@@ -28,8 +28,8 @@
 <div id="verify-email-toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9998;background:#0D2828;border:1px solid rgba(200,168,75,0.5);border-radius:12px;padding:14px 20px;align-items:center;gap:12px;max-width:420px;width:calc(100% - 40px);box-shadow:0 8px 32px rgba(0,0,0,0.4);">
   <span style="font-size:20px;flex-shrink:0;">📧</span>
   <div style="flex:1;">
-    <div style="font-size:13px;font-weight:700;color:#E8C86C;margin-bottom:2px;">Your script isn't saved yet</div>
-    <div style="font-size:12px;color:var(--muted);line-height:1.5;">Check your inbox for a magic link to save your progress across devices.</div>
+    <div style="font-size:13px;font-weight:700;color:#E8C86C;margin-bottom:2px;">Your progress isn't saved to the cloud yet</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.5;">Check your inbox for a magic link, or <button onclick="const idx=screenOrder.indexOf('screen-email');if(idx>=0){currentIndex=idx;showScreen('screen-email');}else{showScreen('screen-email');}" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:12px;text-decoration:underline;padding:0;">enter your email here.</button></div>
   </div>
   <button onclick="document.getElementById('verify-email-toast').style.display='none'" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;flex-shrink:0;padding:4px;">✕</button>
 </div>

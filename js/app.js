@@ -2798,6 +2798,15 @@ function showDashboard() {
   showScreen('plan-screen');
   currentIndex = screenOrder.indexOf('plan-screen');
   window.scrollTo(0, 0);
+
+  // Show verify email toast if user is not authenticated
+  if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
+    const toast = document.getElementById('verify-email-toast');
+    if (toast) {
+      toast.style.display = 'flex';
+      // Don't auto-hide on dashboard — let them dismiss it manually
+    }
+  }
 }
 
 // ── RESTART ───────────────────────────────────────────
