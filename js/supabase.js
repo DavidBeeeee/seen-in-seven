@@ -13,6 +13,9 @@ _sb.auth.onAuthStateChange(async (event, session) => {
   if (session && session.user) {
     _currentUser = await _syncUserProfile(session.user);
 
+    // Flush any saves that happened before auth completed
+    await _flushSaveQueue();
+
     // If we're on the auth waiting screen, advance past it
     const waitScreen = document.getElementById('screen-auth-wait');
     if (waitScreen && waitScreen.classList.contains('active')) {
@@ -69,7 +72,56 @@ async function _syncUserProfile(authUser) {
   }
 }
 
-// ── SEND MAGIC LINK ───────────────────────────────────
+// ── DEFERRED SAVE QUEUE ───────────────────────────────
+// Stores saves that happened before authentication completed.
+// Flushed automatically when _currentUser becomes available.
+const _saveQueue = [];
+
+async function _flushSaveQueue() {
+  if (!_currentUser || _saveQueue.length === 0) return;
+  const items = [..._saveQueue];
+  _saveQueue.length = 0; // clear before processing so re-queues don't duplicate
+  for (const item of items) {
+    try {
+      if (item.type === 'script') {
+        await saveScriptToDb(item.videoNumber, item.level, item.content);
+      } else if (item.type === 'progress') {
+        await saveVideoProgressToDb(item.videoIndex, item.level, item.status);
+      } else if (item.type === 'onboarding') {
+        await saveOnboardingToDb();
+      }
+    } catch(e) {
+      // Silent
+    }
+  }
+}
+
+// Queue a script save — called from app.js whether or not user is authenticated
+function queueScriptSave(videoNumber, level, content) {
+  if (_currentUser) {
+    saveScriptToDb(videoNumber, level, content);
+  } else {
+    _saveQueue.push({ type: 'script', videoNumber, level, content });
+  }
+}
+
+// Queue a progress save
+function queueProgressSave(videoIndex, level, status) {
+  if (_currentUser) {
+    saveVideoProgressToDb(videoIndex, level, status);
+  } else {
+    _saveQueue.push({ type: 'progress', videoIndex, level, status });
+  }
+}
+
+// Queue an onboarding save
+function queueOnboardingSave() {
+  if (_currentUser) {
+    saveOnboardingToDb();
+  } else {
+    _saveQueue.push({ type: 'onboarding' });
+  }
+}
 async function sendMagicLink(email) {
   const { error } = await _sb.auth.signInWithOtp({
     email: email,
@@ -377,14 +429,15 @@ async function initAuth() {
       }
 
       if (effectiveLevel && _currentUser) {
-        // Authenticated user with completed onboarding — go to dashboard
+        // Authenticated user with completed onboarding — flush any queued saves then go to dashboard
+        await _flushSaveQueue();
         if (typeof showDashboard === 'function') {
           showDashboard();
         }
         return;
       } else if (_currentUser) {
         // Authenticated but hasn't completed onboarding yet
-        // Just note the auth — they'll continue through the normal flow
+        await _flushSaveQueue();
         _updateReturningBanner();
       }
     }

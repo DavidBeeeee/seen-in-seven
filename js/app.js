@@ -1675,8 +1675,8 @@ async function showScriptView(idx, skipLoading) {
       state.videos[editKey] = script;
       saveProgress();
       trackSession();
-      // Save to database if authenticated
-      saveScriptToDb(idx + 1, state.level || 1, script);
+      // Queue DB save — fires immediately if authenticated, deferred if not
+      queueScriptSave(idx + 1, state.level || 1, script);
       _doShowScriptView(idx);
     } catch(err) {
       // Hide spinner + epiphany, show error UI with actual error message
@@ -1991,8 +1991,8 @@ function afterFilmed(idx, status) {
     state.videoStatus[idx] = status;
     updateDots(idx + 1 < 7 ? idx + 1 : idx);
     saveProgress(); // persist after every video completion
-    // Save to database if authenticated
-    saveVideoProgressToDb(idx, state.level || 1, status);
+    // Queue DB save — fires immediately if authenticated, deferred if not
+    queueProgressSave(idx, state.level || 1, status);
   }
 
   if (idx < 6) {
@@ -3168,8 +3168,8 @@ function saveProgress() {
     savedAt:       Date.now()
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e) {}
-  // Also sync to database if authenticated
-  saveOnboardingToDb();
+  // Queue DB sync — fires immediately if authenticated, deferred if not
+  queueOnboardingSave();
 }
 
 function loadProgress() {
