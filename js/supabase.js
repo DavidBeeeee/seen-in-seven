@@ -39,8 +39,10 @@ function queueOnboardingSave() {
 
 // ── AUTH STATE ────────────────────────────────────────
 _sb.auth.onAuthStateChange(async (event, session) => {
+  window._SIS_log && _SIS_log('auth:stateChange', {event, hasSession: !!session, hasUser: !!(session && session.user)});
   if (session && session.user) {
     _currentUser = await _syncUserProfile(session.user);
+    window._SIS_log && _SIS_log('auth:synced', {userId: _currentUser ? _currentUser.id : null, level: _currentUser ? _currentUser.level : null});
     await _flushSaveQueue();
 
     const toast = document.getElementById('verify-email-toast');
@@ -191,6 +193,7 @@ async function saveVideoProgressToDb(videoIndex, level, status) {
 
 // ── RESTORE STATE FROM DATABASE ───────────────────────
 async function _restoreFromDatabase() {
+  window._SIS_log && _SIS_log('restore:start', {hasUser: !!_currentUser});
   if (!_currentUser) return false;
   try {
     const { data: user } = await _sb.from('users').select('*').eq('id', _currentUser.id).single();
@@ -270,10 +273,13 @@ async function restoreScriptVersion(scriptId, videoNumber, level, content) {
 
 // ── INIT: CHECK FOR EXISTING SESSION ─────────────────
 async function initAuth() {
+  window._SIS_log && _SIS_log('initAuth:start', {path: window.location.pathname, hash: window.location.hash.substring(0,30)});
   try {
     const session = await getCurrentSession();
+    window._SIS_log && _SIS_log('initAuth:session', {hasSession: !!session, hasUser: !!(session && session.user)});
     if (session && session.user) {
       _currentUser = await _syncUserProfile(session.user);
+      window._SIS_log && _SIS_log('initAuth:profile', {level: _currentUser ? _currentUser.level : null, id: _currentUser ? _currentUser.id : null});
       await _restoreFromDatabase();
       _mergeLocalStorage();
       await _flushSaveQueue();

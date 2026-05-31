@@ -1722,15 +1722,16 @@ async function showScriptView(idx, skipLoading) {
     startLoadingAnimation();
 
     try {
+      window._SIS_log && _SIS_log('gen:start', {idx, level:state.level, mvoQ2:!!state.mvoQ2, topicFreewrite:!!state.topicFreewrite});
       const userMessage = buildAPIUserMessage(idx);
+      window._SIS_log && _SIS_log('gen:built-message', {len: userMessage ? userMessage.length : 0});
       const script = await callDeepSeekAPI(userMessage);
-      if (!script) throw new Error('No script returned from API — the response was empty.');
+      window._SIS_log && _SIS_log('gen:got-response', {len: script ? script.length : 0});
+      if (!script) throw new Error('No script returned — empty response from API.');
       state.videos[editKey] = script;
       saveProgress();
       trackSession();
-      // Queue DB save — fires immediately if authenticated, deferred if not
       queueScriptSave(idx + 1, state.level || 1, script);
-      // Show verify email toast if not authenticated
       if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
         const toast = document.getElementById('verify-email-toast');
         if (toast) {
@@ -1740,7 +1741,6 @@ async function showScriptView(idx, skipLoading) {
       }
       _doShowScriptView(idx);
     } catch(err) {
-      // Hide spinner + epiphany, show error UI with actual error message
       if (loadingWrap) loadingWrap.style.display = 'none';
       if (epiphanyWrap) epiphanyWrap.style.display = 'none';
       if (msgEl) { msgEl.textContent = ''; msgEl.style.display = ''; }
@@ -1748,21 +1748,16 @@ async function showScriptView(idx, skipLoading) {
       const errorMsg = document.getElementById('script-error-msg');
       const retryBtn = document.getElementById('script-error-retry');
       const fallbackBtn = document.getElementById('script-error-fallback');
-      // Show the real error so it can be diagnosed
       const errText = err && err.message ? err.message : String(err);
-      const isCors = errText.toLowerCase().includes('fetch') || errText.toLowerCase().includes('network') || errText.toLowerCase().includes('cors');
-      const displayMsg = isCors
-        ? 'Connection blocked — your browser may be preventing the API call. Try opening this file through a local server (e.g. VS Code Live Server) instead of directly from your file system. Error: ' + errText
-        : 'API error: ' + errText + '\n\nUse "Use Template Instead" to continue without AI.';
+      console.error('[SeenInSeven] Script generation error:', errText);
       if (errorMsg) {
-        errorMsg.textContent = displayMsg;
+        errorMsg.textContent = 'Error: ' + errText;
         errorMsg.style.whiteSpace = 'pre-wrap';
         errorMsg.style.fontSize = '14px';
         errorMsg.style.textAlign = 'left';
       }
       if (retryBtn) retryBtn.onclick = () => showScriptView(idx);
       if (fallbackBtn) fallbackBtn.onclick = () => {
-        // Fall back to compile() template
         const videos = getVideos();
         const v = videos[idx];
         if (v.compile) state.videos[editKey] = v.compile(state.videos);
@@ -1813,8 +1808,10 @@ const VIDEO_RATIONALE = [
 ];
 
 function _doShowScriptView(idx) {
+  window._SIS_log && _SIS_log('_doShowScriptView', {idx, hasScript: !!(state.videos && state.videos['script_v'+idx])});
   const videos = getVideos();
   const v = videos[idx];
+  if (!v) { console.error('[SeenInSeven] _doShowScriptView: no video at idx ' + idx + ' (videos.length=' + videos.length + ')'); return; }
 
   // compile fallback script from beats/compile
   let compiled = '';
@@ -2786,6 +2783,7 @@ function exportPDF(mode) {
 
 // ── SHOW DASHBOARD DIRECTLY (authenticated returning users) ───
 function showDashboard() {
+  window._SIS_log && _SIS_log('showDashboard:start', { level: state.level, name: state.name, hasVideos: Object.keys(state.videos||{}).length, videoStatus: state.videoStatus });
   if (screenOrder.length <= 2) {
     screenOrder = state.posted === 'no'
       ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
@@ -2793,15 +2791,14 @@ function showDashboard() {
   }
   try {
     buildPlan();
+    window._SIS_log && _SIS_log('showDashboard:buildPlan', 'OK');
   } catch(e) {
-    console.error('[SeenInSeven] buildPlan error:', e);
-    // If buildPlan fails, at least show the plan screen with whatever rendered
+    console.error('[SeenInSeven] buildPlan threw: ' + e.message + ' — ' + (e.stack || ''));
   }
   showScreen('plan-screen');
   currentIndex = screenOrder.indexOf('plan-screen');
   window.scrollTo(0, 0);
-
-  // Show verify email toast if user is not authenticated
+  window._SIS_log && _SIS_log('showDashboard:done', 'plan-screen shown');
   if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
     const toast = document.getElementById('verify-email-toast');
     if (toast) toast.style.display = 'flex';

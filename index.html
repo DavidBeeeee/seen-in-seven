@@ -9,7 +9,74 @@
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link rel="stylesheet" href="/css/app.css">
-</head>
+
+<!-- ── GLOBAL ERROR BOUNDARY ── -->
+<script>
+(function() {
+  function showErrorOverlay(title, message, source) {
+    // Don't show overlay for benign errors
+    if (message && message.includes('ResizeObserver')) return;
+    var overlay = document.getElementById('sis-error-overlay');
+    if (!overlay) {
+      overlay = document.createElement('div');
+      overlay.id = 'sis-error-overlay';
+      overlay.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#1a0a0a;border-top:2px solid #ef4444;padding:16px 20px;font-family:monospace;font-size:13px;color:#fca5a5;max-height:50vh;overflow-y:auto;';
+      var dismiss = document.createElement('button');
+      dismiss.textContent = '✕ Dismiss';
+      dismiss.style.cssText = 'float:right;background:#ef4444;color:white;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px;';
+      dismiss.onclick = function() { overlay.style.display = 'none'; };
+      overlay.appendChild(dismiss);
+      var content = document.createElement('div');
+      content.id = 'sis-error-content';
+      overlay.appendChild(content);
+      document.body ? document.body.appendChild(overlay) : document.addEventListener('DOMContentLoaded', function() { document.body.appendChild(overlay); });
+    }
+    overlay.style.display = 'block';
+    var content = document.getElementById('sis-error-content');
+    if (content) {
+      var entry = document.createElement('div');
+      entry.style.cssText = 'border-bottom:1px solid rgba(239,68,68,0.3);padding:8px 0;';
+      entry.innerHTML = '<strong style="color:#ef4444">[' + title + ']</strong> ' + (source ? '<span style="color:#f87171">'+source+'</span> — ' : '') + message;
+      content.insertBefore(entry, content.firstChild);
+    }
+  }
+
+  // Catch synchronous errors
+  window.onerror = function(msg, src, line, col, err) {
+    var source = src ? src.split('/').pop() + ':' + line : '';
+    showErrorOverlay('JS ERROR', msg, source);
+    return false;
+  };
+
+  // Catch unhandled promise rejections
+  window.onunhandledrejection = function(e) {
+    var msg = e.reason ? (e.reason.message || String(e.reason)) : 'Unknown promise rejection';
+    showErrorOverlay('PROMISE', msg, '');
+  };
+
+  // Override console.error to also show in overlay
+  var _origError = console.error.bind(console);
+  console.error = function() {
+    _origError.apply(console, arguments);
+    var msg = Array.from(arguments).map(function(a) { return typeof a === 'object' ? JSON.stringify(a) : String(a); }).join(' ');
+    showErrorOverlay('CONSOLE', msg, '');
+  };
+
+  // Override console.warn for SeenInSeven warnings only
+  var _origWarn = console.warn.bind(console);
+  console.warn = function() {
+    _origWarn.apply(console, arguments);
+    var msg = Array.from(arguments).join(' ');
+    if (msg.indexOf('[SeenInSeven]') !== -1) {
+      showErrorOverlay('WARN', msg, '');
+    }
+  };
+
+  window._SIS_log = function(label, data) {
+    console.log('[SIS:' + label + ']', data !== undefined ? data : '');
+  };
+})();
+</script>
 <body>
 
 <!-- Regen feedback modal -->
