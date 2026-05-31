@@ -2349,7 +2349,8 @@ function buildPlan(){
   const name=state.name||'You';
   const miniText=miniGoalMap[state.minigoal]||state.minigoalText||'complete this challenge';
   const videos=getVideos();
-  const filmedCount = Object.values(state.videoStatus).filter(s=>s==='filmed').length;
+  const videoStatus = state.videoStatus || {};
+  const filmedCount = Object.values(videoStatus).filter(s=>s==='filmed').length;
   const totalVideos = videos.length;
 
   // ── Dashboard header ──────────────────────────────────
@@ -2375,7 +2376,7 @@ function buildPlan(){
 
   // Dashboard action buttons
   if (dbActions) {
-    const nextUnfilmed = videos.findIndex((_,i) => !state.videoStatus[i]);
+    const nextUnfilmed = videos.findIndex((_,i) => !videoStatus[i]);
     const resumeLabel = nextUnfilmed >= 0
       ? 'Resume — Video ' + (nextUnfilmed + 1)
       : 'Review All Scripts';
@@ -2447,7 +2448,7 @@ function buildPlan(){
       else if(v.compile){ script = v.compile(state.videos); }
     }
     const pageBreak = i > 0 ? '<div class="pvrow-page-break"></div>' : '';
-    const filmed = state.videoStatus[i] === 'filmed';
+    const filmed = videoStatus[i] === 'filmed';
     const hasScript = !!state.videos['script_v'+i];
     const statusBadge = filmed
       ? `<span style="font-size:11px;color:var(--green);font-weight:700;letter-spacing:.04em;">✓ FILMED</span>`
@@ -2680,7 +2681,7 @@ async function handleThumbsFeedback(videoIdx, thumbsUp) {
 
 // Conditional affiliate visibility
 function updatePartnerVisibility() {
-  const filmedCount = Object.values(state.videoStatus).filter(s => s === 'filmed').length;
+  const filmedCount = Object.values(state.videoStatus || {}).filter(s => s === 'filmed').length;
   const partnerSection = document.getElementById('partner-section');
   const vubli = document.getElementById('partner-vubli');
   const temu  = document.getElementById('partner-temu');
@@ -2785,13 +2786,17 @@ function exportPDF(mode) {
 
 // ── SHOW DASHBOARD DIRECTLY (authenticated returning users) ───
 function showDashboard() {
-  // Make sure screenOrder is expanded for resuming from dashboard
   if (screenOrder.length <= 2) {
     screenOrder = state.posted === 'no'
       ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
       : ['screen-0','screen-1','screen-email','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
   }
-  buildPlan();
+  try {
+    buildPlan();
+  } catch(e) {
+    console.error('[SeenInSeven] buildPlan error:', e);
+    // If buildPlan fails, at least show the plan screen with whatever rendered
+  }
   showScreen('plan-screen');
   currentIndex = screenOrder.indexOf('plan-screen');
   window.scrollTo(0, 0);
@@ -2799,10 +2804,7 @@ function showDashboard() {
   // Show verify email toast if user is not authenticated
   if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
     const toast = document.getElementById('verify-email-toast');
-    if (toast) {
-      toast.style.display = 'flex';
-      // Don't auto-hide on dashboard — let them dismiss it manually
-    }
+    if (toast) toast.style.display = 'flex';
   }
 }
 
