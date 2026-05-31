@@ -150,6 +150,19 @@ function goToRecapWithNameCheck() {
 }
 
 function goToRecap() {
+  // If the user went through onboarding fresh (not continuing),
+  // clear any previously cached scripts so generation runs fresh
+  const hasExistingScripts = Object.keys(state.videos || {}).some(k => k.startsWith('script_v'));
+  if (hasExistingScripts) {
+    Object.keys(state.videos).forEach(k => {
+      if (k.startsWith('script_v') || k.startsWith('sections_v')) {
+        delete state.videos[k];
+      }
+    });
+    state.videoStatus = {};
+    state.l1VideoStatus = null;
+    state.l1Videos = null;
+  }
   saveProgress();
   populateRecap();
   goNext();
