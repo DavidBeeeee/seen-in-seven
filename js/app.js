@@ -2784,24 +2784,36 @@ function exportPDF(mode) {
 
 // ── SHOW DASHBOARD DIRECTLY (authenticated returning users) ───
 function showDashboard() {
-  window._SIS_log && _SIS_log('showDashboard:start', { level: state.level, name: state.name, alreadyShown: _dashboardShown });
+  window._SIS_log && _SIS_log('showDashboard:start', { level: state.level, name: state.name });
   _dashboardShown = true;
-  transitioning = false; // reset any stuck transition before we show the dashboard
+  transitioning = false;
+
   if (screenOrder.length <= 2) {
     screenOrder = state.posted === 'no'
       ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
       : ['screen-0','screen-1','screen-email','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
   }
-  try {
-    buildPlan();
-    window._SIS_log && _SIS_log('showDashboard:buildPlan', 'OK');
-  } catch(e) {
-    console.error('[SeenInSeven] buildPlan threw: ' + e.message + ' — ' + (e.stack || ''));
+
+  try { buildPlan(); } catch(e) {
+    console.error('[SeenInSeven] buildPlan threw: ' + e.message);
   }
-  showScreen('plan-screen');
+
+  // Force every screen inactive, then force plan-screen active
+  // Using direct DOM manipulation to bypass any animation state issues
+  document.querySelectorAll('.screen').forEach(s => {
+    s.classList.remove('active', 'anim-in', 'anim-out');
+    s.style.display = '';
+  });
+  const planScreen = document.getElementById('plan-screen');
+  if (planScreen) {
+    planScreen.classList.add('active');
+    planScreen.style.display = 'flex';
+  }
+
   currentIndex = screenOrder.indexOf('plan-screen');
   window.scrollTo(0, 0);
-  window._SIS_log && _SIS_log('showDashboard:done', 'plan-screen shown');
+  window._SIS_log && _SIS_log('showDashboard:done', { planActive: planScreen ? planScreen.classList.contains('active') : false });
+
   if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
     const toast = document.getElementById('verify-email-toast');
     if (toast) toast.style.display = 'flex';
