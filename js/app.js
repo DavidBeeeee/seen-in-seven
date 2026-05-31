@@ -18,6 +18,38 @@ let mvoQ2Skipped = false;
 let maxProgressPct = 0;    // L1 blue bar — never decreases
 let maxProgressL2Pct = 0;  // L2 green bar — never decreases
 
+const SAVE_KEY = 'bwb_challenge_v1';
+
+let _sbTracked = false;
+async function trackSession() {
+  if (_sbTracked) return;
+  _sbTracked = true;
+  try {
+    await _sb.from('sessions_legacy').insert({
+      name:           state.name || null,
+      level:          state.level || null,
+      blocker:        state.blocker || null,
+      history:        state.history || null,
+      goal:           state.goal || null,
+      business_stage: state.businessStage || null,
+      topic:          state.topicFreewrite || null,
+      answers: {
+        posted:   state.posted,
+        blocker:  state.blocker,
+        history:  state.history,
+        goal:     state.goal,
+        mvoQ2:    state.mvoQ2,
+        mvoQ3:    state.mvoQ3,
+        mvoQ4:    state.mvoQ4
+      },
+      completed_videos: Object.keys(state.videoStatus || {}).length,
+      user_agent: navigator.userAgent
+    });
+  } catch(e) {
+    // Tracking failure is silent — never block the user
+  }
+}
+
 // ── SCREEN NAVIGATION ─────────────────────────────────
 function showScreen(id, direction='forward') {
   if (transitioning) return;
@@ -3117,7 +3149,6 @@ function copyScript(btn) {
 }
 
 // ── LOCAL STORAGE / RETURNING USER ────────────────────
-const SAVE_KEY = 'bwb_challenge_v1';
 
 function saveProgress() {
   const data = {
@@ -3281,35 +3312,6 @@ function launchConfetti() {
 
 // ── SUPABASE SESSION TRACKING ─────────────────────────
 // Legacy anonymous tracking — kept for backwards compatibility during transition
-let _sbTracked = false;
-async function trackSession() {
-  if (_sbTracked) return;
-  _sbTracked = true;
-  try {
-    await _sb.from('sessions_legacy').insert({
-      name:           state.name || null,
-      level:          state.level || null,
-      blocker:        state.blocker || null,
-      history:        state.history || null,
-      goal:           state.goal || null,
-      business_stage: state.businessStage || null,
-      topic:          state.topicFreewrite || null,
-      answers: {
-        posted:   state.posted,
-        blocker:  state.blocker,
-        history:  state.history,
-        goal:     state.goal,
-        mvoQ2:    state.mvoQ2,
-        mvoQ3:    state.mvoQ3,
-        mvoQ4:    state.mvoQ4
-      },
-      completed_videos: Object.keys(state.videoStatus || {}).length,
-      user_agent: navigator.userAgent
-    });
-  } catch(e) {
-    // Tracking failure is silent — never block the user
-  }
-}
 
 // ── INIT ──────────────────────────────────────────────
 // Hide screen-0 briefly while we check for an existing auth session
