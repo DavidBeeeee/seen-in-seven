@@ -24,6 +24,16 @@
   </div>
 </div>
 
+<!-- ══ VERIFY EMAIL TOAST ══ -->
+<div id="verify-email-toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9998;background:#0D2828;border:1px solid rgba(200,168,75,0.5);border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:12px;max-width:420px;width:calc(100% - 40px);box-shadow:0 8px 32px rgba(0,0,0,0.4);">
+  <span style="font-size:20px;flex-shrink:0;">📧</span>
+  <div style="flex:1;">
+    <div style="font-size:13px;font-weight:700;color:#E8C86C;margin-bottom:2px;">Your script isn't saved yet</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.5;">Check your inbox for a magic link to save your progress across devices.</div>
+  </div>
+  <button onclick="document.getElementById('verify-email-toast').style.display='none'" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;flex-shrink:0;padding:4px;">✕</button>
+</div>
+
 <div id="progress-bar-wrap">
   <div class="logo">SeenInSeven</div>
   <div id="progress-track"><div id="progress-fill"></div><div id="progress-fill-l2"></div></div>
@@ -354,6 +364,11 @@
 
 <!-- ══ COMMUNICATION LAYERS ══ -->
 <div class="screen" id="screen-comm-layers">
+  <!-- Onboarding complete indicator -->
+  <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;padding:10px 14px;background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.2);border-radius:10px;">
+    <span style="font-size:16px;">✅</span>
+    <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);">Setup complete — building your first script</span>
+  </div>
   <div class="video-progress" id="cl-dots"></div>
   <div id="cl-result-badge"></div>
   <div class="q1-progress" id="cl-label">Video 1 of 7</div>

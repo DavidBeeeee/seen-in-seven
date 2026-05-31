@@ -16,6 +16,10 @@ _sb.auth.onAuthStateChange(async (event, session) => {
     // Flush any saves that happened before auth completed
     await _flushSaveQueue();
 
+    // Hide the verify email toast since they're now authenticated
+    const toast = document.getElementById('verify-email-toast');
+    if (toast) toast.style.display = 'none';
+
     // If we're on the auth waiting screen, advance past it
     const waitScreen = document.getElementById('screen-auth-wait');
     if (waitScreen && waitScreen.classList.contains('active')) {

@@ -79,8 +79,8 @@ function goNext() {
 
   if (cur === 'screen-1') {
     screenOrder = state.posted === 'no'
-      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
+      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
   }
 
   if (cur === 'screen-3') {
@@ -176,8 +176,8 @@ function skipAuth() {
   // Ensure screenOrder is fully expanded before jumping
   if (screenOrder.length <= 2) {
     screenOrder = state.posted === 'no'
-      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
+      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
   }
   currentIndex = screenOrder.indexOf('screen-recap');
   populateRecap();
@@ -190,8 +190,8 @@ function advancePastAuth() {
   // Ensure screenOrder is fully expanded
   if (screenOrder.length <= 2) {
     screenOrder = state.posted === 'no'
-      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
+      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
   }
   // Save onboarding to DB now that we have a user
   saveOnboardingToDb();
@@ -1677,6 +1677,14 @@ async function showScriptView(idx, skipLoading) {
       trackSession();
       // Queue DB save — fires immediately if authenticated, deferred if not
       queueScriptSave(idx + 1, state.level || 1, script);
+      // Show verify email toast if not authenticated
+      if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
+        const toast = document.getElementById('verify-email-toast');
+        if (toast) {
+          toast.style.display = 'flex';
+          setTimeout(() => { if (toast) toast.style.display = 'none'; }, 8000);
+        }
+      }
       _doShowScriptView(idx);
     } catch(err) {
       // Hide spinner + epiphany, show error UI with actual error message
@@ -2166,7 +2174,9 @@ async function handleScriptViewFeedback(thumbsUp) {
   await saveScriptFeedback(currentVideoIndex + 1, state.level || 1, thumbsUp);
 }
 
-// ── SCRIPT VERSION HISTORY ────────────────────────────
+// Store for version content (avoids escaping issues with inline onclick)
+const _versionStore = {};
+
 async function loadScriptVersions(idx) {
   const versionsEl  = document.getElementById('sv-versions');
   const versionsList = document.getElementById('sv-versions-list');
@@ -2176,13 +2186,15 @@ async function loadScriptVersions(idx) {
   if (!user) { versionsEl.style.display = 'none'; return; }
 
   const versions = await fetchScriptVersions(idx + 1, state.level || 1);
-
-  // Only show if there are previous versions (more than 1 total)
   const previous = versions.filter(v => !v.is_current);
   if (previous.length === 0) { versionsEl.style.display = 'none'; return; }
 
   versionsEl.style.display = '';
-  versionsList.innerHTML = previous.map((v, i) => {
+
+  // Store content by id to avoid escaping issues
+  previous.forEach(v => { _versionStore[v.id] = v.content; });
+
+  versionsList.innerHTML = previous.map(v => {
     const clean = v.content.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
     const preview = clean.substring(0, 120) + (clean.length > 120 ? '...' : '');
     const date = new Date(v.generated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
@@ -2190,17 +2202,18 @@ async function loadScriptVersions(idx) {
       <div class="version-item">
         <div class="version-header">
           <span class="version-label">Version ${v.version} &middot; ${date}</span>
-          <button class="version-restore" onclick="handleRestoreVersion('${v.id}', ${idx}, ${JSON.stringify(v.content).replace(/'/g, "\\'")})">Restore →</button>
+          <button class="version-restore" onclick="handleRestoreVersion('${v.id}', ${idx})">Restore →</button>
         </div>
         <div class="version-preview">${preview}</div>
       </div>`;
   }).join('');
 }
 
-async function handleRestoreVersion(scriptId, idx, content) {
+async function handleRestoreVersion(scriptId, idx) {
+  const content = _versionStore[scriptId];
+  if (!content) return;
   const level = state.level || 1;
   await restoreScriptVersion(scriptId, idx + 1, level, content);
-  // Refresh the script view with restored content
   _doShowScriptView(idx);
   loadScriptVersions(idx);
 }
@@ -2219,6 +2232,7 @@ function editScript(idx) {
 function markFilmedFromPlan(idx) {
   state.videoStatus[idx] = 'filmed';
   saveProgress();
+  queueProgressSave(idx, state.level || 1, 'filmed');
   buildPlan();
 }
 
@@ -2767,8 +2781,8 @@ function showDashboard() {
   // Make sure screenOrder is expanded for resuming from dashboard
   if (screenOrder.length <= 2) {
     screenOrder = state.posted === 'no'
-      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
+      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
   }
   buildPlan();
   showScreen('plan-screen');
@@ -2780,6 +2794,10 @@ function showDashboard() {
 function restartWizard(){
   if (!confirm('This will erase all your progress and start over. Are you sure?')) return;
   localStorage.removeItem(SAVE_KEY);
+  // Sign out of Supabase so returning auth doesn't restore old data
+  if (typeof _sb !== 'undefined') {
+    _sb.auth.signOut().catch(() => {});
+  }
   Object.keys(state).forEach(k=>state[k]=k==='videos'||k==='videoStatus'?{}:null);
   state.name='';state.minigoalText='';state.videoStatus={};
   state.mvoQ2=null;state.mvoQ3=null;state.mvoQ4=null;
@@ -3157,6 +3175,10 @@ function saveProgress() {
     posted:        state.posted        || '',
     history:       state.history       || '',
     blocker:       state.blocker       || '',
+    minigoal:      state.minigoal      || '',
+    minigoalText:  state.minigoalText  || '',
+    business:      state.business      || '',
+    goal:          state.goal          || '',
     videoStatus:   state.videoStatus   || {},
     videos:        state.videos        || {},
     l1VideoStatus: state.l1VideoStatus || null,
@@ -3183,16 +3205,15 @@ function loadProgress() {
       return;
     }
     if (data.name || data.level) {
-      const banner = document.getElementById('returning-banner');
-      const nameEl = document.getElementById('rb-name-display');
-      banner.classList.add('visible');
-      nameEl.textContent = data.name ? data.name + ' 👋' : '👋';
-      // Restore state so Continue works
+      // Restore state
       if (data.name)        state.name        = data.name;
       if (data.level)       state.level       = data.level;
       if (data.posted)      state.posted      = data.posted;
       if (data.history)     state.history     = data.history;
       if (data.blocker)     state.blocker     = data.blocker;
+      if (data.minigoal)    state.minigoal    = data.minigoal;
+      if (data.minigoalText) state.minigoalText = data.minigoalText;
+      if (data.business)    state.business    = data.business;
       if (data.videoStatus) state.videoStatus = data.videoStatus;
       if (data.videos)      state.videos      = data.videos;
       if (data.mvoQ2)         state.mvoQ2         = data.mvoQ2;
@@ -3201,8 +3222,21 @@ function loadProgress() {
       if (data.l1VideoStatus) state.l1VideoStatus = data.l1VideoStatus;
       if (data.l1Videos)      state.l1Videos      = data.l1Videos;
       if (data.topicFreewrite)state.topicFreewrite= data.topicFreewrite;
-      // Restore mvoQ2Skipped flag from saved onboarding data
       if (data.mvoQ2 && (data.blocker || data.history)) mvoQ2Skipped = true;
+
+      // If authenticated — skip banner entirely and go straight to dashboard
+      if (typeof getCurrentUser === 'function' && getCurrentUser() && data.level) {
+        showDashboard();
+        return;
+      }
+
+      // Not authenticated — show the returning banner
+      const banner = document.getElementById('returning-banner');
+      const nameEl = document.getElementById('rb-name-display');
+      if (banner && nameEl) {
+        banner.classList.add('visible');
+        nameEl.textContent = data.name ? data.name + ' 👋' : '👋';
+      }
     }
   } catch(e) {}
 }
@@ -3213,8 +3247,8 @@ function continueSession() {
   if (state.level) {
     // Bug fix: state.level is numeric (1 or 2), never the string 'L1'
     screenOrder = state.level === 1
-      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
+      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
 
     // Find the first video that hasn't been filmed or skipped
     const videoCount = getVideos().length;
@@ -3252,6 +3286,10 @@ function continueSession() {
 
 function dismissBanner() {
   localStorage.removeItem(SAVE_KEY);
+  // Sign out of Supabase so auth doesn't restore old session
+  if (typeof _sb !== 'undefined') {
+    _sb.auth.signOut().catch(() => {});
+  }
   document.getElementById('returning-banner').classList.remove('visible');
 }
 
