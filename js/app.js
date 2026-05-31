@@ -300,6 +300,383 @@ const miniGoalMap = {
   'proud-l2':'post something I\'d proudly send to a potential client'
 };
 
+const MVO_TOPIC_CARDS = [
+  {icon:'🌿',text:'Health, wellness, and feeling your best',
+   village_full:'people on a wellness journey who want to feel better in their body, their energy, and their everyday life',
+   village_hook:'If you are someone working on your health and how you feel in your own skin'},
+  {icon:'💫',text:'Wealth, abundance, and building what is truly yours',
+   village_full:'people building their finances or their business who want something real and grounded, not hype',
+   village_hook:'If you are building wealth or a business and want someone who speaks plainly about what actually works'},
+  {icon:'🌸',text:'Love, relationships, and the connections that matter',
+   village_full:'people working on their relationships and the way they show up for the people they love and for themselves',
+   village_hook:'If you are someone who wants to feel more connected and more at peace in your relationships'},
+  {icon:'✨',text:'Good vibes, stories, and things that light you up',
+   village_full:'people who want more joy, laughter, and lightness in their everyday life',
+   village_hook:'If you just want more good things in your feed and something genuinely worth stopping to watch'}
+];
+
+const MVO_DATA = {
+  q2:{
+    1:{question:"What's been holding you back from posting?",
+       placeholder:"Describe what's actually been in your way...",
+       cards:[
+         {icon:'😬',text:'Getting on camera feels terrifying',
+          before_short:'the camera thing',
+          before_full:'I have wanted to do this, but every time I think about filming, something shuts it down. The camera feels like a judgment I am not ready to face.'},
+         {icon:'📋',text:'I never know what to say',
+          before_short:'not knowing what to say',
+          before_full:'I sit down to plan a video and my mind goes completely blank. I know I have something worth sharing. I just cannot seem to get it out.'},
+         {icon:'⏳',text:'I do not feel ready yet',
+          before_short:'waiting to feel ready',
+          before_full:'There is always something that feels like it needs to happen first. More confidence, a better setup, a clearer plan. The readiness never quite arrives.'},
+         {icon:'🔄',text:'I keep putting it off',
+          before_short:'the endless delay',
+          before_full:'I have been meaning to start for longer than I want to admit. Life gets in the way, or I get in the way. It just keeps not happening.'}
+       ]},
+    2:{question:"What does your audience come to you for?",
+       placeholder:"What topic or niche does your content focus on?",
+       cards:MVO_TOPIC_CARDS}
+  },
+  q3:{
+    1:{question:"What made you decide today is the day?",
+       placeholder:"What actually pushed you to start today?",
+       cards:[
+         {icon:'👀',text:'I saw someone just like me doing it',
+          catalyst_full:'Something shifted when I watched someone who looked just like me, no big following, no fancy setup, just showing up, and it was actually working. If they could do it, the reason I could not was only me.'},
+         {icon:'🔥',text:'I got tired of waiting to feel ready',
+          catalyst_full:'I realized the feeling of ready is not coming. No amount of planning or consuming more content is going to get me there. The only way forward is to start, and the only day I can start is today.'},
+         {icon:'💬',text:'Someone told me I needed to start',
+          catalyst_full:'Someone I trust looked at me and said it was time. And somewhere under all my reasons for waiting, I knew they were right. So here I am.'},
+         {icon:'⚡',text:'I just decided. No more waiting.',
+          catalyst_full:'There was no big moment. I just decided. I looked at where I was heading if I kept waiting and decided that was not the version of this story I wanted to tell.'}
+       ]},
+    2:{question:"What's the biggest challenge your audience is dealing with?",
+       placeholder:"Describe the main challenge your audience faces...",
+       cards:[
+         {icon:'👤',text:'They feel invisible in their niche',
+          before_full:'The people I work with are genuinely good at what they do, but nobody knows they exist. They watch others with less skill get the attention, the clients, the opportunities, and they cannot figure out how to change that.'},
+         {icon:'🌊',text:'They feel overwhelmed and stuck',
+          before_full:'The people I work with know what they want, but the path there feels impossibly complicated. They are doing everything, nothing is clicking, and the gap between where they are and where they want to be keeps growing.'},
+         {icon:'🧱',text:'They know what they want but cannot get there',
+          before_full:'The people I work with can see exactly where they want to be. The problem is every time they get close, something blocks them, or they second-guess themselves back to square one.'},
+         {icon:'📉',text:'They are undercharging or undervalued',
+          before_full:'The people I work with are delivering real results but not getting paid what that is worth. They have to prove themselves over and over to clients who do not see the value they actually provide.'}
+       ]}
+  },
+  q4:{
+    1:{question:"What do you want to make videos about?",
+       placeholder:"What topic or niche do you want to focus on?",
+       cards:MVO_TOPIC_CARDS},
+    2:{question:"What makes you the right person to help them?",
+       placeholder:"What have you done, built, or lived through that gives you real insight here?",
+       cards:[
+         {icon:'🗺️',text:'I have been exactly where they are',
+          crack_full:'I know this because I have been exactly where they are. I lived through the thing they are dealing with and found a way through it. That is not a pitch. That is why this work matters to me.'},
+         {icon:'🔨',text:'I built something that actually works',
+          crack_full:'I know this because I built a system that solved it. Not a theory borrowed from someone else, something I put together through years of actual work that produces real results.'},
+         {icon:'🤝',text:'I have helped dozens of people through this',
+          crack_full:'I know this because I have watched dozens of people work through this problem. I have seen every version of what keeps people stuck and I know what actually moves things forward.'},
+         {icon:'🔍',text:'I see the patterns they cannot see',
+          crack_full:'I know this because I can see what they cannot see from inside it. When you are stuck in a problem, it looks like a wall. From where I stand, I can see the door. That is what I bring.'}
+       ]}
+  }
+};
+
+
+const INTRO_COPY = {
+  1: {
+    L1: {
+      label: 'Video 1 of 7 — The Origin Signal',
+      title: "Let's Start With Why You're Here",
+      body: "You're about to build your first script. This is Video 1 of 7 — and it's the one that opens the door. We're going to ask you three quick questions, then generate your script from your answers. After this, you get six more. Each one tells a different story: your turning point, your first big realization, how you think differently, where you are now, the thing most people get wrong, and the moment you decided to own your space. Seven videos. A real arc. Proof that you show up. This is where it starts.",
+      result: 'Recognition',
+      framework: [
+        {name:'Hook',                   trigger:'Audience Signal'},
+        {name:'Identity',               trigger:'Trust Layer'},
+        {name:'The Waiting Struggle',   trigger:'Empathy Lock / Mirror Moment'},
+        {name:'The Start Declaration',  trigger:'Open Loop'}
+      ],
+      triggers: ['Audience Signal','Empathy Lock','Mirror Moment','Contrast Shift','Trust Layer','Open Loop','Relationship Primer']
+    },
+    L2: {
+      label: 'Video 1 of 7 — The Origin Signal',
+      title: "Let's Start With Why You're Here",
+      body: "You're about to build your first expert script. This is Video 1 of 7 — the one that signals you're here and you know your space. We'll ask you three questions, then build your script from your answers. What comes next is a full arc: your origin story, your first industry reframe, how you think about the work, what others get wrong, and why your audience should keep coming back. Seven videos. Real authority. A content body that actually does something for your business. Three questions. Let's go.",
+      result: 'Recognition',
+      framework: [
+        {name:'Hook',                     trigger:'Audience Signal'},
+        {name:'Expertise',                trigger:'Trust Layer'},
+        {name:'The Market Gap',           trigger:'Empathy Lock / Mirror Moment'},
+        {name:'The Solution Declaration', trigger:'Open Loop'}
+      ],
+      triggers: ['Audience Signal','Empathy Lock','Mirror Moment','Contrast Shift','Trust Layer','Open Loop','Relationship Primer']
+    }
+  },
+  2: {
+    L1: {
+      label: 'Video 2 of 7 — The Turning Point',
+      title: 'Tell Them What Finally Moved You',
+      body: "People don't follow creators because of what they do — they follow them because of why they started. This video gives your audience a reason to root for you. You're not being dramatic. You're being honest about the moment everything shifted. That honesty is what turns a viewer into a follower.",
+      result: 'Inspiration',
+      framework: [
+        {name:'Hook',                        trigger:'Catalyst Moment'},
+        {name:'The Internal Conflict',       trigger:'Vulnerability Entry'},
+        {name:'The False Solution',          trigger:'Enemy Identification'},
+        {name:'The Decision to Show Up',     trigger:'Agency Reclaim / Path Clarity'}
+      ],
+      triggers: ['Vulnerability Entry','Catalyst Moment','Enemy Identification','Agency Reclaim','Relatable Stakes','Path Clarity','Shared Mission']
+    },
+    L2: {
+      label: 'Video 2 of 7 — The Origin Story',
+      title: 'Show Them Why You Built This',
+      body: "Your audience doesn't just want to buy from you — they want to understand you. This video answers the question they're already asking: why did you build this, and why should I trust you? You're not pitching anything. You're showing them the moment you decided this work mattered.",
+      result: 'Inspiration',
+      framework: [
+        {name:'Hook',                        trigger:'Catalyst Moment'},
+        {name:'The Industry Frustration',    trigger:'Vulnerability Entry'},
+        {name:'The Broken Method',           trigger:'Enemy Identification'},
+        {name:'The Decision to Innovate',    trigger:'Agency Reclaim / Path Clarity'}
+      ],
+      triggers: ['Vulnerability Entry','Catalyst Moment','Enemy Identification','Agency Reclaim','Relatable Stakes','Path Clarity','Shared Mission']
+    }
+  },
+  3: {
+    L1: {
+      label: 'Video 3 of 7 — The First Epiphany',
+      title: "Say The Thing Most People Won't",
+      body: "Every person watching you held some version of the belief you're about to challenge. This video isn't about being controversial — it's about being the person who finally said the thing they'd been thinking but never heard out loud. One honest reframe, told through your real experience, is what builds intellectual trust.",
+      result: 'Insight',
+      framework: [
+        {name:'Hook',                             trigger:'Pattern Break'},
+        {name:'The Struggle Story',               trigger:'Discovery Arc'},
+        {name:'The "Aha" Moment',                 trigger:'Cognitive Reframe'},
+        {name:'The Cost of Staying Invisible',    trigger:'Cost Revelation / Simplicity Signal'}
+      ],
+      triggers: ['Pattern Break','Discovery Arc','Cognitive Reframe','The "Aha" Transfer','Cost Revelation','Simplicity Signal','Authority Anchor']
+    },
+    L2: {
+      label: 'Video 3 of 7 — The First Epiphany',
+      title: 'Challenge What Your Industry Gets Wrong',
+      body: "Your audience has been told things that aren't working for them. This video positions you as someone who sees what others miss. You're not tearing down your industry — you're offering a better lens. One clear reframe, backed by what you've actually seen, is what makes people think: this person gets it.",
+      result: 'Insight',
+      framework: [
+        {name:'Hook',                             trigger:'Pattern Break'},
+        {name:'The Research/Work Story',          trigger:'Discovery Arc'},
+        {name:'The New Insight',                  trigger:'Cognitive Reframe'},
+        {name:'The Cost of the Wrong Method',     trigger:'Cost Revelation / Simplicity Signal'}
+      ],
+      triggers: ['Pattern Break','Discovery Arc','Cognitive Reframe','The "Aha" Transfer','Cost Revelation','Simplicity Signal','Authority Anchor']
+    }
+  },
+  4: {
+    L1: {
+      label: 'Video 4 of 7 — The Progress Signal',
+      title: "Show Them You're Still Doing This",
+      body: "Most people disappear after their first few videos. You're still here — and that matters more than you think. This video is proof that you're the kind of person who follows through. You don't have to have everything figured out. You just have to be honest about where you are and why you're still going.",
+      result: 'Credibility',
+      framework: [
+        {name:'Hook',                    trigger:'Momentum Validation'},
+        {name:'The Experience So Far',   trigger:'Small Win Proof'},
+        {name:'The Reality of the Work', trigger:'Real-Time Transparency'},
+        {name:'The Forward Shift',       trigger:'Social Evidence'}
+      ],
+      triggers: ['Behind-the-Curtain Access','Momentum Validation','Small Win Proof','Expert Ease','Objection Pre-emption','Real-Time Transparency','Social Evidence']
+    },
+    L2: {
+      label: 'Video 4 of 7 — The Teaching Moment',
+      title: 'Give Them Something They Can Use Right Now',
+      body: "This is where you demonstrate real value — not by talking about what you offer, but by actually giving something useful. One insight, explained simply, proves your expertise better than any testimonial. The person watching is already asking: can this person actually help me? Answer it by teaching.",
+      result: 'Credibility',
+      framework: [
+        {name:'Hook',                   trigger:'Momentum Validation'},
+        {name:'The Live Demonstration', trigger:'Method / Expert Ease'},
+        {name:'The Specific Result',    trigger:'Small Win Proof'},
+        {name:'The Client Evidence',    trigger:'Social Evidence'}
+      ],
+      triggers: ['Behind-the-Curtain Access','Momentum Validation','Small Win Proof','Expert Ease','Objection Pre-emption','Real-Time Transparency','Social Evidence']
+    }
+  },
+  5: {
+    L1: {
+      label: 'Video 5 of 7 — The Second Epiphany',
+      title: 'Plant Your Flag',
+      body: "You've shown up, shared your story, and kept going. Now it's time to state what you actually believe. This video is about the conviction you hold that most people in your world have backwards. You're not here to convince anyone. You're here to resonate with the people who already feel it too.",
+      result: 'Authority',
+      framework: [
+        {name:'Hook',               trigger:'Sacred Cow Slaughter'},
+        {name:'The False Belief',   trigger:'Logic Re-stack'},
+        {name:'The New Realization',trigger:'Paradigm Break'},
+        {name:'The Future Self',    trigger:'Status Shift / Natural Invitation'}
+      ],
+      triggers: ['Sacred Cow Slaughter','Logic Re-stack','Emotional Safety','Paradigm Break','Future Pacing','Status Shift','Natural Invitation']
+    },
+    L2: {
+      label: 'Video 5 of 7 — The Second Epiphany',
+      title: 'Let Them See Your Character',
+      body: "By now, your audience has seen you show up, teach, and share your origin. This video is where they get to see your judgment. A mistake you made, the lesson it cost you, and how it changed how you work — that combination creates something testimonials can't: genuine trust in who you are.",
+      result: 'Authority',
+      framework: [
+        {name:'Hook',                    trigger:'Sacred Cow Slaughter'},
+        {name:'The Industry Myth',       trigger:'Logic Re-stack'},
+        {name:'The Better Way',          trigger:'Paradigm Break'},
+        {name:'The Natural Solution',    trigger:'Status Shift / Natural Invitation'}
+      ],
+      triggers: ['Sacred Cow Slaughter','Logic Re-stack','Emotional Safety','Paradigm Break','Future Pacing','Status Shift','Natural Invitation']
+    }
+  },
+  6: {
+    L1: {
+      label: 'Video 6 of 7 — The Alignment Moment',
+      title: 'Connect Your Story To Their Future',
+      body: "Your audience is starting to get you. Now they need to understand what you actually want for them. This video connects your journey to their possibility. It's not a pitch — it's an alignment moment. The right person is watching and asking: is this for me? This video answers yes, without pressure.",
+      result: 'Alignment',
+      framework: [
+        {name:'Hook',                  trigger:'Identity Call-to-Arms'},
+        {name:'The Internal Values',   trigger:'Shared Values'},
+        {name:'Who This Is For',       trigger:'Polarization'},
+        {name:'The Personal Mission',  trigger:'Ethical Bridge'}
+      ],
+      triggers: ['Identity Call-to-Arms','Shared Values','Transformation Story','External Validation','In-Group Belonging','Polarization','Ethical Bridge']
+    },
+    L2: {
+      label: 'Video 6 of 7 — The Alignment Moment',
+      title: "Walk Them Through What It's Like to Work With You",
+      body: "People don't buy outcomes — they buy confidence in the process that gets them there. This video walks your audience through what it actually feels like to work with you, without selling anything. You're showing them the transformation through the experience, not the promise.",
+      result: 'Alignment',
+      framework: [
+        {name:'Hook',                  trigger:'Identity Call-to-Arms'},
+        {name:'The Business Values',   trigger:'Shared Values'},
+        {name:'Who We Serve',          trigger:'Polarization'},
+        {name:'The Industry Mission',  trigger:'Ethical Bridge'}
+      ],
+      triggers: ['Identity Call-to-Arms','Shared Values','Transformation Story','External Validation','In-Group Belonging','Polarization','Ethical Bridge']
+    }
+  },
+  7: {
+    L1: {
+      label: 'Video 7 of 7 — The Resolution',
+      title: 'Close The Arc. Open The Door.',
+      body: "This is the final video — and it's the most important one for building loyalty. You started this challenge as someone deciding to show up. You're finishing it as someone who did. That arc is the story. Share what this actually did for you, what surprised you, and leave the right person an honest open door.",
+      result: 'Loyalty',
+      framework: [
+        {name:'Hook',               trigger:'Full Circle Loop'},
+        {name:'The Internal Shift', trigger:'New Normal Declaration'},
+        {name:'The Final Lesson',   trigger:'Authority Affirmation'},
+        {name:'The New Chapter',    trigger:'Unfolding Horizon'}
+      ],
+      triggers: ['Full Circle Loop','Narrative Satisfaction','New Normal Declaration','Reciprocity','Bridge to Forever','Authority Affirmation','Unfolding Horizon']
+    },
+    L2: {
+      label: 'Video 7 of 7 — The Resolution',
+      title: 'Reflect On What You Built. Invite The Right Person.',
+      body: "Seven videos. That's a full story — your origin, your beliefs, your process, your character. This final video closes the arc. You're reflecting on what you set out to do and what actually happened. And you're leaving one open door for exactly the right person. No hard sell. Just honest intention.",
+      result: 'Loyalty',
+      framework: [
+        {name:'Hook',                      trigger:'Full Circle Loop'},
+        {name:'The Business Shift',        trigger:'New Normal Declaration'},
+        {name:'The Final Proof',           trigger:'Authority Affirmation'},
+        {name:'The Partnership Invitation',trigger:'Unfolding Horizon'}
+      ],
+      triggers: ['Full Circle Loop','Narrative Satisfaction','New Normal Declaration','Reciprocity','Bridge to Forever','Authority Affirmation','Unfolding Horizon']
+    }
+  }
+};
+
+const VIDEO_EASY_PROMPTS = [
+  null, // V1 uses pre-filled fields, no easy mode needed
+  // V2 — YOUR ORIGIN
+  { label: 'Tell me your origin story', hint: 'How did you become the person you are today — and what shaped the way you see things? Could be one pivotal moment, or just the honest version of your background.', key: 'easyAnswer_v1' },
+  // V3 — YOUR EPIPHANY
+  { label: 'What\'s a belief you held for a long time that turned out to be wrong?', hint: 'What cracked it open? Walk me through how you arrived at seeing it differently — the journey matters more than the conclusion.', key: 'easyAnswer_v2' },
+  // V4 — YOUR REALITY CHECK
+  { label: 'What\'s actually been happening since you started?', hint: 'The real version — not the highlight reel. What\'s been harder than expected? What surprised you? What\'s actually working?', key: 'easyAnswer_v3' },
+  // V5 — YOUR TRUTH
+  { label: 'What do you believe that most people in your situation won\'t say out loud?', hint: 'The thing you\'d say if you weren\'t worried about being judged. A conviction, a truth, a flag you want to plant.', key: 'easyAnswer_v4' },
+  // V6 — YOUR CONFESSION
+  { label: 'What\'s something you\'ve been avoiding saying out loud?', hint: 'The thing that would make you feel most exposed. Not for shock — for honesty. The thing that would make the right people lean in.', key: 'easyAnswer_v5' },
+  // V7 — YOUR ELIXIR
+  { label: 'What did doing these 7 videos teach you that you didn\'t know at the start?', hint: 'The honest accounting. What changed? What would you tell yourself at the beginning? What do you want to give your audience?', key: 'easyAnswer_v6' },
+];
+
+const videoPromptMode = {};
+
+const SCRIPT_LOADING_MSGS = [
+  "The best video you'll make is the honest one.",
+  "You don't need perfect. You need real.",
+  "Every creator you admire hit record before they were ready.",
+  "The script is the easy part. Pressing record is the brave part.",
+  "People follow people who show up. You're showing up.",
+  "Your voice is the thing no one else can replicate.",
+  "The right viewer has been waiting for someone exactly like you.",
+  "Done beats perfect every single time.",
+  "One video changes nothing. Seven videos changes everything.",
+  "You already know what to say. You just need to say it.",
+  "The camera doesn't see your nerves. It sees your conviction.",
+  "What you share today might be exactly what someone needs.",
+  "Clarity comes from doing, not from thinking about doing.",
+  "You're not performing. You're connecting.",
+  "The version of you that posts this is who you're becoming.",
+  "Starting is the hardest part. You already started.",
+  "Your story is already inside you. This just helps you say it out loud.",
+  "Every great series started with a single video. This is yours.",
+];
+
+const VIDEO_STORY_LABELS = [
+  'YOUR INTRODUCTION',   // V1
+  'YOUR ORIGIN',         // V2
+  'YOUR EPIPHANY',       // V3
+  'YOUR REALITY CHECK',  // V4
+  'YOUR TRUTH',          // V5
+  'YOUR CONFESSION',     // V6
+  'YOUR ELIXIR',         // V7
+];
+
+const VIDEO_STORY_BEATS = [
+  // V1 — YOUR INTRODUCTION (Audience Signal, Trust Layer, Empathy Lock)
+  ['Audience Signal — Mirror the universal experience of wanting to start but not starting',
+   'Trust Layer — Name, one grounding detail, personality through HOW you talk',
+   'Empathy Lock — Your specific flavor of why you haven\'t been doing this (your blocker)',
+   'Open Loop — You\'re doing this challenge; forward motion + uncertainty'],
+  // V2 — YOUR ORIGIN (Catalyst, Vulnerability, Enemy Identification, Agency Reclaim)
+  ['Catalyst Moment — The surprising/unexpected detail that makes viewers curious about you',
+   'Vulnerability Entry — Something real about who you are that people wouldn\'t guess',
+   'Enemy Identification — The gap between how the world sees you and who you actually are',
+   'Agency Reclaim — Connecting who you are to why you\'re here, in your own words'],
+  // V3 — YOUR EPIPHANY (7-beat structure)
+  ['Pattern Break — A familiar experience seen an unfamiliar way (cognitive friction)',
+   'Discovery Arc — How you arrived at the insight (the journey, not just the conclusion)',
+   'Cognitive Reframe — The old lens cracks; the new one snaps into place',
+   '"Aha" Transfer — The viewer receives a tool they can actually use after this video',
+   'Cost Revelation — What it costs to NOT see it this way (honest, not fear-based)',
+   'Simplicity Signal — The reframe in one sentence. Screenshot-worthy.',
+   'Authority Anchor — Viewer associates you with insight without you claiming it'],
+  // V4 — YOUR REALITY CHECK (Momentum Validation, Behind-the-Curtain, Objection Pre-emption)
+  ['Momentum Validation — Acknowledge what\'s actually happened (no inflation, no minimizing)',
+   'Behind-the-Curtain Access — Show the real texture, not the highlight reel',
+   'Small Win Proof — Concrete, specific evidence that something is working',
+   'Real-Time Transparency — This is happening now, not a polished retrospective',
+   'Objection Pre-emption — Address the doubt your audience already has'],
+  // V5 — YOUR TRUTH (Conviction, Discovery, Cost)
+  ['Convicted Belief Challenge — Plant a flag: something you believe most people won\'t say',
+   'Discovery of the Lie — The moment you realized the old way wasn\'t working',
+   'Cost of the Old Way — What it cost you (and costs others) to stay in the old belief',
+   'The Reframe — What you believe instead, stated with quiet certainty'],
+  // V6 — YOUR CONFESSION (The Unsaid Thing, Root, Internal Battle, Admission)
+  ['The Unsaid Thing — Name what nobody\'s been saying out loud',
+   'The Root — Where does this actually come from? The real origin.',
+   'The Internal Battle — The back-and-forth said out loud, present tense',
+   'The Admission — The thing you finally let yourself say'],
+  // V7 — YOUR ELIXIR (Return, Full Circle, The Gift)
+  ['The Return with the Elixir — You\'re not the same person who started Video 1',
+   'Full Circle — Loop back to where you started; the audience feels the arc close',
+   'What Changed — Not performance of growth — the actual honest accounting',
+   'The Gift — What you want to give your audience: a truth, a permission, a next step'],
+];
+
+
+
+
+
 function populateRecap() {
   const name = state.name || 'You';
   const level = state.level || 1;
@@ -861,24 +1238,8 @@ function updateDots(idx) {
 }
 
 // ── EASY PROMPT — single journal question per video (Easy mode) ──
-const VIDEO_EASY_PROMPTS = [
-  null, // V1 uses pre-filled fields, no easy mode needed
-  // V2 — YOUR ORIGIN
-  { label: 'Tell me your origin story', hint: 'How did you become the person you are today — and what shaped the way you see things? Could be one pivotal moment, or just the honest version of your background.', key: 'easyAnswer_v1' },
-  // V3 — YOUR EPIPHANY
-  { label: 'What\'s a belief you held for a long time that turned out to be wrong?', hint: 'What cracked it open? Walk me through how you arrived at seeing it differently — the journey matters more than the conclusion.', key: 'easyAnswer_v2' },
-  // V4 — YOUR REALITY CHECK
-  { label: 'What\'s actually been happening since you started?', hint: 'The real version — not the highlight reel. What\'s been harder than expected? What surprised you? What\'s actually working?', key: 'easyAnswer_v3' },
-  // V5 — YOUR TRUTH
-  { label: 'What do you believe that most people in your situation won\'t say out loud?', hint: 'The thing you\'d say if you weren\'t worried about being judged. A conviction, a truth, a flag you want to plant.', key: 'easyAnswer_v4' },
-  // V6 — YOUR CONFESSION
-  { label: 'What\'s something you\'ve been avoiding saying out loud?', hint: 'The thing that would make you feel most exposed. Not for shock — for honesty. The thing that would make the right people lean in.', key: 'easyAnswer_v5' },
-  // V7 — YOUR ELIXIR
-  { label: 'What did doing these 7 videos teach you that you didn\'t know at the start?', hint: 'The honest accounting. What changed? What would you tell yourself at the beginning? What do you want to give your audience?', key: 'easyAnswer_v6' },
-];
 
 // Per-video prompt mode: 'easy' or 'extended'
-const videoPromptMode = {};
 
 function setVideoPromptMode(idx, mode) {
   videoPromptMode[idx] = mode;
@@ -1123,26 +1484,6 @@ function _buildPromptsContent(container, v, idx) {
 }
 
 // ── PHASE B: GENERATED SCRIPT ─────────────────────────
-const SCRIPT_LOADING_MSGS = [
-  "The best video you'll make is the honest one.",
-  "You don't need perfect. You need real.",
-  "Every creator you admire hit record before they were ready.",
-  "The script is the easy part. Pressing record is the brave part.",
-  "People follow people who show up. You're showing up.",
-  "Your voice is the thing no one else can replicate.",
-  "The right viewer has been waiting for someone exactly like you.",
-  "Done beats perfect every single time.",
-  "One video changes nothing. Seven videos changes everything.",
-  "You already know what to say. You just need to say it.",
-  "The camera doesn't see your nerves. It sees your conviction.",
-  "What you share today might be exactly what someone needs.",
-  "Clarity comes from doing, not from thinking about doing.",
-  "You're not performing. You're connecting.",
-  "The version of you that posts this is who you're becoming.",
-  "Starting is the hardest part. You already started.",
-  "Your story is already inside you. This just helps you say it out loud.",
-  "Every great series started with a single video. This is yours.",
-];
 
 // ── LOADING MESSAGE BANK ──────────────────────────────
 const LOADING_MESSAGES_BANK = [
@@ -1358,58 +1699,8 @@ async function showScriptView(idx, skipLoading) {
 
 // Psychological rationale text per video (shown above guided view)
 // Per-video label for the story section (replaces generic "MEAT")
-const VIDEO_STORY_LABELS = [
-  'YOUR INTRODUCTION',   // V1
-  'YOUR ORIGIN',         // V2
-  'YOUR EPIPHANY',       // V3
-  'YOUR REALITY CHECK',  // V4
-  'YOUR TRUTH',          // V5
-  'YOUR CONFESSION',     // V6
-  'YOUR ELIXIR',         // V7
-];
 
 // Per-video psychological sub-elements for the story section
-const VIDEO_STORY_BEATS = [
-  // V1 — YOUR INTRODUCTION (Audience Signal, Trust Layer, Empathy Lock)
-  ['Audience Signal — Mirror the universal experience of wanting to start but not starting',
-   'Trust Layer — Name, one grounding detail, personality through HOW you talk',
-   'Empathy Lock — Your specific flavor of why you haven\'t been doing this (your blocker)',
-   'Open Loop — You\'re doing this challenge; forward motion + uncertainty'],
-  // V2 — YOUR ORIGIN (Catalyst, Vulnerability, Enemy Identification, Agency Reclaim)
-  ['Catalyst Moment — The surprising/unexpected detail that makes viewers curious about you',
-   'Vulnerability Entry — Something real about who you are that people wouldn\'t guess',
-   'Enemy Identification — The gap between how the world sees you and who you actually are',
-   'Agency Reclaim — Connecting who you are to why you\'re here, in your own words'],
-  // V3 — YOUR EPIPHANY (7-beat structure)
-  ['Pattern Break — A familiar experience seen an unfamiliar way (cognitive friction)',
-   'Discovery Arc — How you arrived at the insight (the journey, not just the conclusion)',
-   'Cognitive Reframe — The old lens cracks; the new one snaps into place',
-   '"Aha" Transfer — The viewer receives a tool they can actually use after this video',
-   'Cost Revelation — What it costs to NOT see it this way (honest, not fear-based)',
-   'Simplicity Signal — The reframe in one sentence. Screenshot-worthy.',
-   'Authority Anchor — Viewer associates you with insight without you claiming it'],
-  // V4 — YOUR REALITY CHECK (Momentum Validation, Behind-the-Curtain, Objection Pre-emption)
-  ['Momentum Validation — Acknowledge what\'s actually happened (no inflation, no minimizing)',
-   'Behind-the-Curtain Access — Show the real texture, not the highlight reel',
-   'Small Win Proof — Concrete, specific evidence that something is working',
-   'Real-Time Transparency — This is happening now, not a polished retrospective',
-   'Objection Pre-emption — Address the doubt your audience already has'],
-  // V5 — YOUR TRUTH (Conviction, Discovery, Cost)
-  ['Convicted Belief Challenge — Plant a flag: something you believe most people won\'t say',
-   'Discovery of the Lie — The moment you realized the old way wasn\'t working',
-   'Cost of the Old Way — What it cost you (and costs others) to stay in the old belief',
-   'The Reframe — What you believe instead, stated with quiet certainty'],
-  // V6 — YOUR CONFESSION (The Unsaid Thing, Root, Internal Battle, Admission)
-  ['The Unsaid Thing — Name what nobody\'s been saying out loud',
-   'The Root — Where does this actually come from? The real origin.',
-   'The Internal Battle — The back-and-forth said out loud, present tense',
-   'The Admission — The thing you finally let yourself say'],
-  // V7 — YOUR ELIXIR (Return, Full Circle, The Gift)
-  ['The Return with the Elixir — You\'re not the same person who started Video 1',
-   'Full Circle — Loop back to where you started; the audience feels the arc close',
-   'What Changed — Not performance of growth — the actual honest accounting',
-   'The Gift — What you want to give your audience: a truth, a permission, a next step'],
-];
 
 const VIDEO_RATIONALE = [
   // V1 — Still in the Ordinary World
@@ -2500,87 +2791,7 @@ function restartWizard(){
 }
 
 // ── MVO MINI-WIZARD ───────────────────────────────────
-const MVO_TOPIC_CARDS = [
-  {icon:'🌿',text:'Health, wellness, and feeling your best',
-   village_full:'people on a wellness journey who want to feel better in their body, their energy, and their everyday life',
-   village_hook:'If you are someone working on your health and how you feel in your own skin'},
-  {icon:'💫',text:'Wealth, abundance, and building what is truly yours',
-   village_full:'people building their finances or their business who want something real and grounded, not hype',
-   village_hook:'If you are building wealth or a business and want someone who speaks plainly about what actually works'},
-  {icon:'🌸',text:'Love, relationships, and the connections that matter',
-   village_full:'people working on their relationships and the way they show up for the people they love and for themselves',
-   village_hook:'If you are someone who wants to feel more connected and more at peace in your relationships'},
-  {icon:'✨',text:'Good vibes, stories, and things that light you up',
-   village_full:'people who want more joy, laughter, and lightness in their everyday life',
-   village_hook:'If you just want more good things in your feed and something genuinely worth stopping to watch'}
-];
 
-const MVO_DATA = {
-  q2:{
-    1:{question:"What's been holding you back from posting?",
-       placeholder:"Describe what's actually been in your way...",
-       cards:[
-         {icon:'😬',text:'Getting on camera feels terrifying',
-          before_short:'the camera thing',
-          before_full:'I have wanted to do this, but every time I think about filming, something shuts it down. The camera feels like a judgment I am not ready to face.'},
-         {icon:'📋',text:'I never know what to say',
-          before_short:'not knowing what to say',
-          before_full:'I sit down to plan a video and my mind goes completely blank. I know I have something worth sharing. I just cannot seem to get it out.'},
-         {icon:'⏳',text:'I do not feel ready yet',
-          before_short:'waiting to feel ready',
-          before_full:'There is always something that feels like it needs to happen first. More confidence, a better setup, a clearer plan. The readiness never quite arrives.'},
-         {icon:'🔄',text:'I keep putting it off',
-          before_short:'the endless delay',
-          before_full:'I have been meaning to start for longer than I want to admit. Life gets in the way, or I get in the way. It just keeps not happening.'}
-       ]},
-    2:{question:"What does your audience come to you for?",
-       placeholder:"What topic or niche does your content focus on?",
-       cards:MVO_TOPIC_CARDS}
-  },
-  q3:{
-    1:{question:"What made you decide today is the day?",
-       placeholder:"What actually pushed you to start today?",
-       cards:[
-         {icon:'👀',text:'I saw someone just like me doing it',
-          catalyst_full:'Something shifted when I watched someone who looked just like me, no big following, no fancy setup, just showing up, and it was actually working. If they could do it, the reason I could not was only me.'},
-         {icon:'🔥',text:'I got tired of waiting to feel ready',
-          catalyst_full:'I realized the feeling of ready is not coming. No amount of planning or consuming more content is going to get me there. The only way forward is to start, and the only day I can start is today.'},
-         {icon:'💬',text:'Someone told me I needed to start',
-          catalyst_full:'Someone I trust looked at me and said it was time. And somewhere under all my reasons for waiting, I knew they were right. So here I am.'},
-         {icon:'⚡',text:'I just decided. No more waiting.',
-          catalyst_full:'There was no big moment. I just decided. I looked at where I was heading if I kept waiting and decided that was not the version of this story I wanted to tell.'}
-       ]},
-    2:{question:"What's the biggest challenge your audience is dealing with?",
-       placeholder:"Describe the main challenge your audience faces...",
-       cards:[
-         {icon:'👤',text:'They feel invisible in their niche',
-          before_full:'The people I work with are genuinely good at what they do, but nobody knows they exist. They watch others with less skill get the attention, the clients, the opportunities, and they cannot figure out how to change that.'},
-         {icon:'🌊',text:'They feel overwhelmed and stuck',
-          before_full:'The people I work with know what they want, but the path there feels impossibly complicated. They are doing everything, nothing is clicking, and the gap between where they are and where they want to be keeps growing.'},
-         {icon:'🧱',text:'They know what they want but cannot get there',
-          before_full:'The people I work with can see exactly where they want to be. The problem is every time they get close, something blocks them, or they second-guess themselves back to square one.'},
-         {icon:'📉',text:'They are undercharging or undervalued',
-          before_full:'The people I work with are delivering real results but not getting paid what that is worth. They have to prove themselves over and over to clients who do not see the value they actually provide.'}
-       ]}
-  },
-  q4:{
-    1:{question:"What do you want to make videos about?",
-       placeholder:"What topic or niche do you want to focus on?",
-       cards:MVO_TOPIC_CARDS},
-    2:{question:"What makes you the right person to help them?",
-       placeholder:"What have you done, built, or lived through that gives you real insight here?",
-       cards:[
-         {icon:'🗺️',text:'I have been exactly where they are',
-          crack_full:'I know this because I have been exactly where they are. I lived through the thing they are dealing with and found a way through it. That is not a pitch. That is why this work matters to me.'},
-         {icon:'🔨',text:'I built something that actually works',
-          crack_full:'I know this because I built a system that solved it. Not a theory borrowed from someone else, something I put together through years of actual work that produces real results.'},
-         {icon:'🤝',text:'I have helped dozens of people through this',
-          crack_full:'I know this because I have watched dozens of people work through this problem. I have seen every version of what keeps people stuck and I know what actually moves things forward.'},
-         {icon:'🔍',text:'I see the patterns they cannot see',
-          crack_full:'I know this because I can see what they cannot see from inside it. When you are stuck in a problem, it looks like a wall. From where I stand, I can see the door. That is what I bring.'}
-       ]}
-  }
-};
 
 // ── AUTO-POPULATE MVO Q2 FROM ONBOARDING DATA ────────
 function autoPopulateMvoQ2FromOnboarding() {
@@ -2675,204 +2886,6 @@ function confirmMvoOwn(qNum) {
 }
 
 // ── VIDEO INTRO COPY ─────────────────────────────────
-const INTRO_COPY = {
-  1: {
-    L1: {
-      label: 'Video 1 of 7 — The Origin Signal',
-      title: "Let's Start With Why You're Here",
-      body: "You're about to build your first script. This is Video 1 of 7 — and it's the one that opens the door. We're going to ask you three quick questions, then generate your script from your answers. After this, you get six more. Each one tells a different story: your turning point, your first big realization, how you think differently, where you are now, the thing most people get wrong, and the moment you decided to own your space. Seven videos. A real arc. Proof that you show up. This is where it starts.",
-      result: 'Recognition',
-      framework: [
-        {name:'Hook',                   trigger:'Audience Signal'},
-        {name:'Identity',               trigger:'Trust Layer'},
-        {name:'The Waiting Struggle',   trigger:'Empathy Lock / Mirror Moment'},
-        {name:'The Start Declaration',  trigger:'Open Loop'}
-      ],
-      triggers: ['Audience Signal','Empathy Lock','Mirror Moment','Contrast Shift','Trust Layer','Open Loop','Relationship Primer']
-    },
-    L2: {
-      label: 'Video 1 of 7 — The Origin Signal',
-      title: "Let's Start With Why You're Here",
-      body: "You're about to build your first expert script. This is Video 1 of 7 — the one that signals you're here and you know your space. We'll ask you three questions, then build your script from your answers. What comes next is a full arc: your origin story, your first industry reframe, how you think about the work, what others get wrong, and why your audience should keep coming back. Seven videos. Real authority. A content body that actually does something for your business. Three questions. Let's go.",
-      result: 'Recognition',
-      framework: [
-        {name:'Hook',                     trigger:'Audience Signal'},
-        {name:'Expertise',                trigger:'Trust Layer'},
-        {name:'The Market Gap',           trigger:'Empathy Lock / Mirror Moment'},
-        {name:'The Solution Declaration', trigger:'Open Loop'}
-      ],
-      triggers: ['Audience Signal','Empathy Lock','Mirror Moment','Contrast Shift','Trust Layer','Open Loop','Relationship Primer']
-    }
-  },
-  2: {
-    L1: {
-      label: 'Video 2 of 7 — The Turning Point',
-      title: 'Tell Them What Finally Moved You',
-      body: "People don't follow creators because of what they do — they follow them because of why they started. This video gives your audience a reason to root for you. You're not being dramatic. You're being honest about the moment everything shifted. That honesty is what turns a viewer into a follower.",
-      result: 'Inspiration',
-      framework: [
-        {name:'Hook',                        trigger:'Catalyst Moment'},
-        {name:'The Internal Conflict',       trigger:'Vulnerability Entry'},
-        {name:'The False Solution',          trigger:'Enemy Identification'},
-        {name:'The Decision to Show Up',     trigger:'Agency Reclaim / Path Clarity'}
-      ],
-      triggers: ['Vulnerability Entry','Catalyst Moment','Enemy Identification','Agency Reclaim','Relatable Stakes','Path Clarity','Shared Mission']
-    },
-    L2: {
-      label: 'Video 2 of 7 — The Origin Story',
-      title: 'Show Them Why You Built This',
-      body: "Your audience doesn't just want to buy from you — they want to understand you. This video answers the question they're already asking: why did you build this, and why should I trust you? You're not pitching anything. You're showing them the moment you decided this work mattered.",
-      result: 'Inspiration',
-      framework: [
-        {name:'Hook',                        trigger:'Catalyst Moment'},
-        {name:'The Industry Frustration',    trigger:'Vulnerability Entry'},
-        {name:'The Broken Method',           trigger:'Enemy Identification'},
-        {name:'The Decision to Innovate',    trigger:'Agency Reclaim / Path Clarity'}
-      ],
-      triggers: ['Vulnerability Entry','Catalyst Moment','Enemy Identification','Agency Reclaim','Relatable Stakes','Path Clarity','Shared Mission']
-    }
-  },
-  3: {
-    L1: {
-      label: 'Video 3 of 7 — The First Epiphany',
-      title: "Say The Thing Most People Won't",
-      body: "Every person watching you held some version of the belief you're about to challenge. This video isn't about being controversial — it's about being the person who finally said the thing they'd been thinking but never heard out loud. One honest reframe, told through your real experience, is what builds intellectual trust.",
-      result: 'Insight',
-      framework: [
-        {name:'Hook',                             trigger:'Pattern Break'},
-        {name:'The Struggle Story',               trigger:'Discovery Arc'},
-        {name:'The "Aha" Moment',                 trigger:'Cognitive Reframe'},
-        {name:'The Cost of Staying Invisible',    trigger:'Cost Revelation / Simplicity Signal'}
-      ],
-      triggers: ['Pattern Break','Discovery Arc','Cognitive Reframe','The "Aha" Transfer','Cost Revelation','Simplicity Signal','Authority Anchor']
-    },
-    L2: {
-      label: 'Video 3 of 7 — The First Epiphany',
-      title: 'Challenge What Your Industry Gets Wrong',
-      body: "Your audience has been told things that aren't working for them. This video positions you as someone who sees what others miss. You're not tearing down your industry — you're offering a better lens. One clear reframe, backed by what you've actually seen, is what makes people think: this person gets it.",
-      result: 'Insight',
-      framework: [
-        {name:'Hook',                             trigger:'Pattern Break'},
-        {name:'The Research/Work Story',          trigger:'Discovery Arc'},
-        {name:'The New Insight',                  trigger:'Cognitive Reframe'},
-        {name:'The Cost of the Wrong Method',     trigger:'Cost Revelation / Simplicity Signal'}
-      ],
-      triggers: ['Pattern Break','Discovery Arc','Cognitive Reframe','The "Aha" Transfer','Cost Revelation','Simplicity Signal','Authority Anchor']
-    }
-  },
-  4: {
-    L1: {
-      label: 'Video 4 of 7 — The Progress Signal',
-      title: "Show Them You're Still Doing This",
-      body: "Most people disappear after their first few videos. You're still here — and that matters more than you think. This video is proof that you're the kind of person who follows through. You don't have to have everything figured out. You just have to be honest about where you are and why you're still going.",
-      result: 'Credibility',
-      framework: [
-        {name:'Hook',                    trigger:'Momentum Validation'},
-        {name:'The Experience So Far',   trigger:'Small Win Proof'},
-        {name:'The Reality of the Work', trigger:'Real-Time Transparency'},
-        {name:'The Forward Shift',       trigger:'Social Evidence'}
-      ],
-      triggers: ['Behind-the-Curtain Access','Momentum Validation','Small Win Proof','Expert Ease','Objection Pre-emption','Real-Time Transparency','Social Evidence']
-    },
-    L2: {
-      label: 'Video 4 of 7 — The Teaching Moment',
-      title: 'Give Them Something They Can Use Right Now',
-      body: "This is where you demonstrate real value — not by talking about what you offer, but by actually giving something useful. One insight, explained simply, proves your expertise better than any testimonial. The person watching is already asking: can this person actually help me? Answer it by teaching.",
-      result: 'Credibility',
-      framework: [
-        {name:'Hook',                   trigger:'Momentum Validation'},
-        {name:'The Live Demonstration', trigger:'Method / Expert Ease'},
-        {name:'The Specific Result',    trigger:'Small Win Proof'},
-        {name:'The Client Evidence',    trigger:'Social Evidence'}
-      ],
-      triggers: ['Behind-the-Curtain Access','Momentum Validation','Small Win Proof','Expert Ease','Objection Pre-emption','Real-Time Transparency','Social Evidence']
-    }
-  },
-  5: {
-    L1: {
-      label: 'Video 5 of 7 — The Second Epiphany',
-      title: 'Plant Your Flag',
-      body: "You've shown up, shared your story, and kept going. Now it's time to state what you actually believe. This video is about the conviction you hold that most people in your world have backwards. You're not here to convince anyone. You're here to resonate with the people who already feel it too.",
-      result: 'Authority',
-      framework: [
-        {name:'Hook',               trigger:'Sacred Cow Slaughter'},
-        {name:'The False Belief',   trigger:'Logic Re-stack'},
-        {name:'The New Realization',trigger:'Paradigm Break'},
-        {name:'The Future Self',    trigger:'Status Shift / Natural Invitation'}
-      ],
-      triggers: ['Sacred Cow Slaughter','Logic Re-stack','Emotional Safety','Paradigm Break','Future Pacing','Status Shift','Natural Invitation']
-    },
-    L2: {
-      label: 'Video 5 of 7 — The Second Epiphany',
-      title: 'Let Them See Your Character',
-      body: "By now, your audience has seen you show up, teach, and share your origin. This video is where they get to see your judgment. A mistake you made, the lesson it cost you, and how it changed how you work — that combination creates something testimonials can't: genuine trust in who you are.",
-      result: 'Authority',
-      framework: [
-        {name:'Hook',                    trigger:'Sacred Cow Slaughter'},
-        {name:'The Industry Myth',       trigger:'Logic Re-stack'},
-        {name:'The Better Way',          trigger:'Paradigm Break'},
-        {name:'The Natural Solution',    trigger:'Status Shift / Natural Invitation'}
-      ],
-      triggers: ['Sacred Cow Slaughter','Logic Re-stack','Emotional Safety','Paradigm Break','Future Pacing','Status Shift','Natural Invitation']
-    }
-  },
-  6: {
-    L1: {
-      label: 'Video 6 of 7 — The Alignment Moment',
-      title: 'Connect Your Story To Their Future',
-      body: "Your audience is starting to get you. Now they need to understand what you actually want for them. This video connects your journey to their possibility. It's not a pitch — it's an alignment moment. The right person is watching and asking: is this for me? This video answers yes, without pressure.",
-      result: 'Alignment',
-      framework: [
-        {name:'Hook',                  trigger:'Identity Call-to-Arms'},
-        {name:'The Internal Values',   trigger:'Shared Values'},
-        {name:'Who This Is For',       trigger:'Polarization'},
-        {name:'The Personal Mission',  trigger:'Ethical Bridge'}
-      ],
-      triggers: ['Identity Call-to-Arms','Shared Values','Transformation Story','External Validation','In-Group Belonging','Polarization','Ethical Bridge']
-    },
-    L2: {
-      label: 'Video 6 of 7 — The Alignment Moment',
-      title: "Walk Them Through What It's Like to Work With You",
-      body: "People don't buy outcomes — they buy confidence in the process that gets them there. This video walks your audience through what it actually feels like to work with you, without selling anything. You're showing them the transformation through the experience, not the promise.",
-      result: 'Alignment',
-      framework: [
-        {name:'Hook',                  trigger:'Identity Call-to-Arms'},
-        {name:'The Business Values',   trigger:'Shared Values'},
-        {name:'Who We Serve',          trigger:'Polarization'},
-        {name:'The Industry Mission',  trigger:'Ethical Bridge'}
-      ],
-      triggers: ['Identity Call-to-Arms','Shared Values','Transformation Story','External Validation','In-Group Belonging','Polarization','Ethical Bridge']
-    }
-  },
-  7: {
-    L1: {
-      label: 'Video 7 of 7 — The Resolution',
-      title: 'Close The Arc. Open The Door.',
-      body: "This is the final video — and it's the most important one for building loyalty. You started this challenge as someone deciding to show up. You're finishing it as someone who did. That arc is the story. Share what this actually did for you, what surprised you, and leave the right person an honest open door.",
-      result: 'Loyalty',
-      framework: [
-        {name:'Hook',               trigger:'Full Circle Loop'},
-        {name:'The Internal Shift', trigger:'New Normal Declaration'},
-        {name:'The Final Lesson',   trigger:'Authority Affirmation'},
-        {name:'The New Chapter',    trigger:'Unfolding Horizon'}
-      ],
-      triggers: ['Full Circle Loop','Narrative Satisfaction','New Normal Declaration','Reciprocity','Bridge to Forever','Authority Affirmation','Unfolding Horizon']
-    },
-    L2: {
-      label: 'Video 7 of 7 — The Resolution',
-      title: 'Reflect On What You Built. Invite The Right Person.',
-      body: "Seven videos. That's a full story — your origin, your beliefs, your process, your character. This final video closes the arc. You're reflecting on what you set out to do and what actually happened. And you're leaving one open door for exactly the right person. No hard sell. Just honest intention.",
-      result: 'Loyalty',
-      framework: [
-        {name:'Hook',                      trigger:'Full Circle Loop'},
-        {name:'The Business Shift',        trigger:'New Normal Declaration'},
-        {name:'The Final Proof',           trigger:'Authority Affirmation'},
-        {name:'The Partnership Invitation',trigger:'Unfolding Horizon'}
-      ],
-      triggers: ['Full Circle Loop','Narrative Satisfaction','New Normal Declaration','Reciprocity','Bridge to Forever','Authority Affirmation','Unfolding Horizon']
-    }
-  }
-};
 
 function renderFrameworkHTML(framework) {
   if (!framework || !framework.length) return '';
