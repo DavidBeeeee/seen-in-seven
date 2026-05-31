@@ -198,18 +198,15 @@ async function handleEmailSubmit() {
 
   try {
     // Check if this email already has an account with data
-    const { data: existingUser } = await _sb
-      .from('users')
-      .select('id, name, level')
-      .eq('email', email)
-      .maybeSingle();
+    // Uses a SECURITY DEFINER RPC to bypass RLS (user isn't authenticated yet)
+    const { data: emailCheck } = await _sb
+      .rpc('check_email_exists', { lookup_email: email });
 
-    if (existingUser && existingUser.level) {
+    if (emailCheck && emailCheck.has_level) {
       // Existing user — send magic link and show inline confirmation
       sendMagicLink(email).catch(() => {});
       if (checkEl) checkEl.style.display = 'none';
       if (btn) { btn.textContent = 'Continue →'; btn.disabled = false; }
-      // Show inline confirmation — replace the button row
       const emailScreen = document.getElementById('screen-email');
       if (emailScreen) {
         const existing = emailScreen.querySelector('.email-sent-msg');
