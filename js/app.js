@@ -3358,29 +3358,9 @@ function launchConfetti() {
 
   const initResult = await initAuth();
 
-  if (initResult === 'magic_link') {
-    // Magic link is being processed by onAuthStateChange
-    // Show a brief loading indicator instead of screen-0
-    if (s0) {
-      s0.style.visibility = '';
-      // Replace the welcome content temporarily with a loading message
-      const loadingDiv = document.createElement('div');
-      loadingDiv.id = 'magic-link-loading';
-      loadingDiv.style.cssText = 'text-align:center;padding:40px 20px;';
-      loadingDiv.innerHTML = '<div style="font-family:\'Space Mono\',monospace;font-size:11px;letter-spacing:0.2em;color:var(--teal);text-transform:uppercase;margin-bottom:16px;">Signing you in...</div><div style="font-size:16px;color:var(--muted);">One moment</div>';
-      s0.insertBefore(loadingDiv, s0.firstChild);
-    }
-    // onAuthStateChange will take over and either show dashboard or reveal screen-0
-    updateProgress('screen-0');
-    return;
-  }
+  if (s0) s0.style.visibility = '';
 
-  if (initResult === 'dashboard') {
-    // Dashboard is showing — reveal screen-0 visibility but it won't be active
-    if (s0) s0.style.visibility = '';
-  } else {
-    // Normal flow — reveal screen-0 and load localStorage
-    if (s0) s0.style.visibility = '';
+  if (initResult !== 'dashboard') {
     loadProgress();
   }
   updateProgress('screen-0');
