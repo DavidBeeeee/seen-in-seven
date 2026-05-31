@@ -53,10 +53,19 @@ async function trackSession() {
 // ── SCREEN NAVIGATION ─────────────────────────────────
 function showScreen(id, direction='forward') {
   if (transitioning) return;
+
+  const next = document.getElementById(id);
+  if (!next) {
+    console.warn('[SeenInSeven] showScreen: element not found:', id);
+    return;
+  }
+
   transitioning = true;
+  // Safety reset — if something goes wrong inside the setTimeout callbacks,
+  // transitioning can't stay stuck forever
+  setTimeout(() => { transitioning = false; }, 800);
 
   const current = document.querySelector('.screen.active');
-  const next = document.getElementById(id);
 
   if (current) {
     current.classList.add('anim-out');
