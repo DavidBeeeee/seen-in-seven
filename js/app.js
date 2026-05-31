@@ -3352,21 +3352,34 @@ function launchConfetti() {
 // Legacy anonymous tracking — kept for backwards compatibility during transition
 
 // ── INIT ──────────────────────────────────────────────
-// Hide screen-0 briefly while we check for an existing auth session
-// This prevents the welcome screen flashing before the dashboard appears
 (async () => {
   const s0 = document.getElementById('screen-0');
   if (s0) s0.style.visibility = 'hidden';
 
-  await initAuth();
+  const initResult = await initAuth();
 
-  // If initAuth sent us to dashboard, screen-0 stays hidden (it's no longer active)
-  // If not authenticated, reveal screen-0 and load localStorage progress
-  const activePlan = document.getElementById('plan-screen');
-  if (activePlan && activePlan.classList.contains('active')) {
-    // Dashboard is showing — don't reveal screen-0
+  if (initResult === 'magic_link') {
+    // Magic link is being processed by onAuthStateChange
+    // Show a brief loading indicator instead of screen-0
+    if (s0) {
+      s0.style.visibility = '';
+      // Replace the welcome content temporarily with a loading message
+      const loadingDiv = document.createElement('div');
+      loadingDiv.id = 'magic-link-loading';
+      loadingDiv.style.cssText = 'text-align:center;padding:40px 20px;';
+      loadingDiv.innerHTML = '<div style="font-family:\'Space Mono\',monospace;font-size:11px;letter-spacing:0.2em;color:var(--teal);text-transform:uppercase;margin-bottom:16px;">Signing you in...</div><div style="font-size:16px;color:var(--muted);">One moment</div>';
+      s0.insertBefore(loadingDiv, s0.firstChild);
+    }
+    // onAuthStateChange will take over and either show dashboard or reveal screen-0
+    updateProgress('screen-0');
+    return;
+  }
+
+  if (initResult === 'dashboard') {
+    // Dashboard is showing — reveal screen-0 visibility but it won't be active
     if (s0) s0.style.visibility = '';
   } else {
+    // Normal flow — reveal screen-0 and load localStorage
     if (s0) s0.style.visibility = '';
     loadProgress();
   }

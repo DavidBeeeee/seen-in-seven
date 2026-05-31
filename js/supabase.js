@@ -28,7 +28,58 @@ _sb.auth.onAuthStateChange(async (event, session) => {
       return;
     }
 
-    // Update the returning banner if visible and we're on screen-0
+    // If this is a magic link arrival (screen-0 is still showing or hidden),
+    // restore state and go to dashboard
+    const screen0 = document.getElementById('screen-0');
+    const planScreen = document.getElementById('plan-screen');
+    const isOnScreen0 = screen0 && (screen0.classList.contains('active') || screen0.style.visibility === 'hidden');
+    const alreadyOnDashboard = planScreen && planScreen.classList.contains('active');
+
+    if (!alreadyOnDashboard && isOnScreen0 && event === 'SIGNED_IN') {
+      // Clean up the loading indicator if present
+      const loadingDiv = document.getElementById('magic-link-loading');
+      if (loadingDiv) loadingDiv.remove();
+      // Restore from DB, also check localStorage
+      await _restoreFromDatabase();
+
+      let effectiveLevel = state.level;
+      if (!effectiveLevel) {
+        try {
+          const lsRaw = localStorage.getItem('bwb_challenge_v1');
+          if (lsRaw) {
+            const lsData = JSON.parse(lsRaw);
+            if (lsData.level) {
+              state.level = lsData.level;
+              state.name  = lsData.name || state.name;
+              state.videos = lsData.videos || state.videos;
+              state.videoStatus = lsData.videoStatus || state.videoStatus;
+              state.mvoQ2 = lsData.mvoQ2 || state.mvoQ2;
+              state.mvoQ3 = lsData.mvoQ3 || state.mvoQ3;
+              state.mvoQ4 = lsData.mvoQ4 || state.mvoQ4;
+              state.minigoal = lsData.minigoal || state.minigoal;
+              state.minigoalText = lsData.minigoalText || state.minigoalText;
+              state.posted = lsData.posted || state.posted;
+              state.blocker = lsData.blocker || state.blocker;
+              effectiveLevel = lsData.level;
+            }
+          }
+        } catch(e) {}
+      }
+
+      // Flush saves now that we have a user
+      await _flushSaveQueue();
+
+      if (effectiveLevel && typeof showDashboard === 'function') {
+        showDashboard();
+      } else if (screen0) {
+        // No data yet — just make screen-0 visible and update banner
+        screen0.style.visibility = '';
+        _updateReturningBanner();
+      }
+      return;
+    }
+
+    // Update the returning banner if visible
     _updateReturningBanner();
 
   } else {
@@ -399,13 +450,28 @@ async function restoreScriptVersion(scriptId, videoNumber, level, content) {
 // Runs on page load — restores session if user already authenticated
 async function initAuth() {
   try {
+    // Detect if this is a magic link callback (hash contains access_token)
+    const hash = window.location.hash;
+    const isMagicLink = hash && (hash.includes('access_token') || hash.includes('type=magiclink') || hash.includes('type=recovery'));
+
+    if (isMagicLink) {
+      // Supabase JS will process the hash and fire onAuthStateChange
+      // We just need to wait for it — show a loading state and let the
+      // onAuthStateChange handler take over
+      // Clear the hash from the URL so it doesn't confuse anything on reload
+      if (window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', window.location.pathname);
+      }
+      // Return false to signal "magic link in progress — don't show screen-0"
+      return 'magic_link';
+    }
+
     const session = await getCurrentSession();
     if (session && session.user) {
       _currentUser = await _syncUserProfile(session.user);
       const restored = await _restoreFromDatabase();
 
       // Check both DB state and localStorage for level
-      // (magic link returns to a fresh page load where DB restore runs before localStorage)
       let effectiveLevel = state.level;
       if (!effectiveLevel) {
         try {
@@ -413,7 +479,6 @@ async function initAuth() {
           if (lsRaw) {
             const lsData = JSON.parse(lsRaw);
             effectiveLevel = lsData.level || null;
-            // If found in localStorage but not DB, restore it to state
             if (effectiveLevel && !state.level) {
               state.level   = lsData.level;
               state.name    = lsData.name    || state.name;
@@ -434,14 +499,12 @@ async function initAuth() {
       }
 
       if (effectiveLevel && _currentUser) {
-        // Authenticated user with completed onboarding — flush any queued saves then go to dashboard
         await _flushSaveQueue();
         if (typeof showDashboard === 'function') {
           showDashboard();
         }
-        return;
+        return 'dashboard';
       } else if (_currentUser) {
-        // Authenticated but hasn't completed onboarding yet
         await _flushSaveQueue();
         _updateReturningBanner();
       }
@@ -449,4 +512,5 @@ async function initAuth() {
   } catch(e) {
     // Silent — fall through to normal localStorage load
   }
+  return 'normal';
 }
