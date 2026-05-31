@@ -196,14 +196,15 @@ async function saveOnboardingToDb() {
 async function saveScriptToDb(videoNumber, level, content) {
   if (!_currentUser) return;
   try {
-    await _sb.from('scripts').insert({
+    const { error } = await _sb.from('scripts').insert({
       user_id:      _currentUser.id,
       video_number: videoNumber,
       level:        level,
       content:      content
     });
+    if (error) console.warn('[SeenInSeven] Script save error:', error.message, error.code);
   } catch(e) {
-    // Silent
+    console.warn('[SeenInSeven] Script save exception:', e.message);
   }
 }
 
