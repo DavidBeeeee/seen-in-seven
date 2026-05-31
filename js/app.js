@@ -47,8 +47,8 @@ function goNext() {
 
   if (cur === 'screen-1') {
     screenOrder = state.posted === 'no'
-      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
+      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
   }
 
   if (cur === 'screen-3') {
@@ -112,6 +112,53 @@ function goToRecap() {
   saveProgress();
   populateRecap();
   goNext();
+}
+
+// ── AUTH FLOW ─────────────────────────────────────────
+async function handleEmailSubmit() {
+  const input = document.getElementById('auth-email-input');
+  const errEl = document.getElementById('auth-email-error');
+  const btn   = document.getElementById('auth-send-btn');
+  const email = input ? input.value.trim() : '';
+
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    if (errEl) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; }
+    return;
+  }
+
+  if (btn) { btn.textContent = 'Sending...'; btn.disabled = true; }
+  if (errEl) errEl.style.display = 'none';
+
+  try {
+    await sendMagicLink(email);
+    // Show the waiting screen
+    const waitMsg = document.getElementById('auth-wait-email-display');
+    if (waitMsg) waitMsg.textContent = 'We sent a magic link to ' + email + '. Click it and you\'ll land right back here, ready to go.';
+    currentIndex = screenOrder.indexOf('screen-auth-wait');
+    showScreen('screen-auth-wait');
+  } catch(err) {
+    if (errEl) { errEl.textContent = 'Something went wrong sending the link. Try again or skip for now.'; errEl.style.display = 'block'; }
+  } finally {
+    if (btn) { btn.textContent = 'Send My Link →'; btn.disabled = false; }
+  }
+}
+
+function skipAuth() {
+  // Skip auth entirely — go straight to recap
+  currentIndex = screenOrder.indexOf('screen-recap');
+  populateRecap();
+  showScreen('screen-recap');
+  window.scrollTo(0, 0);
+}
+
+function advancePastAuth() {
+  // Called by supabase.js when magic link auth completes
+  // Save onboarding to DB now that we have a user
+  saveOnboardingToDb();
+  currentIndex = screenOrder.indexOf('screen-recap');
+  populateRecap();
+  showScreen('screen-recap');
+  window.scrollTo(0, 0);
 }
 
 function updateProgress(id) {
@@ -1234,6 +1281,8 @@ async function showScriptView(idx, skipLoading) {
       state.videos[editKey] = script;
       saveProgress();
       trackSession();
+      // Save to database if authenticated
+      saveScriptToDb(idx + 1, state.level || 1, script);
       _doShowScriptView(idx);
     } catch(err) {
       // Hide spinner + epiphany, show error UI with actual error message
@@ -1581,6 +1630,8 @@ function afterFilmed(idx, status) {
     state.videoStatus[idx] = status;
     updateDots(idx + 1 < 7 ? idx + 1 : idx);
     saveProgress(); // persist after every video completion
+    // Save to database if authenticated
+    saveVideoProgressToDb(idx, state.level || 1, status);
   }
 
   if (idx < 6) {
@@ -2713,6 +2764,8 @@ function saveProgress() {
     savedAt:       Date.now()
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e) {}
+  // Also sync to database if authenticated
+  saveOnboardingToDb();
 }
 
 function loadProgress() {
@@ -2756,8 +2809,8 @@ function continueSession() {
   if (state.level) {
     // Bug fix: state.level is numeric (1 or 2), never the string 'L1'
     screenOrder = state.level === 1
-      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
+      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
 
     // Find the first video that hasn't been filmed or skipped
     const videoCount = getVideos().length;
@@ -2854,17 +2907,13 @@ function launchConfetti() {
 }
 
 // ── SUPABASE SESSION TRACKING ─────────────────────────
-const _sb = supabase.createClient(
-  'https://zdtkwpzdwnzzmdwrvmka.supabase.co',
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE'
-);
-
+// Legacy anonymous tracking — kept for backwards compatibility during transition
 let _sbTracked = false;
 async function trackSession() {
   if (_sbTracked) return;
   _sbTracked = true;
   try {
-    await _sb.from('sessions').insert({
+    await _sb.from('sessions_legacy').insert({
       name:           state.name || null,
       level:          state.level || null,
       blocker:        state.blocker || null,
@@ -2890,5 +2939,8 @@ async function trackSession() {
 }
 
 // ── INIT ──────────────────────────────────────────────
-loadProgress();
-updateProgress('screen-0');
+// Check for existing Supabase session first, then fall back to localStorage
+initAuth().finally(() => {
+  loadProgress();
+  updateProgress('screen-0');
+});

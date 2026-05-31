@@ -195,6 +195,36 @@
   </div>
 </div>
 
+<!-- ══ S-EMAIL CAPTURE ══ -->
+<div class="screen" id="screen-email">
+  <div class="eyebrow">Almost There</div>
+  <h2 class="screen-title">Save your <span class="accent">progress.</span></h2>
+  <p class="screen-sub">Your scripts will be waiting for you every time you come back — on any device. Enter your email and we'll send you a link to get in.</p>
+  <div class="input-group">
+    <label class="input-label">Your Email</label>
+    <input type="email" class="text-input" id="auth-email-input" placeholder="you@example.com" autocomplete="email" oninput="document.getElementById('auth-email-error').style.display='none'">
+  </div>
+  <div id="auth-email-error" style="color:#ef4444;font-size:14px;margin-top:-12px;margin-bottom:16px;display:none;padding:10px 14px;background:rgba(239,68,68,.08);border-radius:8px;border:1px solid rgba(239,68,68,.2);"></div>
+  <div class="btn-row">
+    <button class="btn-primary" id="auth-send-btn" onclick="handleEmailSubmit()">Send My Link →</button>
+    <button class="btn-skip" onclick="skipAuth()">Skip for now</button>
+  </div>
+  <p style="font-size:13px;color:var(--muted);margin-top:20px;line-height:1.7;">No password. No account setup. Just one click in your inbox and you're in. We'll never send you anything you didn't ask for.</p>
+</div>
+
+<!-- ══ S-AUTH WAIT ══ -->
+<div class="screen" id="screen-auth-wait">
+  <div style="text-align:center;">
+    <div style="font-size:48px;margin-bottom:24px;">📬</div>
+    <div class="eyebrow">Check Your Inbox</div>
+    <h2 class="screen-title">Link <span class="accent">sent.</span></h2>
+    <p class="screen-sub" id="auth-wait-email-display">We sent a magic link to your email. Click it and you'll land right back here, ready to go.</p>
+    <div style="margin-top:32px;padding:20px 24px;background:rgba(45,212,191,0.06);border-radius:14px;border:1px solid rgba(45,212,191,0.18);">
+      <p style="font-size:15px;color:var(--muted);line-height:1.75;margin:0;">Can't find it? Check your spam folder. Still nothing? <button onclick="showScreen('screen-email');currentIndex=screenOrder.indexOf('screen-email');" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:15px;text-decoration:underline;text-underline-offset:3px;padding:0;">Try again</button> or <button onclick="skipAuth()" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:15px;text-decoration:underline;text-underline-offset:3px;padding:0;">continue without saving.</button></p>
+    </div>
+  </div>
+</div>
+
 <!-- ══ S-RECAP ══ -->
 <div class="screen" id="screen-recap">
   <div class="eyebrow" id="recap-eyebrow">Your 7 Video Challenge</div>
@@ -569,6 +599,7 @@
      JAVASCRIPT
 ══════════════════════════════════════ -->
 <script src="/prompts/blueprints.js"></script>
+<script src="/js/supabase.js"></script>
 <script src="/js/app.js"></script>
 
 <!-- ══ DUAL COMPLETE OVERLAY ══ -->
