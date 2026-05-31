@@ -298,8 +298,16 @@ async function initAuth() {
     if (session && session.user) {
       _currentUser = await _syncUserProfile(session.user);
       const restored = await _restoreFromDatabase();
-      if (restored) {
-        _updateReturningBanner();
+      if (restored && _currentUser) {
+        // Authenticated returning user with data — go straight to dashboard
+        // Use setTimeout to let the rest of the app JS finish loading first
+        setTimeout(() => {
+          if (typeof showDashboard === 'function' && state.level) {
+            showDashboard();
+          } else {
+            _updateReturningBanner();
+          }
+        }, 0);
       }
     }
   } catch(e) {

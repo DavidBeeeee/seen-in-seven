@@ -1869,10 +1869,236 @@ function buildPlan(){
   const name=state.name||'You';
   const miniText=miniGoalMap[state.minigoal]||state.minigoalText||'complete this challenge';
   const videos=getVideos();
+  const filmedCount = Object.values(state.videoStatus).filter(s=>s==='filmed').length;
+  const totalVideos = videos.length;
 
-  document.getElementById('plan-name-head').textContent=name+"'s";
-  document.getElementById('plan-level-badge').textContent=
-    state.level===1?'⭐ LEVEL 1 — THE PERSON SERIES':'🔥 LEVEL 2 — THE EXPERT SERIES';
+  // ── Dashboard header ──────────────────────────────────
+  const dbName = document.getElementById('db-name');
+  const dbPill = document.getElementById('db-level-pill');
+  const dbSummary = document.getElementById('db-progress-summary');
+  const dbActions = document.getElementById('db-actions');
+
+  if (dbName) dbName.textContent = name !== 'You' ? name : 'Your Dashboard';
+
+  const levelLabel = state.level === 1 ? 'Level 1 — The Person Series' : 'Level 2 — The Expert Series';
+  if (dbPill) dbPill.textContent = levelLabel;
+
+  if (dbSummary) {
+    if (filmedCount === totalVideos) {
+      dbSummary.textContent = '🎉 All ' + totalVideos + ' videos filmed';
+    } else if (filmedCount === 0) {
+      dbSummary.textContent = totalVideos + ' scripts ready — time to film';
+    } else {
+      dbSummary.textContent = filmedCount + ' of ' + totalVideos + ' filmed';
+    }
+  }
+
+  // Dashboard action buttons
+  if (dbActions) {
+    const nextUnfilmed = videos.findIndex((_,i) => !state.videoStatus[i]);
+    const resumeLabel = nextUnfilmed >= 0
+      ? 'Resume — Video ' + (nextUnfilmed + 1)
+      : 'Review All Scripts';
+    dbActions.innerHTML = `
+      <button class="db-action-btn primary" onclick="resumeFromDashboard()">${resumeLabel} →</button>
+      <button class="db-action-btn" onclick="copyAllScripts(this)">📋 Copy All</button>
+      <button class="db-action-btn" onclick="showPdfModal()">⬇ PDF</button>
+    `;
+  }
+
+  // Remove the legacy level badge and title (dashboard header replaces them)
+  const legacyBadge = document.getElementById('plan-level-badge');
+  if (legacyBadge) legacyBadge.style.display = 'none';
+
+  const output=document.getElementById('plan-output');
+  output.innerHTML='';
+
+  // ── Mission statement ─────────────────────────────────
+  const blockerLabels2 = {ideas:'not knowing what to say',camera:'camera shyness',nothing:'not having a business yet',procrastinating:'putting it off'};
+  const goalLabels2 = {comfortable:'get comfortable on camera',audience:'build an audience',voice:'find their voice',start:'just start showing up',expert:'establish themselves as an expert',clients:'build an audience of potential clients',leads:'generate real leads',consistent:'finally get consistent'};
+  const blockerText = state.blocker ? (blockerLabels2[state.blocker] || state.blocker) : (state.history ? 'getting started' : null);
+  const goalText = state.goal ? (goalLabels2[state.goal] || state.goal) : null;
+
+  let missionLine = '';
+  if (name && name !== 'You') {
+    if (blockerText && goalText) {
+      missionLine = `${name} decided that ${blockerText} wasn't worth the cost — and committed to 7 videos to ${goalText.toLowerCase()}.`;
+    } else if (goalText) {
+      missionLine = `${name} showed up with a single commitment: 7 videos to ${goalText.toLowerCase()}.`;
+    } else if (blockerText) {
+      missionLine = `${name} decided that ${blockerText} would no longer hold them back. Seven videos. That's the plan.`;
+    } else {
+      missionLine = `${name} decided to stop waiting. Seven videos. That's all it takes.`;
+    }
+  } else {
+    if (blockerText && goalText) {
+      missionLine = `You decided that ${blockerText} wasn't worth the cost — and committed to 7 videos to ${goalText.toLowerCase()}.`;
+    } else if (goalText) {
+      missionLine = `You're here to ${goalText.toLowerCase()}. Seven videos. That's your commitment.`;
+    } else {
+      missionLine = `You decided to stop waiting. That's the whole thing.`;
+    }
+  }
+
+  const cs=document.createElement('div');
+  cs.className='plan-section ps-commit';
+  cs.innerHTML=`
+    <div class="ps-label">Your Mission</div>
+    <div style="font-family:'Lora',serif;font-style:italic;font-size:18px;color:var(--teal);line-height:1.7;margin-bottom:14px;">${missionLine}</div>
+    <div class="ps-label" style="margin-top:0;font-size:11px;opacity:0.7;">Your Commitment</div>
+    <div style="font-family:'Lora',serif;font-style:italic;font-size:18px;color:var(--cream);line-height:1.8;">
+      By the end of this challenge I will
+      <strong style="color:var(--teal);font-style:normal;">${miniText}</strong>,
+      even if it's messy, even if nobody watches, and even if I have to do it scared.
+    </div>`;
+  output.appendChild(cs);
+
+  // ── Scripts section ───────────────────────────────────
+  const vs=document.createElement('div');
+  vs.className='plan-section ps-videos';
+  let html='<div class="ps-label">Your ' + totalVideos + ' Scripts</div>';
+
+  videos.forEach((v,i)=>{
+    let script = state.videos['script_v'+i] || '';
+    if (!script) {
+      if(v.beats){ script = v.beats().map(b=>b.text).join('\n\n'); }
+      else if(v.layerMap){ script = v.layerMap(state.videos).map(b=>b.text).join('\n\n'); }
+      else if(v.prebuilt){ script = v.script(); }
+      else if(v.compile){ script = v.compile(state.videos); }
+    }
+    const pageBreak = i > 0 ? '<div class="pvrow-page-break"></div>' : '';
+    const filmed = state.videoStatus[i] === 'filmed';
+    const hasScript = !!state.videos['script_v'+i];
+    const statusBadge = filmed
+      ? `<span style="font-size:11px;color:var(--green);font-weight:700;letter-spacing:.04em;">✓ FILMED</span>`
+      : `<button onclick="markFilmedFromPlan(${i})" style="font-size:12px;background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.3);color:var(--green);padding:4px 12px;border-radius:6px;cursor:pointer;font-weight:600;">✅ I Filmed It</button>`;
+    const cleanScript = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+
+    // Thumbs feedback row
+    const feedbackHtml = hasScript ? `
+      <div class="script-feedback">
+        <span class="script-feedback-label">Sound like you?</span>
+        <button class="fb-btn" id="fb-up-${i}" onclick="handleThumbsFeedback(${i}, true)" title="Yes, sounds like me">👍</button>
+        <button class="fb-btn" id="fb-down-${i}" onclick="handleThumbsFeedback(${i}, false)" title="Not quite">👎</button>
+        <span class="fb-thanks" id="fb-thanks-${i}">Thanks — that helps!</span>
+      </div>` : '';
+
+    html+=`
+      ${pageBreak}
+      <div class="plan-video-row" id="pvrow-${i}">
+        <div class="plan-row-header">
+          <div class="plan-vnum">0${i+1}</div>
+          <div class="plan-vname">${v.title}</div>
+          <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;">
+            ${statusBadge}
+            <span class="plan-edit-link" onclick="editScript(${i})">edit</span>
+            <button class="plan-view-btn" onclick="togglePlanRow(${i})">View <span class="arrow" id="arrow-${i}">▼</span></button>
+          </div>
+        </div>
+        <div class="plan-vscript-wrap">
+          <div class="plan-vscript" id="plan-script-text-${i}">"${cleanScript}"</div>
+          ${feedbackHtml}
+        </div>
+      </div>`;
+  });
+
+  vs.innerHTML=html;
+  output.appendChild(vs);
+
+  // ── L1 scripts archive (L2 users who completed L1) ────
+  if (state.level === 2 && state.l1Videos && Object.keys(state.l1Videos).length > 0) {
+    const l1vids = document.createElement('div');
+    l1vids.className = 'plan-section ps-videos';
+    let l1html = `<div class="ps-label" style="color:rgba(74,222,128,0.65);margin-bottom:4px;">
+      ✓ Your Level 1 Scripts — The Person Series
+    </div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">
+      These are your original 7 videos — the human story before the expertise.
+      They live here for reference.
+    </div>`;
+    const l1VideoList = level1Videos;
+    l1VideoList.forEach((v, i) => {
+      let script = state.l1Videos['script_v'+i] || '';
+      if (!script) {
+        if(v.beats){ script = v.beats().map(b=>b.text).join('\n\n'); }
+        else if(v.prebuilt){ script = v.script(); }
+        else if(v.compile){ script = v.compile(state.l1Videos); }
+      }
+      const cleanL1Script = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g,'').trim();
+      l1html += `
+        <div class="plan-video-row" id="l1pvrow-${i}" style="border-color:rgba(74,222,128,0.15);">
+          <div class="plan-row-header">
+            <div class="plan-vnum" style="color:rgba(74,222,128,0.55);">0${i+1}</div>
+            <div class="plan-vname" style="color:rgba(74,222,128,0.7);">${v.title}</div>
+            <button class="plan-view-btn" onclick="toggleL1PlanRow(${i})" style="border-color:rgba(74,222,128,0.2);color:rgba(74,222,128,0.65);">
+              View <span class="arrow" id="l1arrow-${i}">▼</span>
+            </button>
+          </div>
+          <div class="plan-vscript-wrap">
+            <div class="plan-vscript">"${cleanL1Script}"</div>
+          </div>
+        </div>`;
+    });
+    l1vids.innerHTML = l1html;
+    output.appendChild(l1vids);
+  }
+
+  // ── Build tracker ─────────────────────────────────────
+  buildPlanTracker();
+
+  // ── Conditional affiliate links ───────────────────────
+  updatePartnerVisibility();
+
+  // ── Next step card ────────────────────────────────────
+  if (state.level === 1) {
+    document.getElementById('mission-label').textContent = filmedCount === totalVideos ? '🎉 Level 1 Complete' : '⭐ In Progress';
+    document.getElementById('mission-title').textContent = filmedCount === totalVideos ? 'YOU SHOWED UP. NOW LEVEL UP.' : 'KEEP GOING.';
+    document.getElementById('mission-cta').innerHTML = filmedCount === totalVideos ? `
+      You just completed <strong style="color:var(--teal)">Level 1 — The Person Series</strong>.
+      You explained yourself as a <em>person</em>, not as a business.
+      That's the foundation — and most people never build it.<br><br>
+      <strong style="color:var(--cream)">Your next move:</strong> Level 2 — The Expert Series.
+      Same simple format, but now your videos are about your knowledge, your field, and the people
+      you can genuinely help. You've built the habit and the reps. Now put them to work.<br><br>
+      <button onclick="runItAgain()" style="background:var(--teal);color:#0f172a;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:0.1em;padding:13px 34px;border:none;border-radius:8px;cursor:pointer;margin-top:8px;">
+        Start Level 2 — Skip the Setup →
+      </button>
+    ` : `
+      You have ${totalVideos - filmedCount} video${totalVideos - filmedCount !== 1 ? 's' : ''} left to film.
+      Your scripts are ready — the camera is the only thing between you and done.<br><br>
+      <button onclick="resumeFromDashboard()" style="background:var(--teal);color:#0f172a;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:0.1em;padding:13px 34px;border:none;border-radius:8px;cursor:pointer;margin-top:8px;">
+        Resume Challenge →
+      </button>
+    `;
+  } else {
+    const l2Done = filmedCount === totalVideos;
+    document.getElementById('mission-label').textContent = l2Done ? '🔥 Level 2 Complete' : '🔥 Expert Series';
+    document.getElementById('mission-title').textContent = l2Done ? 'YOU JUST PROVED YOUR VOICE WORKS.' : 'KEEP BUILDING.';
+    document.getElementById('mission-cta').innerHTML = l2Done ? `
+      <strong style="color:var(--cream)">Now let's build the business you deserve.</strong><br><br>
+      This challenge gave you a 7 day kickstart. The Exscalator Engine gives you unlimited unique scripts,
+      a daily entrepreneurial roadmap, and live implementation support, <strong style="color:var(--teal)">FOREVER.</strong><br><br>
+      This is the next step that turns all this new attention into income, so you can get paid simply to exist
+      and fund the life of your dreams, that you deserve.<br><br>
+      <a href="https://content.coloradomastermind.com/yeees" target="_blank"
+        style="display:inline-block;background:var(--green);color:#0f172a;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:0.1em;padding:13px 34px;border-radius:8px;text-decoration:none;margin-top:8px;">
+        Continue →
+      </a>
+    ` : `
+      You have ${totalVideos - filmedCount} video${totalVideos - filmedCount !== 1 ? 's' : ''} left to film.
+      Your expert scripts are ready — keep the momentum going.<br><br>
+      <button onclick="resumeFromDashboard()" style="background:var(--teal);color:#0f172a;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:0.1em;padding:13px 34px;border:none;border-radius:8px;cursor:pointer;margin-top:8px;">
+        Resume →
+      </button>
+    `;
+  }
+
+  // Show "all levels" PDF option only for L2 users with L1 archive
+  const pdfAllOption = document.getElementById('pdf-all-option');
+  if (pdfAllOption) {
+    pdfAllOption.style.display = (state.level === 2 && state.l1Videos && Object.keys(state.l1Videos).length > 0) ? '' : 'none';
+  }
+}
 
   const output=document.getElementById('plan-output');
   output.innerHTML='';
@@ -1919,118 +2145,6 @@ function buildPlan(){
     </div>`;
   output.appendChild(cs);
 
-  // videos section with collapsible scripts
-  const vs=document.createElement('div');
-  vs.className='plan-section ps-videos';
-  let html='<div class="ps-label">Your 7 Scripts</div>';
-
-  videos.forEach((v,i)=>{
-    // prefer the user's edited version, fall back to compile
-    let script = state.videos['script_v'+i] || '';
-    if (!script) {
-      if(v.beats){ script = v.beats().map(b=>b.text).join('\n\n'); }
-      else if(v.layerMap){ script = v.layerMap(state.videos).map(b=>b.text).join('\n\n'); }
-      else if(v.prebuilt){ script = v.script(); }
-      else if(v.compile){ script = v.compile(state.videos); }
-    }
-    const pageBreak = i > 0 ? '<div class="pvrow-page-break"></div>' : '';
-    const filmed = state.videoStatus[i] === 'filmed';
-    const statusBadge = filmed
-      ? `<span style="font-size:11px;color:var(--green);font-weight:700;letter-spacing:.04em;">✓ FILMED</span>`
-      : `<button onclick="markFilmedFromPlan(${i})" style="font-size:12px;background:rgba(74,222,128,0.12);border:1px solid rgba(74,222,128,0.3);color:var(--green);padding:4px 12px;border-radius:6px;cursor:pointer;font-weight:600;">✅ I Filmed It</button>`;
-    // Strip section labels from displayed script
-    const cleanScript = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
-    html+=`
-      ${pageBreak}
-      <div class="plan-video-row" id="pvrow-${i}">
-        <div class="plan-row-header">
-          <div class="plan-vnum">0${i+1}</div>
-          <div class="plan-vname">${v.title}</div>
-          <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;flex-wrap:wrap;justify-content:flex-end;">
-            ${statusBadge}
-            <span class="plan-edit-link" onclick="editScript(${i})">edit</span>
-            <button class="plan-view-btn" onclick="togglePlanRow(${i})">View <span class="arrow" id="arrow-${i}">▼</span></button>
-          </div>
-        </div>
-        <div class="plan-vscript-wrap">
-          <div class="plan-vscript" id="plan-script-text-${i}">"${cleanScript}"</div>
-        </div>
-      </div>`;
-  });
-
-  vs.innerHTML=html;
-  output.appendChild(vs);
-
-  // ── L1 scripts section (only for L2 users who completed L1) ──────────
-  if (state.level === 2 && state.l1Videos && Object.keys(state.l1Videos).length > 0) {
-    const l1vids = document.createElement('div');
-    l1vids.className = 'plan-section ps-videos';
-    let l1html = `<div class="ps-label" style="color:rgba(74,222,128,0.65);margin-bottom:4px;">
-      ✓ Your Level 1 Scripts — The Person Series
-    </div>
-    <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.6;">
-      These are your original 7 videos — the human story before the expertise.
-      They live here for reference.
-    </div>`;
-    const l1VideoList = level1Videos; // always 7
-    l1VideoList.forEach((v, i) => {
-      let script = state.l1Videos['script_v'+i] || '';
-      if (!script) {
-        if(v.beats){ script = v.beats().map(b=>b.text).join('\n\n'); }
-        else if(v.prebuilt){ script = v.script(); }
-        else if(v.compile){ script = v.compile(state.l1Videos); }
-      }
-      const cleanL1Script = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g,'').trim();
-      l1html += `
-        <div class="plan-video-row" id="l1pvrow-${i}" style="border-color:rgba(74,222,128,0.15);">
-          <div class="plan-row-header">
-            <div class="plan-vnum" style="color:rgba(74,222,128,0.55);">0${i+1}</div>
-            <div class="plan-vname" style="color:rgba(74,222,128,0.7);">${v.title}</div>
-            <button class="plan-view-btn" onclick="toggleL1PlanRow(${i})" style="border-color:rgba(74,222,128,0.2);color:rgba(74,222,128,0.65);">
-              View <span class="arrow" id="l1arrow-${i}">▼</span>
-            </button>
-          </div>
-          <div class="plan-vscript-wrap">
-            <div class="plan-vscript">"${cleanL1Script}"</div>
-          </div>
-        </div>`;
-    });
-    l1vids.innerHTML = l1html;
-    output.appendChild(l1vids);
-  }
-
-  // Build the plan-page progress tracker (top slot)
-  buildPlanTracker();
-
-  // mission card — level-aware
-  if (state.level === 1) {
-    document.getElementById('mission-title').textContent = 'YOU SHOWED UP. NOW LEVEL UP.';
-    document.getElementById('mission-cta').innerHTML = `
-      You just completed <strong style="color:var(--teal)">Level 1 — The Person Series</strong>.
-      You explained yourself as a <em>person</em>, not as a business.
-      That's the foundation — and most people never build it.<br><br>
-      <strong style="color:var(--cream)">Your next move:</strong> Level 2 — The Expert Series.
-      Same simple format, but now your videos are about your knowledge, your field, and the people
-      you can genuinely help. You've built the habit and the reps. Now put them to work.<br><br>
-      <button onclick="runItAgain()" style="background:var(--teal);color:#0f172a;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:0.1em;padding:13px 34px;border:none;border-radius:8px;cursor:pointer;margin-top:8px;">
-        Start Level 2 — Skip the Setup →
-      </button>
-    `;
-  } else {
-    document.getElementById('mission-title').textContent = 'YOU JUST PROVED YOUR VOICE WORKS.';
-    document.getElementById('mission-cta').innerHTML = `
-      <strong style="color:var(--cream)">Now let's build the business you deserve.</strong><br><br>
-      This challenge gave you a 7 day kickstart. The Exscalator Engine gives you unlimited unique scripts,
-      a daily entrepreneurial roadmap, and live implementation support, <strong style="color:var(--teal)">FOREVER.</strong><br><br>
-      This is the next step that turns all this new attention into income, so you can get paid simply to exist
-      and fund the life of your dreams, that you deserve.<br><br>
-      <a href="https://content.coloradomastermind.com/yeees" target="_blank"
-        style="display:inline-block;background:var(--green);color:#0f172a;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:0.1em;padding:13px 34px;border-radius:8px;text-decoration:none;margin-top:8px;">
-        Continue →
-      </a>
-    `;
-  }
-}
 
 function togglePlanRow(i){
   const row=document.getElementById('pvrow-'+i);
@@ -2047,38 +2161,43 @@ function toggleL1PlanRow(i){
 }
 
 // Build the plan-page tracker (top slot):
-// filmed → green ✓   |   not filmed → red ✕ (clickable → editScript)
-// L2 row is bigger and glowing
+// filmed → green ✓   |   script ready → gold ✎   |   not started → dim   |   skipped → red ✕
 function buildPlanTracker() {
   const el = document.getElementById('tracker-slot-plan');
   if (!el) return;
   const videos = getVideos();
   const labels = videos.map((_,i) => 'V'+(i+1));
 
-  function makeItem(label, st, isL2, idx, isL1Ghost) {
-    const filmed  = st === 'filmed';
-    const cls     = filmed ? 'vt-done' : 'vt-skipped';
-    const status  = filmed ? '✓' : '✕';
-    const l2Class = isL2      ? ' vt-l2-item vt-plan-l2' : '';
-    const ghostClass = isL1Ghost ? ' vt-l1-ghost'  : '';
-    const clickable  = (!filmed && idx !== null) ? ' vt-clickable' : '';
-    const clickAttr  = (!filmed && idx !== null)
-      ? ` onclick="editScript(${idx})" title="Click to go back and film this video"`
+  function makeItem(label, st, hasScript, isL2, idx, isL1Ghost) {
+    let cls, statusIcon;
+    if (st === 'filmed') {
+      cls = 'vt-done'; statusIcon = '✓';
+    } else if (st === 'skipped') {
+      cls = 'vt-skipped'; statusIcon = '✕';
+    } else if (hasScript) {
+      cls = 'vt-ready'; statusIcon = '✎';
+    } else {
+      cls = 'vt-locked'; statusIcon = '·';
+    }
+    const l2Class    = isL2      ? ' vt-l2-item vt-plan-l2' : '';
+    const ghostClass = isL1Ghost ? ' vt-l1-ghost' : '';
+    const clickable  = (idx !== null && st !== 'filmed') ? ' vt-clickable' : '';
+    const clickAttr  = (idx !== null && st !== 'filmed')
+      ? ` onclick="editScript(${idx})" title="Jump to Video ${idx+1}"`
       : '';
     return `<div class="vt-item${l2Class}${ghostClass}${clickable} ${cls}"${clickAttr}>`+
       `<div class="vt-label">${label}</div>`+
-      `<div class="vt-status">${status}</div>`+
+      `<div class="vt-status">${statusIcon}</div>`+
       `</div>`;
   }
 
   let html = '';
   if (state.level === 2 && state.l1VideoStatus) {
-    // Dual row: L1 ghost on top, L2 clickable below (bigger + glowing)
     const l1Row = labels.map((lbl,i) =>
-      makeItem(lbl, state.l1VideoStatus[i], false, null, true)
+      makeItem(lbl, state.l1VideoStatus[i], !!state.l1Videos?.['script_v'+i], false, null, true)
     ).join('');
     const l2Row = labels.map((lbl,i) =>
-      makeItem(lbl, state.videoStatus[i], true, i, false)
+      makeItem(lbl, state.videoStatus[i], !!state.videos['script_v'+i], true, i, false)
     ).join('');
     html = `<div class="vt-dual-wrap">`+
       `<div class="vt-row-label">L1 — PERSON SERIES</div><div class="vt-row">${l1Row}</div>`+
@@ -2087,10 +2206,155 @@ function buildPlanTracker() {
   } else {
     html = labels.map((lbl,i) => {
       const isL2 = state.level === 2;
-      return makeItem(lbl, state.videoStatus[i], isL2, i, false);
+      return makeItem(lbl, state.videoStatus[i], !!state.videos['script_v'+i], isL2, i, false);
     }).join('');
   }
   el.innerHTML = html;
+}
+
+// ── DASHBOARD HELPERS ─────────────────────────────────
+
+// Resume from dashboard — jump to next unfilmed video
+function resumeFromDashboard() {
+  const videos = getVideos();
+  const nextIdx = videos.findIndex((_,i) => !state.videoStatus[i]);
+  if (nextIdx >= 0) {
+    currentVideoIndex = nextIdx;
+    buildVideoDots('video-dots');
+    buildVideoDots('script-dots');
+    buildVideoDots('vi-dots');
+    renderVideoPrompts(nextIdx);
+    showScreen('screen-7');
+    currentIndex = screenOrder.indexOf('screen-7');
+  }
+  window.scrollTo(0, 0);
+}
+
+// Thumbs feedback handler
+async function handleThumbsFeedback(videoIdx, thumbsUp) {
+  const upBtn   = document.getElementById('fb-up-' + videoIdx);
+  const downBtn = document.getElementById('fb-down-' + videoIdx);
+  const thanks  = document.getElementById('fb-thanks-' + videoIdx);
+
+  if (upBtn)   { upBtn.classList.toggle('active-up', thumbsUp); upBtn.classList.remove('active-down'); }
+  if (downBtn) { downBtn.classList.toggle('active-down', !thumbsUp); downBtn.classList.remove('active-up'); }
+  if (thanks)  { thanks.classList.add('show'); setTimeout(() => thanks.classList.remove('show'), 2500); }
+
+  // Save to DB
+  await saveScriptFeedback(videoIdx + 1, state.level || 1, thumbsUp);
+}
+
+// Conditional affiliate visibility
+function updatePartnerVisibility() {
+  const filmedCount = Object.values(state.videoStatus).filter(s => s === 'filmed').length;
+  const partnerSection = document.getElementById('partner-section');
+  const vubli = document.getElementById('partner-vubli');
+  const temu  = document.getElementById('partner-temu');
+
+  if (!partnerSection) return;
+
+  if (filmedCount >= 1) {
+    partnerSection.removeAttribute('data-locked');
+    if (vubli) vubli.style.display = '';
+  }
+  if (filmedCount >= 3) {
+    if (temu) temu.style.display = '';
+  }
+}
+
+// ── PDF EXPORT ────────────────────────────────────────
+function showPdfModal() {
+  document.getElementById('pdf-modal-overlay').classList.add('show');
+}
+function hidePdfModal() {
+  document.getElementById('pdf-modal-overlay').classList.remove('show');
+}
+
+function exportPDF(mode) {
+  hidePdfModal();
+  const name = state.name || 'Your';
+  const videos = getVideos();
+  const levelLabel = state.level === 1 ? 'Level 1 — The Person Series' : 'Level 2 — The Expert Series';
+
+  let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
+  <title>${name}'s Scripts — SeenInSeven</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;1,400;1,700&family=Oswald:wght@500;600&family=Space+Mono&display=swap');
+    * { margin:0; padding:0; box-sizing:border-box; }
+    body { font-family: Georgia, serif; background:#fff; color:#111; padding:48px 56px; max-width:720px; margin:0 auto; }
+    .doc-header { border-bottom:2px solid #0D2828; padding-bottom:20px; margin-bottom:36px; }
+    .doc-title { font-family:'Oswald',sans-serif; font-size:32px; color:#0D2828; letter-spacing:0.04em; margin-bottom:6px; }
+    .doc-sub { font-family:'Space Mono',monospace; font-size:11px; color:#32B8B8; letter-spacing:0.16em; text-transform:uppercase; }
+    .section-label { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:#999; margin-bottom:6px; }
+    .video-block { page-break-inside:avoid; margin-bottom:44px; padding-bottom:36px; border-bottom:1px solid #e5e5e5; }
+    .video-block:last-child { border-bottom:none; }
+    .video-num { font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:0.1em; color:#32B8B8; margin-bottom:4px; }
+    .video-title { font-family:'Oswald',sans-serif; font-size:24px; color:#0D2828; margin-bottom:16px; }
+    .script-text { font-family:'Lora',serif; font-style:italic; font-size:17px; line-height:2.0; color:#222; white-space:pre-wrap; }
+    .status-badge { display:inline-block; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; padding:3px 10px; border-radius:4px; margin-bottom:12px; }
+    .status-filmed { background:#dcfce7; color:#166534; }
+    .status-pending { background:#fef9c3; color:#854d0e; }
+    .archive-header { font-family:'Oswald',sans-serif; font-size:18px; color:#166534; margin:48px 0 20px; padding-top:32px; border-top:2px solid #dcfce7; }
+    @media print { body { padding:32px 40px; } }
+  </style>
+  </head><body>
+  <div class="doc-header">
+    <div class="doc-title">${name}'s Video Scripts</div>
+    <div class="doc-sub">SeenInSeven · ${levelLabel}</div>
+  </div>`;
+
+  // Current level scripts
+  videos.forEach((v, i) => {
+    let script = state.videos['script_v'+i] || '';
+    if (!script) {
+      if(v.beats) script = v.beats().map(b=>b.text).join('\n\n');
+      else if(v.compile) script = v.compile(state.videos);
+    }
+    const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+    const filmed = state.videoStatus[i] === 'filmed';
+    const statusHtml = filmed
+      ? `<span class="status-badge status-filmed">✓ Filmed</span>`
+      : `<span class="status-badge status-pending">Not filmed yet</span>`;
+    html += `
+    <div class="video-block">
+      <div class="video-num">VIDEO ${i+1} OF ${videos.length}</div>
+      <div class="video-title">${v.title}</div>
+      ${statusHtml}
+      <div class="script-text">${clean}</div>
+    </div>`;
+  });
+
+  // L1 archive if mode === 'all'
+  if (mode === 'all' && state.l1Videos && Object.keys(state.l1Videos).length > 0) {
+    html += `<div class="archive-header">Level 1 Scripts — The Person Series</div>`;
+    level1Videos.forEach((v, i) => {
+      let script = state.l1Videos['script_v'+i] || '';
+      if (!script && v.beats) script = v.beats().map(b=>b.text).join('\n\n');
+      const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+      html += `
+      <div class="video-block">
+        <div class="video-num">L1 VIDEO ${i+1} OF 7</div>
+        <div class="video-title">${v.title}</div>
+        <div class="script-text">${clean}</div>
+      </div>`;
+    });
+  }
+
+  html += `</body></html>`;
+
+  // Open in a new tab and trigger print
+  const win = window.open('', '_blank');
+  win.document.write(html);
+  win.document.close();
+  win.onload = () => { win.focus(); win.print(); };
+}
+
+// ── SHOW DASHBOARD DIRECTLY (authenticated returning users) ───
+function showDashboard() {
+  buildPlan();
+  showScreen('plan-screen');
+  currentIndex = screenOrder.indexOf('plan-screen');
+  window.scrollTo(0, 0);
 }
 
 // ── RESTART ───────────────────────────────────────────

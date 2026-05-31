@@ -534,64 +534,91 @@
 
 <!-- ══ PLAN SCREEN ══ -->
 <div class="screen" id="plan-screen">
-  <div id="plan-level-badge" class="level-badge"></div>
-  <h2 class="screen-title"><span id="plan-name-head">Your</span> <span class="accent">Challenge Plan</span></h2>
-  <p class="screen-sub">All 7 scripts, your commitment, and your mission for right now.</p>
 
-  <!-- Progress tracker — green ✓ filmed, red ✕ clickable to go back to prompts -->
+  <!-- Dashboard header — populated by buildPlan() -->
+  <div class="db-header" id="db-header">
+    <div class="db-greeting">Welcome back</div>
+    <div class="db-name" id="db-name">Your Dashboard</div>
+    <div class="db-meta">
+      <span class="db-level-pill" id="db-level-pill"></span>
+      <span class="db-progress-summary" id="db-progress-summary"></span>
+    </div>
+    <div class="db-actions" id="db-actions"></div>
+  </div>
+
+  <!-- Progress tracker -->
   <div class="v1-tracker" id="tracker-slot-plan"></div>
 
   <div id="plan-output"></div>
 
+  <!-- Action bar -->
   <div class="btn-row" style="margin-bottom:32px;">
-    <button class="btn-primary" id="copy-all-btn" onclick="copyAllScripts(this)">📋 Copy All 7 Scripts</button>
-    <button class="btn-print" onclick="window.print()">Save as PDF</button>
+    <button class="btn-primary" id="copy-all-btn" onclick="copyAllScripts(this)">📋 Copy All Scripts</button>
+    <button class="btn-print" onclick="showPdfModal()">⬇ Export PDF</button>
     <button class="btn-restart" onclick="restartWizard()">Start Over</button>
   </div>
 
+  <!-- Next step card — level-aware -->
   <div class="mission-card" id="mission-card">
     <div class="m-label" id="mission-label">🎉 You Did It</div>
     <div class="m-title" id="mission-title">ALL 7 VIDEOS — COMPLETE</div>
     <div class="m-cta" id="mission-cta"></div>
   </div>
 
+  <!-- Community CTA -->
   <div class="cta-section">
     <h2>You Don't Have to Do This Alone</h2>
     <p>Join a free group of people exactly like you — showing up, posting videos, and cheering each other on. No cost. No pitch. Just people who get it.</p>
     <a class="btn-cta" href="https://facebook.com/groups/coloradobiz" target="_blank">Join the Free Community →</a>
   </div>
 
-  <!-- ══ PARTNER TOOLS SECTION ══ -->
-  <div class="partner-section" id="partner-section">
+  <!-- Partner tools — hidden until videos are filmed, shown by JS -->
+  <div class="partner-section" id="partner-section" data-locked="true">
     <div class="partner-eyebrow">Tools David Bee Actually Uses</div>
     <h2 class="partner-heading">Make posting easier and actually start earning income, TODAY</h2>
-    <div class="partner-grid">
+    <div class="partner-grid" id="partner-grid">
 
-      <div class="partner-card">
+      <!-- Vubli — unlocks after first video filmed -->
+      <div class="partner-card" id="partner-vubli" style="display:none;">
         <span class="partner-badge">David Uses This</span>
         <div class="partner-card-name">Vubli</div>
-        <p class="partner-card-desc">
-          Once your scripts are done, you still have to actually get them out there. Vubli makes
-          that the easy part. A couple button clicks and your video is posted to every platform at
-          once. No juggling apps, no logging in and out, no copy-pasting captions six times. I use
-          it because it turns "I should post this" into "done." 😊
-        </p>
+        <p class="partner-card-desc">Once your scripts are done, you still have to actually get them out there. Vubli makes that the easy part. A couple button clicks and your video is posted to every platform at once. No juggling apps, no logging in and out, no copy-pasting captions six times. I use it because it turns "I should post this" into "done." 😊</p>
         <a href="https://vubli.ai/?via=david" class="partner-cta" target="_blank" rel="noopener">Try Vubli Free →</a>
       </div>
 
-      <div class="partner-card">
+      <!-- Temu — unlocks after 3 videos filmed -->
+      <div class="partner-card" id="partner-temu" style="display:none;">
         <span class="partner-badge">Earn While You Post</span>
         <div class="partner-card-name">Temu Creator</div>
-        <p class="partner-card-desc">
-          This one actually surprised me. Temu has a creator program where you can earn money from
-          your content by sharing things you'd buy anyway, which makes it one of the fastest ways
-          to start seeing income from the audience you're building right now. Free to join. No
-          minimum followers. No catch worth mentioning. 😌
-        </p>
+        <p class="partner-card-desc">This one actually surprised me. Temu has a creator program where you can earn money from your content by sharing things you'd buy anyway, which makes it one of the fastest ways to start seeing income from the audience you're building right now. Free to join. No minimum followers. No catch worth mentioning. 😌</p>
         <a href="https://temu.to/k/plrsjlqz9v8" class="partner-cta" target="_blank" rel="noopener">Join Temu Creator Free →</a>
       </div>
 
     </div>
+  </div>
+
+</div>
+
+<!-- ══ PDF EXPORT MODAL ══ -->
+<div id="pdf-modal-overlay">
+  <div id="pdf-modal">
+    <h3>Export Your Scripts</h3>
+    <p>Choose what you want in your PDF. Opens a clean print-ready page — just hit Print and save as PDF.</p>
+    <div class="pdf-option" onclick="exportPDF('current')">
+      <div class="pdf-option-icon">📄</div>
+      <div>
+        <div class="pdf-option-label">Current Level Scripts</div>
+        <div class="pdf-option-desc">Your 7 scripts from this level, formatted and ready to film from.</div>
+      </div>
+    </div>
+    <div class="pdf-option" id="pdf-all-option" onclick="exportPDF('all')" style="display:none;">
+      <div class="pdf-option-icon">📚</div>
+      <div>
+        <div class="pdf-option-label">All Scripts — Both Levels</div>
+        <div class="pdf-option-desc">Level 1 and Level 2 scripts together in one document.</div>
+      </div>
+    </div>
+    <button class="pdf-cancel" onclick="hidePdfModal()">Cancel</button>
   </div>
 </div>
 

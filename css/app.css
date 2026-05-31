@@ -1319,3 +1319,136 @@ body::before {
 .dco-headline { font-family:'Oswald',sans-serif; font-size:44px; letter-spacing:0.08em; color:rgb(167,139,250); line-height:1.1; margin-bottom:12px; }
 .dco-sub { font-family:'Lora',serif; font-style:italic; font-size:20px; color:var(--cream); line-height:1.6; max-width:480px; margin-bottom:32px; }
 .dco-close { background:rgb(167,139,250); color:#0f172a; font-family:'Oswald',sans-serif; font-size:20px; letter-spacing:0.1em; padding:14px 40px; border:none; border-radius:10px; cursor:pointer; }
+
+/* ── DASHBOARD ───────────────────────────────────────── */
+.db-header {
+  display:flex; flex-direction:column; gap:6px;
+  margin-bottom:28px; padding-bottom:24px;
+  border-bottom:1px solid var(--border);
+}
+.db-greeting {
+  font-family:'Space Mono',monospace;
+  font-size:11px; letter-spacing:0.22em;
+  color:var(--teal); text-transform:uppercase;
+}
+.db-name {
+  font-family:'Oswald',sans-serif;
+  font-size:clamp(36px,7vw,58px);
+  letter-spacing:0.02em; line-height:1.0;
+  color:var(--cream);
+}
+.db-meta {
+  display:flex; align-items:center; gap:12px; flex-wrap:wrap;
+  margin-top:6px;
+}
+.db-level-pill {
+  font-family:'Space Mono',monospace;
+  font-size:10px; letter-spacing:0.14em; text-transform:uppercase;
+  padding:5px 14px; border-radius:20px;
+  border:1px solid rgba(45,212,191,0.35);
+  color:var(--teal); background:rgba(45,212,191,0.06);
+}
+.db-progress-summary {
+  font-size:14px; color:var(--muted);
+}
+.db-actions {
+  display:flex; gap:10px; flex-wrap:wrap; margin-top:10px;
+}
+.db-action-btn {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:8px; padding:10px 18px;
+  color:var(--soft); font-size:14px; font-weight:600;
+  cursor:pointer; transition:all 0.18s;
+  font-family:'Nunito',sans-serif;
+}
+.db-action-btn:hover { border-color:var(--teal); color:var(--cream); }
+.db-action-btn.primary {
+  background:var(--teal); color:#0D2828;
+  border-color:var(--teal);
+}
+.db-action-btn.primary:hover { background:#5eead4; }
+
+/* ── SCRIPT FEEDBACK ─────────────────────────────────── */
+.script-feedback {
+  display:flex; align-items:center; gap:8px;
+  margin-top:12px; padding-top:12px;
+  border-top:1px solid var(--border);
+}
+.script-feedback-label {
+  font-size:12px; color:var(--muted);
+  font-family:'Space Mono',monospace;
+  letter-spacing:0.08em; text-transform:uppercase;
+  flex-shrink:0;
+}
+.fb-btn {
+  background:transparent; border:1px solid var(--border);
+  border-radius:7px; padding:6px 12px;
+  cursor:pointer; font-size:15px; transition:all 0.18s;
+  line-height:1;
+}
+.fb-btn:hover { border-color:var(--teal); transform:scale(1.1); }
+.fb-btn.active-up { background:rgba(74,222,128,0.15); border-color:rgba(74,222,128,0.5); }
+.fb-btn.active-down { background:rgba(239,68,68,0.1); border-color:rgba(239,68,68,0.35); }
+.fb-thanks {
+  font-size:12px; color:var(--teal);
+  font-style:italic; opacity:0;
+  transition:opacity 0.3s;
+}
+.fb-thanks.show { opacity:1; }
+
+/* ── VT SCRIPT-READY STATE ───────────────────────────── */
+.vt-ready { background:rgba(200,168,75,0.07); border-color:rgba(200,168,75,0.3); }
+.vt-ready .vt-label { color:var(--gold,#C8A84B); }
+.vt-ready .vt-status { color:var(--gold,#C8A84B); font-size:13px; }
+
+/* ── PDF EXPORT MODAL ────────────────────────────────── */
+#pdf-modal-overlay {
+  display:none; position:fixed; inset:0; z-index:10000;
+  background:rgba(0,0,0,0.75); backdrop-filter:blur(4px);
+  align-items:center; justify-content:center; padding:20px;
+}
+#pdf-modal-overlay.show { display:flex; }
+#pdf-modal {
+  background:#0f2020; border:1px solid var(--border);
+  border-radius:14px; padding:30px 26px;
+  max-width:440px; width:100%;
+  box-shadow:0 0 48px rgba(13,40,40,0.6);
+}
+#pdf-modal h3 {
+  font-family:'Oswald',sans-serif; font-size:22px;
+  letter-spacing:0.05em; color:var(--cream);
+  margin-bottom:8px;
+}
+#pdf-modal p {
+  font-size:14px; color:var(--muted);
+  line-height:1.7; margin-bottom:20px;
+}
+.pdf-option {
+  background:var(--card); border:1.5px solid var(--border);
+  border-radius:10px; padding:16px 18px; margin-bottom:10px;
+  cursor:pointer; transition:all 0.18s; display:flex;
+  align-items:center; gap:14px;
+}
+.pdf-option:hover { border-color:var(--teal); background:var(--card2); }
+.pdf-option-icon { font-size:24px; flex-shrink:0; }
+.pdf-option-label {
+  font-family:'Oswald',sans-serif; font-size:17px;
+  letter-spacing:0.04em; color:var(--cream);
+}
+.pdf-option-desc { font-size:13px; color:var(--muted); margin-top:2px; }
+.pdf-cancel {
+  background:transparent; border:none;
+  color:var(--muted); font-size:14px;
+  cursor:pointer; width:100%; padding:10px;
+  margin-top:4px; transition:color 0.18s;
+}
+.pdf-cancel:hover { color:var(--cream); }
+
+/* ── PARTNER CONDITIONAL ─────────────────────────────── */
+.partner-section[data-locked] {
+  display:none !important;
+}
+
+@media print {
+  #pdf-modal-overlay, #regen-modal-overlay { display:none !important; }
+}
