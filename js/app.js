@@ -3211,10 +3211,16 @@ function saveProgress() {
 }
 
 function loadProgress() {
-  // If there's a Supabase auth token in the hash, don't touch anything.
+  // If there's a valid Supabase auth token in the hash, step aside —
   // onAuthStateChange will handle routing once it processes the token.
+  // But don't skip on error hashes like #error=access_denied
   const hash = window.location.hash;
-  if (hash && hash.includes('access_token')) return;
+  if (hash && hash.includes('access_token') && !hash.includes('error')) return;
+
+  // If there's an auth error in the hash, clear it and show screen-0 normally
+  if (hash && hash.includes('error=')) {
+    window.history.replaceState(null, '', window.location.pathname);
+  }
 
   try {
     const raw = localStorage.getItem(SAVE_KEY);
@@ -3385,10 +3391,12 @@ function launchConfetti() {
     console.warn('[SeenInSeven] initAuth error:', e);
   }
 
-  // Always reveal screen-0 regardless of what happened
+  // Always reveal screen-0
   if (s0) s0.style.visibility = '';
 
-  // If the URL is /dashboard, always try to show the dashboard
+  const hash = window.location.hash;
+  const hasMagicToken = hash && hash.includes('access_token') && !hash.includes('error=');
+
   if (window.location.pathname === '/dashboard') {
     if (initResult === 'dashboard') {
       // Already there
@@ -3399,7 +3407,17 @@ function launchConfetti() {
       loadProgress();
     }
   } else if (initResult !== 'dashboard') {
-    loadProgress();
+    if (hasMagicToken) {
+      // Magic link — show a loading state while onAuthStateChange processes the token
+      s0.classList.add('active');
+      const s0inner = s0.querySelector('.screen-inner') || s0;
+      const loadDiv = document.createElement('div');
+      loadDiv.style.cssText = 'padding:60px 24px;text-align:center;';
+      loadDiv.innerHTML = '<div style="font-family:\'Space Mono\',monospace;font-size:11px;letter-spacing:0.2em;color:var(--teal);text-transform:uppercase;margin-bottom:12px;">Signing you in...</div>';
+      s0inner.prepend(loadDiv);
+    } else {
+      loadProgress();
+    }
   }
 
   updateProgress('screen-0');
