@@ -86,10 +86,16 @@ function showScreen(id, direction='forward') {
 function goNext() {
   const cur = screenOrder[currentIndex];
 
-  if (cur === 'screen-1') {
+  if (cur === 'screen-0') {
+    // Expand to full order immediately — default to 'no' path, updated when user answers screen-1
+    screenOrder = ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+  }
+
+  if (cur === 'screen-email') {
+    // Now we know state.posted — lock in the correct 2a vs 2b path
     screenOrder = state.posted === 'no'
-      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+      ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
+      : ['screen-0','screen-1','screen-email','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
   }
 
   if (cur === 'screen-3') {
@@ -170,41 +176,55 @@ function goToRecap() {
 
 // ── AUTH FLOW ─────────────────────────────────────────
 async function handleEmailSubmit() {
-  const input = document.getElementById('auth-email-input');
-  const errEl = document.getElementById('auth-email-error');
-  const btn   = document.getElementById('auth-send-btn');
-  const email = input ? input.value.trim() : '';
+  const input   = document.getElementById('auth-email-input');
+  const errEl   = document.getElementById('auth-email-error');
+  const btn     = document.getElementById('auth-send-btn');
+  const checkEl = document.getElementById('auth-checking');
+  const email   = input ? input.value.trim() : '';
 
   if (!email || !email.includes('@') || !email.includes('.')) {
     if (errEl) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; }
     return;
   }
 
-  if (btn) { btn.textContent = 'Saving...'; btn.disabled = true; }
+  if (btn) { btn.textContent = 'Checking...'; btn.disabled = true; }
+  if (checkEl) checkEl.style.display = 'block';
   if (errEl) errEl.style.display = 'none';
 
-  // Send the magic link silently in the background — don't wait for it
-  // User continues immediately to recap; auth completes when they click the link later
-  sendMagicLink(email).catch(() => {
-    // If sending fails silently, that's fine — they're still moving forward
-  });
+  try {
+    // Check if this email already has an account with data
+    const { data: existingUser } = await _sb
+      .from('users')
+      .select('id, name, level')
+      .eq('email', email)
+      .maybeSingle();
 
-  // Advance immediately to recap without waiting for email confirmation
-  if (btn) { btn.textContent = 'Send My Link →'; btn.disabled = false; }
-  skipAuth();
+    if (existingUser && existingUser.level) {
+      // Existing user — send magic link and show waiting screen
+      sendMagicLink(email).catch(() => {});
+      if (checkEl) checkEl.style.display = 'none';
+      if (btn) { btn.textContent = 'Continue →'; btn.disabled = false; }
+      const waitMsg = document.getElementById('auth-wait-email-display');
+      if (waitMsg) waitMsg.textContent = 'We sent a link to ' + email + '. Click it and you\'ll land right back on your dashboard.';
+      currentIndex = screenOrder.indexOf('screen-auth-wait');
+      showScreen('screen-auth-wait');
+      return;
+    }
+
+    // New user — send link silently and continue through questions
+    sendMagicLink(email).catch(() => {});
+
+  } catch(e) {
+    // If check fails, continue anyway — don't block the user
+  }
+
+  if (checkEl) checkEl.style.display = 'none';
+  if (btn) { btn.textContent = 'Continue →'; btn.disabled = false; }
+  goNext();
 }
 
 function skipAuth() {
-  // Ensure screenOrder is fully expanded before jumping
-  if (screenOrder.length <= 2) {
-    screenOrder = state.posted === 'no'
-      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
-  }
-  currentIndex = screenOrder.indexOf('screen-recap');
-  populateRecap();
-  showScreen('screen-recap');
-  window.scrollTo(0, 0);
+  goNext();
 }
 
 function advancePastAuth() {
@@ -212,8 +232,8 @@ function advancePastAuth() {
   // Ensure screenOrder is fully expanded
   if (screenOrder.length <= 2) {
     screenOrder = state.posted === 'no'
-      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+      ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
+      : ['screen-0','screen-1','screen-email','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
   }
   // Save onboarding to DB now that we have a user
   saveOnboardingToDb();
@@ -2757,8 +2777,8 @@ function showDashboard() {
   // Make sure screenOrder is expanded for resuming from dashboard
   if (screenOrder.length <= 2) {
     screenOrder = state.posted === 'no'
-      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+      ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
+      : ['screen-0','screen-1','screen-email','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
   }
   buildPlan();
   showScreen('plan-screen');
@@ -3223,8 +3243,8 @@ function continueSession() {
   if (state.level) {
     // Bug fix: state.level is numeric (1 or 2), never the string 'L1'
     screenOrder = state.level === 1
-      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+      ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
+      : ['screen-0','screen-1','screen-email','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
 
     // Find the first video that hasn't been filmed or skipped
     const videoCount = getVideos().length;

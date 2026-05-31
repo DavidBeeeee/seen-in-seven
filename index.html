@@ -207,19 +207,20 @@
 
 <!-- ══ S-EMAIL CAPTURE ══ -->
 <div class="screen" id="screen-email">
-  <div class="eyebrow">Almost There</div>
-  <h2 class="screen-title">Save your <span class="accent">progress.</span></h2>
-  <p class="screen-sub">Your scripts will be waiting for you every time you come back — on any device. Enter your email and we'll send you a link to get in.</p>
+  <div class="eyebrow">Quick Check</div>
+  <h2 class="screen-title">Been here <span class="accent">before?</span></h2>
+  <p class="screen-sub">Enter your email and we'll pick up right where you left off. New here? We'll save everything as you go.</p>
   <div class="input-group">
     <label class="input-label">Your Email</label>
     <input type="email" class="text-input" id="auth-email-input" placeholder="you@example.com" autocomplete="email" oninput="document.getElementById('auth-email-error').style.display='none'">
   </div>
   <div id="auth-email-error" style="color:#ef4444;font-size:14px;margin-top:-12px;margin-bottom:16px;display:none;padding:10px 14px;background:rgba(239,68,68,.08);border-radius:8px;border:1px solid rgba(239,68,68,.2);"></div>
+  <div id="auth-checking" style="display:none;font-size:14px;color:var(--teal);margin-bottom:16px;font-family:'Space Mono',monospace;letter-spacing:0.08em;">Checking your account...</div>
   <div class="btn-row">
-    <button class="btn-primary" id="auth-send-btn" onclick="handleEmailSubmit()">Send My Link →</button>
+    <button class="btn-primary" id="auth-send-btn" onclick="handleEmailSubmit()">Continue →</button>
     <button class="btn-skip" onclick="skipAuth()">Skip for now</button>
   </div>
-  <p style="font-size:13px;color:var(--muted);margin-top:20px;line-height:1.7;">No password. No account setup. Just one click in your inbox and you're in. We'll never send you anything you didn't ask for.</p>
+  <p style="font-size:13px;color:var(--muted);margin-top:20px;line-height:1.7;">No password needed. We'll send a magic link to your inbox. We'll never send you anything you didn't ask for.</p>
 </div>
 
 <!-- ══ S-AUTH WAIT ══ -->
