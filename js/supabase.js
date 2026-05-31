@@ -73,10 +73,17 @@ async function sendMagicLink(email) {
   const { error } = await _sb.auth.signInWithOtp({
     email: email,
     options: {
-      emailRedirectTo: window.location.origin + window.location.pathname
+      emailRedirectTo: window.location.origin + window.location.pathname,
+      shouldCreateUser: true
     }
   });
-  if (error) throw error;
+  if (error) {
+    // Surface rate limit errors clearly
+    if (error.message && (error.message.includes('rate') || error.status === 429)) {
+      throw new Error('Too many attempts — please wait a few minutes before trying again.');
+    }
+    throw error;
+  }
 }
 
 // ── GET CURRENT SESSION ───────────────────────────────
@@ -203,12 +210,12 @@ async function _restoreFromDatabase() {
 
     if (!user) return false;
 
-    // Fetch onboarding
+    // Fetch onboarding — use maybeSingle() to avoid error when row doesn't exist
     const { data: onboarding } = await _sb
       .from('onboarding')
       .select('*')
       .eq('user_id', _currentUser.id)
-      .single();
+      .maybeSingle();
 
     // Fetch current scripts
     const { data: scripts } = await _sb
@@ -224,11 +231,12 @@ async function _restoreFromDatabase() {
       .select('*')
       .eq('user_id', _currentUser.id);
 
-    // Restore state
+    // Restore state — user table is the primary source
     if (user.name)           state.name           = user.name;
     if (user.level)          state.level          = user.level;
     if (user.blocker)        state.blocker        = user.blocker;
 
+    // Onboarding may not exist yet for brand-new users who just authenticated
     if (onboarding) {
       if (onboarding.posted)          state.posted          = onboarding.posted;
       if (onboarding.history)         state.history         = onboarding.history;
@@ -261,7 +269,9 @@ async function _restoreFromDatabase() {
 
     // Also save to localStorage as fallback
     saveProgress();
-    return true;
+
+    // Return true only if user has meaningful data to show on dashboard
+    return !!(user.level || user.name);
 
   } catch(e) {
     return false;
@@ -335,16 +345,18 @@ async function initAuth() {
     if (session && session.user) {
       _currentUser = await _syncUserProfile(session.user);
       const restored = await _restoreFromDatabase();
-      if (restored && _currentUser) {
-        // Authenticated returning user with data — go straight to dashboard
-        // Use setTimeout to let the rest of the app JS finish loading first
+
+      if (restored && _currentUser && state.level) {
+        // Authenticated returning user with completed onboarding — go to dashboard
         setTimeout(() => {
-          if (typeof showDashboard === 'function' && state.level) {
+          if (typeof showDashboard === 'function') {
             showDashboard();
-          } else {
-            _updateReturningBanner();
           }
         }, 0);
+      } else if (_currentUser) {
+        // Authenticated but no onboarding data yet — just update the banner
+        // They'll go through the normal flow
+        _updateReturningBanner();
       }
     }
   } catch(e) {

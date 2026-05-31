@@ -144,7 +144,12 @@ async function handleEmailSubmit() {
 }
 
 function skipAuth() {
-  // Skip auth entirely — go straight to recap
+  // Ensure screenOrder is fully expanded before jumping
+  if (screenOrder.length <= 2) {
+    screenOrder = state.posted === 'no'
+      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
+      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+  }
   currentIndex = screenOrder.indexOf('screen-recap');
   populateRecap();
   showScreen('screen-recap');
@@ -153,6 +158,12 @@ function skipAuth() {
 
 function advancePastAuth() {
   // Called by supabase.js when magic link auth completes
+  // Ensure screenOrder is fully expanded
+  if (screenOrder.length <= 2) {
+    screenOrder = state.posted === 'no'
+      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
+      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+  }
   // Save onboarding to DB now that we have a user
   saveOnboardingToDb();
   currentIndex = screenOrder.indexOf('screen-recap');
