@@ -348,14 +348,12 @@ async function initAuth() {
 
       if (restored && _currentUser && state.level) {
         // Authenticated returning user with completed onboarding — go to dashboard
-        setTimeout(() => {
-          if (typeof showDashboard === 'function') {
-            showDashboard();
-          }
-        }, 0);
+        if (typeof showDashboard === 'function') {
+          showDashboard();
+        }
+        return; // stop here — don't fall through to loadProgress banner logic
       } else if (_currentUser) {
-        // Authenticated but no onboarding data yet — just update the banner
-        // They'll go through the normal flow
+        // Authenticated but no meaningful data yet — update banner only
         _updateReturningBanner();
       }
     }

@@ -2444,6 +2444,12 @@ function exportPDF(mode) {
 
 // ── SHOW DASHBOARD DIRECTLY (authenticated returning users) ───
 function showDashboard() {
+  // Make sure screenOrder is expanded for resuming from dashboard
+  if (screenOrder.length <= 2) {
+    screenOrder = state.posted === 'no'
+      ? ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
+      : ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-email','screen-auth-wait','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+  }
   buildPlan();
   showScreen('plan-screen');
   currentIndex = screenOrder.indexOf('plan-screen');
@@ -3296,8 +3302,23 @@ async function trackSession() {
 }
 
 // ── INIT ──────────────────────────────────────────────
-// Check for existing Supabase session first, then fall back to localStorage
-initAuth().finally(() => {
-  loadProgress();
+// Hide screen-0 briefly while we check for an existing auth session
+// This prevents the welcome screen flashing before the dashboard appears
+(async () => {
+  const s0 = document.getElementById('screen-0');
+  if (s0) s0.style.visibility = 'hidden';
+
+  await initAuth();
+
+  // If initAuth sent us to dashboard, screen-0 stays hidden (it's no longer active)
+  // If not authenticated, reveal screen-0 and load localStorage progress
+  const activePlan = document.getElementById('plan-screen');
+  if (activePlan && activePlan.classList.contains('active')) {
+    // Dashboard is showing — don't reveal screen-0
+    if (s0) s0.style.visibility = '';
+  } else {
+    if (s0) s0.style.visibility = '';
+    loadProgress();
+  }
   updateProgress('screen-0');
-});
+})();
