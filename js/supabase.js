@@ -285,7 +285,12 @@ async function initAuth() {
       await _flushSaveQueue();
 
       if (state.level && typeof showDashboard === 'function') {
-        showDashboard();
+        if (typeof _dashboardShown !== 'undefined' && _dashboardShown) {
+          // Already shown by loadProgress — just refresh
+          try { buildPlan(); } catch(e) {}
+        } else {
+          showDashboard();
+        }
         return 'dashboard';
       } else if (_currentUser) {
         _updateReturningBanner();

@@ -13,6 +13,7 @@ let currentIndex = 0;
 let currentVideoIndex = 0;
 let currentPreviewVideoNum = 1;
 let transitioning = false;
+let _dashboardShown = false; // prevents double showDashboard during auth race
 let editingFromPlan = false;
 let mvoQ2Skipped = false;
 let maxProgressPct = 0;    // L1 blue bar — never decreases
@@ -2783,7 +2784,9 @@ function exportPDF(mode) {
 
 // ── SHOW DASHBOARD DIRECTLY (authenticated returning users) ───
 function showDashboard() {
-  window._SIS_log && _SIS_log('showDashboard:start', { level: state.level, name: state.name, hasVideos: Object.keys(state.videos||{}).length, videoStatus: state.videoStatus });
+  window._SIS_log && _SIS_log('showDashboard:start', { level: state.level, name: state.name, alreadyShown: _dashboardShown });
+  _dashboardShown = true;
+  transitioning = false; // reset any stuck transition before we show the dashboard
   if (screenOrder.length <= 2) {
     screenOrder = state.posted === 'no'
       ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
@@ -2809,10 +2812,8 @@ function showDashboard() {
 function restartWizard(){
   if (!confirm('This will erase all your progress and start over. Are you sure?')) return;
   localStorage.removeItem(SAVE_KEY);
-  // Sign out of Supabase so returning auth doesn't restore old data
-  if (typeof _sb !== 'undefined') {
-    _sb.auth.signOut().catch(() => {});
-  }
+  _dashboardShown = false;
+  if (typeof _sb !== 'undefined') { _sb.auth.signOut().catch(() => {}); }
   Object.keys(state).forEach(k=>state[k]=k==='videos'||k==='videoStatus'?{}:null);
   state.name='';state.minigoalText='';state.videoStatus={};
   state.mvoQ2=null;state.mvoQ3=null;state.mvoQ4=null;
