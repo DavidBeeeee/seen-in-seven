@@ -126,21 +126,18 @@ async function handleEmailSubmit() {
     return;
   }
 
-  if (btn) { btn.textContent = 'Sending...'; btn.disabled = true; }
+  if (btn) { btn.textContent = 'Saving...'; btn.disabled = true; }
   if (errEl) errEl.style.display = 'none';
 
-  try {
-    await sendMagicLink(email);
-    // Show the waiting screen
-    const waitMsg = document.getElementById('auth-wait-email-display');
-    if (waitMsg) waitMsg.textContent = 'We sent a magic link to ' + email + '. Click it and you\'ll land right back here, ready to go.';
-    currentIndex = screenOrder.indexOf('screen-auth-wait');
-    showScreen('screen-auth-wait');
-  } catch(err) {
-    if (errEl) { errEl.textContent = 'Something went wrong sending the link. Try again or skip for now.'; errEl.style.display = 'block'; }
-  } finally {
-    if (btn) { btn.textContent = 'Send My Link →'; btn.disabled = false; }
-  }
+  // Send the magic link silently in the background — don't wait for it
+  // User continues immediately to recap; auth completes when they click the link later
+  sendMagicLink(email).catch(() => {
+    // If sending fails silently, that's fine — they're still moving forward
+  });
+
+  // Advance immediately to recap without waiting for email confirmation
+  if (btn) { btn.textContent = 'Send My Link →'; btn.disabled = false; }
+  skipAuth();
 }
 
 function skipAuth() {

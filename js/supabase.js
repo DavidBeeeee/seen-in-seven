@@ -13,14 +13,15 @@ _sb.auth.onAuthStateChange(async (event, session) => {
   if (session && session.user) {
     _currentUser = await _syncUserProfile(session.user);
 
-    // If we're on the magic-link waiting screen, advance past it
+    // If we're on the auth waiting screen, advance past it
     const waitScreen = document.getElementById('screen-auth-wait');
     if (waitScreen && waitScreen.classList.contains('active')) {
       await _restoreFromDatabase();
       advancePastAuth();
+      return;
     }
 
-    // Update the returning banner if visible
+    // Update the returning banner if visible and we're on screen-0
     _updateReturningBanner();
 
   } else {
@@ -346,14 +347,44 @@ async function initAuth() {
       _currentUser = await _syncUserProfile(session.user);
       const restored = await _restoreFromDatabase();
 
-      if (restored && _currentUser && state.level) {
-        // Authenticated returning user with completed onboarding — go to dashboard
+      // Check both DB state and localStorage for level
+      // (magic link returns to a fresh page load where DB restore runs before localStorage)
+      let effectiveLevel = state.level;
+      if (!effectiveLevel) {
+        try {
+          const lsRaw = localStorage.getItem('bwb_challenge_v1');
+          if (lsRaw) {
+            const lsData = JSON.parse(lsRaw);
+            effectiveLevel = lsData.level || null;
+            // If found in localStorage but not DB, restore it to state
+            if (effectiveLevel && !state.level) {
+              state.level   = lsData.level;
+              state.name    = lsData.name    || state.name;
+              state.posted  = lsData.posted  || state.posted;
+              state.blocker = lsData.blocker || state.blocker;
+              state.history = lsData.history || state.history;
+              state.videos  = lsData.videos  || state.videos;
+              state.videoStatus = lsData.videoStatus || state.videoStatus;
+              state.mvoQ2   = lsData.mvoQ2   || state.mvoQ2;
+              state.mvoQ3   = lsData.mvoQ3   || state.mvoQ3;
+              state.mvoQ4   = lsData.mvoQ4   || state.mvoQ4;
+              state.topicFreewrite = lsData.topicFreewrite || state.topicFreewrite;
+              state.minigoal = lsData.minigoal || state.minigoal;
+              state.minigoalText = lsData.minigoalText || state.minigoalText;
+            }
+          }
+        } catch(e) {}
+      }
+
+      if (effectiveLevel && _currentUser) {
+        // Authenticated user with completed onboarding — go to dashboard
         if (typeof showDashboard === 'function') {
           showDashboard();
         }
-        return; // stop here — don't fall through to loadProgress banner logic
+        return;
       } else if (_currentUser) {
-        // Authenticated but no meaningful data yet — update banner only
+        // Authenticated but hasn't completed onboarding yet
+        // Just note the auth — they'll continue through the normal flow
         _updateReturningBanner();
       }
     }
