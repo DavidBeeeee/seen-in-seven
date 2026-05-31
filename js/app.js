@@ -3360,8 +3360,21 @@ function launchConfetti() {
 
   if (s0) s0.style.visibility = '';
 
-  if (initResult !== 'dashboard') {
+  // If the URL is /dashboard, always try to show the dashboard
+  if (window.location.pathname === '/dashboard') {
+    if (initResult === 'dashboard') {
+      // Already there
+    } else if (state.level) {
+      // Has local data but not authenticated — show dashboard anyway
+      showDashboard();
+    } else {
+      // No data at all — redirect to home to start fresh
+      window.history.replaceState(null, '', '/');
+      loadProgress();
+    }
+  } else if (initResult !== 'dashboard') {
     loadProgress();
   }
+
   updateProgress('screen-0');
 })();
