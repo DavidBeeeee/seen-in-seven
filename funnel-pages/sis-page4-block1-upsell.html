@@ -1,0 +1,391 @@
+<!-- ═══════════════════════════════════════════════════════════
+     SEENINSEVEN... YOUR AI STORYSTARTER
+     Page 4 · Block 1 · Upsell... 1-on-1 with David
+     Colorado Mastermind · David Bee
+     Place ABOVE the Systeme yes/no upsell buttons.
+
+     SYSTEME SETUP NOTES:
+     - Page background: #0D2828 (Teal Deep)
+     - NO navigation, no logo, no distractions
+     - YES button (below this block): "YES, I WANT TO WORK WITH DAVID... $250/mo"
+     - NO button (below YES): "No thanks, I'll work through this on my own"
+     - YES links to: one-click upsell ($250/month, cancel anytime)
+     - NO links to: Page 5 (downsell)
+     - Pricing: $250/month, no contracts, cancel anytime
+
+     ADMIN NOTE:
+     Testimonials below are placeholders.
+     Replace with real client testimonials before launch.
+═══════════════════════════════════════════════════════════ -->
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+/* ═══════════════════════════
+   SYSTEME.IO OVERRIDE
+═══════════════════════════ */
+.sis-p4 p,
+.sis-p4 div,
+.sis-p4 span,
+.sis-p4 li {
+  text-align: left !important;
+}
+
+/* ═══════════════════════════
+   PAGE VARS + RESET
+   Gold accent = premium 1-on-1 product
+═══════════════════════════ */
+.sis-p4 {
+  --teal-deep:   #0D2828;
+  --teal-mid:    #1E5C5C;
+  --teal-bright: #2A9090;
+  --teal-vivid:  #32B8B8;
+  --teal-soft:   #68C8C8;
+  --teal-pale:   #A8DEDE;
+  --teal-frost:  #EEF9F9;
+  --cream:       #F8FAFA;
+  --white:       #FFFFFF;
+  --ink:         #0D2828;
+  --ink-soft:    #2A4848;
+
+  /* Gold scale for this page */
+  --gold:        #C8A84B;
+  --gold-light:  #E8C86C;
+  --gold-pale:   #F5E8C0;
+  --gold-dim:    rgba(200, 168, 75, 0.15);
+  --gold-border: rgba(200, 168, 75, 0.3);
+
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  line-height: 1.8;
+  background: var(--teal-deep);
+  color: var(--teal-pale);
+  padding: 72px 24px 40px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.sis-p4 *, .sis-p4 *::before, .sis-p4 *::after {
+  box-sizing: border-box;
+}
+.sis-p4-inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ═══════════════════════════
+   EYEBROW... Gold
+═══════════════════════════ */
+.sis-p4-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.sis-p4-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 28px;
+  height: 2px;
+  background: var(--gold);
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════
+   HEADLINES
+═══════════════════════════ */
+.sis-p4-h1 {
+  font-family: 'Lora', serif;
+  font-size: clamp(28px, 5vw, 44px);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--white);
+  margin-bottom: 36px;
+}
+.sis-p4-h1 em {
+  font-style: italic;
+  color: var(--gold-light);
+}
+.sis-p4-section-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 48px 0 22px;
+}
+.sis-p4-section-title::before,
+.sis-p4-section-title::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--gold-border);
+}
+
+/* ═══════════════════════════
+   BODY COPY
+═══════════════════════════ */
+.sis-p4-body {
+  font-size: 20px;
+  color: var(--teal-pale);
+  line-height: 1.85;
+  margin-bottom: 22px;
+}
+.sis-p4-body:last-of-type { margin-bottom: 0; }
+.sis-p4-body strong { color: var(--white); font-weight: 700; }
+
+/* ═══════════════════════════
+   PULL QUOTE (Permanent Marker)... Gold
+═══════════════════════════ */
+.sis-p4-pull {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 22px;
+  line-height: 1.6;
+  color: var(--gold-light);
+  background: var(--gold-dim);
+  border-left: 3px solid var(--gold);
+  padding: 20px 24px;
+  margin: 36px 0;
+  border-radius: 0 8px 8px 0;
+}
+.sis-p4-pull .sis-p4-attr {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--gold);
+  display: block;
+  margin-top: 10px;
+}
+
+/* ═══════════════════════════
+   OTO WINDOW CALLOUT
+═══════════════════════════ */
+.sis-p4-oto {
+  background: rgba(200, 168, 75, 0.05);
+  border: 1px solid var(--gold-border);
+  border-top: 2px solid var(--gold);
+  border-radius: 13px;
+  padding: 26px 28px;
+  margin: 32px 0;
+}
+.sis-p4-oto-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--gold);
+  display: block;
+  margin-bottom: 14px;
+}
+.sis-p4-oto p {
+  font-size: 20px;
+  color: var(--teal-pale);
+  line-height: 1.8;
+}
+
+/* ═══════════════════════════
+   PRICE CARD... Gold
+═══════════════════════════ */
+.sis-p4-price-card {
+  background: var(--gold-dim);
+  border: 1px solid var(--gold-border);
+  border-radius: 14px;
+  padding: 34px 30px;
+  text-align: center;
+  margin: 36px 0;
+}
+.sis-p4-price-amount {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(40px, 8vw, 56px);
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 8px;
+}
+.sis-p4-price-sub {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--gold-light);
+  opacity: 0.8;
+}
+
+/* ═══════════════════════════
+   TESTIMONIALS
+═══════════════════════════ */
+.sis-p4-testimonials-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.22em;
+  color: var(--gold);
+  text-align: center;
+  margin: 44px 0 22px;
+  display: block;
+}
+.sis-p4-testimonial {
+  background: rgba(200, 168, 75, 0.04);
+  border: 1px solid var(--gold-border);
+  border-left: 3px solid var(--gold);
+  border-radius: 0 13px 13px 0;
+  padding: 24px 28px;
+  margin-bottom: 14px;
+}
+.sis-p4-t-text {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 20px;
+  color: var(--teal-pale);
+  line-height: 1.8;
+  margin-bottom: 12px;
+}
+.sis-p4-t-attr {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  opacity: 0.8;
+}
+
+/* ═══════════════════════════
+   LEAD-IN TO BUTTONS
+═══════════════════════════ */
+.sis-p4-leadin {
+  text-align: center;
+  margin-top: 48px;
+  padding-bottom: 8px;
+}
+.sis-p4-leadin p {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 22px;
+  color: var(--teal-pale);
+  line-height: 1.65;
+}
+.sis-p4-arrow {
+  display: block;
+  font-size: 24px;
+  color: var(--gold);
+  margin-top: 14px;
+  opacity: 0.55;
+  animation: p4bounce 2s ease-in-out infinite;
+}
+@keyframes p4bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(8px); }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .sis-p4 { padding: 56px 18px 36px; }
+  .sis-p4-testimonial { padding: 20px 20px; }
+  .sis-p4-price-card { padding: 26px 22px; }
+  .sis-p4-oto { padding: 22px 20px; }
+}
+</style>
+
+<div class="sis-p4">
+  <div class="sis-p4-inner">
+
+    <div class="sis-p4-eyebrow">For SeenInSeven Members Only</div>
+
+    <h1 class="sis-p4-h1">
+      You Just Invested in the Scripts.<br>
+      Let's Talk About <em>What Makes Them Actually Stick.</em>
+    </h1>
+
+    <p class="sis-p4-body">I want to be real with you for a second, since you just made a decision that people avoid for months, sometimes years, and that tells me something important about where your head is right now. You're ready to move. And I want to catch you in this moment since I know from experience what tends to happen next.</p>
+
+    <p class="sis-p4-body">You'll open SeenInSeven, feel great about it, probably build and film Video 1 in the first couple of days. And then somewhere between Video 2 and Video 4, something will shift. You'll film a take you're not confident about. You'll second-guess your hook. You'll start wondering if anyone is actually going to care about what you're putting out there. And instead of pushing through that moment, you'll close the app and tell yourself you'll come back to it tomorrow. Tomorrow becomes next week. Next week becomes "I'll try again when I feel more ready."</p>
+
+    <p class="sis-p4-body">I'm not saying this to be discouraging. I'm saying it since I've watched it happen to some of the most talented and capable people I've ever worked with. And the one thing every single one of them had in common was that they were trying to figure it out alone.</p>
+
+    <div class="sis-p4-pull">
+      "That's what 1-on-1 with David exists to fix."
+      <span class="sis-p4-attr">— David Bee</span>
+    </div>
+
+    <p class="sis-p4-body">Here's something worth knowing about me: I built my entire business without making content. No TikToks. No Reels. No posting strategy whatsoever. Just real conversations, real outreach, and showing up for people in ways that most coaches and consultants never bother to do. That worked, and it still works.</p>
+
+    <p class="sis-p4-body">But I kept watching something happen that I couldn't ignore. People with less experience than me, less skill, and less genuine care for the people they were supposed to be helping were growing online and building real businesses while I stayed invisible. So I started doing both. And now I help other people do the same thing, since I know exactly what it feels like to have the skills and the experience and still freeze up the second a camera is pointed at you.</p>
+
+    <div class="sis-p4-section-title">What 1-on-1 with David Actually Includes</div>
+
+    <p class="sis-p4-body">Working one-on-one with me is exactly what it sounds like. Not a group program where you get a Zoom link once a month and a folder full of resources you'll never open. You and me, working together, with me available from noon to midnight every single day to look at your actual content, give you honest feedback, and tell you exactly what to do when you're stuck.</p>
+
+    <p class="sis-p4-body">Here's what that looks like in practice. You post Video 1 and I watch it, then tell you specifically what's working and what to adjust for the next one. You're trying to write a hook and nothing feels right, so you message me and we work through it together in real time. You're about to put something new out into the world and you want someone who actually understands positioning to look at it first. That's what this is.</p>
+
+    <p class="sis-p4-body">And here's the part that changes the math on this completely. In your first month working together, we're not just reviewing your videos. We're building the actual infrastructure of your business from the ground up: a website if you need one, a payment portal so you can actually collect money, a CRM so your contacts aren't scattered across a dozen apps and a pile of sticky notes, and the structure for your first product or service if that's where you're heading. This is the work that typically costs thousands of dollars to piece together from separate tools and separate coaches who each cover one piece of the puzzle. We do it together, in the first month, so you're not going into month two with content skills and no business to point them at.</p>
+
+    <p class="sis-p4-body">One more thing worth saying directly: a lot of people working through a program like this are already paying for tools and subscriptions they either don't fully use or don't need at all. After working together, it's not unusual to consolidate to fewer tools and actually save money every month. That's not a promise, but it happens regularly enough that it's worth knowing.</p>
+
+    <p class="sis-p4-body">And the bigger picture: if you do this right, you will not need another course or training program until you are actively making money and want to go deeper on something very specific. Not since this covers everything in theory, but since I'll close the actual gaps in your business as they come up, in real time, with you. That is fundamentally different from buying a course that teaches you what someone else figured out three years ago.</p>
+
+    <div class="sis-p4-oto">
+      <span class="sis-p4-oto-label">Why this offer is only available right here</span>
+      <p>The best time to add coaching to SeenInSeven is right now, before you've filmed your first video, while you're still in the decision-making headspace that made you invest in SeenInSeven in the first place. A week from now, the initial motivation will have cooled and the patterns will already be forming. That's the window. Once you're inside the portal and working through the material on your own, the moment to redirect changes completely. This offer is only available here since here is genuinely the right time for it to matter.</p>
+    </div>
+
+    <div class="sis-p4-section-title">The Numbers. Simple as It Gets.</div>
+
+    <p class="sis-p4-body">$250 a month. No contracts. No lock-in. Cancel anytime, for any reason, and that's the end of it with no awkward conversation and nothing to unwind. That's not a discounted rate or a trial price. It is the price since I keep my roster intentionally small and charge what allows me to give people the level of attention this actually requires.</p>
+
+    <p class="sis-p4-body">If you want a big coaching program with a team of assistants and a support ticket system, there are plenty of those. This isn't that. This is direct access, honest feedback, and someone genuinely invested in the outcome. And to be completely straightforward: if you're building a business and you can't make $250 a month worth it with the results you should see in the first month together, that's the first thing we're going to fix.</p>
+
+    <div class="sis-p4-price-card">
+      <div class="sis-p4-price-amount">$250 / Month</div>
+      <div class="sis-p4-price-sub">No contracts &nbsp;&bull;&nbsp; Cancel anytime &nbsp;&bull;&nbsp; Direct access, noon to midnight</div>
+    </div>
+
+    <span class="sis-p4-testimonials-label">What Clients Have Said</span>
+
+    <div class="sis-p4-testimonial">
+      <p class="sis-p4-t-text">"I posted more content in my first month working with David Bee than I had in the entire two years before that. He has this way of cutting through the overthinking and just showing you the next step, and somehow that's genuinely all you really need to keep moving."</p>
+      <p class="sis-p4-t-attr">Business Coach, Colorado</p>
+    </div>
+
+    <div class="sis-p4-testimonial">
+      <p class="sis-p4-t-text">"I was completely convinced I wasn't ready for something like this. David basically told me there's no version of ready that you reach by waiting, and then he walked me through exactly what I was going to post that week. It worked, and I haven't looked back since."</p>
+      <p class="sis-p4-t-attr">Photographer, Denver</p>
+    </div>
+
+    <div class="sis-p4-testimonial">
+      <p class="sis-p4-t-text">"The availability is the part that surprised me most. I've messaged him at 10 at night in a panic about a video I was about to post, and he responded within minutes with real, specific, useful feedback. That's not something you find anywhere else at any price."</p>
+      <p class="sis-p4-t-attr">Health Coach, Colorado</p>
+    </div>
+
+    <div class="sis-p4-leadin">
+      <p>If you're ready to stop doing this alone, I'm ready to work with you.</p>
+      <span class="sis-p4-arrow">&#8595;</span>
+    </div>
+
+    <!--
+      ════════════════════════════════════════
+      [SYSTEME YES BUTTON GOES HERE]
+      Label: "YES, I WANT TO WORK WITH DAVID... $250/mo"
+      Style: Gold background (#C8A84B), full width, prominent
+
+      [SYSTEME NO BUTTON GOES HERE]
+      Label: "No thanks, I'll work through this on my own"
+      Style: Small, subtle, text-only or minimal
+      ════════════════════════════════════════
+    -->
+
+  </div><!-- /.sis-p4-inner -->
+</div><!-- /.sis-p4 -->

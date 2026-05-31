@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>777 Challenge — Day 6</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+.d6-wrap { max-width: 720px; margin: 0 auto; padding: 40px 20px 60px; font-family: 'Nunito', sans-serif; color: #0D2828; }
+
+
+.d6-eyebrow { font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.28em; color: #2A9090; text-transform: uppercase; margin-bottom: 14px; }
+
+
+/* Card 1 — dark teal — proximity pain */
+.d6-stakes { background: #0D2828; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d6-stakes .d6-eyebrow { color: #68C8C8; }
+.d6-stakes h2 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #fff; line-height: 1.4; margin-bottom: 16px; }
+.d6-stakes p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #A8DEDE; line-height: 1.8; margin-bottom: 16px; }
+.d6-stakes p:last-child { margin-bottom: 0; }
+.d6-stakes strong { color: #fff; }
+
+
+/* Pull quote — dark background version */
+.d6-quote-dark { background: rgba(50,184,184,0.07); border-left: 3px solid #32B8B8; border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 24px 0; }
+.d6-quote-dark p { font-family: 'Permanent Marker', cursive; font-size: 20px; color: #68C8C8; line-height: 1.5; margin-bottom: 0; }
+.d6-quote-dark span { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.2em; color: #32B8B8; text-transform: uppercase; margin-top: 10px; display: block; }
+
+
+/* Card 2 — gold — what this video does */
+.d6-action { background: #F5E8C0; border: 1px solid #E8C86C; border-left: 4px solid #C8A84B; border-radius: 12px; padding: 28px 32px; margin-bottom: 28px; }
+.d6-action .d6-eyebrow { color: #C8A84B; }
+.d6-action h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; margin-bottom: 14px; line-height: 1.4; }
+.d6-action p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d6-action p:last-of-type { margin-bottom: 24px; }
+.d6-action strong { color: #0D2828; }
+.d6-btn { display: inline-block; background: #0D2828; color: #32B8B8; font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border-radius: 8px; }
+
+
+/* Card 3 — white bordered — the unfinished version */
+.d6-mirror { background: #fff; border: 1px solid #D8F0F0; border-left: 4px solid #32B8B8; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d6-mirror .d6-eyebrow { color: #2A9090; }
+.d6-mirror h2 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d6-mirror p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d6-mirror p:last-child { margin-bottom: 0; }
+.d6-mirror strong { color: #0D2828; }
+
+
+/* Pull quote — light background version */
+.d6-quote-light { background: #EEF9F9; border-left: 3px solid #32B8B8; border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 24px 0; }
+.d6-quote-light p { font-family: 'Permanent Marker', cursive; font-size: 20px; color: #1E5C5C; line-height: 1.5; margin-bottom: 0; }
+.d6-quote-light span { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.2em; color: #2A9090; text-transform: uppercase; margin-top: 10px; display: block; }
+
+
+/* Divider */
+.d6-divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, #D8E4E8, transparent); margin: 32px 0; }
+
+
+/* Card 4 — white — still time to join */
+.d6-join { background: #fff; border: 1px solid #D8E4E8; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d6-join .d6-eyebrow { color: #2A9090; }
+.d6-join h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d6-join p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d6-join p:last-of-type { margin-bottom: 24px; }
+.d6-join strong { color: #0D2828; }
+.d6-join-btn { display: inline-block; background: #32B8B8; color: #0D2828; font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border-radius: 8px; }
+
+
+/* Card 5 — white — contact David Bee */
+.d6-contact { background: #fff; border: 1px solid #D8E4E8; border-radius: 12px; padding: 36px 36px 32px; }
+.d6-contact .d6-eyebrow { margin-bottom: 14px; color: #2A9090; }
+.d6-contact h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d6-contact p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d6-contact p:last-of-type { margin-bottom: 28px; }
+.d6-links { display: flex; flex-direction: column; gap: 12px; }
+.d6-link { display: flex; align-items: center; gap: 14px; text-decoration: none; background: #EEF9F9; border: 1px solid #D8F0F0; border-radius: 10px; padding: 14px 18px; }
+.d6-link-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; }
+.d6-link-label { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.18em; color: #2A9090; text-transform: uppercase; margin-bottom: 2px; display: block; }
+.d6-link-action { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; color: #0D2828; display: block; }
+
+
+@media (max-width: 600px) {
+  .d6-wrap { padding: 24px 16px 48px; }
+  .d6-stakes, .d6-action, .d6-mirror, .d6-join, .d6-contact { padding: 24px 20px; }
+  .d6-stakes h2, .d6-mirror h2, .d6-action h3, .d6-join h3, .d6-contact h3 { font-size: 24px; }
+}
+</style>
+</head>
+<body style="margin:0;padding:0;background:#F8FAFA;">
+<div class="d6-wrap">
+
+
+  <!-- CARD 1 — dark teal — proximity pain -->
+  <div class="d6-stakes">
+    <p class="d6-eyebrow">Day 6 — The Ordeal</p>
+    <h2>Five videos down. One after today. And somehow the closer you get, the louder the doubt gets. That's not a coincidence.</h2>
+    <p>This is the part nobody talks about when they describe what it feels like to build something. The beginning has energy. The middle has momentum. But right here, this close to the end, something strange happens. The stakes feel higher since there's actually something to lose now. The doubt gets louder since you've come far enough that stopping would actually mean something.</p>
+    <p>That's not a sign that something is wrong. That's what it feels like to be close to something real.</p>
+    <p>Five videos ago you were someone who hadn't posted yet. Today you are someone who has shown up five times, said things on camera you've never said publicly, and proven something to yourself that no amount of planning ever could. The voice telling you to slow down right now isn't protecting you. It's just scared of what finishing looks like.</p>
+    <div class="d6-quote-dark">
+      <p>It's always loudest right before the breakthrough. That's how you know you're close.</p>
+      <span>— David Bee</span>
+    </div>
+  </div>
+
+
+  <!-- CARD 2 — gold — what this video does -->
+  <div class="d6-action">
+    <p class="d6-eyebrow">What today's video is actually doing</p>
+    <h3>Today is the most honest video in the whole sequence. The one where the armor comes off. And that specific moment is what turns a follower into someone who never leaves.</h3>
+    <p>People don't build loyalty to perfect. They build loyalty to real. To the person who showed up five times and then on Day 6 stopped performing progress and just told the truth about where they actually are. The doubt. The uncertainty. The gap between how far they've come and how much they still don't have figured out.</p>
+    <p>That honesty isn't weakness. It's the rarest thing on the internet. And the people watching who see it will trust you with things they wouldn't trust to anyone who only ever showed the polished side.</p>
+    <p>Today's script is built to pull that out of you gently and put it on screen in a way that lands without oversharing. You don't have to have it figured out. You just have to be honest about the fact that you don't.</p>
+    <p>Open the app. Pull up your Video 6 script. Read it once. Press record. Post it.</p>
+    <a href="https://coloradomastermind.onlinecoursehost.com/courses/contentchallenge" class="d6-btn" target="_blank">Open the App &rarr;</a>
+  </div>
+
+
+  <!-- CARD 3 — white bordered — the unfinished version -->
+  <div class="d6-mirror">
+    <p class="d6-eyebrow">The person who stops here</p>
+    <h2>The person who finishes this challenge and the person who stops on Day 6 are not the same person. And you already know which one you want to be.</h2>
+    <p>Stopping here doesn't feel dramatic. That's the thing nobody warns you about. It doesn't feel like quitting. It feels like taking a break, like giving yourself grace, like you've already done more than most and that should be enough.</p>
+    <p>And maybe it is enough for someone else. But you didn't start this to do enough. You started since you were tired of being invisible. Tired of watching people with less experience and less genuine care take up the space that belongs to you. Tired of knowing you have something real to give and having nobody know you exist.</p>
+    <p>Six videos doesn't finish that. Seven does.</p>
+    <div class="d6-quote-light">
+      <p>One more today. One more tomorrow. Then you'll know.</p>
+      <span>— David Bee</span>
+    </div>
+    <p><strong>The question of what it would have felt like to see it through doesn't go away clean if you stop now. It just gets quieter and heavier over time.</strong></p>
+  </div>
+
+
+  <div class="d6-divider"></div>
+
+
+  <!-- CARD 4 — white — still time to join -->
+  <div class="d6-join">
+    <p class="d6-eyebrow">Just finding this?</p>
+    <h3>Day 6 is a strange place to start. Start anyway.</h3>
+    <p>The sequence is still open. The app still builds your scripts in minutes. The community is still going. Seven videos in order at your pace, starting from wherever you are right now. That's all this has ever been.</p>
+    <p><strong>Seven dollars. Seven videos. Your pace, your terms. The door is still open.</strong></p>
+    <a href="https://content.coloradomastermind.com/777challenge" class="d6-join-btn" target="_blank">Join the Challenge &rarr;</a>
+  </div>
+
+
+  <!-- CARD 5 — white — contact David Bee -->
+  <div class="d6-contact">
+    <p class="d6-eyebrow">David is here</p>
+    <h3>Six days in and still going. If something is weighing on you right now, that's exactly what I'm here for.</h3>
+    <p>This far into the challenge the friction isn't usually technical. It's personal. The doubt about whether it's working. The uncertainty about what comes next. The quiet voice asking if any of this is actually going anywhere.</p>
+    <p>Those aren't questions you have to sit with alone. Reach out and let's talk through it. Every conversation I have with someone at this exact stage makes me better at helping the next person who gets here. You reaching out isn't a burden. It's how this whole thing gets better.</p>
+    <p>I'm here. Use it.</p>
+    <div class="d6-links">
+      <a href="https://calendly.com/davidbee" class="d6-link" target="_blank">
+        <span class="d6-link-icon">📅</span>
+        <div><span class="d6-link-label">Book a call</span><span class="d6-link-action">Pick a time on David's calendar</span></div>
+      </a>
+      <a href="https://m.me/davidbeeeee" class="d6-link" target="_blank">
+        <span class="d6-link-icon">💬</span>
+        <div><span class="d6-link-label">Messenger</span><span class="d6-link-action">DM David directly on Facebook</span></div>
+      </a>
+      <a href="mailto:contact@davidbee.me" class="d6-link">
+        <span class="d6-link-icon">📧</span>
+        <div><span class="d6-link-label">Email</span><span class="d6-link-action">contact@davidbee.me</span></div>
+      </a>
+    </div>
+  </div>
+
+
+</div>
+</body>
+</html>

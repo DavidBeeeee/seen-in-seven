@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>777 Challenge — Day 1</title>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;600;700&family=Lora:ital,wght@0,400;0,700;1,400&family=Nunito:wght@400;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+.d1-wrap { max-width: 720px; margin: 0 auto; padding: 40px 20px 60px; font-family: 'Nunito', sans-serif; color: #0D2828; }
+.d1-psych { background: #fff; border: 1px solid #D8F0F0; border-left: 4px solid #32B8B8; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d1-eyebrow { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.28em; color: #2A9090; text-transform: uppercase; margin-bottom: 14px; }
+.d1-psych h2 { font-family: 'Lora', serif; font-size: 22px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d1-psych p { font-family: 'Nunito', sans-serif; font-size: 16px; color: #2A4848; line-height: 1.75; margin-bottom: 14px; }
+.d1-psych p:last-child { margin-bottom: 0; }
+.d1-quote { background: #EEF9F9; border-left: 3px solid #32B8B8; border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 24px 0; }
+.d1-quote p { font-family: 'Permanent Marker', cursive; font-size: 18px; color: #1E5C5C; line-height: 1.5; margin-bottom: 0; }
+.d1-quote span { font-family: 'Oswald', sans-serif; font-size: 9px; font-weight: 600; letter-spacing: 0.2em; color: #2A9090; text-transform: uppercase; margin-top: 10px; display: block; }
+.d1-divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, #D8E4E8, transparent); margin: 32px 0; }
+.d1-action { background: #0D2828; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d1-action .d1-eyebrow { color: #68C8C8; }
+.d1-action h2 { font-family: 'Lora', serif; font-size: 22px; font-weight: 700; color: #fff; line-height: 1.4; margin-bottom: 16px; }
+.d1-action p { font-family: 'Nunito', sans-serif; font-size: 16px; color: #A8DEDE; line-height: 1.75; margin-bottom: 16px; }
+.d1-steps { list-style: none; padding: 0; margin: 0 0 28px; display: flex; flex-direction: column; gap: 14px; }
+.d1-steps li { display: flex; align-items: flex-start; gap: 14px; font-family: 'Nunito', sans-serif; font-size: 15px; color: #fff; line-height: 1.6; }
+.d1-num { font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 700; color: #0D2828; background: #32B8B8; border-radius: 50%; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+.d1-btn { display: inline-block; background: #32B8B8; color: #0D2828; font-family: 'Oswald', sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border-radius: 8px; }
+.d1-friction { background: #F5E8C0; border: 1px solid #E8C86C; border-left: 4px solid #C8A84B; border-radius: 12px; padding: 28px 32px; margin-bottom: 28px; }
+.d1-friction .d1-eyebrow { color: #C8A84B; }
+.d1-friction h3 { font-family: 'Lora', serif; font-size: 19px; font-weight: 700; color: #0D2828; margin-bottom: 14px; line-height: 1.4; }
+.d1-friction p { font-family: 'Nunito', sans-serif; font-size: 15px; color: #2A4848; line-height: 1.75; margin-bottom: 12px; }
+.d1-friction p:last-child { margin-bottom: 0; }
+.d1-contact { background: #fff; border: 1px solid #D8E4E8; border-radius: 12px; padding: 36px 36px 32px; }
+.d1-contact .d1-eyebrow { margin-bottom: 14px; }
+.d1-contact h3 { font-family: 'Lora', serif; font-size: 21px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d1-contact p { font-family: 'Nunito', sans-serif; font-size: 15px; color: #2A4848; line-height: 1.8; margin-bottom: 14px; }
+.d1-contact p:last-of-type { margin-bottom: 24px; }
+.d1-links { display: flex; flex-direction: column; gap: 12px; }
+.d1-link { display: flex; align-items: center; gap: 14px; text-decoration: none; background: #EEF9F9; border: 1px solid #D8F0F0; border-radius: 10px; padding: 14px 18px; }
+.d1-link-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; }
+.d1-link-label { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.18em; color: #2A9090; text-transform: uppercase; margin-bottom: 2px; display: block; }
+.d1-link-action { font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700; color: #0D2828; display: block; }
+@media (max-width: 600px) {
+  .d1-wrap { padding: 24px 16px 48px; }
+  .d1-psych, .d1-action, .d1-friction, .d1-contact { padding: 24px 20px; }
+}
+</style>
+</head>
+<body style="margin:0;padding:0;background:#F8FAFA;">
+<div class="d1-wrap">
+
+
+  <div class="d1-psych">
+    <p class="d1-eyebrow">What this video is actually doing</p>
+    <h2>Video 1 has one job and it isn't to impress anyone.</h2>
+    <p>It's to let one specific person... the one who's been sitting on the sidelines, who knows they should be showing up but hasn't... see a real human being do the exact thing they've been avoiding. That's it. That's the whole job.</p>
+    <p>The script the app built for you is designed around a seven-part architecture that works on the platform and on the person watching at the same time. You don't need to understand all seven parts. You just need to read the words out loud, in your voice, the way you'd talk to a friend who needed to hear this.</p>
+    <div class="d1-quote">
+      <p>The architecture handles the rest.</p>
+      <span>— David Bee</span>
+    </div>
+    <p>Video 1 signals to the platform exactly who should find your content. It tells the right viewer "this person is for me" within the first few seconds. And it opens a loop that makes them want to come back for Video 2. None of that requires you to be polished. All of it requires you to be real.</p>
+  </div>
+
+
+  <div class="d1-action">
+    <p class="d1-eyebrow">Today's one thing</p>
+    <h2>Open the app. Read your script once. Press record.</h2>
+    <p>That's the whole day. Here's exactly how:</p>
+    <ol class="d1-steps">
+      <li><span class="d1-num">1</span><span>Log in to your course and open the script-building app</span></li>
+      <li><span class="d1-num">2</span><span>Pull up your Video 1 script and read it out loud once before you film</span></li>
+      <li><span class="d1-num">3</span><span>Press record. One take is fine. Done is better than perfect.</span></li>
+      <li><span class="d1-num">4</span><span>Post it to the Facebook group with <strong style="color:#32B8B8">#Day1</strong> and tag David so he sees it</span></li>
+    </ol>
+    <a href="https://coloradomastermind.onlinecoursehost.com/courses/contentchallenge" class="d1-btn" target="_blank">Open the App &rarr;</a>
+  </div>
+
+
+  <div class="d1-friction">
+    <p class="d1-eyebrow">The most common thing that happens today</p>
+    <h3>You'll film it, watch it back, and almost delete it.</h3>
+    <p>Don't.</p>
+    <p>The version of you that almost deleted it is the exact version the right person needs to see. Not the polished one. Not the one where your hair cooperated and the lighting was perfect. The real one, where you were a little nervous and did it anyway.</p>
+    <p><strong>That version builds more trust in 60 seconds than a year of perfect posts.</strong></p>
+    <p>Post it.</p>
+  </div>
+
+
+  <div class="d1-divider"></div>
+
+
+  <div class="d1-contact">
+    <p class="d1-eyebrow">David is here</p>
+    <h3>Stuck? Frustrated? That's exactly what I'm here for.</h3>
+    <p>This is one of the first times I've run this challenge. Which means you are not a number in a system that's been running for years. You are one of a small group of people who showed up at the exact moment this thing was being built, and I don't think that's an accident.</p>
+    <p>I built this app to be as seamless as possible for someone who's never done anything like this before. But seamless isn't the same as perfect yet, and the only way it gets there is if the people going through it right now tell me where it breaks down.</p>
+    <p>So if you're stuck, frustrated, confused, or you just need someone to tell you you're doing fine... reach out. Not because I'm being polite. Because I am genuinely, exclusively available to the people in this challenge right now in a way that won't always be true. This window is real and it's short. Take advantage of it.</p>
+    <p>Every time someone tells me what was hard or what almost made them quit, that feedback gets built into the next version. The person who reaches out today makes this easier for someone they'll never meet. That matters to me more than I can say.</p>
+    <div class="d1-links">
+      <a href="https://calendly.com/davidbee" class="d1-link" target="_blank">
+        <span class="d1-link-icon">📅</span>
+        <div><span class="d1-link-label">Book a call</span><span class="d1-link-action">Pick a time on David's calendar</span></div>
+      </a>
+      <a href="https://m.me/davidbeeeee" class="d1-link" target="_blank">
+        <span class="d1-link-icon">💬</span>
+        <div><span class="d1-link-label">Messenger</span><span class="d1-link-action">DM David directly on Facebook</span></div>
+      </a>
+      <a href="mailto:contact@davidbee.me" class="d1-link">
+        <span class="d1-link-icon">📧</span>
+        <div><span class="d1-link-label">Email</span><span class="d1-link-action">contact@davidbee.me</span></div>
+      </a>
+    </div>
+  </div>
+
+
+</div>
+ 
+
+
+–
+</body>
+</html>

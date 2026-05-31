@@ -1,0 +1,599 @@
+<!-- ═══════════════════════════════════════════════════════════
+     SEENINSEVEN... YOUR AI STORYSTARTER
+     Page 1 · Block 2 · FAQ + Final CTA Close
+     Colorado Mastermind · David Bee
+     Drop into a Systeme.io HTML block BELOW Block 1 / the opt-in form.
+     Fonts already loaded from Block 1... do not re-import.
+     CTA buttons link to #form-input-aa036ba5
+═══════════════════════════════════════════════════════════ -->
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+/* ═══════════════════════════
+   SYSTEME.IO OVERRIDE LAYER
+═══════════════════════════ */
+.sis-page p,
+.sis-page div,
+.sis-page span,
+.sis-page li,
+.sis-page a:not(.sis-btn) {
+  text-align: left !important;
+}
+.sis-page h1,
+.sis-page h2,
+.sis-page h3 {
+  font-family: 'Lora', serif !important;
+}
+/* ═══════════════════════════
+   VARIABLES + RESET
+═══════════════════════════ */
+.sis-page {
+  --teal-deep:   #0D2828;
+  --teal-mid:    #1E5C5C;
+  --teal-bright: #2A9090;
+  --teal-vivid:  #32B8B8;
+  --teal-soft:   #68C8C8;
+  --teal-pale:   #A8DEDE;
+  --teal-mist:   #D8F0F0;
+  --teal-frost:  #EEF9F9;
+  --cream:       #F8FAFA;
+  --white:       #FFFFFF;
+  --ink:         #0D2828;
+  --ink-soft:    #2A4848;
+  --ink-muted:   #527070;
+  --gold:        #C8A84B;
+  --gold-light:  #E8C86C;
+  --gold-pale:   #F5E8C0;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--ink);
+  background: var(--cream);
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+.sis-page *, .sis-page *::before, .sis-page *::after { box-sizing: border-box; }
+.sis-page img { max-width: 100%; height: auto; display: block; }
+.sis-page a { color: var(--teal-vivid); text-decoration: none; }
+/* ═══════════════════════════
+   SECTION SHELLS
+═══════════════════════════ */
+.sis-section {
+  width: 100%;
+  padding: 80px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.sis-section.dark {
+  background: var(--teal-deep);
+  color: var(--white);
+}
+.sis-section.dark .sis-body { color: var(--teal-pale); }
+.sis-section.light {
+  background: var(--cream);
+  color: var(--ink);
+}
+.sis-section.light .sis-body { color: var(--ink-soft); }
+.sis-inner {
+  max-width: 820px;
+  margin: 0 auto;
+}
+.sis-inner.wide { max-width: 1040px; }
+.sis-section.dark::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 10% 0%, rgba(50,184,184,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 90% 100%, rgba(50,184,184,0.05) 0%, transparent 60%);
+  pointer-events: none;
+}
+/* ═══════════════════════════
+   EYEBROWS
+═══════════════════════════ */
+.sis-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: var(--teal-bright);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+.sis-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 28px;
+  height: 2px;
+  background: var(--teal-bright);
+  flex-shrink: 0;
+}
+.dark .sis-eyebrow { color: var(--teal-soft); }
+.dark .sis-eyebrow::before { background: var(--teal-soft); }
+/* ═══════════════════════════
+   HEADLINES
+═══════════════════════════ */
+.sis-h2 {
+  font-family: 'Lora', serif;
+  font-size: clamp(26px, 4vw, 40px);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--ink);
+  margin: 0 0 20px;
+}
+.dark .sis-h2 { color: var(--white); }
+.sis-italic {
+  font-style: italic;
+  color: var(--teal-vivid);
+}
+.dark .sis-italic { color: var(--teal-vivid); }
+.light .sis-italic { color: var(--teal-bright); }
+/* ═══════════════════════════
+   BODY COPY
+═══════════════════════════ */
+.sis-body {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  line-height: 1.8;
+  margin: 0 0 20px;
+}
+.sis-body:last-child { margin-bottom: 0; }
+.sis-lead {
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.7;
+  margin: 0 0 24px;
+}
+.dark .sis-lead { color: var(--teal-pale); }
+.light .sis-lead { color: var(--ink-soft); }
+/* ═══════════════════════════
+   PULL QUOTES
+═══════════════════════════ */
+.sis-pull {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 19px;
+  line-height: 1.5;
+  padding: 18px 20px 18px 24px;
+  border-left: 3px solid var(--teal-vivid);
+  margin: 32px 0;
+  border-radius: 0 8px 8px 0;
+}
+.dark .sis-pull { color: var(--teal-soft); background: rgba(50,184,184,0.07); }
+.light .sis-pull { color: var(--teal-mid); background: var(--teal-frost); }
+/* ═══════════════════════════
+   BUTTONS
+═══════════════════════════ */
+.sis-btn {
+  display: inline-block;
+  font-family: 'Oswald', sans-serif !important;
+  font-weight: 700;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  background: var(--teal-vivid);
+  color: var(--teal-deep) !important;
+  padding: 18px 42px;
+  border-radius: 8px;
+  text-decoration: none !important;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 20px rgba(50,184,184,0.25);
+}
+.sis-btn:hover {
+  background: var(--teal-soft);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(50,184,184,0.3);
+}
+.sis-btn-wrap {
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.sis-btn-sub {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  color: var(--ink-muted);
+}
+.dark .sis-btn-sub { color: var(--teal-pale); }
+/* ═══════════════════════════
+   FAQ ACCORDION
+═══════════════════════════ */
+.sis-faq-list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid #C4DADA;
+  margin-top: 52px;
+}
+
+.sis-faq-item {
+  border-bottom: 1px solid #C4DADA;
+  cursor: pointer;
+}
+
+.sis-faq-q {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 26px 4px 26px 0;
+}
+
+.sis-faq-q-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(18px, 2.8vw, 20px);
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1.45;
+  flex: 1;
+}
+
+.sis-faq-q-icon {
+  font-family: 'Oswald', sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  color: var(--teal-vivid);
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+  line-height: 1;
+  user-select: none;
+  margin-top: 2px;
+}
+
+.sis-faq-item.open .sis-faq-q-icon {
+  transform: rotate(45deg);
+}
+
+.sis-faq-a {
+  display: none;
+  padding: 0 4px 28px;
+}
+
+.sis-faq-item.open .sis-faq-a {
+  display: block;
+}
+
+.sis-faq-a p {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(18px, 2.8vw, 20px);
+  color: var(--ink-soft);
+  line-height: 1.8;
+  margin-bottom: 14px;
+}
+
+.sis-faq-a p:last-child { margin-bottom: 0; }
+.sis-faq-a strong { color: var(--ink); font-weight: 700; }
+
+/* Value stack list inside FAQ answer */
+.sis-faq-value-list {
+  list-style: none;
+  margin: 14px 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sis-faq-value-list li {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(17px, 2.6vw, 20px);
+  color: var(--ink-soft);
+  line-height: 1.7;
+  padding-left: 22px;
+  position: relative;
+}
+
+.sis-faq-value-list li::before {
+  content: '→';
+  position: absolute;
+  left: 0;
+  color: var(--teal-vivid);
+  font-weight: 700;
+}
+
+.sis-faq-value-total {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--teal-bright);
+  display: block;
+  margin-top: 18px;
+}
+
+/* ═══════════════════════════
+   CLOSE BOX... CTA callout panel
+   inside the final dark section
+═══════════════════════════ */
+.sis-close-box {
+  background: rgba(50, 184, 184, 0.07);
+  border: 1px solid rgba(50, 184, 184, 0.22);
+  border-radius: 14px;
+  padding: 48px 36px;
+  margin-top: 56px;
+  text-align: center;
+}
+
+.sis-close-box .sis-h2 {
+  text-align: center;
+  margin-bottom: 28px;
+}
+
+.sis-close-box .sis-btn-wrap {
+  align-items: center;
+  margin-top: 0;
+}
+
+.sis-close-sub-note {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--teal-bright);
+  display: block;
+  margin-top: 14px;
+  text-align: center;
+}
+
+/* Mobile */
+@media (max-width: 520px) {
+  .sis-faq-q { padding: 22px 0; }
+  .sis-close-box { padding: 36px 22px; }
+  .sis-close-box .sis-btn { display: block; width: 100%; text-align: center; }
+}
+</style>
+
+<div class="sis-page">
+
+<!-- ════════════════════════════════════
+     SECTION 13... FAQ
+════════════════════════════════════ -->
+<section class="sis-section light">
+  <div class="sis-inner">
+
+    <div class="sis-eyebrow">Before You Decide</div>
+
+    <h2 class="sis-h2">
+      Questions That Usually Come Up<br>
+      Right <em class="sis-italic">About Now.</em>
+    </h2>
+
+    <div class="sis-faq-list">
+
+      <!-- Q1 -->
+      <div class="sis-faq-item">
+        <div class="sis-faq-q">
+          <span class="sis-faq-q-text">🧠 What exactly is SeenInSeven?</span>
+          <span class="sis-faq-q-icon">+</span>
+        </div>
+        <div class="sis-faq-a">
+          <p>SeenInSeven is content-building app powered by AI trained on psychological, sociological, historical, and linguistic story patterns. You answer questions about your experience, your message, and the people you want to reach. The app builds all 7 of your video content from those answers, in your voice, so what comes out sounds like you on your best day.</p>
+          <p>Along with the app, you get the 7-Video Challenge Guide, which walks you through the full process step by step, and the Comment-to-Client Formula with its custom GPT, which shows you how to turn the responses on your videos into real conversations with real people.</p>
+          <p>It's everything you need to go from invisible to having 7 videos posted that actually sound like you.</p>
+        </div>
+      </div>
+
+      <!-- Q2 -->
+      <div class="sis-faq-item">
+        <div class="sis-faq-q">
+          <span class="sis-faq-q-text">📆 Do I have to post one video every day?</span>
+          <span class="sis-faq-q-icon">+</span>
+        </div>
+        <div class="sis-faq-a">
+          <p>No. This is not a streak challenge. You do not have to post every single day in a row. You could do one video a week for seven weeks. You could batch three in a weekend. You could post two, take a break, and come back when life settles.</p>
+          <p><strong>The point is not the timeline. The point is the seven videos.</strong> Seven videos changes how you see yourself on camera. Do them your way. Just do them.</p>
+        </div>
+      </div>
+
+      <!-- Q3 -->
+      <div class="sis-faq-item">
+        <div class="sis-faq-q">
+          <span class="sis-faq-q-text">⏳ I genuinely don't have time for this.</span>
+          <span class="sis-faq-q-icon">+</span>
+        </div>
+        <div class="sis-faq-a">
+          <p>Then you need it more than anyone else on this page.</p>
+          <p>We are talking about 10 minutes a video. You already spend more than that scrolling past other people's content wishing you were posting your own. One focused video beats a hundred hours of thinking about it.</p>
+        </div>
+      </div>
+
+      <!-- Q4 -->
+      <div class="sis-faq-item">
+        <div class="sis-faq-q">
+          <span class="sis-faq-q-text">🙈 What if I don't want to show my face?</span>
+          <span class="sis-faq-q-icon">+</span>
+        </div>
+        <div class="sis-faq-a">
+          <p>You do not have to. Voiceovers, text-based videos, B-roll, AI avatars: all of it works. Visibility means letting your ideas be seen and heard. It does not require your face anywhere near a camera if that is not where you are yet.</p>
+        </div>
+      </div>
+
+      <!-- Q5 -->
+      <div class="sis-faq-item">
+        <div class="sis-faq-q">
+          <span class="sis-faq-q-text">😰 What if nobody watches?</span>
+          <span class="sis-faq-q-icon">+</span>
+        </div>
+        <div class="sis-faq-a">
+          <p>Good. Seriously. An audience of zero means you get to practice, experiment, and figure out what works without anyone watching you trip. The only guaranteed way to stay invisible is to never post anything at all.</p>
+        </div>
+      </div>
+
+      <!-- Q6 -->
+      <div class="sis-faq-item">
+        <div class="sis-faq-q">
+          <span class="sis-faq-q-text">😬 What if I fail?</span>
+          <span class="sis-faq-q-icon">+</span>
+        </div>
+        <div class="sis-faq-a">
+          <p>Then you fail with seven videos posted, a process you now understand, and more camera confidence than you had before you started. That is not failure. That is a head start.</p>
+          <p>Staying invisible to avoid the possibility of failing is the actual loss here.</p>
+        </div>
+      </div>
+
+      <!-- Q7 -->
+      <div class="sis-faq-item">
+        <div class="sis-faq-q">
+          <span class="sis-faq-q-text">🎭 I'm a creative / artist / don't have a business yet. Is this still for me?</span>
+          <span class="sis-faq-q-icon">+</span>
+        </div>
+        <div class="sis-faq-a">
+          <p>Yes. You do not need a business to benefit from showing up. Creatives, artists, side hustlers, and people still figuring it out will leave this with real content momentum and a process they can repeat forever.</p>
+          <p>If you want to build something people can see, this is the path.</p>
+        </div>
+      </div>
+
+      <!-- Q8 -->
+      <div class="sis-faq-item">
+        <div class="sis-faq-q">
+          <span class="sis-faq-q-text">🫥 What if I'm just not someone people want to watch?</span>
+          <span class="sis-faq-q-icon">+</span>
+        </div>
+        <div class="sis-faq-a">
+          <p>People do not follow perfection. They follow realness. They follow someone who shows up consistently and actually gives a damn about what they are saying.</p>
+          <p><strong>Your message matters more than your appearance. Full stop.</strong> Do not let that be the thing that buries your voice.</p>
+        </div>
+      </div>
+
+      <!-- Q9 -->
+      <div class="sis-faq-item">
+        <div class="sis-faq-q">
+          <span class="sis-faq-q-text">📷 Do I need fancy equipment?</span>
+          <span class="sis-faq-q-icon">+</span>
+        </div>
+        <div class="sis-faq-a">
+          <p>You need a smartphone. That is it. Your phone is enough to create content that looks intentional and sounds clear. No ring lights. No editing software. No excuses.</p>
+        </div>
+      </div>
+
+      <!-- Q10 -->
+      <div class="sis-faq-item">
+        <div class="sis-faq-q">
+          <span class="sis-faq-q-text">🧰 What exactly am I getting?</span>
+          <span class="sis-faq-q-icon">+</span>
+        </div>
+        <div class="sis-faq-a">
+          <p>Three things, all in one place:</p>
+          <ul class="sis-faq-value-list">
+            <li>The <strong>Script Builder App</strong> ($197 value)... builds all 7 of your video content using AI trained on the story patterns that have made human communication work for centuries.</li>
+            <li>The <strong>7-Video Challenge Guide</strong> ($47 value)... walks you through the full process so you always know your next step.</li>
+            <li>The <strong>Comment-to-Client Formula + GPT</strong> ($67 value)... shows you how to turn the engagement on your videos into real conversations with real people.</li>
+          </ul>
+          <span class="sis-faq-value-total">Total value: $311 · Everything you need in one place.</span>
+        </div>
+      </div>
+
+      <!-- Q11 -->
+      <div class="sis-faq-item">
+        <div class="sis-faq-q">
+          <span class="sis-faq-q-text">💰 Why does this cost $311?</span>
+          <span class="sis-faq-q-icon">+</span>
+        </div>
+        <div class="sis-faq-a">
+          <p>Building something that genuinely sounds like you took more than a template.</p>
+          <p>The story architecture behind every video guide in SeenInSeven is drawn from patterns proven across psychology, sociology, history, and linguistics. Not trends. Not shortcuts. Actual principles that have made human stories work for thousands of years, rebuilt into an app that generates scripts in your exact voice.</p>
+          <p>Add the Challenge Guide and the Comment-to-Client Formula, and you have everything you need to go from invisible to visible to connected. $311 is what it's worth. That is what it costs.</p>
+          <p>And if it does not work for you, simply let me know within 30 days. Full refund, no questions.</p>
+        </div>
+      </div>
+
+      <!-- Q12 -->
+      <div class="sis-faq-item">
+        <div class="sis-faq-q">
+          <span class="sis-faq-q-text">🔥 I've tried things like this before and quit. What makes this different?</span>
+          <span class="sis-faq-q-icon">+</span>
+        </div>
+        <div class="sis-faq-a">
+          <p>Every other thing you tried made you learn before you could start. SeenInSeven hands you your content before you ever have to think. The app does the heavy lifting. The Challenge Guide tells you exactly what to do next.</p>
+          <p>And there is nothing to fail. You open the app, answer the questions, and get scripts that sound like you. The only way to quit is to not open the app.</p>
+        </div>
+      </div>
+
+    </div><!-- /.sis-faq-list -->
+
+  </div><!-- /.sis-inner -->
+</section>
+
+<!-- ════════════════════════════════════
+     SECTION 14... FINAL CTA CLOSE
+════════════════════════════════════ -->
+<section class="sis-section dark">
+  <div class="sis-inner">
+
+    <div class="sis-eyebrow">The Last Thing I'll Say</div>
+
+    <h2 class="sis-h2">
+      7 Videos. Your Voice.<br>
+      <em class="sis-italic">Your Brand.</em>
+    </h2>
+
+    <p class="sis-body">I spent years watching people with half my experience get hired, get noticed, and get paid. Not smarter. Not better prepared. Just visible, which meant findable, which meant trusted.</p>
+
+    <p class="sis-body">The scripts you'll build inside SeenInSeven aren't templates. They are shaped by the same story patterns that have worked in every culture, every medium, for thousands of years... translated into words that sound exactly like you at your most confident. Each one is a brick. Seven bricks is a foundation. A foundation is something people can actually find.</p>
+
+    <p class="sis-body">You already have the experience. You already have the message. The only piece missing is being visible enough that the right people can reach you.</p>
+
+    <div class="sis-pull">
+      "Seven videos. That's all it takes to go from invisible to someone worth finding."
+      <span class="sis-attr">— David Bee</span>
+    </div>
+
+    <p class="sis-body">Do them in seven days. Do them in seven weeks. Do them whenever you can.</p>
+    <p class="sis-body"><strong>Just do them. This is the system I wish I'd had. It is yours now.</strong></p>
+
+    <div class="sis-close-box">
+      <h3 class="sis-h2" style="text-align:center; margin-bottom:28px;">
+        Let's Build Something<br>
+        People Can <em class="sis-italic">Actually See.</em>
+      </h3>
+      <div class="sis-btn-wrap" style="align-items:center;">
+        <a href="#form-input-aa036ba5" class="sis-btn sis-scroll-btn">
+          Get SeenInSeven... Build My Brand Now
+        </a>
+      </div>
+      <span class="sis-close-sub-note">
+        $311 total value &nbsp;&bull;&nbsp; One-time &nbsp;&bull;&nbsp; 30-day guarantee
+      </span>
+    </div>
+
+  </div><!-- /.sis-inner -->
+</section>
+
+</div><!-- /.sis-page -->
+
+<script>
+  // FAQ accordion... one open at a time
+  document.querySelectorAll('.sis-faq-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      var isOpen = item.classList.contains('open');
+      document.querySelectorAll('.sis-faq-item').forEach(function(i) {
+        i.classList.remove('open');
+      });
+      if (!isOpen) {
+        item.classList.add('open');
+      }
+    });
+  });
+
+  // Smooth scroll for anchor CTA buttons
+  document.querySelectorAll('.sis-scroll-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      var href = btn.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        var target = document.getElementById(href.slice(1));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
+  });
+</script>

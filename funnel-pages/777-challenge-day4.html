@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>777 Challenge — Day 4</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+.d4-wrap { max-width: 720px; margin: 0 auto; padding: 40px 20px 60px; font-family: 'Nunito', sans-serif; color: #0D2828; }
+
+
+.d4-eyebrow { font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.28em; color: #2A9090; text-transform: uppercase; margin-bottom: 14px; }
+
+
+/* Card 1 — dark teal — personality vs process */
+.d4-stakes { background: #0D2828; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d4-stakes .d4-eyebrow { color: #68C8C8; }
+.d4-stakes h2 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #fff; line-height: 1.4; margin-bottom: 16px; }
+.d4-stakes p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #A8DEDE; line-height: 1.8; margin-bottom: 16px; }
+.d4-stakes p:last-child { margin-bottom: 0; }
+.d4-stakes strong { color: #fff; }
+
+
+/* Pull quote — dark background version */
+.d4-quote-dark { background: rgba(50,184,184,0.07); border-left: 3px solid #32B8B8; border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 24px 0; }
+.d4-quote-dark p { font-family: 'Permanent Marker', cursive; font-size: 20px; color: #68C8C8; line-height: 1.5; margin-bottom: 0; }
+.d4-quote-dark span { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.2em; color: #32B8B8; text-transform: uppercase; margin-top: 10px; display: block; }
+
+
+/* Card 2 — gold — what this video does */
+.d4-action { background: #F5E8C0; border: 1px solid #E8C86C; border-left: 4px solid #C8A84B; border-radius: 12px; padding: 28px 32px; margin-bottom: 28px; }
+.d4-action .d4-eyebrow { color: #C8A84B; }
+.d4-action h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; margin-bottom: 14px; line-height: 1.4; }
+.d4-action p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d4-action p:last-of-type { margin-bottom: 24px; }
+.d4-action strong { color: #0D2828; }
+.d4-btn { display: inline-block; background: #0D2828; color: #32B8B8; font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border-radius: 8px; }
+
+
+/* Card 3 — white bordered — what the audience is deciding */
+.d4-mirror { background: #fff; border: 1px solid #D8F0F0; border-left: 4px solid #32B8B8; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d4-mirror .d4-eyebrow { color: #2A9090; }
+.d4-mirror h2 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d4-mirror p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d4-mirror p:last-child { margin-bottom: 0; }
+.d4-mirror strong { color: #0D2828; }
+
+
+/* Pull quote — light background version */
+.d4-quote-light { background: #EEF9F9; border-left: 3px solid #32B8B8; border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 24px 0; }
+.d4-quote-light p { font-family: 'Permanent Marker', cursive; font-size: 20px; color: #1E5C5C; line-height: 1.5; margin-bottom: 0; }
+.d4-quote-light span { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.2em; color: #2A9090; text-transform: uppercase; margin-top: 10px; display: block; }
+
+
+/* Divider */
+.d4-divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, #D8E4E8, transparent); margin: 32px 0; }
+
+
+/* Card 4 — white — still time to join */
+.d4-join { background: #fff; border: 1px solid #D8E4E8; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d4-join .d4-eyebrow { color: #2A9090; }
+.d4-join h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d4-join p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d4-join p:last-of-type { margin-bottom: 24px; }
+.d4-join strong { color: #0D2828; }
+.d4-join-btn { display: inline-block; background: #32B8B8; color: #0D2828; font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border-radius: 8px; }
+
+
+/* Card 5 — white — contact David Bee */
+.d4-contact { background: #fff; border: 1px solid #D8E4E8; border-radius: 12px; padding: 36px 36px 32px; }
+.d4-contact .d4-eyebrow { margin-bottom: 14px; color: #2A9090; }
+.d4-contact h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d4-contact p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d4-contact p:last-of-type { margin-bottom: 28px; }
+.d4-links { display: flex; flex-direction: column; gap: 12px; }
+.d4-link { display: flex; align-items: center; gap: 14px; text-decoration: none; background: #EEF9F9; border: 1px solid #D8F0F0; border-radius: 10px; padding: 14px 18px; }
+.d4-link-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; }
+.d4-link-label { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.18em; color: #2A9090; text-transform: uppercase; margin-bottom: 2px; display: block; }
+.d4-link-action { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; color: #0D2828; display: block; }
+
+
+@media (max-width: 600px) {
+  .d4-wrap { padding: 24px 16px 48px; }
+  .d4-stakes, .d4-action, .d4-mirror, .d4-join, .d4-contact { padding: 24px 20px; }
+  .d4-stakes h2, .d4-mirror h2, .d4-action h3, .d4-join h3, .d4-contact h3 { font-size: 24px; }
+}
+</style>
+</head>
+<body style="margin:0;padding:0;background:#F8FAFA;">
+<div class="d4-wrap">
+
+
+  <!-- CARD 1 — dark teal — personality vs process -->
+  <div class="d4-stakes">
+    <p class="d4-eyebrow">Day 4 — The Road of Trials</p>
+    <h2>Three videos in. This is the first one that proves it wasn't just inspiration.</h2>
+    <p>The first video had novelty. The second had momentum. The third had the electricity of someone who might actually be doing this.</p>
+    <p>Day 4 has none of that.</p>
+    <p>No rush. No applause. No fresh energy carrying you to the record button. Just you, the app, and the quiet uncomfortable truth that showing up today was always going to be harder than showing up on Day 1... and you knew that when you started, and you started anyway.</p>
+    <p>That matters more than you think it does.</p>
+    <p>Inspiration is everywhere. The internet is full of people who had a great first week. What's genuinely rare, what makes someone worth following, worth trusting, worth eventually hiring... is the person who treated Day 4 the same way they treated Day 1. Not since it was easy. Since that's who they decided to be.</p>
+    <div class="d4-quote-dark">
+      <p>You made that decision when you pressed record the first time. Today is just the first day it gets tested.</p>
+      <span>— David Bee</span>
+    </div>
+  </div>
+
+
+  <!-- CARD 2 — gold — what this video does -->
+  <div class="d4-action">
+    <p class="d4-eyebrow">What today's video is actually doing</p>
+    <h3>This is the video that turns a casual viewer into someone who actually follows you. Not since it's your best one. Since you showed up to make it.</h3>
+    <p>Today's video is a check-in. You're mid-journey and you're letting people see that you're still in it. That specific act... showing up in the middle, when the shine is off and the finish line isn't close enough to feel real yet... is one of the most trust-building things a person can do on camera.</p>
+    <p>Not since it's impressive. Since it's rare.</p>
+    <p>The people watching have seen a hundred people start things. They've watched creators burst onto their feed with three great videos and then disappear so completely it's like they never existed. They're not cynical about it. They've just learned not to invest too early.</p>
+    <p><strong>Today is when they start investing in you.</strong></p>
+    <p>Open the app. Pull up your Video 4 script. Read it once. Press record. Post it.</p>
+    <a href="https://coloradomastermind.onlinecoursehost.com/courses/contentchallenge" class="d4-btn" target="_blank">Open the App &rarr;</a>
+  </div>
+
+
+  <!-- CARD 3 — white bordered — what the audience is deciding -->
+  <div class="d4-mirror">
+    <p class="d4-eyebrow">What's actually being decided today</p>
+    <h2>Your audience isn't evaluating your content on Day 4. They're evaluating your character. And that's a question your best video can't answer.</h2>
+    <p>Nobody looks at a great video and thinks "this person will definitely keep going." Great videos are everywhere. They prove talent, maybe. They prove effort, sometimes. But they don't prove anything about who you are when the excitement fades and the ordinary sets in.</p>
+    <p>That proof only comes from days like this one.</p>
+    <p>The quiet judgment forming in the people who've been watching you isn't about your lighting or your hook or whether your script was polished. It's something simpler and more important than any of that. It's whether you're someone whose next video is worth waiting for.</p>
+    <div class="d4-quote-light">
+      <p>You don't get to answer that with words. You answer it by pressing record today and showing up again tomorrow.</p>
+      <span>— David Bee</span>
+    </div>
+    <p><strong>That's the whole game. And it's being played right now whether you film or not.</strong></p>
+  </div>
+
+
+  <div class="d4-divider"></div>
+
+
+  <!-- CARD 4 — white — still time to join -->
+  <div class="d4-join">
+    <p class="d4-eyebrow">Just finding this?</p>
+    <h3>Day 4 is a perfectly strange place to start. Do it anyway.</h3>
+    <p>This challenge doesn't care what day you join. It cares that you go through all seven videos in sequence, and that process starts wherever you are right now. The app is still there. Your scripts are still waiting to be built. The community is still going and they remember exactly what it felt like to be exactly where you are.</p>
+    <p><strong>Seven dollars. Seven videos. Your pace, your terms. The door is still open and it doesn't care what day it is.</strong></p>
+    <a href="https://content.coloradomastermind.com/777challenge" class="d4-join-btn" target="_blank">Join the Challenge &rarr;</a>
+  </div>
+
+
+  <!-- CARD 5 — white — contact David Bee -->
+  <div class="d4-contact">
+    <p class="d4-eyebrow">David is here</p>
+    <h3>If something's not clicking... reach out.</h3>
+    <p>The app, the scripts, the process... all of it was built to make this as frictionless as possible. But frictionless doesn't mean perfect, and if something is getting in the way of you pressing record today, I want to know what it is.</p>
+    <p>Not because I'm being polite. Because you showing up and telling me where this breaks down is the most valuable thing that can happen for everyone who comes through this after you.</p>
+    <p>Stuck on the script? Filmed it and hated it? Just need someone to tell you it's good enough to post? Reach out. That's what this is for.</p>
+    <div class="d4-links">
+      <a href="https://calendly.com/davidbee" class="d4-link" target="_blank">
+        <span class="d4-link-icon">📅</span>
+        <div><span class="d4-link-label">Book a call</span><span class="d4-link-action">Pick a time on David's calendar</span></div>
+      </a>
+      <a href="https://m.me/davidbeeeee" class="d4-link" target="_blank">
+        <span class="d4-link-icon">💬</span>
+        <div><span class="d4-link-label">Messenger</span><span class="d4-link-action">DM David directly on Facebook</span></div>
+      </a>
+      <a href="mailto:contact@davidbee.me" class="d4-link">
+        <span class="d4-link-icon">📧</span>
+        <div><span class="d4-link-label">Email</span><span class="d4-link-action">contact@davidbee.me</span></div>
+      </a>
+    </div>
+  </div>
+
+
+</div>
+</body>
+</html>

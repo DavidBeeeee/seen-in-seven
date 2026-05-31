@@ -1,0 +1,953 @@
+{\rtf1\ansi\ansicpg1252\cocoartf2867
+\cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
+{\colortbl;\red255\green255\blue255;}
+{\*\expandedcolortbl;;}
+\margl1440\margr1440\vieww11520\viewh8400\viewkind0
+\pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
+
+\f0\fs24 \cf0 <!--\
+  ============================================================\
+  PAGE 2 \'97 MVO WIZARD (MINI VERSION)\
+  ============================================================\
+  This is ONE code block. No Systeme native elements on this page.\
+\
+  SYSTEME SETUP NOTES:\
+  - Page background color: #2dd4bf (teal) to match optin page\
+  - Page content area / section background: #111827\
+  - Remove all navigation, headers, footers\
+  - This page is a single code block only\
+\
+  HOW IT WORKS:\
+  - User goes through 4 quick questions (posted before, blocker/history,\
+    business stage, name)\
+  - Auto-advances on card selection (no "Next" button for choice cards)\
+  - After name entry + loading animation, reveals their personalized\
+    Video 1 script\
+  - ONLY THEN does the "Ready for Video 2" CTA appear\
+  - CTA links to the offer page\
+\
+  OFFER PAGE URL:\
+  - https://content.coloradomastermind.com/yes\
+  ============================================================\
+-->\
+<style>\
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Playfair+Display:ital,wght@0,700;1,400&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap');\
+\
+#p2-wizard \{\
+  --bg: #111827;\
+  --card: #1e2d40;\
+  --card2: #243448;\
+  --border: #2e4460;\
+  --cream: #f0f9ff;\
+  --soft: #bae6fd;\
+  --muted: #7eb8d4;\
+  --teal: #2dd4bf;\
+  --cyan: #67e8f9;\
+  --green: #4ade80;\
+\
+  background: var(--bg);\
+  color: var(--cream);\
+  font-family: 'DM Sans', sans-serif;\
+  font-size: 18px;\
+  line-height: 1.75;\
+  padding: 72px 24px 88px;\
+  width: 100%;\
+  position: relative;\
+  overflow: hidden;\
+\}\
+#p2-wizard *, #p2-wizard *::before, #p2-wizard *::after \{\
+  box-sizing: border-box;\
+  margin: 0;\
+  padding: 0;\
+\}\
+#p2-wizard::before \{\
+  content: '';\
+  position: absolute; top: 0; left: 0; right: 0; bottom: 0;\
+  background:\
+    radial-gradient(ellipse 100% 60% at 15% 5%, rgba(96,165,250,0.07) 0%, transparent 55%),\
+    radial-gradient(ellipse 70% 50% at 85% 85%, rgba(45,212,191,0.06) 0%, transparent 55%);\
+  pointer-events: none;\
+  z-index: 0;\
+\}\
+#p2-wizard .inner \{\
+  max-width: 720px;\
+  margin: 0 auto;\
+  position: relative;\
+  z-index: 1;\
+\}\
+\
+/* Progress */\
+#p2-wizard .wiz-progress \{\
+  display: flex;\
+  gap: 8px;\
+  margin-bottom: 48px;\
+  justify-content: center;\
+\}\
+#p2-wizard .wiz-dot \{\
+  width: 8px; height: 8px;\
+  border-radius: 50%;\
+  background: var(--border);\
+  transition: all 0.3s;\
+\}\
+#p2-wizard .wiz-dot.active \{\
+  background: var(--teal);\
+  box-shadow: 0 0 8px rgba(45,212,191,0.4);\
+\}\
+#p2-wizard .wiz-dot.done \{\
+  background: var(--green);\
+\}\
+\
+/* Screens */\
+#p2-wizard .wiz-screen \{\
+  display: none;\
+  animation: p2fadeIn 0.35s ease forwards;\
+\}\
+#p2-wizard .wiz-screen.active \{ display: block; \}\
+@keyframes p2fadeIn \{\
+  from \{ opacity: 0; transform: translateY(16px); \}\
+  to \{ opacity: 1; transform: translateY(0); \}\
+\}\
+\
+/* Typography */\
+#p2-wizard .eyebrow \{\
+  font-family: 'Space Mono', monospace;\
+  font-size: 11px;\
+  letter-spacing: 0.22em;\
+  color: var(--teal);\
+  text-transform: uppercase;\
+  margin-bottom: 16px;\
+  text-align: center;\
+\}\
+#p2-wizard .screen-title \{\
+  font-family: 'Bebas Neue', sans-serif;\
+  font-size: clamp(34px, 7vw, 58px);\
+  letter-spacing: 0.02em;\
+  line-height: 1.0;\
+  color: var(--cream);\
+  margin-bottom: 14px;\
+  text-align: center;\
+\}\
+#p2-wizard .screen-title .accent \{ color: var(--teal); \}\
+#p2-wizard .screen-sub \{\
+  font-size: 18px;\
+  color: var(--muted);\
+  max-width: 560px;\
+  line-height: 1.8;\
+  margin: 0 auto 36px;\
+  text-align: center;\
+\}\
+\
+/* Choice Cards */\
+#p2-wizard .choice-grid \{\
+  display: grid;\
+  grid-template-columns: 1fr 1fr;\
+  gap: 13px;\
+  margin-bottom: 16px;\
+\}\
+#p2-wizard .choice-grid.one-col \{ grid-template-columns: 1fr; \}\
+#p2-wizard .choice-card \{\
+  background: var(--card);\
+  border: 1.5px solid var(--border);\
+  border-radius: 13px;\
+  padding: 22px 24px;\
+  cursor: pointer;\
+  transition: all 0.18s;\
+  user-select: none;\
+  text-align: left;\
+\}\
+#p2-wizard .choice-card:hover \{\
+  border-color: rgba(45,212,191,0.5);\
+  background: var(--card2);\
+  transform: translateY(-2px);\
+\}\
+#p2-wizard .choice-card.selecting \{\
+  border-color: var(--teal);\
+  background: rgba(45,212,191,0.13);\
+  transform: scale(0.97);\
+\}\
+#p2-wizard .card-emoji \{ font-size: 24px; margin-bottom: 10px; display: block; \}\
+#p2-wizard .card-title \{\
+  font-weight: 600; font-size: 18px;\
+  color: var(--cream); margin-bottom: 5px;\
+\}\
+#p2-wizard .card-sub \{ font-size: 16px; color: var(--muted); line-height: 1.55; \}\
+\
+/* Skip link */\
+#p2-wizard .skip-link \{\
+  display: block;\
+  text-align: center;\
+  margin-top: 16px;\
+  font-size: 14px;\
+  color: var(--muted);\
+  cursor: pointer;\
+  text-decoration: underline;\
+  text-underline-offset: 3px;\
+  background: none;\
+  border: none;\
+  font-family: 'DM Sans', sans-serif;\
+\}\
+#p2-wizard .skip-link:hover \{ color: var(--soft); \}\
+\
+/* Name input */\
+#p2-wizard .name-input \{\
+  width: 100%;\
+  background: var(--card2);\
+  border: 1.5px solid var(--border);\
+  border-radius: 9px;\
+  padding: 16px 20px;\
+  color: var(--cream);\
+  font-family: 'DM Sans', sans-serif;\
+  font-size: 19px;\
+  margin-bottom: 18px;\
+  transition: border-color 0.2s;\
+  outline: none;\
+\}\
+#p2-wizard .name-input:focus \{ border-color: var(--teal); \}\
+#p2-wizard .name-input::placeholder \{ color: rgba(126,184,212,0.35); \}\
+#p2-wizard .wiz-btn \{\
+  background: var(--teal);\
+  color: #0f172a;\
+  font-family: 'Bebas Neue', sans-serif;\
+  font-size: 20px;\
+  letter-spacing: 0.1em;\
+  padding: 16px 40px;\
+  border: none;\
+  border-radius: 9px;\
+  cursor: pointer;\
+  transition: all 0.2s;\
+  width: 100%;\
+  display: block;\
+\}\
+#p2-wizard .wiz-btn:hover \{\
+  background: #5eead4;\
+  transform: translateY(-1px);\
+  box-shadow: 0 8px 24px rgba(45,212,191,0.2);\
+\}\
+\
+/* Loading */\
+#p2-wizard .loading-wrap \{\
+  text-align: center;\
+  padding: 48px 0;\
+\}\
+#p2-wizard .loading-dots \{\
+  display: inline-flex;\
+  gap: 10px;\
+  align-items: center;\
+  margin-bottom: 16px;\
+\}\
+#p2-wizard .ldot \{\
+  width: 10px; height: 10px;\
+  background: var(--teal);\
+  border-radius: 50%;\
+  animation: p2pulse 1.2s ease-in-out infinite;\
+\}\
+#p2-wizard .ldot:nth-child(2) \{ animation-delay: 0.2s; \}\
+#p2-wizard .ldot:nth-child(3) \{ animation-delay: 0.4s; \}\
+@keyframes p2pulse \{\
+  0%, 80%, 100% \{ opacity: 0.2; transform: scale(0.8); \}\
+  40% \{ opacity: 1; transform: scale(1.1); \}\
+\}\
+#p2-wizard .loading-label \{\
+  font-family: 'Space Mono', monospace;\
+  font-size: 11px;\
+  letter-spacing: 0.14em;\
+  color: var(--muted);\
+  text-transform: uppercase;\
+\}\
+\
+/* Script Reveal */\
+#p2-wizard .plan-badges \{\
+  display: flex;\
+  gap: 10px;\
+  flex-wrap: wrap;\
+  margin-bottom: 18px;\
+\}\
+#p2-wizard .plan-badge \{\
+  background: rgba(45,212,191,0.12);\
+  border: 1px solid rgba(45,212,191,0.3);\
+  border-radius: 7px;\
+  padding: 5px 14px;\
+  font-family: 'Space Mono', monospace;\
+  font-size: 10px;\
+  letter-spacing: 0.12em;\
+  color: var(--teal);\
+\}\
+#p2-wizard .plan-title \{\
+  font-family: 'Bebas Neue', sans-serif;\
+  font-size: 30px;\
+  letter-spacing: 0.04em;\
+  color: var(--cream);\
+  margin-bottom: 22px;\
+  line-height: 1.1;\
+\}\
+#p2-wizard .plan-title .name-accent \{ color: var(--teal); \}\
+\
+/* Script Box */\
+#p2-wizard .script-box \{\
+  background: rgba(45,212,191,0.04);\
+  border: 1px solid rgba(45,212,191,0.2);\
+  border-radius: 11px;\
+  padding: 22px 24px;\
+  position: relative;\
+  overflow: hidden;\
+\}\
+#p2-wizard .script-label \{\
+  font-family: 'Space Mono', monospace;\
+  font-size: 9px;\
+  letter-spacing: 0.18em;\
+  color: var(--muted);\
+  text-transform: uppercase;\
+  margin-bottom: 14px;\
+\}\
+#p2-wizard .script-line \{\
+  font-family: 'Playfair Display', serif;\
+  font-style: italic;\
+  font-size: 17px;\
+  color: var(--cyan);\
+  line-height: 1.9;\
+\}\
+/* Script header row (label + copy button) */\
+#p2-wizard .script-header \{\
+  display: flex;\
+  justify-content: space-between;\
+  align-items: center;\
+  margin-bottom: 14px;\
+  gap: 12px;\
+\}\
+#p2-wizard .copy-btn \{\
+  font-family: 'Space Mono', monospace;\
+  font-size: 10px;\
+  letter-spacing: 0.12em;\
+  text-transform: uppercase;\
+  color: var(--teal);\
+  background: rgba(45,212,191,0.08);\
+  border: 1px solid rgba(45,212,191,0.25);\
+  border-radius: 6px;\
+  padding: 6px 14px;\
+  cursor: pointer;\
+  transition: all 0.2s;\
+  flex-shrink: 0;\
+\}\
+#p2-wizard .copy-btn:hover \{ background: rgba(45,212,191,0.16); \}\
+#p2-wizard .copy-btn.copied \{\
+  color: var(--green);\
+  border-color: rgba(74,222,128,0.4);\
+  background: rgba(74,222,128,0.08);\
+\}\
+\
+/* Inline CTA (lives inside result screen) */\
+#p2-wizard .result-cta \{\
+  margin-top: 30px;\
+  text-align: center;\
+\}\
+#p2-wizard .btn-cta \{\
+  display: inline-block;\
+  background: var(--teal);\
+  color: #0f172a;\
+  font-family: 'Bebas Neue', sans-serif;\
+  font-size: 22px;\
+  letter-spacing: 0.1em;\
+  padding: 18px 52px;\
+  border-radius: 9px;\
+  text-decoration: none;\
+  transition: all 0.2s;\
+  cursor: pointer;\
+  border: none;\
+\}\
+#p2-wizard .btn-cta:hover \{\
+  background: #5eead4;\
+  transform: translateY(-2px);\
+  box-shadow: 0 12px 32px rgba(45,212,191,0.25);\
+\}\
+#p2-wizard .cta-note \{\
+  font-family: 'Space Mono', monospace;\
+  font-size: 10px;\
+  letter-spacing: 0.14em;\
+  color: var(--muted);\
+  text-transform: uppercase;\
+  margin-top: 12px;\
+  opacity: 0.7;\
+\}\
+\
+/* Video progress tracker */\
+#p2-wizard .video-tracker \{\
+  display: grid;\
+  grid-template-columns: repeat(7, 1fr);\
+  gap: 6px;\
+  margin-top: 28px;\
+\}\
+#p2-wizard .vt-item \{\
+  display: flex;\
+  flex-direction: column;\
+  align-items: center;\
+  gap: 6px;\
+  padding: 10px 4px;\
+  border-radius: 8px;\
+  border: 1px solid transparent;\
+\}\
+#p2-wizard .vt-label \{\
+  font-family: 'Space Mono', monospace;\
+  font-size: 9px;\
+  letter-spacing: 0.06em;\
+  text-transform: uppercase;\
+  text-align: center;\
+\}\
+#p2-wizard .vt-status \{\
+  font-size: 11px;\
+  font-weight: 600;\
+  text-align: center;\
+\}\
+#p2-wizard .vt-item.done \{\
+  background: rgba(74,222,128,0.06);\
+  border-color: rgba(74,222,128,0.2);\
+\}\
+#p2-wizard .vt-item.done .vt-label \{ color: var(--green); \}\
+#p2-wizard .vt-item.done .vt-status \{ color: var(--green); font-size: 14px; \}\
+#p2-wizard .vt-item.next \{\
+  background: rgba(45,212,191,0.07);\
+  border-color: rgba(45,212,191,0.3);\
+\}\
+#p2-wizard .vt-item.next .vt-label \{ color: var(--teal); \}\
+#p2-wizard .vt-item.next .vt-status \{ color: var(--teal); font-size: 13px; \}\
+#p2-wizard .vt-item.locked \{ background: rgba(255,255,255,0.02); border-color: rgba(255,255,255,0.05); \}\
+#p2-wizard .vt-item.locked .vt-label \{ color: rgba(126,184,212,0.35); \}\
+#p2-wizard .vt-item.locked .vt-status \{ color: rgba(126,184,212,0.3); font-size: 14px; \}\
+\
+/* Start Over link */\
+#p2-wizard .start-over-btn \{\
+  display: block;\
+  background: none;\
+  border: none;\
+  font-family: 'Space Mono', monospace;\
+  font-size: 10px;\
+  letter-spacing: 0.14em;\
+  text-transform: uppercase;\
+  color: rgba(126,184,212,0.45);\
+  cursor: pointer;\
+  margin: 22px auto 0;\
+  padding: 6px;\
+  transition: color 0.2s;\
+  text-align: center;\
+\}\
+#p2-wizard .start-over-btn:hover \{ color: var(--muted); \}\
+\
+/* Social proof line */\
+#p2-wizard .social-proof \{\
+  text-align: center;\
+  margin-top: 20px;\
+  padding: 10px 0;\
+\}\
+#p2-wizard .social-proof span \{\
+  font-family: 'DM Sans', sans-serif;\
+  font-size: 13px;\
+  color: var(--muted);\
+  opacity: 0.85;\
+\}\
+#p2-wizard .social-proof strong \{ color: var(--cream); font-weight: 600; \}\
+\
+/* Momentum urgency */\
+#p2-wizard .momentum-note \{\
+  font-family: 'Playfair Display', serif;\
+  font-style: italic;\
+  font-size: 14px;\
+  color: var(--muted);\
+  text-align: center;\
+  margin-top: 10px;\
+  line-height: 1.6;\
+  opacity: 0.8;\
+\}\
+\
+/* Scripts counter (top of page) */\
+#p2-wizard .scripts-counter \{\
+  text-align: center;\
+  margin-bottom: 24px;\
+\}\
+#p2-wizard .scripts-counter span \{\
+  font-family: 'Space Mono', monospace;\
+  font-size: 10px;\
+  letter-spacing: 0.14em;\
+  text-transform: uppercase;\
+  color: var(--muted);\
+  opacity: 0.65;\
+\}\
+#p2-wizard .scripts-counter strong \{\
+  color: var(--teal);\
+  font-weight: 700;\
+\}\
+\
+/* Micro-copy under build button */\
+#p2-wizard .build-note \{\
+  font-size: 12px;\
+  color: var(--muted);\
+  text-align: center;\
+  margin-top: 10px;\
+  opacity: 0.7;\
+\}\
+\
+/* Epiphany Bridge (loading screen story) */\
+#p2-wizard .epiphany-bridge \{\
+  margin-top: 32px;\
+  text-align: center;\
+  padding: 0 8px;\
+\}\
+#p2-wizard .epiphany-line \{\
+  font-family: 'Playfair Display', serif;\
+  font-style: italic;\
+  font-size: 17px;\
+  color: var(--cyan);\
+  line-height: 1.7;\
+  margin-bottom: 12px;\
+  opacity: 0;\
+  transform: translateY(6px);\
+  transition: opacity 0.6s ease, transform 0.6s ease;\
+\}\
+#p2-wizard .epiphany-line.visible \{\
+  opacity: 0.75;\
+  transform: translateY(0);\
+\}\
+#p2-wizard .epiphany-line:last-child \{\
+  color: var(--teal);\
+  font-style: normal;\
+  font-family: 'DM Sans', sans-serif;\
+  font-size: 15px;\
+  letter-spacing: 0.04em;\
+  opacity: 0;\
+\}\
+#p2-wizard .epiphany-line:last-child.visible \{\
+  opacity: 0.9;\
+\}\
+\
+/* Wizard card wrapper */\
+#p2-wizard .wizard-card \{\
+  background: var(--card);\
+  border: 1.5px solid var(--border);\
+  border-radius: 16px;\
+  padding: 44px 40px;\
+  margin-bottom: 40px;\
+  position: relative;\
+  overflow: hidden;\
+\}\
+#p2-wizard .wizard-card::before \{\
+  content: '';\
+  position: absolute;\
+  top: 0; left: 0;\
+  width: 3px; height: 100%;\
+  background: linear-gradient(180deg, var(--teal), var(--cyan));\
+\}\
+\
+/* Mobile */\
+@media (max-width: 600px) \{\
+  #p2-wizard \{ padding: 56px 18px 72px; \}\
+  #p2-wizard .wizard-card \{ padding: 30px 20px; \}\
+  #p2-wizard .choice-grid \{ grid-template-columns: 1fr; \}\
+  #p2-wizard .btn-cta \{ padding: 16px 36px; font-size: 20px; width: 100%; \}\
+  #p2-wizard .result-cta \{ padding: 0; \}\
+  #p2-wizard .video-tracker \{ grid-template-columns: repeat(4, 1fr); \}\
+  #p2-wizard .copy-btn \{ font-size: 11px; padding: 5px 10px; \}\
+\}\
+</style>\
+\
+<div id="p2-wizard">\
+  <div class="inner">\
+\
+    <!-- Top: Welcome -->\
+    <div class="scripts-counter"><span><strong>2,847</strong> scripts built and counting</span></div>\
+    <p class="eyebrow">Your Challenge Starts Here</p>\
+    <h1 class="screen-title">LET'S FIND OUT WHERE<br><span class="accent">YOU'RE STARTING FROM.</span></h1>\
+    <p class="screen-sub">Answer a few quick questions and we'll build your personalized Video 1 script before you leave this page.</p>\
+\
+    <!-- Progress Dots -->\
+    <div class="wiz-progress">\
+      <div class="wiz-dot active" id="p2-dot-0"></div>\
+      <div class="wiz-dot" id="p2-dot-1"></div>\
+      <div class="wiz-dot" id="p2-dot-2"></div>\
+      <div class="wiz-dot" id="p2-dot-3"></div>\
+    </div>\
+\
+    <!-- Wizard Card -->\
+    <div class="wizard-card">\
+\
+      <!-- Q1: Posted Before? -->\
+      <div class="wiz-screen active" id="p2-q1">\
+        <p class="eyebrow">Finding Your Level</p>\
+        <h2 class="screen-title" style="font-size:clamp(28px,5.5vw,44px);">Have you ever posted a <span class="accent">short-form video</span> online?</h2>\
+        <p class="screen-sub">TikTok, Reels, Shorts. Even if you deleted it the next day.</p>\
+        <div class="choice-grid">\
+          <div class="choice-card" id="p2-c-posted-no">\
+            <span class="card-emoji">&#x1FAE3;</span>\
+            <div class="card-title">No, never</div>\
+            <div class="card-sub">Haven't posted yet, or recorded once and never put it out.</div>\
+          </div>\
+          <div class="choice-card" id="p2-c-posted-yes">\
+            <span class="card-emoji">&#x1F4F1;</span>\
+            <div class="card-title">Yes, I have</div>\
+            <div class="card-sub">Posted before, even if it was just a few times or I fell off.</div>\
+          </div>\
+        </div>\
+        <button class="skip-link" id="p2-skip-q1">Skip the questions, just build my script</button>\
+      </div>\
+\
+      <!-- Q2a: Blocker (for "no, never") -->\
+      <div class="wiz-screen" id="p2-q2a">\
+        <p class="eyebrow">Finding Your Level</p>\
+        <h2 class="screen-title" style="font-size:clamp(28px,5.5vw,44px);">What's the <span class="accent">main thing</span> holding you back?</h2>\
+        <p class="screen-sub">Be honest. There's no wrong answer here.</p>\
+        <div class="choice-grid">\
+          <div class="choice-card" id="p2-c-block-ideas">\
+            <span class="card-emoji">&#x1F9E0;</span>\
+            <div class="card-title">I don't know what to say</div>\
+            <div class="card-sub">I stare at the camera and go completely blank.</div>\
+          </div>\
+          <div class="choice-card" id="p2-c-block-camera">\
+            <span class="card-emoji">&#x1F62C;</span>\
+            <div class="card-title">I hate how I look on camera</div>\
+            <div class="card-sub">I've tried but I cringe watching myself back.</div>\
+          </div>\
+          <div class="choice-card" id="p2-c-block-nothing">\
+            <span class="card-emoji">&#x1F937;</span>\
+            <div class="card-title">I don't have a business yet</div>\
+            <div class="card-sub">Not sure what my "thing" is or if anyone would care.</div>\
+          </div>\
+          <div class="choice-card" id="p2-c-block-procrastinating">\
+            <span class="card-emoji">&#x23F0;</span>\
+            <div class="card-title">I keep putting it off</div>\
+            <div class="card-sub">I've been meaning to start. Life keeps happening.</div>\
+          </div>\
+        </div>\
+      </div>\
+\
+      <!-- Q2b: History (for "yes, I have") -->\
+      <div class="wiz-screen" id="p2-q2b">\
+        <p class="eyebrow">Finding Your Level</p>\
+        <h2 class="screen-title" style="font-size:clamp(28px,5.5vw,44px);">How would you describe your <span class="accent">posting history?</span></h2>\
+        <p class="screen-sub">Pick the one that feels most true, even if it's a little uncomfortable.</p>\
+        <div class="choice-grid one-col">\
+          <div class="choice-card" id="p2-c-hist-few">\
+            <div class="card-title">I've posted a few times but never consistently</div>\
+            <div class="card-sub">Made a couple of videos, they went nowhere, and I stopped.</div>\
+          </div>\
+          <div class="choice-card" id="p2-c-hist-stops">\
+            <div class="card-title">I post sometimes but always fall off after a week or two</div>\
+            <div class="card-sub">Start strong, life happens, disappear for months.</div>\
+          </div>\
+          <div class="choice-card" id="p2-c-hist-was">\
+            <div class="card-title">I was consistent once but stopped for a while</div>\
+            <div class="card-sub">Had a rhythm going, something broke it, haven't come back.</div>\
+          </div>\
+        </div>\
+      </div>\
+\
+      <!-- Q3: Business? -->\
+      <div class="wiz-screen" id="p2-q3">\
+        <p class="eyebrow">Finding Your Level</p>\
+        <h2 class="screen-title" style="font-size:clamp(28px,5.5vw,44px);">Are you <span class="accent">building a business</span> or working toward one?</h2>\
+        <p class="screen-sub">This shapes everything about what your videos should say.</p>\
+        <div class="choice-grid one-col">\
+          <div class="choice-card" id="p2-c-biz-yes">\
+            <span class="card-emoji">&#x1F680;</span>\
+            <div class="card-title">Yes, I have an active business</div>\
+            <div class="card-sub">I have clients, an offer, or a service I'm actively building.</div>\
+          </div>\
+          <div class="choice-card" id="p2-c-biz-building">\
+            <span class="card-emoji">&#x1F528;</span>\
+            <div class="card-title">I'm in the early stages of building something</div>\
+            <div class="card-sub">I have a direction but haven't fully launched yet.</div>\
+          </div>\
+          <div class="choice-card" id="p2-c-biz-no">\
+            <span class="card-emoji">&#x1F331;</span>\
+            <div class="card-title">Not yet, I'm still figuring out my thing</div>\
+            <div class="card-sub">I want to start creating but I'm still exploring what to say.</div>\
+          </div>\
+        </div>\
+      </div>\
+\
+      <!-- Q4: Name -->\
+      <div class="wiz-screen" id="p2-q4">\
+        <p class="eyebrow">Almost There</p>\
+        <h2 class="screen-title" style="font-size:clamp(28px,5.5vw,44px);">Last thing: <span class="accent">what's your name?</span></h2>\
+        <p class="screen-sub">We'll use it to personalize your Video 1 script so it actually sounds like something you would say out loud.</p>\
+        <input\
+          type="text"\
+          class="name-input"\
+          id="p2-name"\
+          placeholder="Your first name"\
+          autocomplete="given-name"\
+          maxlength="40"\
+        />\
+        <button class="wiz-btn" id="p2-build">BUILD MY VIDEO 1 SCRIPT</button>\
+        <p class="build-note">Takes about 8 seconds. No email required.</p>\
+      </div>\
+\
+      <!-- Loading State -->\
+      <div class="wiz-screen" id="p2-loading">\
+        <div class="loading-wrap">\
+          <div class="loading-dots">\
+            <div class="ldot"></div>\
+            <div class="ldot"></div>\
+            <div class="ldot"></div>\
+          </div>\
+          <p class="loading-label">Building your personalized script...</p>\
+        </div>\
+        <div class="epiphany-bridge" id="p2-epiphany">\
+          <p class="epiphany-line" id="p2-ep-1">I used to think the people who posted every day were just more confident than me.</p>\
+          <p class="epiphany-line" id="p2-ep-2">Turns out they weren't. They just had something to say before they hit record.</p>\
+          <p class="epiphany-line" id="p2-ep-3">Yours is almost ready.</p>\
+        </div>\
+      </div>\
+\
+      <!-- Script Reveal -->\
+      <div class="wiz-screen" id="p2-result">\
+        <div class="plan-badges">\
+          <span class="plan-badge">VIDEO 1</span>\
+          <span class="plan-badge">PERSONALIZED</span>\
+        </div>\
+        <h2 class="plan-title"><span class="name-accent" id="p2-display-name">Your</span> Video 1: I'm Doing This</h2>\
+\
+        <div class="script-box">\
+          <div class="script-header">\
+            <p class="script-label">Your Video 1 Script</p>\
+            <button class="copy-btn" id="p2-copy-btn">Copy Script</button>\
+          </div>\
+          <p class="script-line" id="p2-script-line-1">Hey, I'm <span id="p2-script-name"></span>. And I'm doing something that honestly scares me a little bit.</p>\
+          <p class="script-line" id="p2-script-line-2">I've been thinking about posting for a while now, and I kept telling myself I'd wait until I felt more ready, until I had better equipment, until I knew exactly what I was doing. But at some point you have to stop planning and just start, and that's what this is. This is me starting. I don't have it all figured out, and I'm not going to pretend that I do, but I have something real to say and I think that matters more than having the perfect setup or the perfect script or the perfect anything.</p>\
+        </div>\
+\
+        <div class="result-cta">\
+          <a href="https://content.coloradomastermind.com/yes" class="btn-cta" id="p2-goto-v2">I'M READY FOR VIDEO 2</a>\
+          <p class="cta-note">Instant access &middot; All 7 scripts unlocked immediately</p>\
+        </div>\
+\
+        <div class="social-proof">\
+          <span>Join <strong>300+</strong> creators who turned their Video 1 script into all seven.</span>\
+        </div>\
+        <p class="momentum-note">Your script is fresh right now. The longer you wait, the harder it gets to press record.</p>\
+\
+        <div class="video-tracker">\
+          <div class="vt-item done">\
+            <div class="vt-label">Video 1</div>\
+            <div class="vt-status">&#10003;</div>\
+          </div>\
+          <div class="vt-item next">\
+            <div class="vt-label">Video 2</div>\
+            <div class="vt-status">&#8594;</div>\
+          </div>\
+          <div class="vt-item locked">\
+            <div class="vt-label">Video 3</div>\
+            <div class="vt-status">&#x1F512;</div>\
+          </div>\
+          <div class="vt-item locked">\
+            <div class="vt-label">Video 4</div>\
+            <div class="vt-status">&#x1F512;</div>\
+          </div>\
+          <div class="vt-item locked">\
+            <div class="vt-label">Video 5</div>\
+            <div class="vt-status">&#x1F512;</div>\
+          </div>\
+          <div class="vt-item locked">\
+            <div class="vt-label">Video 6</div>\
+            <div class="vt-status">&#x1F512;</div>\
+          </div>\
+          <div class="vt-item locked">\
+            <div class="vt-label">Video 7</div>\
+            <div class="vt-status">&#x1F512;</div>\
+          </div>\
+        </div>\
+\
+        <button class="start-over-btn" id="p2-start-over">Start Over</button>\
+\
+      </div>\
+\
+    </div>\
+\
+  </div>\
+</div>\
+\
+<script>\
+(function() \{\
+  var state = \{ posted: null, blocker: null, history: null, business: null, name: '' \};\
+  var currentStep = 0;\
+  var totalSteps = 4;\
+\
+  function updateDots(step) \{\
+    for (var i = 0; i < totalSteps; i++) \{\
+      var dot = document.getElementById('p2-dot-' + i);\
+      dot.className = 'wiz-dot';\
+      if (i < step) dot.className = 'wiz-dot done';\
+      if (i === step) dot.className = 'wiz-dot active';\
+    \}\
+  \}\
+\
+  function showScreen(id) \{\
+    var screens = document.querySelectorAll('#p2-wizard .wiz-screen');\
+    for (var i = 0; i < screens.length; i++) \{\
+      screens[i].classList.remove('active');\
+    \}\
+    var target = document.getElementById(id);\
+    if (target) \{\
+      target.classList.add('active');\
+      target.style.animation = 'none';\
+      target.offsetHeight;\
+      target.style.animation = '';\
+    \}\
+  \}\
+\
+  function autoAdvance(card, key, value) \{\
+    state[key] = value;\
+    card.classList.add('selecting');\
+    setTimeout(function() \{\
+      card.classList.remove('selecting');\
+      if (key === 'posted') \{\
+        currentStep = 1;\
+        updateDots(1);\
+        showScreen(value === 'no' ? 'p2-q2a' : 'p2-q2b');\
+      \} else if (key === 'blocker' || key === 'history') \{\
+        currentStep = 2;\
+        updateDots(2);\
+        showScreen('p2-q3');\
+      \} else if (key === 'business') \{\
+        currentStep = 3;\
+        updateDots(3);\
+        showScreen('p2-q4');\
+        setTimeout(function() \{\
+          document.getElementById('p2-name').focus();\
+        \}, 400);\
+      \}\
+    \}, 280);\
+  \}\
+\
+  function buildScript() \{\
+    var name = document.getElementById('p2-name').value.trim();\
+    if (!name) \{\
+      var inp = document.getElementById('p2-name');\
+      inp.style.borderColor = '#2dd4bf';\
+      inp.focus();\
+      return;\
+    \}\
+    state.name = name;\
+    showScreen('p2-loading');\
+\
+    // Stagger epiphany bridge lines\
+    var ep1 = document.getElementById('p2-ep-1');\
+    var ep2 = document.getElementById('p2-ep-2');\
+    var ep3 = document.getElementById('p2-ep-3');\
+    setTimeout(function() \{ if (ep1) ep1.classList.add('visible'); \}, 300);\
+    setTimeout(function() \{ if (ep2) ep2.classList.add('visible'); \}, 900);\
+    setTimeout(function() \{ if (ep3) ep3.classList.add('visible'); \}, 1500);\
+\
+    setTimeout(function() \{\
+      var display = name.charAt(0).toUpperCase() + name.slice(1).toLowerCase();\
+      document.getElementById('p2-display-name').textContent = display + "'s";\
+      document.getElementById('p2-script-name').textContent = display;\
+\
+      // Build personalized script line 2 based on answers\
+      var line2 = '';\
+      var posted = state.posted;\
+      var blocker = state.blocker;\
+      var history = state.history;\
+      var biz = state.business;\
+\
+      if (posted === 'no' && blocker === 'camera') \{\
+        line2 = "I\\'ve been avoiding this for a while because honestly, I don\\'t love how I come across on camera. I watch myself back and all I see is everything I\\'d change. But I realized the version of me I\\'m waiting to become is never going to show up unless this version goes first. So this is me, exactly as I am right now, doing the thing I\\'ve been putting off because I was waiting to feel ready. I don\\'t feel ready. But I\\'m here, and I think that counts for something.";\
+      \} else if (posted === 'no' && blocker === 'ideas') \{\
+        line2 = "The thing that\\'s been stopping me is not confidence or cameras or any of the stuff people usually talk about. It\\'s simpler than that. I genuinely didn\\'t know what to say. I\\'d think about making a video and go completely blank, like everything I know just disappears the second I think about hitting record. But I found something that helped me get past that, and this is the result. It\\'s not perfect, but it\\'s real, and it\\'s the first thing I\\'ve actually been able to say on camera that sounds like me.";\
+      \} else if (posted === 'no' && (blocker === 'nothing' || blocker === 'procrastinating')) \{\
+        line2 = "I\\'ve been meaning to start this for a while now, and I kept telling myself I\\'d do it when the timing was better, when I had more figured out, when I felt like I actually had something worth saying. But at some point you have to stop planning and just start, and that\\'s what this is. This is me starting. I don\\'t have it all figured out, and I\\'m not going to pretend that I do, but I have something real to say and I think that matters more than having the perfect setup or the perfect script or the perfect anything.";\
+      \} else if (posted === 'yes' && history === 'was') \{\
+        line2 = "I used to post pretty consistently, and honestly, it was going well. Then something happened, life got in the way, I lost the rhythm, and I just never came back. It\\'s been sitting in the back of my mind ever since, this feeling like I abandoned something that was actually working. So this is me coming back. Not with some big relaunch or a brand overhaul, just me picking up where I left off and doing the thing I already know I\\'m capable of doing.";\
+      \} else if (posted === 'yes' && (history === 'few' || history === 'stops')) \{\
+        line2 = "I\\'ve posted before, but if I\\'m being honest it never really stuck. I\\'d make a video, maybe two, feel weird about it, and quietly stop. The pattern kept repeating and I kept telling myself next time would be different. But nothing changes until you actually change what you\\'re doing, so I\\'m trying something new this time. I have a system, I have a plan, and I\\'m not doing this alone anymore. That\\'s what this is. Day one, take one, and this time I\\'m finishing what I start.";\
+      \} else \{\
+        line2 = "I\\'ve been thinking about posting for a while now, and I kept telling myself I\\'d wait until I felt more ready, until I had better equipment, until I knew exactly what I was doing. But at some point you have to stop planning and just start, and that\\'s what this is. This is me starting. I don\\'t have it all figured out, and I\\'m not going to pretend that I do, but I have something real to say and I think that matters more than having the perfect setup or the perfect script or the perfect anything.";\
+      \}\
+      document.getElementById('p2-script-line-2').textContent = line2;\
+\
+      showScreen('p2-result');\
+\
+      setTimeout(function() \{\
+        var gotov2 = document.getElementById('p2-goto-v2');\
+        if (gotov2) \{\
+          gotov2.scrollIntoView(\{ behavior: 'smooth', block: 'center' \});\
+        \}\
+      \}, 400);\
+    \}, 1800);\
+  \}\
+\
+  // Copy script button\
+  document.getElementById('p2-copy-btn').addEventListener('click', function() \{\
+    var btn = this;\
+    var lines = [];\
+    var el1 = document.getElementById('p2-script-line-1');\
+    var el2 = document.getElementById('p2-script-line-2');\
+    if (el1) lines.push(el1.textContent.trim());\
+    if (el2) lines.push(el2.textContent.trim());\
+    var scriptText = lines.join('\\n\\n');\
+    if (navigator.clipboard && scriptText) \{\
+      navigator.clipboard.writeText(scriptText).then(function() \{\
+        btn.textContent = 'Copied!';\
+        btn.classList.add('copied');\
+        setTimeout(function() \{\
+          btn.textContent = 'Copy Script';\
+          btn.classList.remove('copied');\
+        \}, 2000);\
+      \}).catch(function() \{\
+        btn.textContent = 'Copy failed';\
+        setTimeout(function() \{ btn.textContent = 'Copy Script'; \}, 2000);\
+      \});\
+    \}\
+  \});\
+\
+  // Start Over button\
+  document.getElementById('p2-start-over').addEventListener('click', function() \{\
+    state = \{ posted: null, blocker: null, history: null, business: null \};\
+    currentStep = 0;\
+    updateDots(0);\
+    document.getElementById('p2-name').value = '';\
+    // Reset all choice cards\
+    var cards = document.querySelectorAll('#p2-wizard .choice-card');\
+    for (var i = 0; i < cards.length; i++) \{\
+      cards[i].classList.remove('selecting', 'selected');\
+    \}\
+    // Reset epiphany bridge\
+    var ep1 = document.getElementById('p2-ep-1');\
+    var ep2 = document.getElementById('p2-ep-2');\
+    var ep3 = document.getElementById('p2-ep-3');\
+    if (ep1) ep1.classList.remove('visible');\
+    if (ep2) ep2.classList.remove('visible');\
+    if (ep3) ep3.classList.remove('visible');\
+    showScreen('p2-q1');\
+    window.scrollTo(\{ top: 0, behavior: 'smooth' \});\
+  \});\
+\
+  function skipToName() \{\
+    currentStep = 3;\
+    updateDots(3);\
+    showScreen('p2-q4');\
+    setTimeout(function() \{\
+      document.getElementById('p2-name').focus();\
+    \}, 400);\
+  \}\
+\
+  // Wire up choice cards\
+  document.getElementById('p2-c-posted-no').addEventListener('click', function() \{ autoAdvance(this, 'posted', 'no'); \});\
+  document.getElementById('p2-c-posted-yes').addEventListener('click', function() \{ autoAdvance(this, 'posted', 'yes'); \});\
+\
+  document.getElementById('p2-c-block-ideas').addEventListener('click', function() \{ autoAdvance(this, 'blocker', 'ideas'); \});\
+  document.getElementById('p2-c-block-camera').addEventListener('click', function() \{ autoAdvance(this, 'blocker', 'camera'); \});\
+  document.getElementById('p2-c-block-nothing').addEventListener('click', function() \{ autoAdvance(this, 'blocker', 'nothing'); \});\
+  document.getElementById('p2-c-block-procrastinating').addEventListener('click', function() \{ autoAdvance(this, 'blocker', 'procrastinating'); \});\
+\
+  document.getElementById('p2-c-hist-few').addEventListener('click', function() \{ autoAdvance(this, 'history', 'few'); \});\
+  document.getElementById('p2-c-hist-stops').addEventListener('click', function() \{ autoAdvance(this, 'history', 'stops'); \});\
+  document.getElementById('p2-c-hist-was').addEventListener('click', function() \{ autoAdvance(this, 'history', 'was'); \});\
+\
+  document.getElementById('p2-c-biz-yes').addEventListener('click', function() \{ autoAdvance(this, 'business', 'yes'); \});\
+  document.getElementById('p2-c-biz-building').addEventListener('click', function() \{ autoAdvance(this, 'business', 'building'); \});\
+  document.getElementById('p2-c-biz-no').addEventListener('click', function() \{ autoAdvance(this, 'business', 'no'); \});\
+\
+  document.getElementById('p2-build').addEventListener('click', buildScript);\
+  document.getElementById('p2-name').addEventListener('keypress', function(e) \{\
+    if (e.key === 'Enter') buildScript();\
+  \});\
+  document.getElementById('p2-skip-q1').addEventListener('click', skipToName);\
+\})();\
+</script>}

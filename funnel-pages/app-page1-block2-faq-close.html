@@ -1,0 +1,442 @@
+<!-- ═══════════════════════════════════════════════════════════
+     7 VIDEOS. 7 DAYS. $7.... FAQ + FINAL CTA BLOCK
+     Build With Bee... Landing Page Block 2 of 2
+     Sections 10 + 11
+     Drop into a Systeme.io HTML block BELOW your opt-in form.
+     Fonts already loaded from Block 1.
+═══════════════════════════════════════════════════════════ -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+/* Uses bwb- variables... Block 1 must be on the page first */
+/* ═══════════════════════════
+   SECTION 10... FAQ
+═══════════════════════════ */
+.bwb-faq {
+  background: #0c1220;
+  padding: 100px 24px;
+  position: relative;
+  overflow: hidden;
+  font-family: 'Nunito', sans-serif;
+}
+.bwb-faq-glow {
+  position: absolute;
+  top: -60px;
+  left: -60px;
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, rgba(45,212,191,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+.bwb-faq-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.bwb-faq-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: #2dd4bf;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 18px;
+}
+.bwb-faq-headline {
+  font-family: 'Lora', serif;
+  font-size: clamp(38px, 9vw, 62px);
+  letter-spacing: 0.02em;
+  line-height: 1.0;
+  color: #f0f9ff;
+  margin-bottom: 48px;
+}
+.bwb-faq-headline span { color: #2dd4bf; }
+.bwb-faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.bwb-faq-item {
+  border-bottom: 1px solid #2e4460;
+  padding: 28px 0;
+  cursor: pointer;
+}
+.bwb-faq-item:first-child { border-top: 1px solid #2e4460; }
+.bwb-faq-q {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.bwb-faq-q-text {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(18px, 3.5vw, 20px);
+  color: #f0f9ff;
+  font-weight: 600;
+  line-height: 1.4;
+  flex: 1;
+}
+.bwb-faq-q-icon {
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  color: #2dd4bf;
+  flex-shrink: 0;
+  transition: transform 0.25s ease;
+  margin-top: 2px;
+  line-height: 1;
+}
+.bwb-faq-item.open .bwb-faq-q-icon {
+  transform: rotate(45deg);
+}
+.bwb-faq-a {
+  display: none;
+  padding-top: 16px;
+}
+.bwb-faq-item.open .bwb-faq-a {
+  display: block;
+}
+.bwb-faq-a p {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(18px, 3.2vw, 20px);
+  color: #f0f9ff;
+  line-height: 1.85;
+  margin-bottom: 14px;
+}
+.bwb-faq-a p:last-child { margin-bottom: 0; }
+.bwb-faq-a strong { color: #f0f9ff; font-weight: 600; }
+/* ═══════════════════════════
+   SECTION 11... FINAL CTA
+═══════════════════════════ */
+.bwb-close {
+  background: #111827;
+  padding: 100px 24px 120px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+  font-family: 'Nunito', sans-serif;
+}
+.bwb-close::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 50% 0%, rgba(45,212,191,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 20% 100%, rgba(96,165,250,0.06) 0%, transparent 55%);
+  pointer-events: none;
+}
+.bwb-close::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(45,212,191,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45,212,191,0.025) 1px, transparent 1px);
+  background-size: 44px 44px;
+  pointer-events: none;
+}
+.bwb-close-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+.bwb-close-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: #2dd4bf;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 20px;
+}
+.bwb-close-headline {
+  font-family: 'Lora', serif;
+  font-size: clamp(44px, 11vw, 82px);
+  letter-spacing: 0.02em;
+  line-height: 0.97;
+  color: #f0f9ff;
+  margin-bottom: 8px;
+}
+.bwb-close-headline span { color: #2dd4bf; }
+.bwb-close-divider {
+  width: 56px;
+  height: 2px;
+  background: linear-gradient(90deg, #2dd4bf, #67e8f9);
+  margin: 28px auto;
+  border-radius: 2px;
+}
+.bwb-close-body {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(18px, 3.5vw, 20px);
+  color: #f0f9ff;
+  line-height: 1.85;
+  margin-bottom: 20px;
+  text-align: left;
+}
+.bwb-close-body strong { color: #f0f9ff; font-weight: 600; }
+.bwb-close-body:last-of-type { margin-bottom: 0; }
+.bwb-close-pullout {
+  font-family: 'Permanent Marker', cursive;
+  
+  font-size: clamp(18px, 4vw, 22px);
+  color: #67e8f9;
+  line-height: 1.75;
+  border-left: 2px solid rgba(45,212,191,0.4);
+  padding: 6px 0 6px 24px;
+  margin: 36px 0;
+  text-align: left;
+}
+.bwb-close-final {
+  background: linear-gradient(135deg, rgba(45,212,191,0.08) 0%, rgba(96,165,250,0.05) 100%);
+  border: 1px solid rgba(45,212,191,0.25);
+  border-radius: 15px;
+  padding: 44px 32px;
+  margin-top: 52px;
+}
+.bwb-close-final-headline {
+  font-family: 'Lora', serif;
+  font-size: clamp(28px, 6vw, 42px);
+  letter-spacing: 0.04em;
+  color: #f0f9ff;
+  margin-bottom: 20px;
+}
+.bwb-close-final-sub {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: #7eb8d4;
+  text-transform: uppercase;
+  margin-top: 16px;
+  display: block;
+}
+.bwb-close-btn {
+  display: inline-block;
+  background: #2dd4bf;
+  color: #0f172a !important;
+  font-family: 'Lora', serif;
+  font-size: 22px;
+  letter-spacing: 0.12em;
+  padding: 20px 56px;
+  border-radius: 9px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  box-shadow: 0 4px 28px rgba(45,212,191,0.25);
+  text-decoration: none !important;
+  margin-top: 28px;
+}
+.bwb-close-btn:hover {
+  background: #5eead4;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(45,212,191,0.4);
+  color: #0f172a !important;
+}
+/* Mobile */
+@media (max-width: 520px) {
+  .bwb-faq { padding: 70px 20px; }
+  .bwb-close { padding: 70px 20px 90px; }
+  .bwb-close-btn {
+    display: block;
+    width: 100%;
+    text-align: center;
+    font-size: 19px;
+    padding: 18px 24px;
+  }
+  .bwb-close-final { padding: 32px 22px; }
+}
+</style>
+<!-- ════════════════════════════════════
+     SECTION 10... FAQ
+════════════════════════════════════ -->
+<div class="bwb-page">
+<section class="bwb-faq">
+  <div class="bwb-faq-glow"></div>
+  <div class="bwb-faq-inner">
+    <span class="bwb-faq-eyebrow">Answers to Your Common Questions</span>
+    <h2 class="bwb-faq-headline">
+      Let's Make Sure<br>
+      <span>You're Ready.</span>
+    </h2>
+    <div class="bwb-faq-list">
+      <div class="bwb-faq-item">
+        <div class="bwb-faq-q">
+          <span class="bwb-faq-q-text">&#127358; Why is this just $7 to start? What's the catch?</span>
+          <span class="bwb-faq-q-icon">+</span>
+        </div>
+        <div class="bwb-faq-a">
+          <p>There is no catch. The SeenInSeven app on the next page is genuinely free to use. It builds your Video 1 guide in minutes with no hidden fees and no email required.</p>
+          <p>Here is why: David Bee built this because he believes that the biggest reason people never start posting is that they do not know what to say. The free experience fixes that problem immediately. If it works for you, you will want the full challenge, and you can grab it for $7 when you are ready. If it does not work for you, you spent nothing and you still have content.</p>
+          <p><strong>The free experience stands on its own.</strong> The $7 unlocks the other six videos, the system, and the group. Both are real. Neither is a trick.</p>
+        </div>
+      </div>
+      <div class="bwb-faq-item">
+        <div class="bwb-faq-q">
+          <span class="bwb-faq-q-text">&#129504; What exactly is this?</span>
+          <span class="bwb-faq-q-icon">+</span>
+        </div>
+        <div class="bwb-faq-a">
+          <p>A 7-video challenge with an easy-to-use system that does the hard part for you. You get the SeenInSeven app that builds your personalized video guides based on your answers, a step-by-step structure, a private community with real people doing this alongside you, and the Comment-to-Client bonus for turning your engagement into actual business. David Bee is in there every day.</p>
+          <p>This is not about going viral. It is about becoming visible, trusted, and eventually paid.</p>
+        </div>
+      </div>
+      <div class="bwb-faq-item">
+        <div class="bwb-faq-q">
+          <span class="bwb-faq-q-text">&#128198; Do I have to do one video every day?</span>
+          <span class="bwb-faq-q-icon">+</span>
+        </div>
+        <div class="bwb-faq-a">
+          <p>No. This is not a streak challenge. You do not have to post every single day in a row. You could do one video a week for seven weeks. You could batch three in a weekend. You could post two, take a break, and come back when life settles.</p>
+          <p><strong>The point is not the timeline. The point is the seven videos.</strong> Seven videos changes how you see yourself on camera. Do them your way. Just do them.</p>
+        </div>
+      </div>
+      <div class="bwb-faq-item">
+        <div class="bwb-faq-q">
+          <span class="bwb-faq-q-text">&#9203; I genuinely don't have time for this.</span>
+          <span class="bwb-faq-q-icon">+</span>
+        </div>
+        <div class="bwb-faq-a">
+          <p>Then you need it more than anyone else on this page.</p>
+          <p>We are talking about 10 minutes a video. You already spend more than that scrolling past other people's content wishing you were posting your own. One focused video beats a hundred hours of thinking about it.</p>
+        </div>
+      </div>
+      <div class="bwb-faq-item">
+        <div class="bwb-faq-q">
+          <span class="bwb-faq-q-text">&#128584; What if I don't want to show my face?</span>
+          <span class="bwb-faq-q-icon">+</span>
+        </div>
+        <div class="bwb-faq-a">
+          <p>You do not have to. Voiceovers, text based videos, B-roll, AI avatars: all of it works. Visibility means letting your ideas be seen and heard. It does not require your face anywhere near a camera if that is not where you are yet.</p>
+        </div>
+      </div>
+      <div class="bwb-faq-item">
+        <div class="bwb-faq-q">
+          <span class="bwb-faq-q-text">&#128560; What if nobody watches?</span>
+          <span class="bwb-faq-q-icon">+</span>
+        </div>
+        <div class="bwb-faq-a">
+          <p>Good. Seriously. An audience of zero means you get to practice, experiment, and figure out what works without anyone watching you trip. The only guaranteed way to stay invisible forever is to never post anything at all.</p>
+        </div>
+      </div>
+      <div class="bwb-faq-item">
+        <div class="bwb-faq-q">
+          <span class="bwb-faq-q-text">&#128556; What if I fail?</span>
+          <span class="bwb-faq-q-icon">+</span>
+        </div>
+        <div class="bwb-faq-a">
+          <p>Then you fail with seven videos posted, a system you now understand, and more camera confidence than you had before you started. That is not failure. That is a head start.</p>
+          <p>Staying invisible to avoid the possibility of failing is the actual loss here.</p>
+        </div>
+      </div>
+      <div class="bwb-faq-item">
+        <div class="bwb-faq-q">
+          <span class="bwb-faq-q-text">&#127917; I'm a creative / artist / don't have a business yet. Is this still for me?</span>
+          <span class="bwb-faq-q-icon">+</span>
+        </div>
+        <div class="bwb-faq-a">
+          <p>Yes. You do not need a business to benefit from showing up. Creatives, artists, side hustlers, and people still figuring it out will leave this challenge with real content momentum and a process they can repeat forever.</p>
+          <p>If you want to build something people can see, this is the path.</p>
+        </div>
+      </div>
+      <div class="bwb-faq-item">
+        <div class="bwb-faq-q">
+          <span class="bwb-faq-q-text">&#129405; What if I'm just not someone people want to watch?</span>
+          <span class="bwb-faq-q-icon">+</span>
+        </div>
+        <div class="bwb-faq-a">
+          <p>People do not follow perfection. They follow realness. They follow someone who shows up consistently and actually gives a damn about what they are saying.</p>
+          <p><strong>Your message matters more than your appearance. Full stop.</strong> Do not let that be the thing that buries your voice.</p>
+        </div>
+      </div>
+      <div class="bwb-faq-item">
+        <div class="bwb-faq-q">
+          <span class="bwb-faq-q-text">&#128247; Do I need fancy equipment?</span>
+          <span class="bwb-faq-q-icon">+</span>
+        </div>
+        <div class="bwb-faq-a">
+          <p>You need a smartphone. That is it. Your phone is enough to create content that looks intentional and sounds clear. No ring lights. No editing software. No excuses.</p>
+        </div>
+      </div>
+      <div class="bwb-faq-item">
+        <div class="bwb-faq-q">
+          <span class="bwb-faq-q-text">&#129520; What exactly am I getting for $7?</span>
+          <span class="bwb-faq-q-icon">+</span>
+        </div>
+        <div class="bwb-faq-a">
+          <p>The 7-day structure, the personalized SeenInSeven app, access to the private community, and the Comment-to-Client bonus. All for seven dollars. One time. No hidden anything.</p>
+        </div>
+      </div>
+      <div class="bwb-faq-item">
+        <div class="bwb-faq-q">
+          <span class="bwb-faq-q-text">&#128293; I've tried things like this before and quit. What makes this different?</span>
+          <span class="bwb-faq-q-icon">+</span>
+        </div>
+        <div class="bwb-faq-a">
+          <p>Every other thing you tried made you learn before you could start. This one hands you your content before you ever have to think. The app does the heavy lifting. the system tells you what to do. The group keeps you accountable.</p>
+          <p><strong>And this is not a streak challenge.</strong> There is nothing to fail. You open the app, get your content, and film whenever you are ready. That is the entire process.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     SECTION 11... FINAL CTA
+════════════════════════════════════ -->
+<section class="bwb-close">
+  <div class="bwb-close-inner">
+    <span class="bwb-close-eyebrow">The Last Thing I'll Say</span>
+    <h2 class="bwb-close-headline">
+      You've Been Ready.<br>
+      You Just Needed<br>
+      <span>The Right System.</span>
+    </h2>
+    <div class="bwb-close-divider"></div>
+    <p class="bwb-close-body">You do not need more research.</p>
+    <p class="bwb-close-body">You do not need better equipment, a bigger following, or a more polished version of yourself before you are allowed to start. That version of yourself is not coming. The only way to become someone who shows up consistently is to start showing up.</p>
+    <p class="bwb-close-body">Right now there are people out there who need to find you. They need your experience, your perspective, and the specific way you explain things that nobody else explains quite the same way.</p>
+    <div class="bwb-close-pullout">
+      But they cannot find you. Because you are not out there yet.
+    </div>
+    <p class="bwb-close-body">Seven videos changes that. Not because seven videos makes you famous. But because seven videos makes you real. It makes you findable. It makes you someone who showed up when it was uncomfortable and did it anyway.</p>
+    <p class="bwb-close-body"><strong>That is who people trust. That is who people hire. That is who people tell their friends about.</strong></p>
+    <p class="bwb-close-body">Do them in seven days. Do them in seven weeks. Do them whenever you can.</p>
+    <p class="bwb-close-body"><strong>Just do them.</strong></p>
+    <div class="bwb-close-final">
+      <div class="bwb-close-final-headline">
+        Let's Build Something People Can Actually See.
+      </div>
+      <a href="#section-91ec91a8" class="bwb-close-btn bwb-scroll-btn">
+        I'm Ready. Start the Challenge.
+      </a>
+      <span class="bwb-close-final-sub">
+        Free to start &nbsp;&bull;&nbsp; $7 one time when you're ready
+      </span>
+    </div>
+  </div>
+</section>
+<script>
+  // FAQ accordion
+  document.querySelectorAll('.bwb-faq-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      var isOpen = item.classList.contains('open');
+      // Close all
+      document.querySelectorAll('.bwb-faq-item').forEach(function(i) {
+        i.classList.remove('open');
+      });
+      // Toggle clicked
+      if (!isOpen) {
+        item.classList.add('open');
+      }
+    });
+  });
+  // Smooth scroll CTA buttons
+  document.querySelectorAll('.bwb-scroll-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      var target = document.getElementById('section-91ec91a8');
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>
+</div><!-- end .bwb-page -->

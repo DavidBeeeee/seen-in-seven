@@ -1,0 +1,497 @@
+<!-- ═══════════════════════════════════════════════════════════
+     SEENINSEVEN... YOUR AI STORYSTARTER
+     Page 3 · Block 1 · Order Page (Above Form)
+     Colorado Mastermind · David Bee
+     Drop into a Systeme.io HTML block ABOVE the native order form.
+
+     SYSTEME SETUP NOTES:
+     - Page background: #0D2828 (Teal Deep) to match dark sections
+     - Order bump at checkout: "3 Reasons We Fail" at $37
+     - Remove navigation/header if possible
+
+     ADMIN NOTE:
+     - Sarah K. and Marcus T. testimonials are placeholders.
+       Replace with real result-focused testimonials before launch.
+═══════════════════════════════════════════════════════════ -->
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+/* ═══════════════════════════
+   SYSTEME.IO OVERRIDE LAYER
+═══════════════════════════ */
+.sis-p3 p,
+.sis-p3 div,
+.sis-p3 span,
+.sis-p3 li {
+  text-align: left !important;
+}
+
+/* ═══════════════════════════
+   PAGE VARS + RESET
+═══════════════════════════ */
+.sis-p3 {
+  --teal-deep:   #0D2828;
+  --teal-mid:    #1E5C5C;
+  --teal-bright: #2A9090;
+  --teal-vivid:  #32B8B8;
+  --teal-soft:   #68C8C8;
+  --teal-pale:   #A8DEDE;
+  --teal-mist:   #D8F0F0;
+  --teal-frost:  #EEF9F9;
+  --cream:       #F8FAFA;
+  --white:       #FFFFFF;
+  --ink:         #0D2828;
+  --ink-soft:    #2A4848;
+  --ink-muted:   #527070;
+
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  line-height: 1.8;
+  background: var(--teal-deep);
+  color: var(--teal-pale);
+  padding: 72px 24px 56px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.sis-p3 *, .sis-p3 *::before, .sis-p3 *::after {
+  box-sizing: border-box;
+}
+
+.sis-p3-inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+/* ═══════════════════════════
+   EYEBROW
+═══════════════════════════ */
+.sis-p3-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: var(--teal-soft);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.sis-p3-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 28px;
+  height: 2px;
+  background: var(--teal-soft);
+  flex-shrink: 0;
+}
+
+/* ═══════════════════════════
+   HEADLINE
+═══════════════════════════ */
+.sis-p3-h1 {
+  font-family: 'Lora', serif;
+  font-size: clamp(30px, 5.5vw, 48px);
+  font-weight: 700;
+  line-height: 1.18;
+  color: var(--white);
+  margin-bottom: 36px;
+}
+.sis-p3-h1 em {
+  font-style: italic;
+  color: var(--teal-vivid);
+}
+
+/* ═══════════════════════════
+   BODY COPY
+═══════════════════════════ */
+.sis-p3-body {
+  font-size: 20px;
+  line-height: 1.8;
+  color: var(--teal-pale);
+  margin-bottom: 22px;
+}
+.sis-p3-body:last-of-type { margin-bottom: 0; }
+.sis-p3-body strong { color: var(--white); font-weight: 700; }
+
+/* ═══════════════════════════
+   PULL QUOTE (Permanent Marker)
+═══════════════════════════ */
+.sis-p3-pull {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 22px;
+  line-height: 1.6;
+  color: var(--teal-soft);
+  background: rgba(50, 184, 184, 0.07);
+  border-left: 3px solid var(--teal-vivid);
+  padding: 20px 24px;
+  margin: 36px 0;
+  border-radius: 0 8px 8px 0;
+}
+.sis-p3-pull .sis-p3-attr {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--teal-pale);
+  display: block;
+  margin-top: 10px;
+}
+
+/* ═══════════════════════════
+   "IF ALL THIS DID WAS..." BLOCK
+═══════════════════════════ */
+.sis-p3-ifatts {
+  border: 1px solid rgba(50, 184, 184, 0.15);
+  border-radius: 14px;
+  padding: 36px 32px;
+  background: rgba(50, 184, 184, 0.04);
+  margin: 40px 0;
+}
+.sis-p3-ifatts-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.25em;
+  color: var(--teal-bright);
+  margin-bottom: 20px;
+  display: block;
+}
+.sis-p3-ifatt {
+  font-family: 'Lora', serif;
+  font-size: 20px;
+  font-style: italic;
+  color: var(--teal-pale);
+  line-height: 1.7;
+  padding: 14px 0 14px 20px;
+  border-left: 2px solid rgba(50, 184, 184, 0.25);
+  margin-bottom: 12px;
+}
+.sis-p3-ifatt:last-of-type { margin-bottom: 0; }
+.sis-p3-micdrop {
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--white);
+  line-height: 1.6;
+  margin-top: 24px;
+  padding-top: 22px;
+  border-top: 1px solid rgba(50, 184, 184, 0.15);
+}
+
+/* ═══════════════════════════
+   VALUE STACK
+═══════════════════════════ */
+.sis-p3-stack-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--teal-bright);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 48px 0 24px;
+}
+.sis-p3-stack-label::before,
+.sis-p3-stack-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(50, 184, 184, 0.2);
+}
+
+.sis-p3-item {
+  background: rgba(50, 184, 184, 0.05);
+  border: 1px solid rgba(50, 184, 184, 0.14);
+  border-radius: 13px;
+  padding: 24px 26px;
+  margin-bottom: 14px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+  transition: border-color 0.2s;
+}
+.sis-p3-item:hover { border-color: rgba(50, 184, 184, 0.28); }
+.sis-p3-item.bonus {
+  border-color: rgba(50, 184, 184, 0.22);
+  background: rgba(50, 184, 184, 0.08);
+}
+
+.sis-p3-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--teal-vivid);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 34px;
+}
+
+.sis-p3-item-title {
+  font-family: 'Lora', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 6px;
+  line-height: 1.3;
+}
+.sis-p3-item-value {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--teal-vivid);
+  display: inline-block;
+  margin-left: 8px;
+}
+.sis-p3-item-desc {
+  font-size: 16px;
+  line-height: 1.75;
+  color: var(--teal-pale);
+  margin-top: 4px;
+}
+
+/* Total value box */
+.sis-p3-total {
+  text-align: center;
+  margin-top: 28px;
+  padding: 30px 24px;
+  background: rgba(50, 184, 184, 0.06);
+  border: 1px solid rgba(50, 184, 184, 0.18);
+  border-radius: 12px;
+}
+.sis-p3-total-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--teal-bright);
+  display: block;
+  margin-bottom: 10px;
+}
+.sis-p3-price-line {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(36px, 7vw, 52px);
+  font-weight: 700;
+  color: var(--teal-vivid);
+  line-height: 1;
+}
+.sis-p3-price-sub {
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  color: var(--teal-pale);
+  margin-top: 10px;
+  line-height: 1.6;
+}
+
+/* ═══════════════════════════
+   TESTIMONIALS
+═══════════════════════════ */
+.sis-p3-testimonials {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 36px 0;
+}
+.sis-p3-t-card {
+  border-left: 2px solid rgba(50, 184, 184, 0.3);
+  padding: 18px 20px;
+  background: rgba(50, 184, 184, 0.03);
+  border-radius: 0 8px 8px 0;
+}
+.sis-p3-t-card p {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--teal-pale);
+  line-height: 1.75;
+  margin-bottom: 10px;
+}
+.sis-p3-t-card cite {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--teal-bright);
+  font-style: normal;
+}
+
+/* ═══════════════════════════
+   ORDER BUMP SEED
+═══════════════════════════ */
+.sis-p3-bump-seed {
+  background: rgba(50, 184, 184, 0.06);
+  border: 1px dashed rgba(50, 184, 184, 0.25);
+  border-radius: 10px;
+  padding: 22px 26px;
+  margin: 32px 0 12px;
+}
+.sis-p3-bump-seed p {
+  font-size: 16px;
+  color: var(--teal-pale);
+  line-height: 1.75;
+}
+.sis-p3-bump-seed strong { color: var(--white); }
+
+/* ═══════════════════════════
+   TRANSITION TO FORM
+═══════════════════════════ */
+.sis-p3-transition {
+  text-align: center;
+  margin-top: 40px;
+  padding-bottom: 12px;
+}
+.sis-p3-transition p {
+  font-family: 'Lora', serif;
+  font-size: 22px;
+  font-style: italic;
+  color: var(--teal-pale);
+  line-height: 1.6;
+}
+.sis-p3-arrow {
+  display: block;
+  font-size: 26px;
+  color: var(--teal-vivid);
+  margin-top: 16px;
+  opacity: 0.6;
+  animation: p3bounce 2s ease-in-out infinite;
+}
+@keyframes p3bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(8px); }
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .sis-p3 { padding: 56px 18px 40px; }
+  .sis-p3-testimonials { grid-template-columns: 1fr; }
+  .sis-p3-item { flex-direction: row; gap: 14px; padding: 20px 18px; }
+  .sis-p3-ifatts { padding: 26px 22px; }
+}
+</style>
+
+<div class="sis-p3">
+  <div class="sis-p3-inner">
+
+    <div class="sis-p3-eyebrow">You're One Step Away</div>
+
+    <h1 class="sis-p3-h1">
+      Everything You Need to Build<br>
+      Your Entire Brand <em>in 7 Videos.</em>
+    </h1>
+
+    <p class="sis-p3-body">You came here because the gap between what you know and what you're actually putting out there has gotten too wide to ignore. It's not that you don't have enough to say. It's that turning what's in your head into something worth watching has always felt harder than it should be.</p>
+
+    <p class="sis-p3-body">SeenInSeven closes that gap. Not a course to sit through. Not a workbook to fill out and shelve. An actual app that takes what you know about your experience, your message, and the people you want to reach... and builds all 7 of your video content from those answers. Scripts that sound like you. Scripts built on the same story patterns that have made human communication work for thousands of years, drawn from psychology, sociology, history, and linguistics.</p>
+
+    <p class="sis-p3-body">The only thing left to do after that is <strong>press record.</strong></p>
+
+    <div class="sis-p3-pull">
+      "You already have the story. SeenInSeven just helps you tell it the right way."
+      <span class="sis-p3-attr">— David Bee</span>
+    </div>
+
+    <!-- IF ALL THIS DID WAS... -->
+    <div class="sis-p3-ifatts">
+      <span class="sis-p3-ifatts-eyebrow">Ask yourself this</span>
+      <div class="sis-p3-ifatt">
+        If all SeenInSeven did was get you past the blank page, would it be worth it?
+      </div>
+      <div class="sis-p3-ifatt">
+        If all SeenInSeven did was give you 7 videos that actually sound like you, would it be worth it?
+      </div>
+      <div class="sis-p3-ifatt">
+        If all SeenInSeven did was help one person find you online and decide you're exactly who they've been looking for, would it be worth it?
+      </div>
+      <p class="sis-p3-micdrop">
+        It does all three. Here's everything you're getting right now.
+      </p>
+    </div>
+
+    <!-- VALUE STACK -->
+    <div class="sis-p3-stack-label">What's Inside</div>
+
+    <div class="sis-p3-item">
+      <div class="sis-p3-num">01</div>
+      <div>
+        <p class="sis-p3-item-title">
+          The Script Builder App
+          <span class="sis-p3-item-value">Value: $197</span>
+        </p>
+        <p class="sis-p3-item-desc">The core of SeenInSeven. You answer questions about your experience, your message, and the people you want to reach. The app builds all 7 of your video content from those answers, in your voice, using AI trained on psychological, sociological, historical, and linguistic story patterns. What comes out sounds like you on your best day, every time.</p>
+      </div>
+    </div>
+
+    <div class="sis-p3-item">
+      <div class="sis-p3-num">02</div>
+      <div>
+        <p class="sis-p3-item-title">
+          The 7-Video Challenge Guide
+          <span class="sis-p3-item-value">Value: $47</span>
+        </p>
+        <p class="sis-p3-item-desc">The step-by-step guide that tells you exactly what to film, when to film it, and why each video matters in the sequence. You never have to figure out what comes next. Just follow the process and let the momentum build on its own.</p>
+      </div>
+    </div>
+
+    <div class="sis-p3-item bonus">
+      <div class="sis-p3-num">+</div>
+      <div>
+        <p class="sis-p3-item-title">
+          Comment-to-Client Formula + GPT
+          <span class="sis-p3-item-value">Bonus... Value: $67</span>
+        </p>
+        <p class="sis-p3-item-desc">The exact approach for turning the comments and engagement on your videos into actual conversations with real people who want to work with you. Includes a custom GPT that helps you craft responses that feel natural and move people from "interesting video" to "tell me more."</p>
+      </div>
+    </div>
+
+    <div class="sis-p3-total">
+      <span class="sis-p3-total-label">Total Value</span>
+      <div class="sis-p3-price-line">$311</div>
+      <p class="sis-p3-price-sub">
+        One-time investment &nbsp;&bull;&nbsp; Instant access &nbsp;&bull;&nbsp; 30-day guarantee
+      </p>
+    </div>
+
+    <!-- TESTIMONIALS -->
+    <div class="sis-p3-testimonials">
+      <div class="sis-p3-t-card">
+        <p>"I've tried other content courses that cost ten times this. By Video 3, the overthinking just stopped and I started actually enjoying the process of creating for the first time."</p>
+        <cite>Sarah K., Life Coach, Denver</cite>
+      </div>
+      <div class="sis-p3-t-card">
+        <p>"I posted three videos in my first week, which is three more than I managed in the two years before that. Having the script already done removed every excuse I had left."</p>
+        <cite>Marcus T., Real Estate Agent</cite>
+      </div>
+    </div>
+
+    <!--
+      ORDER BUMP SEED
+      Primes the reader for the Systeme native order bump checkbox below.
+
+      SYSTEME ORDER BUMP CONFIG:
+      - Bump name: "3 Reasons We Fail (And How to Beat Them)"
+      - Bump price: $37
+      - Bump checkbox label: "YES... add the 3 Reasons We Fail guide so I can sidestep
+        the three patterns that quietly kill most video challenges before they ever
+        finish. Includes the Accountability Tracker and the 'What To Do When You Want
+        To Quit' playbook. Just $37, added to my order today."
+    -->
+    <div class="sis-p3-bump-seed">
+      <p>One more thing before you complete your order. There are three specific patterns that quietly derail people before they ever finish 7 videos. They have nothing to do with motivation or time. We built something that addresses all three directly, and you'll have the option to add it to your order below for less than the price of a book.</p>
+    </div>
+
+    <!-- TRANSITION -->
+    <div class="sis-p3-transition">
+      <p>Your information goes right below. Fill it in, complete your order, and you'll have access in minutes.</p>
+      <span class="sis-p3-arrow">&#8595;</span>
+    </div>
+
+  </div><!-- /.sis-p3-inner -->
+</div><!-- /.sis-p3 -->

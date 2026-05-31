@@ -1,0 +1,152 @@
+<!--
+  ============================================================
+  PAGE 6... THANK YOU / DELIVERY... CODE BLOCK 2 (BELOW RECEIPT)
+  ============================================================
+  Place this code block BELOW the native Systeme receipt block.
+
+  SYSTEME SETUP NOTES:
+  - Same page background settings as Block 1
+  - This is the final block in the funnel
+
+  PLACEHOLDER URLS:
+  - [INSERT LINK TO WIZARD OR SOCIAL PLATFORM OF CHOICE]
+  - contact@DavidBee.me is used for direct contact
+  ============================================================
+-->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+
+#p6-bottom {
+  --bg: #111827;
+  --card: #1e2d40;
+  --border: #2e4460;
+  --cream: #f0f9ff;
+  --muted: #7eb8d4;
+  --teal: #2dd4bf;
+  --cyan: #67e8f9;
+
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  line-height: 1.75;
+  padding: 48px 24px 80px;
+  width: 100%;
+}
+#p6-bottom *, #p6-bottom *::before, #p6-bottom *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+#p6-bottom .inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+#p6-bottom .divider-line {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  margin: 0 0 40px;
+}
+#p6-bottom .section-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+#p6-bottom p.body {
+  font-size: 20px;
+  color: var(--cream);
+  margin-bottom: 22px;
+  line-height: 1.8;
+}
+#p6-bottom p.body.muted { color: var(--muted); }
+#p6-bottom p.body strong { color: var(--cream); font-weight: 600; }
+
+/* Final CTA */
+#p6-bottom .final-cta {
+  background: linear-gradient(135deg, rgba(14,60,78,0.5), rgba(12,40,62,0.5));
+  border: 1px solid rgba(45,212,191,0.25);
+  border-radius: 14px;
+  padding: 36px 32px;
+  text-align: center;
+  margin-top: 40px;
+}
+#p6-bottom .final-cta .cta-title {
+  font-family: 'Lora', serif;
+  font-size: 28px;
+  letter-spacing: 0.05em;
+  color: var(--cream);
+  margin-bottom: 12px;
+}
+#p6-bottom .final-cta .cta-desc {
+  font-size: 17px;
+  color: var(--muted);
+  margin-bottom: 24px;
+  line-height: 1.7;
+}
+#p6-bottom .btn-go {
+  display: inline-block;
+  background: var(--teal);
+  color: #0f172a;
+  font-family: 'Lora', serif;
+  font-size: 20px;
+  letter-spacing: 0.1em;
+  padding: 16px 44px;
+  border-radius: 9px;
+  text-decoration: none;
+  transition: all 0.2s;
+}
+#p6-bottom .btn-go:hover {
+  background: #5eead4;
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(45,212,191,0.2);
+}
+
+/* Sign off */
+#p6-bottom .sign-off {
+  margin-top: 40px;
+  text-align: center;
+}
+#p6-bottom .sign-off p {
+  font-size: 20px;
+  color: var(--cream);
+  font-weight: 500;
+}
+
+@media (max-width: 600px) {
+  #p6-bottom { padding: 36px 18px 64px; }
+  #p6-bottom .final-cta { padding: 28px 22px; }
+  #p6-bottom .btn-go { width: 100%; padding: 16px 28px; }
+}
+</style>
+
+<div id="p6-bottom">
+  <div class="inner">
+
+    <div class="divider-line"></div>
+
+    <p class="section-eyebrow">A Quick Note From David</p>
+
+    <p class="body">I built this because I kept watching people with real talent and real things to say stay completely invisible online, and it genuinely bothered me. Not in a vague, philosophical way, but in a personal, concrete, "I can actually build something that fixes this" kind of way. So I did.</p>
+
+    <p class="body">You're not starting from zero here. You've already started the app, you've already seen what your Video 1 guide looks like, and you've already made the decision to invest in yourself and follow through on this. The only thing left to do is actually pick up your phone and film it.</p>
+
+    <p class="body">If you get stuck at any point in the process, and I mean genuinely stuck, not just nervous (because nervous is completely normal and it goes away faster than you think it will), reach out. You can email me directly at <strong>contact@DavidBee.me</strong>, post in the community, or if you're in Build With Bee, message me directly anytime.</p>
+
+    <div class="final-cta">
+      <p class="cta-title">YOUR ONLY JOB RIGHT NOW: FILM VIDEO 1</p>
+      <p class="cta-desc">Not this weekend. Not when the lighting is better. Not when you've practiced in the mirror. Your first video is not going to be perfect, and it absolutely does not need to be. It just needs to exist. The second one will be noticeably better, and by the time you finish the seventh, you'll wonder what you were ever so worried about.</p>
+      <!-- [INSERT LINK TO WIZARD OR SOCIAL PLATFORM OF CHOICE] -->
+      <a href="#" class="btn-go">GO FILM VIDEO 1</a>
+    </div>
+
+    <div class="sign-off">
+      <p>I'm genuinely rooting for you, and I can't wait to see what you create.</p>
+      <p style="margin-top: 12px; color: var(--teal); font-weight: 600;">— David</p>
+    </div>
+
+  </div>
+</div>

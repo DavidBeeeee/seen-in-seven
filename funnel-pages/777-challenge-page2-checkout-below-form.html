@@ -1,0 +1,340 @@
+<!-- ═══════════════════════════════════════════════════════════
+     777 CHALLENGE — CHECKOUT PAGE (BELOW FORM)
+     Colorado Mastermind · David Bee
+     Drop into a Systeme.io HTML block — place BELOW the payment form.
+═══════════════════════════════════════════════════════════ -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&display=swap');
+
+.cb-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 40px 24px 60px;
+  font-family: 'Nunito', sans-serif;
+  color: #0D2828;
+  background: #F8FAFA;
+}
+
+/* ── DIVIDER ── */
+.cb-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #D8E4E8, transparent);
+  margin: 0 0 40px;
+}
+
+/* ── GUARANTEE ── */
+.cb-guarantee {
+  background: #fff;
+  border: 1px solid #D8F0F0;
+  border-left: 4px solid #32B8B8;
+  border-radius: 14px;
+  padding: 32px 36px;
+  margin-bottom: 32px;
+}
+.cb-guarantee-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #2A9090;
+  display: block;
+  margin-bottom: 14px;
+}
+.cb-guarantee-title {
+  font-family: 'Lora', serif;
+  font-size: clamp(20px, 3.5vw, 28px);
+  font-weight: 700;
+  color: #0D2828;
+  line-height: 1.3;
+  margin-bottom: 16px;
+}
+.cb-guarantee-body {
+  font-size: 18px;
+  color: #2A4848;
+  line-height: 1.8;
+  margin-bottom: 14px;
+}
+.cb-guarantee-body:last-child { margin-bottom: 0; }
+.cb-guarantee-callout {
+  background: #EEF9F9;
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-top: 20px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  color: #1E5C5C;
+  line-height: 1.75;
+}
+
+/* ── WHAT HAPPENS NEXT ── */
+.cb-next {
+  background: #F8FAFA;
+  border: 1px solid #D8E4E8;
+  border-radius: 14px;
+  padding: 32px 36px;
+  margin-bottom: 32px;
+}
+.cb-next-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #2A9090;
+  display: block;
+  margin-bottom: 18px;
+}
+.cb-next-title {
+  font-family: 'Lora', serif;
+  font-size: clamp(20px, 3.5vw, 26px);
+  font-weight: 700;
+  color: #0D2828;
+  margin-bottom: 20px;
+  line-height: 1.3;
+}
+.cb-next-steps {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.cb-next-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.cb-next-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: #0D2828;
+  background: #32B8B8;
+  border-radius: 50%;
+  width: 26px; height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.cb-next-text {
+  font-size: 18px;
+  color: #2A4848;
+  line-height: 1.8;
+}
+.cb-next-text strong { color: #0D2828; }
+
+/* ── DAVID SIGN-OFF ── */
+.cb-signoff {
+  text-align: center;
+  padding: 20px 0 8px;
+}
+.cb-signoff-quote {
+  font-family: 'Permanent Marker', cursive;
+  font-size: clamp(20px, 2.8vw, 22px);
+  color: #1E5C5C;
+  line-height: 1.65;
+  max-width: 500px;
+  margin: 0 auto 20px;
+}
+.cb-signoff-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #7AAEAE;
+}
+
+/* ── CONTACT ── */
+.cb-contact {
+  text-align: center;
+  padding-top: 24px;
+  border-top: 1px solid #D8E4E8;
+  margin-top: 32px;
+}
+.cb-contact p {
+  font-size: 14px;
+  color: #7AAEAE;
+  line-height: 1.7;
+  margin-bottom: 6px;
+}
+.cb-contact a {
+  color: #2A9090;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+/* ── SECURITY BADGES ── */
+.cb-badges {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 24px;
+  flex-wrap: wrap;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid #D8E4E8;
+}
+.cb-badge-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: #7AAEAE;
+}
+
+/* ── FAQ ── */
+.cb-faq {
+  margin-bottom: 32px;
+}
+.cb-faq-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #2A9090;
+  display: block;
+  margin-bottom: 20px;
+  text-align: center;
+}
+.cb-faq-item {
+  border-top: 1px solid #D8E4E8;
+  padding: 20px 0;
+}
+.cb-faq-item:last-child {
+  border-bottom: 1px solid #D8E4E8;
+}
+.cb-faq-q {
+  font-family: 'Lora', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: #0D2828;
+  line-height: 1.35;
+  margin-bottom: 10px;
+}
+.cb-faq-a {
+  font-size: 18px;
+  color: #2A4848;
+  line-height: 1.8;
+  margin: 0;
+}
+.cb-faq-a a {
+  color: #2A9090;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+@media (max-width: 600px) {
+  .cb-wrap { padding: 32px 16px 48px; }
+  .cb-guarantee, .cb-next { padding: 24px 20px; }
+}
+</style>
+
+<div class="cb-wrap">
+
+  <div class="cb-divider"></div>
+
+  <!-- GUARANTEE -->
+  <div class="cb-guarantee">
+    <span class="cb-guarantee-eyebrow">David's personal guarantee</span>
+    <div class="cb-guarantee-title">Not what you needed? That's on me.</div>
+    <p class="cb-guarantee-body">I'm not going to make you fill out a form or go through a process to ask for your $7 back. That's not how I operate.</p>
+    <p class="cb-guarantee-body">If you join, go through the app, and decide it's not for you... send me an email. I'll refund it personally. No questions, no hoops, no weird process.</p>
+    <div class="cb-guarantee-callout">
+      📧 &nbsp;<strong>contact@davidbee.me</strong> &nbsp;·&nbsp; One email is all it takes. I'll handle it the same day. 😌
+    </div>
+  </div>
+
+  <!-- WHAT HAPPENS NEXT -->
+  <div class="cb-next">
+    <span class="cb-next-eyebrow">Here's exactly what happens after you pay</span>
+    <div class="cb-next-title">You'll have your first video script ready before the day is over.</div>
+    <ol class="cb-next-steps">
+      <li class="cb-next-step">
+        <span class="cb-next-num">1</span>
+        <span class="cb-next-text"><strong>Check your email.</strong> Your confirmation and access instructions arrive immediately. Sometimes they land in the Promotions tab, so check there if you don't see it within a minute or two.</span>
+      </li>
+      <li class="cb-next-step">
+        <span class="cb-next-num">2</span>
+        <span class="cb-next-text"><strong>Claim your free SeenInSeven app.</strong> Your confirmation email includes a free coupon link for the app ($311 value). Follow it, apply the coupon, and your access is instant.</span>
+      </li>
+      <li class="cb-next-step">
+        <span class="cb-next-num">3</span>
+        <span class="cb-next-text"><strong>Open the app and answer the questions.</strong> Takes about five minutes. When you finish, all 7 of your custom video scripts are ready to go.</span>
+      </li>
+      <li class="cb-next-step">
+        <span class="cb-next-num">4</span>
+        <span class="cb-next-text"><strong>Join the private Facebook group.</strong> Introduce yourself. The group is already running, and everyone inside knows exactly what it's like to be right where you are.</span>
+      </li>
+      <li class="cb-next-step">
+        <span class="cb-next-num">5</span>
+        <span class="cb-next-text"><strong>The group starts on the 7th.</strong> You'll get a daily email with everything you need. All you have to do is show up.</span>
+      </li>
+    </ol>
+  </div>
+
+  <!-- SIGN-OFF -->
+  <div class="cb-signoff">
+    <p class="cb-signoff-quote">See you inside. I'll be doing every single one of these videos alongside you.</p>
+    <span class="cb-signoff-name">— David Bee</span>
+  </div>
+
+  <!-- FAQ -->
+  <div class="cb-faq">
+    <span class="cb-faq-eyebrow">A few things people ask before joining</span>
+
+    <div class="cb-faq-item">
+      <div class="cb-faq-q">Do I need any equipment?</div>
+      <p class="cb-faq-a">Your phone is all you need. Vertical, in the car, at the desk... whatever works. The challenge is about showing up, not production quality.</p>
+    </div>
+
+    <div class="cb-faq-item">
+      <div class="cb-faq-q">What if I have no audience yet?</div>
+      <p class="cb-faq-a">That's actually the best time to do this. You're building the habit before the pressure is on. And the private group gives you a real audience watching from day one.</p>
+    </div>
+
+    <div class="cb-faq-item">
+      <div class="cb-faq-q">What exactly is SeenInSeven, and why is it free?</div>
+      <p class="cb-faq-a">SeenInSeven is the app David built to solve the blank-screen problem. You answer a few questions about yourself and your business, and it writes all 7 of your custom video scripts for you. It normally sells for $311. It's included free because the challenge works better when your scripts are already written before Day 1.</p>
+    </div>
+
+    <div class="cb-faq-item">
+      <div class="cb-faq-q">I'm not very technical. Can I figure out the app?</div>
+      <p class="cb-faq-a">Yes. It asks you questions in plain English and writes your scripts for you. If you can fill out a form, you can use it. David is also in the group every day if anything feels confusing.</p>
+    </div>
+
+    <div class="cb-faq-item">
+      <div class="cb-faq-q">What if I fall behind during the challenge?</div>
+      <p class="cb-faq-a">People catch up all the time. The daily emails keep you oriented, the group keeps you accountable, and the scripts are already written... so catching up mostly just means pressing record. You can't really fail this unless you decide to.</p>
+    </div>
+
+    <div class="cb-faq-item">
+      <div class="cb-faq-q">Is there a refund if it's not for me?</div>
+      <p class="cb-faq-a">Yes. David's personal guarantee is right above this. One email to <a href="mailto:contact@davidbee.me">contact@davidbee.me</a> and he'll handle it the same day. No form, no process, no questions.</p>
+    </div>
+  </div>
+
+  <!-- CONTACT -->
+  <div class="cb-contact">
+    <p>Questions before you join? David reads every email personally.</p>
+    <p><a href="mailto:contact@davidbee.me">contact@davidbee.me</a> &nbsp;·&nbsp; <a href="https://m.me/davidbeeeee" target="_blank">Facebook Messenger</a></p>
+  </div>
+
+  <!-- SECURITY BADGES -->
+  <div class="cb-badges">
+    <span class="cb-badge-item">🔒 Secure Checkout</span>
+    <span class="cb-badge-item">✓ One-Time Payment</span>
+    <span class="cb-badge-item">✓ No Subscription</span>
+    <span class="cb-badge-item">✓ Instant Access</span>
+  </div>
+
+</div>

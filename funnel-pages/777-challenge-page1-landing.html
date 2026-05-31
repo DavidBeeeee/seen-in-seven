@@ -1,0 +1,949 @@
+<!-- ═══════════════════════════════════════════════════════════
+     THE 777 CHALLENGE... LANDING PAGE
+     Colorado Mastermind · David Bee
+     Drop into a Systeme.io HTML block.
+     All CTA buttons scroll to #optin-form
+═══════════════════════════════════════════════════════════ -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+/* ═══════════════════════════
+   SYSTEME.IO OVERRIDE LAYER
+═══════════════════════════ */
+.p777 p,
+.p777 div,
+.p777 span,
+.p777 li,
+.p777 a:not(.p777-btn) {
+  text-align: left !important;
+}
+.p777 h1,
+.p777 h2,
+.p777 h3 {
+  font-family: 'Lora', serif !important;
+}
+/* ═══════════════════════════
+   VARIABLES + BASE
+═══════════════════════════ */
+.p777 {
+  --teal-deep:   #1E5C5C;
+  --teal-mid:    #2A9090;
+  --teal-bright: #32B8B8;
+  --teal-soft:   #68C8C8;
+  --teal-pale:   #A8DEDE;
+  --teal-mist:   #D8F0F0;
+  --teal-frost:  #EEF9F9;
+  --sage:        #4A7A5C;
+  --sage-soft:   #6B9E80;
+  --sage-pale:   #A8C8B4;
+  --sage-frost:  #E8F2EC;
+  --seafoam:     #38A89A;
+  --gold:        #C8A84B;
+  --gold-light:  #E8C86C;
+  --bg:          #0D2828;
+  --bg-mid:      #122424;
+  --bg-alt:      #163030;
+  --card:        #1A3838;
+  --card2:       #204040;
+  --border:      #285050;
+  --cream:       #F8FAFA;
+  --soft:        #B8DEDE;
+  --muted:       #7AAEAE;
+  font-family: 'Nunito', sans-serif !important;
+  background: var(--bg) !important;
+  color: var(--cream) !important;
+  text-align: left !important;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+.p777 *, .p777 *::before, .p777 *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+.p777 a { text-decoration: none; }
+/* ═══════════════════════════
+   SHARED COMPONENTS
+═══════════════════════════ */
+.p777-inner {
+  max-width: 700px;
+  margin: 0 auto;
+  width: 100%;
+}
+.p777-eyebrow {
+  font-family: 'Oswald', sans-serif !important;
+  font-size: 12px;
+  letter-spacing: 0.28em;
+  color: var(--teal-soft) !important;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 18px;
+}
+.p777-divider {
+  width: 52px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--teal-bright), var(--sage-soft));
+  border-radius: 2px;
+  margin: 28px 0;
+}
+.p777-divider-center { margin: 28px auto; }
+.p777-h1 {
+  font-family: 'Lora', serif !important;
+  font-size: clamp(44px, 10vw, 82px) !important;
+  font-weight: 900 !important;
+  line-height: 1.05 !important;
+  color: var(--cream) !important;
+  margin-bottom: 12px !important;
+}
+.p777-h1 em {
+  font-style: italic !important;
+  color: var(--teal-soft) !important;
+}
+.p777-h2 {
+  font-family: 'Lora', serif !important;
+  font-size: clamp(32px, 7vw, 58px) !important;
+  font-weight: 900 !important;
+  line-height: 1.1 !important;
+  color: var(--cream) !important;
+  margin-bottom: 8px !important;
+}
+.p777-h2 em {
+  font-style: italic !important;
+  color: var(--teal-soft) !important;
+}
+.p777-h2 span { color: var(--teal-bright) !important; }
+.p777-h3 {
+  font-family: 'Lora', serif !important;
+  font-size: clamp(22px, 5vw, 36px) !important;
+  font-weight: 700 !important;
+  line-height: 1.2 !important;
+  color: var(--cream) !important;
+  margin-bottom: 8px !important;
+}
+.p777-body {
+  font-size: 20px !important;
+  color: var(--soft) !important;
+  line-height: 1.85 !important;
+  margin-bottom: 20px !important;
+  text-align: left !important;
+}
+.p777-body strong { color: var(--cream) !important; font-weight: 600; }
+.p777-body:last-child { margin-bottom: 0 !important; }
+.p777-pullout {
+  font-family: 'Permanent Marker', cursive !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  font-size: clamp(16px, 3.2vw, 20px) !important;
+  color: var(--teal-pale) !important;
+  line-height: 1.75 !important;
+  border-left: 2px solid rgba(107,191,191,0.45) !important;
+  padding: 8px 0 8px 24px !important;
+  margin: 36px 0 !important;
+}
+.p777-btn {
+  display: inline-block;
+  background: linear-gradient(135deg, var(--teal-mid), var(--seafoam));
+  color: #fff !important;
+  font-family: 'Nunito', sans-serif !important;
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  letter-spacing: 0.03em;
+  padding: 18px 48px;
+  border-radius: 60px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  box-shadow: 0 6px 28px rgba(45,138,138,0.35);
+  text-decoration: none !important;
+}
+.p777-btn:hover {
+  background: linear-gradient(135deg, var(--teal-bright), var(--seafoam));
+  transform: translateY(-2px);
+  box-shadow: 0 14px 40px rgba(45,138,138,0.5);
+  color: #fff !important;
+}
+.p777-btn-full {
+  display: block;
+  width: 100%;
+  text-align: center !important;
+}
+.p777-btn-sub {
+  display: block;
+  font-family: 'Oswald', sans-serif !important;
+  font-size: 12px !important;
+  letter-spacing: 0.12em;
+  color: var(--muted) !important;
+  margin-top: 12px;
+  text-transform: uppercase;
+  text-align: center !important;
+}
+.p777-section-border {
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 50%; height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(107,191,191,0.3), transparent);
+}
+/* ═══════════════════════════
+   HERO
+═══════════════════════════ */
+.p777-hero {
+  background: var(--bg) !important;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px 90px;
+  position: relative;
+  overflow: hidden;
+  text-align: center !important;
+}
+.p777-hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 20% 30%, rgba(45,138,138,0.2) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 80% at 80% 70%, rgba(56,168,154,0.15) 0%, transparent 60%);
+  pointer-events: none;
+}
+.p777-hero-badge {
+  display: inline-block;
+  border: 1px solid rgba(196,146,74,0.45);
+  color: var(--gold-light) !important;
+  font-family: 'Oswald', sans-serif !important;
+  font-size: 12px !important;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  border-radius: 40px;
+  margin-bottom: 32px;
+  background: rgba(196,146,74,0.07);
+  position: relative; z-index: 2;
+}
+.p777-hero-pills {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 32px 0 40px;
+  position: relative; z-index: 2;
+}
+.p777-pill {
+  background: rgba(255,255,255,0.06) !important;
+  border: 1px solid rgba(107,191,191,0.28);
+  border-radius: 40px;
+  padding: 9px 22px;
+  font-size: 14px !important;
+  font-weight: 500;
+  color: var(--teal-pale) !important;
+  white-space: nowrap;
+}
+.p777-pill strong { color: #fff !important; font-weight: 700; }
+.p777-hero-note {
+  font-size: 13px !important;
+  color: rgba(255,255,255,0.38) !important;
+  margin-top: 14px;
+  position: relative; z-index: 2;
+}
+/* ═══════════════════════════
+   SECTIONS SHARED
+═══════════════════════════ */
+.p777-sec {
+  padding: 80px 24px;
+  position: relative;
+}
+.p777-sec-dark  { background: var(--bg) !important; }
+.p777-sec-mid   { background: var(--bg-mid) !important; }
+.p777-sec-alt   { background: var(--bg-alt) !important; }
+.p777-sec-card  { background: var(--card) !important; }
+/* ═══════════════════════════
+   STORY / EPIPHANY
+═══════════════════════════ */
+.p777-story-border {
+  border-left: 2px solid rgba(107,191,191,0.35) !important;
+  padding-left: 28px !important;
+  margin: 36px 0 !important;
+}
+.p777-callout {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-left: 3px solid var(--teal-bright) !important;
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin: 36px 0;
+  font-family: 'Permanent Marker', cursive !important;
+  font-style: normal !important;
+  font-weight: 700 !important;
+  font-size: clamp(16px, 3.2vw, 20px) !important;
+  color: var(--teal-pale) !important;
+  line-height: 1.7 !important;
+}
+/* ═══════════════════════════
+   STEP CARDS
+═══════════════════════════ */
+.p777-steps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+  margin-top: 40px;
+}
+.p777-step {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-top: 3px solid var(--teal-bright) !important;
+  border-radius: 14px;
+  padding: 32px 26px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.p777-step:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 40px rgba(45,138,138,0.18);
+}
+.p777-step-num {
+  font-family: 'Permanent Marker', cursive !important;
+  font-size: 44px !important;
+  font-weight: 900 !important;
+  color: rgba(107,191,191,0.25) !important;
+  line-height: 1;
+  margin-bottom: 14px;
+}
+.p777-step-title {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: var(--cream) !important;
+  margin-bottom: 10px;
+}
+.p777-step-desc {
+  font-size: 15px !important;
+  color: var(--soft) !important;
+  line-height: 1.65 !important;
+}
+/* ═══════════════════════════
+   COMMUNITY STATS
+═══════════════════════════ */
+.p777-stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 40px;
+}
+@media (max-width: 600px) {
+  .p777-stats { grid-template-columns: 1fr; }
+}
+.p777-stat {
+  background: var(--card2) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 14px;
+  padding: 28px 20px;
+  text-align: center !important;
+}
+.p777-stat-num {
+  font-family: 'Permanent Marker', cursive !important;
+  font-size: 42px !important;
+  font-weight: 900 !important;
+  color: var(--teal-bright) !important;
+  line-height: 1;
+  margin-bottom: 10px;
+}
+.p777-stat-label {
+  font-size: 14px !important;
+  color: var(--soft) !important;
+  line-height: 1.55 !important;
+}
+/* ═══════════════════════════
+   OUTCOME CARDS
+═══════════════════════════ */
+.p777-outcomes {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 18px;
+  margin-top: 40px;
+}
+.p777-outcome {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 14px;
+  padding: 28px 22px;
+}
+.p777-outcome-icon {
+  font-size: 26px;
+  margin-bottom: 14px;
+  display: block;
+}
+.p777-outcome-title {
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: var(--cream) !important;
+  margin-bottom: 8px;
+}
+.p777-outcome-desc {
+  font-size: 14px !important;
+  color: var(--soft) !important;
+  line-height: 1.65 !important;
+}
+/* ═══════════════════════════
+   OFFER STACK
+═══════════════════════════ */
+.p777-offer-items { margin-top: 36px; }
+.p777-offer-item {
+  display: flex;
+  gap: 18px;
+  align-items: flex-start;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--border);
+}
+.p777-offer-item:last-child { border-bottom: none; }
+.p777-offer-check {
+  font-size: 22px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.p777-offer-title {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: var(--cream) !important;
+  margin-bottom: 6px;
+}
+.p777-offer-desc {
+  font-size: 15px !important;
+  color: var(--soft) !important;
+  line-height: 1.65 !important;
+}
+.p777-offer-value {
+  font-family: 'Oswald', sans-serif !important;
+  font-size: 10px !important;
+  letter-spacing: 0.1em;
+  color: var(--teal-soft) !important;
+  text-transform: uppercase;
+  margin-left: 10px;
+}
+.p777-offer-bonus .p777-offer-title::before {
+  content: '★ BONUS: ';
+  color: var(--gold) !important;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  font-weight: 700;
+}
+.p777-offer-total {
+  background: var(--card2) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 16px;
+  padding: 36px;
+  text-align: center !important;
+  margin-top: 36px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.p777-total-label {
+  font-family: 'Oswald', sans-serif !important;
+  font-size: 12px !important;
+  letter-spacing: 0.18em;
+  color: var(--muted) !important;
+  text-transform: uppercase;
+}
+.p777-total-value {
+  font-family: 'Permanent Marker', cursive !important;
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  color: var(--soft) !important;
+  text-decoration: line-through;
+  opacity: 0.5;
+}
+.p777-total-price {
+  font-family: 'Permanent Marker', cursive !important;
+  font-size: 72px !important;
+  font-weight: 900 !important;
+  color: var(--teal-bright) !important;
+  line-height: 1;
+  margin: 8px 0 4px;
+}
+.p777-total-sub {
+  font-size: 14px !important;
+  color: var(--muted) !important;
+  margin-bottom: 8px;
+}
+/* ═══════════════════════════
+   WHO IT'S FOR
+═══════════════════════════ */
+.p777-who-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-top: 36px;
+}
+@media (max-width: 580px) {
+  .p777-who-cols { grid-template-columns: 1fr; }
+  .p777-steps { grid-template-columns: 1fr; }
+}
+.p777-who-col { border-radius: 14px; padding: 28px; }
+.p777-who-col.yes {
+  background: rgba(107,191,191,0.08) !important;
+  border: 1px solid rgba(107,191,191,0.22) !important;
+}
+.p777-who-col.no {
+  background: rgba(255,255,255,0.03) !important;
+  border: 1px solid rgba(255,255,255,0.08) !important;
+}
+.p777-who-col-title {
+  font-family: 'Oswald', sans-serif !important;
+  font-size: 12px !important;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+}
+.p777-who-col-title.yes { color: var(--teal-soft) !important; }
+.p777-who-col-title.no  { color: rgba(255,255,255,0.3) !important; }
+.p777-who-item {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+  font-size: 15px !important;
+  line-height: 1.55 !important;
+  align-items: flex-start;
+}
+.p777-who-col.yes .p777-who-item { color: rgba(240,248,248,0.85) !important; }
+.p777-who-col.no  .p777-who-item { color: rgba(255,255,255,0.38) !important; }
+.p777-who-icon { flex-shrink: 0; margin-top: 1px; }
+.p777-who-callout {
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin-top: 32px;
+  font-size: 17px !important;
+  color: var(--soft) !important;
+  line-height: 1.75 !important;
+}
+/* ═══════════════════════════
+   FINAL CTA BOX
+═══════════════════════════ */
+.p777-cta-box {
+  background: linear-gradient(160deg, var(--teal-deep), #152828) !important;
+  border: 1px solid var(--border) !important;
+  border-radius: 24px;
+  padding: 64px 48px;
+  text-align: center !important;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 20px 70px rgba(30,96,96,0.4);
+  margin-top: 0;
+}
+.p777-cta-box::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 60% at 20% 30%, rgba(61,170,170,0.15) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 70% at 80% 70%, rgba(56,168,154,0.1) 0%, transparent 60%);
+  pointer-events: none;
+}
+.p777-cta-date {
+  display: inline-block;
+  border: 1px solid rgba(196,146,74,0.4);
+  color: var(--gold-light) !important;
+  font-family: 'Oswald', sans-serif !important;
+  font-size: 12px !important;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 7px 18px;
+  border-radius: 40px;
+  margin-bottom: 24px;
+  background: rgba(196,146,74,0.07);
+  position: relative; z-index: 1;
+}
+
+/* ═══════════════════════════
+   LIGHT SECTION VARIANT
+═══════════════════════════ */
+.p777-sec-light { background: #EEF9F9 !important; }
+.p777-sec-light .p777-h1,
+.p777-sec-light .p777-h2,
+.p777-sec-light .p777-h3 { color: #0D2828 !important; }
+.p777-sec-light .p777-h1 em,
+.p777-sec-light .p777-h2 em,
+.p777-sec-light .p777-h3 em { color: #1E5C5C !important; }
+.p777-sec-light .p777-body { color: #2A3A3A !important; }
+.p777-sec-light .p777-body strong { color: #0D2828 !important; }
+.p777-sec-light .p777-eyebrow { color: #1E5C5C !important; }
+.p777-sec-light .p777-pullout {
+  color: #1E5C5C !important;
+  border-left-color: rgba(30,92,92,0.45) !important;
+}
+.p777-sec-light .p777-callout {
+  background: rgba(30,92,92,0.07) !important;
+  border-color: rgba(30,92,92,0.25) !important;
+  border-left-color: #1E5C5C !important;
+  color: #0D2828 !important;
+}
+.p777-sec-light .p777-story-border {
+  border-left-color: rgba(30,92,92,0.4) !important;
+}
+.p777-sec-light .p777-section-border {
+  background: linear-gradient(90deg, transparent, rgba(30,92,92,0.2), transparent) !important;
+}
+.p777-sec-light .p777-check-item { color: #2A3A3A !important; }
+.p777-sec-light .p777-check-icon { color: #1E5C5C !important; }
+/* Who It's For — light section overrides */
+.p777-sec-light .p777-who-col.yes {
+  background: rgba(30,92,92,0.07) !important;
+  border-color: rgba(30,92,92,0.2) !important;
+}
+.p777-sec-light .p777-who-col.no {
+  background: rgba(30,92,92,0.03) !important;
+  border-color: rgba(30,92,92,0.12) !important;
+}
+.p777-sec-light .p777-who-col-title { color: #0D2828 !important; }
+.p777-sec-light .p777-who-col-title.yes { color: #1E5C5C !important; }
+.p777-sec-light .p777-who-col-title.no  { color: rgba(13,40,40,0.45) !important; }
+.p777-sec-light .p777-who-col.yes .p777-who-item { color: #1A3030 !important; }
+.p777-sec-light .p777-who-col.no  .p777-who-item { color: rgba(13,40,40,0.5) !important; }
+.p777-sec-light .p777-who-callout {
+  background: rgba(30,92,92,0.08) !important;
+  border-color: rgba(30,92,92,0.2) !important;
+  color: #1A3030 !important;
+}
+.p777-sec-light .p777-who-callout strong { color: #0D2828 !important; }
+</style>
+<div class="p777">
+<!-- ════════════════════════════════════
+     HERO
+════════════════════════════════════ -->
+<section class="p777-hero">
+  <div style="position:relative;z-index:2;text-align:center;width:100%;">
+    <div class="p777-hero-badge">Starts the 7th &nbsp;·&nbsp; Group Start</div>
+    <p class="p777-eyebrow" style="text-align:center !important;">7 Videos &nbsp;·&nbsp; 7 Days &nbsp;·&nbsp; $7</p>
+    <h1 class="p777-h1" style="text-align:center !important;">
+      You've been waiting<br>to feel <em>ready.</em>
+    </h1>
+    <p style="font-family:'Permanent Marker',cursive !important;font-style:italic !important;font-size:clamp(18px,3vw,26px) !important;color:rgba(240,248,248,0.6) !important;max-width:580px;margin:0 auto 36px;line-height:1.5;text-align:center !important;">
+      Meanwhile, someone with half your experience just posted their 47th video.
+    </p>
+    <div class="p777-hero-pills">
+      <span class="p777-pill"><strong>7</strong> videos that build your entire brand</span>
+      <span class="p777-pill">A group doing it <strong>with</strong> you</span>
+      <span class="p777-pill">Scripts already written for you</span>
+    </div>
+    <div style="text-align:center !important;">
+      <a href="#optin-form" class="p777-btn p777-scroll-btn">
+        Save My Spot →
+      </a>
+    </div>
+    <p class="p777-hero-note" style="text-align:center !important;">Free to reserve your spot &nbsp;·&nbsp; The challenge is just $7 &nbsp;·&nbsp; First content ready in minutes</p>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     EPIPHANY BRIDGE
+════════════════════════════════════ -->
+<section class="p777-sec p777-sec-light">
+  <div class="p777-section-border"></div>
+  <div class="p777-inner">
+    <span class="p777-eyebrow">The honest truth</span>
+    <h2 class="p777-h2">
+      The people posting consistently<br>
+      aren't less scared <em>than you.</em>
+    </h2>
+    <div class="p777-divider"></div>
+    <div class="p777-story-border">
+      <p class="p777-body">I used to think the people showing up online just had more confidence than me. More time. Some version of themselves they'd already figured out that I hadn't gotten to yet.</p>
+      <p class="p777-body">So I kept waiting for that version to show up.</p>
+      <p class="p777-body">What I eventually figured out, after watching it happen with person after person, is that confidence doesn't come first. It comes after the third video. After someone you've never met leaves a comment that says "this is exactly what I needed to hear." After you watch yourself back and think... okay, that was actually me.</p>
+    </div>
+    <div class="p777-callout">
+      "The problem was never confidence. It was that nobody ever handed you the exact words to say, a room full of people doing the same thing on the same day, and a reason to hit publish bigger than the fear of being seen."
+    </div>
+    <p class="p777-body">That's what this challenge was built to fix. And the reason it works is because you're not doing it alone.</p>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     THE BIG DOMINO
+════════════════════════════════════ -->
+<section class="p777-sec p777-sec-dark" style="text-align:center !important;">
+  <div class="p777-section-border"></div>
+  <div class="p777-inner" style="text-align:center !important;">
+    <span class="p777-eyebrow" style="text-align:center !important;">The one thing that changes everything</span>
+    <h2 class="p777-h2" style="text-align:center !important;font-size:clamp(36px,8vw,68px) !important;">
+      You will never stare<br>at a <span>blank page.</span>
+    </h2>
+    <div class="p777-divider p777-divider-center"></div>
+    <p class="p777-body" style="text-align:center !important;max-width:580px;margin-left:auto;margin-right:auto;">Before Day 1 even starts, the SeenInSeven app interviews you, pulls out your actual voice, and builds custom video guides for all 7 videos. Not a template you fill in.</p>
+    <p class="p777-body" style="text-align:center !important;max-width:580px;margin-left:auto;margin-right:auto;"><strong>Your words. Your story. Your way of saying things... just already done.</strong></p>
+    <div style="background:var(--card);border:1px solid var(--border);border-radius:14px;padding:32px 36px;max-width:560px;margin:32px auto 0;text-align:left !important;">
+      <span class="p777-eyebrow" style="color:var(--gold-light) !important;">★ &nbsp;Bonus for joining the challenge</span>
+      <p class="p777-body" style="margin-bottom:0 !important;">The full SeenInSeven app... normally $311... is yours free the moment you join. It's the reason finishing 7 videos in 7 days feels possible instead of overwhelming. Which means the only thing standing between you and your first video is pressing record.</p>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     HOW IT WORKS
+════════════════════════════════════ -->
+<section class="p777-sec p777-sec-mid">
+  <div class="p777-section-border"></div>
+  <div class="p777-inner">
+    <span class="p777-eyebrow">The experience</span>
+    <h2 class="p777-h2">
+      What actually happens<br>when you <em>join.</em>
+    </h2>
+    <p class="p777-body" style="margin-top:16px;">You're joining a real group of people doing the same thing, on the same timeline... together.</p>
+    <div class="p777-steps">
+      <div class="p777-step">
+        <div class="p777-step-num">01</div>
+        <div class="p777-step-title">Your content is ready before Day 1</div>
+        <p class="p777-step-desc">The app interviews you and builds all 7 custom scripts around your voice, your story, and the people you want to reach. Nothing to write. Just read and record.</p>
+      </div>
+      <div class="p777-step">
+        <div class="p777-step-num">02</div>
+        <div class="p777-step-title">A group starts with you on the 7th</div>
+        <p class="p777-step-desc">The hardest day is Day 1. Starting alongside a group of people doing the exact same thing at the exact same time means you're not facing it in an empty room.</p>
+      </div>
+      <div class="p777-step">
+        <div class="p777-step-num">03</div>
+        <div class="p777-step-title">Your first real audience is already inside</div>
+        <p class="p777-step-desc">The private community watches, shares, and engages with your videos from day one. Real people responding. Not crickets.</p>
+      </div>
+      <div class="p777-step">
+        <div class="p777-step-num">04</div>
+        <div class="p777-step-title">David does every video alongside you</div>
+        <p class="p777-step-desc">Not as an expert watching from above. As someone who also finds this uncomfortable... doing it anyway, publicly, on the same timeline as everyone else.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     COMMUNITY
+════════════════════════════════════ -->
+<section class="p777-sec p777-sec-light">
+  <div class="p777-section-border"></div>
+  <div class="p777-inner">
+    <span class="p777-eyebrow">The community</span>
+    <h2 class="p777-h2">
+      Your first real <em>audience</em><br>is already waiting.
+    </h2>
+    <div class="p777-divider"></div>
+    <p class="p777-body">Most communities tell you to "support each other." This one is built around something more specific.</p>
+    <p class="p777-body">Everyone inside is doing the same 7 videos in the same sequence, which means they understand exactly what you're going through. More importantly, they're watching your videos, sharing them, and giving you real engagement from the very first post.</p>
+    <p class="p777-body">Most platforms discourage self-promotion. This community is built around it. Post your video, get genuine reactions from people who were just where you were, and find out what it feels like when the right people actually watch your work.</p>
+    <div class="p777-stats">
+      <div class="p777-stat">
+        <div class="p777-stat-num">7</div>
+        <div class="p777-stat-label">Days showing up with a group doing the exact same thing at the exact same time.</div>
+      </div>
+      <div class="p777-stat">
+        <div class="p777-stat-num" style="font-size:32px !important;">Day 1</div>
+        <div class="p777-stat-label">Real engagement on your very first video. A community actively watching for your post.</div>
+      </div>
+      <div class="p777-stat">
+        <div class="p777-stat-num">0</div>
+        <div class="p777-stat-label">Days alone. This is a shared experience from the first moment to the last.</div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     BRING A FRIEND
+════════════════════════════════════ -->
+<section class="p777-sec p777-sec-mid">
+  <div class="p777-section-border"></div>
+  <div class="p777-inner">
+    <span class="p777-eyebrow">Better together</span>
+    <h2 class="p777-h2">
+      Doing this with someone<br>you know <em>changes everything.</em>
+    </h2>
+    <div class="p777-divider"></div>
+    <p class="p777-body">If someone came to mind while you were reading this, someone who keeps saying they should start showing up online, trust that instinct.</p>
+    <p class="p777-body">Send them this page. The challenge is built for a group, and showing up alongside someone you already know makes the first video easier, the community warmer, and Day 7 a lot more worth celebrating.</p>
+    <div class="p777-pullout">
+      Starting with a friend isn't just more fun. It's the difference between someone who finishes and someone who almost did.
+    </div>
+    <div style="text-align:center !important;margin-top:8px;">
+      <a href="#optin-form" class="p777-btn p777-scroll-btn">
+        Save Our Spots →
+      </a>
+      <span class="p777-btn-sub">Share this page with someone who's been waiting long enough.</span>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     FUTURE PACE
+════════════════════════════════════ -->
+<section class="p777-sec p777-sec-dark" style="text-align:center !important;">
+  <div class="p777-section-border"></div>
+  <div class="p777-inner" style="text-align:center !important;">
+    <span class="p777-eyebrow" style="text-align:center !important;">The outcome</span>
+    <div style="display:inline-block;background:linear-gradient(135deg,var(--teal-mid),var(--seafoam));color:#fff !important;font-size:13px !important;font-weight:600;letter-spacing:0.08em;padding:6px 18px;border-radius:40px;margin-bottom:24px;">
+      Picture Day 8
+    </div>
+    <h2 class="p777-h2" style="text-align:center !important;">
+      Seven videos posted.<br>Something <em>has shifted.</em>
+    </h2>
+    <div class="p777-divider p777-divider-center"></div>
+    <p class="p777-body" style="text-align:center !important;max-width:580px;margin-left:auto;margin-right:auto;">Someone you've never met has followed you. Someone else has sent a message. Your page looks like a real person is there... someone with a point of view, a story, and something worth saying.</p>
+    <p class="p777-body" style="text-align:center !important;max-width:580px;margin-left:auto;margin-right:auto;">You're not waiting to feel ready anymore, since you already know what it feels like to hit publish and survive it. Seven times.</p>
+    <div class="p777-outcomes" style="text-align:left !important;">
+      <div class="p777-outcome">
+        <span class="p777-outcome-icon">🎯</span>
+        <div class="p777-outcome-title">A complete public identity</div>
+        <p class="p777-outcome-desc">Credibility, authority, trust, thought leadership, and social proof... all in 7 videos. More brand foundation than most established businesses ever build.</p>
+      </div>
+      <div class="p777-outcome">
+        <span class="p777-outcome-icon">🎙️</span>
+        <div class="p777-outcome-title">You know your voice works</div>
+        <p class="p777-outcome-desc">Seven times you hit publish and survived it. The fear doesn't go away... but it stops running the show.</p>
+      </div>
+      <div class="p777-outcome">
+        <span class="p777-outcome-icon">📱</span>
+        <div class="p777-outcome-title">Content that keeps working</div>
+        <p class="p777-outcome-desc">These 7 videos are evergreen. They introduce you, build trust, and show new people why they should care... long after you posted them.</p>
+      </div>
+      <div class="p777-outcome">
+        <span class="p777-outcome-icon">🚀</span>
+        <div class="p777-outcome-title">A system you can repeat</div>
+        <p class="p777-outcome-desc">You leave with the system, the app, and the understanding of why it worked... so keeping going feels like a choice, not a mystery.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     OFFER STACK
+════════════════════════════════════ -->
+<section class="p777-sec p777-sec-mid">
+  <div class="p777-section-border"></div>
+  <div class="p777-inner">
+    <span class="p777-eyebrow">Everything you get</span>
+    <h2 class="p777-h2">
+      Here's what's included<br>for <em>$7.</em>
+    </h2>
+    <p class="p777-body" style="margin-top:16px;">Everything below hits the moment you sign up. One time. No subscription. No catch.</p>
+    <div class="p777-offer-items">
+      <div class="p777-offer-item">
+        <span class="p777-offer-check">🎬</span>
+        <div>
+          <div class="p777-offer-title">The 7-Day Video Challenge <span class="p777-offer-value">Value: $47</span></div>
+          <div class="p777-offer-desc">The proven 7-video sequence, the system behind why each one works, and the group starting together on the 7th. Do them in 7 days or 7 weeks. Your pace, your terms.</div>
+        </div>
+      </div>
+      <div class="p777-offer-item">
+        <span class="p777-offer-check">👥</span>
+        <div>
+          <div class="p777-offer-title">Private Community Access <span class="p777-offer-value">Priceless</span></div>
+          <div class="p777-offer-desc">Your first real audience. Everyone inside is doing the same challenge... actively watching, sharing, and engaging with your videos from day one. Self-promotion is the whole point.</div>
+        </div>
+      </div>
+      <div class="p777-offer-item p777-offer-bonus">
+        <span class="p777-offer-check">✍️</span>
+        <div>
+          <div class="p777-offer-title">SeenInSeven App... Full Access <span class="p777-offer-value">Value: $311 · Free with challenge</span></div>
+          <div class="p777-offer-desc">Interviews you, finds your actual voice, and builds all 7 custom scripts before you ever pick up your phone. Free coupon included with your challenge access the moment you join.</div>
+        </div>
+      </div>
+      <div class="p777-offer-item p777-offer-bonus">
+        <span class="p777-offer-check">💬</span>
+        <div>
+          <div class="p777-offer-title">Comment-to-Client Formula + GPT <span class="p777-offer-value">Value: $67</span></div>
+          <div class="p777-offer-desc">How to turn the real engagement you're about to get into actual conversations with the right people... without being pushy or weird about it.</div>
+        </div>
+      </div>
+    </div>
+    <div class="p777-offer-total">
+      <span class="p777-total-label">Total real-world value</span>
+      <span class="p777-total-value">$425+</span>
+      <span class="p777-total-label" style="margin-top:16px;">Your investment today</span>
+      <span class="p777-total-price">$7</span>
+      <span class="p777-total-sub">One time &nbsp;·&nbsp; No subscription &nbsp;·&nbsp; No recurring fees</span>
+      <a href="#optin-form" class="p777-btn p777-scroll-btn" style="margin-top:12px;">
+        Save My Spot →
+      </a>
+      <span class="p777-btn-sub">Free to reserve · The challenge is just $7 · First content ready in minutes.</span>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     WHO IT'S FOR
+════════════════════════════════════ -->
+<section class="p777-sec p777-sec-light">
+  <div class="p777-section-border"></div>
+  <div class="p777-inner">
+    <span class="p777-eyebrow">Is this for you?</span>
+    <h2 class="p777-h2">
+      Read this and see<br><em>if it lands.</em>
+    </h2>
+    <div class="p777-who-cols">
+      <div class="p777-who-col yes">
+        <div class="p777-who-col-title yes">✓ &nbsp;This is for you</div>
+        <div class="p777-who-item"><span class="p777-who-icon">✓</span><span>You have real experience and something worth saying... and nobody online knows you exist yet.</span></div>
+        <div class="p777-who-item"><span class="p777-who-icon">✓</span><span>You've been meaning to start posting for longer than you want to admit.</span></div>
+        <div class="p777-who-item"><span class="p777-who-icon">✓</span><span>You've tried to film something and talked yourself out of it before anyone could see it.</span></div>
+        <div class="p777-who-item"><span class="p777-who-icon">✓</span><span>You're an overthinker who needs a system more than another pep talk.</span></div>
+        <div class="p777-who-item"><span class="p777-who-icon">✓</span><span>You're tired of watching people with less experience get more attention.</span></div>
+      </div>
+      <div class="p777-who-col no">
+        <div class="p777-who-col-title no">✗ &nbsp;This is not for you</div>
+        <div class="p777-who-item"><span class="p777-who-icon">✗</span><span>You want results without showing up at all.</span></div>
+        <div class="p777-who-item"><span class="p777-who-icon">✗</span><span>You're not willing to film at least one video this week.</span></div>
+        <div class="p777-who-item"><span class="p777-who-icon">✗</span><span>You want someone else to handle the content while you focus on other things.</span></div>
+        <div class="p777-who-item"><span class="p777-who-icon">✗</span><span>You need every video to be perfect before you'll let anyone see it.</span></div>
+      </div>
+    </div>
+    <div class="p777-who-callout">
+      If you read that first list and felt seen, stop waiting. The people who need to find you are out there right now. <strong>They just can't find you yet.</strong>
+    </div>
+    <div style="text-align:center !important;margin-top:36px;">
+      <a href="#optin-form" class="p777-btn p777-scroll-btn">
+        That's me. I'm in. →
+      </a>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     OPT-IN FORM
+════════════════════════════════════ -->
+<section class="p777-sec p777-sec-dark" id="optin-form">
+  <div class="p777-section-border"></div>
+  <div class="p777-inner" style="text-align:center !important;">
+    <span class="p777-eyebrow" style="text-align:center !important;">You're one step away</span>
+    <h2 class="p777-h2" style="text-align:center !important;font-size:clamp(28px,6vw,48px) !important;">
+      Enter your details below<br>to <em>save your spot.</em>
+    </h2>
+    <div class="p777-divider p777-divider-center"></div>
+    <p style="font-size:16px !important;color:rgba(240,248,248,0.55) !important;max-width:460px;margin:0 auto 36px;line-height:1.7;text-align:center !important;">The challenge is $7. You'll confirm that on the next page. No credit card needed here.</p>
+    <!-- ▼▼▼ DROP SYSTEME OPT-IN FORM BLOCK HERE ▼▼▼ -->
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     FINAL CTA
+════════════════════════════════════ -->
+<section class="p777-sec p777-sec-mid">
+  <div class="p777-section-border"></div>
+  <div class="p777-inner">
+    <div class="p777-cta-box">
+      <div style="position:relative;z-index:1;">
+        <div class="p777-cta-date">We start on the 7th</div>
+        <h2 class="p777-h2" style="text-align:center !important;">
+          Stop waiting to feel ready.<br><em>Join the challenge.</em>
+        </h2>
+        <p style="font-size:17px !important;color:rgba(240,248,248,0.65) !important;max-width:480px;margin:16px auto 36px;line-height:1.7;text-align:center !important;">Seven videos. A group doing it with you. Scripts already written. The only thing left is pressing record.</p>
+        <div style="text-align:center !important;">
+          <a href="#optin-form" class="p777-btn p777-scroll-btn">
+            Save My Spot →
+          </a>
+        </div>
+        <p style="margin-top:14px;font-size:13px !important;color:rgba(255,255,255,0.32) !important;text-align:center !important;">Free to reserve &nbsp;·&nbsp; The challenge is just $7 &nbsp;·&nbsp; No hidden fees</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div><!-- end .p777 -->
+<script>
+(function(){
+  document.querySelectorAll('.p777-scroll-btn').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      var target = document.getElementById('optin-form');
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+})();
+</script>

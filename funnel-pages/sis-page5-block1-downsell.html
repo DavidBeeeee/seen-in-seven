@@ -1,0 +1,229 @@
+<!-- ═══════════════════════════════════════════════════════════
+     SEENINSEVEN... YOUR AI STORYSTARTER
+     Page 5 · Block 1 · Downsell... Free Colorado Mastermind Ticket
+     Colorado Mastermind · David Bee
+     Place ABOVE the Eventbrite embed widget.
+
+     SYSTEME SETUP NOTES:
+     - Page background: #0D2828 (Teal Deep)
+     - NO navigation, no logo, no distractions
+     - Below this block: Eventbrite embed for next Colorado
+       Business Mastermind meeting (free ticket)
+     - Below the Eventbrite embed: Place Block 2 (send-off)
+
+     FUNNEL PLACEMENT:
+     - Shown to people who decline the $250/mo coaching upsell
+       on Page 4. They already have SeenInSeven.
+     - No link needed from anywhere else... Systeme routes here
+       via the Page 4 "No" button automatically.
+
+     AUTOMATION NOTE:
+     - When someone registers via Eventbrite, tag them
+       "mastermind-attendee" in Systeme and add them to a
+       warm-up sequence that includes a natural re-entry
+       path back to coaching.
+═══════════════════════════════════════════════════════════ -->
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+/* ═══════════════════════════
+   SYSTEME.IO OVERRIDE
+═══════════════════════════ */
+.sis-p5 p, .sis-p5 div, .sis-p5 span { text-align: left !important; }
+
+/* ═══════════════════════════
+   PAGE VARS + RESET
+═══════════════════════════ */
+.sis-p5 {
+  --teal-deep:   #0D2828;
+  --teal-mid:    #1E5C5C;
+  --teal-bright: #2A9090;
+  --teal-vivid:  #32B8B8;
+  --teal-soft:   #68C8C8;
+  --teal-pale:   #A8DEDE;
+  --white:       #FFFFFF;
+  --ink:         #0D2828;
+  --ink-soft:    #2A4848;
+
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  line-height: 1.8;
+  background: var(--teal-deep);
+  color: var(--teal-pale);
+  padding: 72px 24px 40px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.sis-p5 *, .sis-p5 *::before, .sis-p5 *::after { box-sizing: border-box; }
+.sis-p5-inner { max-width: 720px; margin: 0 auto; }
+
+.sis-p5-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: var(--teal-soft);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+}
+.sis-p5-eyebrow::before {
+  content: '';
+  display: inline-block;
+  width: 28px;
+  height: 2px;
+  background: var(--teal-soft);
+  flex-shrink: 0;
+}
+.sis-p5-h1 {
+  font-family: 'Lora', serif;
+  font-size: clamp(28px, 5.5vw, 46px);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--white);
+  margin-bottom: 36px;
+}
+.sis-p5-h1 em { font-style: italic; color: var(--teal-vivid); }
+.sis-p5-body {
+  font-size: 20px;
+  color: var(--teal-pale);
+  line-height: 1.8;
+  margin-bottom: 22px;
+}
+.sis-p5-body strong { color: var(--white); font-weight: 700; }
+.sis-p5-pull {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 22px;
+  line-height: 1.6;
+  color: var(--teal-soft);
+  background: rgba(50, 184, 184, 0.07);
+  border-left: 3px solid var(--teal-vivid);
+  padding: 18px 22px;
+  margin: 32px 0;
+  border-radius: 0 8px 8px 0;
+}
+.sis-p5-detail-card {
+  background: rgba(50, 184, 184, 0.05);
+  border: 1px solid rgba(50, 184, 184, 0.14);
+  border-radius: 13px;
+  padding: 28px;
+  margin: 28px 0;
+}
+.sis-p5-detail-card p {
+  font-size: 20px;
+  color: var(--teal-pale);
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+.sis-p5-detail-card p:last-child { margin-bottom: 0; }
+.sis-p5-detail-card strong { color: var(--white); }
+.sis-p5-future-pace {
+  margin: 28px 0;
+  padding: 26px 28px;
+  background: rgba(50, 184, 184, 0.04);
+  border: 1px solid rgba(50, 184, 184, 0.1);
+  border-radius: 13px;
+}
+.sis-p5-future-pace p {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--teal-pale);
+  line-height: 1.8;
+}
+.sis-p5-reentry {
+  margin: 28px 0;
+  padding: 18px 24px;
+  background: rgba(50, 184, 184, 0.03);
+  border: 1px solid rgba(50, 184, 184, 0.1);
+  border-radius: 11px;
+  text-align: center !important;
+}
+.sis-p5-reentry p {
+  font-size: 16px;
+  color: var(--teal-pale);
+  line-height: 1.75;
+  text-align: center !important;
+}
+.sis-p5-reentry strong { color: var(--white); }
+.sis-p5-leadin {
+  text-align: center;
+  margin-top: 36px;
+  padding-bottom: 8px;
+}
+.sis-p5-leadin p {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 22px;
+  color: var(--teal-pale);
+}
+.sis-p5-arrow {
+  display: block;
+  font-size: 22px;
+  color: var(--teal-vivid);
+  margin-top: 12px;
+  opacity: 0.5;
+  animation: p5bounce 2s ease-in-out infinite;
+}
+@keyframes p5bounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(8px); }
+}
+@media (max-width: 600px) {
+  .sis-p5 { padding: 56px 18px 36px; }
+  .sis-p5-detail-card { padding: 22px 20px; }
+  .sis-p5-future-pace { padding: 22px 20px; }
+}
+</style>
+
+<div class="sis-p5">
+  <div class="sis-p5-inner">
+
+    <div class="sis-p5-eyebrow">Before You Go</div>
+
+    <h1 class="sis-p5-h1">
+      Totally Understood.<br>
+      <em>Here's Something Free Before You Head In.</em>
+    </h1>
+
+    <p class="sis-p5-body">Not everyone is ready to jump into coaching right now, and that's completely fine. There's no pressure here, and there never will be.</p>
+
+    <p class="sis-p5-body">But before you head into your SeenInSeven portal, I want to offer you something that doesn't cost a thing and doesn't require any commitment beyond showing up for about an hour.</p>
+
+    <p class="sis-p5-body">Every month I host the Colorado Business Mastermind, a small, in-person gathering for people who are building something real. It's not a pitch session, and it's not one of those networking events where everyone is pitching each other on something. It's a genuine, open conversation between people who understand what it actually feels like to build a business or a personal brand from scratch.</p>
+
+    <div class="sis-p5-pull">
+      "We talk about what's working, what isn't, what we're afraid to try, and what we've already tried and want to be honest about. The people who show up tend to keep showing up."
+    </div>
+
+    <div class="sis-p5-detail-card">
+      <p><strong>It's completely free.</strong> You just grab a ticket below so I know how many people to expect, then you show up and be part of the conversation.</p>
+      <p>If you have questions about your SeenInSeven video guides, about getting on camera, about anything you're working on, this is a room full of people who get it, and you can ask me anything directly.</p>
+    </div>
+
+    <div class="sis-p5-future-pace">
+      <p>Here's what showing up looks like. You walk in, find a seat, and within twenty minutes you're in a real conversation with someone who's been exactly where you are, building something, trying to figure out how to get visible, wondering if the effort is going to pay off. By the end of the meeting you have at least one specific thing you didn't have before: a clearer next step, a connection that might actually go somewhere, or an answer to something that's been sitting in the back of your mind for months. That's the room. That's what a ticket gets you.</p>
+    </div>
+
+    <!-- Re-entry path to coaching -->
+    <div class="sis-p5-reentry">
+      <p>Already working through your SeenInSeven video guides and want to add coaching later? Just email <strong>contact@DavidBee.me</strong> with "Ready for coaching" in the subject line. It's $250 a month, no contracts, cancel whenever.</p>
+    </div>
+
+    <div class="sis-p5-leadin">
+      <p>Grab your complimentary ticket for the next meeting.</p>
+      <span class="sis-p5-arrow">&#8595;</span>
+    </div>
+
+    <!--
+      ════════════════════════════════════════
+      [EVENTBRITE EMBED WIDGET GOES HERE]
+      Embed the Eventbrite ticket widget for the
+      next Colorado Business Mastermind meeting.
+      ════════════════════════════════════════
+    -->
+
+  </div><!-- /.sis-p5-inner -->
+</div><!-- /.sis-p5 -->

@@ -1,0 +1,223 @@
+<!--
+  ============================================================
+  PAGE 3 — ORDER FORM PAGE — CODE BLOCK 2 (BELOW FORM)
+  Colorado Mastermind · David Bee · SeenInSeven
+  Place this block BELOW the native Systeme order form.
+  SYSTEME SETUP NOTES:
+  - Same page background settings as Block 1
+  - Scroll button links back up to the order form
+  NOTES:
+  - contact@DavidBee.me is used for support email
+  - Order form anchor: twosteppaymentform-3c3e8794
+  ============================================================
+-->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+#p3-bottom {
+  --bg:     #111827;
+  --card:   #1e2d40;
+  --card2:  #243448;
+  --border: #2e4460;
+  --cream:  #f0f9ff;
+  --soft:   #bae6fd;
+  --muted:  #7eb8d4;
+  --teal:   #2dd4bf;
+  --cyan:   #67e8f9;
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  line-height: 1.8;
+  padding: 48px 24px 72px;
+  width: 100%;
+}
+#p3-bottom *, #p3-bottom *::before, #p3-bottom *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+#p3-bottom .inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+#p3-bottom .divider-line {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  margin: 0 0 40px;
+}
+#p3-bottom p.body {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: var(--cream);
+  margin-bottom: 22px;
+  line-height: 1.8;
+}
+#p3-bottom p.body.muted-text { color: var(--soft); }
+#p3-bottom p.body strong { color: var(--cream); font-weight: 700; }
+/* Guarantee card */
+#p3-bottom .guarantee-card {
+  margin: 28px 0;
+  padding: 32px 28px;
+  background: linear-gradient(135deg, var(--card) 0%, rgba(45,212,191,0.06) 100%);
+  border: 1px solid rgba(45,212,191,0.3);
+  border-radius: 13px;
+  text-align: center;
+}
+#p3-bottom .guarantee-title {
+  font-family: 'Lora', serif;
+  font-size: clamp(20px, 4vw, 28px);
+  font-weight: 700;
+  color: var(--teal);
+  margin-bottom: 14px;
+}
+#p3-bottom .guarantee-body {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: var(--cream);
+  line-height: 1.75;
+  margin-bottom: 16px;
+}
+#p3-bottom .guarantee-kicker {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 17px;
+  color: var(--muted);
+  line-height: 1.65;
+}
+/* For/Not For grid */
+#p3-bottom .filter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-top: 40px;
+}
+#p3-bottom .filter-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 28px 26px;
+}
+#p3-bottom .filter-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  margin-bottom: 16px;
+}
+#p3-bottom .filter-title.yes { color: var(--teal); }
+#p3-bottom .filter-title.no  { color: var(--muted); }
+#p3-bottom .filter-list {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+#p3-bottom .filter-list li {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  color: var(--soft);
+  line-height: 1.55;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+#p3-bottom .filter-list li .icon { flex-shrink: 0; margin-top: 1px; }
+/* Closing line */
+#p3-bottom .closing {
+  margin-top: 36px;
+  text-align: center;
+}
+#p3-bottom .closing p {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 20px;
+  color: var(--cyan);
+  opacity: 0.85;
+  line-height: 1.6;
+}
+/* Scroll CTA */
+#p3-bottom .scroll-cta {
+  text-align: center;
+  margin-top: 48px;
+}
+#p3-bottom .scroll-btn {
+  display: inline-block;
+  background: var(--teal);
+  color: #0f172a !important;
+  font-family: 'Lora', serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  padding: 20px 56px;
+  border-radius: 9px;
+  text-decoration: none !important;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+#p3-bottom .scroll-btn:hover {
+  background: #5eead4;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 32px rgba(45,212,191,0.25);
+  color: #0f172a !important;
+}
+#p3-bottom .scroll-note {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 12px;
+  opacity: 0.7;
+}
+@media (max-width: 600px) {
+  #p3-bottom { padding: 40px 18px 64px; }
+  #p3-bottom .filter-grid { grid-template-columns: 1fr; }
+  #p3-bottom .filter-card { padding: 22px 20px; }
+  #p3-bottom .scroll-btn { padding: 18px 32px; font-size: 19px; display: block; width: 100%; text-align: center; }
+}
+</style>
+
+<div id="p3-bottom">
+  <div class="inner">
+    <div class="divider-line"></div>
+
+    <p class="body">Here's what happens the moment you sign up.</p>
+    <p class="body">You get everything right away: your login link, your video guides, and the community invite. There's no waiting period, no approval queue, and no "check your email in 24 to 48 hours" situation. You paid, you're in, and you can start filming your first video tonight if you want to.</p>
+    <p class="body">This is a one-time $7 payment. No subscription, no automatic renewals.</p>
+
+    <div class="guarantee-card">
+      <p class="guarantee-title">100% No-Questions Guarantee</p>
+      <p class="guarantee-body">Try the full challenge. If it's not what you needed, simply let me know and you'll get every penny back. No forms, no hoops, no awkward conversation. David Bee handles these personally and the answer is always yes.</p>
+      <p class="guarantee-kicker">You're risking $7. David Bee is risking his reputation. That should tell you something about how well this works.</p>
+    </div>
+
+    <div class="filter-grid">
+      <div class="filter-card">
+        <p class="filter-title yes">This is for you if:</p>
+        <ul class="filter-list">
+          <li><span class="icon">✅</span> You've been "about to start" posting for longer than you'd like to admit</li>
+          <li><span class="icon">✅</span> You know the missing piece isn't motivation — it's a real system</li>
+          <li><span class="icon">✅</span> You're ready to stop planning and actually show up</li>
+        </ul>
+      </div>
+      <div class="filter-card">
+        <p class="filter-title no">This isn't for you if:</p>
+        <ul class="filter-list">
+          <li><span class="icon">❌</span> You want someone else to create your content for you</li>
+          <li><span class="icon">❌</span> You're not willing to film at least one video in the next seven days</li>
+          <li><span class="icon">❌</span> You're hoping this will work without you actually showing up</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="closing">
+      <p>If you're still reading this, you already know which one you are.</p>
+    </div>
+
+    <div class="scroll-cta">
+      <a href="#twosteppaymentform-3c3e8794" class="scroll-btn">Yes, I Want All 7 Video Guides &rarr;</a>
+      <p class="scroll-note">One-time &middot; $7 &middot; Instant access</p>
+    </div>
+  </div>
+</div>

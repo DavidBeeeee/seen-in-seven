@@ -1,0 +1,387 @@
+<!-- ═══════════════════════════════════════════════════════════
+     SEENINSEVEN... YOUR AI STORYSTARTER
+     Page 6 · Block 1 · Thank You / Delivery (Above Receipt)
+     Colorado Mastermind · David Bee
+     Place ABOVE the native Systeme receipt block.
+
+     PLACEHOLDER URLS... UPDATE BEFORE LAUNCH:
+     - Portal login: https://coloradomastermind.onlinecoursehost.com/courses/contentchallenge?couponCode=SYSTEMEPORTAL
+     - Community: https://www.facebook.com/groups/coloradobiz
+     - Share URL: https://content.coloradomastermind.com/seeninseven
+═══════════════════════════════════════════════════════════ -->
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+/* ═══════════════════════════
+   SYSTEME.IO OVERRIDE
+═══════════════════════════ */
+.sis-p6 p, .sis-p6 div, .sis-p6 span, .sis-p6 li { text-align: left !important; }
+
+/* ═══════════════════════════
+   PAGE VARS + RESET
+═══════════════════════════ */
+.sis-p6 {
+  --teal-deep:   #0D2828;
+  --teal-mid:    #1E5C5C;
+  --teal-bright: #2A9090;
+  --teal-vivid:  #32B8B8;
+  --teal-soft:   #68C8C8;
+  --teal-pale:   #A8DEDE;
+  --teal-mist:   #D8F0F0;
+  --teal-frost:  #EEF9F9;
+  --cream:       #F8FAFA;
+  --white:       #FFFFFF;
+  --ink:         #0D2828;
+  --ink-soft:    #2A4848;
+  --ink-muted:   #527070;
+
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  line-height: 1.8;
+  background: var(--teal-deep);
+  color: var(--teal-pale);
+  padding: 72px 24px 48px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.sis-p6 *, .sis-p6 *::before, .sis-p6 *::after { box-sizing: border-box; }
+.sis-p6-inner { max-width: 720px; margin: 0 auto; }
+
+.sis-p6-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.28em;
+  color: var(--teal-soft);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  justify-content: center;
+}
+.sis-p6-eyebrow::before,
+.sis-p6-eyebrow::after {
+  content: '';
+  display: inline-block;
+  width: 28px;
+  height: 2px;
+  background: var(--teal-soft);
+  flex-shrink: 0;
+}
+.sis-p6-h1 {
+  font-family: 'Lora', serif;
+  font-size: clamp(30px, 6vw, 50px);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--white);
+  margin-bottom: 20px;
+  text-align: center;
+}
+.sis-p6-h1 em { font-style: italic; color: var(--teal-vivid); }
+.sis-p6-divider {
+  width: 40px;
+  height: 2px;
+  background: var(--teal-vivid);
+  margin: 0 auto 36px;
+  opacity: 0.6;
+}
+.sis-p6-body {
+  font-size: 20px;
+  color: var(--teal-pale);
+  line-height: 1.85;
+  margin-bottom: 22px;
+  text-align: center;
+}
+.sis-p6-body.left { text-align: left !important; }
+.sis-p6-body strong { color: var(--white); font-weight: 700; }
+
+/* Welcome video placeholder */
+.sis-p6-video-ph {
+  margin: 28px 0;
+  padding: 28px 30px;
+  background: rgba(50, 184, 184, 0.05);
+  border: 1px dashed rgba(50, 184, 184, 0.28);
+  border-radius: 13px;
+  text-align: center;
+}
+.sis-p6-vp-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  color: var(--teal-vivid);
+  margin-bottom: 10px;
+  display: block;
+}
+.sis-p6-vp-sub {
+  font-size: 14px;
+  color: var(--teal-bright);
+  line-height: 1.65;
+  font-style: italic;
+  opacity: 0.7;
+}
+
+/* Future pacing */
+.sis-p6-future {
+  margin: 28px 0;
+  padding: 26px 30px;
+  background: rgba(50, 184, 184, 0.04);
+  border: 1px solid rgba(50, 184, 184, 0.12);
+  border-radius: 13px;
+}
+.sis-p6-future p {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--teal-pale);
+  line-height: 1.85;
+}
+
+/* Steps */
+.sis-p6-steps-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--teal-bright);
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin: 44px 0 24px;
+}
+.sis-p6-steps-label::before,
+.sis-p6-steps-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(50, 184, 184, 0.2);
+}
+.sis-p6-step {
+  background: rgba(50, 184, 184, 0.05);
+  border: 1px solid rgba(50, 184, 184, 0.14);
+  border-radius: 13px;
+  padding: 26px 26px;
+  margin-bottom: 14px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+.sis-p6-step-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 30px;
+  font-weight: 700;
+  color: var(--teal-vivid);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 34px;
+}
+.sis-p6-step-title {
+  font-family: 'Lora', serif;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+.sis-p6-step-desc {
+  font-size: 16px;
+  color: var(--teal-pale);
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+.sis-p6-step-link {
+  display: inline-block;
+  background: rgba(50, 184, 184, 0.12);
+  border: 1px solid rgba(50, 184, 184, 0.3);
+  border-radius: 7px;
+  padding: 8px 18px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--teal-vivid);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+.sis-p6-step-link:hover { background: rgba(50, 184, 184, 0.2); }
+
+/* Summary callout */
+.sis-p6-summary {
+  text-align: center;
+  margin-top: 36px;
+  padding: 24px;
+  background: rgba(50, 184, 184, 0.04);
+  border: 1px solid rgba(50, 184, 184, 0.14);
+  border-radius: 11px;
+}
+.sis-p6-summary p { font-size: 20px; color: var(--teal-pale); line-height: 1.75; }
+.sis-p6-summary strong { color: var(--white); }
+
+/* Share section */
+.sis-p6-share {
+  margin: 32px 0;
+  padding: 28px;
+  background: rgba(50, 184, 184, 0.04);
+  border: 1px solid rgba(50, 184, 184, 0.12);
+  border-radius: 13px;
+  text-align: center;
+}
+.sis-p6-share-title {
+  font-family: 'Lora', serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--white);
+  margin-bottom: 10px;
+  text-align: center;
+}
+.sis-p6-share p {
+  font-size: 16px;
+  color: var(--teal-pale);
+  line-height: 1.75;
+  margin-bottom: 22px;
+  text-align: center;
+}
+.sis-p6-share-btns {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+/* Email teaser */
+.sis-p6-email-teaser {
+  margin-top: 28px;
+  padding: 24px 28px;
+  background: rgba(50, 184, 184, 0.03);
+  border: 1px solid rgba(50, 184, 184, 0.1);
+  border-radius: 11px;
+}
+.sis-p6-email-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--teal-bright);
+  display: block;
+  margin-bottom: 12px;
+}
+.sis-p6-email-body { font-size: 20px; color: var(--teal-pale); line-height: 1.8; }
+
+.sis-p6-receipt-transition {
+  text-align: center;
+  margin-top: 44px;
+  padding-bottom: 8px;
+}
+.sis-p6-receipt-transition p {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--teal-bright);
+  opacity: 0.65;
+}
+
+@media (max-width: 600px) {
+  .sis-p6 { padding: 56px 18px 40px; }
+  .sis-p6-step { gap: 14px; padding: 22px 18px; }
+  .sis-p6-share-btns { flex-direction: column; align-items: center; }
+  .sis-p6-share-btns a { width: 100%; text-align: center; }
+}
+</style>
+
+<div class="sis-p6">
+  <div class="sis-p6-inner">
+
+    <div class="sis-p6-eyebrow">Welcome In</div>
+
+    <h1 class="sis-p6-h1">
+      You Did It.<br>
+      <em>Here's Everything You Just Unlocked.</em>
+    </h1>
+    <div class="sis-p6-divider"></div>
+
+    <p class="sis-p6-body">Take a second and let that sink in, since you just did something that the vast majority of people who think about making content never actually follow through on. You committed to it. You invested in it. And now you have everything you need to make it happen.</p>
+
+    <!-- Welcome video placeholder -->
+    <div class="sis-p6-video-ph">
+      <span class="sis-p6-vp-label">&#x25B6; A quick note from David Bee</span>
+      <p class="sis-p6-vp-sub">[ REPLACE THIS BOX WITH A SHORT PERSONAL WELCOME VIDEO. 30 to 60 seconds, filmed on your phone, just welcoming them in and telling them what's waiting inside SeenInSeven. Authenticity &gt; production value here. ]</p>
+    </div>
+
+    <!-- Future pacing -->
+    <div class="sis-p6-future">
+      <p>Here's what the next seven days look like when you actually do this. Day one, you build your first video, film something that feels a little awkward, and post it anyway. Day three, you notice something is shifting... the camera isn't the enemy anymore. By day seven, you have a body of work that didn't exist a week ago, and somewhere in your comments is a person who watched all seven and has a question about what you do. That's not a pitch. That's what consistent, personal content does. You have the scripts and the guide. You just have to show up for the next seven days.</p>
+    </div>
+
+    <div class="sis-p6-steps-label">What to Do Right Now, In This Order</div>
+
+    <div class="sis-p6-step">
+      <div class="sis-p6-step-num">01</div>
+      <div>
+        <p class="sis-p6-step-title">Join the Community First</p>
+        <p class="sis-p6-step-desc">This is where everyone working through the 7-Video Challenge is posting their progress, asking questions, and keeping each other on track. Join before you log into the portal so you're not going into this alone from day one. You're going to want these people in your corner, especially around Video 3 when the initial energy settles and the real momentum-building begins.</p>
+        <a href="https://www.facebook.com/groups/coloradobiz" class="sis-p6-step-link" target="_blank" rel="noopener">Join the Private Community &rarr;</a>
+      </div>
+    </div>
+
+    <div class="sis-p6-step">
+      <div class="sis-p6-step-num">02</div>
+      <div>
+        <p class="sis-p6-step-title">Log In to Your SeenInSeven Portal</p>
+        <p class="sis-p6-step-desc">Your login link has been sent to your email. Click below to access your portal, where you'll find the Script Builder App ready to go, your 7-Video Challenge Guide, and the Comment-to-Client Formula. Start with the Script Builder. It takes just a few minutes to build your first video, and once it's done, you'll see exactly what the next six look like too.</p>
+        <a href="https://coloradomastermind.onlinecoursehost.com/courses/contentchallenge?couponCode=SYSTEMEPORTAL" class="sis-p6-step-link" target="_blank" rel="noopener">Access Your SeenInSeven Portal &rarr;</a>
+      </div>
+    </div>
+
+    <div class="sis-p6-summary">
+      <p>That's it. <strong>Two steps.</strong> Don't make this bigger or more complicated than it needs to be. You have the scripts. You have the process. You have the people. Now go build Video 1.</p>
+    </div>
+
+    <!-- Share element -->
+    <div class="sis-p6-share">
+      <p class="sis-p6-share-title">Know Someone Who Needs This?</p>
+      <p>If there's someone in your life who's been talking about making content but hasn't started yet, send them to SeenInSeven. It might be the thing that finally gets them moving.</p>
+      <div class="sis-p6-share-btns">
+        <a href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Fcontent.coloradomastermind.com%2Fseeninseven"
+           target="_blank" rel="noopener"
+           style="display:inline-flex;align-items:center;gap:8px;background:#1877F2;border-radius:7px;padding:12px 22px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:#fff;text-decoration:none;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.791-4.697 4.533-4.697 1.312 0 2.686.236 2.686.236v2.97h-1.513c-1.491 0-1.956.93-1.956 1.884v2.25h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+          Share on Facebook
+        </a>
+        <a href="sms:?body=Hey%2C%20I%20just%20picked%20up%20this%20script-building%20app%20called%20SeenInSeven%20%E2%80%94%20it%20builds%20all%207%20of%20your%20video%20scripts%20in%20your%20exact%20voice.%20Worth%20checking%20out%3A%20https%3A%2F%2Fcontent.coloradomastermind.com%2Fseeninseven"
+           style="display:inline-flex;align-items:center;gap:8px;background:rgba(50,184,184,0.15);border:1px solid rgba(50,184,184,0.4);border-radius:7px;padding:12px 22px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:#32B8B8;text-decoration:none;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
+          Send a Text
+        </a>
+        <a href="mailto:?subject=You%20should%20check%20this%20out&body=Hey%2C%20I%20just%20picked%20up%20SeenInSeven%20%E2%80%94%20an%20AI%20script%20builder%20that%20generates%20all%207%20of%20your%20video%20scripts%20in%20your%20own%20voice.%20It%27s%20worth%20a%20look%3A%20https%3A%2F%2Fcontent.coloradomastermind.com%2Fseeninseven"
+           style="display:inline-flex;align-items:center;gap:8px;background:rgba(50,184,184,0.08);border:1px solid rgba(50,184,184,0.22);border-radius:7px;padding:12px 22px;font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;color:#A8DEDE;text-decoration:none;">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          Send an Email
+        </a>
+      </div>
+    </div>
+
+    <!-- Email sequence teaser -->
+    <div class="sis-p6-email-teaser">
+      <span class="sis-p6-email-label">Also check your inbox this week</span>
+      <p class="sis-p6-email-body">Over the next few days I'm going to send you a few emails that aren't promotional and aren't just reminders to log in. They're the parts of the story I didn't put on the sales page. Why I almost didn't build any of this, what I learned when it finally started working, and what tends to get people in trouble in week one that makes the whole thing feel harder than it needs to be. Worth reading when they land.</p>
+    </div>
+
+    <div class="sis-p6-receipt-transition">
+      <p>Your order details are below</p>
+    </div>
+
+    <!--
+      ════════════════════════════════════════
+      [SYSTEME RECEIPT BLOCK GOES HERE]
+      ════════════════════════════════════════
+    -->
+
+  </div><!-- /.sis-p6-inner -->
+</div><!-- /.sis-p6 -->

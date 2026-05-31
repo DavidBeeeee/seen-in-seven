@@ -1,0 +1,210 @@
+<!--
+  ============================================================
+  PAGE 5 — DOWNSELL (FREE MASTERMIND TICKET) — CODE BLOCK 1
+  Mastermind for Content Creators, Entrepreneurs, and Action Takers · David Bee · SeenInSeven
+  ============================================================
+  This page is shown to people who DECLINE the SeenInSeven upsell
+  on Page 4. They already have the SeenInSeven App. This offers a
+  free Mastermind ticket as a softer next step.
+  Place this code block ABOVE the Eventbrite embed element.
+
+  SYSTEME SETUP NOTES:
+  - Page background color: #2dd4bf (teal)
+  - Page section background: #111827
+  - NO navigation, no logo, no distractions
+  - Below this block: Embed an Eventbrite widget for the next
+    Mastermind meeting so they can grab a complimentary ticket
+  - Below the Eventbrite embed: Place Code Block 2 (send-off)
+
+  FUNNEL PLACEMENT:
+  - Users reach this page via the decline button on Page 4
+  - Virtual — open to people from anywhere in the world
+  ============================================================
+-->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+#p5-top {
+  --bg:     #111827;
+  --card:   #1e2d40;
+  --border: #2e4460;
+  --cream:  #f0f9ff;
+  --soft:   #bae6fd;
+  --muted:  #7eb8d4;
+  --teal:   #2dd4bf;
+  --cyan:   #67e8f9;
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  line-height: 1.75;
+  padding: 72px 24px 40px;
+  width: 100%;
+}
+#p5-top *, #p5-top *::before, #p5-top *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+#p5-top .inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+#p5-top .eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  text-align: center;
+}
+#p5-top .eyebrow::before,
+#p5-top .eyebrow::after {
+  content: '————';
+  opacity: 0.3;
+  margin: 0 10px;
+}
+#p5-top .page-title {
+  font-family: 'Lora', serif;
+  font-size: clamp(34px, 7.5vw, 60px);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.05;
+  color: var(--cream);
+  margin-bottom: 18px;
+  text-align: center;
+}
+#p5-top .page-title .accent { color: var(--teal); }
+#p5-top .divider {
+  width: 40px;
+  height: 2px;
+  background: var(--teal);
+  margin: 0 auto 40px;
+  opacity: 0.5;
+}
+#p5-top p.body {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: var(--cream);
+  margin-bottom: 22px;
+  line-height: 1.8;
+}
+#p5-top p.body strong { color: var(--cream); font-weight: 700; }
+/* Pull quote */
+#p5-top .callout {
+  border-left: 2px solid rgba(45,212,191,0.4);
+  padding: 16px 22px;
+  margin: 28px 0;
+  background: rgba(45,212,191,0.04);
+  border-radius: 0 8px 8px 0;
+}
+#p5-top .callout p {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 19px;
+  color: var(--cyan);
+  line-height: 1.75;
+}
+/* Detail card */
+#p5-top .detail-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 28px 28px;
+  margin: 28px 0;
+}
+#p5-top .detail-card p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: var(--cream);
+  line-height: 1.75;
+  margin-bottom: 14px;
+}
+#p5-top .detail-card p:last-child { margin-bottom: 0; }
+#p5-top .detail-card strong { color: var(--cream); font-weight: 700; }
+/* Future pacing block */
+#p5-top .future-pace {
+  margin: 24px 0 28px;
+  padding: 26px 28px;
+  background: linear-gradient(135deg, rgba(14,60,78,0.35), rgba(12,40,62,0.25));
+  border: 1px solid rgba(45,212,191,0.12);
+  border-radius: 13px;
+}
+#p5-top .future-pace p {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 19px;
+  color: var(--soft);
+  line-height: 1.8;
+}
+/* Lead-in arrow */
+#p5-top .leadin {
+  text-align: center;
+  margin-top: 36px;
+  padding-bottom: 8px;
+}
+#p5-top .leadin p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: var(--cream);
+  font-weight: 600;
+}
+#p5-top .leadin .arrow {
+  display: block;
+  margin-top: 12px;
+  font-size: 22px;
+  color: var(--teal);
+  opacity: 0.5;
+}
+@media (max-width: 600px) {
+  #p5-top { padding: 56px 18px 36px; }
+  #p5-top .detail-card { padding: 22px 20px; }
+  #p5-top .future-pace { padding: 22px 20px; }
+}
+</style>
+
+<div id="p5-top">
+  <div class="inner">
+
+    <p class="eyebrow">Before You Go</p>
+    <h1 class="page-title">Totally <span class="accent">Understood.</span></h1>
+    <div class="divider"></div>
+
+    <p class="body">Not everyone is ready to jump into something right now, and that's completely fine. There's no pressure here, and there never will be.</p>
+
+    <p class="body">But before you head out, I want to offer you something that doesn't cost a thing and doesn't require any commitment beyond showing up for about an hour.</p>
+
+    <p class="body">Every month I host a Mastermind for Content Creators, Entrepreneurs, and Action Takers — a virtual gathering open to people from anywhere in the world who are building something real. It's not a pitch session, and it's not one of those networking events where everyone is trying to sell each other on something. It's a genuine, open conversation between people who understand what it actually feels like to build a business or a personal brand from scratch.</p>
+
+    <div class="callout">
+      <p>We talk about what's working, what isn't, what we're afraid to try, and what we've already tried and want to be honest about. The people who show up tend to keep showing up, and that says more about the value of the room than anything I could write here.</p>
+    </div>
+
+    <div class="detail-card">
+      <p><strong>It's completely free.</strong> You just grab a ticket below so I know how many people to expect, and then you show up and be part of the conversation.</p>
+      <p>If you have questions about content, about getting started with video, about anything you're working on, this is a room full of people who get it, and you can ask me anything directly.</p>
+    </div>
+
+    <div class="future-pace">
+      <p>Here's what showing up looks like. You log on, drop into the call, and within twenty minutes you're in a real conversation with someone who's been exactly where you are — building something, trying to figure out how to get visible, wondering if the effort is going to pay off. By the end of the meeting you have at least one specific thing you didn't have before: a clearer next step, a connection that might actually go somewhere, or an answer to something that's been sitting in the back of your mind for months. That's the room. That's what a ticket gets you.</p>
+    </div>
+
+    <div class="leadin">
+      <p>Grab your complimentary ticket for the next meeting.</p>
+      <span class="arrow">&#8595;</span>
+    </div>
+
+    <!--
+      ========================================
+      [EVENTBRITE EMBED WIDGET GOES HERE]
+      Embed the Eventbrite ticket widget for
+      the next Mastermind meeting.
+      AUTOMATION NOTE: When someone registers via Eventbrite,
+      add them to a Systeme.io tag "mastermind-attendee" so they
+      receive a warm-up email sequence that includes the $7
+      challenge link as a natural next step.
+      ========================================
+    -->
+
+  </div>
+</div>

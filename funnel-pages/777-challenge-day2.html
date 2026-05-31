@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>777 Challenge — Day 2</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+.d2-wrap { max-width: 720px; margin: 0 auto; padding: 40px 20px 60px; font-family: 'Nunito', sans-serif; color: #0D2828; }
+
+
+.d2-eyebrow { font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.28em; color: #2A9090; text-transform: uppercase; margin-bottom: 14px; }
+
+
+/* Card 1 — dark teal — the stakes of today */
+.d2-stakes { background: #0D2828; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d2-stakes .d2-eyebrow { color: #68C8C8; }
+.d2-stakes h2 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #fff; line-height: 1.4; margin-bottom: 16px; }
+.d2-stakes p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #A8DEDE; line-height: 1.8; margin-bottom: 16px; }
+.d2-stakes p:last-child { margin-bottom: 0; }
+.d2-stakes strong { color: #fff; }
+
+
+/* Pull quote — dark background version */
+.d2-quote-dark { background: rgba(50,184,184,0.07); border-left: 3px solid #32B8B8; border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 24px 0; }
+.d2-quote-dark p { font-family: 'Permanent Marker', cursive; font-size: 20px; color: #68C8C8; line-height: 1.5; margin-bottom: 0; }
+.d2-quote-dark span { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.2em; color: #32B8B8; text-transform: uppercase; margin-top: 10px; display: block; }
+
+
+/* Card 2 — gold — the action payoff */
+.d2-action { background: #F5E8C0; border: 1px solid #E8C86C; border-left: 4px solid #C8A84B; border-radius: 12px; padding: 28px 32px; margin-bottom: 28px; }
+.d2-action .d2-eyebrow { color: #C8A84B; }
+.d2-action h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; margin-bottom: 14px; line-height: 1.4; }
+.d2-action p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d2-action p:last-of-type { margin-bottom: 24px; }
+.d2-action strong { color: #0D2828; }
+.d2-btn { display: inline-block; background: #0D2828; color: #32B8B8; font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border-radius: 8px; }
+
+
+/* Card 3 — white bordered — the accountability bottom layer */
+.d2-mirror { background: #fff; border: 1px solid #D8F0F0; border-left: 4px solid #32B8B8; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d2-mirror .d2-eyebrow { color: #2A9090; }
+.d2-mirror h2 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d2-mirror p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d2-mirror p:last-child { margin-bottom: 0; }
+.d2-mirror strong { color: #0D2828; }
+
+
+/* Pull quote — light background version */
+.d2-quote-light { background: #EEF9F9; border-left: 3px solid #32B8B8; border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 24px 0; }
+.d2-quote-light p { font-family: 'Permanent Marker', cursive; font-size: 20px; color: #1E5C5C; line-height: 1.5; margin-bottom: 0; }
+.d2-quote-light span { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.2em; color: #2A9090; text-transform: uppercase; margin-top: 10px; display: block; }
+
+
+/* Divider */
+.d2-divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, #D8E4E8, transparent); margin: 32px 0; }
+
+
+/* Card 4 — white — still time to join */
+.d2-join { background: #fff; border: 1px solid #D8E4E8; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d2-join .d2-eyebrow { color: #2A9090; }
+.d2-join h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d2-join p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d2-join p:last-of-type { margin-bottom: 24px; }
+.d2-join strong { color: #0D2828; }
+.d2-join-btn { display: inline-block; background: #32B8B8; color: #0D2828; font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border-radius: 8px; }
+
+
+/* Card 5 — white — contact David Bee */
+.d2-contact { background: #fff; border: 1px solid #D8E4E8; border-radius: 12px; padding: 36px 36px 32px; }
+.d2-contact .d2-eyebrow { margin-bottom: 14px; color: #2A9090; }
+.d2-contact h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d2-contact p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d2-contact p:last-of-type { margin-bottom: 28px; }
+.d2-links { display: flex; flex-direction: column; gap: 12px; }
+.d2-link { display: flex; align-items: center; gap: 14px; text-decoration: none; background: #EEF9F9; border: 1px solid #D8F0F0; border-radius: 10px; padding: 14px 18px; }
+.d2-link-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; }
+.d2-link-label { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.18em; color: #2A9090; text-transform: uppercase; margin-bottom: 2px; display: block; }
+.d2-link-action { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; color: #0D2828; display: block; }
+
+
+@media (max-width: 600px) {
+  .d2-wrap { padding: 24px 16px 48px; }
+  .d2-stakes, .d2-action, .d2-mirror, .d2-join, .d2-contact { padding: 24px 20px; }
+  .d2-stakes h2, .d2-mirror h2, .d2-action h3, .d2-join h3, .d2-contact h3 { font-size: 24px; }
+}
+</style>
+</head>
+<body style="margin:0;padding:0;background:#F8FAFA;">
+<div class="d2-wrap">
+
+
+  <!-- CARD 1 — dark teal — the stakes of today -->
+  <div class="d2-stakes">
+    <p class="d2-eyebrow">Day 2 — Introducing the Hero</p>
+    <h2>Yesterday you told the world you were doing this. Today you tell them who you are.</h2>
+    <p>Day 1 was the declaration. You showed up, you committed, you put it on record. That took something real and you should feel that.</p>
+    <p>But here's what Day 1 actually did. It opened a tab in every person who watched it. A quiet question that they didn't even consciously ask. <strong>Is this person going to keep going?</strong></p>
+    <p>Today is where that question gets answered. Not in six videos. Not at the end of the challenge. Right now, today, with this video. The audience you're building... the clients, the followers, the people who will eventually trust you with their problems and their money... they are watching to see if you show up twice. Not seven times. Twice.</p>
+    <div class="d2-quote-dark">
+      <p>Credibility isn't built in the moment you make the commitment. It's built in the moment you keep it.</p>
+      <span>— David Bee</span>
+    </div>
+    <p>This is where your credibility inside this challenge lives or dies. Not because anyone is judging you. Because <strong>you</strong> are becoming someone, right now, in real time. And every person who has ever built an audience worth having did it by showing up on Day 2 when it would have been just as easy not to.</p>
+  </div>
+
+
+  <!-- CARD 2 — gold — the action payoff -->
+  <div class="d2-action">
+    <p class="d2-eyebrow">What today actually gives you</p>
+    <h3>Film today's video and you will have done the single thing that builds more trust than anything else online.</h3>
+    <p>Not follower count. Not production quality. Not a clever hook or a viral moment. <strong>You showed up when you said you would.</strong> That's it. That's the thing that makes people decide to trust someone.</p>
+    <p>Today's video is your origin story. The real one. Not a bio, not a résumé, not a highlight reel. The kind of thing that makes someone watching feel like they actually know you after sixty seconds. That's what this video does when you let it. And the only way to let it is to press record.</p>
+    <p>Open the app. Pull up your Video 2 script. Read it once. Press record. Post it.</p>
+    <a href="https://coloradomastermind.onlinecoursehost.com/courses/contentchallenge" class="d2-btn" target="_blank">Open the App &rarr;</a>
+  </div>
+
+
+  <!-- CARD 3 — white bordered — the accountability bottom layer -->
+  <div class="d2-mirror">
+    <p class="d2-eyebrow">If yesterday didn't happen</p>
+    <h2>Nobody saw you not post. But you did. And that's actually the harder thing to sit with.</h2>
+    <p>The world didn't notice. The group kept going. Nobody sent a disappointed message or unfollowed you. The only person keeping score is you.</p>
+    <p>One of my mentors said something to me once that I've never been able to shake. He told me that <strong>you are the only person who has ever heard every single lie you've told yourself.</strong> Every "I'll start tomorrow." Every "I'm just not ready yet." You were there for every single one. And some quiet part of you remembers all of it.</p>
+    <div class="d2-quote-light">
+      <p>Now is the perfect time to become the person who stops doing that.</p>
+      <span>— David Bee</span>
+    </div>
+    <p>Not someday. Not when things calm down. Right now, today, with this video. You don't have to film two to catch up. You just have to film one. Start the streak that actually matters... the one where you do what you said you would.</p>
+    <p>The app is still there. Your script is still waiting. The group is still going. <strong>This is the moment. Not later. Now.</strong></p>
+  </div>
+
+
+  <div class="d2-divider"></div>
+
+
+  <!-- CARD 4 — white — still time to join -->
+  <div class="d2-join">
+    <p class="d2-eyebrow">Just finding this?</p>
+    <h3>Day 2 is actually a fine place to start.</h3>
+    <p>This challenge isn't built around streaks. It's built around a sequence. Which means if you're reading this right now and you haven't started yet, you haven't missed anything that can't be done in a weekend.</p>
+    <p>Video 1 is still there. The app still builds your scripts in minutes. The community is still going. <strong>The only version of this you can't come back from is the one where you never start at all.</strong></p>
+    <p>Seven dollars. Seven videos. Your pace, your terms. The door is still open.</p>
+    <a href="https://content.coloradomastermind.com/777challenge" class="d2-join-btn" target="_blank">Join the Challenge &rarr;</a>
+  </div>
+
+
+  <!-- CARD 5 — white — contact David Bee -->
+  <div class="d2-contact">
+    <p class="d2-eyebrow">David is here</p>
+    <h3>Stuck, frustrated, or just need someone to tell you you're doing fine?</h3>
+    <p>That's exactly what I'm here for. This challenge is small enough right now that I can actually be present for every single person going through it, in a way that won't always be possible. If something isn't working, if the app is confusing, if you filmed it and you hate it and you don't know what to do... reach out. Seriously.</p>
+    <p>Every time someone tells me what almost made them quit, that becomes the thing I fix next. You reaching out doesn't slow this down. It makes it better for everyone who comes after you.</p>
+    <div class="d2-links">
+      <a href="https://calendly.com/davidbee" class="d2-link" target="_blank">
+        <span class="d2-link-icon">📅</span>
+        <div><span class="d2-link-label">Book a call</span><span class="d2-link-action">Pick a time on David's calendar</span></div>
+      </a>
+      <a href="https://m.me/davidbeeeee" class="d2-link" target="_blank">
+        <span class="d2-link-icon">💬</span>
+        <div><span class="d2-link-label">Messenger</span><span class="d2-link-action">DM David directly on Facebook</span></div>
+      </a>
+      <a href="mailto:contact@davidbee.me" class="d2-link">
+        <span class="d2-link-icon">📧</span>
+        <div><span class="d2-link-label">Email</span><span class="d2-link-action">contact@davidbee.me</span></div>
+      </a>
+    </div>
+  </div>
+
+
+</div>
+
+
+–
+</body>
+</html>

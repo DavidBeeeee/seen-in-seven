@@ -1,0 +1,423 @@
+<!--
+  ============================================================
+  PAGE 3 — ORDER FORM PAGE — CODE BLOCK 1 (ABOVE FORM)
+  Colorado Mastermind · David Bee · SeenInSeven
+  Place this block ABOVE the native Systeme order form.
+  SYSTEME SETUP NOTES:
+  - Page background color: #2dd4bf (teal) to match opt-in page
+  - Page section background: #111827
+  - The Systeme order form goes directly below this block
+  - Configure order bump in Systeme: "3 Reasons We Fail" at $37
+  - Remove navigation/header if possible
+  ============================================================
+-->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+#p3-top {
+  --bg:     #111827;
+  --card:   #1e2d40;
+  --card2:  #243448;
+  --border: #2e4460;
+  --cream:  #f0f9ff;
+  --soft:   #bae6fd;
+  --muted:  #7eb8d4;
+  --teal:   #2dd4bf;
+  --cyan:   #67e8f9;
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  line-height: 1.75;
+  padding: 72px 24px 48px;
+  width: 100%;
+}
+#p3-top *, #p3-top *::before, #p3-top *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+#p3-top .inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+#p3-top .eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.22em;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  text-align: center;
+}
+#p3-top .eyebrow::before,
+#p3-top .eyebrow::after {
+  content: '————';
+  opacity: 0.3;
+  margin: 0 10px;
+}
+#p3-top .page-title {
+  font-family: 'Lora', serif;
+  font-size: clamp(30px, 6vw, 52px);
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 1.1;
+  color: var(--cream);
+  margin-bottom: 18px;
+  text-align: center;
+}
+#p3-top .page-title .accent { color: var(--teal); }
+#p3-top .divider {
+  width: 40px;
+  height: 2px;
+  background: var(--teal);
+  margin: 0 auto 40px;
+  opacity: 0.5;
+}
+/* Body text */
+#p3-top p.body {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: var(--cream);
+  margin-bottom: 24px;
+  line-height: 1.8;
+}
+#p3-top p.body strong { color: var(--cream); font-weight: 700; }
+/* Vision box */
+#p3-top .vision-box {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+  background: linear-gradient(135deg, rgba(45,212,191,0.07) 0%, rgba(12,40,62,0.35) 100%);
+  border: 1px solid rgba(45,212,191,0.2);
+  border-radius: 16px;
+  padding: 32px 30px;
+  margin: 32px 0;
+}
+#p3-top .vision-silhouette {
+  flex-shrink: 0;
+  width: 56px;
+  opacity: 0.55;
+  margin-top: 4px;
+}
+#p3-top .vision-text p.vision-future {
+  font-family: 'Lora', serif;
+  font-size: 19px;
+  font-weight: 400;
+  color: var(--soft);
+  line-height: 1.85;
+  margin-bottom: 22px;
+}
+#p3-top .vision-text p.vision-if {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 18px;
+  color: var(--soft);
+  line-height: 1.75;
+  margin-bottom: 11px;
+  padding-left: 14px;
+  border-left: 1px solid rgba(45,212,191,0.25);
+}
+#p3-top .vision-text p.vision-micdrop {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  font-weight: 700;
+  color: var(--cream);
+  line-height: 1.6;
+  margin-top: 22px;
+  padding-top: 18px;
+  border-top: 1px solid rgba(45,212,191,0.2);
+}
+/* Pull quote — David's voice */
+#p3-top .callout {
+  border-left: 2px solid rgba(45,212,191,0.4);
+  padding: 14px 22px;
+  margin: 32px 0;
+}
+#p3-top .callout p {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 19px;
+  color: var(--cyan);
+  line-height: 1.75;
+}
+/* Inline testimonial */
+#p3-top .inline-quote {
+  border-left: 2px solid rgba(45,212,191,0.35);
+  padding: 14px 22px;
+  margin: 28px 0;
+}
+#p3-top .inline-quote p {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 19px;
+  color: var(--soft);
+  line-height: 1.75;
+  margin-bottom: 8px;
+}
+#p3-top .inline-quote cite {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  font-style: normal;
+}
+/* Value Stack */
+#p3-top .stack-label {
+  font-family: 'Lora', serif;
+  font-size: clamp(22px, 4vw, 32px);
+  font-weight: 700;
+  color: var(--cream);
+  margin: 48px 0 24px;
+  text-align: center;
+}
+#p3-top .value-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 26px 28px;
+  margin-bottom: 14px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+#p3-top .v-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--teal);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 36px;
+}
+#p3-top .v-title {
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  font-size: 19px;
+  color: var(--cream);
+  margin-bottom: 6px;
+}
+#p3-top .v-desc {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  color: var(--soft);
+  line-height: 1.65;
+}
+#p3-top .v-value {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  color: var(--teal);
+  margin-left: 8px;
+}
+#p3-top .value-item.bonus {
+  border-color: rgba(45,212,191,0.35);
+  background: linear-gradient(135deg, var(--card) 0%, rgba(45,212,191,0.06) 100%);
+}
+#p3-top .total-value {
+  text-align: center;
+  margin: 32px 0 0;
+  padding: 28px 24px;
+  background: rgba(45,212,191,0.04);
+  border: 1px solid rgba(45,212,191,0.15);
+  border-radius: 11px;
+}
+#p3-top .total-line {
+  font-family: 'Nunito', sans-serif;
+  font-size: 17px;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+#p3-top .old-price { text-decoration: line-through; opacity: 0.7; }
+#p3-top .your-price {
+  font-family: 'Oswald', sans-serif;
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  color: var(--cream);
+}
+#p3-top .price-accent { color: var(--teal); font-size: 38px; }
+/* Post-stack testimonial pair */
+#p3-top .testimonial-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin: 32px 0;
+}
+#p3-top .t-card {
+  border-left: 2px solid rgba(45,212,191,0.35);
+  padding: 18px 20px;
+  background: rgba(45,212,191,0.02);
+  border-radius: 0 8px 8px 0;
+}
+#p3-top .t-card p {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--soft);
+  line-height: 1.75;
+  margin-bottom: 10px;
+}
+#p3-top .t-card cite {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  font-style: normal;
+}
+/* Transition */
+#p3-top .transition {
+  text-align: center;
+  margin-top: 48px;
+  padding-bottom: 8px;
+}
+#p3-top .transition p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 19px;
+  color: var(--cream);
+  font-style: italic;
+}
+#p3-top .transition .arrow {
+  display: block;
+  margin-top: 16px;
+  font-size: 24px;
+  color: var(--teal);
+  opacity: 0.5;
+  animation: p3bounce 2s ease-in-out infinite;
+}
+@keyframes p3bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(8px); }
+}
+@media (max-width: 600px) {
+  #p3-top { padding: 56px 18px 40px; }
+  #p3-top .value-item { padding: 22px 20px; gap: 14px; }
+  #p3-top .testimonial-pair { grid-template-columns: 1fr; }
+  #p3-top .vision-box { flex-direction: column; gap: 14px; padding: 24px 20px; }
+  #p3-top .vision-silhouette { width: 42px; }
+}
+</style>
+
+<div id="p3-top">
+  <div class="inner">
+
+    <!-- Progress bridge from the app -->
+    <div style="display:flex; justify-content:center; gap:18px; margin-bottom:32px; padding:14px 0;">
+      <span style="font-family:'Oswald',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:#4ade80;">Video 1: Ready to Film &#10003;</span>
+      <span style="font-family:'Oswald',sans-serif; font-size:11px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase; color:rgba(126,184,212,0.5);">Videos 2&ndash;7: Ready to unlock</span>
+    </div>
+
+    <p class="eyebrow">Your First Video Guide Is Ready</p>
+    <h1 class="page-title">
+      Here's What Happens<br>
+      <span class="accent">When You Film All Seven.</span>
+    </h1>
+    <div class="divider"></div>
+
+    <p class="body">You just got something real: a video guide built around your voice, your story, and the things you actually want to say. That was Video 1. It's ready to film whenever you are.</p>
+
+    <p class="body">Seven videos changes how people see you online. Not because seven videos makes you famous, but because seven videos makes you findable. It makes you someone with a point of view, a presence, and a reason for the right people to stop scrolling and pay attention.</p>
+
+    <div class="inline-quote">
+      <p>"I went into the SeenInSeven app expecting something generic. What came out was actually in my voice and specific to my niche. Signing up for the full challenge felt like an obvious call after that, and I'm glad I did."</p>
+      <cite>Jennifer R., Nutritionist</cite>
+    </div>
+
+    <p class="body">The SeenInSeven App was designed to make that happen with as little friction as possible. This is the exact system David Bee uses with his private coaching clients, packaged into something that costs less than lunch. It gives you everything you need to go from "I posted once" to "I have a body of work that actually represents who I am."</p>
+
+    <div class="callout">
+      <p>You already proved you can start. This is what makes sure you finish.</p>
+    </div>
+
+    <div class="vision-box">
+      <div class="vision-silhouette">
+        <svg viewBox="0 0 60 88" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="30" cy="18" r="14" fill="rgba(45,212,191,0.45)"/>
+          <path d="M3 88 C3 58 13 48 30 46 C47 48 57 58 57 88Z" fill="rgba(45,212,191,0.3)"/>
+          <circle cx="47" cy="7" r="3.5" fill="rgba(45,212,191,0.3)"/>
+          <circle cx="54" cy="2" r="2.5" fill="rgba(45,212,191,0.2)"/>
+          <circle cx="59" cy="0" r="1.8" fill="rgba(45,212,191,0.12)"/>
+        </svg>
+      </div>
+      <div class="vision-text">
+        <p class="vision-future">Picture yourself seven days from now. You've posted seven videos. They're not perfect. They were never supposed to be. But they're out there, they're yours, and somewhere in your notifications is a comment from someone who watched one and wanted to know more. That's what happens when you follow the system all the way through.</p>
+        <p class="vision-if">If all this did was help you finally stop overthinking and post your first video, would it be worth $7?</p>
+        <p class="vision-if">If all this did was give you a system so you never had to stare at a blank screen wondering what to say, would it be worth $7?</p>
+        <p class="vision-if">If all this did was help one person find you online and say "I need to work with you," would it be worth $7?</p>
+        <p class="vision-micdrop">This does all three. And it costs less than your morning coffee run.</p>
+      </div>
+    </div>
+
+    <!--
+      ORDER BUMP SEED — primes the reader for the Systeme native
+      order bump checkbox on the form below.
+      SYSTEME ORDER BUMP CONFIG:
+      - Bump name: "3 Reasons We Fail (And How to Beat Them)"
+      - Bump price: $37
+      - Bump description: "YES, add the 3 Reasons We Fail guide so I can avoid the
+        three patterns that quietly kill video challenges before Day 4. Includes the
+        Accountability Tracker and the 'What To Do When You Want To Quit' playbook.
+        Just $37."
+    -->
+    <p class="body">One more thing worth knowing before you see what's included. The biggest reason people don't finish challenges like this has nothing to do with motivation or time. There are three specific patterns that quietly kill follow-through before you even realize it's happening. We built something that addresses all three directly, and you'll have the option to add it at checkout for less than the price of a book.</p>
+
+    <h2 class="stack-label">Here's Everything You Get for $7</h2>
+
+    <div class="value-item">
+      <div class="v-num">01</div>
+      <div>
+        <p class="v-title">The SeenInSeven App <span class="v-value">VALUE: $197</span></p>
+        <p class="v-desc">The same app you just used to build your Video 1 guide, except now you get access to all seven. Each guide is built around your voice, your story, and the specific person you are trying to reach, so you never have to stare at a blank screen wondering what to say or how to say it.</p>
+      </div>
+    </div>
+
+    <div class="value-item">
+      <div class="v-num">02</div>
+      <div>
+        <p class="v-title">The 7-Video Challenge Guide <span class="v-value">VALUE: $47</span></p>
+        <p class="v-desc">The complete day-by-day structure that tells you exactly what to film, when to film it, and why each video matters in the sequence. You don't need to plan anything or figure out what comes next. Just follow the system and let the momentum build on its own.</p>
+      </div>
+    </div>
+
+    <div class="value-item">
+      <div class="v-num">03</div>
+      <div>
+        <p class="v-title">Private Community <span class="v-value">PRICELESS</span></p>
+        <p class="v-desc">A private community that doubles as your first real audience. Everyone inside is doing the same challenge, which means they understand exactly what you're going through and are actively looking for content like yours. A lot of communities discourage self-promotion. This one is built around it. Post your videos, get genuine feedback, and find out what it feels like when the right people actually watch your work. David Bee is in here every day.</p>
+      </div>
+    </div>
+
+    <div class="value-item bonus">
+      <div class="v-num">+</div>
+      <div>
+        <p class="v-title">BONUS: Comment-to-Client Formula + GPT <span class="v-value">VALUE: $67</span></p>
+        <p class="v-desc">The exact system for turning the comments and engagement on your videos into actual conversations with real people who want to work with you. Includes the GPT that helps you craft responses that feel natural and move people from "interesting video" to "I want to know more."</p>
+      </div>
+    </div>
+
+    <div class="total-value">
+      <p class="total-line">Total Real-World Value: <span class="old-price">$311+</span></p>
+      <p class="your-price">Your Investment Today: <span class="price-accent" style="font-size:52px; display:inline-block; margin-top:4px;">$7</span></p>
+      <p style="font-family:'Nunito',sans-serif; font-size:17px; color:var(--soft); margin-top:10px; line-height:1.6;">One-time payment. Instant access. No recurring fees.</p>
+    </div>
+
+    <div class="testimonial-pair">
+      <div class="t-card">
+        <p>"I've invested in $500 courses that didn't move the needle half as much as this challenge did. By Video 3, the overthinking just stopped and I started actually enjoying the process of creating content for the first time."</p>
+        <cite>Sarah K., Life Coach, Denver</cite>
+      </div>
+      <div class="t-card">
+        <p>"I posted three videos in my first week, which is three more than I managed to post in the two years before that. Something about having the content already built for me just removed every excuse I had left."</p>
+        <cite>Marcus T., Real Estate Agent</cite>
+      </div>
+    </div>
+
+    <div class="transition">
+      <p>If you're ready to finish what you just started, your next step is right below.</p>
+      <span class="arrow">&#8595;</span>
+    </div>
+
+  </div>
+</div>

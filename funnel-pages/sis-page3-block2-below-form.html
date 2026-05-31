@@ -1,0 +1,302 @@
+<!-- ═══════════════════════════════════════════════════════════
+     SEENINSEVEN... YOUR AI STORYSTARTER
+     Page 3 · Block 2 · Order Page (Below Form)
+     Colorado Mastermind · David Bee
+     Drop into a Systeme.io HTML block BELOW the native order form.
+
+     ADMIN NOTES:
+     - Update the scroll-back button anchor (#sis-order-form)
+       to match your actual Systeme.io order form element ID.
+     - "simply let me know" guarantee is 30 days, handled personally
+       by David Bee at contact@davidbee.me
+═══════════════════════════════════════════════════════════ -->
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+/* ═══════════════════════════
+   PAGE VARS + RESET
+   (Fonts loaded from Block 1... no re-import needed.)
+═══════════════════════════ */
+.sis-p3b {
+  --teal-deep:   #0D2828;
+  --teal-mid:    #1E5C5C;
+  --teal-bright: #2A9090;
+  --teal-vivid:  #32B8B8;
+  --teal-soft:   #68C8C8;
+  --teal-pale:   #A8DEDE;
+  --teal-mist:   #D8F0F0;
+  --teal-frost:  #EEF9F9;
+  --cream:       #F8FAFA;
+  --white:       #FFFFFF;
+  --ink:         #0D2828;
+  --ink-soft:    #2A4848;
+  --ink-muted:   #527070;
+
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  line-height: 1.8;
+  background: var(--teal-deep);
+  color: var(--teal-pale);
+  padding: 48px 24px 80px;
+  width: 100%;
+  box-sizing: border-box;
+}
+.sis-p3b *, .sis-p3b *::before, .sis-p3b *::after {
+  box-sizing: border-box;
+}
+.sis-p3b-inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.sis-p3b-divider {
+  width: 100%;
+  height: 1px;
+  background: rgba(50, 184, 184, 0.15);
+  margin-bottom: 44px;
+}
+
+/* ═══════════════════════════
+   BODY COPY
+═══════════════════════════ */
+.sis-p3b-body {
+  font-size: 20px;
+  line-height: 1.8;
+  color: var(--teal-pale);
+  margin-bottom: 20px;
+}
+.sis-p3b-body strong { color: var(--white); font-weight: 700; }
+
+/* ═══════════════════════════
+   GUARANTEE CARD
+═══════════════════════════ */
+.sis-p3b-guarantee {
+  background: rgba(50, 184, 184, 0.06);
+  border: 1px solid rgba(50, 184, 184, 0.28);
+  border-radius: 14px;
+  padding: 36px 32px;
+  margin: 32px 0;
+  text-align: center;
+}
+.sis-p3b-guarantee-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.2em;
+  color: var(--teal-vivid);
+  display: block;
+  margin-bottom: 16px;
+}
+.sis-p3b-guarantee p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  color: var(--white);
+  line-height: 1.75;
+  margin-bottom: 14px;
+  text-align: left;
+}
+.sis-p3b-guarantee p:last-of-type { margin-bottom: 0; }
+.sis-p3b-guarantee-fine {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 16px;
+  color: var(--teal-pale) !important;
+  text-align: center !important;
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid rgba(50, 184, 184, 0.15);
+}
+
+/* ═══════════════════════════
+   FOR / NOT FOR FILTER GRID
+═══════════════════════════ */
+.sis-p3b-filter-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 44px;
+}
+.sis-p3b-filter-card {
+  background: rgba(50, 184, 184, 0.04);
+  border: 1px solid rgba(50, 184, 184, 0.14);
+  border-radius: 13px;
+  padding: 26px 24px;
+}
+.sis-p3b-filter-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  margin-bottom: 18px;
+}
+.sis-p3b-filter-title.yes { color: var(--teal-vivid); }
+.sis-p3b-filter-title.no  { color: var(--teal-bright); opacity: 0.65; }
+
+.sis-p3b-filter-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.sis-p3b-filter-list li {
+  font-family: 'Nunito', sans-serif;
+  font-size: 16px;
+  color: var(--teal-pale);
+  line-height: 1.6;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.sis-p3b-filter-list li .fi {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+/* ═══════════════════════════
+   CLOSING LINE
+═══════════════════════════ */
+.sis-p3b-closing {
+  margin-top: 36px;
+  text-align: center;
+}
+.sis-p3b-closing p {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 22px;
+  color: var(--teal-pale);
+  opacity: 0.85;
+  line-height: 1.65;
+}
+
+/* ═══════════════════════════
+   SCROLL-BACK CTA
+═══════════════════════════ */
+.sis-p3b-cta {
+  text-align: center;
+  margin-top: 48px;
+}
+.sis-p3b-btn {
+  display: inline-block;
+  background: var(--teal-vivid);
+  color: var(--teal-deep) !important;
+  font-family: 'Oswald', sans-serif;
+  font-size: 15px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  padding: 20px 52px;
+  border-radius: 8px;
+  text-decoration: none !important;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 20px rgba(50, 184, 184, 0.25);
+}
+.sis-p3b-btn:hover {
+  background: var(--teal-soft);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 32px rgba(50, 184, 184, 0.3);
+  color: var(--teal-deep) !important;
+}
+.sis-p3b-btn-note {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.16em;
+  color: var(--teal-bright);
+  display: block;
+  margin-top: 12px;
+  opacity: 0.8;
+}
+
+/* Mobile */
+@media (max-width: 600px) {
+  .sis-p3b { padding: 40px 18px 64px; }
+  .sis-p3b-filter-grid { grid-template-columns: 1fr; }
+  .sis-p3b-filter-card { padding: 22px 20px; }
+  .sis-p3b-guarantee { padding: 28px 22px; }
+  .sis-p3b-btn { display: block; width: 100%; text-align: center; padding: 18px 24px; }
+}
+</style>
+
+<div class="sis-p3b">
+  <div class="sis-p3b-inner">
+
+    <div class="sis-p3b-divider"></div>
+
+    <p class="sis-p3b-body">Here's what happens the moment you complete your order.</p>
+
+    <p class="sis-p3b-body">You get instant access to everything: the Script Builder App, the 7-Video Challenge Guide, and the Comment-to-Client Formula with its custom GPT. No waiting. No "check your inbox in 24 to 48 hours." You pay, you're in, and you can start building your first video today.</p>
+
+    <p class="sis-p3b-body">This is a one-time investment with no subscription and no automatic renewals. You get lifetime access to everything inside.</p>
+
+    <!-- GUARANTEE -->
+    <div class="sis-p3b-guarantee">
+      <span class="sis-p3b-guarantee-label">30-Day Guarantee</span>
+      <p>Try SeenInSeven for a full 30 days. Build your content. Film your videos. Put it through its paces. If it is not what you needed, simply let me know and I'll refund every penny. No forms. No hoops. No awkward back-and-forth.</p>
+      <p>I handle these personally at contact@DavidBee.me and the answer is always yes.</p>
+      <p class="sis-p3b-guarantee-fine">You're risking $311. David Bee is risking his reputation. That should tell you something about how much this works.</p>
+    </div>
+
+    <!-- FOR / NOT FOR -->
+    <div class="sis-p3b-filter-grid">
+      <div class="sis-p3b-filter-card">
+        <p class="sis-p3b-filter-title yes">This Is for You If:</p>
+        <ul class="sis-p3b-filter-list">
+          <li><span class="fi">✅</span> You've been "about to start" posting for longer than you'd like to admit</li>
+          <li><span class="fi">✅</span> You know what you want to say, you just need the right words to say it</li>
+          <li><span class="fi">✅</span> You're ready to stop planning and actually have something to show for it</li>
+          <li><span class="fi">✅</span> You want videos that sound like you, not like everyone else in your space</li>
+        </ul>
+      </div>
+      <div class="sis-p3b-filter-card">
+        <p class="sis-p3b-filter-title no">This Isn't for You If:</p>
+        <ul class="sis-p3b-filter-list">
+          <li><span class="fi">❌</span> You want someone else to create your content for you</li>
+          <li><span class="fi">❌</span> You're not willing to film at least one video after getting your content</li>
+          <li><span class="fi">❌</span> You're looking for overnight followers or instant results</li>
+          <li><span class="fi">❌</span> You're hoping it works without you actually showing up</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sis-p3b-closing">
+      <p>If you're still reading this, you already know which one you are.</p>
+    </div>
+
+    <!-- SCROLL BACK TO FORM -->
+    <div class="sis-p3b-cta">
+      <!--
+        UPDATE ANCHOR: Replace #sis-order-form with your actual
+        Systeme.io order form element ID on this page.
+      -->
+      <a href="#sis-order-form" class="sis-p3b-btn sis-p3b-scroll-btn">
+        Complete My Order &rarr;
+      </a>
+      <span class="sis-p3b-btn-note">
+        $311 &nbsp;&bull;&nbsp; One-time &nbsp;&bull;&nbsp; Instant access
+      </span>
+    </div>
+
+  </div><!-- /.sis-p3b-inner -->
+</div><!-- /.sis-p3b -->
+
+<script>
+  // Smooth scroll back up to order form
+  document.querySelectorAll('.sis-p3b-scroll-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      var href = btn.getAttribute('href');
+      if (href && href.startsWith('#')) {
+        var target = document.getElementById(href.slice(1));
+        if (target) {
+          e.preventDefault();
+          target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }
+    });
+  });
+</script>

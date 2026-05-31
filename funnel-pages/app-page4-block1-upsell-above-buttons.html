@@ -1,0 +1,271 @@
+<!--
+  ============================================================
+  PAGE 4... UPSELL (BUILD WITH BEE COACHING)... CODE BLOCK 1
+  ============================================================
+  Place this code block ABOVE the Systeme yes/no upsell buttons.
+
+  SYSTEME SETUP NOTES:
+  - Page background color: #2dd4bf (teal)
+  - Page section background: #111827
+  - NO navigation, no logo, no distractions
+  - Below this block: Systeme YES button (styled teal, full width)
+    Label suggestion: "YES, I WANT TO WORK WITH DAVID"
+  - Below YES: Systeme NO button (subtle, small text)
+    Label suggestion: "No thanks, I'll figure it out on my own"
+  - YES button links to: one-click upsell acceptance ($250/month)
+  - NO button links to: Page 5 (downsell)
+
+  PLACEHOLDER NOTES:
+  - Testimonials marked [PLACEHOLDER - REPLACE WITH REAL TESTIMONIAL]
+  - Pricing: $250/month, no contracts, cancel anytime
+  ============================================================
+-->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+
+#p4-top {
+  --bg: #111827;
+  --card: #1e2d40;
+  --card2: #243448;
+  --border: #2e4460;
+  --cream: #f0f9ff;
+  --soft: #bae6fd;
+  --muted: #7eb8d4;
+  --teal: #2dd4bf;
+  --cyan: #67e8f9;
+
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  line-height: 1.75;
+  padding: 72px 24px 40px;
+  width: 100%;
+}
+#p4-top *, #p4-top *::before, #p4-top *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+#p4-top .inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+#p4-top .eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  text-align: center;
+}
+#p4-top .eyebrow::before,
+#p4-top .eyebrow::after {
+  content: '————';
+  opacity: 0.3;
+  margin: 0 10px;
+}
+#p4-top .page-title {
+  font-family: 'Lora', serif;
+  font-size: clamp(32px, 7vw, 56px);
+  letter-spacing: 0.02em;
+  line-height: 1.0;
+  color: var(--cream);
+  margin-bottom: 18px;
+  text-align: center;
+}
+#p4-top .page-title .accent { color: var(--teal); }
+#p4-top .divider {
+  width: 40px;
+  height: 2px;
+  background: var(--teal);
+  margin: 0 0 40px 0;
+  opacity: 0.5;
+}
+#p4-top p.body {
+  font-size: 18px;
+  color: var(--cream);
+  margin-bottom: 22px;
+  line-height: 1.8;
+}
+#p4-top p.body strong { color: var(--cream); font-weight: 600; }
+
+/* Callout */
+#p4-top .callout {
+  border-left: 2px solid rgba(45,212,191,0.4);
+  padding: 16px 22px;
+  margin: 32px 0;
+  background: rgba(45,212,191,0.04);
+  border-radius: 0 8px 8px 0;
+}
+#p4-top .callout p {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 19px;
+  color: var(--cyan);
+  line-height: 1.75;
+}
+
+/* Section headers */
+#p4-top .section-title {
+  font-family: 'Lora', serif;
+  font-size: 26px;
+  letter-spacing: 0.05em;
+  color: var(--cream);
+  margin: 44px 0 20px;
+}
+
+/* Testimonials */
+#p4-top .testimonial {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--teal);
+  border-radius: 0 13px 13px 0;
+  padding: 24px 28px;
+  margin-bottom: 14px;
+}
+#p4-top .t-text {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--soft);
+  line-height: 1.75;
+  margin-bottom: 12px;
+}
+#p4-top .t-attr {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+}
+
+/* Lead-in */
+#p4-top .leadin {
+  text-align: center;
+  margin-top: 48px;
+  padding-bottom: 8px;
+}
+#p4-top .leadin p {
+  font-size: 20px;
+  color: var(--cream);
+  font-weight: 500;
+}
+#p4-top .leadin .arrow {
+  display: block;
+  margin-top: 14px;
+  font-size: 22px;
+  color: var(--teal);
+  opacity: 0.5;
+}
+
+/* Price card */
+#p4-top .price-card {
+  background: linear-gradient(135deg, rgba(14,60,78,0.5), rgba(12,40,62,0.5));
+  border: 1px solid rgba(45,212,191,0.25);
+  border-radius: 14px;
+  padding: 32px 30px;
+  text-align: center;
+  margin: 36px 0;
+}
+#p4-top .price-amount {
+  font-family: 'Lora', serif;
+  font-size: 48px;
+  color: var(--teal);
+  letter-spacing: 0.03em;
+  margin-bottom: 4px;
+}
+#p4-top .price-sub {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+  #p4-top { padding: 56px 18px 36px; }
+  #p4-top .testimonial { padding: 20px 22px; }
+  #p4-top .price-card { padding: 24px 22px; }
+}
+</style>
+
+<div id="p4-top">
+  <div class="inner">
+
+    <p class="eyebrow">Before You Head In</p>
+    <h1 class="page-title">YOU JUST INVESTED<br>IN YOURSELF.<br><span class="accent">LET'S TALK ABOUT WHAT MAKES THIS ACTUALLY STICK.</span></h1>
+    <div class="divider"></div>
+
+    <p class="body">I want to be real with you for a second, because you just made a decision that a lot of people avoid for months, sometimes years, and that tells me something important about where your head is right now. You're in the zone. You're ready to move. And I want to catch you in this moment because I know from experience what tends to happen next.</p>
+
+    <p class="body">You'll open the challenge, feel great about it, probably film Video 1 in the first couple of days. And then somewhere between Video 2 and Video 4, something will shift. You'll film a take you're not confident about. You'll second-guess your hook. You'll start wondering if anyone is actually going to care about what you're putting out there. And instead of pushing through that moment, you'll close the app and tell yourself you'll come back to it tomorrow. Tomorrow becomes next week. Next week becomes "I'll try again when I feel more ready."</p>
+
+    <p class="body">I'm not saying this to be discouraging. I'm saying it because I've watched it happen to some of the most talented and capable people I've ever worked with. And the one thing every single one of them had in common was that they were trying to figure it out alone.</p>
+
+    <div class="callout">
+      <p>That's what Build With Bee exists to fix.</p>
+    </div>
+
+    <p class="body">Here's something a lot of people selling content challenges won't tell you about themselves: I built my entire business without making content. No TikToks. No Reels. No posting strategy whatsoever. Just real conversations, real outreach, and showing up for people in ways that most coaches and consultants never bother to do. That worked, and it still works.</p>
+
+    <p class="body">But I kept watching something happen that I couldn't ignore. People with less experience than me, less skill, less genuine care for the people they were supposed to be helping, were growing online, landing clients, and building real businesses while I stayed invisible because I wasn't willing to get on camera. And the people getting hurt by that were going to the flashy guy because he showed up and I didn't.</p>
+
+    <p class="body">So I started doing both. And now I help other people do the same thing, because I know what it's like to have the skills and the experience and still freeze up the second a camera is pointed at you.</p>
+
+    <h3 class="section-title">WHAT BUILD WITH BEE ACTUALLY IS</h3>
+
+    <p class="body">It's not a course or a group program where you get a Zoom link once a month and a folder full of resources you'll never open. Build With Bee is you and me, working together, with me available from noon to midnight every single day to look at your actual content, give you honest feedback, and tell you exactly what to do when you're stuck.</p>
+
+    <p class="body">Here's what that looks like in practice: you post Video 1 and I watch it, and I tell you specifically what's working and what to adjust for the next one. You're trying to write a hook and nothing feels right, so you message me and we work through it together in real time. You're about to launch something new and you want someone who actually understands positioning to look at it before you put it out into the world. That's what this is.</p>
+
+    <p class="body">I keep my roster intentionally small because this only works if I can genuinely be present for the people I'm working with. If I'm stretched across forty clients, nobody gets the attention they need, and that defeats the entire purpose. Right now there are a few spots available, but that's not always the case.</p>
+
+    <h3 class="section-title">THE HONEST REFRAME ON PRICE</h3>
+
+    <p class="body">If you spend the next six months trying to figure this out on your own, buying courses that don't include real human support, rewatching tutorials that were never designed for your specific situation, starting and stopping over and over, what does that actually cost you? Not just the money you'll spend chasing solutions that don't solve the real problem, but the time you'll lose, the momentum that slips away, and the clients and opportunities that go to someone else while you're still getting ready.</p>
+
+    <div class="price-card">
+      <p class="price-amount">$250/MONTH</p>
+      <p class="price-sub">No contracts &middot; Cancel whenever you want &middot; Less than one missed client</p>
+    </div>
+
+    <p class="testimonials-label" style="font-family:'Oswald',monospace;font-size:10px;letter-spacing:0.2em;color:var(--teal);text-transform:uppercase;margin:40px 0 20px;text-align:center;">What Clients Have Said</p>
+
+    <!-- [PLACEHOLDER - REPLACE WITH REAL TESTIMONIAL] -->
+    <div class="testimonial">
+      <p class="t-text">"I posted more content in my first month working with David than I had in the entire two years before that. He has this way of cutting through the overthinking and just showing you the next step, and somehow that's genuinely all you really need to keep moving."</p>
+      <p class="t-attr">[PLACEHOLDER] Business coach</p>
+    </div>
+
+    <!-- [PLACEHOLDER - REPLACE WITH REAL TESTIMONIAL] -->
+    <div class="testimonial">
+      <p class="t-text">"I was completely convinced I wasn't ready for something like this. David basically told me there's no version of ready that you reach by waiting, and then he walked me through exactly what I was going to post that week. It worked, and I haven't looked back since."</p>
+      <p class="t-attr">[PLACEHOLDER] Photographer</p>
+    </div>
+
+    <!-- [PLACEHOLDER - REPLACE WITH REAL TESTIMONIAL] -->
+    <div class="testimonial">
+      <p class="t-text">"The availability is the part that surprised me most. I've messaged him at 10 at night in a panic about a video I was about to post, and he responded within minutes with real, specific, useful feedback. That's not something you find anywhere else, especially not at this price point."</p>
+      <p class="t-attr">[PLACEHOLDER] Health coach</p>
+    </div>
+
+    <div class="leadin">
+      <p>If you're ready to stop doing this alone, I'm ready to work with you.</p>
+      <span class="arrow">&#8595;</span>
+    </div>
+
+    <!--
+      ========================================
+      [SYSTEME YES BUTTON GOES HERE]
+      Suggested label: "YES, I WANT TO WORK WITH DAVID"
+      Style: Teal background, full width, prominent
+
+      [SYSTEME NO BUTTON GOES HERE]
+      Suggested label: "No thanks, I'll figure it out on my own"
+      Style: Small, subtle, text-only or minimal border
+      ========================================
+    -->
+
+  </div>
+</div>

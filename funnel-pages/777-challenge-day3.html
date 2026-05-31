@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>777 Challenge — Day 3</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+.d3-wrap { max-width: 720px; margin: 0 auto; padding: 40px 20px 60px; font-family: 'Nunito', sans-serif; color: #0D2828; }
+
+
+.d3-eyebrow { font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.28em; color: #2A9090; text-transform: uppercase; margin-bottom: 14px; }
+
+
+/* Card 1 — dark teal — anticipation squandered */
+.d3-stakes { background: #0D2828; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d3-stakes .d3-eyebrow { color: #68C8C8; }
+.d3-stakes h2 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #fff; line-height: 1.4; margin-bottom: 16px; }
+.d3-stakes p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #A8DEDE; line-height: 1.8; margin-bottom: 16px; }
+.d3-stakes p:last-child { margin-bottom: 0; }
+.d3-stakes strong { color: #fff; }
+
+
+/* Pull quote — dark background version */
+.d3-quote-dark { background: rgba(50,184,184,0.07); border-left: 3px solid #32B8B8; border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 24px 0; }
+.d3-quote-dark p { font-family: 'Permanent Marker', cursive; font-size: 20px; color: #68C8C8; line-height: 1.5; margin-bottom: 0; }
+.d3-quote-dark span { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.2em; color: #32B8B8; text-transform: uppercase; margin-top: 10px; display: block; }
+
+
+/* Card 2 — gold — the relief */
+.d3-action { background: #F5E8C0; border: 1px solid #E8C86C; border-left: 4px solid #C8A84B; border-radius: 12px; padding: 28px 32px; margin-bottom: 28px; }
+.d3-action .d3-eyebrow { color: #C8A84B; }
+.d3-action h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; margin-bottom: 14px; line-height: 1.4; }
+.d3-action p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d3-action p:last-of-type { margin-bottom: 24px; }
+.d3-action strong { color: #0D2828; }
+.d3-btn { display: inline-block; background: #0D2828; color: #32B8B8; font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border-radius: 8px; }
+
+
+/* Card 3 — white bordered — the invisible theft */
+.d3-mirror { background: #fff; border: 1px solid #D8F0F0; border-left: 4px solid #32B8B8; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d3-mirror .d3-eyebrow { color: #2A9090; }
+.d3-mirror h2 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d3-mirror p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d3-mirror p:last-child { margin-bottom: 0; }
+.d3-mirror strong { color: #0D2828; }
+
+
+/* Pull quote — light background version */
+.d3-quote-light { background: #EEF9F9; border-left: 3px solid #32B8B8; border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 24px 0; }
+.d3-quote-light p { font-family: 'Permanent Marker', cursive; font-size: 20px; color: #1E5C5C; line-height: 1.5; margin-bottom: 0; }
+.d3-quote-light span { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.2em; color: #2A9090; text-transform: uppercase; margin-top: 10px; display: block; }
+
+
+/* Divider */
+.d3-divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, #D8E4E8, transparent); margin: 32px 0; }
+
+
+/* Card 4 — white — still time to join */
+.d3-join { background: #fff; border: 1px solid #D8E4E8; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d3-join .d3-eyebrow { color: #2A9090; }
+.d3-join h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d3-join p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d3-join p:last-of-type { margin-bottom: 24px; }
+.d3-join strong { color: #0D2828; }
+.d3-join-btn { display: inline-block; background: #32B8B8; color: #0D2828; font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border-radius: 8px; }
+
+
+/* Card 5 — white — contact David Bee */
+.d3-contact { background: #fff; border: 1px solid #D8E4E8; border-radius: 12px; padding: 36px 36px 32px; }
+.d3-contact .d3-eyebrow { margin-bottom: 14px; color: #2A9090; }
+.d3-contact h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d3-contact p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d3-contact p:last-of-type { margin-bottom: 28px; }
+.d3-links { display: flex; flex-direction: column; gap: 12px; }
+.d3-link { display: flex; align-items: center; gap: 14px; text-decoration: none; background: #EEF9F9; border: 1px solid #D8F0F0; border-radius: 10px; padding: 14px 18px; }
+.d3-link-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; }
+.d3-link-label { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.18em; color: #2A9090; text-transform: uppercase; margin-bottom: 2px; display: block; }
+.d3-link-action { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; color: #0D2828; display: block; }
+
+
+@media (max-width: 600px) {
+  .d3-wrap { padding: 24px 16px 48px; }
+  .d3-stakes, .d3-action, .d3-mirror, .d3-join, .d3-contact { padding: 24px 20px; }
+  .d3-stakes h2, .d3-mirror h2, .d3-action h3, .d3-join h3, .d3-contact h3 { font-size: 24px; }
+}
+</style>
+</head>
+<body style="margin:0;padding:0;background:#F8FAFA;">
+<div class="d3-wrap">
+
+
+  <!-- CARD 1 — dark teal — anticipation squandered -->
+  <div class="d3-stakes">
+    <p class="d3-eyebrow">Day 3 — The First Epiphany</p>
+    <h2>You didn't just post two videos. You built something. Today is the day it either pays off or quietly disappears.</h2>
+    <p>Day 1 you made a declaration. Day 2 you proved you meant it. And whether you realize it or not, something happened in the people who watched both of those. A tiny but real version of anticipation. The kind that makes someone check back. The kind that makes them mention you to a friend. The kind that is almost impossible to manufacture and almost impossible to sustain if you disappear right now.</p>
+    <p>Here's the thing about anticipation that nobody talks about. It doesn't wait. It doesn't stay warm while you gather your nerve. It has a shelf life measured in days, not weeks, and Day 3 is exactly when it either gets rewarded or quietly decides you were a flash in the pan.</p>
+    <p>The audience you're building isn't thinking about you in dramatic terms. They're not sitting around wondering if you'll show up. But somewhere in the back of their mind, a tab is open. Today you either load the page or the browser closes it automatically.</p>
+    <div class="d3-quote-dark">
+      <p>Yesterday built the trust. Today is what that trust was for.</p>
+      <span>— David Bee</span>
+    </div>
+  </div>
+
+
+  <!-- CARD 2 — gold — the relief -->
+  <div class="d3-action">
+    <p class="d3-eyebrow">What today actually gives you</p>
+    <h3>Today's video is the one that gets shared. Not liked. Not commented on. Sent to someone specific by someone who watched it and immediately thought of a person who needed to hear it.</h3>
+    <p>That's what an epiphany does. It doesn't just inform... it transfers. It gives the person watching a new way to see something they already knew, and that gift is so rare online that when it happens, people can't help but pass it on.</p>
+    <p>You have a reframe inside you that only you can deliver in exactly the way you deliver it. Not a tip. Not a tactic. The kind of thing that makes someone stop mid-scroll and say "wait." Today's script is built to pull that out of you and put it on screen in a way that lands.</p>
+    <p>Press record today and you give someone something they'll carry with them. That's not content. That's a moment. And moments are what people build audiences around.</p>
+    <p>Open the app. Pull up your Video 3 script. Read it once. Press record. Post it.</p>
+    <a href="https://coloradomastermind.onlinecoursehost.com/courses/contentchallenge" class="d3-btn" target="_blank">Open the App &rarr;</a>
+  </div>
+
+
+  <!-- CARD 3 — white bordered — the invisible theft -->
+  <div class="d3-mirror">
+    <p class="d3-eyebrow">The thing nobody tells you about waiting</p>
+    <h2>The insight you're sitting on has an expiration date. Not because it stops being true. Because someone else is going to say it first.</h2>
+    <p>Right now, somewhere in your space, someone with half your experience and a fraction of your clarity is filming a version of the thing you've been thinking about. Their version is louder. It's less precise. It misses the part that actually matters. But it's going to exist on the internet before yours does if you don't film today.</p>
+    <p>And here's what that costs you that you can't get back. Once their version is out there, yours doesn't land as a revelation anymore. It lands as a response. An echo. The thing that came second. The audience that needed your specific lens on this will find their version first, and most of them will never know yours existed.</p>
+    <p>You've spent years developing a way of seeing something that is completely unique to your experience, your failures, your observations. That's not nothing. That's the thing people will share. But only if it gets out of your head and onto a screen.</p>
+    <div class="d3-quote-light">
+      <p>The world doesn't need another person who almost said the thing. It needs you to actually say it.</p>
+      <span>— David Bee</span>
+    </div>
+  </div>
+
+
+  <div class="d3-divider"></div>
+
+
+  <!-- CARD 4 — white — still time to join -->
+  <div class="d3-join">
+    <p class="d3-eyebrow">Just finding this?</p>
+    <h3>Day 3 is not too late. Not even close.</h3>
+    <p>This challenge runs on sequence, not schedule. Which means the only thing that matters is that you go through all seven videos in order, and you can start that process today, right now, in the next ten minutes if you want to.</p>
+    <p>Video 1 and Video 2 are still there. The app builds your scripts in minutes. The community is still moving. What you'd be walking into isn't a group that's lapped you... it's a group that knows exactly what it felt like to be where you are right now, since they were there two days ago.</p>
+    <p><strong>The door is open. Seven dollars. Seven videos. Your pace, your terms.</strong></p>
+    <a href="https://content.coloradomastermind.com/777challenge" class="d3-join-btn" target="_blank">Join the Challenge &rarr;</a>
+  </div>
+
+
+  <!-- CARD 5 — white — contact David Bee -->
+  <div class="d3-contact">
+    <p class="d3-eyebrow">David is here</p>
+    <h3>If something's not clicking... reach out.</h3>
+    <p>The app, the scripts, the process... all of it was built to make this as frictionless as possible. But frictionless doesn't mean perfect, and if something is getting in the way of you pressing record today, I want to know what it is.</p>
+    <p>Not because I'm being polite. Because you showing up and telling me where this breaks down is the most valuable thing that can happen for everyone who comes through this after you.</p>
+    <p>Stuck on the script? Filmed it and hated it? Just need someone to tell you it's good enough to post? Reach out. That's what this is for.</p>
+    <div class="d3-links">
+      <a href="https://calendly.com/davidbee" class="d3-link" target="_blank">
+        <span class="d3-link-icon">📅</span>
+        <div><span class="d3-link-label">Book a call</span><span class="d3-link-action">Pick a time on David's calendar</span></div>
+      </a>
+      <a href="https://m.me/davidbeeeee" class="d3-link" target="_blank">
+        <span class="d3-link-icon">💬</span>
+        <div><span class="d3-link-label">Messenger</span><span class="d3-link-action">DM David directly on Facebook</span></div>
+      </a>
+      <a href="mailto:contact@davidbee.me" class="d3-link">
+        <span class="d3-link-icon">📧</span>
+        <div><span class="d3-link-label">Email</span><span class="d3-link-action">contact@davidbee.me</span></div>
+      </a>
+    </div>
+  </div>
+
+
+</div>
+
+–
+</body>
+</html>

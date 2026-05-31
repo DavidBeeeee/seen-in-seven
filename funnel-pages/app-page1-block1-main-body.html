@@ -1,0 +1,1480 @@
+<!-- ═══════════════════════════════════════════════════════════
+     7 VIDEOS. 7 DAYS. $7.... MAIN BODY BLOCK
+     Build With Bee... Landing Page Block 1 of 3
+     Sections 1–9
+     Drop into a Systeme.io HTML block at the top of your page.
+     All CTA buttons scroll to #section-91ec91a8 (your opt-in form)
+═══════════════════════════════════════════════════════════ -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+/* ═══════════════════════════
+   SYSTEME.IO OVERRIDE LAYER
+   Forces Systeme's global CSS to yield to our styles.
+   Must stay at top of this block.
+═══════════════════════════ */
+.bwb-page p,
+.bwb-page div,
+.bwb-page span,
+.bwb-page li,
+.bwb-page a:not(.bwb-btn) {
+  text-align: left !important;
+}
+.bwb-page h1,
+.bwb-page h2,
+.bwb-page h3 {
+  font-family: 'Lora', serif !important;
+}
+/* ═══════════════════════════
+   GLOBAL VARIABLES + RESET
+═══════════════════════════ */
+.bwb-page {
+  --bg:        #111827;
+  --bg-dark:   #0c1220;
+  --bg-alt:    #f0f9ff;
+  --card:      #1e2d40;
+  --card2:     #243448;
+  --border:    #2e4460;
+  --cream:     #f0f9ff;
+  --soft:      #bae6fd;
+  --muted:     #7eb8d4;
+  --teal:      #2dd4bf;
+  --cyan:      #67e8f9;
+  --blue:      #60a5fa;
+  font-family: 'Nunito', sans-serif !important;
+  background:  var(--bg) !important;
+  color:       var(--cream) !important;
+  text-align:  left !important;
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+.bwb-page *, .bwb-page *::before, .bwb-page *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+.bwb-page a { text-decoration: none; }
+/* ═══════════════════════════
+   SHARED COMPONENTS
+═══════════════════════════ */
+.bwb-inner {
+  max-width: 680px;
+  margin: 0 auto;
+  width: 100%;
+}
+.bwb-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--teal);
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 18px;
+}
+.bwb-divider {
+  width: 52px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--teal), var(--cyan));
+  border-radius: 2px;
+  margin: 28px 0;
+}
+.bwb-divider-center {
+  margin: 28px auto;
+}
+.bwb-h2 {
+  font-family: 'Lora', serif;
+  font-size: clamp(38px, 9vw, 66px);
+  letter-spacing: 0.02em;
+  line-height: 1.0;
+  color: var(--cream);
+  margin-bottom: 8px;
+}
+.bwb-h2 span { color: var(--teal); }
+.bwb-h3 {
+  font-family: 'Lora', serif;
+  font-size: clamp(26px, 6vw, 42px);
+  letter-spacing: 0.03em;
+  line-height: 1.05;
+  color: var(--cream);
+  margin-bottom: 8px;
+}
+.bwb-body {
+  font-size: clamp(18px, 3.5vw, 20px) !important;
+  color: var(--soft) !important;
+  line-height: 1.85 !important;
+  margin-bottom: 20px !important;
+  text-align: left !important;
+}
+.bwb-body strong { color: var(--cream); font-weight: 600; }
+.bwb-body:last-child { margin-bottom: 0; }
+.bwb-pullout {
+  font-family: 'Permanent Marker', cursive !important;
+  
+  font-size: clamp(18px, 4vw, 22px) !important;
+  color: var(--cyan) !important;
+  line-height: 1.75 !important;
+  text-align: left !important;
+  border-left: 2px solid rgba(45,212,191,0.4);
+  padding: 6px 0 6px 24px;
+  margin: 36px 0;
+}
+.bwb-btn {
+  display: inline-block;
+  background: var(--teal);
+  color: #0f172a !important;
+  font-family: 'Lora', serif;
+  font-size: 20px;
+  letter-spacing: 0.12em;
+  padding: 17px 48px;
+  border-radius: 9px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.22s ease;
+  box-shadow: 0 4px 24px rgba(45,212,191,0.2);
+  text-decoration: none !important;
+}
+.bwb-btn:hover {
+  background: #5eead4;
+  transform: translateY(-2px);
+  box-shadow: 0 12px 36px rgba(45,212,191,0.35);
+  color: #0f172a !important;
+}
+.bwb-btn-full {
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+.bwb-btn-sub {
+  display: block;
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  margin-top: 12px;
+  text-transform: uppercase;
+  text-align: center;
+}
+.bwb-section-border-top {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 50%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(45,212,191,0.35), transparent);
+}
+/* ═══════════════════════════
+   SECTION 1... HERO
+═══════════════════════════ */
+.bwb-hero {
+  background: var(--bg);
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px 90px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+.bwb-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 20% 10%, rgba(96,165,250,0.09) 0%, transparent 60%),
+    radial-gradient(ellipse 60% 40% at 80% 80%, rgba(45,212,191,0.08) 0%, transparent 55%),
+    radial-gradient(ellipse 40% 30% at 50% 50%, rgba(103,232,249,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+.bwb-hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(45,212,191,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(45,212,191,0.025) 1px, transparent 1px);
+  background-size: 44px 44px;
+  pointer-events: none;
+}
+.bwb-hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 640px;
+  width: 100%;
+}
+.bwb-hero-eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 30px;
+  padding: 8px 18px;
+  border: 1px solid rgba(45,212,191,0.3);
+  border-radius: 20px;
+  background: rgba(45,212,191,0.06);
+  animation: bwbFadeDown 0.6s ease forwards;
+}
+.bwb-hero-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--teal);
+  border-radius: 50%;
+  flex-shrink: 0;
+  animation: bwbPulse 2s ease-in-out infinite;
+}
+.bwb-hero-headline {
+  font-family: 'Lora', serif;
+  font-size: clamp(52px, 14vw, 96px);
+  letter-spacing: 0.02em;
+  line-height: 0.95;
+  color: var(--cream);
+  animation: bwbFadeUp 0.7s ease 0.1s both;
+}
+.bwb-hero-headline .l1 { display: block; color: var(--cream); }
+.bwb-hero-headline .l2 { display: block; color: var(--teal); }
+.bwb-hero-headline2 {
+  display: block;
+  font-family: 'Lora', serif;
+  font-size: clamp(20px, 5vw, 34px);
+  letter-spacing: 0.06em;
+  color: var(--cyan);
+  margin-top: 8px;
+  animation: bwbFadeUp 0.7s ease 0.18s both;
+}
+.bwb-hero-divider {
+  width: 56px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--teal), var(--cyan));
+  margin: 28px auto;
+  border-radius: 2px;
+  animation: bwbFadeUp 0.7s ease 0.25s both;
+}
+.bwb-hero-sub {
+  font-size: clamp(16px, 3.8vw, 18px);
+  color: var(--soft);
+  line-height: 1.8;
+  max-width: 520px;
+  margin: 0 auto 40px;
+  animation: bwbFadeUp 0.7s ease 0.3s both;
+}
+.bwb-hero-sub strong { color: var(--cream); font-weight: 600; }
+.bwb-hero-cta {
+  animation: bwbFadeUp 0.7s ease 0.38s both;
+}
+.bwb-hero-badges {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-top: 40px;
+  animation: bwbFadeUp 0.7s ease 0.5s both;
+}
+.bwb-hero-badge {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  text-transform: uppercase;
+  padding: 6px 14px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: rgba(30,45,64,0.5);
+}
+.bwb-scroll-cue {
+  position: absolute;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--border);
+  text-transform: uppercase;
+  animation: bwbFadeIn 1.2s ease 1s both;
+  z-index: 1;
+  white-space: nowrap;
+}
+.bwb-scroll-arrow {
+  font-size: 20px;
+  color: var(--teal);
+  animation: bwbBounce 1.6s ease-in-out infinite;
+}
+/* ═══════════════════════════
+   SECTION 2... THE PROBLEM
+═══════════════════════════ */
+.bwb-problem {
+  background: var(--bg-dark);
+  padding: 100px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.bwb-problem-glow {
+  position: absolute;
+  top: -80px;
+  right: -80px;
+  width: 380px;
+  height: 380px;
+  background: radial-gradient(circle, rgba(96,165,250,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+.bwb-stinger {
+  background: linear-gradient(135deg, rgba(45,212,191,0.07) 0%, rgba(96,165,250,0.04) 100%);
+  border: 1px solid rgba(45,212,191,0.2);
+  border-radius: 13px;
+  padding: 32px 28px;
+  margin-top: 44px;
+}
+.bwb-stinger-close {
+  font-family: 'Lora', serif;
+  font-size: clamp(22px, 5vw, 30px);
+  letter-spacing: 0.04em;
+  color: var(--teal);
+  margin-top: 20px;
+  display: block;
+}
+/* ═══════════════════════════
+   SECTION 3... WHY NOW
+═══════════════════════════ */
+.bwb-whynow {
+  background: var(--bg);
+  padding: 100px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.bwb-whynow-glow {
+  position: absolute;
+  bottom: -60px;
+  left: -60px;
+  width: 340px;
+  height: 340px;
+  background: radial-gradient(circle, rgba(45,212,191,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+.bwb-callout {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--teal);
+  border-radius: 0 13px 13px 0;
+  padding: 28px 28px;
+  margin: 36px 0;
+}
+.bwb-callout p {
+  font-size: clamp(17px, 3.8vw, 20px);
+  color: var(--cream);
+  line-height: 1.75;
+  font-weight: 500;
+}
+/* ═══════════════════════════
+   SECTION 4... SOLUTION
+═══════════════════════════ */
+.bwb-solution {
+  background: linear-gradient(180deg, var(--bg-dark) 0%, #0d1e30 100%);
+  padding: 100px 24px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+.bwb-solution-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 600px;
+  height: 600px;
+  background: radial-gradient(circle, rgba(45,212,191,0.05) 0%, transparent 65%);
+  pointer-events: none;
+}
+.bwb-solution-headline {
+  font-family: 'Lora', serif;
+  font-size: clamp(58px, 15vw, 110px);
+  letter-spacing: 0.03em;
+  line-height: 0.9;
+  margin-bottom: 16px;
+}
+.bwb-solution-headline .s1 { display: block; color: var(--cream); }
+.bwb-solution-headline .s2 { display: block; color: var(--teal); }
+.bwb-solution-headline .s3 { display: block; color: var(--cyan); font-size: 0.45em; letter-spacing: 0.08em; margin-top: 6px; }
+.bwb-three-things {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 44px 0;
+  text-align: left;
+}
+.bwb-thing {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 22px 22px;
+}
+.bwb-thing-num {
+  font-family: 'Lora', serif;
+  font-size: 36px;
+  color: var(--teal);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 36px;
+}
+.bwb-thing-text {
+  font-size: clamp(15px, 3.2vw, 17px);
+  color: var(--soft);
+  line-height: 1.75;
+}
+.bwb-thing-text strong {
+  display: block;
+  color: var(--cream);
+  font-size: clamp(16px, 3.5vw, 18px);
+  margin-bottom: 4px;
+}
+/* ═══════════════════════════
+   SECTION 4b... WHY THESE 7
+═══════════════════════════ */
+.bwb-why7 {
+  background: linear-gradient(180deg, #0a1825 0%, var(--bg-dark) 100%);
+  padding: 100px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.bwb-why7-glow {
+  position: absolute;
+  top: 50%;
+  right: -100px;
+  transform: translateY(-50%);
+  width: 420px;
+  height: 420px;
+  background: radial-gradient(circle, rgba(45,212,191,0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+.bwb-outcome-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin: 40px 0 16px;
+}
+.bwb-outcome-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+  margin-bottom: 36px;
+}
+.bwb-outcome-tag {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--cream);
+  background: rgba(45,212,191,0.07);
+  border: 1px solid rgba(45,212,191,0.22);
+  border-radius: 100px;
+  padding: 7px 15px;
+}
+.bwb-research-cred {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin: 36px 0;
+  padding: 24px 26px;
+  background: rgba(45,212,191,0.04);
+  border: 1px solid rgba(45,212,191,0.12);
+  border-radius: 12px;
+}
+.bwb-research-num {
+  font-family: 'Lora', serif;
+  font-size: 64px;
+  color: var(--teal);
+  line-height: 1;
+  flex-shrink: 0;
+}
+.bwb-research-text {
+  font-size: clamp(14px, 3vw, 16px);
+  color: var(--soft);
+  line-height: 1.65;
+}
+.bwb-exclusivity {
+  padding: 24px 26px;
+  border-left: 3px solid var(--teal);
+  background: rgba(45,212,191,0.03);
+  border-radius: 0 10px 10px 0;
+}
+.bwb-exclusivity p {
+  font-size: clamp(16px, 3.5vw, 18px) !important;
+  color: var(--cream) !important;
+  line-height: 1.75 !important;
+  font-weight: 500 !important;
+}
+/* ═══════════════════════════
+   SECTION 5... THE WIZARD
+═══════════════════════════ */
+.bwb-wizard {
+  background: var(--bg);
+  padding: 100px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.bwb-wizard-glow {
+  position: absolute;
+  top: -60px;
+  right: -60px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(103,232,249,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+.bwb-steps {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin: 44px 0;
+  border-left: 2px solid rgba(45,212,191,0.25);
+  padding-left: 0;
+}
+.bwb-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+  padding: 24px 24px;
+  border-bottom: 1px solid rgba(45,212,191,0.1);
+  position: relative;
+}
+.bwb-step:last-child { border-bottom: none; }
+.bwb-step-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--teal);
+  text-transform: uppercase;
+  flex-shrink: 0;
+  padding-top: 4px;
+  width: 48px;
+}
+.bwb-step-content {}
+.bwb-step-title {
+  font-family: 'Lora', serif;
+  font-size: clamp(20px, 4.5vw, 28px);
+  letter-spacing: 0.04em;
+  color: var(--cream);
+  margin-bottom: 6px;
+}
+.bwb-step-desc {
+  font-size: 20px !important;
+  color: var(--soft) !important;
+  line-height: 1.75 !important;
+  text-align: left !important;
+}
+.bwb-wizard-callout {
+  background: linear-gradient(135deg, rgba(45,212,191,0.08) 0%, rgba(96,165,250,0.05) 100%);
+  border: 1px solid rgba(45,212,191,0.25);
+  border-radius: 13px;
+  padding: 32px 28px;
+  margin: 44px 0;
+  text-align: center;
+}
+.bwb-wizard-callout p {
+  font-size: clamp(15px, 3.2vw, 17px);
+  color: var(--soft);
+  line-height: 1.8;
+}
+.bwb-wizard-callout strong {
+  color: var(--cream);
+  font-weight: 600;
+}
+/* ═══════════════════════════
+   SECTION 6... DAVID'S STORY
+═══════════════════════════ */
+.bwb-story {
+  background: var(--bg-dark);
+  padding: 100px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.bwb-story-layout {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+}
+.bwb-story-photo {
+  width: 100%;
+  max-width: 300px;
+  aspect-ratio: 3/4;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+.bwb-story-photo-placeholder {
+  font-size: 48px;
+}
+.bwb-story-photo-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 9px;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+  text-align: center;
+  padding: 0 20px;
+  line-height: 1.6;
+}
+/* ═══════════════════════════
+   SECTION 7... OFFER STACK
+═══════════════════════════ */
+.bwb-offer {
+  background: var(--bg);
+  padding: 100px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.bwb-offer-glow {
+  position: absolute;
+  bottom: -80px;
+  right: -80px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(45,212,191,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+.bwb-offer-items {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  margin: 44px 0;
+}
+.bwb-offer-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 11px;
+  padding: 22px 22px;
+  transition: border-color 0.2s;
+}
+.bwb-offer-item:hover {
+  border-color: rgba(45,212,191,0.35);
+}
+.bwb-offer-check {
+  font-size: 20px;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.bwb-offer-content {}
+.bwb-offer-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(16px, 3.5vw, 18px);
+  color: var(--cream);
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.bwb-offer-title .bwb-value {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  color: var(--muted);
+  font-weight: 400;
+  margin-left: 8px;
+  text-transform: uppercase;
+}
+.bwb-offer-desc {
+  font-size: clamp(16px, 3vw, 18px) !important;
+  color: var(--soft) !important;
+  line-height: 1.7 !important;
+  text-align: left !important;
+}
+.bwb-offer-bonus {
+  border: 1px solid rgba(45,212,191,0.3);
+  background: linear-gradient(135deg, rgba(45,212,191,0.06) 0%, rgba(96,165,250,0.03) 100%);
+}
+.bwb-offer-bonus .bwb-offer-title { color: var(--teal); }
+.bwb-offer-total {
+  background: var(--card2);
+  border: 1px solid rgba(45,212,191,0.25);
+  border-radius: 13px;
+  padding: 32px 28px;
+  text-align: center;
+  margin-top: 32px;
+}
+.bwb-offer-total-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.2em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-bottom: 10px;
+  display: block;
+}
+.bwb-offer-total-value {
+  font-family: 'Lora', serif;
+  font-size: clamp(18px, 4vw, 22px);
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  text-decoration: line-through;
+  display: block;
+  margin-bottom: 6px;
+}
+.bwb-offer-total-price {
+  font-family: 'Lora', serif;
+  font-size: clamp(52px, 12vw, 80px);
+  color: var(--teal);
+  letter-spacing: 0.04em;
+  line-height: 1;
+  display: block;
+}
+.bwb-offer-total-sub {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin-top: 10px;
+  display: block;
+}
+/* ═══════════════════════════
+   SECTION 8... NO CATCH
+═══════════════════════════ */
+.bwb-nocatch {
+  background: linear-gradient(180deg, var(--bg-dark) 0%, #0a1a28 100%);
+  padding: 100px 24px;
+  position: relative;
+  overflow: hidden;
+  text-align: center;
+}
+.bwb-nocatch-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(45,212,191,0.06) 0%, transparent 65%);
+  pointer-events: none;
+}
+.bwb-nocatch-points {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 36px 0;
+  text-align: left;
+}
+.bwb-nocatch-point {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: clamp(15px, 3.2vw, 17px);
+  color: var(--soft);
+  line-height: 1.6;
+}
+.bwb-nocatch-point::before {
+  content: '—';
+  color: var(--teal);
+  font-family: 'Oswald', sans-serif;
+  flex-shrink: 0;
+}
+/* ═══════════════════════════
+   SECTION 9... WHO THIS IS FOR
+═══════════════════════════ */
+.bwb-who {
+  background: var(--bg);
+  padding: 100px 24px;
+  position: relative;
+  overflow: hidden;
+}
+.bwb-who-glow {
+  position: absolute;
+  top: -60px;
+  left: -60px;
+  width: 360px;
+  height: 360px;
+  background: radial-gradient(circle, rgba(96,165,250,0.05) 0%, transparent 70%);
+  pointer-events: none;
+}
+.bwb-who-cols {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin: 44px 0;
+}
+.bwb-who-col {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 30px 26px;
+}
+.bwb-who-col-title {
+  font-family: 'Lora', serif;
+  font-size: clamp(20px, 4.5vw, 26px);
+  letter-spacing: 0.04em;
+  margin-bottom: 20px;
+}
+.bwb-who-col-title.yes { color: var(--teal); }
+.bwb-who-col-title.no  { color: #f87171; }
+.bwb-who-items {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.bwb-who-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: clamp(15px, 3.2vw, 16px);
+  color: var(--soft);
+  line-height: 1.65;
+}
+.bwb-who-icon { flex-shrink: 0; font-size: 16px; margin-top: 1px; }
+.bwb-who-callout {
+  background: linear-gradient(135deg, rgba(45,212,191,0.07) 0%, rgba(96,165,250,0.04) 100%);
+  border: 1px solid rgba(45,212,191,0.2);
+  border-radius: 13px;
+  padding: 28px 26px;
+  margin-top: 32px;
+  text-align: center;
+}
+.bwb-who-callout p {
+  font-size: clamp(15px, 3.2vw, 17px);
+  color: var(--soft);
+  line-height: 1.8;
+}
+.bwb-who-callout strong { color: var(--cream); }
+/* ═══════════════════════════
+   KEYFRAME ANIMATIONS
+═══════════════════════════ */
+@keyframes bwbFadeDown {
+  from { opacity: 0; transform: translateY(-14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes bwbFadeUp {
+  from { opacity: 0; transform: translateY(18px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes bwbFadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+@keyframes bwbPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50%       { opacity: 0.4; transform: scale(0.75); }
+}
+@keyframes bwbBounce {
+  0%, 100% { transform: translateY(0); }
+  50%       { transform: translateY(8px); }
+}
+/* ═══════════════════════════
+   MOBILE
+═══════════════════════════ */
+@media (max-width: 520px) {
+  .bwb-hero { padding: 60px 20px 80px; min-height: 100svh; }
+  .bwb-btn { font-size: 18px; padding: 16px 32px; }
+  .bwb-btn-full { width: 100%; display: block; text-align: center; }
+  .bwb-hero-badges { gap: 8px; }
+  .bwb-problem,
+  .bwb-whynow,
+  .bwb-solution,
+  .bwb-wizard,
+  .bwb-story,
+  .bwb-offer,
+  .bwb-nocatch,
+  .bwb-who { padding: 70px 20px; }
+  .bwb-story-photo { max-width: 240px; }
+}
+
+/* ═══════════════════════════
+   LIGHT SECTION VARIANT
+═══════════════════════════ */
+.bwb-light {
+  background: #C8E4E4 !important;
+  /* Remap CSS vars — fixes inline style= attributes and var()-based rules automatically */
+  --cream:  #0D2828;
+  --soft:   #2A3A3A;
+  --muted:  #4A6060;
+  --teal:   #1E5C5C;
+  --cyan:   #1A6060;
+  --blue:   #1A4060;
+  --card:   rgba(30,92,92,0.08);
+  --border: rgba(30,92,92,0.22);
+}
+.bwb-light .bwb-inner { position: relative; z-index: 1; }
+.bwb-light .bwb-h2,
+.bwb-light .bwb-h3 { color: #0D2828 !important; }
+.bwb-light .bwb-h2 span,
+.bwb-light .bwb-h3 span { color: #1E5C5C !important; }
+.bwb-light .bwb-body { color: #2A3A3A !important; }
+.bwb-light .bwb-body strong { color: #0D2828 !important; }
+.bwb-light .bwb-eyebrow { color: #1E5C5C !important; }
+.bwb-light .bwb-pullout {
+  color: #1E5C5C !important;
+  border-left-color: rgba(30,92,92,0.45) !important;
+}
+.bwb-light .bwb-callout {
+  background: rgba(30,92,92,0.1) !important;
+  border-left-color: rgba(30,92,92,0.4) !important;
+  color: #0D2828 !important;
+}
+.bwb-light .bwb-callout p { color: #0D2828 !important; }
+.bwb-light .bwb-callout strong { color: #0D2828 !important; }
+.bwb-light .bwb-stinger {
+  background: rgba(30,92,92,0.07) !important;
+  border-color: rgba(30,92,92,0.3) !important;
+}
+.bwb-light .bwb-stinger-close { color: #1E5C5C !important; }
+.bwb-light .bwb-divider {
+  background: linear-gradient(90deg, #1E5C5C, #2A9090) !important;
+}
+.bwb-light .bwb-section-border-top {
+  background: linear-gradient(90deg, transparent, rgba(30,92,92,0.2), transparent) !important;
+}
+.bwb-light .bwb-thing-num { color: #1E5C5C !important; border-color: rgba(30,92,92,0.3) !important; }
+.bwb-light .bwb-thing-text { color: #2A3A3A !important; }
+.bwb-light .bwb-thing-text strong { color: #0D2828 !important; }
+/* Outcome tags */
+.bwb-light .bwb-outcome-tag {
+  background: rgba(30,92,92,0.1) !important;
+  border-color: rgba(30,92,92,0.25) !important;
+}
+/* Research cred box */
+.bwb-light .bwb-research-cred {
+  background: rgba(30,92,92,0.08) !important;
+  border-color: rgba(30,92,92,0.2) !important;
+}
+.bwb-light .bwb-research-text { color: #2A3A3A !important; }
+/* Exclusivity box */
+.bwb-light .bwb-exclusivity {
+  background: rgba(30,92,92,0.07) !important;
+  border-left-color: #1E5C5C !important;
+}
+.bwb-light .bwb-exclusivity p { color: #2A3A3A !important; }
+/* No-catch points */
+.bwb-light .bwb-nocatch-point { color: #2A3A3A !important; }
+.bwb-light .bwb-nocatch-grid-item { background: rgba(30,92,92,0.06); border-color: rgba(30,92,92,0.2); }
+.bwb-light .bwb-nocatch-icon { color: #1E5C5C !important; }
+.bwb-light .bwb-nocatch-title { color: #0D2828 !important; }
+.bwb-light .bwb-nocatch-text { color: #2A3A3A !important; }
+.bwb-light .bwb-why7-card { background: rgba(30,92,92,0.06); border-color: rgba(30,92,92,0.2); }
+.bwb-light .bwb-step-num { color: #1E5C5C !important; }
+.bwb-light .bwb-step-title { color: #0D2828 !important; }
+.bwb-light .bwb-step-desc { color: #2A3A3A !important; }
+/* Button sub-text */
+.bwb-light .bwb-btn-sub { color: #4A6060 !important; }
+</style>
+<div class="bwb-page">
+<!-- ════════════════════════════════════
+     SECTION 1... HERO
+════════════════════════════════════ -->
+<section class="bwb-hero">
+  <div class="bwb-hero-inner">
+    <div class="bwb-hero-eyebrow">
+      <span class="bwb-hero-dot"></span>
+      For The Person Who Has Been Waiting Long Enough
+    </div>
+    <h1 class="bwb-hero-headline">
+      <span class="l1">Post Your First</span>
+      <span class="l2">Video This Week.</span>
+    </h1>
+    <span class="bwb-hero-headline2">Or Finally Post One You're Actually Proud Of.</span>
+    <div class="bwb-hero-divider"></div>
+    <p class="bwb-hero-sub">
+      You already know you need to be making content.
+      This is the system that gets you out of your head and in front of a camera.
+      <strong>Up to 7 videos, in 7 days or less,</strong> with a step-by-step app
+      that does the hard part for you.
+    </p>
+    <div class="bwb-hero-cta">
+      <a href="#section-91ec91a8" class="bwb-btn bwb-scroll-btn">
+        I'm Ready. Let's Do This.
+      </a>
+      <span class="bwb-btn-sub">Video 1 free to start &nbsp;&bull;&nbsp; Your first content ready in minutes</span>
+    </div>
+    <div class="bwb-hero-badges">
+      <div class="bwb-hero-badge">&#9889; Instant Access</div>
+      <div class="bwb-hero-badge">&#127919; Your Pace. Your Terms.</div>
+      <div class="bwb-hero-badge">&#128241; Built for Mobile</div>
+    </div>
+  </div>
+  <div class="bwb-scroll-cue">
+    <div class="bwb-scroll-arrow">&#8595;</div>
+    scroll
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     SECTION 2... THE PROBLEM
+════════════════════════════════════ -->
+<section class="bwb-problem">
+  <div class="bwb-problem-glow"></div>
+  <div class="bwb-inner" style="position:relative;z-index:1;">
+    <div class="bwb-section-border-top"></div>
+    <span class="bwb-eyebrow">Sound Familiar?</span>
+    <h2 class="bwb-h2">
+      You Know You Need<br>
+      To Be Posting.<br>
+      <span>So What's Stopping You?</span>
+    </h2>
+    <div class="bwb-divider"></div>
+    <p class="bwb-body">You have real experience. Real skills. Real results you've gotten for people.</p>
+    <p class="bwb-body">And absolutely nobody online knows you exist.</p>
+    <p class="bwb-body">While you've been waiting to feel ready, someone with a fraction of your knowledge opened their phone, hit record, and started building an audience. They're not more qualified than you. They're not more talented. They don't have better advice or a better story.</p>
+    <p class="bwb-body"><strong>They just showed up. And you didn't.</strong></p>
+    <div class="bwb-pullout">
+      That's a brutal thing to sit with. But it's the truth.
+    </div>
+    <p class="bwb-body">Every day you stay off camera is another day the wrong people are filling the space that belongs to you. Coaches who overpromise. Self-proclaimed experts selling shortcuts they've never actually used. People with perfect branding and hollow advice are collecting the clients, the followers, and the income that should be going to someone like you.</p>
+    <p class="bwb-body">And they're winning because they understood one thing before you did:</p>
+    <div class="bwb-stinger">
+      <p class="bwb-body" style="margin-bottom:16px;"><strong>Being good at what you do means nothing if nobody can find you.</strong></p>
+      <p class="bwb-body" style="margin-bottom:0;">You already know this. That's the part that keeps you up at night. You know you should be making content. The real question is why, knowing everything you know, you still haven't started.</p>
+      <span class="bwb-stinger-close">That's exactly what this challenge was built to fix.</span>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     SECTION 3... WHY NOW
+════════════════════════════════════ -->
+<section class="bwb-whynow bwb-light">
+  <div class="bwb-whynow-glow"></div>
+  <div class="bwb-inner" style="position:relative;z-index:1;">
+    <div class="bwb-section-border-top"></div>
+    <span class="bwb-eyebrow">The Reality Check</span>
+    <h2 class="bwb-h2">
+      The Window Is Still Open.<br>
+      <span>But It Won't Be Forever.</span>
+    </h2>
+    <div class="bwb-divider"></div>
+    <p class="bwb-body">Here's what nobody in the "build your brand" space wants to say out loud:</p>
+    <p class="bwb-body">Getting noticed online is harder than it was two years ago. The platforms are flooded. Every niche is crowded. AI is generating more content in a single day than the entire internet held a decade ago.</p>
+    <p class="bwb-body">And the creators who started showing up consistently back then? They already have the head start. The audience. The trust. The years of proof already working in their favor.</p>
+    <p class="bwb-body">So what does that mean for you?</p>
+    <div class="bwb-callout">
+      <p>Waiting is no longer a neutral decision. Every month you stay invisible is a month someone else in your space gets stronger, more established, and harder to compete with.</p>
+    </div>
+    <p class="bwb-body">But here's what the doom and gloom crowd always leaves out:</p>
+    <div class="bwb-pullout">
+      Consistency still beats everything.
+    </div>
+    <p class="bwb-body">Not production value. Not follower count. Not how long someone has been doing this. The creators winning right now are winning because they show up with something real to say and they never stop.</p>
+    <p class="bwb-body">You have the second part handled. You just need the first.</p>
+    <p class="bwb-body"><strong>The window is still open. But you need to walk through it now, not later.</strong></p>
+    <p class="bwb-body">Six months from now, you'll either have a library of content that's working for you while you sleep, or you'll be reading another page like this one, still telling yourself you'll start when you feel ready. Both versions of you exist right now. This is where you decide which one wins.</p>
+    <div style="text-align:center; margin-top:40px;">
+      <a href="#section-91ec91a8" class="bwb-btn bwb-scroll-btn">
+        Start Now. Not Later.
+      </a>
+      <span class="bwb-btn-sub">Start free. No credit card needed.</span>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     SECTION 4... SOLUTION REVEAL
+════════════════════════════════════ -->
+<section class="bwb-solution">
+  <div class="bwb-solution-glow"></div>
+  <div class="bwb-inner" style="position:relative;z-index:1;">
+    <div class="bwb-section-border-top"></div>
+    <span class="bwb-eyebrow" style="text-align:center;display:block;">Introducing SeenInSeven</span>
+    <div class="bwb-solution-headline">
+      <span class="s1">7 Videos.</span>
+      <span class="s2">7 Days.</span>
+      <span class="s3">The Kickstarter That Finally Gets You Moving.</span>
+    </div>
+    <p style="text-align:center;font-family:'Oswald',sans-serif;font-size:13px;letter-spacing:0.28em;color:var(--teal);text-transform:uppercase;margin:18px 0 0;">7 Videos &nbsp;&middot;&nbsp; Your Voice &nbsp;&middot;&nbsp; Your Brand</p>
+    <div class="bwb-divider bwb-divider-center"></div>
+    <p class="bwb-body" style="text-align:center;">This is not a course. There are no modules to watch before you're allowed to start. No homework to finish before you feel ready. No 47-step structure to memorize.</p>
+    <p class="bwb-body" style="text-align:center;"><strong>This is a kickstarter with one job: get you posting.</strong></p>
+    <div class="bwb-three-things">
+      <div class="bwb-thing">
+        <div class="bwb-thing-num">01</div>
+        <div class="bwb-thing-text">
+          <strong>You will know exactly what to say.</strong>
+          The app tells you exactly what to say before you ever pick up your phone.
+        </div>
+      </div>
+      <div class="bwb-thing">
+        <div class="bwb-thing-num">02</div>
+        <div class="bwb-thing-text">
+          <strong>You will know how to say it.</strong>
+          The tools show you how to make it look and sound great without any gear.
+        </div>
+      </div>
+      <div class="bwb-thing">
+        <div class="bwb-thing-num">03</div>
+        <div class="bwb-thing-text">
+          <strong>You will have real people around you.</strong>
+          Doing the exact same thing, at the exact same time.
+        </div>
+      </div>
+    </div>
+    <p class="bwb-body" style="text-align:center;">By the time you hit your seventh video, something will have shifted. Not just because you have 7 videos posted. Because you will have proved something to yourself that no amount of research ever could.</p>
+    <div class="bwb-pullout" style="text-align:left;">
+      That you can do this. That your voice works on camera. That people actually respond when you show up.
+    </div>
+    <div style="text-align:center; margin-top:40px;">
+      <a href="#section-91ec91a8" class="bwb-btn bwb-scroll-btn">
+        I'm Ready. Let's Do This.
+      </a>
+      <span class="bwb-btn-sub">Do them in 7 days or 7 weeks. Your pace, your terms.</span>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     SECTION 4b... WHY THESE 7 VIDEOS
+════════════════════════════════════ -->
+<section class="bwb-why7 bwb-light">
+  <div class="bwb-why7-glow"></div>
+  <div class="bwb-inner" style="position:relative;z-index:1;">
+    <div class="bwb-section-border-top"></div>
+    <span class="bwb-eyebrow">The Research Behind the Challenge</span>
+    <h2 class="bwb-h2">
+      These Aren't 7 Random Videos.<br>
+      <span>They're the Only 7 That Build Everything at Once.</span>
+    </h2>
+    <div class="bwb-divider"></div>
+    <p class="bwb-body">Every content challenge on the internet picks 7 topics out of thin air and calls it a system. Post a day-in-your-life video. Film a Q&amp;A. Share a hot take. It's not a bad place to start, but none of it is designed with a real purpose. You post, you get a few views, and then you wonder why nothing is actually building.</p>
+    <p class="bwb-body">This is built differently. David Bee spent the last 10 years studying thousands of creators, influencers, educators, public speakers, and digital entrepreneurs... watching what built real audience, real trust, and real business. Out of everything he analyzed, seven specific video types emerged as the only combination that accomplishes all of this at the same time:</p>
+    <p class="bwb-outcome-label">What These 7 Videos Build For You</p>
+    <div class="bwb-outcome-grid">
+      <span class="bwb-outcome-tag">Credibility</span>
+      <span class="bwb-outcome-tag">Authority</span>
+      <span class="bwb-outcome-tag">Reliability</span>
+      <span class="bwb-outcome-tag">Client Trust</span>
+      <span class="bwb-outcome-tag">Audience Interest</span>
+      <span class="bwb-outcome-tag">Viral Potential</span>
+      <span class="bwb-outcome-tag">Thought Leadership</span>
+      <span class="bwb-outcome-tag">Niche Authority</span>
+      <span class="bwb-outcome-tag">Social Proof</span>
+      <span class="bwb-outcome-tag">Discoverability</span>
+      <span class="bwb-outcome-tag">Shareability</span>
+      <span class="bwb-outcome-tag">Audience Magnetism</span>
+      <span class="bwb-outcome-tag">Brand Positioning</span>
+      <span class="bwb-outcome-tag">Evergreen Reach</span>
+    </div>
+    <div class="bwb-research-cred">
+      <div class="bwb-research-num">10</div>
+      <p class="bwb-research-text">Years studying thousands of creators, influencers, educators, public speakers, and digital entrepreneurs to identify exactly which videos build presence, trust, and business at the same time.</p>
+    </div>
+    <div class="bwb-exclusivity">
+      <p>The scripts for these seven videos are custom-built for this exact sequence. You cannot buy them separately. You cannot Google the system. This system exists nowhere else.</p>
+    </div>
+    <p class="bwb-outcome-label" style="margin-top:52px;">The 7-Video Sequence, Explained</p>
+    <div class="bwb-callout" style="margin-bottom:20px;">
+      <p><strong>Video 1... The Declaration.</strong> Your opening video is not an introduction. It is a seven-part psychological architecture most creators never figure out even after years of posting. Every line simultaneously signals to the platform exactly who should see this, and signals to the right viewer that you are exactly who they have been looking for.</p>
+    </div>
+    <p class="bwb-body" style="margin-bottom:20px;">Video 1 opens the door. Videos 2 through 7 build the room people want to stay in. Each one extracts your worldview, makes the gap your audience is living in undeniably visible, and positions what you offer as the natural next step. Even if you do not have a product or service yet.</p>
+    <div style="display:flex;flex-direction:column;gap:10px;margin:0 0 8px;">
+      <div style="display:flex;align-items:flex-start;gap:16px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;">
+        <span style="font-family:'Oswald',monospace;font-size:9px;letter-spacing:0.15em;color:var(--teal);text-transform:uppercase;flex-shrink:0;padding-top:3px;min-width:58px;">Video 2</span>
+        <span style="font-size:clamp(14px,3vw,16px);color:var(--soft);line-height:1.65;">Your worldview. The one insight only you could give.</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;">
+        <span style="font-family:'Oswald',monospace;font-size:9px;letter-spacing:0.15em;color:var(--teal);text-transform:uppercase;flex-shrink:0;padding-top:3px;min-width:58px;">Video 3</span>
+        <span style="font-size:clamp(14px,3vw,16px);color:var(--soft);line-height:1.65;">The gap. Why they are stuck and what it is costing them.</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;">
+        <span style="font-family:'Oswald',monospace;font-size:9px;letter-spacing:0.15em;color:var(--teal);text-transform:uppercase;flex-shrink:0;padding-top:3px;min-width:58px;">Video 4</span>
+        <span style="font-size:clamp(14px,3vw,16px);color:var(--soft);line-height:1.65;">Your method. Demonstrated live, not just described.</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;">
+        <span style="font-family:'Oswald',monospace;font-size:9px;letter-spacing:0.15em;color:var(--teal);text-transform:uppercase;flex-shrink:0;padding-top:3px;min-width:58px;">Video 5</span>
+        <span style="font-size:clamp(14px,3vw,16px);color:var(--soft);line-height:1.65;">The natural offer. Built on four videos of trust. No pitch needed.</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;">
+        <span style="font-family:'Oswald',monospace;font-size:9px;letter-spacing:0.15em;color:var(--teal);text-transform:uppercase;flex-shrink:0;padding-top:3px;min-width:58px;">Video 6</span>
+        <span style="font-size:clamp(14px,3vw,16px);color:var(--soft);line-height:1.65;">Social proof through story. Theirs or yours.</span>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:16px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px 18px;">
+        <span style="font-family:'Oswald',monospace;font-size:9px;letter-spacing:0.15em;color:var(--teal);text-transform:uppercase;flex-shrink:0;padding-top:3px;min-width:58px;">Video 7</span>
+        <span style="font-size:clamp(14px,3vw,16px);color:var(--soft);line-height:1.65;">The seal. The relationship is real. The next chapter begins.</span>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     SECTION 5... THE WIZARD
+════════════════════════════════════ -->
+<section class="bwb-wizard">
+  <div class="bwb-wizard-glow"></div>
+  <div class="bwb-inner" style="position:relative;z-index:1;">
+    <div class="bwb-section-border-top"></div>
+    <span class="bwb-eyebrow">Your Secret Weapon</span>
+    <h2 class="bwb-h2">
+      Meet the App That Hands You<br>
+      <span>Your First 7 Scripts.</span>
+    </h2>
+    <div class="bwb-divider"></div>
+    <p class="bwb-body">The biggest reason people never post their first video has nothing to do with confidence or cameras or lighting.</p>
+    <p class="bwb-body"><strong>It's not knowing what to say.</strong></p>
+    <p class="bwb-body">That one problem kills more potential content creators than anything else. You sit down to film and your mind goes blank. You write something out and it sounds nothing like you. You watch it back and delete it before anyone can see it.</p>
+    <p class="bwb-body">This app was built to solve that specific problem. It took months to build. It has been tested with real people who were exactly where you are right now. And it works.</p>
+    <div class="bwb-steps">
+      <div class="bwb-step">
+        <div class="bwb-step-num">Step 01</div>
+        <div class="bwb-step-content">
+          <div class="bwb-step-title">Find Your Level</div>
+          <div class="bwb-step-desc">The app meets you exactly where you are. Whether you have never posted before or you have tried and stopped, it reads your level, learns your voice, and builds around what you already know and who you are trying to reach. This is not a generic questionnaire. It is a structured interview that pulls out what makes your perspective distinct.</div>
+        </div>
+      </div>
+      <div class="bwb-step">
+        <div class="bwb-step-num">Step 02</div>
+        <div class="bwb-step-content">
+          <div class="bwb-step-title">Get Your Video 1 Content... Free</div>
+          <div class="bwb-step-desc">Your Video 1 content is ready instantly. No email required. Your personalized content built around a seven-part psychological architecture, engineered to connect with your exact viewer. When you are ready, upgrading to the full challenge for $7 unlocks all seven video guides, each building on the last.</div>
+        </div>
+      </div>
+      <div class="bwb-step">
+        <div class="bwb-step-num">Step 03</div>
+        <div class="bwb-step-content">
+          <div class="bwb-step-title">Press Record</div>
+          <div class="bwb-step-desc">Read your words. Hit record. Post it. The hardest part of making a video has always been knowing what to say. That part is handled.</div>
+        </div>
+      </div>
+    </div>
+    <video width="100%" controls style="max-width:680px; display:block; margin:0 auto; border-radius:8px; background-color:#0c1220;">
+      <source src="https://d1yei2z3i6k35z.cloudfront.net/15110371/69a87df1ed89a_ScreenRecording_03-04-202613-33-47_1.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="bwb-wizard-callout">
+      <p>Why not just write your own content or ask ChatGPT? You could. A lot of people try. And a lot of people delete what they write before anyone ever sees it, because a blank page with no structure gives you no way to know whether what you wrote will actually work.</p>
+      <p>This app does not generate text. It produces a sequenced story architecture built from your specific words, your real experience, and the exact person you are trying to reach. The seven things happening simultaneously inside every guide it produces are not something you can replicate with a prompt. <strong>No two scripts produced here are ever the same.</strong></p>
+      <p style="margin-bottom:0;">Your Video 1 content is free. No email required. Just your content, live on screen, in minutes. The full challenge... all seven video guides, the video structure, the private community, and the Comment-to-Client bonus... is $7. One time. No catch.</p>
+    </div>
+    <div style="text-align:center; margin-top:16px;">
+      <a href="#section-91ec91a8" class="bwb-btn bwb-scroll-btn">
+        Get the App + The Full Challenge
+      </a>
+      <span class="bwb-btn-sub">Video 1 free. No credit card needed.</span>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     SECTION 6... DAVID'S STORY
+════════════════════════════════════ -->
+<section class="bwb-story bwb-light">
+  <div class="bwb-inner" style="position:relative;z-index:1;">
+    <div class="bwb-section-border-top"></div>
+    <span class="bwb-eyebrow">From David Bee</span>
+    <h2 class="bwb-h2">
+      I'm Not a Content coach.<br>
+      <span>I'm Doing This Right Alongside You.</span>
+    </h2>
+    <div class="bwb-divider"></div>
+    <div class="bwb-story-layout">
+      <div class="bwb-story-photo">
+        <img src="https://d1yei2z3i6k35z.cloudfront.net/15110371/69a87f0867d59_DavidBeeHeadshot01small.jpg" alt="David Bee" style="width:100%; max-width:280px; border-radius:8px; display:block;">
+      </div>
+      <div class="bwb-story-text">
+        <p class="bwb-body">Here's something a lot of people selling content challenges won't admit:</p>
+        <p class="bwb-body">That world doesn't exist anymore. Without short form video content, people won't be able to know you, like you, or trust you... no matter how many text posts you make.</p>
+        <p class="bwb-body">I spent years trying to build around it anyway. And I watched real, talented people get overlooked while people with less experience and a phone built audiences that dwarfed mine.</p>
+        <p class="bwb-body">But I kept watching something happen that I couldn't shake. People with less experience than me. Less skill. Less genuine care for the people they were supposed to be helping. They were growing online, landing clients, and building real businesses while I stayed invisible because I was not willing to get on camera.</p>
+        <p class="bwb-body"><strong>And the people getting hurt by that? They were going to the flashy guy because he showed up and I didn't.</strong></p>
+        <p class="bwb-body">Here's what I know about the people I work with best. They are usually the ones who want to be on stage, leading workshops, changing lives. They know they are good. They know they have something real to give.</p>
+        <p class="bwb-body">And yet the second they need to film a short video, they freeze. They overthink it. They record six takes, hate all of them, and disappear for three months.</p>
+        <p class="bwb-body">I get that more than I ever wanted to.</p>
+        <p class="bwb-body">So I built the system I wished existed. I tested it. I put real people through it. And now I am putting myself through the exact same process, publicly, inside this challenge, right alongside everyone who joins.</p>
+        <p class="bwb-body" style="margin-bottom:0;"><strong>Because I am done playing small. And I think you are too.</strong></p>
+      </div>
+    </div>
+    <div style="text-align:center; margin-top:48px;">
+      <a href="#section-91ec91a8" class="bwb-btn bwb-scroll-btn">
+        Let's Do This Together
+      </a>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     SECTION 6b... SOCIAL PROOF
+════════════════════════════════════ -->
+<section style="background:var(--bg-dark);padding:100px 24px 80px;position:relative;overflow:hidden;">
+  <div class="bwb-inner" style="position:relative;z-index:1;">
+    <div class="bwb-section-border-top"></div>
+    <span class="bwb-eyebrow">Real People. Real Shifts.</span>
+    <h2 class="bwb-h2">
+      What Happens When You<br>
+      <span>Finally Just Start</span>
+    </h2>
+    <div class="bwb-divider"></div>
+    <div style="display:flex;flex-direction:column;gap:20px;margin-top:8px;">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:30px 26px;">
+        <p style="font-size:clamp(16px,3.2vw,18px);color:var(--cream);line-height:1.85;font-style:italic;margin-bottom:16px;">"I had everything I needed to post for almost a year. The knowledge, the experience, the message. What I was missing was the nerve to actually do it. Once I had the script in my hands, the excuses ran out."</p>
+        <p style="font-family:'Oswald',monospace;font-size:10px;letter-spacing:0.15em;color:var(--teal);text-transform:uppercase;margin:0;">Marcus D. &nbsp;&mdash;&nbsp; Executive Coach</p>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:30px 26px;">
+        <p style="font-size:clamp(16px,3.2vw,18px);color:var(--cream);line-height:1.85;font-style:italic;margin-bottom:16px;">"I posted for the first time and someone I had never met left a comment saying it was exactly what they needed to hear that week. That one comment paid for every hour I spent second-guessing myself. I wish I had started sooner."</p>
+        <p style="font-family:'Oswald',monospace;font-size:10px;letter-spacing:0.15em;color:var(--teal);text-transform:uppercase;margin:0;">Priya N. &nbsp;&mdash;&nbsp; Wellness Professional</p>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:13px;padding:30px 26px;">
+        <p style="font-size:clamp(16px,3.2vw,18px);color:var(--cream);line-height:1.85;font-style:italic;margin-bottom:16px;">"I thought the problem was my camera. Then I thought it was my voice. Then I thought it was my niche. Turns out the problem was that I had no idea what to say first. Having a script solved the thing I could not name."</p>
+        <p style="font-family:'Oswald',monospace;font-size:10px;letter-spacing:0.15em;color:var(--teal);text-transform:uppercase;margin:0;">Tyler R. &nbsp;&mdash;&nbsp; Business Consultant</p>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     SECTION 7... OFFER STACK
+════════════════════════════════════ -->
+<section class="bwb-offer">
+  <div class="bwb-offer-glow"></div>
+  <div class="bwb-inner" style="position:relative;z-index:1;">
+    <div class="bwb-section-border-top"></div>
+    <span class="bwb-eyebrow">The SeenInSeven System</span>
+    <h2 class="bwb-h2">
+      Here's Everything You Get<br>
+      <span>The Moment You Join</span>
+    </h2>
+    <p class="bwb-body" style="margin-top:16px;">This is not a drip feed. Not a "check your email in 3 days." Everything below hits the moment you sign up.</p>
+    <div class="bwb-offer-items">
+      <div class="bwb-offer-item">
+        <span class="bwb-offer-check">&#9989;</span>
+        <div class="bwb-offer-content">
+          <div class="bwb-offer-title">The 7-Video Challenge Guide <span class="bwb-value">Value: $47</span></div>
+          <div class="bwb-offer-desc">A flexible structure that tells you exactly what to post, how to frame it, and how to keep going when motivation dips. Do them in 7 days or 7 weeks. Your pace, your terms.</div>
+        </div>
+      </div>
+      <div class="bwb-offer-item">
+        <span class="bwb-offer-check">&#9989;</span>
+        <div class="bwb-offer-content">
+          <div class="bwb-offer-title">The SeenInSeven App <span class="bwb-value">Value: $197</span></div>
+          <div class="bwb-offer-desc">The fully built app that interviews you, finds your level, and generates 7 custom video guides built around your voice, your niche, and your message. This is the thing that makes starting actually feel possible.</div>
+        </div>
+      </div>
+      <div class="bwb-offer-item">
+        <span class="bwb-offer-check">&#9989;</span>
+        <div class="bwb-offer-content">
+          <div class="bwb-offer-title">Private Community <span class="bwb-value">Priceless</span></div>
+          <div class="bwb-offer-desc">A private community that doubles as your first real audience. Everyone inside is doing the same challenge, which means they understand exactly what you're going through and are actively looking for content like yours. Most communities discourage self-promotion. This one is built around it. Post your videos, get genuine feedback, and find out what it feels like when the right people watch your work. David Bee is in here every day.</div>
+        </div>
+      </div>
+      <div class="bwb-offer-item bwb-offer-bonus">
+        <span class="bwb-offer-check">&#127873;</span>
+        <div class="bwb-offer-content">
+          <div class="bwb-offer-title">BONUS: Facebook Comment-to-Client Formula + GPT <span class="bwb-value">Value: $67</span></div>
+          <div class="bwb-offer-desc">The strategy almost nobody teaches. How to turn comment threads into real client conversations without being pushy, salesy, or weird about it. Includes a custom GPT that helps you write better replies in a fraction of the time.</div>
+        </div>
+      </div>
+    </div>
+    <div class="bwb-offer-total">
+      <span class="bwb-offer-total-label">Total Real-World Value</span>
+      <span class="bwb-offer-total-value">$311+</span>
+      <span class="bwb-offer-total-label" style="margin-top:16px;">Your Investment Today</span>
+      <span class="bwb-offer-total-price">$7</span>
+      <span class="bwb-offer-total-sub">One time &nbsp;&bull;&nbsp; No subscription &nbsp;&bull;&nbsp; No recurring fees</span>
+    </div>
+    <div style="text-align:center; margin-top:36px;">
+      <a href="#section-91ec91a8" class="bwb-btn bwb-scroll-btn">
+        I Want Everything. Let's Go.
+      </a>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     SECTION 8... NO CATCH
+════════════════════════════════════ -->
+<section class="bwb-nocatch bwb-light">
+  <div class="bwb-nocatch-glow"></div>
+  <div class="bwb-inner" style="position:relative;z-index:1;">
+    <div class="bwb-section-border-top"></div>
+    <span class="bwb-eyebrow" style="text-align:center;display:block;">Let's Be Straight</span>
+    <h2 class="bwb-h2" style="text-align:center;">
+      Seven Dollars.<br>
+      One Time.<br>
+      <span>No Catch.</span>
+    </h2>
+    <div class="bwb-divider bwb-divider-center"></div>
+    <p class="bwb-body" style="text-align:center;">I want to be completely straight with you about something.</p>
+    <div class="bwb-nocatch-points" style="max-width:480px;margin-left:auto;margin-right:auto;">
+      <div class="bwb-nocatch-point">No hidden fees. No surprise charges. Just $7.</div>
+      <div class="bwb-nocatch-point">No subscription that quietly kicks in after your trial.</div>
+      <div class="bwb-nocatch-point">No live training you have to sit through first.</div>
+      <div class="bwb-nocatch-point">No fine print. You know exactly what you're getting before you commit.</div>
+    </div>
+    <p class="bwb-body" style="text-align:center; margin-top:28px;">It's $7. You get everything on this page. Right now. That is the whole transaction.</p>
+    <p class="bwb-body" style="text-align:center;">I priced it this way because I have watched too many people use price as the reason they stay stuck. Seven dollars is not an investment in a course. It is a decision to stop being invisible.</p>
+    <div class="bwb-pullout" style="text-align:left; max-width:480px; margin:36px auto;">
+      What you will not forget is posting your first video. What you will not forget is the comment from a stranger who watched it and said it helped them.
+    </div>
+    <p class="bwb-body" style="text-align:center;"><strong>That moment starts here. Right now. For $7.</strong></p>
+    <div style="text-align:center; margin-top:40px;">
+      <a href="#section-91ec91a8" class="bwb-btn bwb-scroll-btn">
+        Start Now. Get Your First Video Ready.
+      </a>
+      <span class="bwb-btn-sub">Start free. No credit card needed.</span>
+    </div>
+  </div>
+</section>
+<!-- ════════════════════════════════════
+     SECTION 9... WHO THIS IS FOR
+════════════════════════════════════ -->
+<section class="bwb-who">
+  <div class="bwb-who-glow"></div>
+  <div class="bwb-inner" style="position:relative;z-index:1;">
+    <div class="bwb-section-border-top"></div>
+    <span class="bwb-eyebrow">Is This For You?</span>
+    <h2 class="bwb-h2">
+      This Was Built<br>
+      <span>For You.</span>
+    </h2>
+    <p class="bwb-body" style="margin-top:16px;">Specifically you. Not everyone. Read this and see if it lands.</p>
+    <div class="bwb-who-cols">
+      <div class="bwb-who-col">
+        <div class="bwb-who-col-title yes">This is for you if...</div>
+        <div class="bwb-who-items">
+          <div class="bwb-who-item"><span class="bwb-who-icon">&#9989;</span> You have a business, a skill, or a message, and the people who need you most have no idea you exist.</div>
+          <div class="bwb-who-item"><span class="bwb-who-icon">&#9989;</span> You have been meaning to post for months and something always gets in the way.</div>
+          <div class="bwb-who-item"><span class="bwb-who-icon">&#9989;</span> You have posted before but never felt good about what you put out.</div>
+          <div class="bwb-who-item"><span class="bwb-who-icon">&#9989;</span> You are an overthinker who needs a system more than inspiration.</div>
+          <div class="bwb-who-item"><span class="bwb-who-icon">&#9989;</span> You are tired of watching less qualified people get more attention.</div>
+          <div class="bwb-who-item"><span class="bwb-who-icon">&#9989;</span> You have failed streak-based challenges before and need something that works at your pace.</div>
+        </div>
+      </div>
+      <div class="bwb-who-col">
+        <div class="bwb-who-col-title no">This is NOT for you if...</div>
+        <div class="bwb-who-items">
+          <div class="bwb-who-item"><span class="bwb-who-icon">&#10060;</span> You want results without showing up at all.</div>
+          <div class="bwb-who-item"><span class="bwb-who-icon">&#10060;</span> You are not willing to film at least one video this week.</div>
+          <div class="bwb-who-item"><span class="bwb-who-icon">&#10060;</span> You think the problem is your equipment, your lighting, or your jawline.</div>
+        </div>
+      </div>
+    </div>
+    <div class="bwb-who-callout">
+      <p>If you read that first list and felt seen, stop waiting. The people who need to find you are out there right now. <strong>They just can't find you yet.</strong></p>
+    </div>
+    <div style="text-align:center; margin-top:36px;">
+      <a href="#section-91ec91a8" class="bwb-btn bwb-scroll-btn">
+        That's Me. I'm In.
+      </a>
+    </div>
+  </div>
+</section>
+</div><!-- end .bwb-page -->
+<script>
+  // Smooth scroll all CTA buttons to the Systeme opt-in form section
+  document.querySelectorAll('.bwb-scroll-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      var target = document.getElementById('section-91ec91a8');
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    });
+  });
+</script>

@@ -1,0 +1,231 @@
+<!--
+  ============================================================
+  PAGE 6... THANK YOU / DELIVERY... CODE BLOCK 1 (ABOVE RECEIPT)
+  ============================================================
+  Place this code block ABOVE the native Systeme receipt block.
+
+  SYSTEME SETUP NOTES:
+  - Page background color: #2dd4bf (teal)
+  - Page section background: #111827
+  - The Systeme receipt block goes directly below this code block
+  - If user took the mastermind downsell, conditionally show
+    the mastermind invite (note: this may need Systeme conditional
+    logic or a separate thank-you variant page)
+
+  PLACEHOLDER URLS... REPLACE ALL OF THESE:
+  - [INSERT APP LOGIN URL HERE]
+  - [INSERT FACEBOOK GROUP URL HERE]
+  ============================================================
+-->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+
+#p6-top {
+  --bg: #111827;
+  --card: #1e2d40;
+  --card2: #243448;
+  --border: #2e4460;
+  --cream: #f0f9ff;
+  --soft: #bae6fd;
+  --muted: #7eb8d4;
+  --teal: #2dd4bf;
+  --cyan: #67e8f9;
+
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  line-height: 1.75;
+  padding: 72px 24px 48px;
+  width: 100%;
+}
+#p6-top *, #p6-top *::before, #p6-top *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+#p6-top .inner {
+  max-width: 720px;
+  margin: 0 auto;
+}
+#p6-top .eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 11px;
+  letter-spacing: 0.22em;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin-bottom: 16px;
+  text-align: center;
+}
+#p6-top .eyebrow::before,
+#p6-top .eyebrow::after {
+  content: '————';
+  opacity: 0.3;
+  margin: 0 10px;
+}
+#p6-top .page-title {
+  font-family: 'Lora', serif;
+  font-size: clamp(36px, 8vw, 64px);
+  letter-spacing: 0.02em;
+  line-height: 1.0;
+  color: var(--cream);
+  margin-bottom: 18px;
+  text-align: center;
+}
+#p6-top .page-title .accent { color: var(--teal); }
+#p6-top .divider {
+  width: 40px;
+  height: 2px;
+  background: var(--teal);
+  margin: 0 auto 40px;
+  opacity: 0.5;
+}
+#p6-top p.body {
+  font-size: 20px;
+  color: var(--cream);
+  margin-bottom: 22px;
+  line-height: 1.8;
+  text-align: center;
+}
+#p6-top p.body.left { text-align: left; }
+#p6-top p.body strong { color: var(--cream); font-weight: 600; }
+
+/* Delivery Steps */
+#p6-top .steps-label {
+  font-family: 'Lora', serif;
+  font-size: 26px;
+  letter-spacing: 0.05em;
+  color: var(--cream);
+  margin: 44px 0 24px;
+  text-align: center;
+}
+#p6-top .step-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 13px;
+  padding: 28px 28px;
+  margin-bottom: 16px;
+  display: flex;
+  gap: 20px;
+  align-items: flex-start;
+}
+#p6-top .step-num {
+  font-family: 'Lora', serif;
+  font-size: 34px;
+  color: var(--teal);
+  line-height: 1;
+  flex-shrink: 0;
+  width: 36px;
+}
+#p6-top .step-title {
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--cream);
+  margin-bottom: 8px;
+}
+#p6-top .step-desc {
+  font-size: 17px;
+  color: var(--muted);
+  line-height: 1.7;
+  margin-bottom: 12px;
+}
+#p6-top .step-link {
+  display: inline-block;
+  background: rgba(45,212,191,0.12);
+  border: 1px solid rgba(45,212,191,0.3);
+  border-radius: 7px;
+  padding: 8px 18px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  color: var(--teal);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+#p6-top .step-link:hover {
+  background: rgba(45,212,191,0.2);
+}
+
+/* Summary */
+#p6-top .summary {
+  text-align: center;
+  margin-top: 36px;
+  padding: 24px;
+  background: rgba(45,212,191,0.04);
+  border: 1px solid rgba(45,212,191,0.15);
+  border-radius: 11px;
+}
+#p6-top .summary p {
+  font-size: 18px;
+  color: var(--muted);
+  line-height: 1.7;
+}
+#p6-top .summary strong { color: var(--cream); }
+
+/* Transition to receipt */
+#p6-top .receipt-transition {
+  text-align: center;
+  margin-top: 44px;
+  padding-bottom: 8px;
+}
+#p6-top .receipt-transition p {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.15em;
+  color: var(--muted);
+  text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+  #p6-top { padding: 56px 18px 40px; }
+  #p6-top .step-card { padding: 22px 20px; gap: 14px; }
+}
+</style>
+
+<div id="p6-top">
+  <div class="inner">
+
+    <p class="eyebrow">Welcome In</p>
+    <h1 class="page-title">YOU DID IT.<br><span class="accent">HERE'S EVERYTHING YOU JUST UNLOCKED.</span></h1>
+    <div class="divider"></div>
+
+    <p class="body">Take a second and let that sink in, because you just did something that the vast majority of people who talk about making content never actually follow through on. You committed to it. You invested in it. And now you have everything you need to make it happen.</p>
+
+    <h2 class="steps-label">HERE'S WHAT TO DO RIGHT NOW, IN THIS ORDER:</h2>
+
+    <div class="step-card">
+      <div class="step-num">01</div>
+      <div>
+        <p class="step-title">Log In and Access the App</p>
+        <p class="step-desc">Your login link has been sent to your email. Click below to access the app, where you'll find all seven video guides, the filming toolkit, and the complete step-by-step structure. Everything is in the order you should use it.</p>
+        <!-- [INSERT APP LOGIN URL HERE] -->
+        <a href="#" class="step-link">ACCESS THE APP &rarr;</a>
+      </div>
+    </div>
+
+    <div class="step-card">
+      <div class="step-num">02</div>
+      <div>
+        <p class="step-title">Join the Community</p>
+        <p class="step-desc">This is where everyone doing the challenge right now is posting their progress, asking questions, and keeping each other honest. You're going to want these people in your corner, especially around Video 3 when the initial burst of excitement starts to settle and the real momentum-building begins.</p>
+        <!-- [INSERT FACEBOOK GROUP URL HERE] -->
+        <a href="#" class="step-link">JOIN THE GROUP &rarr;</a>
+      </div>
+    </div>
+
+    <div class="summary">
+      <p>That's it. <strong>Two steps.</strong> Don't make this bigger or more complicated than it needs to be. You have the guides. You have the system. You have the people. Now go use them.</p>
+    </div>
+
+    <div class="receipt-transition">
+      <p>Your order details are below</p>
+    </div>
+
+    <!--
+      ========================================
+      [SYSTEME RECEIPT BLOCK GOES HERE]
+      ========================================
+    -->
+
+  </div>
+</div>

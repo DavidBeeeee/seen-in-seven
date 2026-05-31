@@ -1,0 +1,1562 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>777 Challenge — Day 7</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+.d7-wrap { max-width: 720px; margin: 0 auto; padding: 40px 20px 60px; font-family: 'Nunito', sans-serif; color: #0D2828; }
+
+
+.d7-eyebrow { font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.28em; color: #2A9090; text-transform: uppercase; margin-bottom: 14px; }
+
+
+/* Card 1 — dark teal — the earned identity shift */
+.d7-stakes { background: #0D2828; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d7-stakes .d7-eyebrow { color: #68C8C8; }
+.d7-stakes h2 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #fff; line-height: 1.4; margin-bottom: 16px; }
+.d7-stakes p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #A8DEDE; line-height: 1.8; margin-bottom: 16px; }
+.d7-stakes p:last-child { margin-bottom: 0; }
+.d7-stakes strong { color: #fff; }
+
+
+/* Pull quote — dark background version */
+.d7-quote-dark { background: rgba(50,184,184,0.07); border-left: 3px solid #32B8B8; border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 24px 0; }
+.d7-quote-dark p { font-family: 'Permanent Marker', cursive; font-size: 20px; color: #68C8C8; line-height: 1.5; margin-bottom: 0; }
+.d7-quote-dark span { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.2em; color: #32B8B8; text-transform: uppercase; margin-top: 10px; display: block; }
+
+
+/* Card 2 — gold — what today's video does */
+.d7-action { background: #F5E8C0; border: 1px solid #E8C86C; border-left: 4px solid #C8A84B; border-radius: 12px; padding: 28px 32px; margin-bottom: 28px; }
+.d7-action .d7-eyebrow { color: #C8A84B; }
+.d7-action h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; margin-bottom: 14px; line-height: 1.4; }
+.d7-action p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d7-action p:last-of-type { margin-bottom: 24px; }
+.d7-action strong { color: #0D2828; }
+.d7-btn { display: inline-block; background: #0D2828; color: #32B8B8; font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border-radius: 8px; }
+
+
+/* Card 3 — white bordered — the new world */
+.d7-mirror { background: #fff; border: 1px solid #D8F0F0; border-left: 4px solid #32B8B8; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d7-mirror .d7-eyebrow { color: #2A9090; }
+.d7-mirror h2 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d7-mirror p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d7-mirror p:last-child { margin-bottom: 0; }
+.d7-mirror strong { color: #0D2828; }
+
+
+/* Pull quote — light background version */
+.d7-quote-light { background: #EEF9F9; border-left: 3px solid #32B8B8; border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 24px 0; }
+.d7-quote-light p { font-family: 'Permanent Marker', cursive; font-size: 20px; color: #1E5C5C; line-height: 1.5; margin-bottom: 0; }
+.d7-quote-light span { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.2em; color: #2A9090; text-transform: uppercase; margin-top: 10px; display: block; }
+
+
+/* Victory CTA */
+.d7-victory-btn { display: inline-block; background: #32B8B8; color: #0D2828; font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border-radius: 8px; margin-top: 8px; }
+
+
+/* Divider */
+.d7-divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, #D8E4E8, transparent); margin: 32px 0; }
+
+
+/* Card 4 — white — still time to join */
+.d7-join { background: #fff; border: 1px solid #D8E4E8; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d7-join .d7-eyebrow { color: #2A9090; }
+.d7-join h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d7-join p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d7-join p:last-of-type { margin-bottom: 24px; }
+.d7-join strong { color: #0D2828; }
+.d7-join-btn { display: inline-block; background: #32B8B8; color: #0D2828; font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border-radius: 8px; }
+
+
+/* Card 5 — white — contact David Bee */
+.d7-contact { background: #fff; border: 1px solid #D8E4E8; border-radius: 12px; padding: 36px 36px 32px; }
+.d7-contact .d7-eyebrow { margin-bottom: 14px; color: #2A9090; }
+.d7-contact h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d7-contact p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d7-contact p:last-of-type { margin-bottom: 28px; }
+.d7-links { display: flex; flex-direction: column; gap: 12px; }
+.d7-link { display: flex; align-items: center; gap: 14px; text-decoration: none; background: #EEF9F9; border: 1px solid #D8F0F0; border-radius: 10px; padding: 14px 18px; }
+.d7-link-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; }
+.d7-link-label { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.18em; color: #2A9090; text-transform: uppercase; margin-bottom: 2px; display: block; }
+.d7-link-action { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; color: #0D2828; display: block; }
+
+
+@media (max-width: 600px) {
+  .d7-wrap { padding: 24px 16px 48px; }
+  .d7-stakes, .d7-action, .d7-mirror, .d7-join, .d7-contact { padding: 24px 20px; }
+  .d7-stakes h2, .d7-mirror h2, .d7-action h3, .d7-join h3, .d7-contact h3 { font-size: 24px; }
+}
+</style>
+<style>
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+
+/* ── OUTER CONTAINER — everything is relative to this ── */
+#vc-root {
+  position: relative;
+  background: #030A0A;
+  font-family: 'Nunito', sans-serif;
+  color: #fff;
+  overflow: hidden;
+  width: 100%;
+}
+
+
+/* ── CANVAS LAYERS — absolute inside root ── */
+#vc-fireworks,
+#vc-confetti,
+#vc-particles,
+#vc-cursor {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%; height: 100%;
+  pointer-events: none;
+}
+
+
+#vc-fireworks  { z-index: 40; }
+#vc-confetti   { z-index: 41; }
+#vc-particles  { z-index: 1;  }
+#vc-cursor     { z-index: 42; pointer-events: none; }
+
+
+/* ── INTRO OVERLAY — absolute inside root ── */
+#vc-intro {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100vh;
+  min-height: 600px;
+  background: #000;
+  z-index: 99;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+
+#vc-intro-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+}
+
+
+.vc-intro-text {
+  position: relative;
+  z-index: 2;
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(48px, 14vw, 140px);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0;
+}
+
+
+.vc-intro-letter {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(100%);
+  background: linear-gradient(135deg, #C8A84B, #F5E8C0, #C8A84B, #32B8B8);
+  background-size: 300% 300%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: vc-gold-bg 3s ease infinite;
+}
+
+
+@keyframes vc-gold-bg {
+  0%   { background-position: 0%   50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
+
+
+/* ── SCREEN SHAKE ── */
+@keyframes vc-shake {
+  0%,100% { transform: translate(0,0) rotate(0deg); }
+  10%  { transform: translate(-4px,-2px) rotate(-0.5deg); }
+  20%  { transform: translate(4px,2px)   rotate(0.5deg);  }
+  30%  { transform: translate(-3px,3px)  rotate(-0.3deg); }
+  40%  { transform: translate(3px,-3px)  rotate(0.3deg);  }
+  50%  { transform: translate(-2px,2px)  rotate(-0.2deg); }
+  60%  { transform: translate(2px,-1px)  rotate(0.2deg);  }
+  70%  { transform: translate(-1px,1px)  rotate(-0.1deg); }
+  80%  { transform: translate(1px,-1px)  rotate(0.1deg);  }
+  90%  { transform: translate(-1px,0)    rotate(0deg);    }
+}
+.vc-shake { animation: vc-shake 0.5s ease; }
+
+
+/* ── HERO ── */
+.vc-hero {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 60px 24px 120px;
+  position: relative;
+  overflow: hidden;
+  z-index: 2;
+}
+
+
+.vc-bg-seven {
+  position: absolute;
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(260px, 48vw, 560px);
+  font-weight: 700;
+  color: rgba(50,184,184,0.03);
+  line-height: 1;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  animation: vc-seven-spin 40s linear infinite;
+  pointer-events: none;
+  user-select: none;
+  z-index: 0;
+}
+
+
+@keyframes vc-seven-spin {
+  from { transform: translate(-50%,-50%) rotate(0deg);   }
+  to   { transform: translate(-50%,-50%) rotate(360deg); }
+}
+
+
+.vc-hero-glow {
+  position: absolute;
+  width: clamp(400px, 90vw, 1000px);
+  height: clamp(400px, 90vw, 1000px);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200,168,75,0.10) 0%, rgba(50,184,184,0.05) 40%, transparent 70%);
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  animation: vc-glow-pulse 3s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 0;
+}
+
+
+@keyframes vc-glow-pulse {
+  0%,100% { transform: translate(-50%,-50%) scale(1);    opacity: 0.6; }
+  50%      { transform: translate(-50%,-50%) scale(1.2);  opacity: 1;   }
+}
+
+
+.vc-hero-content { position: relative; z-index: 2; }
+
+
+.vc-hero-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.35em;
+  color: #32B8B8;
+  text-transform: uppercase;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: vc-fade-up 0.6s ease forwards 3.8s;
+}
+
+
+.vc-hero-headline {
+  font-family: 'Lora', serif;
+  font-size: clamp(48px, 11vw, 96px);
+  font-weight: 700;
+  line-height: 1.1;
+  margin-bottom: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 16px;
+}
+
+
+.vc-word { display: inline-block; opacity: 0; transform: translateY(50px) scale(0.7); }
+.vc-word.gold { color: #C8A84B; font-style: italic; text-shadow: 0 0 40px rgba(200,168,75,0.5); }
+.vc-word.teal { color: #32B8B8; text-shadow: 0 0 40px rgba(50,184,184,0.5); }
+
+
+.vc-w1 { animation: vc-word-slam 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards 4.0s; }
+.vc-w2 { animation: vc-word-slam 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards 4.2s; }
+.vc-w3 { animation: vc-word-slam 0.5s cubic-bezier(0.34,1.56,0.64,1) forwards 4.4s; }
+.vc-w4 { animation: vc-word-slam 0.7s cubic-bezier(0.34,1.56,0.64,1) forwards 4.6s; }
+
+
+@keyframes vc-word-slam {
+  from { opacity: 0; transform: translateY(50px) scale(0.7); }
+  to   { opacity: 1; transform: translateY(0)    scale(1);   }
+}
+
+
+.vc-hero-tagline {
+  font-family: 'Permanent Marker', cursive;
+  font-size: clamp(24px, 6vw, 38px);
+  color: #C8A84B;
+  margin: 20px 0 32px;
+  opacity: 0;
+  text-shadow: 0 0 30px rgba(200,168,75,0.4);
+  animation: vc-stamp-bounce 0.8s cubic-bezier(0.34,1.56,0.64,1) forwards 5.0s;
+}
+
+
+@keyframes vc-stamp-bounce {
+  from { opacity: 0; transform: scale(1.6) rotate(-3deg); }
+  to   { opacity: 1; transform: scale(1)   rotate(0deg);  }
+}
+
+
+.vc-hero-sub {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(17px, 3vw, 20px);
+  color: #A8DEDE;
+  line-height: 1.85;
+  max-width: 580px;
+  margin: 0 auto 48px;
+  opacity: 0;
+  animation: vc-fade-up 0.8s ease forwards 5.3s;
+}
+
+
+@keyframes vc-fade-up {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+
+
+.vc-scroll-hint {
+  position: absolute;
+  bottom: 32px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  opacity: 0;
+  animation: vc-fade-up 0.8s ease forwards 5.8s;
+}
+
+
+.vc-scroll-hint span {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  letter-spacing: 0.25em;
+  color: #2A9090;
+  text-transform: uppercase;
+}
+
+
+.vc-scroll-arrow {
+  width: 2px; height: 48px;
+  background: linear-gradient(to bottom, #32B8B8, transparent);
+  animation: vc-arrow-bob 1.5s ease-in-out infinite 6s;
+}
+
+
+@keyframes vc-arrow-bob {
+  0%,100% { transform: scaleY(1);   opacity: 0.5; }
+  50%      { transform: scaleY(1.4); opacity: 1;   }
+}
+
+
+/* ── BEAM DIVIDERS ── */
+.vc-beam { position: relative; height: 2px; overflow: hidden; z-index: 2; }
+.vc-beam::after {
+  content: '';
+  position: absolute;
+  top: 0; left: -100%;
+  width: 100%; height: 100%;
+  background: linear-gradient(90deg, transparent, #32B8B8, #C8A84B, #32B8B8, transparent);
+  animation: vc-beam-sweep 2.5s ease-in-out infinite;
+}
+@keyframes vc-beam-sweep {
+  from { left: -100%; }
+  to   { left:  100%; }
+}
+
+
+/* ── SECTIONS ── */
+.vc-section {
+  position: relative;
+  z-index: 2;
+  padding: 80px 24px;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+
+.vc-section-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  color: #32B8B8;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  display: block;
+}
+
+
+/* ── HONOR ── */
+.vc-honor h2 {
+  font-family: 'Lora', serif;
+  font-size: clamp(26px, 5vw, 40px);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
+  margin-bottom: 28px;
+}
+
+
+.vc-honor p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  color: #A8DEDE;
+  line-height: 1.85;
+  margin-bottom: 20px;
+}
+
+
+.vc-honor strong { color: #fff; }
+
+
+.vc-stat-row {
+  display: grid;
+  grid-template-columns: repeat(3,1fr);
+  gap: 16px;
+  margin: 52px 0;
+}
+
+
+.vc-stat {
+  background: rgba(50,184,184,0.04);
+  border: 1px solid rgba(50,184,184,0.12);
+  border-top: 3px solid #32B8B8;
+  border-radius: 16px;
+  padding: 28px 16px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+
+.vc-stat:hover {
+  transform: translateY(-6px);
+  border-color: rgba(50,184,184,0.4);
+  box-shadow: 0 20px 40px rgba(50,184,184,0.1);
+}
+
+
+.vc-stat::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at 50% 0%, rgba(50,184,184,0.06), transparent 70%);
+  pointer-events: none;
+}
+
+
+.vc-stat-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(40px, 8vw, 56px);
+  font-weight: 700;
+  background: linear-gradient(135deg, #32B8B8, #68C8C8, #32B8B8);
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+  margin-bottom: 10px;
+  display: block;
+  animation: vc-num-shimmer 3s ease-in-out infinite;
+}
+
+
+@keyframes vc-num-shimmer {
+  0%,100% { filter: brightness(1);   }
+  50%      { filter: brightness(1.4); }
+}
+
+
+.vc-stat-label {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  color: #527070;
+  line-height: 1.4;
+}
+
+
+/* ── REFRAME ── */
+.vc-reframe h2 {
+  font-family: 'Lora', serif;
+  font-size: clamp(26px, 5vw, 40px);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.35;
+  margin-bottom: 28px;
+}
+
+
+.vc-reframe p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  color: #A8DEDE;
+  line-height: 1.85;
+  margin-bottom: 20px;
+}
+
+
+.vc-reframe strong { color: #fff; }
+
+
+.vc-one-reveal {
+  text-align: center;
+  padding: 60px 24px;
+  position: relative;
+  margin: 52px 0;
+  border-radius: 24px;
+  border: 1px solid rgba(200,168,75,0.1);
+  overflow: hidden;
+}
+
+
+.vc-one-reveal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(200,168,75,0.07), transparent 70%);
+  pointer-events: none;
+}
+
+
+.vc-one-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.28em;
+  color: #C8A84B;
+  text-transform: uppercase;
+  display: block;
+  margin-bottom: 16px;
+  position: relative;
+}
+
+
+.vc-one-number {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(110px, 26vw, 190px);
+  font-weight: 700;
+  line-height: 1;
+  background: linear-gradient(135deg, #C8A84B 0%, #F5E8C0 30%, #E8C86C 60%, #C8A84B 100%);
+  background-size: 200% 200%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+  display: block;
+  position: relative;
+  animation: vc-gold-shimmer 2s ease-in-out infinite;
+  filter: drop-shadow(0 0 30px rgba(200,168,75,0.4));
+}
+
+
+@keyframes vc-gold-shimmer {
+  0%,100% { background-position: 0%   50%; filter: drop-shadow(0 0 20px rgba(200,168,75,0.3)); }
+  50%      { background-position: 100% 50%; filter: drop-shadow(0 0 50px rgba(200,168,75,0.7)); }
+}
+
+
+.vc-one-sub {
+  font-family: 'Lora', serif;
+  font-size: clamp(20px, 4vw, 28px);
+  font-style: italic;
+  color: #E8C86C;
+  position: relative;
+  margin-top: 8px;
+}
+
+
+.vc-one-copy {
+  font-family: 'Nunito', sans-serif;
+  font-size: 17px;
+  color: #68C8C8;
+  line-height: 1.8;
+  max-width: 480px;
+  margin: 20px auto 0;
+  position: relative;
+}
+
+
+.vc-358-wrap {
+  text-align: center;
+  padding: 48px 24px;
+  margin: 48px 0;
+}
+
+
+.vc-358-num {
+  font-family: 'Oswald', sans-serif;
+  font-size: clamp(80px, 20vw, 140px);
+  font-weight: 700;
+  color: rgba(168,222,222,0.1);
+  line-height: 1;
+  display: block;
+  letter-spacing: -0.02em;
+}
+
+
+.vc-358-label {
+  font-family: 'Lora', serif;
+  font-size: clamp(18px, 4vw, 24px);
+  font-style: italic;
+  color: #A8DEDE;
+  margin-top: -12px;
+  display: block;
+}
+
+
+.vc-358-sub {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  color: #527070;
+  margin-top: 16px;
+  display: block;
+  line-height: 1.8;
+}
+
+
+.vc-callout {
+  background: rgba(200,168,75,0.05);
+  border: 1px solid rgba(200,168,75,0.18);
+  border-left: 4px solid #C8A84B;
+  border-radius: 0 16px 16px 0;
+  padding: 28px 32px;
+  margin: 36px 0;
+}
+
+
+.vc-callout p {
+  font-family: 'Permanent Marker', cursive;
+  font-size: clamp(18px, 4vw, 22px);
+  color: #C8A84B;
+  line-height: 1.6;
+  margin-bottom: 0;
+}
+
+
+.vc-callout span {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  color: #E8C86C;
+  text-transform: uppercase;
+  margin-top: 12px;
+  display: block;
+}
+
+
+/* ── VIDEO SELL ── */
+.vc-video-sell {
+  text-align: center;
+  padding: 80px 24px 130px;
+  position: relative;
+  z-index: 2;
+  max-width: 760px;
+  margin: 0 auto;
+}
+
+
+.vc-video-sell::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translateX(-50%);
+  width: 100%; height: 100%;
+  background: radial-gradient(ellipse at 50% 30%, rgba(200,168,75,0.06), transparent 65%);
+  pointer-events: none;
+}
+
+
+.vc-video-sell h2 {
+  font-family: 'Lora', serif;
+  font-size: clamp(30px, 7vw, 52px);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 24px;
+}
+
+
+.vc-video-sell h2 span { color: #C8A84B; font-style: italic; }
+
+
+.vc-video-sell p {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  color: #A8DEDE;
+  line-height: 1.85;
+  margin-bottom: 20px;
+  max-width: 560px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+
+.vc-video-sell strong { color: #fff; }
+
+
+.vc-cta-wrap {
+  margin-top: 52px;
+  position: relative;
+  display: inline-block;
+}
+
+
+.vc-cta-glow {
+  position: absolute;
+  inset: -10px;
+  border-radius: 18px;
+  background: conic-gradient(from 0deg, #C8A84B, #32B8B8, #C8A84B, #E8C86C, #32B8B8, #C8A84B);
+  animation: vc-glow-spin 3s linear infinite;
+  filter: blur(14px);
+  opacity: 0.7;
+  z-index: 0;
+}
+
+
+@keyframes vc-glow-spin {
+  from { transform: rotate(0deg);   }
+  to   { transform: rotate(360deg); }
+}
+
+
+.vc-cta-btn {
+  position: relative;
+  z-index: 1;
+  display: inline-block;
+  background: linear-gradient(135deg, #C8A84B, #E8C86C, #C8A84B);
+  background-size: 200% 200%;
+  color: #0D2828;
+  font-family: 'Oswald', sans-serif;
+  font-size: 16px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 22px 52px;
+  border-radius: 10px;
+  animation: vc-heartbeat 1.4s ease-in-out infinite, vc-btn-shimmer 3s ease infinite;
+  transition: filter 0.2s ease;
+}
+
+
+.vc-cta-btn:hover { filter: brightness(1.15); }
+
+
+@keyframes vc-heartbeat {
+  0%,100% { transform: scale(1);    }
+  14%      { transform: scale(1.04); }
+  28%      { transform: scale(1);    }
+  42%      { transform: scale(1.06); }
+  70%      { transform: scale(1);    }
+}
+
+
+@keyframes vc-btn-shimmer {
+  0%   { background-position: 0%   50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
+
+
+.vc-cta-sub {
+  display: block;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  color: #2A4848;
+  margin-top: 20px;
+}
+
+
+/* ── SCROLL REVEAL ── */
+.vc-reveal {
+  opacity: 0;
+  transform: translateY(36px);
+  transition: opacity 0.8s ease, transform 0.8s ease;
+}
+
+
+.vc-reveal.vc-visible { opacity: 1; transform: translateY(0); }
+.vc-reveal-d1 { transition-delay: 0.10s; }
+.vc-reveal-d2 { transition-delay: 0.22s; }
+.vc-reveal-d3 { transition-delay: 0.38s; }
+
+
+/* ── MOBILE ── */
+@media (max-width: 600px) {
+  .vc-hero { padding: 48px 20px 100px; }
+  .vc-section { padding: 60px 20px; }
+  .vc-video-sell { padding: 60px 20px 100px; }
+  .vc-stat-row { gap: 10px; }
+  .vc-stat { padding: 20px 10px; }
+  .vc-callout { padding: 22px 18px; }
+  .vc-cta-btn { padding: 18px 28px; font-size: 14px; width: 100%; text-align: center; display: block; }
+  .vc-hero-headline { gap: 0 10px; }
+  .vc-one-reveal { padding: 40px 16px; }
+}
+</style>
+</head>
+<body style="margin:0;padding:0;background:#F8FAFA;">
+<div class="d7-wrap">
+
+
+  <!-- CARD 1 — dark teal — the earned identity shift -->
+  <div class="d7-stakes">
+    <p class="d7-eyebrow">Day 7 — The Return</p>
+    <h2>Six days ago you were someone who hadn't posted. That person doesn't exist anymore.</h2>
+    <p>This isn't motivational language. It's just true.</p>
+    <p>You showed up when it was uncomfortable. You said things on camera you'd never said publicly before. You kept going on the days when the novelty wore off and nobody was watching that closely and it would have been completely reasonable to stop. And somewhere inside all of that, something shifted that you can't un-shift.</p>
+    <p>The person who started this challenge was someone who knew they should be showing up online and had a hundred reasons why now wasn't the right time. That person is gone. What's standing here now is someone who shows up. Someone who does what they said they would do. Someone whose name exists on the internet in a way it didn't seven days ago.</p>
+    <p>That's not a small thing. That's the thing most people in your space spend years trying to manufacture and never quite get there since it can't be manufactured. It can only be earned.</p>
+    <div class="d7-quote-dark">
+      <p>You earned it. This week. One video at a time.</p>
+      <span>— David Bee</span>
+    </div>
+  </div>
+
+
+  <!-- CARD 2 — gold — what today's video does -->
+  <div class="d7-action">
+    <p class="d7-eyebrow">What today's video is actually doing</p>
+    <h3>Today you close the loop that Day 1 opened. And everything you built this week has been leading to this moment.</h3>
+    <p>Day 1 you made a declaration and left it unresolved. You told the world you were doing something and walked away from the camera without knowing how it would end. Every video since has been adding weight to that open loop. Every day you showed up made the resolution more worth waiting for.</p>
+    <p>Today is that resolution.</p>
+    <p>The person watching who followed you from Day 1 is about to see something they almost never see online. Someone who said they'd do a thing and actually did it. All the way through. On the hard days and the ordinary days and the days when the doubt was loud.</p>
+    <p>That moment... the full circle close... is what turns a viewer into someone who tells other people about you. It's the ending that makes the whole story worth sharing.</p>
+    <p>Film it. Close the loop. Step into what's waiting on the other side.</p>
+    <p>Open the app. Pull up your Video 7 script. Read it once. Press record. Post it.</p>
+    <a href="https://coloradomastermind.onlinecoursehost.com/courses/contentchallenge" class="d7-btn" target="_blank">Open the App &rarr;</a>
+  </div>
+
+
+  <!-- CARD 3 — white bordered — the new world -->
+  <div class="d7-mirror">
+    <p class="d7-eyebrow">The world you just walked into</p>
+    <h2>There's a line between the person who almost started and the person who actually did. You just crossed it. And the view from this side is completely different.</h2>
+    <p>Before this week the gap between you and the people building real audiences online felt vague and overwhelming. Too many steps. Too much to figure out. Too many people already ahead of you.</p>
+    <p>From here that gap looks different. Not smaller, but clearer. You know now that you can show up. You know your voice works on camera. You know what it feels like to say something real and post it before you talk yourself out of it. Those aren't small things. Those are the exact things that were standing between you and everything you came here to build.</p>
+    <p>Seven videos is a foundation. And now that you've built it you can see exactly what a foundation is for. The question sitting in front of you right now isn't whether you can do this anymore. You answered that. The question is what you build on top of it.</p>
+    <div class="d7-quote-light">
+      <p>That question has an answer. And it's waiting for you at your Victory Celebration.</p>
+      <span>— David Bee</span>
+    </div>
+    <p><strong>Head there now. You've earned what's on the other side.</strong></p>
+    <a href="https://content.coloradomastermind.com/victory" class="d7-victory-btn" target="_blank">Go to Your Victory Celebration &rarr;</a>
+  </div>
+
+
+  <div class="d7-divider"></div>
+
+
+  <!-- CARD 4 — white — still time to join -->
+  <div class="d7-join">
+    <p class="d7-eyebrow">Just finding this?</p>
+    <h3>Day 7 is actually the perfect place to understand what this challenge is about. Then go back and start from Day 1.</h3>
+    <p>The sequence is still open. The app still builds your scripts in minutes. The community is still going. And knowing where this journey ends before you begin isn't a spoiler. It's the best possible reason to start.</p>
+    <p><strong>Seven dollars. Seven videos. Your pace, your terms. The door is wide open.</strong></p>
+    <a href="https://content.coloradomastermind.com/777challenge" class="d7-join-btn" target="_blank">Join the Challenge &rarr;</a>
+  </div>
+
+
+  <!-- CARD 5 — white — contact David Bee -->
+  <div class="d7-contact">
+    <p class="d7-eyebrow">David is here</p>
+    <h3>I built everything on this page, and every page before it, to get you to this moment. But I can't want it more than you do.</h3>
+    <p>The app, the scripts, the daily pages, the community... all of it exists for one reason. To make crossing this threshold as close to inevitable as possible for anyone willing to show up. And you showed up. Seven times.</p>
+    <p>What happens next is on you. Not since I'm stepping back. Since that's how this works. I can build the path. I can light it up. I can be on the other end of a phone call or a message or a calendar invite every single day of this challenge. But the step is always yours to take.</p>
+    <p>If you're standing here and something is still in the way... a question, a doubt, a technical thing that never got resolved... reach out right now. Today. I am as available to you in this moment as I will ever be and I mean that literally.</p>
+    <p>You're one video away from your Victory Celebration. I'll see you there.</p>
+    <div class="d7-links">
+      <a href="https://calendly.com/davidbee" class="d7-link" target="_blank">
+        <span class="d7-link-icon">📅</span>
+        <div><span class="d7-link-label">Book a call</span><span class="d7-link-action">Pick a time on David's calendar</span></div>
+      </a>
+      <a href="https://m.me/davidbeeeee" class="d7-link" target="_blank">
+        <span class="d7-link-icon">💬</span>
+        <div><span class="d7-link-label">Messenger</span><span class="d7-link-action">DM David directly on Facebook</span></div>
+      </a>
+      <a href="mailto:contact@davidbee.me" class="d7-link">
+        <span class="d7-link-icon">📧</span>
+        <div><span class="d7-link-label">Email</span><span class="d7-link-action">contact@davidbee.me</span></div>
+      </a>
+    </div>
+  </div>
+
+
+</div>
+
+
+
+
+Victory (formerly graduation) Day!
+
+
+
+
+
+
+
+
+<!-- ── ROOT CONTAINER ── -->
+<div id="vc-root">
+
+
+  <!-- Canvas layers -->
+  <canvas id="vc-particles"></canvas>
+  <canvas id="vc-fireworks"></canvas>
+  <canvas id="vc-confetti"></canvas>
+  <canvas id="vc-cursor"></canvas>
+
+
+  <!-- Intro overlay -->
+  <div id="vc-intro">
+    <canvas id="vc-intro-canvas"></canvas>
+    <div class="vc-intro-text">
+      <span class="vc-intro-letter" id="vcl-y">Y</span>
+      <span class="vc-intro-letter" id="vcl-o">O</span>
+      <span class="vc-intro-letter" id="vcl-u">U</span>
+      <span style="display:inline-block;width:0.25em"></span>
+      <span class="vc-intro-letter" id="vcl-d">D</span>
+      <span class="vc-intro-letter" id="vcl-i">I</span>
+      <span class="vc-intro-letter" id="vcl-d2">D</span>
+      <span style="display:inline-block;width:0.2em"></span>
+      <span class="vc-intro-letter" id="vcl-it">IT</span>
+    </div>
+  </div>
+
+
+  <!-- Main content -->
+  <div id="vc-main">
+
+
+    <!-- HERO -->
+    <section class="vc-hero">
+      <div class="vc-bg-seven">7</div>
+      <div class="vc-hero-glow"></div>
+      <div class="vc-hero-content">
+        <p class="vc-hero-eyebrow">Your Victory Celebration</p>
+        <h1 class="vc-hero-headline">
+          <span class="vc-word vc-w1">You</span>
+          <span class="vc-word gold vc-w2">actually</span>
+          <span class="vc-word vc-w3">did</span>
+          <span class="vc-word teal vc-w4">it.</span>
+        </h1>
+        <p class="vc-hero-tagline">Welcome to the other side. 🎉</p>
+        <p class="vc-hero-sub">Seven videos. Seven days of showing up. One complete journey from someone who hadn't posted to someone who does. That's not a small thing. That's everything you came here to build.</p>
+      </div>
+      <div class="vc-scroll-hint">
+        <span>Keep scrolling</span>
+        <div class="vc-scroll-arrow"></div>
+      </div>
+    </section>
+
+
+    <div class="vc-beam"></div>
+
+
+    <!-- HONOR -->
+    <section class="vc-section vc-honor">
+      <div class="vc-reveal">
+        <span class="vc-section-eyebrow">What you built this week</span>
+        <h2>Let's be honest about what just happened. Because it deserves more than a pat on the back.</h2>
+        <p>You came into this challenge as someone who knew they should be showing up online and had a hundred reasons why now wasn't the right time. That person is gone.</p>
+        <p>What you built this week isn't a posting streak. It isn't seven pieces of content. It's the specific kind of credibility that most people in your space spend years trying to manufacture and never quite get there... <strong>since it can't be manufactured. It can only be earned.</strong></p>
+        <p>You said things on camera you'd never said publicly. You showed up on the days when the novelty wore off and nobody was watching that closely. You kept going when it would have been completely reasonable to stop.</p>
+      </div>
+
+
+      <div class="vc-stat-row">
+        <div class="vc-stat vc-reveal vc-reveal-d1">
+          <span class="vc-stat-num" data-target="7">0</span>
+          <div class="vc-stat-label">Videos posted</div>
+        </div>
+        <div class="vc-stat vc-reveal vc-reveal-d2">
+          <span class="vc-stat-num" data-target="7">0</span>
+          <div class="vc-stat-label">Days of showing up</div>
+        </div>
+        <div class="vc-stat vc-reveal vc-reveal-d3">
+          <span class="vc-stat-num" data-target="1">0</span>
+          <div class="vc-stat-label">Person who became someone who does this</div>
+        </div>
+      </div>
+
+
+      <div class="vc-reveal">
+        <p>There's a line between the person who almost started and the person who actually did. You crossed it. And the view from this side is completely different.</p>
+      </div>
+    </section>
+
+
+    <div class="vc-beam"></div>
+
+
+    <!-- REFRAME -->
+    <section class="vc-section vc-reframe">
+      <div class="vc-reveal">
+        <span class="vc-section-eyebrow">What you actually did</span>
+        <h2>Those seven videos weren't random. They were a system. And you just ran one of the most powerful engines in content creation without even knowing it had a name.</h2>
+        <p>The sequence you went through this week... the declaration, the origin, the epiphany, the proof of work, the conviction, the ordeal, the return... that's not a content challenge. That's a scientifically, sociologically, and historically proven architecture for building trust, credibility, and a real audience online.</p>
+        <p>The most successful content creators in the world run versions of this engine. Some of them know it. Most of them don't. You ran it deliberately, with intention, and with scripts built specifically around your voice, your story, and your worldview.</p>
+      </div>
+
+
+      <div class="vc-one-reveal vc-reveal" id="vc-one-block">
+        <span class="vc-one-label">You ran engine</span>
+        <span class="vc-one-number">1</span>
+        <p class="vc-one-sub">of five.</p>
+        <p class="vc-one-copy">And it's designed to be run once, maybe twice a year at most. Your audience needs time to absorb it before you run it again.</p>
+      </div>
+
+
+      <div class="vc-358-wrap vc-reveal">
+        <span class="vc-358-num">358</span>
+        <span class="vc-358-label">days left in the year.</span>
+        <span class="vc-358-sub">What do you post for the other 358?</span>
+      </div>
+
+
+      <div class="vc-callout vc-reveal">
+        <p>That question has an answer. And it's in the video waiting for you below.</p>
+        <span>— David Bee</span>
+      </div>
+    </section>
+
+
+    <div class="vc-beam"></div>
+
+
+    <!-- VIDEO SELL -->
+    <section class="vc-video-sell">
+      <div class="vc-reveal">
+        <span class="vc-section-eyebrow">Your Victory Celebration</span>
+        <h2>This video is <span>yours.</span><br>You earned it.</h2>
+        <p>David Bee recorded this specifically for the people who make it to this page. It explains exactly what you did this week, why it worked, and the complete system behind the four engines you haven't run yet.</p>
+        <p>This is your victory ceremony. <strong>It's free. It's waiting. And it's the thing that makes everything you built this week make sense.</strong></p>
+        <div class="vc-cta-wrap">
+          <div class="vc-cta-glow"></div>
+          <a href="#row-11b26cf7" class="vc-cta-btn">Watch Your Victory Celebration &rarr;</a>
+        </div>
+        <span class="vc-cta-sub">Free · No catch · You've more than earned this</span>
+      </div>
+    </section>
+
+
+  </div><!-- /vc-main -->
+</div><!-- /vc-root -->
+
+
+<script>
+(function() {
+
+
+  const root = document.getElementById('vc-root');
+
+
+  function rand(a, b)    { return a + Math.random() * (b - a); }
+  function randInt(a, b) { return Math.floor(rand(a, b + 1)); }
+  function lerp(a, b, t) { return a + (b - a) * t; }
+
+
+  // ── CANVAS SIZING ──
+  // Size canvases to root's full scrollable height
+  function sizeCanvases() {
+    const w = root.offsetWidth;
+    const h = root.scrollHeight;
+    [
+      document.getElementById('vc-fireworks'),
+      document.getElementById('vc-confetti'),
+      document.getElementById('vc-particles'),
+      document.getElementById('vc-cursor'),
+    ].forEach(c => { c.width = w; c.height = h; });
+  }
+
+
+  // Intro canvas matches viewport height only
+  const introEl     = document.getElementById('vc-intro');
+  const introCanvas = document.getElementById('vc-intro-canvas');
+  introCanvas.width  = root.offsetWidth;
+  introCanvas.height = window.innerHeight;
+
+
+  // ── INTRO EXPLOSION ──
+  const iCtx = introCanvas.getContext('2d');
+  const introParticles = [];
+  for (let i = 0; i < 90; i++) {
+    introParticles.push({
+      x: introCanvas.width / 2,
+      y: introCanvas.height / 2,
+      vx: rand(-7, 7),
+      vy: rand(-7, 7),
+      r: rand(1, 4),
+      color: ['#32B8B8','#C8A84B','#68C8C8','#E8C86C'][randInt(0,3)],
+      life: 1,
+      decay: rand(0.007, 0.018)
+    });
+  }
+
+
+  let introFrame = 0;
+  let introRunning = true;
+
+
+  function drawIntro() {
+    if (!introRunning) return;
+    iCtx.clearRect(0, 0, introCanvas.width, introCanvas.height);
+
+
+    const grad = iCtx.createRadialGradient(
+      introCanvas.width/2, introCanvas.height/2, 0,
+      introCanvas.width/2, introCanvas.height/2, introFrame * 4
+    );
+    grad.addColorStop(0, 'rgba(200,168,75,0.18)');
+    grad.addColorStop(1, 'transparent');
+    iCtx.fillStyle = grad;
+    iCtx.fillRect(0, 0, introCanvas.width, introCanvas.height);
+
+
+    introParticles.forEach(p => {
+      p.x += p.vx; p.y += p.vy;
+      p.vx *= 0.97; p.vy *= 0.97;
+      p.life -= p.decay;
+      if (p.life <= 0) return;
+      iCtx.beginPath();
+      iCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      iCtx.fillStyle = p.color;
+      iCtx.globalAlpha = p.life;
+      iCtx.fill();
+      iCtx.globalAlpha = 1;
+    });
+
+
+    introFrame++;
+    requestAnimationFrame(drawIntro);
+  }
+
+
+  drawIntro();
+
+
+  // Letters slam in
+  const letterIds  = ['vcl-y','vcl-o','vcl-u','vcl-d','vcl-i','vcl-d2','vcl-it'];
+  const letterDelay = [0, 80, 160, 280, 360, 440, 560];
+
+
+  letterIds.forEach((id, i) => {
+    setTimeout(() => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.style.transition = 'opacity 0.35s ease, transform 0.45s cubic-bezier(0.34,1.56,0.64,1)';
+      el.style.opacity    = '1';
+      el.style.transform  = 'translateY(0)';
+    }, 400 + letterDelay[i]);
+  });
+
+
+  // Shake on last letter
+  setTimeout(() => {
+    introEl.style.animation = 'vc-shake 0.4s ease';
+  }, 1150);
+
+
+  // Fade out intro → reveal page → start effects
+  setTimeout(() => {
+    introRunning = false;
+    introEl.style.transition = 'opacity 0.7s ease';
+    introEl.style.opacity    = '0';
+    setTimeout(() => {
+      introEl.style.display = 'none';
+      // Size canvases now that intro is gone and layout is stable
+      sizeCanvases();
+      startParticles();
+      startFireworks();
+      startConfetti();
+    }, 700);
+  }, 1900);
+
+
+  // ── FIREWORKS ──
+  const fwCanvas = document.getElementById('vc-fireworks');
+  const fwCtx    = fwCanvas.getContext('2d');
+  const fwColors = ['#32B8B8','#C8A84B','#68C8C8','#E8C86C','#A8DEDE','#F5E8C0','#fff'];
+  const rockets    = [];
+  const explosions = [];
+  let fwRunning = false;
+  let fwEndTime = 0;
+
+
+  function createRocket() {
+    const x = rand(fwCanvas.width * 0.05, fwCanvas.width * 0.95);
+    rockets.push({
+      x, y: window.innerHeight, // start from viewport bottom
+      tx: rand(fwCanvas.width * 0.1, fwCanvas.width * 0.9),
+      ty: rand(window.innerHeight * 0.05, window.innerHeight * 0.55),
+      speed: rand(9, 15),
+      color: fwColors[randInt(0, fwColors.length - 1)],
+      trail: []
+    });
+  }
+
+
+  function explode(x, y, color) {
+    const count = randInt(60, 110);
+    for (let i = 0; i < count; i++) {
+      const angle = (Math.PI * 2 / count) * i + rand(-0.3, 0.3);
+      const speed = rand(2, 9);
+      explosions.push({
+        x, y,
+        vx: Math.cos(angle) * speed,
+        vy: Math.sin(angle) * speed,
+        r: rand(1.5, 3.5),
+        color,
+        life: 1,
+        decay: rand(0.012, 0.026),
+        gravity: 0.09
+      });
+    }
+  }
+
+
+  function drawFireworks() {
+    if (!fwRunning) return;
+    fwCtx.fillStyle = 'rgba(3,10,10,0.16)';
+    fwCtx.fillRect(0, 0, fwCanvas.width, fwCanvas.height);
+
+
+    rockets.forEach((r, idx) => {
+      const dx = r.tx - r.x;
+      const dy = r.ty - r.y;
+      const dist = Math.sqrt(dx*dx + dy*dy);
+      if (dist < r.speed) {
+        explode(r.x, r.y, r.color);
+        rockets.splice(idx, 1);
+        return;
+      }
+      r.x += (dx / dist) * r.speed;
+      r.y += (dy / dist) * r.speed;
+      r.trail.push({ x: r.x, y: r.y });
+      if (r.trail.length > 14) r.trail.shift();
+      r.trail.forEach((pt, i) => {
+        fwCtx.beginPath();
+        fwCtx.arc(pt.x, pt.y, 2 * (i / r.trail.length), 0, Math.PI * 2);
+        fwCtx.fillStyle = r.color;
+        fwCtx.globalAlpha = (i / r.trail.length) * 0.8;
+        fwCtx.fill();
+        fwCtx.globalAlpha = 1;
+      });
+    });
+
+
+    for (let i = explosions.length - 1; i >= 0; i--) {
+      const p = explosions[i];
+      p.x += p.vx; p.y += p.vy;
+      p.vy += p.gravity;
+      p.vx *= 0.97;
+      p.life -= p.decay;
+      if (p.life <= 0) { explosions.splice(i, 1); continue; }
+      fwCtx.beginPath();
+      fwCtx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
+      fwCtx.fillStyle = p.color;
+      fwCtx.globalAlpha = p.life;
+      fwCtx.fill();
+      fwCtx.globalAlpha = 1;
+    }
+
+
+    if (Math.random() < 0.04 && Date.now() < fwEndTime - 1500) createRocket();
+
+
+    if (Date.now() < fwEndTime || rockets.length > 0 || explosions.length > 0) {
+      requestAnimationFrame(drawFireworks);
+    } else {
+      fwCtx.clearRect(0, 0, fwCanvas.width, fwCanvas.height);
+    }
+  }
+
+
+  function startFireworks() {
+    fwRunning = true;
+    fwEndTime = Date.now() + 8000;
+    for (let i = 0; i < 6; i++) setTimeout(createRocket, i * 180);
+    drawFireworks();
+  }
+
+
+  // ── CONFETTI ──
+  const cfCanvas = document.getElementById('vc-confetti');
+  const cfCtx    = cfCanvas.getContext('2d');
+  const cfColors = ['#32B8B8','#C8A84B','#68C8C8','#E8C86C','#A8DEDE','#F5E8C0','#2A9090','#fff'];
+  const cfPieces = [];
+  let cfStart = null;
+  const cfDuration = 9000;
+
+
+  function startConfetti() {
+    for (let i = 0; i < 240; i++) {
+      const shape = ['rect','circle','star'][randInt(0,2)];
+      cfPieces.push({
+        x: rand(0, cfCanvas.width),
+        y: rand(-cfCanvas.height * 0.6, -10),
+        w: rand(6,14), h: rand(4,9),
+        r: rand(2,6),
+        color: cfColors[randInt(0, cfColors.length - 1)],
+        rot: rand(0, Math.PI*2),
+        rotV: rand(-0.14, 0.14),
+        vx: rand(-2.5, 2.5),
+        vy: rand(2.5, 6.5),
+        wobble: rand(0, Math.PI*2),
+        wobbleV: rand(0.02, 0.08),
+        shape, opacity: 1
+      });
+    }
+    requestAnimationFrame(drawConfetti);
+  }
+
+
+  function drawStar(ctx, x, y, r, color, alpha) {
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = color;
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const angle = (i * 4 * Math.PI / 5) - Math.PI/2;
+      i === 0
+        ? ctx.moveTo(x + r * Math.cos(angle), y + r * Math.sin(angle))
+        : ctx.lineTo(x + r * Math.cos(angle), y + r * Math.sin(angle));
+    }
+    ctx.closePath();
+    ctx.fill();
+    ctx.restore();
+  }
+
+
+  function drawConfetti(ts) {
+    if (!cfStart) cfStart = ts;
+    const progress = Math.min((ts - cfStart) / cfDuration, 1);
+    cfCtx.clearRect(0, 0, cfCanvas.width, cfCanvas.height);
+
+
+    cfPieces.forEach(p => {
+      p.wobble += p.wobbleV;
+      p.x += p.vx + Math.sin(p.wobble) * 0.9;
+      p.y += p.vy;
+      p.rot += p.rotV;
+      if (progress > 0.55) p.opacity = Math.max(0, 1 - ((progress - 0.55) / 0.45));
+
+
+      if (p.shape === 'star') {
+        drawStar(cfCtx, p.x, p.y, p.r + 2, p.color, p.opacity);
+      } else {
+        cfCtx.save();
+        cfCtx.globalAlpha = p.opacity;
+        cfCtx.translate(p.x, p.y);
+        cfCtx.rotate(p.rot);
+        cfCtx.fillStyle = p.color;
+        if (p.shape === 'rect') {
+          cfCtx.fillRect(-p.w/2, -p.h/2, p.w, p.h);
+        } else {
+          cfCtx.beginPath();
+          cfCtx.arc(0, 0, p.r, 0, Math.PI*2);
+          cfCtx.fill();
+        }
+        cfCtx.restore();
+      }
+
+
+      if (p.y > cfCanvas.height + 30) {
+        p.y = rand(-80, -10);
+        p.x = rand(0, cfCanvas.width);
+        if (progress >= 0.55) p.opacity = 0;
+      }
+    });
+
+
+    if (progress < 1) requestAnimationFrame(drawConfetti);
+  }
+
+
+  // ── PARTICLE FIELD ──
+  const ptCanvas = document.getElementById('vc-particles');
+  const ptCtx    = ptCanvas.getContext('2d');
+  const ptColors = ['rgba(50,184,184,','rgba(200,168,75,','rgba(104,200,200,','rgba(232,200,108,'];
+  const ptPieces = [];
+
+
+  function startParticles() {
+    for (let i = 0; i < 55; i++) {
+      ptPieces.push({
+        x: rand(0, ptCanvas.width),
+        y: rand(0, ptCanvas.height),
+        r: rand(0.5, 2.2),
+        color: ptColors[randInt(0, ptColors.length - 1)],
+        vy: -rand(0.1, 0.45),
+        vx: rand(-0.2, 0.2),
+        opacity: rand(0.05, 0.35),
+        opV: (rand(0,1) > 0.5 ? 1 : -1) * rand(0.002, 0.006)
+      });
+    }
+    drawParticles();
+  }
+
+
+  function drawParticles() {
+    ptCtx.clearRect(0, 0, ptCanvas.width, ptCanvas.height);
+    ptPieces.forEach(p => {
+      p.y += p.vy; p.x += p.vx;
+      p.opacity += p.opV;
+      if (p.opacity < 0.04 || p.opacity > 0.38) p.opV *= -1;
+      if (p.y < -10) { p.y = ptCanvas.height + 10; p.x = rand(0, ptCanvas.width); }
+      if (p.x < -10 || p.x > ptCanvas.width + 10) p.x = rand(0, ptCanvas.width);
+      ptCtx.beginPath();
+      ptCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ptCtx.fillStyle = p.color + p.opacity + ')';
+      ptCtx.fill();
+    });
+    requestAnimationFrame(drawParticles);
+  }
+
+
+  // ── CURSOR TRAIL ──
+  const curCanvas = document.getElementById('vc-cursor');
+  const curCtx    = curCanvas.getContext('2d');
+  const trailColors = ['#32B8B8','#C8A84B','#68C8C8','#E8C86C'];
+  const trail = [];
+
+
+  // Track mouse relative to root element
+  root.addEventListener('mousemove', e => {
+    const rect = root.getBoundingClientRect();
+    const mx = e.clientX - rect.left;
+    const my = e.clientY - rect.top + root.scrollTop;
+    for (let i = 0; i < 3; i++) {
+      trail.push({
+        x: mx + rand(-4, 4),
+        y: my + rand(-4, 4),
+        r: rand(2, 5),
+        color: trailColors[randInt(0, trailColors.length - 1)],
+        life: 1,
+        decay: rand(0.04, 0.08),
+        vx: rand(-0.8, 0.8),
+        vy: rand(-1.5, 0)
+      });
+    }
+  });
+
+
+  function drawCursor() {
+    curCtx.clearRect(0, 0, curCanvas.width, curCanvas.height);
+    for (let i = trail.length - 1; i >= 0; i--) {
+      const p = trail[i];
+      p.x += p.vx; p.y += p.vy;
+      p.vy += 0.06;
+      p.life -= p.decay;
+      if (p.life <= 0) { trail.splice(i, 1); continue; }
+      curCtx.beginPath();
+      curCtx.arc(p.x, p.y, p.r * p.life, 0, Math.PI * 2);
+      curCtx.fillStyle = p.color;
+      curCtx.globalAlpha = p.life * 0.7;
+      curCtx.fill();
+      curCtx.globalAlpha = 1;
+    }
+    requestAnimationFrame(drawCursor);
+  }
+  drawCursor();
+
+
+  // ── SCROLL REVEAL (watches root scroll, not window) ──
+  const reveals = document.querySelectorAll('.vc-reveal');
+  const revealObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('vc-visible');
+        revealObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12, root: null });
+  reveals.forEach(el => revealObs.observe(el));
+
+
+  // ── COUNTER + BURST ──
+  const counters = document.querySelectorAll('.vc-stat-num[data-target]');
+  const counterObs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (!e.isIntersecting) return;
+      const el = e.target;
+      const target = parseInt(el.dataset.target);
+      const dur = 1400;
+      const start = performance.now();
+      function update(now) {
+        const progress = Math.min((now - start) / dur, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = Math.round(eased * target);
+        if (progress < 1) {
+          requestAnimationFrame(update);
+        } else {
+          el.textContent = target;
+          el.style.transition = 'transform 0.15s ease';
+          el.style.transform = 'scale(1.25)';
+          setTimeout(() => { el.style.transform = 'scale(1)'; }, 150);
+        }
+      }
+      requestAnimationFrame(update);
+      counterObs.unobserve(el);
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(el => counterObs.observe(el));
+
+
+  // ── SCREEN SHAKE on ONE reveal ──
+  const oneBlock = document.getElementById('vc-one-block');
+  if (oneBlock) {
+    const shakeObs = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const main = document.getElementById('vc-main');
+        main.classList.add('vc-shake');
+        setTimeout(() => main.classList.remove('vc-shake'), 500);
+        shakeObs.unobserve(e.target);
+      });
+    }, { threshold: 0.5 });
+    shakeObs.observe(oneBlock);
+  }
+
+
+  // ── SCROLL BG SHIFT ──
+  // Since root overflows, watch scroll on the Systeme page wrapper
+  window.addEventListener('scroll', () => {
+    const totalH  = document.body.scrollHeight - window.innerHeight;
+    const scrollP = totalH > 0 ? window.scrollY / totalH : 0;
+    const r = Math.round(lerp(3,  13, scrollP));
+    const g = Math.round(lerp(10, 28, scrollP));
+    const b = Math.round(lerp(10, 28, scrollP));
+    root.style.background = `rgb(${r},${g},${b})`;
+  });
+
+
+  window.addEventListener('resize', sizeCanvases);
+
+
+})();
+</script>
+</body>
+</html>

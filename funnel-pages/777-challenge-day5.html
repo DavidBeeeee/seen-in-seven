@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>777 Challenge — Day 5</title>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap" rel="stylesheet">
+<style>
+.d5-wrap { max-width: 720px; margin: 0 auto; padding: 40px 20px 60px; font-family: 'Nunito', sans-serif; color: #0D2828; }
+
+
+.d5-eyebrow { font-family: 'Oswald', sans-serif; font-size: 12px; font-weight: 600; letter-spacing: 0.28em; color: #2A9090; text-transform: uppercase; margin-bottom: 14px; }
+
+
+/* Card 1 — dark teal — the credibility payoff */
+.d5-stakes { background: #0D2828; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d5-stakes .d5-eyebrow { color: #68C8C8; }
+.d5-stakes h2 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #fff; line-height: 1.4; margin-bottom: 16px; }
+.d5-stakes p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #A8DEDE; line-height: 1.8; margin-bottom: 16px; }
+.d5-stakes p:last-child { margin-bottom: 0; }
+.d5-stakes strong { color: #fff; }
+
+
+/* Pull quote — dark background version */
+.d5-quote-dark { background: rgba(50,184,184,0.07); border-left: 3px solid #32B8B8; border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 24px 0; }
+.d5-quote-dark p { font-family: 'Permanent Marker', cursive; font-size: 20px; color: #68C8C8; line-height: 1.5; margin-bottom: 0; }
+.d5-quote-dark span { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.2em; color: #32B8B8; text-transform: uppercase; margin-top: 10px; display: block; }
+
+
+/* Card 2 — gold — what this video does */
+.d5-action { background: #F5E8C0; border: 1px solid #E8C86C; border-left: 4px solid #C8A84B; border-radius: 12px; padding: 28px 32px; margin-bottom: 28px; }
+.d5-action .d5-eyebrow { color: #C8A84B; }
+.d5-action h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; margin-bottom: 14px; line-height: 1.4; }
+.d5-action p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d5-action p:last-of-type { margin-bottom: 24px; }
+.d5-action strong { color: #0D2828; }
+.d5-btn { display: inline-block; background: #0D2828; color: #32B8B8; font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border-radius: 8px; }
+
+
+/* Card 3 — white bordered — cost of neutrality */
+.d5-mirror { background: #fff; border: 1px solid #D8F0F0; border-left: 4px solid #32B8B8; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d5-mirror .d5-eyebrow { color: #2A9090; }
+.d5-mirror h2 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d5-mirror p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d5-mirror p:last-child { margin-bottom: 0; }
+.d5-mirror strong { color: #0D2828; }
+
+
+/* Pull quote — light background version */
+.d5-quote-light { background: #EEF9F9; border-left: 3px solid #32B8B8; border-radius: 0 8px 8px 0; padding: 18px 22px; margin: 24px 0; }
+.d5-quote-light p { font-family: 'Permanent Marker', cursive; font-size: 20px; color: #1E5C5C; line-height: 1.5; margin-bottom: 0; }
+.d5-quote-light span { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.2em; color: #2A9090; text-transform: uppercase; margin-top: 10px; display: block; }
+
+
+/* Divider */
+.d5-divider { width: 100%; height: 1px; background: linear-gradient(90deg, transparent, #D8E4E8, transparent); margin: 32px 0; }
+
+
+/* Card 4 — white — still time to join */
+.d5-join { background: #fff; border: 1px solid #D8E4E8; border-radius: 12px; padding: 32px 36px; margin-bottom: 28px; }
+.d5-join .d5-eyebrow { color: #2A9090; }
+.d5-join h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d5-join p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d5-join p:last-of-type { margin-bottom: 24px; }
+.d5-join strong { color: #0D2828; }
+.d5-join-btn { display: inline-block; background: #32B8B8; color: #0D2828; font-family: 'Oswald', sans-serif; font-size: 15px; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; text-decoration: none; padding: 14px 28px; border-radius: 8px; }
+
+
+/* Card 5 — white — contact David Bee */
+.d5-contact { background: #fff; border: 1px solid #D8E4E8; border-radius: 12px; padding: 36px 36px 32px; }
+.d5-contact .d5-eyebrow { margin-bottom: 14px; color: #2A9090; }
+.d5-contact h3 { font-family: 'Lora', serif; font-size: 28px; font-weight: 700; color: #0D2828; line-height: 1.4; margin-bottom: 16px; }
+.d5-contact p { font-family: 'Nunito', sans-serif; font-size: 18px; color: #2A4848; line-height: 1.8; margin-bottom: 16px; }
+.d5-contact p:last-of-type { margin-bottom: 28px; }
+.d5-links { display: flex; flex-direction: column; gap: 12px; }
+.d5-link { display: flex; align-items: center; gap: 14px; text-decoration: none; background: #EEF9F9; border: 1px solid #D8F0F0; border-radius: 10px; padding: 14px 18px; }
+.d5-link-icon { font-size: 20px; flex-shrink: 0; width: 28px; text-align: center; }
+.d5-link-label { font-family: 'Oswald', sans-serif; font-size: 10px; font-weight: 600; letter-spacing: 0.18em; color: #2A9090; text-transform: uppercase; margin-bottom: 2px; display: block; }
+.d5-link-action { font-family: 'Nunito', sans-serif; font-size: 16px; font-weight: 700; color: #0D2828; display: block; }
+
+
+@media (max-width: 600px) {
+  .d5-wrap { padding: 24px 16px 48px; }
+  .d5-stakes, .d5-action, .d5-mirror, .d5-join, .d5-contact { padding: 24px 20px; }
+  .d5-stakes h2, .d5-mirror h2, .d5-action h3, .d5-join h3, .d5-contact h3 { font-size: 24px; }
+}
+</style>
+</head>
+<body style="margin:0;padding:0;background:#F8FAFA;">
+<div class="d5-wrap">
+
+
+  <!-- CARD 1 — dark teal — the credibility payoff -->
+  <div class="d5-stakes">
+    <p class="d5-eyebrow">Day 5 — The Second Epiphany</p>
+    <h2>Four days of showing up just bought you something most people online never earn. Today is where you spend it.</h2>
+    <p>Think about what the last four days actually built. Not just videos. Not just a posting streak. Something quieter and more valuable than either of those. You built the specific kind of trust that only comes from watching someone do what they said they would do, more than once, on days that weren't easy.</p>
+    <p>The people who've been watching you aren't just viewers anymore. They're invested. They showed up four times for you and somewhere in that exchange a door opened that is only open right now, at this exact moment in the journey, for a very short window of time.</p>
+    <p>That door is permission. Permission to say something real. Something with an edge. Something that not everyone in your space is willing to put on record.</p>
+    <p>Four days of consistency just gave you a platform that most people spend years trying to build. They try to manufacture it with production value and posting schedules and hashtag strategies. You built it by showing up four times and being honest.</p>
+    <div class="d5-quote-dark">
+      <p>Don't walk through that door with something safe.</p>
+      <span>— David Bee</span>
+    </div>
+  </div>
+
+
+  <!-- CARD 2 — gold — what this video does -->
+  <div class="d5-action">
+    <p class="d5-eyebrow">What today's video is actually doing</p>
+    <h3>Today is the day you stop describing the journey and start standing for something. That shift is everything.</h3>
+    <p>The first four videos showed people who you are, where you come from, how you think, and that you don't quit when it gets ordinary. Today's video does something different. Today you hand the person watching a new way of seeing something they thought they already understood.</p>
+    <p>Not a tip. Not a lesson. A reframe. The kind that makes someone stop mid-scroll and say "wait." The kind that gets sent to someone specific by someone who watched it and immediately thought of a person who needed to hear it.</p>
+    <p>You have a conviction inside you that is completely unique to your experience, your failures, your observations. Today's script is built to pull that out and put it on screen in a way that lands with the weight of someone who has spent four days earning the right to say it.</p>
+    <p>Open the app. Pull up your Video 5 script. Read it once. Press record. Post it.</p>
+    <a href="https://coloradomastermind.onlinecoursehost.com/courses/contentchallenge" class="d5-btn" target="_blank">Open the App &rarr;</a>
+  </div>
+
+
+  <!-- CARD 3 — white bordered — cost of neutrality -->
+  <div class="d5-mirror">
+    <p class="d5-eyebrow">The cost of playing it safe today</p>
+    <h2>Neutrality feels like the careful choice. It isn't. It's just invisibility with a more comfortable name.</h2>
+    <p>Every day someone in your space publishes a loud, confident, slightly wrong take on something you actually understand deeply. And they're building an audience off it. Not since they're right. Since they showed up with a point of view and you didn't.</p>
+    <p>The people worth reaching aren't looking for someone who sees both sides of everything. They're looking for someone who has done the work, lived the experience, and arrived at a belief they're willing to put on record. That person is magnetic in a way that careful, measured, nobody-can-argue-with-this content never will be.</p>
+    <p>Four days of showing up gave you something rare. The audience in front of you right now is warmed up, invested, and genuinely ready to hear what you actually think. That combination doesn't come around often.</p>
+    <div class="d5-quote-light">
+      <p>Say the thing. The real one. The one you've been thinking about. Today is the day it belongs on camera.</p>
+      <span>— David Bee</span>
+    </div>
+  </div>
+
+
+  <div class="d5-divider"></div>
+
+
+  <!-- CARD 4 — white — still time to join -->
+  <div class="d5-join">
+    <p class="d5-eyebrow">Just finding this?</p>
+    <h3>Day 5 is not too late. The sequence is still open.</h3>
+    <p>This challenge runs on sequence, not schedule. Which means wherever you're starting from right now, the path is the same. Seven videos in order, at your pace, starting today. The app builds your scripts in minutes. The community is still going. The door is still open.</p>
+    <p><strong>Seven dollars. Seven videos. Your pace, your terms.</strong></p>
+    <a href="https://content.coloradomastermind.com/777challenge" class="d5-join-btn" target="_blank">Join the Challenge &rarr;</a>
+  </div>
+
+
+  <!-- CARD 5 — white — contact David Bee -->
+  <div class="d5-contact">
+    <p class="d5-eyebrow">David is here</p>
+    <h3>If something's not clicking... reach out. Seriously.</h3>
+    <p>Five days in, the friction looks different for everyone. Maybe the script isn't sitting right. Maybe you filmed it and you're not sure it landed. Maybe life just got in the way and you need someone to help you find your footing again.</p>
+    <p>Whatever it is, reaching out isn't admitting defeat. It's actually one of the most useful things you can do for this whole community. Every time someone tells me where this gets hard, that becomes the thing I fix for the next person who hits the same wall. You reaching out makes this better for people you'll never meet.</p>
+    <p>I'm here. Use it.</p>
+    <div class="d5-links">
+      <a href="https://calendly.com/davidbee" class="d5-link" target="_blank">
+        <span class="d5-link-icon">📅</span>
+        <div><span class="d5-link-label">Book a call</span><span class="d5-link-action">Pick a time on David's calendar</span></div>
+      </a>
+      <a href="https://m.me/davidbeeeee" class="d5-link" target="_blank">
+        <span class="d5-link-icon">💬</span>
+        <div><span class="d5-link-label">Messenger</span><span class="d5-link-action">DM David directly on Facebook</span></div>
+      </a>
+      <a href="mailto:contact@davidbee.me" class="d5-link">
+        <span class="d5-link-icon">📧</span>
+        <div><span class="d5-link-label">Email</span><span class="d5-link-action">contact@davidbee.me</span></div>
+      </a>
+    </div>
+  </div>
+
+
+</div>
+</body>
+</html>

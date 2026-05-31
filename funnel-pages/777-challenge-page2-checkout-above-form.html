@@ -1,0 +1,295 @@
+<!-- ═══════════════════════════════════════════════════════════
+     777 CHALLENGE — CHECKOUT PAGE (ABOVE FORM)
+     Colorado Mastermind · David Bee
+     Drop into a Systeme.io HTML block — place ABOVE the payment form.
+═══════════════════════════════════════════════════════════ -->
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&display=swap');
+
+.co-wrap {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 60px 24px 40px;
+  font-family: 'Nunito', sans-serif;
+  color: #0D2828;
+  background: #F8FAFA;
+}
+
+/* ── CONFIRMATION BADGE ── */
+.co-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(50,184,184,0.1);
+  border: 1px solid rgba(50,184,184,0.35);
+  border-radius: 40px;
+  padding: 8px 20px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #1E5C5C;
+  margin-bottom: 28px;
+}
+.co-badge-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: #32B8B8;
+  flex-shrink: 0;
+}
+
+/* ── HEADLINE ── */
+.co-h1 {
+  font-family: 'Lora', serif;
+  font-size: clamp(32px, 6vw, 54px);
+  font-weight: 700;
+  line-height: 1.15;
+  color: #0D2828;
+  margin-bottom: 14px;
+}
+.co-h1 em {
+  font-style: italic;
+  color: #2A9090;
+}
+.co-sub {
+  font-size: 18px;
+  color: #2A4848;
+  line-height: 1.75;
+  margin-bottom: 40px;
+}
+
+/* ── WHAT YOU'RE GETTING CARD ── */
+.co-getting {
+  background: #EEF9F9;
+  border: 1px solid #D8F0F0;
+  border-left: 4px solid #32B8B8;
+  border-radius: 14px;
+  padding: 32px 36px;
+  margin-bottom: 32px;
+}
+.co-getting-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #2A9090;
+  margin-bottom: 18px;
+  display: block;
+}
+.co-getting-items {
+  list-style: none;
+  padding: 0; margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.co-getting-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  font-size: 18px;
+  color: #1A3030;
+  line-height: 1.8;
+}
+.co-getting-check {
+  color: #32B8B8;
+  font-weight: 700;
+  font-size: 18px;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+.co-getting-item strong { color: #0D2828; }
+.co-getting-value {
+  font-family: 'Oswald', sans-serif;
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  color: #2A9090;
+  text-transform: uppercase;
+  margin-left: 6px;
+  opacity: 0.8;
+}
+
+/* ── IF ALL THIS DID WAS ── */
+.co-ifall {
+  background: #0D2828;
+  border-radius: 14px;
+  padding: 36px;
+  margin-bottom: 32px;
+}
+.co-ifall-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #68C8C8;
+  margin-bottom: 20px;
+  display: block;
+}
+.co-ifall-item {
+  font-family: 'Nunito', sans-serif;
+  font-size: 18px;
+  color: #A8DEDE;
+  line-height: 1.8;
+  margin-bottom: 16px;
+  padding-left: 20px;
+  border-left: 2px solid rgba(50,184,184,0.3);
+}
+.co-ifall-item:last-of-type { margin-bottom: 0; }
+.co-ifall-item strong { color: #fff; }
+.co-ifall-close {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 20px;
+  color: #68C8C8;
+  line-height: 1.6;
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid rgba(50,184,184,0.2);
+  text-align: center;
+}
+
+/* ── PRICE DISPLAY ── */
+.co-price-wrap {
+  text-align: center;
+  margin-bottom: 12px;
+}
+.co-price-label {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: #7AAEAE;
+  display: block;
+  margin-bottom: 8px;
+}
+.co-price-was {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 22px;
+  color: #7AAEAE;
+  text-decoration: line-through;
+  opacity: 0.6;
+}
+.co-price-now {
+  font-family: 'Permanent Marker', cursive;
+  font-size: 80px;
+  font-weight: 900;
+  color: #32B8B8;
+  line-height: 1;
+  display: block;
+  margin: 4px 0 8px;
+}
+.co-price-note {
+  font-size: 14px;
+  color: #7AAEAE;
+}
+
+/* ── DIVIDER ── */
+.co-divider {
+  width: 100%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, #D8E4E8, transparent);
+  margin: 32px 0;
+}
+
+/* ── HEADING ABOVE FORM ── */
+.co-form-head {
+  text-align: center;
+  margin-bottom: 28px;
+}
+.co-form-eyebrow {
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  color: #2A9090;
+  display: block;
+  margin-bottom: 12px;
+}
+.co-form-h2 {
+  font-family: 'Lora', serif;
+  font-size: clamp(24px, 4vw, 36px);
+  font-weight: 700;
+  color: #0D2828;
+  line-height: 1.25;
+}
+.co-form-h2 em {
+  font-style: italic;
+  color: #2A9090;
+}
+
+@media (max-width: 600px) {
+  .co-wrap { padding: 40px 16px 32px; }
+  .co-getting, .co-ifall { padding: 24px 20px; }
+  .co-price-now { font-size: 64px; }
+}
+</style>
+
+<div class="co-wrap">
+
+  <!-- CONFIRMATION BADGE -->
+  <div>
+    <span class="co-badge">
+      <span class="co-badge-dot"></span>
+      Almost there · Spot reserved
+    </span>
+  </div>
+
+  <!-- HEADLINE -->
+  <h1 class="co-h1">
+    You're one step away from<br>
+    <em>your first video being done.</em>
+  </h1>
+  <p class="co-sub">You just told us you're ready. Here's everything that comes with that decision.</p>
+
+  <!-- WHAT YOU'RE GETTING -->
+  <div class="co-getting">
+    <span class="co-getting-eyebrow">What you're getting today</span>
+    <ul class="co-getting-items">
+      <li class="co-getting-item">
+        <span class="co-getting-check">✓</span>
+        <span><strong>The 7-Day Video Challenge</strong><br>Seven videos, done at your pace, with a group doing the same thing on the same timeline.</span>
+      </li>
+      <li class="co-getting-item">
+        <span class="co-getting-check">✓</span>
+        <span><strong>Private Facebook Community</strong><br>Your first real audience. Everyone inside is watching, sharing, and engaging with your videos from day one.</span>
+      </li>
+      <li class="co-getting-item">
+        <span class="co-getting-check">★</span>
+        <span><strong>SeenInSeven: Your AI Story Starter</strong> <span class="co-getting-value">$311 value · free with the challenge</span><br>Interviews you, finds your actual voice, and writes all 7 custom scripts before you ever pick up your phone. Your coupon arrives the moment you join.</span>
+      </li>
+    </ul>
+  </div>
+
+  <!-- IF ALL THIS DID WAS -->
+  <div class="co-ifall">
+    <span class="co-ifall-eyebrow">Think about it this way</span>
+    <p class="co-ifall-item">If all this challenge did was get you to post your <strong>first video</strong> and prove to yourself that you actually can do this... would it be worth $7?</p>
+    <p class="co-ifall-item">If all it did was make sure you <strong>never stare at a blank screen</strong> wondering what to say... since your scripts are already written and waiting... would it be worth $7?</p>
+    <p class="co-ifall-item">If all it did was put you in a room full of people doing the exact same thing so you <strong>never have to figure this out alone</strong>... would it be worth $7?</p>
+    <div class="co-ifall-close">Any one of those things is worth more than $7.<br>You're getting all three.</div>
+  </div>
+
+  <!-- PRICE -->
+  <div class="co-price-wrap">
+    <span class="co-price-label">Your total today</span>
+    <span class="co-price-now">$7</span>
+    <span class="co-price-note">One time &nbsp;·&nbsp; No subscription &nbsp;·&nbsp; No recurring fees</span>
+    <span class="co-price-note" style="margin-top:6px;display:block;">SeenInSeven included free &nbsp;·&nbsp; $311 retail value</span>
+  </div>
+
+  <div class="co-divider"></div>
+
+  <!-- HEADING ABOVE THE PAYMENT FORM -->
+  <div class="co-form-head">
+    <span class="co-form-eyebrow">Complete your registration</span>
+    <h2 class="co-form-h2">Enter your details below<br>and <em>let's get started.</em></h2>
+  </div>
+
+  <!-- ▼▼▼ DROP SYSTEME PAYMENT FORM BLOCK HERE ▼▼▼ -->
+
+</div>

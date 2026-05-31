@@ -1,0 +1,1632 @@
+<!-- BWB MVO Script Builder v3.1 -->
+
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono&display=swap');
+#p2-wizard {
+  --bg: #111827;
+  --card: #1e2d40;
+  --card2: #243448;
+  --border: #2e4460;
+  --cream: #f0f9ff;
+  --soft: #bae6fd;
+  --muted: #7eb8d4;
+  --teal: #2dd4bf;
+  --cyan: #67e8f9;
+  --green: #4ade80;
+  background: var(--bg);
+  color: var(--cream);
+  font-family: 'Nunito', sans-serif;
+  min-height: 100vh;
+  padding: 72px 24px 88px;
+  position: relative;
+  overflow: hidden;
+}
+
+#p2-wizard::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background:
+    radial-gradient(ellipse 100% 60% at 15% 5%, rgba(96,165,250,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 70% 50% at 85% 85%, rgba(45,212,191,0.06) 0%, transparent 55%);
+  pointer-events: none;
+  z-index: 0;
+}
+
+#p2-wizard .pw-inner {
+  max-width: 640px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+/* ---- Returning banner ---- */
+#p2-wizard .pw-banner {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 16px 20px;
+  margin-bottom: 28px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--soft);
+}
+#p2-wizard .pw-banner-btns {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+#p2-wizard .pw-banner-btns button {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  color: var(--cream);
+  padding: 6px 14px;
+  cursor: pointer;
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  transition: all 0.2s;
+}
+#p2-wizard .pw-banner-btns button.pw-btn-resume {
+  background: var(--teal);
+  border-color: var(--teal);
+  color: #0f172a;
+  font-weight: 600;
+}
+#p2-wizard .pw-banner-btns button:hover { opacity: 0.85; }
+
+/* ---- Wizard card ---- */
+#p2-wizard .wizard-card {
+  background: var(--card);
+  border: 1.5px solid var(--border);
+  border-radius: 16px;
+  padding: 44px 40px;
+  position: relative;
+  overflow: hidden;
+}
+#p2-wizard .wizard-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0;
+  width: 3px; height: 100%;
+  background: linear-gradient(180deg, var(--teal), var(--cyan));
+  z-index: 1;
+}
+/* Progress bar on card selection */
+#p2-wizard .wizard-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg, var(--teal), var(--cyan));
+  transition: width 1.1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+#p2-wizard .wizard-card.pw-loading::after {
+  width: 100%;
+}
+
+@media (max-width: 600px) {
+  #p2-wizard .wizard-card { padding: 32px 24px; }
+}
+
+/* ---- Screens ---- */
+#p2-wizard .pw-screen { display: none; }
+#p2-wizard .pw-screen.active {
+  display: block;
+  animation: pwFadeIn 0.22s ease forwards;
+}
+
+/* ---- Counter ---- */
+#p2-wizard .pw-counter {
+  font-family: 'Space Mono', monospace;
+  font-size: 12px;
+  color: var(--muted);
+  letter-spacing: 0.05em;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+#p2-wizard .pw-count-num { color: var(--teal); font-weight: 700; }
+
+/* ---- Typography ---- */
+#p2-wizard .pw-headline {
+  font-family: 'Lora', serif;
+  font-size: clamp(38px, 9vw, 58px);
+  letter-spacing: 0.03em;
+  color: var(--cream);
+  line-height: 1;
+  margin: 0 0 20px;
+}
+#p2-wizard .pw-question {
+  font-family: 'Nunito', sans-serif;
+  font-size: clamp(20px, 4vw, 26px);
+  font-weight: 600;
+  color: var(--cream);
+  line-height: 1.3;
+  margin: 0 0 28px;
+}
+#p2-wizard .pw-q-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+  text-transform: uppercase;
+  margin: 0 0 12px;
+}
+#p2-wizard .pw-q-sub {
+  font-size: 15px;
+  color: var(--muted);
+  margin: -16px 0 24px;
+}
+#p2-wizard .pw-intro-body {
+  font-size: 18px;
+  color: var(--soft);
+  line-height: 1.6;
+  margin: 0 0 12px;
+}
+#p2-wizard .pw-intro-sub {
+  font-size: 14px;
+  color: var(--muted);
+  margin: 0 0 36px;
+}
+
+/* ---- Primary button ---- */
+#p2-wizard .pw-btn-primary {
+  display: block;
+  width: 100%;
+  background: linear-gradient(135deg, var(--teal), var(--cyan));
+  color: #0f172a;
+  font-family: 'Lora', serif;
+  font-size: 22px;
+  letter-spacing: 0.08em;
+  border: none;
+  border-radius: 12px;
+  padding: 18px 24px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-align: center;
+}
+#p2-wizard .pw-btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(45,212,191,0.3);
+}
+#p2-wizard .pw-btn-primary:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+}
+
+/* ---- Choice cards ---- */
+#p2-wizard .pw-cards {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+#p2-wizard .pw-cards-q1 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+@media (max-width: 500px) {
+  #p2-wizard .pw-cards,
+  #p2-wizard .pw-cards-q1 { grid-template-columns: 1fr; }
+}
+#p2-wizard .choice-card {
+  background: var(--card2);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 16px;
+  cursor: pointer;
+  transition: border-color 0.2s, transform 0.2s, background 0.2s, box-shadow 0.2s;
+  text-align: center;
+}
+#p2-wizard .pw-cards-q1 .choice-card { padding: 28px 20px; }
+#p2-wizard .choice-card:hover {
+  border-color: var(--teal);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(45,212,191,0.15);
+}
+#p2-wizard .choice-card.selecting {
+  border-color: var(--teal);
+  background: rgba(45,212,191,0.12);
+  box-shadow: 0 0 0 2px rgba(45,212,191,0.25);
+  transform: scale(0.98);
+}
+#p2-wizard .cc-icon {
+  font-size: 28px;
+  margin-bottom: 10px;
+}
+#p2-wizard .pw-cards-q1 .cc-icon { font-size: 36px; margin-bottom: 14px; }
+#p2-wizard .cc-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--soft);
+  line-height: 1.4;
+}
+#p2-wizard .pw-cards-q1 .cc-text { font-size: 16px; }
+
+/* ---- Say it your own way ---- */
+#p2-wizard .pw-own-way { margin-top: 8px; }
+#p2-wizard .pw-own-link {
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.2s;
+}
+#p2-wizard .pw-own-link:hover { color: var(--soft); }
+#p2-wizard .pw-own-wrap { margin-top: 12px; }
+#p2-wizard .pw-own-textarea {
+  width: 100%;
+  background: var(--card2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  color: var(--cream);
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  padding: 14px 16px;
+  resize: vertical;
+  min-height: 80px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#p2-wizard .pw-own-textarea:focus { border-color: var(--teal); }
+#p2-wizard .pw-own-textarea::placeholder { color: var(--muted); }
+#p2-wizard .pw-own-confirm {
+  display: inline-block;
+  margin-top: 10px;
+  background: var(--teal);
+  color: #0f172a;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+#p2-wizard .pw-own-confirm:hover { opacity: 0.9; transform: translateY(-1px); }
+
+/* ---- Name input ---- */
+#p2-wizard .pw-name-input {
+  display: block;
+  width: 100%;
+  background: var(--card2);
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  color: var(--cream);
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+  box-sizing: border-box;
+  outline: none;
+  transition: border-color 0.2s;
+}
+#p2-wizard .pw-name-input:focus { border-color: var(--teal); }
+#p2-wizard .pw-name-input::placeholder { color: var(--muted); }
+#p2-wizard .pw-build-note {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  margin-top: 14px;
+}
+
+/* ---- Loading ---- */
+#p2-wizard .pw-loading-card {
+  text-align: center;
+  padding: 64px 40px;
+}
+#p2-wizard .pw-loader-ring {
+  width: 52px;
+  height: 52px;
+  border: 3px solid var(--border);
+  border-top-color: var(--teal);
+  border-radius: 50%;
+  animation: pwSpin 0.85s linear infinite;
+  margin: 0 auto 28px;
+}
+@keyframes pwSpin { to { transform: rotate(360deg); } }
+#p2-wizard .pw-loading-title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--cream);
+  margin: 0 0 24px;
+}
+#p2-wizard .pw-reflections { min-height: 140px; }
+#p2-wizard .pw-reflection-line {
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--soft);
+  margin: 0 0 12px;
+  opacity: 0;
+  animation: pwFadeIn 0.6s ease forwards;
+}
+@keyframes pwFadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---- Result card ---- */
+#p2-wizard .pw-result-card { padding: 44px 40px; }
+@media (max-width: 600px) { #p2-wizard .pw-result-card { padding: 32px 24px; } }
+
+#p2-wizard .pw-result-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 28px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+#p2-wizard .pw-result-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.12em;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin: 0;
+}
+
+/* ---- Copy button ---- */
+#p2-wizard .pw-copy-btn {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--teal);
+  background: rgba(45,212,191,0.08);
+  border: 1px solid rgba(45,212,191,0.3);
+  border-radius: 8px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+#p2-wizard .pw-copy-btn:hover {
+  background: rgba(45,212,191,0.16);
+  border-color: var(--teal);
+}
+#p2-wizard .pw-copy-btn.copied {
+  color: var(--green);
+  background: rgba(74,222,128,0.1);
+  border-color: rgba(74,222,128,0.35);
+}
+
+/* ---- View toggle ---- */
+#p2-wizard .pw-view-toggle {
+  display: flex;
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 3px;
+  gap: 3px;
+}
+#p2-wizard .pw-toggle-btn {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--muted);
+  background: none;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 14px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+#p2-wizard .pw-toggle-btn.active {
+  background: var(--teal);
+  color: #0f172a;
+  font-weight: 600;
+}
+
+/* ---- Script output ---- */
+#p2-wizard .pw-script-output {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+}
+#p2-wizard .pw-beat { margin-bottom: 28px; }
+#p2-wizard .pw-beat:last-child { margin-bottom: 0; }
+
+/* Beat header: label + locked regen button */
+#p2-wizard .pw-beat-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+#p2-wizard .pw-beat-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin: 0;
+}
+#p2-wizard .pw-regen-btn {
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  color: var(--muted);
+  background: rgba(126,184,212,0.06);
+  border: 1px solid rgba(126,184,212,0.35);
+  border-radius: 6px;
+  padding: 3px 10px;
+  cursor: not-allowed;
+  opacity: 0.7;
+  letter-spacing: 0.02em;
+}
+
+/* ---- Expanded intro (pw-s0) ---- */
+#p2-wizard .pw-intro-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 36px 0 32px;
+}
+#p2-wizard .pw-intro-section-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.18em;
+  color: var(--teal);
+  text-transform: uppercase;
+  margin: 0 0 20px;
+}
+#p2-wizard .pw-intro-copy {
+  font-size: 15px;
+  line-height: 1.75;
+  color: var(--soft);
+  margin: 0 0 18px;
+}
+#p2-wizard .pw-intro-copy strong {
+  color: var(--cream);
+  font-weight: 600;
+}
+#p2-wizard .pw-intro-features {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 8px;
+}
+#p2-wizard .pw-intro-feature {
+  display: flex;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 22px;
+}
+#p2-wizard .pw-feature-num {
+  flex-shrink: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--teal), var(--cyan));
+  color: #111827;
+  font-family: 'Space Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 2px;
+}
+#p2-wizard .pw-feature-body {}
+#p2-wizard .pw-feature-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cream);
+  margin: 0 0 4px;
+  letter-spacing: 0.01em;
+}
+#p2-wizard .pw-feature-desc {
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--muted);
+  margin: 0;
+}
+#p2-wizard .pw-intro-videos-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 20px 0 8px;
+}
+@media (max-width: 480px) {
+  #p2-wizard .pw-intro-videos-grid { grid-template-columns: 1fr; }
+}
+#p2-wizard .pw-intro-video-chip {
+  background: var(--card2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+}
+#p2-wizard .pw-intro-video-chip .pvc-num {
+  font-family: 'Lora', serif;
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  color: var(--teal);
+  margin: 0 0 4px;
+}
+#p2-wizard .pw-intro-video-chip .pvc-desc {
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--muted);
+  margin: 0;
+}
+#p2-wizard .pw-intro-callout {
+  background: linear-gradient(135deg, rgba(45,212,191,0.08), rgba(103,232,249,0.06));
+  border: 1px solid rgba(45,212,191,0.25);
+  border-radius: 12px;
+  padding: 22px 24px;
+  margin: 28px 0 0;
+}
+#p2-wizard .pw-intro-callout p {
+  font-size: 14.5px;
+  line-height: 1.7;
+  color: var(--soft);
+  margin: 0;
+}
+#p2-wizard .pw-intro-callout p strong {
+  color: var(--cream);
+}
+
+#p2-wizard .pw-beat-text {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--cream);
+  line-height: 1.7;
+  margin: 0;
+}
+#p2-wizard .pw-clean-para {
+  font-family: 'Lora', serif;
+  font-style: italic;
+  font-size: 17px;
+  color: var(--cream);
+  line-height: 1.7;
+  margin: 0 0 20px;
+}
+#p2-wizard .pw-clean-para:last-child { margin-bottom: 0; }
+
+/* ---- Divider ---- */
+#p2-wizard .pw-divider {
+  border: none;
+  border-top: 1px solid var(--border);
+  margin: 32px 0;
+}
+
+/* ---- CTA ---- */
+#p2-wizard .result-cta { text-align: center; margin-bottom: 20px; }
+#p2-wizard .btn-cta {
+  display: inline-block;
+  background: linear-gradient(135deg, #16a34a, #22c55e);
+  color: #fff;
+  font-family: 'Lora', serif;
+  font-size: 24px;
+  letter-spacing: 0.08em;
+  text-decoration: none;
+  border-radius: 12px;
+  padding: 20px 44px;
+  transition: all 0.25s;
+  box-shadow: 0 4px 24px rgba(34,197,94,0.25);
+}
+#p2-wizard .btn-cta:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 32px rgba(34,197,94,0.35);
+}
+#p2-wizard .cta-note {
+  font-size: 13px;
+  color: var(--muted);
+  margin: 12px 0 0;
+}
+
+/* ---- Social proof ---- */
+#p2-wizard .social-proof {
+  text-align: center;
+  font-size: 14px;
+  color: var(--muted);
+  margin: 20px 0 10px;
+}
+#p2-wizard .social-proof strong { color: var(--soft); }
+
+/* ---- Momentum ---- */
+#p2-wizard .momentum-note {
+  text-align: center;
+  font-size: 13px;
+  color: var(--muted);
+  font-style: italic;
+  margin: 0 0 28px;
+}
+
+/* ---- Video tracker ---- */
+#p2-wizard .video-tracker {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+#p2-wizard .vt-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  min-width: 56px;
+}
+#p2-wizard .vt-item.done  { background: rgba(74,222,128,0.1); border-color: rgba(74,222,128,0.4); }
+#p2-wizard .vt-item.next  { background: rgba(45,212,191,0.1); border-color: var(--teal); }
+#p2-wizard .vt-item.locked { opacity: 0.4; }
+#p2-wizard .vt-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.06em;
+  color: var(--muted);
+  white-space: nowrap;
+}
+#p2-wizard .vt-status { font-size: 15px; }
+
+/* ---- Rebuild ---- */
+#p2-wizard .pw-rebuild { text-align: center; margin-top: 28px; }
+#p2-wizard .pw-rebuild a {
+  font-size: 13px;
+  color: var(--muted);
+  text-decoration: none;
+}
+#p2-wizard .pw-rebuild a:hover { color: var(--soft); }
+</style>
+
+<div id="p2-wizard">
+  <div class="pw-inner">
+
+    <!-- Returning user banner -->
+    <div id="pw-returning" style="display:none;">
+      <div class="pw-banner">
+        <span>Welcome back. Your answers are still here.</span>
+        <div class="pw-banner-btns">
+          <button class="pw-btn-resume" onclick="pwRestoreSession()">Jump to my script</button>
+          <button onclick="pwDismissBanner()">Start fresh</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Screen 0: Intro -->
+    <div class="pw-screen active" id="pw-s0">
+      <div class="wizard-card">
+        <div class="pw-counter"><span class="pw-count-num">2,847</span> scripts built and counting</div>
+        <h1 class="pw-headline">Here's what you're actually building.</h1>
+        <p class="pw-intro-body">Answer 4 quick questions. We'll write your Video 1 guide before you leave this page.</p>
+        <p class="pw-intro-sub">Results appear instantly. Nothing gets emailed.</p>
+        <button class="pw-btn-primary" onclick="pwShowScreen('pw-s1')">BUILD MY SCRIPT</button>
+
+        <hr class="pw-intro-divider">
+
+        <p class="pw-intro-section-label">What this actually does</p>
+        <p class="pw-intro-copy">A lot of people think the hardest part of making video is showing up on camera. But that is not why most videos disappear into the void. They fail because they are missing a specific structure that works on the human brain from the first second to the last.</p>
+        <p class="pw-intro-copy">This is not a template. It is not a fill-in-the-blank script. It is a sequenced story architecture built from your actual words, your real experience, and the exact people you are here to reach. <strong>No two scripts produced here are ever the same.</strong></p>
+        <p class="pw-intro-copy">Your Video 1 is doing seven things at once that most creators never figure out, even after years of posting.</p>
+
+        <ul class="pw-intro-features">
+          <li class="pw-intro-feature">
+            <div class="pw-feature-num">1</div>
+            <div class="pw-feature-body">
+              <p class="pw-feature-name">The Audience Signal</p>
+              <p class="pw-feature-desc">Your opening line is engineered to tell the platform exactly who to show this to, while simultaneously telling your ideal viewer "this person is for me." One sentence. Two jobs done.</p>
+            </div>
+          </li>
+          <li class="pw-intro-feature">
+            <div class="pw-feature-num">2</div>
+            <div class="pw-feature-body">
+              <p class="pw-feature-name">The Empathy Lock</p>
+              <p class="pw-feature-desc">Before you teach, sell, or share anything, your viewer feels genuinely understood. This is the psychological moment that turns a stranger into someone who wants to keep watching.</p>
+            </div>
+          </li>
+          <li class="pw-intro-feature">
+            <div class="pw-feature-num">3</div>
+            <div class="pw-feature-body">
+              <p class="pw-feature-name">The Mirror Moment</p>
+              <p class="pw-feature-desc">Your story is told in a way where your viewer sees themselves in it. Not as a backdrop. As the main character. You become the guide who has already walked the path they are standing at the beginning of.</p>
+            </div>
+          </li>
+          <li class="pw-intro-feature">
+            <div class="pw-feature-num">4</div>
+            <div class="pw-feature-body">
+              <p class="pw-feature-name">The Contrast Shift</p>
+              <p class="pw-feature-desc">One specific turning point in your story creates a subconscious "I want that" response. There is no pitch. There is no ask. The desire forms on its own because of the sequence.</p>
+            </div>
+          </li>
+          <li class="pw-intro-feature">
+            <div class="pw-feature-num">5</div>
+            <div class="pw-feature-body">
+              <p class="pw-feature-name">The Trust Layer</p>
+              <p class="pw-feature-desc">Your script quietly establishes that you have lived what you are talking about, without bragging, without credentials, without needing anyone to take your word for it. It shows.</p>
+            </div>
+          </li>
+          <li class="pw-intro-feature">
+            <div class="pw-feature-num">6</div>
+            <div class="pw-feature-body">
+              <p class="pw-feature-name">The Open Loop</p>
+              <p class="pw-feature-desc">Your closing line is designed to make watching your next video feel like the natural next thought, not a decision someone has to talk themselves into. It plants the return before they leave.</p>
+            </div>
+          </li>
+          <li class="pw-intro-feature">
+            <div class="pw-feature-num">7</div>
+            <div class="pw-feature-body">
+              <p class="pw-feature-name">The Relationship Primer</p>
+              <p class="pw-feature-desc">Hidden in the structure is a pattern that begins building a real one-to-one relationship with your viewer from the very first watch. Not a fanbase. Not followers. People who genuinely feel like they know you.</p>
+            </div>
+          </li>
+        </ul>
+
+        <hr class="pw-intro-divider">
+
+        <p class="pw-intro-section-label">Videos 2 through 7</p>
+        <p class="pw-intro-copy">Video 1 opens the door. Videos 2 through 7 build the room people want to stay in.</p>
+        <p class="pw-intro-copy">Each video in the series goes deeper. Together they extract your unique way of seeing the world, make the gap between where your audience is and where they want to be undeniably clear, and position what you offer as the logical and irresistible next step. Even if you do not have a product or service yet.</p>
+
+        <div class="pw-intro-disclaimer" style="background: rgba(45,212,191,0.08); border: 1px solid rgba(45,212,191,0.2); border-radius: 12px; padding: 24px; margin-bottom: 24px; font-size: 16px; line-height: 1.7; color: var(--soft);">
+          <p style="margin-bottom: 12px; color: var(--cream);"><strong>About Your Scripts:</strong></p>
+          <p><strong>No two scripts will ever be quite the same.</strong> This preview shows you how the system works. There's no custom AI involved... it's just a simple structure that any creator can use. In the full challenge, you'll fill in your own words, your real experience, and your specific audience to create content that's uniquely yours.</p>
+          <p style="margin-top: 12px; margin-bottom: 0;"><em style="color: var(--muted); font-style: italic;">Note: Scripts in this free guide will share similar structural elements because they all follow the same psychological structure. But inside the full challenge, you'll receive custom refinements and personalization that make your script one-of-a-kind.</em></p>
+        </div>
+
+        <div class="pw-intro-videos-grid">
+          <div class="pw-intro-video-chip">
+            <p class="pvc-num">VIDEO 2</p>
+            <p class="pvc-desc"><strong>Your worldview.</strong> The insight only you can give. This video reveals the unique lens through which you see the world... your particular way of understanding a problem, opportunity, or truth. It establishes authority without credentials.</p>
+          </div>
+          <div class="pw-intro-video-chip">
+            <p class="pvc-num">VIDEO 3</p>
+            <p class="pvc-desc"><strong>The gap.</strong> Why your audience is stuck and what that is costing them emotionally, financially, or in terms of opportunity. This video creates urgency by making the status quo uncomfortable.</p>
+          </div>
+          <div class="pw-intro-video-chip">
+            <p class="pvc-num">VIDEO 4</p>
+            <p class="pvc-desc"><strong>Your method.</strong> A proven approach, demonstrated live, not just theoretically described. This video shows you can actually deliver on what Video 1 promised. It is proof. Action. Real results.</p>
+          </div>
+          <div class="pw-intro-video-chip">
+            <p class="pvc-num">VIDEO 5</p>
+            <p class="pvc-desc"><strong>The natural offer.</strong> Built on four videos of trust and credibility. At this point, the pitch is almost unnecessary because your viewer has already decided they need what you are offering.</p>
+          </div>
+          <div class="pw-intro-video-chip">
+            <p class="pvc-num">VIDEO 6</p>
+            <p class="pvc-desc"><strong>Social proof through story.</strong> Either a real story of someone you have helped, or your own proof of principle. This is where the viewer shifts from &quot;this could work for me&quot; to &quot;this is working for people like me.&quot;</p>
+          </div>
+          <div class="pw-intro-video-chip">
+            <p class="pvc-num">VIDEO 7</p>
+            <p class="pvc-desc"><strong>The seal.</strong> This is where the relationship becomes real and permanent. Your viewer has moved from stranger to community member. The next chapter of their journey begins.</p>
+          </div>
+        </div>
+
+        <div class="pw-intro-callout">
+          <p>By the end of this series, your audience does not feel like subscribers. They feel like friends who chose to be there. <strong>That is not a side effect of good content. That is the design.</strong> And it all starts with four questions and the words only you have.</p>
+        </div>
+
+        <hr class="pw-intro-divider">
+
+        <button class="pw-btn-primary" onclick="pwShowScreen('pw-s1')" style="width:100%">LET'S BUILD MY VIDEO 1 SCRIPT</button>
+        <p class="pw-intro-sub" style="text-align:center;margin-top:14px;">Results appear instantly. Nothing gets emailed.</p>
+      </div>
+    </div>
+
+    <!-- Q1: Level setter -->
+    <div class="pw-screen" id="pw-s1">
+      <div class="wizard-card">
+        <p class="pw-q-label">Question 1 of 4</p>
+        <h2 class="pw-question">Have you ever posted short-form video online?</h2>
+        <div class="pw-cards-q1">
+          <div class="choice-card" onclick="pwSelectLevel('yes', this)">
+            <div class="cc-icon">📱</div>
+            <div class="cc-text">Yes... I've posted before</div>
+          </div>
+          <div class="choice-card" onclick="pwSelectLevel('no', this)">
+            <div class="cc-icon">🎬</div>
+            <div class="cc-text">No... this would be my first</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 Level 1: What's been holding you back? -->
+    <div class="pw-screen" id="pw-s2-l1">
+      <div class="wizard-card">
+        <p class="pw-q-label">Question 2 of 4</p>
+        <h2 class="pw-question">What's been holding you back from your first video?</h2>
+        <div class="pw-cards" id="pw-cards-q2l1"></div>
+        <div class="pw-own-way">
+          <a href="#" class="pw-own-link" onclick="pwToggleOwn(event,'pw-own-q2l1')">Say it your own way ↓</a>
+          <div class="pw-own-wrap" id="pw-own-q2l1" style="display:none;">
+            <textarea class="pw-own-textarea" id="pw-own-text-q2l1" placeholder="Describe what's actually been in your way..."></textarea>
+            <button class="pw-own-confirm" onclick="pwConfirmOwn('q2','pw-own-text-q2l1','pw-s3-l1')">Use this</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q2 Level 2: What topic does your content live in? (village/topic) -->
+    <div class="pw-screen" id="pw-s2-l2">
+      <div class="wizard-card">
+        <p class="pw-q-label">Question 2 of 4</p>
+        <h2 class="pw-question">What does your audience come to you for?</h2>
+        <div class="pw-cards" id="pw-cards-q2l2"></div>
+        <div class="pw-own-way">
+          <a href="#" class="pw-own-link" onclick="pwToggleOwn(event,'pw-own-q2l2')">Say it your own way ↓</a>
+          <div class="pw-own-wrap" id="pw-own-q2l2" style="display:none;">
+            <textarea class="pw-own-textarea" id="pw-own-text-q2l2" placeholder="What topic or niche does your content focus on?"></textarea>
+            <button class="pw-own-confirm" onclick="pwConfirmOwn('q2','pw-own-text-q2l2','pw-s3-l2')">Use this</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 Level 1: What made today the day? -->
+    <div class="pw-screen" id="pw-s3-l1">
+      <div class="wizard-card">
+        <p class="pw-q-label">Question 3 of 4</p>
+        <h2 class="pw-question">What made you decide today is the day?</h2>
+        <div class="pw-cards" id="pw-cards-q3l1"></div>
+        <div class="pw-own-way">
+          <a href="#" class="pw-own-link" onclick="pwToggleOwn(event,'pw-own-q3l1')">Say it your own way ↓</a>
+          <div class="pw-own-wrap" id="pw-own-q3l1" style="display:none;">
+            <textarea class="pw-own-textarea" id="pw-own-text-q3l1" placeholder="What actually pushed you to start today?"></textarea>
+            <button class="pw-own-confirm" onclick="pwConfirmOwn('q3','pw-own-text-q3l1','pw-s4-l1')">Use this</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q3 Level 2: What's the biggest challenge your audience faces? (was Q2) -->
+    <div class="pw-screen" id="pw-s3-l2">
+      <div class="wizard-card">
+        <p class="pw-q-label">Question 3 of 4</p>
+        <h2 class="pw-question">What's the biggest challenge your audience is dealing with?</h2>
+        <div class="pw-cards" id="pw-cards-q3l2"></div>
+        <div class="pw-own-way">
+          <a href="#" class="pw-own-link" onclick="pwToggleOwn(event,'pw-own-q3l2')">Say it your own way ↓</a>
+          <div class="pw-own-wrap" id="pw-own-q3l2" style="display:none;">
+            <textarea class="pw-own-textarea" id="pw-own-text-q3l2" placeholder="Describe the main challenge your audience faces..."></textarea>
+            <button class="pw-own-confirm" onclick="pwConfirmOwn('q3','pw-own-text-q3l2','pw-s4-l2')">Use this</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q4 Level 1: What do you want to make videos about? (topic/village) -->
+    <div class="pw-screen" id="pw-s4-l1">
+      <div class="wizard-card">
+        <p class="pw-q-label">Question 4 of 4</p>
+        <h2 class="pw-question">What do you want to make videos about?</h2>
+        <div class="pw-cards" id="pw-cards-q4l1"></div>
+        <div class="pw-own-way">
+          <a href="#" class="pw-own-link" onclick="pwToggleOwn(event,'pw-own-q4l1')">Say it your own way ↓</a>
+          <div class="pw-own-wrap" id="pw-own-q4l1" style="display:none;">
+            <textarea class="pw-own-textarea" id="pw-own-text-q4l1" placeholder="What topic or niche do you want to focus on?"></textarea>
+            <button class="pw-own-confirm" onclick="pwConfirmOwn('q4','pw-own-text-q4l1','pw-s5')">Use this</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q4 Level 2: What makes you the right person? (authority... was Q3) -->
+    <div class="pw-screen" id="pw-s4-l2">
+      <div class="wizard-card">
+        <p class="pw-q-label">Question 4 of 4</p>
+        <h2 class="pw-question">What makes you the right person to help them?</h2>
+        <div class="pw-cards" id="pw-cards-q4l2"></div>
+        <div class="pw-own-way">
+          <a href="#" class="pw-own-link" onclick="pwToggleOwn(event,'pw-own-q4l2')">Say it your own way ↓</a>
+          <div class="pw-own-wrap" id="pw-own-q4l2" style="display:none;">
+            <textarea class="pw-own-textarea" id="pw-own-text-q4l2" placeholder="What have you done, built, or lived through that gives you real insight here?"></textarea>
+            <button class="pw-own-confirm" onclick="pwConfirmOwn('q4','pw-own-text-q4l2','pw-s5')">Use this</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Q5: Name -->
+    <div class="pw-screen" id="pw-s5">
+      <div class="wizard-card">
+        <p class="pw-q-label">Almost done</p>
+        <h2 class="pw-question">What's your first name?</h2>
+        <p class="pw-q-sub">We'll put it right in the script.</p>
+        <input type="text" id="pw-name-input" class="pw-name-input" placeholder="Your first name..." oninput="pwCheckName()" onkeydown="if(event.key==='Enter'&&this.value.trim())pwBuildScript()">
+        <button class="pw-btn-primary" id="pw-build-btn" onclick="pwBuildScript()" disabled>BUILD MY SCRIPT</button>
+        <p class="pw-build-note">Results appear instantly. Nothing gets emailed.</p>
+      </div>
+    </div>
+
+    <!-- Loading -->
+    <div class="pw-screen" id="pw-loading">
+      <div class="wizard-card pw-loading-card">
+        <div class="pw-loader-ring"></div>
+        <h2 class="pw-loading-title">Writing your script...</h2>
+        <div id="pw-reflections" class="pw-reflections"></div>
+      </div>
+    </div>
+
+    <!-- Result -->
+    <div class="pw-screen" id="pw-result">
+      <div class="wizard-card pw-result-card">
+        <div class="pw-result-header">
+          <p class="pw-result-label">Your Video 1 Script</p>
+          <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+            <button class="pw-copy-btn" id="pw-copy-btn" onclick="pwCopyScript(this)">Copy Script</button>
+            <div class="pw-view-toggle">
+              <button class="pw-toggle-btn active" id="pw-guided-btn" onclick="pwSetView('guided')">Guided</button>
+              <button class="pw-toggle-btn" id="pw-clean-btn" onclick="pwSetView('clean')">Clean</button>
+            </div>
+          </div>
+        </div>
+
+        <div id="pw-script-guided"></div>
+        <div id="pw-script-clean" style="display:none;"></div>
+
+        <div class="pw-divider"></div>
+
+        <div class="result-cta">
+          <a href="https://content.coloradomastermind.com/yes" class="btn-cta" id="p2-goto-v2">I'M READY FOR VIDEO 2</a>
+          <p class="cta-note">Instant access &middot; All 7 video guides unlocked immediately</p>
+        </div>
+
+        <div class="social-proof">
+          <span>Join <strong>300+</strong> creators who turned their Video 1 guide into all seven.</span>
+        </div>
+
+        <p class="momentum-note">Your script is fresh right now. The longer you wait, the harder it gets to press record.</p>
+
+        <div class="video-tracker">
+          <div class="vt-item done"><div class="vt-label">Video 1</div><div class="vt-status">&#10003;</div></div>
+          <div class="vt-item next"><div class="vt-label">Video 2</div><div class="vt-status">&#8594;</div></div>
+          <div class="vt-item locked"><div class="vt-label">Video 3</div><div class="vt-status">&#128274;</div></div>
+          <div class="vt-item locked"><div class="vt-label">Video 4</div><div class="vt-status">&#128274;</div></div>
+          <div class="vt-item locked"><div class="vt-label">Video 5</div><div class="vt-status">&#128274;</div></div>
+          <div class="vt-item locked"><div class="vt-label">Video 6</div><div class="vt-status">&#128274;</div></div>
+          <div class="vt-item locked"><div class="vt-label">Video 7</div><div class="vt-status">&#128274;</div></div>
+        </div>
+
+        <p class="pw-rebuild"><a href="#" onclick="pwRebuild(event)">Start over and rebuild your script</a></p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+/* MVO Script Builder v3.1 */
+
+var PW = {
+  level: null,
+  answers: {},
+  autoTimer: null,
+  storageKey: 'bwb_wizard_v31'
+};
+
+/* ---- Shared topic cards (L1 Q4 + L2 Q2) ---- */
+
+var PW_TOPIC_CARDS = [
+  {
+    key: 'health',
+    icon: '\uD83C\uDF3F',
+    text: 'Health, wellness, and feeling your best',
+    village_full: 'people on a wellness journey who want to feel better in their body, their energy, and their everyday life',
+    village_hook: 'If you are someone working on your health and how you feel in your own skin'
+  },
+  {
+    key: 'wealth',
+    icon: '\uD83D\uDCAB',
+    text: 'Wealth, abundance, and building what is truly yours',
+    village_full: 'people building their finances or their business who want something real and grounded, not hype',
+    village_hook: 'If you are building wealth or a business and want someone who speaks plainly about what actually works'
+  },
+  {
+    key: 'relationships',
+    icon: '\uD83C\uDF38',
+    text: 'Love, relationships, and the connections that matter',
+    village_full: 'people working on their relationships and the way they show up for the people they love and for themselves',
+    village_hook: 'If you are someone who wants to feel more connected and more at peace in your relationships'
+  },
+  {
+    key: 'entertainment',
+    icon: '\u2728',
+    text: 'Good vibes, stories, and things that light you up',
+    village_full: 'people who want more joy, laughter, and lightness in their everyday life',
+    village_hook: 'If you just want more good things in your feed and something genuinely worth stopping to watch'
+  }
+];
+
+/* ---- Card data ---- */
+
+var PW_CARDS = {
+  q2: {
+    1: [
+      {
+        key: 'camera-shy',
+        icon: '\uD83D\uDE2C',
+        text: 'Getting on camera feels terrifying',
+        before_short: 'the camera thing',
+        before_full: 'I have wanted to do this, but every time I think about filming, something shuts it down. The camera feels like a judgment I am not ready to face.'
+      },
+      {
+        key: 'blank-screen',
+        icon: '\uD83D\uDCCB',
+        text: 'I never know what to say',
+        before_short: 'not knowing what to say',
+        before_full: 'I sit down to plan a video and my mind goes completely blank. I know I have something worth sharing. I just cannot seem to get it out.'
+      },
+      {
+        key: 'not-ready',
+        icon: '\u23F3',
+        text: 'I do not feel ready yet',
+        before_short: 'waiting to feel ready',
+        before_full: 'There is always something that feels like it needs to happen first. More confidence, a better setup, a clearer plan. The readiness never quite arrives.'
+      },
+      {
+        key: 'putting-off',
+        icon: '\uD83D\uDD04',
+        text: 'I keep putting it off',
+        before_short: 'the endless delay',
+        before_full: 'I have been meaning to start for longer than I want to admit. Life gets in the way, or I get in the way. It just keeps not happening.'
+      }
+    ],
+    /* L2 Q2 = topic/village (shared with topic cards, set in pwSelectLevel) */
+    2: PW_TOPIC_CARDS
+  },
+  q3: {
+    1: [
+      {
+        key: 'saw-someone',
+        icon: '\uD83D\uDC40',
+        text: 'I saw someone just like me doing it',
+        catalyst_full: 'Something shifted when I watched someone who looked just like me, no big following, no fancy setup, just showing up, and it was actually working. If they could do it, the reason I could not was only me.'
+      },
+      {
+        key: 'got-tired',
+        icon: '\uD83D\uDD25',
+        text: 'I got tired of waiting to feel ready',
+        catalyst_full: 'I realized the feeling of ready is not coming. No amount of planning or consuming more content is going to get me there. The only way forward is to start, and the only day I can start is today.'
+      },
+      {
+        key: 'told-me',
+        icon: '\uD83D\uDCAC',
+        text: 'Someone told me I needed to start',
+        catalyst_full: 'Someone I trust looked at me and said it was time. And somewhere under all my reasons for waiting, I knew they were right. So here I am.'
+      },
+      {
+        key: 'just-decided',
+        icon: '\u26A1',
+        text: 'I just decided. No more waiting.',
+        catalyst_full: 'There was no big moment. I just decided. I looked at where I was heading if I kept waiting and decided that was not the version of this story I wanted to tell.'
+      }
+    ],
+    /* L2 Q3 = audience challenge (was Q2) */
+    2: [
+      {
+        key: 'invisible',
+        icon: '\uD83D\uDC64',
+        text: 'They feel invisible in their niche',
+        before_full: 'The people I work with are genuinely good at what they do, but nobody knows they exist. They watch others with less skill get the attention, the clients, the opportunities, and they cannot figure out how to change that.'
+      },
+      {
+        key: 'overwhelmed',
+        icon: '\uD83C\uDF0A',
+        text: 'They feel overwhelmed and stuck',
+        before_full: 'The people I work with know what they want, but the path there feels impossibly complicated. They are doing everything, nothing is clicking, and the gap between where they are and where they want to be keeps growing.'
+      },
+      {
+        key: 'stuck',
+        icon: '\uD83E\uDDF1',
+        text: 'They know what they want but cannot get there',
+        before_full: 'The people I work with can see exactly where they want to be. The problem is every time they get close, something blocks them, or they second-guess themselves back to square one.'
+      },
+      {
+        key: 'undervalued',
+        icon: '\uD83D\uDCC9',
+        text: 'They are undercharging or undervalued',
+        before_full: 'The people I work with are delivering real results but not getting paid what that is worth. They have to prove themselves over and over to clients who do not see the value they actually provide.'
+      }
+    ]
+  },
+  q4: {
+    /* L1 Q4 = topic/village (shared with topic cards, set in pwSelectLevel) */
+    1: PW_TOPIC_CARDS,
+    /* L2 Q4 = authority (was Q3) */
+    2: [
+      {
+        key: 'lived-it',
+        icon: '\uD83D\uDDFA\uFE0F',
+        text: 'I have been exactly where they are',
+        crack_full: 'I know this because I have been exactly where they are. I lived through the thing they are dealing with and found a way through it. That is not a pitch. That is why this work matters to me.'
+      },
+      {
+        key: 'built-it',
+        icon: '\uD83D\uDD28',
+        text: 'I built something that actually works',
+        crack_full: 'I know this because I built a system that solved it. Not a theory borrowed from someone else, something I put together through years of actual work that produces real results.'
+      },
+      {
+        key: 'helped-many',
+        icon: '\uD83E\uDD1D',
+        text: 'I have helped dozens of people through this',
+        crack_full: 'I know this because I have watched dozens of people work through this problem. I have seen every version of what keeps people stuck and I know what actually moves things forward.'
+      },
+      {
+        key: 'insight',
+        icon: '\uD83D\uDD0D',
+        text: 'I see the patterns they cannot see',
+        crack_full: 'I know this because I can see what they cannot see from inside it. When you are stuck in a problem, it looks like a wall. From where I stand, I can see the door. That is what I bring.'
+      }
+    ]
+  }
+};
+
+/* ---- Loading reflection pools (4 chosen at random each run) ---- */
+var PW_REFL_POOL = {
+  1: [
+    'The fear you felt before starting is the most relatable thing you could ever share.',
+    'Someone out there is waiting for someone who sounds exactly like you.',
+    'Audiences do not follow perfection. They follow people they believe in.',
+    'Your story is not the backdrop. It is the whole point.',
+    'The people meant to find you are already searching for someone exactly like you.',
+    'One honest video from the right person can change someone\'s entire direction.',
+    'The creators who last are not the most polished. They are the most real.',
+    'What feels ordinary to you is extraordinary to someone who has not lived it.',
+    'You do not need to be an expert. You need to be honest about what you know.',
+    'Video 1 is a declaration. Videos 2 through 7 are where the real relationship begins.',
+    'The platform rewards consistency. Your audience rewards connection.',
+    'Starting is the hardest part. Everything after this gets easier.',
+    'People do not remember what you said. They remember how you made them feel.',
+    'Your first video opens the door. The next six are what makes people want to stay.',
+    'Showing up once takes courage. Showing up seven times builds trust.',
+    'The version of you on camera does not need to be perfect. It just needs to be true.',
+    'There is someone who needs to hear what you are about to say.',
+    'Every creator you admire had a Video 1 too. This is yours.'
+  ],
+  2: [
+    'The people who need you are still out there looking for someone who gets it.',
+    'Real influence is not built on reach. It is built on recognition.',
+    'What you know has the power to completely change someone\'s direction.',
+    'The relationship you build in 90 seconds can last for years.',
+    'Creators who build communities outlast creators who chase trends.',
+    'Your audience does not want more content. They want to feel more connected.',
+    'What makes you different is not your niche. It is your perspective.',
+    'The creators who build lasting businesses build trust before they build offers.',
+    'Someone found your last video for a reason. This series gives them a reason to stay.',
+    'Authority is not declared. It is demonstrated, one video at a time.',
+    'The next seven videos you make could reintroduce you to your own audience.',
+    'What you learned the hard way is worth more than what a lot of people teach.',
+    'People do not buy what you sell. They buy who you are and what you stand for.',
+    'The gap between where your audience is and where they want to be is exactly where you live.',
+    'Consistency without strategy is just noise. This is the strategy.',
+    'You already have what it takes. This script just helps people see it.',
+    'The creators who scale are not the loudest ones. They are the most trusted.',
+    'Seven videos. Seven chances to turn a viewer into someone who genuinely cares.'
+  ]
+};
+
+function pwPickReflections(level) {
+  var pool = (PW_REFL_POOL[level] || PW_REFL_POOL[1]).slice();
+  for (var i = pool.length - 1; i > 0; i--) {
+    var j = Math.floor(Math.random() * (i + 1));
+    var tmp = pool[i]; pool[i] = pool[j]; pool[j] = tmp;
+  }
+  return pool.slice(0, 4);
+}
+
+/* ---- Utility ---- */
+
+function pwShowScreen(id) {
+  var screens = document.querySelectorAll("#p2-wizard .pw-screen");
+  screens.forEach(function(s) { s.classList.remove("active"); });
+  var target = document.getElementById(id);
+  if (target) {
+    target.classList.add("active");
+    setTimeout(function() {
+      var wizard = document.getElementById("p2-wizard");
+      if (wizard) {
+        wizard.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+    }, 150);
+  }
+}
+
+function pwRenderCards(containerId, cards, answerKey, nextScreen) {
+  var container = document.getElementById(containerId);
+  if (!container) return;
+  container.innerHTML = '';
+  cards.forEach(function(card) {
+    var div = document.createElement('div');
+    div.className = 'choice-card';
+    div.innerHTML = '<div class="cc-icon">' + card.icon + '</div><div class="cc-text">' + card.text + '</div>';
+    div.addEventListener('click', function() {
+      pwSelectCard(card, answerKey, nextScreen, div);
+    });
+    container.appendChild(div);
+  });
+}
+
+function pwSelectCard(card, answerKey, nextScreen, el) {
+  if (PW.autoTimer) { clearTimeout(PW.autoTimer); PW.autoTimer = null; }
+  var siblings = el.parentElement.querySelectorAll('.choice-card');
+  siblings.forEach(function(s) { s.classList.remove('selecting'); });
+  el.classList.add('selecting');
+
+  /* Trigger progress bar */
+  var wCard = el.closest('.wizard-card');
+  if (wCard) {
+    wCard.classList.remove('pw-loading');
+    void wCard.offsetWidth; /* force reflow so transition restarts */
+    wCard.classList.add('pw-loading');
+  }
+
+  PW.answers[answerKey] = card;
+  pwSaveSession();
+  PW.autoTimer = setTimeout(function() { pwShowScreen(nextScreen); }, 1200);
+}
+
+/* ---- Q1 ---- */
+
+function pwSelectLevel(val, el) {
+  if (PW.autoTimer) { clearTimeout(PW.autoTimer); PW.autoTimer = null; }
+  var siblings = el.parentElement.querySelectorAll('.choice-card');
+  siblings.forEach(function(s) { s.classList.remove('selecting'); });
+  el.classList.add('selecting');
+
+  var wCard = el.closest('.wizard-card');
+  if (wCard) {
+    wCard.classList.remove('pw-loading');
+    void wCard.offsetWidth;
+    wCard.classList.add('pw-loading');
+  }
+
+  PW.level = (val === 'yes') ? 2 : 1;
+  pwSaveSession();
+
+  if (PW.level === 1) {
+    pwRenderCards('pw-cards-q2l1', PW_CARDS.q2[1],  'q2', 'pw-s3-l1');
+    pwRenderCards('pw-cards-q3l1', PW_CARDS.q3[1],  'q3', 'pw-s4-l1');
+    pwRenderCards('pw-cards-q4l1', PW_CARDS.q4[1],  'q4', 'pw-s5');
+  } else {
+    pwRenderCards('pw-cards-q2l2', PW_CARDS.q2[2],  'q2', 'pw-s3-l2');
+    pwRenderCards('pw-cards-q3l2', PW_CARDS.q3[2],  'q3', 'pw-s4-l2');
+    pwRenderCards('pw-cards-q4l2', PW_CARDS.q4[2],  'q4', 'pw-s5');
+  }
+
+  PW.autoTimer = setTimeout(function() {
+    pwShowScreen(PW.level === 1 ? 'pw-s2-l1' : 'pw-s2-l2');
+  }, 1200);
+}
+
+/* ---- Own way ---- */
+
+function pwToggleOwn(e, wrapId) {
+  e.preventDefault();
+  if (PW.autoTimer) { clearTimeout(PW.autoTimer); PW.autoTimer = null; }
+  var wrap = document.getElementById(wrapId);
+  if (wrap) {
+    wrap.style.display = (wrap.style.display === 'none' || wrap.style.display === '') ? 'block' : 'none';
+  }
+}
+
+function pwConfirmOwn(answerKey, textareaId, nextScreen) {
+  var ta = document.getElementById(textareaId);
+  if (!ta || !ta.value.trim()) return;
+  var txt = ta.value.trim();
+  var card = { key: 'custom', custom: true };
+
+  if (answerKey === 'q2') {
+    if (PW.level === 2) {
+      /* L2 Q2 = village/topic */
+      card.village_full = txt; card.village_hook = txt;
+    } else {
+      /* L1 Q2 = blocker */
+      card.before_short = txt; card.before_full = txt;
+    }
+  } else if (answerKey === 'q3') {
+    if (PW.level === 2) {
+      /* L2 Q3 = audience challenge */
+      card.before_full = txt;
+    } else {
+      /* L1 Q3 = catalyst */
+      card.catalyst_full = txt;
+    }
+  } else if (answerKey === 'q4') {
+    if (PW.level === 2) {
+      /* L2 Q4 = authority */
+      card.crack_full = txt;
+    } else {
+      /* L1 Q4 = village/topic */
+      card.village_full = txt; card.village_hook = txt;
+    }
+  }
+
+  PW.answers[answerKey] = card;
+  pwSaveSession();
+  pwShowScreen(nextScreen);
+}
+
+/* ---- Name ---- */
+
+function pwCheckName() {
+  var input = document.getElementById('pw-name-input');
+  var btn   = document.getElementById('pw-build-btn');
+  if (btn) btn.disabled = !(input && input.value.trim().length > 0);
+}
+
+/* ---- Build ---- */
+
+function pwBuildScript() {
+  var nameEl = document.getElementById('pw-name-input');
+  PW.answers.name = nameEl ? nameEl.value.trim() : 'Friend';
+  pwSaveSession();
+  pwShowScreen('pw-loading');
+
+  var level = PW.level || 1;
+  var refl  = pwPickReflections(level);
+  var box   = document.getElementById('pw-reflections');
+  if (box) box.innerHTML = '';
+
+  refl.forEach(function(text, i) {
+    setTimeout(function() {
+      if (box) {
+        var p = document.createElement('p');
+        p.className = 'pw-reflection-line';
+        p.textContent = text;
+        box.appendChild(p);
+      }
+    }, 500 + i * 1150);
+  });
+
+  setTimeout(function() {
+    pwCompileScript();
+    pwShowScreen('pw-result');
+  }, 5200);
+}
+
+/* ---- Script compiler ---- */
+
+function pwCompileScript() {
+  var level = PW.level || 1;
+  var ans   = PW.answers;
+  var name  = ans.name || 'Friend';
+  var q2    = ans.q2   || {};
+  var q3    = ans.q3   || {};
+  var q4    = ans.q4   || {};
+  var beats = [];
+
+  if (level === 1) {
+    /* L1: q2=blocker, q3=catalyst, q4=village/topic */
+    var before_short  = q2.before_short  || 'getting started';
+    var before_full   = q2.before_full   || 'Something has been making it hard to take that first step.';
+    var catalyst_full = q3.catalyst_full || 'Something finally made it clear that today was the day.';
+    var village_full  = q4.village_full  || 'people who are right where I was';
+
+    beats = [
+      {
+        label: 'HOOK',
+        text: 'You are seeing me on camera for the first time right now. ' + before_short + ' kept me from this for longer than I want to admit. That changes today.'
+      },
+      {
+        label: 'MY BEFORE',
+        text: before_full
+      },
+      {
+        label: 'THE CATALYST',
+        text: catalyst_full
+      },
+      {
+        label: 'MY COMMITMENT',
+        text: 'My name is ' + name + '. I am not promising forever. I am committing to seven videos. Seven videos to let you see who I am, what I care about, and whether anything I share is actually worth your time. That starts right now.'
+      },
+      {
+        label: 'FOR YOU',
+        text: 'I am making these for ' + village_full + '. If that is you, I am really glad you found this. Stay with me for the next six.'
+      }
+    ];
+
+  } else {
+    /* L2: q2=village/topic, q3=audience challenge, q4=authority */
+    var village_hook  = q2.village_hook  || 'If you know something needs to change';
+    var village_full2 = q2.village_full  || 'people ready to take the next step';
+    var before_full2  = q3.before_full   || 'there is a real challenge standing between where they are and where they want to be.';
+    var crack_full    = q4.crack_full    || 'I have spent years working through this exact problem.';
+
+    beats = [
+      {
+        label: 'HOOK',
+        text: village_hook + '... I want to talk to you.'
+      },
+      {
+        label: 'WHO YOU SERVE',
+        text: 'The people I am here for are ' + village_full2 + '. And the thing most of them are working through right now is this: ' + before_full2
+      },
+      {
+        label: 'YOUR AUTHORITY',
+        text: crack_full
+      },
+      {
+        label: 'MY COMMITMENT',
+        text: 'My name is ' + name + '. Over these next seven videos, I want to share some things in a way you probably have not heard them before. Things that will actually help, whether you have been following me for a while or you just found this today.'
+      },
+      {
+        label: 'THE INVITATION',
+        text: 'If you have been here for a while, thank you for still being here. If you are brand new, I am so glad you landed on this. Follow along with me for the next six because what comes next is worth your time.'
+      }
+    ];
+  }
+
+  /* Render guided view */
+  var guidedEl = document.getElementById('pw-script-guided');
+  if (guidedEl) {
+    var gHtml = '<div class="pw-script-output">';
+    beats.forEach(function(b) {
+      gHtml += '<div class="pw-beat">';
+      gHtml += '<div class="pw-beat-header">';
+      gHtml += '<span class="pw-beat-label">' + b.label + '</span>';
+      gHtml += '<button class="pw-regen-btn" disabled>&#128274; Regenerate</button>';
+      gHtml += '</div>';
+      gHtml += '<p class="pw-beat-text">' + b.text + '</p>';
+      gHtml += '</div>';
+    });
+    gHtml += '</div>';
+    guidedEl.innerHTML = gHtml;
+  }
+
+  /* Render clean view */
+  var cleanEl = document.getElementById('pw-script-clean');
+  if (cleanEl) {
+    var cHtml = '<div class="pw-script-output">';
+    beats.forEach(function(b) { cHtml += '<p class="pw-clean-para">' + b.text + '</p>'; });
+    cHtml += '</div>';
+    cleanEl.innerHTML = cHtml;
+  }
+}
+
+/* ---- View toggle ---- */
+
+function pwSetView(view) {
+  var g  = document.getElementById('pw-script-guided');
+  var c  = document.getElementById('pw-script-clean');
+  var gb = document.getElementById('pw-guided-btn');
+  var cb = document.getElementById('pw-clean-btn');
+  if (view === 'guided') {
+    if (g) g.style.display = 'block'; if (c) c.style.display = 'none';
+    if (gb) gb.classList.add('active'); if (cb) cb.classList.remove('active');
+  } else {
+    if (g) g.style.display = 'none'; if (c) c.style.display = 'block';
+    if (gb) gb.classList.remove('active'); if (cb) cb.classList.add('active');
+  }
+}
+
+/* ---- Copy script ---- */
+
+function pwCopyScript(btn) {
+  var cleanEl = document.getElementById('pw-script-clean');
+  if (!cleanEl) return;
+  /* Temporarily show clean view to read text, then restore state */
+  var wasHidden = cleanEl.style.display === 'none';
+  if (wasHidden) cleanEl.style.display = 'block';
+  var text = (cleanEl.innerText || cleanEl.textContent || '').trim();
+  if (wasHidden) cleanEl.style.display = 'none';
+  if (!text) return;
+  function onCopied() {
+    btn.textContent = 'Copied!';
+    btn.classList.add('copied');
+    setTimeout(function() {
+      btn.textContent = 'Copy Script';
+      btn.classList.remove('copied');
+    }, 2500);
+  }
+  try {
+    navigator.clipboard.writeText(text).then(onCopied);
+  } catch(e) {
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    document.execCommand('copy');
+    document.body.removeChild(ta);
+    onCopied();
+  }
+}
+
+/* ---- Rebuild ---- */
+
+function pwRebuild(e) {
+  e.preventDefault();
+  PW.level = null; PW.answers = {};
+  if (PW.autoTimer) { clearTimeout(PW.autoTimer); PW.autoTimer = null; }
+  try { localStorage.removeItem(PW.storageKey); } catch(ex) {}
+  pwShowScreen('pw-s0');
+}
+
+/* ---- Storage ---- */
+
+function pwSaveSession() {
+  try {
+    localStorage.setItem(PW.storageKey, JSON.stringify({ level: PW.level, answers: PW.answers, savedAt: Date.now() }));
+  } catch(e) {}
+}
+
+function pwRestoreSession() {
+  try {
+    var raw = localStorage.getItem(PW.storageKey);
+    if (!raw) return false;
+    var data = JSON.parse(raw);
+    if (Date.now() - (data.savedAt || 0) > 30 * 24 * 60 * 60 * 1000) {
+      localStorage.removeItem(PW.storageKey); return false;
+    }
+    PW.level = data.level; PW.answers = data.answers || {};
+    var banner = document.getElementById('pw-returning');
+    if (banner) banner.style.display = 'none';
+    /* Always render cards so any screen is usable on resume */
+    if (PW.level === 1) {
+      pwRenderCards('pw-cards-q2l1', PW_CARDS.q2[1],  'q2', 'pw-s3-l1');
+      pwRenderCards('pw-cards-q3l1', PW_CARDS.q3[1],  'q3', 'pw-s4-l1');
+      pwRenderCards('pw-cards-q4l1', PW_CARDS.q4[1],  'q4', 'pw-s5');
+    } else if (PW.level === 2) {
+      pwRenderCards('pw-cards-q2l2', PW_CARDS.q2[2],  'q2', 'pw-s3-l2');
+      pwRenderCards('pw-cards-q3l2', PW_CARDS.q3[2],  'q3', 'pw-s4-l2');
+      pwRenderCards('pw-cards-q4l2', PW_CARDS.q4[2],  'q4', 'pw-s5');
+    }
+    if (PW.answers.name && PW.level) {
+      pwCompileScript(); pwShowScreen('pw-result');
+    }
+    return true;
+  } catch(e) { return false; }
+}
+
+function pwDismissBanner() {
+  try { localStorage.removeItem(PW.storageKey); } catch(e) {}
+  var banner = document.getElementById('pw-returning');
+  if (banner) banner.style.display = 'none';
+}
+
+/* ---- Init ---- */
+
+function pwInit() {
+  /* Counter: read persisted value, bump by random 10-99, animate up */
+  try {
+    var counterKey = 'bwb_counter_v1';
+    var base = 2847;
+    var stored = parseInt(localStorage.getItem(counterKey), 10);
+    if (!stored || stored < base) stored = base;
+    var bump = 10 + Math.floor(Math.random() * 90);
+    var newVal = stored + bump;
+    localStorage.setItem(counterKey, newVal);
+    var el = document.querySelector('#p2-wizard .pw-count-num');
+    if (el) {
+      var start = stored;
+      var end = newVal;
+      var duration = 900;
+      var startTime = null;
+      function animateCounter(ts) {
+        if (!startTime) startTime = ts;
+        var progress = Math.min((ts - startTime) / duration, 1);
+        var cur = Math.floor(start + (end - start) * progress);
+        el.textContent = cur.toLocaleString();
+        if (progress < 1) requestAnimationFrame(animateCounter);
+      }
+      requestAnimationFrame(animateCounter);
+    }
+  } catch(e) {}
+
+  /* Returning user banner */
+  try {
+    var raw = localStorage.getItem(PW.storageKey);
+    if (raw) {
+      var data = JSON.parse(raw);
+      if (Date.now() - (data.savedAt || 0) < 30 * 24 * 60 * 60 * 1000 && data.answers && data.level) {
+        var banner = document.getElementById('pw-returning');
+        if (banner) banner.style.display = 'block';
+      }
+    }
+  } catch(e) {}
+}
+
+pwInit();
+
+/* end v3.1 */
+</script>
