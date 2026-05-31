@@ -25,7 +25,7 @@
 </div>
 
 <!-- ══ VERIFY EMAIL TOAST ══ -->
-<div id="verify-email-toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9998;background:#0D2828;border:1px solid rgba(200,168,75,0.5);border-radius:12px;padding:14px 20px;display:flex;align-items:center;gap:12px;max-width:420px;width:calc(100% - 40px);box-shadow:0 8px 32px rgba(0,0,0,0.4);">
+<div id="verify-email-toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9998;background:#0D2828;border:1px solid rgba(200,168,75,0.5);border-radius:12px;padding:14px 20px;align-items:center;gap:12px;max-width:420px;width:calc(100% - 40px);box-shadow:0 8px 32px rgba(0,0,0,0.4);">
   <span style="font-size:20px;flex-shrink:0;">📧</span>
   <div style="flex:1;">
     <div style="font-size:13px;font-weight:700;color:#E8C86C;margin-bottom:2px;">Your script isn't saved yet</div>
@@ -383,11 +383,7 @@
   </div>
   <div style="text-align:center;margin-top:14px;">
     <button class="btn-skip" onclick="skipFromPreface(0)">Skip this video →</button>
-    <br><button class="preface-skip-end" onclick="skipToEnd()">skip to the end — see the full plan</button>
-  </div>
-</div>
-
-<!-- ══ VIDEO INTRO SCREEN ══ -->
+    <br><button class="preface-skip-end" onclick="skipToEnd()">→ Dashboard</button>
 <div class="screen" id="screen-video-intro">
   <div class="video-progress" id="vi-dots"></div>
   <div id="vi-result-badge"></div>
@@ -403,7 +399,7 @@
   </div>
   <div style="text-align:center;margin-top:14px;">
     <button class="btn-skip" id="vi-skip-btn" onclick="skipFromPreface(currentPreviewVideoNum - 1)">Skip this video →</button>
-    <br><button class="preface-skip-end" onclick="skipToEnd()">skip to the end — see the full plan</button>
+    <br><button class="preface-skip-end" onclick="skipToEnd()">→ Dashboard</button>
   </div>
 </div>
 
@@ -525,7 +521,7 @@
 
     <div class="btn-row" style="margin-top:8px;">
       <button class="btn-back" onclick="goBackToPrompts()">← Back to Prompts</button>
-      <button class="btn-skip" style="font-size:14px;color:#4a6a80;" onclick="skipToEnd()">Skip to the end — see my plan</button>
+      <button class="btn-skip" style="font-size:14px;color:#4a6a80;" onclick="skipToEnd()">→ Dashboard</button>
     </div>
   </div>
 </div>
