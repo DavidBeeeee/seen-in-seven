@@ -1553,7 +1553,7 @@ function _buildPromptsContent(container, v, idx) {
   genBtn.className = 'btn-primary';
   genBtn.style.fontSize = '20px';
   genBtn.textContent = v.prebuilt ? '✨ Edit & Personalize This Script' : '✨ Generate My Script';
-  genBtn.onclick = () => showScriptView(idx);
+  genBtn.onclick = () => { window._SIS_log && _SIS_log('genBtn:click', {idx}); showScriptView(idx); };
   btnWrap.appendChild(genBtn);
 
   const skipGenBtn = document.createElement('button');
@@ -1876,6 +1876,7 @@ function _doShowScriptViewInner(idx) {
   }
 
   // populate the script screen
+  window._SIS_log && _SIS_log('dsv:populate', {hasBadge: !!document.getElementById('sv-badge'), hasTitle: !!document.getElementById('sv-title')});
   document.getElementById('sv-badge').textContent = 'VIDEO ' + (idx + 1);
   document.getElementById('sv-title').textContent = v.title;
 
@@ -1988,6 +1989,7 @@ function _doShowScriptViewInner(idx) {
   }
 
   // Default to guided view; scroll to top first
+  window._SIS_log && _SIS_log('dsv:beats-rendered', {beatsLen: (document.getElementById('sv-beats')||{}).innerHTML ? document.getElementById('sv-beats').innerHTML.length : 0});
   window.scrollTo(0, 0);
   setScriptView('guided');
 

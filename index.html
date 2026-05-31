@@ -13,68 +13,102 @@
 <!-- ── GLOBAL ERROR BOUNDARY ── -->
 <script>
 (function() {
-  function showErrorOverlay(title, message, source) {
-    // Don't show overlay for benign errors
-    if (message && message.includes('ResizeObserver')) return;
-    var overlay = document.getElementById('sis-error-overlay');
-    if (!overlay) {
-      overlay = document.createElement('div');
-      overlay.id = 'sis-error-overlay';
-      overlay.style.cssText = 'position:fixed;bottom:0;left:0;right:0;z-index:99999;background:#1a0a0a;border-top:2px solid #ef4444;padding:16px 20px;font-family:monospace;font-size:13px;color:#fca5a5;max-height:50vh;overflow-y:auto;';
-      var dismiss = document.createElement('button');
-      dismiss.textContent = '✕ Dismiss';
-      dismiss.style.cssText = 'float:right;background:#ef4444;color:white;border:none;padding:4px 10px;border-radius:4px;cursor:pointer;font-size:12px;';
-      dismiss.onclick = function() { overlay.style.display = 'none'; };
-      overlay.appendChild(dismiss);
+  // Diagnostics mode: add ?debug=1 to the URL to see a live on-screen trace.
+  var DEBUG = /[?&]debug=1/.test(window.location.search) || (function(){ try { return localStorage.getItem('sis_debug')==='1'; } catch(e){ return false; } })();
+  if (/[?&]debug=1/.test(window.location.search)) { try { localStorage.setItem('sis_debug','1'); } catch(e){} }
+  if (/[?&]debug=0/.test(window.location.search)) { try { localStorage.removeItem('sis_debug'); } catch(e){} DEBUG = false; }
+
+  var logLines = [];
+
+  function ensurePanel() {
+    if (!DEBUG) return null;
+    var panel = document.getElementById('sis-debug-panel');
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.id = 'sis-debug-panel';
+      panel.style.cssText = 'position:fixed;top:0;right:0;width:340px;max-width:90vw;height:100vh;z-index:2147483647;background:rgba(10,10,14,0.95);border-left:2px solid #32B8B8;padding:8px;font-family:monospace;font-size:11px;color:#9fe;overflow-y:auto;line-height:1.5;';
+      var hdr = document.createElement('div');
+      hdr.style.cssText = 'position:sticky;top:0;background:#0a0a0e;padding:4px 0 8px;border-bottom:1px solid #333;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;';
+      hdr.innerHTML = '<strong style="color:#32B8B8;">SIS DIAGNOSTICS</strong>';
+      var btns = document.createElement('div');
+      var copyBtn = document.createElement('button');
+      copyBtn.textContent = 'Copy';
+      copyBtn.style.cssText = 'background:#32B8B8;color:#000;border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-size:10px;margin-right:4px;';
+      copyBtn.onclick = function() {
+        var txt = logLines.join('\n');
+        navigator.clipboard && navigator.clipboard.writeText(txt);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(function(){ copyBtn.textContent='Copy'; }, 1200);
+      };
+      var clrBtn = document.createElement('button');
+      clrBtn.textContent = 'Off';
+      clrBtn.style.cssText = 'background:#444;color:#fff;border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-size:10px;';
+      clrBtn.onclick = function() { try { localStorage.removeItem('sis_debug'); } catch(e){} panel.style.display='none'; };
+      btns.appendChild(copyBtn); btns.appendChild(clrBtn);
+      hdr.appendChild(btns);
+      panel.appendChild(hdr);
       var content = document.createElement('div');
-      content.id = 'sis-error-content';
-      overlay.appendChild(content);
-      document.body ? document.body.appendChild(overlay) : document.addEventListener('DOMContentLoaded', function() { document.body.appendChild(overlay); });
+      content.id = 'sis-debug-content';
+      panel.appendChild(content);
+      (document.body || document.documentElement).appendChild(panel);
     }
-    overlay.style.display = 'block';
-    var content = document.getElementById('sis-error-content');
+    return panel;
+  }
+
+  function addLine(kind, text, color) {
+    var ts = new Date().toISOString().substr(11, 12);
+    logLines.push('[' + ts + '] ' + kind + ' ' + text);
+    if (!DEBUG) return;
+    var panel = ensurePanel();
+    if (!panel) return;
+    var content = document.getElementById('sis-debug-content');
     if (content) {
       var entry = document.createElement('div');
-      entry.style.cssText = 'border-bottom:1px solid rgba(239,68,68,0.3);padding:8px 0;';
-      entry.innerHTML = '<strong style="color:#ef4444">[' + title + ']</strong> ' + (source ? '<span style="color:#f87171">'+source+'</span> — ' : '') + message;
-      content.insertBefore(entry, content.firstChild);
+      entry.style.cssText = 'padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.06);color:' + (color||'#9fe') + ';word-break:break-word;';
+      entry.innerHTML = '<span style="color:#555;">' + ts + '</span> <strong>' + kind + '</strong> ' + text;
+      content.appendChild(entry);
+      content.scrollTop = content.scrollHeight;
+      panel.scrollTop = panel.scrollHeight;
     }
   }
 
-  // Catch synchronous errors
   window.onerror = function(msg, src, line, col, err) {
     var source = src ? src.split('/').pop() + ':' + line : '';
-    showErrorOverlay('JS ERROR', msg, source);
+    addLine('❌ERROR', source + ' — ' + msg, '#ff6b6b');
     return false;
   };
 
-  // Catch unhandled promise rejections
   window.onunhandledrejection = function(e) {
     var msg = e.reason ? (e.reason.message || String(e.reason)) : 'Unknown promise rejection';
-    showErrorOverlay('PROMISE', msg, '');
+    var stack = e.reason && e.reason.stack ? ' | ' + e.reason.stack.split('\n')[1] : '';
+    addLine('❌PROMISE', msg + stack, '#ff6b6b');
   };
 
-  // Override console.error to also show in overlay
   var _origError = console.error.bind(console);
   console.error = function() {
     _origError.apply(console, arguments);
     var msg = Array.from(arguments).map(function(a) { return typeof a === 'object' ? JSON.stringify(a) : String(a); }).join(' ');
-    showErrorOverlay('CONSOLE', msg, '');
+    addLine('❌', msg, '#ff6b6b');
   };
 
-  // Override console.warn for SeenInSeven warnings only
   var _origWarn = console.warn.bind(console);
   console.warn = function() {
     _origWarn.apply(console, arguments);
     var msg = Array.from(arguments).join(' ');
-    if (msg.indexOf('[SeenInSeven]') !== -1) {
-      showErrorOverlay('WARN', msg, '');
-    }
+    if (msg.indexOf('[SeenInSeven]') !== -1) addLine('⚠️', msg, '#ffd93d');
   };
 
   window._SIS_log = function(label, data) {
-    console.log('[SIS:' + label + ']', data !== undefined ? data : '');
+    var d = data !== undefined ? (typeof data === 'object' ? JSON.stringify(data) : String(data)) : '';
+    console.log('[SIS:' + label + ']', d);
+    addLine('•', label + (d ? ' ' + d : ''), '#9fe');
   };
+
+  if (DEBUG) {
+    document.addEventListener('DOMContentLoaded', ensurePanel);
+    ensurePanel();
+    addLine('•', 'diagnostics ON — path=' + window.location.pathname + ' hash=' + window.location.hash.substr(0,24), '#32B8B8');
+  }
 })();
 </script>
 </head>
