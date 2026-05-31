@@ -285,9 +285,46 @@ function userIsPaid() {
   return _currentUser && _currentUser.is_paid === true;
 }
 
-// ── GET CURRENT USER ──────────────────────────────────
-function getCurrentUser() {
-  return _currentUser;
+// ── FETCH SCRIPT VERSIONS ─────────────────────────────
+// Returns all versions for a video in descending order (newest first)
+async function fetchScriptVersions(videoNumber, level) {
+  if (!_currentUser) return [];
+  try {
+    const { data } = await _sb
+      .from('scripts')
+      .select('id, content, version, generated_at, is_current, thumbs_up')
+      .eq('user_id', _currentUser.id)
+      .eq('video_number', videoNumber)
+      .eq('level', level)
+      .order('version', { ascending: false });
+    return data || [];
+  } catch(e) {
+    return [];
+  }
+}
+
+// ── RESTORE SCRIPT VERSION ────────────────────────────
+// Marks a specific version as current, all others as not
+async function restoreScriptVersion(scriptId, videoNumber, level, content) {
+  if (!_currentUser) return;
+  try {
+    // Mark all versions for this video as not current
+    await _sb.from('scripts')
+      .update({ is_current: false })
+      .eq('user_id', _currentUser.id)
+      .eq('video_number', videoNumber)
+      .eq('level', level);
+    // Mark the selected version as current
+    await _sb.from('scripts')
+      .update({ is_current: true })
+      .eq('id', scriptId);
+  } catch(e) {
+    // Silent
+  }
+  // Restore in state immediately regardless of DB result
+  const idx = videoNumber - 1;
+  state.videos['script_v' + idx] = content;
+  saveProgress();
 }
 
 // ── INIT: CHECK FOR EXISTING SESSION ─────────────────

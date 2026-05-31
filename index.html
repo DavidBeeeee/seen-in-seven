@@ -480,6 +480,20 @@
       </div>
     </div>
 
+    <!-- Thumbs feedback — inline on script screen -->
+    <div class="script-feedback" id="sv-feedback" style="margin-bottom:16px;">
+      <span class="script-feedback-label">Sound like you?</span>
+      <button class="fb-btn" id="sv-fb-up" onclick="handleScriptViewFeedback(true)" title="Yes, sounds like me">👍</button>
+      <button class="fb-btn" id="sv-fb-down" onclick="handleScriptViewFeedback(false)" title="Not quite">👎</button>
+      <span class="fb-thanks" id="sv-fb-thanks">Thanks — that helps!</span>
+    </div>
+
+    <!-- Previous versions — shown only when authenticated and versions exist -->
+    <div id="sv-versions" style="display:none;margin-bottom:16px;">
+      <div style="font-family:'Space Mono',monospace;font-size:9px;letter-spacing:0.18em;color:var(--muted);text-transform:uppercase;margin-bottom:10px;">Previous Versions</div>
+      <div id="sv-versions-list"></div>
+    </div>
+
     <div class="filmed-card">
       <div class="filmed-card-inner">
         <div class="filmed-icon">🎬</div>

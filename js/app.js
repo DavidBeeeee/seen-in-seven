@@ -558,6 +558,19 @@ function buildAPIUserMessage(videoIdx) {
 
   // V2-V7: add previous video answers + scripts
   const videos = getVideos();
+
+  // Voice reference block for videos 3+ — gives AI concrete voice patterns to match
+  if (videoIdx >= 2) {
+    const voiceScripts = [];
+    for (let i = 0; i < Math.min(videoIdx, 3); i++) {
+      const s = sv['script_v' + i];
+      if (s) voiceScripts.push('Video ' + (i+1) + ':\n' + s.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim());
+    }
+    if (voiceScripts.length > 0) {
+      msg += '\n\nVOICE REFERENCE — These are this speaker\'s actual generated scripts. Study the sentence length, word choice, emotional register, and rhythm. Video ' + videoNum + ' must sound like the same person:\n\n' + voiceScripts.join('\n\n---\n\n');
+    }
+  }
+
   for (let i = 0; i < videoIdx; i++) {
     const prevVideo = videos[i];
     let prevBlock = '\n\nVideo ' + (i + 1) + ' prompts:';
@@ -1540,12 +1553,18 @@ function _doShowScriptView(idx) {
       }
     }
     editor.value = cleanScript;
+    let _editSaveTimer = null;
     editor.oninput = () => {
       // Store clean edit back; no section labels needed in storage for user-edited text
       state.videos[editKey] = editor.value;
       // Re-parse sections when user edits clean view
       const reParsed = parseScriptSections(editor.value);
       if (reParsed) state.videos[sectionsKey] = reParsed;
+      // Debounced save to DB (2 seconds after last keystroke)
+      clearTimeout(_editSaveTimer);
+      _editSaveTimer = setTimeout(() => {
+        saveScriptEditToDb(idx + 1, state.level || 1, editor.value);
+      }, 2000);
     };
   }
 
@@ -1622,6 +1641,17 @@ function _doShowScriptView(idx) {
     updateDots(idx);
     window.scrollTo(0, 0);
   }
+
+  // Reset feedback buttons for this video
+  const upBtn   = document.getElementById('sv-fb-up');
+  const downBtn = document.getElementById('sv-fb-down');
+  const thanks  = document.getElementById('sv-fb-thanks');
+  if (upBtn)   upBtn.className = 'fb-btn';
+  if (downBtn) downBtn.className = 'fb-btn';
+  if (thanks)  thanks.classList.remove('show');
+
+  // Load previous versions (async — non-blocking)
+  loadScriptVersions(idx);
 }
 
 function afterFilmed(idx, status) {
@@ -1790,6 +1820,58 @@ function redoScript() {
     currentIndex = screenOrder.indexOf('screen-7');
   }
   window.scrollTo(0, 0);
+}
+
+// ── SCRIPT VIEW FEEDBACK (inline thumbs) ─────────────
+async function handleScriptViewFeedback(thumbsUp) {
+  const upBtn   = document.getElementById('sv-fb-up');
+  const downBtn = document.getElementById('sv-fb-down');
+  const thanks  = document.getElementById('sv-fb-thanks');
+
+  if (upBtn)   { upBtn.classList.toggle('active-up', thumbsUp); upBtn.classList.toggle('active-down', false); }
+  if (downBtn) { downBtn.classList.toggle('active-down', !thumbsUp); downBtn.classList.toggle('active-up', false); }
+  if (thanks)  { thanks.classList.add('show'); setTimeout(() => thanks.classList.remove('show'), 2500); }
+
+  await saveScriptFeedback(currentVideoIndex + 1, state.level || 1, thumbsUp);
+}
+
+// ── SCRIPT VERSION HISTORY ────────────────────────────
+async function loadScriptVersions(idx) {
+  const versionsEl  = document.getElementById('sv-versions');
+  const versionsList = document.getElementById('sv-versions-list');
+  if (!versionsEl || !versionsList) return;
+
+  const user = getCurrentUser();
+  if (!user) { versionsEl.style.display = 'none'; return; }
+
+  const versions = await fetchScriptVersions(idx + 1, state.level || 1);
+
+  // Only show if there are previous versions (more than 1 total)
+  const previous = versions.filter(v => !v.is_current);
+  if (previous.length === 0) { versionsEl.style.display = 'none'; return; }
+
+  versionsEl.style.display = '';
+  versionsList.innerHTML = previous.map((v, i) => {
+    const clean = v.content.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+    const preview = clean.substring(0, 120) + (clean.length > 120 ? '...' : '');
+    const date = new Date(v.generated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+    return `
+      <div class="version-item">
+        <div class="version-header">
+          <span class="version-label">Version ${v.version} &middot; ${date}</span>
+          <button class="version-restore" onclick="handleRestoreVersion('${v.id}', ${idx}, ${JSON.stringify(v.content).replace(/'/g, "\\'")})">Restore →</button>
+        </div>
+        <div class="version-preview">${preview}</div>
+      </div>`;
+  }).join('');
+}
+
+async function handleRestoreVersion(scriptId, idx, content) {
+  const level = state.level || 1;
+  await restoreScriptVersion(scriptId, idx + 1, level, content);
+  // Refresh the script view with restored content
+  _doShowScriptView(idx);
+  loadScriptVersions(idx);
 }
 
 function editScript(idx) {

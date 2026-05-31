@@ -1452,3 +1452,41 @@ body::before {
 @media print {
   #pdf-modal-overlay, #regen-modal-overlay { display:none !important; }
 }
+
+/* ── SCRIPT VERSION HISTORY ──────────────────────────── */
+.version-item {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 16px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: all 0.18s;
+}
+.version-item:hover { border-color: var(--teal); }
+.version-header {
+  display: flex; align-items: center;
+  justify-content: space-between; gap: 12px;
+  margin-bottom: 8px;
+}
+.version-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--muted);
+}
+.version-restore {
+  font-size: 12px; color: var(--teal);
+  background: none; border: none; cursor: pointer;
+  text-decoration: underline; text-underline-offset: 3px;
+  padding: 0; transition: color 0.18s;
+}
+.version-restore:hover { color: var(--cream); }
+.version-preview {
+  font-family: 'Lora', serif;
+  font-style: italic; font-size: 14px;
+  color: var(--muted); line-height: 1.65;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
