@@ -2527,52 +2527,6 @@ function buildPlan(){
   }
 }
 
-  const output=document.getElementById('plan-output');
-  output.innerHTML='';
-
-  // Build personalized mission statement
-  // Correct keys matching actual state.blocker / state.goal quiz values
-  const blockerLabels2 = {ideas:'not knowing what to say',camera:'camera shyness',nothing:'not having a business yet',procrastinating:'putting it off'};
-  const goalLabels2 = {comfortable:'get comfortable on camera',audience:'build an audience',voice:'find their voice',start:'just start showing up',expert:'establish themselves as an expert',clients:'build an audience of potential clients',leads:'generate real leads',consistent:'finally get consistent'};
-  const blockerText = state.blocker ? (blockerLabels2[state.blocker] || state.blocker) : (state.history ? 'getting started' : null);
-  const goalText = state.goal ? (goalLabels2[state.goal] || state.goal) : null;
-
-  // Build mission using quiz answers (blocker + goal), not the free-write topic
-  let missionLine = '';
-  if (name && name !== 'You') {
-    if (blockerText && goalText) {
-      missionLine = `${name} decided that ${blockerText} wasn't worth the cost — and committed to 7 videos to ${goalText.toLowerCase()}.`;
-    } else if (goalText) {
-      missionLine = `${name} showed up with a single commitment: 7 videos to ${goalText.toLowerCase()}.`;
-    } else if (blockerText) {
-      missionLine = `${name} decided that ${blockerText} would no longer hold them back. Seven videos. That's the plan.`;
-    } else {
-      missionLine = `${name} decided to stop waiting. Seven videos. That's all it takes.`;
-    }
-  } else {
-    if (blockerText && goalText) {
-      missionLine = `You decided that ${blockerText} wasn't worth the cost — and committed to 7 videos to ${goalText.toLowerCase()}.`;
-    } else if (goalText) {
-      missionLine = `You're here to ${goalText.toLowerCase()}. Seven videos. That's your commitment.`;
-    } else {
-      missionLine = `You decided to stop waiting. That's the whole thing.`;
-    }
-  }
-
-  const cs=document.createElement('div');
-  cs.className='plan-section ps-commit';
-  cs.innerHTML=`
-    <div class="ps-label">Your Mission</div>
-    <div style="font-family:'Lora',serif;font-style:italic;font-size:18px;color:var(--teal);line-height:1.7;margin-bottom:14px;">${missionLine}</div>
-    <div class="ps-label" style="margin-top:0;font-size:11px;opacity:0.7;">Your Commitment</div>
-    <div style="font-family:'Lora',serif;font-style:italic;font-size:18px;color:var(--cream);line-height:1.8;">
-      By the end of this challenge I will
-      <strong style="color:var(--teal);font-style:normal;">${miniText}</strong>,
-      even if it's messy, even if nobody watches, and even if I have to do it scared.
-    </div>`;
-  output.appendChild(cs);
-
-
 function togglePlanRow(i){
   const row=document.getElementById('pvrow-'+i);
   row.classList.toggle('open');
