@@ -52,36 +52,49 @@ async function trackSession() {
 }
 
 // ── SCREEN NAVIGATION ─────────────────────────────────
-function showScreen(id, direction='forward') {
-  if (transitioning) return;
+let _screenAnimTimers = [];
 
+function showScreen(id, direction='forward') {
   const next = document.getElementById(id);
   if (!next) {
     console.warn('[SeenInSeven] showScreen: element not found:', id);
     return;
   }
 
-  transitioning = true;
-  // Safety reset — if something goes wrong inside the setTimeout callbacks,
-  // transitioning can't stay stuck forever
-  setTimeout(() => { transitioning = false; }, 800);
+  // Cancel any in-flight transition timers so a rapid second call
+  // never gets silently dropped (this was causing blank screens)
+  _screenAnimTimers.forEach(t => clearTimeout(t));
+  _screenAnimTimers = [];
+
+  // Immediately finalize whatever was mid-animation
+  document.querySelectorAll('.screen.anim-out').forEach(s => {
+    s.classList.remove('active', 'anim-out');
+  });
 
   const current = document.querySelector('.screen.active');
 
-  if (current) {
+  if (current && current !== next) {
     current.classList.add('anim-out');
-    setTimeout(() => {
+    const t1 = setTimeout(() => {
       current.classList.remove('active','anim-out');
       next.classList.add('active','anim-in');
-      setTimeout(() => { next.classList.remove('anim-in'); transitioning = false; }, 350);
+      const t2 = setTimeout(() => { next.classList.remove('anim-in'); }, 350);
+      _screenAnimTimers.push(t2);
     }, 200);
+    _screenAnimTimers.push(t1);
   } else {
+    // No current screen, or same screen — show immediately
+    document.querySelectorAll('.screen.active').forEach(s => {
+      if (s !== next) s.classList.remove('active');
+    });
     next.classList.add('active','anim-in');
-    setTimeout(() => { next.classList.remove('anim-in'); transitioning = false; }, 350);
+    const t = setTimeout(() => { next.classList.remove('anim-in'); }, 350);
+    _screenAnimTimers.push(t);
   }
 
   updateProgress(id);
-  setTimeout(() => window.scrollTo(0,0), 50);
+  const ts = setTimeout(() => window.scrollTo(0,0), 50);
+  _screenAnimTimers.push(ts);
 }
 
 function goNext() {
@@ -302,11 +315,17 @@ function updateProgress(id) {
 }
 
 // ── AUTO-ADVANCE ───────────────────────────────────────
+let _autoAdvanceLock = false;
 function autoAdvance(el, key, value) {
-  if (transitioning) return;
+  if (_autoAdvanceLock) return;
+  _autoAdvanceLock = true;
   el.classList.add('selecting');
   state[key] = value;
-  setTimeout(() => { el.classList.remove('selecting'); goNext(); }, 300);
+  setTimeout(() => {
+    el.classList.remove('selecting');
+    goNext();
+    _autoAdvanceLock = false;
+  }, 300);
 }
 
 // ── LEVEL DETERMINATION ───────────────────────────────
@@ -1810,6 +1829,16 @@ const VIDEO_RATIONALE = [
 
 function _doShowScriptView(idx) {
   window._SIS_log && _SIS_log('_doShowScriptView', {idx, hasScript: !!(state.videos && state.videos['script_v'+idx])});
+  try {
+    _doShowScriptViewInner(idx);
+  } catch(e) {
+    console.error('[SeenInSeven] _doShowScriptView threw at video ' + idx + ': ' + e.message + ' | ' + (e.stack||'').split('\n')[1]);
+    showScreen('screen-script');
+    currentIndex = screenOrder.indexOf('screen-script');
+  }
+}
+
+function _doShowScriptViewInner(idx) {
   const videos = getVideos();
   const v = videos[idx];
   if (!v) { console.error('[SeenInSeven] _doShowScriptView: no video at idx ' + idx + ' (videos.length=' + videos.length + ')'); return; }
@@ -2786,7 +2815,6 @@ function exportPDF(mode) {
 function showDashboard() {
   window._SIS_log && _SIS_log('showDashboard:start', { level: state.level, name: state.name });
   _dashboardShown = true;
-  transitioning = false;
 
   if (screenOrder.length <= 2) {
     screenOrder = state.posted === 'no'
@@ -2798,21 +2826,9 @@ function showDashboard() {
     console.error('[SeenInSeven] buildPlan threw: ' + e.message);
   }
 
-  // Force every screen inactive, then force plan-screen active
-  // Using direct DOM manipulation to bypass any animation state issues
-  document.querySelectorAll('.screen').forEach(s => {
-    s.classList.remove('active', 'anim-in', 'anim-out');
-    s.style.display = '';
-  });
-  const planScreen = document.getElementById('plan-screen');
-  if (planScreen) {
-    planScreen.classList.add('active');
-    planScreen.style.display = 'flex';
-  }
-
+  showScreen('plan-screen');
   currentIndex = screenOrder.indexOf('plan-screen');
-  window.scrollTo(0, 0);
-  window._SIS_log && _SIS_log('showDashboard:done', { planActive: planScreen ? planScreen.classList.contains('active') : false });
+  window._SIS_log && _SIS_log('showDashboard:done', '');
 
   if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
     const toast = document.getElementById('verify-email-toast');
@@ -2835,7 +2851,7 @@ function restartWizard(){
   if (fwEl) fwEl.value = '';
   currentPreviewVideoNum=1;
   screenOrder=['screen-0','screen-1'];
-  currentIndex=0;currentVideoIndex=0;transitioning=false;
+  currentIndex=0;currentVideoIndex=0;transitioning=false;_dashboardShown=false;
   // Reset progress bar classes
   const pbWrap = document.getElementById('progress-bar-wrap');
   if (pbWrap) {
