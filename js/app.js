@@ -3211,6 +3211,11 @@ function saveProgress() {
 }
 
 function loadProgress() {
+  // If there's a Supabase auth token in the hash, don't touch anything.
+  // onAuthStateChange will handle routing once it processes the token.
+  const hash = window.location.hash;
+  if (hash && hash.includes('access_token')) return;
+
   try {
     const raw = localStorage.getItem(SAVE_KEY);
     if (!raw) return;
