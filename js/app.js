@@ -96,6 +96,11 @@ function goNext() {
     screenOrder = state.posted === 'no'
       ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
       : ['screen-0','screen-1','screen-email','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+    // User is going through fresh onboarding — clear any previously restored answers
+    // so their new answers always win
+    state.blocker = null; state.history = null; state.goal = null;
+    state.minigoal = null; state.minigoalText = ''; state.business = null;
+    state.mvoQ2 = null; state.mvoQ3 = null; state.mvoQ4 = null;
   }
 
   if (cur === 'screen-3') {
@@ -200,14 +205,23 @@ async function handleEmailSubmit() {
       .maybeSingle();
 
     if (existingUser && existingUser.level) {
-      // Existing user — send magic link and show waiting screen
+      // Existing user — send magic link and show inline confirmation
       sendMagicLink(email).catch(() => {});
       if (checkEl) checkEl.style.display = 'none';
       if (btn) { btn.textContent = 'Continue →'; btn.disabled = false; }
-      const waitMsg = document.getElementById('auth-wait-email-display');
-      if (waitMsg) waitMsg.textContent = 'We sent a link to ' + email + '. Click it and you\'ll land right back on your dashboard.';
-      currentIndex = screenOrder.indexOf('screen-auth-wait');
-      showScreen('screen-auth-wait');
+      // Show inline confirmation — replace the button row
+      const emailScreen = document.getElementById('screen-email');
+      if (emailScreen) {
+        const existing = emailScreen.querySelector('.email-sent-msg');
+        if (!existing) {
+          const msg = document.createElement('div');
+          msg.className = 'email-sent-msg';
+          msg.style.cssText = 'margin-top:16px;padding:16px 18px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;font-size:15px;color:var(--green);line-height:1.7;';
+          msg.innerHTML = '📬 <strong>Link sent to ' + email + '</strong><br><span style="color:var(--muted);font-size:13px;">Click it to pick up where you left off. Or <button onclick="goNext()" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:13px;text-decoration:underline;padding:0;">continue as a new user instead.</button></span>';
+          const btnRow = emailScreen.querySelector('.btn-row');
+          if (btnRow) btnRow.after(msg);
+        }
+      }
       return;
     }
 
@@ -215,7 +229,7 @@ async function handleEmailSubmit() {
     sendMagicLink(email).catch(() => {});
 
   } catch(e) {
-    // If check fails, continue anyway — don't block the user
+    // If check fails, continue anyway
   }
 
   if (checkEl) checkEl.style.display = 'none';
