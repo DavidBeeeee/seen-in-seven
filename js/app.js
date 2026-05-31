@@ -3224,6 +3224,7 @@ function loadProgress() {
       if (data.minigoal)    state.minigoal    = data.minigoal;
       if (data.minigoalText) state.minigoalText = data.minigoalText;
       if (data.business)    state.business    = data.business;
+      if (data.goal)        state.goal        = data.goal;
       if (data.videoStatus) state.videoStatus = data.videoStatus;
       if (data.videos)      state.videos      = data.videos;
       if (data.mvoQ2)         state.mvoQ2         = data.mvoQ2;
@@ -3234,13 +3235,13 @@ function loadProgress() {
       if (data.topicFreewrite)state.topicFreewrite= data.topicFreewrite;
       if (data.mvoQ2 && (data.blocker || data.history)) mvoQ2Skipped = true;
 
-      // If authenticated — skip banner entirely and go straight to dashboard
-      if (typeof getCurrentUser === 'function' && getCurrentUser() && data.level) {
+      // If they have a level — go straight to dashboard, no banner needed
+      if (data.level && typeof showDashboard === 'function') {
         showDashboard();
         return;
       }
 
-      // Not authenticated — show the returning banner
+      // Has name but no level (partial onboarding) — show the banner
       const banner = document.getElementById('returning-banner');
       const nameEl = document.getElementById('rb-name-display');
       if (banner && nameEl) {
