@@ -2000,29 +2000,41 @@ function _doShowScriptViewInner(idx) {
   const filmedBtn = document.getElementById('btn-filmed-main');
   const skipBtn = document.getElementById('btn-filmed-skip');
 
+  const alreadyFilmed = state.videoStatus[idx] === 'filmed';
+
+  function _backToDashboard() {
+    editingFromPlan = false;
+    updateProgress('screen-script');
+    buildPlan();
+    showScreen('plan-screen');
+    currentIndex = screenOrder.indexOf('plan-screen');
+    window.scrollTo(0, 0);
+  }
+
   if (editingFromPlan) {
-    filmedBtn.textContent = '✅ Done Editing → Back to My Plan';
-    filmedBtn.onclick = () => {
-      editingFromPlan = false;
-      // refresh the script text in the plan row if it's already rendered
-      const el = document.getElementById('plan-script-text-' + idx);
-      if (el) el.textContent = '"' + (state.videos['script_v'+idx] || '') + '"';
-      buildPlan();
-      showScreen('plan-screen');
-      currentIndex = screenOrder.indexOf('plan-screen');
-      window.scrollTo(0, 0);
-    };
-    skipBtn.textContent = '← Back to Plan without saving';
-    skipBtn.onclick = () => {
-      editingFromPlan = false;
-      showScreen('plan-screen');
-      currentIndex = screenOrder.indexOf('plan-screen');
-      window.scrollTo(0, 0);
-    };
+    if (alreadyFilmed) {
+      // Already filmed — just offer to go back, no status changes
+      filmedBtn.textContent = '✅ Done — Back to Dashboard';
+      filmedBtn.onclick = _backToDashboard;
+      skipBtn.textContent = '← Back to Dashboard';
+      skipBtn.onclick = _backToDashboard;
+    } else {
+      // Not yet filmed — offer to mark filmed or just return
+      filmedBtn.textContent = '✅ Mark Filmed → Back to Dashboard';
+      filmedBtn.onclick = () => {
+        state.videoStatus[idx] = 'filmed';
+        saveProgress();
+        queueProgressSave(idx, state.level || 1, 'filmed');
+        launchConfetti();
+        _backToDashboard();
+      };
+      skipBtn.textContent = '← Back to Dashboard without filming';
+      skipBtn.onclick = _backToDashboard;
+    }
   } else {
     filmedBtn.textContent = idx < 6 ? '✅ I Filmed It! → Next Video' : '✅ I Filmed It! → See My Full Plan';
     filmedBtn.onclick = () => afterFilmed(idx, 'filmed');
-    skipBtn.textContent = idx < 6 ? 'Skip this one for now → Next Video' : 'Skip → See My Full Plan';
+    skipBtn.textContent = idx < 6 ? 'Skip for now → Next Video' : 'Skip → See My Full Plan';
     skipBtn.onclick = () => afterFilmed(idx, 'skipped');
   }
 
@@ -2080,8 +2092,13 @@ function _doShowScriptViewInner(idx) {
 
 function afterFilmed(idx, status) {
   // Record status ('filmed' or 'skipped')
+  // Never downgrade a filmed video to skipped
   if (status) {
-    state.videoStatus[idx] = status;
+    if (status === 'skipped' && state.videoStatus[idx] === 'filmed') {
+      // Already filmed — don't overwrite, just navigate forward
+    } else {
+      state.videoStatus[idx] = status;
+    }
     updateDots(idx + 1 < 7 ? idx + 1 : idx);
     saveProgress(); // persist after every video completion
     // Queue DB save — fires immediately if authenticated, deferred if not
@@ -2307,11 +2324,9 @@ function editScript(idx) {
   editingFromPlan = true;
   currentVideoIndex = idx;
   updateDots(idx);
-  // Go to PROMPTS page so user can review/edit answers before regenerating
-  renderVideoPrompts(idx);
-  showScreen('screen-7');
-  currentIndex = screenOrder.indexOf('screen-7');
-  window.scrollTo(0, 0);
+  // Go directly to the script view — user sees their script immediately
+  // They can regenerate from within the script view if they want
+  showScriptView(idx, true); // skipLoading=true since script already exists
 }
 
 function markFilmedFromPlan(idx) {
@@ -2522,7 +2537,32 @@ function exportSinglePDF(idx) {
   setTimeout(() => win.print(), 300);
 }
 
-// ── SESSION EXPIRY HANDLER ────────────────────────────
+// ── PAGE PROTECTION ───────────────────────────────────
+// Warn if user tries to close/refresh while a script is generating
+window.addEventListener('beforeunload', (e) => {
+  const loadingScreen = document.getElementById('screen-script-loading');
+  if (loadingScreen && loadingScreen.classList.contains('active')) {
+    e.preventDefault();
+    e.returnValue = 'Your script is still generating — are you sure you want to leave?';
+  }
+});
+
+// Prevent visibility changes (switching apps/windows) from interrupting the script flow
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'visible') {
+    // User came back — check if we're on a script screen and do nothing
+    const scriptScreen = document.getElementById('screen-script');
+    const loadingScreen = document.getElementById('screen-script-loading');
+    const promptsScreen = document.getElementById('screen-7');
+    const onScriptFlow = (scriptScreen && scriptScreen.classList.contains('active'))
+      || (loadingScreen && loadingScreen.classList.contains('active'))
+      || (promptsScreen && promptsScreen.classList.contains('active'));
+    if (onScriptFlow) {
+      // Don't let auth state changes interrupt — the supabase handler already guards this
+      window._SIS_log && _SIS_log('visibility:returned-to-script', 'staying put');
+    }
+  }
+});
 setInterval(async () => {
   if (typeof getCurrentUser !== 'function' || !getCurrentUser()) return;
   try {

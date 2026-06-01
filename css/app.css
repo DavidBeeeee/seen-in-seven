@@ -194,15 +194,15 @@ body::before {
 /* ── INPUTS ── */
 .input-group { margin-bottom:24px; }
 .input-label {
-  font-family:'Space Mono',monospace;
-  font-size:10px; letter-spacing:0.14em;
-  color:var(--teal); text-transform:uppercase;
-  margin-bottom:8px; display:block;
+  font-family:'Lora',serif;
+  font-size:20px; font-weight:600; letter-spacing:0;
+  color:var(--cream); text-transform:none;
+  margin-bottom:8px; display:block; line-height:1.4;
 }
 .input-hint {
-  font-size:16px; color:var(--muted);
-  font-style:italic; margin-bottom:9px;
-  display:block; line-height:1.55;
+  font-size:13px; color:var(--muted);
+  font-style:italic; margin-bottom:12px;
+  display:block; line-height:1.6;
 }
 .text-input {
   width:100%; background:var(--card);

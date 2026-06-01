@@ -38,11 +38,11 @@ function queueOnboardingSave() {
 }
 
 // ── AUTH STATE ────────────────────────────────────────
+// Track page load time to distinguish initial auth from token refreshes
+const _pageLoadTime = Date.now();
+
 _sb.auth.onAuthStateChange((event, session) => {
   window._SIS_log && _SIS_log('auth:stateChange', {event, hasSession: !!session, hasUser: !!(session && session.user)});
-  // CRITICAL: never await Supabase calls directly inside this callback —
-  // the client holds a lock during the auth event and awaiting a DB query
-  // here deadlocks forever. Defer all DB work with setTimeout(0).
   if (session && session.user) {
     const u = session.user;
     setTimeout(async () => {
@@ -53,14 +53,28 @@ _sb.auth.onAuthStateChange((event, session) => {
 
         const toast = document.getElementById('verify-email-toast');
         if (toast) toast.style.display = 'none';
-        // Show header nav now that user is authenticated
         const navEl = document.getElementById('header-nav');
         if (navEl) navEl.style.display = 'flex';
 
         if (event === 'SIGNED_IN') {
+          // Only route to dashboard if this is from the initial page load (within 8 seconds)
+          // or if the user is currently on screen-0 (not mid-flow)
+          const isInitialLoad = (Date.now() - _pageLoadTime) < 8000;
+          const screen0 = document.getElementById('screen-0');
+          const onScreen0 = screen0 && screen0.classList.contains('active');
+          const planScreen = document.getElementById('plan-screen');
+          const onDashboard = planScreen && planScreen.classList.contains('active');
+
+          if (!isInitialLoad && !onScreen0 && !onDashboard) {
+            // Token refresh mid-flow — just update auth state silently, don't interrupt the user
+            window._SIS_log && _SIS_log('auth:token-refresh-mid-flow', 'skipping navigation');
+            await _restoreFromDatabase();
+            await _flushSaveQueue();
+            return;
+          }
+
           // Clear any previous user's localStorage before restoring the new session
           try { localStorage.removeItem('bwb_challenge_v1'); } catch(e) {}
-          // Hide the returning banner in case loadProgress showed it
           const banner = document.getElementById('returning-banner');
           if (banner) banner.classList.remove('visible');
           await _restoreFromDatabase();
@@ -72,8 +86,6 @@ _sb.auth.onAuthStateChange((event, session) => {
             showDashboard();
           } else {
             window._SIS_log && _SIS_log('auth:no-dashboard', {level: state.level});
-            // No level yet — they need to go through onboarding
-            // Make sure screen-0 is visible and clean
             if (typeof showScreen === 'function') showScreen('screen-0');
           }
         }
