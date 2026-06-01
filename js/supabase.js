@@ -59,12 +59,10 @@ _sb.auth.onAuthStateChange((event, session) => {
           _mergeLocalStorage();
           await _flushSaveQueue();
           window._SIS_log && _SIS_log('auth:after-restore', {level: state.level, name: state.name});
+          // SIGNED_IN always wins — reset dashboard flag and show fresh
+          if (typeof _dashboardShown !== 'undefined') _dashboardShown = false;
           if (state.level && typeof showDashboard === 'function') {
-            if (typeof _dashboardShown !== 'undefined' && _dashboardShown) {
-              try { buildPlan(); } catch(e) {}
-            } else {
-              showDashboard();
-            }
+            showDashboard();
           } else {
             window._SIS_log && _SIS_log('auth:no-dashboard', {level: state.level});
           }
