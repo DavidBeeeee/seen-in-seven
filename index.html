@@ -128,6 +128,13 @@
 
 <!-- ══ VERIFY EMAIL TOAST ══ -->
 <div id="verify-email-toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9998;background:#0D2828;border:1px solid rgba(200,168,75,0.5);border-radius:12px;padding:14px 20px;align-items:center;gap:12px;max-width:440px;width:calc(100% - 40px);box-shadow:0 8px 32px rgba(0,0,0,0.4);">
+  <span style="font-size:20px;flex-shrink:0;">📧</span>
+  <div style="flex:1;">
+    <div style="font-size:13px;font-weight:700;color:#E8C86C;margin-bottom:3px;">Confirm your email to save your scripts</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.6;">Your progress is only saved on this device right now. Check your inbox for a magic link to fully activate your account — or <button onclick="showEmailScreenFromToast()" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:12px;text-decoration:underline;padding:0;font-family:inherit;">enter your email here.</button></div>
+  </div>
+  <button onclick="dismissVerifyToast()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;flex-shrink:0;padding:4px;">✕</button>
+</div>
 
 <!-- ══ EMAIL VERIFICATION GATE ══ -->
 <div id="verify-gate-overlay" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.85);align-items:center;justify-content:center;padding:24px;">
@@ -140,12 +147,25 @@
     <button onclick="handleGateEmailSubmit()" style="width:100%;background:var(--teal);border:none;border-radius:10px;padding:14px;color:#0D2828;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:0.08em;cursor:pointer;margin-bottom:12px;">Secure My Script →</button>
     <button onclick="dismissVerifyGate()" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;text-decoration:underline;font-family:'Nunito',sans-serif;">Skip for now (script may be lost if you close this tab)</button>
   </div>
-</div>  <span style="font-size:20px;flex-shrink:0;">📧</span>
-  <div style="flex:1;">
-    <div style="font-size:13px;font-weight:700;color:#E8C86C;margin-bottom:3px;">Confirm your email to save your scripts</div>
-    <div style="font-size:12px;color:var(--muted);line-height:1.6;">Your progress is only saved on this device right now. Check your inbox for a magic link to fully activate your account — or <button onclick="showEmailScreenFromToast()" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:12px;text-decoration:underline;padding:0;font-family:inherit;">enter your email here.</button></div>
+</div>
+
+<!-- ══ DELETE & START OVER CONFIRMATION ══ -->
+<div id="delete-start-over-confirm" style="display:none;position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#0a1f1f;border:1px solid var(--border);border-radius:16px;padding:32px 28px;max-width:420px;width:100%;text-align:center;">
+    <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--cream);margin-bottom:12px;">Delete this script and start over?</div>
+    <div style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:28px;">Your current draft will be saved to version history. You'll go back to the questions to start a fresh script for this video.</div>
+    <div style="display:flex;gap:12px;justify-content:center;">
+      <button onclick="document.getElementById('delete-start-over-confirm').style.display='none'" style="background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:10px 24px;color:var(--soft);font-size:15px;cursor:pointer;font-family:'Nunito',sans-serif;">Cancel</button>
+      <button onclick="deleteAndStartOver()" style="background:#ef4444;border:none;border-radius:8px;padding:10px 24px;color:white;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Yes, Start Over</button>
+    </div>
   </div>
-  <button onclick="dismissVerifyToast()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;flex-shrink:0;padding:4px;">✕</button>
+</div>
+
+<!-- ══ FULLSCREEN SCRIPT PREVIEW ══ -->
+<div id="fullscreen-preview" style="display:none;position:fixed;inset:0;z-index:9700;background:#0D2828;padding:60px 32px 40px;overflow-y:auto;">
+  <button onclick="closeFullscreenPreview()" style="position:fixed;top:20px;right:24px;background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:8px 16px;color:var(--cream);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;z-index:1;">✕ Close</button>
+  <div id="fullscreen-preview-title" style="font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:0.12em;color:var(--teal);text-transform:uppercase;margin-bottom:16px;text-align:center;"></div>
+  <div id="fullscreen-preview-content" style="font-family:'Lora',serif;font-style:italic;font-size:28px;line-height:1.85;color:var(--cream);max-width:780px;margin:0 auto;white-space:pre-wrap;"></div>
 </div>
 
 <div id="progress-bar-wrap">
@@ -633,16 +653,24 @@
       <div id="sv-versions-list"></div>
     </div>
 
+    <!-- Undo/Redo toolbar -->
+    <div id="sv-undo-bar" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:8px;">
+      <button id="sv-undo" onclick="undoScript()" disabled title="Undo (Ctrl/Cmd+Z)" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;font-size:13px;">↶ Undo</button>
+      <button id="sv-redo" onclick="redoScriptStep()" disabled title="Redo (Ctrl/Cmd+Shift+Z)" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;font-size:13px;">↷ Redo</button>
+      <button id="sv-fullscreen" onclick="openFullscreenPreview()" title="Fullscreen view" style="background:none;border:1px solid var(--border);border-radius:6px;padding:5px 10px;color:var(--muted);cursor:pointer;font-family:'Nunito',sans-serif;font-size:13px;margin-left:auto;">⛶ Fullscreen</button>
+    </div>
+
     <div class="filmed-card">
       <div class="filmed-card-inner">
-        <div class="filmed-icon">🎬</div>
+        <div class="filmed-icon">🔒</div>
         <div>
-          <div class="filmed-title">Ready when you are.</div>
-          <div class="filmed-sub">Film it, then come back and tap the button below.</div>
+          <div class="filmed-title" id="lock-card-title">Happy with this script?</div>
+          <div class="filmed-sub" id="lock-card-sub">Lock it in when you're ready to film. You can always edit it after.</div>
         </div>
       </div>
-      <button class="btn-filmed" id="btn-filmed-main">✅ I Filmed It!</button>
-      <button class="btn-skip" id="btn-filmed-skip">Skip this one for now</button>
+      <button class="btn-filmed" id="btn-lock-main" onclick="lockInScript()">🔒 Lock In This Script</button>
+      <button class="btn-skip" id="btn-filmed-main" style="font-size:14px;">✅ I Filmed It</button>
+      <button class="btn-skip" id="btn-filmed-skip" style="display:none;">Skip this one for now</button>
     </div>
 
     <div class="v1-tracker" id="tracker-slot-script"></div>
@@ -650,6 +678,7 @@
     <div class="btn-row" style="margin-top:8px;">
       <button class="btn-back" onclick="goBackToPrompts()">← Back to Prompts</button>
       <button class="btn-skip" style="font-size:14px;color:#4a6a80;" onclick="skipToEnd()">→ Dashboard</button>
+      <button class="btn-skip" style="font-size:13px;color:rgba(239,68,68,0.6);margin-left:auto;" onclick="confirmDeleteAndStartOver()">🗑 Delete &amp; Start Over</button>
     </div>
   </div>
 </div>

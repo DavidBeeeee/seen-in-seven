@@ -1753,6 +1753,8 @@ async function showScriptView(idx, skipLoading) {
       saveProgress();
       trackSession();
       queueScriptSave(idx + 1, state.level || 1, script);
+      // Push undo snapshot for this generation
+      if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(idx);
       _doShowScriptView(idx);
       // Show verification gate after first script, persistent toast for subsequent
       if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
@@ -1978,15 +1980,14 @@ function _doShowScriptViewInner(idx) {
     editor.value = cleanScript;
     let _editSaveTimer = null;
     editor.oninput = () => {
-      // Store clean edit back; no section labels needed in storage for user-edited text
       state.videos[editKey] = editor.value;
-      // Re-parse sections when user edits clean view
       const reParsed = parseScriptSections(editor.value);
       if (reParsed) state.videos[sectionsKey] = reParsed;
-      // Debounced save to DB (2 seconds after last keystroke)
       clearTimeout(_editSaveTimer);
       _editSaveTimer = setTimeout(() => {
         saveScriptEditToDb(idx + 1, state.level || 1, editor.value);
+        if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(idx);
+        if (typeof flashSavedIndicator === 'function') flashSavedIndicator();
       }, 2000);
     };
   }
@@ -1995,6 +1996,9 @@ function _doShowScriptViewInner(idx) {
   window._SIS_log && _SIS_log('dsv:beats-rendered', {beatsLen: (document.getElementById('sv-beats')||{}).innerHTML ? document.getElementById('sv-beats').innerHTML.length : 0});
   window.scrollTo(0, 0);
   setScriptView('guided');
+  // Update lock state UI and undo/redo buttons
+  if (typeof _updateLockUI === 'function') _updateLockUI(idx);
+  if (typeof _refreshUndoButtons === 'function') _refreshUndoButtons(idx);
 
   // wire up I Filmed It / Done Editing
   const filmedBtn = document.getElementById('btn-filmed-main');
@@ -2237,13 +2241,14 @@ function skipToEnd() {
   window.scrollTo(0, 0);
 }
 
-function redoScript() {
+function startVideoOver() {
   const idx = currentVideoIndex;
+  // Push snapshot before wiping so undo can recover
+  if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(idx);
   const videos = getVideos();
   const v = videos[idx];
   delete state.videos['script_v' + idx];
   if (v.beats) {
-    // V1: clear MVO answers and journal-prompt edits, go back to V1 preface
     state.mvoQ2 = null; state.mvoQ3 = null; state.mvoQ4 = null;
     mvoQ2Skipped = false;
     delete state.videos['_v1_seen'];
@@ -2254,7 +2259,6 @@ function redoScript() {
     showScreen('screen-comm-layers');
     currentIndex = screenOrder.indexOf('screen-comm-layers');
   } else {
-    // V2-7: clear prompts answers, go back to prompts screen
     if (v.prompts) { v.prompts.forEach(p => { delete state.videos[p.key]; }); }
     renderVideoPrompts(idx);
     showScreen('screen-7');
@@ -2262,6 +2266,9 @@ function redoScript() {
   }
   window.scrollTo(0, 0);
 }
+
+// Backward-compat alias (old onclick handlers may still call redoScript)
+function redoScript() { startVideoOver(); }
 
 // ── SCRIPT VIEW FEEDBACK (inline thumbs) ─────────────
 async function handleScriptViewFeedback(thumbsUp) {
@@ -2447,6 +2454,341 @@ async function handleGateEmailSubmit() {
   } catch(e) {
     if (errEl) { errEl.textContent = 'Something went wrong — try again.'; errEl.style.display = 'block'; }
   }
+}
+
+// ── UNDO/REDO SYSTEM ──────────────────────────────────
+// Per-video undo stacks. Each video has its own history.
+// state.videos['_undo_v' + idx] = { stack: [], pointer: 0 }
+// The stack contains script text snapshots, pointer is the current index.
+
+function _undoKey(idx) { return '_undo_v' + idx; }
+
+function _getUndoState(idx) {
+  const k = _undoKey(idx);
+  if (!state.videos[k]) state.videos[k] = { stack: [], pointer: -1 };
+  return state.videos[k];
+}
+
+function pushUndoSnapshot(idx) {
+  const script = state.videos['script_v' + idx];
+  if (!script) return;
+  const u = _getUndoState(idx);
+  // Don't push duplicate consecutive snapshots
+  if (u.pointer >= 0 && u.stack[u.pointer] === script) return;
+  // Truncate forward history if we're not at the top
+  if (u.pointer < u.stack.length - 1) u.stack = u.stack.slice(0, u.pointer + 1);
+  u.stack.push(script);
+  // Cap stack at 50 entries to avoid memory bloat
+  if (u.stack.length > 50) { u.stack.shift(); u.pointer = u.stack.length - 1; }
+  else u.pointer = u.stack.length - 1;
+  saveProgress();
+  _refreshUndoButtons(idx);
+}
+
+function undoScript() {
+  const idx = currentVideoIndex;
+  const u = _getUndoState(idx);
+  if (u.pointer <= 0) return;
+  u.pointer--;
+  state.videos['script_v' + idx] = u.stack[u.pointer];
+  saveProgress();
+  _doShowScriptView(idx);
+  _refreshUndoButtons(idx);
+}
+
+function redoScriptStep() {
+  const idx = currentVideoIndex;
+  const u = _getUndoState(idx);
+  if (u.pointer >= u.stack.length - 1) return;
+  u.pointer++;
+  state.videos['script_v' + idx] = u.stack[u.pointer];
+  saveProgress();
+  _doShowScriptView(idx);
+  _refreshUndoButtons(idx);
+}
+
+function _refreshUndoButtons(idx) {
+  const u = _getUndoState(idx);
+  const undoBtn = document.getElementById('sv-undo');
+  const redoBtn = document.getElementById('sv-redo');
+  if (undoBtn) {
+    const canUndo = u.pointer > 0;
+    undoBtn.disabled = !canUndo;
+    undoBtn.style.opacity = canUndo ? '1' : '0.4';
+    undoBtn.style.cursor = canUndo ? 'pointer' : 'not-allowed';
+  }
+  if (redoBtn) {
+    const canRedo = u.pointer < u.stack.length - 1;
+    redoBtn.disabled = !canRedo;
+    redoBtn.style.opacity = canRedo ? '1' : '0.4';
+    redoBtn.style.cursor = canRedo ? 'pointer' : 'not-allowed';
+  }
+}
+
+// Global keyboard shortcuts for undo/redo on script view
+document.addEventListener('keydown', (e) => {
+  const scriptScreen = document.getElementById('screen-script');
+  if (!scriptScreen || !scriptScreen.classList.contains('active')) return;
+  // Don't intercept when typing in textarea/input (browser handles native undo there)
+  const tag = (e.target.tagName || '').toLowerCase();
+  if (tag === 'textarea' || tag === 'input') return;
+  const cmd = e.ctrlKey || e.metaKey;
+  if (cmd && e.key === 'z' && !e.shiftKey) { e.preventDefault(); undoScript(); }
+  else if ((cmd && e.key === 'z' && e.shiftKey) || (cmd && e.key === 'y')) { e.preventDefault(); redoScriptStep(); }
+});
+
+// ── LOCK IN SCRIPT ────────────────────────────────────
+function lockInScript() {
+  const idx = currentVideoIndex;
+  state.videos['locked_v' + idx] = true;
+  saveProgress();
+  _updateLockUI(idx);
+  // Brief celebration
+  const btn = document.getElementById('btn-lock-main');
+  if (btn) {
+    btn.textContent = '🔒 Locked In ✓';
+    btn.style.background = 'rgba(74,222,128,0.18)';
+    btn.style.color = 'var(--green)';
+  }
+  // After half a second, also promote "I Filmed It" to the primary spot visually
+  setTimeout(() => _updateLockUI(idx), 500);
+}
+
+function _updateLockUI(idx) {
+  const locked = !!state.videos['locked_v' + idx];
+  const lockBtn = document.getElementById('btn-lock-main');
+  const filmedBtn = document.getElementById('btn-filmed-main');
+  const titleEl = document.getElementById('lock-card-title');
+  const subEl = document.getElementById('lock-card-sub');
+  const iconEl = document.querySelector('.filmed-card .filmed-icon');
+  if (locked) {
+    // Lock button becomes secondary "Unlock to edit"
+    if (lockBtn) {
+      lockBtn.className = 'btn-skip';
+      lockBtn.style.fontSize = '13px';
+      lockBtn.textContent = '🔓 Unlock to edit again';
+      lockBtn.onclick = () => unlockScript();
+    }
+    // Filmed becomes the primary action
+    if (filmedBtn) {
+      filmedBtn.className = 'btn-filmed';
+      filmedBtn.style.fontSize = '';
+    }
+    if (titleEl) titleEl.textContent = 'Script locked in. Time to film.';
+    if (subEl) subEl.textContent = 'Your script is set. Film it, then come back and tap below.';
+    if (iconEl) iconEl.textContent = '🎬';
+  } else {
+    if (lockBtn) {
+      lockBtn.className = 'btn-filmed';
+      lockBtn.style.fontSize = '';
+      lockBtn.textContent = '🔒 Lock In This Script';
+      lockBtn.onclick = () => lockInScript();
+    }
+    if (filmedBtn) {
+      filmedBtn.className = 'btn-skip';
+      filmedBtn.style.fontSize = '14px';
+    }
+    if (titleEl) titleEl.textContent = 'Happy with this script?';
+    if (subEl) subEl.textContent = "Lock it in when you're ready to film. You can always edit it after.";
+    if (iconEl) iconEl.textContent = '🔒';
+  }
+}
+
+function unlockScript() {
+  const idx = currentVideoIndex;
+  delete state.videos['locked_v' + idx];
+  saveProgress();
+  _updateLockUI(idx);
+}
+
+// ── DELETE & START OVER ───────────────────────────────
+function confirmDeleteAndStartOver() {
+  const el = document.getElementById('delete-start-over-confirm');
+  if (el) el.style.display = 'flex';
+}
+
+async function deleteAndStartOver() {
+  const idx = currentVideoIndex;
+  const el = document.getElementById('delete-start-over-confirm');
+  if (el) el.style.display = 'none';
+  // The current script is already saved as a version in the DB via queueScriptSave on initial generation.
+  // We just need to wipe local state and go back to prompts. The DB row stays as a historical version.
+  // First, ensure the current script is persisted in DB before wiping (in case of unsaved edits)
+  const currentScript = state.videos['script_v' + idx];
+  if (currentScript && typeof saveScriptEditToDb === 'function') {
+    await saveScriptEditToDb(idx + 1, state.level || 1, currentScript);
+  }
+  // Clear the script and its undo history and lock state
+  delete state.videos['script_v' + idx];
+  delete state.videos['sections_v' + idx];
+  delete state.videos['_undo_v' + idx];
+  delete state.videos['locked_v' + idx];
+  // Clear prompt answers for this video so they can answer fresh
+  const videos = getVideos();
+  const v = videos[idx];
+  if (v && v.prompts) v.prompts.forEach(p => { delete state.videos[p.key]; });
+  // For V1 (idx 0), also reset the MVO answers and topic freewrite
+  if (idx === 0) {
+    state.mvoQ2 = null; state.mvoQ3 = null; state.mvoQ4 = null;
+    state.topicFreewrite = '';
+    mvoQ2Skipped = false;
+    delete state.videos['_v1_seen'];
+    delete state.videos['v0p0']; delete state.videos['v0p1'];
+    delete state.videos['v0p2']; delete state.videos['v0p3']; delete state.videos['v0p4'];
+  }
+  saveProgress();
+  // Send back to prompts
+  if (idx === 0) {
+    renderPrefaceV1();
+    showScreen('screen-comm-layers');
+    currentIndex = screenOrder.indexOf('screen-comm-layers');
+  } else {
+    renderVideoPrompts(idx);
+    showScreen('screen-7');
+    currentIndex = screenOrder.indexOf('screen-7');
+  }
+  window.scrollTo(0, 0);
+}
+
+// ── FULLSCREEN PREVIEW ────────────────────────────────
+function openFullscreenPreview() {
+  const idx = currentVideoIndex;
+  const videos = getVideos();
+  const v = videos[idx];
+  if (!v) return;
+  const script = state.videos['script_v' + idx] || '';
+  const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  const titleEl = document.getElementById('fullscreen-preview-title');
+  const contentEl = document.getElementById('fullscreen-preview-content');
+  if (titleEl) titleEl.textContent = 'Video ' + (idx + 1) + ' · ' + v.title;
+  if (contentEl) contentEl.textContent = clean;
+  const overlay = document.getElementById('fullscreen-preview');
+  if (overlay) overlay.style.display = 'block';
+}
+
+function closeFullscreenPreview() {
+  const overlay = document.getElementById('fullscreen-preview');
+  if (overlay) overlay.style.display = 'none';
+}
+
+// Esc key closes fullscreen
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    const overlay = document.getElementById('fullscreen-preview');
+    if (overlay && overlay.style.display === 'block') closeFullscreenPreview();
+  }
+});
+
+// ── DASHBOARD VERSION MODAL ───────────────────────────
+async function openVersionModal(idx) {
+  const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+  if (!user) {
+    alert('Sign in to view version history.');
+    return;
+  }
+  const videos = getVideos();
+  const v = videos[idx];
+  if (!v) return;
+  const versions = await fetchScriptVersions(idx + 1, state.level || 1);
+  if (!versions || versions.length === 0) return;
+
+  // Build the modal
+  let modal = document.getElementById('version-modal-overlay');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'version-modal-overlay';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:9400;background:rgba(0,0,0,0.78);display:flex;align-items:center;justify-content:center;padding:24px;';
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML = '';
+  const inner = document.createElement('div');
+  inner.style.cssText = 'background:#0a1f1f;border:1px solid var(--border);border-radius:16px;max-width:680px;width:100%;max-height:88vh;overflow-y:auto;padding:28px;';
+  inner.innerHTML = `
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+      <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--cream);letter-spacing:0.04em;">Video ${idx + 1} — Version History</div>
+      <button onclick="closeVersionModal()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:22px;padding:4px 8px;">✕</button>
+    </div>
+    <div style="font-size:14px;color:var(--muted);margin-bottom:24px;font-style:italic;">${v.title}</div>
+    <div id="version-modal-list"></div>`;
+  modal.appendChild(inner);
+
+  const listEl = document.getElementById('version-modal-list');
+  versions.forEach(ver => {
+    _versionStore[ver.id] = ver.content;
+    const clean = ver.content.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+    const date = new Date(ver.generated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    const isCurrent = ver.is_current;
+    const item = document.createElement('div');
+    item.style.cssText = `border:1px solid ${isCurrent ? 'rgba(50,184,184,0.4)' : 'var(--border)'};border-radius:10px;padding:16px;margin-bottom:14px;background:${isCurrent ? 'rgba(50,184,184,0.05)' : 'transparent'};`;
+    item.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.12em;color:${isCurrent ? 'var(--teal)' : 'var(--muted)'};text-transform:uppercase;">
+          Version ${ver.version} · ${date} ${isCurrent ? '· CURRENT' : ''}
+        </div>
+        <div style="display:flex;gap:14px;">
+          <button class="dbc-link" onclick="copyVersion('${ver.id}', this)">Copy</button>
+          <button class="dbc-link" onclick="printVersion('${ver.id}', ${idx})">Print</button>
+          ${!isCurrent ? `<button class="dbc-link primary" onclick="restoreVersion('${ver.id}', ${idx})">Restore</button>` : ''}
+        </div>
+      </div>
+      <div style="font-family:'Lora',serif;font-style:italic;font-size:14px;line-height:1.7;color:var(--cream);white-space:pre-wrap;max-height:200px;overflow-y:auto;padding:8px 0;border-top:1px solid var(--border);">${clean}</div>`;
+    listEl.appendChild(item);
+  });
+
+  modal.style.display = 'flex';
+}
+
+function closeVersionModal() {
+  const modal = document.getElementById('version-modal-overlay');
+  if (modal) modal.style.display = 'none';
+}
+
+function copyVersion(scriptId, btn) {
+  const content = _versionStore[scriptId];
+  if (!content) return;
+  const clean = content.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  navigator.clipboard && navigator.clipboard.writeText(clean).then(() => {
+    if (btn) { const orig = btn.textContent; btn.textContent = '✓ Copied'; setTimeout(() => btn.textContent = orig, 1500); }
+  });
+}
+
+function printVersion(scriptId, idx) {
+  const content = _versionStore[scriptId];
+  if (!content) return;
+  const videos = getVideos();
+  const v = videos[idx];
+  const clean = content.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  const win = window.open('', '_blank');
+  win.document.write(`<html><head><title>Video ${idx + 1} — ${v.title}</title>
+    <style>body{font-family:Georgia,serif;max-width:680px;margin:40px auto;padding:0 24px;color:#111;line-height:1.8;}
+    h1{font-size:22px;margin-bottom:4px;}h2{font-size:14px;color:#555;font-weight:normal;margin-bottom:32px;}
+    p{white-space:pre-wrap;font-size:16px;}</style></head>
+    <body><h1>Video ${idx + 1} — ${v.title}</h1>
+    <h2>SeenInSeven · ${state.name || ''}</h2>
+    <p>${clean}</p></body></html>`);
+  win.document.close();
+  setTimeout(() => win.print(), 300);
+}
+
+async function restoreVersion(scriptId, idx) {
+  await handleRestoreVersion(scriptId, idx);
+  closeVersionModal();
+  buildPlan();
+}
+
+// ── TRUST INDICATOR: "Saved" flash ─────────────────────
+function flashSavedIndicator() {
+  let el = document.getElementById('saved-indicator');
+  if (!el) {
+    el = document.createElement('div');
+    el.id = 'saved-indicator';
+    el.style.cssText = 'position:fixed;top:70px;right:24px;z-index:9999;background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.4);color:var(--green);padding:6px 14px;border-radius:8px;font-family:"Space Mono",monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;opacity:0;transition:opacity 0.3s ease;pointer-events:none;';
+    el.textContent = '✓ Saved';
+    document.body.appendChild(el);
+  }
+  el.style.opacity = '1';
+  clearTimeout(el._hideTimer);
+  el._hideTimer = setTimeout(() => { el.style.opacity = '0'; }, 1800);
 }
 
 // ── LOGOUT ────────────────────────────────────────────
@@ -2678,6 +3020,34 @@ function showLevelChangeConfirm() {
 }
 
 async function confirmLevelChange(newLevel) {
+  const oldLevel = state.level;
+  if (oldLevel === newLevel) return;
+
+  // Archive scripts properly to avoid scrambling
+  // If switching FROM L1 → L2 and L1 has scripts: stash them in l1Videos
+  // If switching FROM L2 → L1 and l1Videos has scripts: restore them
+  if (oldLevel === 1 && newLevel === 2) {
+    // Stash current L1 scripts before clearing
+    const hasL1Scripts = Object.keys(state.videos || {}).some(k => k.startsWith('script_v'));
+    if (hasL1Scripts) {
+      state.l1Videos = { ...state.videos };
+      state.l1VideoStatus = { ...state.videoStatus };
+    }
+    state.videos = {};
+    state.videoStatus = {};
+  } else if (oldLevel === 2 && newLevel === 1) {
+    // Restore L1 scripts if we have them stashed; otherwise just clear
+    if (state.l1Videos && Object.keys(state.l1Videos).length > 0) {
+      state.videos = { ...state.l1Videos };
+      state.videoStatus = { ...(state.l1VideoStatus || {}) };
+      state.l1Videos = null;
+      state.l1VideoStatus = null;
+    } else {
+      state.videos = {};
+      state.videoStatus = {};
+    }
+  }
+
   state.level = newLevel;
   saveProgress();
   const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
@@ -2700,14 +3070,33 @@ async function confirmLevelChange(newLevel) {
 
 function rerunOnboarding() {
   closeSettings();
-  if (!confirm('This will clear your onboarding answers and take you back through the questions. Your scripts will be kept. Continue?')) return;
-  // Clear onboarding answers but keep scripts and name
+  // Use a styled inline confirmation rather than the browser dialog
+  let overlay = document.getElementById('rerun-onboarding-confirm');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'rerun-onboarding-confirm';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;padding:24px;';
+    overlay.innerHTML = `
+      <div style="background:#0a1f1f;border:1px solid var(--border);border-radius:16px;padding:32px 28px;max-width:420px;width:100%;text-align:center;">
+        <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--cream);margin-bottom:12px;">Re-run onboarding?</div>
+        <div style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:28px;">This clears your answers and takes you back to the questions. Your scripts will be kept exactly as they are.</div>
+        <div style="display:flex;gap:12px;justify-content:center;">
+          <button onclick="document.getElementById('rerun-onboarding-confirm').remove()" style="background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:10px 24px;color:var(--soft);font-size:15px;cursor:pointer;font-family:'Nunito',sans-serif;">Cancel</button>
+          <button onclick="_doRerunOnboarding()" style="background:var(--teal);border:none;border-radius:8px;padding:10px 24px;color:#0D2828;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Yes, Re-run</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+  }
+}
+
+function _doRerunOnboarding() {
+  const overlay = document.getElementById('rerun-onboarding-confirm');
+  if (overlay) overlay.remove();
   state.blocker = null; state.history = null; state.goal = null;
   state.minigoal = null; state.minigoalText = ''; state.business = null;
   state.mvoQ2 = null; state.mvoQ3 = null; state.mvoQ4 = null;
   state.topicFreewrite = ''; state.posted = null;
   saveProgress();
-  // Reset screenOrder and go back to screen-1
   screenOrder = ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
   currentIndex = screenOrder.indexOf('screen-1');
   showScreen('screen-1');
@@ -2846,13 +3235,14 @@ function buildPlan(){
   videos.forEach((v, i) => {
     const filmed = videoStatus[i] === 'filmed';
     const hasScript = !!state.videos['script_v' + i];
+    const isLocked = !!state.videos['locked_v' + i];
     const script = state.videos['script_v' + i] || '';
     const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
     const preview = clean ? clean.substring(0, 90) + (clean.length > 90 ? '…' : '') : 'Script not yet generated';
 
     const statusClass = filmed ? 'card-filmed' : hasScript ? 'card-ready' : 'card-pending';
-    const statusIcon = filmed ? '✓' : hasScript ? '◎' : '·';
-    const statusLabel = filmed ? 'Filmed' : hasScript ? 'Ready' : 'Pending';
+    const statusIcon = filmed ? '✓' : isLocked ? '🔒' : hasScript ? '◎' : '·';
+    const statusLabel = filmed ? 'Filmed' : isLocked ? 'Locked' : hasScript ? 'Draft' : 'Pending';
 
     const card = document.createElement('div');
     card.className = 'db-video-card ' + statusClass;
@@ -2876,7 +3266,7 @@ function buildPlan(){
           : hasScript
             ? `<button class="dbc-link" onclick="markFilmedFromPlan(${i})">Mark Filmed</button>`
             : ''}
-        ${hasScript ? `<button class="dbc-link" onclick="copyScriptFromDashboard(${i}, this)">Copy</button> <button class="dbc-link" onclick="exportSinglePDF(${i})">PDF</button>` : ''}
+        ${hasScript ? `<button class="dbc-link" onclick="copyScriptFromDashboard(${i}, this)">Copy</button> <button class="dbc-link" onclick="exportSinglePDF(${i})">PDF</button> <button class="dbc-link" onclick="openVersionModal(${i})">Versions</button>` : ''}
       </div>`;
     grid.appendChild(card);
   });
@@ -3055,19 +3445,6 @@ function resumeFromDashboard() {
 }
 
 // Thumbs feedback handler
-async function handleThumbsFeedback(videoIdx, thumbsUp) {
-  const upBtn   = document.getElementById('fb-up-' + videoIdx);
-  const downBtn = document.getElementById('fb-down-' + videoIdx);
-  const thanks  = document.getElementById('fb-thanks-' + videoIdx);
-
-  if (upBtn)   { upBtn.classList.toggle('active-up', thumbsUp); upBtn.classList.remove('active-down'); }
-  if (downBtn) { downBtn.classList.toggle('active-down', !thumbsUp); downBtn.classList.remove('active-up'); }
-  if (thanks)  { thanks.classList.add('show'); setTimeout(() => thanks.classList.remove('show'), 2500); }
-
-  // Save to DB
-  await saveScriptFeedback(videoIdx + 1, state.level || 1, thumbsUp);
-}
-
 // Conditional affiliate visibility
 function updatePartnerVisibility() {
   const filmedCount = Object.values(state.videoStatus || {}).filter(s => s === 'filmed').length;
