@@ -38,29 +38,41 @@ function queueOnboardingSave() {
 }
 
 // ── AUTH STATE ────────────────────────────────────────
-_sb.auth.onAuthStateChange(async (event, session) => {
+_sb.auth.onAuthStateChange((event, session) => {
   window._SIS_log && _SIS_log('auth:stateChange', {event, hasSession: !!session, hasUser: !!(session && session.user)});
+  // CRITICAL: never await Supabase calls directly inside this callback —
+  // the client holds a lock during the auth event and awaiting a DB query
+  // here deadlocks forever. Defer all DB work with setTimeout(0).
   if (session && session.user) {
-    _currentUser = await _syncUserProfile(session.user);
-    window._SIS_log && _SIS_log('auth:synced', {userId: _currentUser ? _currentUser.id : null, level: _currentUser ? _currentUser.level : null});
-    await _flushSaveQueue();
+    const u = session.user;
+    setTimeout(async () => {
+      try {
+        _currentUser = await _syncUserProfile(u);
+        window._SIS_log && _SIS_log('auth:synced', {userId: _currentUser ? _currentUser.id : null, level: _currentUser ? _currentUser.level : null});
+        await _flushSaveQueue();
 
-    const toast = document.getElementById('verify-email-toast');
-    if (toast) toast.style.display = 'none';
+        const toast = document.getElementById('verify-email-toast');
+        if (toast) toast.style.display = 'none';
 
-    // SIGNED_IN fires when magic link is clicked or on new login
-    // INITIAL_SESSION fires when an existing session is restored on page load
-    // initAuth handles INITIAL_SESSION — we only act here for SIGNED_IN
-    if (event === 'SIGNED_IN') {
-      await _restoreFromDatabase();
-      // Also pull from localStorage in case DB doesn't have everything yet
-      _mergeLocalStorage();
-      await _flushSaveQueue(); // flush again after restore
-      // Go to dashboard if they have data, otherwise let them continue
-      if (state.level && typeof showDashboard === 'function') {
-        showDashboard();
+        if (event === 'SIGNED_IN') {
+          await _restoreFromDatabase();
+          _mergeLocalStorage();
+          await _flushSaveQueue();
+          window._SIS_log && _SIS_log('auth:after-restore', {level: state.level, name: state.name});
+          if (state.level && typeof showDashboard === 'function') {
+            if (typeof _dashboardShown !== 'undefined' && _dashboardShown) {
+              try { buildPlan(); } catch(e) {}
+            } else {
+              showDashboard();
+            }
+          } else {
+            window._SIS_log && _SIS_log('auth:no-dashboard', {level: state.level});
+          }
+        }
+      } catch(e) {
+        console.error('[SeenInSeven] onAuthStateChange handler error: ' + e.message);
       }
-    }
+    }, 0);
   } else {
     _currentUser = null;
   }
@@ -93,19 +105,35 @@ function _mergeLocalStorage() {
 // ── USER PROFILE SYNC ─────────────────────────────────
 async function _syncUserProfile(authUser) {
   try {
-    const { data: existing } = await _sb
-      .from('users').select('*').eq('auth_id', authUser.id).single();
+    window._SIS_log && _SIS_log('sync:start', {authId: authUser.id});
+    const { data: existing, error: selErr } = await _sb
+      .from('users').select('*').eq('auth_id', authUser.id).maybeSingle();
+    if (selErr) { window._SIS_log && _SIS_log('sync:selErr', selErr.message); }
+
     if (existing) {
-      await _sb.from('users').update({ last_active: new Date().toISOString() }).eq('id', existing.id);
+      window._SIS_log && _SIS_log('sync:found', {id: existing.id, level: existing.level});
+      _sb.from('users').update({ last_active: new Date().toISOString() }).eq('id', existing.id).then(()=>{});
       return existing;
     }
-    const { data: created } = await _sb.from('users').insert({
+
+    window._SIS_log && _SIS_log('sync:creating', {});
+    const { data: created, error: insErr } = await _sb.from('users').insert({
       auth_id: authUser.id, email: authUser.email,
       name: state.name || null, level: state.level || null,
       blocker: state.blocker || null, is_paid: false
-    }).select().single();
+    }).select().maybeSingle();
+    if (insErr) {
+      window._SIS_log && _SIS_log('sync:insErr', insErr.message);
+      // Race: another call may have inserted it — fetch again
+      const { data: retry } = await _sb.from('users').select('*').eq('auth_id', authUser.id).maybeSingle();
+      return retry || null;
+    }
+    window._SIS_log && _SIS_log('sync:created', {id: created ? created.id : null});
     return created;
-  } catch(e) { return null; }
+  } catch(e) {
+    window._SIS_log && _SIS_log('sync:exception', e.message);
+    return null;
+  }
 }
 
 // ── SEND MAGIC LINK ───────────────────────────────────

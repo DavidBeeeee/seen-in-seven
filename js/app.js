@@ -52,36 +52,34 @@ async function trackSession() {
 }
 
 // ── SCREEN NAVIGATION ─────────────────────────────────
-function showScreen(id, direction='forward') {
-  if (transitioning) return;
+let _screenAnimTimers = [];
 
+function showScreen(id, direction='forward') {
   const next = document.getElementById(id);
   if (!next) {
     console.warn('[SeenInSeven] showScreen: element not found:', id);
     return;
   }
 
-  transitioning = true;
-  // Safety reset — if something goes wrong inside the setTimeout callbacks,
-  // transitioning can't stay stuck forever
-  setTimeout(() => { transitioning = false; }, 800);
+  // Cancel cosmetic animation timers from any previous call
+  _screenAnimTimers.forEach(t => clearTimeout(t));
+  _screenAnimTimers = [];
 
-  const current = document.querySelector('.screen.active');
+  // SYNCHRONOUS screen swap — never deferred, so a rapid second call
+  // can never leave us with no active screen (this was the blank-screen bug).
+  document.querySelectorAll('.screen.active').forEach(s => {
+    if (s !== next) s.classList.remove('active', 'anim-in', 'anim-out');
+  });
 
-  if (current) {
-    current.classList.add('anim-out');
-    setTimeout(() => {
-      current.classList.remove('active','anim-out');
-      next.classList.add('active','anim-in');
-      setTimeout(() => { next.classList.remove('anim-in'); transitioning = false; }, 350);
-    }, 200);
-  } else {
-    next.classList.add('active','anim-in');
-    setTimeout(() => { next.classList.remove('anim-in'); transitioning = false; }, 350);
-  }
+  next.classList.remove('anim-out');
+  next.classList.add('active', 'anim-in');
+
+  // Only the cosmetic anim-in cleanup is deferred
+  const t = setTimeout(() => { next.classList.remove('anim-in'); }, 350);
+  _screenAnimTimers.push(t);
 
   updateProgress(id);
-  setTimeout(() => window.scrollTo(0,0), 50);
+  window.scrollTo(0, 0);
 }
 
 function goNext() {
@@ -302,11 +300,17 @@ function updateProgress(id) {
 }
 
 // ── AUTO-ADVANCE ───────────────────────────────────────
+let _autoAdvanceLock = false;
 function autoAdvance(el, key, value) {
-  if (transitioning) return;
+  if (_autoAdvanceLock) return;
+  _autoAdvanceLock = true;
   el.classList.add('selecting');
   state[key] = value;
-  setTimeout(() => { el.classList.remove('selecting'); goNext(); }, 300);
+  setTimeout(() => {
+    el.classList.remove('selecting');
+    goNext();
+    _autoAdvanceLock = false;
+  }, 300);
 }
 
 // ── LEVEL DETERMINATION ───────────────────────────────
@@ -1534,7 +1538,7 @@ function _buildPromptsContent(container, v, idx) {
   genBtn.className = 'btn-primary';
   genBtn.style.fontSize = '20px';
   genBtn.textContent = v.prebuilt ? '✨ Edit & Personalize This Script' : '✨ Generate My Script';
-  genBtn.onclick = () => showScriptView(idx);
+  genBtn.onclick = () => { window._SIS_log && _SIS_log('genBtn:click', {idx}); showScriptView(idx); };
   btnWrap.appendChild(genBtn);
 
   const skipGenBtn = document.createElement('button');
@@ -1810,6 +1814,16 @@ const VIDEO_RATIONALE = [
 
 function _doShowScriptView(idx) {
   window._SIS_log && _SIS_log('_doShowScriptView', {idx, hasScript: !!(state.videos && state.videos['script_v'+idx])});
+  try {
+    _doShowScriptViewInner(idx);
+  } catch(e) {
+    console.error('[SeenInSeven] _doShowScriptView threw at video ' + idx + ': ' + e.message + ' | ' + (e.stack||'').split('\n')[1]);
+    showScreen('screen-script');
+    currentIndex = screenOrder.indexOf('screen-script');
+  }
+}
+
+function _doShowScriptViewInner(idx) {
   const videos = getVideos();
   const v = videos[idx];
   if (!v) { console.error('[SeenInSeven] _doShowScriptView: no video at idx ' + idx + ' (videos.length=' + videos.length + ')'); return; }
@@ -1847,6 +1861,7 @@ function _doShowScriptView(idx) {
   }
 
   // populate the script screen
+  window._SIS_log && _SIS_log('dsv:populate', {hasBadge: !!document.getElementById('sv-badge'), hasTitle: !!document.getElementById('sv-title')});
   document.getElementById('sv-badge').textContent = 'VIDEO ' + (idx + 1);
   document.getElementById('sv-title').textContent = v.title;
 
@@ -1959,6 +1974,7 @@ function _doShowScriptView(idx) {
   }
 
   // Default to guided view; scroll to top first
+  window._SIS_log && _SIS_log('dsv:beats-rendered', {beatsLen: (document.getElementById('sv-beats')||{}).innerHTML ? document.getElementById('sv-beats').innerHTML.length : 0});
   window.scrollTo(0, 0);
   setScriptView('guided');
 
@@ -2784,19 +2800,17 @@ function exportPDF(mode) {
 
 // ── SHOW DASHBOARD DIRECTLY (authenticated returning users) ───
 function showDashboard() {
-  window._SIS_log && _SIS_log('showDashboard:start', { level: state.level, name: state.name, alreadyShown: _dashboardShown });
+  window._SIS_log && _SIS_log('showDashboard:start', { level: state.level, name: state.name });
   _dashboardShown = true;
-  transitioning = false; // reset any stuck transition before we show the dashboard
+
   if (screenOrder.length <= 2) {
     screenOrder = state.posted === 'no'
       ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
       : ['screen-0','screen-1','screen-email','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
   }
-  try {
-    buildPlan();
-    window._SIS_log && _SIS_log('showDashboard:buildPlan', 'OK');
-  } catch(e) {
-    console.error('[SeenInSeven] buildPlan threw: ' + e.message + ' — ' + (e.stack || ''));
+
+  try { buildPlan(); } catch(e) {
+    console.error('[SeenInSeven] buildPlan threw: ' + e.message);
   }
   // Bypass showScreen's 200ms animation — activate plan-screen synchronously
   // to eliminate races with the async auth flow (onAuthStateChange + initAuth
@@ -2832,7 +2846,7 @@ function restartWizard(){
   if (fwEl) fwEl.value = '';
   currentPreviewVideoNum=1;
   screenOrder=['screen-0','screen-1'];
-  currentIndex=0;currentVideoIndex=0;transitioning=false;
+  currentIndex=0;currentVideoIndex=0;transitioning=false;_dashboardShown=false;
   // Reset progress bar classes
   const pbWrap = document.getElementById('progress-bar-wrap');
   if (pbWrap) {
@@ -3220,6 +3234,17 @@ function saveProgress() {
 }
 
 function loadProgress() {
+  // If there's a valid Supabase auth token in the hash, step aside —
+  // onAuthStateChange will handle routing once it processes the token.
+  // But don't skip on error hashes like #error=access_denied
+  const hash = window.location.hash;
+  if (hash && hash.includes('access_token') && !hash.includes('error')) return;
+
+  // If there's an auth error in the hash, clear it and show screen-0 normally
+  if (hash && hash.includes('error=')) {
+    window.history.replaceState(null, '', window.location.pathname);
+  }
+
   try {
     const raw = localStorage.getItem(SAVE_KEY);
     if (!raw) return;
@@ -3395,7 +3420,9 @@ function launchConfetti() {
     if (s0) s0.style.visibility = '';
   }
 
-  // If the URL is /dashboard, always try to show the dashboard
+  const hash = window.location.hash;
+  const hasMagicToken = hash && hash.includes('access_token') && !hash.includes('error=');
+
   if (window.location.pathname === '/dashboard') {
     if (initResult === 'dashboard') {
       // Already there
@@ -3406,7 +3433,17 @@ function launchConfetti() {
       loadProgress();
     }
   } else if (initResult !== 'dashboard') {
-    loadProgress();
+    if (hasMagicToken) {
+      // Magic link — show a loading state while onAuthStateChange processes the token
+      s0.classList.add('active');
+      const s0inner = s0.querySelector('.screen-inner') || s0;
+      const loadDiv = document.createElement('div');
+      loadDiv.style.cssText = 'padding:60px 24px;text-align:center;';
+      loadDiv.innerHTML = '<div style="font-family:\'Space Mono\',monospace;font-size:11px;letter-spacing:0.2em;color:var(--teal);text-transform:uppercase;margin-bottom:12px;">Signing you in...</div>';
+      s0inner.prepend(loadDiv);
+    } else {
+      loadProgress();
+    }
   }
 
   updateProgress('screen-0');
