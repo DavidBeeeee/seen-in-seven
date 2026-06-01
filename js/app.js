@@ -2435,7 +2435,7 @@ function showEmailScreenFromToast() {
 }
 
 // ── COPY SINGLE SCRIPT ────────────────────────────────
-function copyScript(idx, btn) {
+function copyScriptFromDashboard(idx, btn) {
   const script = state.videos['script_v' + idx] || '';
   const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
   if (!clean) return;
@@ -2784,7 +2784,7 @@ function buildPlan(){
           : hasScript
             ? `<button class="dbc-btn" onclick="markFilmedFromPlan(${i})">Mark Filmed</button>`
             : ''}
-        ${hasScript ? `<button class="dbc-btn" onclick="copyScript(${i}, this)">Copy</button><button class="dbc-btn" onclick="exportSinglePDF(${i})">PDF</button>` : ''}
+        ${hasScript ? `<button class="dbc-btn" onclick="copyScriptFromDashboard(${i}, this)">Copy</button><button class="dbc-btn" onclick="exportSinglePDF(${i})">PDF</button>` : ''}
       </div>`;
     grid.appendChild(card);
   });
