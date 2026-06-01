@@ -149,9 +149,19 @@
 </div>
 
 <div id="progress-bar-wrap">
-  <div class="logo">SeenInSeven</div>
+  <div class="header-left">
+    <div class="logo">SeenInSeven</div>
+    <div class="header-username" id="header-username"></div>
+  </div>
   <div id="progress-track"><div id="progress-fill"></div><div id="progress-fill-l2"></div></div>
-  <div id="progress-label">YOUR JOURNEY</div>
+  <div class="header-right">
+    <div id="progress-label">YOUR JOURNEY</div>
+    <div class="header-nav" id="header-nav">
+      <button class="header-nav-btn" onclick="showDashboard()" id="header-dashboard-btn" title="Dashboard">Dashboard</button>
+      <button class="header-nav-btn icon" onclick="openSettings()" title="Settings">⚙️</button>
+      <button class="header-nav-link" onclick="logOut()">Log out</button>
+    </div>
+  </div>
 </div>
 <canvas id="confetti-canvas"></canvas>
 
@@ -691,18 +701,13 @@
     <div class="settings-danger">
       <div class="settings-label" style="color:#ef4444;">Danger Zone</div>
       <button class="settings-btn-danger" onclick="restartWizard()">Delete Everything &amp; Start Over</button>
+      <button class="settings-btn-danger" style="border-color:rgba(100,100,100,0.3);color:var(--muted);" onclick="logOut()">Log Out</button>
     </div>
   </div>
 
   <!-- Dashboard header — populated by buildPlan() -->
   <div class="db-header" id="db-header">
-    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
-      <div class="db-greeting">Welcome back</div>
-      <div style="display:flex;gap:8px;align-items:center;">
-        <button class="db-settings-btn" onclick="logOut()" title="Log out" style="font-size:13px;padding:6px 12px;font-family:'Nunito',sans-serif;font-weight:700;">Log Out</button>
-        <button class="db-settings-btn" onclick="openSettings()" title="Account settings">⚙️</button>
-      </div>
-    </div>
+    <div class="db-greeting">Welcome back</div>
     <div class="db-name" id="db-name">Your Dashboard</div>
     <div class="db-meta">
       <span class="db-level-pill" id="db-level-pill"></span>
@@ -717,11 +722,14 @@
   <div id="plan-output"></div>
 
   <!-- Bottom action bar - text links only -->
-  <div class="db-bottom-bar">
+  <!-- Copy/PDF — above the divider line -->
+  <div class="db-script-actions">
     <button class="db-bottom-link" onclick="copyAllScripts(this)">📋 Copy All Scripts</button>
     <button class="db-bottom-link" onclick="showPdfModal()">⬇ Export All as PDF</button>
-    <button class="db-bottom-link" onclick="logOut()">Log Out</button>
   </div>
+
+  <!-- Bottom divider -->
+  <div class="db-bottom-bar"></div>
 
   <!-- Styled start-over confirmation (replaces browser confirm()) -->
   <div id="start-over-confirm" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;padding:24px;">

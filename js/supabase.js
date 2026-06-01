@@ -53,6 +53,9 @@ _sb.auth.onAuthStateChange((event, session) => {
 
         const toast = document.getElementById('verify-email-toast');
         if (toast) toast.style.display = 'none';
+        // Show header nav now that user is authenticated
+        const navEl = document.getElementById('header-nav');
+        if (navEl) navEl.style.display = 'flex';
 
         if (event === 'SIGNED_IN') {
           // Clear any previous user's localStorage before restoring the new session

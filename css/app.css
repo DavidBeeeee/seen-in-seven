@@ -48,37 +48,68 @@ body::before {
   background: rgba(13,40,40,0.96);
   backdrop-filter: blur(16px);
   border-bottom: 1px solid var(--border);
-  padding: 14px 32px;
+  padding: 10px 24px;
   display:flex; align-items:center; gap:16px;
+}
+.header-left {
+  display:flex; flex-direction:column; justify-content:center;
+  flex-shrink:0; min-width:0;
 }
 .logo {
   font-family:'Oswald',sans-serif;
-  font-size:18px; letter-spacing:0.12em;
-  color:var(--teal); flex-shrink:0;
+  font-size:16px; letter-spacing:0.12em;
+  color:var(--teal); line-height:1.2;
 }
+.header-username {
+  font-family:'Nunito',sans-serif;
+  font-size:11px; color:var(--muted);
+  letter-spacing:0.04em; line-height:1.2;
+  white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  max-width:120px;
+}
+.header-right {
+  display:flex; flex-direction:column; align-items:flex-end;
+  flex-shrink:0; gap:4px;
+}
+#progress-label {
+  font-family:'Space Mono',monospace;
+  font-size:12px; color:var(--cream);
+  letter-spacing:0.12em; white-space:nowrap;
+  font-weight:700;
+}
+.header-nav {
+  display:flex; align-items:center; gap:8px;
+}
+.header-nav-btn {
+  background:none; border:1px solid var(--border);
+  border-radius:6px; padding:3px 10px;
+  font-family:'Nunito',sans-serif; font-size:12px; font-weight:700;
+  color:var(--muted); cursor:pointer; transition:all 0.18s;
+  white-space:nowrap;
+}
+.header-nav-btn:hover { border-color:var(--teal); color:var(--cream); }
+.header-nav-btn.icon { padding:3px 8px; font-size:14px; }
+.header-nav-link {
+  background:none; border:none; padding:0;
+  font-family:'Nunito',sans-serif; font-size:11px;
+  color:var(--muted); cursor:pointer;
+  text-decoration:underline; text-underline-offset:2px;
+  transition:color 0.15s; white-space:nowrap;
+}
+.header-nav-link:hover { color:var(--soft); }
 #progress-track {
   flex:1; height:5px;
   background:var(--border); border-radius:3px; overflow:visible; position:relative;
 }
 #progress-fill {
-  position:absolute; bottom:0; left:0;
-  height:3px;
+  position:absolute; bottom:0; left:0; height:3px;
   background:linear-gradient(90deg,#3b82f6,#60a5fa);
-  border-radius:2px;
-  transition:width 0.6s cubic-bezier(0.4,0,0.2,1);
-  width:0%;
+  border-radius:2px; transition:width 0.6s cubic-bezier(0.4,0,0.2,1); width:0%;
 }
 #progress-fill-l2 {
-  position:absolute; bottom:0; left:0;
-  height:5px; border-radius:3px; z-index:2;
+  position:absolute; bottom:0; left:0; height:5px; border-radius:3px; z-index:2;
   background:linear-gradient(90deg,#4ade80,#22d3ee,#4ade80);
-  transition:width 0.6s cubic-bezier(0.4,0,0.2,1);
-  width:0%; opacity:0;
-}
-#progress-label {
-  font-family:'Space Mono',monospace;
-  font-size:11px; color:var(--muted);
-  letter-spacing:0.1em; white-space:nowrap; flex-shrink:0;
+  transition:width 0.6s cubic-bezier(0.4,0,0.2,1); width:0%; opacity:0;
 }
 
 /* ── SCREENS ── */
@@ -1730,3 +1761,15 @@ body::before {
 .dbc-link:hover { color:var(--soft); }
 .dbc-link.primary { color:var(--teal); }
 .dbc-link.primary:hover { color:var(--soft); }
+
+/* ── SCRIPT ACTION LINKS ────────────────────────────── */
+.db-script-actions {
+  display:flex; gap:20px; padding:16px 0 8px;
+  flex-wrap:wrap;
+}
+.db-bottom-bar {
+  border-top:1px solid var(--border);
+  padding-top:0; margin-bottom:28px;
+}
+/* Hide header-nav by default, shown via JS when authenticated */
+.header-nav { display:none; }

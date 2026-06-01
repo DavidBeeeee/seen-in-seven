@@ -258,6 +258,19 @@ function advancePastAuth() {
 
 function updateProgress(id) {
   const wrap = document.getElementById('progress-bar-wrap');
+
+  // Update header username and nav visibility
+  const usernameEl = document.getElementById('header-username');
+  const navEl = document.getElementById('header-nav');
+  const dashBtn = document.getElementById('header-dashboard-btn');
+  if (usernameEl) usernameEl.textContent = state.name || '';
+  // Show nav only when authenticated or on dashboard
+  const isAuthenticated = typeof getCurrentUser === 'function' && getCurrentUser();
+  const onDashboard = id === 'plan-screen';
+  if (navEl) navEl.style.display = (isAuthenticated || onDashboard) ? 'flex' : 'none';
+  // Hide Dashboard button when already on dashboard
+  if (dashBtn) dashBtn.style.display = onDashboard ? 'none' : '';
+
   if (wrap.classList.contains('progress-l1-complete') || wrap.classList.contains('progress-l2-complete')) return;
 
   const videosDone = Object.keys(state.videoStatus).length;
@@ -3148,6 +3161,15 @@ function showDashboard() {
   currentIndex = screenOrder.indexOf('plan-screen');
   window.scrollTo(0, 0);
   window._SIS_log && _SIS_log('showDashboard:done', 'plan-screen activated synchronously');
+
+  // Update header username and show nav
+  const _usernameEl = document.getElementById('header-username');
+  if (_usernameEl) _usernameEl.textContent = state.name || '';
+  const _navEl = document.getElementById('header-nav');
+  if (_navEl) _navEl.style.display = 'flex';
+  const _dashBtn = document.getElementById('header-dashboard-btn');
+  if (_dashBtn) _dashBtn.style.display = 'none';
+
   if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
     const toast = document.getElementById('verify-email-toast');
     if (toast) toast.style.display = 'flex';
