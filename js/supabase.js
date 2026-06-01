@@ -158,23 +158,34 @@ async function getCurrentSession() {
 async function saveOnboardingToDb() {
   if (!_currentUser) return;
   try {
-    await _sb.from('users').update({
-      name: state.name || null, level: state.level || null,
-      blocker: state.blocker || null, business_stage: state.business || null
+    // Update the users table
+    const { error: userErr } = await _sb.from('users').update({
+      name:           state.name     || null,
+      level:          state.level    || null,
+      blocker:        state.blocker  || null,
+      business_stage: state.business || null
     }).eq('id', _currentUser.id);
+    if (userErr) console.warn('[SeenInSeven] saveOnboardingToDb users error:', userErr.message);
 
-    const { data: existing } = await _sb.from('onboarding').select('id').eq('user_id', _currentUser.id).maybeSingle();
-    const onboardingData = {
-      user_id: _currentUser.id,
-      posted: state.posted || null, history: state.history || null,
-      goal: state.goal || null, mini_goal: state.minigoal || null,
-      mini_goal_text: state.minigoalText || null, business: state.business || null,
-      mvo_q2: state.mvoQ2 || null, mvo_q3: state.mvoQ3 || null, mvo_q4: state.mvoQ4 || null,
-      topic_freewrite: state.topicFreewrite || null
-    };
-    if (existing) { await _sb.from('onboarding').update(onboardingData).eq('id', existing.id); }
-    else { await _sb.from('onboarding').insert(onboardingData); }
-  } catch(e) {}
+    // Upsert onboarding — unique constraint on user_id prevents duplicates
+    const { error: obErr } = await _sb.from('onboarding').upsert({
+      user_id:          _currentUser.id,
+      posted:           state.posted         || null,
+      history:          state.history        || null,
+      goal:             state.goal           || null,
+      mini_goal:        state.minigoal       || null,
+      mini_goal_text:   state.minigoalText   || null,
+      business:         state.business       || null,
+      mvo_q2:           state.mvoQ2          || null,
+      mvo_q3:           state.mvoQ3          || null,
+      mvo_q4:           state.mvoQ4          || null,
+      topic_freewrite:  state.topicFreewrite || null,
+      updated_at:       new Date().toISOString()
+    }, { onConflict: 'user_id' });
+    if (obErr) console.warn('[SeenInSeven] saveOnboardingToDb onboarding error:', obErr.message);
+  } catch(e) {
+    console.warn('[SeenInSeven] saveOnboardingToDb exception:', e.message);
+  }
 }
 
 // ── SAVE SCRIPT TO DB ─────────────────────────────────
