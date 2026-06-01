@@ -635,9 +635,59 @@
 <!-- ══ PLAN SCREEN ══ -->
 <div class="screen" id="plan-screen">
 
+  <!-- Settings panel overlay -->
+  <div id="settings-panel" class="settings-panel">
+    <div class="settings-header">
+      <span class="settings-title">Account Settings</span>
+      <button class="settings-close" onclick="closeSettings()">✕</button>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">Display Name</div>
+      <input type="text" id="settings-name" class="settings-input" placeholder="Your name">
+      <div class="settings-hint">Used to personalize your scripts</div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">Email</div>
+      <div class="settings-email-row">
+        <span id="settings-email-display" class="settings-email-val"></span>
+        <button class="settings-link-btn" onclick="sendSettingsEmailChange()">Change →</button>
+      </div>
+      <div id="settings-email-msg" class="settings-hint"></div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">Series</div>
+      <div class="settings-level-row">
+        <span id="settings-level-display" class="settings-level-val"></span>
+        <button class="settings-link-btn" onclick="showLevelChangeConfirm()">Switch →</button>
+      </div>
+      <div id="settings-level-msg" class="settings-hint"></div>
+    </div>
+
+    <div class="settings-section">
+      <div class="settings-label">Onboarding</div>
+      <button class="settings-btn-secondary" onclick="rerunOnboarding()">Re-run onboarding questions →</button>
+      <div class="settings-hint">Updates your script personalization. Your existing scripts are kept.</div>
+    </div>
+
+    <div class="settings-save-row">
+      <button class="settings-btn-primary" onclick="saveSettings()">Save Changes</button>
+    </div>
+
+    <div class="settings-danger">
+      <div class="settings-label" style="color:#ef4444;">Danger Zone</div>
+      <button class="settings-btn-danger" onclick="restartWizard()">Delete Everything &amp; Start Over</button>
+    </div>
+  </div>
+
   <!-- Dashboard header — populated by buildPlan() -->
   <div class="db-header" id="db-header">
-    <div class="db-greeting">Welcome back</div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+      <div class="db-greeting">Welcome back</div>
+      <button class="db-settings-btn" onclick="openSettings()" title="Account settings">⚙️</button>
+    </div>
     <div class="db-name" id="db-name">Your Dashboard</div>
     <div class="db-meta">
       <span class="db-level-pill" id="db-level-pill"></span>

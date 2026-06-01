@@ -2358,7 +2358,151 @@ function toggleCheck(el){
   el.querySelector('.check-box').textContent=el.classList.contains('checked')?'✓':'';
 }
 
-// ── PLAN BUILDER ──────────────────────────────────────
+// ── SETTINGS PANEL ────────────────────────────────────
+function openSettings() {
+  const panel = document.getElementById('settings-panel');
+  if (!panel) return;
+
+  // Populate with current state
+  const nameInput = document.getElementById('settings-name');
+  const emailDisplay = document.getElementById('settings-email-display');
+  const levelDisplay = document.getElementById('settings-level-display');
+
+  if (nameInput) nameInput.value = state.name || '';
+  if (emailDisplay) {
+    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+    emailDisplay.textContent = (user && user.email) ? user.email : 'Not saved yet';
+  }
+  if (levelDisplay) {
+    levelDisplay.textContent = state.level === 1
+      ? 'Level 1 — The Person Series'
+      : state.level === 2
+        ? 'Level 2 — The Expert Series'
+        : 'Not set';
+  }
+
+  // Clear messages
+  const emailMsg = document.getElementById('settings-email-msg');
+  const levelMsg = document.getElementById('settings-level-msg');
+  if (emailMsg) emailMsg.textContent = '';
+  if (levelMsg) levelMsg.textContent = '';
+
+  panel.classList.add('open');
+}
+
+function closeSettings() {
+  const panel = document.getElementById('settings-panel');
+  if (panel) panel.classList.remove('open');
+}
+
+async function saveSettings() {
+  const nameInput = document.getElementById('settings-name');
+  const newName = nameInput ? nameInput.value.trim() : '';
+
+  if (newName && newName !== state.name) {
+    state.name = newName;
+    saveProgress();
+    // Update DB immediately if authenticated
+    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+    if (user && typeof _sb !== 'undefined') {
+      await _sb.from('users').update({ name: newName }).eq('id', user.id);
+    }
+    // Update dashboard header
+    const dbName = document.getElementById('db-name');
+    if (dbName) dbName.textContent = newName;
+    buildPlan();
+  }
+
+  closeSettings();
+
+  // Brief success indicator
+  const btn = document.querySelector('.db-settings-btn');
+  if (btn) {
+    const orig = btn.textContent;
+    btn.textContent = '✓';
+    setTimeout(() => { btn.textContent = orig; }, 1500);
+  }
+}
+
+async function sendSettingsEmailChange() {
+  const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+  const emailMsg = document.getElementById('settings-email-msg');
+  if (!user || !user.email) {
+    if (emailMsg) emailMsg.textContent = 'No email on file — go through onboarding to add one.';
+    return;
+  }
+  try {
+    await sendMagicLink(user.email);
+    if (emailMsg) {
+      emailMsg.textContent = 'Link sent to ' + user.email + ' — click it to re-verify.';
+      emailMsg.style.color = 'var(--teal)';
+    }
+  } catch(e) {
+    if (emailMsg) {
+      emailMsg.textContent = 'Could not send — try again in a moment.';
+      emailMsg.style.color = '#ef4444';
+    }
+  }
+}
+
+function showLevelChangeConfirm() {
+  const levelMsg = document.getElementById('settings-level-msg');
+  const currentLevel = state.level;
+  const otherLevel = currentLevel === 1 ? 2 : 1;
+  const otherLabel = otherLevel === 1 ? 'Level 1 (Person Series)' : 'Level 2 (Expert Series)';
+
+  if (levelMsg) {
+    levelMsg.innerHTML = 'Switch to ' + otherLabel + '? Your current scripts will be kept. '
+      + '<button onclick="confirmLevelChange(' + otherLevel + ')" style="background:none;border:none;color:var(--teal);cursor:pointer;font-weight:700;font-size:12px;padding:0;">Yes, switch →</button>';
+    levelMsg.style.color = 'var(--cream)';
+  }
+}
+
+async function confirmLevelChange(newLevel) {
+  state.level = newLevel;
+  saveProgress();
+  const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+  if (user && typeof _sb !== 'undefined') {
+    await _sb.from('users').update({ level: newLevel }).eq('id', user.id);
+  }
+  const levelDisplay = document.getElementById('settings-level-display');
+  if (levelDisplay) {
+    levelDisplay.textContent = newLevel === 1
+      ? 'Level 1 — The Person Series'
+      : 'Level 2 — The Expert Series';
+  }
+  const levelMsg = document.getElementById('settings-level-msg');
+  if (levelMsg) {
+    levelMsg.textContent = 'Switched. Your dashboard will update.';
+    levelMsg.style.color = 'var(--teal)';
+  }
+  buildPlan();
+}
+
+function rerunOnboarding() {
+  closeSettings();
+  if (!confirm('This will clear your onboarding answers and take you back through the questions. Your scripts will be kept. Continue?')) return;
+  // Clear onboarding answers but keep scripts and name
+  state.blocker = null; state.history = null; state.goal = null;
+  state.minigoal = null; state.minigoalText = ''; state.business = null;
+  state.mvoQ2 = null; state.mvoQ3 = null; state.mvoQ4 = null;
+  state.topicFreewrite = ''; state.posted = null;
+  saveProgress();
+  // Reset screenOrder and go back to screen-1
+  screenOrder = ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+  currentIndex = screenOrder.indexOf('screen-1');
+  showScreen('screen-1');
+}
+
+// Close settings when clicking outside the panel
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('settings-panel');
+  if (panel && panel.classList.contains('open')) {
+    if (!panel.contains(e.target) && !e.target.closest('.db-settings-btn')) {
+      closeSettings();
+    }
+  }
+});
 function buildPlan(){
   const name=state.name||'You';
   const miniText=miniGoalMap[state.minigoal]||state.minigoalText||'complete this challenge';
