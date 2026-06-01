@@ -9,6 +9,7 @@
   --teal:        #32B8B8;
   --cyan:        #7DD8D8;
   --green:       #4ade80;
+  --gold:        #C8A84B;
   --blue:        #2A9090;
   --teal-deep:   #0D2828;
   --teal-vivid:  #32B8B8;
@@ -1773,3 +1774,55 @@ body::before {
 }
 /* Hide header-nav by default, shown via JS when authenticated */
 .header-nav { display:none; }
+
+/* ── SCRIPT VIEW TOOLBAR BUTTONS ─────────────────────── */
+.sv-tool-btn {
+  background:none; border:1px solid var(--border); border-radius:6px;
+  padding:4px 9px; color:var(--muted); cursor:pointer;
+  font-family:'Nunito',sans-serif; font-size:12px; font-weight:600;
+  transition:all 0.15s; white-space:nowrap;
+}
+.sv-tool-btn:hover { border-color:var(--teal); color:var(--cream); }
+.sv-tool-btn:disabled { opacity:0.35; cursor:not-allowed; }
+.sv-redo-link.danger {
+  font-size:12px; color:rgba(239,68,68,0.55); cursor:pointer;
+  text-decoration:underline; text-underline-offset:2px;
+  font-family:'Nunito',sans-serif; font-weight:600;
+  transition:color 0.15s; white-space:nowrap;
+}
+.sv-redo-link.danger:hover { color:#ef4444; }
+
+/* ── FILMED CHECKBOX ─────────────────────────────────── */
+.filmed-checkbox-row {
+  display:flex; align-items:center; gap:10px; cursor:pointer;
+  padding:10px 0 4px; user-select:none;
+}
+.filmed-checkbox-box {
+  font-size:22px; color:var(--muted); transition:color 0.2s;
+  flex-shrink:0; line-height:1;
+}
+.filmed-checkbox-label {
+  font-family:'Nunito',sans-serif; font-size:15px;
+  color:var(--muted); font-weight:600; transition:color 0.2s;
+}
+.filmed-checkbox-row:hover .filmed-checkbox-box { color:var(--teal); }
+.filmed-checkbox-row:hover .filmed-checkbox-label { color:var(--cream); }
+
+/* ── SCRIPT SCREEN BOTTOM NAV ────────────────────────── */
+.sv-nav-link {
+  background:none; border:none; padding:0;
+  font-family:'Nunito',sans-serif; font-size:13px; font-weight:600;
+  color:var(--muted); cursor:pointer; text-decoration:underline;
+  text-underline-offset:2px; transition:color 0.15s; white-space:nowrap;
+}
+.sv-nav-link:hover { color:var(--soft); }
+
+/* ── TRACKER STATUS COLORS ───────────────────────────── */
+.vt-done     { border-color:rgba(74,222,128,0.5) !important; }
+.vt-done .vt-status { color:var(--green); }
+.vt-skipped  { border-color:rgba(239,68,68,0.4) !important; opacity:0.7; }
+.vt-skipped .vt-status { color:#ef4444; }
+.vt-locked-in { border-color:rgba(200,168,75,0.5) !important; }
+.vt-locked-in .vt-status { color:var(--gold); font-size:11px; }
+.vt-ready    { border-color:rgba(50,184,184,0.3) !important; }
+.vt-ready .vt-status { color:var(--teal); }

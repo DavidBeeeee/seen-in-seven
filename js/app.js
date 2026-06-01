@@ -984,6 +984,10 @@ Regenerate ONLY the [${sectionKey}] section, applying the feedback above. Return
     if (sectionEl) sectionEl.textContent = newSectionText.trim();
 
     saveProgress();
+    // Push undo snapshot after section regen — but do NOT call queueScriptSave
+    // (new DB version is only created via Lock In or Delete & Start Over)
+    if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(videoIdx);
+    if (typeof flashSavedIndicator === 'function') flashSavedIndicator();
     if (btnEl) { btnEl.textContent = '✅ Done'; btnEl.disabled = false; setTimeout(() => { if (btnEl) btnEl.textContent = '↺ regenerate'; }, 2000); }
   } catch(err) {
     if (btnEl) { btnEl.textContent = '⚠️ Error'; btnEl.disabled = false; setTimeout(() => { if (btnEl) btnEl.textContent = originalText; }, 3000); }
@@ -2241,6 +2245,26 @@ function skipToEnd() {
   window.scrollTo(0, 0);
 }
 
+function confirmStartVideoOver() {
+  // Show a warning before wiping answers and going back to questions
+  let overlay = document.getElementById('start-video-over-confirm');
+  if (!overlay) {
+    overlay = document.createElement('div');
+    overlay.id = 'start-video-over-confirm';
+    overlay.style.cssText = 'position:fixed;inset:0;z-index:9200;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;padding:24px;';
+    overlay.innerHTML = `
+      <div style="background:#0a1f1f;border:1px solid var(--border);border-radius:16px;padding:32px 28px;max-width:400px;width:100%;text-align:center;">
+        <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--cream);margin-bottom:12px;">Redo this script?</div>
+        <div style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:28px;">This clears your current script and answers for this video and takes you back to the questions. Your other videos are unaffected.</div>
+        <div style="display:flex;gap:12px;justify-content:center;">
+          <button onclick="document.getElementById('start-video-over-confirm').remove()" style="background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:10px 24px;color:var(--soft);font-size:15px;cursor:pointer;font-family:'Nunito',sans-serif;">Cancel</button>
+          <button onclick="document.getElementById('start-video-over-confirm').remove();startVideoOver();" style="background:#ef4444;border:none;border-radius:8px;padding:10px 24px;color:white;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Yes, Start Over</button>
+        </div>
+      </div>`;
+    document.body.appendChild(overlay);
+  }
+}
+
 function startVideoOver() {
   const idx = currentVideoIndex;
   // Push snapshot before wiping so undo can recover
@@ -2268,7 +2292,7 @@ function startVideoOver() {
 }
 
 // Backward-compat alias (old onclick handlers may still call redoScript)
-function redoScript() { startVideoOver(); }
+function redoScript() { confirmStartVideoOver(); }
 
 // ── SCRIPT VIEW FEEDBACK (inline thumbs) ─────────────
 async function handleScriptViewFeedback(thumbsUp) {
@@ -2490,9 +2514,7 @@ function undoScript() {
   const u = _getUndoState(idx);
   if (u.pointer <= 0) return;
   u.pointer--;
-  state.videos['script_v' + idx] = u.stack[u.pointer];
-  saveProgress();
-  _doShowScriptView(idx);
+  _applyUndoSnapshot(idx, u.stack[u.pointer]);
   _refreshUndoButtons(idx);
 }
 
@@ -2501,10 +2523,30 @@ function redoScriptStep() {
   const u = _getUndoState(idx);
   if (u.pointer >= u.stack.length - 1) return;
   u.pointer++;
-  state.videos['script_v' + idx] = u.stack[u.pointer];
-  saveProgress();
-  _doShowScriptView(idx);
+  _applyUndoSnapshot(idx, u.stack[u.pointer]);
   _refreshUndoButtons(idx);
+}
+
+function _applyUndoSnapshot(idx, text) {
+  state.videos['script_v' + idx] = text;
+  saveProgress();
+  // Update both views without re-rendering the whole screen
+  const editor = document.getElementById('script-editor');
+  if (editor) {
+    const clean = text.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+    editor.value = clean;
+  }
+  // Re-parse sections and update the structured view in-place
+  const sectionsKey = 'sections_v' + idx;
+  const parsed = typeof parseScriptSections === 'function' ? parseScriptSections(text) : null;
+  if (parsed) {
+    state.videos[sectionsKey] = parsed;
+    // Update each section element in the structured view
+    Object.entries(parsed).forEach(([key, val]) => {
+      const el = document.getElementById('sv-section-text-' + key.replace(' ', '-'));
+      if (el) el.textContent = val.trim();
+    });
+  }
 }
 
 function _refreshUndoButtons(idx) {
@@ -2536,6 +2578,24 @@ document.addEventListener('keydown', (e) => {
   if (cmd && e.key === 'z' && !e.shiftKey) { e.preventDefault(); undoScript(); }
   else if ((cmd && e.key === 'z' && e.shiftKey) || (cmd && e.key === 'y')) { e.preventDefault(); redoScriptStep(); }
 });
+
+function handleFilmedCheckbox(checkbox) {
+  const idx = currentVideoIndex;
+  if (checkbox.checked) {
+    const boxEl = document.getElementById('filmed-checkbox-box');
+    const labelEl = document.getElementById('btn-filmed-main');
+    if (boxEl) boxEl.textContent = '☑';
+    if (labelEl) labelEl.style.color = 'var(--green)';
+    // Wire through to afterFilmed
+    const filmedBtn = document.getElementById('btn-filmed-main');
+    if (filmedBtn && typeof filmedBtn.onclick === 'function') filmedBtn.onclick();
+  }
+}
+
+function skipFilmedBtn() {
+  const skipBtn = document.getElementById('btn-filmed-skip');
+  if (skipBtn && typeof skipBtn.onclick === 'function') skipBtn.onclick();
+}
 
 // ── LOCK IN SCRIPT ────────────────────────────────────
 function lockInScript() {
@@ -2778,14 +2838,9 @@ async function restoreVersion(scriptId, idx) {
 
 // ── TRUST INDICATOR: "Saved" flash ─────────────────────
 function flashSavedIndicator() {
-  let el = document.getElementById('saved-indicator');
-  if (!el) {
-    el = document.createElement('div');
-    el.id = 'saved-indicator';
-    el.style.cssText = 'position:fixed;top:70px;right:24px;z-index:9999;background:rgba(74,222,128,0.15);border:1px solid rgba(74,222,128,0.4);color:var(--green);padding:6px 14px;border-radius:8px;font-family:"Space Mono",monospace;font-size:11px;letter-spacing:0.1em;text-transform:uppercase;opacity:0;transition:opacity 0.3s ease;pointer-events:none;';
-    el.textContent = '✓ Saved';
-    document.body.appendChild(el);
-  }
+  // Use the in-card saved indicator (bottom right of script card)
+  const el = document.getElementById('saved-indicator');
+  if (!el) return;
   el.style.opacity = '1';
   clearTimeout(el._hideTimer);
   el._hideTimer = setTimeout(() => { el.style.opacity = '0'; }, 1800);
@@ -3383,11 +3438,14 @@ function buildPlanTracker() {
   const labels = videos.map((_,i) => 'V'+(i+1));
 
   function makeItem(label, st, hasScript, isL2, idx, isL1Ghost) {
+    const isLocked = idx !== null && !!state.videos['locked_v' + idx];
     let cls, statusIcon;
     if (st === 'filmed') {
       cls = 'vt-done'; statusIcon = '✓';
     } else if (st === 'skipped') {
       cls = 'vt-skipped'; statusIcon = '✕';
+    } else if (isLocked) {
+      cls = 'vt-locked-in'; statusIcon = '🔒';
     } else if (hasScript) {
       cls = 'vt-ready'; statusIcon = '✎';
     } else {
@@ -3414,8 +3472,8 @@ function buildPlanTracker() {
       makeItem(lbl, state.videoStatus[i], !!state.videos['script_v'+i], true, i, false)
     ).join('');
     html = `<div class="vt-dual-wrap">`+
-      `<div class="vt-row-label">L1 — PERSON SERIES</div><div class="vt-row">${l1Row}</div>`+
-      `<div class="vt-row-label vt-l2-label">L2 — EXPERT SERIES</div><div class="vt-row">${l2Row}</div>`+
+      `<div class="vt-row-label">L1 — RELATABLE HERO</div><div class="vt-row">${l1Row}</div>`+
+      `<div class="vt-row-label vt-l2-label">L2 — AUTHORITY SERIES</div><div class="vt-row">${l2Row}</div>`+
       `</div>`;
   } else {
     html = labels.map((lbl,i) => {
@@ -3918,7 +3976,31 @@ function setScriptView(view) {
   const gBtn      = document.getElementById('sv-guided-btn');
   const cBtn      = document.getElementById('sv-clean-btn');
   const rationale = document.getElementById('sv-rationale');
+
   if (view === 'guided') {
+    // Sync: if user edited the textarea, update the structured view before showing it
+    const editor = document.getElementById('script-editor');
+    if (editor && editor.value) {
+      const idx = currentVideoIndex;
+      const editKey = 'script_v' + idx;
+      const sectionsKey = 'sections_v' + idx;
+      const currentEditorText = editor.value;
+      // Only sync if it differs from stored (user actually typed something)
+      const stored = state.videos[editKey] || '';
+      const storedClean = stored.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+      if (currentEditorText.trim() !== storedClean) {
+        state.videos[editKey] = currentEditorText;
+        const reParsed = typeof parseScriptSections === 'function' ? parseScriptSections(currentEditorText) : null;
+        if (reParsed) {
+          state.videos[sectionsKey] = reParsed;
+          // Update each beat section text in the structured view
+          Object.entries(reParsed).forEach(([key, val]) => {
+            const el = document.getElementById('sv-section-text-' + key.replace(' ', '-'));
+            if (el) el.textContent = val.trim();
+          });
+        }
+      }
+    }
     if (beats)     beats.style.display = 'block';
     if (clean)     clean.style.display = 'none';
     if (gBtn)      gBtn.classList.add('active');
