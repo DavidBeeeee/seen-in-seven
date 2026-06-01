@@ -61,40 +61,25 @@ function showScreen(id, direction='forward') {
     return;
   }
 
-  // Cancel any in-flight transition timers so a rapid second call
-  // never gets silently dropped (this was causing blank screens)
+  // Cancel cosmetic animation timers from any previous call
   _screenAnimTimers.forEach(t => clearTimeout(t));
   _screenAnimTimers = [];
 
-  // Immediately finalize whatever was mid-animation
-  document.querySelectorAll('.screen.anim-out').forEach(s => {
-    s.classList.remove('active', 'anim-out');
+  // SYNCHRONOUS screen swap — never deferred, so a rapid second call
+  // can never leave us with no active screen (this was the blank-screen bug).
+  document.querySelectorAll('.screen.active').forEach(s => {
+    if (s !== next) s.classList.remove('active', 'anim-in', 'anim-out');
   });
 
-  const current = document.querySelector('.screen.active');
+  next.classList.remove('anim-out');
+  next.classList.add('active', 'anim-in');
 
-  if (current && current !== next) {
-    current.classList.add('anim-out');
-    const t1 = setTimeout(() => {
-      current.classList.remove('active','anim-out');
-      next.classList.add('active','anim-in');
-      const t2 = setTimeout(() => { next.classList.remove('anim-in'); }, 350);
-      _screenAnimTimers.push(t2);
-    }, 200);
-    _screenAnimTimers.push(t1);
-  } else {
-    // No current screen, or same screen — show immediately
-    document.querySelectorAll('.screen.active').forEach(s => {
-      if (s !== next) s.classList.remove('active');
-    });
-    next.classList.add('active','anim-in');
-    const t = setTimeout(() => { next.classList.remove('anim-in'); }, 350);
-    _screenAnimTimers.push(t);
-  }
+  // Only the cosmetic anim-in cleanup is deferred
+  const t = setTimeout(() => { next.classList.remove('anim-in'); }, 350);
+  _screenAnimTimers.push(t);
 
   updateProgress(id);
-  const ts = setTimeout(() => window.scrollTo(0,0), 50);
-  _screenAnimTimers.push(ts);
+  window.scrollTo(0, 0);
 }
 
 function goNext() {
