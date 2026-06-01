@@ -128,7 +128,19 @@
 
 <!-- ══ VERIFY EMAIL TOAST ══ -->
 <div id="verify-email-toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9998;background:#0D2828;border:1px solid rgba(200,168,75,0.5);border-radius:12px;padding:14px 20px;align-items:center;gap:12px;max-width:440px;width:calc(100% - 40px);box-shadow:0 8px 32px rgba(0,0,0,0.4);">
-  <span style="font-size:20px;flex-shrink:0;">📧</span>
+
+<!-- ══ EMAIL VERIFICATION GATE ══ -->
+<div id="verify-gate-overlay" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.85);align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#0a1f1f;border:1px solid rgba(200,168,75,0.4);border-radius:16px;padding:36px 28px;max-width:420px;width:100%;text-align:center;">
+    <div style="font-size:32px;margin-bottom:16px;">📧</div>
+    <div style="font-family:'Oswald',sans-serif;font-size:24px;color:var(--cream);margin-bottom:10px;">Don't lose your script</div>
+    <div style="font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:24px;">Your first script is ready — but it's only saved on this device right now. Enter your email so we can send a magic link to secure your progress across every device.</div>
+    <input type="email" id="gate-email-input" class="text-input" placeholder="you@example.com" autocomplete="email" style="margin-bottom:12px;">
+    <div id="gate-email-error" style="color:#ef4444;font-size:13px;margin-bottom:12px;display:none;"></div>
+    <button onclick="handleGateEmailSubmit()" style="width:100%;background:var(--teal);border:none;border-radius:10px;padding:14px;color:#0D2828;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:0.08em;cursor:pointer;margin-bottom:12px;">Secure My Script →</button>
+    <button onclick="dismissVerifyGate()" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;text-decoration:underline;font-family:'Nunito',sans-serif;">Skip for now (script may be lost if you close this tab)</button>
+  </div>
+</div>  <span style="font-size:20px;flex-shrink:0;">📧</span>
   <div style="flex:1;">
     <div style="font-size:13px;font-weight:700;color:#E8C86C;margin-bottom:3px;">Confirm your email to save your scripts</div>
     <div style="font-size:12px;color:var(--muted);line-height:1.6;">Your progress is only saved on this device right now. Check your inbox for a magic link to fully activate your account — or <button onclick="showEmailScreenFromToast()" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:12px;text-decoration:underline;padding:0;font-family:inherit;">enter your email here.</button></div>
@@ -686,7 +698,10 @@
   <div class="db-header" id="db-header">
     <div style="display:flex;justify-content:space-between;align-items:flex-start;">
       <div class="db-greeting">Welcome back</div>
-      <button class="db-settings-btn" onclick="openSettings()" title="Account settings">⚙️</button>
+      <div style="display:flex;gap:8px;align-items:center;">
+        <button class="db-settings-btn" onclick="logOut()" title="Log out" style="font-size:13px;padding:6px 12px;font-family:'Nunito',sans-serif;font-weight:700;">Log Out</button>
+        <button class="db-settings-btn" onclick="openSettings()" title="Account settings">⚙️</button>
+      </div>
     </div>
     <div class="db-name" id="db-name">Your Dashboard</div>
     <div class="db-meta">
@@ -705,7 +720,6 @@
   <div class="db-bottom-bar">
     <button class="db-bottom-link" onclick="copyAllScripts(this)">📋 Copy All Scripts</button>
     <button class="db-bottom-link" onclick="showPdfModal()">⬇ Export All as PDF</button>
-    <button class="db-bottom-link danger" onclick="confirmStartOver()">Start Over</button>
     <button class="db-bottom-link" onclick="logOut()">Log Out</button>
   </div>
 
@@ -741,11 +755,12 @@
     <h2 class="partner-heading">Make posting easier and actually start earning income, TODAY</h2>
     <div class="partner-grid" id="partner-grid">
 
-      <!-- Vubli — unlocks after first video filmed -->
+      <!-- Vubli — unlocks after first script generated -->
       <div class="partner-card" id="partner-vubli" style="display:none;">
         <span class="partner-badge">David Uses This</span>
         <div class="partner-card-name">Vubli</div>
-        <p class="partner-card-desc">Once your scripts are done, you still have to actually get them out there. Vubli makes that the easy part. A couple button clicks and your video is posted to every platform at once. No juggling apps, no logging in and out, no copy-pasting captions six times. I use it because it turns "I should post this" into "done." 😊</p>
+        <p class="partner-card-desc">Your scripts are done — now you have to actually get them out there. Vubli posts your video to every platform at once. No juggling apps, no copy-pasting captions six times. I use it because it turns "I should post this" into "done." 😊</p>
+        <div style="margin-bottom:12px;padding:8px 12px;background:rgba(50,184,184,0.08);border:1px solid rgba(50,184,184,0.2);border-radius:8px;font-size:13px;color:var(--teal);font-family:'Space Mono',monospace;letter-spacing:0.06em;">Use code <strong>davidbee</strong> for a discount</div>
         <a href="https://vubli.ai/?via=david" class="partner-cta" target="_blank" rel="noopener">Try Vubli Free →</a>
       </div>
 

@@ -780,9 +780,9 @@ function populateRecap() {
     const goalShort = {comfortable:'getting comfortable on camera',audience:'building an audience',voice:'finding their voice',start:'just getting started',expert:'establishing expertise',clients:'building a client audience',leads:'generating leads',consistent:'getting consistent'};
     const g = goalShort[state.goal] || 'showing up';
     if (name && name !== 'You') {
-      miniMission.textContent = `${name} is doing the 7 Video Challenge — ${level===1?'The Person Series':'The Expert Series'} — committed to ${g}.`;
+      miniMission.textContent = `${name} is doing the 7 Video Challenge — ${level===1?'The Relatable Hero':'The Authority Series'} — committed to ${g}.`;
     } else {
-      miniMission.textContent = `You're doing the 7 Video Challenge — ${level===1?'The Person Series':'The Expert Series'}.`;
+      miniMission.textContent = `You're doing the 7 Video Challenge — ${level===1?'The Relatable Hero':'The Authority Series'}.`;
     }
   }
 
@@ -1017,7 +1017,7 @@ function buildAPIUserMessage(videoIdx) {
       msg += '4. Who you\'re here to reach: ' + (whoReach || '(not specified)') + '\n';
       if (extra) msg += '5. Anything else they want to add: ' + extra + '\n';
     } else {
-      // Level 2 V1 — same 4-answer structure as Level 1, with Expert Series declaration
+      // Level 2 V1 — same 4-answer structure as Level 1, with Authority Series declaration
       // Level 2 MVO field mapping: Q2→village_full, Q3→before_full, Q4→crack_full
       const l2Decl = sv.v0decl || `For those of you who don't know me yet, my name is ${name}. I kinda never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me, some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of. I'm specifically doing this 7 Video Challenge because I have to share my knowledge, my experience, and my lived reality for the specific people I want to help before the world changes forever and I won't have the chance. These 7 videos are how I'm establishing myself as a credible voice in my field, but I'm scared, I'm frustrated, I don't know how it's going to go, but I'm committed to finishing.`;
       const stopping = sv.v0p1 || q3.before_full || '';
@@ -1380,7 +1380,7 @@ function _buildPromptsContent(container, v, idx) {
     // Build the intro declaration (read-only for V1)
     const introDeclaration = `Hi, my name is ${state.name || '(your name)'}. I never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me — some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of.`;
 
-    // Level 2 declaration (for Expert Series)
+    // Level 2 declaration (for Authority Series)
     const l2Declaration = `For those of you who don't know me yet, my name is ${state.name || '(your name)'}. I kinda never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me, some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of. I'm specifically doing this 7 Video Challenge because I have to share my knowledge, my experience, and my lived reality for the specific people I want to help before the world changes forever and I won't have the chance. These 7 videos are how I'm establishing myself as a credible voice in my field, but I'm scared, I'm frustrated, I don't know how it's going to go, but I'm committed to finishing.`;
 
     const v0Prompts = level === 1
@@ -1444,7 +1444,7 @@ function _buildPromptsContent(container, v, idx) {
       promptsHTML = `
         <div class="input-group">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-            <label class="input-label" style="margin-bottom:0;">Your Expert Series declaration</label>
+            <label class="input-label" style="margin-bottom:0;">Your Authority Series declaration</label>
             <span style="font-size:10px;color:var(--muted);background:rgba(255,255,255,0.06);padding:2px 8px;border-radius:4px;letter-spacing:.06em;">READ ONLY</span>
           </div>
           <span class="input-hint" style="font-size:10px;opacity:0.65;">Pre-filled from your onboarding — you can edit on the next page.</span>
@@ -1740,14 +1740,16 @@ async function showScriptView(idx, skipLoading) {
       saveProgress();
       trackSession();
       queueScriptSave(idx + 1, state.level || 1, script);
+      _doShowScriptView(idx);
+      // Show verification gate after first script, persistent toast for subsequent
       if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
-        const toast = document.getElementById('verify-email-toast');
-        if (toast) {
-          toast.style.display = 'flex';
-          setTimeout(() => { if (toast) toast.style.display = 'none'; }, 8000);
+        if (idx === 0) {
+          setTimeout(() => showVerifyGate(), 1200);
+        } else {
+          const toast = document.getElementById('verify-email-toast');
+          if (toast) toast.style.display = 'flex';
         }
       }
-      _doShowScriptView(idx);
     } catch(err) {
       if (loadingWrap) loadingWrap.style.display = 'none';
       if (epiphanyWrap) epiphanyWrap.style.display = 'none';
@@ -2303,6 +2305,8 @@ function markFilmedFromPlan(idx) {
   state.videoStatus[idx] = 'filmed';
   saveProgress();
   queueProgressSave(idx, state.level || 1, 'filmed');
+  // Fire confetti celebration
+  launchConfetti();
   // Update card immediately so it feels instant
   const card = document.getElementById('dbcard-' + idx);
   if (card) {
@@ -2312,7 +2316,7 @@ function markFilmedFromPlan(idx) {
     const statusLabel = card.querySelector('.dbc-status-label');
     if (statusIcon) statusIcon.textContent = '✓';
     if (statusLabel) statusLabel.textContent = 'Filmed';
-    const actionsDiv = card.querySelector('.dbc-actions');
+    const actionsDiv = card.querySelector('.dbc-links');
     if (actionsDiv) {
       const markBtn = actionsDiv.querySelector('button[onclick*="markFilmedFromPlan"]');
       if (markBtn) markBtn.replaceWith(Object.assign(document.createElement('span'), {
@@ -2377,6 +2381,44 @@ function goBackToPrompts() {
 function toggleCheck(el){
   el.classList.toggle('checked');
   el.querySelector('.check-box').textContent=el.classList.contains('checked')?'✓':'';
+}
+
+// ── EMAIL VERIFICATION GATE ───────────────────────────
+function showVerifyGate() {
+  const gate = document.getElementById('verify-gate-overlay');
+  if (gate) gate.style.display = 'flex';
+}
+
+function dismissVerifyGate() {
+  const gate = document.getElementById('verify-gate-overlay');
+  if (gate) gate.style.display = 'none';
+  // Show persistent toast instead so they still see the warning
+  const toast = document.getElementById('verify-email-toast');
+  if (toast) toast.style.display = 'flex';
+}
+
+async function handleGateEmailSubmit() {
+  const input = document.getElementById('gate-email-input');
+  const errEl = document.getElementById('gate-email-error');
+  const email = input ? input.value.trim() : '';
+
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    if (errEl) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; }
+    return;
+  }
+  if (errEl) errEl.style.display = 'none';
+
+  try {
+    await sendMagicLink(email);
+    const gate = document.getElementById('verify-gate-overlay');
+    if (gate) {
+      gate.querySelector('button[onclick*="handleGateEmailSubmit"]').textContent = '✓ Link sent! Check your inbox.';
+      gate.querySelector('button[onclick*="handleGateEmailSubmit"]').disabled = true;
+      setTimeout(() => { gate.style.display = 'none'; }, 2500);
+    }
+  } catch(e) {
+    if (errEl) { errEl.textContent = 'Something went wrong — try again.'; errEl.style.display = 'block'; }
+  }
 }
 
 // ── LOGOUT ────────────────────────────────────────────
@@ -2499,9 +2541,9 @@ function openSettings() {
   }
   if (levelDisplay) {
     levelDisplay.textContent = state.level === 1
-      ? 'Level 1 — The Person Series'
+      ? 'Level 1 — The Relatable Hero'
       : state.level === 2
-        ? 'Level 2 — The Expert Series'
+        ? 'Level 2 — The Authority Series'
         : 'Not set';
   }
 
@@ -2573,7 +2615,7 @@ function showLevelChangeConfirm() {
   const levelMsg = document.getElementById('settings-level-msg');
   const currentLevel = state.level;
   const otherLevel = currentLevel === 1 ? 2 : 1;
-  const otherLabel = otherLevel === 1 ? 'Level 1 (Person Series)' : 'Level 2 (Expert Series)';
+  const otherLabel = otherLevel === 1 ? 'Level 1 (Relatable Hero)' : 'Level 2 (Authority Series)';
 
   if (levelMsg) {
     levelMsg.innerHTML = 'Switch to ' + otherLabel + '? Your current scripts will be kept. '
@@ -2592,8 +2634,8 @@ async function confirmLevelChange(newLevel) {
   const levelDisplay = document.getElementById('settings-level-display');
   if (levelDisplay) {
     levelDisplay.textContent = newLevel === 1
-      ? 'Level 1 — The Person Series'
-      : 'Level 2 — The Expert Series';
+      ? 'Level 1 — The Relatable Hero'
+      : 'Level 2 — The Authority Series';
   }
   const levelMsg = document.getElementById('settings-level-msg');
   if (levelMsg) {
@@ -2654,7 +2696,7 @@ function buildPlan(){
     }
     localStorage.setItem('sis_returned', '1');
   }
-  const levelLabel = state.level === 1 ? 'Level 1 — Person Series' : 'Level 2 — Expert Series';
+  const levelLabel = state.level === 1 ? 'Level 1 — Relatable Hero' : 'Level 2 — Authority Series';
   if (dbPill) dbPill.textContent = levelLabel;
   if (dbSummary) dbSummary.textContent = '';
   if (dbActions) dbActions.innerHTML = '';
@@ -2700,10 +2742,7 @@ function buildPlan(){
     <div class="db-hero-content">
       <div class="db-hero-status">${heroStatusLine}</div>
       <button class="db-hero-cta" onclick="resumeFromDashboard()">${resumeLabel}</button>
-      <div class="db-hero-tools">
-        <button class="db-tool-btn" onclick="copyAllScripts(this)">📋 Copy All</button>
-        <button class="db-tool-btn" onclick="showPdfModal()">⬇ PDF</button>
-      </div>
+
     </div>`;
   output.appendChild(hero);
 
@@ -2775,16 +2814,16 @@ function buildPlan(){
         </div>
       </div>
       <div class="dbc-preview">${preview}</div>
-      <div class="dbc-actions">
+      <div class="dbc-links">
         ${hasScript
-          ? `<button class="dbc-btn primary" onclick="editScript(${i})">View Script →</button>`
-          : `<button class="dbc-btn primary" onclick="resumeToVideo(${i})">Generate →</button>`}
+          ? `<button class="dbc-link primary" onclick="editScript(${i})">View →</button>`
+          : `<button class="dbc-link primary" onclick="resumeToVideo(${i})">Generate →</button>`}
         ${filmed
           ? `<span class="dbc-filmed-badge">✓ filmed</span>`
           : hasScript
-            ? `<button class="dbc-btn" onclick="markFilmedFromPlan(${i})">Mark Filmed</button>`
+            ? `<button class="dbc-link" onclick="markFilmedFromPlan(${i})">Mark Filmed</button>`
             : ''}
-        ${hasScript ? `<button class="dbc-btn" onclick="copyScriptFromDashboard(${i}, this)">Copy</button><button class="dbc-btn" onclick="exportSinglePDF(${i})">PDF</button>` : ''}
+        ${hasScript ? `<button class="dbc-link" onclick="copyScriptFromDashboard(${i}, this)">Copy</button> <button class="dbc-link" onclick="exportSinglePDF(${i})">PDF</button>` : ''}
       </div>`;
     grid.appendChild(card);
   });
@@ -2795,7 +2834,7 @@ function buildPlan(){
   if (state.level === 2 && state.l1Videos && Object.keys(state.l1Videos).length > 0) {
     const l1label = document.createElement('div');
     l1label.className = 'db-grid-label';
-    l1label.innerHTML = '<span style="color:rgba(74,222,128,0.65);">✓ Level 1 — Person Series (Archive)</span>';
+    l1label.innerHTML = '<span style="color:rgba(74,222,128,0.65);">✓ Level 1 — Relatable Hero (Archive)</span>';
     output.appendChild(l1label);
 
     const l1grid = document.createElement('div');
@@ -2830,9 +2869,9 @@ function buildPlan(){
     document.getElementById('mission-label').textContent = filmedCount === totalVideos ? '🎉 Level 1 Complete' : '⭐ In Progress';
     document.getElementById('mission-title').textContent = filmedCount === totalVideos ? 'YOU SHOWED UP. NOW LEVEL UP.' : 'KEEP GOING.';
     document.getElementById('mission-cta').innerHTML = filmedCount === totalVideos ? `
-      You just completed <strong style="color:var(--teal)">Level 1 — The Person Series</strong>.
+      You just completed <strong style="color:var(--teal)">Level 1 — The Relatable Hero</strong>.
       That's the foundation — most people never build it.<br><br>
-      <strong>Your next move:</strong> Level 2 — The Expert Series.<br><br>
+      <strong>Your next move:</strong> Level 2 — The Authority Series.<br><br>
       <button onclick="runItAgain()" style="background:var(--teal);color:#0f172a;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:0.1em;padding:13px 34px;border:none;border-radius:8px;cursor:pointer;margin-top:8px;">
         Start Level 2 — Skip the Setup →
       </button>` : `
@@ -2843,7 +2882,7 @@ function buildPlan(){
       </button>`;
   } else {
     const l2Done = filmedCount === totalVideos;
-    document.getElementById('mission-label').textContent = l2Done ? '🔥 Level 2 Complete' : '🔥 Expert Series';
+    document.getElementById('mission-label').textContent = l2Done ? '🔥 Level 2 Complete' : '🔥 Authority Series';
     document.getElementById('mission-title').textContent = l2Done ? 'YOU JUST PROVED YOUR VOICE WORKS.' : 'KEEP BUILDING.';
     document.getElementById('mission-cta').innerHTML = l2Done ? `
       <strong style="color:var(--cream)">Now let's build the business you deserve.</strong><br><br>
@@ -2985,7 +3024,8 @@ function updatePartnerVisibility() {
 
   if (!partnerSection) return;
 
-  if (filmedCount >= 1) {
+  const hasAnyScript = Object.keys(state.videos || {}).some(k => k.startsWith('script_v') && state.videos[k]);
+  if (filmedCount >= 1 || hasAnyScript) {
     partnerSection.removeAttribute('data-locked');
     if (vubli) vubli.style.display = '';
   }
@@ -3006,7 +3046,7 @@ function exportPDF(mode) {
   hidePdfModal();
   const name = state.name || 'Your';
   const videos = getVideos();
-  const levelLabel = state.level === 1 ? 'Level 1 — The Person Series' : 'Level 2 — The Expert Series';
+  const levelLabel = state.level === 1 ? 'Level 1 — The Relatable Hero' : 'Level 2 — The Authority Series';
 
   let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
   <title>${name}'s Scripts — SeenInSeven</title>
@@ -3058,7 +3098,7 @@ function exportPDF(mode) {
 
   // L1 archive if mode === 'all'
   if (mode === 'all' && state.l1Videos && Object.keys(state.l1Videos).length > 0) {
-    html += `<div class="archive-header">Level 1 Scripts — The Person Series</div>`;
+    html += `<div class="archive-header">Level 1 Scripts — The Relatable Hero</div>`;
     level1Videos.forEach((v, i) => {
       let script = state.l1Videos['script_v'+i] || '';
       if (!script && v.beats) script = v.beats().map(b=>b.text).join('\n\n');
