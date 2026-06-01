@@ -2798,10 +2798,19 @@ function showDashboard() {
   } catch(e) {
     console.error('[SeenInSeven] buildPlan threw: ' + e.message + ' — ' + (e.stack || ''));
   }
-  showScreen('plan-screen');
+  // Bypass showScreen's 200ms animation — activate plan-screen synchronously
+  // to eliminate races with the async auth flow (onAuthStateChange + initAuth
+  // both calling showDashboard can leave the animation timer in a bad state).
+  transitioning = false;
+  document.querySelectorAll('.screen.active, .screen.anim-out, .screen.anim-in').forEach(s => {
+    s.classList.remove('active', 'anim-out', 'anim-in');
+  });
+  const _planEl = document.getElementById('plan-screen');
+  if (_planEl) _planEl.classList.add('active');
+
   currentIndex = screenOrder.indexOf('plan-screen');
   window.scrollTo(0, 0);
-  window._SIS_log && _SIS_log('showDashboard:done', 'plan-screen shown');
+  window._SIS_log && _SIS_log('showDashboard:done', 'plan-screen activated synchronously');
   if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
     const toast = document.getElementById('verify-email-toast');
     if (toast) toast.style.display = 'flex';
@@ -3380,8 +3389,11 @@ function launchConfetti() {
     console.warn('[SeenInSeven] initAuth error:', e);
   }
 
-  // Always reveal screen-0 regardless of what happened
-  if (s0) s0.style.visibility = '';
+  // If dashboard was shown, don't reveal screen-0 (it's already hidden behind plan-screen).
+  // Only restore visibility when staying on the onboarding flow.
+  if (initResult !== 'dashboard') {
+    if (s0) s0.style.visibility = '';
+  }
 
   // If the URL is /dashboard, always try to show the dashboard
   if (window.location.pathname === '/dashboard') {
