@@ -212,8 +212,11 @@ async function handleEmailSubmit() {
         if (!existing) {
           const msg = document.createElement('div');
           msg.className = 'email-sent-msg';
-          msg.style.cssText = 'margin-top:16px;padding:16px 18px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;font-size:15px;color:var(--green);line-height:1.7;';
-          msg.innerHTML = '📬 <strong>Link sent to ' + email + '</strong><br><span style="color:var(--muted);font-size:13px;">Click it to pick up where you left off. Or <button onclick="goNext()" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:13px;text-decoration:underline;padding:0;">continue as a new user instead.</button></span>';
+          msg.style.cssText = 'margin-top:16px;padding:16px 18px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;line-height:1.7;';
+          msg.innerHTML = `
+            <div style="font-size:17px;font-weight:700;color:var(--cream);margin-bottom:6px;">Welcome back! 👋</div>
+            <div style="font-size:14px;color:var(--muted);">We recognize you — you've already started your SeenInSeven scripts. Check your inbox for a magic link to get straight back to your dashboard.</div>
+            <div style="margin-top:12px;font-size:13px;color:var(--muted);">Wrong email? <button onclick="document.querySelector('.email-sent-msg').remove();document.getElementById('auth-email-input').value='';document.getElementById('auth-email-input').focus();" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:13px;text-decoration:underline;padding:0;font-family:inherit;">Try a different one →</button></div>`;
           const btnRow = emailScreen.querySelector('.btn-row');
           if (btnRow) btnRow.after(msg);
         }
@@ -1392,7 +1395,7 @@ function _buildPromptsContent(container, v, idx) {
            hint:'Who is watching this? Who do you want to show up for?',
            def: q4.village_full || ''},
           {key:'v0p4', label:"Anything else you'd like to add?",
-           hint:'Free write — extra context, a story, anything you want the AI to know. This goes straight into your script.',
+           hint:'A detail that makes you uniquely you — a background, a personality trait, something surprising. The AI will weave it in.',
            def: ''}
         ]
       : [
@@ -1410,7 +1413,7 @@ function _buildPromptsContent(container, v, idx) {
            hint:'Who is watching this? Who do you want to show up for?',
            def: q2.village_full || ''},
           {key:'v0p4', label:"Anything else you'd like to add?",
-           hint:'Free write — extra context, a story, anything you want the AI to know. This goes straight into your script.',
+           hint:'A detail that makes you uniquely you — a background, a personality trait, something surprising. The AI will weave it in.',
            def: ''}
         ];
     // Pre-populate from MVO defaults on first load
@@ -1431,7 +1434,7 @@ function _buildPromptsContent(container, v, idx) {
           <div class="input-group">
             <label class="input-label">${p.label}</label>
             <span class="input-hint" style="font-size:10px;opacity:0.65;">${p.hint}</span>
-            <textarea class="text-input" rows="2" placeholder="(pre-filled from your answers)"
+            <textarea class="text-input" rows="2" placeholder="e.g. I have a background in healthcare but I've never talked about it on camera — mention that I'm nervous but committed"
               oninput="state.videos['${p.key}']=this.value">${sv[p.key] || p.def}</textarea>
           </div>`).join('');
       // Also store the declaration in state so API can use it
@@ -2300,6 +2303,24 @@ function markFilmedFromPlan(idx) {
   state.videoStatus[idx] = 'filmed';
   saveProgress();
   queueProgressSave(idx, state.level || 1, 'filmed');
+  // Update card immediately so it feels instant
+  const card = document.getElementById('dbcard-' + idx);
+  if (card) {
+    card.classList.remove('card-ready', 'card-pending');
+    card.classList.add('card-filmed');
+    const statusIcon = card.querySelector('.dbc-status-icon');
+    const statusLabel = card.querySelector('.dbc-status-label');
+    if (statusIcon) statusIcon.textContent = '✓';
+    if (statusLabel) statusLabel.textContent = 'Filmed';
+    const actionsDiv = card.querySelector('.dbc-actions');
+    if (actionsDiv) {
+      const markBtn = actionsDiv.querySelector('button[onclick*="markFilmedFromPlan"]');
+      if (markBtn) markBtn.replaceWith(Object.assign(document.createElement('span'), {
+        className: 'dbc-filmed-badge', textContent: '✓ filmed'
+      }));
+    }
+  }
+  // Update ring in hero
   buildPlan();
 }
 
@@ -2357,6 +2378,109 @@ function toggleCheck(el){
   el.classList.toggle('checked');
   el.querySelector('.check-box').textContent=el.classList.contains('checked')?'✓':'';
 }
+
+// ── LOGOUT ────────────────────────────────────────────
+async function logOut() {
+  try {
+    localStorage.removeItem(SAVE_KEY);
+    localStorage.removeItem('sis_returned');
+    _dashboardShown = false;
+    if (typeof _sb !== 'undefined') await _sb.auth.signOut();
+  } catch(e) {}
+  Object.keys(state).forEach(k => state[k] = k === 'videos' || k === 'videoStatus' ? {} : null);
+  state.name = ''; state.minigoalText = ''; state.topicFreewrite = '';
+  screenOrder = ['screen-0','screen-1'];
+  currentIndex = 0; currentVideoIndex = 0;
+  showScreen('screen-0');
+}
+
+// ── CONFIRM START OVER ────────────────────────────────
+function confirmStartOver() {
+  const el = document.getElementById('start-over-confirm');
+  if (el) el.style.display = 'flex';
+}
+
+// ── TOAST MANAGEMENT ─────────────────────────────────
+let _toastDismissCount = 0;
+let _toastReshowTimer = null;
+
+function dismissVerifyToast() {
+  const toast = document.getElementById('verify-email-toast');
+  if (toast) toast.style.display = 'none';
+  _toastDismissCount++;
+  if (_toastDismissCount < 3) {
+    clearTimeout(_toastReshowTimer);
+    _toastReshowTimer = setTimeout(() => {
+      if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
+        const t = document.getElementById('verify-email-toast');
+        if (t) t.style.display = 'flex';
+      }
+    }, 5 * 60 * 1000);
+  }
+}
+
+function showEmailScreenFromToast() {
+  const toast = document.getElementById('verify-email-toast');
+  if (toast) toast.style.display = 'none';
+  if (screenOrder.indexOf('screen-email') === -1) {
+    screenOrder = state.posted === 'no'
+      ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
+      : ['screen-0','screen-1','screen-email','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+  }
+  const input = document.getElementById('auth-email-input');
+  if (input) input.value = '';
+  const msg = document.querySelector('.email-sent-msg');
+  if (msg) msg.remove();
+  showScreen('screen-email');
+}
+
+// ── COPY SINGLE SCRIPT ────────────────────────────────
+function copyScript(idx, btn) {
+  const script = state.videos['script_v' + idx] || '';
+  const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  if (!clean) return;
+  navigator.clipboard && navigator.clipboard.writeText(clean).then(() => {
+    if (btn) {
+      const orig = btn.textContent;
+      btn.textContent = '✓ Copied';
+      setTimeout(() => { btn.textContent = orig; }, 1500);
+    }
+  });
+}
+
+// ── EXPORT SINGLE SCRIPT PDF ──────────────────────────
+function exportSinglePDF(idx) {
+  const videos = getVideos();
+  const v = videos[idx];
+  const script = state.videos['script_v' + idx] || '';
+  if (!script || !v) return;
+  const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  const win = window.open('', '_blank');
+  win.document.write(`<html><head><title>Video ${idx + 1} — ${v.title}</title>
+    <style>body{font-family:Georgia,serif;max-width:680px;margin:40px auto;padding:0 24px;color:#111;line-height:1.8;}
+    h1{font-size:22px;margin-bottom:4px;}h2{font-size:14px;color:#555;font-weight:normal;margin-bottom:32px;}
+    p{white-space:pre-wrap;font-size:16px;}</style></head>
+    <body><h1>Video ${idx + 1} — ${v.title}</h1>
+    <h2>SeenInSeven · ${state.name || ''}</h2>
+    <p>${clean}</p></body></html>`);
+  win.document.close();
+  setTimeout(() => win.print(), 300);
+}
+
+// ── SESSION EXPIRY HANDLER ────────────────────────────
+setInterval(async () => {
+  if (typeof getCurrentUser !== 'function' || !getCurrentUser()) return;
+  try {
+    const { data } = await _sb.auth.getSession();
+    if (!data || !data.session) {
+      const plan = document.getElementById('plan-screen');
+      if (plan && plan.classList.contains('active')) {
+        const toast = document.getElementById('verify-email-toast');
+        if (toast) toast.style.display = 'flex';
+      }
+    }
+  } catch(e) {}
+}, 5 * 60 * 1000);
 
 // ── SETTINGS PANEL ────────────────────────────────────
 function openSettings() {
@@ -2517,8 +2641,19 @@ function buildPlan(){
   const dbPill = document.getElementById('db-level-pill');
   const dbSummary = document.getElementById('db-progress-summary');
   const dbActions = document.getElementById('db-actions');
+  const dbGreeting = document.querySelector('.db-greeting');
 
   if (dbName) dbName.textContent = name !== 'You' ? name : 'Your Dashboard';
+  // First visit vs returning — check localStorage flag
+  if (dbGreeting) {
+    const hasReturned = localStorage.getItem('sis_returned');
+    if (!hasReturned) {
+      dbGreeting.textContent = filmedCount > 0 ? 'Welcome back' : 'Welcome';
+    } else {
+      dbGreeting.textContent = 'Welcome back';
+    }
+    localStorage.setItem('sis_returned', '1');
+  }
   const levelLabel = state.level === 1 ? 'Level 1 — Person Series' : 'Level 2 — Expert Series';
   if (dbPill) dbPill.textContent = levelLabel;
   if (dbSummary) dbSummary.textContent = '';
@@ -2649,6 +2784,7 @@ function buildPlan(){
           : hasScript
             ? `<button class="dbc-btn" onclick="markFilmedFromPlan(${i})">Mark Filmed</button>`
             : ''}
+        ${hasScript ? `<button class="dbc-btn" onclick="copyScript(${i}, this)">Copy</button><button class="dbc-btn" onclick="exportSinglePDF(${i})">PDF</button>` : ''}
       </div>`;
     grid.appendChild(card);
   });

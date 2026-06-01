@@ -127,13 +127,13 @@
 </div>
 
 <!-- ══ VERIFY EMAIL TOAST ══ -->
-<div id="verify-email-toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9998;background:#0D2828;border:1px solid rgba(200,168,75,0.5);border-radius:12px;padding:14px 20px;align-items:center;gap:12px;max-width:420px;width:calc(100% - 40px);box-shadow:0 8px 32px rgba(0,0,0,0.4);">
+<div id="verify-email-toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9998;background:#0D2828;border:1px solid rgba(200,168,75,0.5);border-radius:12px;padding:14px 20px;align-items:center;gap:12px;max-width:440px;width:calc(100% - 40px);box-shadow:0 8px 32px rgba(0,0,0,0.4);">
   <span style="font-size:20px;flex-shrink:0;">📧</span>
   <div style="flex:1;">
-    <div style="font-size:13px;font-weight:700;color:#E8C86C;margin-bottom:2px;">Your progress isn't saved to the cloud yet</div>
-    <div style="font-size:12px;color:var(--muted);line-height:1.5;">Check your inbox for a magic link, or <button onclick="const idx=screenOrder.indexOf('screen-email');if(idx>=0){currentIndex=idx;showScreen('screen-email');}else{showScreen('screen-email');}" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:12px;text-decoration:underline;padding:0;">enter your email here.</button></div>
+    <div style="font-size:13px;font-weight:700;color:#E8C86C;margin-bottom:3px;">Confirm your email to save your scripts</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.6;">Your progress is only saved on this device right now. Check your inbox for a magic link to fully activate your account — or <button onclick="showEmailScreenFromToast()" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:12px;text-decoration:underline;padding:0;font-family:inherit;">enter your email here.</button></div>
   </div>
-  <button onclick="document.getElementById('verify-email-toast').style.display='none'" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;flex-shrink:0;padding:4px;">✕</button>
+  <button onclick="dismissVerifyToast()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;flex-shrink:0;padding:4px;">✕</button>
 </div>
 
 <div id="progress-bar-wrap">
@@ -701,17 +701,30 @@
 
   <div id="plan-output"></div>
 
-  <!-- Action bar -->
-  <div class="btn-row" style="margin-bottom:32px;">
-    <button class="btn-primary" id="copy-all-btn" onclick="copyAllScripts(this)">📋 Copy All Scripts</button>
-    <button class="btn-print" onclick="showPdfModal()">⬇ Export PDF</button>
-    <button class="btn-restart" onclick="restartWizard()">Start Over</button>
+  <!-- Bottom action bar - text links only -->
+  <div class="db-bottom-bar">
+    <button class="db-bottom-link" onclick="copyAllScripts(this)">📋 Copy All Scripts</button>
+    <button class="db-bottom-link" onclick="showPdfModal()">⬇ Export All as PDF</button>
+    <button class="db-bottom-link danger" onclick="confirmStartOver()">Start Over</button>
+    <button class="db-bottom-link" onclick="logOut()">Log Out</button>
+  </div>
+
+  <!-- Styled start-over confirmation (replaces browser confirm()) -->
+  <div id="start-over-confirm" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;padding:24px;">
+    <div style="background:#0a1f1f;border:1px solid var(--border);border-radius:16px;padding:32px 28px;max-width:380px;width:100%;text-align:center;">
+      <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--cream);margin-bottom:12px;">Start Over?</div>
+      <div style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:28px;">This deletes all your scripts and answers permanently. There's no undo.</div>
+      <div style="display:flex;gap:12px;justify-content:center;">
+        <button onclick="document.getElementById('start-over-confirm').style.display='none'" style="background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:10px 24px;color:var(--soft);font-size:15px;cursor:pointer;font-family:'Nunito',sans-serif;">Cancel</button>
+        <button onclick="restartWizard()" style="background:#ef4444;border:none;border-radius:8px;padding:10px 24px;color:white;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Yes, Delete Everything</button>
+      </div>
+    </div>
   </div>
 
   <!-- Next step card — level-aware -->
   <div class="mission-card" id="mission-card">
-    <div class="m-label" id="mission-label">🎉 You Did It</div>
-    <div class="m-title" id="mission-title">ALL 7 VIDEOS — COMPLETE</div>
+    <div class="m-label" id="mission-label">⭐ In Progress</div>
+    <div class="m-title" id="mission-title">KEEP GOING.</div>
     <div class="m-cta" id="mission-cta"></div>
   </div>
 
