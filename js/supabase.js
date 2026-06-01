@@ -330,6 +330,17 @@ async function restoreScriptVersion(scriptId, videoNumber, level, content) {
   saveProgress();
 }
 
+async function deleteScriptVersion(scriptId) {
+  if (!_currentUser) return false;
+  try {
+    // Never delete the current version — only non-current ones
+    const { data } = await _sb.from('scripts').select('is_current').eq('id', scriptId).single();
+    if (data && data.is_current) return false; // refuse to delete current version
+    await _sb.from('scripts').delete().eq('id', scriptId).eq('user_id', _currentUser.id);
+    return true;
+  } catch(e) { return false; }
+}
+
 // ── INIT: CHECK FOR EXISTING SESSION ─────────────────
 async function initAuth() {
   window._SIS_log && _SIS_log('initAuth:start', {path: window.location.pathname, hash: window.location.hash.substring(0,30)});

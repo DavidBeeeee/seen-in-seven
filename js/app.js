@@ -2430,10 +2430,20 @@ function _addV1Tracker() {
 }
 
 function goBackToPrompts() {
-  showScreen('screen-7');
-  currentIndex = screenOrder.indexOf('screen-7');
-  renderVideoPrompts(currentVideoIndex);
-  window.scrollTo(0, 0);
+  const idx = currentVideoIndex;
+  if (idx > 0) {
+    // Go to the previous video's script view, not the prompts screen
+    const prevIdx = idx - 1;
+    currentVideoIndex = prevIdx;
+    editingFromPlan = true; // treat as editing so footer shows correct buttons
+    showScriptView(prevIdx, true);
+  } else {
+    // Video 0 — go back to the prompts/comm-layers screen
+    showScreen('screen-7');
+    currentIndex = screenOrder.indexOf('screen-7');
+    renderVideoPrompts(idx);
+    window.scrollTo(0, 0);
+  }
 }
 
 // ── CHECKLIST ─────────────────────────────────────────
@@ -2530,18 +2540,27 @@ function redoScriptStep() {
 function _applyUndoSnapshot(idx, text) {
   state.videos['script_v' + idx] = text;
   saveProgress();
-  // Update both views without re-rendering the whole screen
+
+  const clean = text.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+
+  // Always switch to Edit tab — undo/redo is most visible and reliable there
+  if (typeof setScriptView === 'function') setScriptView('clean');
+
   const editor = document.getElementById('script-editor');
   if (editor) {
-    const clean = text.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
     editor.value = clean;
+    // Briefly highlight the textarea to show something changed
+    editor.style.transition = 'background 0.2s ease';
+    editor.style.background = 'rgba(50,184,184,0.10)';
+    setTimeout(() => { editor.style.background = ''; }, 600);
+    editor.focus();
   }
-  // Re-parse sections and update the structured view in-place
+
+  // Also update structured view in background
   const sectionsKey = 'sections_v' + idx;
   const parsed = typeof parseScriptSections === 'function' ? parseScriptSections(text) : null;
   if (parsed) {
     state.videos[sectionsKey] = parsed;
-    // Update each section element in the structured view
     Object.entries(parsed).forEach(([key, val]) => {
       const el = document.getElementById('sv-section-text-' + key.replace(' ', '-'));
       if (el) el.textContent = val.trim();
@@ -2581,14 +2600,31 @@ document.addEventListener('keydown', (e) => {
 
 function handleFilmedCheckbox(checkbox) {
   const idx = currentVideoIndex;
+  const boxEl   = document.getElementById('filmed-checkbox-box');
+  const labelEl = document.getElementById('btn-filmed-main');
+
   if (checkbox.checked) {
-    const boxEl = document.getElementById('filmed-checkbox-box');
-    const labelEl = document.getElementById('btn-filmed-main');
+    // Mark filmed
+    state.videoStatus[idx] = 'filmed';
+    saveProgress();
+    queueProgressSave(idx, state.level || 1, 'filmed');
     if (boxEl) boxEl.textContent = '☑';
-    if (labelEl) labelEl.style.color = 'var(--green)';
-    // Wire through to afterFilmed
-    const filmedBtn = document.getElementById('btn-filmed-main');
-    if (filmedBtn && typeof filmedBtn.onclick === 'function') filmedBtn.onclick();
+    if (labelEl) { labelEl.textContent = 'Filmed ✓'; labelEl.style.color = 'var(--green)'; }
+    launchConfetti();
+    // Update lock card to reflect filmed state
+    _updateLockUI(idx);
+    // Update dashboard card if it exists
+    const card = document.getElementById('dbcard-' + idx);
+    if (card) {
+      card.classList.remove('card-ready', 'card-pending');
+      card.classList.add('card-filmed');
+    }
+  } else {
+    // Un-mark filmed (in case they tap again by accident)
+    delete state.videoStatus[idx];
+    saveProgress();
+    if (boxEl) boxEl.textContent = '☐';
+    if (labelEl) { labelEl.textContent = 'I Filmed It'; labelEl.style.color = ''; }
   }
 }
 
@@ -2602,54 +2638,110 @@ function lockInScript() {
   const idx = currentVideoIndex;
   state.videos['locked_v' + idx] = true;
   saveProgress();
-  _updateLockUI(idx);
-  // Brief celebration
+
+  // Animate the lock button
   const btn = document.getElementById('btn-lock-main');
   if (btn) {
     btn.textContent = '🔒 Locked In ✓';
     btn.style.background = 'rgba(74,222,128,0.18)';
     btn.style.color = 'var(--green)';
   }
-  // After half a second, also promote "I Filmed It" to the primary spot visually
-  setTimeout(() => _updateLockUI(idx), 500);
+  setTimeout(() => _updateLockUI(idx), 400);
 }
 
 function _updateLockUI(idx) {
   const locked = !!state.videos['locked_v' + idx];
+  const filmed = state.videoStatus[idx] === 'filmed';
   const lockBtn = document.getElementById('btn-lock-main');
-  const filmedBtn = document.getElementById('btn-filmed-main');
   const titleEl = document.getElementById('lock-card-title');
-  const subEl = document.getElementById('lock-card-sub');
-  const iconEl = document.querySelector('.filmed-card .filmed-icon');
+  const subEl   = document.getElementById('lock-card-sub');
+  const iconEl  = document.querySelector('.filmed-card .filmed-icon');
+
+  // Restore filmed checkbox state
+  const checkbox = document.getElementById('filmed-checkbox');
+  const boxEl = document.getElementById('filmed-checkbox-box');
+  const labelEl = document.getElementById('btn-filmed-main');
+  if (filmed) {
+    if (checkbox) checkbox.checked = true;
+    if (boxEl) boxEl.textContent = '☑';
+    if (labelEl) { labelEl.textContent = 'Filmed ✓'; labelEl.style.color = 'var(--green)'; }
+  } else {
+    if (checkbox) checkbox.checked = false;
+    if (boxEl) boxEl.textContent = '☐';
+    if (labelEl) { labelEl.textContent = 'I Filmed It'; labelEl.style.color = ''; }
+  }
+  if (existing) existing.remove();
+
   if (locked) {
-    // Lock button becomes secondary "Unlock to edit"
     if (lockBtn) {
       lockBtn.className = 'btn-skip';
-      lockBtn.style.fontSize = '13px';
+      lockBtn.style.cssText = 'font-size:13px;color:var(--muted);';
       lockBtn.textContent = '🔓 Unlock to edit again';
       lockBtn.onclick = () => unlockScript();
     }
-    // Filmed becomes the primary action
-    if (filmedBtn) {
-      filmedBtn.className = 'btn-filmed';
-      filmedBtn.style.fontSize = '';
+    if (titleEl) titleEl.textContent = filmed ? 'This one\'s done.' : 'Script locked. Time to film.';
+    if (subEl) subEl.textContent = filmed
+      ? 'Move on to the next one.'
+      : 'Film it, then tap the toggle below when you\'re back.';
+    if (iconEl) iconEl.textContent = filmed ? '✅' : '🎬';
+
+    // Add "Next Video" button below the filmed toggle (only if not last video and not editingFromPlan)
+    const videos = getVideos();
+    const isLastVideo = idx >= videos.length - 1;
+    const filmedRow = document.getElementById('filmed-checkbox-row');
+    if (filmedRow && filmedRow.parentNode) {
+      const nextBtn = document.createElement('button');
+      nextBtn.id = 'btn-next-video';
+      nextBtn.className = 'btn-filmed';
+      nextBtn.style.marginTop = '12px';
+      if (editingFromPlan) {
+        nextBtn.textContent = '← Back to Dashboard';
+        nextBtn.onclick = () => {
+          editingFromPlan = false;
+          updateProgress('screen-script');
+          buildPlan();
+          showScreen('plan-screen');
+          currentIndex = screenOrder.indexOf('plan-screen');
+          window.scrollTo(0, 0);
+        };
+      } else if (isLastVideo) {
+        nextBtn.textContent = '🎉 See Your Full Dashboard →';
+        nextBtn.onclick = () => afterFilmed(idx, filmed ? null : undefined);
+        nextBtn.onclick = () => {
+          showDashboard();
+        };
+      } else {
+        nextBtn.textContent = 'Next Video →';
+        nextBtn.onclick = () => afterFilmed(idx, filmed ? null : undefined);
+        nextBtn.onclick = () => {
+          // Advance to next video intro
+          currentPreviewVideoNum = idx + 2;
+          const nextIdx = idx + 1;
+          currentVideoIndex = nextIdx;
+          const videos2 = getVideos();
+          if (videos2[nextIdx] && videos2[nextIdx].beats) {
+            renderPrefaceV1();
+            showScreen('screen-comm-layers');
+            currentIndex = screenOrder.indexOf('screen-comm-layers');
+          } else {
+            renderVideoIntro(nextIdx);
+            showScreen('screen-7');
+            currentIndex = screenOrder.indexOf('screen-7');
+          }
+          window.scrollTo(0, 0);
+        };
+      }
+      filmedRow.parentNode.insertBefore(nextBtn, filmedRow.nextSibling);
     }
-    if (titleEl) titleEl.textContent = 'Script locked in. Time to film.';
-    if (subEl) subEl.textContent = 'Your script is set. Film it, then come back and tap below.';
-    if (iconEl) iconEl.textContent = '🎬';
   } else {
     if (lockBtn) {
       lockBtn.className = 'btn-filmed';
-      lockBtn.style.fontSize = '';
+      lockBtn.style.cssText = '';
       lockBtn.textContent = '🔒 Lock In This Script';
       lockBtn.onclick = () => lockInScript();
     }
-    if (filmedBtn) {
-      filmedBtn.className = 'btn-skip';
-      filmedBtn.style.fontSize = '14px';
-    }
     if (titleEl) titleEl.textContent = 'Happy with this script?';
-    if (subEl) subEl.textContent = "Lock it in when you're ready to film. You can always edit it after.";
+    if (subEl) subEl.textContent = 'Lock it in when you\'re ready to film. You can always edit it after.';
     if (iconEl) iconEl.textContent = '🔒';
   }
 }
@@ -2785,10 +2877,11 @@ async function openVersionModal(idx) {
         <div style="font-family:'Space Mono',monospace;font-size:11px;letter-spacing:0.12em;color:${isCurrent ? 'var(--teal)' : 'var(--muted)'};text-transform:uppercase;">
           Version ${ver.version} · ${date} ${isCurrent ? '· CURRENT' : ''}
         </div>
-        <div style="display:flex;gap:14px;">
+        <div style="display:flex;gap:14px;align-items:center;">
           <button class="dbc-link" onclick="copyVersion('${ver.id}', this)">Copy</button>
           <button class="dbc-link" onclick="printVersion('${ver.id}', ${idx})">Print</button>
           ${!isCurrent ? `<button class="dbc-link primary" onclick="restoreVersion('${ver.id}', ${idx})">Restore</button>` : ''}
+          ${!isCurrent ? `<button class="dbc-link" style="color:rgba(239,68,68,0.6);" onclick="deleteVersion('${ver.id}', ${idx}, this)">Delete</button>` : ''}
         </div>
       </div>
       <div style="font-family:'Lora',serif;font-style:italic;font-size:14px;line-height:1.7;color:var(--cream);white-space:pre-wrap;max-height:200px;overflow-y:auto;padding:8px 0;border-top:1px solid var(--border);">${clean}</div>`;
@@ -2834,6 +2927,21 @@ async function restoreVersion(scriptId, idx) {
   await handleRestoreVersion(scriptId, idx);
   closeVersionModal();
   buildPlan();
+}
+
+async function deleteVersion(scriptId, idx, btn) {
+  if (!confirm('Delete this version permanently? This cannot be undone.')) return;
+  const ok = await deleteScriptVersion(scriptId);
+  if (ok) {
+    delete _versionStore[scriptId];
+    const item = btn.closest('[style*="border:1px"]') || btn.closest('div');
+    if (item) item.remove();
+    // Re-open modal to refresh the list
+    closeVersionModal();
+    await openVersionModal(idx);
+  } else {
+    if (btn) { btn.textContent = '⚠ Can\'t delete'; setTimeout(() => btn.textContent = 'Delete', 2000); }
+  }
 }
 
 // ── TRUST INDICATOR: "Saved" flash ─────────────────────
