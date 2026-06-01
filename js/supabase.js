@@ -55,16 +55,23 @@ _sb.auth.onAuthStateChange((event, session) => {
         if (toast) toast.style.display = 'none';
 
         if (event === 'SIGNED_IN') {
+          // Clear any previous user's localStorage before restoring the new session
+          try { localStorage.removeItem('bwb_challenge_v1'); } catch(e) {}
+          // Hide the returning banner in case loadProgress showed it
+          const banner = document.getElementById('returning-banner');
+          if (banner) banner.classList.remove('visible');
           await _restoreFromDatabase();
           _mergeLocalStorage();
           await _flushSaveQueue();
           window._SIS_log && _SIS_log('auth:after-restore', {level: state.level, name: state.name});
-          // SIGNED_IN always wins — reset dashboard flag and show fresh
           if (typeof _dashboardShown !== 'undefined') _dashboardShown = false;
           if (state.level && typeof showDashboard === 'function') {
             showDashboard();
           } else {
             window._SIS_log && _SIS_log('auth:no-dashboard', {level: state.level});
+            // No level yet — they need to go through onboarding
+            // Make sure screen-0 is visible and clean
+            if (typeof showScreen === 'function') showScreen('screen-0');
           }
         }
       } catch(e) {
