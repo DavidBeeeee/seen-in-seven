@@ -3218,50 +3218,56 @@ function showDashboard() {
 
 // ── RESTART ───────────────────────────────────────────
 function restartWizard(){
-  if (!confirm('This will erase all your progress and start over. Are you sure?')) return;
-  localStorage.removeItem(SAVE_KEY);
-  _dashboardShown = false;
-  if (typeof _sb !== 'undefined') { _sb.auth.signOut().catch(() => {}); }
-  Object.keys(state).forEach(k=>state[k]=k==='videos'||k==='videoStatus'?{}:null);
-  state.name='';state.minigoalText='';state.videoStatus={};
-  state.mvoQ2=null;state.mvoQ3=null;state.mvoQ4=null;
-  state.topicFreewrite='';state.l1VideoStatus=null;state.l1Videos=null;
-  mvoQ2Skipped=false;
-  const fwEl = document.getElementById('freewrite-input');
-  if (fwEl) fwEl.value = '';
-  currentPreviewVideoNum=1;
-  screenOrder=['screen-0','screen-1'];
-  currentIndex=0;currentVideoIndex=0;transitioning=false;_dashboardShown=false;
-  // Reset progress bar classes
-  const pbWrap = document.getElementById('progress-bar-wrap');
-  if (pbWrap) {
-    pbWrap.classList.remove('progress-l1-complete','progress-l2-complete');
-  }
-  document.getElementById('progress-label').textContent = 'YOUR JOURNEY';
-  document.getElementById('commitment-fill').textContent='—';
-  document.getElementById('user-name').value='';
-  document.getElementById('script-editor').value='';
-  // Reset V1 loading + tracker state
-  const v1Loading = document.getElementById('v1-loading');
-  const scriptMain = document.getElementById('script-main-content');
-  if (v1Loading) v1Loading.style.display = 'none';
-  if (scriptMain) scriptMain.style.display = '';
-  // Reset epiphany line visibility
-  ['ep1','ep2','ep3'].forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.classList.remove('visible');
-  });
-  // Reset progress bars
+  // Use the styled confirmation overlay
+  const overlay = document.getElementById('start-over-confirm');
+  if (overlay) { overlay.style.display = 'none'; }
+
+  // Clear scripts and onboarding from state
+  state.videos       = {};
+  state.videoStatus  = {};
+  state.l1Videos     = null;
+  state.l1VideoStatus= null;
+  state.posted       = null;
+  state.blocker      = null;
+  state.history      = null;
+  state.goal         = null;
+  state.minigoal     = null;
+  state.minigoalText = '';
+  state.business     = null;
+  state.mvoQ2        = null;
+  state.mvoQ3        = null;
+  state.mvoQ4        = null;
+  state.topicFreewrite = '';
+  mvoQ2Skipped = false;
   maxProgressPct = 0;
   maxProgressL2Pct = 0;
+
+  // Save cleared state to localStorage
+  saveProgress();
+
+  // Clear from DB if authenticated (fire and forget)
+  const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+  if (user && typeof _sb !== 'undefined') {
+    _sb.from('scripts').delete().eq('user_id', user.id).then(() => {});
+    _sb.from('video_progress').delete().eq('user_id', user.id).then(() => {});
+    _sb.from('onboarding').delete().eq('user_id', user.id).then(() => {});
+    _sb.from('users').update({
+      level: state.level, // keep level
+      blocker: null, business_stage: null
+    }).eq('id', user.id).then(() => {});
+  }
+
+  // Reset progress bar
+  const pbWrap = document.getElementById('progress-bar-wrap');
+  if (pbWrap) pbWrap.classList.remove('progress-l1-complete','progress-l2-complete');
   const pfill = document.getElementById('progress-fill');
   const pfillL2 = document.getElementById('progress-fill-l2');
   if (pfill) pfill.style.width = '0%';
   if (pfillL2) { pfillL2.style.width = '0%'; pfillL2.style.opacity = '0'; }
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active','anim-in','anim-out'));
-  document.getElementById('screen-0').classList.add('active');
-  updateProgress('screen-0');
-  window.scrollTo(0,0);
+
+  // Stay on dashboard — rebuild it fresh
+  buildPlan();
+  updateProgress('plan-screen');
 }
 
 // ── MVO MINI-WIZARD ───────────────────────────────────

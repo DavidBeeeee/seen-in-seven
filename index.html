@@ -734,8 +734,8 @@
   <!-- Styled start-over confirmation (replaces browser confirm()) -->
   <div id="start-over-confirm" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;padding:24px;">
     <div style="background:#0a1f1f;border:1px solid var(--border);border-radius:16px;padding:32px 28px;max-width:380px;width:100%;text-align:center;">
-      <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--cream);margin-bottom:12px;">Start Over?</div>
-      <div style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:28px;">This deletes all your scripts and answers permanently. There's no undo.</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--cream);margin-bottom:12px;">Start Fresh?</div>
+      <div style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:28px;">This will delete all your scripts and reset your onboarding answers. You'll stay logged in and can generate new scripts right away. Your account and email stay intact.</div>
       <div style="display:flex;gap:12px;justify-content:center;">
         <button onclick="document.getElementById('start-over-confirm').style.display='none'" style="background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:10px 24px;color:var(--soft);font-size:15px;cursor:pointer;font-family:'Nunito',sans-serif;">Cancel</button>
         <button onclick="restartWizard()" style="background:#ef4444;border:none;border-radius:8px;padding:10px 24px;color:white;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Yes, Delete Everything</button>
