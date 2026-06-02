@@ -49,6 +49,14 @@
     .btn { border:1px solid var(--line); border-radius:8px; padding:8px 13px; color:var(--soft); background:transparent; }
     .btn:hover { border-color:var(--teal); color:var(--cream); }
     .btn-primary { background:var(--teal); border-color:var(--teal); color:#062121; font-weight:800; }
+    .btn-small { padding:6px 9px; font-size:11px; border-radius:7px; }
+    .copy-toast {
+      position:fixed; right:18px; bottom:18px; z-index:80; padding:10px 13px;
+      border:1px solid rgba(50,184,184,0.45); border-radius:8px;
+      background:#061818; color:var(--soft); box-shadow:0 14px 40px rgba(0,0,0,0.35);
+      opacity:0; transform:translateY(8px); pointer-events:none; transition:opacity .18s ease, transform .18s ease;
+    }
+    .copy-toast.show { opacity:1; transform:translateY(0); }
 
     .admin-body { max-width:1560px; margin:0 auto; padding:24px; }
     .grid { display:grid; gap:14px; }
@@ -160,6 +168,7 @@
       <span class="admin-pill" id="last-loaded">Not loaded</span>
       <span class="health-pill health-warn" id="health-pill">Waiting</span>
       <span class="admin-pill" id="admin-user-email"></span>
+      <button class="btn" onclick="copyDashboardSummary()">Copy Dashboard</button>
       <button class="btn btn-primary" onclick="loadAll()">Refresh</button>
       <button class="btn" onclick="adminLogout()">Log Out</button>
     </div>
@@ -175,6 +184,7 @@
             <div class="section-title">Activation Funnel</div>
             <div class="section-note">A fast read on where test users move or stall.</div>
           </div>
+          <button class="btn btn-small" onclick="copyFunnelSummary()">Copy</button>
         </div>
         <div id="funnel-panel" class="loading">Loading funnel...</div>
       </div>
@@ -184,6 +194,7 @@
             <div class="section-title">Stall Points</div>
             <div class="section-note">Users who may need a human check-in.</div>
           </div>
+          <button class="btn btn-small" onclick="copyStallSummary()">Copy</button>
         </div>
         <div id="stall-panel" class="stall-list loading">Loading stalls...</div>
       </div>
@@ -193,6 +204,7 @@
             <div class="section-title">Issue Triage</div>
             <div class="section-note">Grouped errors and script failures.</div>
           </div>
+          <button class="btn btn-small" onclick="copyIssueSummary()">Copy</button>
         </div>
         <div id="issue-panel" class="issue-list loading">Loading issues...</div>
       </div>
@@ -205,6 +217,7 @@
             <div class="section-title">User Workbench</div>
             <div class="section-note" id="user-count-note">Loading users...</div>
           </div>
+          <button class="btn btn-small" onclick="copyFilteredUsers()">Copy Users</button>
         </div>
         <div class="toolbar">
           <input id="user-search" class="search" placeholder="Search name, email, status, or latest event" oninput="applyFilters()">
@@ -255,6 +268,8 @@
     </section>
   </main>
 </div>
+
+<div class="copy-toast" id="copy-toast">Copied</div>
 
 <script>
 const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
@@ -501,15 +516,23 @@ function applyFilters() {
   const q = (document.getElementById('user-search').value || '').toLowerCase();
   const filter = document.getElementById('status-filter').value;
   const sort = document.getElementById('sort-filter').value;
-  let rows = adminState.rows.filter(r => rowMatches(r, q, filter));
-  rows.sort((a,b) => {
-    if (sort === 'recent') return b.lastActiveMs - a.lastActiveMs;
-    if (sort === 'progress') return (b.scriptCount + b.filmedCount * 2) - (a.scriptCount + a.filmedCount * 2);
-    if (sort === 'name') return displayName(a).localeCompare(displayName(b));
-    return (b.attention - a.attention) || (b.lastActiveMs - a.lastActiveMs);
-  });
+  let rows = filteredRows(q, filter, sort);
   renderUserRows(rows);
   document.getElementById('user-count-note').textContent = rows.length + ' shown from ' + adminState.rows.length + ' total';
+}
+
+function filteredRows(q, filter, sort) {
+  const query = q == null ? (document.getElementById('user-search').value || '').toLowerCase() : q;
+  const statusFilter = filter || document.getElementById('status-filter').value;
+  const sortMode = sort || document.getElementById('sort-filter').value;
+  let rows = adminState.rows.filter(r => rowMatches(r, query, statusFilter));
+  rows.sort((a,b) => {
+    if (sortMode === 'recent') return b.lastActiveMs - a.lastActiveMs;
+    if (sortMode === 'progress') return (b.scriptCount + b.filmedCount * 2) - (a.scriptCount + a.filmedCount * 2);
+    if (sortMode === 'name') return displayName(a).localeCompare(displayName(b));
+    return (b.attention - a.attention) || (b.lastActiveMs - a.lastActiveMs);
+  });
+  return rows;
 }
 
 function rowMatches(r, q, filter) {
@@ -564,7 +587,7 @@ function renderDrawer(userId) {
     return;
   }
   drawer.innerHTML =
-    '<div class="drawer-head"><div class="drawer-title">' + h(displayName(r)) + '</div><div class="drawer-sub">' + h(r.user.email || r.user.id) + '</div></div>' +
+    '<div class="drawer-head"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;"><div><div class="drawer-title">' + h(displayName(r)) + '</div><div class="drawer-sub">' + h(r.user.email || r.user.id) + '</div></div><button class="btn btn-small" onclick="copySelectedUser()">Copy User</button></div></div>' +
     '<div class="drawer-section">' + renderProfile(r) + '</div>' +
     '<div class="drawer-section">' + renderJourney(r) + '</div>' +
     '<div class="drawer-section">' + renderNotes(r) + '</div>' +
@@ -635,9 +658,9 @@ function renderAnswers(ob) {
 function renderScripts(r) {
   if (!r.scripts.length) return '<div class="empty">No current scripts generated yet.</div>';
   return r.scripts.slice().sort((a,b) => Number(a.video_number) - Number(b.video_number)).map(s => {
-    const clean = String(s.content || '').replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+    const clean = cleanScriptText(s);
     const feedback = s.thumbs_up === true ? 'thumbs up' : s.thumbs_up === false ? 'thumbs down' : 'no feedback';
-    return '<details class="script-card"><summary>Video ' + h(s.video_number) + ' | v' + h(s.version || 1) + ' | ' + h(feedback) + '</summary><div class="script-text">' + h(clean || 'Empty script') + '</div></details>';
+    return '<details class="script-card"><summary>Video ' + h(s.video_number) + ' | v' + h(s.version || 1) + ' | ' + h(feedback) + '</summary><div style="padding:0 11px 8px;"><button class="btn btn-small" onclick="copyAdminScript(event,\'' + safeAttr(r.user.id) + '\',' + Number(s.video_number || 0) + ')">Copy Script</button></div><div class="script-text">' + h(clean || 'Empty script') + '</div></details>';
   }).join('');
 }
 
@@ -680,6 +703,259 @@ async function togglePaid(e, userId) {
     btn.textContent = 'Error';
     console.error(err);
   }
+}
+
+function copyDashboardSummary() {
+  const rows = adminState.rows;
+  const text = [
+    exportHeader('SeenInSeven Admin Dashboard'),
+    '',
+    exportSnapshot(),
+    '',
+    exportFunnel(),
+    '',
+    exportStalls(),
+    '',
+    exportIssues(),
+    '',
+    'VISIBLE USERS',
+    exportRows(filteredRows()).join('\n\n') || 'No users in current filter.',
+    '',
+    'LOAD WARNINGS',
+    Object.keys(adminState.loadErrors).length ? Object.entries(adminState.loadErrors).map(([k,v]) => '- ' + k + ': ' + v).join('\n') : 'None',
+    '',
+    'TOTAL USERS: ' + rows.length
+  ].join('\n');
+  copyPlainText(text, 'Dashboard copied');
+}
+
+function copyFunnelSummary() {
+  copyPlainText([exportHeader('SeenInSeven Activation Funnel'), '', exportFunnel()].join('\n'), 'Funnel copied');
+}
+
+function copyStallSummary() {
+  copyPlainText([exportHeader('SeenInSeven Stall Points'), '', exportStalls()].join('\n'), 'Stalls copied');
+}
+
+function copyIssueSummary() {
+  copyPlainText([exportHeader('SeenInSeven Issue Triage'), '', exportIssues()].join('\n'), 'Issues copied');
+}
+
+function copyFilteredUsers() {
+  const rows = filteredRows();
+  copyPlainText([
+    exportHeader('SeenInSeven Filtered Users'),
+    'FILTER: ' + document.getElementById('status-filter').value,
+    'SEARCH: ' + (document.getElementById('user-search').value || 'none'),
+    'SORT: ' + document.getElementById('sort-filter').value,
+    'COUNT: ' + rows.length + ' of ' + adminState.rows.length,
+    '',
+    exportRows(rows).join('\n\n') || 'No users in current filter.'
+  ].join('\n'), 'Users copied');
+}
+
+function copySelectedUser() {
+  const r = adminState.rows.find(row => row.user.id === adminState.selectedUserId);
+  if (!r) return copyPlainText('No selected user.', 'No user selected');
+  copyPlainText(exportUserDetail(r), 'User copied');
+}
+
+function copyAdminScript(e, userId, videoNumber) {
+  if (e) e.stopPropagation();
+  const r = adminState.rows.find(row => row.user.id === userId);
+  const script = r && r.scripts.find(s => Number(s.video_number) === Number(videoNumber));
+  if (!script) return copyPlainText('Script not found.', 'Script missing');
+  copyPlainText([
+    exportHeader('SeenInSeven Script'),
+    'USER: ' + displayName(r) + ' <' + (r.user.email || 'no email') + '>',
+    'USER ID: ' + r.user.id,
+    'VIDEO: ' + (script.video_number || videoNumber),
+    'LEVEL: ' + levelLabel(script.level || r.user.level),
+    'VERSION: ' + (script.version || 1),
+    'FEEDBACK: ' + (script.thumbs_up === true ? 'thumbs up' : script.thumbs_up === false ? 'thumbs down' : 'none'),
+    'CREATED: ' + (script.created_at || '-'),
+    'UPDATED: ' + (script.updated_at || '-'),
+    '',
+    cleanScriptText(script)
+  ].join('\n'), 'Script copied');
+}
+
+function exportHeader(title) {
+  return title + '\nGenerated: ' + new Date().toISOString() + '\nEnvironment: ' + document.getElementById('environment-pill').textContent + '\nHealth: ' + document.getElementById('health-pill').textContent;
+}
+
+function exportSnapshot() {
+  const rows = adminState.rows;
+  const todayActive = rows.filter(r => isWithin(r.user.last_active || (r.latest && r.latest.created_at), 24)).length;
+  const onboarded = rows.filter(r => r.onboardingComplete).length;
+  const firstScript = rows.filter(r => r.scripts.some(s => Number(s.video_number) === 1)).length;
+  const anyFilmed = rows.filter(r => r.filmedCount > 0).length;
+  const complete = rows.filter(r => r.filmedCount >= 7).length;
+  const errors24 = adminState.logs.filter(l => isErrorLog(l) && isWithin(l.created_at, 24)).length;
+  return [
+    'SNAPSHOT',
+    '- Total users: ' + rows.length,
+    '- Active 24hr: ' + todayActive,
+    '- Onboarded: ' + onboarded,
+    '- First script generated: ' + firstScript,
+    '- Any video filmed: ' + anyFilmed,
+    '- All 7 filmed: ' + complete,
+    '- Errors 24hr: ' + errors24
+  ].join('\n');
+}
+
+function exportFunnel() {
+  const rows = adminState.rows;
+  const total = rows.length;
+  const steps = [
+    ['Users created', total],
+    ['Email or auth present', rows.filter(r => !!r.user.email || hasLog(r, ['magic_link_sent','auth_completed','email_submitted'])).length],
+    ['Onboarding complete', rows.filter(r => r.onboardingComplete).length],
+    ['Script 1 generated', rows.filter(r => r.scripts.some(s => Number(s.video_number) === 1)).length],
+    ['Script copied', rows.filter(r => hasLog(r, ['script_copied','all_scripts_copied'])).length],
+    ['Script locked', rows.filter(r => hasLog(r, ['script_locked'])).length],
+    ['Video filmed', rows.filter(r => r.filmedCount > 0).length],
+    ['Dashboard returned', rows.filter(r => hasLog(r, ['dashboard_viewed'])).length],
+    ['All 7 filmed', rows.filter(r => r.filmedCount >= 7).length]
+  ];
+  return 'FUNNEL\n' + steps.map(([label, count]) => '- ' + label + ': ' + count + ' / ' + total + ' (' + pct(count, total) + ')').join('\n');
+}
+
+function exportStalls() {
+  const stalls = adminState.rows.filter(r => r.stalled || (r.scriptCount > 0 && r.filmedCount === 0)).sort((a,b) => b.attention - a.attention);
+  if (!stalls.length) return 'STALL POINTS\nNone';
+  return 'STALL POINTS\n' + stalls.map(r => {
+    const reason = r.stalled ? 'No movement for 48+ hours' : 'Generated script but has not filmed yet';
+    return '- ' + displayName(r) + ' | ' + r.status.label + ' | ' + reason + ' | Last active: ' + lastActiveText(r) + ' | User ID: ' + r.user.id;
+  }).join('\n');
+}
+
+function exportIssues() {
+  const issueLogs = adminState.logs.filter(isErrorLog);
+  if (!issueLogs.length) return 'ISSUES\nNone';
+  const groups = {};
+  issueLogs.forEach(log => {
+    const key = issueKey(log);
+    if (!groups[key]) groups[key] = { label:key, logs:[], users:new Set(), first:log.created_at, last:log.created_at };
+    groups[key].logs.push(log);
+    if (log.user_id) groups[key].users.add(log.user_id);
+    if (dateMs(log.created_at) < dateMs(groups[key].first)) groups[key].first = log.created_at;
+    if (dateMs(log.created_at) > dateMs(groups[key].last)) groups[key].last = log.created_at;
+  });
+  return 'ISSUES\n' + Object.values(groups).sort((a,b) => dateMs(b.last) - dateMs(a.last)).map(g => [
+    '- ' + g.label,
+    '  Events: ' + g.logs.length,
+    '  Affected users: ' + Array.from(g.users).join(', '),
+    '  First seen: ' + g.first,
+    '  Last seen: ' + g.last,
+    '  Latest detail: ' + detailText(g.logs.slice().sort((a,b) => dateMs(b.created_at) - dateMs(a.created_at))[0].detail)
+  ].join('\n')).join('\n');
+}
+
+function exportRows(rows) {
+  return rows.map(r => [
+    displayName(r) + ' <' + (r.user.email || 'no email') + '>',
+    '- User ID: ' + r.user.id,
+    '- Auth ID: ' + (r.user.auth_id || '-'),
+    '- Status: ' + r.status.label,
+    '- Level: ' + levelLabel(r.user.level),
+    '- Progress: ' + r.scriptCount + '/7 scripts, ' + r.filmedCount + '/7 filmed, ' + r.skipped.length + ' skipped',
+    '- Last active: ' + lastActiveText(r),
+    '- Latest event: ' + latestEventLabel(r),
+    '- Errors: ' + r.errorLogs.length + ' total, ' + r.recentErrors.length + ' in 24hr',
+    '- Support: ' + supportLabel(r.notes.support_status) + ', priority ' + (r.notes.priority || 'normal'),
+    '- Paid flag: ' + (!!r.user.is_paid),
+    '- Next action: ' + nextAction(r)
+  ].join('\n'));
+}
+
+function exportUserDetail(r) {
+  return [
+    exportHeader('SeenInSeven User Detail'),
+    '',
+    exportRows([r])[0],
+    '',
+    'CREATED: ' + (r.user.created_at || '-'),
+    'LAST ACTIVE RAW: ' + (r.user.last_active || '-'),
+    '',
+    'ADMIN NOTES',
+    '- Status: ' + supportLabel(r.notes.support_status),
+    '- Priority: ' + (r.notes.priority || 'normal'),
+    '- Test group: ' + (!!r.notes.test_group),
+    '- Last contacted: ' + (r.notes.last_contacted_at || '-'),
+    '- Note: ' + (r.notes.note || '-'),
+    '',
+    'ONBOARDING',
+    exportOnboarding(r.ob),
+    '',
+    'SCRIPTS',
+    r.scripts.length ? r.scripts.slice().sort((a,b) => Number(a.video_number) - Number(b.video_number)).map(exportScriptSummary).join('\n\n') : 'No current scripts.',
+    '',
+    'ERRORS',
+    r.errorLogs.length ? r.errorLogs.map(l => '- ' + l.created_at + ' | ' + l.event_type + ' | ' + detailText(l.detail)).join('\n') : 'No errors.',
+    '',
+    'RECENT TIMELINE',
+    r.logs.slice(0, 30).map(l => '- ' + l.created_at + ' | ' + l.event_type + ' | ' + detailText(l.detail)).join('\n') || 'No logs.'
+  ].join('\n');
+}
+
+function exportOnboarding(ob) {
+  if (!ob) return 'No onboarding row found.';
+  return [
+    '- Posted: ' + valueText(ob.posted),
+    '- History: ' + valueText(ob.history),
+    '- Business: ' + valueText(ob.business),
+    '- Goal: ' + valueText(ob.goal),
+    '- Mini goal: ' + valueText(ob.mini_goal_text || ob.mini_goal),
+    '- Topic freewrite: ' + valueText(ob.topic_freewrite),
+    '- MVO Q2: ' + valueText(ob.mvo_q2),
+    '- MVO Q3: ' + valueText(ob.mvo_q3),
+    '- MVO Q4: ' + valueText(ob.mvo_q4)
+  ].join('\n');
+}
+
+function exportScriptSummary(s) {
+  return [
+    'Video ' + (s.video_number || '-') + ' | Level ' + (s.level || '-') + ' | Version ' + (s.version || 1),
+    '- Created: ' + (s.created_at || '-'),
+    '- Updated: ' + (s.updated_at || '-'),
+    '- Feedback: ' + (s.thumbs_up === true ? 'thumbs up' : s.thumbs_up === false ? 'thumbs down' : 'none'),
+    cleanScriptText(s)
+  ].join('\n');
+}
+
+function cleanScriptText(s) {
+  return String(s.content || s.script || '').replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim() || '[empty script]';
+}
+
+async function copyPlainText(text, successMessage) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    showCopyToast(successMessage || 'Copied');
+  } catch(e) {
+    console.error('Copy failed', e);
+    showCopyToast('Copy failed');
+  }
+}
+
+function showCopyToast(msg) {
+  const toast = document.getElementById('copy-toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(showCopyToast._timer);
+  showCopyToast._timer = setTimeout(() => toast.classList.remove('show'), 1800);
 }
 
 function metricCard(num, label, sub) {
