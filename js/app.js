@@ -88,6 +88,7 @@ function goNext() {
   if (cur === 'screen-0') {
     // Expand to full order immediately — default to 'no' path, updated when user answers screen-1
     screenOrder = ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+    if (typeof logEvent === 'function') logEvent('onboarding_started', {source: 'start_button'});
   }
 
   if (cur === 'screen-email') {
@@ -124,6 +125,12 @@ function goNext() {
     // Populate freewrite textarea from state (safe - no template literal in HTML)
     const fw = document.getElementById('freewrite-input');
     if (fw) fw.value = state.topicFreewrite || '';
+  }
+  if (cur === 'screen-checklist' && state.topicFreewrite && typeof logEvent === 'function') {
+    logEvent('topic_freewrite_saved', {
+      level: state.level || null,
+      length: state.topicFreewrite.length
+    });
   }
   if (nextId === 'screen-mvo2') renderMvoScreen(2);
   else if (nextId === 'screen-mvo3') renderMvoScreen(3);
@@ -174,6 +181,12 @@ function goToRecap() {
     state.l1Videos = null;
   }
   saveProgress();
+  if (typeof logEvent === 'function') {
+    logEvent('onboarding_completed', {
+      level: state.level || null,
+      posted: state.posted || null
+    });
+  }
   populateRecap();
   goNext();
 }
@@ -194,6 +207,7 @@ async function handleEmailSubmit() {
   if (btn) { btn.textContent = 'Checking...'; btn.disabled = true; }
   if (checkEl) checkEl.style.display = 'block';
   if (errEl) errEl.style.display = 'none';
+  if (typeof logEvent === 'function') logEvent('email_submitted', {source: 'screen-email'});
 
   try {
     // Check if this email already has an account with data
@@ -204,6 +218,7 @@ async function handleEmailSubmit() {
     if (emailCheck && emailCheck.has_level) {
       // Existing user — send magic link and show inline confirmation
       sendMagicLink(email).catch(() => {});
+      if (typeof logEvent === 'function') logEvent('magic_link_requested', {source: 'returning_user'});
       if (checkEl) checkEl.style.display = 'none';
       if (btn) { btn.textContent = 'Continue →'; btn.disabled = false; }
       const emailScreen = document.getElementById('screen-email');
@@ -226,6 +241,7 @@ async function handleEmailSubmit() {
 
     // New user — send link silently and continue through questions
     sendMagicLink(email).catch(() => {});
+    if (typeof logEvent === 'function') logEvent('magic_link_requested', {source: 'new_user'});
 
   } catch(e) {
     // If check fails, continue anyway
@@ -237,6 +253,7 @@ async function handleEmailSubmit() {
 }
 
 function skipAuth() {
+  if (typeof logEvent === 'function') logEvent('auth_skipped', {source: 'screen-email'});
   goNext();
 }
 
@@ -1366,6 +1383,12 @@ function setVideoPromptMode(idx, mode) {
 // ── PHASE A: PROMPTS ──────────────────────────────────
 function renderVideoPrompts(idx) {
   currentVideoIndex = idx;
+  if (typeof logEvent === 'function') {
+    logEvent('prompt_screen_viewed', {
+      video_number: idx + 1,
+      level: state.level || 1
+    });
+  }
   updateDots(idx);
   renderVideoTracker('prompts');
   const videos = getVideos();
@@ -1757,6 +1780,12 @@ async function showScriptView(idx, skipLoading) {
 
     try {
       window._SIS_log && _SIS_log('gen:start', {idx, level:state.level, mvoQ2:!!state.mvoQ2, topicFreewrite:!!state.topicFreewrite});
+      if (typeof logEvent === 'function') {
+        logEvent('script_generation_started', {
+          video_number: idx + 1,
+          level: state.level || 1
+        });
+      }
       const userMessage = buildAPIUserMessage(idx);
       window._SIS_log && _SIS_log('gen:built-message', {len: userMessage ? userMessage.length : 0});
       const script = await callDeepSeekAPI(userMessage);
@@ -1788,6 +1817,13 @@ async function showScriptView(idx, skipLoading) {
       const fallbackBtn = document.getElementById('script-error-fallback');
       const errText = err && err.message ? err.message : String(err);
       console.error('[SeenInSeven] Script generation error:', errText);
+      if (typeof logEvent === 'function') {
+        logEvent('script_failed', {
+          video_number: idx + 1,
+          level: state.level || 1,
+          error: errText
+        });
+      }
       if (errorMsg) {
         errorMsg.textContent = 'Error: ' + errText;
         errorMsg.style.whiteSpace = 'pre-wrap';
@@ -1800,6 +1836,12 @@ async function showScriptView(idx, skipLoading) {
         const v = videos[idx];
         if (v.compile) state.videos[editKey] = v.compile(state.videos);
         else if (v.beats) state.videos[editKey] = v.beats().map(b=>b.text).join('\n\n');
+        if (typeof logEvent === 'function') {
+          logEvent('template_fallback_used', {
+            video_number: idx + 1,
+            level: state.level || 1
+          });
+        }
         _doShowScriptView(idx);
       };
     }
@@ -2120,6 +2162,12 @@ function afterFilmed(idx, status) {
     }
     updateDots(idx + 1 < 7 ? idx + 1 : idx);
     saveProgress(); // persist after every video completion
+    if (status === 'skipped' && typeof logEvent === 'function') {
+      logEvent('video_skipped', {
+        video_number: idx + 1,
+        level: state.level || 1
+      });
+    }
     // Queue DB save — fires immediately if authenticated, deferred if not
     queueProgressSave(idx, state.level || 1, status);
   }
@@ -2316,6 +2364,13 @@ async function handleScriptViewFeedback(thumbsUp) {
   if (thanks)  { thanks.classList.add('show'); setTimeout(() => thanks.classList.remove('show'), 2500); }
 
   await saveScriptFeedback(currentVideoIndex + 1, state.level || 1, thumbsUp);
+  if (typeof logEvent === 'function') {
+    logEvent('script_feedback', {
+      video_number: currentVideoIndex + 1,
+      level: state.level || 1,
+      thumbs_up: !!thumbsUp
+    });
+  }
 }
 
 // Store for version content (avoids escaping issues with inline onclick)
@@ -2650,6 +2705,12 @@ function lockInScript() {
   const idx = currentVideoIndex;
   state.videos['locked_v' + idx] = true;
   saveProgress();
+  if (typeof logEvent === 'function') {
+    logEvent('script_locked', {
+      video_number: idx + 1,
+      level: state.level || 1
+    });
+  }
 
   // Animate the lock button
   const btn = document.getElementById('btn-lock-main');
@@ -2774,6 +2835,13 @@ async function deleteAndStartOver() {
   const idx = currentVideoIndex;
   const el = document.getElementById('delete-start-over-confirm');
   if (el) el.style.display = 'none';
+  if (typeof logEvent === 'function') {
+    logEvent('start_over_confirmed', {
+      source: 'video_restart',
+      video_number: idx + 1,
+      level: state.level || 1
+    });
+  }
   // The current script is already saved as a version in the DB via queueScriptSave on initial generation.
   // We just need to wipe local state and go back to prompts. The DB row stays as a historical version.
   // First, ensure the current script is persisted in DB before wiping (in case of unsaved edits)
@@ -3025,6 +3093,13 @@ function copyScriptFromDashboard(idx, btn) {
   const script = state.videos['script_v' + idx] || '';
   const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
   if (!clean) return;
+  if (typeof logEvent === 'function') {
+    logEvent('script_copied', {
+      video_number: idx + 1,
+      level: state.level || 1,
+      source: 'dashboard'
+    });
+  }
   navigator.clipboard && navigator.clipboard.writeText(clean).then(() => {
     if (btn) {
       const orig = btn.textContent;
@@ -3097,6 +3172,9 @@ setInterval(async () => {
 function openSettings() {
   const panel = document.getElementById('settings-panel');
   if (!panel) return;
+  if (typeof logEvent === 'function') {
+    logEvent('settings_opened', {level: state.level || null});
+  }
 
   // Populate with current state
   const nameInput = document.getElementById('settings-name');
@@ -3224,6 +3302,12 @@ async function confirmLevelChange(newLevel) {
 
   state.level = newLevel;
   saveProgress();
+  if (typeof logEvent === 'function') {
+    logEvent('level_switched', {
+      from_level: oldLevel || null,
+      to_level: newLevel
+    });
+  }
   const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
   if (user && typeof _sb !== 'undefined') {
     await _sb.from('users').update({ level: newLevel }).eq('id', user.id);
@@ -3659,6 +3743,12 @@ function hidePdfModal() {
 
 function exportPDF(mode) {
   hidePdfModal();
+  if (typeof logEvent === 'function') {
+    logEvent('pdf_exported', {
+      mode: mode || 'all',
+      level: state.level || null
+    });
+  }
   const name = state.name || 'Your';
   const videos = getVideos();
   const levelLabel = state.level === 1 ? 'Level 1: The Relatable Hero' : 'Level 2 — The Authority Series';
@@ -3740,6 +3830,9 @@ function exportPDF(mode) {
 function showDashboard() {
   window._SIS_log && _SIS_log('showDashboard:start', { level: state.level, name: state.name });
   _dashboardShown = true;
+  if (typeof logEvent === 'function') {
+    logEvent('dashboard_viewed', {level: state.level || null});
+  }
 
   if (screenOrder.length <= 2) {
     screenOrder = state.posted === 'no'
@@ -3783,6 +3876,12 @@ function restartWizard(){
   // Use the styled confirmation overlay
   const overlay = document.getElementById('start-over-confirm');
   if (overlay) { overlay.style.display = 'none'; }
+  if (typeof logEvent === 'function') {
+    logEvent('start_over_confirmed', {
+      source: 'full_restart',
+      level: state.level || null
+    });
+  }
 
   // Clear scripts and onboarding from state
   state.videos       = {};
@@ -3903,6 +4002,12 @@ function renderMvoScreen(qNum) {
 function selectMvoCard(qNum, cardData, el) {
   el.classList.add('selecting');
   state['mvoQ'+qNum] = cardData;
+  if (qNum === 4 && typeof logEvent === 'function') {
+    logEvent('mvo_completed', {
+      level: state.level || 1,
+      source: 'card'
+    });
+  }
   setTimeout(() => goNext(), 300);
 }
 
@@ -3924,6 +4029,12 @@ function confirmMvoOwn(qNum) {
   else if (qNum===4 && level===1) { custom.village_full = text; custom.village_hook = 'If you are someone looking for '+text; }
   else if (qNum===4 && level===2) { custom.crack_full = text; }
   state['mvoQ'+qNum] = custom;
+  if (qNum === 4 && typeof logEvent === 'function') {
+    logEvent('mvo_completed', {
+      level: state.level || 1,
+      source: 'custom'
+    });
+  }
   goNext();
 }
 
@@ -4083,6 +4194,9 @@ function copyAllScripts(btn) {
     if (btn) { btn.textContent = '⚠️ No scripts yet'; setTimeout(function(){ btn.textContent='📋 Copy All 7 Scripts'; }, 2000); }
     return;
   }
+  if (typeof logEvent === 'function') {
+    logEvent('all_scripts_copied', {level: state.level || null});
+  }
   var copied = function() {
     if (btn) { btn.textContent = '✅ All 7 Copied!'; }
     setTimeout(function() { if (btn) btn.textContent = '📋 Copy All 7 Scripts'; }, 2500);
@@ -4150,6 +4264,13 @@ function copyScript(btn) {
   const editor = document.getElementById('script-editor');
   if (editor && !editor.value.trim() && text) editor.value = text;
   if (!text) return;
+  if (typeof logEvent === 'function') {
+    logEvent('script_copied', {
+      video_number: currentVideoIndex + 1,
+      level: state.level || 1,
+      source: 'script_view'
+    });
+  }
   const showCopyTip = function() {
     var tip = document.getElementById('script-copy-tip');
     if (!tip) {
@@ -4427,5 +4548,9 @@ function launchConfetti() {
     }
   }
 
-  updateProgress('screen-0');
+  if (typeof logEvent === 'function') {
+    logEvent('app_loaded', {source: 'init'});
+  }
+  const activeScreen = document.querySelector('.screen.active');
+  updateProgress(activeScreen ? activeScreen.id : 'screen-0');
 })();

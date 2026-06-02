@@ -3,197 +3,257 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SeenInSeven: Admin</title>
+  <title>SeenInSeven: Admin Command Center</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     :root {
-      --bg: #0D2828; --card: #0f2e2e; --border: rgba(50,184,184,0.18);
-      --teal: #32B8B8; --cream: #F8FAFA; --muted: #68C8C8;
-      --green: #4ade80; --gold: #C8A84B; --red: #ef4444;
-      --soft: #A8DEDE;
+      --bg:#0D2828; --bg2:#091d1d; --panel:#102f2f; --panel2:#0a2222;
+      --line:rgba(168,222,222,0.18); --line2:rgba(168,222,222,0.09);
+      --teal:#32B8B8; --teal2:#68C8C8; --soft:#A8DEDE; --cream:#F8FAFA;
+      --muted:#7daaaa; --green:#4ade80; --gold:#C8A84B; --red:#ef4444;
+      --orange:#f59e0b; --blue:#60a5fa;
     }
-    body { background: var(--bg); color: var(--cream); font-family: 'system-ui', sans-serif; font-size: 14px; min-height: 100vh; }
+    body {
+      min-height:100vh; background:var(--bg); color:var(--cream);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      font-size:14px; line-height:1.45;
+    }
+    button, input, select, textarea { font:inherit; }
+    button { cursor:pointer; }
 
-    /* ── AUTH SCREEN ── */
-    #auth-screen { display:flex; align-items:center; justify-content:center; min-height:100vh; padding:24px; }
-    .auth-box { background:var(--card); border:1px solid var(--border); border-radius:16px; padding:40px 36px; max-width:400px; width:100%; text-align:center; }
-    .auth-box h1 { font-size:22px; color:var(--teal); margin-bottom:8px; letter-spacing:0.06em; }
-    .auth-box p { color:var(--muted); font-size:13px; margin-bottom:28px; line-height:1.6; }
-    .auth-input { width:100%; background:#0a1f1f; border:1.5px solid var(--border); border-radius:8px; padding:11px 14px; color:var(--cream); font-size:15px; margin-bottom:12px; }
+    #auth-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+    .auth-box { width:100%; max-width:420px; padding:38px 34px; background:var(--panel); border:1px solid var(--line); border-radius:14px; text-align:center; }
+    .auth-box h1 { font-size:24px; color:var(--teal); margin-bottom:8px; letter-spacing:0.04em; }
+    .auth-box p { color:var(--muted); font-size:14px; line-height:1.7; margin-bottom:24px; }
+    .auth-input { width:100%; background:#071a1a; border:1px solid var(--line); border-radius:8px; padding:12px 14px; color:var(--cream); margin-bottom:12px; }
     .auth-input:focus { outline:none; border-color:var(--teal); }
-    .auth-btn { width:100%; background:var(--teal); border:none; border-radius:8px; padding:12px; color:#0D2828; font-size:15px; font-weight:700; cursor:pointer; }
-    .auth-msg { margin-top:12px; font-size:13px; color:var(--muted); line-height:1.6; }
+    .auth-btn { width:100%; border:0; border-radius:8px; padding:12px; background:var(--teal); color:#062121; font-weight:800; }
+    .auth-msg { margin-top:12px; color:var(--muted); font-size:13px; }
     .auth-msg.error { color:var(--red); }
 
-    /* ── ADMIN SHELL ── */
-    #admin-screen { display:none; }
-    .admin-header { position:sticky; top:0; z-index:10; background:rgba(13,40,40,0.96); backdrop-filter:blur(12px); border-bottom:1px solid var(--border); padding:14px 28px; display:flex; align-items:center; justify-content:space-between; }
-    .admin-header h1 { font-size:16px; letter-spacing:0.1em; color:var(--teal); font-family:monospace; }
-    .admin-header-right { display:flex; gap:10px; align-items:center; }
-    .admin-email { font-size:12px; color:var(--muted); }
-    .btn-refresh { background:var(--teal); border:none; border-radius:7px; padding:7px 18px; color:#0D2828; font-size:13px; font-weight:700; cursor:pointer; }
-    .btn-refresh:hover { background:#5eead4; }
-    .btn-logout { background:none; border:1px solid var(--border); border-radius:7px; padding:7px 14px; color:var(--muted); font-size:12px; cursor:pointer; }
+    #admin-screen { display:none; min-height:100vh; }
+    .command-header {
+      position:sticky; top:0; z-index:20; display:flex; justify-content:space-between; gap:20px; align-items:center;
+      padding:16px 26px; background:rgba(9,29,29,0.97); backdrop-filter:blur(12px); border-bottom:1px solid var(--line);
+    }
+    .brand-kicker { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--teal2); margin-bottom:4px; }
+    .command-title { font-size:22px; font-weight:800; letter-spacing:0.01em; }
+    .command-sub { color:var(--muted); font-size:12px; margin-top:3px; }
+    .command-actions { display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end; align-items:center; }
+    .admin-pill { border:1px solid var(--line); border-radius:999px; padding:7px 10px; color:var(--soft); font-size:12px; background:rgba(50,184,184,0.05); }
+    .health-pill { border-radius:999px; padding:7px 11px; font-size:12px; font-weight:800; }
+    .health-ok { color:#052216; background:var(--green); }
+    .health-warn { color:#261a04; background:var(--gold); }
+    .health-bad { color:#fff; background:var(--red); }
+    .btn { border:1px solid var(--line); border-radius:8px; padding:8px 13px; color:var(--soft); background:transparent; }
+    .btn:hover { border-color:var(--teal); color:var(--cream); }
+    .btn-primary { background:var(--teal); border-color:var(--teal); color:#062121; font-weight:800; }
 
-    .admin-body { padding:28px; max-width:1400px; margin:0 auto; }
+    .admin-body { max-width:1560px; margin:0 auto; padding:24px; }
+    .grid { display:grid; gap:14px; }
+    .snapshot-grid { grid-template-columns:repeat(7,minmax(130px,1fr)); margin-bottom:18px; }
+    .insight-grid { grid-template-columns:minmax(0,1.1fr) minmax(320px,0.8fr) minmax(320px,0.8fr); margin-bottom:18px; }
+    .main-grid { grid-template-columns:minmax(0,1fr) 390px; align-items:start; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:10px; }
+    .card-pad { padding:16px; }
+    .metric { padding:15px 16px; min-height:96px; }
+    .metric-num { font-size:30px; line-height:1; color:var(--teal); font-weight:850; margin-bottom:7px; }
+    .metric-label { color:var(--muted); text-transform:uppercase; letter-spacing:0.12em; font-size:10px; font-weight:800; }
+    .metric-sub { color:var(--soft); font-size:12px; margin-top:7px; }
+    .section-head { display:flex; justify-content:space-between; gap:14px; align-items:flex-start; margin-bottom:14px; }
+    .section-title { font-size:13px; text-transform:uppercase; letter-spacing:0.14em; color:var(--teal2); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .section-note { color:var(--muted); font-size:12px; margin-top:4px; }
 
-    /* ── STAT CARDS ── */
-    .stat-row { display:grid; grid-template-columns:repeat(auto-fit, minmax(160px,1fr)); gap:14px; margin-bottom:32px; }
-    .stat-card { background:var(--card); border:1px solid var(--border); border-radius:12px; padding:18px 20px; }
-    .stat-num { font-size:32px; font-weight:700; color:var(--teal); line-height:1; margin-bottom:6px; }
-    .stat-label { font-size:11px; color:var(--muted); text-transform:uppercase; letter-spacing:0.1em; }
+    .funnel-step { margin-bottom:12px; }
+    .funnel-row { display:flex; justify-content:space-between; gap:10px; color:var(--soft); font-size:12px; margin-bottom:5px; }
+    .bar { height:9px; border-radius:99px; background:rgba(168,222,222,0.11); overflow:hidden; }
+    .bar-fill { height:100%; background:var(--teal); border-radius:99px; min-width:2px; }
 
-    /* ── SECTION HEADERS ── */
-    .section-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:16px; }
-    .section-title { font-size:12px; text-transform:uppercase; letter-spacing:0.15em; color:var(--muted); font-family:monospace; }
-    .section { margin-bottom:40px; }
+    .stall-list, .issue-list, .timeline-list, .script-list, .answers-list { display:flex; flex-direction:column; gap:8px; }
+    .mini-row { border:1px solid var(--line2); border-radius:8px; padding:10px 11px; background:rgba(6,22,22,0.35); }
+    .mini-top { display:flex; justify-content:space-between; gap:10px; margin-bottom:4px; }
+    .mini-name { color:var(--cream); font-weight:800; font-size:13px; }
+    .mini-meta { color:var(--muted); font-size:11px; }
+    .mini-body { color:var(--soft); font-size:12px; }
 
-    /* ── USER TABLE ── */
-    .user-table { width:100%; border-collapse:collapse; }
-    .user-table th { text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); padding:8px 14px; border-bottom:1px solid var(--border); font-family:monospace; font-weight:normal; }
-    .user-table td { padding:10px 14px; border-bottom:1px solid rgba(50,184,184,0.08); vertical-align:middle; }
-    .user-table tr:hover td { background:rgba(50,184,184,0.04); cursor:pointer; }
-    .user-table tr.expanded td { background:rgba(50,184,184,0.06); }
-    .progress-bar { height:6px; background:rgba(50,184,184,0.12); border-radius:3px; width:80px; overflow:hidden; }
-    .progress-fill { height:100%; background:var(--teal); border-radius:3px; transition:width 0.3s; }
-    .badge { display:inline-block; padding:2px 8px; border-radius:4px; font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.08em; }
-    .badge-green { background:rgba(74,222,128,0.12); color:var(--green); border:1px solid rgba(74,222,128,0.25); }
-    .badge-gold { background:rgba(200,168,75,0.12); color:var(--gold); border:1px solid rgba(200,168,75,0.25); }
-    .badge-muted { background:rgba(104,200,200,0.08); color:var(--muted); border:1px solid var(--border); }
-    .toggle-paid { background:none; border:1px solid var(--border); border-radius:5px; padding:3px 8px; font-size:11px; color:var(--muted); cursor:pointer; }
+    .toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px; }
+    .search { min-width:240px; flex:1; background:#071a1a; border:1px solid var(--line); border-radius:8px; padding:10px 11px; color:var(--cream); }
+    .select { background:#071a1a; border:1px solid var(--line); border-radius:8px; padding:10px 11px; color:var(--cream); }
+    .table-wrap { overflow:auto; border:1px solid var(--line2); border-radius:9px; }
+    table { width:100%; border-collapse:collapse; min-width:980px; }
+    th { position:sticky; top:0; background:#0b2424; color:var(--muted); text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.12em; padding:10px 12px; border-bottom:1px solid var(--line); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    td { padding:12px; border-bottom:1px solid var(--line2); vertical-align:middle; }
+    tr.user-row:hover td { background:rgba(50,184,184,0.05); }
+    tr.selected td { background:rgba(50,184,184,0.1); }
+    .name-main { color:var(--cream); font-weight:800; }
+    .name-sub { color:var(--muted); font-size:12px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; margin-top:2px; }
+    .progress-stack { min-width:110px; }
+    .progress-text { color:var(--soft); font-size:12px; margin-top:5px; }
+    .badge { display:inline-flex; align-items:center; border-radius:5px; padding:3px 7px; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; font-weight:850; border:1px solid var(--line); color:var(--soft); background:rgba(168,222,222,0.07); white-space:nowrap; }
+    .badge.green { color:var(--green); border-color:rgba(74,222,128,0.3); background:rgba(74,222,128,0.08); }
+    .badge.gold { color:var(--gold); border-color:rgba(200,168,75,0.35); background:rgba(200,168,75,0.08); }
+    .badge.red { color:#fecaca; border-color:rgba(239,68,68,0.35); background:rgba(239,68,68,0.12); }
+    .badge.blue { color:#bfdbfe; border-color:rgba(96,165,250,0.35); background:rgba(96,165,250,0.1); }
+    .badge.orange { color:#fed7aa; border-color:rgba(245,158,11,0.35); background:rgba(245,158,11,0.1); }
+    .toggle-paid { background:transparent; border:1px solid var(--line); color:var(--muted); border-radius:5px; padding:4px 8px; font-size:11px; }
     .toggle-paid:hover { border-color:var(--teal); color:var(--cream); }
 
-    /* ── USER DETAIL PANEL ── */
-    .user-detail { background:#071a1a; border:1px solid var(--border); border-radius:0 0 12px 12px; padding:24px; margin-top:-1px; }
-    .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:24px; }
-    @media(max-width:800px) { .detail-grid { grid-template-columns:1fr; } }
-    .detail-section-title { font-size:10px; text-transform:uppercase; letter-spacing:0.14em; color:var(--teal); font-family:monospace; margin-bottom:12px; }
-    .onboarding-row { display:flex; gap:8px; margin-bottom:7px; align-items:flex-start; }
-    .ob-label { font-size:10px; text-transform:uppercase; letter-spacing:0.1em; color:var(--muted); font-family:monospace; min-width:90px; padding-top:2px; }
-    .ob-val { font-size:13px; color:var(--cream); line-height:1.5; }
-
-    .script-list { display:flex; flex-direction:column; gap:10px; }
-    .script-item { background:var(--card); border:1px solid var(--border); border-radius:8px; overflow:hidden; }
-    .script-item-header { padding:10px 14px; display:flex; align-items:center; gap:10px; cursor:pointer; }
-    .script-item-header:hover { background:rgba(50,184,184,0.06); }
-    .script-num { font-family:monospace; font-size:10px; color:var(--muted); min-width:20px; }
-    .script-title { font-size:13px; color:var(--cream); flex:1; }
-    .script-versions { font-size:10px; color:var(--muted); }
-    .script-body { padding:14px; border-top:1px solid var(--border); display:none; }
-    .script-body.open { display:block; }
-    .script-text { font-family:Georgia,serif; font-style:italic; font-size:13px; color:var(--soft); line-height:1.8; white-space:pre-wrap; max-height:300px; overflow-y:auto; }
-    .script-meta { font-size:10px; color:var(--muted); margin-bottom:8px; font-family:monospace; }
-
-    /* ── LOG TABLE ── */
-    .log-row { display:grid; grid-template-columns:100px 130px 1fr; gap:12px; padding:8px 14px; border-bottom:1px solid rgba(50,184,184,0.06); font-size:12px; align-items:center; }
-    .log-row:hover { background:rgba(50,184,184,0.04); }
-    .log-time { color:var(--muted); font-family:monospace; font-size:10px; }
-    .log-type { font-family:monospace; font-size:11px; }
-    .log-type.script_generated { color:var(--green); }
-    .log-type.auth_completed { color:var(--teal); }
-    .log-type.video_filmed { color:var(--gold); }
-    .log-type.magic_link_sent { color:var(--soft); }
-    .log-type.script_failed { color:var(--red); }
-    .log-type.error { color:var(--red); }
-    .log-detail { color:var(--cream); }
-
-    /* ── SYSTEM HEALTH ── */
-    .health-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(200px,1fr)); gap:14px; }
-    .health-card { background:var(--card); border:1px solid var(--border); border-radius:10px; padding:16px 18px; }
-    .health-label { font-size:10px; text-transform:uppercase; letter-spacing:0.12em; color:var(--muted); font-family:monospace; margin-bottom:8px; }
-    .health-val { font-size:22px; font-weight:700; color:var(--cream); }
-    .health-sub { font-size:11px; color:var(--muted); margin-top:4px; }
-
-    .empty { color:var(--muted); font-size:13px; font-style:italic; padding:20px 14px; }
-    .loading { color:var(--muted); font-size:13px; font-family:monospace; padding:20px 0; }
+    .drawer { position:sticky; top:86px; max-height:calc(100vh - 108px); overflow:auto; background:var(--panel2); border:1px solid var(--line); border-radius:10px; }
+    .drawer-empty { padding:34px 18px; color:var(--muted); text-align:center; line-height:1.7; }
+    .drawer-head { padding:16px; border-bottom:1px solid var(--line); }
+    .drawer-title { font-size:19px; font-weight:850; margin-bottom:3px; }
+    .drawer-sub { color:var(--muted); font-size:12px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; word-break:break-word; }
+    .drawer-section { padding:16px; border-bottom:1px solid var(--line2); }
+    .kv { display:grid; grid-template-columns:120px 1fr; gap:8px; font-size:13px; margin-bottom:8px; }
+    .kv-label { color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; font-size:10px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .kv-val { color:var(--soft); word-break:break-word; }
+    .timeline-item { display:grid; grid-template-columns:92px 1fr; gap:10px; padding:9px 0; border-bottom:1px solid var(--line2); }
+    .timeline-time { color:var(--muted); font-size:11px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .timeline-event { color:var(--cream); font-weight:800; font-size:12px; }
+    .timeline-detail { color:var(--muted); font-size:12px; margin-top:2px; word-break:break-word; }
+    .script-card { border:1px solid var(--line2); border-radius:8px; background:rgba(6,22,22,0.45); overflow:hidden; }
+    .script-card summary { padding:10px 11px; cursor:pointer; color:var(--cream); font-weight:800; }
+    .script-text { padding:0 11px 12px; white-space:pre-wrap; color:var(--soft); font-family:Georgia,serif; font-style:italic; line-height:1.75; max-height:260px; overflow:auto; }
+    .note-box textarea { width:100%; min-height:92px; resize:vertical; background:#071a1a; border:1px solid var(--line); color:var(--cream); border-radius:8px; padding:10px; margin-top:8px; }
+    .note-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; }
+    .check-row { display:flex; gap:8px; align-items:center; color:var(--soft); font-size:13px; margin:8px 0; }
+    .muted { color:var(--muted); }
+    .empty { color:var(--muted); font-style:italic; padding:14px 0; }
+    .loading { color:var(--muted); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; padding:18px 0; }
     .denied { text-align:center; padding:80px 24px; color:var(--red); font-size:15px; }
+
+    @media(max-width:1200px) {
+      .snapshot-grid { grid-template-columns:repeat(3,1fr); }
+      .insight-grid, .main-grid { grid-template-columns:1fr; }
+      .drawer { position:relative; top:0; max-height:none; }
+    }
+    @media(max-width:720px) {
+      .command-header { align-items:flex-start; flex-direction:column; }
+      .admin-body { padding:14px; }
+      .snapshot-grid { grid-template-columns:repeat(2,1fr); }
+      .metric-num { font-size:25px; }
+    }
   </style>
 </head>
 <body>
 
-<!-- ══ AUTH SCREEN ══ -->
 <div id="auth-screen">
   <div class="auth-box">
     <h1>SeenInSeven Admin</h1>
     <p>Enter your admin email address to receive a login link.</p>
     <input type="email" id="admin-email" class="auth-input" placeholder="email@davidbee.me" autocomplete="email">
-    <button class="auth-btn" onclick="sendAdminLink()">Send Login Link →</button>
+    <button class="auth-btn" onclick="sendAdminLink()">Send Login Link</button>
     <div id="auth-msg" class="auth-msg"></div>
   </div>
 </div>
 
-<!-- ══ ADMIN SCREEN ══ -->
 <div id="admin-screen">
-  <div class="admin-header">
-    <h1>⚙ SEENINSEVEN ADMIN</h1>
-    <div class="admin-header-right">
-      <span class="admin-email" id="admin-user-email"></span>
-      <button class="btn-refresh" onclick="loadAll()">↻ Refresh</button>
-      <button class="btn-logout" onclick="adminLogout()">Log Out</button>
+  <header class="command-header">
+    <div>
+      <div class="brand-kicker">SeenInSeven</div>
+      <div class="command-title">Admin Command Center</div>
+      <div class="command-sub">Test-user progress, friction, support context, and issue triage.</div>
     </div>
-  </div>
+    <div class="command-actions">
+      <span class="admin-pill" id="environment-pill">Local</span>
+      <span class="admin-pill" id="last-loaded">Not loaded</span>
+      <span class="health-pill health-warn" id="health-pill">Waiting</span>
+      <span class="admin-pill" id="admin-user-email"></span>
+      <button class="btn btn-primary" onclick="loadAll()">Refresh</button>
+      <button class="btn" onclick="adminLogout()">Log Out</button>
+    </div>
+  </header>
 
-  <div class="admin-body">
-    <!-- Stats row -->
-    <div class="stat-row" id="stat-row">
-      <div class="stat-card"><div class="stat-num" id="stat-users">-</div><div class="stat-label">Total Users</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-paid">-</div><div class="stat-label">Paid</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-scripts">-</div><div class="stat-label">Scripts Generated</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-filmed">-</div><div class="stat-label">Videos Filmed</div></div>
-      <div class="stat-card"><div class="stat-num" id="stat-errors">-</div><div class="stat-label">Errors (24hr)</div></div>
-    </div>
+  <main class="admin-body">
+    <section class="grid snapshot-grid" id="snapshot-grid"></section>
 
-    <!-- Users section -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-title">Users</span>
+    <section class="grid insight-grid">
+      <div class="card card-pad">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Activation Funnel</div>
+            <div class="section-note">A fast read on where test users move or stall.</div>
+          </div>
+        </div>
+        <div id="funnel-panel" class="loading">Loading funnel...</div>
       </div>
-      <table class="user-table" id="user-table">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Level</th>
-            <th>Paid</th>
-            <th>Scripts</th>
-            <th>Filmed</th>
-            <th>Progress</th>
-            <th>Last Active</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="user-tbody">
-          <tr><td colspan="9" class="loading">Loading...</td></tr>
-        </tbody>
-      </table>
-    </div>
+      <div class="card card-pad">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Stall Points</div>
+            <div class="section-note">Users who may need a human check-in.</div>
+          </div>
+        </div>
+        <div id="stall-panel" class="stall-list loading">Loading stalls...</div>
+      </div>
+      <div class="card card-pad">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Issue Triage</div>
+            <div class="section-note">Grouped errors and script failures.</div>
+          </div>
+        </div>
+        <div id="issue-panel" class="issue-list loading">Loading issues...</div>
+      </div>
+    </section>
 
-    <!-- Recent activity log -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-title">Recent Activity (All Users)</span>
+    <section class="grid main-grid">
+      <div class="card card-pad">
+        <div class="section-head">
+          <div>
+            <div class="section-title">User Workbench</div>
+            <div class="section-note" id="user-count-note">Loading users...</div>
+          </div>
+        </div>
+        <div class="toolbar">
+          <input id="user-search" class="search" placeholder="Search name, email, status, or latest event" oninput="applyFilters()">
+          <select id="status-filter" class="select" onchange="applyFilters()">
+            <option value="all">All users</option>
+            <option value="needs_help">Needs help</option>
+            <option value="has_errors">Has errors</option>
+            <option value="stalled">Stalled</option>
+            <option value="no_script">No script generated</option>
+            <option value="script_no_film">Script generated, not filmed</option>
+            <option value="onboarded">Completed onboarding</option>
+            <option value="complete">Completed all 7</option>
+            <option value="l1">Level 1</option>
+            <option value="l2">Level 2</option>
+            <option value="test_group">Test group only</option>
+          </select>
+          <select id="sort-filter" class="select" onchange="applyFilters()">
+            <option value="attention">Needs attention first</option>
+            <option value="recent">Most recently active</option>
+            <option value="progress">Most progress</option>
+            <option value="name">Name A-Z</option>
+          </select>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>User</th>
+                <th>Status</th>
+                <th>Level</th>
+                <th>Progress</th>
+                <th>Latest Event</th>
+                <th>Errors</th>
+                <th>Support</th>
+                <th>Paid</th>
+              </tr>
+            </thead>
+            <tbody id="user-tbody">
+              <tr><td colspan="8" class="loading">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
-      <div id="activity-log">
-        <div class="loading">Loading...</div>
-      </div>
-    </div>
 
-    <!-- System health -->
-    <div class="section">
-      <div class="section-header">
-        <span class="section-title">System Health</span>
-      </div>
-      <div class="health-grid" id="health-grid">
-        <div class="health-card"><div class="health-label">Scripts today</div><div class="health-val" id="h-scripts-today">-</div></div>
-        <div class="health-card"><div class="health-label">Auth completions today</div><div class="health-val" id="h-auth-today">-</div></div>
-        <div class="health-card"><div class="health-label">Magic links sent today</div><div class="health-val" id="h-links-today">-</div></div>
-        <div class="health-card"><div class="health-label">Errors (24hr)</div><div class="health-val" id="h-errors-today" style="color:var(--red)">-</div></div>
-        <div class="health-card"><div class="health-label">Videos filmed today</div><div class="health-val" id="h-filmed-today">-</div></div>
-        <div class="health-card"><div class="health-label">Total log events</div><div class="health-val" id="h-total-logs">-</div></div>
-      </div>
-    </div>
-  </div>
+      <aside class="drawer" id="user-drawer">
+        <div class="drawer-empty">Select a user to inspect their journey, scripts, events, issues, and support notes.</div>
+      </aside>
+    </section>
+  </main>
 </div>
 
 <script>
@@ -201,8 +261,13 @@ const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const ADMIN_EMAIL = 'email@davidbee.me';
+const NOTE_KEY = 'sis_admin_notes_v1';
 
-// ── AUTH ──────────────────────────────────────────────
+let adminState = {
+  users: [], scripts: [], currentScripts: [], progress: [], onboarding: [], logs: [],
+  rows: [], selectedUserId: null, notes: loadNotes(), loadErrors: {}
+};
+
 async function sendAdminLink() {
   const email = document.getElementById('admin-email').value.trim();
   const msg = document.getElementById('auth-msg');
@@ -225,207 +290,384 @@ async function adminLogout() {
   document.getElementById('admin-screen').style.display = 'none';
 }
 
-// ── INIT ──────────────────────────────────────────────
-sb.auth.onAuthStateChange(async (event, session) => {
-  if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
-    if (!session || !session.user) return;
-    if (session.user.email !== ADMIN_EMAIL) {
-      document.getElementById('auth-screen').innerHTML = '<div class="denied">Access denied for ' + session.user.email + '. <button onclick="adminLogout()" style="background:none;border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;cursor:pointer;margin-left:8px;">Log Out</button></div>';
-      return;
-    }
-    document.getElementById('auth-screen').style.display = 'none';
-    document.getElementById('admin-screen').style.display = 'block';
-    document.getElementById('admin-user-email').textContent = session.user.email;
-    await loadAll();
-  }
-});
-
-// ── LOAD ALL DATA ─────────────────────────────────────
-async function loadAll() {
-  document.getElementById('user-tbody').innerHTML = '<tr><td colspan="9" class="loading">Loading...</td></tr>';
-  document.getElementById('activity-log').innerHTML = '<div class="loading">Loading...</div>';
-
-  const [usersRes, scriptsRes, progressRes, onboardingRes, logsRes] = await Promise.all([
-    sb.rpc('admin_get_users'),
-    sb.rpc('admin_get_scripts'),
-    sb.rpc('admin_get_progress'),
-    sb.rpc('admin_get_onboarding'),
-    sb.rpc('admin_get_logs')
-  ]);
-
-  if (usersRes.error) {
-    document.getElementById('user-tbody').innerHTML = '<tr><td colspan="9" class="empty" style="color:var(--red)">Error loading users: ' + usersRes.error.message + '</td></tr>';
+sb.auth.onAuthStateChange((event, session) => {
+  if (event !== 'SIGNED_IN' && event !== 'INITIAL_SESSION') return;
+  if (!session || !session.user) return;
+  if (session.user.email !== ADMIN_EMAIL) {
+    document.getElementById('auth-screen').innerHTML =
+      '<div class="denied">Access denied for ' + h(session.user.email) + '. <button onclick="adminLogout()" class="btn" style="margin-left:8px;">Log Out</button></div>';
     return;
   }
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('admin-screen').style.display = 'block';
+  document.getElementById('admin-user-email').textContent = session.user.email;
+  document.getElementById('environment-pill').textContent = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') ? 'Local' : 'Production';
+  setTimeout(() => loadAll(), 0);
+});
 
-  const users = usersRes.data || [];
-  const scripts = (scriptsRes.data || []).filter(s => s.is_current);
-  const progress = (progressRes.data || []).filter(p => p.status === 'filmed');
-  const onboarding = onboardingRes.data || [];
-  const logs = logsRes.data || [];
-
-  // Build lookup maps
-  const scriptsByUser = {};
-  scripts.forEach(s => { if (!scriptsByUser[s.user_id]) scriptsByUser[s.user_id] = []; scriptsByUser[s.user_id].push(s); });
-  const progressByUser = {};
-  progress.forEach(p => { if (!progressByUser[p.user_id]) progressByUser[p.user_id] = []; progressByUser[p.user_id].push(p); });
-  const onboardingByUser = {};
-  onboarding.forEach(o => { onboardingByUser[o.user_id] = o; });
-
-  // All versions count per user
-  sb.from('scripts').select('user_id, id').then(allScripts => {
-    // just for version counts
-    const allVersionsByUser = {};
-    (allScripts.data || []).forEach(s => { allVersionsByUser[s.user_id] = (allVersionsByUser[s.user_id] || 0) + 1; });
-    window._allVersionsByUser = allVersionsByUser;
-  });
-
-  // Stats
-  document.getElementById('stat-users').textContent = users.length;
-  document.getElementById('stat-paid').textContent = users.filter(u => u.is_paid).length;
-  document.getElementById('stat-scripts').textContent = scripts.length;
-  document.getElementById('stat-filmed').textContent = progress.length;
-
-  const now = new Date();
-  const dayAgo = new Date(now - 24*60*60*1000).toISOString();
-  const recentErrors = logs.filter(l => l.event_type === 'error' || l.event_type === 'script_failed' && l.created_at > dayAgo);
-  document.getElementById('stat-errors').textContent = recentErrors.length;
-  document.getElementById('stat-errors').style.color = recentErrors.length > 0 ? 'var(--red)' : 'var(--cream)';
-
-  // Health
-  const today = new Date(); today.setHours(0,0,0,0);
-  const todayStr = today.toISOString();
-  document.getElementById('h-scripts-today').textContent = logs.filter(l => l.event_type === 'script_generated' && l.created_at > todayStr).length;
-  document.getElementById('h-auth-today').textContent = logs.filter(l => l.event_type === 'auth_completed' && l.created_at > todayStr).length;
-  document.getElementById('h-links-today').textContent = logs.filter(l => l.event_type === 'magic_link_sent' && l.created_at > todayStr).length;
-  document.getElementById('h-errors-today').textContent = logs.filter(l => (l.event_type === 'error' || l.event_type === 'script_failed') && l.created_at > dayAgo).length;
-  document.getElementById('h-filmed-today').textContent = logs.filter(l => l.event_type === 'video_filmed' && l.created_at > todayStr).length;
-  document.getElementById('h-total-logs').textContent = logs.length;
-
-  // User table
-  renderUserTable(users, scriptsByUser, progressByUser, onboardingByUser);
-
-  // Activity log
-  renderActivityLog(logs, users);
+async function loadAll() {
+  setLoading();
+  const calls = await Promise.all([
+    rpcSafe('users', 'admin_get_users'),
+    rpcSafe('scripts', 'admin_get_scripts'),
+    rpcSafe('progress', 'admin_get_progress'),
+    rpcSafe('onboarding', 'admin_get_onboarding'),
+    rpcSafe('logs', 'admin_get_logs')
+  ]);
+  const byName = Object.fromEntries(calls.map(c => [c.name, c]));
+  adminState.users = byName.users.data || [];
+  adminState.scripts = byName.scripts.data || [];
+  adminState.currentScripts = adminState.scripts.filter(s => s.is_current !== false);
+  adminState.progress = byName.progress.data || [];
+  adminState.onboarding = byName.onboarding.data || [];
+  adminState.logs = byName.logs.data || [];
+  adminState.loadErrors = Object.fromEntries(calls.filter(c => c.error).map(c => [c.name, c.error]));
+  adminState.rows = buildRows();
+  document.getElementById('last-loaded').textContent = 'Loaded ' + new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+  renderAll();
 }
 
-// ── USER TABLE ─────────────────────────────────────────
-function renderUserTable(users, scriptsByUser, progressByUser, onboardingByUser) {
+async function rpcSafe(name, rpcName) {
+  try {
+    const res = await sb.rpc(rpcName);
+    return { name, data: res.data || [], error: res.error ? res.error.message : null };
+  } catch(e) {
+    return { name, data: [], error: e.message || String(e) };
+  }
+}
+
+function setLoading() {
+  document.getElementById('snapshot-grid').innerHTML = metricCard('-', 'Loading', 'Fetching admin data');
+  document.getElementById('funnel-panel').innerHTML = '<div class="loading">Loading funnel...</div>';
+  document.getElementById('stall-panel').innerHTML = '<div class="loading">Loading stalls...</div>';
+  document.getElementById('issue-panel').innerHTML = '<div class="loading">Loading issues...</div>';
+  document.getElementById('user-tbody').innerHTML = '<tr><td colspan="8" class="loading">Loading...</td></tr>';
+}
+
+function buildRows() {
+  const scriptsByUser = groupBy(adminState.currentScripts, 'user_id');
+  const allScriptsByUser = groupBy(adminState.scripts, 'user_id');
+  const progressByUser = groupBy(adminState.progress, 'user_id');
+  const logsByUser = groupBy(adminState.logs, 'user_id');
+  const onboardingByUser = Object.fromEntries(adminState.onboarding.map(o => [o.user_id, o]));
+  return adminState.users.map(user => {
+    const scripts = scriptsByUser[user.id] || [];
+    const allScripts = allScriptsByUser[user.id] || [];
+    const progress = progressByUser[user.id] || [];
+    const logs = (logsByUser[user.id] || []).sort((a,b) => dateMs(b.created_at) - dateMs(a.created_at));
+    const ob = onboardingByUser[user.id] || null;
+    const filmed = progress.filter(p => p.status === 'filmed');
+    const skipped = progress.filter(p => p.status === 'skipped');
+    const errorLogs = logs.filter(isErrorLog);
+    const recentErrors = errorLogs.filter(l => isWithin(l.created_at, 24));
+    const latest = logs[0] || null;
+    const notes = getNote(user.id);
+    const onboardingComplete = !!(ob || user.level);
+    const scriptCount = uniqueVideoCount(scripts);
+    const filmedCount = uniqueProgressCount(filmed);
+    const lastActiveMs = dateMs(user.last_active || (latest && latest.created_at));
+    const stalled = isStalled(lastActiveMs, onboardingComplete, scriptCount, filmedCount);
+    const status = computeStatus({ recentErrors, filmedCount, scriptCount, onboardingComplete, user, stalled });
+    const attention = attentionScore({ notes, recentErrors, stalled, scriptCount, filmedCount, onboardingComplete, latest });
+    return {
+      user, scripts, allScripts, progress, filmed, skipped, logs, ob, latest, notes,
+      onboardingComplete, scriptCount, filmedCount, errorLogs, recentErrors, status,
+      stalled, attention, lastActiveMs
+    };
+  });
+}
+
+function computeStatus(row) {
+  if (row.recentErrors.length) return { label:'Error', tone:'red' };
+  if (row.filmedCount >= 7) return { label:'Complete', tone:'green' };
+  if (row.stalled) return { label:'Stalled', tone:'orange' };
+  if (row.filmedCount > 0) return { label:'Filming', tone:'gold' };
+  if (row.scriptCount > 0) return { label:'Script Started', tone:'blue' };
+  if (row.onboardingComplete) return { label:'Ready To Generate', tone:'green' };
+  if (row.user.name || row.user.email) return { label:'Onboarding', tone:'gold' };
+  return { label:'New', tone:'' };
+}
+
+function attentionScore(row) {
+  let score = 0;
+  if (row.notes.support_status === 'needs_help') score += 100;
+  if (row.notes.priority === 'high') score += 50;
+  if (row.recentErrors.length) score += 40;
+  if (row.stalled) score += 25;
+  if (row.scriptCount > 0 && row.filmedCount === 0) score += 10;
+  if (!row.onboardingComplete) score += 4;
+  return score;
+}
+
+function isStalled(lastActiveMs, onboardingComplete, scriptCount, filmedCount) {
+  if (!lastActiveMs || filmedCount >= 7) return false;
+  const hours = (Date.now() - lastActiveMs) / 36e5;
+  const meaningful = onboardingComplete || scriptCount > 0 || filmedCount > 0;
+  return meaningful && hours >= 48;
+}
+
+function renderAll() {
+  renderHealth();
+  renderSnapshot();
+  renderFunnel();
+  renderStalls();
+  renderIssues();
+  applyFilters();
+  if (adminState.selectedUserId) renderDrawer(adminState.selectedUserId);
+}
+
+function renderHealth() {
+  const pill = document.getElementById('health-pill');
+  const errors = Object.keys(adminState.loadErrors);
+  const recentErrors = adminState.logs.filter(l => isErrorLog(l) && isWithin(l.created_at, 24)).length;
+  if (errors.length) {
+    pill.textContent = 'Data warning';
+    pill.className = 'health-pill health-bad';
+  } else if (recentErrors) {
+    pill.textContent = recentErrors + ' recent issue' + (recentErrors === 1 ? '' : 's');
+    pill.className = 'health-pill health-warn';
+  } else {
+    pill.textContent = 'Healthy';
+    pill.className = 'health-pill health-ok';
+  }
+}
+
+function renderSnapshot() {
+  const rows = adminState.rows;
+  const todayActive = rows.filter(r => isWithin(r.user.last_active || (r.latest && r.latest.created_at), 24)).length;
+  const onboarded = rows.filter(r => r.onboardingComplete).length;
+  const firstScript = rows.filter(r => r.scripts.some(s => Number(s.video_number) === 1)).length;
+  const anyFilmed = rows.filter(r => r.filmedCount > 0).length;
+  const complete = rows.filter(r => r.filmedCount >= 7).length;
+  const errors24 = adminState.logs.filter(l => isErrorLog(l) && isWithin(l.created_at, 24)).length;
+  const errorNote = Object.keys(adminState.loadErrors).length ? 'Dataset warning: ' + Object.keys(adminState.loadErrors).join(', ') : 'Operational view';
+  document.getElementById('snapshot-grid').innerHTML = [
+    metricCard(rows.length, 'Total Users', errorNote),
+    metricCard(todayActive, 'Active 24hr', 'Last active or latest event'),
+    metricCard(onboarded, 'Onboarded', pct(onboarded, rows.length) + ' of users'),
+    metricCard(firstScript, 'First Script', pct(firstScript, rows.length) + ' reached value'),
+    metricCard(anyFilmed, 'Any Filmed', pct(anyFilmed, rows.length) + ' took action'),
+    metricCard(complete, 'All 7 Filmed', pct(complete, rows.length) + ' complete'),
+    metricCard(errors24, 'Errors 24hr', errors24 ? 'Needs review' : 'Clear')
+  ].join('');
+}
+
+function renderFunnel() {
+  const rows = adminState.rows;
+  const total = rows.length;
+  const steps = [
+    ['Users created', total],
+    ['Email or auth present', rows.filter(r => !!r.user.email || hasLog(r, ['magic_link_sent','auth_completed','email_submitted'])).length],
+    ['Onboarding complete', rows.filter(r => r.onboardingComplete).length],
+    ['Script 1 generated', rows.filter(r => r.scripts.some(s => Number(s.video_number) === 1)).length],
+    ['Script copied', rows.filter(r => hasLog(r, ['script_copied','all_scripts_copied'])).length],
+    ['Script locked', rows.filter(r => hasLog(r, ['script_locked'])).length],
+    ['Video filmed', rows.filter(r => r.filmedCount > 0).length],
+    ['Dashboard returned', rows.filter(r => hasLog(r, ['dashboard_viewed'])).length],
+    ['All 7 filmed', rows.filter(r => r.filmedCount >= 7).length]
+  ];
+  document.getElementById('funnel-panel').innerHTML = steps.map(([label, count]) => {
+    const width = total ? Math.round((count / total) * 100) : 0;
+    return '<div class="funnel-step"><div class="funnel-row"><span>' + h(label) + '</span><strong>' + count + ' / ' + total + '</strong></div><div class="bar"><div class="bar-fill" style="width:' + width + '%"></div></div></div>';
+  }).join('') || '<div class="empty">No users yet.</div>';
+}
+
+function renderStalls() {
+  const stalls = adminState.rows.filter(r => r.stalled || (r.scriptCount > 0 && r.filmedCount === 0)).sort((a,b) => b.attention - a.attention).slice(0, 8);
+  document.getElementById('stall-panel').innerHTML = stalls.length ? stalls.map(r => {
+    const reason = r.stalled ? 'No movement for 48+ hours' : 'Generated script but has not filmed yet';
+    return '<button class="mini-row" onclick="selectUser(\'' + safeAttr(r.user.id) + '\')" style="text-align:left;width:100%;"><div class="mini-top"><span class="mini-name">' + h(displayName(r)) + '</span><span class="badge orange">' + h(r.status.label) + '</span></div><div class="mini-body">' + h(reason) + '</div><div class="mini-meta">' + h(lastActiveText(r)) + '</div></button>';
+  }).join('') : '<div class="empty">No obvious stalls yet.</div>';
+}
+
+function renderIssues() {
+  const issueLogs = adminState.logs.filter(isErrorLog);
+  const groups = {};
+  issueLogs.forEach(log => {
+    const key = issueKey(log);
+    if (!groups[key]) groups[key] = { label:key, logs:[], users:new Set(), first:log.created_at, last:log.created_at };
+    groups[key].logs.push(log);
+    if (log.user_id) groups[key].users.add(log.user_id);
+    if (dateMs(log.created_at) < dateMs(groups[key].first)) groups[key].first = log.created_at;
+    if (dateMs(log.created_at) > dateMs(groups[key].last)) groups[key].last = log.created_at;
+  });
+  const items = Object.values(groups).sort((a,b) => dateMs(b.last) - dateMs(a.last)).slice(0, 8);
+  document.getElementById('issue-panel').innerHTML = items.length ? items.map(g => {
+    return '<div class="mini-row"><div class="mini-top"><span class="mini-name">' + h(g.label) + '</span><span class="badge red">' + g.logs.length + ' event' + (g.logs.length === 1 ? '' : 's') + '</span></div><div class="mini-body">' + g.users.size + ' affected user' + (g.users.size === 1 ? '' : 's') + '</div><div class="mini-meta">First seen ' + h(formatDate(g.first)) + ' | Last seen ' + h(formatDate(g.last)) + '</div></div>';
+  }).join('') : '<div class="empty">No logged errors or script failures.</div>';
+}
+
+function applyFilters() {
+  const q = (document.getElementById('user-search').value || '').toLowerCase();
+  const filter = document.getElementById('status-filter').value;
+  const sort = document.getElementById('sort-filter').value;
+  let rows = adminState.rows.filter(r => rowMatches(r, q, filter));
+  rows.sort((a,b) => {
+    if (sort === 'recent') return b.lastActiveMs - a.lastActiveMs;
+    if (sort === 'progress') return (b.scriptCount + b.filmedCount * 2) - (a.scriptCount + a.filmedCount * 2);
+    if (sort === 'name') return displayName(a).localeCompare(displayName(b));
+    return (b.attention - a.attention) || (b.lastActiveMs - a.lastActiveMs);
+  });
+  renderUserRows(rows);
+  document.getElementById('user-count-note').textContent = rows.length + ' shown from ' + adminState.rows.length + ' total';
+}
+
+function rowMatches(r, q, filter) {
+  const note = r.notes || {};
+  const haystack = [displayName(r), r.user.email, r.status.label, latestEventLabel(r), note.support_status, note.note].join(' ').toLowerCase();
+  if (q && !haystack.includes(q)) return false;
+  if (filter === 'needs_help') return note.support_status === 'needs_help';
+  if (filter === 'has_errors') return r.errorLogs.length > 0;
+  if (filter === 'stalled') return r.stalled;
+  if (filter === 'no_script') return r.scriptCount === 0;
+  if (filter === 'script_no_film') return r.scriptCount > 0 && r.filmedCount === 0;
+  if (filter === 'onboarded') return r.onboardingComplete;
+  if (filter === 'complete') return r.filmedCount >= 7;
+  if (filter === 'l1') return Number(r.user.level) === 1;
+  if (filter === 'l2') return Number(r.user.level) === 2;
+  if (filter === 'test_group') return !!note.test_group;
+  return true;
+}
+
+function renderUserRows(rows) {
   const tbody = document.getElementById('user-tbody');
-  if (!users.length) { tbody.innerHTML = '<tr><td colspan="9" class="empty">No users yet.</td></tr>'; return; }
-
-  tbody.innerHTML = users.map(u => {
-    const scripts = scriptsByUser[u.id] || [];
-    const filmed = progressByUser[u.id] || [];
-    const scriptCount = scripts.length;
-    const filmedCount = filmed.length;
-    const pct = Math.round((filmedCount / 7) * 100);
-    const lastActive = u.last_active ? timeSince(u.last_active) : 'never';
-    const levelLabel = u.level === 1 ? 'L1' : u.level === 2 ? 'L2' : '-';
-    const statusBadge = filmedCount === 7
-      ? '<span class="badge badge-green">Complete</span>'
-      : filmedCount > 0
-        ? '<span class="badge badge-gold">In Progress</span>'
-        : scriptCount > 0
-          ? '<span class="badge badge-muted">Started</span>'
-          : '<span class="badge badge-muted">No Scripts</span>';
-
-    return `<tr onclick="toggleUserDetail('${u.id}')" data-uid="${u.id}">
-      <td>${u.name || '<span style="color:var(--muted)">unnamed</span>'}</td>
-      <td style="font-family:monospace;font-size:12px;color:var(--muted)">${u.email || '-'}</td>
-      <td>${levelLabel}</td>
-      <td>
-        ${u.is_paid
-          ? '<span class="badge badge-green">Paid</span>'
-          : '<button class="toggle-paid" onclick="togglePaid(event,\''+u.id+'\')">Set Paid</button>'}
-      </td>
-      <td>${scriptCount} / 7</td>
-      <td>${filmedCount} / 7</td>
-      <td>
-        <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
-        ${statusBadge}
-      </td>
-      <td style="font-size:11px;color:var(--muted)">${lastActive}</td>
-      <td style="font-size:11px;color:var(--teal)">▼</td>
-    </tr>
-    <tr id="detail-row-${u.id}" style="display:none">
-      <td colspan="9" style="padding:0">
-        ${renderUserDetail(u, scripts, filmed, onboardingByUser[u.id])}
-      </td>
-    </tr>`;
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="8" class="empty">No users match this view.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = rows.map(r => {
+    const selected = r.user.id === adminState.selectedUserId ? ' selected' : '';
+    return '<tr class="user-row' + selected + '" onclick="selectUser(\'' + safeAttr(r.user.id) + '\')">' +
+      '<td><div class="name-main">' + h(displayName(r)) + '</div><div class="name-sub">' + h(r.user.email || r.user.id) + '</div></td>' +
+      '<td>' + badge(r.status.label, r.status.tone) + (r.stalled ? ' ' + badge('Watch', 'orange') : '') + '</td>' +
+      '<td>' + h(levelLabel(r.user.level)) + '</td>' +
+      '<td><div class="progress-stack"><div class="bar"><div class="bar-fill" style="width:' + Math.round((r.filmedCount / 7) * 100) + '%"></div></div><div class="progress-text">' + r.scriptCount + '/7 scripts | ' + r.filmedCount + '/7 filmed</div></div></td>' +
+      '<td><div>' + h(latestEventLabel(r)) + '</div><div class="mini-meta">' + h(lastActiveText(r)) + '</div></td>' +
+      '<td>' + (r.recentErrors.length ? badge(r.recentErrors.length + ' recent', 'red') : '<span class="muted">0</span>') + '</td>' +
+      '<td>' + badge(supportLabel(r.notes.support_status), supportTone(r.notes.support_status)) + '</td>' +
+      '<td>' + (r.user.is_paid ? badge('Paid','green') : '<button class="toggle-paid" onclick="togglePaid(event,\'' + safeAttr(r.user.id) + '\')">Set Paid</button>') + '</td>' +
+    '</tr>';
   }).join('');
 }
 
-function renderUserDetail(u, scripts, filmed, ob) {
-  const goalMap = {comfortable:'get comfortable on camera',audience:'build an audience',voice:'find their voice',start:'just start showing up',expert:'establish themselves as an expert',clients:'build an audience of potential clients',leads:'generate real leads',consistent:'finally get consistent'};
-  const filmedNums = filmed.map(f => f.video_index + 1);
-
-  const onboardingHtml = ob ? `
-    <div class="onboarding-row"><span class="ob-label">Posted</span><span class="ob-val">${ob.posted || '-'}</span></div>
-    <div class="onboarding-row"><span class="ob-label">History</span><span class="ob-val">${ob.history || '-'}</span></div>
-    <div class="onboarding-row"><span class="ob-label">Goal</span><span class="ob-val">${goalMap[ob.goal] || ob.goal || '-'}</span></div>
-    <div class="onboarding-row"><span class="ob-label">Mini goal</span><span class="ob-val">${ob.mini_goal_text || ob.mini_goal || '-'}</span></div>
-    <div class="onboarding-row"><span class="ob-label">Business</span><span class="ob-val">${ob.business || '-'}</span></div>
-    <div class="onboarding-row"><span class="ob-label">Belief 1</span><span class="ob-val">${ob.mvo_q2 || '-'}</span></div>
-    <div class="onboarding-row"><span class="ob-label">Belief 2</span><span class="ob-val">${ob.mvo_q3 || '-'}</span></div>
-    <div class="onboarding-row"><span class="ob-label">Why now</span><span class="ob-val">${ob.mvo_q4 || '-'}</span></div>
-    ${ob.topic_freewrite ? '<div class="onboarding-row"><span class="ob-label">Freewrite</span><span class="ob-val">' + ob.topic_freewrite + '</span></div>' : ''}
-  ` : '<div class="empty">No onboarding data.</div>';
-
-  const scriptsHtml = scripts.length ? scripts.sort((a,b) => a.video_number - b.video_number).map(s => {
-    const isFilmed = filmedNums.includes(s.video_number);
-    const clean = (s.content || '').replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
-    return `<div class="script-item">
-      <div class="script-item-header" onclick="toggleScript(this)">
-        <span class="script-num">V${s.video_number}</span>
-        <span class="script-title">Video ${s.video_number}</span>
-        ${isFilmed ? '<span class="badge badge-green" style="font-size:9px;">filmed</span>' : ''}
-        <span class="script-versions">v${s.version} · ${formatDate(s.generated_at)}</span>
-        <span style="font-size:11px;color:var(--muted);margin-left:4px">▼</span>
-      </div>
-      <div class="script-body">
-        <div class="script-meta">Generated ${formatDate(s.generated_at)} · Version ${s.version}</div>
-        <div class="script-text">${escHtml(clean)}</div>
-      </div>
-    </div>`;
-  }).join('') : '<div class="empty">No scripts generated yet.</div>';
-
-  return `<div class="user-detail">
-    <div class="detail-grid">
-      <div>
-        <div class="detail-section-title">Onboarding Answers</div>
-        ${onboardingHtml}
-      </div>
-      <div>
-        <div class="detail-section-title">Scripts</div>
-        <div class="script-list">${scriptsHtml}</div>
-      </div>
-    </div>
-  </div>`;
+function selectUser(userId) {
+  adminState.selectedUserId = userId;
+  applyFilters();
+  renderDrawer(userId);
 }
 
-function toggleUserDetail(uid) {
-  const row = document.getElementById('detail-row-' + uid);
-  const headerRow = document.querySelector('[data-uid="'+uid+'"]');
-  if (!row) return;
-  const open = row.style.display !== 'none';
-  row.style.display = open ? 'none' : 'table-row';
-  if (headerRow) {
-    headerRow.classList.toggle('expanded', !open);
-    const arrow = headerRow.querySelector('td:last-child');
-    if (arrow) arrow.textContent = open ? '▼' : '▲';
+function renderDrawer(userId) {
+  const r = adminState.rows.find(row => row.user.id === userId);
+  const drawer = document.getElementById('user-drawer');
+  if (!r) {
+    drawer.innerHTML = '<div class="drawer-empty">User not found after refresh.</div>';
+    return;
   }
+  drawer.innerHTML =
+    '<div class="drawer-head"><div class="drawer-title">' + h(displayName(r)) + '</div><div class="drawer-sub">' + h(r.user.email || r.user.id) + '</div></div>' +
+    '<div class="drawer-section">' + renderProfile(r) + '</div>' +
+    '<div class="drawer-section">' + renderJourney(r) + '</div>' +
+    '<div class="drawer-section">' + renderNotes(r) + '</div>' +
+    '<div class="drawer-section"><div class="section-title">Onboarding Answers</div><div class="answers-list">' + renderAnswers(r.ob) + '</div></div>' +
+    '<div class="drawer-section"><div class="section-title">Script Review</div><div class="script-list">' + renderScripts(r) + '</div></div>' +
+    '<div class="drawer-section"><div class="section-title">Issue Panel</div><div class="issue-list">' + renderUserIssues(r) + '</div></div>' +
+    '<div class="drawer-section"><div class="section-title">Event Timeline</div><div class="timeline-list">' + renderTimeline(r.logs) + '</div></div>';
 }
 
-function toggleScript(header) {
-  const body = header.nextElementSibling;
-  const open = body.classList.contains('open');
-  body.classList.toggle('open', !open);
-  const arrow = header.querySelector('span:last-child');
-  if (arrow) arrow.textContent = open ? '▼' : '▲';
+function renderProfile(r) {
+  return '<div class="section-title" style="margin-bottom:12px;">Profile Summary</div>' +
+    kv('Status', badge(r.status.label, r.status.tone)) +
+    kv('Database ID', h(r.user.id)) +
+    kv('Auth ID', h(r.user.auth_id || '-')) +
+    kv('Level', h(levelLabel(r.user.level))) +
+    kv('Paid flag', r.user.is_paid ? badge('Paid','green') : badge('Not paid','')) +
+    kv('Last active', h(lastActiveText(r))) +
+    kv('Next action', h(nextAction(r)));
 }
 
-// ── is_paid TOGGLE ────────────────────────────────────
+function renderJourney(r) {
+  return '<div class="section-title" style="margin-bottom:12px;">Journey State</div>' +
+    kv('Scripts', h(r.scriptCount + ' of 7 current scripts')) +
+    kv('Filmed', h(r.filmedCount + ' of 7 videos')) +
+    kv('Skipped', h(r.skipped.length + ' skipped')) +
+    kv('Latest event', h(latestEventLabel(r))) +
+    kv('Support read', h(nextAction(r)));
+}
+
+function renderNotes(r) {
+  const n = r.notes;
+  return '<div class="section-title" style="margin-bottom:12px;">Admin Notes <span class="muted" style="font-size:10px;">local-only v1</span></div>' +
+    '<div class="note-box">' +
+    '<div class="note-row"><select class="select" id="note-status"><option value="none">None</option><option value="watch">Watch</option><option value="needs_help">Needs Help</option><option value="resolved">Resolved</option></select><select class="select" id="note-priority"><option value="normal">Normal</option><option value="low">Low</option><option value="high">High</option></select></div>' +
+    '<label class="check-row"><input type="checkbox" id="note-test-group"> Test group user</label>' +
+    '<input class="search" id="note-contacted" placeholder="Last contacted note or date" value="' + h(n.last_contacted_at || '') + '">' +
+    '<textarea id="note-text" placeholder="What does David Bee need to know about this user?">' + h(n.note || '') + '</textarea>' +
+    '<button class="btn btn-primary" style="margin-top:8px;" onclick="saveCurrentNote()">Save Note</button>' +
+    '</div>';
+}
+
+function hydrateNoteControls(r) {
+  const n = r.notes || {};
+  const status = document.getElementById('note-status');
+  const priority = document.getElementById('note-priority');
+  const test = document.getElementById('note-test-group');
+  if (status) status.value = n.support_status || 'none';
+  if (priority) priority.value = n.priority || 'normal';
+  if (test) test.checked = !!n.test_group;
+}
+
+function renderAnswers(ob) {
+  if (!ob) return '<div class="empty">No onboarding row found.</div>';
+  const goalMap = {comfortable:'get comfortable on camera',audience:'build an audience',voice:'find their voice',start:'just start showing up',expert:'establish themselves as an expert',clients:'build an audience of potential clients',leads:'generate real leads',consistent:'finally get consistent'};
+  return [
+    answerRow('Posted', ob.posted),
+    answerRow('History', ob.history),
+    answerRow('Goal', goalMap[ob.goal] || ob.goal),
+    answerRow('Mini goal', ob.mini_goal_text || ob.mini_goal),
+    answerRow('Business', ob.business),
+    answerRow('Belief 1', valueText(ob.mvo_q2)),
+    answerRow('Belief 2', valueText(ob.mvo_q3)),
+    answerRow('Why now', valueText(ob.mvo_q4)),
+    answerRow('Freewrite', ob.topic_freewrite)
+  ].join('');
+}
+
+function renderScripts(r) {
+  if (!r.scripts.length) return '<div class="empty">No current scripts generated yet.</div>';
+  return r.scripts.slice().sort((a,b) => Number(a.video_number) - Number(b.video_number)).map(s => {
+    const clean = String(s.content || '').replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+    const feedback = s.thumbs_up === true ? 'thumbs up' : s.thumbs_up === false ? 'thumbs down' : 'no feedback';
+    return '<details class="script-card"><summary>Video ' + h(s.video_number) + ' | v' + h(s.version || 1) + ' | ' + h(feedback) + '</summary><div class="script-text">' + h(clean || 'Empty script') + '</div></details>';
+  }).join('');
+}
+
+function renderUserIssues(r) {
+  if (!r.errorLogs.length) return '<div class="empty">No errors for this user.</div>';
+  return r.errorLogs.slice(0, 8).map(l => '<div class="mini-row"><div class="mini-top"><span class="mini-name">' + h(l.event_type) + '</span><span class="mini-meta">' + h(formatDate(l.created_at)) + '</span></div><div class="mini-body">' + h(detailText(l.detail)) + '</div></div>').join('');
+}
+
+function renderTimeline(logs) {
+  if (!logs.length) return '<div class="empty">No events logged yet.</div>';
+  return logs.slice(0, 80).map(l => '<div class="timeline-item"><div class="timeline-time">' + h(formatDate(l.created_at)) + '</div><div><div class="timeline-event">' + h(l.event_type) + '</div><div class="timeline-detail">' + h(detailText(l.detail)) + '</div></div></div>').join('');
+}
+
+function saveCurrentNote() {
+  const userId = adminState.selectedUserId;
+  if (!userId) return;
+  adminState.notes[userId] = {
+    support_status: document.getElementById('note-status').value,
+    priority: document.getElementById('note-priority').value,
+    test_group: document.getElementById('note-test-group').checked,
+    last_contacted_at: document.getElementById('note-contacted').value.trim(),
+    note: document.getElementById('note-text').value.trim(),
+    updated_at: new Date().toISOString()
+  };
+  saveNotes();
+  adminState.rows = buildRows();
+  applyFilters();
+  renderDrawer(userId);
+}
+
 async function togglePaid(e, userId) {
   e.stopPropagation();
   const btn = e.target;
@@ -433,44 +675,98 @@ async function togglePaid(e, userId) {
   try {
     const { error } = await sb.rpc('admin_set_paid', { target_user_id: userId, paid: true });
     if (error) throw error;
-    btn.replaceWith(Object.assign(document.createElement('span'), { className: 'badge badge-green', textContent: 'Paid' }));
+    await loadAll();
   } catch(err) {
     btn.textContent = 'Error';
     console.error(err);
   }
 }
 
-// ── ACTIVITY LOG ──────────────────────────────────────
-function renderActivityLog(logs, users) {
-  const el = document.getElementById('activity-log');
-  if (!logs.length) { el.innerHTML = '<div class="empty">No activity logged yet. Events will appear here as users generate scripts, verify email, and film videos.</div>'; return; }
-
-  const userById = {};
-  users.forEach(u => { userById[u.id] = u.name || u.email || u.id.substring(0,8); });
-
-  el.innerHTML = logs.slice(0, 100).map(l => {
-    const userName = userById[l.user_id] || (l.user_id ? l.user_id.substring(0,8) : 'anon');
-    const detail = l.detail ? JSON.stringify(l.detail).replace(/^{|}$/g,'').replace(/"/g,'') : '';
-    return `<div class="log-row">
-      <span class="log-time">${formatTime(l.created_at)}</span>
-      <span class="log-type ${l.event_type}">${l.event_type}</span>
-      <span class="log-detail"><strong style="color:var(--muted)">${escHtml(userName)}</strong> ${escHtml(detail)}</span>
-    </div>`;
-  }).join('');
+function metricCard(num, label, sub) {
+  return '<div class="card metric"><div class="metric-num">' + h(num) + '</div><div class="metric-label">' + h(label) + '</div><div class="metric-sub">' + h(sub || '') + '</div></div>';
+}
+function kv(label, value) { return '<div class="kv"><div class="kv-label">' + h(label) + '</div><div class="kv-val">' + value + '</div></div>'; }
+function answerRow(label, value) { return '<div class="mini-row"><div class="mini-meta">' + h(label) + '</div><div class="mini-body">' + h(valueText(value) || '-') + '</div></div>'; }
+function badge(label, tone) { return '<span class="badge ' + h(tone || '') + '">' + h(label) + '</span>'; }
+function groupBy(items, key) { return (items || []).reduce((acc, item) => { const k = item[key] || 'none'; (acc[k] = acc[k] || []).push(item); return acc; }, {}); }
+function hasLog(r, events) { return r.logs.some(l => events.includes(l.event_type)); }
+function isErrorLog(l) { return l && (l.event_type === 'error' || l.event_type === 'script_failed' || String(l.event_type || '').includes('failed')); }
+function isWithin(date, hours) { const ms = dateMs(date); return !!ms && (Date.now() - ms) <= hours * 3600000; }
+function dateMs(date) { const ms = date ? new Date(date).getTime() : 0; return Number.isFinite(ms) ? ms : 0; }
+function uniqueVideoCount(items) { return new Set((items || []).map(i => Number(i.video_number)).filter(Boolean)).size; }
+function uniqueProgressCount(items) { return new Set((items || []).map(i => Number(i.video_index)).filter(n => Number.isFinite(n))).size; }
+function pct(n, d) { return d ? Math.round((n / d) * 100) + '%' : '0%'; }
+function displayName(r) { return r.user.name || r.user.email || ('User ' + String(r.user.id || '').slice(0,8)); }
+function levelLabel(level) { return Number(level) === 1 ? 'L1' : Number(level) === 2 ? 'L2' : 'Unset'; }
+function supportLabel(v) { return ({none:'None', watch:'Watch', needs_help:'Needs Help', resolved:'Resolved'}[v || 'none'] || 'None'); }
+function supportTone(v) { return v === 'needs_help' ? 'red' : v === 'watch' ? 'orange' : v === 'resolved' ? 'green' : ''; }
+function latestEventLabel(r) { return r.latest ? r.latest.event_type : 'No events'; }
+function lastActiveText(r) { return r.lastActiveMs ? timeSince(r.lastActiveMs) + ' ago' : 'No activity'; }
+function nextAction(r) {
+  if (r.recentErrors.length) return 'Review error and contact if blocked.';
+  if (!r.onboardingComplete) return 'Watch onboarding completion.';
+  if (!r.scriptCount) return 'User is ready for first script.';
+  if (r.scriptCount && !r.filmedCount) return 'Encourage filming first video.';
+  if (r.filmedCount < 7) return 'Keep momentum to next video.';
+  return 'Complete. Review scripts and next-step readiness.';
+}
+function issueKey(log) {
+  const detail = detailText(log.detail);
+  const msg = detail || log.event_type || 'unknown issue';
+  return (log.event_type || 'issue') + ': ' + msg.slice(0, 80);
+}
+function detailText(detail) {
+  if (!detail) return '';
+  if (typeof detail === 'string') return detail;
+  try { return JSON.stringify(detail).replace(/[{}"]/g, '').replace(/,/g, ', '); } catch(e) { return String(detail); }
+}
+function valueText(value) {
+  if (value == null) return '';
+  if (typeof value === 'string') return value;
+  if (typeof value === 'object') return value.before_full || value.catalyst_full || value.village_full || value.crack_full || value.text || JSON.stringify(value);
+  return String(value);
+}
+function formatDate(d) { return d ? new Date(d).toLocaleString([], {month:'short', day:'numeric', hour:'numeric', minute:'2-digit'}) : '-'; }
+function timeSince(ms) {
+  const s = Math.max(0, Math.floor((Date.now() - ms) / 1000));
+  if (s < 60) return s + 's';
+  if (s < 3600) return Math.floor(s / 60) + 'm';
+  if (s < 86400) return Math.floor(s / 3600) + 'h';
+  return Math.floor(s / 86400) + 'd';
+}
+function h(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+function safeAttr(s) {
+  return h(String(s || '')
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r'));
+}
+function loadNotes() { try { return JSON.parse(localStorage.getItem(NOTE_KEY) || '{}'); } catch(e) { return {}; } }
+function saveNotes() { localStorage.setItem(NOTE_KEY, JSON.stringify(adminState.notes)); }
+function getNote(userId) {
+  return Object.assign({support_status:'none', priority:'normal', note:'', last_contacted_at:'', test_group:false}, adminState.notes[userId] || {});
 }
 
-// ── HELPERS ───────────────────────────────────────────
-function timeSince(date) {
-  const d = new Date(date);
-  const s = Math.floor((new Date() - d) / 1000);
-  if (s < 60) return s + 's ago';
-  if (s < 3600) return Math.floor(s/60) + 'm ago';
-  if (s < 86400) return Math.floor(s/3600) + 'h ago';
-  return Math.floor(s/86400) + 'd ago';
-}
-function formatDate(d) { return d ? new Date(d).toLocaleDateString('en-US', {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '-'; }
-function formatTime(d) { return d ? new Date(d).toLocaleTimeString('en-US', {month:'short',day:'numeric',hour:'numeric',minute:'2-digit'}) : '-'; }
-function escHtml(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+document.addEventListener('input', e => {
+  if (e.target && e.target.id && e.target.id.startsWith('note-')) return;
+});
+document.addEventListener('change', e => {
+  if (!adminState.selectedUserId) return;
+});
+const drawerObserver = new MutationObserver(() => {
+  if (!adminState.selectedUserId) return;
+  const row = adminState.rows.find(r => r.user.id === adminState.selectedUserId);
+  if (row) hydrateNoteControls(row);
+});
+drawerObserver.observe(document.getElementById('user-drawer'), {childList:true, subtree:false});
 </script>
 </body>
 </html>

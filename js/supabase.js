@@ -354,8 +354,14 @@ async function deleteScriptVersion(scriptId) {
 
 // ── EVENT LOGGING ─────────────────────────────────────
 // Call this at key moments to write a row to the logs table.
-// Events: 'script_generated', 'script_failed', 'auth_completed',
-//         'video_filmed', 'magic_link_sent', 'error'
+// Events include: 'app_loaded', 'onboarding_started', 'email_submitted',
+// 'magic_link_requested', 'auth_skipped', 'onboarding_completed',
+// 'topic_freewrite_saved', 'mvo_completed', 'prompt_screen_viewed',
+// 'script_generation_started', 'script_generated', 'script_failed',
+// 'template_fallback_used', 'script_copied', 'all_scripts_copied',
+// 'pdf_exported', 'script_locked', 'video_filmed', 'video_skipped',
+// 'dashboard_viewed', 'settings_opened', 'start_over_confirmed',
+// 'level_switched', 'script_feedback', 'auth_completed', 'error'
 async function logEvent(eventType, detail = {}) {
   if (!_currentUser) return;
   try {
