@@ -85,15 +85,15 @@ Located in `funnel-pages/`. These are the custom HTML blocks that get pasted int
 
 David uses **GitHub Desktop** on his local machine to sync the repo. The local folder on his machine (inside his project folder) is a clone of this repository.
 
-**Two different tools push to this same repo:**
+**Two different Claude tools push to this same repo:**
 
-- **Claude.ai (browser)** — pushes directly to GitHub via the Git CLI inside a temporary cloud container. Changes go to GitHub first, then David pulls them down to his local machine using GitHub Desktop.
+- **Claude.ai (browser)** — makes changes inside a temporary cloud container (`/home/claude/seen-in-seven`) and pushes directly to GitHub via git CLI. After a Claude.ai session, David needs to **pull in GitHub Desktop** to get those changes onto his local machine.
 
-- **Claude Code (Cowork/desktop tool)** — pushes directly from David's local machine via GitHub Desktop. Changes appear locally first, then get pushed to GitHub.
+- **Claude Code (desktop/terminal tool)** — runs on David's local machine and pushes directly to GitHub via git CLI from there. The changes are already local when they go up.
 
-Both end up in the same place — the `main` branch on GitHub. The practical difference: after a Claude.ai session, David needs to **pull in GitHub Desktop** to get the changes locally. After a Claude Code session, the changes are already local and have been pushed up.
+Both tools commit under the same author name (`David Bee <contact@davidbee.me>`), so the git history doesn't distinguish between them. Both push to the `main` branch. Vercel watches `main` and auto-deploys within 30 seconds regardless of which tool pushed.
 
-Vercel watches the GitHub `main` branch regardless of who pushed, and auto-deploys within 30 seconds either way.
+**GitHub Desktop is David's sync tool**, not a push mechanism for Claude. It gives a visual view of what's changed and is how David pulls Claude.ai session changes down to his local machine.
 
 ---
 
