@@ -152,7 +152,7 @@
 <!-- ══ DELETE & START OVER CONFIRMATION ══ -->
 <div id="delete-start-over-confirm" style="display:none;position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;padding:24px;">
   <div style="background:#0a1f1f;border:1px solid var(--border);border-radius:16px;padding:32px 28px;max-width:420px;width:100%;text-align:center;">
-    <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--cream);margin-bottom:12px;">Delete this script and start over?</div>
+    <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--cream);margin-bottom:12px;">Delete this script and re-answer questions?</div>
     <div style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:28px;">Your current draft will be saved to version history. You'll go back to the questions to start a fresh script for this video.</div>
     <div style="display:flex;gap:12px;justify-content:center;">
       <button onclick="document.getElementById('delete-start-over-confirm').style.display='none'" style="background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:10px 24px;color:var(--soft);font-size:15px;cursor:pointer;font-family:'Nunito',sans-serif;">Cancel</button>
@@ -665,17 +665,24 @@
         <p style="font-size:13px;color:var(--muted);margin:0;line-height:1.6;" id="sv-rationale-text"></p>
       </div>
       <div class="sv-toolbar">
-        <div style="display:flex;align-items:center;gap:6px;flex-wrap:nowrap;overflow:hidden;">
+        <!-- Row 1: toggle + copy -->
+        <div class="sv-toolbar-row sv-toolbar-top">
           <div class="sv-view-toggle">
             <button class="sv-toggle-btn active" id="sv-guided-btn" onclick="setScriptView('guided')">Structured</button>
             <button class="sv-toggle-btn" id="sv-clean-btn" onclick="setScriptView('clean')">Edit</button>
           </div>
+          <button class="sv-copy-btn" id="sv-copy-btn" onclick="copyScript(this)">📋 Copy</button>
+        </div>
+        <!-- Row 2: undo, redo, preview -->
+        <div class="sv-toolbar-row">
           <button id="sv-undo" onclick="undoScript()" disabled title="Undo (Ctrl/Cmd+Z)" class="sv-tool-btn">↶ Undo</button>
           <button id="sv-redo" onclick="redoScriptStep()" disabled title="Redo (Ctrl/Cmd+Shift+Z)" class="sv-tool-btn">↷ Redo</button>
-          <button id="sv-fullscreen" onclick="openFullscreenPreview()" title="Fullscreen" class="sv-tool-btn">⛶</button>
-          <span class="sv-redo-link danger" onclick="confirmDeleteAndStartOver()" style="display:none;" id="sv-delete-link">Delete &amp; Start Over</span>
+          <button id="sv-fullscreen" onclick="openFullscreenPreview()" title="Fullscreen preview" class="sv-tool-btn">⛶ Preview</button>
         </div>
-        <button class="sv-copy-btn" id="sv-copy-btn" onclick="copyScript(this)">📋 Copy</button>
+        <!-- Row 3: delete link -->
+        <div class="sv-toolbar-row">
+          <span class="sv-redo-link danger" onclick="confirmDeleteAndStartOver()">Delete &amp; Re-answer Questions</span>
+        </div>
       </div>
       <div id="sv-beats" class="sv-beats-view"></div>
       <div id="sv-clean" style="display:none;">
@@ -754,7 +761,7 @@
   <div class="db-bottom-bar"></div>
 
   <!-- Styled start-over confirmation (replaces browser confirm()) -->
-  <div id="start-over-confirm" style="display:none;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.7);display:none;align-items:center;justify-content:center;padding:24px;">
+  <div id="start-over-confirm" style="display:none;position:fixed;inset:0;z-index:10100;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;padding:24px;">
     <div style="background:#0a1f1f;border:1px solid var(--border);border-radius:16px;padding:32px 28px;max-width:380px;width:100%;text-align:center;">
       <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--cream);margin-bottom:12px;">Start Fresh?</div>
       <div style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:28px;">This will delete all your scripts and reset your onboarding answers. You'll stay logged in and can generate new scripts right away. Your account and email stay intact.</div>

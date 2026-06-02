@@ -997,8 +997,14 @@ body::before {
 
 /* ── SCRIPT TOOLBAR ── */
 .sv-toolbar {
-  display:flex; justify-content:space-between; align-items:center;
-  margin-bottom:18px; flex-wrap:nowrap; gap:8px;
+  display:flex; flex-direction:column; gap:8px;
+  margin-bottom:18px;
+}
+.sv-toolbar-row {
+  display:flex; align-items:center; gap:8px; flex-wrap:nowrap;
+}
+.sv-toolbar-top {
+  justify-content:space-between; align-items:center;
 }
 .sv-view-toggle {
   display:flex;
@@ -1915,10 +1921,3 @@ body::before {
   transform:none;
 }
 
-/* ── TOOLBAR MOBILE ──────────────────────────────────── */
-#sv-delete-link { display:none; }
-@media (min-width:520px) { #sv-delete-link { display:inline !important; } }
-@media (max-width:400px) {
-  .sv-toggle-btn { padding:6px 10px; font-size:11px; }
-  .sv-tool-btn { padding:3px 5px; font-size:10px; }
-}
