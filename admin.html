@@ -227,7 +227,8 @@ async function adminLogout() {
 
 // ── INIT ──────────────────────────────────────────────
 sb.auth.onAuthStateChange(async (event, session) => {
-  if (session && session.user) {
+  if (event === 'SIGNED_IN' || event === 'INITIAL_SESSION') {
+    if (!session || !session.user) return;
     if (session.user.email !== ADMIN_EMAIL) {
       document.getElementById('auth-screen').innerHTML = '<div class="denied">Access denied for ' + session.user.email + '. <button onclick="adminLogout()" style="background:none;border:1px solid var(--border);color:var(--muted);padding:6px 12px;border-radius:6px;cursor:pointer;margin-left:8px;">Log Out</button></div>';
       return;
@@ -245,16 +246,21 @@ async function loadAll() {
   document.getElementById('activity-log').innerHTML = '<div class="loading">Loading...</div>';
 
   const [usersRes, scriptsRes, progressRes, onboardingRes, logsRes] = await Promise.all([
-    sb.from('users').select('*').order('created_at', { ascending: false }),
-    sb.from('scripts').select('id, user_id, video_number, level, version, is_current, content, generated_at').eq('is_current', true),
-    sb.from('video_progress').select('*').eq('status', 'filmed'),
-    sb.from('onboarding').select('*'),
-    sb.from('logs').select('*, users(name, email)').order('created_at', { ascending: false }).limit(200)
+    sb.rpc('admin_get_users'),
+    sb.rpc('admin_get_scripts'),
+    sb.rpc('admin_get_progress'),
+    sb.rpc('admin_get_onboarding'),
+    sb.rpc('admin_get_logs')
   ]);
 
+  if (usersRes.error) {
+    document.getElementById('user-tbody').innerHTML = '<tr><td colspan="9" class="empty" style="color:var(--red)">Error loading users: ' + usersRes.error.message + '</td></tr>';
+    return;
+  }
+
   const users = usersRes.data || [];
-  const scripts = scriptsRes.data || [];
-  const progress = progressRes.data || [];
+  const scripts = (scriptsRes.data || []).filter(s => s.is_current);
+  const progress = (progressRes.data || []).filter(p => p.status === 'filmed');
   const onboarding = onboardingRes.data || [];
   const logs = logsRes.data || [];
 
@@ -425,23 +431,25 @@ async function togglePaid(e, userId) {
   const btn = e.target;
   btn.textContent = '...';
   try {
-    await sb.from('users').update({ is_paid: true }).eq('id', userId);
+    const { error } = await sb.rpc('admin_set_paid', { target_user_id: userId, paid: true });
+    if (error) throw error;
     btn.replaceWith(Object.assign(document.createElement('span'), { className: 'badge badge-green', textContent: 'Paid' }));
   } catch(err) {
     btn.textContent = 'Error';
+    console.error(err);
   }
 }
 
 // ── ACTIVITY LOG ──────────────────────────────────────
 function renderActivityLog(logs, users) {
   const el = document.getElementById('activity-log');
-  if (!logs.length) { el.innerHTML = '<div class="empty">No activity logged yet.</div>'; return; }
+  if (!logs.length) { el.innerHTML = '<div class="empty">No activity logged yet. Events will appear here as users generate scripts, verify email, and film videos.</div>'; return; }
 
-  const userEmailById = {};
-  users.forEach(u => { userEmailById[u.id] = u.email || u.name || u.id.substring(0,8); });
+  const userById = {};
+  users.forEach(u => { userById[u.id] = u.name || u.email || u.id.substring(0,8); });
 
   el.innerHTML = logs.slice(0, 100).map(l => {
-    const userName = (l.users && (l.users.name || l.users.email)) || userEmailById[l.user_id] || (l.user_id ? l.user_id.substring(0,8) : 'anon');
+    const userName = userById[l.user_id] || (l.user_id ? l.user_id.substring(0,8) : 'anon');
     const detail = l.detail ? JSON.stringify(l.detail).replace(/^{|}$/g,'').replace(/"/g,'') : '';
     return `<div class="log-row">
       <span class="log-time">${formatTime(l.created_at)}</span>
