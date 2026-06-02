@@ -13,13 +13,42 @@
 
 ## What this app is
 
-SeenInSeven is the delivery mechanism for the 777 Challenge — a $7 group video challenge where first-time entrepreneurs film 7 videos in sequence, building a complete digital brand from scratch.
+SeenInSeven is the free app reward for joining the 777 Challenge — a group video challenge where first-time entrepreneurs film 7 videos in sequence, building a complete digital brand from scratch.
 
 **The most important thing to understand before touching this codebase:**
 
-The challenge is the product. The app is the bonus. Every design, copy, and UX decision should reinforce that users are part of a group challenge, not using a solo AI tool. The app interviews the user, finds their voice, and produces fully customized scripts for all 7 videos before they ever pick up their phone. The scripts are built on a proprietary Hero's Journey framework that cannot be replicated.
+The challenge is the product. The app is the bonus. Every design, copy, and UX decision should reinforce that users are part of a community of content creators who are using this to connect with an audience and ultimately earn life-changing income, just as others are doing all around the world — not using an AI tool in isolation. The app interviews the user, finds their voice, and produces fully customized scripts for all 7 videos faster and easier than they could possibly expect. The scripts are built on a proprietary Hero's Journey framework that cannot be replicated.
 
-The business model: $7 gets access to the challenge and the app. The upsell at completion is the Exit Escalator Engine (EEE) at $77/month founding rate, which teaches the full 5E framework for ongoing content creation and business building.
+The current business model: $7 gets access to the community challenge, with this ($300+) app as a free bonus. The upsell at completion is the Exit Escalator Engine (EEE) at $77/month founding rate, which teaches the full 5E framework for ongoing content creation and business building.
+
+---
+
+## Where the code lives
+
+**There is no local codebase to hand off.** The GitHub repository is the single source of truth:
+
+`https://github.com/DavidBeeeee/seen-in-seven`
+
+To start working on this, clone the repo:
+
+```bash
+git clone https://github.com/DavidBeeeee/seen-in-seven
+cd seen-in-seven
+```
+
+No build step, no `npm install`, no bundler. Static files served directly. You can run it locally with any static file server:
+
+```bash
+npx serve .
+# or
+python3 -m http.server 8000
+```
+
+Note: the DeepSeek API proxy (`/api/generate.js`) requires the `DEEPSEEK_API_KEY` environment variable which is stored in Vercel. Script generation won't work locally without it, but the auth flow, dashboard, and all navigation can be tested locally.
+
+**Deployment is automatic.** Every push to the `main` branch on GitHub triggers a Vercel deploy in approximately 30 seconds. There is no manual deployment step.
+
+**Claude works out of a temporary container** (`/home/claude/seen-in-seven`) that resets between sessions. All changes are committed and pushed to GitHub before the session ends. If a new Claude session or developer picks this up, they pull from GitHub — the container history is irrelevant.
 
 ---
 
