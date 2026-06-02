@@ -3926,7 +3926,8 @@ function buildPlanTracker() {
 // Resume from dashboard — jump to next unfilmed video
 function resumeFromDashboard() {
   const videos = getVideos();
-  const nextIdx = videos.findIndex((_,i) => !state.videoStatus[i]);
+  // Find first video that hasn't been filmed (includes skipped and pending)
+  const nextIdx = videos.findIndex((_,i) => state.videoStatus[i] !== 'filmed');
   if (nextIdx < 0) { showDashboard(); return; }
   currentVideoIndex = nextIdx;
   buildVideoDots('video-dots');
@@ -3936,6 +3937,11 @@ function resumeFromDashboard() {
   if (state.videos['script_v' + nextIdx]) {
     editingFromPlan = false;
     showScriptView(nextIdx, true);
+  } else if (nextIdx === 0) {
+    // Video 1 uses the V1 preface screen, not screen-7
+    renderPrefaceV1();
+    showScreen('screen-comm-layers');
+    currentIndex = screenOrder.indexOf('screen-comm-layers');
   } else {
     renderVideoPrompts(nextIdx);
     showScreen('screen-7');
