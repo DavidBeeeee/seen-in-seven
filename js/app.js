@@ -1245,13 +1245,13 @@ const level2Videos = [
   },
   {
     title:"The Second Epiphany",
-    note:"Deeper. More personal. More convicted. The biggest myth in your field — not a tip, a genuine paradigm shift earned through doing the work. You're not sharing an opinion, you're sharing what you can't unsee.",
+    note:"Deeper. More personal. More convicted. The biggest myth in your field: not a tip, but a genuine paradigm shift earned through doing the work. You're not sharing an opinion, you're sharing what you can't unsee.",
     prompts:[
-      {label:"What's the biggest myth or most overused piece of advice in your field that you've come to believe is actually wrong — or even harmful?",hint:"The sacred cow. The thing every guru says. The advice that gets repeated so often nobody questions it anymore. You question it. You've seen what happens when people follow it. What is it?",key:"v4p0",ph:"e.g. the biggest myth in my field is that consistency is the answer — post every day, show up every day, grind every day. I've watched people burn out completely following that advice and then blame themselves for failing."},
+      {label:"What's the biggest myth or most overused piece of advice in your field that you've come to believe is actually wrong — or even harmful?",hint:"The sacred cow. The thing every guru says. The advice that gets repeated so often nobody questions it anymore. You question it. You've seen what happens when people follow it. What is it?",key:"v4p0",ph:"e.g. the biggest myth in my field is that consistency is the answer. Post every day, show up every day, grind every day. I've watched people burn out following that advice and then blame themselves for failing."},
       {label:"Tell the story of your own relationship with this belief. Did you used to follow it? Teach it? What happened that made you turn against it?",hint:"The most powerful version of this is when YOU were a believer first. You followed the playbook. You recommended it to others. And then something happened that made you see it was broken. That personal journey from believer to heretic is what makes this credible, not preachy.",key:"v4p1",ph:"e.g. I used to tell my clients this. I believed in it. I built my own routine around it. And then I watched my most dedicated client — someone who followed every rule — completely crater her mental health in pursuit of consistency and end up taking six months off."},
-      {label:"What's the actual truth — the thing that works but nobody talks about because it's less sexy, less simple, or threatens the established way of doing things?",hint:"The real answer. The thing you've figured out through doing the work, not reading about the work. It might be simpler than the myth. It might be harder. But it's TRUE, and you can back it up with your own experience and results.",key:"v4p2",ph:"e.g. depth beats volume every time. One video that changes how someone thinks is worth more than thirty that they half-watch. The people winning aren't the ones posting most — they're the ones saying the most true thing."},
-      {label:"What happens to people who keep following the myth? What have you watched it cost your peers, your clients, or people in your space?",hint:"Be specific. Not 'they fail' — HOW do they fail? What does it look like? The wasted money, the wasted time, the frustration, the quitting.",key:"v4p3",ph:"e.g. they burn out. They create for months, see no results, decide they're not interesting enough, and quit. The myth told them consistency would compound. Nobody told them they also needed to have something worth saying."},
-      {label:"Who specifically needs to hear this — and what would change for them if they actually believed you?",hint:"Picture one specific person. A client, a peer, someone who asked you for advice last week. If THEY got this — really got it — what would shift for them? That's the emotional engine. That's why you're saying this out loud instead of keeping it to yourself.",key:"v4p4",ph:"e.g. this is for the expert who's been posting dutifully for months with nothing to show for it and is starting to think the problem is them. It's not them. They just got sold a system designed for content farms, not humans with something to say."}
+      {label:"What's the actual truth — the thing that works but nobody talks about because it's less sexy, less simple, or threatens the established way of doing things?",hint:"The real answer. The thing you've figured out through doing the work, not reading about the work. It might be simpler than the myth. It might be harder. But it's TRUE, and you can back it up with your own experience and results.",key:"v4p2",ph:"e.g. depth beats volume every time. One video that changes how someone thinks is worth more than thirty that they half-watch. The people winning aren't the ones posting most. They're the ones saying the most true thing."},
+      {label:"What happens to people who keep following the myth? What have you watched it cost your peers, your clients, or people in your space?",hint:"Be specific. Not 'they fail.' HOW do they fail? What does it look like? The wasted money, the wasted time, the frustration, the quitting.",key:"v4p3",ph:"e.g. they burn out. They create for months, see no results, decide they're not interesting enough, and quit. The myth told them consistency would compound. Nobody told them they also needed to have something worth saying."},
+      {label:"Who specifically needs to hear this, and what would change for them if they actually believed you?",hint:"Picture one specific person. A client, a peer, someone who asked you for advice last week. If THEY got this — really got it — what would shift for them? That's the emotional engine. That's why you're saying this out loud instead of keeping it to yourself.",key:"v4p4",ph:"e.g. this is for the expert who's been posting dutifully for months with nothing to show for it and is starting to think the problem is them. It's not them. They just got sold a system designed for content farms, not humans with something to say."}
     ],
     compile:v=>`The biggest myth in my field: ${v.v4p0||'___'}. My own journey with this belief: ${v.v4p1||'___'}. What's actually true: ${v.v4p2||'___'}. What it costs people who keep following the myth: ${v.v4p3||'___'}. Who specifically needs to hear this: ${v.v4p4||'___'}.`
   },
@@ -1262,16 +1262,16 @@ const level2Videos = [
       {label:"What's the internal battle you're fighting about putting yourself out there as someone with real expertise? The thing that makes you hesitate even though you KNOW you're good at this.",hint:"Imposter syndrome. Comparison. The fear of being 'that person' who promotes themselves. The voice that says your experience doesn't count because you don't have the right credentials, the right following, the right whatever. What's YOUR version of that battle?",key:"v5p0",ph:"e.g. my version of this is the credential question — I don't have letters after my name. I learned everything I know from fifteen years of doing this work with real people. But the voice still shows up asking who I think I am."},
       {label:"What's the specific fear? If you imagine fully owning your expertise publicly — being visible, being known for what you know — what's the worst thing that could happen? Say it out loud.",hint:"Sometimes the fear is concrete: 'people from my old life will judge me.' Sometimes it's abstract: 'what if I put myself out there and nobody cares.' Sometimes it's deeper: 'what if I'm not actually as good as I think I am.' Name the actual fear. Not the category — the specific thought.",key:"v5p1",ph:"e.g. the specific fear is that someone I respect will watch one of these videos and think 'she's overreaching.' That one imaginary judgment has cost me more than two years of staying quiet."},
       {label:"What's it been costing you to stay small? Not in money, but in impact, in fulfillment, in the people you could be helping but aren't because you've been hiding.",hint:"You know there are people who need what you know. You've probably met some of them. What happens to them because you haven't stepped into this fully? And what happens to YOU... what are you leaving on the table by playing it safe?",key:"v5p2",ph:"e.g. what it's been costing me is harder to name than money. There are people right now making the exact mistakes I know how to prevent, and I haven't shown up for them because I've been waiting to feel ready."},
-      {label:"Despite all of that — why are you still here? Why haven't you quit? What's the thing that keeps pulling you forward even when the doubt is loud?",hint:"Something is stronger than the fear. A purpose, a person, a vision, a stubborn refusal to let the doubt win. That thing — whatever it is — is the real engine underneath everything you've built so far. Name it.",key:"v5p3",ph:"e.g. I'm still here because I keep meeting people who are stuck in the exact place I was stuck in. And when I talk to them — even for twenty minutes — something shifts. That shift is what I'm here for. The doubt is just the admission fee."}
+      {label:"Despite all of that... why are you still here? Why haven't you quit? What's the thing that keeps pulling you forward even when the doubt is loud?",hint:"Something is stronger than the fear. A purpose, a person, a vision, a stubborn refusal to let the doubt win. That thing — whatever it is — is the real engine underneath everything you've built so far. Name it.",key:"v5p3",ph:"e.g. I'm still here because I keep meeting people who are stuck in the exact place I was stuck in. And when I talk to them — even for twenty minutes — something shifts. That shift is what I'm here for. The doubt is just the admission fee."}
     ],
     compile:v=>`The internal battle I'm fighting: ${v.v5p0||'___'}. The specific fear: ${v.v5p1||'___'}. What staying small has cost me: ${v.v5p2||'___'}. Why I'm still here despite the doubt: ${v.v5p3||'___'}.`
   },
   {
     title:"What I Learned",
-    note:"Seven videos. A complete arc. Close it honestly — what you set out to prove, what you actually learned, what you'd tell someone at the beginning, and one open door for the right person.",
+    note:"Seven videos. A complete arc. Close it honestly: what you set out to prove, what you actually learned, what you'd tell someone at the beginning, and one open door for the right person.",
     prompts:[
       {label:"When you filmed Video 1, what were you trying to prove — to yourself, to your audience, to your industry? Did you prove it?",hint:"Go back to the beginning. You had an intention — maybe it was clear, maybe it was vague. What was it? And now, seven videos later — did the challenge deliver what you expected? Or did it deliver something else entirely?",key:"v6p0",ph:"e.g. I started this wanting to prove I could show up consistently without a perfect strategy in place. Did I prove it? Sort of. What I actually proved was more interesting — that the strategy becomes obvious once you start."},
-      {label:"What did this challenge teach you about your own expertise that you didn't know before? Not about content or filming — about the actual WORK you do and who you do it for.",hint:"Putting your knowledge on camera forces a kind of clarity that nothing else does. You had to simplify. You had to choose what matters. What did that process reveal about what you actually know and what you actually care about?",key:"v6p1",ph:"e.g. this challenge taught me that I know far more than I realize, and I've been gatekeeping it behind a fear of saying something imperfect. The act of saying it imperfectly taught me more about my expertise than a year of preparation would have."},
+      {label:"What did this challenge teach you about your own expertise that you didn't know before? Not about content or filming. About the actual WORK you do and who you do it for.",hint:"Putting your knowledge on camera forces a kind of clarity that nothing else does. You had to simplify. You had to choose what matters. What did that process reveal about what you actually know and what you actually care about?",key:"v6p1",ph:"e.g. this challenge taught me that I know far more than I realize, and I've been gatekeeping it behind a fear of saying something imperfect. The act of saying it imperfectly taught me more about my expertise than a year of preparation would have."},
       {label:"What's the one thing you'd tell someone in your field who's been hiding behind their work instead of putting themselves out there?",hint:"You were that person seven videos ago. Now you're not. What do you know from the inside that they can't see from the outside? Not motivational fluff. The real, practical, emotional truth about what it takes and what it gives back.",key:"v6p2",ph:"e.g. I'd tell them: the fear doesn't go away before you start. It goes away because you started. There's no version of this where you feel ready first."},
       {label:"What do you still need? Be honest. What did this challenge show you about where you need to grow, what support you need, or what's missing from your next chapter?",hint:"You just did something real. You proved something. And in the process, you probably saw clearly what the next level requires. Maybe it's help with systems. Maybe it's community. Maybe it's accountability. Whatever it is — naming it isn't weakness. It's the most strategic thing you can do.",key:"v6p3",ph:"e.g. what I still need is a real framework for turning this visibility into actual conversations with the right people. The videos are working. I don't yet have a clear path from 'someone watches' to 'someone reaches out.'"},
       {label:"If the right person is watching this — the exact person you've been making these videos for — what's your invitation to them? Not a pitch. An open door.",hint:"You've spent seven videos showing this person who you are, what you know, and what you believe. They trust you. So what do you want to say to them? The specific person, the specific problem, the specific next step. That's it. That's enough.",key:"v6p4",ph:"e.g. if you're a consultant or coach who knows you're good at what you do but keeps struggling to get visible in a way that feels authentic — reach out. Not to pitch you anything. Just to talk about what's actually in the way."}
@@ -1412,7 +1412,7 @@ function _buildPromptsContent(container, v, idx) {
            hint:'Who is watching this? Who do you want to show up for?',
            def: q4.village_full || ''},
           {key:'v0p4', label:"Anything else you'd like to add?",
-           hint:'A detail that makes you uniquely you — a background, a personality trait, something surprising. The AI will weave it in.',
+           hint:'A detail that makes you uniquely you: a background, a personality trait, something surprising. The AI will weave it in.',
            def: ''}
         ]
       : [
@@ -1430,7 +1430,7 @@ function _buildPromptsContent(container, v, idx) {
            hint:'Who is watching this? Who do you want to show up for?',
            def: q2.village_full || ''},
           {key:'v0p4', label:"Anything else you'd like to add?",
-           hint:'A detail that makes you uniquely you — a background, a personality trait, something surprising. The AI will weave it in.',
+           hint:'A detail that makes you uniquely you: a background, a personality trait, something surprising. The AI will weave it in.',
            def: ''}
         ];
     // Pre-populate from MVO defaults on first load
@@ -1451,7 +1451,7 @@ function _buildPromptsContent(container, v, idx) {
           <div class="input-group">
             <label class="input-label">${p.label}</label>
             <span class="input-hint" style="font-size:10px;opacity:0.65;">${p.hint}</span>
-            <textarea class="text-input" rows="2" placeholder="e.g. I have a background in healthcare but I've never talked about it on camera — mention that I'm nervous but committed"
+            <textarea class="text-input" rows="2" placeholder="e.g. I have a background in healthcare but I've never talked about it on camera. Mention that I'm nervous but committed"
               oninput="state.videos['${p.key}']=this.value">${sv[p.key] || p.def}</textarea>
           </div>`).join('');
       // Also store the declaration in state so API can use it
@@ -1487,7 +1487,7 @@ function _buildPromptsContent(container, v, idx) {
               <span style="font-size:10px;color:var(--muted);background:rgba(255,255,255,0.06);padding:2px 8px;border-radius:4px;letter-spacing:.06em;">PRE-FILLED</span>
             </div>
             <span class="input-hint" style="font-size:10px;opacity:0.65;">${p.hint}</span>
-            <div style="background:rgba(45,212,191,0.04);border:1px solid rgba(45,212,191,0.15);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--soft);line-height:1.7;margin-top:6px;">${val || '<em style="color:var(--muted);font-style:italic;">Not provided — you can add on the next page.</em>'}</div>
+            <div style="background:rgba(45,212,191,0.04);border:1px solid rgba(45,212,191,0.15);border-radius:10px;padding:12px 14px;font-size:14px;color:var(--soft);line-height:1.7;margin-top:6px;">${val || '<em style="color:var(--muted);font-style:italic;">Not provided. You can add on the next page.</em>'}</div>
           </div>`;
           }
         }).join('');
@@ -1608,7 +1608,7 @@ function _buildPromptsContent(container, v, idx) {
 const LOADING_MESSAGES_BANK = [
   "I used to think the people who posted every day were just more confident than me.",
   "Turns out they weren't. They just had something to say before they hit record.",
-  "The embarrassment you feel before pressing record? That's not weakness — that's evidence you care.",
+  "The embarrassment you feel before pressing record? That's not weakness. That's evidence you care.",
   "The hardest video to make is always the first one. After that, it just feels normal.",
   "Nobody starts with an audience. They start with a decision to show up anyway.",
   "You don't need to be an expert. You need to be honest. Those are not the same thing.",
@@ -1637,7 +1637,7 @@ const LOADING_MESSAGES_BANK = [
   "Your hesitation has a name. It's called caring. And it means you're doing this right.",
   "The people who follow you eventually are looking for someone exactly like you. Right now.",
   "Not every video has to be your best. Every video has to be yours.",
-  "There is a version of this story only you can tell. That's not a cliché — it's literally true.",
+  "There is a version of this story only you can tell. That's not a cliché. It's literally true.",
   "The camera captures what you say. The edit captures what you mean. Your audience hears what they need.",
   "You've talked yourself out of posting a hundred times. This time, let the script do the talking.",
   "Showing up without an audience takes more courage than showing up to one. That's the rep you're building.",
@@ -1761,7 +1761,7 @@ async function showScriptView(idx, skipLoading) {
       window._SIS_log && _SIS_log('gen:built-message', {len: userMessage ? userMessage.length : 0});
       const script = await callDeepSeekAPI(userMessage);
       window._SIS_log && _SIS_log('gen:got-response', {len: script ? script.length : 0});
-      if (!script) throw new Error('No script returned — empty response from API.');
+      if (!script) throw new Error('No script returned. Empty response from API.');
       state.videos[editKey] = script;
       saveProgress();
       trackSession();
@@ -1832,17 +1832,17 @@ const VIDEO_RATIONALE = [
   // V1 — Still in the Ordinary World
   'WHERE WE ARE: The very first step of the Hero\'s Journey — still in the Ordinary World. The hero hasn\'t crossed the threshold yet. This is the moment before everything changes. Your audience sees themselves in you because you haven\'t become anything yet — you\'re just starting, exactly like they want to.',
   // V2 — Crossing the Threshold / Meeting the Mentor
-  'WHERE WE ARE: Crossing the Threshold. The audience said yes to following you in Video 1. Now they need to know who they actually said yes to. This is where the bond forms — not through impressiveness, but through specificity. The more real the details, the more they feel like they know you.',
+  'WHERE WE ARE: Crossing the Threshold. The audience said yes to following you in Video 1. Now they need to know who they actually said yes to. This is where the bond forms, not through impressiveness, but through specificity. The more real the details, the more they feel like they know you.',
   // V3 — The Road of Trials (First Epiphany)
-  'WHERE WE ARE: The Road of Trials — the crown jewel. The hero has entered a new world and faces their first real challenge: the challenge of a stuck belief. This video doesn\'t teach — it restructures how your audience sees something they thought they already understood. This is the one that gets shared.',
+  'WHERE WE ARE: The Road of Trials, the crown jewel. The hero has entered a new world and faces their first real challenge: the challenge of a stuck belief. This video doesn\'t teach — it restructures how your audience sees something they thought they already understood. This is the one that gets shared.',
   // V4 — Approaching the Innermost Cave
-  'WHERE WE ARE: Approaching the Innermost Cave. The hero is deep in the journey now — past the easy part, not yet at the breakthrough. This video is where trust compounds. Showing the real texture of what\'s happening (not a highlight reel) builds more credibility than any success story could.',
+  'WHERE WE ARE: Approaching the Innermost Cave. The hero is deep in the journey now, past the easy part, not yet at the breakthrough. This video is where trust compounds. Showing the real texture of what\'s happening (not a highlight reel) builds more credibility than any success story could.',
   // V5 — The Ordeal
-  'WHERE WE ARE: The Ordeal — the darkest moment before the breakthrough. The hero confronts the central lie or false belief that\'s been holding them back. This is where conviction replaces performance. Your audience needs to see you mean what you say, not just say what sounds good.',
+  'WHERE WE ARE: The Ordeal, the darkest moment before the breakthrough. The hero confronts the central lie or false belief that\'s been holding them back. This is where conviction replaces performance. Your audience needs to see you mean what you say, not just say what sounds good.',
   // V6 — The Inmost Cave (The Confession)
-  'WHERE WE ARE: The Inmost Cave. The deepest point of the journey — where the hero faces the thing they\'ve been avoiding. This is the most vulnerable video in the challenge, and the most powerful. What you say here is what people remember. The unsaid thing, finally said.',
+  'WHERE WE ARE: The Inmost Cave. The deepest point of the journey, where the hero faces the thing they\'ve been avoiding. This is the most vulnerable video in the challenge, and the most powerful. What you say here is what people remember. The unsaid thing, finally said.',
   // V7 — The Road Back / Return with the Elixir
-  'WHERE WE ARE: The Road Back. The Hero returns changed — carrying the Elixir. The circle closes. Your audience has watched a transformation happen in real time, and this video is where they feel it complete. The CTA here isn\'t about the next video — it\'s about the next chapter.',
+  'WHERE WE ARE: The Road Back. The Hero returns changed, carrying the Elixir. The circle closes. Your audience has watched a transformation happen in real time, and this video is where they feel it complete. The CTA here isn\'t about the next video — it\'s about the next chapter.',
 ];
 
 function _doShowScriptView(idx) {
@@ -2498,7 +2498,7 @@ async function handleGateEmailSubmit() {
       setTimeout(() => { gate.style.display = 'none'; }, 2500);
     }
   } catch(e) {
-    if (errEl) { errEl.textContent = 'Something went wrong — try again.'; errEl.style.display = 'block'; }
+    if (errEl) { errEl.textContent = 'Something went wrong. Try again.'; errEl.style.display = 'block'; }
   }
 }
 
@@ -2868,7 +2868,7 @@ async function openVersionModal(idx) {
   inner.style.cssText = 'background:#0a1f1f;border:1px solid var(--border);border-radius:16px;max-width:680px;width:100%;max-height:88vh;overflow-y:auto;padding:28px;';
   inner.innerHTML = `
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-      <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--cream);letter-spacing:0.04em;">Video ${idx + 1} — Version History</div>
+      <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--cream);letter-spacing:0.04em;">Video ${idx + 1}: Version History</div>
       <button onclick="closeVersionModal()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:22px;padding:4px 8px;">✕</button>
     </div>
     <div style="font-size:14px;color:var(--muted);margin-bottom:24px;font-style:italic;">${v.title}</div>
@@ -3059,7 +3059,7 @@ window.addEventListener('beforeunload', (e) => {
   const loadingScreen = document.getElementById('screen-script-loading');
   if (loadingScreen && loadingScreen.classList.contains('active')) {
     e.preventDefault();
-    e.returnValue = 'Your script is still generating — are you sure you want to leave?';
+    e.returnValue = 'Your script is still generating. Are you sure you want to leave?';
   }
 });
 
@@ -3110,7 +3110,7 @@ function openSettings() {
   }
   if (levelDisplay) {
     levelDisplay.textContent = state.level === 1
-      ? 'Level 1 — The Relatable Hero'
+      ? 'Level 1: The Relatable Hero'
       : state.level === 2
         ? 'Level 2 — The Authority Series'
         : 'Not set';
@@ -3231,7 +3231,7 @@ async function confirmLevelChange(newLevel) {
   const levelDisplay = document.getElementById('settings-level-display');
   if (levelDisplay) {
     levelDisplay.textContent = newLevel === 1
-      ? 'Level 1 — The Relatable Hero'
+      ? 'Level 1: The Relatable Hero'
       : 'Level 2 — The Authority Series';
   }
   const levelMsg = document.getElementById('settings-level-msg');
@@ -3661,7 +3661,7 @@ function exportPDF(mode) {
   hidePdfModal();
   const name = state.name || 'Your';
   const videos = getVideos();
-  const levelLabel = state.level === 1 ? 'Level 1 — The Relatable Hero' : 'Level 2 — The Authority Series';
+  const levelLabel = state.level === 1 ? 'Level 1: The Relatable Hero' : 'Level 2 — The Authority Series';
 
   let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
   <title>${name}'s Scripts — SeenInSeven</title>
