@@ -2670,6 +2670,8 @@ function _updateLockUI(idx) {
     if (boxEl) boxEl.textContent = '☐';
     if (labelEl) { labelEl.textContent = 'I Filmed It'; labelEl.style.color = ''; }
   }
+  // Remove any previously injected next-video button
+  const existing = document.getElementById('btn-next-video');
   if (existing) existing.remove();
 
   if (locked) {
@@ -2706,15 +2708,11 @@ function _updateLockUI(idx) {
         };
       } else if (isLastVideo) {
         nextBtn.textContent = '🎉 See Your Full Dashboard →';
-        nextBtn.onclick = () => afterFilmed(idx, filmed ? null : undefined);
-        nextBtn.onclick = () => {
-          showDashboard();
-        };
+        nextBtn.onclick = () => { showDashboard(); };
       } else {
         nextBtn.textContent = 'Next Video →';
-        nextBtn.onclick = () => afterFilmed(idx, filmed ? null : undefined);
         nextBtn.onclick = () => {
-          // Advance to next video intro
+          // Advance to next video
           currentPreviewVideoNum = idx + 2;
           const nextIdx = idx + 1;
           currentVideoIndex = nextIdx;
@@ -3269,7 +3267,10 @@ function _doRerunOnboarding() {
 document.addEventListener('click', function(e) {
   const panel = document.getElementById('settings-panel');
   if (panel && panel.classList.contains('open')) {
-    if (!panel.contains(e.target) && !e.target.closest('.db-settings-btn')) {
+    // Don't close if click was on the settings toggle button itself (any variant)
+    const isToggleBtn = e.target.closest('.db-settings-btn') ||
+                        e.target.closest('.header-nav-btn');
+    if (!panel.contains(e.target) && !isToggleBtn) {
       closeSettings();
     }
   }
