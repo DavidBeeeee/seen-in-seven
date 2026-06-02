@@ -1574,10 +1574,19 @@ function _buildPromptsContent(container, v, idx) {
     backBtn.style.marginTop = '10px';
     backBtn.textContent = '← Previous Video';
     backBtn.onclick = () => {
-      showScreen('screen-7');
-      currentIndex = screenOrder.indexOf('screen-7');
-      renderVideoPrompts(idx - 1);
-      window.scrollTo(0, 0);
+      const prevIdx = idx - 1;
+      currentVideoIndex = prevIdx;
+      if (state.videos['script_v' + prevIdx]) {
+        // Previous video has a script — go to the script view
+        editingFromPlan = false;
+        showScriptView(prevIdx, true);
+      } else {
+        // No script yet — go to that video's prompts
+        showScreen('screen-7');
+        currentIndex = screenOrder.indexOf('screen-7');
+        renderVideoPrompts(prevIdx);
+        window.scrollTo(0, 0);
+      }
     };
     btnWrap.appendChild(backBtn);
   }
