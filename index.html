@@ -665,7 +665,7 @@
         <p style="font-size:13px;color:var(--muted);margin:0;line-height:1.6;" id="sv-rationale-text"></p>
       </div>
       <div class="sv-toolbar">
-        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+        <div style="display:flex;align-items:center;gap:6px;flex-wrap:nowrap;overflow:hidden;">
           <div class="sv-view-toggle">
             <button class="sv-toggle-btn active" id="sv-guided-btn" onclick="setScriptView('guided')">Structured</button>
             <button class="sv-toggle-btn" id="sv-clean-btn" onclick="setScriptView('clean')">Edit</button>
@@ -673,14 +673,14 @@
           <button id="sv-undo" onclick="undoScript()" disabled title="Undo (Ctrl/Cmd+Z)" class="sv-tool-btn">↶ Undo</button>
           <button id="sv-redo" onclick="redoScriptStep()" disabled title="Redo (Ctrl/Cmd+Shift+Z)" class="sv-tool-btn">↷ Redo</button>
           <button id="sv-fullscreen" onclick="openFullscreenPreview()" title="Fullscreen" class="sv-tool-btn">⛶</button>
-          <span class="sv-redo-link danger" onclick="confirmDeleteAndStartOver()">Delete &amp; Start Over</span>
+          <span class="sv-redo-link danger" onclick="confirmDeleteAndStartOver()" style="display:none;" id="sv-delete-link">Delete &amp; Start Over</span>
         </div>
         <button class="sv-copy-btn" id="sv-copy-btn" onclick="copyScript(this)">📋 Copy</button>
       </div>
       <div id="sv-beats" class="sv-beats-view"></div>
       <div id="sv-clean" style="display:none;">
         <textarea class="script-editor" id="script-editor" rows="8" placeholder="Your script will appear here..."></textarea>
-        <p class="sv-hint">✏️ Edit freely. Changes save automatically and are undoable.</p>
+        <p class="sv-hint">✏️ Edit freely. Changes save automatically — tap <em>Undo</em> to fix any mistake.</p>
       </div>
       <!-- Saved indicator — bottom right of card -->
       <div id="saved-indicator" style="text-align:right;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--green);opacity:0;transition:opacity 0.3s ease;text-transform:uppercase;padding:6px 0 0;">✓ Saved</div>

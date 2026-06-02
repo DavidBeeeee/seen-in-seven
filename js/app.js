@@ -2902,20 +2902,23 @@ function handleFilmedCheckbox(checkbox) {
     if (boxEl) boxEl.textContent = '☑';
     if (labelEl) { labelEl.textContent = 'Filmed ✓'; labelEl.style.color = 'var(--green)'; }
     launchConfetti();
-    // Update lock card to reflect filmed state
-    _updateLockUI(idx);
-    // Update dashboard card if it exists
+    // Auto-lock if not already locked — filming implies commitment
+    if (!state.videos['locked_v' + idx]) {
+      lockInScript();
+    } else {
+      _updateLockUI(idx);
+    }
     const card = document.getElementById('dbcard-' + idx);
     if (card) {
       card.classList.remove('card-ready', 'card-pending');
       card.classList.add('card-filmed');
     }
   } else {
-    // Un-mark filmed (in case they tap again by accident)
     delete state.videoStatus[idx];
     saveProgress();
     if (boxEl) boxEl.textContent = '☐';
     if (labelEl) { labelEl.textContent = 'I Filmed It'; labelEl.style.color = ''; }
+    _updateLockUI(idx);
   }
 }
 
@@ -2954,10 +2957,11 @@ function _updateLockUI(idx) {
   const subEl   = document.getElementById('lock-card-sub');
   const iconEl  = document.querySelector('.filmed-card .filmed-icon');
 
-  // Restore filmed checkbox state
+  // Restore filmed checkbox state + resize based on lock state
   const checkbox = document.getElementById('filmed-checkbox');
   const boxEl = document.getElementById('filmed-checkbox-box');
   const labelEl = document.getElementById('btn-filmed-main');
+  const checkRow = document.getElementById('filmed-checkbox-row');
   if (filmed) {
     if (checkbox) checkbox.checked = true;
     if (boxEl) boxEl.textContent = '☑';
@@ -2967,6 +2971,21 @@ function _updateLockUI(idx) {
     if (boxEl) boxEl.textContent = '☐';
     if (labelEl) { labelEl.textContent = 'I Filmed It'; labelEl.style.color = ''; }
   }
+
+  // When locked: filmed row becomes a big prominent button-like element
+  // When unlocked: it shrinks back to the subtle checkbox row
+  if (checkRow) {
+    if (locked) {
+      checkRow.style.cssText = 'background:rgba(50,184,184,0.08);border:1.5px solid rgba(50,184,184,0.25);border-radius:10px;padding:14px 18px;margin-top:12px;justify-content:center;gap:14px;';
+      if (boxEl) boxEl.style.fontSize = '26px';
+      if (labelEl) labelEl.style.cssText = 'font-size:18px;font-weight:700;font-family:"Oswald",sans-serif;letter-spacing:0.05em;' + (filmed ? 'color:var(--green)' : 'color:var(--cream)');
+    } else {
+      checkRow.style.cssText = '';
+      if (boxEl) boxEl.style.fontSize = '';
+      if (labelEl) labelEl.style.cssText = filmed ? 'color:var(--green)' : '';
+    }
+  }
+
   // Remove any previously injected next-video button
   const existing = document.getElementById('btn-next-video');
   if (existing) existing.remove();
