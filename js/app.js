@@ -64,7 +64,7 @@
     // Listening badge
     const badge = document.createElement('span');
     badge.className = 'voice-listening-badge';
-    badge.textContent = 'Listening...';
+    badge.innerHTML = '<em>Listening</em> &nbsp;<strong>(tap to stop)</strong>';
     badge.style.display = 'none';
 
     wrap.appendChild(badge);
@@ -99,7 +99,7 @@
     activeBadge = badge;
 
     btn.classList.add('listening');
-    btn.innerHTML = '🔴';
+    btn.innerHTML = '🟢';
     badge.style.display = 'block';
 
     let finalTranscript = '';

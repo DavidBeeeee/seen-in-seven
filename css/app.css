@@ -1867,12 +1867,12 @@ body::before {
 }
 .voice-btn:hover { color:var(--teal); }
 .voice-btn.listening {
-  color:#ef4444;
+  color:var(--green);
   animation:micPulse 1s ease-in-out infinite;
 }
 @keyframes micPulse {
   0%,100% { opacity:1; transform:translateY(-50%) scale(1); }
-  50%      { opacity:0.6; transform:translateY(-50%) scale(1.2); }
+  50%      { opacity:0.85; transform:translateY(-50%) scale(1.25); }
 }
 .voice-input-wrap.is-textarea .voice-btn.listening {
   animation:micPulseStatic 1s ease-in-out infinite;
@@ -1886,15 +1886,16 @@ body::before {
   right:42px;
   top:50%;
   transform:translateY(-50%);
-  font-family:'Space Mono',monospace;
-  font-size:9px;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  color:#ef4444;
+  font-family:'Nunito',sans-serif;
+  font-size:11px;
+  letter-spacing:0.02em;
+  color:var(--green);
   pointer-events:none;
   white-space:nowrap;
   z-index:2;
 }
+.voice-listening-badge em { font-style:italic; font-weight:600; }
+.voice-listening-badge strong { font-weight:800; color:var(--soft); }
 .voice-input-wrap.is-textarea .voice-listening-badge {
   top:14px;
   transform:none;
