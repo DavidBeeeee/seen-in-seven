@@ -2040,10 +2040,12 @@ function _doShowScriptViewInner(idx) {
       skipBtn.onclick = _backToDashboard;
     }
   } else {
-    filmedBtn.textContent = idx < 6 ? '✅ I Filmed It! → Next Video' : '✅ I Filmed It! → See My Full Plan';
-    filmedBtn.onclick = () => afterFilmed(idx, 'filmed');
-    skipBtn.textContent = idx < 6 ? 'Skip for now → Next Video' : 'Skip → See My Full Plan';
-    skipBtn.onclick = () => afterFilmed(idx, 'skipped');
+    // Normal flow — filmed is handled by the checkbox, skip needs to be wired
+    if (skipBtn) {
+      skipBtn.style.display = 'block';
+      skipBtn.textContent = idx < 6 ? 'Skip for now → Next Video' : 'Skip → See My Full Plan';
+      skipBtn.onclick = () => afterFilmed(idx, 'skipped');
+    }
   }
 
   // Video 1 first-time reveal: show Epiphany Bridge loading animation
@@ -2432,16 +2434,16 @@ function _addV1Tracker() {
 function goBackToPrompts() {
   const idx = currentVideoIndex;
   if (idx > 0) {
-    // Go to the previous video's script view, not the prompts screen
+    // Go to the previous video's script view (normal back-navigation, not dashboard editing)
     const prevIdx = idx - 1;
     currentVideoIndex = prevIdx;
-    editingFromPlan = true; // treat as editing so footer shows correct buttons
+    editingFromPlan = false; // normal flow — keep Next Video footer, not dashboard footer
     showScriptView(prevIdx, true);
   } else {
-    // Video 0 — go back to the prompts/comm-layers screen
-    showScreen('screen-7');
-    currentIndex = screenOrder.indexOf('screen-7');
-    renderVideoPrompts(idx);
+    // Video 1 — go back to the V1 preface (comm-layers), not the prompts screen
+    renderPrefaceV1();
+    showScreen('screen-comm-layers');
+    currentIndex = screenOrder.indexOf('screen-comm-layers');
     window.scrollTo(0, 0);
   }
 }
@@ -4279,15 +4281,21 @@ function continueSession() {
       showScreen('plan-screen');
       currentIndex = screenOrder.indexOf('plan-screen');
     } else {
-      // Resume at the first incomplete video's prompts screen
+      // Resume at the first incomplete video
       currentVideoIndex = resumeIdx;
       buildVideoDots('video-dots');
       buildVideoDots('script-dots');
       buildVideoDots('cl-dots');
       buildVideoDots('vi-dots');
-      renderVideoPrompts(currentVideoIndex);
-      showScreen('screen-7');
-      currentIndex = screenOrder.indexOf('screen-7');
+      // If a script already exists for this video, go to the script view
+      if (state.videos['script_v' + resumeIdx]) {
+        editingFromPlan = false;
+        showScriptView(resumeIdx, true);
+      } else {
+        renderVideoPrompts(currentVideoIndex);
+        showScreen('screen-7');
+        currentIndex = screenOrder.indexOf('screen-7');
+      }
     }
     window.scrollTo(0, 0);
   } else {
@@ -4296,11 +4304,11 @@ function continueSession() {
 }
 
 function dismissBanner() {
+  // Just hide the banner and let them start fresh locally
+  // Don't sign out — they may want to keep their account
   localStorage.removeItem(SAVE_KEY);
-  // Sign out of Supabase so auth doesn't restore old session
-  if (typeof _sb !== 'undefined') {
-    _sb.auth.signOut().catch(() => {});
-  }
+  Object.keys(state).forEach(k => state[k] = k === 'videos' || k === 'videoStatus' ? {} : null);
+  state.name = ''; state.minigoalText = ''; state.topicFreewrite = '';
   document.getElementById('returning-banner').classList.remove('visible');
 }
 
