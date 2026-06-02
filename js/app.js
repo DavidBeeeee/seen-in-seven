@@ -1766,8 +1766,8 @@ async function showScriptView(idx, skipLoading) {
       saveProgress();
       trackSession();
       queueScriptSave(idx + 1, state.level || 1, script);
-      // Push undo snapshot for this generation
       if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(idx);
+      if (typeof logEvent === 'function') logEvent('script_generated', {video_number: idx + 1, level: state.level || 1});
       _doShowScriptView(idx);
       // Show verification gate after first script, persistent toast for subsequent
       if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
@@ -2375,7 +2375,7 @@ function markFilmedFromPlan(idx) {
   state.videoStatus[idx] = 'filmed';
   saveProgress();
   queueProgressSave(idx, state.level || 1, 'filmed');
-  // Fire confetti celebration
+  if (typeof logEvent === 'function') logEvent('video_filmed', {video_number: idx + 1, level: state.level || 1, source: 'dashboard'});
   launchConfetti();
   // Update card immediately so it feels instant
   const card = document.getElementById('dbcard-' + idx);
@@ -2616,10 +2616,10 @@ function handleFilmedCheckbox(checkbox) {
   const labelEl = document.getElementById('btn-filmed-main');
 
   if (checkbox.checked) {
-    // Mark filmed
     state.videoStatus[idx] = 'filmed';
     saveProgress();
     queueProgressSave(idx, state.level || 1, 'filmed');
+    if (typeof logEvent === 'function') logEvent('video_filmed', {video_number: idx + 1, level: state.level || 1});
     if (boxEl) boxEl.textContent = '☑';
     if (labelEl) { labelEl.textContent = 'Filmed ✓'; labelEl.style.color = 'var(--green)'; }
     launchConfetti();

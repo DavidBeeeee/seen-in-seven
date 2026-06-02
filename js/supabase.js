@@ -81,6 +81,7 @@ _sb.auth.onAuthStateChange((event, session) => {
           _mergeLocalStorage();
           await _flushSaveQueue();
           window._SIS_log && _SIS_log('auth:after-restore', {level: state.level, name: state.name});
+          if (typeof logEvent === 'function') logEvent('auth_completed', {level: state.level});
           if (typeof _dashboardShown !== 'undefined') _dashboardShown = false;
           if (state.level && typeof showDashboard === 'function') {
             showDashboard();
@@ -344,12 +345,28 @@ async function restoreScriptVersion(scriptId, videoNumber, level, content) {
 async function deleteScriptVersion(scriptId) {
   if (!_currentUser) return false;
   try {
-    // Never delete the current version — only non-current ones
     const { data } = await _sb.from('scripts').select('is_current').eq('id', scriptId).single();
-    if (data && data.is_current) return false; // refuse to delete current version
+    if (data && data.is_current) return false;
     await _sb.from('scripts').delete().eq('id', scriptId).eq('user_id', _currentUser.id);
     return true;
   } catch(e) { return false; }
+}
+
+// ── EVENT LOGGING ─────────────────────────────────────
+// Call this at key moments to write a row to the logs table.
+// Events: 'script_generated', 'script_failed', 'auth_completed',
+//         'video_filmed', 'magic_link_sent', 'error'
+async function logEvent(eventType, detail = {}) {
+  if (!_currentUser) return;
+  try {
+    await _sb.from('logs').insert({
+      user_id:    _currentUser.id,
+      event_type: eventType,
+      detail:     detail
+    });
+  } catch(e) {
+    // Logging should never break the app — fail silently
+  }
 }
 
 // ── INIT: CHECK FOR EXISTING SESSION ─────────────────
