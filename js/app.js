@@ -2712,18 +2712,19 @@ function _updateLockUI(idx) {
       } else {
         nextBtn.textContent = 'Next Video →';
         nextBtn.onclick = () => {
-          // Advance to next video
           currentPreviewVideoNum = idx + 2;
-          const nextIdx = idx + 1;
-          currentVideoIndex = nextIdx;
+          currentVideoIndex = idx + 1;
           const videos2 = getVideos();
-          if (videos2[nextIdx] && videos2[nextIdx].beats) {
+          const nextVid = videos2[idx + 1];
+          if (nextVid && nextVid.beats) {
+            // V1-style intro (has beats) — go to comm-layers preface
             renderPrefaceV1();
             showScreen('screen-comm-layers');
             currentIndex = screenOrder.indexOf('screen-comm-layers');
           } else {
-            renderVideoIntro(nextIdx);
-            showScreen('screen-7');
+            // Standard video intro
+            renderVideoIntro(idx + 2); // 1-based: next video number = idx + 2
+            showScreen('screen-video-intro');
             currentIndex = screenOrder.indexOf('screen-7');
           }
           window.scrollTo(0, 0);
