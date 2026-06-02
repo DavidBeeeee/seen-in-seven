@@ -3496,7 +3496,7 @@ function buildPlan(){
         Start Level 2 — Skip the Setup →
       </button>` : `
       You have ${totalVideos - filmedCount} video${totalVideos - filmedCount !== 1 ? 's' : ''} left to film.
-      Your scripts are ready — the camera is the only thing between you and done.<br><br>
+      Your scripts are ready. The camera is the only thing between you and done.<br><br>
       <button onclick="resumeFromDashboard()" style="background:var(--teal);color:#0f172a;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:0.1em;padding:13px 34px;border:none;border-radius:8px;cursor:pointer;margin-top:8px;">
         Resume Challenge →
       </button>`;
