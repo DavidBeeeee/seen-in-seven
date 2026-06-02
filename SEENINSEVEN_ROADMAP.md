@@ -158,11 +158,55 @@ Phase 1 does not include:
 
 ---
 
-## Phase 2: Full User Experience Audit
+## Phase 2: Onboarding Update
 
-**Goal:** Once admin visibility is strong, make the full user journey pristine.
+**Goal:** Make the onboarding the strongest possible foundation for script personalization, mission commitment, and ongoing script context.
 
-This phase starts after the admin command center is useful enough to observe real test users. The purpose is to make sure the user-facing app feels clear, warm, and safe for the target audience before bigger systems are connected.
+This phase will affect the script generation output, the admin panel data structure, and the dashboard mission statement. It needs to be built carefully so nothing in the existing flow breaks. `prompts/blueprints.js` should not be modified — changes to how data is collected and passed to the AI must go through `buildAPIUserMessage()` in `app.js`.
+
+### Add "Say My Own Thing" to Every Choice Screen
+
+Every question that currently uses fixed-option choice cards needs a free-text fallback. Currently screens 2a, 2b, 3, 4 (goal grid), and 5 (mini-goal grid) all use `autoAdvance()` tap-to-select cards with no custom option. Users who don't see themselves in the options either pick the closest wrong answer or feel unseen.
+
+Each screen needs a final option that says something like "Something else — let me say it in my own words" which reveals a short text input. The typed answer saves to state and flows into the script generation the same way a preset answer would. The admin panel needs to display custom answers wherever it currently shows preset answer labels.
+
+This is a significant change — it touches every onboarding screen, the state object, `saveOnboardingToDb`, and how the admin panel renders onboarding data. Plan for it to break things if done carelessly.
+
+### Mission Statement Overhaul
+
+The current mission statement on the dashboard is generated from a simple template combining the user's goal and mini-goal answers. It exists but doesn't land with the emotional weight it should. The commit moment (currently the name screen and the "I'm In" button on screen-6) needs to be redesigned so the user feels like they're making a real declaration, not filling out a form.
+
+This is intentionally left open for David Bee to describe the exact experience he wants. The technical work will follow once the vision is clear. The existing `miniGoalMap` and `missionLine` logic in `buildPlan()` is the starting point.
+
+Key questions David Bee needs to answer before this is built:
+- What does the ideal commitment moment look, feel, and say?
+- Should the mission statement be editable by the user after the fact?
+- Should it appear anywhere outside the dashboard (script view, completion screen)?
+
+### Knowledge Base / Context Documents
+
+Users should be able to upload or paste in supporting documents that give the AI richer context for their scripts. Examples: a master business description, a personal style guide, writing samples, a bio, an offer overview, a list of client results.
+
+This is a meaningful addition to the script personalization system. The uploaded context should be stored per user in Supabase, surfaced in the prompts screen so users know it's active, passed into `buildAPIUserMessage()` as additional context, and visible in the admin panel so David Bee can see what context each user brought in.
+
+Technical considerations:
+- Text-only for now. No PDF parsing, no file uploads. Paste-in textarea only.
+- Store in a new `user_context` table or as a JSONB field on the users row.
+- Cap at a reasonable character limit (around 2,000 characters) so it doesn't blow up the API prompt length.
+- The `buildAPIUserMessage()` function will need a new section that appends available context when present.
+
+### Out Of Scope For Phase 2
+
+- Changes to `prompts/blueprints.js`.
+- Redesigning the video prompt questions (screen-7). That is covered in Phase 3.
+- Paid access enforcement.
+- Email automation.
+
+---
+
+## Phase 3: Full User Experience Audit
+
+**Goal:** Once admin visibility is solid and onboarding has been updated, walk the entire user journey end to end and make sure every step feels clear, warm, and safe for a non-technical 45-60 year old who is camera shy. Not a feature sprint — a refinement pass.
 
 ### Audit Scope
 
@@ -172,7 +216,7 @@ Review the full journey:
 - Returning user detection.
 - Magic-link auth.
 - Skipping auth.
-- Onboarding choices.
+- Onboarding choices including new free-text options.
 - Name capture.
 - Recap.
 - Topic freewrite.
@@ -211,13 +255,13 @@ The experience should make a non-technical, camera-shy user feel:
 - They are not being punished for moving slowly.
 - The app is helping them complete the challenge, not distracting them from it.
 
-### Out Of Scope For Phase 2
+### Out Of Scope For Phase 3
 
-Phase 2 should not become a new feature sprint. It is an audit and refinement phase. Do not add paid gating, email automation, broad gamification, or superapp features here.
+Phase 3 should not become a new feature sprint. It is an audit and refinement phase. Do not add paid gating, email automation, broad gamification, or superapp features here.
 
 ---
 
-## Phase 3: Gamification And Completion Experience
+## Phase 4: Gamification And Completion Experience
 
 **Goal:** Reserved for a later experience layer defined by David Bee.
 
@@ -237,11 +281,32 @@ This phase exists as a placeholder so future work has a clear slot without prema
 
 ---
 
-## Phase 4: Paid Access And Checkout Bridge
+## Phase 5: Script Output Update
 
-**Goal:** Add revenue protection after the test experience is proven.
+**Goal:** Improve script quality, personalization depth, and output options before the paid access gate goes live.
 
-This phase should wait until the first test users have helped validate the app experience and David Bee is ready to route real buyers into the system.
+This phase is intentionally placed after the user experience audit and before paid access enforcement, so that paying users receive the best possible version of the scripts from day one.
+
+David Bee will define the specifics of this phase. The following are known areas of interest:
+
+- Script logic improvements. This is a separate project with its own scope. It will involve working with `buildAPIUserMessage()` and potentially `prompts/blueprints.js` under David Bee's direct instruction. Do not attempt this without an explicit brief.
+- Improving how knowledge base context (added in Phase 2) flows into the script output.
+- Improving how free-text onboarding answers (added in Phase 2) influence script personalization compared to preset answers.
+- Output format options. Whether users can choose different script formats, lengths, or styles is TBD.
+
+### Out Of Scope For Phase 5
+
+- Changes to `prompts/blueprints.js` without explicit instruction from David Bee.
+- New video series or challenge types.
+- Paid gating (that is Phase 6).
+
+---
+
+## Phase 6: Paid Access And Checkout Bridge
+
+**Goal:** Add revenue protection after the test experience is proven and script output is strong.
+
+This phase should wait until the first test users have helped validate the app experience, the onboarding is solid, and David Bee is satisfied with script quality.
 
 ### Intended Direction
 
@@ -259,15 +324,15 @@ When paid access is eventually enforced, it should be careful and humane. A real
 
 The likely gate is not the entire app. The likely gate is access to later videos after the first meaningful experience, but the exact gate should be decided when this phase begins.
 
-### Out Of Scope Until Phase 4
+### Out Of Scope Until Phase 6
 
 Do not implement paid access enforcement during the test period. The current assumption remains: anyone with the link can use the app.
 
 ---
 
-## Phase 5: Email And Follow-Up System
+## Phase 7: Email And Follow-Up System
 
-**Goal:** Add nudges only after the product experience is clean.
+**Goal:** Add nudges only after the product experience is clean and paid access is working.
 
 This phase was intentionally moved later. David Bee does not want test users receiving rough or premature automated emails.
 
@@ -278,6 +343,7 @@ Do not add automated lifecycle emails until:
 - Admin visibility is strong.
 - The user experience has been audited.
 - The core flow feels pristine.
+- Script output quality is high.
 - Email copy and timing can be created with care.
 - A real transactional email provider is selected.
 
@@ -296,7 +362,7 @@ Supabase built-in email should not be treated as the long-term lifecycle email s
 
 ---
 
-## Phase 6: Long-Term Superapp Foundation
+## Phase 8: Long-Term Superapp Foundation
 
 **Goal:** Keep the larger Colorado Mastermind ecosystem in view without building it prematurely.
 

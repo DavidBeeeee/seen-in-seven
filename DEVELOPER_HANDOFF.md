@@ -229,13 +229,15 @@ The full phased roadmap lives in `SEENINSEVEN_ROADMAP.md` in this repo. **That d
 
 The phases are strictly sequential — do not skip ahead. Phase 1 must be complete before Phase 2 begins, and so on. The roadmap document explains why each phase is ordered the way it is.
 
-Quick summary of phases:
+Quick summary of phases in order — do not skip ahead:
 1. **Admin Command Center and Stability** — current priority
-2. **Full User Experience Audit** — after admin visibility is solid
-3. **Gamification and Completion Experience** — placeholder, defined by David Bee when ready
-4. **Paid Access and Checkout Bridge** — after the test experience is proven
-5. **Email and Follow-Up System** — after the product experience is clean
-6. **Long-Term Superapp Foundation** — future direction, not current scope
+2. **Onboarding Update** — free-text options on all choice screens, mission statement overhaul, knowledge base context documents
+3. **Full User Experience Audit** — end-to-end refinement pass, not a feature sprint
+4. **Gamification and Completion Experience** — placeholder, defined by David Bee when ready
+5. **Script Output Update** — improve personalization depth and output quality before the paywall goes live
+6. **Paid Access and Checkout Bridge** — Systeme.io webhook, is_paid enforcement
+7. **Email and Follow-Up System** — automated nudges, requires proper transactional email provider
+8. **Long-Term Superapp Foundation** — future direction, not current scope
 
 ---
 
