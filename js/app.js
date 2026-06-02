@@ -2965,25 +2965,18 @@ function _updateLockUI(idx) {
   if (filmed) {
     if (checkbox) checkbox.checked = true;
     if (boxEl) boxEl.textContent = '☑';
-    if (labelEl) { labelEl.textContent = 'Filmed ✓'; labelEl.style.color = 'var(--green)'; }
+    if (labelEl) labelEl.textContent = 'Filmed ✓';
   } else {
     if (checkbox) checkbox.checked = false;
     if (boxEl) boxEl.textContent = '☐';
-    if (labelEl) { labelEl.textContent = 'I Filmed It'; labelEl.style.color = ''; }
+    if (labelEl) labelEl.textContent = 'I Filmed It';
   }
 
   // When locked: filmed row becomes a big prominent button-like element
   // When unlocked: it shrinks back to the subtle checkbox row
   if (checkRow) {
-    if (locked) {
-      checkRow.style.cssText = 'background:rgba(50,184,184,0.08);border:1.5px solid rgba(50,184,184,0.25);border-radius:10px;padding:14px 18px;margin-top:12px;justify-content:center;gap:14px;';
-      if (boxEl) boxEl.style.fontSize = '26px';
-      if (labelEl) labelEl.style.cssText = 'font-size:18px;font-weight:700;font-family:"Oswald",sans-serif;letter-spacing:0.05em;' + (filmed ? 'color:var(--green)' : 'color:var(--cream)');
-    } else {
-      checkRow.style.cssText = '';
-      if (boxEl) boxEl.style.fontSize = '';
-      if (labelEl) labelEl.style.cssText = filmed ? 'color:var(--green)' : '';
-    }
+    checkRow.classList.toggle('locked', locked);
+    checkRow.classList.toggle('is-filmed', filmed);
   }
 
   // Remove any previously injected next-video button
@@ -3010,7 +3003,7 @@ function _updateLockUI(idx) {
     if (filmedRow && filmedRow.parentNode) {
       const nextBtn = document.createElement('button');
       nextBtn.id = 'btn-next-video';
-      nextBtn.className = 'btn-filmed';
+      nextBtn.className = 'btn-filmed btn-next-video';
       nextBtn.style.marginTop = '12px';
       if (editingFromPlan) {
         nextBtn.textContent = '← Back to Dashboard';
