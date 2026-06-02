@@ -117,8 +117,19 @@ function _mergeLocalStorage() {
     if (d.mvoQ3 && !state.mvoQ3) state.mvoQ3 = d.mvoQ3;
     if (d.mvoQ4 && !state.mvoQ4) state.mvoQ4 = d.mvoQ4;
     if (d.topicFreewrite && !state.topicFreewrite) state.topicFreewrite = d.topicFreewrite;
-    if (d.videos && Object.keys(state.videos || {}).length === 0) state.videos = d.videos;
+    // Merge videos additively — DB scripts take priority,
+    // but localStorage-only keys (locked_v*, _undo_v*, v0p*, etc.) are preserved
+    if (d.videos) {
+      if (!state.videos) state.videos = {};
+      Object.keys(d.videos).forEach(k => {
+        // Don't overwrite DB-sourced scripts, but keep all other video state
+        if (k.startsWith('script_v') && state.videos[k]) return;
+        state.videos[k] = d.videos[k];
+      });
+    }
     if (d.videoStatus && Object.keys(state.videoStatus || {}).length === 0) state.videoStatus = d.videoStatus;
+    if (d.l1Videos) state.l1Videos = d.l1Videos;
+    if (d.l1VideoStatus) state.l1VideoStatus = d.l1VideoStatus;
   } catch(e) {}
 }
 

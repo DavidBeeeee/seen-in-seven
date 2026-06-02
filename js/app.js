@@ -810,14 +810,14 @@ function populateRecap() {
     if (headingEl) headingEl.innerHTML = name !== 'You'
       ? `${name}, You're<br>The Hero of This Story.`
       : `You're The Hero<br>of This Story.`;
-    if (nameEl) nameEl.textContent = 'LEVEL 1 — THE PERSON SERIES';
+    if (nameEl) nameEl.textContent = 'LEVEL 1 — THE RELATABLE HERO';
     if (msgEl) msgEl.innerHTML = `Your 7 videos are about <strong style="color:var(--cream)">you as a person</strong> — who you are, what you believe, and what you've lived through. No business required. No expertise needed. Just your voice, your story, and the willingness to show up.`;
   } else {
     if (emojiEl) emojiEl.textContent = '🔥';
     if (headingEl) headingEl.innerHTML = name !== 'You'
       ? `${name}, You're<br>The Expert in the Room.`
       : `You're The Expert<br>in the Room.`;
-    if (nameEl) nameEl.textContent = 'LEVEL 2 — THE EXPERT SERIES';
+    if (nameEl) nameEl.textContent = 'LEVEL 2 — THE AUTHORITY SERIES';
     if (msgEl) msgEl.innerHTML = `Your 7 videos position you as the <strong style="color:var(--cream)">go-to person in your space</strong> — your offer, your beliefs, your process, and your results. You've got the reps from Level 1. Now it's time to put them to work.`;
   }
 }
@@ -2395,7 +2395,7 @@ function runItAgain() {
     state.level = 2;
     // update the badge while we're at it
     const badge = document.getElementById('plan-level-badge');
-    if (badge) badge.textContent = '🔥 LEVEL 2 — THE EXPERT SERIES';
+    if (badge) badge.textContent = '🔥 LEVEL 2 — THE AUTHORITY SERIES';
   }
   // Save L1 video status + scripts before wiping so dual tracker and plan page can show them
   state.l1VideoStatus = { ...state.videoStatus };
@@ -2421,9 +2421,10 @@ function runItAgain() {
   buildVideoDots('script-dots');
   buildVideoDots('cl-dots');
   buildVideoDots('vi-dots');
-  renderVideoPrompts(0);
-  showScreen('screen-7');
-  currentIndex = screenOrder.indexOf('screen-7');
+  // Video 0 uses comm-layers preface, not screen-7
+  renderPrefaceV1();
+  showScreen('screen-comm-layers');
+  currentIndex = screenOrder.indexOf('screen-comm-layers');
   window.scrollTo(0, 0);
 }
 
