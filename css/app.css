@@ -1186,12 +1186,18 @@ body::before {
 /* ── WELCOME TAGLINE ── */
 .welcome-tagline {
   font-family:'Lora',serif;
-  font-style:italic;
   font-size:18px;
   color:var(--teal);
   line-height:1.7;
   margin-bottom:18px;
   max-width:500px;
+}
+.welcome-tagline strong {
+  font-weight:700;
+  font-style:normal;
+}
+.welcome-tagline em {
+  font-style:italic;
 }
 
 /* ── PREFACE SKIP END ── */
