@@ -2440,17 +2440,28 @@ function _buildTrackerHTML(videos, context) {
   // Current level row (L2 gets glowing purple)
   const currentRow = labels.map((label, i) => {
     const st = state.videoStatus[i];
+    const isLocked = !!state.videos['locked_v' + i];
+    const hasScript = !!state.videos['script_v' + i];
     let cls, status;
+
     if (st === 'filmed') {
       cls = 'vt-done'; status = '✓';
-    } else if (st === 'skipped') {
-      cls = 'vt-skipped'; status = '✕';
     } else if (i === currentVideoIndex) {
+      // Current video being worked on
       cls = 'vt-next';
       status = (context === 'preface') ? '→' : '↑';
+    } else if (isLocked) {
+      cls = 'vt-locked-in'; status = '🔒';
+    } else if (st === 'skipped' && hasScript) {
+      cls = 'vt-ready'; status = '✎';
+    } else if (st === 'skipped') {
+      cls = 'vt-skipped'; status = '✕';
+    } else if (hasScript) {
+      cls = 'vt-ready'; status = '✎';
     } else if (context === 'script' && i === currentVideoIndex + 1) {
       cls = 'vt-locked'; status = '→';
     } else if (i < currentVideoIndex) {
+      // Previous video with no script and no status — shouldn't happen but fallback
       cls = 'vt-done'; status = '✓';
     } else {
       cls = 'vt-locked'; status = '🔒';
