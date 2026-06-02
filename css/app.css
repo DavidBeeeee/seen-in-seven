@@ -1846,7 +1846,7 @@ body::before {
 }
 .voice-input-wrap.is-textarea .text-input,
 .voice-input-wrap.is-textarea textarea {
-  padding-bottom:28px;
+  padding-bottom:38px;
 }
 .voice-input-wrap:not(.is-textarea) .text-input,
 .voice-input-wrap:not(.is-textarea) input[type="text"] {
@@ -1855,7 +1855,7 @@ body::before {
 .voice-btn {
   position:absolute;
   right:8px;
-  bottom:10px;
+  bottom:18px;
   top:auto;
   transform:none;
   background:none;
@@ -1897,7 +1897,7 @@ body::before {
 .voice-listening-badge {
   position:absolute;
   right:30px;
-  bottom:8px;
+  bottom:16px;
   top:auto;
   transform:none;
   font-family:'Nunito',sans-serif;
@@ -1916,8 +1916,39 @@ body::before {
 .voice-listening-badge em { font-style:italic; font-weight:600; }
 .voice-listening-badge strong { font-weight:800; color:var(--soft); }
 .voice-input-wrap.is-textarea .voice-listening-badge {
-  bottom:8px;
+  bottom:16px;
   top:auto;
   transform:none;
 }
 
+@media (max-width:480px) {
+  .sv-toolbar-top {
+    position:relative;
+    padding-right:42px;
+    min-height:34px;
+  }
+  .sv-copy-btn {
+    position:absolute;
+    right:0;
+    top:0;
+    width:34px;
+    height:34px;
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    padding:0;
+    border-radius:999px;
+    font-size:0;
+    letter-spacing:0;
+    text-transform:none;
+  }
+  .sv-copy-btn::before {
+    content:"📋";
+    font-size:14px;
+    line-height:1;
+  }
+  .sv-copy-btn.copied::before {
+    content:"✓";
+    font-size:16px;
+  }
+}
