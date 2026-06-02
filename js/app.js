@@ -3140,12 +3140,12 @@ async function saveSettings() {
 
   closeSettings();
 
-  // Brief success indicator
-  const btn = document.querySelector('.db-settings-btn');
-  if (btn) {
-    const orig = btn.textContent;
-    btn.textContent = '✓';
-    setTimeout(() => { btn.textContent = orig; }, 1500);
+  // Brief success indicator on the settings gear button
+  const settingsBtn = document.querySelector('.header-nav-btn.icon');
+  if (settingsBtn) {
+    const orig = settingsBtn.textContent;
+    settingsBtn.textContent = '✓';
+    setTimeout(() => { settingsBtn.textContent = orig; }, 1500);
   }
 }
 
@@ -3602,11 +3602,16 @@ function buildPlanTracker() {
 function resumeFromDashboard() {
   const videos = getVideos();
   const nextIdx = videos.findIndex((_,i) => !state.videoStatus[i]);
-  if (nextIdx >= 0) {
-    currentVideoIndex = nextIdx;
-    buildVideoDots('video-dots');
-    buildVideoDots('script-dots');
-    buildVideoDots('vi-dots');
+  if (nextIdx < 0) { showDashboard(); return; }
+  currentVideoIndex = nextIdx;
+  buildVideoDots('video-dots');
+  buildVideoDots('script-dots');
+  buildVideoDots('vi-dots');
+  // If a script already exists, go straight to the script view
+  if (state.videos['script_v' + nextIdx]) {
+    editingFromPlan = false;
+    showScriptView(nextIdx, true);
+  } else {
     renderVideoPrompts(nextIdx);
     showScreen('screen-7');
     currentIndex = screenOrder.indexOf('screen-7');
@@ -4128,15 +4133,13 @@ function setScriptView(view) {
 }
 
 function copyScript(btn) {
+  // Get text from state (source of truth) — not the textarea which may be stale or hidden
+  const raw = state.videos['script_v' + currentVideoIndex] || '';
+  const text = raw.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  // Also sync textarea value in case user expects it to match
   const editor = document.getElementById('script-editor');
-  if (!editor) return;
-  // Temporarily show clean view to read value, then restore
-  const beatsEl = document.getElementById('sv-beats');
-  const cleanEl = document.getElementById('sv-clean');
-  const wasClean = cleanEl && cleanEl.style.display !== 'none';
-  if (!wasClean && cleanEl) cleanEl.style.display = 'block';
-  const text = editor.value;
-  if (!wasClean && cleanEl) cleanEl.style.display = 'none';
+  if (editor && !editor.value.trim() && text) editor.value = text;
+  if (!text) return;
   const showCopyTip = function() {
     var tip = document.getElementById('script-copy-tip');
     if (!tip) {
