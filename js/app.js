@@ -3592,7 +3592,8 @@ function buildPlan(){
   const videoStatus = state.videoStatus || {};
   const filmedCount = Object.values(videoStatus).filter(s => s === 'filmed').length;
   const totalVideos = videos.length;
-  const nextUnfilmedIdx = videos.findIndex((_, i) => !videoStatus[i]);
+  // Find next video that hasn't been filmed (skipped counts as needing attention but not filmed)
+  const nextUnfilmedIdx = videos.findIndex((_, i) => videoStatus[i] !== 'filmed');
 
   // ── Dashboard header ──────────────────────────────────
   const dbName = document.getElementById('db-name');
@@ -3628,9 +3629,11 @@ function buildPlan(){
 
   const resumeLabel = filmedCount === totalVideos
     ? 'Review All Scripts'
-    : nextUnfilmedIdx === 0
-      ? 'Start Video 1 →'
-      : 'Continue — Video ' + (nextUnfilmedIdx + 1) + ' →';
+    : nextUnfilmedIdx < 0
+      ? 'Review Your Scripts'
+      : nextUnfilmedIdx === 0
+        ? 'Start Video 1 →'
+        : 'Continue — Video ' + (nextUnfilmedIdx + 1) + ' →';
 
   const heroStatusLine = filmedCount === totalVideos
     ? '🎉 All ' + totalVideos + ' videos filmed. You did it.'
@@ -3861,11 +3864,15 @@ function buildPlanTracker() {
     let cls, statusIcon;
     if (st === 'filmed') {
       cls = 'vt-done'; statusIcon = '✓';
-    } else if (st === 'skipped') {
-      cls = 'vt-skipped'; statusIcon = '✕';
     } else if (isLocked) {
+      // Locked takes priority over skipped — user came back to this video
       cls = 'vt-locked-in'; statusIcon = '🔒';
-    } else if (hasScript) {
+    } else if (hasScript && st !== 'skipped') {
+      cls = 'vt-ready'; statusIcon = '✎';
+    } else if (st === 'skipped' && !hasScript) {
+      cls = 'vt-skipped'; statusIcon = '✕';
+    } else if (st === 'skipped' && hasScript) {
+      // Skipped but now has a script — show as ready (user generated after skipping)
       cls = 'vt-ready'; statusIcon = '✎';
     } else {
       cls = 'vt-locked'; statusIcon = '·';
