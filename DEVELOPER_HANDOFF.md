@@ -11,6 +11,14 @@
 
 ---
 
+## Roadmap source of truth
+
+Before planning or implementing roadmap work, read `SEENINSEVEN_ROADMAP.md`.
+
+This handoff remains the source of truth for architecture, stack, debugging history, and current implementation shape. Its older roadmap notes are partially superseded by `SEENINSEVEN_ROADMAP.md`, especially around admin priorities, test-user timing, delayed email nudges, delayed paid access, removed posted-vs-filmed work, and the placeholder-only gamification phase.
+
+---
+
 ## What this app is
 
 SeenInSeven is the free app reward for joining the 777 Challenge — a group video challenge where first-time entrepreneurs film 7 videos in sequence, building a complete digital brand from scratch.
