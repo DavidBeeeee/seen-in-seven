@@ -1,3 +1,216 @@
+// ── VOICE-TO-TEXT SYSTEM ───────────────────────────────
+// Uses the browser's native Web Speech API.
+// Wraps every eligible text input/textarea with a mic button.
+// Skips: email inputs, hidden inputs, checkboxes, admin fields.
+// Uses MutationObserver so dynamically rendered prompt textareas
+// (added by renderVideoPrompts) get mic buttons automatically.
+
+(function initVoiceToText() {
+  const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if (!SpeechRecognition) return; // browser doesn't support — hide everything, nothing breaks
+
+  let activeRecognition = null;
+  let activeBtn = null;
+  let activeBadge = null;
+  let silenceTimer = null;
+
+  function isEligible(el) {
+    if (!el || el.dataset.voiceAttached) return false;
+    const tag = el.tagName.toLowerCase();
+    if (tag === 'textarea') return true;
+    if (tag === 'input') {
+      const t = (el.type || 'text').toLowerCase();
+      // Skip email, password, hidden, checkbox, number, tel
+      return t === 'text' || t === '' || t === 'search';
+    }
+    return false;
+  }
+
+  function shouldSkip(el) {
+    // Skip email-related inputs and admin page inputs
+    const id = el.id || '';
+    const cls = el.className || '';
+    const skip = ['email', 'auth-email', 'gate-email', 'settings-email', 'admin'];
+    if (skip.some(s => id.toLowerCase().includes(s) || cls.toLowerCase().includes(s))) return true;
+    if (el.type === 'email') return true;
+    if (el.autocomplete === 'email') return true;
+    return false;
+  }
+
+  function attachMic(el) {
+    if (!isEligible(el) || shouldSkip(el)) return;
+    el.dataset.voiceAttached = '1';
+
+    const isTextarea = el.tagName.toLowerCase() === 'textarea';
+
+    // Wrap el in a relative-positioned container
+    const parent = el.parentNode;
+    if (!parent) return;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'voice-input-wrap' + (isTextarea ? ' is-textarea' : '');
+
+    parent.insertBefore(wrap, el);
+    wrap.appendChild(el);
+
+    // Mic button
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'voice-btn';
+    btn.title = 'Click to speak';
+    btn.innerHTML = '🎤';
+    btn.setAttribute('aria-label', 'Voice input');
+
+    // Listening badge
+    const badge = document.createElement('span');
+    badge.className = 'voice-listening-badge';
+    badge.textContent = 'Listening...';
+    badge.style.display = 'none';
+
+    wrap.appendChild(badge);
+    wrap.appendChild(btn);
+
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      if (activeBtn === btn) {
+        stopListening();
+      } else {
+        startListening(el, btn, badge);
+      }
+    });
+  }
+
+  function startListening(el, btn, badge) {
+    // Stop any existing session
+    if (activeRecognition) {
+      activeRecognition.abort();
+      if (activeBtn) { activeBtn.classList.remove('listening'); activeBtn.innerHTML = '🎤'; }
+      if (activeBadge) activeBadge.style.display = 'none';
+    }
+
+    const recognition = new SpeechRecognition();
+    recognition.continuous = true;
+    recognition.interimResults = true;
+    recognition.lang = 'en-US';
+
+    activeRecognition = recognition;
+    activeBtn = btn;
+    activeBadge = badge;
+
+    btn.classList.add('listening');
+    btn.innerHTML = '🔴';
+    badge.style.display = 'block';
+
+    let finalTranscript = '';
+
+    recognition.onresult = (event) => {
+      clearTimeout(silenceTimer);
+
+      let interim = '';
+      for (let i = event.resultIndex; i < event.results.length; i++) {
+        const t = event.results[i][0].transcript;
+        if (event.results[i].isFinal) {
+          finalTranscript += t + ' ';
+        } else {
+          interim = t;
+        }
+      }
+
+      // Show interim result in field (appended to existing content)
+      const existingBase = el.dataset.voiceBase || '';
+      el.value = existingBase + finalTranscript + interim;
+
+      // Fire oninput so all existing handlers (state saves, undo, etc) trigger
+      el.dispatchEvent(new Event('input', { bubbles: true }));
+
+      // 3-second silence timeout
+      silenceTimer = setTimeout(() => stopListening(), 3000);
+    };
+
+    recognition.onerror = (event) => {
+      if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+        btn.title = 'Microphone access denied';
+        btn.innerHTML = '🚫';
+        setTimeout(() => { btn.innerHTML = '🎤'; btn.title = 'Click to speak'; }, 3000);
+      }
+      stopListening(false);
+    };
+
+    recognition.onend = () => {
+      stopListening(false);
+    };
+
+    // Snapshot the current field value as the "base" before speaking
+    el.dataset.voiceBase = el.value ? el.value.trimEnd() + ' ' : '';
+    finalTranscript = '';
+
+    try {
+      recognition.start();
+      // Reset silence timer on start
+      silenceTimer = setTimeout(() => stopListening(), 10000); // max 10s if no speech detected at all
+    } catch(e) {
+      stopListening(false);
+    }
+  }
+
+  function stopListening(cleanupBase = true) {
+    clearTimeout(silenceTimer);
+
+    if (activeRecognition) {
+      try { activeRecognition.stop(); } catch(e) {}
+      activeRecognition = null;
+    }
+    if (activeBtn) {
+      activeBtn.classList.remove('listening');
+      activeBtn.innerHTML = '🎤';
+      activeBtn = null;
+    }
+    if (activeBadge) {
+      activeBadge.style.display = 'none';
+      activeBadge = null;
+    }
+
+    // Clean up the voice base snapshots on all fields
+    if (cleanupBase) {
+      document.querySelectorAll('[data-voice-base]').forEach(el => {
+        delete el.dataset.voiceBase;
+      });
+    }
+  }
+
+  // Attach to all existing eligible inputs on load
+  function attachAll() {
+    document.querySelectorAll('textarea, input[type="text"], input:not([type])').forEach(attachMic);
+  }
+
+  // Watch for dynamically added inputs (renderVideoPrompts, etc)
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach(m => {
+      m.addedNodes.forEach(node => {
+        if (node.nodeType !== 1) return; // element nodes only
+        // Check the node itself
+        if (node.matches && node.matches('textarea, input[type="text"], input:not([type])')) {
+          attachMic(node);
+        }
+        // Check descendants
+        node.querySelectorAll && node.querySelectorAll('textarea, input[type="text"], input:not([type])').forEach(attachMic);
+      });
+    });
+  });
+
+  // Start observing once DOM is ready
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      attachAll();
+      observer.observe(document.body, { childList: true, subtree: true });
+    });
+  } else {
+    attachAll();
+    observer.observe(document.body, { childList: true, subtree: true });
+  }
+})();
+
 // ── STATE ──────────────────────────────────────────────
 const state = {
   posted:null, blocker:null, history:null, business:null,

@@ -1832,3 +1832,70 @@ body::before {
 .vt-locked-in .vt-status { color:var(--gold); font-size:11px; }
 .vt-ready    { border-color:rgba(50,184,184,0.3) !important; }
 .vt-ready .vt-status { color:var(--teal); }
+
+/* ── VOICE-TO-TEXT ───────────────────────────────────── */
+.voice-input-wrap {
+  position:relative;
+  display:block;
+}
+.voice-input-wrap .text-input,
+.voice-input-wrap textarea,
+.voice-input-wrap input[type="text"] {
+  padding-right:46px;
+}
+.voice-btn {
+  position:absolute;
+  right:12px;
+  top:50%;
+  transform:translateY(-50%);
+  background:none;
+  border:none;
+  padding:4px;
+  cursor:pointer;
+  color:var(--muted);
+  font-size:18px;
+  line-height:1;
+  border-radius:6px;
+  transition:color 0.2s, background 0.2s;
+  z-index:2;
+  -webkit-tap-highlight-color:transparent;
+}
+/* For textareas, anchor to top-right instead of vertically centered */
+.voice-input-wrap.is-textarea .voice-btn {
+  top:12px;
+  transform:none;
+}
+.voice-btn:hover { color:var(--teal); }
+.voice-btn.listening {
+  color:#ef4444;
+  animation:micPulse 1s ease-in-out infinite;
+}
+@keyframes micPulse {
+  0%,100% { opacity:1; transform:translateY(-50%) scale(1); }
+  50%      { opacity:0.6; transform:translateY(-50%) scale(1.2); }
+}
+.voice-input-wrap.is-textarea .voice-btn.listening {
+  animation:micPulseStatic 1s ease-in-out infinite;
+}
+@keyframes micPulseStatic {
+  0%,100% { opacity:1; transform:scale(1); }
+  50%      { opacity:0.6; transform:scale(1.2); }
+}
+.voice-listening-badge {
+  position:absolute;
+  right:42px;
+  top:50%;
+  transform:translateY(-50%);
+  font-family:'Space Mono',monospace;
+  font-size:9px;
+  letter-spacing:0.1em;
+  text-transform:uppercase;
+  color:#ef4444;
+  pointer-events:none;
+  white-space:nowrap;
+  z-index:2;
+}
+.voice-input-wrap.is-textarea .voice-listening-badge {
+  top:14px;
+  transform:none;
+}
