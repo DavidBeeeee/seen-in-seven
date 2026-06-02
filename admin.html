@@ -57,6 +57,21 @@
       opacity:0; transform:translateY(8px); pointer-events:none; transition:opacity .18s ease, transform .18s ease;
     }
     .copy-toast.show { opacity:1; transform:translateY(0); }
+    .context-modal {
+      position:fixed; inset:0; z-index:90; display:none; align-items:center; justify-content:center;
+      padding:20px; background:rgba(2,10,10,0.78);
+    }
+    .context-modal.open { display:flex; }
+    .context-box {
+      width:min(840px,100%); max-height:82vh; overflow:auto;
+      background:#081f1f; border:1px solid var(--line); border-radius:10px; box-shadow:0 24px 80px rgba(0,0,0,0.42);
+    }
+    .context-head {
+      position:sticky; top:0; display:flex; justify-content:space-between; align-items:center; gap:12px;
+      padding:14px 16px; background:#081f1f; border-bottom:1px solid var(--line);
+    }
+    .context-body { padding:16px; white-space:pre-wrap; color:var(--soft); line-height:1.7; }
+    .context-snippet { color:var(--soft); font-size:12px; line-height:1.65; }
 
     .admin-body { max-width:1560px; margin:0 auto; padding:24px; }
     .grid { display:grid; gap:14px; }
@@ -270,6 +285,18 @@
 </div>
 
 <div class="copy-toast" id="copy-toast">Copied</div>
+<div class="context-modal" id="context-modal" onclick="if(event.target.id==='context-modal') closeContextModal()">
+  <div class="context-box">
+    <div class="context-head">
+      <div>
+        <div class="section-title">Full Pasted Context</div>
+        <div class="mini-meta" id="context-modal-meta"></div>
+      </div>
+      <button class="btn btn-small" onclick="closeContextModal()">Close</button>
+    </div>
+    <div class="context-body" id="context-modal-body"></div>
+  </div>
+</div>
 
 <script>
 const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
@@ -642,17 +669,77 @@ function hydrateNoteControls(r) {
 function renderAnswers(ob) {
   if (!ob) return '<div class="empty">No onboarding row found.</div>';
   const goalMap = {comfortable:'get comfortable on camera',audience:'build an audience',voice:'find their voice',start:'just start showing up',expert:'establish themselves as an expert',clients:'build an audience of potential clients',leads:'generate real leads',consistent:'finally get consistent'};
+  const p2 = getPhase2Context(ob);
+  const context = p2.knowledgeContext || '';
+  const contextSnippet = context
+    ? '<div class="mini-row"><div class="mini-top"><span class="mini-name">Pasted context</span><button class="btn btn-small" onclick="openContextModal(\'' + safeAttr(ob.user_id) + '\')">View Full</button></div><div class="context-snippet">' + h(context.slice(0, 320)) + (context.length > 320 ? '...' : '') + '</div></div>'
+    : '';
   return [
     answerRow('Posted', ob.posted),
     answerRow('History', ob.history),
     answerRow('Goal', goalMap[ob.goal] || ob.goal),
     answerRow('Mini goal', ob.mini_goal_text || ob.mini_goal),
     answerRow('Business', ob.business),
+    answerRow('Context mode', p2.contentMode),
+    answerRow('Custom blocker/history/goal', valueText(p2.custom)),
+    answerRow('Audience context', p2.audienceContext),
+    answerRow('Message context', p2.messageContext),
+    answerRow('Done carrying', commitmentText('pain', p2.commitmentPain, p2.commitmentPainCustom)),
+    answerRow('Moving toward', commitmentText('desire', p2.commitmentDesire, p2.commitmentDesireCustom)),
     answerRow('Belief 1', valueText(ob.mvo_q2)),
     answerRow('Belief 2', valueText(ob.mvo_q3)),
     answerRow('Why now', valueText(ob.mvo_q4)),
-    answerRow('Freewrite', ob.topic_freewrite)
+    answerRow('Freewrite', ob.topic_freewrite),
+    contextSnippet
   ].join('');
+}
+
+function getPhase2Context(ob) {
+  const p2 = (ob && ob.phase2_context && typeof ob.phase2_context === 'object') ? ob.phase2_context : {};
+  return Object.assign({
+    custom:{},
+    contentMode:'',
+    audienceContext:'',
+    messageContext:'',
+    knowledgeContext:'',
+    commitmentPain:'',
+    commitmentPainCustom:'',
+    commitmentDesire:'',
+    commitmentDesireCustom:''
+  }, p2, { custom: Object.assign({}, p2.custom || {}) });
+}
+
+function commitmentText(kind, value, customValue) {
+  const pain = {
+    hiding:'Hiding even though I have something worth saying',
+    waiting:'Waiting until I feel more ready',
+    scattered:'Feeling scattered every time I try to explain myself',
+    invisible:'Watching the right people never discover me'
+  };
+  const desire = {
+    confidence:'A calmer kind of confidence on camera',
+    connection:'The right people recognizing themselves in my story',
+    proof:'Proof that I can finish what I start',
+    momentum:'Real momentum for my voice, my brand, or my business'
+  };
+  if (value === 'custom') return customValue || '';
+  return (kind === 'pain' ? pain[value] : desire[value]) || value || '';
+}
+
+function openContextModal(userId) {
+  const ob = adminState.onboarding.find(row => row.user_id === userId);
+  const p2 = getPhase2Context(ob);
+  const modal = document.getElementById('context-modal');
+  const body = document.getElementById('context-modal-body');
+  const meta = document.getElementById('context-modal-meta');
+  if (body) body.textContent = p2.knowledgeContext || 'No pasted context saved.';
+  if (meta) meta.textContent = (p2.knowledgeContext || '').length + ' characters';
+  if (modal) modal.classList.add('open');
+}
+
+function closeContextModal() {
+  const modal = document.getElementById('context-modal');
+  if (modal) modal.classList.remove('open');
 }
 
 function renderScripts(r) {
@@ -901,6 +988,7 @@ function exportUserDetail(r) {
 
 function exportOnboarding(ob) {
   if (!ob) return 'No onboarding row found.';
+  const p2 = getPhase2Context(ob);
   return [
     '- Posted: ' + valueText(ob.posted),
     '- History: ' + valueText(ob.history),
@@ -908,6 +996,13 @@ function exportOnboarding(ob) {
     '- Goal: ' + valueText(ob.goal),
     '- Mini goal: ' + valueText(ob.mini_goal_text || ob.mini_goal),
     '- Topic freewrite: ' + valueText(ob.topic_freewrite),
+    '- Context mode: ' + valueText(p2.contentMode),
+    '- Custom answers: ' + valueText(p2.custom),
+    '- Audience context: ' + valueText(p2.audienceContext),
+    '- Message context: ' + valueText(p2.messageContext),
+    '- Done carrying: ' + valueText(commitmentText('pain', p2.commitmentPain, p2.commitmentPainCustom)),
+    '- Moving toward: ' + valueText(commitmentText('desire', p2.commitmentDesire, p2.commitmentDesireCustom)),
+    '- Pasted context: ' + valueText(p2.knowledgeContext),
     '- MVO Q2: ' + valueText(ob.mvo_q2),
     '- MVO Q3: ' + valueText(ob.mvo_q3),
     '- MVO Q4: ' + valueText(ob.mvo_q4)

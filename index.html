@@ -181,6 +181,7 @@
       <button class="header-nav-btn icon" onclick="openSettings()" title="Settings">⚙️</button>
       <button class="header-nav-link" onclick="logOut()">Log out</button>
     </div>
+    <button class="header-nav-link" id="header-signin-btn" onclick="showSignInScreen()" style="display:none;">Sign in</button>
   </div>
 </div>
 <canvas id="confetti-canvas"></canvas>
@@ -259,6 +260,7 @@
   <div class="bounce-arrow">↓</div>
   <div class="btn-row">
     <button class="btn-primary" onclick="goNext()">Let's Do This</button>
+    <button class="btn-secondary" onclick="showSignInScreen()">Sign In</button>
   </div>
 </div>
 
@@ -278,6 +280,12 @@
       <div class="card-title">Yes, I have</div>
       <div class="card-sub">Posted before, even if it was just a few times or I fell off.</div>
     </div>
+  </div>
+  <div class="choice-custom">
+    <div class="choice-custom-title">Say it my way</div>
+    <div class="choice-custom-copy">If none of those are quite right, talk or type the real reason. This helps your scripts sound more like you.</div>
+    <textarea class="text-input" id="blocker-custom" rows="3" maxlength="1000" placeholder="What is actually making this hard?" oninput="setCustomAnswer('blocker', this.value)"></textarea>
+    <div class="btn-row"><button class="btn-secondary" onclick="useCustomRouteAnswer('blocker','custom')">Use My Words</button></div>
   </div>
 </div>
 
@@ -329,6 +337,12 @@
       <div class="card-sub">Had a rhythm going, something broke it, haven't come back.</div>
     </div>
   </div>
+  <div class="choice-custom">
+    <div class="choice-custom-title">Say it my way</div>
+    <div class="choice-custom-copy">Give the honest version of what happened with posting before. Short is fine.</div>
+    <textarea class="text-input" id="history-custom" rows="3" maxlength="1000" placeholder="What has your posting pattern really been?" oninput="setCustomAnswer('history', this.value)"></textarea>
+    <div class="btn-row"><button class="btn-secondary" onclick="useCustomRouteAnswer('history','custom')">Use My Words</button></div>
+  </div>
 </div>
 
 <!-- ══ S3 BUSINESS? ══ -->
@@ -351,6 +365,11 @@
       <span class="card-emoji">🌱</span>
       <div class="card-title">Not yet... still figuring out my thing</div>
       <div class="card-sub">I want to start creating but I'm still exploring what I want to say.</div>
+    </div>
+    <div class="choice-card" onclick="autoAdvance(this,'business','story')">
+      <span class="card-emoji">🧭</span>
+      <div class="card-title">Mostly my story for now</div>
+      <div class="card-sub">I may build something later, but right now I need to show up and be seen.</div>
     </div>
   </div>
 </div>
@@ -420,6 +439,71 @@
       <p style="font-size:15px;color:var(--muted);line-height:1.75;margin:0;">Can't find it? Check your spam folder. Still nothing? <button onclick="showScreen('screen-email');currentIndex=screenOrder.indexOf('screen-email');" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:15px;text-decoration:underline;text-underline-offset:3px;padding:0;">Try again</button> or <button onclick="skipAuth()" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:15px;text-decoration:underline;text-underline-offset:3px;padding:0;">continue without saving.</button></p>
     </div>
   </div>
+</div>
+
+<!-- ══ CONTEXT MODE ══ -->
+<div class="screen" id="screen-context-mode">
+  <div class="eyebrow">Script Depth</div>
+  <h2 class="screen-title">How much context do you want to give the app?</h2>
+  <p class="screen-sub">Simple is enough. Extended gives the AI more of your words, your audience, and your point of view.</p>
+  <div class="mode-tutorial">
+    <div class="tutorial-arrow">↘</div>
+    <div class="tutorial-copy">New move: pick Simple to keep momentum, or Extended if you want stronger personalization.</div>
+  </div>
+  <div class="context-toggle" role="group" aria-label="Script context depth">
+    <button class="context-toggle-btn active" id="context-simple-btn" onclick="setContextMode('simple')">Simple</button>
+    <button class="context-toggle-btn" id="context-extended-btn" onclick="setContextMode('extended')">Extended</button>
+  </div>
+  <div class="context-mode-card" id="context-mode-card">
+    <strong>Simple:</strong> we will use the answers you already gave, then ask for optional notes on the next screen.
+  </div>
+  <div class="btn-row">
+    <button class="btn-primary" onclick="goNext()">Continue →</button>
+    <button class="btn-back" onclick="goBack()">Back</button>
+  </div>
+</div>
+
+<!-- ══ CONTEXT DETAILS ══ -->
+<div class="screen" id="screen-context-details">
+  <div class="eyebrow">Optional Context</div>
+  <h2 class="screen-title">Give the app anything useful.</h2>
+  <p class="screen-sub">Paste notes from a business doc, style guide, bio, offer overview, writing sample, or anything you want your scripts to understand.</p>
+  <div id="extended-prompts" class="extended-prompts" style="display:none;">
+    <div class="input-group">
+      <label class="input-label">Who are you trying to reach?</label>
+      <textarea class="text-input" id="audience-context" rows="4" maxlength="1200" placeholder="Describe the person you want these videos to speak to." oninput="setPhase2Field('audienceContext', this.value)"></textarea>
+      <div class="input-hint">Tap the mic if talking this out is easier.</div>
+    </div>
+    <div class="input-group">
+      <label class="input-label">What do they need to understand or feel?</label>
+      <textarea class="text-input" id="message-context" rows="4" maxlength="1200" placeholder="What should your audience believe, notice, or feel after hearing from you?" oninput="setPhase2Field('messageContext', this.value)"></textarea>
+    </div>
+  </div>
+  <div class="input-group">
+    <label class="input-label">Optional knowledge/context paste</label>
+    <textarea class="text-input" id="knowledge-context" rows="8" maxlength="12000" placeholder="Paste useful context here. Master business doc, style notes, offer notes, client pain points, bio, writing samples... plain text only." oninput="setKnowledgeContext(this.value)"></textarea>
+    <div class="input-hint" id="knowledge-count">0 / 12,000 characters</div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-primary" onclick="goNext()">Continue →</button>
+    <button class="btn-back" onclick="goBack()">Back</button>
+  </div>
+</div>
+
+<!-- ══ COMMITMENT PAIN ══ -->
+<div class="screen" id="screen-commit-pain">
+  <div class="eyebrow">Your Line In The Sand</div>
+  <h2 class="screen-title">What are you <span class="accent">done</span> carrying?</h2>
+  <p class="screen-sub">This becomes part of your mission on the dashboard, so choose the one that feels most honest.</p>
+  <div class="choice-grid" id="commit-pain-grid"></div>
+</div>
+
+<!-- ══ COMMITMENT DESIRE ══ -->
+<div class="screen" id="screen-commit-desire">
+  <div class="eyebrow">Your Direction</div>
+  <h2 class="screen-title">What are you <span class="accent">moving toward?</span></h2>
+  <p class="screen-sub">Not a perfect marketing goal. The real reason finishing these seven videos would matter.</p>
+  <div class="choice-grid" id="commit-desire-grid"></div>
 </div>
 
 <!-- ══ S-RECAP ══ -->

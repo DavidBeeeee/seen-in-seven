@@ -117,6 +117,8 @@ function _mergeLocalStorage() {
     if (d.mvoQ2 && !state.mvoQ2) state.mvoQ2 = d.mvoQ2;
     if (d.mvoQ3 && !state.mvoQ3) state.mvoQ3 = d.mvoQ3;
     if (d.mvoQ4 && !state.mvoQ4) state.mvoQ4 = d.mvoQ4;
+    if (d.phase2) state.phase2 = Object.assign({}, state.phase2 || {}, d.phase2);
+    if (typeof ensurePhase2 === 'function') ensurePhase2();
     if (d.topicFreewrite && !state.topicFreewrite) state.topicFreewrite = d.topicFreewrite;
     // Merge videos additively — DB scripts take priority,
     // but localStorage-only keys (locked_v*, _undo_v*, v0p*, etc.) are preserved
@@ -199,8 +201,10 @@ async function saveOnboardingToDb() {
     }).eq('id', _currentUser.id);
     if (userErr) console.warn('[SeenInSeven] saveOnboardingToDb users error:', userErr.message);
 
-    // Upsert onboarding — unique constraint on user_id prevents duplicates
-    const { error: obErr } = await _sb.from('onboarding').upsert({
+    // Upsert onboarding — unique constraint on user_id prevents duplicates.
+    // phase2_context is attempted when the schema supports it, then gracefully
+    // retried without it for older databases.
+    const baseOnboarding = {
       user_id:          _currentUser.id,
       posted:           state.posted         || null,
       history:          state.history        || null,
@@ -213,7 +217,14 @@ async function saveOnboardingToDb() {
       mvo_q4:           state.mvoQ4          || null,
       topic_freewrite:  state.topicFreewrite || null,
       updated_at:       new Date().toISOString()
-    }, { onConflict: 'user_id' });
+    };
+    const phase2Context = typeof ensurePhase2 === 'function' ? ensurePhase2() : (state.phase2 || null);
+    const richOnboarding = Object.assign({}, baseOnboarding, { phase2_context: phase2Context });
+    let { error: obErr } = await _sb.from('onboarding').upsert(richOnboarding, { onConflict: 'user_id' });
+    if (obErr && obErr.message && obErr.message.toLowerCase().includes('phase2_context')) {
+      const retry = await _sb.from('onboarding').upsert(baseOnboarding, { onConflict: 'user_id' });
+      obErr = retry.error;
+    }
     if (obErr) console.warn('[SeenInSeven] saveOnboardingToDb onboarding error:', obErr.message);
   } catch(e) {
     console.warn('[SeenInSeven] saveOnboardingToDb exception:', e.message);
@@ -289,6 +300,8 @@ async function _restoreFromDatabase() {
       if (onboarding.mvo_q3)          state.mvoQ3          = onboarding.mvo_q3;
       if (onboarding.mvo_q4)          state.mvoQ4          = onboarding.mvo_q4;
       if (onboarding.topic_freewrite) state.topicFreewrite = onboarding.topic_freewrite;
+      if (onboarding.phase2_context)  state.phase2         = onboarding.phase2_context;
+      if (typeof ensurePhase2 === 'function') ensurePhase2();
     }
 
     if (scripts && scripts.length) {

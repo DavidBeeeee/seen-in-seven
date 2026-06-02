@@ -218,9 +218,22 @@ const state = {
   level:null, videos:{}, videoStatus:{},
   mvoQ2:null, mvoQ3:null, mvoQ4:null,
   topicFreewrite: '',
-  l1VideoStatus: null
+  l1VideoStatus: null,
+  phase2: {
+    custom:{},
+    contentMode:'simple',
+    audienceContext:'',
+    messageContext:'',
+    knowledgeContext:'',
+    commitmentPain:null,
+    commitmentPainCustom:'',
+    commitmentDesire:null,
+    commitmentDesireCustom:''
+  }
 };
 
+const ONBOARDING_ORDER_NO = ['screen-0','screen-1','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-context-mode','screen-context-details','screen-commit-pain','screen-commit-desire','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+const ONBOARDING_ORDER_YES = ['screen-0','screen-1','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-context-mode','screen-context-details','screen-commit-pain','screen-commit-desire','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
 let screenOrder = ['screen-0','screen-1'];
 let currentIndex = 0;
 let currentVideoIndex = 0;
@@ -233,6 +246,55 @@ let maxProgressPct = 0;    // L1 blue bar — never decreases
 let maxProgressL2Pct = 0;  // L2 green bar — never decreases
 
 const SAVE_KEY = 'bwb_challenge_v1';
+let authScreenMode = 'signin';
+
+function getOnboardingOrder() {
+  return state.posted === 'yes' ? [...ONBOARDING_ORDER_YES] : [...ONBOARDING_ORDER_NO];
+}
+
+function ensureFullOnboardingOrder() {
+  screenOrder = getOnboardingOrder();
+}
+
+function resetPhase2() {
+  state.phase2 = {
+    custom:{},
+    contentMode:'simple',
+    audienceContext:'',
+    messageContext:'',
+    knowledgeContext:'',
+    commitmentPain:null,
+    commitmentPainCustom:'',
+    commitmentDesire:null,
+    commitmentDesireCustom:''
+  };
+  return state.phase2;
+}
+
+function ensurePhase2() {
+  state.phase2 = Object.assign({
+    custom:{},
+    contentMode:'simple',
+    audienceContext:'',
+    messageContext:'',
+    knowledgeContext:'',
+    commitmentPain:null,
+    commitmentPainCustom:'',
+    commitmentDesire:null,
+    commitmentDesireCustom:''
+  }, state.phase2 || {});
+  state.phase2.custom = Object.assign({}, state.phase2.custom || {});
+  return state.phase2;
+}
+
+function escapeHTML(value) {
+  return String(value == null ? '' : value)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
 
 let _sbTracked = false;
 async function trackSession() {
@@ -252,6 +314,7 @@ async function trackSession() {
         blocker:  state.blocker,
         history:  state.history,
         goal:     state.goal,
+        phase2:   ensurePhase2(),
         mvoQ2:    state.mvoQ2,
         mvoQ3:    state.mvoQ3,
         mvoQ4:    state.mvoQ4
@@ -299,21 +362,20 @@ function goNext() {
   const cur = screenOrder[currentIndex];
 
   if (cur === 'screen-0') {
-    // Expand to full order immediately — default to 'no' path, updated when user answers screen-1
-    screenOrder = ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+    // Expand to full order immediately — default to the new-user path, updated after screen-1.
+    ensureFullOnboardingOrder();
     if (typeof logEvent === 'function') logEvent('onboarding_started', {source: 'start_button'});
   }
 
-  if (cur === 'screen-email') {
+  if (cur === 'screen-1') {
     // Now we know state.posted — lock in the correct 2a vs 2b path
-    screenOrder = state.posted === 'no'
-      ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-email','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+    ensureFullOnboardingOrder();
     // User is going through fresh onboarding — clear any previously restored answers
     // so their new answers always win
     state.blocker = null; state.history = null; state.goal = null;
     state.minigoal = null; state.minigoalText = ''; state.business = null;
     state.mvoQ2 = null; state.mvoQ3 = null; state.mvoQ4 = null;
+    ensurePhase2().custom = {};
   }
 
   if (cur === 'screen-3') {
@@ -345,7 +407,11 @@ function goNext() {
       length: state.topicFreewrite.length
     });
   }
-  if (nextId === 'screen-mvo2') renderMvoScreen(2);
+  if (nextId === 'screen-context-mode') renderContextMode();
+  else if (nextId === 'screen-context-details') renderContextDetails();
+  else if (nextId === 'screen-commit-pain') renderCommitmentCards('pain');
+  else if (nextId === 'screen-commit-desire') renderCommitmentCards('desire');
+  else if (nextId === 'screen-mvo2') renderMvoScreen(2);
   else if (nextId === 'screen-mvo3') renderMvoScreen(3);
   else if (nextId === 'screen-mvo4') renderMvoScreen(4);
   else if (nextId === 'screen-comm-layers') renderPrefaceV1();
@@ -452,7 +518,17 @@ async function handleEmailSubmit() {
       return;
     }
 
-    // New user — send link silently and continue through questions
+    if (authScreenMode === 'signin') {
+      if (checkEl) checkEl.style.display = 'none';
+      if (btn) { btn.textContent = 'Send Sign-In Link →'; btn.disabled = false; }
+      if (errEl) {
+        errEl.textContent = 'No saved challenge found for that email yet. Start the challenge first, then we can save your progress.';
+        errEl.style.display = 'block';
+      }
+      return;
+    }
+
+    // New user save prompt — send link silently and continue through questions
     sendMagicLink(email).catch(() => {});
     if (typeof logEvent === 'function') logEvent('magic_link_requested', {source: 'new_user'});
 
@@ -467,16 +543,51 @@ async function handleEmailSubmit() {
 
 function skipAuth() {
   if (typeof logEvent === 'function') logEvent('auth_skipped', {source: 'screen-email'});
+  if (authScreenMode === 'signin') {
+    screenOrder = ['screen-0','screen-1'];
+    currentIndex = 0;
+    showScreen('screen-0');
+    return;
+  }
   goNext();
+}
+
+function showSignInScreen() {
+  authScreenMode = 'signin';
+  screenOrder = ['screen-0','screen-email'];
+  currentIndex = 1;
+  resetEmailScreenCopy('Welcome <span class="accent">back.</span>', 'Enter your email and we will send a magic link to your dashboard.', 'Send Sign-In Link →');
+  showScreen('screen-email');
+}
+
+function showSaveEmailScreen() {
+  authScreenMode = 'save';
+  if (screenOrder.indexOf('screen-email') === -1) {
+    screenOrder.splice(Math.max(currentIndex + 1, 1), 0, 'screen-email');
+  }
+  currentIndex = screenOrder.indexOf('screen-email');
+  resetEmailScreenCopy('Save your <span class="accent">progress.</span>', 'Enter your email and we will send a magic link so your challenge can follow you across devices.', 'Save And Continue →');
+  showScreen('screen-email');
+}
+
+function resetEmailScreenCopy(titleHtml, subText, buttonText) {
+  const title = document.querySelector('#screen-email .screen-title');
+  const sub = document.querySelector('#screen-email .screen-sub');
+  const btn = document.getElementById('auth-send-btn');
+  const err = document.getElementById('auth-email-error');
+  const msg = document.querySelector('#screen-email .email-sent-msg');
+  if (title) title.innerHTML = titleHtml;
+  if (sub) sub.textContent = subText;
+  if (btn) { btn.textContent = buttonText; btn.disabled = false; }
+  if (err) err.style.display = 'none';
+  if (msg) msg.remove();
 }
 
 function advancePastAuth() {
   // Called by supabase.js when magic link auth completes
   // Ensure screenOrder is fully expanded
   if (screenOrder.length <= 2) {
-    screenOrder = state.posted === 'no'
-      ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-email','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+    ensureFullOnboardingOrder();
   }
   // Save onboarding to DB now that we have a user
   saveOnboardingToDb();
@@ -493,11 +604,13 @@ function updateProgress(id) {
   const usernameEl = document.getElementById('header-username');
   const navEl = document.getElementById('header-nav');
   const dashBtn = document.getElementById('header-dashboard-btn');
+  const signInBtn = document.getElementById('header-signin-btn');
   if (usernameEl) usernameEl.textContent = state.name || '';
   // Show nav only when authenticated or on dashboard
   const isAuthenticated = typeof getCurrentUser === 'function' && getCurrentUser();
   const onDashboard = id === 'plan-screen';
   if (navEl) navEl.style.display = (isAuthenticated || onDashboard) ? 'flex' : 'none';
+  if (signInBtn) signInBtn.style.display = (!isAuthenticated && id !== 'screen-email' && !onDashboard) ? '' : 'none';
   // Hide Dashboard button when already on dashboard
   if (dashBtn) dashBtn.style.display = onDashboard ? 'none' : '';
 
@@ -552,6 +665,7 @@ function autoAdvance(el, key, value) {
   _autoAdvanceLock = true;
   el.classList.add('selecting');
   state[key] = value;
+  saveProgress();
   setTimeout(() => {
     el.classList.remove('selecting');
     goNext();
@@ -586,6 +700,7 @@ function populateGoalGrid() {
     c.innerHTML = `<span class="card-emoji">${o.e}</span><div class="card-title">${o.t}</div><div class="card-sub">${o.s}</div>`;
     grid.appendChild(c);
   });
+  grid.after(renderChoiceCustom('goal', 'Say it my way', 'What do you want content to do for you in your real life or business?', 'Use My Words'));
 }
 
 function populateMiniGoalGrid() {
@@ -595,13 +710,11 @@ function populateMiniGoalGrid() {
     {t:'Post my very first video ever (and actually survive it)',v:'first'},
     {t:'Film all 7 videos without quitting on myself',v:'all7'},
     {t:'Find a content style that genuinely feels like me',v:'style'},
-    {t:'Make at least one video I\'m actually proud of',v:'proud'},
-    {t:'Get my first real comment or reply from a stranger',v:'comment'}
+    {t:'Make at least one video I\'m actually proud of',v:'proud'}
   ] : [
     {t:'Build a content habit I can actually maintain',v:'habit'},
     {t:'Create at least one video that brings in a real lead',v:'lead'},
     {t:'Feel genuinely confident talking about my business on camera',v:'confident'},
-    {t:'Make all 7 and figure out what resonates',v:'test'},
     {t:'Post something I\'d proudly send to a potential client',v:'proud-l2'}
   ];
   opts.forEach(o => {
@@ -616,12 +729,13 @@ function populateMiniGoalGrid() {
     c.innerHTML = `<div class="card-title">${o.t}</div>`;
     grid.appendChild(c);
   });
+  grid.after(renderChoiceCustom('minigoal', 'Say it my way', 'Describe the win you actually want to feel at the end of the seven videos.', 'Use My Win'));
 }
 
 // ── RECAP ─────────────────────────────────────────────
 const blockerLabels = {ideas:'Not knowing what to say',camera:'Camera shyness',nothing:'Not having a business yet',procrastinating:'Putting it off'};
 const historyLabels = {few:'Posted a few times, never consistently',stops:'Posts sometimes but keeps falling off',was:'Was consistent once, took a break'};
-const businessLabels = {yes:'Active business',building:'Building something',no:'Still exploring'};
+const businessLabels = {yes:'Active business',building:'Building something',no:'Still exploring',story:'Story-first right now'};
 const goalLabels = {comfortable:'Getting comfortable on camera',audience:'Building an audience',voice:'Finding my voice',start:'Just starting',expert:'Establishing expertise',clients:'Building a client audience',leads:'Generating leads',consistent:'Getting consistent'};
 const miniGoalMap = {
   first:'post my very first video ever (and actually survive it)',
@@ -635,6 +749,155 @@ const miniGoalMap = {
   test:'make all 7 and figure out what resonates',
   'proud-l2':'post something I\'d proudly send to a potential client'
 };
+
+const commitmentPainLabels = {
+  hiding:'Hiding even though I have something worth saying',
+  waiting:'Waiting until I feel more ready',
+  scattered:'Feeling scattered every time I try to explain myself',
+  invisible:'Watching the right people never discover me'
+};
+
+const commitmentDesireLabels = {
+  confidence:'A calmer kind of confidence on camera',
+  connection:'The right people recognizing themselves in my story',
+  proof:'Proof that I can finish what I start',
+  momentum:'Real momentum for my voice, my brand, or my business'
+};
+
+function renderChoiceCustom(key, title, copy, buttonText) {
+  const old = document.getElementById(key + '-custom-wrap');
+  if (old) old.remove();
+  const p2 = ensurePhase2();
+  const wrap = document.createElement('div');
+  wrap.className = 'choice-custom';
+  wrap.id = key + '-custom-wrap';
+  wrap.innerHTML =
+    '<div class="choice-custom-title">' + escapeHTML(title) + '</div>' +
+    '<div class="choice-custom-copy">' + escapeHTML(copy) + '</div>' +
+    '<textarea class="text-input" rows="3" maxlength="1000" placeholder="Say it in your own words..." oninput="setCustomAnswer(\'' + key + '\', this.value)">' + escapeHTML(p2.custom[key] || '') + '</textarea>' +
+    '<div class="btn-row"><button class="btn-secondary" onclick="useCustomRouteAnswer(\'' + key + '\',\'custom\')">' + escapeHTML(buttonText) + '</button></div>';
+  return wrap;
+}
+
+function setCustomAnswer(key, value) {
+  const p2 = ensurePhase2();
+  p2.custom[key] = String(value || '').slice(0, 1000);
+  saveProgress();
+}
+
+function useCustomRouteAnswer(key, fallbackValue) {
+  const p2 = ensurePhase2();
+  const text = (p2.custom[key] || '').trim();
+  if (!text) return;
+  if (key === 'minigoal') {
+    state.minigoal = fallbackValue;
+    state.minigoalText = text;
+    const fill = document.getElementById('commitment-fill');
+    if (fill) fill.textContent = text.toLowerCase();
+  } else {
+    state[key] = fallbackValue;
+  }
+  saveProgress();
+  goNext();
+}
+
+function setPhase2Field(key, value) {
+  const p2 = ensurePhase2();
+  p2[key] = String(value || '').slice(0, key === 'knowledgeContext' ? 12000 : 1200);
+  saveProgress();
+}
+
+function setKnowledgeContext(value) {
+  const p2 = ensurePhase2();
+  p2.knowledgeContext = String(value || '').slice(0, 12000);
+  const input = document.getElementById('knowledge-context');
+  if (input && input.value !== p2.knowledgeContext) input.value = p2.knowledgeContext;
+  const count = document.getElementById('knowledge-count');
+  if (count) count.textContent = p2.knowledgeContext.length.toLocaleString() + ' / 12,000 characters';
+  saveProgress();
+}
+
+function renderContextMode() {
+  const p2 = ensurePhase2();
+  setContextMode(p2.contentMode || 'simple', false);
+}
+
+function setContextMode(mode, persist = true) {
+  const p2 = ensurePhase2();
+  p2.contentMode = mode === 'extended' ? 'extended' : 'simple';
+  const simple = document.getElementById('context-simple-btn');
+  const extended = document.getElementById('context-extended-btn');
+  const card = document.getElementById('context-mode-card');
+  if (simple) simple.classList.toggle('active', p2.contentMode === 'simple');
+  if (extended) extended.classList.toggle('active', p2.contentMode === 'extended');
+  if (card) {
+    card.innerHTML = p2.contentMode === 'extended'
+      ? '<strong>Extended:</strong> two deeper prompts will appear next, plus one optional paste box for any extra context.'
+      : '<strong>Simple:</strong> we will use the answers you already gave, then ask for optional notes on the next screen.';
+  }
+  if (persist) saveProgress();
+}
+
+function renderContextDetails() {
+  const p2 = ensurePhase2();
+  const extended = document.getElementById('extended-prompts');
+  const audience = document.getElementById('audience-context');
+  const message = document.getElementById('message-context');
+  const knowledge = document.getElementById('knowledge-context');
+  if (extended) extended.style.display = p2.contentMode === 'extended' ? 'block' : 'none';
+  if (audience) audience.value = p2.audienceContext || '';
+  if (message) message.value = p2.messageContext || '';
+  if (knowledge) knowledge.value = p2.knowledgeContext || '';
+  setKnowledgeContext(p2.knowledgeContext || '');
+}
+
+function renderCommitmentCards(kind) {
+  const p2 = ensurePhase2();
+  const isPain = kind === 'pain';
+  const grid = document.getElementById(isPain ? 'commit-pain-grid' : 'commit-desire-grid');
+  if (!grid) return;
+  const labels = isPain ? commitmentPainLabels : commitmentDesireLabels;
+  const icons = isPain ? ['🫥','⏳','🧩','👻'] : ['🎙️','🤝','🏁','📈'];
+  grid.innerHTML = '';
+  Object.entries(labels).forEach(([value, text], idx) => {
+    const card = document.createElement('div');
+    card.className = 'choice-card';
+    card.onclick = function(){ selectCommitment(kind, value); };
+    card.innerHTML = '<span class="card-emoji">' + icons[idx] + '</span><div class="card-title">' + escapeHTML(text) + '</div>';
+    grid.appendChild(card);
+  });
+  grid.after(renderCommitmentCustom(kind));
+}
+
+function renderCommitmentCustom(kind) {
+  const isPain = kind === 'pain';
+  const key = isPain ? 'commitmentPainCustom' : 'commitmentDesireCustom';
+  const old = document.getElementById(kind + '-commit-custom');
+  if (old) old.remove();
+  const p2 = ensurePhase2();
+  const wrap = document.createElement('div');
+  wrap.className = 'choice-custom';
+  wrap.id = kind + '-commit-custom';
+  wrap.innerHTML =
+    '<div class="choice-custom-title">Say it my way</div>' +
+    '<div class="choice-custom-copy">' + (isPain ? 'What are you done tolerating, delaying, or shrinking around?' : 'What do you want these videos to open up for you?') + '</div>' +
+    '<textarea class="text-input" rows="3" maxlength="1000" placeholder="Write the real answer..." oninput="setPhase2Field(\'' + key + '\', this.value)">' + escapeHTML(p2[key] || '') + '</textarea>' +
+    '<div class="btn-row"><button class="btn-secondary" onclick="selectCommitment(\'' + kind + '\',\'custom\')">Use My Words</button></div>';
+  return wrap;
+}
+
+function selectCommitment(kind, value) {
+  const p2 = ensurePhase2();
+  if (kind === 'pain') {
+    if (value === 'custom' && !String(p2.commitmentPainCustom || '').trim()) return;
+    p2.commitmentPain = value;
+  } else {
+    if (value === 'custom' && !String(p2.commitmentDesireCustom || '').trim()) return;
+    p2.commitmentDesire = value;
+  }
+  saveProgress();
+  goNext();
+}
 
 const MVO_TOPIC_CARDS = [
   {icon:'🌿',text:'Health, wellness, and feeling your best',
@@ -957,6 +1220,31 @@ const SCRIPT_LOADING_MSGS = [
   "Every great series started with a single video. This is yours.",
 ];
 
+function phase2ValueText(kind, value, customValue) {
+  if (value === 'custom' && customValue) return customValue;
+  if (kind === 'pain') return commitmentPainLabels[value] || value || '';
+  if (kind === 'desire') return commitmentDesireLabels[value] || value || '';
+  return value || '';
+}
+
+function buildPhase2ContextLines() {
+  const p2 = ensurePhase2();
+  const lines = [];
+  const custom = p2.custom || {};
+  if (custom.blocker) lines.push('- Blocker in their own words: ' + custom.blocker);
+  if (custom.history) lines.push('- Posting history in their own words: ' + custom.history);
+  if (custom.goal) lines.push('- Content goal in their own words: ' + custom.goal);
+  if (custom.minigoal) lines.push('- Personal challenge win in their own words: ' + custom.minigoal);
+  lines.push('- Context mode: ' + (p2.contentMode === 'extended' ? 'Extended' : 'Simple'));
+  if (p2.audienceContext) lines.push('- Audience context: ' + p2.audienceContext);
+  if (p2.messageContext) lines.push('- Desired audience reaction: ' + p2.messageContext);
+  const pain = phase2ValueText('pain', p2.commitmentPain, p2.commitmentPainCustom);
+  const desire = phase2ValueText('desire', p2.commitmentDesire, p2.commitmentDesireCustom);
+  if (pain) lines.push('- What they are done carrying: ' + pain);
+  if (desire) lines.push('- What they are moving toward: ' + desire);
+  return lines;
+}
+
 const VIDEO_STORY_LABELS = [
   'YOUR INTRODUCTION',   // V1
   'YOUR ORIGIN',         // V2
@@ -1230,6 +1518,7 @@ function buildAPIUserMessage(videoIdx) {
   const videoNum = videoIdx + 1;
   const sv = state.videos;
   const name = state.name || '';
+  const p2 = ensurePhase2();
 
   // Onboarding data block
   const lines = ['- Name: ' + (name || '(not provided)')];
@@ -1239,10 +1528,13 @@ function buildAPIUserMessage(videoIdx) {
   if (state.business) lines.push('- Business stage: ' + (businessLabels[state.business] || state.business));
   if (state.goal) lines.push('- Primary goal: ' + (goalLabels[state.goal] || state.goal));
   if (state.minigoal) lines.push('- Mini-goal: ' + (miniGoalMap[state.minigoal] || state.minigoalText || state.minigoal));
+  const customLines = buildPhase2ContextLines();
+  customLines.forEach(line => lines.push(line));
   const commitText = 'By the end of this challenge I will ' + (state.minigoalText || 'complete this challenge') + ', even if it\'s messy, even if nobody watches, and even if I have to do it scared.';
   lines.push('- Commitment: ' + commitText);
 
   if (state.topicFreewrite) lines.push('- Topic / what they want to talk about: ' + state.topicFreewrite);
+  if (p2.knowledgeContext) lines.push('- Pasted context / knowledge base: ' + p2.knowledgeContext);
 
   let msg = 'Generate Video ' + videoNum + ' script.\n\nLEVEL: ' + level + '\nVIDEO: ' + videoNum + '\n\nONBOARDING DATA:\n' + lines.join('\n');
 
@@ -3312,16 +3604,9 @@ function dismissVerifyToast() {
 function showEmailScreenFromToast() {
   const toast = document.getElementById('verify-email-toast');
   if (toast) toast.style.display = 'none';
-  if (screenOrder.indexOf('screen-email') === -1) {
-    screenOrder = state.posted === 'no'
-      ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-email','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
-  }
   const input = document.getElementById('auth-email-input');
   if (input) input.value = '';
-  const msg = document.querySelector('.email-sent-msg');
-  if (msg) msg.remove();
-  showScreen('screen-email');
+  showSaveEmailScreen();
 }
 
 // ── COPY SINGLE SCRIPT ────────────────────────────────
@@ -3590,8 +3875,9 @@ function _doRerunOnboarding() {
   state.minigoal = null; state.minigoalText = ''; state.business = null;
   state.mvoQ2 = null; state.mvoQ3 = null; state.mvoQ4 = null;
   state.topicFreewrite = ''; state.posted = null;
+  resetPhase2();
   saveProgress();
-  screenOrder = ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+  ensureFullOnboardingOrder();
   currentIndex = screenOrder.indexOf('screen-1');
   showScreen('screen-1');
 }
@@ -3608,6 +3894,30 @@ document.addEventListener('click', function(e) {
     }
   }
 });
+
+function buildMissionManifesto(name, miniText) {
+  const p2 = ensurePhase2();
+  const custom = p2.custom || {};
+  const displayName = name && name !== 'You' ? name : 'You';
+  const goalText = custom.goal || goalLabels[state.goal] || state.goal || 'show up with more honesty and consistency';
+  const painText = phase2ValueText('pain', p2.commitmentPain, p2.commitmentPainCustom)
+    || custom.blocker
+    || custom.history
+    || blockerLabels[state.blocker]
+    || historyLabels[state.history]
+    || 'waiting for the perfect moment';
+  const desireText = phase2ValueText('desire', p2.commitmentDesire, p2.commitmentDesireCustom)
+    || custom.minigoal
+    || miniText
+    || 'proof that this voice is worth using';
+  const first = displayName === 'You'
+    ? 'You are done letting ' + painText.toLowerCase() + ' decide whether you get to be seen.'
+    : displayName + ' is done letting ' + painText.toLowerCase() + ' decide whether they get to be seen.';
+  const second = 'These seven videos are a real commitment to ' + goalText.toLowerCase() + ', with enough honesty that the right people can recognize themselves in the story.';
+  const third = 'The win is not performing perfectly. The win is moving toward ' + desireText.toLowerCase() + ' and finishing the arc anyway.';
+  return [first, second, third].map(escapeHTML).join(' ');
+}
+
 function buildPlan(){
   const name = state.name || 'You';
   const miniText = miniGoalMap[state.minigoal] || state.minigoalText || 'complete this challenge';
@@ -3689,21 +3999,7 @@ function buildPlan(){
   output.appendChild(hero);
 
   // ── MISSION — collapsed by default ────────────────────
-  const blockerLabels2 = {ideas:'not knowing what to say',camera:'camera shyness',nothing:'not having a business yet',procrastinating:'putting it off'};
-  const goalLabels2 = {comfortable:'get comfortable on camera',audience:'build an audience',voice:'find their voice',start:'just start showing up',expert:'establish themselves as an expert',clients:'build an audience of potential clients',leads:'generate real leads',consistent:'finally get consistent'};
-  const blockerText = state.blocker ? (blockerLabels2[state.blocker] || state.blocker) : (state.history ? 'getting started' : null);
-  const goalText = state.goal ? (goalLabels2[state.goal] || state.goal) : null;
-
-  let missionLine = '';
-  if (name !== 'You') {
-    if (blockerText && goalText) missionLine = `${name} decided that ${blockerText} wasn't worth the cost — and committed to 7 videos to ${goalText}.`;
-    else if (goalText) missionLine = `${name} showed up with one commitment: 7 videos to ${goalText}.`;
-    else missionLine = `${name} decided to stop waiting. Seven videos. That's all it takes.`;
-  } else {
-    missionLine = goalText
-      ? `You're here to ${goalText}. Seven videos. That's the commitment.`
-      : `You decided to stop waiting. That's the whole thing.`;
-  }
+  const missionLine = buildMissionManifesto(name, miniText);
 
   const missionEl = document.createElement('div');
   missionEl.className = 'db-mission-collapsed';
@@ -3717,7 +4013,7 @@ function buildPlan(){
       <div class="db-mission-line">${missionLine}</div>
       <div class="db-mission-commit">
         By the end of this challenge I will
-        <strong style="color:var(--teal)">${miniText}</strong>,
+        <strong style="color:var(--teal)">${escapeHTML(miniText)}</strong>,
         even if it's messy, even if nobody watches, and even if I have to do it scared.
       </div>
     </div>`;
@@ -4084,9 +4380,7 @@ function showDashboard() {
   }
 
   if (screenOrder.length <= 2) {
-    screenOrder = state.posted === 'no'
-      ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-email','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+    ensureFullOnboardingOrder();
   }
 
   try { buildPlan(); } catch(e) {
@@ -4113,6 +4407,8 @@ function showDashboard() {
   if (_navEl) _navEl.style.display = 'flex';
   const _dashBtn = document.getElementById('header-dashboard-btn');
   if (_dashBtn) _dashBtn.style.display = 'none';
+  const _signInBtn = document.getElementById('header-signin-btn');
+  if (_signInBtn) _signInBtn.style.display = 'none';
 
   if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
     const toast = document.getElementById('verify-email-toast');
@@ -4148,6 +4444,7 @@ function restartWizard(){
   state.mvoQ3        = null;
   state.mvoQ4        = null;
   state.topicFreewrite = '';
+  resetPhase2();
   mvoQ2Skipped = false;
   maxProgressPct = 0;
   maxProgressL2Pct = 0;
@@ -4571,6 +4868,7 @@ function saveProgress() {
     mvoQ2:         state.mvoQ2         || null,
     mvoQ3:         state.mvoQ3         || null,
     mvoQ4:         state.mvoQ4         || null,
+    phase2:        ensurePhase2(),
     savedAt:       Date.now()
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e) {}
@@ -4615,6 +4913,8 @@ function loadProgress() {
       if (data.mvoQ2)         state.mvoQ2         = data.mvoQ2;
       if (data.mvoQ3)         state.mvoQ3         = data.mvoQ3;
       if (data.mvoQ4)         state.mvoQ4         = data.mvoQ4;
+      if (data.phase2)        state.phase2        = data.phase2;
+      ensurePhase2();
       if (data.l1VideoStatus) state.l1VideoStatus = data.l1VideoStatus;
       if (data.l1Videos)      state.l1Videos      = data.l1Videos;
       if (data.topicFreewrite)state.topicFreewrite= data.topicFreewrite;
@@ -4642,9 +4942,7 @@ function continueSession() {
   // If they completed onboarding (level known), resume at the right place
   if (state.level) {
     // Bug fix: state.level is numeric (1 or 2), never the string 'L1'
-    screenOrder = state.level === 1
-      ? ['screen-0','screen-1','screen-email','screen-2a','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen']
-      : ['screen-0','screen-1','screen-email','screen-2b','screen-3','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+    ensureFullOnboardingOrder();
 
     // Find the first video that hasn't been filmed or skipped
     const videoCount = getVideos().length;
@@ -4692,6 +4990,7 @@ function dismissBanner() {
   localStorage.removeItem(SAVE_KEY);
   Object.keys(state).forEach(k => state[k] = k === 'videos' || k === 'videoStatus' ? {} : null);
   state.name = ''; state.minigoalText = ''; state.topicFreewrite = '';
+  resetPhase2();
   document.getElementById('returning-banner').classList.remove('visible');
 }
 
