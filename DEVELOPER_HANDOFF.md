@@ -52,6 +52,51 @@ Note: the DeepSeek API proxy (`/api/generate.js`) requires the `DEEPSEEK_API_KEY
 
 ---
 
+## What's in the repository
+
+This repo is the entire 777 Challenge project folder, not just the app. Here's everything it contains:
+
+**The SeenInSeven app (deployed to Vercel):**
+- `index.html` — the full app
+- `admin.html` — admin dashboard
+- `css/app.css` — all styles
+- `js/app.js` — all application logic
+- `js/supabase.js` — auth and database layer
+- `prompts/blueprints.js` — core IP, never modify
+- `api/generate.js` — DeepSeek serverless proxy
+- `vercel.json` — URL routing
+
+**Landing page HTML blocks (for Systeme.io):**
+Located in `funnel-pages/`. These are the custom HTML blocks that get pasted into Systeme.io's page builder for the challenge landing pages, checkout pages, upsell/downsell pages, daily challenge pages, and thank you pages. They are not deployed by Vercel — they live here for version control and are manually copied into Systeme.io when updated.
+
+**Project and planning documents:**
+- `777_Challenge_Launch_Plan.docx` — full launch plan
+- `7v7d7-project-document.docx` — project brief
+- `Hero's Journey 777 Video Challenge.md` — framework reference
+- `social-launch-kit.md` — social content
+- `funnel-audit-brunson.md` — funnel analysis
+- `LANDING_PAGES_INVENTORY.md` and `LANDING_PAGES_EDITS_SUMMARY.md` — landing page tracking
+- `DEAR_FUTURE_CLAUDE.md` — debugging history (read this)
+- `DEVELOPER_HANDOFF.md` — this file
+
+---
+
+## How GitHub Desktop fits in
+
+David uses **GitHub Desktop** on his local machine to sync the repo. The local folder on his machine (inside his project folder) is a clone of this repository.
+
+**Two different tools push to this same repo:**
+
+- **Claude.ai (browser)** — pushes directly to GitHub via the Git CLI inside a temporary cloud container. Changes go to GitHub first, then David pulls them down to his local machine using GitHub Desktop.
+
+- **Claude Code (Cowork/desktop tool)** — pushes directly from David's local machine via GitHub Desktop. Changes appear locally first, then get pushed to GitHub.
+
+Both end up in the same place — the `main` branch on GitHub. The practical difference: after a Claude.ai session, David needs to **pull in GitHub Desktop** to get the changes locally. After a Claude Code session, the changes are already local and have been pushed up.
+
+Vercel watches the GitHub `main` branch regardless of who pushed, and auto-deploys within 30 seconds either way.
+
+---
+
 ## Technical stack
 
 | Layer | Technology |
