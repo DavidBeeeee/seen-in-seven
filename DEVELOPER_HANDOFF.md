@@ -223,7 +223,21 @@ The app has 21 screens, all `<div class="screen">` elements that are direct chil
 
 ---
 
-## Current app state — what works
+## Roadmap
+
+The full phased roadmap lives in `SEENINSEVEN_ROADMAP.md` in this repo. **That document is the canonical source of truth for what to build next.** Treat it as more current than any older handoff notes or session history.
+
+The phases are strictly sequential — do not skip ahead. Phase 1 must be complete before Phase 2 begins, and so on. The roadmap document explains why each phase is ordered the way it is.
+
+Quick summary of phases:
+1. **Admin Command Center and Stability** — current priority
+2. **Full User Experience Audit** — after admin visibility is solid
+3. **Gamification and Completion Experience** — placeholder, defined by David Bee when ready
+4. **Paid Access and Checkout Bridge** — after the test experience is proven
+5. **Email and Follow-Up System** — after the product experience is clean
+6. **Long-Term Superapp Foundation** — future direction, not current scope
+
+---
 
 - Full onboarding flow (all 21 screens)
 - Magic link authentication — new and returning users
