@@ -4883,7 +4883,7 @@ function renderMvoQuestion(qNum, level, mode) {
   const isExtendedL2 = level === 2 && mode === 'extended';
   const showFreewrite = level === 1 || isExtendedL2;
   const sub = getMvoSubtitle(qNum, level, mode);
-  const chips = isExtendedL2 ? '' : '<div class="mvo-chip-grid">' + data.cards.map(card => {
+  const chips = '<div class="mvo-chip-grid">' + data.cards.map(card => {
     const active = mvoCardMatches(selected, card);
     return '<button type="button" class="mvo-chip' + (active ? ' selected' : '') + '" onclick="selectMvoBriefCard(' + qNum + ',' + level + ',\'' + safeMvoCardKey(card.text) + '\')">' + card.icon + ' ' + escapeHTML(card.text) + '</button>';
   }).join('') + '</div>';
@@ -4951,7 +4951,6 @@ function mvoAnswerText(qNum, level) {
     if (qNum === 4) return answer.village_full || '';
   }
   if (level === 1) return '';
-  if (level === 2 && mode === 'extended') return '';
   if (qNum === 2 && level === 2) return answer.village_full || '';
   if (qNum === 3 && level === 2) return answer.before_full || '';
   if (qNum === 4 && level === 2) return answer.crack_full || '';
