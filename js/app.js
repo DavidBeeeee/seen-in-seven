@@ -469,7 +469,7 @@ function goBack() {
 }
 
 
-function goToRecapWithNameCheck() {
+async function goToRecapWithNameCheck() {
   const nameInput = document.getElementById('user-name');
   if (!nameInput.value.trim()) {
     nameInput.style.borderColor = 'var(--teal)';
@@ -481,7 +481,7 @@ function goToRecapWithNameCheck() {
     }, 2500);
     return;
   }
-  goToRecap();
+  await goToRecap();
 }
 
 async function goToRecap() {
@@ -626,12 +626,18 @@ function resetEmailScreenCopy(titleHtml, subText, buttonText) {
 
 const SAVE_PROGRESS_OVERLAY_KEY = 'sis_save_progress_overlay_seen_v2';
 
+function hasSeenSaveProgressOverlay() {
+  try {
+    return sessionStorage.getItem(SAVE_PROGRESS_OVERLAY_KEY) === '1';
+  } catch(e) {
+    return false;
+  }
+}
+
 function maybeShowSaveProgressOverlay() {
   const isAuthenticated = typeof getCurrentUser === 'function' && getCurrentUser();
   if (isAuthenticated) return;
-  try {
-    if (sessionStorage.getItem(SAVE_PROGRESS_OVERLAY_KEY) === '1') return;
-  } catch(e) {}
+  if (hasSeenSaveProgressOverlay()) return;
   const overlay = document.getElementById('save-progress-overlay');
   if (!overlay) return;
   overlay.classList.add('open');
@@ -721,9 +727,9 @@ function updateProgress(id) {
     fill.style.width = '100%';
     let pct2;
     if (videosDone === 0) {
-      // Onboarding: green grows 0→15% from screen-4 (index 4) through screen-7
+      // Onboarding: green grows 0-15% through the active Phase 2 onboarding screens.
       const screen7idx = screenOrder.indexOf('screen-7');
-      const startIdx = 4; // screen-4 is always at index 4 in the full screenOrder
+      const startIdx = Math.max(screenOrder.indexOf('screen-content-intent'), 0);
       if (screen7idx > 0 && currentIndex >= startIdx) {
         pct2 = Math.min(((currentIndex - startIdx) / Math.max(screen7idx - startIdx, 1)) * 15, 15);
       } else {
@@ -1147,18 +1153,21 @@ function buildMissionFallback() {
 }
 
 async function generateMissionForRecap() {
-  const p2 = ensurePhase2();
   const btn = document.getElementById('commitment-submit-btn');
   const original = btn ? btn.textContent : '';
   if (btn) { btn.disabled = true; btn.textContent = 'Writing your mission...'; }
+  let missionText;
   try {
     const mission = await callDeepSeekAPIRaw(MISSION_SYSTEM_PROMPT, buildMissionUserMessage());
-    p2.missionStatement = (mission || buildMissionFallback()).replace(/\s+/g, ' ').trim();
+    missionText = (mission || '').replace(/\s+/g, ' ').trim() || buildMissionFallback();
   } catch(e) {
-    p2.missionStatement = buildMissionFallback();
+    missionText = buildMissionFallback();
   }
-  p2.missionGeneratedAt = new Date().toISOString();
-  p2.commitmentDeclaration = buildCommitmentDeclaration();
+  const updatedPhase2 = ensurePhase2();
+  updatedPhase2.missionStatement = missionText;
+  updatedPhase2.missionGeneratedAt = new Date().toISOString();
+  updatedPhase2.commitmentDeclaration = buildCommitmentDeclaration();
+  state.phase2 = updatedPhase2;
   saveProgress();
   if (btn) { btn.disabled = false; btn.textContent = original || "I'm ready. Let's do this."; }
 }
@@ -2543,10 +2552,10 @@ async function showScriptView(idx, skipLoading) {
       if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(idx);
       if (typeof logEvent === 'function') logEvent('script_generated', {video_number: idx + 1, level: state.level || 1});
       _doShowScriptView(idx);
-      // Show verification gate after first script, persistent toast for subsequent
+      // Show the legacy verification gate only if the newer save-progress overlay never appeared.
       if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
         if (idx === 0) {
-          setTimeout(() => showVerifyGate(), 1200);
+          if (!hasSeenSaveProgressOverlay()) setTimeout(() => showVerifyGate(), 1200);
         } else {
           const toast = document.getElementById('verify-email-toast');
           if (toast) toast.style.display = 'flex';
