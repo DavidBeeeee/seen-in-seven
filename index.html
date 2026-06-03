@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>SeenInSeven: Your AI StoryStarter</title>
+<title>SeenInSeven: Your 7 Video Challenge</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
@@ -262,7 +262,7 @@
 
   <div class="welcome-split">
     <div class="welcome-main">
-      <div class="welcome-eyebrow">Your AI StoryStarter</div>
+      <div class="welcome-eyebrow">Your 7 Video Challenge</div>
       <h1 class="welcome-title">
         <span class="l1">SeenInSeven</span>
       </h1>
@@ -388,23 +388,6 @@
   <h2 class="screen-title">What do you most want these videos to say <span class="accent">about you?</span></h2>
   <p class="screen-sub">This shapes the whole tone of your scripts, so go with whatever feels most true right now.</p>
   <div class="choice-grid" id="content-intent-grid"></div>
-  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
-</div>
-
-<!-- ══ DEPRECATED PLACEHOLDER: OLD GOAL SCREEN ══ -->
-<div class="screen" id="screen-4">
-  <div class="q1-progress">Question deprecated</div>
-  <h2 class="screen-title">This screen is no longer used.</h2>
-  <p class="screen-sub">The V2 onboarding flow replaces this question.</p>
-  <div class="choice-grid" id="goal-grid"></div>
-</div>
-
-<!-- ══ DEPRECATED PLACEHOLDER: OLD MINI GOAL SCREEN ══ -->
-<div class="screen" id="screen-5">
-  <div class="q1-progress">Question deprecated</div>
-  <h2 class="screen-title">This screen is no longer used.</h2>
-  <p class="screen-sub">The V2 onboarding flow replaces this question.</p>
-  <div class="choice-grid" id="minigoal-grid"></div>
   <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
@@ -584,43 +567,6 @@
       <button class="btn-primary" onclick="completeMvoBrief()">Build My First Script</button>
       <button class="script-def-back" onclick="goBack()">← Back</button>
     </div>
-  </div>
-</div>
-
-<!-- ══ MVO Q3 ══ -->
-<div class="screen" id="screen-mvo3">
-  <div class="q1-progress">Deprecated</div>
-  <h2 class="screen-title">This screen is no longer used.</h2>
-</div>
-
-<!-- ══ MVO Q4 ══ -->
-<div class="screen" id="screen-mvo4">
-  <div class="q1-progress">Deprecated</div>
-  <h2 class="screen-title">This screen is no longer used.</h2>
-</div>
-
-<!-- ══ COMMUNICATION LAYERS ══ -->
-<div class="screen" id="screen-comm-layers">
-  <!-- Onboarding complete indicator -->
-  <div style="display:flex;align-items:center;gap:8px;margin-bottom:20px;padding:10px 14px;background:rgba(74,222,128,0.07);border:1px solid rgba(74,222,128,0.2);border-radius:10px;">
-    <span style="font-size:16px;">✅</span>
-    <span style="font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.12em;text-transform:uppercase;color:var(--green);">Setup complete... building your first script</span>
-  </div>
-  <div class="video-progress" id="cl-dots"></div>
-  <div id="cl-result-badge"></div>
-  <div class="q1-progress" id="cl-label">Video 1 of 7</div>
-  <h2 class="screen-title" id="cl-title"></h2>
-  <p class="vi-body" id="cl-body"></p>
-  <div id="cl-framework"></div>
-  <div id="cl-triggers"></div>
-  <div class="v1-tracker" id="tracker-slot-cl"></div>
-  <div class="btn-row" style="margin-top:1.5rem;">
-    <button class="script-def-back" onclick="goBack()" style="margin-right:10px;">← Back</button>
-    <button class="btn-primary" id="cl-ready-btn" onclick="goNext()">I'm Ready →</button>
-  </div>
-  <div style="text-align:center;margin-top:14px;">
-    <button class="btn-skip" onclick="skipFromPreface(0)">Skip this video →</button>
-    <br><button class="preface-skip-end" onclick="skipToEnd()">→ Dashboard</button>
   </div>
 </div>
 

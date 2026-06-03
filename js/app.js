@@ -727,7 +727,7 @@ function updateProgress(id) {
   const fillL2 = document.getElementById('progress-fill-l2');
 
   // Small phase bonus within each video's working cycle
-  const phaseBonus = (id === 'screen-comm-layers' || id === 'screen-video-intro') ? 1.5
+  const phaseBonus = id === 'screen-video-intro' ? 1.5
                    : id === 'screen-7' ? 3.5
                    : id === 'screen-script' ? 6 : 0;
 
@@ -2093,7 +2093,6 @@ function startVideos() {
   currentVideoIndex = 0;
   buildVideoDots('video-dots');
   buildVideoDots('script-dots');
-  buildVideoDots('cl-dots');
   buildVideoDots('vi-dots');
   renderVideoPrompts(0);
   showScreen('screen-7');
@@ -2123,7 +2122,7 @@ function buildVideoDots(containerId) {
 }
 
 function updateDots(idx) {
-  ['video-dots','script-dots','cl-dots','vi-dots'].forEach(cid => {
+  ['video-dots','script-dots','vi-dots'].forEach(cid => {
     for (let i = 0; i < 7; i++) {
       const d = document.getElementById(cid + '-dot-' + i);
       if (!d) continue;
@@ -2978,10 +2977,9 @@ function afterFilmed(idx, status) {
 
 function backFromVideoIntro() {
   if (currentPreviewVideoNum <= 1) {
-    // Go back to screen-comm-layers (V1 preface)
-    renderPrefaceV1();
-    showScreen('screen-comm-layers');
-    currentIndex = screenOrder.indexOf('screen-comm-layers');
+    renderMvoScreen();
+    showScreen('screen-mvo2');
+    currentIndex = screenOrder.indexOf('screen-mvo2');
   } else {
     // Go back to the script screen for the previous video
     const prevIdx = currentPreviewVideoNum - 2;
@@ -3000,7 +2998,7 @@ function skipFromPreface(idx) {
 function renderVideoTracker(context) {
   context = context || 'prompts';
   const videos = getVideos();
-  const slots = ['tracker-slot-cl','tracker-slot-vi','tracker-slot-journal','tracker-slot-script'];
+  const slots = ['tracker-slot-vi','tracker-slot-journal','tracker-slot-script'];
   const html = _buildTrackerHTML(videos, context);
   slots.forEach(sid => {
     const el = document.getElementById(sid);
@@ -3136,9 +3134,9 @@ function startVideoOver() {
     delete state.videos['v0p0'];
     delete state.videos['v0p1'];
     delete state.videos['v0p2'];
-    renderPrefaceV1();
-    showScreen('screen-comm-layers');
-    currentIndex = screenOrder.indexOf('screen-comm-layers');
+    renderMvoScreen();
+    showScreen('screen-mvo2');
+    currentIndex = screenOrder.indexOf('screen-mvo2');
   } else {
     if (v.prompts) { v.prompts.forEach(p => { delete state.videos[p.key]; }); }
     renderVideoPrompts(idx);
@@ -3265,6 +3263,11 @@ function runItAgain() {
   // Wipe only video answers, keep name/goal/minigoal
   state.videos = {};
   state.videoStatus = {};
+  state.mvoQ2 = null;
+  state.mvoQ3 = null;
+  state.mvoQ4 = null;
+  state.topicFreewrite = '';
+  mvoQ2Skipped = false;
   currentVideoIndex = 0;
   currentPreviewVideoNum = 1;
   // Reset progress bar for L2 run
@@ -3281,12 +3284,10 @@ function runItAgain() {
   document.getElementById('progress-label').textContent = 'YOUR JOURNEY';
   buildVideoDots('video-dots');
   buildVideoDots('script-dots');
-  buildVideoDots('cl-dots');
   buildVideoDots('vi-dots');
-  // Video 0 uses comm-layers preface, not screen-7
-  renderPrefaceV1();
-  showScreen('screen-comm-layers');
-  currentIndex = screenOrder.indexOf('screen-comm-layers');
+  renderMvoScreen();
+  showScreen('screen-mvo2');
+  currentIndex = screenOrder.indexOf('screen-mvo2');
   window.scrollTo(0, 0);
 }
 
@@ -3682,9 +3683,9 @@ async function deleteAndStartOver() {
   saveProgress();
   // Send back to prompts
   if (idx === 0) {
-    renderPrefaceV1();
-    showScreen('screen-comm-layers');
-    currentIndex = screenOrder.indexOf('screen-comm-layers');
+    renderMvoScreen();
+    showScreen('screen-mvo2');
+    currentIndex = screenOrder.indexOf('screen-mvo2');
   } else {
     renderVideoPrompts(idx);
     showScreen('screen-7');
@@ -5020,33 +5021,6 @@ function renderResultBadgeHTML(result) {
   return `<div class="vi-result-badge"><span>Result:</span>${result}</div>`;
 }
 
-function renderPrefaceV1() {
-  const lv  = state.level || 1;
-  const key = lv === 1 ? 'L1' : 'L2';
-  const data = INTRO_COPY[1] && INTRO_COPY[1][key];
-  if (!data) return;
-  // update currentPreviewVideoNum
-  currentPreviewVideoNum = 1;
-  currentVideoIndex = 0;
-  buildVideoDots('cl-dots');  // rebuild dots fresh so updateDots has elements to update
-  updateDots(0);
-  renderVideoTracker('preface');
-  const labelEl  = document.getElementById('cl-label');
-  const titleEl  = document.getElementById('cl-title');
-  const bodyEl   = document.getElementById('cl-body');
-  const badgeEl  = document.getElementById('cl-result-badge');
-  const fwEl     = document.getElementById('cl-framework');
-  const trigEl   = document.getElementById('cl-triggers');
-  const btnEl    = document.getElementById('cl-ready-btn');
-  if (labelEl)  labelEl.textContent  = data.label;
-  if (titleEl)  titleEl.textContent  = data.title;
-  if (bodyEl)   bodyEl.textContent   = data.body;
-  if (badgeEl)  badgeEl.innerHTML    = renderResultBadgeHTML(data.result);
-  if (fwEl)     fwEl.innerHTML       = renderFrameworkHTML(data.framework);
-  if (trigEl)   trigEl.innerHTML     = renderTriggersHTML(data.triggers);
-  if (btnEl)    btnEl.onclick = () => goNext();
-}
-
 function renderVideoIntro(videoNum) {
   const lv  = state.level || 1;
   const key = lv === 1 ? 'L1' : 'L2';
@@ -5100,7 +5074,7 @@ function compileMvoBeats() {
     if (sv.v0p2) q4 = Object.assign({}, q4, {crack_full: sv.v0p2});
   }
   if (level === 1) {
-    const isComeback = state.history === 'was';
+    const isComeback = state.posted === 'consistent' || state.history === 'was';
     const hookText = isComeback
       ? 'Hey, I\'m ' + name + '. I\'m back. And I want to be honest with you about the fact that I was here before — and I stopped.'
       : 'Hey, I\'m ' + name + '. And I\'m doing something that honestly scares me a little bit.';
@@ -5355,43 +5329,8 @@ function continueSession() {
   document.getElementById('returning-banner').classList.remove('visible');
   // If they completed onboarding (level known), resume at the right place
   if (state.level) {
-    // Bug fix: state.level is numeric (1 or 2), never the string 'L1'
     ensureFullOnboardingOrder();
-
-    // Find the first video that hasn't been filmed or skipped
-    const videoCount = getVideos().length;
-    let resumeIdx = 0;
-    let allDone = true;
-    for (let i = 0; i < videoCount; i++) {
-      if (!state.videoStatus[i]) {
-        resumeIdx = i;
-        allDone = false;
-        break;
-      }
-    }
-
-    if (allDone) {
-      // All 7 videos complete — go straight to the plan
-      buildPlan();
-      showScreen('plan-screen');
-      currentIndex = screenOrder.indexOf('plan-screen');
-    } else {
-      // Resume at the first incomplete video
-      currentVideoIndex = resumeIdx;
-      buildVideoDots('video-dots');
-      buildVideoDots('script-dots');
-      buildVideoDots('cl-dots');
-      buildVideoDots('vi-dots');
-      // If a script already exists for this video, go to the script view
-      if (state.videos['script_v' + resumeIdx]) {
-        editingFromPlan = false;
-        showScriptView(resumeIdx, true);
-      } else {
-        renderVideoPrompts(currentVideoIndex);
-        showScreen('screen-7');
-        currentIndex = screenOrder.indexOf('screen-7');
-      }
-    }
+    resumeFromDashboard();
     window.scrollTo(0, 0);
   } else {
     goNext();

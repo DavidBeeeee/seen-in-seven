@@ -128,9 +128,7 @@ body::before {
 /* Short-content screens benefit from vertical centering */
 #screen-1.active,
 #screen-2a.active,
-#screen-3.active,
-#screen-4.active,
-#screen-5.active {
+#screen-3.active {
   justify-content:center;
 }
 .screen.anim-in  { animation: fadeIn  0.35s ease forwards; }
