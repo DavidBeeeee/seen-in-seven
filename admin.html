@@ -668,7 +668,7 @@ function hydrateNoteControls(r) {
 
 function renderAnswers(ob) {
   if (!ob) return '<div class="empty">No onboarding row found.</div>';
-  const goalMap = {comfortable:'get comfortable on camera',audience:'build an audience',voice:'find their voice',start:'just start showing up',expert:'establish themselves as an expert',clients:'build an audience of potential clients',leads:'generate real leads',consistent:'finally get consistent'};
+  const goalMap = {comfortable:'get comfortable being seen',story:'help people understand their story',audience:'build an audience',voice:'find their voice',start:'starting because someone told them to',expert:'establish themselves as an expert',clients:'attract the right people to their business',leads:'generate leads or conversations',consistent:'finally get consistent'};
   const p2 = getPhase2Context(ob);
   const context = p2.knowledgeContext || '';
   const contextSnippet = context

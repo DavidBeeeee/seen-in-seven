@@ -242,31 +242,33 @@
     </div>
   </div>
 
-  <div class="welcome-eyebrow">SeenInSeven · Your AI StoryStarter</div>
-  <h1 class="welcome-title">
-    <span class="l1">7 Videos.</span>
-    <span class="l2">Your Brand.</span>
-    <span class="l3">Starting Now.</span>
-  </h1>
-  <p class="welcome-tagline"><strong>SeenInSeven:</strong> <em>build your entire brand in just 7 videos.</em></p>
-  <p class="welcome-sub">You don't need to go viral. You don't need fancy gear. The app just needs your answers, and it'll do the rest. Right now.</p>
-
-  <div class="welcome-steps">
-    <div class="welcome-step"><div class="slabel">Step 01</div><div class="st">Find your level</div></div>
-    <div class="welcome-step"><div class="slabel">Step 02</div><div class="st">Set your goal</div></div>
-    <div class="welcome-step"><div class="slabel">Step 03</div><div class="st">Build your scripts</div></div>
-    <div class="welcome-step"><div class="slabel">Step 04</div><div class="st">Press record</div></div>
-  </div>
-  <div class="bounce-arrow">↓</div>
-  <div class="btn-row">
-    <button class="btn-primary" onclick="goNext()">Let's Do This</button>
-    <button class="btn-secondary" onclick="showSignInScreen()">Sign In</button>
+  <div class="welcome-split">
+    <div class="welcome-main">
+      <div class="welcome-eyebrow">SeenInSeven · Your AI StoryStarter</div>
+      <h1 class="welcome-title">
+        <span class="l1">7 Videos.</span>
+        <span class="l2">Your Brand.</span>
+        <span class="l3">Starting Now.</span>
+      </h1>
+      <p class="welcome-tagline"><strong>SeenInSeven:</strong> <em>build your entire brand in just 7 videos.</em></p>
+      <p class="welcome-sub">Answer a few clear questions. Get scripts that sound like you. Then press record.</p>
+      <div class="btn-row welcome-actions">
+        <button class="btn-primary" onclick="goNext()">Let's Do This</button>
+        <button class="btn-secondary" onclick="showSignInScreen()">Sign In</button>
+      </div>
+    </div>
+    <div class="welcome-steps">
+      <div class="welcome-step"><div class="slabel">Step 01</div><div class="st">Find your level</div></div>
+      <div class="welcome-step"><div class="slabel">Step 02</div><div class="st">Shape your mission</div></div>
+      <div class="welcome-step"><div class="slabel">Step 03</div><div class="st">Add your context</div></div>
+      <div class="welcome-step"><div class="slabel">Step 04</div><div class="st">Build your scripts</div></div>
+    </div>
   </div>
 </div>
 
 <!-- ══ S1 POSTED? ══ -->
 <div class="screen" id="screen-1">
-  <div class="q1-progress">Question 1 of 4 - Finding Your Level</div>
+  <div class="q1-progress">Question 1 - Finding Your Level</div>
   <h2 class="screen-title">Have you ever posted a <span class="accent">short-form video</span> online?</h2>
   <p class="screen-sub">TikTok, Reels, Shorts... anything counts. Even if you deleted it the next day.</p>
   <div class="choice-grid">
@@ -275,82 +277,78 @@
       <div class="card-title">No, never</div>
       <div class="card-sub">Haven't posted yet (or recorded once and never put it out).</div>
     </div>
-    <div class="choice-card" onclick="autoAdvance(this,'posted','yes')">
+    <div class="choice-card" onclick="autoAdvance(this,'posted','few')">
       <span class="card-emoji">📱</span>
-      <div class="card-title">Yes, I have</div>
-      <div class="card-sub">Posted before, even if it was just a few times or I fell off.</div>
+      <div class="card-title">Yes, a few times</div>
+      <div class="card-sub">I tried it, but it never became a real rhythm.</div>
+    </div>
+    <div class="choice-card" onclick="autoAdvance(this,'posted','felloff')">
+      <span class="card-emoji">🔄</span>
+      <div class="card-title">Yes, but I fell off</div>
+      <div class="card-sub">I posted for a while, then life or nerves pulled me away.</div>
+    </div>
+    <div class="choice-card" onclick="autoAdvance(this,'posted','consistent')">
+      <span class="card-emoji">🔥</span>
+      <div class="card-title">Yes, consistently before</div>
+      <div class="card-sub">I know what posting feels like. I want this to work better.</div>
     </div>
   </div>
-  <div class="choice-custom">
-    <div class="choice-custom-title">Say it my way</div>
-    <div class="choice-custom-copy">If none of those are quite right, talk or type the real reason. This helps your scripts sound more like you.</div>
-    <textarea class="text-input" id="blocker-custom" rows="3" maxlength="1000" placeholder="What is actually making this hard?" oninput="setCustomAnswer('blocker', this.value)"></textarea>
-    <div class="btn-row"><button class="btn-secondary" onclick="useCustomRouteAnswer('blocker','custom')">Use My Words</button></div>
-  </div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
 <!-- ══ S2a BLOCKER ══ -->
 <div class="screen" id="screen-2a">
-  <div class="q1-progress">Question 2 of 4 - Finding Your Level</div>
+  <div class="q1-progress">Question 3 - Your Friction Point</div>
   <h2 class="screen-title">What's the <span class="accent">main thing</span> holding you back?</h2>
-  <p class="screen-sub">Be honest. There's no wrong answer. This helps us prepare you for exactly that moment.</p>
+  <p class="screen-sub">Pick the closest answer, then use your own words if the real answer has more texture.</p>
   <div class="choice-grid">
-    <div class="choice-card" onclick="autoAdvance(this,'blocker','ideas')">
+    <div class="choice-card" onclick="selectCardAnswer(this,'blocker','ideas')">
       <span class="card-emoji">🧠</span>
       <div class="card-title">I don't know what to say</div>
       <div class="card-sub">I stare at the camera and go completely blank.</div>
     </div>
-    <div class="choice-card" onclick="autoAdvance(this,'blocker','camera')">
+    <div class="choice-card" onclick="selectCardAnswer(this,'blocker','camera')">
       <span class="card-emoji">😬</span>
-      <div class="card-title">I hate how I look on camera</div>
-      <div class="card-sub">I've tried but I cringe watching myself back.</div>
+      <div class="card-title">I don't like how I come across</div>
+      <div class="card-sub">My voice, face, energy, or delivery makes me second-guess it.</div>
     </div>
-    <div class="choice-card" onclick="autoAdvance(this,'blocker','nothing')">
-      <span class="card-emoji">🤷</span>
-      <div class="card-title">I don't have a business yet</div>
-      <div class="card-sub">Not sure what my "thing" is or if anyone would care.</div>
+    <div class="choice-card" onclick="selectCardAnswer(this,'blocker','care')">
+      <span class="card-emoji">👀</span>
+      <div class="card-title">I'm worried people won't care</div>
+      <div class="card-sub">I don't want to post into silence or feel embarrassed.</div>
     </div>
-    <div class="choice-card" onclick="autoAdvance(this,'blocker','procrastinating')">
+    <div class="choice-card" onclick="selectCardAnswer(this,'blocker','procrastinating')">
       <span class="card-emoji">⏰</span>
       <div class="card-title">I keep putting it off</div>
       <div class="card-sub">I've been meaning to start. Life just keeps happening.</div>
     </div>
   </div>
-</div>
-
-<!-- ══ S2b HISTORY ══ -->
-<div class="screen" id="screen-2b">
-  <div class="q1-progress">Question 2 of 4 - Finding Your Level</div>
-  <h2 class="screen-title">How would you describe your <span class="accent">posting history?</span></h2>
-  <p class="screen-sub">Pick the one that feels most true, even if it's a little uncomfortable.</p>
-  <div class="choice-grid one-col">
-    <div class="choice-card" onclick="autoAdvance(this,'history','few')">
-      <div class="card-title">I've posted a few times but never consistently</div>
-      <div class="card-sub">Made a couple of videos, they went nowhere, and I stopped.</div>
-    </div>
-    <div class="choice-card" onclick="autoAdvance(this,'history','stops')">
-      <div class="card-title">I post sometimes but always fall off after a week or two</div>
-      <div class="card-sub">Start strong, life happens, disappear for months.</div>
-    </div>
-    <div class="choice-card" onclick="autoAdvance(this,'history','was')">
-      <div class="card-title">I was consistent once but stopped for a while</div>
-      <div class="card-sub">Had a rhythm going, something broke it, haven't come back.</div>
+  <div class="feature-callout voice-feature">
+    <div class="feature-badge">New feature</div>
+    <div class="feature-arrow">↘</div>
+    <div>
+      <div class="feature-title">Say it your way.</div>
+      <div class="feature-copy">Type it, or tap the mic and talk it out. Your own words make the scripts feel much more personal.</div>
     </div>
   </div>
-  <div class="choice-custom">
-    <div class="choice-custom-title">Say it my way</div>
-    <div class="choice-custom-copy">Give the honest version of what happened with posting before. Short is fine.</div>
-    <textarea class="text-input" id="history-custom" rows="3" maxlength="1000" placeholder="What has your posting pattern really been?" oninput="setCustomAnswer('history', this.value)"></textarea>
-    <div class="btn-row"><button class="btn-secondary" onclick="useCustomRouteAnswer('history','custom')">Use My Words</button></div>
+  <div class="choice-custom first-custom-feature">
+    <div class="choice-custom-title">Say it your way</div>
+    <div class="choice-custom-copy">If the card is close but not quite it, add the real version here.</div>
+    <textarea class="text-input" id="blocker-custom" rows="3" maxlength="1000" placeholder="What's actually making this hard?" oninput="setCustomAnswer('blocker', this.value)"></textarea>
+    <div class="btn-row"><button class="btn-secondary" onclick="useCustomRouteAnswer('blocker','custom')">Use My Words</button></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-primary" onclick="goNext()">Continue</button>
+    <button class="btn-back" onclick="goBack()">Back</button>
   </div>
 </div>
 
 <!-- ══ S3 BUSINESS? ══ -->
 <div class="screen" id="screen-3">
-  <div class="q1-progress">Question 3 of 4 - Finding Your Level</div>
-  <h2 class="screen-title">Are you <span class="accent">building a business</span> or working toward one?</h2>
+  <div class="q1-progress">Question 2 - Finding Your Level</div>
+  <h2 class="screen-title">What are you <span class="accent">building toward</span> right now?</h2>
   <p class="screen-sub">This shapes everything about what your videos should say and who they're for.</p>
-  <div class="choice-grid one-col">
+  <div class="choice-grid">
     <div class="choice-card" onclick="autoAdvance(this,'business','yes')">
       <span class="card-emoji">🚀</span>
       <div class="card-title">Yes, I have an active business</div>
@@ -372,22 +370,25 @@
       <div class="card-sub">I may build something later, but right now I need to show up and be seen.</div>
     </div>
   </div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
 <!-- ══ S4 PRIMARY GOAL ══ -->
 <div class="screen" id="screen-4">
-  <div class="q1-progress">Question 4 of 4 - Your Goal</div>
-  <h2 class="screen-title">What do you <span class="accent">actually want</span> from this?</h2>
-  <p class="screen-sub">Not what you think you should want. What you actually want right now.</p>
+  <div class="q1-progress">Question 6 - Your Content Goal</div>
+  <h2 class="screen-title">What do you want content to <span class="accent">do for you?</span></h2>
+  <p class="screen-sub">Not the perfect strategic answer. The real reason this would be worth doing.</p>
   <div class="choice-grid" id="goal-grid"></div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
 <!-- ══ S5 MINI GOAL ══ -->
 <div class="screen" id="screen-5">
-  <div class="eyebrow">Your Win</div>
+  <div class="q1-progress">Question 7 - Your Win</div>
   <h2 class="screen-title">What does <span class="accent">winning</span> look like for you?</h2>
   <p class="screen-sub">Pick the one that makes you go "yeah, that one." That's your finish line.</p>
-  <div class="choice-grid one-col" id="minigoal-grid"></div>
+  <div class="choice-grid" id="minigoal-grid"></div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
 <!-- ══ S6 NAME + COMMITMENT ══ -->
@@ -441,69 +442,22 @@
   </div>
 </div>
 
-<!-- ══ CONTEXT MODE ══ -->
-<div class="screen" id="screen-context-mode">
-  <div class="eyebrow">Script Depth</div>
-  <h2 class="screen-title">How much context do you want to give the app?</h2>
-  <p class="screen-sub">Simple is enough. Extended gives the AI more of your words, your audience, and your point of view.</p>
-  <div class="mode-tutorial">
-    <div class="tutorial-arrow">↘</div>
-    <div class="tutorial-copy">New move: pick Simple to keep momentum, or Extended if you want stronger personalization.</div>
-  </div>
-  <div class="context-toggle" role="group" aria-label="Script context depth">
-    <button class="context-toggle-btn active" id="context-simple-btn" onclick="setContextMode('simple')">Simple</button>
-    <button class="context-toggle-btn" id="context-extended-btn" onclick="setContextMode('extended')">Extended</button>
-  </div>
-  <div class="context-mode-card" id="context-mode-card">
-    <strong>Simple:</strong> we will use the answers you already gave, then ask for optional notes on the next screen.
-  </div>
-  <div class="btn-row">
-    <button class="btn-primary" onclick="goNext()">Continue →</button>
-    <button class="btn-back" onclick="goBack()">Back</button>
-  </div>
-</div>
-
-<!-- ══ CONTEXT DETAILS ══ -->
-<div class="screen" id="screen-context-details">
-  <div class="eyebrow">Optional Context</div>
-  <h2 class="screen-title">Give the app anything useful.</h2>
-  <p class="screen-sub">Paste notes from a business doc, style guide, bio, offer overview, writing sample, or anything you want your scripts to understand.</p>
-  <div id="extended-prompts" class="extended-prompts" style="display:none;">
-    <div class="input-group">
-      <label class="input-label">Who are you trying to reach?</label>
-      <textarea class="text-input" id="audience-context" rows="4" maxlength="1200" placeholder="Describe the person you want these videos to speak to." oninput="setPhase2Field('audienceContext', this.value)"></textarea>
-      <div class="input-hint">Tap the mic if talking this out is easier.</div>
-    </div>
-    <div class="input-group">
-      <label class="input-label">What do they need to understand or feel?</label>
-      <textarea class="text-input" id="message-context" rows="4" maxlength="1200" placeholder="What should your audience believe, notice, or feel after hearing from you?" oninput="setPhase2Field('messageContext', this.value)"></textarea>
-    </div>
-  </div>
-  <div class="input-group">
-    <label class="input-label">Optional knowledge/context paste</label>
-    <textarea class="text-input" id="knowledge-context" rows="8" maxlength="12000" placeholder="Paste useful context here. Master business doc, style notes, offer notes, client pain points, bio, writing samples... plain text only." oninput="setKnowledgeContext(this.value)"></textarea>
-    <div class="input-hint" id="knowledge-count">0 / 12,000 characters</div>
-  </div>
-  <div class="btn-row">
-    <button class="btn-primary" onclick="goNext()">Continue →</button>
-    <button class="btn-back" onclick="goBack()">Back</button>
-  </div>
-</div>
-
 <!-- ══ COMMITMENT PAIN ══ -->
 <div class="screen" id="screen-commit-pain">
-  <div class="eyebrow">Your Line In The Sand</div>
+  <div class="q1-progress">Question 4 - Your Line In The Sand</div>
   <h2 class="screen-title">What are you <span class="accent">done</span> carrying?</h2>
   <p class="screen-sub">This becomes part of your mission on the dashboard, so choose the one that feels most honest.</p>
   <div class="choice-grid" id="commit-pain-grid"></div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
 <!-- ══ COMMITMENT DESIRE ══ -->
 <div class="screen" id="screen-commit-desire">
-  <div class="eyebrow">Your Direction</div>
+  <div class="q1-progress">Question 5 - Your Direction</div>
   <h2 class="screen-title">What are you <span class="accent">moving toward?</span></h2>
   <p class="screen-sub">Not a perfect marketing goal. The real reason finishing these seven videos would matter.</p>
   <div class="choice-grid" id="commit-desire-grid"></div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
 <!-- ══ S-RECAP ══ -->
@@ -572,16 +526,36 @@
 
 <!-- ══ S-FREEWRITE ══ -->
 <div class="screen" id="screen-checklist">
-  <div class="eyebrow">Before We Build Your Script</div>
+  <div class="eyebrow">New Feature</div>
   <h2 class="screen-title">What do you want to <span class="accent">talk about?</span></h2>
-  <p class="screen-sub" style="font-size:15px;">Do you already know what you want to cover? A topic, a story, a feeling... anything. Don't overthink it. Just write.</p>
+  <p class="screen-sub" style="font-size:15px;">Simple is fast. Extended gives the script builder more of your story, your audience, and your point of view.</p>
+  <div class="mode-tutorial talk-tutorial">
+    <div class="tutorial-arrow">↘</div>
+    <div class="tutorial-copy"><strong>New feature:</strong> use Simple when you want momentum, or Extended when you want the AI to go deeper.</div>
+  </div>
+  <div class="context-toggle" role="group" aria-label="Script context depth">
+    <button class="context-toggle-btn active" id="context-simple-btn" onclick="setContextMode('simple')">Simple</button>
+    <button class="context-toggle-btn" id="context-extended-btn" onclick="setContextMode('extended')">Extended</button>
+  </div>
+  <div id="extended-prompts" class="extended-prompts" style="display:none;">
+    <div class="input-group">
+      <label class="input-label">Who are you trying to reach?</label>
+      <textarea class="text-input" id="audience-context" rows="4" maxlength="1200" placeholder="Describe the person you want these videos to speak to." oninput="setPhase2Field('audienceContext', this.value)"></textarea>
+    </div>
+    <div class="input-group">
+      <label class="input-label">What do they need to understand or feel?</label>
+      <textarea class="text-input" id="message-context" rows="4" maxlength="1200" placeholder="What should your audience believe, notice, or feel after hearing from you?" oninput="setPhase2Field('messageContext', this.value)"></textarea>
+    </div>
+  </div>
   <div class="input-group" style="margin-top:8px;">
-    <label class="input-label">Your thoughts (totally optional, but useful)</label>
-    <span class="input-hint" style="font-size:10px;opacity:0.65;">The more you share here, the more your scripts will sound like <em>you</em>. Blank is fine too. This goes straight to the AI when it builds your scripts.</span>
+    <label class="input-label">Your thoughts</label>
+    <span class="input-hint" style="font-size:12px;opacity:0.75;">Topic, story, offer notes, audience notes, style notes, or anything you want the scripts to understand. Plain text only.</span>
     <textarea class="text-input" id="freewrite-input" rows="6"
       style="resize:vertical;min-height:140px;line-height:1.7;"
       placeholder="I want to talk about why I finally started even though I had zero followers. Or maybe the thing I wish someone had told me when I was starting out. Or the embarrassing mistake that actually changed everything..."
-      oninput="state.topicFreewrite=this.value"></textarea>
+      maxlength="12000"
+      oninput="setTalkContext(this.value)"></textarea>
+    <div class="input-hint" id="knowledge-count">0 / 12,000 characters</div>
   </div>
   <div class="btn-row">
     <button class="btn-primary" onclick="goNext()">Let's Build My Scripts →</button>
@@ -603,6 +577,7 @@
       <div class="btn-row"><button class="btn-primary" onclick="confirmMvoOwn(2)">Use This</button></div>
     </div>
   </div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
 <!-- ══ MVO Q3 ══ -->
@@ -617,6 +592,7 @@
       <div class="btn-row"><button class="btn-primary" onclick="confirmMvoOwn(3)">Use This</button></div>
     </div>
   </div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
 <!-- ══ MVO Q4 ══ -->
@@ -631,6 +607,7 @@
       <div class="btn-row"><button class="btn-primary" onclick="confirmMvoOwn(4)">Use This</button></div>
     </div>
   </div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
 <!-- ══ COMMUNICATION LAYERS ══ -->
