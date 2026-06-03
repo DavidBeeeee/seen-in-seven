@@ -1085,9 +1085,8 @@ function buildCommitmentDeclaration() {
   const p2 = ensurePhase2();
   const name = state.name || 'I';
   const reasons = naturalList(p2.commitmentReasons);
-  const intro = 'I, ' + name + ', commit to finishing these 7 videos in order.';
-  const reasonLine = reasons ? ' I am doing this because I want ' + reasons + '.' : '';
-  return intro + reasonLine + ' I do not need perfect. I need to show up.';
+  const base = 'I, ' + name + ", commit to finishing all 7 videos no matter how long it takes, because this isn't a race or a streak challenge. It's a story I'm sharing with the people who need to hear it. I'm doing this because I want";
+  return reasons ? base + ' ' + reasons + '.' : base + '...';
 }
 
 function toggleCommitmentReason(reason) {
@@ -1131,13 +1130,14 @@ function renderCommitmentDeclaration() {
 
 const MISSION_SYSTEM_PROMPT = `You are writing a first-person mission statement for someone who just committed to completing a 7-video content challenge. This statement will live on their dashboard and should feel like their own words, not an outside analysis.
 
-Write 2 short sentences, 35 to 55 words total.
+Write 3 grounded sentences, 65 to 90 words total.
 
 Requirements:
 1. Use first person: I, my, me.
 2. Mention the real thing they are done carrying or moving beyond.
 3. Mention what they are moving toward.
-4. End with a simple commitment to finish the 7 videos.
+4. Include why being seen matters to them or to the people they want to reach.
+5. End with a simple commitment to finish the 7 videos.
 
 Tone: warm, direct, grounded, human. No corporate language. No buzzwords. No exclamation points. No diagnosis. No second-person analysis. No phrases like "embark on," "journey," or "unlock your potential." Return only the mission statement.`;
 
@@ -1164,7 +1164,7 @@ function buildMissionFallback() {
   const pain = p2.commitmentPainText || blocker;
   const vision = p2.commitmentDesireText || 'becoming someone who follows through';
   const reasons = naturalList(p2.commitmentReasons) || 'finish what you started';
-  return 'I am done letting ' + pain.charAt(0).toLowerCase() + pain.slice(1) + ' keep me quiet. I am moving toward ' + vision.charAt(0).toLowerCase() + vision.slice(1) + ', and I am finishing these 7 videos because I want to ' + removeLeadingTo(reasons) + '.';
+  return 'I am done letting ' + pain.charAt(0).toLowerCase() + pain.slice(1) + ' keep me quiet. I am moving toward ' + vision.charAt(0).toLowerCase() + vision.slice(1) + ', not because I need to perform, but because the right people cannot find the version of me I keep hidden. I am finishing these 7 videos because I want to ' + removeLeadingTo(reasons) + '.';
 }
 
 async function generateMissionForRecap() {
@@ -1601,7 +1601,6 @@ function populateRecap() {
   const headingEl = document.getElementById('recap-hero-heading');
   const nameEl = document.getElementById('recap-level-name');
   const msgEl = document.getElementById('recap-level-message');
-  const commitEl = document.getElementById('recap-commitment-summary');
 
   if (miniMission) miniMission.textContent = p2.missionStatement || buildMissionFallback();
 
@@ -1622,7 +1621,6 @@ function populateRecap() {
   }
 
   p2.commitmentDeclaration = p2.commitmentDeclaration || buildCommitmentDeclaration();
-  if (commitEl) commitEl.textContent = p2.commitmentDeclaration;
 }
 
 // ── API SCRIPT ENGINE ────────────────────────────────
@@ -3023,12 +3021,12 @@ function _buildTrackerHTML(videos, context) {
 
     if (st === 'filmed') {
       cls = 'vt-done'; status = '✓';
+    } else if (isLocked) {
+      cls = 'vt-locked-in'; status = '🔒';
     } else if (i === currentVideoIndex) {
       // Current video being worked on
       cls = 'vt-next';
       status = (context === 'preface') ? '→' : '↑';
-    } else if (isLocked) {
-      cls = 'vt-locked-in'; status = '🔒';
     } else if (st === 'skipped' && hasScript) {
       cls = 'vt-ready'; status = '✎';
     } else if (st === 'skipped') {
@@ -3036,12 +3034,11 @@ function _buildTrackerHTML(videos, context) {
     } else if (hasScript) {
       cls = 'vt-ready'; status = '✎';
     } else if (context === 'script' && i === currentVideoIndex + 1) {
-      cls = 'vt-locked'; status = '→';
+      cls = 'vt-locked'; status = '–';
     } else if (i < currentVideoIndex) {
-      // Previous video with no script and no status — shouldn't happen but fallback
-      cls = 'vt-done'; status = '✓';
+      cls = 'vt-locked'; status = '–';
     } else {
-      cls = 'vt-locked'; status = '🔒';
+      cls = 'vt-locked'; status = '–';
     }
     const l2Class = state.level === 2 ? ' vt-l2-item' : '';
     return `<div class="vt-item${l2Class} ${cls}"><div class="vt-label">${label}</div><div class="vt-status">${status}</div></div>`;
@@ -3055,7 +3052,7 @@ function _buildTrackerHTML(videos, context) {
       let cls, status;
       if (st === 'filmed') { cls = 'vt-done'; status = '✓'; }
       else if (st === 'skipped') { cls = 'vt-skipped'; status = '✕'; }
-      else { cls = 'vt-locked'; status = '🔒'; }
+      else { cls = 'vt-locked'; status = '–'; }
       return `<div class="vt-item vt-l1-ghost ${cls}"><div class="vt-label">${label}</div><div class="vt-status">${status}</div></div>`;
     }).join('');
     return `<div class="vt-dual-wrap">` +
@@ -4305,7 +4302,7 @@ function buildPlan(){
     const preview = clean ? clean.substring(0, 90) + (clean.length > 90 ? '…' : '') : 'Script not yet generated';
 
     const statusClass = filmed ? 'card-filmed' : hasScript ? 'card-ready' : 'card-pending';
-    const statusIcon = filmed ? '✓' : isLocked ? '🔒' : hasScript ? '◎' : '·';
+    const statusIcon = filmed ? '✓' : isLocked ? '🔒' : hasScript ? '✎' : '–';
     const statusLabel = filmed ? 'Filmed' : isLocked ? 'Locked' : hasScript ? 'Draft' : 'Pending';
 
     const card = document.createElement('div');
@@ -4469,7 +4466,7 @@ function buildPlanTracker() {
       // Skipped but now has a script — show as ready (user generated after skipping)
       cls = 'vt-ready'; statusIcon = '✎';
     } else {
-      cls = 'vt-locked'; statusIcon = '🔒';
+      cls = 'vt-locked'; statusIcon = '–';
     }
     const l2Class    = isL2      ? ' vt-l2-item vt-plan-l2' : '';
     const ghostClass = isL1Ghost ? ' vt-l1-ghost' : '';
