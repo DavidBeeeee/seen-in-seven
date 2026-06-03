@@ -149,6 +149,24 @@
   </div>
 </div>
 
+<!-- ══ EARLY SAVE PROGRESS OVERLAY ══ -->
+<div id="save-progress-overlay" class="save-progress-overlay" aria-hidden="true">
+  <div class="save-progress-card" role="dialog" aria-modal="true" aria-labelledby="save-progress-title">
+    <div class="eyebrow">Quick Check</div>
+    <h2 class="screen-title" id="save-progress-title">Save Your <span class="accent">Progress!</span></h2>
+    <p class="screen-sub">Enter your email to prevent your effort from vanishing. We'll save everything as you go.</p>
+    <div class="input-group">
+      <label class="input-label">Your Email</label>
+      <input type="email" class="text-input" id="save-progress-email" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div id="save-progress-error" class="inline-error" style="display:none;"></div>
+    <div class="btn-row">
+      <button class="btn-primary" id="save-progress-btn" onclick="handleSaveProgressEmail()">Send Magic Link</button>
+      <button class="btn-skip" onclick="skipSaveProgressOverlay()">Skip for now (progress only saved on this device)</button>
+    </div>
+  </div>
+</div>
+
 <!-- ══ DELETE & START OVER CONFIRMATION ══ -->
 <div id="delete-start-over-confirm" style="display:none;position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;padding:24px;">
   <div style="background:#0a1f1f;border:1px solid var(--border);border-radius:16px;padding:32px 28px;max-width:420px;width:100%;text-align:center;">
@@ -244,53 +262,50 @@
 
   <div class="welcome-split">
     <div class="welcome-main">
-      <div class="welcome-eyebrow">SeenInSeven · Your AI StoryStarter</div>
+      <div class="welcome-eyebrow">Your AI StoryStarter</div>
       <h1 class="welcome-title">
-        <span class="l1">7 Videos.</span>
-        <span class="l2">Your Brand.</span>
-        <span class="l3">Starting Now.</span>
+        <span class="l1">SeenInSeven</span>
       </h1>
-      <p class="welcome-tagline"><strong>SeenInSeven:</strong> <em>build your entire brand in just 7 videos.</em></p>
-      <p class="welcome-sub">Answer a few clear questions. Get scripts that sound like you. Then press record.</p>
+      <p class="welcome-tagline"><em>Build your entire brand in just 7 videos.</em></p>
       <div class="btn-row welcome-actions">
         <button class="btn-primary" onclick="goNext()">Let's Do This</button>
         <button class="btn-secondary" onclick="showSignInScreen()">Sign In</button>
       </div>
     </div>
     <div class="welcome-steps">
-      <div class="welcome-step"><div class="slabel">Step 01</div><div class="st">Find your level</div></div>
-      <div class="welcome-step"><div class="slabel">Step 02</div><div class="st">Shape your mission</div></div>
-      <div class="welcome-step"><div class="slabel">Step 03</div><div class="st">Add your context</div></div>
-      <div class="welcome-step"><div class="slabel">Step 04</div><div class="st">Build your scripts</div></div>
+      <div class="welcome-step"><div class="slabel">Step 01</div><div class="st">Figure out where you are</div></div>
+      <div class="welcome-step"><div class="slabel">Step 02</div><div class="st">Make a real commitment</div></div>
+      <div class="welcome-step"><div class="slabel">Step 03</div><div class="st">Tell us about your world</div></div>
+      <div class="welcome-step"><div class="slabel">Step 04</div><div class="st">Build your first script</div></div>
     </div>
   </div>
 </div>
 
 <!-- ══ S1 POSTED? ══ -->
 <div class="screen" id="screen-1">
-  <div class="q1-progress">Question 1 - Finding Your Level</div>
+  <div class="q1-progress">Question 1: Finding Your Level</div>
   <h2 class="screen-title">Have you ever posted a <span class="accent">short-form video</span> online?</h2>
   <p class="screen-sub">TikTok, Reels, Shorts... anything counts. Even if you deleted it the next day.</p>
   <div class="choice-grid">
     <div class="choice-card" onclick="autoAdvance(this,'posted','no')">
       <span class="card-emoji">🫣</span>
-      <div class="card-title">No, never</div>
-      <div class="card-sub">Haven't posted yet (or recorded once and never put it out).</div>
+      <div class="card-title">No, never.</div>
+      <div class="card-sub">Haven't started yet, or recorded once and never put it out.</div>
     </div>
     <div class="choice-card" onclick="autoAdvance(this,'posted','few')">
       <span class="card-emoji">📱</span>
-      <div class="card-title">Yes, a few times</div>
-      <div class="card-sub">I tried it, but it never became a real rhythm.</div>
+      <div class="card-title">Yes, a few times.</div>
+      <div class="card-sub">Enough to know it wasn't going to stick on its own.</div>
     </div>
     <div class="choice-card" onclick="autoAdvance(this,'posted','felloff')">
       <span class="card-emoji">🔄</span>
-      <div class="card-title">Yes, but I fell off</div>
-      <div class="card-sub">I posted for a while, then life or nerves pulled me away.</div>
+      <div class="card-title">Yes, but I fell off.</div>
+      <div class="card-sub">Life happened, or nerves happened. It stopped mattering, until now.</div>
     </div>
     <div class="choice-card" onclick="autoAdvance(this,'posted','consistent')">
       <span class="card-emoji">🔥</span>
-      <div class="card-title">Yes, consistently before</div>
-      <div class="card-sub">I know what posting feels like. I want this to work better.</div>
+      <div class="card-title">Yes, consistently before.</div>
+      <div class="card-sub">You know what posting feels like. You just want this time to be different.</div>
     </div>
   </div>
   <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
@@ -298,39 +313,38 @@
 
 <!-- ══ S2a BLOCKER ══ -->
 <div class="screen" id="screen-2a">
-  <div class="q1-progress">Question 3 - Your Friction Point</div>
-  <h2 class="screen-title">What's the <span class="accent">main thing</span> holding you back?</h2>
-  <p class="screen-sub">Pick the closest answer, then use your own words if the real answer has more texture.</p>
+  <div class="q1-progress">Question 4: Your Friction Point</div>
+  <h2 class="screen-title">What's the main thing holding you back from <span class="accent">posting regularly?</span></h2>
+  <p class="screen-sub">Pick the closest answer, or scroll down and use your own words if none of these quite fit.</p>
   <div class="choice-grid">
     <div class="choice-card" onclick="autoAdvance(this,'blocker','ideas')">
       <span class="card-emoji">🧠</span>
-      <div class="card-title">I don't know what to say</div>
+      <div class="card-title">I don't know what to say.</div>
       <div class="card-sub">I stare at the camera and go completely blank.</div>
     </div>
     <div class="choice-card" onclick="autoAdvance(this,'blocker','camera')">
       <span class="card-emoji">😬</span>
-      <div class="card-title">I don't like how I come across</div>
-      <div class="card-sub">My voice, face, energy, or delivery makes me second-guess it.</div>
+      <div class="card-title">I don't like how I come across.</div>
+      <div class="card-sub">My voice, face, energy, or delivery makes me dislike my videos.</div>
     </div>
     <div class="choice-card" onclick="autoAdvance(this,'blocker','care')">
       <span class="card-emoji">👀</span>
-      <div class="card-title">I'm worried people won't care</div>
+      <div class="card-title">I'm worried people won't care.</div>
       <div class="card-sub">I don't want to post into silence or feel embarrassed.</div>
     </div>
     <div class="choice-card" onclick="autoAdvance(this,'blocker','procrastinating')">
       <span class="card-emoji">⏰</span>
-      <div class="card-title">I keep putting it off</div>
-      <div class="card-sub">I've been meaning to start. Life just keeps happening.</div>
+      <div class="card-title">I keep putting it off.</div>
+      <div class="card-sub">I've been meaning to start, but life just keeps happening.</div>
     </div>
   </div>
   <div class="choice-custom first-custom-feature">
     <div class="feature-inline-head">
       <span class="feature-badge">New feature</span>
       <span class="feature-inline-arrow">↓</span>
-      <span class="feature-inline-copy">Type below, or tap the mic in this box and talk it out.</span>
+      <span class="feature-inline-copy">NEW: Say it out loud. Tap the mic and just talk. We'll grab your words so you don't have to type.</span>
     </div>
-    <div class="choice-custom-title">Say it your way</div>
-    <div class="choice-custom-copy">If the card is close but not quite it, add the real version here.</div>
+    <div class="choice-custom-title">If nothing above is quite how you feel, just say it.</div>
     <textarea class="text-input" id="blocker-custom" rows="3" maxlength="1000" placeholder="What's actually making this hard?" oninput="setCustomAnswer('blocker', this.value)"></textarea>
     <div class="btn-row"><button class="btn-secondary" onclick="useCustomRouteAnswer('blocker','custom')">Use My Words</button></div>
   </div>
@@ -339,48 +353,56 @@
 
 <!-- ══ S3 BUSINESS? ══ -->
 <div class="screen" id="screen-3">
-  <div class="q1-progress">Question 2 - Finding Your Level</div>
+  <div class="q1-progress">Question 2: Finding Your Level</div>
   <h2 class="screen-title">What are you <span class="accent">building toward</span> right now?</h2>
   <p class="screen-sub">This shapes everything about what your videos should say and who they're for.</p>
   <div class="choice-grid">
     <div class="choice-card" onclick="autoAdvance(this,'business','yes')">
       <span class="card-emoji">🚀</span>
-      <div class="card-title">Yes, I have an active business</div>
-      <div class="card-sub">I have clients, an offer, or a service I'm actively selling or building toward.</div>
+      <div class="card-title">I have an active business I'm growing.</div>
+      <div class="card-sub">I have clients, an offer, a service, or products I am intentionally selling or sharing.</div>
     </div>
     <div class="choice-card" onclick="autoAdvance(this,'business','building')">
       <span class="card-emoji">🔨</span>
-      <div class="card-title">I'm in the early stages of building something</div>
+      <div class="card-title">I'm in the early stages of building something.</div>
       <div class="card-sub">I have a direction but haven't fully launched yet.</div>
     </div>
     <div class="choice-card" onclick="autoAdvance(this,'business','no')">
       <span class="card-emoji">🌱</span>
-      <div class="card-title">Not yet... still figuring out my thing</div>
-      <div class="card-sub">I want to start creating but I'm still exploring what I want to say.</div>
+      <div class="card-title">Not yet... still figuring out my thing.</div>
+      <div class="card-sub">I want to start creating but I am still exploring what I want to say.</div>
     </div>
     <div class="choice-card" onclick="autoAdvance(this,'business','story')">
       <span class="card-emoji">🧭</span>
-      <div class="card-title">Mostly my story for now</div>
-      <div class="card-sub">I may build something later, but right now I need to show up and be seen.</div>
+      <div class="card-title">I'm mostly sharing my story and lived experience.</div>
+      <div class="card-sub">I may build something later, but right now I need to show up and be seen with zero agenda.</div>
     </div>
   </div>
   <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
-<!-- ══ S4 PRIMARY GOAL ══ -->
-<div class="screen" id="screen-4">
-  <div class="q1-progress">Question 6 - Your Content Goal</div>
-  <h2 class="screen-title">What do you want content to <span class="accent">do for you?</span></h2>
-  <p class="screen-sub">Not the perfect strategic answer. The real reason this would be worth doing.</p>
-  <div class="choice-grid" id="goal-grid"></div>
+<!-- ══ Q3 CONTENT INTENT ══ -->
+<div class="screen" id="screen-content-intent">
+  <div class="q1-progress">Question 3: Finding Your Level</div>
+  <h2 class="screen-title">What do you most want these videos to say <span class="accent">about you?</span></h2>
+  <p class="screen-sub">This shapes the whole tone of your scripts, so go with whatever feels most true right now.</p>
+  <div class="choice-grid" id="content-intent-grid"></div>
   <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
-<!-- ══ S5 MINI GOAL ══ -->
+<!-- ══ DEPRECATED PLACEHOLDER: OLD GOAL SCREEN ══ -->
+<div class="screen" id="screen-4">
+  <div class="q1-progress">Question deprecated</div>
+  <h2 class="screen-title">This screen is no longer used.</h2>
+  <p class="screen-sub">The V2 onboarding flow replaces this question.</p>
+  <div class="choice-grid" id="goal-grid"></div>
+</div>
+
+<!-- ══ DEPRECATED PLACEHOLDER: OLD MINI GOAL SCREEN ══ -->
 <div class="screen" id="screen-5">
-  <div class="q1-progress">Question 7 - Your Win</div>
-  <h2 class="screen-title">What does <span class="accent">winning</span> look like for you?</h2>
-  <p class="screen-sub">Pick the one that makes you go "yeah, that one." That's your finish line.</p>
+  <div class="q1-progress">Question deprecated</div>
+  <h2 class="screen-title">This screen is no longer used.</h2>
+  <p class="screen-sub">The V2 onboarding flow replaces this question.</p>
   <div class="choice-grid" id="minigoal-grid"></div>
   <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
@@ -388,19 +410,17 @@
 <!-- ══ S6 NAME + COMMITMENT ══ -->
 <div class="screen" id="screen-6">
   <div class="eyebrow">Your Promise</div>
-  <h2 class="screen-title">Let's make it <span class="accent">real.</span></h2>
-  <p class="screen-sub">Read this out loud. Mean every word of it.</p>
-  <div class="commit-wrap">
-    <div class="commit-text">
-      By the end of this challenge I will <span class="fill" id="commitment-fill">—</span>, even if it's messy, even if nobody watches, and even if I have to do it scared.
-    </div>
-  </div>
+  <h2 class="screen-title" id="commit-title">Let's make it <span class="accent">real.</span></h2>
   <div class="input-group">
     <label class="input-label">What's your first name?</label>
-    <input type="text" class="text-input" id="user-name" placeholder="So we can personalize your scripts" autocomplete="given-name" oninput="state.name = this.value">
+    <input type="text" class="text-input" id="user-name" placeholder="So we can personalize your scripts" autocomplete="given-name" oninput="setUserName(this.value)">
+  </div>
+  <div class="commit-wrap" id="commitment-declaration-wrap" style="display:none;">
+    <div class="commit-text" id="commitment-declaration-text"></div>
+    <div class="commit-reasons" id="commitment-reasons"></div>
   </div>
   <div class="btn-row">
-    <button class="btn-primary" onclick="goToRecapWithNameCheck()">I'm In. Show Me What's Next</button>
+    <button class="btn-primary" id="commitment-submit-btn" onclick="goToRecapWithNameCheck()">I'm ready. Let's do this.</button>
     <button class="btn-back" onclick="goBack()">Back</button>
   </div>
 </div>
@@ -438,82 +458,64 @@
 
 <!-- ══ COMMITMENT PAIN ══ -->
 <div class="screen" id="screen-commit-pain">
-  <div class="q1-progress">Question 4 - Your Line In The Sand</div>
-  <h2 class="screen-title">What are you <span class="accent">done</span> carrying?</h2>
-  <p class="screen-sub">This becomes part of your mission on the dashboard, so choose the one that feels most honest.</p>
+  <div class="q1-progress">Question 5: What's At Stake</div>
+  <h2 class="screen-title">What problems would be gone if content started <span class="accent">working for you?</span></h2>
+  <p class="screen-sub" id="commit-pain-subtitle"></p>
   <div class="choice-grid" id="commit-pain-grid"></div>
   <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
 <!-- ══ COMMITMENT DESIRE ══ -->
 <div class="screen" id="screen-commit-desire">
-  <div class="q1-progress">Question 5 - Your Direction</div>
-  <h2 class="screen-title">What are you <span class="accent">moving toward?</span></h2>
-  <p class="screen-sub">Not a perfect marketing goal. The real reason finishing these seven videos would matter.</p>
+  <div class="q1-progress">Question 6: Your Vision</div>
+  <h2 class="screen-title">What would you love for these <span class="accent">7 videos</span> to do for you?</h2>
+  <p class="screen-sub">Not the strategy answer that just 'sounds' good. The thing in your life you'd finally have if this actually worked the way you hoped it would.</p>
   <div class="choice-grid" id="commit-desire-grid"></div>
   <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
 <!-- ══ S-RECAP ══ -->
 <div class="screen" id="screen-recap">
-  <div class="eyebrow" id="recap-eyebrow">Your 7 Video Challenge</div>
-
-  <!-- Small mission line at top (populated by JS) -->
-  <div id="recap-mini-mission" style="font-family:'Lora',serif;font-style:italic;font-size:13px;color:var(--teal);opacity:0.85;margin-bottom:18px;line-height:1.6;text-align:center;padding:0 4px;"></div>
-
-  <!-- Big level hero section -->
-  <div id="recap-hero-section" style="text-align:center;margin-bottom:24px;padding:22px 20px;background:rgba(45,212,191,0.06);border-radius:16px;border:1px solid rgba(45,212,191,0.18);">
-    <div id="recap-level-emoji" style="font-size:42px;margin-bottom:8px;"></div>
-    <div id="recap-hero-heading" style="font-family:'Oswald',sans-serif;font-size:32px;letter-spacing:0.06em;color:var(--cream);line-height:1.2;margin-bottom:8px;"></div>
-    <div id="recap-level-name" style="font-family:'Oswald',sans-serif;font-size:16px;letter-spacing:0.12em;color:var(--teal);margin-bottom:12px;"></div>
-    <div id="recap-level-message" style="font-size:15px;color:var(--soft);line-height:1.7;max-width:400px;margin:0 auto;"></div>
-  </div>
-
-  <!-- David review callout -->
-  <div style="display:flex;gap:12px;align-items:flex-start;padding:14px 16px;background:rgba(74,222,128,0.06);border-radius:12px;border:1px solid rgba(74,222,128,0.18);margin-bottom:22px;">
-    <div style="font-size:22px;flex-shrink:0;margin-top:2px;">👀</div>
-    <div>
-      <div style="font-size:14px;font-weight:700;color:var(--green);margin-bottom:4px;">David Bee will personally review your videos, if you want him to.</div>
-      <div style="font-size:13px;color:var(--muted);line-height:1.6;">Share them in <a href="https://facebook.com/groups/coloradobiz" target="_blank" style="color:var(--teal);text-decoration:none;">the community</a> or send them directly to David Bee. Optional. You'll get real feedback on what you're doing right, not just what to fix.</div>
-    </div>
-  </div>
-
-  <h3 style="font-family:'Oswald',sans-serif;font-size:28px;letter-spacing:0.04em;color:var(--cream);margin-bottom:18px;margin-top:8px;">
-    Here's how the challenge works.
-  </h3>
+  <div class="eyebrow">Your Mission</div>
+  <div class="level-badge" id="recap-level-name"></div>
+  <h2 class="screen-title" id="recap-hero-heading">Here's what you're really doing.</h2>
+  <div class="mission-statement-block" id="recap-mission-statement"></div>
+  <div class="commitment-summary" id="recap-commitment-summary"></div>
+  <div class="recap-divider"></div>
+  <div class="eyebrow">How This Works</div>
   <div class="guideline-list">
     <div class="guideline-item">
       <div class="guideline-num">1</div>
       <div>
         <div class="guideline-title">7 videos. Your timeline.</div>
-        <div class="guideline-desc">You don't have to post all 7 in 7 days. Some people move fast, some take a few weeks, some take a few months. Speed literally doesn't matter, but commitment does. What matters is that you finish in order. Each video builds on the last.</div>
+        <div class="guideline-desc">Speed doesn't matter. Order does. Each video builds on the last.</div>
       </div>
     </div>
     <div class="guideline-item">
       <div class="guideline-num">2</div>
       <div>
         <div class="guideline-title">Fill in the prompts. Film the script.</div>
-        <div class="guideline-desc">Every video has a set of journal prompts. Your answers become your script. You don't need to memorize it. Just read it off your phone or use it as a guide.</div>
+        <div class="guideline-desc">Your answers become your words to speak. Read it off your phone.</div>
       </div>
     </div>
     <div class="guideline-item">
       <div class="guideline-num">3</div>
       <div>
         <div class="guideline-title">Done is better than perfect.</div>
-        <div class="guideline-desc">Your first video doesn't have to be good. It just has to exist. You'll be amazed how much better Video 7 is than Video 1. That growth is the whole point.</div>
+        <div class="guideline-desc">Video 7 will be better than Video 1. That growth makes this process more valuable than you can imagine.</div>
       </div>
     </div>
     <div class="guideline-item">
       <div class="guideline-num">4</div>
       <div>
         <div class="guideline-title">The camera doesn't need a perfect you.</div>
-        <div class="guideline-desc">It needs the real you. Every video you film (messy, unpolished, uncertain) is proof that you showed up. That's the whole challenge.</div>
+        <div class="guideline-desc">It needs the real one. Messy and showing up is much better than staying invisible.</div>
       </div>
     </div>
   </div>
 
   <div class="btn-row">
-    <button class="btn-primary" onclick="goNext()">Got It. Let's Get Prepped</button>
+    <button class="btn-primary" onclick="goNext()">Let's Build Your First Script</button>
     <button class="btn-back" onclick="goBack()">Back</button>
   </div>
 </div>
@@ -521,7 +523,7 @@
 <!-- ══ S-FREEWRITE ══ -->
 <div class="screen" id="screen-checklist">
   <div class="eyebrow">New Feature</div>
-  <h2 class="screen-title">What do you want to <span class="accent">talk about?</span></h2>
+  <h2 class="screen-title">What do you want to talk about in this <span class="accent">video series?</span></h2>
   <p class="screen-sub" style="font-size:15px;">Simple is fast. Extended gives the script builder more of your story, your audience, and your point of view.</p>
   <div class="mode-tutorial talk-tutorial">
     <div class="tutorial-arrow">↘</div>
@@ -561,47 +563,32 @@
 
 <!-- ══ MVO Q2 — Script 1 mini-wizard ══ -->
 <div class="screen" id="screen-mvo2">
-  <div class="q1-progress" id="mvo2-label">Getting Your Script Ready - Question 1 of 3</div>
-  <h2 class="screen-title" id="mvo2-question"></h2>
-  <div class="choice-grid" id="mvo2-cards"></div>
-  <div class="mvo-own-way">
-    <a href="#" class="mvo-own-link" onclick="toggleMvoOwn(event,'mvo2-own-field')">Say it your own way ↓</a>
-    <div class="mvo-own-field" id="mvo2-own-field" style="display:none;">
-      <textarea class="mvo-own-textarea" id="mvo2-textarea" placeholder=""></textarea>
-      <div class="btn-row"><button class="btn-primary" onclick="confirmMvoOwn(2)">Use This</button></div>
+  <div class="journal-card mvo-brief-card">
+    <div class="q1-progress" id="mvo2-label">Getting Your Script Ready</div>
+    <h2 class="screen-title" id="mvo2-question">Let's get your script ready.</h2>
+    <p class="screen-sub" id="mvo2-subtitle">Answer what feels relevant. The more you add, the more the script sounds like you.</p>
+    <div class="context-toggle mvo-mode-toggle" role="group" aria-label="Script prep depth">
+      <button class="context-toggle-btn active" id="mvo-simple-btn" onclick="setMvoMode('simple')">Simple</button>
+      <button class="context-toggle-btn" id="mvo-extended-btn" onclick="setMvoMode('extended')">Extended</button>
+    </div>
+    <div id="mvo2-cards" class="mvo-brief"></div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="completeMvoBrief()">Build My First Script</button>
+      <button class="btn-back" onclick="goBack()">Back</button>
     </div>
   </div>
-  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
 <!-- ══ MVO Q3 ══ -->
 <div class="screen" id="screen-mvo3">
-  <div class="q1-progress" id="mvo3-label">Getting Your Script Ready - Question 2 of 3</div>
-  <h2 class="screen-title" id="mvo3-question"></h2>
-  <div class="choice-grid" id="mvo3-cards"></div>
-  <div class="mvo-own-way">
-    <a href="#" class="mvo-own-link" onclick="toggleMvoOwn(event,'mvo3-own-field')">Say it your own way ↓</a>
-    <div class="mvo-own-field" id="mvo3-own-field" style="display:none;">
-      <textarea class="mvo-own-textarea" id="mvo3-textarea" placeholder=""></textarea>
-      <div class="btn-row"><button class="btn-primary" onclick="confirmMvoOwn(3)">Use This</button></div>
-    </div>
-  </div>
-  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
+  <div class="q1-progress">Deprecated</div>
+  <h2 class="screen-title">This screen is no longer used.</h2>
 </div>
 
 <!-- ══ MVO Q4 ══ -->
 <div class="screen" id="screen-mvo4">
-  <div class="q1-progress" id="mvo4-label">Getting Your Script Ready - Question 3 of 3</div>
-  <h2 class="screen-title" id="mvo4-question"></h2>
-  <div class="choice-grid" id="mvo4-cards"></div>
-  <div class="mvo-own-way">
-    <a href="#" class="mvo-own-link" onclick="toggleMvoOwn(event,'mvo4-own-field')">Say it your own way ↓</a>
-    <div class="mvo-own-field" id="mvo4-own-field" style="display:none;">
-      <textarea class="mvo-own-textarea" id="mvo4-textarea" placeholder=""></textarea>
-      <div class="btn-row"><button class="btn-primary" onclick="confirmMvoOwn(4)">Use This</button></div>
-    </div>
-  </div>
-  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
+  <div class="q1-progress">Deprecated</div>
+  <h2 class="screen-title">This screen is no longer used.</h2>
 </div>
 
 <!-- ══ COMMUNICATION LAYERS ══ -->

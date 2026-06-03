@@ -618,7 +618,7 @@ function renderDrawer(userId) {
     '<div class="drawer-section">' + renderProfile(r) + '</div>' +
     '<div class="drawer-section">' + renderJourney(r) + '</div>' +
     '<div class="drawer-section">' + renderNotes(r) + '</div>' +
-    '<div class="drawer-section"><div class="section-title">Onboarding Answers</div><div class="answers-list">' + renderAnswers(r.ob) + '</div></div>' +
+    '<div class="drawer-section"><div class="section-title">Onboarding Answers</div><div class="answers-list">' + renderAnswers(r.ob, r) + '</div></div>' +
     '<div class="drawer-section"><div class="section-title">Script Review</div><div class="script-list">' + renderScripts(r) + '</div></div>' +
     '<div class="drawer-section"><div class="section-title">Issue Panel</div><div class="issue-list">' + renderUserIssues(r) + '</div></div>' +
     '<div class="drawer-section"><div class="section-title">Event Timeline</div><div class="timeline-list">' + renderTimeline(r.logs) + '</div></div>';
@@ -666,7 +666,7 @@ function hydrateNoteControls(r) {
   if (test) test.checked = !!n.test_group;
 }
 
-function renderAnswers(ob) {
+function renderAnswers(ob, row) {
   if (!ob) return '<div class="empty">No onboarding row found.</div>';
   const goalMap = {comfortable:'get comfortable being seen',story:'help people understand their story',audience:'build an audience',voice:'find their voice',start:'starting because someone told them to',expert:'establish themselves as an expert',clients:'attract the right people to their business',leads:'generate leads or conversations',consistent:'finally get consistent'};
   const p2 = getPhase2Context(ob);
@@ -676,19 +676,25 @@ function renderAnswers(ob) {
     : '';
   return [
     answerRow('Posted', ob.posted),
-    answerRow('History', ob.history),
-    answerRow('Goal', goalMap[ob.goal] || ob.goal),
-    answerRow('Mini goal', ob.mini_goal_text || ob.mini_goal),
     answerRow('Business', ob.business),
+    answerRow('Content intent', p2.contentIntentTitle || p2.contentIntent),
+    answerRow('Main blocker', commitmentText('blocker', row && row.user ? row.user.blocker : ob.blocker, p2.custom && p2.custom.blocker)),
+    answerRow('Blocker custom', p2.custom && p2.custom.blocker),
+    answerRow('Pain title', p2.commitmentPainTitle),
+    answerRow('Pain full text', p2.commitmentPainText),
+    answerRow('Pain source', p2.commitmentPainType),
+    answerRow('Vision title', p2.commitmentDesireTitle),
+    answerRow('Vision full text', p2.commitmentDesireText),
+    answerRow('Vision source', p2.commitmentDesireType),
+    answerRow('Commitment reasons', valueText(p2.commitmentReasons || ob.commitment_reasons)),
+    answerRow('Commitment declaration', p2.commitmentDeclaration || ob.commitment_declaration),
+    answerRow('Mission statement', p2.missionStatement || ob.mission_statement),
     answerRow('Context mode', p2.contentMode),
-    answerRow('Custom blocker/history/goal', valueText(p2.custom)),
     answerRow('Audience context', p2.audienceContext),
     answerRow('Message context', p2.messageContext),
-    answerRow('Done carrying', commitmentText('pain', p2.commitmentPain, p2.commitmentPainCustom)),
-    answerRow('Moving toward', commitmentText('desire', p2.commitmentDesire, p2.commitmentDesireCustom)),
-    answerRow('Belief 1', valueText(ob.mvo_q2)),
-    answerRow('Belief 2', valueText(ob.mvo_q3)),
-    answerRow('Why now', valueText(ob.mvo_q4)),
+    answerRow('MVO Q1 / stopped', valueText(ob.mvo_q2)),
+    answerRow('MVO Q2 / why now', valueText(ob.mvo_q3)),
+    answerRow('MVO Q3 / who reach', valueText(ob.mvo_q4)),
     answerRow('Freewrite', ob.topic_freewrite),
     contextSnippet
   ].join('');
@@ -702,14 +708,36 @@ function getPhase2Context(ob) {
     audienceContext:'',
     messageContext:'',
     knowledgeContext:'',
+    contentIntent:'',
+    contentIntentTitle:'',
     commitmentPain:'',
     commitmentPainCustom:'',
+    commitmentPainTitle:'',
+    commitmentPainText:'',
+    commitmentPainType:'',
     commitmentDesire:'',
-    commitmentDesireCustom:''
+    commitmentDesireCustom:'',
+    commitmentDesireTitle:'',
+    commitmentDesireText:'',
+    commitmentDesireType:'',
+    commitmentReasons:[],
+    commitmentDeclaration:'',
+    missionStatement:'',
+    missionGeneratedAt:'',
+    mvoMode:''
   }, p2, { custom: Object.assign({}, p2.custom || {}) });
 }
 
 function commitmentText(kind, value, customValue) {
+  if (kind === 'blocker') {
+    const map = {
+      ideas:"I don't know what to say.",
+      camera:"I don't like how I come across.",
+      care:"I'm worried people won't care.",
+      procrastinating:"I keep putting it off."
+    };
+    return customValue || map[value] || value || '';
+  }
   const pain = {
     hiding:'Hiding even though I have something worth saying',
     waiting:'Waiting until I feel more ready',
@@ -973,7 +1001,7 @@ function exportUserDetail(r) {
     '- Note: ' + (r.notes.note || '-'),
     '',
     'ONBOARDING',
-    exportOnboarding(r.ob),
+    exportOnboarding(r.ob, r),
     '',
     'SCRIPTS',
     r.scripts.length ? r.scripts.slice().sort((a,b) => Number(a.video_number) - Number(b.video_number)).map(exportScriptSummary).join('\n\n') : 'No current scripts.',
@@ -986,26 +1014,32 @@ function exportUserDetail(r) {
   ].join('\n');
 }
 
-function exportOnboarding(ob) {
+function exportOnboarding(ob, row) {
   if (!ob) return 'No onboarding row found.';
   const p2 = getPhase2Context(ob);
   return [
     '- Posted: ' + valueText(ob.posted),
-    '- History: ' + valueText(ob.history),
     '- Business: ' + valueText(ob.business),
-    '- Goal: ' + valueText(ob.goal),
-    '- Mini goal: ' + valueText(ob.mini_goal_text || ob.mini_goal),
-    '- Topic freewrite: ' + valueText(ob.topic_freewrite),
+    '- Content intent: ' + valueText(p2.contentIntentTitle || p2.contentIntent),
+    '- Main blocker: ' + valueText(commitmentText('blocker', row && row.user ? row.user.blocker : ob.blocker, p2.custom && p2.custom.blocker)),
+    '- Blocker custom: ' + valueText(p2.custom && p2.custom.blocker),
+    '- Pain title: ' + valueText(p2.commitmentPainTitle),
+    '- Pain full text: ' + valueText(p2.commitmentPainText),
+    '- Pain source: ' + valueText(p2.commitmentPainType),
+    '- Vision title: ' + valueText(p2.commitmentDesireTitle),
+    '- Vision full text: ' + valueText(p2.commitmentDesireText),
+    '- Vision source: ' + valueText(p2.commitmentDesireType),
+    '- Commitment reasons: ' + valueText(p2.commitmentReasons || ob.commitment_reasons),
+    '- Commitment declaration: ' + valueText(p2.commitmentDeclaration || ob.commitment_declaration),
+    '- Mission statement: ' + valueText(p2.missionStatement || ob.mission_statement),
     '- Context mode: ' + valueText(p2.contentMode),
-    '- Custom answers: ' + valueText(p2.custom),
     '- Audience context: ' + valueText(p2.audienceContext),
     '- Message context: ' + valueText(p2.messageContext),
-    '- Done carrying: ' + valueText(commitmentText('pain', p2.commitmentPain, p2.commitmentPainCustom)),
-    '- Moving toward: ' + valueText(commitmentText('desire', p2.commitmentDesire, p2.commitmentDesireCustom)),
+    '- Topic freewrite: ' + valueText(ob.topic_freewrite),
     '- Pasted context: ' + valueText(p2.knowledgeContext),
-    '- MVO Q2: ' + valueText(ob.mvo_q2),
-    '- MVO Q3: ' + valueText(ob.mvo_q3),
-    '- MVO Q4: ' + valueText(ob.mvo_q4)
+    '- MVO Q1 / stopped: ' + valueText(ob.mvo_q2),
+    '- MVO Q2 / why now: ' + valueText(ob.mvo_q3),
+    '- MVO Q3 / who reach: ' + valueText(ob.mvo_q4)
   ].join('\n');
 }
 

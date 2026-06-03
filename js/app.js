@@ -225,14 +225,27 @@ const state = {
     audienceContext:'',
     messageContext:'',
     knowledgeContext:'',
+    contentIntent:null,
+    contentIntentTitle:'',
     commitmentPain:null,
     commitmentPainCustom:'',
+    commitmentPainTitle:'',
+    commitmentPainText:'',
+    commitmentPainType:'',
     commitmentDesire:null,
-    commitmentDesireCustom:''
+    commitmentDesireCustom:'',
+    commitmentDesireTitle:'',
+    commitmentDesireText:'',
+    commitmentDesireType:'',
+    commitmentReasons:[],
+    commitmentDeclaration:'',
+    missionStatement:'',
+    missionGeneratedAt:'',
+    mvoMode:'simple'
   }
 };
 
-const ONBOARDING_ORDER = ['screen-0','screen-1','screen-3','screen-2a','screen-commit-pain','screen-commit-desire','screen-4','screen-5','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-mvo3','screen-mvo4','screen-7','screen-script','plan-screen'];
+const ONBOARDING_ORDER = ['screen-0','screen-1','screen-3','screen-content-intent','screen-2a','screen-commit-pain','screen-commit-desire','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-7','screen-script','plan-screen'];
 let screenOrder = ['screen-0','screen-1'];
 let currentIndex = 0;
 let currentVideoIndex = 0;
@@ -262,10 +275,23 @@ function resetPhase2() {
     audienceContext:'',
     messageContext:'',
     knowledgeContext:'',
+    contentIntent:null,
+    contentIntentTitle:'',
     commitmentPain:null,
     commitmentPainCustom:'',
+    commitmentPainTitle:'',
+    commitmentPainText:'',
+    commitmentPainType:'',
     commitmentDesire:null,
-    commitmentDesireCustom:''
+    commitmentDesireCustom:'',
+    commitmentDesireTitle:'',
+    commitmentDesireText:'',
+    commitmentDesireType:'',
+    commitmentReasons:[],
+    commitmentDeclaration:'',
+    missionStatement:'',
+    missionGeneratedAt:'',
+    mvoMode:'simple'
   };
   return state.phase2;
 }
@@ -277,12 +303,26 @@ function ensurePhase2() {
     audienceContext:'',
     messageContext:'',
     knowledgeContext:'',
+    contentIntent:null,
+    contentIntentTitle:'',
     commitmentPain:null,
     commitmentPainCustom:'',
+    commitmentPainTitle:'',
+    commitmentPainText:'',
+    commitmentPainType:'',
     commitmentDesire:null,
-    commitmentDesireCustom:''
+    commitmentDesireCustom:'',
+    commitmentDesireTitle:'',
+    commitmentDesireText:'',
+    commitmentDesireType:'',
+    commitmentReasons:[],
+    commitmentDeclaration:'',
+    missionStatement:'',
+    missionGeneratedAt:'',
+    mvoMode:'simple'
   }, state.phase2 || {});
   state.phase2.custom = Object.assign({}, state.phase2.custom || {});
+  state.phase2.commitmentReasons = Array.isArray(state.phase2.commitmentReasons) ? state.phase2.commitmentReasons : [];
   return state.phase2;
 }
 
@@ -373,29 +413,16 @@ function goNext() {
     state.blocker = null; state.history = null; state.goal = null;
     state.minigoal = null; state.minigoalText = ''; state.business = null;
     state.mvoQ2 = null; state.mvoQ3 = null; state.mvoQ4 = null;
-    ensurePhase2().custom = {};
+    resetPhase2();
   }
 
-  if (cur === 'screen-3') {
+  if (cur === 'screen-content-intent') {
     determineLevel();
-  }
-
-  if (cur === 'screen-commit-desire') {
-    populateGoalGrid();
-    populateMiniGoalGrid();
   }
 
   currentIndex++;
   if (currentIndex >= screenOrder.length) currentIndex = screenOrder.length-1;
   let nextId = screenOrder[currentIndex];
-
-  // Skip screen-mvo2 for Level 1 when onboarding already captured blocker/history
-  if (nextId === 'screen-mvo2' && state.level === 1 && (state.blocker || state.history)) {
-    autoPopulateMvoQ2FromOnboarding();
-    currentIndex++;
-    if (currentIndex >= screenOrder.length) currentIndex = screenOrder.length-1;
-    nextId = screenOrder[currentIndex];
-  }
 
   if (nextId === 'screen-checklist') {
     // Populate freewrite textarea from state (safe - no template literal in HTML)
@@ -407,11 +434,15 @@ function goNext() {
       length: state.topicFreewrite.length
     });
   }
-  if (nextId === 'screen-commit-pain') renderCommitmentCards('pain');
+  if (nextId === 'screen-content-intent') renderContentIntentGrid();
+  else if (nextId === 'screen-commit-pain') renderCommitmentCards('pain');
   else if (nextId === 'screen-commit-desire') renderCommitmentCards('desire');
+  else if (nextId === 'screen-6') renderCommitmentDeclaration();
+  else if (nextId === 'screen-recap') {
+    populateRecap();
+    setTimeout(maybeShowSaveProgressOverlay, 450);
+  }
   else if (nextId === 'screen-mvo2') renderMvoScreen(2);
-  else if (nextId === 'screen-mvo3') renderMvoScreen(3);
-  else if (nextId === 'screen-mvo4') renderMvoScreen(4);
   else if (nextId === 'screen-comm-layers') renderPrefaceV1();
   else if (nextId === 'screen-7') {
     currentVideoIndex = 0;
@@ -426,18 +457,13 @@ function goNext() {
 function goBack() {
   if (currentIndex > 0) {
     currentIndex--;
-    if (screenOrder[currentIndex] === 'screen-mvo2' && state.level === 1 && (state.blocker || state.history)) {
-      currentIndex = Math.max(0, currentIndex - 1);
-    }
     const prevId = screenOrder[currentIndex];
     if (prevId === 'screen-checklist') renderTalkContext();
+    else if (prevId === 'screen-content-intent') renderContentIntentGrid();
     else if (prevId === 'screen-commit-pain') renderCommitmentCards('pain');
     else if (prevId === 'screen-commit-desire') renderCommitmentCards('desire');
-    else if (prevId === 'screen-4') populateGoalGrid();
-    else if (prevId === 'screen-5') populateMiniGoalGrid();
+    else if (prevId === 'screen-6') renderCommitmentDeclaration();
     else if (prevId === 'screen-mvo2') renderMvoScreen(2);
-    else if (prevId === 'screen-mvo3') renderMvoScreen(3);
-    else if (prevId === 'screen-mvo4') renderMvoScreen(4);
     showScreen(prevId, 'back');
   }
 }
@@ -458,7 +484,7 @@ function goToRecapWithNameCheck() {
   goToRecap();
 }
 
-function goToRecap() {
+async function goToRecap() {
   // If the user went through onboarding fresh (not continuing),
   // clear any previously cached scripts so generation runs fresh
   const hasExistingScripts = Object.keys(state.videos || {}).some(k => k.startsWith('script_v'));
@@ -472,7 +498,9 @@ function goToRecap() {
     state.l1VideoStatus = null;
     state.l1Videos = null;
   }
+  renderCommitmentDeclaration();
   saveProgress();
+  await generateMissionForRecap();
   if (typeof logEvent === 'function') {
     logEvent('onboarding_completed', {
       level: state.level || null,
@@ -596,6 +624,57 @@ function resetEmailScreenCopy(titleHtml, subText, buttonText) {
   if (msg) msg.remove();
 }
 
+const SAVE_PROGRESS_OVERLAY_KEY = 'sis_save_progress_overlay_seen_v2';
+
+function maybeShowSaveProgressOverlay() {
+  const isAuthenticated = typeof getCurrentUser === 'function' && getCurrentUser();
+  if (isAuthenticated) return;
+  try {
+    if (sessionStorage.getItem(SAVE_PROGRESS_OVERLAY_KEY) === '1') return;
+  } catch(e) {}
+  const overlay = document.getElementById('save-progress-overlay');
+  if (!overlay) return;
+  overlay.classList.add('open');
+  overlay.setAttribute('aria-hidden', 'false');
+}
+
+function closeSaveProgressOverlay(markSeen = true) {
+  if (markSeen) {
+    try { sessionStorage.setItem(SAVE_PROGRESS_OVERLAY_KEY, '1'); } catch(e) {}
+  }
+  const overlay = document.getElementById('save-progress-overlay');
+  if (!overlay) return;
+  overlay.classList.remove('open');
+  overlay.setAttribute('aria-hidden', 'true');
+}
+
+function skipSaveProgressOverlay() {
+  if (typeof logEvent === 'function') logEvent('auth_skipped', {source: 'save_progress_overlay'});
+  closeSaveProgressOverlay(true);
+}
+
+async function handleSaveProgressEmail() {
+  const input = document.getElementById('save-progress-email');
+  const err = document.getElementById('save-progress-error');
+  const btn = document.getElementById('save-progress-btn');
+  const email = input ? input.value.trim() : '';
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    if (err) { err.textContent = 'Please enter a valid email address.'; err.style.display = 'block'; }
+    return;
+  }
+  if (err) err.style.display = 'none';
+  if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
+  try {
+    await sendMagicLink(email);
+    if (typeof logEvent === 'function') logEvent('magic_link_requested', {source: 'save_progress_overlay'});
+    if (btn) btn.textContent = 'Check your inbox';
+    setTimeout(() => closeSaveProgressOverlay(true), 900);
+  } catch(e) {
+    if (err) { err.textContent = 'Something went wrong sending the magic link. You can skip and keep going on this device.'; err.style.display = 'block'; }
+    if (btn) { btn.disabled = false; btn.textContent = 'Send Magic Link'; }
+  }
+}
+
 function advancePastAuth() {
   // Called by supabase.js when magic link auth completes
   // Ensure screenOrder is fully expanded
@@ -695,98 +774,111 @@ function selectCardAnswer(el, key, value) {
   saveProgress();
 }
 
-// ── LEVEL DETERMINATION ───────────────────────────────
+// ── LEVEL DETERMINATION + V2 ONBOARDING DATA ──────────
+const blockerLabels = {
+  ideas:"I don't know what to say.",
+  camera:"I don't like how I come across.",
+  care:"I'm worried people won't care.",
+  procrastinating:"I keep putting it off.",
+  custom:'Custom answer'
+};
+const blockerFullText = {
+  ideas:'I stare at the camera and go completely blank.',
+  camera:'My voice, face, energy, or delivery makes me dislike my videos.',
+  care:"I don't want to post into silence or feel embarrassed.",
+  procrastinating:"I've been meaning to start, but life just keeps happening."
+};
+const historyLabels = {
+  no:'No, never.',
+  few:'Yes, a few times.',
+  felloff:'Yes, but I fell off.',
+  consistent:'Yes, consistently before.',
+  stops:'Posts sometimes but keeps falling off',
+  was:'Was consistent once, took a break'
+};
+const businessLabels = {
+  yes:"I have an active business I'm growing.",
+  building:"I'm in the early stages of building something.",
+  no:'Not yet... still figuring out my thing.',
+  story:"I'm mostly sharing my story and lived experience."
+};
+const goalLabels = {};
+const miniGoalMap = {};
+
+const CONTENT_INTENT_OPTIONS = [
+  {e:'🙋', v:'person', t:'Who I am as a person.', s:'My personality, my values, my story. I want people to know me before they know what I do.'},
+  {e:'🎯', v:'teach', t:'What I know and can teach.', s:'My expertise, my experience, the specific thing I have spent years getting good at.'},
+  {e:'🛤️', v:'journey', t:"Where I've been and where I'm going.", s:'I am in the middle of something real and I want to document the journey as it happens.'},
+  {e:'🤷', v:'unsure', t:"I'm not sure yet.", s:'I will figure it out as I go. Help me find my footing first.'}
+];
+
+const COMMITMENT_COPY = {
+  pain: {
+    1: [
+      {e:'🗣️', v:'l1_loneliness', t:'The loneliness of feeling like I have something real to say but nobody knows I exist.', full:"The thing that weighs on me most is knowing I have a perspective and a story worth sharing, while living like someone who has never said it out loud. It's not that I don't want to be seen. It's that I haven't figured out how to make myself start, and the silence has started to feel permanent."},
+      {e:'👀', v:'l1_watching', t:'The frustration of always watching and never participating even though I have something to say.', full:"I have spent more time consuming other people's content than I want to admit, watching people share things I already know, perspectives I already have, stories that aren't more interesting than mine. And I'm still in the audience. That gap between knowing I belong in the conversation and actually being in it is what I'm most tired of living in."},
+      {e:'⏳', v:'l1_stuck', t:'The missed opportunities of seeing others keep moving ahead while I stay exactly where I am.', full:"The thing that scares me most isn't failure. It's looking up in another year and realizing I haven't moved. People I started alongside are building audiences, starting conversations, and creating things that matter to real people, while I'm still in the same place I was when I first thought about doing this."},
+      {e:'📖', v:'l1_regret', t:"The regret of carrying a story worth telling that I'm not confident enough to share.", full:"There are things I know, things I've lived through, and things I wish someone had told me when I needed it most. And I carry them almost entirely to myself. Not because they don't matter. Because somewhere along the way I convinced myself that I needed to be more ready, more polished, more certain before I had the right to say them out loud."}
+    ],
+    2: [
+      {e:'💼', v:'l2_income', t:"The exhaustion of working this hard while the income still doesn't reflect what I actually know.", full:"The thing that follows me around is knowing how much I've invested in getting good at this, the years, the experience, the results I've produced, and still watching my income not reflect any of that. I'm not lazy. I'm not inexperienced. I just haven't figured out how to make what I know work for me at the scale it should."},
+      {e:'📣', v:'l2_louder', t:"The frustration of watching people with less experience get paid more than me because they're louder online.", full:"It's not bitterness, it's just true. There are people in my space with a fraction of my experience who have built audiences, attracted clients, and created income I haven't because they figured out how to show up online and I haven't yet. The difference between us isn't the knowledge or the results. It's the visibility. And I'm tired of letting that be the reason."},
+      {e:'🎁', v:'l2_free', t:'The resentment of giving away my best knowledge for free while others monetize the same thing.', full:"I give a lot away. In conversations, in consultations, in the advice I hand out before anyone has paid me a dollar. And somewhere in the back of my mind I know that the same knowledge I'm giving away for free is exactly what other people are building real income around. I want to stop being generous to everyone except myself."},
+      {e:'⌛', v:'l2_window', t:"The fear that I've waited too long and the window to build something real is closing.", full:"The thing I don't say out loud is that I'm afraid the timing has passed. That the people who were going to build something already did, and I spent too long watching instead of starting. I know that's probably not true. But the longer I wait the louder that fear gets, and I'm done letting it make my decisions for me."}
+    ]
+  },
+  desire: {
+    1: [
+      {e:'💛', v:'l1_known', t:'The joy of being known by exactly the right people for exactly who you are.', full:"What I'm actually chasing isn't fame or followers. It's the specific feeling of someone finding me, watching something I made, and thinking 'this is exactly who I was looking for.' To be known not as a version of myself I performed, but as the real one. That's what I want to feel before this is over."},
+      {e:'✨', v:'l1_change', t:'The moment you realize your story actually changes something for someone.', full:"Somewhere in these seven videos there's a person who needs to hear exactly what I have to say, at exactly the moment I say it. I don't know who they are yet. But the idea that my story could land at the right moment for the right person, and actually shift something for them, is the reason I'm doing this."},
+      {e:'🏁', v:'l1_finish', t:'The identity of being someone who showed up, followed through, and finished.', full:"Honestly, as much as this is about being seen by other people, it's also about what I need to prove to myself. That I'm someone who starts things and finishes them. That when I say I'm going to do something, I actually do it. Seven videos feels like the kind of thing that changes how I see myself, not just how others see me."},
+      {e:'🤝', v:'l1_people', t:'The community of people who found you because you finally let them.', full:"What I want on the other side of this is people. Real ones who resonate with my story, who see themselves in what I share, who show up in my comments or my messages because something I said actually mattered to them. I don't want an audience. I want to find my people."}
+    ],
+    2: [
+      {e:'🌅', v:'l2_life', t:'The life that opens up when your expertise finally has the reach it deserves.', full:"What I'm really after isn't just more income. It's what that income represents. The ability to choose my work, my hours, my clients, and my focus. The version of this where my knowledge is working for me even when I'm not in the room. That's the life I've been building toward and content is the thing that finally makes it possible."},
+      {e:'🧲', v:'l2_clients', t:'The clients who arrive already convinced, already wanting what you do.', full:"The thing I want more than anything is to stop starting from zero in every conversation. To have people find me already understanding what I do, already believing in my approach, already decided that I'm the right person. Content is how that happens. That's why I'm here."},
+      {e:'👑', v:'l2_authority', t:'The authority that makes every conversation start from a completely different place.', full:"There's a version of this where my name carries weight before I say a word. Where people come into a conversation with me already having a sense of who I am and what I stand for. That's not ego. That's what real visibility actually does. And I want to know what it feels like to operate from that place."},
+      {e:'🕊️', v:'l2_freedom', t:'The freedom to do only the work you actually want to do.', full:"What I want at the end of this is options. The ability to say no to the wrong clients, the wrong projects, the wrong opportunities, because the right ones are finding me instead. Content is how you stop chasing work and start attracting it. That's the specific freedom I'm building toward."}
+    ]
+  }
+};
+
+const COMMITMENT_REASONS = [
+  'to finally be someone who finishes what they start',
+  'to get my story out before I talk myself out of it again',
+  'to show up for the people who need to hear what I have to say',
+  "to prove I'm ready even when I don't feel like it",
+  'to stop letting fear make my decisions for me',
+  "to build something real that I'm actually proud of"
+];
+
 function determineLevel() {
-  const hasPostingExperience = state.posted !== 'no';
-  state.level = (hasPostingExperience && (state.business==='yes'||state.business==='building')) ? 2 : 1;
+  const p2 = ensurePhase2();
+  state.level = (p2.contentIntent === 'teach' && (state.business === 'yes' || state.business === 'building')) ? 2 : 1;
 }
 
-// ── GOAL GRIDS ────────────────────────────────────────
-function populateGoalGrid() {
-  const grid = document.getElementById('goal-grid');
+function renderContentIntentGrid() {
+  const grid = document.getElementById('content-intent-grid');
+  if (!grid) return;
+  const p2 = ensurePhase2();
   grid.innerHTML = '';
-  const opts = state.level===1 ? [
-    {e:'🎙️',t:'Help me get comfortable being seen',s:'I want the camera to feel less like a threat.',v:'comfortable'},
-    {e:'📖',t:'Help people understand my story',s:'I want the right people to know what shaped me.',v:'story'},
-    {e:'💬',t:'Help me find my voice',s:'I want to figure out what sounds true coming from me.',v:'voice'},
-    {e:'🌱',t:'Honestly, someone told me to start',s:'I am here because it is probably time.',v:'start'}
-  ] : [
-    {e:'🎯',t:'Help my business attract the right people',s:'I want content to make my work easier to understand.',v:'clients'},
-    {e:'📈',t:'Create real leads or conversations',s:'I want videos that open business opportunities.',v:'leads'},
-    {e:'🧠',t:'Establish myself as a trusted voice',s:'I want people to feel my perspective and credibility.',v:'expert'},
-    {e:'🌱',t:'Honestly, someone told me to start',s:'I know I need to show up more clearly.',v:'start'}
-  ];
-  opts.forEach(o => {
+  CONTENT_INTENT_OPTIONS.forEach(o => {
     const c = document.createElement('div');
-    c.className = 'choice-card';
-    c.onclick = function(){ autoAdvance(this,'goal',o.v); };
-    c.innerHTML = `<span class="card-emoji">${o.e}</span><div class="card-title">${o.t}</div><div class="card-sub">${o.s}</div>`;
+    c.className = 'choice-card' + (p2.contentIntent === o.v ? ' selected' : '');
+    c.onclick = function(){ selectContentIntent(o, this); };
+    c.innerHTML = '<span class="card-emoji">' + o.e + '</span><div class="card-title">' + escapeHTML(o.t) + '</div><div class="card-sub">' + escapeHTML(o.s) + '</div>';
     grid.appendChild(c);
   });
-  grid.after(renderChoiceCustom('goal', 'Say it my way', 'What do you want content to do for you in your real life or business?', 'Use My Words'));
 }
 
-function populateMiniGoalGrid() {
-  const grid = document.getElementById('minigoal-grid');
-  grid.innerHTML = '';
-  const opts = state.level===1 ? [
-    {e:'🏁',t:'Film all 7 videos without quitting on myself',v:'all7'},
-    {e:'✨',t:'Find a content style that actually feels like me',v:'style'},
-    {e:'💛',t:'Make at least one video I\'m proud to share',v:'proud'},
-    {e:'💬',t:'Start conversations with the right people',v:'conversation'}
-  ] : [
-    {e:'🏁',t:'Film all 7 videos without quitting on myself',v:'all7'},
-    {e:'✨',t:'Find a content style that actually feels like me',v:'style'},
-    {e:'💼',t:'Post something I\'d proudly send to a potential client',v:'proud-l2'},
-    {e:'💬',t:'Start conversations with the right people',v:'conversation'}
-  ];
-  opts.forEach(o => {
-    const c = document.createElement('div');
-    c.className = 'choice-card';
-    c.onclick = function(){
-      state.minigoal = o.v;
-      state.minigoalText = o.t.toLowerCase();
-      document.getElementById('commitment-fill').textContent = state.minigoalText;
-      autoAdvance(this,'minigoal',o.v);
-    };
-    c.innerHTML = `<span class="card-emoji">${o.e}</span><div class="card-title">${o.t}</div>`;
-    grid.appendChild(c);
-  });
-  grid.after(renderChoiceCustom('minigoal', 'Say it my way', 'Describe the win you actually want to feel at the end of the seven videos.', 'Use My Win'));
+function selectContentIntent(option, el) {
+  const p2 = ensurePhase2();
+  p2.contentIntent = option.v;
+  p2.contentIntentTitle = option.t;
+  if (el) el.classList.add('selecting');
+  saveProgress();
+  setTimeout(goNext, 300);
 }
-
-// ── RECAP ─────────────────────────────────────────────
-const blockerLabels = {ideas:'Not knowing what to say',camera:'Not liking how they come across on camera',care:'Worried people will not care',nothing:'Not having a business yet',procrastinating:'Putting it off'};
-const historyLabels = {few:'Posted a few times, never consistently',felloff:'Posted before and fell off',consistent:'Posted consistently before',stops:'Posts sometimes but keeps falling off',was:'Was consistent once, took a break'};
-const businessLabels = {yes:'Active business',building:'Building something',no:'Still exploring',story:'Story-first right now'};
-const goalLabels = {comfortable:'Getting comfortable being seen',story:'Helping people understand their story',audience:'Building an audience',voice:'Finding their voice',start:'Starting because someone told them to',expert:'Establishing expertise',clients:'Attracting the right people to their business',leads:'Generating leads or conversations',consistent:'Getting consistent'};
-const miniGoalMap = {
-  first:'post my very first video ever (and actually survive it)',
-  all7:'film all 7 videos without quitting on myself',
-  style:'find a content style that genuinely feels like me',
-  proud:'make at least one video I\'m actually proud of',
-  conversation:'start conversations with the right people',
-  comment:'get my first real comment or reply from a stranger',
-  habit:'build a content habit I can actually maintain',
-  lead:'create at least one video that brings in a real lead',
-  confident:'feel genuinely confident talking about my business on camera',
-  test:'make all 7 and figure out what resonates',
-  'proud-l2':'post something I\'d proudly send to a potential client'
-};
-
-const commitmentPainLabels = {
-  hiding:'Hiding even though I have something worth saying',
-  waiting:'Waiting until I feel more ready',
-  scattered:'Feeling scattered every time I try to explain myself',
-  invisible:'Watching the right people never discover me'
-};
-
-const commitmentDesireLabels = {
-  confidence:'A calmer kind of confidence on camera',
-  connection:'The right people recognizing themselves in my story',
-  proof:'Proof that I can finish what I start',
-  momentum:'Real momentum for my voice, my brand, or my business'
-};
 
 function renderChoiceCustom(key, title, copy, buttonText) {
   const old = document.getElementById(key + '-custom-wrap');
@@ -899,14 +991,21 @@ function renderCommitmentCards(kind) {
   const isPain = kind === 'pain';
   const grid = document.getElementById(isPain ? 'commit-pain-grid' : 'commit-desire-grid');
   if (!grid) return;
-  const labels = isPain ? commitmentPainLabels : commitmentDesireLabels;
-  const icons = isPain ? ['🫥','⏳','🧩','👻'] : ['🎙️','🤝','🏁','📈'];
+  const level = state.level || 1;
+  const cards = COMMITMENT_COPY[kind][level] || COMMITMENT_COPY[kind][1];
+  const subtitle = document.getElementById('commit-pain-subtitle');
+  if (isPain && subtitle) {
+    subtitle.textContent = level === 2
+      ? 'What pain would finally be out of your life if your videos actually generated you real income and you were seen as an expert in your industry?'
+      : 'What pain would finally be out of your life if you felt genuinely comfortable showing up and were getting massive exposure and increased influence in your community?';
+  }
   grid.innerHTML = '';
-  Object.entries(labels).forEach(([value, text], idx) => {
+  cards.forEach(cardData => {
     const card = document.createElement('div');
-    card.className = 'choice-card';
-    card.onclick = function(){ selectCommitment(kind, value, true, this); };
-    card.innerHTML = '<span class="card-emoji">' + icons[idx] + '</span><div class="card-title">' + escapeHTML(text) + '</div>';
+    const selected = isPain ? p2.commitmentPain === cardData.v : p2.commitmentDesire === cardData.v;
+    card.className = 'choice-card' + (selected ? ' selected' : '');
+    card.onclick = function(){ selectCommitment(kind, cardData.v, true, this); };
+    card.innerHTML = '<span class="card-emoji">' + cardData.e + '</span><div class="card-title">' + escapeHTML(cardData.t) + '</div>';
     grid.appendChild(card);
   });
   grid.after(renderCommitmentCustom(kind));
@@ -922,9 +1021,8 @@ function renderCommitmentCustom(kind) {
   wrap.className = 'choice-custom';
   wrap.id = kind + '-commit-custom';
   wrap.innerHTML =
-    '<div class="choice-custom-title">Say it my way</div>' +
-    '<div class="choice-custom-copy">' + (isPain ? 'What are you done tolerating, delaying, or shrinking around?' : 'What do you want these videos to open up for you?') + '</div>' +
-    '<textarea class="text-input" rows="3" maxlength="1000" placeholder="Write the real answer..." oninput="setPhase2Field(\'' + key + '\', this.value)">' + escapeHTML(p2[key] || '') + '</textarea>' +
+    '<div class="choice-custom-title">' + (isPain ? 'If none of these is quite right, say it in your own words.' : 'If none of these is quite right, describe the real thing you want.') + '</div>' +
+    '<textarea class="text-input" rows="3" maxlength="1000" placeholder="' + (isPain ? "What's the real pain you're carrying?" : 'What would actually change in your life if this worked?') + '" oninput="setPhase2Field(\'' + key + '\', this.value)">' + escapeHTML(p2[key] || '') + '</textarea>' +
     '<div class="btn-row"><button class="btn-secondary" onclick="selectCommitment(\'' + kind + '\',\'custom\',true)">Use My Words</button></div>';
   return wrap;
 }
@@ -932,15 +1030,137 @@ function renderCommitmentCustom(kind) {
 function selectCommitment(kind, value, advance = false, el = null) {
   const p2 = ensurePhase2();
   if (el) el.classList.add('selecting');
+  const cards = COMMITMENT_COPY[kind][state.level || 1] || [];
+  const selected = cards.find(card => card.v === value);
   if (kind === 'pain') {
     if (value === 'custom' && !String(p2.commitmentPainCustom || '').trim()) return;
     p2.commitmentPain = value;
+    p2.commitmentPainTitle = value === 'custom' ? p2.commitmentPainCustom : (selected ? selected.t : value);
+    p2.commitmentPainText = value === 'custom' ? p2.commitmentPainCustom : (selected ? selected.full : value);
+    p2.commitmentPainType = value === 'custom' ? 'custom' : 'card';
   } else {
     if (value === 'custom' && !String(p2.commitmentDesireCustom || '').trim()) return;
     p2.commitmentDesire = value;
+    p2.commitmentDesireTitle = value === 'custom' ? p2.commitmentDesireCustom : (selected ? selected.t : value);
+    p2.commitmentDesireText = value === 'custom' ? p2.commitmentDesireCustom : (selected ? selected.full : value);
+    p2.commitmentDesireType = value === 'custom' ? 'custom' : 'card';
   }
   saveProgress();
   if (advance) setTimeout(() => goNext(), 300);
+}
+
+function setUserName(value) {
+  state.name = String(value || '').trim().slice(0, 80);
+  renderCommitmentDeclaration();
+  saveProgress();
+}
+
+function naturalList(items) {
+  const list = (items || []).filter(Boolean);
+  if (!list.length) return '';
+  if (list.length === 1) return list[0];
+  if (list.length === 2) return list[0] + ' and ' + list[1];
+  return list.slice(0, -1).join(', ') + ', and ' + list[list.length - 1];
+}
+
+function buildCommitmentDeclaration() {
+  const p2 = ensurePhase2();
+  const name = state.name || 'I';
+  const reasons = naturalList(p2.commitmentReasons);
+  const base = 'I, ' + name + ", commit to finishing all 7 videos no matter how long it takes, because this isn't a race or a streak challenge. It's a story I'm sharing with the people who need to hear it. I'm doing this because I want";
+  return reasons ? base + ' ' + reasons + '.' : base + '...';
+}
+
+function toggleCommitmentReason(reason) {
+  const p2 = ensurePhase2();
+  const current = new Set(p2.commitmentReasons || []);
+  if (current.has(reason)) current.delete(reason);
+  else current.add(reason);
+  p2.commitmentReasons = Array.from(current);
+  renderCommitmentDeclaration();
+  saveProgress();
+}
+
+function toggleCommitmentReasonByIndex(index) {
+  const reason = COMMITMENT_REASONS[index];
+  if (reason) toggleCommitmentReason(reason);
+}
+
+function renderCommitmentDeclaration() {
+  const p2 = ensurePhase2();
+  const input = document.getElementById('user-name');
+  if (input && input.value !== (state.name || '')) input.value = state.name || '';
+  const title = document.getElementById('commit-title');
+  if (title) {
+    title.innerHTML = state.name
+      ? "Let's make it <span class=\"accent\">real, " + escapeHTML(state.name) + ".</span>"
+      : "Let's make it <span class=\"accent\">real.</span>";
+  }
+  const wrap = document.getElementById('commitment-declaration-wrap');
+  const text = document.getElementById('commitment-declaration-text');
+  const reasons = document.getElementById('commitment-reasons');
+  if (wrap) wrap.style.display = state.name ? 'block' : 'none';
+  p2.commitmentDeclaration = buildCommitmentDeclaration();
+  if (text) text.textContent = p2.commitmentDeclaration;
+  if (reasons) {
+    reasons.innerHTML = COMMITMENT_REASONS.map((reason, idx) => {
+      const selected = (p2.commitmentReasons || []).includes(reason);
+      return '<button type="button" class="commit-reason-chip' + (selected ? ' selected' : '') + '" onclick="toggleCommitmentReasonByIndex(' + idx + ')">' + escapeHTML(reason) + '</button>';
+    }).join('');
+  }
+}
+
+const MISSION_SYSTEM_PROMPT = `You are writing a personal mission statement for someone who just committed to completing a 7-video content challenge. This statement will live on their dashboard and be the first thing they see every time they return to the app. It needs to feel like it was written by someone who truly listened to their answers, not generated by an algorithm.
+
+Write a single paragraph of 4 to 6 sentences that:
+1. Opens by acknowledging where they actually are right now, not where they want to be, using the specific texture of their pain and posting history without quoting it back at them verbatim.
+2. Names the specific thing that has been keeping them stuck in a way that feels like recognition rather than diagnosis.
+3. Turns toward what they are building and why it matters, drawing from their vision answer and commitment reasons.
+4. Closes with a single forward-facing sentence that feels like a quiet declaration rather than a motivational poster.
+
+Tone: warm, direct, human. Written in second person. No corporate language. No buzzwords. No exclamation points. No phrases like "embark on," "journey," "unlock your potential," or anything that sounds like it belongs in a LinkedIn post. Return only the mission statement paragraph. Nothing else.`;
+
+function buildMissionUserMessage() {
+  const p2 = ensurePhase2();
+  const custom = p2.custom || {};
+  const blockerText = custom.blocker || blockerFullText[state.blocker] || blockerLabels[state.blocker] || state.blocker || '';
+  return [
+    'Name: ' + (state.name || '(not provided)'),
+    'Posting history: ' + (historyLabels[state.posted] || state.posted || '(not provided)'),
+    'What they are building: ' + (businessLabels[state.business] || state.business || '(not provided)'),
+    'How they want to show up: ' + (p2.contentIntentTitle || p2.contentIntent || '(not provided)'),
+    'What has been holding them back: ' + (blockerText || '(not provided)') + ' (source: ' + (custom.blocker ? 'custom' : 'card') + ')',
+    'The pain they are running from: ' + (p2.commitmentPainText || '(not provided)') + ' (source: ' + (p2.commitmentPainType || 'card') + ')',
+    'The vision they are running toward: ' + (p2.commitmentDesireText || '(not provided)') + ' (source: ' + (p2.commitmentDesireType || 'card') + ')',
+    'Why they are committing to finish: ' + ((p2.commitmentReasons || []).join('; ') || '(not provided)'),
+    'Their level: ' + ((state.level || 1) === 2 ? 'L2 Authority Series' : 'L1 Relatable Hero')
+  ].join('\n');
+}
+
+function buildMissionFallback() {
+  const p2 = ensurePhase2();
+  const blocker = (p2.custom && p2.custom.blocker) || blockerFullText[state.blocker] || blockerLabels[state.blocker] || 'waiting until this feels easier';
+  const pain = p2.commitmentPainText || blocker;
+  const vision = p2.commitmentDesireText || 'becoming someone who follows through';
+  const reasons = naturalList(p2.commitmentReasons) || 'finish what you started';
+  return 'You are starting from a real place, with real hesitation, and that matters more than pretending this is easy. The thing that has kept you stuck is not a lack of story or value, it is the weight of ' + pain.charAt(0).toLowerCase() + pain.slice(1) + '. These seven videos are your way of moving toward ' + vision.charAt(0).toLowerCase() + vision.slice(1) + ', one honest recording at a time. You are doing this because you want ' + reasons + '. This is where you stop waiting for the perfect version of yourself and let the real one begin.';
+}
+
+async function generateMissionForRecap() {
+  const p2 = ensurePhase2();
+  const btn = document.getElementById('commitment-submit-btn');
+  const original = btn ? btn.textContent : '';
+  if (btn) { btn.disabled = true; btn.textContent = 'Writing your mission...'; }
+  try {
+    const mission = await callDeepSeekAPIRaw(MISSION_SYSTEM_PROMPT, buildMissionUserMessage());
+    p2.missionStatement = (mission || buildMissionFallback()).replace(/\s+/g, ' ').trim();
+  } catch(e) {
+    p2.missionStatement = buildMissionFallback();
+  }
+  p2.missionGeneratedAt = new Date().toISOString();
+  p2.commitmentDeclaration = buildCommitmentDeclaration();
+  saveProgress();
+  if (btn) { btn.disabled = false; btn.textContent = original || "I'm ready. Let's do this."; }
 }
 
 const MVO_TOPIC_CARDS = [
@@ -1266,8 +1486,10 @@ const SCRIPT_LOADING_MSGS = [
 
 function phase2ValueText(kind, value, customValue) {
   if (value === 'custom' && customValue) return customValue;
-  if (kind === 'pain') return commitmentPainLabels[value] || value || '';
-  if (kind === 'desire') return commitmentDesireLabels[value] || value || '';
+  const data = COMMITMENT_COPY[kind] || {};
+  const cards = [].concat(data[1] || [], data[2] || []);
+  const found = cards.find(card => card.v === value);
+  if (found) return found.full || found.t || value || '';
   return value || '';
 }
 
@@ -1276,16 +1498,16 @@ function buildPhase2ContextLines() {
   const lines = [];
   const custom = p2.custom || {};
   if (custom.blocker) lines.push('- Blocker in their own words: ' + custom.blocker);
-  if (custom.history) lines.push('- Posting history in their own words: ' + custom.history);
-  if (custom.goal) lines.push('- Content goal in their own words: ' + custom.goal);
-  if (custom.minigoal) lines.push('- Personal challenge win in their own words: ' + custom.minigoal);
+  if (p2.contentIntentTitle) lines.push('- Content intent: ' + p2.contentIntentTitle);
   lines.push('- Context mode: ' + (p2.contentMode === 'extended' ? 'Extended' : 'Simple'));
   if (p2.audienceContext) lines.push('- Audience context: ' + p2.audienceContext);
   if (p2.messageContext) lines.push('- Desired audience reaction: ' + p2.messageContext);
-  const pain = phase2ValueText('pain', p2.commitmentPain, p2.commitmentPainCustom);
-  const desire = phase2ValueText('desire', p2.commitmentDesire, p2.commitmentDesireCustom);
-  if (pain) lines.push('- What they are done carrying: ' + pain);
-  if (desire) lines.push('- What they are moving toward: ' + desire);
+  const pain = p2.commitmentPainText || phase2ValueText('pain', p2.commitmentPain, p2.commitmentPainCustom);
+  const desire = p2.commitmentDesireText || phase2ValueText('desire', p2.commitmentDesire, p2.commitmentDesireCustom);
+  if (pain) lines.push('- Pain content should help resolve: ' + pain);
+  if (desire) lines.push('- Vision they want content to create: ' + desire);
+  if (p2.commitmentDeclaration) lines.push('- Commitment declaration: ' + p2.commitmentDeclaration);
+  if (p2.missionStatement) lines.push('- Dashboard mission statement: ' + p2.missionStatement);
   return lines;
 }
 
@@ -1346,42 +1568,18 @@ const VIDEO_STORY_BEATS = [
 
 
 function populateRecap() {
-  const name = state.name || 'You';
+  const p2 = ensurePhase2();
+  const name = state.name || 'you';
   const level = state.level || 1;
-
-  // Small mission line at top
-  const miniMission = document.getElementById('recap-mini-mission');
-  if (miniMission) {
-    const goalShort = {comfortable:'getting comfortable on camera',audience:'building an audience',voice:'finding their voice',start:'just getting started',expert:'establishing expertise',clients:'building a client audience',leads:'generating leads',consistent:'getting consistent'};
-    const g = goalShort[state.goal] || 'showing up';
-    if (name && name !== 'You') {
-      miniMission.textContent = `${name} is doing the 7 Video Challenge (${level===1?'The Relatable Hero':'The Authority Series'}), committed to ${g}.`;
-    } else {
-      miniMission.textContent = `You're doing the 7 Video Challenge: ${level===1?'The Relatable Hero':'The Authority Series'}.`;
-    }
-  }
-
-  // Hero section
-  const emojiEl = document.getElementById('recap-level-emoji');
   const headingEl = document.getElementById('recap-hero-heading');
   const nameEl = document.getElementById('recap-level-name');
-  const msgEl = document.getElementById('recap-level-message');
-
-  if (level === 1) {
-    if (emojiEl) emojiEl.textContent = '⭐';
-    if (headingEl) headingEl.innerHTML = name !== 'You'
-      ? `${name}, You're<br>The Hero of This Story.`
-      : `You're The Hero<br>of This Story.`;
-    if (nameEl) nameEl.textContent = 'LEVEL 1 — THE RELATABLE HERO';
-    if (msgEl) msgEl.innerHTML = `Your 7 videos are about <strong style="color:var(--cream)">you as a person</strong>: who you are, what you believe, and what you've lived through. No business required. No expertise needed. Just your voice, your story, and the willingness to show up.`;
-  } else {
-    if (emojiEl) emojiEl.textContent = '🔥';
-    if (headingEl) headingEl.innerHTML = name !== 'You'
-      ? `${name}, You're<br>The Expert in the Room.`
-      : `You're The Expert<br>in the Room.`;
-    if (nameEl) nameEl.textContent = 'LEVEL 2 — THE AUTHORITY SERIES';
-    if (msgEl) msgEl.innerHTML = `Your 7 videos position you as the <strong style="color:var(--cream)">go-to person in your space</strong>: your offer, your beliefs, your process, and your results. You've got the reps from Level 1. Now it's time to put them to work.`;
-  }
+  const missionEl = document.getElementById('recap-mission-statement');
+  const commitEl = document.getElementById('recap-commitment-summary');
+  if (headingEl) headingEl.textContent = "Here's what you're really doing, " + name + '.';
+  if (nameEl) nameEl.textContent = level === 2 ? 'Authority Series' : 'Relatable Hero';
+  if (missionEl) missionEl.textContent = p2.missionStatement || buildMissionFallback();
+  p2.commitmentDeclaration = p2.commitmentDeclaration || buildCommitmentDeclaration();
+  if (commitEl) commitEl.textContent = p2.commitmentDeclaration;
 }
 
 // ── API SCRIPT ENGINE ────────────────────────────────
@@ -1570,11 +1768,9 @@ function buildAPIUserMessage(videoIdx) {
   if (state.history) lines.push('- Posting history: ' + (historyLabels[state.history] || state.history));
   if (state.blocker) lines.push('- Blocker: ' + (blockerLabels[state.blocker] || state.blocker));
   if (state.business) lines.push('- Business stage: ' + (businessLabels[state.business] || state.business));
-  if (state.goal) lines.push('- Primary goal: ' + (goalLabels[state.goal] || state.goal));
-  if (state.minigoal) lines.push('- Mini-goal: ' + (miniGoalMap[state.minigoal] || state.minigoalText || state.minigoal));
   const customLines = buildPhase2ContextLines();
   customLines.forEach(line => lines.push(line));
-  const commitText = 'By the end of this challenge I will ' + (state.minigoalText || 'complete this challenge') + ', even if it\'s messy, even if nobody watches, and even if I have to do it scared.';
+  const commitText = p2.commitmentDeclaration || buildCommitmentDeclaration();
   lines.push('- Commitment: ' + commitText);
 
   if (state.topicFreewrite) lines.push('- Topic / what they want to talk about: ' + state.topicFreewrite);
@@ -3941,30 +4137,13 @@ document.addEventListener('click', function(e) {
 
 function buildMissionManifesto(name, miniText) {
   const p2 = ensurePhase2();
-  const custom = p2.custom || {};
-  const displayName = name && name !== 'You' ? name : 'You';
-  const goalText = custom.goal || goalLabels[state.goal] || state.goal || 'show up with more honesty and consistency';
-  const painText = phase2ValueText('pain', p2.commitmentPain, p2.commitmentPainCustom)
-    || custom.blocker
-    || custom.history
-    || blockerLabels[state.blocker]
-    || historyLabels[state.history]
-    || 'waiting for the perfect moment';
-  const desireText = phase2ValueText('desire', p2.commitmentDesire, p2.commitmentDesireCustom)
-    || custom.minigoal
-    || miniText
-    || 'proof that this voice is worth using';
-  const first = displayName === 'You'
-    ? 'You are done letting ' + painText.toLowerCase() + ' decide whether you get to be seen.'
-    : displayName + ' is done letting ' + painText.toLowerCase() + ' decide whether they get to be seen.';
-  const second = 'These seven videos are a real commitment to ' + goalText.toLowerCase() + ', with enough honesty that the right people can recognize themselves in the story.';
-  const third = 'The win is not performing perfectly. The win is moving toward ' + desireText.toLowerCase() + ' and finishing the arc anyway.';
-  return [first, second, third].map(escapeHTML).join(' ');
+  return escapeHTML(p2.missionStatement || buildMissionFallback());
 }
 
 function buildPlan(){
   const name = state.name || 'You';
-  const miniText = miniGoalMap[state.minigoal] || state.minigoalText || 'complete this challenge';
+  const p2 = ensurePhase2();
+  const commitmentText = p2.commitmentDeclaration || buildCommitmentDeclaration();
   const videos = getVideos();
   const videoStatus = state.videoStatus || {};
   const filmedCount = Object.values(videoStatus).filter(s => s === 'filmed').length;
@@ -4043,7 +4222,7 @@ function buildPlan(){
   output.appendChild(hero);
 
   // ── MISSION — collapsed by default ────────────────────
-  const missionLine = buildMissionManifesto(name, miniText);
+  const missionLine = buildMissionManifesto(name, commitmentText);
 
   const missionEl = document.createElement('div');
   missionEl.className = 'db-mission-collapsed';
@@ -4056,9 +4235,7 @@ function buildPlan(){
     <div class="db-mission-body" id="db-mission-body" style="display:none;">
       <div class="db-mission-line">${missionLine}</div>
       <div class="db-mission-commit">
-        By the end of this challenge I will
-        <strong style="color:var(--teal)">${escapeHTML(miniText)}</strong>,
-        even if it's messy, even if nobody watches, and even if I have to do it scared.
+        ${escapeHTML(commitmentText)}
       </div>
     </div>`;
   output.appendChild(missionEl);
@@ -4526,6 +4703,16 @@ function restartWizard(){
 
 // ── AUTO-POPULATE MVO Q2 FROM ONBOARDING DATA ────────
 function autoPopulateMvoQ2FromOnboarding() {
+  if (state.mvoQ2 && state.mvoQ2.before_full) return;
+  const customBlocker = ensurePhase2().custom && ensurePhase2().custom.blocker;
+  if (customBlocker) {
+    state.mvoQ2 = {
+      before_short: customBlocker.split(' ').slice(0,5).join(' '),
+      before_full: customBlocker
+    };
+    mvoQ2Skipped = true;
+    return;
+  }
   const blockerMap = {
     camera: {
       before_short: 'the camera thing',
@@ -4538,6 +4725,10 @@ function autoPopulateMvoQ2FromOnboarding() {
     procrastinating: {
       before_short: 'the endless delay',
       before_full: 'I have been meaning to start for longer than I want to admit. Life gets in the way, or I get in the way. It just keeps not happening.'
+    },
+    care: {
+      before_short: 'worrying people will not care',
+      before_full: 'I have wanted to post, but part of me keeps wondering if anyone will actually care. I do not want to put something real out there and feel embarrassed by the silence.'
     },
     nothing: {
       before_short: 'not being sure what my thing is',
@@ -4555,7 +4746,7 @@ function autoPopulateMvoQ2FromOnboarding() {
     },
     was: {
       before_short: 'losing the rhythm I had',
-      before_full: 'I used to have a rhythm. Something broke it and I just never came back. It has been sitting in the back of my mind ever since — this thing I know I let slip away.'
+      before_full: 'I used to have a rhythm. Something broke it and I just never came back. It has been sitting in the back of my mind ever since, this thing I know I let slip away.'
     }
   };
   if (state.blocker && blockerMap[state.blocker]) {
@@ -4567,62 +4758,132 @@ function autoPopulateMvoQ2FromOnboarding() {
   }
 }
 
-function renderMvoScreen(qNum) {
+function renderMvoScreen() {
   const level = state.level || 1;
-  const data = MVO_DATA['q'+qNum][level];
-  // When Q2 was auto-populated from onboarding, the 3-question sequence becomes 2
-  const qTotal = mvoQ2Skipped ? 2 : 3;
-  const qLabel = mvoQ2Skipped ? qNum - 2 : qNum - 1; // Q3→1, Q4→2 when skipped
-  document.getElementById('mvo'+qNum+'-label').textContent = 'Getting Your Script Ready — Question '+qLabel+' of '+qTotal;
-  document.getElementById('mvo'+qNum+'-question').textContent = data.question;
-  document.getElementById('mvo'+qNum+'-textarea').placeholder = data.placeholder;
-  // Reset own-way
-  document.getElementById('mvo'+qNum+'-own-field').style.display = 'none';
-  const grid = document.getElementById('mvo'+qNum+'-cards');
-  grid.innerHTML = '';
-  data.cards.forEach(card => {
-    const el = document.createElement('div');
-    el.className = 'choice-card';
-    el.innerHTML = `<span class="card-emoji">${card.icon}</span><div class="card-title">${card.text}</div>`;
-    el.onclick = () => selectMvoCard(qNum, card, el);
-    grid.appendChild(el);
-  });
-}
+  const p2 = ensurePhase2();
+  const mode = p2.mvoMode || 'simple';
+  const title = document.getElementById('mvo2-question');
+  const subtitle = document.getElementById('mvo2-subtitle');
+  const simpleBtn = document.getElementById('mvo-simple-btn');
+  const extendedBtn = document.getElementById('mvo-extended-btn');
+  const container = document.getElementById('mvo2-cards');
+  if (!container) return;
+  if (title) title.textContent = level === 2 ? "Let's get your expert script ready." : "Let's get your script ready.";
+  if (subtitle) subtitle.textContent = level === 2 ? 'Three questions. Your answers become the foundation of your first script.' : 'Answer what feels relevant. The more you add, the more the script sounds like you.';
+  if (simpleBtn) simpleBtn.classList.toggle('active', mode === 'simple');
+  if (extendedBtn) extendedBtn.classList.toggle('active', mode === 'extended');
 
-function selectMvoCard(qNum, cardData, el) {
-  el.classList.add('selecting');
-  state['mvoQ'+qNum] = cardData;
-  if (qNum === 4 && typeof logEvent === 'function') {
-    logEvent('mvo_completed', {
-      level: state.level || 1,
-      source: 'card'
-    });
+  if (level === 1) {
+    autoPopulateMvoQ2FromOnboarding();
+    const questions = mode === 'extended' ? [2,3,4] : [3];
+    container.innerHTML = questions.map(qNum => renderMvoQuestion(qNum, level, mode)).join('');
+  } else {
+    container.innerHTML = [2,3,4].map(qNum => renderMvoQuestion(qNum, level, mode)).join('');
   }
-  setTimeout(() => goNext(), 300);
 }
 
-function toggleMvoOwn(e, fieldId) {
-  e.preventDefault();
-  const el = document.getElementById(fieldId);
-  el.style.display = el.style.display === 'none' ? 'block' : 'none';
+function setMvoMode(mode) {
+  const p2 = ensurePhase2();
+  p2.mvoMode = mode === 'extended' ? 'extended' : 'simple';
+  saveProgress();
+  renderMvoScreen();
 }
 
-function confirmMvoOwn(qNum) {
-  const text = document.getElementById('mvo'+qNum+'-textarea').value.trim();
-  if (!text) return;
-  const level = state.level || 1;
-  const custom = {};
-  if      (qNum===2 && level===1) { custom.before_short = text.split(' ').slice(0,5).join(' '); custom.before_full = text; }
-  else if (qNum===2 && level===2) { custom.village_full = text; custom.village_hook = 'If you are someone who values '+text; }
-  else if (qNum===3 && level===1) { custom.catalyst_full = text; }
-  else if (qNum===3 && level===2) { custom.before_full = text; }
-  else if (qNum===4 && level===1) { custom.village_full = text; custom.village_hook = 'If you are someone looking for '+text; }
-  else if (qNum===4 && level===2) { custom.crack_full = text; }
+function renderMvoQuestion(qNum, level, mode) {
+  const data = MVO_DATA['q'+qNum][level];
+  const selected = state['mvoQ'+qNum] || {};
+  const isExtendedL2 = level === 2 && mode === 'extended';
+  const showFreewrite = level === 1 || isExtendedL2;
+  const sub = getMvoSubtitle(qNum, level, mode);
+  const chips = isExtendedL2 ? '' : '<div class="mvo-chip-grid">' + data.cards.map(card => {
+    const active = mvoCardMatches(selected, card);
+    return '<button type="button" class="mvo-chip' + (active ? ' selected' : '') + '" onclick="selectMvoBriefCard(' + qNum + ',' + level + ',\'' + safeMvoCardKey(card.text) + '\')">' + card.icon + ' ' + escapeHTML(card.text) + '</button>';
+  }).join('') + '</div>';
+  const currentText = mvoAnswerText(qNum, level);
+  const freewrite = showFreewrite
+    ? '<div class="mvo-freewrite-wrap"><label class="input-label">' + (isExtendedL2 ? "This is what we'll use. Rewrite it in your own words if you want the script to sound more like you." : getMvoFreewriteLabel(qNum, level, mode)) + '</label><textarea class="text-input" rows="3" placeholder="' + escapeHTML(getMvoPlaceholder(qNum, level, mode)) + '" oninput="setMvoFreewrite(' + qNum + ',' + level + ', this.value)">' + escapeHTML(currentText) + '</textarea></div>'
+    : '';
+  return '<div class="mvo-brief-question"><div class="mvo-brief-title">' + escapeHTML(data.question) + '</div><div class="mvo-brief-sub">' + escapeHTML(sub) + '</div>' + chips + freewrite + '</div>';
+}
+
+function safeMvoCardKey(text) {
+  return String(text || '').replace(/\\/g, '\\\\').replace(/'/g, "\\'");
+}
+
+function getMvoCard(qNum, level, text) {
+  const data = MVO_DATA['q'+qNum][level];
+  return (data.cards || []).find(card => card.text === text);
+}
+
+function mvoCardMatches(selected, card) {
+  return !!selected && (selected.text === card.text || selected.village_full === card.village_full || selected.before_full === card.before_full || selected.catalyst_full === card.catalyst_full || selected.crack_full === card.crack_full);
+}
+
+function selectMvoBriefCard(qNum, level, text) {
+  const card = getMvoCard(qNum, level, text);
+  if (!card) return;
+  state['mvoQ'+qNum] = card;
+  saveProgress();
+  renderMvoScreen();
+}
+
+function setMvoFreewrite(qNum, level, value) {
+  const text = String(value || '').slice(0, 2000);
+  const custom = { custom_text: text };
+  if (qNum === 2 && level === 1) { custom.text = text; custom.before_short = text.split(' ').slice(0,5).join(' '); custom.before_full = text; }
+  else if (qNum === 2 && level === 2) { custom.text = text; custom.village_full = text; custom.village_hook = 'If you are someone who needs ' + text; }
+  else if (qNum === 3 && level === 1) { custom.text = text; custom.catalyst_full = text; }
+  else if (qNum === 3 && level === 2) { custom.text = text; custom.before_full = text; }
+  else if (qNum === 4 && level === 1) { custom.text = text; custom.village_full = text; custom.village_hook = 'If you are someone looking for ' + text; }
+  else if (qNum === 4 && level === 2) { custom.text = text; custom.crack_full = text; }
   state['mvoQ'+qNum] = custom;
-  if (qNum === 4 && typeof logEvent === 'function') {
+  saveProgress();
+}
+
+function mvoAnswerText(qNum, level) {
+  const answer = state['mvoQ'+qNum] || {};
+  if (answer.custom_text) return answer.custom_text;
+  if (level === 1) return '';
+  if (qNum === 2 && level === 2) return answer.village_full || '';
+  if (qNum === 3 && level === 2) return answer.before_full || '';
+  if (qNum === 4 && level === 2) return answer.crack_full || '';
+  return '';
+}
+
+function getMvoSubtitle(qNum, level, mode) {
+  if (level === 1 && mode === 'simple') return "Pick the one that's closest, then add anything the buttons don't quite capture.";
+  if (level === 1 && qNum === 2) return 'Pick the closest one.';
+  if (level === 1 && qNum === 3) return 'Pick the closest one.';
+  if (level === 1 && qNum === 4) return 'Pick the closest one, or describe it below in your own words.';
+  if (level === 2 && mode === 'simple') return 'Pick one.';
+  return "We'll use this for your first script.";
+}
+
+function getMvoFreewriteLabel(qNum, level, mode) {
+  if (level === 1 && mode === 'simple') return 'Add anything else that brought you here.';
+  return 'Say it your way.';
+}
+
+function getMvoPlaceholder(qNum, level, mode) {
+  if (qNum === 2 && level === 1) return "What's actually been making this hard?";
+  if (qNum === 3 && level === 1) return 'What finally made this feel like the right time?';
+  if (qNum === 4 && level === 1) return "Describe what you want to talk about, who it's for, and why it matters to you.";
+  return 'Describe this in your own words.';
+}
+
+function completeMvoBrief() {
+  const level = state.level || 1;
+  if (level === 1) {
+    autoPopulateMvoQ2FromOnboarding();
+    if (!state.mvoQ4 || !mvoAnswerText(4, 1)) {
+      const topic = state.topicFreewrite || ensurePhase2().knowledgeContext || '';
+      if (topic) setMvoFreewrite(4, 1, topic);
+    }
+  }
+  if (typeof logEvent === 'function') {
     logEvent('mvo_completed', {
-      level: state.level || 1,
-      source: 'custom'
+      level: level,
+      source: ensurePhase2().mvoMode || 'simple'
     });
   }
   goNext();

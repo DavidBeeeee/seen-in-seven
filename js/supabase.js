@@ -219,9 +219,15 @@ async function saveOnboardingToDb() {
       updated_at:       new Date().toISOString()
     };
     const phase2Context = typeof ensurePhase2 === 'function' ? ensurePhase2() : (state.phase2 || null);
-    const richOnboarding = Object.assign({}, baseOnboarding, { phase2_context: phase2Context });
+    const richOnboarding = Object.assign({}, baseOnboarding, {
+      phase2_context: phase2Context,
+      mission_statement: phase2Context && phase2Context.missionStatement ? phase2Context.missionStatement : null,
+      mission_generated_at: phase2Context && phase2Context.missionGeneratedAt ? phase2Context.missionGeneratedAt : null,
+      commitment_declaration: phase2Context && phase2Context.commitmentDeclaration ? phase2Context.commitmentDeclaration : null,
+      commitment_reasons: phase2Context && Array.isArray(phase2Context.commitmentReasons) ? phase2Context.commitmentReasons : []
+    });
     let { error: obErr } = await _sb.from('onboarding').upsert(richOnboarding, { onConflict: 'user_id' });
-    if (obErr && obErr.message && obErr.message.toLowerCase().includes('phase2_context')) {
+    if (obErr && obErr.message && /phase2_context|mission_statement|mission_generated_at|commitment_declaration|commitment_reasons/i.test(obErr.message)) {
       const retry = await _sb.from('onboarding').upsert(baseOnboarding, { onConflict: 'user_id' });
       obErr = retry.error;
     }
@@ -302,6 +308,12 @@ async function _restoreFromDatabase() {
       if (onboarding.topic_freewrite) state.topicFreewrite = onboarding.topic_freewrite;
       if (onboarding.phase2_context)  state.phase2         = onboarding.phase2_context;
       if (typeof ensurePhase2 === 'function') ensurePhase2();
+      if (onboarding.mission_statement) {
+        state.phase2.missionStatement = onboarding.mission_statement;
+        state.phase2.missionGeneratedAt = onboarding.mission_generated_at || state.phase2.missionGeneratedAt || '';
+      }
+      if (onboarding.commitment_declaration) state.phase2.commitmentDeclaration = onboarding.commitment_declaration;
+      if (Array.isArray(onboarding.commitment_reasons)) state.phase2.commitmentReasons = onboarding.commitment_reasons;
     }
 
     if (scripts && scripts.length) {
