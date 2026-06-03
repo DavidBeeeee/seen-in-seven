@@ -1139,7 +1139,15 @@ Requirements:
 4. Include why being seen matters to them or to the people they want to reach.
 5. End with a simple commitment to finish the 7 videos.
 
-Tone: warm, direct, grounded, human. No corporate language. No buzzwords. No exclamation points. No diagnosis. No second-person analysis. No phrases like "embark on," "journey," or "unlock your potential." Return only the mission statement.`;
+Tone: warm, direct, grounded, human. No corporate language. No buzzwords. No exclamation points. No diagnosis. No second-person analysis. No em dashes. No phrases like "embark on," "journey," or "unlock your potential." Return only the mission statement.`;
+
+function cleanMissionText(text) {
+  return String(text || '')
+    .replace(/[—–]/g, ', ')
+    .replace(/\s+/g, ' ')
+    .replace(/\s+,/g, ',')
+    .trim();
+}
 
 function buildMissionUserMessage() {
   const p2 = ensurePhase2();
@@ -1164,7 +1172,7 @@ function buildMissionFallback() {
   const pain = p2.commitmentPainText || blocker;
   const vision = p2.commitmentDesireText || 'becoming someone who follows through';
   const reasons = naturalList(p2.commitmentReasons) || 'finish what you started';
-  return 'I am done letting ' + pain.charAt(0).toLowerCase() + pain.slice(1) + ' keep me quiet. I am moving toward ' + vision.charAt(0).toLowerCase() + vision.slice(1) + ', not because I need to perform, but because the right people cannot find the version of me I keep hidden. I am finishing these 7 videos because I want to ' + removeLeadingTo(reasons) + '.';
+  return cleanMissionText('I am done letting ' + pain.charAt(0).toLowerCase() + pain.slice(1) + ' keep me quiet. I am moving toward ' + vision.charAt(0).toLowerCase() + vision.slice(1) + ', not because I need to perform, but because the right people cannot find the version of me I keep hidden. I am finishing these 7 videos because I want to ' + removeLeadingTo(reasons) + '.');
 }
 
 async function generateMissionForRecap() {
@@ -1174,12 +1182,12 @@ async function generateMissionForRecap() {
   let missionText;
   try {
     const mission = await callDeepSeekAPIRaw(MISSION_SYSTEM_PROMPT, buildMissionUserMessage());
-    missionText = (mission || '').replace(/\s+/g, ' ').trim() || buildMissionFallback();
+    missionText = cleanMissionText(mission) || buildMissionFallback();
   } catch(e) {
-    missionText = buildMissionFallback();
+    missionText = cleanMissionText(buildMissionFallback());
   }
   const updatedPhase2 = ensurePhase2();
-  updatedPhase2.missionStatement = missionText;
+  updatedPhase2.missionStatement = cleanMissionText(missionText);
   updatedPhase2.missionGeneratedAt = new Date().toISOString();
   updatedPhase2.commitmentDeclaration = buildCommitmentDeclaration();
   state.phase2 = updatedPhase2;
@@ -1602,7 +1610,7 @@ function populateRecap() {
   const nameEl = document.getElementById('recap-level-name');
   const msgEl = document.getElementById('recap-level-message');
 
-  if (miniMission) miniMission.textContent = p2.missionStatement || buildMissionFallback();
+  if (miniMission) miniMission.innerHTML = '<span class="recap-mini-mission-label">Mission Statement:</span> ' + escapeHTML(cleanMissionText(p2.missionStatement || buildMissionFallback()));
 
   if (level === 1) {
     if (emojiEl) emojiEl.textContent = '⭐';
@@ -4182,7 +4190,7 @@ document.addEventListener('click', function(e) {
 
 function buildMissionManifesto(name, miniText) {
   const p2 = ensurePhase2();
-  return escapeHTML(p2.missionStatement || buildMissionFallback());
+  return escapeHTML(cleanMissionText(p2.missionStatement || buildMissionFallback()));
 }
 
 function hasScriptAt(idx) {
