@@ -905,7 +905,7 @@ function renderCommitmentCards(kind) {
   Object.entries(labels).forEach(([value, text], idx) => {
     const card = document.createElement('div');
     card.className = 'choice-card';
-    card.onclick = function(){ selectCommitmentCard(this, kind, value); };
+    card.onclick = function(){ selectCommitment(kind, value, true, this); };
     card.innerHTML = '<span class="card-emoji">' + icons[idx] + '</span><div class="card-title">' + escapeHTML(text) + '</div>';
     grid.appendChild(card);
   });
@@ -929,13 +929,9 @@ function renderCommitmentCustom(kind) {
   return wrap;
 }
 
-function selectCommitmentCard(el, kind, value) {
-  selectCardAnswer(el, kind === 'pain' ? 'commitmentPain' : 'commitmentDesire', value);
-  selectCommitment(kind, value, false);
-}
-
-function selectCommitment(kind, value, advance = false) {
+function selectCommitment(kind, value, advance = false, el = null) {
   const p2 = ensurePhase2();
+  if (el) el.classList.add('selecting');
   if (kind === 'pain') {
     if (value === 'custom' && !String(p2.commitmentPainCustom || '').trim()) return;
     p2.commitmentPain = value;
@@ -944,7 +940,7 @@ function selectCommitment(kind, value, advance = false) {
     p2.commitmentDesire = value;
   }
   saveProgress();
-  if (advance) goNext();
+  if (advance) setTimeout(() => goNext(), 300);
 }
 
 const MVO_TOPIC_CARDS = [

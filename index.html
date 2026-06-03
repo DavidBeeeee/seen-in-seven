@@ -302,45 +302,39 @@
   <h2 class="screen-title">What's the <span class="accent">main thing</span> holding you back?</h2>
   <p class="screen-sub">Pick the closest answer, then use your own words if the real answer has more texture.</p>
   <div class="choice-grid">
-    <div class="choice-card" onclick="selectCardAnswer(this,'blocker','ideas')">
+    <div class="choice-card" onclick="autoAdvance(this,'blocker','ideas')">
       <span class="card-emoji">🧠</span>
       <div class="card-title">I don't know what to say</div>
       <div class="card-sub">I stare at the camera and go completely blank.</div>
     </div>
-    <div class="choice-card" onclick="selectCardAnswer(this,'blocker','camera')">
+    <div class="choice-card" onclick="autoAdvance(this,'blocker','camera')">
       <span class="card-emoji">😬</span>
       <div class="card-title">I don't like how I come across</div>
       <div class="card-sub">My voice, face, energy, or delivery makes me second-guess it.</div>
     </div>
-    <div class="choice-card" onclick="selectCardAnswer(this,'blocker','care')">
+    <div class="choice-card" onclick="autoAdvance(this,'blocker','care')">
       <span class="card-emoji">👀</span>
       <div class="card-title">I'm worried people won't care</div>
       <div class="card-sub">I don't want to post into silence or feel embarrassed.</div>
     </div>
-    <div class="choice-card" onclick="selectCardAnswer(this,'blocker','procrastinating')">
+    <div class="choice-card" onclick="autoAdvance(this,'blocker','procrastinating')">
       <span class="card-emoji">⏰</span>
       <div class="card-title">I keep putting it off</div>
       <div class="card-sub">I've been meaning to start. Life just keeps happening.</div>
     </div>
   </div>
-  <div class="feature-callout voice-feature">
-    <div class="feature-badge">New feature</div>
-    <div class="feature-arrow">↘</div>
-    <div>
-      <div class="feature-title">Say it your way.</div>
-      <div class="feature-copy">Type it, or tap the mic and talk it out. Your own words make the scripts feel much more personal.</div>
-    </div>
-  </div>
   <div class="choice-custom first-custom-feature">
+    <div class="feature-inline-head">
+      <span class="feature-badge">New feature</span>
+      <span class="feature-inline-arrow">↓</span>
+      <span class="feature-inline-copy">Type below, or tap the mic in this box and talk it out.</span>
+    </div>
     <div class="choice-custom-title">Say it your way</div>
     <div class="choice-custom-copy">If the card is close but not quite it, add the real version here.</div>
     <textarea class="text-input" id="blocker-custom" rows="3" maxlength="1000" placeholder="What's actually making this hard?" oninput="setCustomAnswer('blocker', this.value)"></textarea>
     <div class="btn-row"><button class="btn-secondary" onclick="useCustomRouteAnswer('blocker','custom')">Use My Words</button></div>
   </div>
-  <div class="btn-row">
-    <button class="btn-primary" onclick="goNext()">Continue</button>
-    <button class="btn-back" onclick="goBack()">Back</button>
-  </div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
 <!-- ══ S3 BUSINESS? ══ -->

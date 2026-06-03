@@ -438,6 +438,13 @@ body::before {
   border-radius:12px;
   background:rgba(45,212,191,0.055);
 }
+.feature-inline-head {
+  display:grid;
+  grid-template-columns:auto 22px 1fr;
+  gap:8px;
+  align-items:center;
+  margin-bottom:12px;
+}
 .feature-badge {
   font-family:'Space Mono',monospace;
   font-size:10px;
@@ -448,6 +455,18 @@ body::before {
   border-radius:999px;
   padding:6px 9px;
   white-space:nowrap;
+}
+.feature-inline-arrow {
+  color:var(--teal);
+  font-size:22px;
+  line-height:1;
+  text-align:center;
+  animation:tutorialNudge 1.4s ease-in-out infinite;
+}
+.feature-inline-copy {
+  color:var(--muted);
+  font-size:13px;
+  line-height:1.45;
 }
 .feature-arrow {
   font-size:30px;
@@ -814,15 +833,39 @@ body::before {
 
   /* Choice cards — single column on mobile */
   .choice-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
+    gap: 9px;
+  }
+  .choice-card {
+    padding: 14px 12px;
+    border-radius: 11px;
+  }
+  .choice-card .card-emoji {
+    font-size: 21px;
+    margin-bottom: 7px;
+  }
+  .choice-card .card-title {
+    font-size: 15px;
+    line-height: 1.22;
+  }
+  .choice-card .card-sub {
+    font-size: 12px;
+    line-height: 1.35;
+  }
+  .feature-inline-head {
+    grid-template-columns:1fr;
+    gap:6px;
+  }
+  .feature-inline-arrow {
+    display:none;
   }
 
   /* Buttons */
   .btn-primary {
-    width: 100%;
+    width: auto;
     text-align: center;
-    font-size: 18px;
-    padding: 16px 24px;
+    font-size: 16px;
+    padding: 13px 18px;
   }
   .btn-filmed {
     width: 100%;
@@ -833,6 +876,9 @@ body::before {
   .btn-row {
     flex-direction: column;
     align-items: stretch;
+  }
+  .btn-row .btn-primary {
+    width: 100%;
   }
   .btn-row .btn-back,
   .btn-row .btn-skip {
