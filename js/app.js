@@ -4184,6 +4184,27 @@ function buildMissionManifesto(name, miniText) {
   return escapeHTML(p2.missionStatement || buildMissionFallback());
 }
 
+function hasScriptAt(idx) {
+  return !!state.videos['script_v' + idx];
+}
+
+function getNextScriptIndex(videos) {
+  return videos.findIndex((_, i) => !hasScriptAt(i));
+}
+
+function getNextUnfilmedIndex(videos) {
+  return videos.findIndex((_, i) => state.videoStatus[i] !== 'filmed');
+}
+
+function hasFirstScriptPrep() {
+  const level = state.level || 1;
+  const p2 = ensurePhase2();
+  if (level === 1) {
+    return !!(state.mvoQ2 || state.mvoQ3 || state.mvoQ4 || state.topicFreewrite || p2.knowledgeContext);
+  }
+  return !!(state.mvoQ2 || state.mvoQ3 || state.mvoQ4 || p2.firstScriptNotes);
+}
+
 function buildPlan(){
   const name = state.name || 'You';
   const p2 = ensurePhase2();
@@ -4192,8 +4213,8 @@ function buildPlan(){
   const videoStatus = state.videoStatus || {};
   const filmedCount = Object.values(videoStatus).filter(s => s === 'filmed').length;
   const totalVideos = videos.length;
-  // Find next video that hasn't been filmed (skipped counts as needing attention but not filmed)
-  const nextUnfilmedIdx = videos.findIndex((_, i) => videoStatus[i] !== 'filmed');
+  const nextScriptIdx = getNextScriptIndex(videos);
+  const nextUnfilmedIdx = getNextUnfilmedIndex(videos);
 
   // ── Dashboard header ──────────────────────────────────
   const dbName = document.getElementById('db-name');
@@ -4229,14 +4250,16 @@ function buildPlan(){
 
   const resumeLabel = filmedCount === totalVideos
     ? 'Review All Scripts'
-    : nextUnfilmedIdx < 0
-      ? 'Review Your Scripts'
-      : nextUnfilmedIdx === 0
-        ? 'Start Video 1 →'
-        : 'Continue — Video ' + (nextUnfilmedIdx + 1) + ' →';
+    : nextScriptIdx >= 0
+      ? (nextScriptIdx === 0 ? 'Build Script 1 →' : 'Build Script ' + (nextScriptIdx + 1) + ' →')
+      : nextUnfilmedIdx < 0
+        ? 'Review Your Scripts'
+        : 'Film Video ' + (nextUnfilmedIdx + 1) + ' →';
 
   const heroStatusLine = filmedCount === totalVideos
     ? '🎉 All ' + totalVideos + ' videos filmed. You did it.'
+    : nextScriptIdx >= 0
+      ? (nextScriptIdx === 0 ? 'Start by building Script 1.' : 'Next up: build Script ' + (nextScriptIdx + 1) + '.')
     : filmedCount === 0
       ? 'Scripts ready. Time to film.'
       : filmedCount + ' of ' + totalVideos + ' filmed — keep going.';
@@ -4416,6 +4439,11 @@ function resumeToVideo(idx) {
   const videos = getVideos();
   buildVideoDots('vi-dots');
   if (idx === 0 && !state.videos['script_v0']) {
+    if (hasFirstScriptPrep()) {
+      editingFromPlan = false;
+      showScriptView(0);
+      return;
+    }
     renderMvoScreen();
     showScreen('screen-mvo2');
     currentIndex = screenOrder.indexOf('screen-mvo2');
@@ -4503,21 +4531,29 @@ function buildPlanTracker() {
 
 // ── DASHBOARD HELPERS ─────────────────────────────────
 
-// Resume from dashboard — jump to next unfilmed video
+// Resume from dashboard — jump to the next script that still needs to be created.
 function resumeFromDashboard() {
   const videos = getVideos();
-  // Find first video that hasn't been filmed (includes skipped and pending)
-  const nextIdx = videos.findIndex((_,i) => state.videoStatus[i] !== 'filmed');
-  if (nextIdx < 0) { showDashboard(); return; }
+  let nextIdx = getNextScriptIndex(videos);
+  if (nextIdx < 0) {
+    nextIdx = getNextUnfilmedIndex(videos);
+    if (nextIdx < 0) { showDashboard(); return; }
+  }
   currentVideoIndex = nextIdx;
   buildVideoDots('video-dots');
   buildVideoDots('script-dots');
   buildVideoDots('vi-dots');
-  // If a script already exists, go straight to the script view
+
   if (state.videos['script_v' + nextIdx]) {
     editingFromPlan = false;
     showScriptView(nextIdx, true);
   } else if (nextIdx === 0) {
+    if (hasFirstScriptPrep()) {
+      editingFromPlan = false;
+      showScriptView(0);
+      window.scrollTo(0, 0);
+      return;
+    }
     renderMvoScreen();
     showScreen('screen-mvo2');
     currentIndex = screenOrder.indexOf('screen-mvo2');
@@ -4872,7 +4908,9 @@ function getMvoCard(qNum, level, text) {
 }
 
 function mvoCardMatches(selected, card) {
-  return !!selected && (selected.text === card.text || selected.village_full === card.village_full || selected.before_full === card.before_full || selected.catalyst_full === card.catalyst_full || selected.crack_full === card.crack_full);
+  if (!selected || !card) return false;
+  const keys = ['text', 'village_full', 'before_full', 'catalyst_full', 'crack_full'];
+  return keys.some(key => selected[key] && card[key] && selected[key] === card[key]);
 }
 
 function selectMvoBriefCard(qNum, level, text) {

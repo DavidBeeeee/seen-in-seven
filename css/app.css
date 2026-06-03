@@ -172,8 +172,8 @@ body::before {
 
 .welcome-split {
   display:grid;
-  grid-template-columns:minmax(0,1fr) minmax(250px,360px);
-  gap:34px;
+  grid-template-columns:minmax(520px,1fr) minmax(250px,360px);
+  gap:42px;
   align-items:center;
   width:100%;
 }
@@ -1018,8 +1018,9 @@ body::before {
 }
 .welcome-title {
   font-family:'Oswald',sans-serif;
-  font-size:clamp(54px,12vw,92px);
+  font-size:clamp(54px,9vw,82px);
   letter-spacing:0.02em; line-height:0.95; margin-bottom:28px;
+  white-space:nowrap;
 }
 .welcome-title .l1 { display:block; color:var(--cream); }
 .welcome-title .l2 { display:block; color:var(--teal); }
@@ -1092,6 +1093,7 @@ body::before {
   /* Welcome */
   .welcome-title {
     font-size: clamp(48px, 14vw, 72px);
+    white-space:normal;
   }
   .welcome-sub {
     font-size: 17px;
@@ -1221,6 +1223,16 @@ body::before {
 
   /* Video dots */
   .video-progress { margin-bottom: 18px; }
+}
+
+@media (max-width: 960px) {
+  .welcome-split {
+    grid-template-columns:1fr;
+    gap:24px;
+  }
+  .welcome-title {
+    white-space:normal;
+  }
 }
 
 /* ── PROGRESS DOTS ── */
