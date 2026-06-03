@@ -338,11 +338,12 @@
       <div class="card-sub">I've been meaning to start, but life just keeps happening.</div>
     </div>
   </div>
+  <div class="scroll-feature-cue">Keep scrolling for the new feature ↓</div>
   <div class="choice-custom first-custom-feature">
     <div class="feature-inline-head">
-      <span class="feature-badge">New feature</span>
+      <span class="feature-badge">NEW: Use your own words!</span>
       <span class="feature-inline-arrow">↓</span>
-      <span class="feature-inline-copy">NEW: Say it out loud. Tap the mic and just talk. We'll grab your words so you don't have to type.</span>
+      <span class="feature-inline-copy">If the cards are close but not exact, write what is actually true for you.</span>
     </div>
     <div class="choice-custom-title">If nothing above is quite how you feel, just say it.</div>
     <textarea class="text-input" id="blocker-custom" rows="3" maxlength="1000" placeholder="What's actually making this hard?" oninput="setCustomAnswer('blocker', this.value)"></textarea>
@@ -476,46 +477,54 @@
 
 <!-- ══ S-RECAP ══ -->
 <div class="screen" id="screen-recap">
-  <div class="eyebrow">Your Mission</div>
-  <div class="level-badge" id="recap-level-name"></div>
-  <h2 class="screen-title" id="recap-hero-heading">Here's what you're really doing.</h2>
-  <div class="mission-statement-block" id="recap-mission-statement"></div>
+  <div class="eyebrow" id="recap-eyebrow">Your 7 Video Challenge</div>
+  <div id="recap-mini-mission" class="recap-mini-mission"></div>
+
+  <div id="recap-hero-section" class="recap-hero-section">
+    <div id="recap-level-emoji" class="recap-level-emoji"></div>
+    <div id="recap-hero-heading" class="recap-hero-heading"></div>
+    <div id="recap-level-name" class="recap-level-name"></div>
+    <div id="recap-level-message" class="recap-level-message"></div>
+  </div>
+
   <div class="commitment-summary" id="recap-commitment-summary"></div>
-  <div class="recap-divider"></div>
-  <div class="eyebrow">How This Works</div>
+
+  <h3 class="recap-guidelines-heading">
+    Here's how the challenge works.
+  </h3>
   <div class="guideline-list">
     <div class="guideline-item">
       <div class="guideline-num">1</div>
       <div>
         <div class="guideline-title">7 videos. Your timeline.</div>
-        <div class="guideline-desc">Speed doesn't matter. Order does. Each video builds on the last.</div>
+        <div class="guideline-desc">You don't have to post all 7 in 7 days. Some people move fast, some take a few weeks, some take a few months. Speed literally doesn't matter, but commitment does. What matters is that you finish in order. Each video builds on the last.</div>
       </div>
     </div>
     <div class="guideline-item">
       <div class="guideline-num">2</div>
       <div>
         <div class="guideline-title">Fill in the prompts. Film the script.</div>
-        <div class="guideline-desc">Your answers become your words to speak. Read it off your phone.</div>
+        <div class="guideline-desc">Every video has a set of prompts. Your answers become your script. You don't need to memorize it. Just read it off your phone or use it as a guide.</div>
       </div>
     </div>
     <div class="guideline-item">
       <div class="guideline-num">3</div>
       <div>
         <div class="guideline-title">Done is better than perfect.</div>
-        <div class="guideline-desc">Video 7 will be better than Video 1. That growth makes this process more valuable than you can imagine.</div>
+        <div class="guideline-desc">Your first video doesn't have to be good. It just has to exist. You'll be amazed how much better Video 7 is than Video 1. That growth is the whole point.</div>
       </div>
     </div>
     <div class="guideline-item">
       <div class="guideline-num">4</div>
       <div>
         <div class="guideline-title">The camera doesn't need a perfect you.</div>
-        <div class="guideline-desc">It needs the real one. Messy and showing up is much better than staying invisible.</div>
+        <div class="guideline-desc">It needs the real you. Every video you film, messy, unpolished, uncertain, is proof that you showed up. That's the whole challenge.</div>
       </div>
     </div>
   </div>
 
   <div class="btn-row">
-    <button class="btn-primary" onclick="goNext()">Let's Build Your First Script</button>
+    <button class="btn-primary" onclick="goNext()">Got It. Let's Get Prepped</button>
     <button class="btn-back" onclick="goBack()">Back</button>
   </div>
 </div>
@@ -524,15 +533,16 @@
 <div class="screen" id="screen-checklist">
   <div class="eyebrow">New Feature</div>
   <h2 class="screen-title">What do you want to talk about in this <span class="accent">video series?</span></h2>
-  <p class="screen-sub" style="font-size:15px;">Simple is fast. Extended gives the script builder more of your story, your audience, and your point of view.</p>
+  <p class="screen-sub" style="font-size:15px;">Give me a full overview of what you want to talk about over these seven videos, who you are, what you do, and what you want the goal of this series of yours to communicate. The more info the better.</p>
   <div class="mode-tutorial talk-tutorial">
     <div class="tutorial-arrow">↘</div>
-    <div class="tutorial-copy"><strong>New feature:</strong> use Simple when you want momentum, or Extended when you want the AI to go deeper.</div>
+    <div class="tutorial-copy"><strong>New feature:</strong> choose Simple when you want momentum, or Extended when you want the scripts to go deeper.</div>
   </div>
   <div class="context-toggle" role="group" aria-label="Script context depth">
     <button class="context-toggle-btn active" id="context-simple-btn" onclick="setContextMode('simple')">Simple</button>
     <button class="context-toggle-btn" id="context-extended-btn" onclick="setContextMode('extended')">Extended</button>
   </div>
+  <div class="context-mode-helper" id="context-mode-card">Simple is fast. Extended gives the script builder more of your story, your audience, and your point of view.</div>
   <div id="extended-prompts" class="extended-prompts" style="display:none;">
     <div class="input-group">
       <label class="input-label">Who are you trying to reach?</label>
@@ -544,11 +554,11 @@
     </div>
   </div>
   <div class="input-group" style="margin-top:8px;">
-    <label class="input-label">Your thoughts</label>
-    <span class="input-hint" style="font-size:12px;opacity:0.75;">Topic, story, offer notes, audience notes, style notes, or anything you want the scripts to understand. Plain text only.</span>
+    <label class="input-label">Put down anything you think will be helpful for us to know about your business, products, services, or story.</label>
+    <span class="input-hint" style="font-size:12px;opacity:0.75;">Feel free to copy and paste your bio, example video scripts, product lists, master business document, brand guide, stylewriting rules, or anything else useful. The more the better. You can always add to this later. Plain text only.</span>
     <textarea class="text-input" id="freewrite-input" rows="6"
       style="resize:vertical;min-height:140px;line-height:1.7;"
-      placeholder="I want to talk about why I finally started even though I had zero followers. Or maybe the thing I wish someone had told me when I was starting out. Or the embarrassing mistake that actually changed everything..."
+      placeholder="Paste or write anything helpful here. Business notes, brand voice, offers, stories, audience details, product lists, style rules, examples, or anything you want the scripts to understand."
       maxlength="12000"
       oninput="setTalkContext(this.value)"></textarea>
     <div class="input-hint" id="knowledge-count">0 / 12,000 characters</div>
@@ -574,7 +584,7 @@
     <div id="mvo2-cards" class="mvo-brief"></div>
     <div class="btn-row">
       <button class="btn-primary" onclick="completeMvoBrief()">Build My First Script</button>
-      <button class="btn-back" onclick="goBack()">Back</button>
+      <button class="script-def-back" onclick="goBack()">← Back</button>
     </div>
   </div>
 </div>
@@ -607,7 +617,7 @@
   <div id="cl-triggers"></div>
   <div class="v1-tracker" id="tracker-slot-cl"></div>
   <div class="btn-row" style="margin-top:1.5rem;">
-    <button class="btn-secondary" onclick="goBack()" style="margin-right:10px;">← Back</button>
+    <button class="script-def-back" onclick="goBack()" style="margin-right:10px;">← Back</button>
     <button class="btn-primary" id="cl-ready-btn" onclick="goNext()">I'm Ready →</button>
   </div>
   <div style="text-align:center;margin-top:14px;">
@@ -701,7 +711,7 @@
         <div class="video-badge" id="sv-badge">VIDEO 1</div>
         <div class="sv-title" id="sv-title">I'm Doing This</div>
       </div>
-      <p class="sv-instruction" id="sv-instruction">Your AI-crafted script is ready. Edit any word until it sounds exactly like you, then film it.</p>
+      <p class="sv-instruction" id="sv-instruction">We used your words, feelings, and thoughts, then organized them into your own personalized video. Edit any word until it sounds exactly like you, then film it.</p>
       <!-- Psychological rationale (shown above structured view) -->
       <div id="sv-rationale" style="display:none;margin-bottom:16px;padding:12px 16px;background:rgba(45,212,191,0.06);border-radius:10px;border:1px solid rgba(45,212,191,0.15);">
         <p style="font-size:13px;color:var(--muted);margin:0;line-height:1.6;" id="sv-rationale-text"></p>

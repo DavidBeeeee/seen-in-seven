@@ -288,12 +288,12 @@ async function _restoreFromDatabase() {
     if (!user) return false;
 
     const { data: onboarding } = await _sb.from('onboarding').select('*').eq('user_id', _currentUser.id).maybeSingle();
-    const { data: scripts } = await _sb.from('scripts').select('*').eq('user_id', _currentUser.id).eq('is_current', true).order('video_number');
-    const { data: progress } = await _sb.from('video_progress').select('*').eq('user_id', _currentUser.id);
-
     if (user.name)    state.name    = user.name;
     if (user.level)   state.level   = user.level;
     if (user.blocker) state.blocker = user.blocker;
+    const activeLevel = user.level || state.level || 1;
+    const { data: scripts } = await _sb.from('scripts').select('*').eq('user_id', _currentUser.id).eq('is_current', true).eq('level', activeLevel).order('video_number');
+    const { data: progress } = await _sb.from('video_progress').select('*').eq('user_id', _currentUser.id).eq('level', activeLevel);
 
     if (onboarding) {
       if (onboarding.posted)          state.posted         = onboarding.posted;

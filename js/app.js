@@ -225,6 +225,7 @@ const state = {
     audienceContext:'',
     messageContext:'',
     knowledgeContext:'',
+    firstScriptNotes:'',
     contentIntent:null,
     contentIntentTitle:'',
     commitmentPain:null,
@@ -245,7 +246,7 @@ const state = {
   }
 };
 
-const ONBOARDING_ORDER = ['screen-0','screen-1','screen-3','screen-content-intent','screen-2a','screen-commit-pain','screen-commit-desire','screen-6','screen-recap','screen-checklist','screen-comm-layers','screen-mvo2','screen-7','screen-script','plan-screen'];
+const ONBOARDING_ORDER = ['screen-0','screen-1','screen-3','screen-content-intent','screen-2a','screen-commit-pain','screen-commit-desire','screen-6','screen-recap','screen-checklist','screen-mvo2','screen-7','screen-script','plan-screen'];
 let screenOrder = ['screen-0','screen-1'];
 let currentIndex = 0;
 let currentVideoIndex = 0;
@@ -275,6 +276,7 @@ function resetPhase2() {
     audienceContext:'',
     messageContext:'',
     knowledgeContext:'',
+    firstScriptNotes:'',
     contentIntent:null,
     contentIntentTitle:'',
     commitmentPain:null,
@@ -303,6 +305,7 @@ function ensurePhase2() {
     audienceContext:'',
     messageContext:'',
     knowledgeContext:'',
+    firstScriptNotes:'',
     contentIntent:null,
     contentIntentTitle:'',
     commitmentPain:null,
@@ -413,6 +416,12 @@ function goNext() {
     state.blocker = null; state.history = null; state.goal = null;
     state.minigoal = null; state.minigoalText = ''; state.business = null;
     state.mvoQ2 = null; state.mvoQ3 = null; state.mvoQ4 = null;
+    state.videos = {};
+    state.videoStatus = {};
+    state.l1VideoStatus = null;
+    state.l1Videos = null;
+    maxProgressPct = 0;
+    maxProgressL2Pct = 0;
     resetPhase2();
   }
 
@@ -443,7 +452,6 @@ function goNext() {
     setTimeout(maybeShowSaveProgressOverlay, 450);
   }
   else if (nextId === 'screen-mvo2') renderMvoScreen(2);
-  else if (nextId === 'screen-comm-layers') renderPrefaceV1();
   else if (nextId === 'screen-7') {
     currentVideoIndex = 0;
     buildVideoDots('video-dots');
@@ -728,7 +736,7 @@ function updateProgress(id) {
     let pct2;
     if (videosDone === 0) {
       // Onboarding: green grows 0-15% through the active Phase 2 onboarding screens.
-      const screen7idx = screenOrder.indexOf('screen-7');
+      const screen7idx = Math.max(screenOrder.indexOf('screen-script'), screenOrder.indexOf('screen-mvo2'));
       const startIdx = Math.max(screenOrder.indexOf('screen-content-intent'), 0);
       if (screen7idx > 0 && currentIndex >= startIdx) {
         pct2 = Math.min(((currentIndex - startIdx) / Math.max(screen7idx - startIdx, 1)) * 15, 15);
@@ -747,7 +755,7 @@ function updateProgress(id) {
     fill.style.width = maxProgressPct + '%';
   } else {
     // Onboarding phase: blue bar creeps 0→15% from screen-0 to screen-7
-    const setupEnd = screenOrder.indexOf('screen-7');
+    const setupEnd = Math.max(screenOrder.indexOf('screen-script'), screenOrder.indexOf('screen-mvo2'));
     const setupPct = setupEnd > 0 ? Math.min((currentIndex / setupEnd) * 15, 15) : 0;
     maxProgressPct = Math.max(maxProgressPct, setupPct);
     fill.style.width = maxProgressPct + '%';
@@ -967,9 +975,9 @@ function setContextMode(mode, persist = true) {
   if (extended) extended.classList.toggle('active', p2.contentMode === 'extended');
   if (extendedPrompts) extendedPrompts.style.display = p2.contentMode === 'extended' ? 'block' : 'none';
   if (card) {
-    card.innerHTML = p2.contentMode === 'extended'
-      ? '<strong>Extended:</strong> two deeper prompts will appear next, plus one optional paste box for any extra context.'
-      : '<strong>Simple:</strong> we will use the answers you already gave, then ask for optional notes on the next screen.';
+    card.textContent = p2.contentMode === 'extended'
+      ? 'Extended gives the script builder more of your story, your audience, and your point of view.'
+      : 'Simple is fast. We will use the answers you already gave, plus anything you paste below.';
   }
   if (persist) saveProgress();
 }
@@ -1069,12 +1077,17 @@ function naturalList(items) {
   return list.slice(0, -1).join(', ') + ', and ' + list[list.length - 1];
 }
 
+function removeLeadingTo(text) {
+  return String(text || '').replace(/^to\s+/i, '');
+}
+
 function buildCommitmentDeclaration() {
   const p2 = ensurePhase2();
   const name = state.name || 'I';
   const reasons = naturalList(p2.commitmentReasons);
-  const base = 'I, ' + name + ", commit to finishing all 7 videos no matter how long it takes, because this isn't a race or a streak challenge. It's a story I'm sharing with the people who need to hear it. I'm doing this because I want";
-  return reasons ? base + ' ' + reasons + '.' : base + '...';
+  const intro = 'I, ' + name + ', commit to finishing these 7 videos in order.';
+  const reasonLine = reasons ? ' I am doing this because I want ' + reasons + '.' : '';
+  return intro + reasonLine + ' I do not need perfect. I need to show up.';
 }
 
 function toggleCommitmentReason(reason) {
@@ -1116,15 +1129,17 @@ function renderCommitmentDeclaration() {
   }
 }
 
-const MISSION_SYSTEM_PROMPT = `You are writing a personal mission statement for someone who just committed to completing a 7-video content challenge. This statement will live on their dashboard and be the first thing they see every time they return to the app. It needs to feel like it was written by someone who truly listened to their answers, not generated by an algorithm.
+const MISSION_SYSTEM_PROMPT = `You are writing a first-person mission statement for someone who just committed to completing a 7-video content challenge. This statement will live on their dashboard and should feel like their own words, not an outside analysis.
 
-Write a single paragraph of 4 to 6 sentences that:
-1. Opens by acknowledging where they actually are right now, not where they want to be, using the specific texture of their pain and posting history without quoting it back at them verbatim.
-2. Names the specific thing that has been keeping them stuck in a way that feels like recognition rather than diagnosis.
-3. Turns toward what they are building and why it matters, drawing from their vision answer and commitment reasons.
-4. Closes with a single forward-facing sentence that feels like a quiet declaration rather than a motivational poster.
+Write 2 short sentences, 35 to 55 words total.
 
-Tone: warm, direct, human. Written in second person. No corporate language. No buzzwords. No exclamation points. No phrases like "embark on," "journey," "unlock your potential," or anything that sounds like it belongs in a LinkedIn post. Return only the mission statement paragraph. Nothing else.`;
+Requirements:
+1. Use first person: I, my, me.
+2. Mention the real thing they are done carrying or moving beyond.
+3. Mention what they are moving toward.
+4. End with a simple commitment to finish the 7 videos.
+
+Tone: warm, direct, grounded, human. No corporate language. No buzzwords. No exclamation points. No diagnosis. No second-person analysis. No phrases like "embark on," "journey," or "unlock your potential." Return only the mission statement.`;
 
 function buildMissionUserMessage() {
   const p2 = ensurePhase2();
@@ -1149,7 +1164,7 @@ function buildMissionFallback() {
   const pain = p2.commitmentPainText || blocker;
   const vision = p2.commitmentDesireText || 'becoming someone who follows through';
   const reasons = naturalList(p2.commitmentReasons) || 'finish what you started';
-  return 'You are starting from a real place, with real hesitation, and that matters more than pretending this is easy. The thing that has kept you stuck is not a lack of story or value, it is the weight of ' + pain.charAt(0).toLowerCase() + pain.slice(1) + '. These seven videos are your way of moving toward ' + vision.charAt(0).toLowerCase() + vision.slice(1) + ', one honest recording at a time. You are doing this because you want ' + reasons + '. This is where you stop waiting for the perfect version of yourself and let the real one begin.';
+  return 'I am done letting ' + pain.charAt(0).toLowerCase() + pain.slice(1) + ' keep me quiet. I am moving toward ' + vision.charAt(0).toLowerCase() + vision.slice(1) + ', and I am finishing these 7 videos because I want to ' + removeLeadingTo(reasons) + '.';
 }
 
 async function generateMissionForRecap() {
@@ -1511,6 +1526,7 @@ function buildPhase2ContextLines() {
   lines.push('- Context mode: ' + (p2.contentMode === 'extended' ? 'Extended' : 'Simple'));
   if (p2.audienceContext) lines.push('- Audience context: ' + p2.audienceContext);
   if (p2.messageContext) lines.push('- Desired audience reaction: ' + p2.messageContext);
+  if (p2.firstScriptNotes) lines.push('- Extra first-script notes: ' + p2.firstScriptNotes);
   const pain = p2.commitmentPainText || phase2ValueText('pain', p2.commitmentPain, p2.commitmentPainCustom);
   const desire = p2.commitmentDesireText || phase2ValueText('desire', p2.commitmentDesire, p2.commitmentDesireCustom);
   if (pain) lines.push('- Pain content should help resolve: ' + pain);
@@ -1578,15 +1594,33 @@ const VIDEO_STORY_BEATS = [
 
 function populateRecap() {
   const p2 = ensurePhase2();
-  const name = state.name || 'you';
+  const name = state.name || 'You';
   const level = state.level || 1;
+  const miniMission = document.getElementById('recap-mini-mission');
+  const emojiEl = document.getElementById('recap-level-emoji');
   const headingEl = document.getElementById('recap-hero-heading');
   const nameEl = document.getElementById('recap-level-name');
-  const missionEl = document.getElementById('recap-mission-statement');
+  const msgEl = document.getElementById('recap-level-message');
   const commitEl = document.getElementById('recap-commitment-summary');
-  if (headingEl) headingEl.textContent = "Here's what you're really doing, " + name + '.';
-  if (nameEl) nameEl.textContent = level === 2 ? 'Authority Series' : 'Relatable Hero';
-  if (missionEl) missionEl.textContent = p2.missionStatement || buildMissionFallback();
+
+  if (miniMission) miniMission.textContent = p2.missionStatement || buildMissionFallback();
+
+  if (level === 1) {
+    if (emojiEl) emojiEl.textContent = '⭐';
+    if (headingEl) headingEl.innerHTML = name !== 'You'
+      ? escapeHTML(name) + ", You're<br>The Hero of This Story."
+      : "You're The Hero<br>of This Story.";
+    if (nameEl) nameEl.textContent = 'LEVEL 1 - THE RELATABLE HERO';
+    if (msgEl) msgEl.innerHTML = 'Your 7 videos are about <strong style="color:var(--cream)">you as a person</strong>: who you are, what you believe, and what you have lived through. No business required. No expertise needed. Just your voice, your story, and the willingness to show up.';
+  } else {
+    if (emojiEl) emojiEl.textContent = '🔥';
+    if (headingEl) headingEl.innerHTML = name !== 'You'
+      ? escapeHTML(name) + ", You're<br>The Expert in the Room."
+      : "You're The Expert<br>in the Room.";
+    if (nameEl) nameEl.textContent = 'LEVEL 2 - THE AUTHORITY SERIES';
+    if (msgEl) msgEl.innerHTML = 'Your 7 videos position you as the <strong style="color:var(--cream)">go-to person in your space</strong>: your offer, your beliefs, your process, and your point of view. You have something useful to say. Now it gets organized.';
+  }
+
   p2.commitmentDeclaration = p2.commitmentDeclaration || buildCommitmentDeclaration();
   if (commitEl) commitEl.textContent = p2.commitmentDeclaration;
 }
@@ -2370,9 +2404,9 @@ function _buildPromptsContent(container, v, idx) {
 
   // Skip to end — always shown
   const skipEnd = document.createElement('button');
-  skipEnd.className = 'btn-skip';
-  skipEnd.style.cssText = 'font-size:14px;margin-top:14px;color:#4a6a80;';
-  skipEnd.textContent = 'Skip to the end, see my plan';
+  skipEnd.className = 'preface-skip-end';
+  skipEnd.style.cssText = 'margin-top:14px;';
+  skipEnd.textContent = 'Dashboard';
   skipEnd.onclick = () => skipToEnd();
   btnWrap.appendChild(skipEnd);
 
@@ -2626,11 +2660,11 @@ async function showScriptView(idx, skipLoading) {
 
 const VIDEO_RATIONALE = [
   // V1 — Still in the Ordinary World
-  'WHERE WE ARE: The very first step of the Hero\'s Journey — still in the Ordinary World. The hero hasn\'t crossed the threshold yet. This is the moment before everything changes. Your audience sees themselves in you because you haven\'t become anything yet — you\'re just starting, exactly like they want to.',
+  'WHERE WE ARE: The very first step of the Hero\'s Journey, still in the Ordinary World. The hero hasn\'t crossed the threshold yet. This is the moment before everything changes. Your audience sees themselves in you because you haven\'t become anything yet. You\'re just starting, exactly like they want to.',
   // V2 — Crossing the Threshold / Meeting the Mentor
   'WHERE WE ARE: Crossing the Threshold. The audience said yes to following you in Video 1. Now they need to know who they actually said yes to. This is where the bond forms, not through impressiveness, but through specificity. The more real the details, the more they feel like they know you.',
   // V3 — The Road of Trials (First Epiphany)
-  'WHERE WE ARE: The Road of Trials, the crown jewel. The hero has entered a new world and faces their first real challenge: the challenge of a stuck belief. This video doesn\'t teach — it restructures how your audience sees something they thought they already understood. This is the one that gets shared.',
+  'WHERE WE ARE: The Road of Trials, the crown jewel. The hero has entered a new world and faces their first real challenge: the challenge of a stuck belief. This video doesn\'t teach. It restructures how your audience sees something they thought they already understood. This is the one that gets shared.',
   // V4 — Approaching the Innermost Cave
   'WHERE WE ARE: Approaching the Innermost Cave. The hero is deep in the journey now, past the easy part, not yet at the breakthrough. This video is where trust compounds. Showing the real texture of what\'s happening (not a highlight reel) builds more credibility than any success story could.',
   // V5 — The Ordeal
@@ -2638,7 +2672,7 @@ const VIDEO_RATIONALE = [
   // V6 — The Inmost Cave (The Confession)
   'WHERE WE ARE: The Inmost Cave. The deepest point of the journey, where the hero faces the thing they\'ve been avoiding. This is the most vulnerable video in the challenge, and the most powerful. What you say here is what people remember. The unsaid thing, finally said.',
   // V7 — The Road Back / Return with the Elixir
-  'WHERE WE ARE: The Road Back. The Hero returns changed, carrying the Elixir. The circle closes. Your audience has watched a transformation happen in real time, and this video is where they feel it complete. The CTA here isn\'t about the next video — it\'s about the next chapter.',
+  'WHERE WE ARE: The Road Back. The Hero returns changed, carrying the Elixir. The circle closes. Your audience has watched a transformation happen in real time, and this video is where they feel it complete. The CTA here isn\'t about the next video. It\'s about the next chapter.',
 ];
 
 function _doShowScriptView(idx) {
@@ -2908,22 +2942,24 @@ function _doShowScriptViewInner(idx) {
 function afterFilmed(idx, status) {
   // Record status ('filmed' or 'skipped')
   // Never downgrade a filmed video to skipped
+  let shouldPersistStatus = false;
   if (status) {
     if (status === 'skipped' && state.videoStatus[idx] === 'filmed') {
       // Already filmed — don't overwrite, just navigate forward
     } else {
       state.videoStatus[idx] = status;
+      shouldPersistStatus = true;
     }
     updateDots(idx + 1 < 7 ? idx + 1 : idx);
     saveProgress(); // persist after every video completion
-    if (status === 'skipped' && typeof logEvent === 'function') {
+    if (shouldPersistStatus && status === 'skipped' && typeof logEvent === 'function') {
       logEvent('video_skipped', {
         video_number: idx + 1,
         level: state.level || 1
       });
     }
     // Queue DB save — fires immediately if authenticated, deferred if not
-    queueProgressSave(idx, state.level || 1, status);
+    if (shouldPersistStatus) queueProgressSave(idx, state.level || 1, status);
   }
 
   if (idx < 6) {
@@ -3019,7 +3055,7 @@ function _buildTrackerHTML(videos, context) {
       let cls, status;
       if (st === 'filmed') { cls = 'vt-done'; status = '✓'; }
       else if (st === 'skipped') { cls = 'vt-skipped'; status = '✕'; }
-      else { cls = 'vt-locked'; status = '—'; }
+      else { cls = 'vt-locked'; status = '🔒'; }
       return `<div class="vt-item vt-l1-ghost ${cls}"><div class="vt-label">${label}</div><div class="vt-status">${status}</div></div>`;
     }).join('');
     return `<div class="vt-dual-wrap">` +
@@ -3270,10 +3306,10 @@ function goBackToPrompts() {
     editingFromPlan = false; // normal flow — keep Next Video footer, not dashboard footer
     showScriptView(prevIdx, true);
   } else {
-    // Video 1 — go back to the V1 preface (comm-layers), not the prompts screen
-    renderPrefaceV1();
-    showScreen('screen-comm-layers');
-    currentIndex = screenOrder.indexOf('screen-comm-layers');
+    // Video 1 now uses the combined script prep screen.
+    renderMvoScreen();
+    showScreen('screen-mvo2');
+    currentIndex = screenOrder.indexOf('screen-mvo2');
     window.scrollTo(0, 0);
   }
 }
@@ -3566,11 +3602,13 @@ function _updateLockUI(idx) {
           currentVideoIndex = idx + 1;
           const videos2 = getVideos();
           const nextVid = videos2[idx + 1];
-          if (nextVid && nextVid.beats) {
-            // V1-style intro (has beats) — go to comm-layers preface
-            renderPrefaceV1();
-            showScreen('screen-comm-layers');
-            currentIndex = screenOrder.indexOf('screen-comm-layers');
+          if (state.videos['script_v' + (idx + 1)]) {
+            editingFromPlan = false;
+            showScriptView(idx + 1, true);
+          } else if (idx + 1 === 0 || (nextVid && nextVid.beats)) {
+            renderMvoScreen();
+            showScreen('screen-mvo2');
+            currentIndex = screenOrder.indexOf('screen-mvo2');
           } else {
             // Standard video intro
             renderVideoIntro(idx + 2); // 1-based: next video number = idx + 2
@@ -4380,6 +4418,13 @@ function resumeToVideo(idx) {
   currentVideoIndex = idx;
   const videos = getVideos();
   buildVideoDots('vi-dots');
+  if (idx === 0 && !state.videos['script_v0']) {
+    renderMvoScreen();
+    showScreen('screen-mvo2');
+    currentIndex = screenOrder.indexOf('screen-mvo2');
+    window.scrollTo(0, 0);
+    return;
+  }
   renderVideoPrompts(idx);
   showScreen('screen-7');
   currentIndex = screenOrder.indexOf('screen-7');
@@ -4424,7 +4469,7 @@ function buildPlanTracker() {
       // Skipped but now has a script — show as ready (user generated after skipping)
       cls = 'vt-ready'; statusIcon = '✎';
     } else {
-      cls = 'vt-locked'; statusIcon = '·';
+      cls = 'vt-locked'; statusIcon = '🔒';
     }
     const l2Class    = isL2      ? ' vt-l2-item vt-plan-l2' : '';
     const ghostClass = isL1Ghost ? ' vt-l1-ghost' : '';
@@ -4476,10 +4521,9 @@ function resumeFromDashboard() {
     editingFromPlan = false;
     showScriptView(nextIdx, true);
   } else if (nextIdx === 0) {
-    // Video 1 uses the V1 preface screen, not screen-7
-    renderPrefaceV1();
-    showScreen('screen-comm-layers');
-    currentIndex = screenOrder.indexOf('screen-comm-layers');
+    renderMvoScreen();
+    showScreen('screen-mvo2');
+    currentIndex = screenOrder.indexOf('screen-mvo2');
   } else {
     renderVideoPrompts(nextIdx);
     showScreen('screen-7');
@@ -4787,7 +4831,8 @@ function renderMvoScreen() {
     const questions = mode === 'extended' ? [2,3,4] : [3];
     container.innerHTML = questions.map(qNum => renderMvoQuestion(qNum, level, mode)).join('');
   } else {
-    container.innerHTML = [2,3,4].map(qNum => renderMvoQuestion(qNum, level, mode)).join('');
+    container.innerHTML = [2,3,4].map(qNum => renderMvoQuestion(qNum, level, mode)).join('') +
+      (mode === 'extended' ? renderMvoAnythingElse() : '');
   }
 }
 
@@ -4810,9 +4855,14 @@ function renderMvoQuestion(qNum, level, mode) {
   }).join('') + '</div>';
   const currentText = mvoAnswerText(qNum, level);
   const freewrite = showFreewrite
-    ? '<div class="mvo-freewrite-wrap"><label class="input-label">' + (isExtendedL2 ? "This is what we'll use. Rewrite it in your own words if you want the script to sound more like you." : getMvoFreewriteLabel(qNum, level, mode)) + '</label><textarea class="text-input" rows="3" placeholder="' + escapeHTML(getMvoPlaceholder(qNum, level, mode)) + '" oninput="setMvoFreewrite(' + qNum + ',' + level + ', this.value)">' + escapeHTML(currentText) + '</textarea></div>'
+    ? '<div class="mvo-freewrite-wrap"><label class="input-label">' + getMvoFreewriteLabel(qNum, level, mode) + '</label><textarea class="text-input" rows="3" placeholder="' + escapeHTML(getMvoPlaceholder(qNum, level, mode)) + '" oninput="setMvoFreewrite(' + qNum + ',' + level + ', this.value)">' + escapeHTML(currentText) + '</textarea></div>'
     : '';
   return '<div class="mvo-brief-question"><div class="mvo-brief-title">' + escapeHTML(data.question) + '</div><div class="mvo-brief-sub">' + escapeHTML(sub) + '</div>' + chips + freewrite + '</div>';
+}
+
+function renderMvoAnythingElse() {
+  const p2 = ensurePhase2();
+  return '<div class="mvo-brief-question"><div class="mvo-brief-title">Anything else you would like to add?</div><div class="mvo-brief-sub">Add any detail that would help this first script feel more accurate, specific, or useful.</div><div class="mvo-freewrite-wrap"><label class="input-label">Use your words.</label><textarea class="text-input" rows="3" maxlength="1200" placeholder="Anything else we should know before building this first script?" oninput="setMvoFirstScriptNotes(this.value)">' + escapeHTML(p2.firstScriptNotes || '') + '</textarea></div></div>';
 }
 
 function safeMvoCardKey(text) {
@@ -4849,10 +4899,23 @@ function setMvoFreewrite(qNum, level, value) {
   saveProgress();
 }
 
+function setMvoFirstScriptNotes(value) {
+  const p2 = ensurePhase2();
+  p2.firstScriptNotes = String(value || '').slice(0, 1200);
+  saveProgress();
+}
+
 function mvoAnswerText(qNum, level) {
   const answer = state['mvoQ'+qNum] || {};
+  const mode = ensurePhase2().mvoMode || 'simple';
   if (answer.custom_text) return answer.custom_text;
+  if (level === 1 && mode === 'extended') {
+    if (qNum === 2) return answer.before_full || '';
+    if (qNum === 3) return answer.catalyst_full || '';
+    if (qNum === 4) return answer.village_full || '';
+  }
   if (level === 1) return '';
+  if (level === 2 && mode === 'extended') return '';
   if (qNum === 2 && level === 2) return answer.village_full || '';
   if (qNum === 3 && level === 2) return answer.before_full || '';
   if (qNum === 4 && level === 2) return answer.crack_full || '';
@@ -4865,11 +4928,12 @@ function getMvoSubtitle(qNum, level, mode) {
   if (level === 1 && qNum === 3) return 'Pick the closest one.';
   if (level === 1 && qNum === 4) return 'Pick the closest one, or describe it below in your own words.';
   if (level === 2 && mode === 'simple') return 'Pick one.';
-  return "We'll use this for your first script.";
+  return 'Use your own words if you want to give the script builder more context.';
 }
 
 function getMvoFreewriteLabel(qNum, level, mode) {
   if (level === 1 && mode === 'simple') return 'Add anything else that brought you here.';
+  if (level === 2 && mode === 'extended') return 'Use your words.';
   return 'Say it your way.';
 }
 
@@ -4895,7 +4959,8 @@ function completeMvoBrief() {
       source: ensurePhase2().mvoMode || 'simple'
     });
   }
-  goNext();
+  currentVideoIndex = 0;
+  showScriptView(0);
 }
 
 // ── VIDEO INTRO COPY ─────────────────────────────────
