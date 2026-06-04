@@ -286,29 +286,24 @@ body::before {
 }
 .commit-text {
   font-family:'Lora',serif;
-  font-style:italic; font-size:21px;
-  color:var(--cream); line-height:1.8;
+  font-style:italic; font-size:16px;
+  color:var(--cream); line-height:1.55;
 }
 .commit-text .fill { color:var(--teal); font-style:normal; font-weight:700; }
 .commit-reasons {
   display:flex;
   flex-wrap:wrap;
-  gap:9px;
-  margin-bottom:20px;
-}
-/* Declaration text sits BELOW chips so expanding text doesn't shift chips up */
-.commit-text {
-  min-height:4em;
-  transition:none; /* no animation — instant update feels more responsive */
+  gap:7px;
+  margin-top:22px;
 }
 .commit-reason-chip {
   border:1.5px solid var(--border);
   background:rgba(255,255,255,0.035);
   color:var(--soft);
   border-radius:999px;
-  padding:9px 13px;
+  padding:6px 11px;
   cursor:pointer;
-  font-size:14px;
+  font-size:12px;
   font-family:'Nunito',sans-serif;
   transition:all 0.16s ease;
   touch-action:manipulation;
@@ -1236,8 +1231,8 @@ body::before {
   .cta-section p { font-size: 16px; }
 
   /* Commit block */
-  .commit-wrap { padding: 20px 22px; }
-  .commit-text { font-size: 18px; }
+  .commit-wrap { padding: 18px 20px; }
+  .commit-text { font-size: 14px; }
 
   /* Checklist */
   .check-text { font-size: 16px; }
