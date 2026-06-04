@@ -1108,7 +1108,7 @@ body::before {
   }
   .theme-opt {
     font-size: 10px !important;
-    padding: 1px 3px !important;
+    padding: 1px 1px !important;
   }
   .header-settings-btn {
     margin-top: auto !important;
@@ -1417,6 +1417,7 @@ body::before {
   min-height: 200px;
 }
 .script-editor:focus { outline: none; border-color: var(--teal); }
+.script-editor::placeholder { color:rgba(100,185,210,0.5); }
 .sv-hint {
   font-size:15px; color:var(--muted); margin-top:10px;
   font-style:italic;

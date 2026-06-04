@@ -4668,8 +4668,8 @@ function buildPlanTracker() {
     }
     const l2Class    = isL2      ? ' vt-l2-item vt-plan-l2' : '';
     const ghostClass = isL1Ghost ? ' vt-l1-ghost' : '';
-    const clickable  = (idx !== null && st !== 'filmed') ? ' vt-clickable' : '';
-    const clickAttr  = (idx !== null && st !== 'filmed')
+    const clickable  = (idx !== null && hasScript) ? ' vt-clickable' : '';
+    const clickAttr  = (idx !== null && hasScript)
       ? ` onclick="editScript(${idx})" title="Jump to Video ${idx+1}"`
       : '';
     return `<div class="vt-item${l2Class}${ghostClass}${clickable} ${cls}"${clickAttr}>`+
