@@ -64,8 +64,10 @@ _sb.auth.onAuthStateChange((event, session) => {
           const onScreen0 = screen0 && screen0.classList.contains('active');
           const planScreen = document.getElementById('plan-screen');
           const onDashboard = planScreen && planScreen.classList.contains('active');
+          const emailScreen = document.getElementById('screen-email');
+          const onEmailScreen = emailScreen && emailScreen.classList.contains('active');
 
-          if (!isInitialLoad && !onScreen0 && !onDashboard) {
+          if (!isInitialLoad && !onScreen0 && !onDashboard && !onEmailScreen) {
             // Token refresh mid-flow — just update auth state silently, don't interrupt the user
             window._SIS_log && _SIS_log('auth:token-refresh-mid-flow', 'skipping navigation');
             await _restoreFromDatabase();
