@@ -5,8 +5,8 @@
 **Owner:** David Bee, Colorado Mastermind  
 **Date:** June 2026  
 **Repo:** https://github.com/DavidBeeeee/seen-in-seven  
-**Live app:** https://seen-in-seven.vercel.app  
-**Admin panel:** https://seen-in-seven.vercel.app/admin.html  
+**Live app:** https://studio.coloradomastermind.com
+**Admin panel:** https://studio.coloradomastermind.com/admin.html
 **Contact:** contact@davidbee.me / 303-596-0511
 
 ---
@@ -380,8 +380,8 @@ Should return an empty array. If it doesn't, find and close the unclosed tag.
 
 | Resource | URL / Value |
 |----------|-------------|
-| App | https://seen-in-seven.vercel.app |
-| Admin | https://seen-in-seven.vercel.app/admin.html |
+| App | https://studio.coloradomastermind.com |
+| Admin | https://studio.coloradomastermind.com/admin.html |
 | GitHub | https://github.com/DavidBeeeee/seen-in-seven |
 | Supabase project | zdtkwpzdwnzzmdwrvmka |
 | Supabase URL | https://zdtkwpzdwnzzmdwrvmka.supabase.co |
