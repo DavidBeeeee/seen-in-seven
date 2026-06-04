@@ -261,7 +261,7 @@
           <select id="sort-filter" class="select" onchange="applyFilters()">
             <option value="attention">Needs attention first</option>
             <option value="recent">Most recently active</option>
-            <option value="anon">Anonymous / unverified first</option>
+            <option value="anon" selected>Anonymous / unverified first</option>
             <option value="progress">Most progress</option>
             <option value="name">Name A-Z</option>
           </select>
@@ -322,6 +322,7 @@ const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZ
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const ADMIN_EMAILS = new Set(['email@davidbee.me', 'davidkamau@live.com']);
 const NOTE_KEY = 'sis_admin_notes_v1';
+const PREF_KEY = 'sis_admin_prefs_v1';
 
 let adminState = {
   users: [], scripts: [], currentScripts: [], progress: [], onboarding: [], logs: [], preauthEvents: [],
@@ -377,6 +378,7 @@ sb.auth.onAuthStateChange((event, session) => {
 });
 
 async function loadAll() {
+  applyAdminPrefs();
   setLoading();
   const calls = await Promise.all([
     rpcSafe('users', 'admin_get_users'),
@@ -627,6 +629,7 @@ function applyFilters() {
   const q = (document.getElementById('user-search').value || '').toLowerCase();
   const filter = document.getElementById('status-filter').value;
   const sort = document.getElementById('sort-filter').value;
+  saveAdminPrefs(filter, sort);
   let rows = filteredRows(q, filter, sort);
   renderUserRows(rows);
   document.getElementById('user-count-note').textContent = rows.length + ' shown from ' + adminState.rows.length + ' total';
@@ -1354,6 +1357,20 @@ function safeAttr(s) {
 }
 function loadNotes() { try { return JSON.parse(localStorage.getItem(NOTE_KEY) || '{}'); } catch(e) { return {}; } }
 function saveNotes() { localStorage.setItem(NOTE_KEY, JSON.stringify(adminState.notes)); }
+function loadAdminPrefs() {
+  try { return Object.assign({statusFilter:'all', sortFilter:'anon'}, JSON.parse(localStorage.getItem(PREF_KEY) || '{}')); }
+  catch(e) { return {statusFilter:'all', sortFilter:'anon'}; }
+}
+function saveAdminPrefs(statusFilter, sortFilter) {
+  try { localStorage.setItem(PREF_KEY, JSON.stringify({statusFilter: statusFilter || 'all', sortFilter: sortFilter || 'anon'})); } catch(e) {}
+}
+function applyAdminPrefs() {
+  const prefs = loadAdminPrefs();
+  const statusEl = document.getElementById('status-filter');
+  const sortEl = document.getElementById('sort-filter');
+  if (statusEl && [...statusEl.options].some(o => o.value === prefs.statusFilter)) statusEl.value = prefs.statusFilter;
+  if (sortEl && [...sortEl.options].some(o => o.value === prefs.sortFilter)) sortEl.value = prefs.sortFilter;
+}
 function getNote(userId) {
   return Object.assign({support_status:'none', priority:'normal', note:'', last_contacted_at:'', test_group:false}, adminState.notes[userId] || {});
 }
