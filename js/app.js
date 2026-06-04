@@ -4531,7 +4531,7 @@ function buildPlan(){
   if (state.level === 2 && state.l1Videos && Object.keys(state.l1Videos).length > 0) {
     const l1label = document.createElement('div');
     l1label.className = 'db-grid-label';
-    l1label.innerHTML = '<span style="color:rgba(74,222,128,0.65);">✓ Level 1 — Relatable Hero (Archive)</span>';
+    l1label.innerHTML = '<span class="db-l1-archive-label">✓ Level 1 — Relatable Hero (Archive)</span>';
     output.appendChild(l1label);
 
     const l1grid = document.createElement('div');
@@ -4541,17 +4541,16 @@ function buildPlan(){
       const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
       const preview = clean ? clean.substring(0, 90) + '…' : '';
       const card = document.createElement('div');
-      card.className = 'db-video-card card-filmed';
-      card.style.opacity = '0.7';
+      card.className = 'db-video-card card-filmed db-l1-card';
       card.innerHTML = `
         <div class="dbc-header">
-          <div class="dbc-num" style="color:rgba(74,222,128,0.55);">0${i + 1}</div>
-          <div class="dbc-title" style="color:rgba(74,222,128,0.7);">${v.title}</div>
+          <div class="dbc-num db-l1-num">0${i + 1}</div>
+          <div class="dbc-title db-l1-title">${v.title}</div>
           <div class="dbc-status"><span class="dbc-status-icon">✓</span></div>
         </div>
         <div class="dbc-preview">${preview}</div>
-        <div class="dbc-actions">
-          <button class="dbc-btn" onclick="editL1Script(${i})">View →</button>
+        <div class="dbc-links">
+          ${clean ? `<button class="dbc-link primary" onclick="showL1ScriptModal(${i})">View →</button>` : '<span class="dbc-pending-label">No script saved</span>'}
         </div>`;
       l1grid.appendChild(card);
     });
@@ -4697,6 +4696,45 @@ function buildPlanTracker() {
     }).join('');
   }
   el.innerHTML = html;
+}
+
+// ── L1 ARCHIVE SCRIPT VIEWER ─────────────────────────
+function showL1ScriptModal(idx) {
+  const script = state.l1Videos && state.l1Videos['script_v' + idx] || '';
+  const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  if (!clean) return;
+  const videos = level1Videos || [];
+  const title = (videos[idx] && videos[idx].title) ? videos[idx].title : 'Script ' + (idx + 1);
+  let modal = document.getElementById('l1-script-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'l1-script-modal';
+    modal.style.cssText = 'position:fixed;inset:0;z-index:9800;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(2,10,10,0.7);backdrop-filter:blur(5px);';
+    modal.innerHTML = '<div id="l1-script-modal-inner" style="width:min(680px,100%);max-height:82vh;overflow:auto;background:var(--card);border:1px solid var(--border);border-radius:14px;box-shadow:0 24px 80px rgba(0,0,0,0.4);">' +
+      '<div style="position:sticky;top:0;display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;background:var(--card);border-bottom:1px solid var(--border);">' +
+      '<div id="l1-modal-title" style="font-family:\'Oswald\',sans-serif;font-size:17px;letter-spacing:0.04em;color:var(--teal);"></div>' +
+      '<div style="display:flex;gap:8px;">' +
+      '<button onclick="copyL1Script()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;color:var(--muted);font-size:12px;cursor:pointer;font-family:\'Nunito\',sans-serif;">Copy</button>' +
+      '<button onclick="closeL1ScriptModal()" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 10px;color:var(--muted);font-size:12px;cursor:pointer;font-family:\'Nunito\',sans-serif;">Close</button>' +
+      '</div></div>' +
+      '<div id="l1-modal-body" style="padding:20px 22px;font-family:\'Lora\',serif;font-style:italic;font-size:18px;line-height:1.85;color:var(--cyan);white-space:pre-wrap;"></div>' +
+      '</div>';
+    modal.addEventListener('click', e => { if (e.target === modal) closeL1ScriptModal(); });
+    document.body.appendChild(modal);
+  }
+  document.getElementById('l1-modal-title').textContent = 'L1 — Video ' + (idx + 1) + ': ' + title;
+  document.getElementById('l1-modal-body').textContent = clean;
+  modal.style.display = 'flex';
+  modal._scriptText = clean;
+}
+function closeL1ScriptModal() {
+  const modal = document.getElementById('l1-script-modal');
+  if (modal) modal.style.display = 'none';
+}
+function copyL1Script() {
+  const modal = document.getElementById('l1-script-modal');
+  if (!modal || !modal._scriptText) return;
+  navigator.clipboard && navigator.clipboard.writeText(modal._scriptText).catch(() => {});
 }
 
 // ── DASHBOARD HELPERS ─────────────────────────────────

@@ -637,6 +637,27 @@ body.light-mode .inline-error {
   color: #dc2626;
 }
 
+/* ── L1 ARCHIVE CARDS (light mode: darken green so it reads) ── */
+body.light-mode .db-l1-archive-label { color: #166534; }
+body.light-mode .db-l1-num   { color: rgba(22,101,52,0.7); }
+body.light-mode .db-l1-title { color: rgba(22,101,52,0.9); }
+body.light-mode .db-l1-card {
+  border-color: rgba(22,101,52,0.2);
+  background: rgba(22,101,52,0.03);
+}
+
+/* ── DASHBOARD BUTTON (light mode) ───────────────────── */
+body.light-mode .btn-to-dashboard {
+  background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(37,99,235,0.07));
+  border-color: rgba(59,130,246,0.25);
+  color: #1d4ed8;
+}
+body.light-mode .btn-to-dashboard:hover {
+  background: linear-gradient(135deg, rgba(59,130,246,0.18), rgba(37,99,235,0.12));
+  border-color: rgba(59,130,246,0.4);
+  color: #1e40af;
+}
+
 /* ── MISC ─────────────────────────────────────────────── */
 body.light-mode .preface-skip-end { color: var(--muted); }
 body.light-mode .preface-skip-end:hover { color: var(--cream); }

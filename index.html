@@ -200,7 +200,7 @@
   <div class="header-right">
     <div id="progress-label">YOUR JOURNEY</div>
     <div class="header-nav" id="header-nav">
-      <button class="header-nav-btn" onclick="showDashboard()" id="header-dashboard-btn" title="Dashboard">Dashboard</button>
+      <button class="header-nav-btn btn-to-dashboard" onclick="showDashboard()" id="header-dashboard-btn" title="Dashboard">Dashboard →</button>
       <button class="header-nav-link" onclick="logOut()">Log out</button>
     </div>
     <button class="header-nav-link" id="header-signin-btn" onclick="showSignInScreen()" style="display:none;">Sign in</button>
@@ -622,7 +622,7 @@
     <button class="btn-skip" id="vi-skip-btn" onclick="skipFromPreface(currentPreviewVideoNum - 1)">Skip this video →</button>
   </div>
   <div style="text-align:center;margin-top:10px;">
-    <button class="preface-skip-end" onclick="skipToEnd()">→ Dashboard</button>
+    <button class="btn-to-dashboard" onclick="skipToEnd()">→ Dashboard</button>
   </div>
 </div>
 
@@ -758,7 +758,7 @@
 
     <div class="btn-row" style="margin-top:16px;align-items:center;">
       <span class="sv-nav-link" onclick="goBackToPrompts()">← Previous Video</span>
-      <button class="btn-primary" style="flex:1;max-width:220px;" onclick="skipToEnd()">→ Dashboard</button>
+      <button class="btn-to-dashboard" onclick="skipToEnd()">→ Dashboard</button>
       <span class="sv-nav-link" onclick="skipFilmedBtn()">→ Skip this video</span>
     </div>
   </div>

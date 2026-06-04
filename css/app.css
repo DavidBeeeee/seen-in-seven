@@ -1692,9 +1692,9 @@ body::before {
 .vt-next { background:rgba(45,212,191,.07); border-color:rgba(45,212,191,.3); }
 .vt-next .vt-label, .vt-next .vt-status { color:var(--teal); }
 .vt-next .vt-status { font-size:13px; }
-.vt-locked { background:rgba(255,255,255,.02); border-color:rgba(255,255,255,.05); }
-.vt-locked .vt-label { color:rgba(126,184,212,.35); }
-.vt-locked .vt-status { color:rgba(126,184,212,.28); font-size:16px; }
+.vt-locked { background:rgba(255,255,255,.04); border-color:rgba(168,222,222,.14); }
+.vt-locked .vt-label { color:rgba(126,184,212,.5); }
+.vt-locked .vt-status { color:rgba(126,184,212,.4); font-size:16px; }
 .vt-skipped { background:rgba(239,68,68,.06); border-color:rgba(239,68,68,.2); }
 .vt-skipped .vt-label { color:#ef4444; }
 .vt-skipped .vt-status { color:#ef4444; font-size:17px; }
@@ -1710,12 +1710,12 @@ body::before {
 .vt-l2-item { background:rgba(167,139,250,0.08)!important; border-color:rgba(167,139,250,0.25)!important; }
 .vt-l2-item .vt-label, .vt-l2-item .vt-status { color:rgb(167,139,250)!important; }
 .vt-l2-item.vt-locked {
-  background:rgba(255,255,255,.02)!important;
-  border-color:rgba(255,255,255,.05)!important;
+  background:rgba(167,139,250,0.04)!important;
+  border-color:rgba(167,139,250,0.15)!important;
 }
 .vt-l2-item.vt-locked .vt-label,
 .vt-l2-item.vt-locked .vt-status {
-  color:rgba(126,184,212,.34)!important;
+  color:rgba(167,139,250,.45)!important;
 }
 .vt-l2-item.vt-next { box-shadow:0 0 8px rgba(167,139,250,0.35); animation:l2glow 2s ease-in-out infinite; }
 @keyframes l2glow { 0%,100%{box-shadow:0 0 6px rgba(167,139,250,0.3);} 50%{box-shadow:0 0 14px rgba(167,139,250,0.65);} }
@@ -2336,18 +2336,34 @@ body::before {
 .db-bottom-link.danger { color:rgba(239,68,68,0.6); }
 .db-bottom-link.danger:hover { color:#ef4444; }
 
-/* Mobile 2-col grid — header wraps: num+status row, title row */
+/* Mobile 2-col grid — hide status badge in header so title has full width */
 @media (max-width:480px) {
   .db-video-grid { grid-template-columns:1fr 1fr !important; gap:8px; }
   .dbc-preview { display:none; }
-  .dbc-header {
-    flex-wrap: wrap;
-    gap: 2px 6px;
-    align-items: center;
-  }
-  .dbc-num    { order:1; }
-  .dbc-status { order:2; margin-left:auto; }
-  .dbc-title  { order:3; width:100%; font-size:14px; line-height:1.2; margin-top:1px; }
+  .dbc-header .dbc-status { display:none; }
+  .dbc-title { font-size:13px; }
+}
+
+/* ── L1 ARCHIVE CARD COLOURS ─────────────────────────── */
+.db-l1-archive-label { color:rgba(74,222,128,0.65); }
+.db-l1-card { opacity:0.75; }
+.db-l1-num   { color:rgba(74,222,128,0.55); }
+.db-l1-title { color:rgba(74,222,128,0.7); }
+
+/* ── DASHBOARD BUTTON — consistent across all appearances ── */
+.btn-to-dashboard {
+  display:inline-flex; align-items:center; gap:5px;
+  background:linear-gradient(135deg,rgba(96,165,250,0.15),rgba(59,130,246,0.08));
+  border:1px solid rgba(96,165,250,0.3); border-radius:999px;
+  color:#93c5fd; font-family:'Nunito',sans-serif;
+  font-size:14px; font-weight:700;
+  padding:8px 16px; cursor:pointer;
+  transition:all 0.18s; white-space:nowrap;
+  text-decoration:none;
+}
+.btn-to-dashboard:hover {
+  background:linear-gradient(135deg,rgba(96,165,250,0.25),rgba(59,130,246,0.16));
+  border-color:rgba(96,165,250,0.5); color:#bfdbfe;
 }
 
 /* ── CARD LINKS (replaces dbc-btn) ───────────────────── */
