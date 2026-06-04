@@ -1104,11 +1104,11 @@ body::before {
   }
   .theme-toggle-btn {
     margin-top: auto !important;
-    padding: 2px !important;
+    padding: 1px !important;
   }
   .theme-opt {
     font-size: 10px !important;
-    padding: 2px 4px !important;
+    padding: 1px 3px !important;
   }
   .header-settings-btn {
     margin-top: auto !important;
