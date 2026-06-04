@@ -606,6 +606,8 @@ function showSignInScreen() {
   screenOrder = ['screen-0','screen-email'];
   currentIndex = 1;
   resetEmailScreenCopy('Welcome <span class="accent">back.</span>', 'Enter your email and we will send a magic link to your dashboard.', 'Send Sign-In Link →');
+  const toggle = document.getElementById('auth-password-toggle');
+  if (toggle) toggle.style.display = '';
   showScreen('screen-email');
 }
 
@@ -627,9 +629,59 @@ function resetEmailScreenCopy(titleHtml, subText, buttonText) {
   const msg = document.querySelector('#screen-email .email-sent-msg');
   if (title) title.innerHTML = titleHtml;
   if (sub) sub.textContent = subText;
-  if (btn) { btn.textContent = buttonText; btn.disabled = false; }
+  if (btn) { btn.textContent = buttonText; btn.disabled = false; btn.onclick = handleEmailSubmit; }
   if (err) err.style.display = 'none';
   if (msg) msg.remove();
+  // Reset password mode back to magic-link mode
+  const pwWrap = document.getElementById('auth-password-wrap');
+  const pwInput = document.getElementById('auth-password-input');
+  const hint = document.getElementById('auth-email-hint');
+  const toggle = document.getElementById('auth-password-toggle');
+  if (pwWrap) pwWrap.style.display = 'none';
+  if (pwInput) pwInput.value = '';
+  if (hint) hint.style.display = '';
+  if (toggle) { toggle.style.display = 'none'; toggle.textContent = 'Have a password? Sign in with it →'; }
+}
+
+function togglePasswordSignIn() {
+  const pwWrap = document.getElementById('auth-password-wrap');
+  const hint = document.getElementById('auth-email-hint');
+  const btn = document.getElementById('auth-send-btn');
+  const toggle = document.getElementById('auth-password-toggle');
+  if (!pwWrap) return;
+  const isShowing = pwWrap.style.display !== 'none';
+  pwWrap.style.display = isShowing ? 'none' : 'block';
+  if (hint) hint.style.display = isShowing ? '' : 'none';
+  if (btn) { btn.textContent = isShowing ? 'Send Sign-In Link →' : 'Sign In →'; btn.onclick = isShowing ? handleEmailSubmit : handlePasswordSignIn; }
+  if (toggle) toggle.textContent = isShowing ? 'Have a password? Sign in with it →' : 'Use magic link instead →';
+  const err = document.getElementById('auth-email-error');
+  if (err) err.style.display = 'none';
+}
+
+async function handlePasswordSignIn() {
+  const emailInput = document.getElementById('auth-email-input');
+  const pwInput = document.getElementById('auth-password-input');
+  const errEl = document.getElementById('auth-email-error');
+  const btn = document.getElementById('auth-send-btn');
+  const email = emailInput ? emailInput.value.trim() : '';
+  const password = pwInput ? pwInput.value : '';
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    if (errEl) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; }
+    return;
+  }
+  if (!password) {
+    if (errEl) { errEl.textContent = 'Please enter your password.'; errEl.style.display = 'block'; }
+    return;
+  }
+  if (btn) { btn.textContent = 'Signing in...'; btn.disabled = true; }
+  if (errEl) errEl.style.display = 'none';
+  try {
+    await signInWithPassword(email, password);
+    // onAuthStateChange handles navigation after successful sign-in
+  } catch(e) {
+    if (errEl) { errEl.textContent = e.message || 'Sign in failed. Try a magic link instead.'; errEl.style.display = 'block'; }
+    if (btn) { btn.textContent = 'Sign In →'; btn.disabled = false; }
+  }
 }
 
 const SAVE_PROGRESS_OVERLAY_KEY = 'sis_save_progress_overlay_seen_v2';
@@ -4014,6 +4066,14 @@ function openSettings() {
   if (emailMsg) emailMsg.textContent = '';
   if (levelMsg) levelMsg.textContent = '';
 
+  // Reset password form to idle state
+  cancelSetPassword();
+
+  // Only show password section when authenticated
+  const pwSection = document.getElementById('settings-password-section');
+  const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+  if (pwSection) pwSection.style.display = user ? '' : 'none';
+
   panel.classList.add('open');
 }
 
@@ -4070,6 +4130,56 @@ async function sendSettingsEmailChange() {
       emailMsg.style.color = '#ef4444';
     }
   }
+}
+
+function showSetPasswordForm() {
+  const form = document.getElementById('settings-password-form');
+  const idle = document.getElementById('settings-password-idle');
+  if (form) form.style.display = 'block';
+  if (idle) idle.style.display = 'none';
+  const pwInput = document.getElementById('settings-password-input');
+  if (pwInput) pwInput.focus();
+}
+
+function cancelSetPassword() {
+  const form = document.getElementById('settings-password-form');
+  const idle = document.getElementById('settings-password-idle');
+  const msg = document.getElementById('settings-password-msg');
+  const pwInput = document.getElementById('settings-password-input');
+  const pwConfirm = document.getElementById('settings-password-confirm');
+  if (form) form.style.display = 'none';
+  if (idle) idle.style.display = '';
+  if (msg) { msg.textContent = ''; }
+  if (pwInput) pwInput.value = '';
+  if (pwConfirm) pwConfirm.value = '';
+}
+
+async function saveSettingsPassword() {
+  const pwInput = document.getElementById('settings-password-input');
+  const pwConfirm = document.getElementById('settings-password-confirm');
+  const msg = document.getElementById('settings-password-msg');
+  const btn = document.querySelector('#settings-password-form .settings-btn-primary');
+  const pw = pwInput ? pwInput.value : '';
+  const confirm = pwConfirm ? pwConfirm.value : '';
+  if (pw.length < 6) {
+    if (msg) { msg.textContent = 'Password must be at least 6 characters.'; msg.style.color = '#ef4444'; }
+    return;
+  }
+  if (pw !== confirm) {
+    if (msg) { msg.textContent = 'Passwords do not match.'; msg.style.color = '#ef4444'; }
+    return;
+  }
+  if (btn) { btn.textContent = 'Setting...'; btn.disabled = true; }
+  if (msg) msg.textContent = '';
+  try {
+    await setUserPassword(pw);
+    if (msg) { msg.textContent = 'Password set. You can now sign in with email and password.'; msg.style.color = 'var(--teal)'; }
+    if (pwInput) pwInput.value = '';
+    if (pwConfirm) pwConfirm.value = '';
+  } catch(e) {
+    if (msg) { msg.textContent = e.message || 'Could not set password. Try again.'; msg.style.color = '#ef4444'; }
+  }
+  if (btn) { btn.textContent = 'Set Password'; btn.disabled = false; }
 }
 
 function showLevelChangeConfirm() {

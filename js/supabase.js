@@ -183,6 +183,20 @@ async function sendMagicLink(email) {
   }
 }
 
+async function signInWithPassword(email, password) {
+  const { error } = await _sb.auth.signInWithPassword({ email, password });
+  if (error) {
+    if (error.message && error.message.toLowerCase().includes('invalid'))
+      throw new Error('Wrong email or password. Try again, or use a magic link instead.');
+    throw error;
+  }
+}
+
+async function setUserPassword(newPassword) {
+  const { error } = await _sb.auth.updateUser({ password: newPassword });
+  if (error) throw error;
+}
+
 async function getCurrentSession() {
   const { data } = await _sb.auth.getSession();
   return data.session;
