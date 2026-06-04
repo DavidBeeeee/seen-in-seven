@@ -1115,6 +1115,11 @@ body::before {
     font-size: 10px !important;
     padding: 2px 4px !important;
   }
+  .btn-db-header {
+    margin-top: auto !important;
+    font-size: 9px !important;
+    padding: 2px 6px !important;
+  }
 
   /* Screens */
   .screen {
@@ -2353,17 +2358,21 @@ body::before {
 /* ── DASHBOARD BUTTON — consistent across all appearances ── */
 .btn-to-dashboard {
   display:inline-flex; align-items:center; gap:5px;
-  background:linear-gradient(135deg,rgba(96,165,250,0.15),rgba(59,130,246,0.08));
-  border:1px solid rgba(96,165,250,0.3); border-radius:999px;
-  color:#93c5fd; font-family:'Nunito',sans-serif;
+  background:linear-gradient(135deg,rgba(74,222,128,0.12),rgba(52,211,153,0.07));
+  border:1px solid rgba(74,222,128,0.28); border-radius:999px;
+  color:var(--green); font-family:'Nunito',sans-serif;
   font-size:14px; font-weight:700;
   padding:8px 16px; cursor:pointer;
   transition:all 0.18s; white-space:nowrap;
-  text-decoration:none;
+  text-decoration:none; align-self:flex-start;
 }
 .btn-to-dashboard:hover {
-  background:linear-gradient(135deg,rgba(96,165,250,0.25),rgba(59,130,246,0.16));
-  border-color:rgba(96,165,250,0.5); color:#bfdbfe;
+  background:linear-gradient(135deg,rgba(74,222,128,0.22),rgba(52,211,153,0.14));
+  border-color:rgba(74,222,128,0.45); color:#86efac;
+}
+/* Header variant — compact, sits beside the gear */
+.btn-db-header {
+  font-size:11px; padding:3px 9px;
 }
 
 /* ── CARD LINKS (replaces dbc-btn) ───────────────────── */

@@ -2503,9 +2503,9 @@ function _buildPromptsContent(container, v, idx) {
 
   // Skip to end — always shown
   const skipEnd = document.createElement('button');
-  skipEnd.className = 'preface-skip-end';
+  skipEnd.className = 'btn-to-dashboard';
   skipEnd.style.cssText = 'margin-top:14px;';
-  skipEnd.textContent = 'Dashboard';
+  skipEnd.textContent = '→ Dashboard';
   skipEnd.onclick = () => skipToEnd();
   btnWrap.appendChild(skipEnd);
 

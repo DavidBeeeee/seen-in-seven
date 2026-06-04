@@ -648,14 +648,14 @@ body.light-mode .db-l1-card {
 
 /* ── DASHBOARD BUTTON (light mode) ───────────────────── */
 body.light-mode .btn-to-dashboard {
-  background: linear-gradient(135deg, rgba(59,130,246,0.1), rgba(37,99,235,0.07));
-  border-color: rgba(59,130,246,0.25);
-  color: #1d4ed8;
+  background: linear-gradient(135deg, rgba(22,101,52,0.09), rgba(21,128,61,0.06));
+  border-color: rgba(22,101,52,0.28);
+  color: #166534;
 }
 body.light-mode .btn-to-dashboard:hover {
-  background: linear-gradient(135deg, rgba(59,130,246,0.18), rgba(37,99,235,0.12));
-  border-color: rgba(59,130,246,0.4);
-  color: #1e40af;
+  background: linear-gradient(135deg, rgba(22,101,52,0.16), rgba(21,128,61,0.11));
+  border-color: rgba(22,101,52,0.45);
+  color: #14532d;
 }
 
 /* ── MISC ─────────────────────────────────────────────── */
