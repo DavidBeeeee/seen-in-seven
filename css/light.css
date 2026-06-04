@@ -1,0 +1,607 @@
+/*
+  SeenInSeven — Light Mode
+  All rules scoped to body.light-mode.
+  Dark mode lives entirely in app.css and is untouched.
+  Edit ONLY this file for light mode changes.
+
+  Palette:
+    bg       #EFF8F8   page background
+    card     #FFFFFF   card surfaces
+    card2    #E3F2F2   card alt / hover
+    border   rgba(26,138,138,0.18)
+    cream    #1A3535   primary text
+    soft     #2D5858   secondary text
+    muted    #4A8888   labels, meta
+    teal     #1A8A8A   brand accent (darkened for contrast on light)
+*/
+
+/* ── CSS VARIABLES ────────────────────────────────────── */
+body.light-mode {
+  --bg:          #EFF8F8;
+  --card:        #FFFFFF;
+  --card2:       #E3F2F2;
+  --border:      rgba(26,138,138,0.18);
+  --cream:       #1A3535;
+  --soft:        #2D5858;
+  --muted:       #4A8888;
+  --teal:        #1A8A8A;
+  --cyan:        #2A9090;
+  --blue:        #1A7070;
+  --teal-deep:   #EFF8F8;
+  --teal-vivid:  #1A8A8A;
+  --teal-soft:   #4A8888;
+  --teal-bright: #1A7070;
+  --ink:         #1A3535;
+  background: var(--bg);
+  color: var(--cream);
+}
+
+/* ── BODY TEXTURE ─────────────────────────────────────── */
+body.light-mode::before {
+  background:
+    radial-gradient(ellipse 100% 60% at 15% 5%,  rgba(26,138,138,0.06) 0%, transparent 55%),
+    radial-gradient(ellipse 70%  50% at 85% 85%, rgba(26,138,138,0.04) 0%, transparent 55%),
+    radial-gradient(ellipse 50%  40% at 50% 50%, rgba(26,138,138,0.03) 0%, transparent 60%);
+}
+
+/* ── HEADER / PROGRESS BAR ────────────────────────────── */
+body.light-mode #progress-bar-wrap {
+  background: rgba(239,248,248,0.97);
+  border-bottom-color: rgba(26,138,138,0.15);
+}
+body.light-mode .header-nav-btn {
+  color: var(--muted);
+}
+body.light-mode .header-nav-btn:hover {
+  color: var(--cream);
+}
+body.light-mode .header-nav-link {
+  color: var(--muted);
+}
+body.light-mode .header-nav-link:hover {
+  color: var(--soft);
+}
+body.light-mode .theme-toggle-btn {
+  background: var(--card);
+  border-color: rgba(26,138,138,0.25);
+}
+
+/* ── SCREENS ──────────────────────────────────────────── */
+body.light-mode .screen {
+  background: transparent;
+}
+body.light-mode .screen-title,
+body.light-mode .screen-sub,
+body.light-mode .eyebrow,
+body.light-mode .q1-progress {
+  color: var(--cream);
+}
+body.light-mode .eyebrow,
+body.light-mode .q1-progress {
+  color: var(--teal);
+}
+body.light-mode .accent {
+  color: var(--teal);
+}
+body.light-mode .screen-sub {
+  color: var(--soft);
+}
+
+/* ── CHOICE CARDS ─────────────────────────────────────── */
+body.light-mode .choice-card {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.18);
+  box-shadow: 0 1px 4px rgba(26,138,138,0.06);
+}
+body.light-mode .choice-card:hover {
+  background: var(--card2);
+  border-color: rgba(26,138,138,0.4);
+}
+body.light-mode .choice-card.selecting {
+  background: rgba(26,138,138,0.1);
+  border-color: var(--teal);
+}
+body.light-mode .choice-card.selected {
+  background: rgba(26,138,138,0.1);
+  border-color: var(--teal);
+}
+body.light-mode .choice-card .card-title { color: var(--cream); }
+body.light-mode .choice-card .card-sub   { color: var(--muted); }
+
+/* ── INPUTS ───────────────────────────────────────────── */
+body.light-mode .text-input {
+  background: #F5FDFD;
+  border-color: rgba(26,138,138,0.22);
+  color: var(--cream);
+}
+body.light-mode .text-input:focus {
+  border-color: var(--teal);
+}
+body.light-mode .text-input::placeholder {
+  color: rgba(74,136,136,0.45);
+}
+body.light-mode .input-label  { color: var(--cream); }
+body.light-mode .input-hint   { color: var(--muted); }
+
+/* ── COMMITMENT SCREEN ────────────────────────────────── */
+body.light-mode .commit-wrap {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.2);
+  border-left-color: var(--teal);
+}
+body.light-mode .commit-text  { color: var(--cream); }
+body.light-mode .commit-reason-chip {
+  background: rgba(26,138,138,0.05);
+  border-color: rgba(26,138,138,0.22);
+  color: var(--soft);
+}
+body.light-mode .commit-reason-chip:hover,
+body.light-mode .commit-reason-chip.selected {
+  background: rgba(26,138,138,0.14);
+  border-color: var(--teal);
+  color: var(--cream);
+}
+
+/* ── RECAP SCREEN ─────────────────────────────────────── */
+body.light-mode .recap-card {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.15);
+}
+body.light-mode .recap-mini-mission {
+  background: linear-gradient(180deg, rgba(26,138,138,0.1), rgba(26,138,138,0.04));
+  border-color: rgba(26,138,138,0.3);
+  box-shadow: 0 8px 24px rgba(26,138,138,0.08);
+  color: var(--cream);
+}
+body.light-mode .recap-hero-section {
+  background: rgba(26,138,138,0.05);
+  border-color: rgba(26,138,138,0.15);
+}
+body.light-mode .recap-hero-heading { color: var(--cream); }
+body.light-mode .recap-level-name   { color: var(--teal); }
+body.light-mode .recap-level-message { color: var(--soft); }
+body.light-mode .recap-guidelines-heading { color: var(--cream); }
+body.light-mode .recap-value  { color: var(--cream); }
+body.light-mode .recap-label  { color: var(--muted); }
+body.light-mode .recap-row    { border-bottom-color: rgba(26,138,138,0.12); }
+body.light-mode .recap-divider {
+  background: linear-gradient(90deg, transparent, rgba(26,138,138,0.3), transparent);
+}
+body.light-mode .mission-statement-block {
+  background: linear-gradient(135deg, rgba(26,138,138,0.07), rgba(26,112,112,0.04));
+  border-color: rgba(26,138,138,0.2);
+  color: var(--cream);
+}
+body.light-mode .commitment-summary {
+  background: rgba(200,168,75,0.06);
+  border-left-color: rgba(200,168,75,0.5);
+  color: var(--soft);
+}
+
+/* ── GUIDELINE ITEMS ──────────────────────────────────── */
+body.light-mode .guideline-item {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.15);
+}
+body.light-mode .guideline-title { color: var(--cream); }
+body.light-mode .guideline-desc  { color: var(--muted); }
+
+/* ── CHECKLIST ────────────────────────────────────────── */
+body.light-mode .check-item {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.18);
+}
+body.light-mode .check-item:hover {
+  border-color: rgba(26,138,138,0.35);
+}
+body.light-mode .check-item.checked {
+  background: rgba(74,222,128,0.06);
+  border-color: var(--green);
+}
+body.light-mode .check-text { color: var(--muted); }
+body.light-mode .check-item.checked .check-text { color: var(--cream); }
+body.light-mode .check-box {
+  border-color: rgba(26,138,138,0.3);
+}
+
+/* ── MVO / BRIEF ──────────────────────────────────────── */
+body.light-mode .mvo-brief-question {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.18);
+}
+body.light-mode .mvo-brief-title { color: var(--cream); }
+body.light-mode .mvo-brief-sub   { color: var(--muted); }
+body.light-mode .mvo-chip {
+  background: rgba(26,138,138,0.05);
+  border-color: rgba(26,138,138,0.2);
+  color: var(--soft);
+}
+body.light-mode .mvo-chip:hover {
+  background: rgba(26,138,138,0.1);
+  border-color: rgba(26,138,138,0.4);
+  color: var(--cream);
+}
+body.light-mode .mvo-chip.selected {
+  background: rgba(26,138,138,0.15);
+  border-color: var(--teal);
+  color: var(--cream);
+  box-shadow: 0 0 0 1px rgba(26,138,138,0.2), 0 4px 12px rgba(26,138,138,0.1);
+}
+
+/* ── CONTEXT TOGGLE (simple/extended) ────────────────── */
+body.light-mode .context-toggle {
+  background: rgba(26,138,138,0.06);
+  border-color: rgba(26,138,138,0.18);
+}
+body.light-mode .context-toggle-btn {
+  color: var(--muted);
+}
+body.light-mode .context-mode-card {
+  background: rgba(26,138,138,0.05);
+  border-color: rgba(26,138,138,0.15);
+  color: var(--muted);
+}
+body.light-mode .context-mode-card strong { color: var(--cream); }
+
+/* ── CHOICE CUSTOM / FEATURE CALLOUT ─────────────────── */
+body.light-mode .choice-custom {
+  background: rgba(26,138,138,0.04);
+  border-color: rgba(26,138,138,0.18);
+}
+body.light-mode .choice-custom-title { color: var(--cream); }
+body.light-mode .choice-custom-copy  { color: var(--muted); }
+body.light-mode .feature-callout {
+  background: rgba(26,138,138,0.04);
+  border-color: rgba(26,138,138,0.18);
+}
+body.light-mode .feature-badge {
+  border-color: rgba(26,138,138,0.25);
+  color: var(--teal);
+}
+body.light-mode .feature-title { color: var(--cream); }
+body.light-mode .feature-copy  { color: var(--muted); }
+body.light-mode .scroll-feature-cue {
+  background: rgba(26,138,138,0.9);
+  border-color: rgba(74,222,128,0.3);
+  color: #fff;
+}
+body.light-mode .first-custom-feature .voice-input-wrap::before {
+  background: rgba(26,138,138,0.9);
+  border-color: rgba(26,138,138,0.5);
+  color: #fff;
+}
+
+/* ── WELCOME SCREEN ───────────────────────────────────── */
+body.light-mode .welcome-title .l1 { color: var(--cream); }
+body.light-mode .welcome-title .l2 { color: var(--teal); }
+body.light-mode .welcome-sub { color: var(--soft); }
+body.light-mode .welcome-step .slabel { color: var(--muted); }
+body.light-mode .welcome-step .st { color: var(--soft); }
+body.light-mode .welcome-steps {
+  border-left-color: rgba(26,138,138,0.25);
+}
+body.light-mode .welcome-step {
+  border-bottom-color: rgba(26,138,138,0.1);
+}
+body.light-mode .returning-banner {
+  background: rgba(26,138,138,0.06);
+  border-color: rgba(26,138,138,0.18);
+}
+body.light-mode .rb-text { color: var(--muted); }
+body.light-mode .rb-name { color: var(--cream); }
+body.light-mode .rb-sub  { color: var(--muted); }
+body.light-mode .rb-fresh {
+  color: var(--muted);
+  border-color: rgba(26,138,138,0.2);
+}
+body.light-mode .rb-fresh:hover {
+  color: var(--cream);
+  border-color: rgba(26,138,138,0.4);
+}
+
+/* ── VIDEO INTRO (preface) ────────────────────────────── */
+body.light-mode .vi-framework {
+  background: rgba(26,138,138,0.05);
+  border-color: rgba(26,138,138,0.18);
+}
+body.light-mode .vi-beat {
+  background: rgba(26,138,138,0.07);
+  border-color: rgba(26,138,138,0.18);
+}
+body.light-mode .vi-beat-name { color: var(--cream); }
+body.light-mode .vi-result-badge {
+  background: linear-gradient(135deg, rgba(74,222,128,0.1), rgba(26,138,138,0.08));
+  border-color: rgba(74,222,128,0.3);
+}
+body.light-mode .vi-trigger-tag {
+  background: rgba(26,112,112,0.08);
+  border-color: rgba(26,112,112,0.2);
+  color: var(--blue);
+}
+body.light-mode .info-box {
+  background: rgba(26,112,112,0.06);
+  border-left-color: rgba(26,112,112,0.35);
+  color: var(--muted);
+}
+
+/* ── SCRIPT VIEW ──────────────────────────────────────── */
+body.light-mode .script-view-card {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.15);
+}
+body.light-mode .sv-title { color: var(--cream); }
+body.light-mode .sv-instruction {
+  background: rgba(26,138,138,0.04);
+  border-left-color: rgba(26,138,138,0.3);
+  color: var(--muted);
+}
+body.light-mode .script-editor {
+  background: #F5FDFD;
+  border-color: rgba(26,138,138,0.25);
+  color: var(--cream);
+}
+body.light-mode .script-editor:focus {
+  border-color: var(--teal);
+}
+body.light-mode .sv-hint { color: var(--muted); }
+body.light-mode .filmed-card {
+  background: linear-gradient(135deg, rgba(26,138,138,0.06), rgba(26,112,112,0.04));
+  border-color: rgba(26,138,138,0.2);
+}
+body.light-mode .filmed-title { color: var(--cream); }
+body.light-mode .filmed-sub   { color: var(--muted); }
+
+/* Script section labels (HOOK, MEAT, CTA) */
+body.light-mode .sv-section-label {
+  background: rgba(26,138,138,0.08);
+  border-color: rgba(26,138,138,0.2);
+  color: var(--teal);
+}
+
+/* ── SCRIPT TOOLBAR ───────────────────────────────────── */
+body.light-mode .sv-tool-btn {
+  border-color: rgba(26,138,138,0.2);
+  color: var(--muted);
+}
+body.light-mode .sv-tool-btn:hover {
+  border-color: var(--teal);
+  color: var(--cream);
+}
+
+/* ── VERSION / UNDO ───────────────────────────────────── */
+body.light-mode .sv-redo-link.danger { color: rgba(239,68,68,0.55); }
+body.light-mode .sv-redo-link.danger:hover { color: #ef4444; }
+
+/* ── LOADING SCREEN ───────────────────────────────────── */
+body.light-mode .epiphany-line { color: var(--soft); }
+body.light-mode .epiphany-line.ep-last { color: var(--teal); }
+
+/* ── DASHBOARD ────────────────────────────────────────── */
+body.light-mode .db-hero {
+  border-bottom-color: rgba(26,138,138,0.15);
+}
+body.light-mode .db-hero-status { color: var(--muted); }
+body.light-mode .db-hero-cta {
+  background: var(--teal);
+  color: #FFFFFF;
+}
+body.light-mode .db-mission-collapsed {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.15);
+}
+body.light-mode .db-mission-body {
+  border-top-color: rgba(26,138,138,0.12);
+}
+body.light-mode .db-mission-line  { color: var(--cream); }
+body.light-mode .db-mission-commit { color: var(--soft); }
+body.light-mode .db-grid-label    { color: var(--muted); }
+body.light-mode .db-video-card {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.18);
+  box-shadow: 0 1px 4px rgba(26,138,138,0.06);
+}
+body.light-mode .db-video-card:hover {
+  border-color: rgba(26,138,138,0.4);
+}
+body.light-mode .db-video-card.card-filmed {
+  border-color: rgba(74,222,128,0.35);
+  background: rgba(74,222,128,0.03);
+}
+body.light-mode .db-video-card.card-ready {
+  border-color: rgba(26,138,138,0.3);
+}
+body.light-mode .db-video-card.card-locked {
+  opacity: 0.5;
+}
+body.light-mode .dbc-num    { color: var(--teal); }
+body.light-mode .dbc-title  { color: var(--cream); }
+body.light-mode .dbc-preview { color: var(--muted); }
+body.light-mode .dbc-status-label { color: var(--muted); }
+body.light-mode .dbc-link { color: var(--teal); }
+body.light-mode .dbc-link:hover { color: var(--cream); }
+body.light-mode .dbc-link.primary {
+  background: rgba(26,138,138,0.1);
+  border-color: rgba(26,138,138,0.25);
+  color: var(--teal);
+}
+body.light-mode .dbc-link.primary:hover {
+  background: var(--teal);
+  color: #FFFFFF;
+}
+body.light-mode .db-level-pill { color: var(--muted); }
+body.light-mode .db-name       { color: var(--cream); }
+body.light-mode .db-greeting   { color: var(--muted); }
+body.light-mode .db-progress-summary { color: var(--muted); }
+body.light-mode .db-mission-toggle { color: var(--cream); }
+body.light-mode .db-mission-eyebrow { color: var(--teal); }
+body.light-mode .db-mission-arrow  { color: var(--muted); }
+body.light-mode .dbc-filmed-badge { color: var(--green); }
+body.light-mode .dbc-status-icon  { color: var(--teal); }
+body.light-mode .db-video-card.card-filmed .dbc-status-icon { color: var(--green); }
+
+/* Progress tracker dots on dashboard */
+body.light-mode .vt-item { background: rgba(26,138,138,0.06); }
+body.light-mode .vt-done { background: rgba(74,222,128,0.12); }
+body.light-mode .vt-ready { background: rgba(26,138,138,0.1); }
+body.light-mode .vt-locked { background: rgba(26,138,138,0.04); }
+body.light-mode .vt-skipped { background: rgba(239,68,68,0.06); }
+body.light-mode .vt-label { color: var(--muted); }
+body.light-mode .vt-status { color: var(--teal); }
+
+/* ── SETTINGS PANEL ───────────────────────────────────── */
+body.light-mode .settings-panel {
+  background: #FFFFFF;
+  border-left-color: rgba(26,138,138,0.18);
+}
+body.light-mode .settings-title  { color: var(--cream); }
+body.light-mode .settings-close  { color: var(--muted); }
+body.light-mode .settings-close:hover { color: var(--cream); }
+body.light-mode .settings-section {
+  border-bottom-color: rgba(26,138,138,0.12);
+}
+body.light-mode .settings-label  { color: var(--teal); }
+body.light-mode .settings-hint   { color: var(--muted); }
+body.light-mode .settings-input {
+  background: #F5FDFD;
+  border-color: rgba(26,138,138,0.2);
+  color: var(--cream);
+}
+body.light-mode .settings-email-val,
+body.light-mode .settings-level-val { color: var(--cream); }
+body.light-mode .settings-link-btn { color: var(--teal); }
+body.light-mode .settings-link-btn:hover { color: var(--soft); }
+body.light-mode .settings-btn-secondary {
+  background: #F5FDFD;
+  border-color: rgba(26,138,138,0.2);
+  color: var(--soft);
+}
+body.light-mode .settings-btn-secondary:hover {
+  border-color: var(--teal);
+  color: var(--cream);
+}
+body.light-mode .settings-danger {
+  border-top-color: rgba(239,68,68,0.12);
+}
+
+/* ── MODALS / OVERLAYS ────────────────────────────────── */
+body.light-mode .save-progress-overlay {
+  background: rgba(26,74,74,0.45);
+}
+body.light-mode .save-progress-card {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.22);
+  box-shadow: 0 24px 80px rgba(26,138,138,0.15);
+}
+body.light-mode .start-over-confirm {
+  background: rgba(26,74,74,0.45);
+}
+body.light-mode .start-over-card {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.22);
+}
+body.light-mode .version-modal-overlay {
+  background: rgba(26,74,74,0.45);
+}
+body.light-mode .version-modal-card {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.22);
+}
+body.light-mode .version-item {
+  border-color: rgba(26,138,138,0.15);
+}
+body.light-mode .version-item:hover {
+  background: rgba(26,138,138,0.04);
+}
+body.light-mode #verify-email-toast {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.22);
+  color: var(--cream);
+}
+
+/* ── PLAN / DASHBOARD OLD SECTIONS ───────────────────── */
+body.light-mode .plan-section {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.15);
+}
+body.light-mode .plan-vname { color: var(--cream); }
+body.light-mode .plan-vscript { color: var(--muted); }
+body.light-mode .plan-video-row { border-bottom-color: rgba(26,138,138,0.12); }
+body.light-mode .plan-view-btn {
+  background: #F5FDFD;
+  border-color: rgba(26,138,138,0.2);
+  color: var(--cream);
+}
+body.light-mode .plan-view-btn:hover {
+  border-color: var(--teal);
+  color: var(--teal);
+}
+body.light-mode .plan-edit-link { color: var(--muted); }
+body.light-mode .plan-edit-link:hover { color: var(--cream); }
+body.light-mode .mission-card {
+  background: linear-gradient(135deg, rgba(26,138,138,0.08), rgba(26,112,112,0.04));
+  border-color: rgba(26,138,138,0.2);
+}
+body.light-mode .cta-section {
+  background: linear-gradient(135deg, #E3F2F2 0%, #D8ECEC 100%);
+  border-color: rgba(26,138,138,0.22);
+}
+body.light-mode .cta-section h2 { color: var(--cream); }
+body.light-mode .cta-section p  { color: var(--soft); }
+body.light-mode .dm-card {
+  background: linear-gradient(135deg, rgba(26,138,138,0.06), rgba(26,112,112,0.04));
+  border-color: rgba(26,138,138,0.2);
+}
+body.light-mode .dm-card h3 { color: var(--cream); }
+body.light-mode .dm-card p  { color: var(--muted); }
+body.light-mode .dm-btn {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.2);
+  color: var(--soft);
+}
+body.light-mode .dm-btn:hover {
+  border-color: var(--teal);
+  color: var(--cream);
+}
+
+/* ── JOURNAL CARD ─────────────────────────────────────── */
+body.light-mode .journal-card {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.15);
+}
+body.light-mode .journal-title { color: var(--cream); }
+
+/* ── VIDEO TRACKER DOTS ───────────────────────────────── */
+body.light-mode .vt-locked-in { background: rgba(26,138,138,0.12); }
+
+/* ── CONFIRM / DANGER DIALOGS ─────────────────────────── */
+body.light-mode .start-over-confirm > div {
+  background: #FFFFFF;
+  border-color: rgba(239,68,68,0.2);
+  color: var(--cream);
+}
+
+/* ── ERROR / INLINE ERRORS ────────────────────────────── */
+body.light-mode .inline-error {
+  background: rgba(239,68,68,0.06);
+  border-color: rgba(239,68,68,0.18);
+  color: #dc2626;
+}
+
+/* ── MISC ─────────────────────────────────────────────── */
+body.light-mode .preface-skip-end { color: var(--muted); }
+body.light-mode .preface-skip-end:hover { color: var(--cream); }
+body.light-mode .btn-back  { border-color: rgba(26,138,138,0.22); color: var(--muted); }
+body.light-mode .btn-back:hover { border-color: var(--teal); color: var(--teal); }
+body.light-mode .btn-skip { color: var(--teal); }
+body.light-mode .btn-skip:hover { color: var(--cream); }
+body.light-mode .btn-restart { color: var(--muted); }
+body.light-mode .btn-restart:hover { color: var(--cream); }
+body.light-mode .dbc-pending-label { color: var(--muted); }
+body.light-mode #progress-label { color: var(--cream); }
+body.light-mode .verify-email-toast { background: #FFFFFF; color: var(--cream); }
+
+/* ── VOICE INPUT ──────────────────────────────────────── */
+body.light-mode .voice-listening-badge {
+  background: rgba(26,138,138,0.9);
+  color: #FFFFFF;
+}
