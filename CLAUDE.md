@@ -7,6 +7,8 @@ SeenInSeven is the delivery tool for the **777 Challenge** (Colorado Mastermind 
 **Owner:** David Bee (David Kamau)
 **Stack:** Vanilla HTML + CSS + JS — no framework, no build step, no bundler. Supabase for auth and database. Vercel for hosting. DeepSeek for script and mission-statement generation.
 **Repo:** github.com/DavidBeeeee/seen-in-seven
+**Live URL:** https://studio.coloradomastermind.com
+**Admin panel:** https://studio.coloradomastermind.com/admin.html
 
 ---
 
