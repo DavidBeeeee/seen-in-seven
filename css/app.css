@@ -1087,11 +1087,34 @@ body::before {
 
   /* Progress bar */
   #progress-bar-wrap {
-    padding: 10px 16px;
+    padding: 10px 16px 8px;
     gap: 10px;
   }
   .logo { font-size: 15px; }
   #progress-label { font-size: 10px; }
+
+  /* Anchor toggle and gear to the bottom of the header symmetrically */
+  .header-left {
+    justify-content: flex-start;
+    align-self: stretch;
+  }
+  .header-right {
+    justify-content: flex-start;
+    align-self: stretch;
+  }
+  .theme-toggle-btn {
+    margin-top: auto;
+    padding: 2px;
+  }
+  .theme-opt {
+    font-size: 11px;
+    padding: 2px 5px;
+  }
+  .header-settings-btn {
+    margin-top: auto;
+    font-size: 11px !important;
+    padding: 2px 5px !important;
+  }
 
   /* Screens */
   .screen {
