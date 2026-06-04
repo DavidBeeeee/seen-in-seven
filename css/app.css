@@ -2556,22 +2556,24 @@ body::before {
   }
 }
 
-/* ── THEME TOGGLE BUTTON ─────────────────────────────── */
+/* ── THEME TOGGLE ────────────────────────────────────── */
 .theme-toggle-btn {
-  background:none; border:1px solid var(--border); border-radius:999px;
-  cursor:pointer; padding:2px 7px; display:inline-flex; align-items:center;
-  gap:3px; font-size:12px; line-height:1;
+  background:var(--card); border:1.5px solid var(--border); border-radius:999px;
+  cursor:pointer; padding:3px; display:inline-flex; align-items:center; gap:0;
   touch-action:manipulation; -webkit-tap-highlight-color:transparent;
-  flex-shrink:0; transition:border-color 0.15s;
+  flex-shrink:0; transition:border-color 0.2s;
 }
 .theme-toggle-btn:hover { border-color:var(--teal); }
-.theme-sep { color:var(--muted); font-size:10px; }
-/* Dark mode (default): sun dim, moon bright */
-.theme-sun  { opacity:0.35; }
-.theme-moon { opacity:1; }
-/* Light mode: sun bright, moon dim */
-body.light-mode .theme-sun  { opacity:1; }
-body.light-mode .theme-moon { opacity:0.35; }
+.theme-opt {
+  font-size:14px; padding:4px 7px; border-radius:999px;
+  transition:background 0.2s, opacity 0.2s;
+}
+/* Dark mode default: moon active, sun dim */
+.theme-sun  { background:transparent; opacity:0.4; }
+.theme-moon { background:rgba(50,184,184,0.22); opacity:1; }
+/* Light mode: sun active, moon dim */
+body.light-mode .theme-sun  { background:rgba(26,138,138,0.2); opacity:1; }
+body.light-mode .theme-moon { background:transparent; opacity:0.4; }
 
 /* ── SETTINGS GEAR — always visible ─────────────────── */
 .header-settings-btn {
