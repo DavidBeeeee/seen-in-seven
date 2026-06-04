@@ -121,6 +121,14 @@
     .badge.orange { color:#fed7aa; border-color:rgba(245,158,11,0.35); background:rgba(245,158,11,0.1); }
     .toggle-paid { background:transparent; border:1px solid var(--line); color:var(--muted); border-radius:5px; padding:4px 8px; font-size:11px; }
     .toggle-paid:hover { border-color:var(--teal); color:var(--cream); }
+    .bulk-bar {
+      display:none; align-items:center; justify-content:space-between; gap:12px;
+      margin-bottom:12px; padding:10px 12px; border:1px solid rgba(245,158,11,0.35);
+      border-radius:8px; background:rgba(245,158,11,0.08); color:var(--soft);
+    }
+    .bulk-bar.show { display:flex; }
+    .row-check { width:16px; height:16px; accent-color:var(--teal); }
+    .select-col { width:42px; min-width:42px; }
 
     .drawer { position:sticky; top:86px; max-height:calc(100vh - 108px); overflow:auto; background:var(--panel2); border:1px solid var(--line); border-radius:10px; }
     .drawer-empty { padding:34px 18px; color:var(--muted); text-align:center; line-height:1.7; }
@@ -245,6 +253,7 @@
             <option value="script_no_film">Script generated, not filmed</option>
             <option value="onboarded">Completed onboarding</option>
             <option value="complete">Completed all 7</option>
+            <option value="preauth">Unverified / anonymous</option>
             <option value="l1">Level 1</option>
             <option value="l2">Level 2</option>
             <option value="test_group">Test group only</option>
@@ -252,14 +261,23 @@
           <select id="sort-filter" class="select" onchange="applyFilters()">
             <option value="attention">Needs attention first</option>
             <option value="recent">Most recently active</option>
+            <option value="anon">Anonymous / unverified first</option>
             <option value="progress">Most progress</option>
             <option value="name">Name A-Z</option>
           </select>
+        </div>
+        <div class="bulk-bar" id="bulk-bar">
+          <div><strong id="bulk-count">0 selected</strong><span class="muted"> | deletion removes app data and pre-auth lead events, not the Supabase Auth account.</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-small" onclick="clearSelection()">Clear</button>
+            <button class="btn btn-small" style="border-color:rgba(239,68,68,0.5);color:#fecaca;" onclick="deleteSelectedUsers()">Delete Selected</button>
+          </div>
         </div>
         <div class="table-wrap">
           <table>
             <thead>
               <tr>
+                <th class="select-col"><input type="checkbox" class="row-check" id="select-visible" onchange="toggleVisibleSelection(this.checked)" title="Select visible rows"></th>
                 <th>User</th>
                 <th>Status</th>
                 <th>Level</th>
@@ -271,7 +289,7 @@
               </tr>
             </thead>
             <tbody id="user-tbody">
-              <tr><td colspan="8" class="loading">Loading...</td></tr>
+              <tr><td colspan="9" class="loading">Loading...</td></tr>
             </tbody>
           </table>
         </div>
@@ -307,7 +325,7 @@ const NOTE_KEY = 'sis_admin_notes_v1';
 
 let adminState = {
   users: [], scripts: [], currentScripts: [], progress: [], onboarding: [], logs: [], preauthEvents: [],
-  rows: [], selectedUserId: null, notes: loadNotes(), loadErrors: {}
+  rows: [], selectedUserId: null, selectedIds: new Set(), notes: loadNotes(), loadErrors: {}, optionalWarnings: {}
 };
 
 async function sendAdminLink() {
@@ -376,8 +394,10 @@ async function loadAll() {
   adminState.onboarding = byName.onboarding.data || [];
   adminState.logs = byName.logs.data || [];
   adminState.preauthEvents = byName.preauth.data || [];
-  adminState.loadErrors = Object.fromEntries(calls.filter(c => c.error).map(c => [c.name, c.error]));
+  adminState.optionalWarnings = Object.fromEntries(calls.filter(c => c.name === 'preauth' && c.error).map(c => [c.name, c.error]));
+  adminState.loadErrors = Object.fromEntries(calls.filter(c => c.error && c.name !== 'preauth').map(c => [c.name, c.error]));
   adminState.rows = buildRows();
+  pruneSelectedIds();
   document.getElementById('last-loaded').textContent = 'Loaded ' + new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
   renderAll();
 }
@@ -396,7 +416,7 @@ function setLoading() {
   document.getElementById('funnel-panel').innerHTML = '<div class="loading">Loading funnel...</div>';
   document.getElementById('stall-panel').innerHTML = '<div class="loading">Loading stalls...</div>';
   document.getElementById('issue-panel').innerHTML = '<div class="loading">Loading issues...</div>';
-  document.getElementById('user-tbody').innerHTML = '<tr><td colspan="8" class="loading">Loading...</td></tr>';
+  document.getElementById('user-tbody').innerHTML = '<tr><td colspan="9" class="loading">Loading...</td></tr>';
 }
 
 function buildRows() {
@@ -619,6 +639,7 @@ function filteredRows(q, filter, sort) {
   let rows = adminState.rows.filter(r => rowMatches(r, query, statusFilter));
   rows.sort((a,b) => {
     if (sortMode === 'recent') return b.lastActiveMs - a.lastActiveMs;
+    if (sortMode === 'anon') return Number(!!b.preauth) - Number(!!a.preauth) || (b.lastActiveMs - a.lastActiveMs);
     if (sortMode === 'progress') return (b.scriptCount + b.filmedCount * 2) - (a.scriptCount + a.filmedCount * 2);
     if (sortMode === 'name') return displayName(a).localeCompare(displayName(b));
     return (b.attention - a.attention) || (b.lastActiveMs - a.lastActiveMs);
@@ -637,6 +658,7 @@ function rowMatches(r, q, filter) {
   if (filter === 'script_no_film') return r.scriptCount > 0 && r.filmedCount === 0;
   if (filter === 'onboarded') return r.onboardingComplete;
   if (filter === 'complete') return r.filmedCount >= 7;
+  if (filter === 'preauth') return !!r.preauth;
   if (filter === 'l1') return Number(r.user.level) === 1;
   if (filter === 'l2') return Number(r.user.level) === 2;
   if (filter === 'test_group') return !!note.test_group;
@@ -646,12 +668,15 @@ function rowMatches(r, q, filter) {
 function renderUserRows(rows) {
   const tbody = document.getElementById('user-tbody');
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="8" class="empty">No users match this view.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="9" class="empty">No users match this view.</td></tr>';
+    updateBulkBar();
     return;
   }
   tbody.innerHTML = rows.map(r => {
     const selected = r.user.id === adminState.selectedUserId ? ' selected' : '';
+    const checked = adminState.selectedIds.has(r.user.id) ? ' checked' : '';
     return '<tr class="user-row' + selected + '" onclick="selectUser(\'' + safeAttr(r.user.id) + '\')">' +
+      '<td class="select-col"><input type="checkbox" class="row-check" onclick="event.stopPropagation()" onchange="toggleRowSelection(\'' + safeAttr(r.user.id) + '\', this.checked)"' + checked + '></td>' +
       '<td><div class="name-main">' + h(displayName(r)) + '</div><div class="name-sub">' + h(r.user.email || r.user.id) + '</div></td>' +
       '<td>' + badge(r.status.label, r.status.tone) + (r.stalled ? ' ' + badge('Watch', 'orange') : '') + '</td>' +
       '<td>' + h(levelLabel(r.user.level)) + '</td>' +
@@ -662,6 +687,47 @@ function renderUserRows(rows) {
       '<td>' + (r.preauth ? '<span class="muted">-</span>' : (r.user.is_paid ? badge('Paid','green') : '<button class="toggle-paid" onclick="togglePaid(event,\'' + safeAttr(r.user.id) + '\')">Set Paid</button>')) + '</td>' +
     '</tr>';
   }).join('');
+  updateBulkBar(rows);
+}
+
+function toggleRowSelection(userId, checked) {
+  if (checked) adminState.selectedIds.add(userId);
+  else adminState.selectedIds.delete(userId);
+  updateBulkBar();
+}
+
+function toggleVisibleSelection(checked) {
+  filteredRows().forEach(r => {
+    if (checked) adminState.selectedIds.add(r.user.id);
+    else adminState.selectedIds.delete(r.user.id);
+  });
+  applyFilters();
+}
+
+function clearSelection() {
+  adminState.selectedIds.clear();
+  applyFilters();
+}
+
+function pruneSelectedIds() {
+  const valid = new Set((adminState.rows || []).map(r => r.user.id));
+  Array.from(adminState.selectedIds || []).forEach(id => { if (!valid.has(id)) adminState.selectedIds.delete(id); });
+}
+
+function updateBulkBar(visibleRows) {
+  const count = adminState.selectedIds ? adminState.selectedIds.size : 0;
+  const bar = document.getElementById('bulk-bar');
+  const countEl = document.getElementById('bulk-count');
+  if (bar) bar.classList.toggle('show', count > 0);
+  if (countEl) countEl.textContent = count + ' selected';
+  const selectVisible = document.getElementById('select-visible');
+  if (selectVisible) {
+    const rows = visibleRows || filteredRows();
+    const visibleIds = rows.map(r => r.user.id);
+    const selectedVisible = visibleIds.filter(id => adminState.selectedIds.has(id)).length;
+    selectVisible.checked = visibleIds.length > 0 && selectedVisible === visibleIds.length;
+    selectVisible.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
+  }
 }
 
 function selectUser(userId) {
@@ -893,6 +959,32 @@ async function togglePaid(e, userId) {
   }
 }
 
+async function deleteSelectedUsers() {
+  const ids = Array.from(adminState.selectedIds || []);
+  if (!ids.length) return;
+  const rows = ids.map(id => adminState.rows.find(r => r.user.id === id)).filter(Boolean);
+  const realIds = rows.filter(r => !r.preauth).map(r => r.user.id);
+  const anonIds = rows.filter(r => r.preauth).map(r => r.anonSessionId).filter(Boolean);
+  const label = rows.map(displayName).slice(0, 8).join(', ') + (rows.length > 8 ? ', ...' : '');
+  const ok = window.confirm('Delete ' + rows.length + ' selected admin row' + (rows.length === 1 ? '' : 's') + '?\n\n' + label + '\n\nThis removes app data and pre-auth lead events. It does not delete Supabase Auth accounts.');
+  if (!ok) return;
+  try {
+    const { error } = await sb.rpc('admin_delete_subjects', {
+      target_user_ids: realIds,
+      target_anon_session_ids: anonIds
+    });
+    if (error) throw error;
+    adminState.selectedIds.clear();
+    adminState.selectedUserId = null;
+    await loadAll();
+    document.getElementById('user-drawer').innerHTML = '<div class="drawer-empty">Deleted selected rows. Select a user to inspect their journey, scripts, events, issues, and support notes.</div>';
+    showCopyToast('Deleted selected rows');
+  } catch(err) {
+    showCopyToast('Delete failed');
+    alert('Delete failed: ' + (err.message || err));
+  }
+}
+
 function copyDashboardSummary() {
   const rows = adminState.rows;
   const text = [
@@ -911,6 +1003,9 @@ function copyDashboardSummary() {
     '',
     'LOAD WARNINGS',
     Object.keys(adminState.loadErrors).length ? Object.entries(adminState.loadErrors).map(([k,v]) => '- ' + k + ': ' + v).join('\n') : 'None',
+    '',
+    'OPTIONAL SETUP NOTES',
+    Object.keys(adminState.optionalWarnings || {}).length ? Object.entries(adminState.optionalWarnings).map(([k,v]) => '- ' + k + ': ' + v).join('\n') : 'None',
     '',
     'TOTAL USERS: ' + rows.length
   ].join('\n');
