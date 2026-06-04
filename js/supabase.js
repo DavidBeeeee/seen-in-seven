@@ -186,9 +186,14 @@ async function sendMagicLink(email) {
 async function signInWithPassword(email, password) {
   const { error } = await _sb.auth.signInWithPassword({ email, password });
   if (error) {
-    if (error.message && error.message.toLowerCase().includes('invalid'))
+    const msg = (error.message || '').toLowerCase();
+    if (msg.includes('invalid login') || msg.includes('invalid credentials') || msg.includes('invalid email or password'))
       throw new Error('Wrong email or password. Try again, or use a magic link instead.');
-    throw error;
+    if (msg.includes('email not confirmed'))
+      throw new Error('Please confirm your email address first. Check your inbox for a confirmation link.');
+    if (msg.includes('rate') || error.status === 429)
+      throw new Error('Too many attempts — please wait a few minutes before trying again.');
+    throw new Error('Sign in failed. Please try a magic link instead.');
   }
 }
 

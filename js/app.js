@@ -664,7 +664,7 @@ async function handlePasswordSignIn() {
   const errEl = document.getElementById('auth-email-error');
   const btn = document.getElementById('auth-send-btn');
   const email = emailInput ? emailInput.value.trim() : '';
-  const password = pwInput ? pwInput.value : '';
+  const password = pwInput ? pwInput.value.trim() : '';
   if (!email || !email.includes('@') || !email.includes('.')) {
     if (errEl) { errEl.textContent = 'Please enter a valid email address.'; errEl.style.display = 'block'; }
     return;
@@ -4159,8 +4159,8 @@ async function saveSettingsPassword() {
   const pwConfirm = document.getElementById('settings-password-confirm');
   const msg = document.getElementById('settings-password-msg');
   const btn = document.querySelector('#settings-password-form .settings-btn-primary');
-  const pw = pwInput ? pwInput.value : '';
-  const confirm = pwConfirm ? pwConfirm.value : '';
+  const pw = pwInput ? pwInput.value.trim() : '';
+  const confirm = pwConfirm ? pwConfirm.value.trim() : '';
   if (pw.length < 6) {
     if (msg) { msg.textContent = 'Password must be at least 6 characters.'; msg.style.color = '#ef4444'; }
     return;
