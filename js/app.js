@@ -266,10 +266,6 @@ const THEME_KEY = 'sis_theme_v1';
 function applyTheme(theme) {
   const isLight = theme === 'light';
   document.body.classList.toggle('light-mode', isLight);
-  document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
-    btn.textContent = isLight ? '🌙' : '☀️';
-    btn.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
-  });
   const settingsToggle = document.getElementById('settings-theme-label');
   if (settingsToggle) settingsToggle.textContent = isLight ? 'Dark mode' : 'Light mode';
 }
