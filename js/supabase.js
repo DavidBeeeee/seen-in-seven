@@ -5,6 +5,63 @@ const _sb = supabase.createClient(
 );
 
 let _currentUser = null;
+const PREAUTH_SESSION_KEY = 'sis_preauth_session_v1';
+
+function getPreauthSessionId() {
+  try {
+    let id = localStorage.getItem(PREAUTH_SESSION_KEY);
+    if (!id) {
+      const rand = (window.crypto && crypto.randomUUID)
+        ? crypto.randomUUID()
+        : 'anon-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 12);
+      id = 'sis-' + rand;
+      localStorage.setItem(PREAUTH_SESSION_KEY, id);
+    }
+    return id;
+  } catch(e) {
+    return 'sis-memory-' + Date.now().toString(36);
+  }
+}
+
+function preauthSnapshot(eventType) {
+  if (typeof state === 'undefined') return {};
+  const p2 = typeof ensurePhase2 === 'function' ? ensurePhase2() : (state.phase2 || {});
+  const base = {
+    name: state.name || '',
+    level: state.level || null,
+    posted: state.posted || null,
+    blocker: state.blocker || null,
+    business: state.business || null,
+    content_intent: p2.contentIntentTitle || p2.contentIntent || null,
+    auth_mode: typeof authScreenMode !== 'undefined' ? authScreenMode : null
+  };
+  if (eventType === 'onboarding_completed') {
+    base.onboarding_snapshot = {
+      topic_freewrite: state.topicFreewrite || '',
+      mvo_q2: state.mvoQ2 || null,
+      mvo_q3: state.mvoQ3 || null,
+      mvo_q4: state.mvoQ4 || null,
+      phase2: p2
+    };
+  }
+  return base;
+}
+
+async function recordPreauthEvent(eventType, detail = {}) {
+  try {
+    const merged = Object.assign({}, preauthSnapshot(eventType), detail || {});
+    await _sb.rpc('record_preauth_event', {
+      p_anon_session_id: getPreauthSessionId(),
+      p_event_type: eventType,
+      p_detail: merged,
+      p_email: merged.email || null,
+      p_page_path: window.location.pathname + window.location.search,
+      p_user_agent: navigator.userAgent || ''
+    });
+  } catch(e) {
+    // Pre-auth visibility is useful, but it should never block the app.
+  }
+}
 
 // ── DEFERRED SAVE QUEUE ───────────────────────────────
 const _saveQueue = [];
@@ -50,6 +107,7 @@ _sb.auth.onAuthStateChange((event, session) => {
         _currentUser = await _syncUserProfile(u);
         window._SIS_log && _SIS_log('auth:synced', {userId: _currentUser ? _currentUser.id : null, level: _currentUser ? _currentUser.level : null});
         await _flushSaveQueue();
+        try { await _sb.rpc('attach_preauth_session', { p_anon_session_id: getPreauthSessionId() }); } catch(e) {}
 
         const toast = document.getElementById('verify-email-toast');
         if (toast) toast.style.display = 'none';
@@ -409,6 +467,7 @@ async function deleteScriptVersion(scriptId) {
 // 'dashboard_viewed', 'settings_opened', 'start_over_confirmed',
 // 'level_switched', 'script_feedback', 'auth_completed', 'error'
 async function logEvent(eventType, detail = {}) {
+  recordPreauthEvent(eventType, detail);
   if (!_currentUser) return;
   try {
     await _sb.from('logs').insert({

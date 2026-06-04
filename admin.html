@@ -306,7 +306,7 @@ const ADMIN_EMAILS = new Set(['email@davidbee.me', 'davidkamau@live.com']);
 const NOTE_KEY = 'sis_admin_notes_v1';
 
 let adminState = {
-  users: [], scripts: [], currentScripts: [], progress: [], onboarding: [], logs: [],
+  users: [], scripts: [], currentScripts: [], progress: [], onboarding: [], logs: [], preauthEvents: [],
   rows: [], selectedUserId: null, notes: loadNotes(), loadErrors: {}
 };
 
@@ -365,7 +365,8 @@ async function loadAll() {
     rpcSafe('scripts', 'admin_get_scripts'),
     rpcSafe('progress', 'admin_get_progress'),
     rpcSafe('onboarding', 'admin_get_onboarding'),
-    rpcSafe('logs', 'admin_get_logs')
+    rpcSafe('logs', 'admin_get_logs'),
+    rpcSafe('preauth', 'admin_get_preauth_events')
   ]);
   const byName = Object.fromEntries(calls.map(c => [c.name, c]));
   adminState.users = byName.users.data || [];
@@ -374,6 +375,7 @@ async function loadAll() {
   adminState.progress = byName.progress.data || [];
   adminState.onboarding = byName.onboarding.data || [];
   adminState.logs = byName.logs.data || [];
+  adminState.preauthEvents = byName.preauth.data || [];
   adminState.loadErrors = Object.fromEntries(calls.filter(c => c.error).map(c => [c.name, c.error]));
   adminState.rows = buildRows();
   document.getElementById('last-loaded').textContent = 'Loaded ' + new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
@@ -403,7 +405,7 @@ function buildRows() {
   const progressByUser = groupBy(adminState.progress, 'user_id');
   const logsByUser = groupBy(adminState.logs, 'user_id');
   const onboardingByUser = Object.fromEntries(adminState.onboarding.map(o => [o.user_id, o]));
-  return adminState.users.map(user => {
+  const userRows = adminState.users.map(user => {
     const scripts = scriptsByUser[user.id] || [];
     const allScripts = allScriptsByUser[user.id] || [];
     const progress = progressByUser[user.id] || [];
@@ -426,6 +428,57 @@ function buildRows() {
       user, scripts, allScripts, progress, filmed, skipped, logs, ob, latest, notes,
       onboardingComplete, scriptCount, filmedCount, errorLogs, recentErrors, status,
       stalled, attention, lastActiveMs
+    };
+  });
+  return userRows.concat(buildPreauthRows());
+}
+
+function buildPreauthRows() {
+  const unlinked = (adminState.preauthEvents || []).filter(e => !e.user_id);
+  const bySession = groupBy(unlinked, 'anon_session_id');
+  return Object.entries(bySession).map(([sessionId, events]) => {
+    const sorted = events.slice().sort((a,b) => dateMs(b.created_at) - dateMs(a.created_at));
+    const latest = sorted[0] || null;
+    const email = firstTruthy(sorted.map(e => e.email || (e.detail && e.detail.email)));
+    const snapshot = latestOnboardingSnapshot(sorted);
+    const user = {
+      id: 'preauth:' + sessionId,
+      auth_id: '',
+      email: email || '',
+      name: snapshot.name || '',
+      level: snapshot.level || null,
+      is_paid: false,
+      last_active: latest && latest.created_at,
+      created_at: sorted.length ? sorted[sorted.length - 1].created_at : ''
+    };
+    const logs = sorted.map(e => ({
+      user_id: user.id,
+      event_type: e.event_type,
+      detail: e.detail || {},
+      created_at: e.created_at,
+      preauth: true
+    }));
+    const ob = snapshotToOnboarding(sessionId, snapshot);
+    const recentErrors = logs.filter(isErrorLog).filter(l => isWithin(l.created_at, 24));
+    const notes = getNote(user.id);
+    const onboardingComplete = logs.some(l => l.event_type === 'onboarding_completed');
+    const skippedAuth = logs.some(l => l.event_type === 'auth_skipped');
+    const status = recentErrors.length
+      ? { label:'Error', tone:'red' }
+      : onboardingComplete
+        ? { label:'Unverified Complete', tone:'orange' }
+        : skippedAuth
+          ? { label:'Skipped Auth', tone:'gold' }
+          : email
+            ? { label:'Email Entered', tone:'blue' }
+            : { label:'Unverified', tone:'' };
+    const lastActiveMs = latest ? dateMs(latest.created_at) : 0;
+    return {
+      preauth: true, anonSessionId: sessionId, user, scripts: [], allScripts: [], progress: [],
+      filmed: [], skipped: [], logs, ob, latest, notes, onboardingComplete, scriptCount: 0,
+      filmedCount: 0, errorLogs: logs.filter(isErrorLog), recentErrors, status,
+      stalled: isStalled(lastActiveMs, onboardingComplete, 0, 0), attention: 15 + (skippedAuth ? 8 : 0) + (onboardingComplete ? 14 : 0),
+      lastActiveMs
     };
   });
 }
@@ -510,7 +563,7 @@ function renderFunnel() {
   const total = rows.length;
   const steps = [
     ['Users created', total],
-    ['Email or auth present', rows.filter(r => !!r.user.email || hasLog(r, ['magic_link_sent','auth_completed','email_submitted'])).length],
+    ['Email or auth present', rows.filter(r => !!r.user.email || hasLog(r, ['magic_link_requested','auth_completed','email_submitted'])).length],
     ['Onboarding complete', rows.filter(r => r.onboardingComplete).length],
     ['Script 1 generated', rows.filter(r => r.scripts.some(s => Number(s.video_number) === 1)).length],
     ['Script copied', rows.filter(r => hasLog(r, ['script_copied','all_scripts_copied'])).length],
@@ -606,7 +659,7 @@ function renderUserRows(rows) {
       '<td><div>' + h(latestEventLabel(r)) + '</div><div class="mini-meta">' + h(lastActiveText(r)) + '</div></td>' +
       '<td>' + (r.recentErrors.length ? badge(r.recentErrors.length + ' recent', 'red') : '<span class="muted">0</span>') + '</td>' +
       '<td>' + badge(supportLabel(r.notes.support_status), supportTone(r.notes.support_status)) + '</td>' +
-      '<td>' + (r.user.is_paid ? badge('Paid','green') : '<button class="toggle-paid" onclick="togglePaid(event,\'' + safeAttr(r.user.id) + '\')">Set Paid</button>') + '</td>' +
+      '<td>' + (r.preauth ? '<span class="muted">-</span>' : (r.user.is_paid ? badge('Paid','green') : '<button class="toggle-paid" onclick="togglePaid(event,\'' + safeAttr(r.user.id) + '\')">Set Paid</button>')) + '</td>' +
     '</tr>';
   }).join('');
 }
@@ -638,10 +691,11 @@ function renderDrawer(userId) {
 function renderProfile(r) {
   return '<div class="section-title" style="margin-bottom:12px;">Profile Summary</div>' +
     kv('Status', badge(r.status.label, r.status.tone)) +
-    kv('Database ID', h(r.user.id)) +
-    kv('Auth ID', h(r.user.auth_id || '-')) +
+    (r.preauth ? kv('Pre-auth session', h(r.anonSessionId || '-')) : kv('Database ID', h(r.user.id))) +
+    kv('Auth ID', h(r.user.auth_id || (r.preauth ? 'Not verified yet' : '-'))) +
+    (r.preauth ? kv('Email entered', h(r.user.email || '-')) : '') +
     kv('Level', h(levelLabel(r.user.level))) +
-    kv('Paid flag', r.user.is_paid ? badge('Paid','green') : badge('Not paid','')) +
+    kv('Paid flag', r.preauth ? badge('Not verified','') : (r.user.is_paid ? badge('Paid','green') : badge('Not paid',''))) +
     kv('Last active', h(lastActiveText(r))) +
     kv('Next action', h(nextAction(r)));
 }
@@ -773,7 +827,8 @@ function commitmentText(kind, value, customValue) {
 }
 
 function openContextModal(userId) {
-  const ob = adminState.onboarding.find(row => row.user_id === userId);
+  const selected = adminState.rows.find(row => row.user.id === userId);
+  const ob = selected && selected.ob ? selected.ob : adminState.onboarding.find(row => row.user_id === userId);
   const p2 = getPhase2Context(ob);
   const modal = document.getElementById('context-modal');
   const body = document.getElementById('context-modal-body');
@@ -942,7 +997,7 @@ function exportFunnel() {
   const total = rows.length;
   const steps = [
     ['Users created', total],
-    ['Email or auth present', rows.filter(r => !!r.user.email || hasLog(r, ['magic_link_sent','auth_completed','email_submitted'])).length],
+    ['Email or auth present', rows.filter(r => !!r.user.email || hasLog(r, ['magic_link_requested','auth_completed','email_submitted'])).length],
     ['Onboarding complete', rows.filter(r => r.onboardingComplete).length],
     ['Script 1 generated', rows.filter(r => r.scripts.some(s => Number(s.video_number) === 1)).length],
     ['Script copied', rows.filter(r => hasLog(r, ['script_copied','all_scripts_copied'])).length],
@@ -997,7 +1052,8 @@ function exportRows(rows) {
     '- Latest event: ' + latestEventLabel(r),
     '- Errors: ' + r.errorLogs.length + ' total, ' + r.recentErrors.length + ' in 24hr',
     '- Support: ' + supportLabel(r.notes.support_status) + ', priority ' + (r.notes.priority || 'normal'),
-    '- Paid flag: ' + (!!r.user.is_paid),
+    '- Paid flag: ' + (r.preauth ? 'unverified' : (!!r.user.is_paid)),
+    '- Pre-auth session: ' + (r.anonSessionId || '-'),
     '- Next action: ' + nextAction(r)
   ].join('\n'));
 }
@@ -1112,6 +1168,32 @@ function kv(label, value) { return '<div class="kv"><div class="kv-label">' + h(
 function answerRow(label, value) { return '<div class="mini-row"><div class="mini-meta">' + h(label) + '</div><div class="mini-body">' + h(valueText(value) || '-') + '</div></div>'; }
 function badge(label, tone) { return '<span class="badge ' + h(tone || '') + '">' + h(label) + '</span>'; }
 function groupBy(items, key) { return (items || []).reduce((acc, item) => { const k = item[key] || 'none'; (acc[k] = acc[k] || []).push(item); return acc; }, {}); }
+function firstTruthy(values) { return (values || []).find(v => v != null && String(v).trim()) || ''; }
+function latestOnboardingSnapshot(events) {
+  const completed = events.find(e => e.event_type === 'onboarding_completed' && e.detail && e.detail.onboarding_snapshot);
+  const latest = events[0] || {};
+  const detail = completed ? completed.detail : (latest.detail || {});
+  const inner = detail.onboarding_snapshot || {};
+  const snapshot = Object.assign({}, inner, detail);
+  snapshot.phase2 = Object.assign({}, inner.phase2 || detail.phase2 || {});
+  return snapshot;
+}
+function snapshotToOnboarding(sessionId, snapshot) {
+  if (!snapshot || (!snapshot.phase2 && !snapshot.level && !snapshot.posted && !snapshot.business && !snapshot.topic_freewrite)) return null;
+  return {
+    user_id: 'preauth:' + sessionId,
+    posted: snapshot.posted || null,
+    business: snapshot.business || null,
+    mvo_q2: snapshot.mvo_q2 || null,
+    mvo_q3: snapshot.mvo_q3 || null,
+    mvo_q4: snapshot.mvo_q4 || null,
+    topic_freewrite: snapshot.topic_freewrite || '',
+    phase2_context: snapshot.phase2 || {},
+    commitment_declaration: snapshot.phase2 && snapshot.phase2.commitmentDeclaration,
+    commitment_reasons: snapshot.phase2 && snapshot.phase2.commitmentReasons,
+    mission_statement: snapshot.phase2 && snapshot.phase2.missionStatement
+  };
+}
 function hasLog(r, events) { return r.logs.some(l => events.includes(l.event_type)); }
 function isErrorLog(l) { return l && (l.event_type === 'error' || l.event_type === 'script_failed' || String(l.event_type || '').includes('failed')); }
 function isWithin(date, hours) { const ms = dateMs(date); return !!ms && (Date.now() - ms) <= hours * 3600000; }
@@ -1126,6 +1208,8 @@ function supportTone(v) { return v === 'needs_help' ? 'red' : v === 'watch' ? 'o
 function latestEventLabel(r) { return r.latest ? r.latest.event_type : 'No events'; }
 function lastActiveText(r) { return r.lastActiveMs ? timeSince(r.lastActiveMs) + ' ago' : 'No activity'; }
 function nextAction(r) {
+  if (r.preauth && r.user.email) return 'Unverified lead. Watch for magic-link verification or follow up manually.';
+  if (r.preauth) return 'Anonymous visitor. Watch whether they enter email or complete onboarding.';
   if (r.recentErrors.length) return 'Review error and contact if blocked.';
   if (!r.onboardingComplete) return 'Watch onboarding completion.';
   if (!r.scriptCount) return 'User is ready for first script.';

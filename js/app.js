@@ -562,7 +562,7 @@ async function handleEmailSubmit() {
   if (btn) { btn.textContent = 'Checking...'; btn.disabled = true; }
   if (checkEl) checkEl.style.display = 'block';
   if (errEl) errEl.style.display = 'none';
-  if (typeof logEvent === 'function') logEvent('email_submitted', {source: 'screen-email'});
+  if (typeof logEvent === 'function') logEvent('email_submitted', {source: 'screen-email', email: email, mode: authScreenMode});
 
   try {
     // Check if this email already has an account with data
@@ -573,7 +573,7 @@ async function handleEmailSubmit() {
     if (emailCheck && emailCheck.has_level) {
       // Existing user — send magic link and show inline confirmation
       sendMagicLink(email).catch(() => {});
-      if (typeof logEvent === 'function') logEvent('magic_link_requested', {source: 'returning_user'});
+      if (typeof logEvent === 'function') logEvent('magic_link_requested', {source: 'returning_user', email: email});
       if (checkEl) checkEl.style.display = 'none';
       if (btn) { btn.textContent = 'Continue →'; btn.disabled = false; }
       const emailScreen = document.getElementById('screen-email');
@@ -606,7 +606,7 @@ async function handleEmailSubmit() {
 
     // New user save prompt — send link silently and continue through questions
     sendMagicLink(email).catch(() => {});
-    if (typeof logEvent === 'function') logEvent('magic_link_requested', {source: 'new_user'});
+    if (typeof logEvent === 'function') logEvent('magic_link_requested', {source: 'new_user', email: email});
 
   } catch(e) {
     // If check fails, continue anyway
@@ -618,7 +618,7 @@ async function handleEmailSubmit() {
 }
 
 function skipAuth() {
-  if (typeof logEvent === 'function') logEvent('auth_skipped', {source: 'screen-email'});
+  if (typeof logEvent === 'function') logEvent('auth_skipped', {source: 'screen-email', mode: authScreenMode});
   if (authScreenMode === 'signin') {
     screenOrder = ['screen-0','screen-1'];
     currentIndex = 0;
@@ -759,7 +759,7 @@ async function handleSaveProgressEmail() {
   if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
   try {
     await sendMagicLink(email);
-    if (typeof logEvent === 'function') logEvent('magic_link_requested', {source: 'save_progress_overlay'});
+    if (typeof logEvent === 'function') logEvent('magic_link_requested', {source: 'save_progress_overlay', email: email});
     if (btn) btn.textContent = 'Check your inbox';
     setTimeout(() => closeSaveProgressOverlay(true), 900);
   } catch(e) {
