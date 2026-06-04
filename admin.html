@@ -644,27 +644,34 @@ function renderJourney(r) {
     kv('Support read', h(nextAction(r)));
 }
 
+function noteOpt(val, label, current) {
+  return '<option value="' + val + '"' + (current === val ? ' selected' : '') + '>' + label + '</option>';
+}
+
 function renderNotes(r) {
   const n = r.notes;
   return '<div class="section-title" style="margin-bottom:12px;">Admin Notes <span class="muted" style="font-size:10px;">local-only v1</span></div>' +
     '<div class="note-box">' +
-    '<div class="note-row"><select class="select" id="note-status"><option value="none">None</option><option value="watch">Watch</option><option value="needs_help">Needs Help</option><option value="resolved">Resolved</option></select><select class="select" id="note-priority"><option value="normal">Normal</option><option value="low">Low</option><option value="high">High</option></select></div>' +
-    '<label class="check-row"><input type="checkbox" id="note-test-group"> Test group user</label>' +
+    '<div class="note-row">' +
+      '<select class="select" id="note-status">' +
+        noteOpt('none','None', n.support_status) +
+        noteOpt('watch','Watch', n.support_status) +
+        noteOpt('needs_help','Needs Help', n.support_status) +
+        noteOpt('resolved','Resolved', n.support_status) +
+      '</select>' +
+      '<select class="select" id="note-priority">' +
+        noteOpt('normal','Normal', n.priority) +
+        noteOpt('low','Low', n.priority) +
+        noteOpt('high','High', n.priority) +
+      '</select>' +
+    '</div>' +
+    '<label class="check-row"><input type="checkbox" id="note-test-group"' + (n.test_group ? ' checked' : '') + '> Test group user</label>' +
     '<input class="search" id="note-contacted" placeholder="Last contacted note or date" value="' + h(n.last_contacted_at || '') + '">' +
     '<textarea id="note-text" placeholder="What does David Bee need to know about this user?">' + h(n.note || '') + '</textarea>' +
     '<button class="btn btn-primary" style="margin-top:8px;" onclick="saveCurrentNote()">Save Note</button>' +
     '</div>';
 }
 
-function hydrateNoteControls(r) {
-  const n = r.notes || {};
-  const status = document.getElementById('note-status');
-  const priority = document.getElementById('note-priority');
-  const test = document.getElementById('note-test-group');
-  if (status) status.value = n.support_status || 'none';
-  if (priority) priority.value = n.priority || 'normal';
-  if (test) test.checked = !!n.test_group;
-}
 
 function renderAnswers(ob, row) {
   if (!ob) return '<div class="empty">No onboarding row found.</div>';
@@ -888,8 +895,8 @@ function copyAdminScript(e, userId, videoNumber) {
     'LEVEL: ' + levelLabel(script.level || r.user.level),
     'VERSION: ' + (script.version || 1),
     'FEEDBACK: ' + (script.thumbs_up === true ? 'thumbs up' : script.thumbs_up === false ? 'thumbs down' : 'none'),
-    'CREATED: ' + (script.created_at || '-'),
-    'UPDATED: ' + (script.updated_at || '-'),
+    'CREATED: ' + (script.generated_at || '-'),
+    'UPDATED: ' + (script.edited_at || '-'),
     '',
     cleanScriptText(script)
   ].join('\n'), 'Script copied');
@@ -1046,8 +1053,8 @@ function exportOnboarding(ob, row) {
 function exportScriptSummary(s) {
   return [
     'Video ' + (s.video_number || '-') + ' | Level ' + (s.level || '-') + ' | Version ' + (s.version || 1),
-    '- Created: ' + (s.created_at || '-'),
-    '- Updated: ' + (s.updated_at || '-'),
+    '- Created: ' + (s.generated_at || '-'),
+    '- Updated: ' + (s.edited_at || '-'),
     '- Feedback: ' + (s.thumbs_up === true ? 'thumbs up' : s.thumbs_up === false ? 'thumbs down' : 'none'),
     cleanScriptText(s)
   ].join('\n');
@@ -1128,6 +1135,7 @@ function detailText(detail) {
 function valueText(value) {
   if (value == null) return '';
   if (typeof value === 'string') return value;
+  if (Array.isArray(value)) return value.filter(Boolean).join(', ') || '';
   if (typeof value === 'object') return value.before_full || value.catalyst_full || value.village_full || value.crack_full || value.text || JSON.stringify(value);
   return String(value);
 }
@@ -1166,12 +1174,6 @@ document.addEventListener('input', e => {
 document.addEventListener('change', e => {
   if (!adminState.selectedUserId) return;
 });
-const drawerObserver = new MutationObserver(() => {
-  if (!adminState.selectedUserId) return;
-  const row = adminState.rows.find(r => r.user.id === adminState.selectedUserId);
-  if (row) hydrateNoteControls(row);
-});
-drawerObserver.observe(document.getElementById('user-drawer'), {childList:true, subtree:false});
 </script>
 </body>
 </html>
