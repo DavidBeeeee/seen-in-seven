@@ -1102,13 +1102,9 @@ body::before {
     justify-content: flex-start;
     align-self: stretch;
   }
-  .theme-toggle-btn {
-    margin-top: auto !important;
-    padding: 1px !important;
-  }
   .theme-opt {
     font-size: 10px !important;
-    padding: 1px 1px !important;
+    padding: 1px 2px !important;
   }
   .header-bottom-row {
     margin-top: auto;
@@ -2616,14 +2612,14 @@ body::before {
 /* ── THEME TOGGLE ────────────────────────────────────── */
 .theme-toggle-btn {
   background:var(--card); border:1.5px solid var(--border); border-radius:999px;
-  cursor:pointer; padding:3px; display:inline-flex; align-items:center; gap:0;
+  cursor:pointer; padding:2px; display:inline-flex; align-items:center; gap:0;
   touch-action:manipulation; -webkit-tap-highlight-color:transparent;
   flex-shrink:0; align-self:flex-start; width:fit-content;
   transition:border-color 0.2s;
 }
 .theme-toggle-btn:hover { border-color:var(--teal); }
 .theme-opt {
-  font-size:14px; padding:4px 7px; border-radius:999px;
+  font-size:11px; padding:2px 4px; border-radius:999px;
   transition:background 0.2s, opacity 0.2s;
 }
 /* Dark mode default: moon active, sun dim */
