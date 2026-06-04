@@ -1110,13 +1110,14 @@ body::before {
     font-size: 10px !important;
     padding: 1px 1px !important;
   }
+  .header-bottom-row {
+    margin-top: auto;
+  }
   .header-settings-btn {
-    margin-top: auto !important;
     font-size: 10px !important;
     padding: 2px 4px !important;
   }
   .btn-db-header {
-    margin-top: auto !important;
     font-size: 9px !important;
     padding: 2px 6px !important;
   }
@@ -2629,10 +2630,13 @@ body::before {
 .theme-sun  { background:transparent; opacity:0.4; }
 .theme-moon { background:rgba(50,184,184,0.22); opacity:1; }
 
+/* ── HEADER BOTTOM ROW — dashboard + gear group ──────── */
+.header-bottom-row {
+  display:flex; align-items:center; gap:6px; flex-shrink:0;
+}
 /* ── SETTINGS GEAR — always visible ─────────────────── */
 .header-settings-btn {
   flex-shrink:0;
-  margin-left:4px;
 }
 
 /* ── DASHBOARD LOCKED CARD ───────────────────────────── */

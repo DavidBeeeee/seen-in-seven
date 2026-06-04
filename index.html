@@ -203,8 +203,10 @@
       <button class="header-nav-link" onclick="logOut()">Log out</button>
     </div>
     <button class="header-nav-link" id="header-signin-btn" onclick="showSignInScreen()" style="display:none;">Sign in</button>
-    <button class="btn-to-dashboard btn-db-header" onclick="showDashboard()" id="header-dashboard-btn" title="Dashboard">→ Dashboard</button>
-    <button class="header-nav-btn icon header-settings-btn" onclick="openSettings()" title="Settings">⚙️</button>
+    <div class="header-bottom-row">
+      <button class="btn-to-dashboard btn-db-header" onclick="showDashboard()" id="header-dashboard-btn" title="Dashboard">→ Dashboard</button>
+      <button class="header-nav-btn icon header-settings-btn" onclick="openSettings()" title="Settings">⚙️</button>
+    </div>
   </div>
 </div>
 <canvas id="confetti-canvas"></canvas>
