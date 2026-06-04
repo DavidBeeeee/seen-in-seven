@@ -261,6 +261,32 @@ let maxProgressL2Pct = 0;  // L2 green bar — never decreases
 const SAVE_KEY = 'bwb_challenge_v1';
 let authScreenMode = 'signin';
 
+// ── THEME ─────────────────────────────────────────────
+const THEME_KEY = 'sis_theme_v1';
+function applyTheme(theme) {
+  const isLight = theme === 'light';
+  document.body.classList.toggle('light-mode', isLight);
+  document.querySelectorAll('.theme-toggle-btn').forEach(btn => {
+    btn.textContent = isLight ? '🌙' : '☀️';
+    btn.title = isLight ? 'Switch to dark mode' : 'Switch to light mode';
+  });
+  const settingsToggle = document.getElementById('settings-theme-label');
+  if (settingsToggle) settingsToggle.textContent = isLight ? 'Dark mode' : 'Light mode';
+}
+function toggleTheme() {
+  const current = localStorage.getItem(THEME_KEY) || 'dark';
+  const next = current === 'dark' ? 'light' : 'dark';
+  try { localStorage.setItem(THEME_KEY, next); } catch(e) {}
+  applyTheme(next);
+}
+// Apply saved theme immediately on load
+(function() {
+  try {
+    const saved = localStorage.getItem(THEME_KEY);
+    if (saved) applyTheme(saved);
+  } catch(e) {}
+})();
+
 function getOnboardingOrder() {
   return [...ONBOARDING_ORDER];
 }
@@ -397,7 +423,12 @@ function showScreen(id, direction='forward') {
   _screenAnimTimers.push(t);
 
   updateProgress(id);
-  window.scrollTo(0, 0);
+  // Force scroll to top — setTimeout(0) ensures it fires after layout settles on iOS
+  setTimeout(() => {
+    window.scrollTo(0, 0);
+    document.documentElement.scrollTop = 0;
+    document.body.scrollTop = 0;
+  }, 0);
 }
 
 function goNext() {
@@ -1147,7 +1178,16 @@ function toggleCommitmentReason(reason) {
   if (current.has(reason)) current.delete(reason);
   else current.add(reason);
   p2.commitmentReasons = Array.from(current);
-  renderCommitmentDeclaration();
+  // Targeted update — avoids rebuilding the chip DOM which causes scroll jumps on mobile
+  p2.commitmentDeclaration = buildCommitmentDeclaration();
+  const text = document.getElementById('commitment-declaration-text');
+  if (text) text.textContent = p2.commitmentDeclaration;
+  const reasonsEl = document.getElementById('commitment-reasons');
+  if (reasonsEl) {
+    reasonsEl.querySelectorAll('.commit-reason-chip').forEach(chip => {
+      chip.classList.toggle('selected', p2.commitmentReasons.includes(chip.dataset.reason));
+    });
+  }
   saveProgress();
 }
 
@@ -1175,7 +1215,7 @@ function renderCommitmentDeclaration() {
   if (reasons) {
     reasons.innerHTML = COMMITMENT_REASONS.map((reason, idx) => {
       const selected = (p2.commitmentReasons || []).includes(reason);
-      return '<button type="button" class="commit-reason-chip' + (selected ? ' selected' : '') + '" onclick="toggleCommitmentReasonByIndex(' + idx + ')">' + escapeHTML(reason) + '</button>';
+      return '<button type="button" class="commit-reason-chip' + (selected ? ' selected' : '') + '" data-reason="' + escapeHTML(reason) + '" onclick="toggleCommitmentReasonByIndex(' + idx + ')">' + escapeHTML(reason) + '</button>';
     }).join('');
   }
 }
@@ -4066,6 +4106,13 @@ function openSettings() {
   if (emailMsg) emailMsg.textContent = '';
   if (levelMsg) levelMsg.textContent = '';
 
+  // Sync theme toggle label
+  const settingsThemeLabel = document.getElementById('settings-theme-label');
+  if (settingsThemeLabel) {
+    const isLight = document.body.classList.contains('light-mode');
+    settingsThemeLabel.textContent = isLight ? 'Dark mode' : 'Light mode';
+  }
+
   // Reset password form to idle state
   cancelSetPassword();
 
@@ -4448,7 +4495,7 @@ function buildPlan(){
     const statusLabel = filmed ? 'Filmed' : isLocked ? 'Locked' : hasScript ? 'Draft' : 'Pending';
 
     const card = document.createElement('div');
-    card.className = 'db-video-card ' + statusClass;
+    card.className = 'db-video-card ' + statusClass + (!hasScript && i !== nextScriptIdx ? ' card-locked' : '');
     card.id = 'dbcard-' + i;
     card.innerHTML = `
       <div class="dbc-header">
@@ -4463,7 +4510,9 @@ function buildPlan(){
       <div class="dbc-links">
         ${hasScript
           ? `<button class="dbc-link primary" onclick="editScript(${i})">View →</button>`
-          : `<button class="dbc-link primary" onclick="resumeToVideo(${i})">Generate →</button>`}
+          : i === nextScriptIdx
+            ? `<button class="dbc-link primary" onclick="resumeToVideo(${i})">Generate →</button>`
+            : `<span class="dbc-pending-label">Complete earlier scripts first</span>`}
         ${filmed
           ? `<span class="dbc-filmed-badge">✓ filmed</span>`
           : hasScript

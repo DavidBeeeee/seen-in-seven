@@ -189,6 +189,7 @@
 <div id="progress-bar-wrap">
   <div class="header-left">
     <div class="logo">SeenInSeven</div>
+    <button class="theme-toggle-btn" onclick="toggleTheme()" title="Switch to light mode">☀️</button>
     <div class="header-username" id="header-username"></div>
   </div>
   <div id="progress-track"><div id="progress-fill"></div><div id="progress-fill-l2"></div></div>
@@ -196,10 +197,10 @@
     <div id="progress-label">YOUR JOURNEY</div>
     <div class="header-nav" id="header-nav">
       <button class="header-nav-btn" onclick="showDashboard()" id="header-dashboard-btn" title="Dashboard">Dashboard</button>
-      <button class="header-nav-btn icon" onclick="openSettings()" title="Settings">⚙️</button>
       <button class="header-nav-link" onclick="logOut()">Log out</button>
     </div>
     <button class="header-nav-link" id="header-signin-btn" onclick="showSignInScreen()" style="display:none;">Sign in</button>
+    <button class="header-nav-btn icon header-settings-btn" onclick="openSettings()" title="Settings">⚙️</button>
   </div>
 </div>
 <canvas id="confetti-canvas"></canvas>
@@ -251,6 +252,13 @@
     <div class="settings-label">Onboarding</div>
     <button class="settings-btn-secondary" onclick="rerunOnboarding()">Re-run onboarding questions →</button>
     <div class="settings-hint">Updates your script personalization. Your existing scripts are kept.</div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">Appearance</div>
+    <button class="settings-link-btn" onclick="toggleTheme()" style="font-size:15px;">
+      <span id="settings-theme-label">Light mode</span> →
+    </button>
+    <div class="settings-hint">Toggles between dark and light display.</div>
   </div>
   <div class="settings-save-row">
     <button class="settings-btn-primary" onclick="saveSettings()">Save Changes</button>
@@ -603,12 +611,14 @@
   <div id="vi-triggers"></div>
   <div class="v1-tracker" id="tracker-slot-vi"></div>
   <div class="btn-row" style="margin-top:1.5rem;">
-    <button class="btn-secondary" id="vi-back-btn" onclick="backFromVideoIntro()" style="margin-right:10px;">← Back</button>
     <button class="btn-primary" id="vi-ready-btn" onclick="readyForVideo(0)">I'm Ready →</button>
   </div>
-  <div style="text-align:center;margin-top:14px;">
+  <div style="text-align:center;margin-top:16px;display:flex;gap:20px;justify-content:center;align-items:center;flex-wrap:wrap;">
+    <a id="vi-back-btn" onclick="backFromVideoIntro()" style="color:var(--muted);font-size:14px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;">← Back</a>
     <button class="btn-skip" id="vi-skip-btn" onclick="skipFromPreface(currentPreviewVideoNum - 1)">Skip this video →</button>
-    <br><button class="preface-skip-end" onclick="skipToEnd()">→ Dashboard</button>
+  </div>
+  <div style="text-align:center;margin-top:10px;">
+    <button class="preface-skip-end" onclick="skipToEnd()">→ Dashboard</button>
   </div>
 </div>
 

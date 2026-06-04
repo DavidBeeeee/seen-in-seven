@@ -185,6 +185,8 @@ body::before {
   border-radius:13px; padding:22px 24px;
   cursor:pointer; transition:all 0.18s;
   position:relative; user-select:none; text-align:left;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
 }
 .choice-card:hover {
   border-color:rgba(45,212,191,0.5);
@@ -304,6 +306,8 @@ body::before {
   font-size:14px;
   font-family:'Nunito',sans-serif;
   transition:all 0.16s ease;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
 }
 .commit-reason-chip:hover,
 .commit-reason-chip.selected {
@@ -1137,20 +1141,20 @@ body::before {
     gap: 9px;
   }
   .choice-card {
-    padding: 14px 12px;
+    padding: 16px 14px;
     border-radius: 11px;
   }
   .choice-card .card-emoji {
-    font-size: 21px;
-    margin-bottom: 7px;
+    font-size: 24px;
+    margin-bottom: 8px;
   }
   .choice-card .card-title {
-    font-size: 15px;
-    line-height: 1.22;
+    font-size: 17px;
+    line-height: 1.25;
   }
   .choice-card .card-sub {
-    font-size: 12px;
-    line-height: 1.35;
+    font-size: 14px;
+    line-height: 1.4;
   }
   .feature-inline-head {
     grid-template-columns:1fr;
@@ -2550,4 +2554,88 @@ body::before {
     content:"✓";
     font-size:16px;
   }
+}
+
+/* ── THEME TOGGLE BUTTON ─────────────────────────────── */
+.theme-toggle-btn {
+  background:none; border:none; cursor:pointer;
+  font-size:15px; line-height:1; padding:2px 4px;
+  opacity:0.7; transition:opacity 0.15s;
+  touch-action:manipulation;
+  -webkit-tap-highlight-color:transparent;
+  flex-shrink:0;
+}
+.theme-toggle-btn:hover { opacity:1; }
+
+/* ── SETTINGS GEAR — always visible ─────────────────── */
+.header-settings-btn {
+  flex-shrink:0;
+  margin-left:4px;
+}
+
+/* ── DASHBOARD LOCKED CARD ───────────────────────────── */
+.db-video-card.card-locked {
+  opacity:0.55;
+  pointer-events:none;
+}
+.db-video-card.card-locked .dbc-links {
+  pointer-events:none;
+}
+.dbc-pending-label {
+  font-size:11px;
+  color:var(--muted);
+  font-style:italic;
+  letter-spacing:0.03em;
+}
+
+/* ── LIGHT MODE ──────────────────────────────────────── */
+body.light-mode {
+  --bg:    #EFF8F8;
+  --card:  #FFFFFF;
+  --card2: #E3F2F2;
+  --border:rgba(26,138,138,0.18);
+  --cream: #1A3535;
+  --soft:  #2D5858;
+  --muted: #4A8888;
+  --teal:  #1A8A8A;
+  --cyan:  #2A9090;
+  --blue:  #1A7070;
+  background: var(--bg);
+  color: var(--cream);
+}
+body.light-mode::before {
+  background:
+    radial-gradient(ellipse 100% 60% at 15% 5%,  rgba(26,138,138,0.07) 0%, transparent 55%),
+    radial-gradient(ellipse 70%  50% at 85% 85%, rgba(26,138,138,0.05) 0%, transparent 55%),
+    radial-gradient(ellipse 50%  40% at 50% 50%, rgba(26,138,138,0.04) 0%, transparent 60%);
+}
+body.light-mode #progress-bar-wrap {
+  background:rgba(239,248,248,0.97);
+  border-bottom-color:rgba(26,138,138,0.15);
+}
+body.light-mode .settings-panel {
+  background:#FFFFFF;
+  border-color:rgba(26,138,138,0.18);
+}
+body.light-mode .text-input {
+  background:#F5FDFD;
+  color:var(--cream);
+}
+body.light-mode .text-input::placeholder { color:rgba(74,136,136,0.45); }
+body.light-mode .choice-card { background:#FFFFFF; }
+body.light-mode .choice-card:hover { background:#E3F2F2; }
+body.light-mode .choice-card.selected,
+body.light-mode .choice-card.selecting { background:rgba(26,138,138,0.1); }
+body.light-mode .journal-card,
+body.light-mode .recap-card,
+body.light-mode .db-video-card,
+body.light-mode .mini-row,
+body.light-mode .db-hero { background:#FFFFFF; border-color:rgba(26,138,138,0.15); }
+body.light-mode .commit-reason-chip { background:rgba(26,138,138,0.06); color:var(--soft); }
+body.light-mode .commit-reason-chip.selected { background:rgba(26,138,138,0.14); color:var(--cream); }
+body.light-mode .logo { color:var(--teal); }
+body.light-mode .accent { color:var(--teal); }
+body.light-mode .save-progress-overlay,
+body.light-mode .start-over-confirm { background:rgba(239,248,248,0.96); }
+body.light-mode .screen-script-bg { background:var(--bg); }
 }
