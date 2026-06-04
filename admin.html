@@ -302,7 +302,7 @@
 const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const ADMIN_EMAIL = 'email@davidbee.me';
+const ADMIN_EMAILS = new Set(['email@davidbee.me', 'davidkamau@live.com']);
 const NOTE_KEY = 'sis_admin_notes_v1';
 
 let adminState = {
@@ -314,7 +314,7 @@ async function sendAdminLink() {
   const email = document.getElementById('admin-email').value.trim();
   const msg = document.getElementById('auth-msg');
   if (!email) { msg.textContent = 'Enter your email first.'; msg.className = 'auth-msg error'; return; }
-  if (email !== ADMIN_EMAIL) { msg.textContent = 'Access denied.'; msg.className = 'auth-msg error'; return; }
+  if (!ADMIN_EMAILS.has(email)) { msg.textContent = 'Access denied.'; msg.className = 'auth-msg error'; return; }
   try {
     const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + '/admin.html' } });
     if (error) throw error;
@@ -335,7 +335,7 @@ async function adminLogout() {
 sb.auth.onAuthStateChange((event, session) => {
   if (event !== 'SIGNED_IN' && event !== 'INITIAL_SESSION') return;
   if (!session || !session.user) return;
-  if (session.user.email !== ADMIN_EMAIL) {
+  if (!ADMIN_EMAILS.has(session.user.email)) {
     document.getElementById('auth-screen').innerHTML =
       '<div class="denied">Access denied for ' + h(session.user.email) + '. <button onclick="adminLogout()" class="btn" style="margin-left:8px;">Log Out</button></div>';
     return;
@@ -344,7 +344,18 @@ sb.auth.onAuthStateChange((event, session) => {
   document.getElementById('admin-screen').style.display = 'block';
   document.getElementById('admin-user-email').textContent = session.user.email;
   document.getElementById('environment-pill').textContent = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') ? 'Local' : 'Production';
-  setTimeout(() => loadAll(), 0);
+  setTimeout(async () => {
+    // Ensure this admin has a users row with is_admin = true so the RPCs work
+    try {
+      const { data: existing } = await sb.from('users').select('id').eq('auth_id', session.user.id).maybeSingle();
+      if (!existing) {
+        await sb.from('users').insert({ auth_id: session.user.id, email: session.user.email, is_admin: true, is_paid: false });
+      } else {
+        await sb.from('users').update({ is_admin: true }).eq('id', existing.id);
+      }
+    } catch(e) {}
+    loadAll();
+  }, 0);
 });
 
 async function loadAll() {
