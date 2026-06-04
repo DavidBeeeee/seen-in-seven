@@ -469,6 +469,8 @@ function buildPreauthRows() {
       email: email || '',
       name: snapshot.name || '',
       level: snapshot.level || null,
+      blocker: snapshot.blocker || null,
+      business_stage: snapshot.business || null,
       is_paid: false,
       last_active: latest && latest.created_at,
       created_at: sorted.length ? sorted[sorted.length - 1].created_at : ''
@@ -809,23 +811,33 @@ function renderNotes(r) {
 
 function renderAnswers(ob, row) {
   if (!ob) return '<div class="empty">No onboarding row found.</div>';
-  const goalMap = {comfortable:'get comfortable being seen',story:'help people understand their story',audience:'build an audience',voice:'find their voice',start:'starting because someone told them to',expert:'establish themselves as an expert',clients:'attract the right people to their business',leads:'generate leads or conversations',consistent:'finally get consistent'};
   const p2 = getPhase2Context(ob);
   const context = p2.knowledgeContext || '';
+  const customAnswers = p2.custom && Object.keys(p2.custom).length ? JSON.stringify(p2.custom, null, 2) : '';
   const contextSnippet = context
     ? '<div class="mini-row"><div class="mini-top"><span class="mini-name">Pasted context</span><button class="btn btn-small" onclick="openContextModal(\'' + safeAttr(ob.user_id) + '\')">View Full</button></div><div class="context-snippet">' + h(context.slice(0, 320)) + (context.length > 320 ? '...' : '') + '</div></div>'
     : '';
   return [
     answerRow('Posted', ob.posted),
+    answerRow('History', ob.history),
     answerRow('Business', ob.business),
+    answerRow('Goal', ob.goal),
+    answerRow('Mini goal', ob.mini_goal),
+    answerRow('Mini goal text', ob.mini_goal_text),
     answerRow('Content intent', p2.contentIntentTitle || p2.contentIntent),
+    answerRow('Content intent raw', p2.contentIntent),
     answerRow('Main blocker', commitmentText('blocker', row && row.user ? row.user.blocker : ob.blocker, p2.custom && p2.custom.blocker)),
     answerRow('Blocker custom', p2.custom && p2.custom.blocker),
+    answerRow('All custom answers', customAnswers),
     answerRow('Pain title', p2.commitmentPainTitle),
     answerRow('Pain full text', p2.commitmentPainText),
+    answerRow('Pain raw', p2.commitmentPain),
+    answerRow('Pain custom', p2.commitmentPainCustom),
     answerRow('Pain source', p2.commitmentPainType),
     answerRow('Vision title', p2.commitmentDesireTitle),
     answerRow('Vision full text', p2.commitmentDesireText),
+    answerRow('Vision raw', p2.commitmentDesire),
+    answerRow('Vision custom', p2.commitmentDesireCustom),
     answerRow('Vision source', p2.commitmentDesireType),
     answerRow('Commitment reasons', valueText(p2.commitmentReasons || ob.commitment_reasons)),
     answerRow('Commitment declaration', p2.commitmentDeclaration || ob.commitment_declaration),
@@ -833,6 +845,8 @@ function renderAnswers(ob, row) {
     answerRow('Context mode', p2.contentMode),
     answerRow('Audience context', p2.audienceContext),
     answerRow('Message context', p2.messageContext),
+    answerRow('First script notes', p2.firstScriptNotes),
+    answerRow('Script 1 mode', p2.mvoMode),
     answerRow('MVO Q1 / stopped', valueText(ob.mvo_q2)),
     answerRow('MVO Q2 / why now', valueText(ob.mvo_q3)),
     answerRow('MVO Q3 / who reach', valueText(ob.mvo_q4)),
@@ -849,6 +863,7 @@ function getPhase2Context(ob) {
     audienceContext:'',
     messageContext:'',
     knowledgeContext:'',
+    firstScriptNotes:'',
     contentIntent:'',
     contentIntentTitle:'',
     commitmentPain:'',
@@ -1191,15 +1206,25 @@ function exportOnboarding(ob, row) {
   const p2 = getPhase2Context(ob);
   return [
     '- Posted: ' + valueText(ob.posted),
+    '- History: ' + valueText(ob.history),
     '- Business: ' + valueText(ob.business),
+    '- Goal: ' + valueText(ob.goal),
+    '- Mini goal: ' + valueText(ob.mini_goal),
+    '- Mini goal text: ' + valueText(ob.mini_goal_text),
     '- Content intent: ' + valueText(p2.contentIntentTitle || p2.contentIntent),
+    '- Content intent raw: ' + valueText(p2.contentIntent),
     '- Main blocker: ' + valueText(commitmentText('blocker', row && row.user ? row.user.blocker : ob.blocker, p2.custom && p2.custom.blocker)),
     '- Blocker custom: ' + valueText(p2.custom && p2.custom.blocker),
+    '- All custom answers: ' + valueText(p2.custom && Object.keys(p2.custom).length ? JSON.stringify(p2.custom) : ''),
     '- Pain title: ' + valueText(p2.commitmentPainTitle),
     '- Pain full text: ' + valueText(p2.commitmentPainText),
+    '- Pain raw: ' + valueText(p2.commitmentPain),
+    '- Pain custom: ' + valueText(p2.commitmentPainCustom),
     '- Pain source: ' + valueText(p2.commitmentPainType),
     '- Vision title: ' + valueText(p2.commitmentDesireTitle),
     '- Vision full text: ' + valueText(p2.commitmentDesireText),
+    '- Vision raw: ' + valueText(p2.commitmentDesire),
+    '- Vision custom: ' + valueText(p2.commitmentDesireCustom),
     '- Vision source: ' + valueText(p2.commitmentDesireType),
     '- Commitment reasons: ' + valueText(p2.commitmentReasons || ob.commitment_reasons),
     '- Commitment declaration: ' + valueText(p2.commitmentDeclaration || ob.commitment_declaration),
@@ -1207,6 +1232,8 @@ function exportOnboarding(ob, row) {
     '- Context mode: ' + valueText(p2.contentMode),
     '- Audience context: ' + valueText(p2.audienceContext),
     '- Message context: ' + valueText(p2.messageContext),
+    '- First script notes: ' + valueText(p2.firstScriptNotes),
+    '- Script 1 mode: ' + valueText(p2.mvoMode),
     '- Topic freewrite: ' + valueText(ob.topic_freewrite),
     '- Pasted context: ' + valueText(p2.knowledgeContext),
     '- MVO Q1 / stopped: ' + valueText(ob.mvo_q2),
@@ -1281,7 +1308,12 @@ function snapshotToOnboarding(sessionId, snapshot) {
   return {
     user_id: 'preauth:' + sessionId,
     posted: snapshot.posted || null,
+    blocker: snapshot.blocker || null,
+    history: snapshot.history || null,
     business: snapshot.business || null,
+    goal: snapshot.goal || null,
+    mini_goal: snapshot.mini_goal || null,
+    mini_goal_text: snapshot.mini_goal_text || '',
     mvo_q2: snapshot.mvo_q2 || null,
     mvo_q3: snapshot.mvo_q3 || null,
     mvo_q4: snapshot.mvo_q4 || null,

@@ -31,12 +31,25 @@ function preauthSnapshot(eventType) {
     level: state.level || null,
     posted: state.posted || null,
     blocker: state.blocker || null,
+    history: state.history || null,
     business: state.business || null,
+    goal: state.goal || null,
+    mini_goal: state.minigoal || null,
+    mini_goal_text: state.minigoalText || '',
     content_intent: p2.contentIntentTitle || p2.contentIntent || null,
     auth_mode: typeof authScreenMode !== 'undefined' ? authScreenMode : null
   };
   if (eventType === 'onboarding_completed') {
     base.onboarding_snapshot = {
+      name: state.name || '',
+      level: state.level || null,
+      posted: state.posted || null,
+      blocker: state.blocker || null,
+      history: state.history || null,
+      business: state.business || null,
+      goal: state.goal || null,
+      mini_goal: state.minigoal || null,
+      mini_goal_text: state.minigoalText || '',
       topic_freewrite: state.topicFreewrite || '',
       mvo_q2: state.mvoQ2 || null,
       mvo_q3: state.mvoQ3 || null,
