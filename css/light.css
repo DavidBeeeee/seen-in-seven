@@ -445,13 +445,58 @@ body.light-mode .dbc-status-icon  { color: var(--teal); }
 body.light-mode .db-video-card.card-filmed .dbc-status-icon { color: var(--green); }
 
 /* Progress tracker dots on dashboard */
-body.light-mode .vt-item { background: rgba(26,138,138,0.06); }
-body.light-mode .vt-done { background: rgba(74,222,128,0.12); }
-body.light-mode .vt-ready { background: rgba(26,138,138,0.1); }
-body.light-mode .vt-locked { background: rgba(26,138,138,0.04); }
-body.light-mode .vt-skipped { background: rgba(239,68,68,0.06); }
-body.light-mode .vt-label { color: var(--muted); }
-body.light-mode .vt-status { color: var(--teal); }
+body.light-mode .vt-item {
+  background: rgba(26,138,138,0.04);
+  border-color: rgba(26,138,138,0.2);
+}
+body.light-mode .vt-item .vt-label { color: var(--muted); }
+body.light-mode .vt-item .vt-status { color: var(--muted); }
+
+/* Pending/not started — present but clearly inactive */
+body.light-mode .vt-locked {
+  background: #F2F8F8;
+  border-color: rgba(26,138,138,0.18);
+}
+body.light-mode .vt-locked .vt-label  { color: rgba(74,136,136,0.45); }
+body.light-mode .vt-locked .vt-status { color: rgba(74,136,136,0.35); }
+
+/* Has script — clearly ready */
+body.light-mode .vt-ready {
+  background: rgba(26,138,138,0.12);
+  border-color: rgba(26,138,138,0.45);
+}
+body.light-mode .vt-ready .vt-label,
+body.light-mode .vt-ready .vt-status { color: var(--teal); }
+
+/* Current video */
+body.light-mode .vt-next {
+  background: rgba(26,138,138,0.1);
+  border-color: rgba(26,138,138,0.4);
+}
+body.light-mode .vt-next .vt-label,
+body.light-mode .vt-next .vt-status { color: var(--teal); }
+
+/* Filmed — clearly complete */
+body.light-mode .vt-done {
+  background: rgba(74,222,128,0.15);
+  border-color: rgba(74,222,128,0.5);
+}
+body.light-mode .vt-done .vt-label,
+body.light-mode .vt-done .vt-status { color: #1a7a3a; }
+
+/* Skipped */
+body.light-mode .vt-skipped {
+  background: rgba(239,68,68,0.07);
+  border-color: rgba(239,68,68,0.3);
+}
+body.light-mode .vt-skipped .vt-label,
+body.light-mode .vt-skipped .vt-status { color: #dc2626; }
+
+/* Locked script */
+body.light-mode .vt-locked-in {
+  background: rgba(26,138,138,0.12);
+  border-color: rgba(26,138,138,0.4);
+}
 
 /* ── SETTINGS PANEL ───────────────────────────────────── */
 body.light-mode .settings-panel {

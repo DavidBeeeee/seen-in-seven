@@ -2336,11 +2336,18 @@ body::before {
 .db-bottom-link.danger { color:rgba(239,68,68,0.6); }
 .db-bottom-link.danger:hover { color:#ef4444; }
 
-/* Mobile 2-col grid */
+/* Mobile 2-col grid — header wraps: num+status row, title row */
 @media (max-width:480px) {
   .db-video-grid { grid-template-columns:1fr 1fr !important; gap:8px; }
-  .dbc-title { font-size:13px; }
   .dbc-preview { display:none; }
+  .dbc-header {
+    flex-wrap: wrap;
+    gap: 2px 6px;
+    align-items: center;
+  }
+  .dbc-num    { order:1; }
+  .dbc-status { order:2; margin-left:auto; }
+  .dbc-title  { order:3; width:100%; font-size:14px; line-height:1.2; margin-top:1px; }
 }
 
 /* ── CARD LINKS (replaces dbc-btn) ───────────────────── */
@@ -2585,7 +2592,8 @@ body::before {
   background:var(--card); border:1.5px solid var(--border); border-radius:999px;
   cursor:pointer; padding:3px; display:inline-flex; align-items:center; gap:0;
   touch-action:manipulation; -webkit-tap-highlight-color:transparent;
-  flex-shrink:0; transition:border-color 0.2s;
+  flex-shrink:0; align-self:flex-start; width:fit-content;
+  transition:border-color 0.2s;
 }
 .theme-toggle-btn:hover { border-color:var(--teal); }
 .theme-opt {
