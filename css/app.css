@@ -294,7 +294,12 @@ body::before {
   display:flex;
   flex-wrap:wrap;
   gap:9px;
-  margin-top:18px;
+  margin-bottom:20px;
+}
+/* Declaration text sits BELOW chips so expanding text doesn't shift chips up */
+.commit-text {
+  min-height:4em;
+  transition:none; /* no animation — instant update feels more responsive */
 }
 .commit-reason-chip {
   border:1.5px solid var(--border);

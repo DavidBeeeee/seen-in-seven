@@ -1172,13 +1172,19 @@ function buildCommitmentDeclaration() {
   return reasons ? base + ' ' + reasons + '.' : base + '...';
 }
 
+let _chipLocked = false;
 function toggleCommitmentReason(reason) {
+  // Lock prevents layout-shift ghost taps on mobile from registering
+  if (_chipLocked) return;
+  _chipLocked = true;
+  setTimeout(() => { _chipLocked = false; }, 400);
+
   const p2 = ensurePhase2();
   const current = new Set(p2.commitmentReasons || []);
   if (current.has(reason)) current.delete(reason);
   else current.add(reason);
   p2.commitmentReasons = Array.from(current);
-  // Targeted update — avoids rebuilding the chip DOM which causes scroll jumps on mobile
+  // Targeted update — avoids rebuilding the chip DOM (prevents scroll jumps on mobile)
   p2.commitmentDeclaration = buildCommitmentDeclaration();
   const text = document.getElementById('commitment-declaration-text');
   if (text) text.textContent = p2.commitmentDeclaration;
