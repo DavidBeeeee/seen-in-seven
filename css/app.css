@@ -2766,3 +2766,24 @@ body::before {
   .gem-just-earned { animation:none; }
   .dbp-bar-fill { transition:none; }
 }
+
+/* ── POSTED TRACKING ROW (dashboard cards) ───────────── */
+.dbc-posted-row {
+  display:flex; flex-direction:column; gap:7px;
+  margin-top:10px; padding-top:10px;
+  border-top:1px dashed rgba(168,222,222,0.12);
+}
+.dbc-posted-check {
+  display:inline-flex; align-items:center; gap:7px;
+  font-size:13px; color:var(--soft); cursor:pointer;
+  font-weight:600;
+}
+.dbc-posted-check input { accent-color:var(--teal); width:15px; height:15px; cursor:pointer; }
+.dbc-post-url {
+  width:100%; background:rgba(6,22,22,0.5);
+  border:1px solid rgba(168,222,222,0.15); border-radius:7px;
+  padding:7px 10px; color:var(--cream);
+  font-family:'Nunito',sans-serif; font-size:12px;
+}
+.dbc-post-url:focus { outline:none; border-color:var(--teal); }
+.dbc-post-url::placeholder { color:rgba(126,184,212,0.4); }

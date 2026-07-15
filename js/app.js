@@ -263,6 +263,14 @@ let maxProgressL2Pct = 0;  // L2 green bar — never decreases
 const SAVE_KEY = 'bwb_challenge_v1';
 let authScreenMode = 'signin';
 
+// ── ENGAGEMENT LINKS ──────────────────────────────────
+// David Bee: paste the real URLs here when ready. While a URL is empty,
+// its dashboard card stays hidden — nothing broken shows to users.
+const ENGAGE_LINKS = {
+  graduation: '',   // Graduation Event page/replay URL
+  schedule: ''      // 1-1 call scheduling URL
+};
+
 // ── THEME ─────────────────────────────────────────────
 const THEME_KEY = 'sis_theme_v1';
 function applyTheme(theme) {
@@ -4790,7 +4798,18 @@ function buildPlan(){
             ? `<button class="dbc-link" onclick="markFilmedFromPlan(${i})">Mark Filmed</button>`
             : ''}
         ${hasScript ? `<button class="dbc-link" onclick="copyScriptFromDashboard(${i}, this)">Copy</button> <button class="dbc-link" onclick="exportSinglePDF(${i})">PDF</button> <button class="dbc-link" onclick="openVersionModal(${i})">Versions</button>` : ''}
-      </div>`;
+      </div>
+      ${filmed ? (() => {
+        const vp = (state.videoPosted && state.videoPosted[i]) || {};
+        return `<div class="dbc-posted-row">
+          <label class="dbc-posted-check">
+            <input type="checkbox" ${vp.posted ? 'checked' : ''} onchange="togglePosted(${i}, this.checked)">
+            <span>I posted it</span>
+          </label>
+          ${vp.posted ? `<input type="url" class="dbc-post-url" placeholder="Paste your video link for bonus points"
+            value="${escapeHTML(vp.url || '')}" onchange="setPostUrl(${i}, this.value)">` : ''}
+        </div>`;
+      })() : ''}`;
     grid.appendChild(card);
   });
 
@@ -5056,6 +5075,97 @@ function updatePartnerVisibility() {
   if (filmedCount >= 3) {
     if (temu) temu.style.display = '';
   }
+
+  // Engagement cards appear only when David has set their URLs
+  const grad = document.getElementById('engage-graduation');
+  const gradCta = document.getElementById('engage-graduation-cta');
+  if (grad && ENGAGE_LINKS.graduation) {
+    partnerSection.removeAttribute('data-locked');
+    grad.style.display = '';
+    if (gradCta) gradCta.href = ENGAGE_LINKS.graduation;
+  }
+  const call = document.getElementById('engage-call');
+  const callCta = document.getElementById('engage-call-cta');
+  if (call && ENGAGE_LINKS.schedule) {
+    partnerSection.removeAttribute('data-locked');
+    call.style.display = '';
+    if (callCta) callCta.href = ENGAGE_LINKS.schedule;
+  }
+}
+
+// ── ENGAGEMENT POINT HOOKS ────────────────────────────
+// Sponsor/graduation/call actions persist two ways: state.engage for the
+// instant client-side points display (works anonymous), and a logs event
+// for the authoritative server-side computation.
+
+function _refreshPointsPanel() {
+  const old = document.getElementById('db-points-panel');
+  if (!old || typeof buildPointsPanel !== 'function') return;
+  const wasOpen = (() => {
+    const body = document.getElementById('vault-body');
+    return body && body.style.display !== 'none';
+  })();
+  const fresh = buildPointsPanel();
+  old.replaceWith(fresh);
+  if (wasOpen) toggleVaultPanel();
+}
+
+function trackSponsorClick(partner) {
+  if (!state.engage) state.engage = {};
+  const key = 'sponsor_' + partner;
+  if (!state.engage[key]) {
+    state.engage[key] = true;
+    saveProgress();
+    if (typeof logEvent === 'function') logEvent('sponsor_clicked', { partner: partner });
+    _refreshPointsPanel();
+  }
+  return true; // let the link navigate
+}
+
+function openEngageLink(kind) {
+  const url = kind === 'graduation' ? ENGAGE_LINKS.graduation : ENGAGE_LINKS.schedule;
+  if (!url) return false;
+  if (!state.engage) state.engage = {};
+  const key = kind === 'graduation' ? 'graduation' : 'call';
+  if (!state.engage[key]) {
+    state.engage[key] = true;
+    saveProgress();
+    if (typeof logEvent === 'function') {
+      logEvent(kind === 'graduation' ? 'graduation_watched' : 'call_scheduled', {});
+    }
+    _refreshPointsPanel();
+  }
+  return true; // href is set by updatePartnerVisibility; let the link navigate
+}
+
+// ── POSTED TRACKING (points: posted + optional URL bonus) ────────────
+function togglePosted(idx, checked) {
+  if (!state.videoPosted) state.videoPosted = {};
+  const prev = state.videoPosted[idx] || {};
+  state.videoPosted[idx] = { posted: !!checked, url: prev.url || '' };
+  saveProgress();
+  if (typeof queuePostedSave === 'function') {
+    queuePostedSave(idx, state.level || 1, !!checked, prev.url || '');
+  }
+  if (checked && typeof logEvent === 'function') {
+    logEvent('video_posted', { video_number: idx + 1, has_url: !!(prev.url) });
+  }
+  buildPlan(); // refresh card UI + points strip together
+}
+
+function setPostUrl(idx, value) {
+  if (!state.videoPosted) state.videoPosted = {};
+  const prev = state.videoPosted[idx] || {};
+  const url = String(value || '').trim().slice(0, 500);
+  state.videoPosted[idx] = { posted: prev.posted !== false, url: url };
+  saveProgress();
+  if (typeof queuePostedSave === 'function') {
+    queuePostedSave(idx, state.level || 1, state.videoPosted[idx].posted, url);
+  }
+  if (url && typeof logEvent === 'function') {
+    logEvent('video_posted', { video_number: idx + 1, has_url: true });
+  }
+  buildPlan();
 }
 
 // ── PDF EXPORT ────────────────────────────────────────

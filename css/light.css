@@ -707,3 +707,13 @@ body.light-mode .vault-money {
 body.light-mode .vault-money-caption { color: var(--soft); }
 body.light-mode .vault-row { color: var(--soft); border-bottom-color: rgba(26,138,138,0.1); }
 body.light-mode .vault-row strong { color: #1a7a3a; }
+
+/* ── POSTED TRACKING ROW ─────────────────────────────── */
+body.light-mode .dbc-posted-row { border-top-color: rgba(26,138,138,0.15); }
+body.light-mode .dbc-posted-check { color: var(--soft); }
+body.light-mode .dbc-post-url {
+  background: #F5FDFD;
+  border-color: rgba(26,138,138,0.2);
+  color: var(--cream);
+}
+body.light-mode .dbc-post-url::placeholder { color: rgba(74,136,136,0.45); }
