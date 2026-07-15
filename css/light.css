@@ -676,3 +676,34 @@ body.light-mode .voice-listening-badge {
   background: rgba(26,138,138,0.9);
   color: #FFFFFF;
 }
+
+/* ── POINTS PANEL + WEALTH VAULT ─────────────────────── */
+body.light-mode .db-points-panel {
+  background: #FFFFFF;
+  border-color: rgba(26,138,138,0.18);
+  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+}
+body.light-mode .db-points-strip:hover { background: rgba(26,138,138,0.04); }
+body.light-mode .dbp-eyebrow { color: var(--teal); }
+body.light-mode .dbp-milestone { color: var(--cream); }
+body.light-mode .dbp-bar { background: rgba(26,138,138,0.12); }
+body.light-mode .dbp-next { color: var(--muted); }
+body.light-mode .vault-body { border-top-color: rgba(26,138,138,0.15); }
+body.light-mode .vault-gem-slot {
+  background: #F5FDFD;
+  border-color: rgba(26,138,138,0.12);
+}
+body.light-mode .vault-gem-slot.earned {
+  background: rgba(26,138,138,0.07);
+  border-color: rgba(26,138,138,0.3);
+}
+body.light-mode .vault-gem-name { color: var(--muted); }
+body.light-mode .vault-gem-slot.earned .vault-gem-name { color: var(--cream); }
+body.light-mode .vault-gem-slot.earned .vault-gem-at { color: #1a7a3a; }
+body.light-mode .vault-money {
+  background: linear-gradient(135deg, rgba(47,158,99,0.07), rgba(245,201,76,0.08));
+  border-color: rgba(47,158,99,0.2);
+}
+body.light-mode .vault-money-caption { color: var(--soft); }
+body.light-mode .vault-row { color: var(--soft); border-bottom-color: rgba(26,138,138,0.1); }
+body.light-mode .vault-row strong { color: #1a7a3a; }

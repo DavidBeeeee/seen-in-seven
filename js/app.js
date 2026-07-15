@@ -4440,6 +4440,199 @@ function hasFirstScriptPrep() {
   return !!(state.mvoQ2 || state.mvoQ3 || state.mvoQ4 || p2.firstScriptNotes);
 }
 
+// ── POINTS PANEL + WEALTH VAULT ───────────────────────
+// Dashboard strip (milestone + progress, tap to open) and the full vault:
+// eight faceted gems earned at milestones, a money pile that grows with
+// total points, and the numbered breakdown for people who love numbers.
+// Data comes from computePoints(state) in js/points.js.
+
+const POINTS_LABELS = {
+  onboarding_complete: 'Completed your onboarding',
+  starter_context: 'Shared your story and context',
+  audience_context: 'Described your audience',
+  message_context: 'Named your core message',
+  mvo_q4_answered: 'Answered the deep question',
+  first_script_notes: 'Added extra script notes',
+  scripts_generated: 'Scripts created',
+  all_seven_scripts: 'All 7 scripts complete',
+  scripts_locked: 'Scripts locked in',
+  videos_filmed: 'Videos filmed',
+  videos_posted: 'Videos posted',
+  post_url_bonus: 'Shared your video links',
+  sponsor_clicks: 'Explored the creator tools',
+  graduation_watched: 'Watched the Graduation Event',
+  call_scheduled: 'Scheduled your 1-1 with David Bee'
+};
+
+const GEM_COLORS = {
+  amethyst: ['#c4b5fd', '#7c3aed'],
+  topaz:    ['#fde68a', '#d97706'],
+  emerald:  ['#6ee7b7', '#059669'],
+  sapphire: ['#93c5fd', '#2563eb'],
+  ruby:     ['#fca5a5', '#dc2626'],
+  opal:     ['#c4b5fd', '#22d3ee'],
+  diamond:  ['#f0f9ff', '#60a5fa'],
+  gold:     ['#fde047', '#f59e0b']
+};
+
+function _gemSVG(gem, earned, size) {
+  const c = GEM_COLORS[gem] || GEM_COLORS.diamond;
+  const gid = 'gg-' + gem + (earned ? '-on' : '-off');
+  const light = earned ? c[0] : '#5a6b6b';
+  const dark = earned ? c[1] : '#2c3a3a';
+  const glow = earned ? `filter="url(#glow-${gem})"` : '';
+  return `<svg viewBox="0 0 64 64" width="${size}" height="${size}" class="vault-gem-svg${earned ? ' gem-earned' : ''}" aria-hidden="true">
+    <defs>
+      <linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="${light}"/>
+        <stop offset="100%" stop-color="${dark}"/>
+      </linearGradient>
+      ${earned ? `<filter id="glow-${gem}" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="2.4" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>` : ''}
+    </defs>
+    <g ${glow} opacity="${earned ? 1 : 0.45}">
+      <polygon points="22,12 42,12 52,26 32,54 12,26" fill="url(#${gid})"/>
+      <polygon points="22,12 42,12 38,26 26,26" fill="#ffffff" opacity="0.32"/>
+      <polygon points="22,12 26,26 12,26" fill="#ffffff" opacity="0.14"/>
+      <polygon points="42,12 52,26 38,26" fill="#000000" opacity="0.12"/>
+      <polygon points="12,26 26,26 32,54" fill="#000000" opacity="0.18"/>
+      <polygon points="38,26 52,26 32,54" fill="#000000" opacity="0.3"/>
+      <polygon points="26,26 38,26 32,54" fill="#ffffff" opacity="0.1"/>
+    </g>
+  </svg>`;
+}
+
+function _moneyPileSVG(ratio) {
+  // Wealth grows with points: bill stacks rise, coins pile up, one layer at
+  // a time. Pure visual metaphor; the numbers live in the breakdown below.
+  const steps = 6;
+  const visible = Math.max(ratio > 0 ? 1 : 0, Math.round(ratio * steps));
+  let bills = '';
+  for (let i = 0; i < 3; i++) {
+    const on = visible >= (i + 1) * 2;
+    const y = 46 - i * 9;
+    bills += `<g opacity="${on ? 1 : 0.12}">
+      <rect x="${14 + i * 3}" y="${y}" width="52" height="8" rx="2" fill="#2f9e63"/>
+      <rect x="${14 + i * 3}" y="${y}" width="52" height="8" rx="2" fill="none" stroke="#1c7a48" stroke-width="1"/>
+      <circle cx="${40 + i * 3}" cy="${y + 4}" r="2.6" fill="#c9f2dc" opacity="0.9"/>
+    </g>`;
+  }
+  let coins = '';
+  for (let i = 0; i < 3; i++) {
+    const on = visible >= i * 2 + 1;
+    const cx = 86 + (i % 2) * 14;
+    const cy = 50 - Math.floor(i / 2) * 9 - (i % 2) * 4;
+    coins += `<g opacity="${on ? 1 : 0.12}">
+      <ellipse cx="${cx}" cy="${cy}" rx="9" ry="7" fill="#f5c94c"/>
+      <ellipse cx="${cx}" cy="${cy - 1.5}" rx="9" ry="7" fill="#fde68a"/>
+      <text x="${cx}" y="${cy + 1.6}" text-anchor="middle" font-size="8" font-weight="800" fill="#b07d1a">$</text>
+    </g>`;
+  }
+  return `<svg viewBox="0 0 112 60" class="vault-money-svg" aria-hidden="true">${bills}${coins}</svg>`;
+}
+
+const MILESTONES_SEEN_KEY = 'sis_milestones_seen_v1';
+
+function buildPointsPanel() {
+  const pts = computePoints(state);
+  const wrap = document.createElement('div');
+  wrap.className = 'db-points-panel';
+  wrap.id = 'db-points-panel';
+
+  const current = pts.earnedCount > 0 ? pts.milestones[pts.earnedCount - 1] : null;
+  const stripTitle = current ? current.name : 'Just Getting Started';
+  const nextLine = pts.nextMilestone
+    ? (pts.nextMilestone.at - pts.total) + ' points to ' + pts.nextMilestone.name
+    : 'Every milestone earned. Incredible.';
+
+  const miniGems = pts.milestones.map(m => _gemSVG(m.gem, m.earned, 16)).join('');
+
+  const gemGrid = pts.milestones.map(m => `
+    <div class="vault-gem-slot${m.earned ? ' earned' : ''}" title="${escapeHTML(m.name)} at ${m.at} points">
+      ${_gemSVG(m.gem, m.earned, 44)}
+      <div class="vault-gem-name">${escapeHTML(m.name)}</div>
+      <div class="vault-gem-at">${m.earned ? 'Earned' : m.at + ' pts'}</div>
+    </div>`).join('');
+
+  const rows = Object.keys(pts.breakdown).map(k => {
+    const v = pts.breakdown[k];
+    const p = (typeof v === 'object') ? v.points : v;
+    const count = (typeof v === 'object' && v.count) ? ' ×' + v.count : '';
+    return `<div class="vault-row"><span>${escapeHTML(POINTS_LABELS[k] || k)}${count}</span><strong>+${p}</strong></div>`;
+  }).join('') || '<div class="vault-row muted-row"><span>Your first points are one step away</span></div>';
+
+  wrap.innerHTML = `
+    <button class="db-points-strip" onclick="toggleVaultPanel()" aria-expanded="false">
+      <div class="dbp-left">
+        <span class="dbp-eyebrow">Your Progress</span>
+        <span class="dbp-milestone">${escapeHTML(stripTitle)}</span>
+      </div>
+      <div class="dbp-mid">
+        <div class="dbp-bar"><div class="dbp-bar-fill" style="width:${pts.progressToNext}%"></div></div>
+        <span class="dbp-next">${pts.total} points · ${escapeHTML(nextLine)}</span>
+      </div>
+      <div class="dbp-right">
+        <span class="dbp-gems-mini">${miniGems}</span>
+        <span class="dbp-arrow" id="vault-arrow">▼</span>
+      </div>
+    </button>
+    <div class="vault-body" id="vault-body" style="display:none;">
+      <div class="vault-gems">${gemGrid}</div>
+      <div class="vault-money">
+        ${_moneyPileSVG(pts.maxTotal ? pts.total / pts.maxTotal : 0)}
+        <div class="vault-money-caption">Your wealth is building. ${pts.total} of ${pts.maxTotal} points.</div>
+      </div>
+      <div class="vault-breakdown">
+        <div class="vault-breakdown-title">How you earned it</div>
+        ${rows}
+      </div>
+    </div>`;
+
+  _checkMilestoneCelebration(pts, wrap);
+  return wrap;
+}
+
+function toggleVaultPanel() {
+  const body = document.getElementById('vault-body');
+  const arrow = document.getElementById('vault-arrow');
+  const strip = document.querySelector('.db-points-strip');
+  if (!body) return;
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  if (arrow) arrow.style.transform = open ? '' : 'rotate(180deg)';
+  if (strip) strip.setAttribute('aria-expanded', String(!open));
+}
+
+// Confetti + gem flash when a new milestone was crossed since last visit.
+// First-ever render just records the baseline so returning users are not
+// greeted with retroactive confetti spam.
+function _checkMilestoneCelebration(pts, wrap) {
+  let seen = null;
+  try { seen = localStorage.getItem(MILESTONES_SEEN_KEY); } catch(e) {}
+  if (seen === null) {
+    try { localStorage.setItem(MILESTONES_SEEN_KEY, String(pts.earnedCount)); } catch(e) {}
+    return;
+  }
+  const seenCount = parseInt(seen, 10) || 0;
+  if (pts.earnedCount > seenCount) {
+    try { localStorage.setItem(MILESTONES_SEEN_KEY, String(pts.earnedCount)); } catch(e) {}
+    setTimeout(() => {
+      launchConfetti();
+      const slots = wrap.querySelectorAll('.vault-gem-slot.earned');
+      const newest = slots[slots.length - 1];
+      if (newest) newest.classList.add('gem-just-earned');
+      // Auto-open the vault so they see what they just earned
+      const body = document.getElementById('vault-body');
+      if (body && body.style.display === 'none') toggleVaultPanel();
+    }, 600);
+  } else if (pts.earnedCount < seenCount) {
+    // Start-over path — resync quietly
+    try { localStorage.setItem(MILESTONES_SEEN_KEY, String(pts.earnedCount)); } catch(e) {}
+  }
+}
+
 function buildPlan(){
   const name = state.name || 'You';
   const p2 = ensurePhase2();
@@ -4522,6 +4715,13 @@ function buildPlan(){
 
     </div>`;
   output.appendChild(hero);
+
+  // ── POINTS PANEL + WEALTH VAULT ───────────────────────
+  if (typeof buildPointsPanel === 'function') {
+    try { output.appendChild(buildPointsPanel()); } catch(e) {
+      console.error('[SeenInSeven] buildPointsPanel threw: ' + e.message);
+    }
+  }
 
   // ── MISSION — collapsed by default ────────────────────
   const missionLine = buildMissionManifesto(name, commitmentText);
