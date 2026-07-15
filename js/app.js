@@ -1731,12 +1731,46 @@ async function callDeepSeekAPI(userMessage) {
   return callDeepSeekAPIRaw(SYSTEM_PROMPT, userMessage);
 }
 
+// One automatic, silent retry on failure — the user never sees the first
+// attempt fail. Only after both attempts fail does the caller's own catch
+// block show the error screen. Keeps script generation from dead-ending
+// on a single transient hiccup, without silently substituting a template
+// (unlike the mission-statement generator, which falls back automatically).
+async function callDeepSeekAPIWithRetry(userMessage, retries = 1) {
+  let lastErr;
+  for (let attempt = 0; attempt <= retries; attempt++) {
+    try {
+      const script = await callDeepSeekAPI(userMessage);
+      if (!script) throw new Error('No script returned. Empty response from API.');
+      return script;
+    } catch(e) {
+      lastErr = e;
+      if (attempt < retries) {
+        window._SIS_log && _SIS_log('gen:retry', {attempt: attempt + 1, error: e.message});
+        await new Promise(r => setTimeout(r, 800));
+      }
+    }
+  }
+  throw lastErr;
+}
+
 async function callDeepSeekAPIRaw(systemMsg, userMsg) {
-  const response = await fetch('/api/generate', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ systemMsg, userMsg })
-  });
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), 28000);
+  let response;
+  try {
+    response = await fetch('/api/generate', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ systemMsg, userMsg }),
+      signal: controller.signal
+    });
+  } catch(e) {
+    if (e.name === 'AbortError') throw new Error('The request took too long and timed out. Please try again.');
+    throw e;
+  } finally {
+    clearTimeout(timeoutId);
+  }
   if (!response.ok) {
     const err = await response.json().catch(() => ({}));
     throw new Error(err.error ? err.error : 'API error ' + response.status);
@@ -2675,9 +2709,8 @@ async function showScriptView(idx, skipLoading) {
       }
       const userMessage = buildAPIUserMessage(idx);
       window._SIS_log && _SIS_log('gen:built-message', {len: userMessage ? userMessage.length : 0});
-      const script = await callDeepSeekAPI(userMessage);
+      const script = await callDeepSeekAPIWithRetry(userMessage, 1);
       window._SIS_log && _SIS_log('gen:got-response', {len: script ? script.length : 0});
-      if (!script) throw new Error('No script returned. Empty response from API.');
       state.videos[editKey] = script;
       saveProgress();
       trackSession();
@@ -3079,9 +3112,7 @@ function afterFilmed(idx, status) {
 
 function backFromVideoIntro() {
   if (currentPreviewVideoNum <= 1) {
-    renderMvoScreen();
-    showScreen('screen-mvo2');
-    currentIndex = screenOrder.indexOf('screen-mvo2');
+    goToMvoScreen();
   } else {
     // Go back to the script screen for the previous video
     const prevIdx = currentPreviewVideoNum - 2;
@@ -3236,9 +3267,7 @@ function startVideoOver() {
     delete state.videos['v0p0'];
     delete state.videos['v0p1'];
     delete state.videos['v0p2'];
-    renderMvoScreen();
-    showScreen('screen-mvo2');
-    currentIndex = screenOrder.indexOf('screen-mvo2');
+    goToMvoScreen();
   } else {
     if (v.prompts) { v.prompts.forEach(p => { delete state.videos[p.key]; }); }
     renderVideoPrompts(idx);
@@ -3387,9 +3416,7 @@ function runItAgain() {
   buildVideoDots('video-dots');
   buildVideoDots('script-dots');
   buildVideoDots('vi-dots');
-  renderMvoScreen();
-  showScreen('screen-mvo2');
-  currentIndex = screenOrder.indexOf('screen-mvo2');
+  goToMvoScreen();
   window.scrollTo(0, 0);
 }
 
@@ -3407,9 +3434,7 @@ function goBackToPrompts() {
     showScriptView(prevIdx, true);
   } else {
     // Video 1 now uses the combined script prep screen.
-    renderMvoScreen();
-    showScreen('screen-mvo2');
-    currentIndex = screenOrder.indexOf('screen-mvo2');
+    goToMvoScreen();
     window.scrollTo(0, 0);
   }
 }
@@ -3706,9 +3731,7 @@ function _updateLockUI(idx) {
             editingFromPlan = false;
             showScriptView(idx + 1, true);
           } else if (idx + 1 === 0 || (nextVid && nextVid.beats)) {
-            renderMvoScreen();
-            showScreen('screen-mvo2');
-            currentIndex = screenOrder.indexOf('screen-mvo2');
+            goToMvoScreen();
           } else {
             // Standard video intro
             renderVideoIntro(idx + 2); // 1-based: next video number = idx + 2
@@ -3785,9 +3808,7 @@ async function deleteAndStartOver() {
   saveProgress();
   // Send back to prompts
   if (idx === 0) {
-    renderMvoScreen();
-    showScreen('screen-mvo2');
-    currentIndex = screenOrder.indexOf('screen-mvo2');
+    goToMvoScreen();
   } else {
     renderVideoPrompts(idx);
     showScreen('screen-7');
@@ -4613,9 +4634,7 @@ function resumeToVideo(idx) {
       showScriptView(0);
       return;
     }
-    renderMvoScreen();
-    showScreen('screen-mvo2');
-    currentIndex = screenOrder.indexOf('screen-mvo2');
+    goToMvoScreen();
     window.scrollTo(0, 0);
     return;
   }
@@ -4762,9 +4781,7 @@ function resumeFromDashboard() {
       window.scrollTo(0, 0);
       return;
     }
-    renderMvoScreen();
-    showScreen('screen-mvo2');
-    currentIndex = screenOrder.indexOf('screen-mvo2');
+    goToMvoScreen();
   } else {
     renderVideoPrompts(nextIdx);
     showScreen('screen-7');
@@ -4801,6 +4818,11 @@ function hidePdfModal() {
   document.getElementById('pdf-modal-overlay').classList.remove('show');
 }
 
+// Brand colors mirrored from css/app.css :root — keep these two in sync with
+// --ink and --teal there. exportPDF() prints on a white background, so it
+// intentionally does not reuse the rest of the dark-mode palette.
+const PDF_BRAND = { ink: '#0D2828', teal: '#32B8B8' };
+
 function exportPDF(mode) {
   hidePdfModal();
   if (typeof logEvent === 'function') {
@@ -4819,14 +4841,14 @@ function exportPDF(mode) {
     @import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;1,400;1,700&family=Oswald:wght@500;600&family=Space+Mono&display=swap');
     * { margin:0; padding:0; box-sizing:border-box; }
     body { font-family: Georgia, serif; background:#fff; color:#111; padding:48px 56px; max-width:720px; margin:0 auto; }
-    .doc-header { border-bottom:2px solid #0D2828; padding-bottom:20px; margin-bottom:36px; }
-    .doc-title { font-family:'Oswald',sans-serif; font-size:32px; color:#0D2828; letter-spacing:0.04em; margin-bottom:6px; }
-    .doc-sub { font-family:'Space Mono',monospace; font-size:11px; color:#32B8B8; letter-spacing:0.16em; text-transform:uppercase; }
+    .doc-header { border-bottom:2px solid ${PDF_BRAND.ink}; padding-bottom:20px; margin-bottom:36px; }
+    .doc-title { font-family:'Oswald',sans-serif; font-size:32px; color:${PDF_BRAND.ink}; letter-spacing:0.04em; margin-bottom:6px; }
+    .doc-sub { font-family:'Space Mono',monospace; font-size:11px; color:${PDF_BRAND.teal}; letter-spacing:0.16em; text-transform:uppercase; }
     .section-label { font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:#999; margin-bottom:6px; }
     .video-block { page-break-inside:avoid; margin-bottom:44px; padding-bottom:36px; border-bottom:1px solid #e5e5e5; }
     .video-block:last-child { border-bottom:none; }
-    .video-num { font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:0.1em; color:#32B8B8; margin-bottom:4px; }
-    .video-title { font-family:'Oswald',sans-serif; font-size:24px; color:#0D2828; margin-bottom:16px; }
+    .video-num { font-family:'Oswald',sans-serif; font-size:13px; letter-spacing:0.1em; color:${PDF_BRAND.teal}; margin-bottom:4px; }
+    .video-title { font-family:'Oswald',sans-serif; font-size:24px; color:${PDF_BRAND.ink}; margin-bottom:16px; }
     .script-text { font-family:'Lora',serif; font-style:italic; font-size:17px; line-height:2.0; color:#222; white-space:pre-wrap; }
     .status-badge { display:inline-block; font-family:'Space Mono',monospace; font-size:9px; letter-spacing:0.12em; text-transform:uppercase; padding:3px 10px; border-radius:4px; margin-bottom:12px; }
     .status-filmed { background:#dcfce7; color:#166534; }
@@ -5082,6 +5104,15 @@ function setMvoMode(mode) {
   p2.mvoMode = mode === 'extended' ? 'extended' : 'simple';
   saveProgress();
   renderMvoScreen();
+}
+
+// Navigate to screen-mvo2, rendering its content and syncing currentIndex.
+// Callers that also need window.scrollTo(0,0) still call it themselves right after —
+// this helper only replaces the 3-line render/show/index pattern, not scroll behavior.
+function goToMvoScreen() {
+  renderMvoScreen();
+  showScreen('screen-mvo2');
+  currentIndex = screenOrder.indexOf('screen-mvo2');
 }
 
 function renderMvoQuestion(qNum, level, mode) {
