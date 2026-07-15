@@ -34,6 +34,9 @@ prompts/blueprints.js  AI system prompts — DO NOT MODIFY without explicit inst
 ### Supabase Auth Rule (load-bearing)
 Never `await` Supabase database calls inside `onAuthStateChange` callback body. Defer with `setTimeout(0)`. This prevents a navigator lock bug that caused a hard-to-debug blank screen. See `js/supabase.js` — the pattern is already correct.
 
+### Admin Privilege Rule (load-bearing)
+`users.is_admin` and `users.is_paid` cannot be set by a direct client-side `update()`/`insert()` — a `BEFORE UPDATE` trigger (`prevent_privilege_self_escalation`) silently reverts any change to those two columns unless the caller is already an admin or is `service_role`. The only way to grant admin from the client is `sb.rpc('provision_admin_account')`, which checks the caller's JWT email against a hardcoded allowlist server-side before granting anything. Do not try to "fix" a broken admin-provisioning flow by writing `is_admin` directly from JS again — that reintroduces a real privilege-escalation hole (any signed-in user could self-grant admin). To add a new admin email, update the allowlist in `provision_admin_account()` (Supabase) **and** `ADMIN_EMAILS` in `admin.html`.
+
 ### No Frameworks
 Do not introduce React, Vue, build steps, bundlers, or major abstractions. This is intentional. The app is vanilla and should stay that way unless David Bee explicitly asks to change it.
 
@@ -51,7 +54,7 @@ Do not introduce React, Vue, build steps, bundlers, or major abstractions. This 
 
 Scripts use `generated_at` / `edited_at` (not `created_at` / `updated_at`).
 
-Admin RPCs: `admin_get_users`, `admin_get_scripts`, `admin_get_progress`, `admin_get_onboarding`, `admin_get_logs`, `admin_set_paid` — all gated by `is_admin = true` on the users row.
+Admin RPCs: `admin_get_users`, `admin_get_scripts`, `admin_get_progress`, `admin_get_onboarding`, `admin_get_logs`, `admin_get_preauth_events`, `admin_set_paid`, `admin_delete_subjects`, `provision_admin_account` — all gated by `is_admin = true` on the users row (or, for `provision_admin_account`, a server-side email allowlist). Granted to `authenticated` only, not `anon`.
 
 ---
 

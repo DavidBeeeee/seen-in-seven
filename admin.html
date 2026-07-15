@@ -364,14 +364,14 @@ sb.auth.onAuthStateChange((event, session) => {
   document.getElementById('admin-user-email').textContent = session.user.email;
   document.getElementById('environment-pill').textContent = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') ? 'Local' : 'Production';
   setTimeout(async () => {
-    // Ensure this admin has a users row with is_admin = true so the RPCs work
+    // Ensure this admin has a users row with is_admin = true so the RPCs work.
+    // Goes through provision_admin_account() — a server-side gated RPC that
+    // checks the caller's JWT email against its own allowlist — rather than
+    // writing is_admin directly from the client. A DB trigger also blocks
+    // any direct client write to is_admin/is_paid unless the caller is
+    // already an admin, so this RPC is the only way this ever succeeds.
     try {
-      const { data: existing } = await sb.from('users').select('id').eq('auth_id', session.user.id).maybeSingle();
-      if (!existing) {
-        await sb.from('users').insert({ auth_id: session.user.id, email: session.user.email, is_admin: true, is_paid: false });
-      } else {
-        await sb.from('users').update({ is_admin: true }).eq('id', existing.id);
-      }
+      await sb.rpc('provision_admin_account');
     } catch(e) {}
     loadAll();
   }, 0);
