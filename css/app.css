@@ -2787,3 +2787,92 @@ body::before {
 }
 .dbc-post-url:focus { outline:none; border-color:var(--teal); }
 .dbc-post-url::placeholder { color:rgba(126,184,212,0.4); }
+
+/* ══════════════════════════════════════════════════════
+   REFINED-WARM VISUAL LAYER
+   Calm, premium depth for a 45-60 first-time-creator
+   audience. Transform/opacity animations only. Appended
+   after all base rules so equal-specificity declarations
+   here win by source order.
+══════════════════════════════════════════════════════ */
+
+/* ── Softer, longer screen entrance ── */
+.screen.anim-in { animation: screenRise 0.5s cubic-bezier(0.22, 0.9, 0.3, 1) forwards; }
+@keyframes screenRise {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+
+/* ── Ambient depth on the core card families ── */
+.choice-card,
+.journal-card,
+.recap-card,
+.script-view-card,
+.db-video-card,
+.partner-card,
+.mvo-brief-question,
+.guideline-item,
+.check-item,
+.commit-wrap,
+.db-points-panel,
+.filmed-card {
+  box-shadow: 0 1px 2px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.12);
+}
+.choice-card:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.22), 0 14px 34px rgba(0,0,0,0.2), 0 0 0 1px rgba(50,184,184,0.14);
+}
+.db-video-card:hover,
+.partner-card:hover {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.22), 0 12px 30px rgba(0,0,0,0.18);
+}
+.partner-card { transition: box-shadow 0.2s, transform 0.2s; }
+.partner-card:hover { transform: translateY(-2px); }
+
+/* ── Button feel: gentle press + primary glow ── */
+.btn-primary, .btn-secondary, .btn-filmed, .btn-cta,
+.db-hero-cta, .btn-to-dashboard, .settings-btn-primary,
+.partner-cta, .dbc-link.primary {
+  transition: transform 0.14s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+}
+.btn-primary:active, .btn-secondary:active, .btn-filmed:active,
+.btn-cta:active, .db-hero-cta:active, .btn-to-dashboard:active,
+.settings-btn-primary:active, .partner-cta:active {
+  transform: scale(0.975);
+}
+.btn-primary:hover, .db-hero-cta:hover {
+  box-shadow: 0 6px 20px rgba(50,184,184,0.32);
+}
+.btn-filmed:hover { box-shadow: 0 8px 26px rgba(45,212,191,0.3); }
+
+/* ── Input focus: soft ring instead of bare border swap ── */
+.text-input:focus, .settings-input:focus, .dbc-post-url:focus, .search:focus {
+  border-color: var(--teal);
+  box-shadow: 0 0 0 3px rgba(50,184,184,0.16);
+}
+
+/* ── Settings panel: quiet glass ── */
+.settings-panel {
+  background: rgba(10,31,31,0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  box-shadow: -18px 0 50px rgba(0,0,0,0.35);
+}
+
+/* ── Choice-card selection: a touch more ceremony ── */
+.choice-card.selecting {
+  box-shadow: 0 0 0 2px rgba(50,184,184,0.4), 0 10px 30px rgba(50,184,184,0.18);
+}
+
+/* ── Dashboard hero ring: gentle presence ── */
+.db-hero-ring svg { filter: drop-shadow(0 4px 14px rgba(50,184,184,0.18)); }
+
+/* ── Calm everything down for reduced-motion users ── */
+@media (prefers-reduced-motion: reduce) {
+  .screen.anim-in, .screen.anim-out { animation: none; }
+  .partner-card, .choice-card, .db-video-card,
+  .btn-primary, .btn-secondary, .btn-filmed, .btn-cta,
+  .db-hero-cta, .btn-to-dashboard, .settings-btn-primary, .partner-cta {
+    transition: none;
+  }
+  .choice-card:hover, .db-video-card:hover, .partner-card:hover { transform: none; }
+}

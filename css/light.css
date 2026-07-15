@@ -717,3 +717,45 @@ body.light-mode .dbc-post-url {
   color: var(--cream);
 }
 body.light-mode .dbc-post-url::placeholder { color: rgba(74,136,136,0.45); }
+
+/* ── REFINED-WARM VISUAL LAYER (light) ───────────────── */
+/* Light surfaces need teal-tinted, softer shadows — pure black reads
+   harsh on the pale background. Same structure as the dark layer. */
+body.light-mode .choice-card,
+body.light-mode .journal-card,
+body.light-mode .recap-card,
+body.light-mode .script-view-card,
+body.light-mode .db-video-card,
+body.light-mode .partner-card,
+body.light-mode .mvo-brief-question,
+body.light-mode .guideline-item,
+body.light-mode .check-item,
+body.light-mode .commit-wrap,
+body.light-mode .db-points-panel,
+body.light-mode .filmed-card {
+  box-shadow: 0 1px 2px rgba(26,74,74,0.08), 0 8px 24px rgba(26,74,74,0.08);
+}
+body.light-mode .choice-card:hover {
+  box-shadow: 0 2px 4px rgba(26,74,74,0.1), 0 14px 34px rgba(26,74,74,0.14), 0 0 0 1px rgba(26,138,138,0.18);
+}
+body.light-mode .db-video-card:hover,
+body.light-mode .partner-card:hover {
+  box-shadow: 0 2px 4px rgba(26,74,74,0.1), 0 12px 30px rgba(26,74,74,0.12);
+}
+body.light-mode .btn-primary:hover,
+body.light-mode .db-hero-cta:hover {
+  box-shadow: 0 6px 20px rgba(26,138,138,0.28);
+}
+body.light-mode .text-input:focus,
+body.light-mode .settings-input:focus,
+body.light-mode .dbc-post-url:focus {
+  box-shadow: 0 0 0 3px rgba(26,138,138,0.14);
+}
+body.light-mode .settings-panel {
+  background: rgba(255,255,255,0.92);
+  box-shadow: -18px 0 50px rgba(26,74,74,0.14);
+}
+body.light-mode .choice-card.selecting {
+  box-shadow: 0 0 0 2px rgba(26,138,138,0.35), 0 10px 30px rgba(26,138,138,0.14);
+}
+body.light-mode .db-hero-ring svg { filter: drop-shadow(0 4px 14px rgba(26,138,138,0.16)); }
