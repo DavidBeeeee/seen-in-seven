@@ -219,6 +219,8 @@ const state = {
   mvoQ2:null, mvoQ3:null, mvoQ4:null,
   topicFreewrite: '',
   l1VideoStatus: null,
+  videoPosted:{},   // { [videoIndex]: { posted:bool, url:string } } — points
+  engage:{},        // { sponsor_vubli, sponsor_temu, graduation, call } — points
   phase2: {
     custom:{},
     contentMode:'simple',
@@ -3672,6 +3674,9 @@ function lockInScript() {
   const idx = currentVideoIndex;
   state.videos['locked_v' + idx] = true;
   saveProgress();
+  // Persist lock server-side (points: first lock per video). Queued if
+  // anonymous, flushed after auth.
+  if (typeof queueLockSave === 'function') queueLockSave(idx, state.level || 1);
   if (typeof logEvent === 'function') {
     logEvent('script_locked', {
       video_number: idx + 1,
@@ -5011,6 +5016,7 @@ function restartWizard(){
   // Clear scripts and onboarding from state
   state.videos       = {};
   state.videoStatus  = {};
+  state.videoPosted  = {};  // server rows are deleted below, keep points in parity
   state.l1Videos     = null;
   state.l1VideoStatus= null;
   state.posted       = null;
@@ -5537,6 +5543,8 @@ function saveProgress() {
     mvoQ3:         state.mvoQ3         || null,
     mvoQ4:         state.mvoQ4         || null,
     phase2:        ensurePhase2(),
+    videoPosted:   state.videoPosted   || {},
+    engage:        state.engage        || {},
     savedAt:       Date.now()
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e) {}
@@ -5586,6 +5594,8 @@ function loadProgress() {
       if (data.l1VideoStatus) state.l1VideoStatus = data.l1VideoStatus;
       if (data.l1Videos)      state.l1Videos      = data.l1Videos;
       if (data.topicFreewrite)state.topicFreewrite= data.topicFreewrite;
+      if (data.videoPosted)   state.videoPosted   = data.videoPosted;
+      if (data.engage)        state.engage        = data.engage;
       if (data.mvoQ2 && (data.blocker || data.history)) mvoQ2Skipped = true;
 
       // If they have a level — go straight to dashboard, no banner needed
