@@ -52,8 +52,12 @@ body::before {
   padding: 10px 24px;
   display:flex; align-items:center; gap:16px;
 }
+/* Both header side-columns stretch to full header height at every viewport,
+   so the theme toggle (left) and dashboard+gear row (right) can pin to the
+   bottom edge symmetrically via margin-top:auto. */
 .header-left {
-  display:flex; flex-direction:column; justify-content:center;
+  display:flex; flex-direction:column; justify-content:flex-start;
+  align-self:stretch;
   flex-shrink:0; min-width:0;
 }
 .logo {
@@ -70,6 +74,7 @@ body::before {
 }
 .header-right {
   display:flex; flex-direction:column; align-items:flex-end;
+  justify-content:flex-start; align-self:stretch;
   flex-shrink:0; gap:4px;
 }
 #progress-label {
@@ -1093,21 +1098,11 @@ body::before {
   .logo { font-size: 15px; }
   #progress-label { font-size: 10px; }
 
-  /* Anchor toggle and gear to the bottom of the header symmetrically */
-  .header-left {
-    justify-content: flex-start;
-    align-self: stretch;
-  }
-  .header-right {
-    justify-content: flex-start;
-    align-self: stretch;
-  }
-  .header-bottom-row {
-    margin-top: auto;
-  }
-  /* .theme-opt / .header-settings-btn / .btn-db-header mobile sizing lives
-     further down, physically after their base rules, so normal cascade
-     order applies it without needing !important. */
+  /* Header stretch/pinning now lives in the base .header-left/.header-right/
+     .theme-toggle-btn/.header-bottom-row rules (applies to all viewports).
+     Mobile-only sizing for .theme-opt/.header-settings-btn/.btn-db-header
+     lives further down, physically after their base rules, so normal
+     cascade order applies it without needing !important. */
 
   /* Screens */
   .screen {
@@ -2623,6 +2618,7 @@ body::before {
   cursor:pointer; padding:2px; display:inline-flex; align-items:center; gap:0;
   touch-action:manipulation; -webkit-tap-highlight-color:transparent;
   flex-shrink:0; align-self:flex-start; width:fit-content;
+  margin-top:auto; /* pin to bottom of the stretched header-left column */
   transition:border-color 0.2s;
 }
 .theme-toggle-btn:hover { border-color:var(--teal); }
@@ -2637,6 +2633,7 @@ body::before {
 /* ── HEADER BOTTOM ROW — dashboard + gear group ──────── */
 .header-bottom-row {
   display:flex; align-items:center; gap:6px; flex-shrink:0;
+  margin-top:auto; /* pin to bottom of the stretched header-right column */
 }
 /* ── SETTINGS GEAR — always visible ─────────────────── */
 .header-settings-btn {

@@ -4416,7 +4416,10 @@ function hasScriptAt(idx) {
 }
 
 function getNextScriptIndex(videos) {
-  return videos.findIndex((_, i) => !hasScriptAt(i));
+  // Skip videos the user explicitly skipped — the dashboard CTA should never
+  // route someone back into a video they chose to pass on. They can still
+  // return to a skipped video from its own card.
+  return videos.findIndex((_, i) => !hasScriptAt(i) && state.videoStatus[i] !== 'skipped');
 }
 
 function getNextUnfilmedIndex(videos) {
@@ -4545,6 +4548,7 @@ function buildPlan(){
 
   videos.forEach((v, i) => {
     const filmed = videoStatus[i] === 'filmed';
+    const skipped = videoStatus[i] === 'skipped';
     const hasScript = !!state.videos['script_v' + i];
     const isLocked = !!state.videos['locked_v' + i];
     const script = state.videos['script_v' + i] || '';
@@ -4552,11 +4556,12 @@ function buildPlan(){
     const preview = clean ? clean.substring(0, 90) + (clean.length > 90 ? '…' : '') : 'Script not yet generated';
 
     const statusClass = filmed ? 'card-filmed' : hasScript ? 'card-ready' : 'card-pending';
-    const statusIcon = filmed ? '✓' : isLocked ? '🔒' : hasScript ? '✎' : '–';
-    const statusLabel = filmed ? 'Filmed' : isLocked ? 'Locked' : hasScript ? 'Draft' : 'Pending';
+    const statusIcon = filmed ? '✓' : isLocked ? '🔒' : hasScript ? '✎' : skipped ? '✕' : '–';
+    const statusLabel = filmed ? 'Filmed' : isLocked ? 'Locked' : hasScript ? 'Draft' : skipped ? 'Skipped' : 'Pending';
 
+    // Skipped videos are never locked — the user chose to pass and can return anytime.
     const card = document.createElement('div');
-    card.className = 'db-video-card ' + statusClass + (!hasScript && i !== nextScriptIdx ? ' card-locked' : '');
+    card.className = 'db-video-card ' + statusClass + (!hasScript && !skipped && i !== nextScriptIdx ? ' card-locked' : '');
     card.id = 'dbcard-' + i;
     card.innerHTML = `
       <div class="dbc-header">
@@ -4571,7 +4576,7 @@ function buildPlan(){
       <div class="dbc-links">
         ${hasScript
           ? `<button class="dbc-link primary" onclick="editScript(${i})">View →</button>`
-          : i === nextScriptIdx
+          : (i === nextScriptIdx || skipped)
             ? `<button class="dbc-link primary" onclick="resumeToVideo(${i})">Generate →</button>`
             : `<span class="dbc-pending-label">Complete earlier scripts first</span>`}
         ${filmed
