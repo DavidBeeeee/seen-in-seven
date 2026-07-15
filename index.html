@@ -346,28 +346,7 @@
   <div class="q1-progress">Question 4: Your Friction Point</div>
   <h2 class="screen-title">What's the main thing holding you back from <span class="accent">posting regularly?</span></h2>
   <p class="screen-sub">Pick the closest answer, or scroll down and use your own words if none of these quite fit.</p>
-  <div class="choice-grid">
-    <div class="choice-card" onclick="autoAdvance(this,'blocker','ideas')">
-      <span class="card-emoji">🧠</span>
-      <div class="card-title">I don't know what to say.</div>
-      <div class="card-sub">I stare at the camera and go completely blank.</div>
-    </div>
-    <div class="choice-card" onclick="autoAdvance(this,'blocker','camera')">
-      <span class="card-emoji">😬</span>
-      <div class="card-title">I don't like how I come across.</div>
-      <div class="card-sub">My voice, face, energy, or delivery makes me dislike my videos.</div>
-    </div>
-    <div class="choice-card" onclick="autoAdvance(this,'blocker','care')">
-      <span class="card-emoji">👀</span>
-      <div class="card-title">I'm worried people won't care.</div>
-      <div class="card-sub">I don't want to post into silence or feel embarrassed.</div>
-    </div>
-    <div class="choice-card" onclick="autoAdvance(this,'blocker','procrastinating')">
-      <span class="card-emoji">⏰</span>
-      <div class="card-title">I keep putting it off.</div>
-      <div class="card-sub">I've been meaning to start, but life just keeps happening.</div>
-    </div>
-  </div>
+  <div class="choice-grid" id="blocker-choice-grid"></div>
   <div class="scroll-feature-cue">Keep scrolling for the new feature ↓</div>
   <div class="choice-custom first-custom-feature">
     <div class="feature-inline-head">
@@ -387,28 +366,7 @@
   <div class="q1-progress">Question 2: Finding Your Level</div>
   <h2 class="screen-title">What are you <span class="accent">building toward</span> right now?</h2>
   <p class="screen-sub">This shapes everything about what your videos should say and who they're for.</p>
-  <div class="choice-grid">
-    <div class="choice-card" onclick="autoAdvance(this,'business','yes')">
-      <span class="card-emoji">🚀</span>
-      <div class="card-title">I have an active business I'm growing.</div>
-      <div class="card-sub">I have clients, an offer, a service, or products I am intentionally selling or sharing.</div>
-    </div>
-    <div class="choice-card" onclick="autoAdvance(this,'business','building')">
-      <span class="card-emoji">🔨</span>
-      <div class="card-title">I'm in the early stages of building something.</div>
-      <div class="card-sub">I have a direction but haven't fully launched yet.</div>
-    </div>
-    <div class="choice-card" onclick="autoAdvance(this,'business','no')">
-      <span class="card-emoji">🌱</span>
-      <div class="card-title">Not yet... still figuring out my thing.</div>
-      <div class="card-sub">I want to start creating but I am still exploring what I want to say.</div>
-    </div>
-    <div class="choice-card" onclick="autoAdvance(this,'business','story')">
-      <span class="card-emoji">🧭</span>
-      <div class="card-title">I'm mostly sharing my story and lived experience.</div>
-      <div class="card-sub">I may build something later, but right now I need to show up and be seen with zero agenda.</div>
-    </div>
-  </div>
+  <div class="choice-grid" id="business-choice-grid"></div>
   <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 

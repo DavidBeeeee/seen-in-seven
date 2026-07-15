@@ -470,7 +470,9 @@ function goNext() {
       length: state.topicFreewrite.length
     });
   }
-  if (nextId === 'screen-content-intent') renderContentIntentGrid();
+  if (nextId === 'screen-3') renderChoiceGrid(BUSINESS_OPTIONS, 'business', 'business-choice-grid');
+  else if (nextId === 'screen-2a') renderChoiceGrid(BLOCKER_OPTIONS, 'blocker', 'blocker-choice-grid');
+  else if (nextId === 'screen-content-intent') renderContentIntentGrid();
   else if (nextId === 'screen-commit-pain') renderCommitmentCards('pain');
   else if (nextId === 'screen-commit-desire') renderCommitmentCards('desire');
   else if (nextId === 'screen-6') renderCommitmentDeclaration();
@@ -494,6 +496,8 @@ function goBack() {
     currentIndex--;
     const prevId = screenOrder[currentIndex];
     if (prevId === 'screen-checklist') renderTalkContext();
+    else if (prevId === 'screen-3') renderChoiceGrid(BUSINESS_OPTIONS, 'business', 'business-choice-grid');
+    else if (prevId === 'screen-2a') renderChoiceGrid(BLOCKER_OPTIONS, 'blocker', 'blocker-choice-grid');
     else if (prevId === 'screen-content-intent') renderContentIntentGrid();
     else if (prevId === 'screen-commit-pain') renderCommitmentCards('pain');
     else if (prevId === 'screen-commit-desire') renderCommitmentCards('desire');
@@ -905,6 +909,22 @@ const CONTENT_INTENT_OPTIONS = [
   {e:'🤷', v:'unsure', t:"I'm not sure yet.", s:'I will figure it out as I go. Help me find my footing first.'}
 ];
 
+// screen-2a — "what's holding you back from posting" (autoAdvance sets state.blocker)
+const BLOCKER_OPTIONS = [
+  {e:'🧠', v:'ideas', t:"I don't know what to say.", s:'I stare at the camera and go completely blank.'},
+  {e:'😬', v:'camera', t:"I don't like how I come across.", s:'My voice, face, energy, or delivery makes me dislike my videos.'},
+  {e:'👀', v:'care', t:"I'm worried people won't care.", s:"I don't want to post into silence or feel embarrassed."},
+  {e:'⏰', v:'procrastinating', t:'I keep putting it off.', s:"I've been meaning to start, but life just keeps happening."}
+];
+
+// screen-3 — "what are you building toward" (autoAdvance sets state.business)
+const BUSINESS_OPTIONS = [
+  {e:'🚀', v:'yes', t:"I have an active business I'm growing.", s:'I have clients, an offer, a service, or products I am intentionally selling or sharing.'},
+  {e:'🔨', v:'building', t:"I'm in the early stages of building something.", s:"I have a direction but haven't fully launched yet."},
+  {e:'🌱', v:'no', t:'Not yet... still figuring out my thing.', s:'I want to start creating but I am still exploring what I want to say.'},
+  {e:'🧭', v:'story', t:"I'm mostly sharing my story and lived experience.", s:'I may build something later, but right now I need to show up and be seen with zero agenda.'}
+];
+
 const COMMITMENT_COPY = {
   pain: {
     1: [
@@ -959,6 +979,24 @@ function renderContentIntentGrid() {
     const c = document.createElement('div');
     c.className = 'choice-card' + (p2.contentIntent === o.v ? ' selected' : '');
     c.onclick = function(){ selectContentIntent(o, this); };
+    c.innerHTML = '<span class="card-emoji">' + o.e + '</span><div class="card-title">' + escapeHTML(o.t) + '</div><div class="card-sub">' + escapeHTML(o.s) + '</div>';
+    grid.appendChild(c);
+  });
+}
+
+// Shared renderer for static autoAdvance choice-card screens (screen-2a,
+// screen-3). Mirrors renderContentIntentGrid()'s DOM-construction style,
+// but wires cards to autoAdvance(this, key, value) instead of a
+// select-and-stay handler, since these screens navigate away immediately
+// on click and don't need to redraw a "selected" state.
+function renderChoiceGrid(options, key, containerId) {
+  const grid = document.getElementById(containerId);
+  if (!grid) return;
+  grid.innerHTML = '';
+  options.forEach(o => {
+    const c = document.createElement('div');
+    c.className = 'choice-card';
+    c.onclick = function(){ autoAdvance(this, key, o.v); };
     c.innerHTML = '<span class="card-emoji">' + o.e + '</span><div class="card-title">' + escapeHTML(o.t) + '</div><div class="card-sub">' + escapeHTML(o.s) + '</div>';
     grid.appendChild(c);
   });

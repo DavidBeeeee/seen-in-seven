@@ -4,7 +4,7 @@
     {
       "name": "Static File Server",
       "runtimeExecutable": "python3",
-      "runtimeArgs": ["-c", "import os,http.server,socketserver; os.chdir('/Users/flutemusik/Downloads/777 Project'); socketserver.TCPServer.allow_reuse_address=True; httpd=socketserver.TCPServer(('',3000),http.server.SimpleHTTPRequestHandler); print('Serving on port 3000'); httpd.serve_forever()"],
+      "runtimeArgs": [".claude/serve.py"],
       "port": 3000
     }
   ]

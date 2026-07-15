@@ -1102,21 +1102,12 @@ body::before {
     justify-content: flex-start;
     align-self: stretch;
   }
-  .theme-opt {
-    font-size: 10px !important;
-    padding: 1px 2px !important;
-  }
   .header-bottom-row {
     margin-top: auto;
   }
-  .header-settings-btn {
-    font-size: 10px !important;
-    padding: 2px 4px !important;
-  }
-  .btn-db-header {
-    font-size: 9px !important;
-    padding: 2px 6px !important;
-  }
+  /* .theme-opt / .header-settings-btn / .btn-db-header mobile sizing lives
+     further down, physically after their base rules, so normal cascade
+     order applies it without needing !important. */
 
   /* Screens */
   .screen {
@@ -1295,10 +1286,15 @@ body::before {
 
 /* ── PROGRESS BAR LEVEL COMPLETE ── */
 .progress-l1-complete #progress-fill {
-  background: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd) !important;
+  /* No !important needed — this ID+class selector already outranks the
+     bare #progress-fill rule above by specificity. */
+  background: linear-gradient(90deg, #3b82f6, #60a5fa, #93c5fd);
 }
 .progress-l2-complete #progress-fill-l2 {
   animation: progressGlow 1.5s ease-in-out infinite;
+  /* !important is required here — js/app.js sets fillL2.style.opacity
+     inline in several places, and only !important can override an
+     inline style regardless of CSS specificity. */
   opacity: 1 !important;
 }
 @keyframes progressGlow {
@@ -1646,6 +1642,9 @@ body::before {
   line-height:1.85; color:var(--cyan);
 }
 
+/* Print stylesheet — !important here is intentional. It forces the
+   printed page to override the entire screen-media styling regardless
+   of theme, in-app state, or specificity elsewhere in the file. */
 @media print {
   #progress-bar-wrap,.btn-row,.btn-filmed,.cta-section { display:none!important; }
   .screen { padding:20px; }
@@ -1709,6 +1708,14 @@ body::before {
 .vt-row-label { font-size:9px; font-weight:800; letter-spacing:.1em; color:var(--muted); margin-bottom:2px; }
 .vt-l2-label { color:rgb(167,139,250); }
 .vt-l1-ghost { opacity:0.45; transform:scale(0.88); }
+/* !important left in place through .vt-plan-l2 below and the second
+   .vt-done/.vt-skipped/.vt-locked-in/.vt-ready block further down —
+   these classes combine on the same tracker dot across level (L1/L2),
+   status (done/ready/locked/skipped), and view context (video-intro vs
+   dashboard), and the current cascade order between all of them was
+   already carefully tuned this session. Left untouched deliberately;
+   revisit as its own focused pass with full visual regression testing
+   across every state combination, not folded into a general cleanup. */
 .vt-l2-item { background:rgba(167,139,250,0.08)!important; border-color:rgba(167,139,250,0.25)!important; }
 .vt-l2-item .vt-label, .vt-l2-item .vt-status { color:rgb(167,139,250)!important; }
 .vt-l2-item.vt-locked {
@@ -1742,7 +1749,7 @@ body::before {
 }
 @keyframes arrowBounce { 0%,100%{transform:translateY(0);opacity:0.85;} 50%{transform:translateY(8px);opacity:1;} }
 
-/* Print styles */
+/* Print styles — !important intentional, same reasoning as above. */
 @media print {
   #progress-bar-wrap, .btn-row, .cta-section, .plan-edit-link,
   .plan-view-btn, #mission-card button, #mission-card a[href],
@@ -2279,6 +2286,7 @@ body::before {
   display:none !important;
 }
 
+/* Print styles — !important intentional, same reasoning as above. */
 @media print {
   #pdf-modal-overlay, #regen-modal-overlay { display:none !important; }
 }
@@ -2340,7 +2348,7 @@ body::before {
 
 /* Mobile 2-col grid — hide status badge in header so title has full width */
 @media (max-width:480px) {
-  .db-video-grid { grid-template-columns:1fr 1fr !important; gap:8px; }
+  .db-video-grid { grid-template-columns:1fr 1fr; gap:8px; }
   .dbc-preview { display:none; }
   .dbc-header .dbc-status { display:none; }
   .dbc-title { font-size:13px; }
@@ -2633,6 +2641,14 @@ body::before {
 /* ── SETTINGS GEAR — always visible ─────────────────── */
 .header-settings-btn {
   flex-shrink:0;
+}
+/* Mobile sizing — placed after the base rules above (and .btn-db-header
+   further up the file) so equal-specificity cascade order applies these
+   without !important. Must stay below both base rules to keep working. */
+@media (max-width: 600px) {
+  .theme-opt { font-size: 10px; padding: 1px 2px; }
+  .header-settings-btn { font-size: 10px; padding: 2px 4px; }
+  .btn-db-header { font-size: 9px; padding: 2px 6px; }
 }
 
 /* ── DASHBOARD LOCKED CARD ───────────────────────────── */
