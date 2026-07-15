@@ -782,11 +782,17 @@ function renderProfile(r) {
 
 function renderJourney(r) {
   const postedRows = (r.progress || []).filter(p => p.posted || p.post_url);
+  // post_url is user-supplied. h() escapes HTML but a javascript: URL
+  // survives escaping and would execute in the ADMIN's session on click —
+  // only linkify http(s), render anything else as inert text.
+  const safeUrl = u => /^https?:\/\//i.test(String(u || '').trim());
   const postedHtml = postedRows.length
     ? postedRows.map(p =>
         kv('Posted V' + (Number(p.video_index) + 1),
           p.post_url
-            ? '<a href="' + h(p.post_url) + '" target="_blank" rel="noopener" style="color:var(--teal);word-break:break-all;">' + h(p.post_url) + '</a>'
+            ? (safeUrl(p.post_url)
+                ? '<a href="' + h(p.post_url) + '" target="_blank" rel="noopener" style="color:var(--teal);word-break:break-all;">' + h(p.post_url) + '</a>'
+                : '<span style="word-break:break-all;">' + h(p.post_url) + '</span>')
             : h('Self-reported, no link'))
       ).join('')
     : '';

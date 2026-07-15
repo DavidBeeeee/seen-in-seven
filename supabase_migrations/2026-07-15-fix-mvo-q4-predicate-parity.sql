@@ -1,0 +1,20 @@
+-- Parity fix found during the gamification branch code review.
+--
+-- compute_user_points() checked the MVO Q4 answer with
+--   coalesce(v_ob.mvo_q4->>'village_full', v_ob.mvo_q4->>'crack_full', '') <> ''
+-- but coalesce returns the FIRST NON-NULL value, not the first non-empty
+-- one. A row with village_full = '' (empty string, not null) and
+-- crack_full = 'real answer' evaluated to '' and awarded nothing, while
+-- the client mirror in js/points.js
+--   (_filled(q4.village_full) || _filled(q4.crack_full))
+-- correctly awarded the points — a client/server divergence.
+--
+-- Fix: explicit OR of two per-key non-emptiness checks, matching the
+-- client exactly:
+--   if coalesce(v_ob.mvo_q4->>'village_full', '') <> ''
+--      or coalesce(v_ob.mvo_q4->>'crack_full', '') <> '' then
+--
+-- Applied as a full CREATE OR REPLACE of compute_user_points() with only
+-- that predicate changed; everything else identical to
+-- 2026-07-15-add-points.sql. See that file for the function body; the
+-- live database carries the corrected version.

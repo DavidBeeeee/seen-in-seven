@@ -116,7 +116,11 @@ begin
       pts := (r->>'message_context')::int; total := total + pts;
       b := b || jsonb_build_object('message_context', pts);
     end if;
-    if coalesce(v_ob.mvo_q4->>'village_full', v_ob.mvo_q4->>'crack_full', '') <> '' then
+    -- Explicit OR (not coalesce chaining): coalesce returns the first
+    -- NON-NULL value, so village_full = '' would mask a real crack_full.
+    -- Must match js/points.js: _filled(village_full) || _filled(crack_full).
+    if coalesce(v_ob.mvo_q4->>'village_full', '') <> ''
+       or coalesce(v_ob.mvo_q4->>'crack_full', '') <> '' then
       pts := (r->>'mvo_q4_answered')::int; total := total + pts;
       b := b || jsonb_build_object('mvo_q4_answered', pts);
     end if;
