@@ -22,7 +22,9 @@
 html { scroll-behavior:smooth; }
 
 body {
-  background: var(--bg);
+  background:
+    linear-gradient(180deg, #081c1c 0%, #0D2828 34%, #0b2424 68%, #071a1e 100%)
+    fixed;
   color: var(--cream);
   font-family: 'Nunito', sans-serif;
   font-size: 19px;
@@ -31,15 +33,35 @@ body {
   overflow-x: hidden;
 }
 
+/* Atmosphere: two aurora glows that drift almost imperceptibly, plus a
+   fine grain layer (::after) — the depth that makes flat panels feel
+   like a lit room instead of a color fill. */
 body::before {
   content:'';
-  position:fixed; inset:0;
+  position:fixed; inset:-20%;
   background:
-    radial-gradient(ellipse 100% 60% at 15% 5%,  rgba(50,184,184,0.06) 0%, transparent 55%),
-    radial-gradient(ellipse 70%  50% at 85% 85%, rgba(50,184,184,0.04) 0%, transparent 55%),
-    radial-gradient(ellipse 50%  40% at 50% 50%, rgba(50,184,184,0.03) 0%, transparent 60%);
+    radial-gradient(ellipse 46% 34% at 18% 8%,  rgba(50,184,184,0.16) 0%, transparent 62%),
+    radial-gradient(ellipse 40% 30% at 84% 88%, rgba(200,168,75,0.10) 0%, transparent 60%),
+    radial-gradient(ellipse 34% 26% at 78% 18%, rgba(125,216,216,0.08) 0%, transparent 58%),
+    radial-gradient(ellipse 30% 24% at 30% 78%, rgba(50,184,184,0.07) 0%, transparent 55%);
   pointer-events:none;
   z-index:0;
+  animation: auroraDrift 46s ease-in-out infinite alternate;
+}
+@keyframes auroraDrift {
+  from { transform: translate3d(-1.5%, -1%, 0) scale(1); }
+  to   { transform: translate3d(1.5%, 1.5%, 0) scale(1.05); }
+}
+body::after {
+  content:'';
+  position:fixed; inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+  opacity:0.035;
+  pointer-events:none;
+  z-index:0;
+}
+@media (prefers-reduced-motion: reduce) {
+  body::before { animation:none; }
 }
 
 /* ── PROGRESS BAR ── */
@@ -2788,22 +2810,33 @@ body::before {
 .dbc-post-url:focus { outline:none; border-color:var(--teal); }
 .dbc-post-url::placeholder { color:rgba(126,184,212,0.4); }
 
+
 /* ══════════════════════════════════════════════════════
-   REFINED-WARM VISUAL LAYER
-   Calm, premium depth for a 45-60 first-time-creator
-   audience. Transform/opacity animations only. Appended
-   after all base rules so equal-specificity declarations
-   here win by source order.
+   SIGNATURE VISUAL LANGUAGE
+   The stunning pass. Glass surfaces lit from above, gradient
+   typography, a jewel-toned primary action, staggered card
+   entrances. Calm and premium for a 45-60 first-time-creator
+   audience — but unmistakably transformed. Transform/opacity
+   animations only; both themes; reduced-motion respected.
 ══════════════════════════════════════════════════════ */
 
-/* ── Softer, longer screen entrance ── */
-.screen.anim-in { animation: screenRise 0.5s cubic-bezier(0.22, 0.9, 0.3, 1) forwards; }
-@keyframes screenRise {
-  from { opacity:0; transform:translateY(14px); }
-  to   { opacity:1; transform:translateY(0); }
+/* ── Gradient display typography ── */
+@supports (-webkit-background-clip: text) or (background-clip: text) {
+  .welcome-title .l1,
+  .screen-title .accent,
+  .db-name {
+    background: linear-gradient(120deg, #7DD8D8 0%, #32B8B8 45%, #4ade80 110%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+  }
+}
+.welcome-eyebrow, .eyebrow, .q1-progress {
+  letter-spacing: 0.26em;
 }
 
-/* ── Ambient depth on the core card families ── */
+/* ── Glass card language: lit from above ── */
 .choice-card,
 .journal-card,
 .recap-card,
@@ -2815,64 +2848,207 @@ body::before {
 .check-item,
 .commit-wrap,
 .db-points-panel,
-.filmed-card {
-  box-shadow: 0 1px 2px rgba(0,0,0,0.18), 0 8px 24px rgba(0,0,0,0.12);
+.filmed-card,
+.choice-custom,
+.recap-hero-section {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.012) 42%, rgba(255,255,255,0) 100%),
+    rgba(17,49,49,0.62);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border-color: rgba(168,222,222,0.14);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.08),
+    0 1px 2px rgba(0,0,0,0.25),
+    0 12px 34px rgba(0,0,0,0.22);
 }
 .choice-card:hover {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.22), 0 14px 34px rgba(0,0,0,0.2), 0 0 0 1px rgba(50,184,184,0.14);
+  border-color: rgba(50,184,184,0.45);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    0 2px 4px rgba(0,0,0,0.25),
+    0 18px 44px rgba(0,0,0,0.3),
+    0 0 24px rgba(50,184,184,0.14);
 }
-.db-video-card:hover,
-.partner-card:hover {
-  box-shadow: 0 2px 4px rgba(0,0,0,0.22), 0 12px 30px rgba(0,0,0,0.18);
+.db-video-card:hover, .partner-card:hover {
+  border-color: rgba(50,184,184,0.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255,255,255,0.1),
+    0 2px 4px rgba(0,0,0,0.25),
+    0 16px 38px rgba(0,0,0,0.28);
 }
-.partner-card { transition: box-shadow 0.2s, transform 0.2s; }
-.partner-card:hover { transform: translateY(-2px); }
+.partner-card { transition: box-shadow 0.22s, transform 0.22s, border-color 0.22s; }
+.partner-card:hover { transform: translateY(-3px); }
 
-/* ── Button feel: gentle press + primary glow ── */
-.btn-primary, .btn-secondary, .btn-filmed, .btn-cta,
-.db-hero-cta, .btn-to-dashboard, .settings-btn-primary,
-.partner-cta, .dbc-link.primary {
-  transition: transform 0.14s ease, box-shadow 0.2s ease, background 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+/* ── Signature gradient-border feature cards ── */
+.db-points-panel, .db-hero {
+  position: relative;
+  border: 1px solid transparent;
+  background:
+    linear-gradient(rgba(15,44,44,0.86), rgba(13,40,40,0.92)) padding-box,
+    linear-gradient(135deg, rgba(50,184,184,0.55), rgba(168,222,222,0.12) 40%, rgba(200,168,75,0.4)) border-box;
+  border-radius: 16px;
 }
-.btn-primary:active, .btn-secondary:active, .btn-filmed:active,
-.btn-cta:active, .db-hero-cta:active, .btn-to-dashboard:active,
-.settings-btn-primary:active, .partner-cta:active {
+.db-hero {
+  padding: 26px 28px;
+  margin-bottom: 22px;
+  box-shadow: 0 18px 50px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.07);
+}
+
+/* ── Header: floating glass bar with a gradient hairline ── */
+#progress-bar-wrap {
+  background: rgba(8,26,26,0.78);
+  backdrop-filter: blur(20px) saturate(1.3);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  border-bottom: none;
+  box-shadow: 0 10px 34px rgba(0,0,0,0.28);
+}
+#progress-bar-wrap::after {
+  content:'';
+  position:absolute; left:0; right:0; bottom:0; height:1px;
+  background: linear-gradient(90deg, transparent, rgba(50,184,184,0.5) 30%, rgba(200,168,75,0.35) 70%, transparent);
+  pointer-events:none;
+}
+
+/* ── Jewel primary action ── */
+.btn-primary, .db-hero-cta, .settings-btn-primary, .btn-cta, .btn-print {
+  background: linear-gradient(120deg, #2fb3b3 0%, #38cfc0 55%, #4ade80 130%);
+  color: #06282a;
+  box-shadow: 0 4px 16px rgba(50,184,184,0.24), inset 0 1px 0 rgba(255,255,255,0.28);
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.14s ease, box-shadow 0.22s ease, filter 0.22s ease;
+}
+.btn-primary:hover, .db-hero-cta:hover, .settings-btn-primary:hover, .btn-cta:hover, .btn-print:hover {
+  background: linear-gradient(120deg, #35c4c4 0%, #40dccd 55%, #56e690 130%);
+  box-shadow: 0 8px 26px rgba(50,184,184,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+  transform: translateY(-1px);
+}
+.btn-primary:active, .db-hero-cta:active, .settings-btn-primary:active, .btn-cta:active, .btn-print:active,
+.btn-secondary:active, .btn-filmed:active, .partner-cta:active, .btn-to-dashboard:active {
   transform: scale(0.975);
 }
-.btn-primary:hover, .db-hero-cta:hover {
-  box-shadow: 0 6px 20px rgba(50,184,184,0.32);
+/* Shine sweep on hover */
+.btn-primary::after, .db-hero-cta::after {
+  content:'';
+  position:absolute; top:0; bottom:0; left:-80%; width:55%;
+  background: linear-gradient(105deg, transparent, rgba(255,255,255,0.34), transparent);
+  transform: skewX(-20deg);
+  transition: left 0.55s ease;
+  pointer-events:none;
 }
-.btn-filmed:hover { box-shadow: 0 8px 26px rgba(45,212,191,0.3); }
+.btn-primary:hover::after, .db-hero-cta:hover::after { left: 130%; }
 
-/* ── Input focus: soft ring instead of bare border swap ── */
+/* ── Inputs: soft focus halo ── */
 .text-input:focus, .settings-input:focus, .dbc-post-url:focus, .search:focus {
   border-color: var(--teal);
-  box-shadow: 0 0 0 3px rgba(50,184,184,0.16);
+  box-shadow: 0 0 0 3px rgba(50,184,184,0.16), inset 0 1px 3px rgba(0,0,0,0.18);
 }
 
-/* ── Settings panel: quiet glass ── */
+/* ── Settings panel: deep glass ── */
 .settings-panel {
-  background: rgba(10,31,31,0.92);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  box-shadow: -18px 0 50px rgba(0,0,0,0.35);
+  background: rgba(9,29,29,0.88);
+  backdrop-filter: blur(22px) saturate(1.2);
+  -webkit-backdrop-filter: blur(22px) saturate(1.2);
+  box-shadow: -22px 0 60px rgba(0,0,0,0.42);
 }
 
-/* ── Choice-card selection: a touch more ceremony ── */
-.choice-card.selecting {
-  box-shadow: 0 0 0 2px rgba(50,184,184,0.4), 0 10px 30px rgba(50,184,184,0.18);
+/* ── Staggered card entrances on screen change ── */
+.screen.anim-in { animation: screenRise 0.5s cubic-bezier(0.22, 0.9, 0.3, 1) forwards; }
+@keyframes screenRise {
+  from { opacity:0; transform:translateY(14px); }
+  to   { opacity:1; transform:translateY(0); }
+}
+.screen.anim-in .choice-card {
+  opacity: 0;
+  animation: cardRise 0.5s cubic-bezier(0.22, 0.9, 0.3, 1) forwards;
+}
+.screen.anim-in .choice-card:nth-child(1) { animation-delay: 0.06s; }
+.screen.anim-in .choice-card:nth-child(2) { animation-delay: 0.13s; }
+.screen.anim-in .choice-card:nth-child(3) { animation-delay: 0.2s; }
+.screen.anim-in .choice-card:nth-child(4) { animation-delay: 0.27s; }
+.screen.anim-in .choice-card:nth-child(n+5) { animation-delay: 0.34s; }
+@keyframes cardRise {
+  from { opacity:0; transform:translateY(18px) scale(0.985); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
 }
 
-/* ── Dashboard hero ring: gentle presence ── */
-.db-hero-ring svg { filter: drop-shadow(0 4px 14px rgba(50,184,184,0.18)); }
+/* ── Progress bar: living shimmer ── */
+#progress-track { overflow:hidden; border-radius:3px; }
+#progress-fill, #progress-fill-l2 { position:relative; }
+#progress-fill::after, #progress-fill-l2::after, .dbp-bar-fill::after {
+  content:'';
+  position:absolute; inset:0;
+  background: linear-gradient(100deg, transparent 30%, rgba(255,255,255,0.35) 50%, transparent 70%);
+  background-size: 220% 100%;
+  animation: barShimmer 3.2s ease-in-out infinite;
+}
+.dbp-bar { position:relative; }
+.dbp-bar-fill { position:relative; overflow:hidden; }
+@keyframes barShimmer {
+  0%   { background-position: 130% 0; }
+  60%, 100% { background-position: -90% 0; }
+}
 
-/* ── Calm everything down for reduced-motion users ── */
+/* ── Dashboard hero ring: gentle float + glow ── */
+.db-hero-ring svg {
+  filter: drop-shadow(0 6px 20px rgba(50,184,184,0.28));
+  animation: ringFloat 5.5s ease-in-out infinite;
+}
+@keyframes ringFloat {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-5px); }
+}
+
+/* ── Vault gems: idle glisten on earned gems ── */
+.vault-gem-slot.earned .vault-gem-svg {
+  animation: gemGlisten 4.4s ease-in-out infinite;
+}
+.vault-gem-slot.earned:nth-child(2n) .vault-gem-svg { animation-delay: 1.4s; }
+.vault-gem-slot.earned:nth-child(3n) .vault-gem-svg { animation-delay: 2.6s; }
+@keyframes gemGlisten {
+  0%, 100% { transform: scale(1); filter: brightness(1); }
+  50%      { transform: scale(1.05); filter: brightness(1.22); }
+}
+.vault-money {
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.04), rgba(255,255,255,0) 50%),
+    linear-gradient(135deg, rgba(74,222,128,0.09), rgba(245,201,76,0.08));
+  border-color: rgba(200,168,75,0.28);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* ── Gradient hairline dividers ── */
+.recap-divider,
+.db-hero + .db-points-panel::before {
+  background: linear-gradient(90deg, transparent, rgba(50,184,184,0.45), rgba(200,168,75,0.3), transparent);
+}
+
+/* ── Themed scrollbar + selection ── */
+::selection { background: rgba(50,184,184,0.35); color: var(--cream); }
+::-webkit-scrollbar { width: 10px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: rgba(50,184,184,0.28);
+  border-radius: 99px;
+  border: 2px solid rgba(8,26,26,0.9);
+}
+::-webkit-scrollbar-thumb:hover { background: rgba(50,184,184,0.45); }
+
+/* ── Reduced motion: still gorgeous, just still ── */
 @media (prefers-reduced-motion: reduce) {
-  .screen.anim-in, .screen.anim-out { animation: none; }
-  .partner-card, .choice-card, .db-video-card,
-  .btn-primary, .btn-secondary, .btn-filmed, .btn-cta,
-  .db-hero-cta, .btn-to-dashboard, .settings-btn-primary, .partner-cta {
+  .screen.anim-in, .screen.anim-out,
+  .screen.anim-in .choice-card,
+  #progress-fill::after, #progress-fill-l2::after, .dbp-bar-fill::after,
+  .db-hero-ring svg,
+  .vault-gem-slot.earned .vault-gem-svg,
+  .btn-primary::after, .db-hero-cta::after {
+    animation: none;
+  }
+  .screen.anim-in .choice-card { opacity: 1; }
+  .partner-card, .btn-primary, .db-hero-cta, .settings-btn-primary, .btn-cta, .btn-print {
     transition: none;
   }
-  .choice-card:hover, .db-video-card:hover, .partner-card:hover { transform: none; }
+  .choice-card:hover, .db-video-card:hover, .partner-card:hover,
+  .btn-primary:hover, .db-hero-cta:hover { transform: none; }
 }
