@@ -219,6 +219,8 @@ const state = {
   mvoQ2:null, mvoQ3:null, mvoQ4:null,
   topicFreewrite: '',
   l1VideoStatus: null,
+  videoPosted:{},   // { [videoIndex]: { posted:bool, url:string } } — points
+  engage:{},        // { sponsor_vubli, sponsor_temu, graduation, call } — points
   phase2: {
     custom:{},
     contentMode:'simple',
@@ -260,6 +262,14 @@ let maxProgressL2Pct = 0;  // L2 green bar — never decreases
 
 const SAVE_KEY = 'bwb_challenge_v1';
 let authScreenMode = 'signin';
+
+// ── ENGAGEMENT LINKS ──────────────────────────────────
+// David Bee: paste the real URLs here when ready. While a URL is empty,
+// its dashboard card stays hidden — nothing broken shows to users.
+const ENGAGE_LINKS = {
+  graduation: '',   // Graduation Event page/replay URL
+  schedule: ''      // 1-1 call scheduling URL
+};
 
 // ── THEME ─────────────────────────────────────────────
 const THEME_KEY = 'sis_theme_v1';
@@ -3672,6 +3682,9 @@ function lockInScript() {
   const idx = currentVideoIndex;
   state.videos['locked_v' + idx] = true;
   saveProgress();
+  // Persist lock server-side (points: first lock per video). Queued if
+  // anonymous, flushed after auth.
+  if (typeof queueLockSave === 'function') queueLockSave(idx, state.level || 1);
   if (typeof logEvent === 'function') {
     logEvent('script_locked', {
       video_number: idx + 1,
@@ -4416,7 +4429,10 @@ function hasScriptAt(idx) {
 }
 
 function getNextScriptIndex(videos) {
-  return videos.findIndex((_, i) => !hasScriptAt(i));
+  // Skip videos the user explicitly skipped — the dashboard CTA should never
+  // route someone back into a video they chose to pass on. They can still
+  // return to a skipped video from its own card.
+  return videos.findIndex((_, i) => !hasScriptAt(i) && state.videoStatus[i] !== 'skipped');
 }
 
 function getNextUnfilmedIndex(videos) {
@@ -4430,6 +4446,199 @@ function hasFirstScriptPrep() {
     return !!(state.mvoQ2 || state.mvoQ3 || state.mvoQ4 || state.topicFreewrite || p2.knowledgeContext);
   }
   return !!(state.mvoQ2 || state.mvoQ3 || state.mvoQ4 || p2.firstScriptNotes);
+}
+
+// ── POINTS PANEL + WEALTH VAULT ───────────────────────
+// Dashboard strip (milestone + progress, tap to open) and the full vault:
+// eight faceted gems earned at milestones, a money pile that grows with
+// total points, and the numbered breakdown for people who love numbers.
+// Data comes from computePoints(state) in js/points.js.
+
+const POINTS_LABELS = {
+  onboarding_complete: 'Completed your onboarding',
+  starter_context: 'Shared your story and context',
+  audience_context: 'Described your audience',
+  message_context: 'Named your core message',
+  mvo_q4_answered: 'Answered the deep question',
+  first_script_notes: 'Added extra script notes',
+  scripts_generated: 'Scripts created',
+  all_seven_scripts: 'All 7 scripts complete',
+  scripts_locked: 'Scripts locked in',
+  videos_filmed: 'Videos filmed',
+  videos_posted: 'Videos posted',
+  post_url_bonus: 'Shared your video links',
+  sponsor_clicks: 'Explored the creator tools',
+  graduation_watched: 'Watched the Graduation Event',
+  call_scheduled: 'Scheduled your 1-1 with David Bee'
+};
+
+const GEM_COLORS = {
+  amethyst: ['#c4b5fd', '#7c3aed'],
+  topaz:    ['#fde68a', '#d97706'],
+  emerald:  ['#6ee7b7', '#059669'],
+  sapphire: ['#93c5fd', '#2563eb'],
+  ruby:     ['#fca5a5', '#dc2626'],
+  opal:     ['#c4b5fd', '#22d3ee'],
+  diamond:  ['#f0f9ff', '#60a5fa'],
+  gold:     ['#fde047', '#f59e0b']
+};
+
+function _gemSVG(gem, earned, size) {
+  const c = GEM_COLORS[gem] || GEM_COLORS.diamond;
+  const gid = 'gg-' + gem + (earned ? '-on' : '-off');
+  const light = earned ? c[0] : '#5a6b6b';
+  const dark = earned ? c[1] : '#2c3a3a';
+  const glow = earned ? `filter="url(#glow-${gem})"` : '';
+  return `<svg viewBox="0 0 64 64" width="${size}" height="${size}" class="vault-gem-svg${earned ? ' gem-earned' : ''}" aria-hidden="true">
+    <defs>
+      <linearGradient id="${gid}" x1="0" y1="0" x2="1" y2="1">
+        <stop offset="0%" stop-color="${light}"/>
+        <stop offset="100%" stop-color="${dark}"/>
+      </linearGradient>
+      ${earned ? `<filter id="glow-${gem}" x="-40%" y="-40%" width="180%" height="180%">
+        <feGaussianBlur stdDeviation="2.4" result="b"/>
+        <feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge>
+      </filter>` : ''}
+    </defs>
+    <g ${glow} opacity="${earned ? 1 : 0.45}">
+      <polygon points="22,12 42,12 52,26 32,54 12,26" fill="url(#${gid})"/>
+      <polygon points="22,12 42,12 38,26 26,26" fill="#ffffff" opacity="0.32"/>
+      <polygon points="22,12 26,26 12,26" fill="#ffffff" opacity="0.14"/>
+      <polygon points="42,12 52,26 38,26" fill="#000000" opacity="0.12"/>
+      <polygon points="12,26 26,26 32,54" fill="#000000" opacity="0.18"/>
+      <polygon points="38,26 52,26 32,54" fill="#000000" opacity="0.3"/>
+      <polygon points="26,26 38,26 32,54" fill="#ffffff" opacity="0.1"/>
+    </g>
+  </svg>`;
+}
+
+function _moneyPileSVG(ratio) {
+  // Wealth grows with points: bill stacks rise, coins pile up, one layer at
+  // a time. Pure visual metaphor; the numbers live in the breakdown below.
+  const steps = 6;
+  const visible = Math.max(ratio > 0 ? 1 : 0, Math.round(ratio * steps));
+  let bills = '';
+  for (let i = 0; i < 3; i++) {
+    const on = visible >= (i + 1) * 2;
+    const y = 46 - i * 9;
+    bills += `<g opacity="${on ? 1 : 0.12}">
+      <rect x="${14 + i * 3}" y="${y}" width="52" height="8" rx="2" fill="#2f9e63"/>
+      <rect x="${14 + i * 3}" y="${y}" width="52" height="8" rx="2" fill="none" stroke="#1c7a48" stroke-width="1"/>
+      <circle cx="${40 + i * 3}" cy="${y + 4}" r="2.6" fill="#c9f2dc" opacity="0.9"/>
+    </g>`;
+  }
+  let coins = '';
+  for (let i = 0; i < 3; i++) {
+    const on = visible >= i * 2 + 1;
+    const cx = 86 + (i % 2) * 14;
+    const cy = 50 - Math.floor(i / 2) * 9 - (i % 2) * 4;
+    coins += `<g opacity="${on ? 1 : 0.12}">
+      <ellipse cx="${cx}" cy="${cy}" rx="9" ry="7" fill="#f5c94c"/>
+      <ellipse cx="${cx}" cy="${cy - 1.5}" rx="9" ry="7" fill="#fde68a"/>
+      <text x="${cx}" y="${cy + 1.6}" text-anchor="middle" font-size="8" font-weight="800" fill="#b07d1a">$</text>
+    </g>`;
+  }
+  return `<svg viewBox="0 0 112 60" class="vault-money-svg" aria-hidden="true">${bills}${coins}</svg>`;
+}
+
+const MILESTONES_SEEN_KEY = 'sis_milestones_seen_v1';
+
+function buildPointsPanel() {
+  const pts = computePoints(state);
+  const wrap = document.createElement('div');
+  wrap.className = 'db-points-panel';
+  wrap.id = 'db-points-panel';
+
+  const current = pts.earnedCount > 0 ? pts.milestones[pts.earnedCount - 1] : null;
+  const stripTitle = current ? current.name : 'Just Getting Started';
+  const nextLine = pts.nextMilestone
+    ? (pts.nextMilestone.at - pts.total) + ' points to ' + pts.nextMilestone.name
+    : 'Every milestone earned. Incredible.';
+
+  const miniGems = pts.milestones.map(m => _gemSVG(m.gem, m.earned, 16)).join('');
+
+  const gemGrid = pts.milestones.map(m => `
+    <div class="vault-gem-slot${m.earned ? ' earned' : ''}" title="${escapeHTML(m.name)} at ${m.at} points">
+      ${_gemSVG(m.gem, m.earned, 44)}
+      <div class="vault-gem-name">${escapeHTML(m.name)}</div>
+      <div class="vault-gem-at">${m.earned ? 'Earned' : m.at + ' pts'}</div>
+    </div>`).join('');
+
+  const rows = Object.keys(pts.breakdown).map(k => {
+    const v = pts.breakdown[k];
+    const p = (typeof v === 'object') ? v.points : v;
+    const count = (typeof v === 'object' && v.count) ? ' ×' + v.count : '';
+    return `<div class="vault-row"><span>${escapeHTML(POINTS_LABELS[k] || k)}${count}</span><strong>+${p}</strong></div>`;
+  }).join('') || '<div class="vault-row muted-row"><span>Your first points are one step away</span></div>';
+
+  wrap.innerHTML = `
+    <button class="db-points-strip" onclick="toggleVaultPanel()" aria-expanded="false">
+      <div class="dbp-left">
+        <span class="dbp-eyebrow">Your Progress</span>
+        <span class="dbp-milestone">${escapeHTML(stripTitle)}</span>
+      </div>
+      <div class="dbp-mid">
+        <div class="dbp-bar"><div class="dbp-bar-fill" style="width:${pts.progressToNext}%"></div></div>
+        <span class="dbp-next">${pts.total} points · ${escapeHTML(nextLine)}</span>
+      </div>
+      <div class="dbp-right">
+        <span class="dbp-gems-mini">${miniGems}</span>
+        <span class="dbp-arrow" id="vault-arrow">▼</span>
+      </div>
+    </button>
+    <div class="vault-body" id="vault-body" style="display:none;">
+      <div class="vault-gems">${gemGrid}</div>
+      <div class="vault-money">
+        ${_moneyPileSVG(pts.maxTotal ? pts.total / pts.maxTotal : 0)}
+        <div class="vault-money-caption">Your wealth is building. ${pts.total} of ${pts.maxTotal} points.</div>
+      </div>
+      <div class="vault-breakdown">
+        <div class="vault-breakdown-title">How you earned it</div>
+        ${rows}
+      </div>
+    </div>`;
+
+  _checkMilestoneCelebration(pts, wrap);
+  return wrap;
+}
+
+function toggleVaultPanel() {
+  const body = document.getElementById('vault-body');
+  const arrow = document.getElementById('vault-arrow');
+  const strip = document.querySelector('.db-points-strip');
+  if (!body) return;
+  const open = body.style.display !== 'none';
+  body.style.display = open ? 'none' : 'block';
+  if (arrow) arrow.style.transform = open ? '' : 'rotate(180deg)';
+  if (strip) strip.setAttribute('aria-expanded', String(!open));
+}
+
+// Confetti + gem flash when a new milestone was crossed since last visit.
+// First-ever render just records the baseline so returning users are not
+// greeted with retroactive confetti spam.
+function _checkMilestoneCelebration(pts, wrap) {
+  let seen = null;
+  try { seen = localStorage.getItem(MILESTONES_SEEN_KEY); } catch(e) {}
+  if (seen === null) {
+    try { localStorage.setItem(MILESTONES_SEEN_KEY, String(pts.earnedCount)); } catch(e) {}
+    return;
+  }
+  const seenCount = parseInt(seen, 10) || 0;
+  if (pts.earnedCount > seenCount) {
+    try { localStorage.setItem(MILESTONES_SEEN_KEY, String(pts.earnedCount)); } catch(e) {}
+    setTimeout(() => {
+      launchConfetti();
+      const slots = wrap.querySelectorAll('.vault-gem-slot.earned');
+      const newest = slots[slots.length - 1];
+      if (newest) newest.classList.add('gem-just-earned');
+      // Auto-open the vault so they see what they just earned
+      const body = document.getElementById('vault-body');
+      if (body && body.style.display === 'none') toggleVaultPanel();
+    }, 600);
+  } else if (pts.earnedCount < seenCount) {
+    // Start-over path — resync quietly
+    try { localStorage.setItem(MILESTONES_SEEN_KEY, String(pts.earnedCount)); } catch(e) {}
+  }
 }
 
 function buildPlan(){
@@ -4515,6 +4724,13 @@ function buildPlan(){
     </div>`;
   output.appendChild(hero);
 
+  // ── POINTS PANEL + WEALTH VAULT ───────────────────────
+  if (typeof buildPointsPanel === 'function') {
+    try { output.appendChild(buildPointsPanel()); } catch(e) {
+      console.error('[SeenInSeven] buildPointsPanel threw: ' + e.message);
+    }
+  }
+
   // ── MISSION — collapsed by default ────────────────────
   const missionLine = buildMissionManifesto(name, commitmentText);
 
@@ -4545,6 +4761,7 @@ function buildPlan(){
 
   videos.forEach((v, i) => {
     const filmed = videoStatus[i] === 'filmed';
+    const skipped = videoStatus[i] === 'skipped';
     const hasScript = !!state.videos['script_v' + i];
     const isLocked = !!state.videos['locked_v' + i];
     const script = state.videos['script_v' + i] || '';
@@ -4552,11 +4769,12 @@ function buildPlan(){
     const preview = clean ? clean.substring(0, 90) + (clean.length > 90 ? '…' : '') : 'Script not yet generated';
 
     const statusClass = filmed ? 'card-filmed' : hasScript ? 'card-ready' : 'card-pending';
-    const statusIcon = filmed ? '✓' : isLocked ? '🔒' : hasScript ? '✎' : '–';
-    const statusLabel = filmed ? 'Filmed' : isLocked ? 'Locked' : hasScript ? 'Draft' : 'Pending';
+    const statusIcon = filmed ? '✓' : isLocked ? '🔒' : hasScript ? '✎' : skipped ? '✕' : '–';
+    const statusLabel = filmed ? 'Filmed' : isLocked ? 'Locked' : hasScript ? 'Draft' : skipped ? 'Skipped' : 'Pending';
 
+    // Skipped videos are never locked — the user chose to pass and can return anytime.
     const card = document.createElement('div');
-    card.className = 'db-video-card ' + statusClass + (!hasScript && i !== nextScriptIdx ? ' card-locked' : '');
+    card.className = 'db-video-card ' + statusClass + (!hasScript && !skipped && i !== nextScriptIdx ? ' card-locked' : '');
     card.id = 'dbcard-' + i;
     card.innerHTML = `
       <div class="dbc-header">
@@ -4571,7 +4789,7 @@ function buildPlan(){
       <div class="dbc-links">
         ${hasScript
           ? `<button class="dbc-link primary" onclick="editScript(${i})">View →</button>`
-          : i === nextScriptIdx
+          : (i === nextScriptIdx || skipped)
             ? `<button class="dbc-link primary" onclick="resumeToVideo(${i})">Generate →</button>`
             : `<span class="dbc-pending-label">Complete earlier scripts first</span>`}
         ${filmed
@@ -4580,7 +4798,18 @@ function buildPlan(){
             ? `<button class="dbc-link" onclick="markFilmedFromPlan(${i})">Mark Filmed</button>`
             : ''}
         ${hasScript ? `<button class="dbc-link" onclick="copyScriptFromDashboard(${i}, this)">Copy</button> <button class="dbc-link" onclick="exportSinglePDF(${i})">PDF</button> <button class="dbc-link" onclick="openVersionModal(${i})">Versions</button>` : ''}
-      </div>`;
+      </div>
+      ${filmed ? (() => {
+        const vp = (state.videoPosted && state.videoPosted[i]) || {};
+        return `<div class="dbc-posted-row">
+          <label class="dbc-posted-check">
+            <input type="checkbox" ${vp.posted ? 'checked' : ''} onchange="togglePosted(${i}, this.checked)">
+            <span>I posted it</span>
+          </label>
+          ${vp.posted ? `<input type="url" class="dbc-post-url" placeholder="Paste your video link for bonus points"
+            value="${escapeHTML(vp.url || '')}" onchange="setPostUrl(${i}, this.value)">` : ''}
+        </div>`;
+      })() : ''}`;
     grid.appendChild(card);
   });
 
@@ -4846,6 +5075,97 @@ function updatePartnerVisibility() {
   if (filmedCount >= 3) {
     if (temu) temu.style.display = '';
   }
+
+  // Engagement cards appear only when David has set their URLs
+  const grad = document.getElementById('engage-graduation');
+  const gradCta = document.getElementById('engage-graduation-cta');
+  if (grad && ENGAGE_LINKS.graduation) {
+    partnerSection.removeAttribute('data-locked');
+    grad.style.display = '';
+    if (gradCta) gradCta.href = ENGAGE_LINKS.graduation;
+  }
+  const call = document.getElementById('engage-call');
+  const callCta = document.getElementById('engage-call-cta');
+  if (call && ENGAGE_LINKS.schedule) {
+    partnerSection.removeAttribute('data-locked');
+    call.style.display = '';
+    if (callCta) callCta.href = ENGAGE_LINKS.schedule;
+  }
+}
+
+// ── ENGAGEMENT POINT HOOKS ────────────────────────────
+// Sponsor/graduation/call actions persist two ways: state.engage for the
+// instant client-side points display (works anonymous), and a logs event
+// for the authoritative server-side computation.
+
+function _refreshPointsPanel() {
+  const old = document.getElementById('db-points-panel');
+  if (!old || typeof buildPointsPanel !== 'function') return;
+  const wasOpen = (() => {
+    const body = document.getElementById('vault-body');
+    return body && body.style.display !== 'none';
+  })();
+  const fresh = buildPointsPanel();
+  old.replaceWith(fresh);
+  if (wasOpen) toggleVaultPanel();
+}
+
+function trackSponsorClick(partner) {
+  if (!state.engage) state.engage = {};
+  const key = 'sponsor_' + partner;
+  if (!state.engage[key]) {
+    state.engage[key] = true;
+    saveProgress();
+    if (typeof logEvent === 'function') logEvent('sponsor_clicked', { partner: partner });
+    _refreshPointsPanel();
+  }
+  return true; // let the link navigate
+}
+
+function openEngageLink(kind) {
+  const url = kind === 'graduation' ? ENGAGE_LINKS.graduation : ENGAGE_LINKS.schedule;
+  if (!url) return false;
+  if (!state.engage) state.engage = {};
+  const key = kind === 'graduation' ? 'graduation' : 'call';
+  if (!state.engage[key]) {
+    state.engage[key] = true;
+    saveProgress();
+    if (typeof logEvent === 'function') {
+      logEvent(kind === 'graduation' ? 'graduation_watched' : 'call_scheduled', {});
+    }
+    _refreshPointsPanel();
+  }
+  return true; // href is set by updatePartnerVisibility; let the link navigate
+}
+
+// ── POSTED TRACKING (points: posted + optional URL bonus) ────────────
+function togglePosted(idx, checked) {
+  if (!state.videoPosted) state.videoPosted = {};
+  const prev = state.videoPosted[idx] || {};
+  state.videoPosted[idx] = { posted: !!checked, url: prev.url || '' };
+  saveProgress();
+  if (typeof queuePostedSave === 'function') {
+    queuePostedSave(idx, state.level || 1, !!checked, prev.url || '');
+  }
+  if (checked && typeof logEvent === 'function') {
+    logEvent('video_posted', { video_number: idx + 1, has_url: !!(prev.url) });
+  }
+  buildPlan(); // refresh card UI + points strip together
+}
+
+function setPostUrl(idx, value) {
+  if (!state.videoPosted) state.videoPosted = {};
+  const prev = state.videoPosted[idx] || {};
+  const url = String(value || '').trim().slice(0, 500);
+  state.videoPosted[idx] = { posted: prev.posted !== false, url: url };
+  saveProgress();
+  if (typeof queuePostedSave === 'function') {
+    queuePostedSave(idx, state.level || 1, state.videoPosted[idx].posted, url);
+  }
+  if (url && typeof logEvent === 'function') {
+    logEvent('video_posted', { video_number: idx + 1, has_url: true });
+  }
+  buildPlan();
 }
 
 // ── PDF EXPORT ────────────────────────────────────────
@@ -5006,6 +5326,7 @@ function restartWizard(){
   // Clear scripts and onboarding from state
   state.videos       = {};
   state.videoStatus  = {};
+  state.videoPosted  = {};  // server rows are deleted below, keep points in parity
   state.l1Videos     = null;
   state.l1VideoStatus= null;
   state.posted       = null;
@@ -5532,6 +5853,8 @@ function saveProgress() {
     mvoQ3:         state.mvoQ3         || null,
     mvoQ4:         state.mvoQ4         || null,
     phase2:        ensurePhase2(),
+    videoPosted:   state.videoPosted   || {},
+    engage:        state.engage        || {},
     savedAt:       Date.now()
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e) {}
@@ -5581,6 +5904,8 @@ function loadProgress() {
       if (data.l1VideoStatus) state.l1VideoStatus = data.l1VideoStatus;
       if (data.l1Videos)      state.l1Videos      = data.l1Videos;
       if (data.topicFreewrite)state.topicFreewrite= data.topicFreewrite;
+      if (data.videoPosted)   state.videoPosted   = data.videoPosted;
+      if (data.engage)        state.engage        = data.engage;
       if (data.mvoQ2 && (data.blocker || data.history)) mvoQ2Skipped = true;
 
       // If they have a level — go straight to dashboard, no banner needed

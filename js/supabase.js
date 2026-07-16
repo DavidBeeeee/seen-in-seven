@@ -88,6 +88,8 @@ async function _flushSaveQueue() {
       if (item.type === 'script')     await saveScriptToDb(item.videoNumber, item.level, item.content);
       else if (item.type === 'progress') await saveVideoProgressToDb(item.videoIndex, item.level, item.status);
       else if (item.type === 'onboarding') await saveOnboardingToDb();
+      else if (item.type === 'lock')   await saveVideoLockToDb(item.videoIndex, item.level);
+      else if (item.type === 'posted') await savePostedToDb(item.videoIndex, item.level, item.posted, item.postUrl);
     } catch(e) {}
   }
 }
@@ -105,6 +107,16 @@ function queueProgressSave(videoIndex, level, status) {
 function queueOnboardingSave() {
   if (_currentUser) { saveOnboardingToDb(); }
   else { _saveQueue.push({ type: 'onboarding' }); }
+}
+
+function queueLockSave(videoIndex, level) {
+  if (_currentUser) { saveVideoLockToDb(videoIndex, level); }
+  else { _saveQueue.push({ type: 'lock', videoIndex, level }); }
+}
+
+function queuePostedSave(videoIndex, level, posted, postUrl) {
+  if (_currentUser) { savePostedToDb(videoIndex, level, posted, postUrl); }
+  else { _saveQueue.push({ type: 'posted', videoIndex, level, posted, postUrl }); }
 }
 
 // ── AUTH STATE ────────────────────────────────────────
@@ -153,6 +165,8 @@ _sb.auth.onAuthStateChange((event, session) => {
           await _restoreFromDatabase();
           _mergeLocalStorage();
           await _flushSaveQueue();
+          _syncPointsStateToDb();
+          fetchPointsConfig();
           window._SIS_log && _SIS_log('auth:after-restore', {level: state.level, name: state.name});
           if (typeof logEvent === 'function') logEvent('auth_completed', {level: state.level});
           if (typeof _dashboardShown !== 'undefined') _dashboardShown = false;
@@ -206,6 +220,13 @@ function _mergeLocalStorage() {
     if (d.videoStatus && Object.keys(state.videoStatus || {}).length === 0) state.videoStatus = d.videoStatus;
     if (d.l1Videos) state.l1Videos = d.l1Videos;
     if (d.l1VideoStatus) state.l1VideoStatus = d.l1VideoStatus;
+    // Points state — merge additively, DB-restored entries win
+    if (d.videoPosted) {
+      state.videoPosted = Object.assign({}, d.videoPosted, state.videoPosted || {});
+    }
+    if (d.engage) {
+      state.engage = Object.assign({}, d.engage, state.engage || {});
+    }
   } catch(e) {}
 }
 
@@ -371,6 +392,73 @@ async function saveVideoProgressToDb(videoIndex, level, status) {
   } catch(e) {}
 }
 
+// ── SAVE LOCK STATE TO DB (points: first lock per video) ──────────────
+// Upsert touches only its own columns, so it never clobbers status/posted
+// on an existing row. locked_at is set once and never cleared — matching
+// the points rule that only the FIRST lock per video counts.
+async function saveVideoLockToDb(videoIndex, level) {
+  if (!_currentUser) return;
+  try {
+    await _sb.from('video_progress').upsert({
+      user_id: _currentUser.id, video_index: videoIndex, level,
+      locked_at: new Date().toISOString()
+    }, { onConflict: 'user_id,video_index,level' });
+  } catch(e) {}
+}
+
+// ── SAVE POSTED STATE TO DB (points: posted + optional URL bonus) ─────
+async function savePostedToDb(videoIndex, level, posted, postUrl) {
+  if (!_currentUser) return;
+  try {
+    await _sb.from('video_progress').upsert({
+      user_id: _currentUser.id, video_index: videoIndex, level,
+      posted: !!posted,
+      posted_at: posted ? new Date().toISOString() : null,
+      post_url: (postUrl || '').trim().slice(0, 500) || null
+    }, { onConflict: 'user_id,video_index,level' });
+  } catch(e) {}
+}
+
+// ── FETCH TUNABLE POINTS CONFIG ───────────────────────
+// points_config is world-readable by design (cosmetic values). Called
+// post-auth and on load; anonymous/offline users fall back to the
+// baked-in POINTS_RULES in js/points.js.
+async function fetchPointsConfig() {
+  try {
+    const { data } = await _sb.from('points_config').select('version, rules').eq('id', 1).maybeSingle();
+    if (data && data.rules && typeof applyPointsConfig === 'function') {
+      applyPointsConfig(data.rules, data.version);
+    }
+  } catch(e) {}
+}
+
+// ── RECONCILE LOCAL POINTS STATE TO DB ────────────────
+// Pushes lock/posted state that only exists locally (earned while
+// anonymous in an earlier session, so it never went through the save
+// queue) up to video_progress. Skips indexes the DB already knows
+// (tracked during _restoreFromDatabase) so original timestamps survive.
+// Idempotent; points rules are booleans per video, so nothing inflates.
+const _dbLockedIdx = new Set();
+const _dbPostedIdx = new Set();
+
+async function _syncPointsStateToDb() {
+  if (!_currentUser) return;
+  const level = state.level || 1;
+  try {
+    for (let i = 0; i < 7; i++) {
+      if (state.videos && state.videos['locked_v' + i] && !_dbLockedIdx.has(i)) {
+        await saveVideoLockToDb(i, level);
+        _dbLockedIdx.add(i);
+      }
+      const p = state.videoPosted && state.videoPosted[i];
+      if (p && (p.posted || p.url) && !_dbPostedIdx.has(i)) {
+        await savePostedToDb(i, level, p.posted, p.url);
+        _dbPostedIdx.add(i);
+      }
+    }
+  } catch(e) {}
+}
+
 // ── RESTORE STATE FROM DATABASE ───────────────────────
 async function _restoreFromDatabase() {
   window._SIS_log && _SIS_log('restore:start', {hasUser: !!_currentUser});
@@ -414,6 +502,18 @@ async function _restoreFromDatabase() {
     if (progress && progress.length) {
       progress.forEach(p => {
         if (p.status === 'filmed' || p.status === 'skipped') state.videoStatus[p.video_index] = p.status;
+        // Points state: locked + posted live on the same rows. Remember which
+        // indexes the DB already knows so _syncPointsStateToDb only pushes
+        // genuinely local-only state (preserves original timestamps).
+        if (p.locked_at) {
+          state.videos['locked_v' + p.video_index] = true;
+          _dbLockedIdx.add(p.video_index);
+        }
+        if (p.posted || p.post_url) {
+          if (!state.videoPosted) state.videoPosted = {};
+          state.videoPosted[p.video_index] = { posted: !!p.posted, url: p.post_url || '' };
+          _dbPostedIdx.add(p.video_index);
+        }
       });
     }
 
@@ -505,6 +605,8 @@ async function initAuth() {
       await _restoreFromDatabase();
       _mergeLocalStorage();
       await _flushSaveQueue();
+      _syncPointsStateToDb();
+      fetchPointsConfig();
 
       if (state.level && typeof showDashboard === 'function') {
         if (typeof _dashboardShown !== 'undefined' && _dashboardShown) {

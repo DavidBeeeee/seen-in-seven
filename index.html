@@ -791,7 +791,7 @@
         <div class="partner-card-name">Vubli</div>
         <p class="partner-card-desc">Your scripts are done. Now you have to actually get them out there. Vubli posts your video to every platform at once. No juggling apps, no copy-pasting captions six times. I use it because it turns "I should post this" into "done." 😊</p>
         <div style="margin-bottom:12px;padding:8px 12px;background:rgba(50,184,184,0.08);border:1px solid rgba(50,184,184,0.2);border-radius:8px;font-size:13px;color:var(--teal);font-family:'Space Mono',monospace;letter-spacing:0.06em;">Use code <strong>davidbee</strong> for a discount</div>
-        <a href="https://vubli.ai/?via=david" class="partner-cta" target="_blank" rel="noopener">Try Vubli Free →</a>
+        <a href="https://vubli.ai/?via=david" class="partner-cta" target="_blank" rel="noopener" onclick="trackSponsorClick('vubli')">Try Vubli Free →</a>
       </div>
 
       <!-- Temu — unlocks after 3 videos filmed -->
@@ -799,7 +799,23 @@
         <span class="partner-badge">Earn While You Post</span>
         <div class="partner-card-name">Temu Creator</div>
         <p class="partner-card-desc">This one actually surprised me. Temu has a creator program where you can earn money from your content by sharing things you'd buy anyway, which makes it one of the fastest ways to start seeing income from the audience you're building right now. Free to join. No minimum followers. No catch worth mentioning. 😌</p>
-        <a href="https://temu.to/k/plrsjlqz9v8" class="partner-cta" target="_blank" rel="noopener">Join Temu Creator Free →</a>
+        <a href="https://temu.to/k/plrsjlqz9v8" class="partner-cta" target="_blank" rel="noopener" onclick="trackSponsorClick('temu')">Join Temu Creator Free →</a>
+      </div>
+
+      <!-- Graduation Event — hidden until ENGAGE_LINKS.graduation is set in app.js -->
+      <div class="partner-card" id="engage-graduation" style="display:none;">
+        <span class="partner-badge">The Finish Line</span>
+        <div class="partner-card-name">The Graduation Event</div>
+        <p class="partner-card-desc">When you finish your seven videos, this is where we celebrate it together. Watch the Graduation Event to see what you built, hear what worked for people just like you, and find out what your next chapter can look like. 😊</p>
+        <a href="#" class="partner-cta" id="engage-graduation-cta" target="_blank" rel="noopener" onclick="return openEngageLink('graduation')">Watch the Graduation Event →</a>
+      </div>
+
+      <!-- 1-1 with David Bee — hidden until ENGAGE_LINKS.schedule is set in app.js -->
+      <div class="partner-card" id="engage-call" style="display:none;">
+        <span class="partner-badge">Talk With David Bee</span>
+        <div class="partner-card-name">Your 1-1 Call</div>
+        <p class="partner-card-desc">A short call with David Bee to look at what you built and talk about what comes next. Real feedback on your videos, real direction for your next step, and no pressure at any point. 😌</p>
+        <a href="#" class="partner-cta" id="engage-call-cta" target="_blank" rel="noopener" onclick="return openEngageLink('call')">Schedule Your 1-1 →</a>
       </div>
 
     </div>
@@ -835,6 +851,7 @@
 ══════════════════════════════════════ -->
 <script src="/prompts/blueprints.js"></script>
 <script src="/js/supabase.js"></script>
+<script src="/js/points.js"></script>
 <script src="/js/app.js"></script>
 
 <!-- ══ DUAL COMPLETE OVERLAY ══ -->

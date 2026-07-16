@@ -120,6 +120,7 @@
     .badge.blue { color:#bfdbfe; border-color:rgba(96,165,250,0.35); background:rgba(96,165,250,0.1); }
     .badge.orange { color:#fed7aa; border-color:rgba(245,158,11,0.35); background:rgba(245,158,11,0.1); }
     .toggle-paid { background:transparent; border:1px solid var(--line); color:var(--muted); border-radius:5px; padding:4px 8px; font-size:11px; }
+    .points-num { color:var(--gold); font-weight:850; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
     .toggle-paid:hover { border-color:var(--teal); color:var(--cream); }
     .bulk-bar {
       display:none; align-items:center; justify-content:space-between; gap:12px;
@@ -263,6 +264,7 @@
             <option value="recent">Most recently active</option>
             <option value="anon" selected>Anonymous / unverified first</option>
             <option value="progress">Most progress</option>
+            <option value="points">Most points</option>
             <option value="name">Name A-Z</option>
           </select>
         </div>
@@ -282,6 +284,7 @@
                 <th>Status</th>
                 <th>Level</th>
                 <th>Progress</th>
+                <th>Points</th>
                 <th>Latest Event</th>
                 <th>Errors</th>
                 <th>Support</th>
@@ -289,7 +292,7 @@
               </tr>
             </thead>
             <tbody id="user-tbody">
-              <tr><td colspan="9" class="loading">Loading...</td></tr>
+              <tr><td colspan="10" class="loading">Loading...</td></tr>
             </tbody>
           </table>
         </div>
@@ -386,7 +389,8 @@ async function loadAll() {
     rpcSafe('progress', 'admin_get_progress'),
     rpcSafe('onboarding', 'admin_get_onboarding'),
     rpcSafe('logs', 'admin_get_logs'),
-    rpcSafe('preauth', 'admin_get_preauth_events')
+    rpcSafe('preauth', 'admin_get_preauth_events'),
+    rpcSafe('points', 'admin_get_points')
   ]);
   const byName = Object.fromEntries(calls.map(c => [c.name, c]));
   adminState.users = byName.users.data || [];
@@ -396,8 +400,9 @@ async function loadAll() {
   adminState.onboarding = byName.onboarding.data || [];
   adminState.logs = byName.logs.data || [];
   adminState.preauthEvents = byName.preauth.data || [];
-  adminState.optionalWarnings = Object.fromEntries(calls.filter(c => c.name === 'preauth' && c.error).map(c => [c.name, c.error]));
-  adminState.loadErrors = Object.fromEntries(calls.filter(c => c.error && c.name !== 'preauth').map(c => [c.name, c.error]));
+  adminState.points = byName.points.data || [];
+  adminState.optionalWarnings = Object.fromEntries(calls.filter(c => (c.name === 'preauth' || c.name === 'points') && c.error).map(c => [c.name, c.error]));
+  adminState.loadErrors = Object.fromEntries(calls.filter(c => c.error && c.name !== 'preauth' && c.name !== 'points').map(c => [c.name, c.error]));
   adminState.rows = buildRows();
   pruneSelectedIds();
   document.getElementById('last-loaded').textContent = 'Loaded ' + new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
@@ -418,7 +423,7 @@ function setLoading() {
   document.getElementById('funnel-panel').innerHTML = '<div class="loading">Loading funnel...</div>';
   document.getElementById('stall-panel').innerHTML = '<div class="loading">Loading stalls...</div>';
   document.getElementById('issue-panel').innerHTML = '<div class="loading">Loading issues...</div>';
-  document.getElementById('user-tbody').innerHTML = '<tr><td colspan="9" class="loading">Loading...</td></tr>';
+  document.getElementById('user-tbody').innerHTML = '<tr><td colspan="10" class="loading">Loading...</td></tr>';
 }
 
 function buildRows() {
@@ -427,12 +432,14 @@ function buildRows() {
   const progressByUser = groupBy(adminState.progress, 'user_id');
   const logsByUser = groupBy(adminState.logs, 'user_id');
   const onboardingByUser = Object.fromEntries(adminState.onboarding.map(o => [o.user_id, o]));
+  const pointsByUser = Object.fromEntries((adminState.points || []).map(p => [p.user_id, p.points]));
   const userRows = adminState.users.map(user => {
     const scripts = scriptsByUser[user.id] || [];
     const allScripts = allScriptsByUser[user.id] || [];
     const progress = progressByUser[user.id] || [];
     const logs = (logsByUser[user.id] || []).sort((a,b) => dateMs(b.created_at) - dateMs(a.created_at));
     const ob = onboardingByUser[user.id] || null;
+    const points = pointsByUser[user.id] || null;
     const filmed = progress.filter(p => p.status === 'filmed');
     const skipped = progress.filter(p => p.status === 'skipped');
     const errorLogs = logs.filter(isErrorLog);
@@ -449,7 +456,7 @@ function buildRows() {
     return {
       user, scripts, allScripts, progress, filmed, skipped, logs, ob, latest, notes,
       onboardingComplete, scriptCount, filmedCount, errorLogs, recentErrors, status,
-      stalled, attention, lastActiveMs
+      stalled, attention, lastActiveMs, points
     };
   });
   return userRows.concat(buildPreauthRows());
@@ -646,6 +653,7 @@ function filteredRows(q, filter, sort) {
     if (sortMode === 'recent') return b.lastActiveMs - a.lastActiveMs;
     if (sortMode === 'anon') return Number(!!b.preauth) - Number(!!a.preauth) || (b.lastActiveMs - a.lastActiveMs);
     if (sortMode === 'progress') return (b.scriptCount + b.filmedCount * 2) - (a.scriptCount + a.filmedCount * 2);
+    if (sortMode === 'points') return ((b.points && b.points.total) || 0) - ((a.points && a.points.total) || 0);
     if (sortMode === 'name') return displayName(a).localeCompare(displayName(b));
     return (b.attention - a.attention) || (b.lastActiveMs - a.lastActiveMs);
   });
@@ -673,7 +681,7 @@ function rowMatches(r, q, filter) {
 function renderUserRows(rows) {
   const tbody = document.getElementById('user-tbody');
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="9" class="empty">No users match this view.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" class="empty">No users match this view.</td></tr>';
     updateBulkBar();
     return;
   }
@@ -686,6 +694,7 @@ function renderUserRows(rows) {
       '<td>' + badge(r.status.label, r.status.tone) + (r.stalled ? ' ' + badge('Watch', 'orange') : '') + '</td>' +
       '<td>' + h(levelLabel(r.user.level)) + '</td>' +
       '<td><div class="progress-stack"><div class="bar"><div class="bar-fill" style="width:' + Math.round((r.filmedCount / 7) * 100) + '%"></div></div><div class="progress-text">' + r.scriptCount + '/7 scripts | ' + r.filmedCount + '/7 filmed</div></div></td>' +
+      '<td>' + (r.points ? '<span class="points-num">' + r.points.total + '</span>' : '<span class="muted">-</span>') + '</td>' +
       '<td><div>' + h(latestEventLabel(r)) + '</div><div class="mini-meta">' + h(lastActiveText(r)) + '</div></td>' +
       '<td>' + (r.recentErrors.length ? badge(r.recentErrors.length + ' recent', 'red') : '<span class="muted">0</span>') + '</td>' +
       '<td>' + badge(supportLabel(r.notes.support_status), supportTone(r.notes.support_status)) + '</td>' +
@@ -772,10 +781,37 @@ function renderProfile(r) {
 }
 
 function renderJourney(r) {
+  const postedRows = (r.progress || []).filter(p => p.posted || p.post_url);
+  // post_url is user-supplied. h() escapes HTML but a javascript: URL
+  // survives escaping and would execute in the ADMIN's session on click —
+  // only linkify http(s), render anything else as inert text.
+  const safeUrl = u => /^https?:\/\//i.test(String(u || '').trim());
+  const postedHtml = postedRows.length
+    ? postedRows.map(p =>
+        kv('Posted V' + (Number(p.video_index) + 1),
+          p.post_url
+            ? (safeUrl(p.post_url)
+                ? '<a href="' + h(p.post_url) + '" target="_blank" rel="noopener" style="color:var(--teal);word-break:break-all;">' + h(p.post_url) + '</a>'
+                : '<span style="word-break:break-all;">' + h(p.post_url) + '</span>')
+            : h('Self-reported, no link'))
+      ).join('')
+    : '';
+  const pointsBreakdown = r.points && r.points.breakdown
+    ? Object.keys(r.points.breakdown).map(k => {
+        const v = r.points.breakdown[k];
+        const pts = (typeof v === 'object') ? v.points : v;
+        return h(k) + ' +' + pts;
+      }).join(' · ')
+    : '';
   return '<div class="section-title" style="margin-bottom:12px;">Journey State</div>' +
+    kv('Points', r.points
+      ? '<span class="points-num">' + r.points.total + '</span>' +
+        (pointsBreakdown ? '<div class="mini-meta" style="margin-top:4px;">' + pointsBreakdown + '</div>' : '')
+      : '-') +
     kv('Scripts', h(r.scriptCount + ' of 7 current scripts')) +
     kv('Filmed', h(r.filmedCount + ' of 7 videos')) +
     kv('Skipped', h(r.skipped.length + ' skipped')) +
+    postedHtml +
     kv('Latest event', h(latestEventLabel(r))) +
     kv('Support read', h(nextAction(r)));
 }
