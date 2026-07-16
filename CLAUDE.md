@@ -16,11 +16,14 @@ SeenInSeven is the delivery tool for the **777 Challenge** (Colorado Mastermind 
 
 ```
 index.html          Main single-page app (all screens live here)
-js/app.js           All application logic (~5500 lines)
+js/app.js           All application logic (~5900 lines)
 js/supabase.js      Supabase client, auth, DB read/write, event logging
-css/app.css         All styles
+js/points.js        Gamification points engine (client mirror of the SQL compute)
+css/app.css         Dark mode (default theme) — all structural + dark styles
+css/light.css       Light mode overrides only — see header comment in the file
 admin.html          Standalone admin panel (separate auth, no framework)
 prompts/blueprints.js  AI system prompts — DO NOT MODIFY without explicit instruction
+supabase_migrations/   Dated .sql files, one per applied change — chronological history of schema/RPC changes
 ```
 
 ---
@@ -40,6 +43,12 @@ Never `await` Supabase database calls inside `onAuthStateChange` callback body. 
 ### No Frameworks
 Do not introduce React, Vue, build steps, bundlers, or major abstractions. This is intentional. The app is vanilla and should stay that way unless David Bee explicitly asks to change it.
 
+### Points System Rule (load-bearing)
+Points are **derived, never ledgered**. There is no points-transactions table. `js/points.js` (`computePoints(state)`) and the SQL function `compute_user_points(uuid)` each independently recompute a user's total from data that already exists (onboarding answers, scripts, video_progress, logs) — they must be kept in exact agreement rule-for-rule. If you add or change a point rule, edit **three places together**: `POINTS_RULES` in `js/points.js`, the matching branch in `compute_user_points()`, and the seed row in `points_config` (Supabase table — this is the row David can tune live without a redeploy; the client only uses its baked-in copy as an offline/anonymous fallback). A rule mismatch between client and server shows up as a different total in the dashboard vs. the admin panel — that is the symptom to check first if points look wrong. `compute_user_points()` itself has no direct grants; it is only reachable through `get_my_points()` (self) and `admin_get_points()` (admin-gated).
+
+### Engagement Links Rule
+`ENGAGE_LINKS` near the top of `js/app.js` holds the Graduation Event and 1-1 scheduling URLs. Both are empty strings by default and their dashboard cards stay hidden until David pastes in real URLs — never render a placeholder link to users.
+
 ---
 
 ## Supabase Schema (key tables)
@@ -49,12 +58,14 @@ Do not introduce React, Vue, build steps, bundlers, or major abstractions. This 
 | `users` | id, auth_id, email, name, level, blocker, is_paid, is_admin, last_active |
 | `onboarding` | user_id, posted, business, mvo_q2/q3/q4, topic_freewrite, phase2_context (jsonb), mission_statement, commitment_declaration, commitment_reasons |
 | `scripts` | user_id, video_number, level, content, version, is_current, thumbs_up, generated_at, edited_at |
-| `video_progress` | user_id, video_index, level, status (filmed/skipped), filmed_at |
+| `video_progress` | user_id, video_index, level, status (filmed/skipped/**null**), filmed_at, **locked_at, posted, posted_at, post_url** |
 | `logs` | user_id, event_type, detail (jsonb), created_at |
+| `preauth_events` | anon_session_id, user_id (nullable), email, event_type, detail (jsonb), created_at — pre-auth funnel tracking, attached to a user via `attach_preauth_session()` after sign-in |
+| `points_config` | id=1 (single row), version, rules (jsonb) — tunable point values + milestone thresholds, world-readable |
 
-Scripts use `generated_at` / `edited_at` (not `created_at` / `updated_at`).
+Scripts use `generated_at` / `edited_at` (not `created_at` / `updated_at`). `video_progress.status` allows `null` (a script can be locked before it's filmed).
 
-Admin RPCs: `admin_get_users`, `admin_get_scripts`, `admin_get_progress`, `admin_get_onboarding`, `admin_get_logs`, `admin_get_preauth_events`, `admin_set_paid`, `admin_delete_subjects`, `provision_admin_account` — all gated by `is_admin = true` on the users row (or, for `provision_admin_account`, a server-side email allowlist). Granted to `authenticated` only, not `anon`.
+Admin RPCs: `admin_get_users`, `admin_get_scripts`, `admin_get_progress`, `admin_get_onboarding`, `admin_get_logs`, `admin_get_preauth_events`, `admin_get_points`, `admin_set_paid`, `admin_delete_subjects`, `provision_admin_account` — all gated by `is_admin = true` on the users row (or, for `provision_admin_account`, a server-side email allowlist). Granted to `authenticated` only, not `anon`. Trigger-only functions (`prevent_privilege_self_escalation`, `set_script_version`) have no RPC grants at all — they only fire via their triggers.
 
 ---
 
@@ -89,16 +100,23 @@ Level is determined by `determineLevel()` after `screen-content-intent`:
 
 ---
 
-## Roadmap Position (as of June 2026)
+## Roadmap Position (as of July 2026)
 
 **Phase 1 (Admin Command Center) — Complete**
 **Phase 2 (Onboarding Update) — ~60% done**
 - Remaining: "say my own words" option on content intent grid
 - Commit-moment UX redesign pending David Bee's direction
 
-**Phases 3–8 — Not started**
+**Phase 3 (Full UX Audit) — Partially covered, not formally run**
+- A full-app visual redesign shipped (glass surfaces, gradient typography, aurora atmosphere, motion identity, both themes) — this covers the *visual* half of Phase 3's intent, but the audit's actual checklist (walking all ~30 listed flows end-to-end, both levels, both themes, mobile + desktop) has not been formally executed and signed off.
 
-First test users are about to be onboarded. Do not add paid gating, email automation, gamification, or superapp features. See `SEENINSEVEN_ROADMAP.md` for full phase definitions.
+**Phase 4 (Gamification) — Built, pending David's real-world tuning**
+- Points engine, dashboard trophy panel + wealth vault (8 milestone gems + money pile), posted-video tracking with link bonus, sponsor click tracking, Graduation Event + 1-1 call cards (hidden until `ENGAGE_LINKS` is filled in) are all live on production as of this merge.
+- Point values and milestone thresholds are **starting numbers**, not final — tune them in the `points_config` Supabase table (see Points System Rule above).
+
+**Phases 5–8 — Not started**
+
+Do not add paid gating, email automation, or superapp features. See `SEENINSEVEN_ROADMAP.md` for full phase definitions and current status detail.
 
 ---
 
@@ -120,3 +138,4 @@ First test users are about to be onboarded. Do not add paid gating, email automa
 - Admin panel still loads data
 - Mobile layout still readable
 - No `await` inside `onAuthStateChange` callback body
+- If a points rule changed: client (`js/points.js`) and server (`compute_user_points`) totals still agree on a real account — check via the admin panel's Points column vs. the dashboard strip

@@ -206,6 +206,8 @@ Technical considerations:
 
 ## Phase 3: Full User Experience Audit
 
+**Status as of July 2026: Partially covered by a visual redesign pass, but the formal audit below has not been run.** A full-app visual language shipped (aurora atmosphere, glass card surfaces, gradient typography, jewel primary actions, motion identity, both dark and light themes) — this addresses the *feel* of the app that Phase 3 cares about, but it was not accompanied by the systematic flow-by-flow walkthrough described below. Treat that walkthrough as still outstanding.
+
 **Goal:** Once admin visibility is solid and onboarding has been updated, walk the entire user journey end to end and make sure every step feels clear, warm, and safe for a non-technical 45-60 year old who is camera shy. Not a feature sprint — a refinement pass.
 
 ### Audit Scope
@@ -263,21 +265,18 @@ Phase 3 should not become a new feature sprint. It is an audit and refinement ph
 
 ## Phase 4: Gamification And Completion Experience
 
-**Goal:** Reserved for a later experience layer defined by David Bee.
+**Status as of July 2026: Defined by David Bee and built.** This phase is no longer a placeholder. What shipped:
 
-This phase replaces earlier ideas about immediate community bridge work and a standalone graduation/completion phase. Those older ideas should not be implemented from the handoff. David Bee has a future plan for this and will describe it later.
+- **Points engine.** Points are derived (never ledgered) from data that already exists — onboarding depth, script generation, extended-mode answers, script locking, filming, and posting. Computed identically client-side (`js/points.js`) and server-side (`compute_user_points()` in Supabase), so the number shown is trustworthy and cannot be gamed by deleting and regenerating content.
+- **Dashboard trophy panel + wealth vault.** A progress strip on the dashboard shows the current milestone and points; tapping it opens a vault of eight collectible gems (one per milestone) plus a money pile that visibly grows with total points — the "watch your wealth build" framing David asked for.
+- **Posted-video tracking.** Users self-report when they've posted a video (checkbox) and can optionally paste the post link for bonus points. This is the "posted-vs-filmed tracking" the earlier version of this roadmap explicitly deferred — it is now built.
+- **Engagement points.** Sponsor tool clicks (Vubli, Temu), watching the Graduation Event, and scheduling a 1-1 with David Bee all award points. The Graduation Event and 1-1 cards are fully built but stay hidden until David pastes real URLs into `ENGAGE_LINKS` in `js/app.js`.
+- **Admin visibility.** The admin panel shows each user's point total, full earning breakdown, and posted-video links.
 
-Until David Bee defines this phase, do not invent:
-
-- Reward mechanics.
-- Streak mechanics.
-- Completion badges.
-- Community posting flows.
-- Graduation Event flows.
-- Challenge celebration mechanics.
-- New progress rituals.
-
-This phase exists as a placeholder so future work has a clear slot without prematurely defining the experience.
+**What is still open:**
+- Point values and milestone thresholds are starting numbers David has not yet tuned against real user behavior — adjustable live in the `points_config` Supabase table, no redeploy needed.
+- No streak mechanics, completion badges beyond the gem system, or community posting flows exist — those remain undefined and should not be invented without David's direction, same as before.
+- The Graduation Event and 1-1 scheduling URLs are placeholders (empty, cards hidden) until David provides them.
 
 ---
 
@@ -386,17 +385,17 @@ Do not start a major architecture rewrite for this now. Let the first user data 
 These items are intentionally not part of the current implementation plan:
 
 - No community bridge implementation right now.
-- No posted-vs-filmed tracking right now.
 - No email nudges right now.
 - No paid gate right now.
 - No Systeme.io webhook right now.
-- No gamification mechanics until David Bee defines them.
+- No streak mechanics, completion badges beyond the existing gem system, or community posting flows until David Bee defines them.
 - No superapp rewrite right now.
 - No framework migration.
 - No broad state-management rewrite.
 - No changes to `prompts/blueprints.js`.
+- No changes to the script generation prompts or rules as part of gamification work — the points system only reads what users already typed; it does not touch `buildAPIUserMessage()` or the generation pipeline. Any future generation-quality work is a separate, explicitly-briefed project.
 
-If a future developer or AI session sees these ideas in older docs, they should treat this document as the newer roadmap source of truth.
+**Updated as of July 2026:** posted-vs-filmed tracking and a defined gamification system (Phase 4) are now built — see Phase 4 above. If a future developer or AI session sees the older "not built yet" framing for either of those in other docs, treat this document as the newer roadmap source of truth.
 
 ---
 
@@ -425,8 +424,14 @@ For documentation-only work, verify:
 
 ## Current Immediate Next Step
 
-The next implementation phase should be Phase 1 only:
+**Updated July 2026.** Phase 1 is complete. Phase 4 (Gamification) has been built out of its original sequence position, at David Bee's explicit direction, alongside a full visual redesign — this was a deliberate priority call, not scope creep, and does not change the sequencing rule for what comes after.
 
-**Admin Command Center And Stability.**
+Recommended next priorities, in order:
 
-Do not skip into later roadmap phases until David Bee explicitly changes the priority.
+1. **Tune the points system against real behavior.** The point values and milestone thresholds shipped are starting numbers. Once test users are active, watch the admin panel's points data and adjust `points_config` — no code change needed for this.
+2. **Provide the two outstanding URLs.** The Graduation Event and 1-1 scheduling cards are fully built and waiting on `ENGAGE_LINKS` in `js/app.js`.
+3. **Finish Phase 2** — the one remaining item is the "say my own words" free-text option on the content-intent grid, plus the commit-moment UX redesign (still pending David Bee's direction on what that moment should feel like).
+4. **Run the actual Phase 3 audit.** The visual pass improved how the app *feels*, but the flow-by-flow checklist in Phase 3 above (auth edge cases, error/fallback states, mobile vs. desktop parity across all ~30 listed flows) has not been formally walked and signed off. Worth doing before the first real cohort scales up.
+5. **Security housekeeping before broader user growth:** rotate the two admin test-account passwords, and enable leaked-password protection in the Supabase Auth dashboard (currently off — a one-click toggle, not a code change).
+
+Do not skip into Phases 5–8 until David Bee explicitly changes the priority.

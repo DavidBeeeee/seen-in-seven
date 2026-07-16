@@ -121,18 +121,23 @@ Both tools commit under the same author name (`David Bee <contact@davidbee.me>`)
 
 ## File structure
 
+> **Note (July 2026):** the file structure, schema, and RPC list below have drifted from reality in several places (screen count, `screen-comm-layers` references, password auth was added, points system was added). `CLAUDE.md` and `SEENINSEVEN_ROADMAP.md` in this repo are kept current every session and should be treated as more authoritative than this section until it gets a full rewrite. The schema/RPC tables immediately below have been corrected as of July 2026; the file-structure tree and screen-flow section further down have not.
+
 ```
 seen-in-seven/
-├── index.html          — markup, all 21 screen divs, modals, overlays (~830 lines)
-├── admin.html          — admin dashboard (password: magic link to email@davidbee.me only)
-├── css/app.css         — all styles (~1,830 lines)
+├── index.html          — markup, all screen divs, modals, overlays (~890 lines)
+├── admin.html          — admin dashboard (magic link, allowlisted emails only — see ADMIN_EMAILS)
+├── css/app.css         — dark mode (default) — structural + dark styles
+├── css/light.css        — light mode overrides only, kept in a separate file by convention
 ├── js/
-│   ├── app.js          — all application logic, global state (~3,600+ lines)
-│   └── supabase.js     — auth + database layer, event logging (~400 lines)
+│   ├── app.js          — all application logic, global state (~5,900 lines)
+│   ├── supabase.js     — auth + database layer, event logging, sync queue
+│   └── points.js       — gamification points engine (client mirror of the SQL compute)
 ├── prompts/
 │   └── blueprints.js   — SYSTEM_PROMPT + Hero's Journey blueprints ← CORE IP. NEVER MODIFY.
 ├── api/
 │   └── generate.js     — DeepSeek proxy serverless function
+├── supabase_migrations/ — dated .sql files, one per applied schema/RPC change
 ├── vercel.json         — URL rewrites
 ├── DEAR_FUTURE_CLAUDE.md — debugging history (READ THIS FIRST)
 └── DEVELOPER_HANDOFF.md  — this file
@@ -147,20 +152,25 @@ All tables in `public` schema. RLS enabled on all.
 | Table | Purpose |
 |-------|---------|
 | `users` | id, auth_id, email, name, level, blocker, business_stage, is_paid, is_admin, last_active |
-| `onboarding` | user_id (UNIQUE), posted, history, goal, mini_goal, mini_goal_text, business, mvo_q2/q3/q4, topic_freewrite |
+| `onboarding` | user_id (UNIQUE), posted, history, goal, mini_goal, mini_goal_text, business, mvo_q2/q3/q4, topic_freewrite, phase2_context (jsonb) |
 | `scripts` | user_id, video_number, level, content, version, is_current, thumbs_up, generated_at, edited_at. Trigger auto-increments version on insert. |
-| `video_progress` | user_id, video_index, level, status ('filmed'/'skipped'), filmed_at |
+| `video_progress` | user_id, video_index, level, status ('filmed'/'skipped'/**null**), filmed_at, **locked_at, posted, posted_at, post_url** (added July 2026 for gamification) |
 | `logs` | user_id, event_type, detail (JSONB), created_at — admin activity log |
+| `preauth_events` | anon_session_id, user_id (nullable), email, event_type, detail (jsonb), created_at — pre-auth funnel tracking, added mid-2026 |
+| `points_config` | id=1, version, rules (jsonb) — tunable point values + milestone thresholds, added July 2026 |
 
 **RPC functions (SECURITY DEFINER — bypass RLS):**
 - `check_email_exists(email)` — pre-auth lookup for returning users
 - `is_admin()` — checks if current user has is_admin flag
-- `admin_get_users/scripts/progress/onboarding/logs()` — admin panel data
+- `admin_get_users/scripts/progress/onboarding/logs/preauth_events/points()` — admin panel data
 - `admin_set_paid(user_id, paid)` — toggle is_paid from admin panel
+- `admin_delete_subjects(user_ids[], anon_session_ids[])` — bulk delete from admin panel
+- `provision_admin_account()` — the only way to self-grant `is_admin`; checks the caller's JWT email against a hardcoded allowlist. See the Admin Privilege Rule in `CLAUDE.md` — do not write `is_admin` directly from client code, a `BEFORE UPDATE` trigger blocks it.
+- `get_my_points()` / `admin_get_points()` — wrap `compute_user_points()`, which has no direct grants of its own
 
-**Auth method:** Supabase magic link (passwordless email OTP). No passwords.
+**Auth method:** Supabase magic link (passwordless email OTP) **or password** (added mid-2026 — both coexist; see the sign-in screen's password toggle).
 
-**Admin access:** Only `email@davidbee.me` can access `admin.html`. Gated by `is_admin = true` in the users table.
+**Admin access:** Gated by `is_admin = true` in the users table, granted only via `provision_admin_account()` against the `ADMIN_EMAILS` allowlist in `admin.html` (currently more than one email — check that file for the current list).
 
 ---
 
