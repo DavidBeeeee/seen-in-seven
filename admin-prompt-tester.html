@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SeenInSeven Prompt Tester</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="/css/admin-prompt-tester.css">
+</head>
+<body>
+  <section id="auth-screen" class="auth-screen">
+    <form class="auth-panel" onsubmit="sendAdminLink(event)">
+      <div class="kicker">Colorado Mastermind Studio / SeenInSeven</div>
+      <h1>Prompt Tester</h1>
+      <p>Administrator access required.</p>
+      <input id="admin-email" type="email" autocomplete="email" placeholder="email@davidbee.me" required>
+      <button class="button primary" type="submit">Send Login Link</button>
+      <div id="auth-message" class="message" aria-live="polite"></div>
+    </form>
+  </section>
+
+  <div id="tester-app" hidden>
+    <header class="topbar">
+      <div>
+        <div class="kicker">Colorado Mastermind Studio / SeenInSeven</div>
+        <h1>Prompt Tester</h1>
+      </div>
+      <nav class="top-actions" aria-label="Prompt tester actions">
+        <span class="status-pill" id="published-status">Loading blueprint...</span>
+        <span class="account-pill" id="admin-user-email"></span>
+        <a class="button" href="/admin/seeninseven">SIS Admin</a>
+        <button class="button" type="button" onclick="adminLogout()">Log Out</button>
+      </nav>
+    </header>
+
+    <main class="workspace">
+      <section class="control-strip" aria-label="Test controls">
+        <label>
+          <span>Test user</span>
+          <select id="test-user" onchange="handleUserChange()">
+            <option value="">Loading users...</option>
+          </select>
+        </label>
+        <label>
+          <span>Video</span>
+          <select id="test-video" onchange="refreshTestMessage()">
+            <option value="1">Video 1</option>
+            <option value="2">Video 2</option>
+            <option value="3">Video 3</option>
+            <option value="4">Video 4</option>
+            <option value="5">Video 5</option>
+            <option value="6">Video 6</option>
+            <option value="7">Video 7</option>
+          </select>
+        </label>
+        <label>
+          <span>Level</span>
+          <select id="test-level" onchange="refreshTestMessage()">
+            <option value="1">Level 1</option>
+            <option value="2">Level 2</option>
+          </select>
+        </label>
+        <div class="control-actions">
+          <button class="button" type="button" onclick="refreshTestMessage()">Reload Test Copy</button>
+          <button class="button primary" id="generate-button" type="button" onclick="generateTest()">Generate Test</button>
+        </div>
+      </section>
+
+      <div id="page-message" class="banner" hidden aria-live="polite"></div>
+
+      <section class="editor-grid">
+        <article class="tool-pane prompt-pane">
+          <div class="pane-head">
+            <div>
+              <div class="pane-title">Blueprint Draft</div>
+              <div class="pane-meta" id="draft-meta">Not loaded</div>
+            </div>
+            <div class="pane-actions">
+              <button class="button small" type="button" onclick="undoDraftEdit()">Undo Edit</button>
+              <button class="button small" type="button" onclick="restorePublishedDraft()">Restore Published</button>
+            </div>
+          </div>
+          <textarea id="blueprint-editor" class="code-editor" spellcheck="false" aria-label="Blueprint source"></textarea>
+          <div class="editor-footer">
+            <span id="blueprint-count">0 characters</span>
+            <span id="autosave-status">Draft not saved</span>
+          </div>
+        </article>
+
+        <article class="tool-pane data-pane">
+          <div class="pane-head">
+            <div>
+              <div class="pane-title">Read-Only User Data Copy</div>
+              <div class="pane-meta" id="user-data-meta">Select a user</div>
+            </div>
+          </div>
+          <textarea id="user-message-editor" class="data-editor" spellcheck="false" aria-label="Test user message"></textarea>
+          <div class="editor-footer">
+            <span>Edits here affect this test only</span>
+            <span>No user records are changed</span>
+          </div>
+        </article>
+      </section>
+
+      <section class="result-band">
+        <div class="result-head">
+          <div>
+            <div class="pane-title">Test Output</div>
+            <div class="pane-meta" id="result-meta">No test generated</div>
+          </div>
+          <div class="pane-actions">
+            <button class="button small" type="button" onclick="copyTestOutput()">Copy Output</button>
+            <button class="button small" type="button" onclick="toggleRawOutput()">Raw / Final</button>
+          </div>
+        </div>
+        <div id="test-output" class="test-output empty-output">Choose a user and generate a test.</div>
+      </section>
+
+      <section class="publish-bar">
+        <div>
+          <div class="pane-title">Published Blueprint</div>
+          <div class="pane-meta" id="publish-meta">Checking GitHub connection...</div>
+        </div>
+        <div class="publish-actions">
+          <button class="button danger" id="undo-publish-button" type="button" onclick="requestPublishUndo()" disabled>Undo Last Publish</button>
+          <button class="button publish" id="publish-button" type="button" onclick="openPublishReview()" disabled>Review Changes</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-backdrop" id="publish-modal" hidden>
+    <section class="confirm-modal" role="dialog" aria-modal="true" aria-labelledby="confirm-title">
+      <div id="confirm-step-one">
+        <div class="step-label">Confirmation 1 of 2</div>
+        <h2 id="confirm-title">Review blueprint changes</h2>
+        <div id="validation-summary" class="validation-summary"></div>
+        <div id="change-summary" class="change-summary"></div>
+        <label class="confirm-check">
+          <input id="review-confirmed" type="checkbox" onchange="updateFirstConfirmation()">
+          <span>I reviewed the draft and test output.</span>
+        </label>
+        <div class="modal-actions">
+          <button class="button" type="button" onclick="closePublishModal()">Cancel</button>
+          <button class="button publish" id="continue-confirm-button" type="button" onclick="showFinalConfirmation()" disabled>Continue</button>
+        </div>
+      </div>
+
+      <div id="confirm-step-two" hidden>
+        <div class="step-label">Confirmation 2 of 2</div>
+        <h2>Apply to blueprints.js</h2>
+        <p class="confirm-copy">Type <strong>APPLY BLUEPRINT</strong> to create the GitHub commit.</p>
+        <input id="publish-phrase" class="confirm-input" autocomplete="off" oninput="updateFinalConfirmation()">
+        <div class="modal-actions">
+          <button class="button" type="button" onclick="backToPublishReview()">Back</button>
+          <button class="button publish" id="apply-blueprint-button" type="button" onclick="publishBlueprint()" disabled>Apply Blueprint</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div id="toast" class="toast" aria-live="polite"></div>
+  <script src="/js/admin-prompt-tester.js"></script>
+</body>
+</html>
