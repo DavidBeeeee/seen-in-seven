@@ -85,11 +85,10 @@
             <i data-lucide="video"></i>
             <span>SeenInSeven</span>
           </a>
-          <span class="nav-item nav-item-disabled" title="Connect the AI Boardroom to activate this area">
+          <a class="nav-item" href="/admin/boardroom">
             <i data-lucide="messages-square"></i>
             <span>AI Boardroom</span>
-            <small>Soon</small>
-          </span>
+          </a>
         </nav>
         <a class="nav-item studio-return" href="/">
           <i data-lucide="arrow-left"></i>
@@ -127,7 +126,7 @@
           </article>
           <article class="admin-metric">
             <span class="metric-icon"><i data-lucide="blocks"></i></span>
-            <div><strong id="metric-apps">1</strong><span>Connected app</span><small>Boardroom is next</small></div>
+            <div><strong id="metric-apps">2</strong><span>Connected apps</span><small>Studio access controls</small></div>
           </article>
         </section>
 
@@ -154,18 +153,22 @@
               </a>
             </article>
 
-            <article class="admin-app-card upcoming-app">
+            <article class="admin-app-card">
               <div class="admin-app-top">
                 <span class="app-admin-icon"><i data-lucide="messages-square"></i></span>
-                <span class="status-chip">Next app</span>
+                <span class="status-chip status-live">Connected</span>
               </div>
               <h3>AI Boardroom</h3>
-              <p>Its customer access and activity will appear here when the Boardroom is connected to Studio.</p>
-              <div class="app-ready-row"><i data-lucide="circle-check"></i><span>Admin location reserved</span></div>
-              <div class="app-ready-row"><i data-lucide="circle-check"></i><span>Separate access key ready</span></div>
-              <button class="secondary-button app-admin-button" type="button" disabled>
-                <span>Connect during Boardroom setup</span>
-              </button>
+              <p>Advisor conversations, documents, action cards, workspace activity, and customer access.</p>
+              <div class="app-stat-row">
+                <div><strong id="boardroom-users">-</strong><span>with access</span></div>
+                <div><strong id="boardroom-sessions">-</strong><span>conversations</span></div>
+                <div><strong id="boardroom-cards">-</strong><span>open cards</span></div>
+              </div>
+              <a class="secondary-button app-admin-button" href="/admin/boardroom">
+                <span>Open AI Boardroom admin</span>
+                <i data-lucide="arrow-right"></i>
+              </a>
             </article>
           </div>
         </section>
@@ -185,6 +188,7 @@
               <option value="any">Has app access</option>
               <option value="none">No app access</option>
               <option value="seeninseven">SeenInSeven access</option>
+              <option value="boardroom">AI Boardroom access</option>
             </select>
           </div>
 
@@ -203,6 +207,7 @@
       <div class="account-menu-email" id="menu-email"></div>
       <a href="/"><i data-lucide="layout-grid"></i>My Studio</a>
       <a href="/admin/seeninseven"><i data-lucide="video"></i>SeenInSeven admin</a>
+      <a href="/admin/boardroom"><i data-lucide="messages-square"></i>AI Boardroom admin</a>
       <button id="sign-out-button" type="button"><i data-lucide="log-out"></i>Sign out</button>
     </div>
 

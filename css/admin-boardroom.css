@@ -1,0 +1,10 @@
+.boardroom-admin-main { width: min(1540px, 100%); }
+.boardroom-metrics { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+.boardroom-table { min-width: 1120px; }
+.boardroom-table td { vertical-align: middle; }
+.boardroom-workspace { color: var(--studio-soft); font-weight: 800; }
+.boardroom-empty { color: var(--studio-muted); font-size: 12px; }
+.boardroom-access-button { min-width: 96px; }
+@media (max-width: 1260px) { .boardroom-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (max-width: 760px) { .boardroom-metrics { grid-template-columns: 1fr 1fr; } }
+@media (max-width: 470px) { .boardroom-metrics { grid-template-columns: 1fr; } }

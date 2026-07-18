@@ -5,7 +5,7 @@ const studioSb = supabase.createClient(STUDIO_SUPABASE_URL, STUDIO_SUPABASE_KEY)
 
 let studioSession = null;
 let studioProfile = null;
-let studioAccess = null;
+let studioAccess = [];
 let authMode = 'magic';
 
 const el = id => document.getElementById(id);
@@ -89,32 +89,45 @@ async function ensureStudioProfile(user) {
   return retry;
 }
 
-async function loadSeenInSevenAccess(profile) {
+async function loadStudioAccess(profile) {
   const { data, error } = await studioSb
     .from('studio_entitlements')
     .select('app_key,status,access_source,granted_at,expires_at')
     .eq('user_id', profile.id)
-    .eq('app_key', 'seeninseven')
-    .eq('status', 'active')
-    .maybeSingle();
+    .eq('status', 'active');
 
   if (error) {
     // Preview deployments may load before the additive Studio migration is applied.
-    if (profile.is_paid === true) return { app_key: 'seeninseven', status: 'active', access_source: 'beta' };
-    return null;
+    if (profile.is_paid === true) return [{ app_key: 'seeninseven', status: 'active', access_source: 'beta' }];
+    return [];
   }
-  if (data && data.expires_at && new Date(data.expires_at).getTime() <= Date.now()) return null;
-  return data || null;
+  return (data || []).filter(item => !item.expires_at || new Date(item.expires_at).getTime() > Date.now());
+}
+
+function hasStudioAccess(appKey) {
+  return studioAccess.some(item => item.app_key === appKey);
+}
+
+function renderAppAccess(appKey, unlocked, betaCopy) {
+  el(appKey + '-locked-cover').hidden = unlocked;
+  el(appKey + '-open-button').hidden = !unlocked;
+  el(appKey + '-request-button').hidden = unlocked;
+  el(appKey + '-access-label').textContent = unlocked ? 'Beta access' : 'Early access';
+  el(appKey + '-access-label').classList.toggle('unlocked', unlocked);
+  el(appKey + '-status').classList.toggle('unlocked', unlocked);
+  el(appKey + '-status').innerHTML = unlocked
+    ? '<i data-lucide="badge-check"></i><span>' + betaCopy + '</span>'
+    : '<i data-lucide="clock-3"></i><span>Coming soon. Message David Bee for early access.</span>';
 }
 
 async function hydrateStudio(session) {
   studioSession = session;
   studioProfile = null;
-  studioAccess = null;
+  studioAccess = [];
 
   if (session && session.user) {
     studioProfile = await ensureStudioProfile(session.user);
-    if (studioProfile) studioAccess = await loadSeenInSevenAccess(studioProfile);
+    if (studioProfile) studioAccess = await loadStudioAccess(studioProfile);
   }
   renderStudio();
 }
@@ -123,11 +136,12 @@ function renderStudio() {
   const signedIn = Boolean(studioSession && studioSession.user);
   const email = signedIn ? studioSession.user.email : '';
   const localProgress = hasLocalSeenInSevenProgress();
-  const unlocked = Boolean(studioAccess) || localProgress;
+  const seenInSevenUnlocked = hasStudioAccess('seeninseven') || localProgress;
+  const boardroomUnlocked = hasStudioAccess('boardroom');
 
   el('sign-in-button').hidden = signedIn;
   el('account-button').hidden = !signedIn;
-  el('device-progress').hidden = !localProgress || Boolean(studioAccess);
+  el('device-progress').hidden = !localProgress || hasStudioAccess('seeninseven');
   const isAdmin = Boolean(signedIn && studioProfile && studioProfile.is_admin === true);
   el('admin-nav-item').hidden = !isAdmin;
   el('admin-menu-item').hidden = !isAdmin;
@@ -144,15 +158,8 @@ function renderStudio() {
     el('welcome-copy').textContent = 'Sign in once, then return to everything you are building with Colorado Mastermind.';
   }
 
-  el('locked-cover').hidden = unlocked;
-  el('open-app-button').hidden = !unlocked;
-  el('request-access-button').hidden = unlocked;
-  el('access-label').textContent = unlocked ? 'Beta access' : 'Early access';
-  el('access-label').classList.toggle('unlocked', unlocked);
-  el('app-status').classList.toggle('unlocked', unlocked);
-  el('app-status').innerHTML = unlocked
-    ? '<i data-lucide="badge-check"></i><span>Included in your Studio beta access.</span>'
-    : '<i data-lucide="clock-3"></i><span>Coming soon. Message David Bee for early access.</span>';
+  renderAppAccess('seeninseven', seenInSevenUnlocked, 'Included in your Studio beta access.');
+  renderAppAccess('boardroom', boardroomUnlocked, 'Your private advisor team is ready.');
   refreshIcons();
 }
 
@@ -200,7 +207,7 @@ async function signOutStudio() {
   el('account-menu').hidden = true;
   studioSession = null;
   studioProfile = null;
-  studioAccess = null;
+  studioAccess = [];
   renderStudio();
 }
 
@@ -210,7 +217,7 @@ studioSb.auth.onAuthStateChange((event, session) => {
     hydrateStudio(session).catch(() => {
       studioSession = session;
       studioProfile = null;
-      studioAccess = null;
+      studioAccess = [];
       renderStudio();
     });
   }, 0);
