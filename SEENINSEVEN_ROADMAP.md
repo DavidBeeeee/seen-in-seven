@@ -30,7 +30,7 @@ The current test-period assumption is simple:
 - The existing `is_paid` admin toggle may remain visible for later use, but it must not block access during the test period.
 - There are no automated email nudges yet.
 - Gamification and completion mechanics are intentionally undefined until David Bee describes that phase.
-- The long-term superapp direction is real, but it is not current implementation scope.
+- The first Studio shell was explicitly brought into scope by David Bee on July 18, 2026. This is an outer dashboard and access foundation, not a SeenInSeven rewrite.
 
 ---
 
@@ -50,7 +50,7 @@ Supabase can hold an internal navigator lock during `onAuthStateChange` callback
 
 ### Preserve Screen Structure
 
-All `.screen` elements in `index.html` must remain direct children of `body`. If a dashboard or screen renders blank, first check DOM structure and parent dimensions before changing JavaScript.
+All `.screen` elements in `seeninseven.html` must remain direct children of `body`. If a dashboard or screen renders blank, first check DOM structure and parent dimensions before changing JavaScript.
 
 Run this check before and after HTML screen edits:
 
@@ -363,9 +363,11 @@ Supabase built-in email should not be treated as the long-term lifecycle email s
 
 ## Phase 8: Long-Term Superapp Foundation
 
-**Goal:** Keep the larger Colorado Mastermind ecosystem in view without building it prematurely.
+**Status as of July 18, 2026:** The first narrow foundation is in progress by explicit owner direction.
 
-SeenInSeven is intended to become one module in a broader suite of Colorado Mastermind tools. This larger direction is correct, but it is not current implementation scope.
+**Goal:** Establish the Colorado Mastermind Studio front door without rewriting SeenInSeven or prematurely moving other apps.
+
+SeenInSeven is the first module inside Colorado Mastermind Studio. The first release adds the Studio dashboard, shared login session, app-specific beta access, and a stable `/seeninseven` route. It does not add another app, paid enforcement, cross-app history, or Systeme automation.
 
 Future possibilities include:
 
@@ -376,7 +378,7 @@ Future possibilities include:
 - Cross-tool user history.
 - Support and progress visibility across the full offer ecosystem.
 
-Do not start a major architecture rewrite for this now. Let the first user data show what actually matters before reshaping the app around the superapp future.
+Do not turn this foundation into a major architecture rewrite. SeenInSeven remains vanilla HTML/CSS/JS and keeps its current auth, saved work, AI prompts, points, and screen system.
 
 ---
 
@@ -389,7 +391,7 @@ These items are intentionally not part of the current implementation plan:
 - No paid gate right now.
 - No Systeme.io webhook right now.
 - No streak mechanics, completion badges beyond the existing gem system, or community posting flows until David Bee defines them.
-- No superapp rewrite right now.
+- No additional Studio apps or broad superapp rewrite right now.
 - No framework migration.
 - No broad state-management rewrite.
 - No changes to `prompts/blueprints.js`.

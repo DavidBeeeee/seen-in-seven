@@ -65,7 +65,8 @@ Note: the DeepSeek API proxy (`/api/generate.js`) requires the `DEEPSEEK_API_KEY
 This repo is the entire 777 Challenge project folder, not just the app. Here's everything it contains:
 
 **The SeenInSeven app (deployed to Vercel):**
-- `index.html` — the full app
+- `index.html` — Colorado Mastermind Studio dashboard
+- `seeninseven.html` — the full SeenInSeven app
 - `admin.html` — admin dashboard
 - `css/app.css` — all styles
 - `js/app.js` — all application logic
@@ -125,12 +126,15 @@ Both tools commit under the same author name (`David Bee <contact@davidbee.me>`)
 
 ```
 seen-in-seven/
-├── index.html          — markup, all screen divs, modals, overlays (~890 lines)
+├── index.html          — Colorado Mastermind Studio dashboard and login
+├── seeninseven.html    — SeenInSeven screens, modals, and overlays
 ├── admin.html          — admin dashboard (magic link, allowlisted emails only — see ADMIN_EMAILS)
+├── css/studio.css      — Studio dashboard dark and light themes
 ├── css/app.css         — dark mode (default) — structural + dark styles
 ├── css/light.css        — light mode overrides only, kept in a separate file by convention
 ├── js/
 │   ├── app.js          — all application logic, global state (~5,900 lines)
+│   ├── studio.js       — Studio auth, theme, and app access display
 │   ├── supabase.js     — auth + database layer, event logging, sync queue
 │   └── points.js       — gamification points engine (client mirror of the SQL compute)
 ├── prompts/

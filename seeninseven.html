@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SeenInSeven: Your 7 Video Challenge</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/light.css">
+
+<!-- ── GLOBAL ERROR BOUNDARY ── -->
+<script>
+(function() {
+  // Diagnostics mode: add ?debug=1 to the URL to see a live on-screen trace.
+  var DEBUG = /[?&]debug=1/.test(window.location.search) || (function(){ try { return localStorage.getItem('sis_debug')==='1'; } catch(e){ return false; } })();
+  if (/[?&]debug=1/.test(window.location.search)) { try { localStorage.setItem('sis_debug','1'); } catch(e){} }
+  if (/[?&]debug=0/.test(window.location.search)) { try { localStorage.removeItem('sis_debug'); } catch(e){} DEBUG = false; }
+
+  var logLines = [];
+
+  function ensurePanel() {
+    if (!DEBUG) return null;
+    var panel = document.getElementById('sis-debug-panel');
+    if (!panel) {
+      panel = document.createElement('div');
+      panel.id = 'sis-debug-panel';
+      panel.style.cssText = 'position:fixed;top:0;right:0;width:340px;max-width:90vw;height:100vh;z-index:2147483647;background:rgba(10,10,14,0.95);border-left:2px solid #32B8B8;padding:8px;font-family:monospace;font-size:11px;color:#9fe;overflow-y:auto;line-height:1.5;';
+      var hdr = document.createElement('div');
+      hdr.style.cssText = 'position:sticky;top:0;background:#0a0a0e;padding:4px 0 8px;border-bottom:1px solid #333;margin-bottom:6px;display:flex;justify-content:space-between;align-items:center;';
+      hdr.innerHTML = '<strong style="color:#32B8B8;">SIS DIAGNOSTICS</strong>';
+      var btns = document.createElement('div');
+      var copyBtn = document.createElement('button');
+      copyBtn.textContent = 'Copy';
+      copyBtn.style.cssText = 'background:#32B8B8;color:#000;border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-size:10px;margin-right:4px;';
+      copyBtn.onclick = function() {
+        var txt = logLines.join('\n');
+        navigator.clipboard && navigator.clipboard.writeText(txt);
+        copyBtn.textContent = 'Copied!';
+        setTimeout(function(){ copyBtn.textContent='Copy'; }, 1200);
+      };
+      var clrBtn = document.createElement('button');
+      clrBtn.textContent = 'Off';
+      clrBtn.style.cssText = 'background:#444;color:#fff;border:none;padding:3px 8px;border-radius:4px;cursor:pointer;font-size:10px;';
+      clrBtn.onclick = function() { try { localStorage.removeItem('sis_debug'); } catch(e){} panel.style.display='none'; };
+      btns.appendChild(copyBtn); btns.appendChild(clrBtn);
+      hdr.appendChild(btns);
+      panel.appendChild(hdr);
+      var content = document.createElement('div');
+      content.id = 'sis-debug-content';
+      panel.appendChild(content);
+      (document.body || document.documentElement).appendChild(panel);
+    }
+    return panel;
+  }
+
+  function addLine(kind, text, color) {
+    var ts = new Date().toISOString().substr(11, 12);
+    logLines.push('[' + ts + '] ' + kind + ' ' + text);
+    if (!DEBUG) return;
+    var panel = ensurePanel();
+    if (!panel) return;
+    var content = document.getElementById('sis-debug-content');
+    if (content) {
+      var entry = document.createElement('div');
+      entry.style.cssText = 'padding:3px 0;border-bottom:1px solid rgba(255,255,255,0.06);color:' + (color||'#9fe') + ';word-break:break-word;';
+      entry.innerHTML = '<span style="color:#555;">' + ts + '</span> <strong>' + kind + '</strong> ' + text;
+      content.appendChild(entry);
+      content.scrollTop = content.scrollHeight;
+      panel.scrollTop = panel.scrollHeight;
+    }
+  }
+
+  window.onerror = function(msg, src, line, col, err) {
+    var source = src ? src.split('/').pop() + ':' + line : '';
+    addLine('❌ERROR', source + ' — ' + msg, '#ff6b6b');
+    return false;
+  };
+
+  window.onunhandledrejection = function(e) {
+    var msg = e.reason ? (e.reason.message || String(e.reason)) : 'Unknown promise rejection';
+    var stack = e.reason && e.reason.stack ? ' | ' + e.reason.stack.split('\n')[1] : '';
+    addLine('❌PROMISE', msg + stack, '#ff6b6b');
+  };
+
+  var _origError = console.error.bind(console);
+  console.error = function() {
+    _origError.apply(console, arguments);
+    var msg = Array.from(arguments).map(function(a) { return typeof a === 'object' ? JSON.stringify(a) : String(a); }).join(' ');
+    addLine('❌', msg, '#ff6b6b');
+  };
+
+  var _origWarn = console.warn.bind(console);
+  console.warn = function() {
+    _origWarn.apply(console, arguments);
+    var msg = Array.from(arguments).join(' ');
+    if (msg.indexOf('[SeenInSeven]') !== -1) addLine('⚠️', msg, '#ffd93d');
+  };
+
+  window._SIS_log = function(label, data) {
+    var d = data !== undefined ? (typeof data === 'object' ? JSON.stringify(data) : String(data)) : '';
+    console.log('[SIS:' + label + ']', d);
+    addLine('•', label + (d ? ' ' + d : ''), '#9fe');
+  };
+
+  if (DEBUG) {
+    document.addEventListener('DOMContentLoaded', ensurePanel);
+    ensurePanel();
+    addLine('•', 'diagnostics ON — path=' + window.location.pathname + ' hash=' + window.location.hash.substr(0,24), '#32B8B8');
+  }
+})();
+</script>
+</head>
+<body>
+
+<!-- Regen feedback modal -->
+<div id="regen-modal-overlay">
+  <div id="regen-modal">
+    <p id="regen-modal-title">What would you like to change?</p>
+    <textarea id="regen-modal-textarea" rows="3" placeholder="e.g. make the hook more specific to my niche..."></textarea>
+    <div class="regen-modal-btns">
+      <button id="regen-modal-improve">Just improve it →</button>
+      <button id="regen-modal-submit">Make this change →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ VERIFY EMAIL TOAST ══ -->
+<div id="verify-email-toast" style="display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9998;background:#0D2828;border:1px solid rgba(200,168,75,0.5);border-radius:12px;padding:14px 20px;align-items:center;gap:12px;max-width:440px;width:calc(100% - 40px);box-shadow:0 8px 32px rgba(0,0,0,0.4);">
+  <span style="font-size:20px;flex-shrink:0;">📧</span>
+  <div style="flex:1;">
+    <div style="font-size:13px;font-weight:700;color:#E8C86C;margin-bottom:3px;">Confirm your email to save your scripts</div>
+    <div style="font-size:12px;color:var(--muted);line-height:1.6;">Your progress is only saved on this device right now. Check your inbox for a magic link to fully activate your account, or <button onclick="showEmailScreenFromToast()" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:12px;text-decoration:underline;padding:0;font-family:inherit;">enter your email here.</button></div>
+  </div>
+  <button onclick="dismissVerifyToast()" style="background:none;border:none;color:var(--muted);cursor:pointer;font-size:18px;line-height:1;flex-shrink:0;padding:4px;">✕</button>
+</div>
+
+<!-- ══ EMAIL VERIFICATION GATE ══ -->
+<div id="verify-gate-overlay" style="display:none;position:fixed;inset:0;z-index:9500;background:rgba(0,0,0,0.85);align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#0a1f1f;border:1px solid rgba(200,168,75,0.4);border-radius:16px;padding:36px 28px;max-width:420px;width:100%;text-align:center;">
+    <div style="font-size:32px;margin-bottom:16px;">📧</div>
+    <div style="font-family:'Oswald',sans-serif;font-size:24px;color:var(--cream);margin-bottom:10px;">Don't lose your script</div>
+    <div style="font-size:15px;color:var(--muted);line-height:1.75;margin-bottom:24px;">Your first script is ready. It's only saved on this device right now. Enter your email so we can send a magic link to secure your progress across every device.</div>
+    <input type="email" id="gate-email-input" class="text-input" placeholder="you@example.com" autocomplete="email" style="margin-bottom:12px;">
+    <div id="gate-email-error" style="color:#ef4444;font-size:13px;margin-bottom:12px;display:none;"></div>
+    <button onclick="handleGateEmailSubmit()" style="width:100%;background:var(--teal);border:none;border-radius:10px;padding:14px;color:#0D2828;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:0.08em;cursor:pointer;margin-bottom:12px;">Secure My Script →</button>
+    <button onclick="dismissVerifyGate()" style="background:none;border:none;color:var(--muted);font-size:13px;cursor:pointer;text-decoration:underline;font-family:'Nunito',sans-serif;">Skip for now (script may be lost if you close this tab)</button>
+  </div>
+</div>
+
+<!-- ══ EARLY SAVE PROGRESS OVERLAY ══ -->
+<div id="save-progress-overlay" class="save-progress-overlay" aria-hidden="true">
+  <div class="save-progress-card" role="dialog" aria-modal="true" aria-labelledby="save-progress-title">
+    <div class="eyebrow">Quick Check</div>
+    <h2 class="screen-title" id="save-progress-title">Save your <span class="accent">progress.</span></h2>
+    <p class="screen-sub">Enter your email to prevent your effort from vanishing. We'll save everything as you go.</p>
+    <div class="input-group">
+      <label class="input-label">Your Email</label>
+      <input type="email" class="text-input" id="save-progress-email" placeholder="you@example.com" autocomplete="email">
+    </div>
+    <div id="save-progress-error" class="inline-error" style="display:none;"></div>
+    <div class="btn-row">
+      <button class="btn-primary" id="save-progress-btn" onclick="handleSaveProgressEmail()">Send Magic Link</button>
+      <button class="btn-skip" onclick="skipSaveProgressOverlay()">Skip for now (progress only saved on this device)</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ DELETE & START OVER CONFIRMATION ══ -->
+<div id="delete-start-over-confirm" style="display:none;position:fixed;inset:0;z-index:9100;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;padding:24px;">
+  <div style="background:#0a1f1f;border:1px solid var(--border);border-radius:16px;padding:32px 28px;max-width:420px;width:100%;text-align:center;">
+    <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--cream);margin-bottom:12px;">Delete this script and re-answer questions?</div>
+    <div style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:28px;">Your current draft will be saved to version history. You'll go back to the questions to start a fresh script for this video.</div>
+    <div style="display:flex;gap:12px;justify-content:center;">
+      <button onclick="document.getElementById('delete-start-over-confirm').style.display='none'" style="background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:10px 24px;color:var(--soft);font-size:15px;cursor:pointer;font-family:'Nunito',sans-serif;">Cancel</button>
+      <button onclick="deleteAndStartOver()" style="background:#ef4444;border:none;border-radius:8px;padding:10px 24px;color:white;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Yes, Start Over</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FULLSCREEN SCRIPT PREVIEW ══ -->
+<div id="fullscreen-preview" style="display:none;position:fixed;inset:0;z-index:9700;background:#0D2828;padding:60px 32px 40px;overflow-y:auto;">
+  <button onclick="closeFullscreenPreview()" style="position:fixed;top:20px;right:24px;background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:8px 16px;color:var(--cream);font-family:'Nunito',sans-serif;font-size:14px;font-weight:700;cursor:pointer;z-index:1;">✕ Close</button>
+  <div id="fullscreen-preview-title" style="font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:0.12em;color:var(--teal);text-transform:uppercase;margin-bottom:16px;text-align:center;"></div>
+  <div id="fullscreen-preview-content" style="font-family:'Lora',serif;font-style:italic;font-size:28px;line-height:1.85;color:var(--cream);max-width:780px;margin:0 auto;white-space:pre-wrap;"></div>
+</div>
+
+<div id="progress-bar-wrap">
+  <div class="header-left">
+    <div class="logo">SeenInSeven</div>
+    <div class="header-username" id="header-username"></div>
+    <button class="theme-toggle-btn" onclick="toggleTheme()" title="Toggle light/dark mode">
+      <span class="theme-opt theme-sun">☀️</span>
+      <span class="theme-opt theme-moon">🌙</span>
+    </button>
+  </div>
+  <div id="progress-track"><div id="progress-fill"></div><div id="progress-fill-l2"></div></div>
+  <div class="header-right">
+    <div id="progress-label">YOUR JOURNEY</div>
+    <div class="header-nav" id="header-nav">
+      <button class="header-nav-link" onclick="logOut()">Log out</button>
+    </div>
+    <button class="header-nav-link" id="header-signin-btn" onclick="showSignInScreen()" style="display:none;">Sign in</button>
+    <div class="header-bottom-row">
+      <a class="header-nav-btn studio-home-link" href="/" title="Colorado Mastermind Studio">Studio</a>
+      <button class="btn-to-dashboard btn-db-header" onclick="showDashboard()" id="header-dashboard-btn" title="Dashboard">→ Dashboard</button>
+      <button class="header-nav-btn icon header-settings-btn" onclick="openSettings()" title="Settings">⚙️</button>
+    </div>
+  </div>
+</div>
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ══ SETTINGS PANEL (global — works on any screen) ══ -->
+<div id="settings-panel" class="settings-panel">
+  <div class="settings-header">
+    <span class="settings-title">Account Settings</span>
+    <button class="settings-close" onclick="closeSettings()">✕</button>
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">Display Name</div>
+    <input type="text" id="settings-name" class="settings-input" placeholder="Your name">
+    <div class="settings-hint">Used to personalize your scripts</div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">Email</div>
+    <div class="settings-email-row">
+      <span id="settings-email-display" class="settings-email-val"></span>
+      <button class="settings-link-btn" onclick="sendSettingsEmailChange()">Change →</button>
+    </div>
+    <div id="settings-email-msg" class="settings-hint"></div>
+  </div>
+  <div class="settings-section" id="settings-password-section">
+    <div class="settings-label">Password</div>
+    <div id="settings-password-form" style="display:none;">
+      <input type="password" class="settings-input" id="settings-password-input" placeholder="New password (min 6 characters)" autocomplete="new-password">
+      <input type="password" class="settings-input" style="margin-top:8px;" id="settings-password-confirm" placeholder="Confirm password" autocomplete="new-password">
+      <div id="settings-password-msg" class="settings-hint" style="margin-top:6px;"></div>
+      <div style="display:flex;gap:10px;margin-top:10px;">
+        <button class="settings-btn-primary" onclick="saveSettingsPassword()">Set Password</button>
+        <button class="settings-link-btn" onclick="cancelSetPassword()">Cancel</button>
+      </div>
+    </div>
+    <div id="settings-password-idle">
+      <div class="settings-hint">Set a password to sign in without a magic link.</div>
+      <button class="settings-link-btn" style="margin-top:6px;" onclick="showSetPasswordForm()">Set password →</button>
+    </div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">Series</div>
+    <div class="settings-level-row">
+      <span id="settings-level-display" class="settings-level-val"></span>
+      <button class="settings-link-btn" onclick="showLevelChangeConfirm()">Switch →</button>
+    </div>
+    <div id="settings-level-msg" class="settings-hint"></div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">Onboarding</div>
+    <button class="settings-btn-secondary" onclick="rerunOnboarding()">Re-run onboarding questions →</button>
+    <div class="settings-hint">Updates your script personalization. Your existing scripts are kept.</div>
+  </div>
+  <div class="settings-section">
+    <div class="settings-label">Appearance</div>
+    <button class="settings-link-btn" onclick="toggleTheme()" style="font-size:15px;">
+      <span id="settings-theme-label">Light mode</span> →
+    </button>
+    <div class="settings-hint">Toggles between dark and light display.</div>
+  </div>
+  <div class="settings-save-row">
+    <button class="settings-btn-primary" onclick="saveSettings()">Save Changes</button>
+  </div>
+  <div class="settings-danger">
+    <div class="settings-label" style="color:#ef4444;">Danger Zone</div>
+    <button class="settings-btn-danger" onclick="confirmStartOver()">Delete Everything &amp; Start Over</button>
+    <button class="settings-btn-danger" style="border-color:rgba(100,100,100,0.3);color:var(--muted);" onclick="logOut()">Log Out</button>
+  </div>
+</div>
+
+<!-- ══ S0 WELCOME ══ -->
+<div class="screen active" id="screen-0">
+
+  <!-- Returning user banner (shown via JS if saved session exists) -->
+  <div class="returning-banner" id="returning-banner">
+    <div class="rb-text">Welcome back</div>
+    <div class="rb-name" id="rb-name-display">👋</div>
+    <div class="rb-sub">You've already made progress. Want to pick up where you left off?</div>
+    <div class="rb-btns">
+      <button class="rb-continue" onclick="continueSession()">Continue →</button>
+      <button class="rb-fresh" onclick="dismissBanner()">Start Fresh</button>
+    </div>
+  </div>
+
+  <div class="welcome-split">
+    <div class="welcome-main">
+      <div class="welcome-eyebrow">Your 7 Video Challenge</div>
+      <h1 class="welcome-title">
+        <span class="l1">SeenInSeven</span>
+      </h1>
+      <p class="welcome-tagline"><em>Build your entire brand in just 7 videos.</em></p>
+      <div class="btn-row welcome-actions">
+        <button class="btn-primary" onclick="goNext()">Let's Do This</button>
+        <button class="btn-secondary" onclick="showSignInScreen()">Sign In</button>
+      </div>
+    </div>
+    <div class="welcome-steps">
+      <div class="welcome-step"><div class="slabel">Step 01</div><div class="st">Figure out where you are</div></div>
+      <div class="welcome-step"><div class="slabel">Step 02</div><div class="st">Make a real commitment</div></div>
+      <div class="welcome-step"><div class="slabel">Step 03</div><div class="st">Tell us about your world</div></div>
+      <div class="welcome-step"><div class="slabel">Step 04</div><div class="st">Build your first script</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ S1 POSTED? ══ -->
+<div class="screen" id="screen-1">
+  <div class="q1-progress">Question 1: Finding Your Level</div>
+  <h2 class="screen-title">Have you ever posted a <span class="accent">short-form video</span> online?</h2>
+  <p class="screen-sub">TikTok, Reels, Shorts... anything counts. Even if you deleted it the next day.</p>
+  <div class="choice-grid">
+    <div class="choice-card" onclick="autoAdvance(this,'posted','no')">
+      <span class="card-emoji">🫣</span>
+      <div class="card-title">No, never.</div>
+      <div class="card-sub">Haven't started yet, or recorded once and never put it out.</div>
+    </div>
+    <div class="choice-card" onclick="autoAdvance(this,'posted','few')">
+      <span class="card-emoji">📱</span>
+      <div class="card-title">Yes, a few times.</div>
+      <div class="card-sub">Enough to know it wasn't going to stick on its own.</div>
+    </div>
+    <div class="choice-card" onclick="autoAdvance(this,'posted','felloff')">
+      <span class="card-emoji">🔄</span>
+      <div class="card-title">Yes, but I fell off.</div>
+      <div class="card-sub">Life happened, or nerves happened. It stopped mattering, until now.</div>
+    </div>
+    <div class="choice-card" onclick="autoAdvance(this,'posted','consistent')">
+      <span class="card-emoji">🔥</span>
+      <div class="card-title">Yes, consistently before.</div>
+      <div class="card-sub">You know what posting feels like. You just want this time to be different.</div>
+    </div>
+  </div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
+</div>
+
+<!-- ══ S2a BLOCKER ══ -->
+<div class="screen" id="screen-2a">
+  <div class="q1-progress">Question 4: Your Friction Point</div>
+  <h2 class="screen-title">What's the main thing holding you back from <span class="accent">posting regularly?</span></h2>
+  <p class="screen-sub">Pick the closest answer, or scroll down and use your own words if none of these quite fit.</p>
+  <div class="choice-grid" id="blocker-choice-grid"></div>
+  <div class="scroll-feature-cue">Keep scrolling for the new feature ↓</div>
+  <div class="choice-custom first-custom-feature">
+    <div class="feature-inline-head">
+      <span class="feature-badge">NEW: Use your own words!</span>
+      <span class="feature-inline-arrow">↓</span>
+      <span class="feature-inline-copy">If the cards are close but not exact, write what is actually true for you.</span>
+    </div>
+    <div class="choice-custom-title">If nothing above is quite how you feel, just say it.</div>
+    <textarea class="text-input" id="blocker-custom" rows="3" maxlength="1000" placeholder="What's actually making this hard?" oninput="setCustomAnswer('blocker', this.value)"></textarea>
+    <div class="btn-row"><button class="btn-secondary" onclick="useCustomRouteAnswer('blocker','custom')">Use My Words</button></div>
+  </div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
+</div>
+
+<!-- ══ S3 BUSINESS? ══ -->
+<div class="screen" id="screen-3">
+  <div class="q1-progress">Question 2: Finding Your Level</div>
+  <h2 class="screen-title">What are you <span class="accent">building toward</span> right now?</h2>
+  <p class="screen-sub">This shapes everything about what your videos should say and who they're for.</p>
+  <div class="choice-grid" id="business-choice-grid"></div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
+</div>
+
+<!-- ══ Q3 CONTENT INTENT ══ -->
+<div class="screen" id="screen-content-intent">
+  <div class="q1-progress">Question 3: Finding Your Level</div>
+  <h2 class="screen-title">What do you most want these videos to say <span class="accent">about you?</span></h2>
+  <p class="screen-sub">This shapes the whole tone of your scripts, so go with whatever feels most true right now.</p>
+  <div class="choice-grid" id="content-intent-grid"></div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
+</div>
+
+<!-- ══ S6 NAME + COMMITMENT ══ -->
+<div class="screen" id="screen-6">
+  <div class="eyebrow">Your Promise</div>
+  <h2 class="screen-title" id="commit-title">Let's make it <span class="accent">real.</span></h2>
+  <div class="input-group">
+    <label class="input-label">What's your first name?</label>
+    <input type="text" class="text-input" id="user-name" placeholder="So we can personalize your scripts" autocomplete="given-name" oninput="setUserName(this.value)">
+  </div>
+  <div class="commit-wrap" id="commitment-declaration-wrap" style="display:none;">
+    <div class="commit-text" id="commitment-declaration-text"></div>
+    <div class="commit-reasons" id="commitment-reasons"></div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-primary" id="commitment-submit-btn" onclick="goToRecapWithNameCheck()">I'm ready. Let's do this.</button>
+    <button class="btn-back" onclick="goBack()">Back</button>
+  </div>
+</div>
+
+<!-- ══ S-EMAIL CAPTURE ══ -->
+<div class="screen" id="screen-email">
+  <div class="eyebrow">Quick Check</div>
+  <h2 class="screen-title">Been here <span class="accent">before?</span></h2>
+  <p class="screen-sub">Enter your email and we'll pick up right where you left off. New here? We'll save everything as you go.</p>
+  <div class="input-group">
+    <label class="input-label">Your Email</label>
+    <input type="email" class="text-input" id="auth-email-input" placeholder="you@example.com" autocomplete="email" oninput="document.getElementById('auth-email-error').style.display='none'">
+  </div>
+  <div id="auth-password-wrap" style="display:none;">
+    <div class="input-group" style="margin-top:12px;">
+      <label class="input-label">Password</label>
+      <input type="password" class="text-input" id="auth-password-input" placeholder="Your password" autocomplete="current-password">
+    </div>
+  </div>
+  <div id="auth-email-error" style="color:#ef4444;font-size:14px;margin-top:-12px;margin-bottom:16px;display:none;padding:10px 14px;background:rgba(239,68,68,.08);border-radius:8px;border:1px solid rgba(239,68,68,.2);"></div>
+  <div id="auth-checking" style="display:none;font-size:14px;color:var(--teal);margin-bottom:16px;font-family:'Space Mono',monospace;letter-spacing:0.08em;">Checking your account...</div>
+  <div class="btn-row">
+    <button class="btn-primary" id="auth-send-btn" onclick="handleEmailSubmit()">Continue →</button>
+    <button class="btn-skip" onclick="skipAuth()">Skip for now</button>
+  </div>
+  <button id="auth-password-toggle" onclick="togglePasswordSignIn()" style="display:none;background:none;border:none;color:var(--teal);cursor:pointer;font-size:13px;text-decoration:underline;text-underline-offset:3px;padding:0;margin-top:14px;">Have a password? Sign in with it →</button>
+  <p id="auth-email-hint" style="font-size:13px;color:var(--muted);margin-top:20px;line-height:1.7;">No password needed. We'll send a magic link to your inbox. We'll never send you anything you didn't ask for.</p>
+</div>
+
+<!-- ══ S-AUTH WAIT ══ -->
+<div class="screen" id="screen-auth-wait">
+  <div style="text-align:center;">
+    <div style="font-size:48px;margin-bottom:24px;">📬</div>
+    <div class="eyebrow">Check Your Inbox</div>
+    <h2 class="screen-title">Link <span class="accent">sent.</span></h2>
+    <p class="screen-sub" id="auth-wait-email-display">We sent a magic link to your email. Click it and you'll land right back here, ready to go.</p>
+    <div style="margin-top:32px;padding:20px 24px;background:rgba(45,212,191,0.06);border-radius:14px;border:1px solid rgba(45,212,191,0.18);">
+      <p style="font-size:15px;color:var(--muted);line-height:1.75;margin:0;">Can't find it? Check your spam folder. Still nothing? <button onclick="showScreen('screen-email');currentIndex=screenOrder.indexOf('screen-email');" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:15px;text-decoration:underline;text-underline-offset:3px;padding:0;">Try again</button> or <button onclick="skipAuth()" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:15px;text-decoration:underline;text-underline-offset:3px;padding:0;">continue without saving.</button></p>
+    </div>
+  </div>
+</div>
+
+<!-- ══ COMMITMENT PAIN ══ -->
+<div class="screen" id="screen-commit-pain">
+  <div class="q1-progress">Question 5: What's At Stake</div>
+  <h2 class="screen-title">What problems would be gone if content started <span class="accent">working for you?</span></h2>
+  <p class="screen-sub" id="commit-pain-subtitle"></p>
+  <div class="choice-grid" id="commit-pain-grid"></div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
+</div>
+
+<!-- ══ COMMITMENT DESIRE ══ -->
+<div class="screen" id="screen-commit-desire">
+  <div class="q1-progress">Question 6: Your Vision</div>
+  <h2 class="screen-title">What would you love for these <span class="accent">7 videos</span> to do for you?</h2>
+  <p class="screen-sub">Not the strategy answer that just 'sounds' good. The thing in your life you'd finally have if this actually worked the way you hoped it would.</p>
+  <div class="choice-grid" id="commit-desire-grid"></div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
+</div>
+
+<!-- ══ S-RECAP ══ -->
+<div class="screen" id="screen-recap">
+  <div class="eyebrow" id="recap-eyebrow">Your 7 Video Challenge</div>
+  <div id="recap-hero-section" class="recap-hero-section">
+    <div id="recap-level-emoji" class="recap-level-emoji"></div>
+    <div id="recap-hero-heading" class="recap-hero-heading"></div>
+    <div id="recap-level-name" class="recap-level-name"></div>
+    <div id="recap-level-message" class="recap-level-message"></div>
+  </div>
+
+  <div id="recap-mini-mission" class="recap-mini-mission"></div>
+
+  <h3 class="recap-guidelines-heading">
+    Here's how the challenge works.
+  </h3>
+  <div class="guideline-list">
+    <div class="guideline-item">
+      <div class="guideline-num">1</div>
+      <div>
+        <div class="guideline-title">7 videos. Your timeline.</div>
+        <div class="guideline-desc">You don't have to post all 7 in 7 days. Some people move fast, some take a few weeks, some take a few months. Speed literally doesn't matter, but commitment does. What matters is that you finish in order. Each video builds on the last.</div>
+      </div>
+    </div>
+    <div class="guideline-item">
+      <div class="guideline-num">2</div>
+      <div>
+        <div class="guideline-title">Fill in the prompts. Film the script.</div>
+        <div class="guideline-desc">Every video has a set of prompts. Your answers become your script. You don't need to memorize it. Just read it off your phone or use it as a guide.</div>
+      </div>
+    </div>
+    <div class="guideline-item">
+      <div class="guideline-num">3</div>
+      <div>
+        <div class="guideline-title">Done is better than perfect.</div>
+        <div class="guideline-desc">Your first video doesn't have to be good. It just has to exist. You'll be amazed how much better Video 7 is than Video 1. That growth is the whole point.</div>
+      </div>
+    </div>
+    <div class="guideline-item">
+      <div class="guideline-num">4</div>
+      <div>
+        <div class="guideline-title">The camera doesn't need a perfect you.</div>
+        <div class="guideline-desc">It needs the real you. Every video you film, messy, unpolished, uncertain, is proof that you showed up. That's the whole challenge.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="btn-row">
+    <button class="btn-primary" onclick="goNext()">Got It. Let's Get Prepped</button>
+    <button class="btn-back" onclick="goBack()">Back</button>
+  </div>
+</div>
+
+<!-- ══ S-FREEWRITE ══ -->
+<div class="screen" id="screen-checklist">
+  <div class="eyebrow">New Feature</div>
+  <h2 class="screen-title">What do you want to talk about in this <span class="accent">video series?</span></h2>
+  <p class="screen-sub" style="font-size:15px;">Give me a full overview of what you want to talk about over these seven videos, who you are, what you do, and what you want the goal of this series of yours to communicate. The more info the better.</p>
+  <div class="mode-tutorial talk-tutorial">
+    <div class="tutorial-arrow">↘</div>
+    <div class="tutorial-copy"><strong>New feature:</strong> choose Simple when you want momentum, or Extended when you want the scripts to go deeper.</div>
+  </div>
+  <div class="context-toggle" role="group" aria-label="Script context depth">
+    <button class="context-toggle-btn active" id="context-simple-btn" onclick="setContextMode('simple')">Simple</button>
+    <button class="context-toggle-btn" id="context-extended-btn" onclick="setContextMode('extended')">Extended</button>
+  </div>
+  <div class="context-mode-helper" id="context-mode-card">Simple is fast. Extended gives the script builder more of your story, your audience, and your point of view.</div>
+  <div id="extended-prompts" class="extended-prompts" style="display:none;">
+    <div class="input-group">
+      <label class="input-label">Who are you trying to reach?</label>
+      <textarea class="text-input" id="audience-context" rows="4" maxlength="1200" placeholder="Describe the person you want these videos to speak to." oninput="setPhase2Field('audienceContext', this.value)"></textarea>
+    </div>
+    <div class="input-group">
+      <label class="input-label">What do they need to understand or feel?</label>
+      <textarea class="text-input" id="message-context" rows="4" maxlength="1200" placeholder="What should your audience believe, notice, or feel after hearing from you?" oninput="setPhase2Field('messageContext', this.value)"></textarea>
+    </div>
+  </div>
+  <div class="input-group" style="margin-top:8px;">
+    <label class="input-label">Put down anything you think will be helpful for us to know about your business, products, services, or story.</label>
+    <span class="input-hint" style="font-size:12px;opacity:0.75;">Feel free to copy and paste your bio, example video scripts, product lists, master business document, brand guide, stylewriting rules, or anything else useful. The more the better. You can always add to this later. Plain text only.</span>
+    <textarea class="text-input" id="freewrite-input" rows="6"
+      style="resize:vertical;min-height:140px;line-height:1.7;"
+      placeholder="Paste or write anything helpful here. Business notes, brand voice, offers, stories, audience details, product lists, style rules, examples, or anything you want the scripts to understand."
+      maxlength="12000"
+      oninput="setTalkContext(this.value)"></textarea>
+    <div class="input-hint" id="knowledge-count">0 / 12,000 characters</div>
+  </div>
+  <div class="btn-row">
+    <button class="btn-primary" onclick="goNext()">Let's Build My Scripts →</button>
+    <button class="btn-back" onclick="goBack()">Back</button>
+  </div>
+</div>
+
+
+
+<!-- ══ MVO Q2 — Script 1 mini-wizard ══ -->
+<div class="screen" id="screen-mvo2">
+  <div class="journal-card mvo-brief-card">
+    <div class="q1-progress" id="mvo2-label">Getting Your Script Ready</div>
+    <h2 class="screen-title" id="mvo2-question">Let's get your script ready.</h2>
+    <p class="screen-sub" id="mvo2-subtitle">Answer what feels relevant. The more you add, the more the script sounds like you.</p>
+    <div class="context-toggle mvo-mode-toggle" role="group" aria-label="Script prep depth">
+      <button class="context-toggle-btn active" id="mvo-simple-btn" onclick="setMvoMode('simple')">Simple</button>
+      <button class="context-toggle-btn" id="mvo-extended-btn" onclick="setMvoMode('extended')">Extended</button>
+    </div>
+    <div id="mvo2-cards" class="mvo-brief"></div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="completeMvoBrief()">Build My First Script</button>
+      <button class="script-def-back" onclick="goBack()">← Back</button>
+    </div>
+  </div>
+</div>
+
+<div class="screen" id="screen-video-intro">
+  <div class="video-progress" id="vi-dots"></div>
+  <div id="vi-result-badge"></div>
+  <div class="q1-progress" id="vi-label">Video 1 of 7</div>
+  <h2 class="screen-title" id="vi-title"></h2>
+  <p class="vi-body" id="vi-body"></p>
+  <div id="vi-framework"></div>
+  <div id="vi-triggers"></div>
+  <div class="v1-tracker" id="tracker-slot-vi"></div>
+  <div class="btn-row" style="margin-top:1.5rem;">
+    <button class="btn-primary" id="vi-ready-btn" onclick="readyForVideo(0)">I'm Ready →</button>
+  </div>
+  <div style="text-align:center;margin-top:16px;display:flex;gap:20px;justify-content:center;align-items:center;flex-wrap:wrap;">
+    <a id="vi-back-btn" onclick="backFromVideoIntro()" style="color:var(--muted);font-size:14px;text-decoration:underline;text-underline-offset:3px;cursor:pointer;">← Back</a>
+    <button class="btn-skip" id="vi-skip-btn" onclick="skipFromPreface(currentPreviewVideoNum - 1)">Skip this video →</button>
+  </div>
+  <div style="text-align:center;margin-top:10px;">
+    <button class="btn-to-dashboard" onclick="skipToEnd()">→ Dashboard</button>
+  </div>
+</div>
+
+<!-- ══ S7 VIDEO JOURNAL ══ -->
+<div class="screen" id="screen-7">
+  <div class="eyebrow" id="video-eyebrow">Video 1 of 7</div>
+  <div class="video-progress" id="video-dots"></div>
+  <div id="video-journal-content"></div>
+  <div class="v1-tracker" id="tracker-slot-journal"></div>
+</div>
+
+<!-- ══ SCRIPT LOADING SCREEN ══ -->
+<div class="screen" id="screen-script-loading">
+  <div class="v1-loading-wrap">
+    <div class="loading-dots">
+      <div class="ldot"></div>
+      <div class="ldot"></div>
+      <div class="ldot"></div>
+    </div>
+    <span class="loading-label" id="script-loading-label">Building your script...</span>
+  </div>
+  <!-- Epiphany phrases — shown during AI generation -->
+  <div class="v1-epiphany" id="script-loading-epiphany" style="display:none;">
+    <p class="epiphany-line" id="sl-ep1"></p>
+    <p class="epiphany-line" id="sl-ep2"></p>
+    <p class="epiphany-line" id="sl-ep3"></p>
+    <p class="epiphany-line" id="sl-ep4"></p>
+    <p class="epiphany-line ep-last" id="sl-ep5">Yours is almost ready.</p>
+  </div>
+  <!-- Static loading message (shown when no API call is happening) -->
+  <p class="epiphany-line visible" id="script-loading-msg" style="text-align:center;margin-top:32px;padding:0 16px;"></p>
+  <div id="script-error-section" style="display:none;text-align:center;margin-top:32px;padding:0 24px;">
+    <p id="script-error-msg" style="color:#f87171;font-size:16px;margin-bottom:24px;line-height:1.5;"></p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+      <button id="script-error-retry" class="btn-primary" style="font-size:16px;">↺ Try Again</button>
+      <button id="script-error-fallback" class="btn-secondary" style="font-size:16px;background:transparent;border:1px solid rgba(255,255,255,0.2);color:rgba(255,255,255,0.7);">Use Template Instead</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ SCRIPT VIEW SCREEN ══ -->
+<div class="screen" id="screen-script">
+  <div class="eyebrow" id="script-eyebrow">Video 1 of 7: Your Script</div>
+  <div class="video-progress" id="script-dots"></div>
+
+  <!-- V1 Epiphany Bridge loading (only shown first time Video 1 script is revealed) -->
+  <div id="v1-loading" style="display:none;">
+    <div class="v1-loading-wrap">
+      <div class="loading-dots">
+        <div class="ldot"></div>
+        <div class="ldot"></div>
+        <div class="ldot"></div>
+      </div>
+      <span class="loading-label">Building your Video 1 script...</span>
+    </div>
+    <div class="v1-epiphany">
+      <p class="epiphany-line" id="ep1">I used to think the people who posted every day were just more confident than me.</p>
+      <p class="epiphany-line" id="ep2">Turns out they weren't. They just had something to say before they hit record.</p>
+      <p class="epiphany-line ep-last" id="ep3">Yours is almost ready.</p>
+    </div>
+  </div>
+
+  <!-- Main script content (hidden during V1 loading) -->
+  <div id="script-main-content">
+    <div class="script-view-card">
+      <div class="sv-header">
+        <div class="video-badge" id="sv-badge">VIDEO 1</div>
+        <div class="sv-title" id="sv-title">I'm Doing This</div>
+      </div>
+      <p class="sv-instruction" id="sv-instruction">We used your words, feelings, and thoughts, then organized them into your own personalized video. Edit any word until it sounds exactly like you, then film it.</p>
+      <!-- Psychological rationale (shown above structured view) -->
+      <div id="sv-rationale" style="display:none;margin-bottom:16px;padding:12px 16px;background:rgba(45,212,191,0.06);border-radius:10px;border:1px solid rgba(45,212,191,0.15);">
+        <p style="font-size:13px;color:var(--muted);margin:0;line-height:1.6;" id="sv-rationale-text"></p>
+      </div>
+      <div class="sv-toolbar">
+        <!-- Row 1: toggle + copy -->
+        <div class="sv-toolbar-row sv-toolbar-top">
+          <div class="sv-view-toggle">
+            <button class="sv-toggle-btn active" id="sv-guided-btn" onclick="setScriptView('guided')">Structured</button>
+            <button class="sv-toggle-btn" id="sv-clean-btn" onclick="setScriptView('clean')">Edit</button>
+          </div>
+          <button class="sv-copy-btn" id="sv-copy-btn" onclick="copyScript(this)">📋 Copy</button>
+        </div>
+        <!-- Row 2: undo, redo, preview -->
+        <div class="sv-toolbar-row">
+          <button id="sv-undo" onclick="undoScript()" disabled title="Undo (Ctrl/Cmd+Z)" class="sv-tool-btn">↶ Undo</button>
+          <button id="sv-redo" onclick="redoScriptStep()" disabled title="Redo (Ctrl/Cmd+Shift+Z)" class="sv-tool-btn">↷ Redo</button>
+          <button id="sv-fullscreen" onclick="openFullscreenPreview()" title="Fullscreen preview" class="sv-tool-btn">⛶ Preview</button>
+        </div>
+        <!-- Row 3: delete link -->
+        <div class="sv-toolbar-row">
+          <span class="sv-redo-link danger" onclick="confirmDeleteAndStartOver()">Delete &amp; Re-answer Questions</span>
+        </div>
+      </div>
+      <div id="sv-beats" class="sv-beats-view"></div>
+      <div id="sv-clean" style="display:none;">
+        <textarea class="script-editor" id="script-editor" rows="8" placeholder="Your script will appear here..."></textarea>
+        <p class="sv-hint">✏️ Edit freely. Changes save automatically — tap <em>Undo</em> to fix any mistake.</p>
+      </div>
+      <!-- Saved indicator — bottom right of card -->
+      <div id="saved-indicator" style="text-align:right;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--green);opacity:0;transition:opacity 0.3s ease;text-transform:uppercase;padding:6px 0 0;">✓ Saved</div>
+    </div>
+
+    <!-- Thumbs feedback — inline on script screen -->
+    <div class="script-feedback" id="sv-feedback" style="margin-bottom:16px;">
+      <span class="script-feedback-label">Sound like you?</span>
+      <button class="fb-btn" id="sv-fb-up" onclick="handleScriptViewFeedback(true)" title="Yes, sounds like me">👍</button>
+      <button class="fb-btn" id="sv-fb-down" onclick="handleScriptViewFeedback(false)" title="Not quite">👎</button>
+      <span class="fb-thanks" id="sv-fb-thanks">Thanks, that helps!</span>
+    </div>
+
+    <div class="filmed-card">
+      <div class="filmed-card-inner">
+        <div class="filmed-icon">🔒</div>
+        <div>
+          <div class="filmed-title" id="lock-card-title">Happy with this script?</div>
+          <div class="filmed-sub" id="lock-card-sub">Lock it in when you're ready to film. You can always edit it after.</div>
+        </div>
+      </div>
+      <button class="btn-filmed" id="btn-lock-main" onclick="lockInScript()">🔒 Lock In This Script</button>
+
+      <!-- I Filmed It — checkbox style -->
+      <label class="filmed-checkbox-row" id="filmed-checkbox-row">
+        <input type="checkbox" id="filmed-checkbox" onchange="handleFilmedCheckbox(this)" style="display:none;">
+        <span class="filmed-checkbox-box" id="filmed-checkbox-box">☐</span>
+        <span class="filmed-checkbox-label" id="btn-filmed-main">I Filmed It</span>
+      </label>
+
+      <button class="btn-skip" id="btn-filmed-skip" style="display:none;">Skip this one for now</button>
+    </div>
+
+    <div class="v1-tracker" id="tracker-slot-script"></div>
+
+    <div class="btn-row" style="margin-top:16px;align-items:center;">
+      <span class="sv-nav-link" onclick="goBackToPrompts()">← Previous Video</span>
+      <button class="btn-to-dashboard" onclick="skipToEnd()">→ Dashboard</button>
+      <span class="sv-nav-link" onclick="skipFilmedBtn()">→ Skip this video</span>
+    </div>
+  </div>
+</div>
+
+<!-- ══ PLAN SCREEN ══ -->
+<div class="screen" id="plan-screen">
+
+  <!-- Dashboard header — populated by buildPlan() -->
+  <div class="db-header" id="db-header">
+    <div class="db-greeting">Welcome back</div>
+    <div class="db-name" id="db-name">Your Dashboard</div>
+    <div class="db-meta">
+      <span class="db-level-pill" id="db-level-pill"></span>
+      <span class="db-progress-summary" id="db-progress-summary"></span>
+    </div>
+    <div class="db-actions" id="db-actions"></div>
+  </div>
+
+  <!-- Progress tracker -->
+  <div class="v1-tracker" id="tracker-slot-plan"></div>
+
+  <div id="plan-output"></div>
+
+  <!-- Bottom action bar - text links only -->
+  <!-- Copy/PDF — above the divider line -->
+  <div class="db-script-actions">
+    <button class="db-bottom-link" onclick="copyAllScripts(this)">📋 Copy All Scripts</button>
+    <button class="db-bottom-link" onclick="showPdfModal()">⬇ Export All as PDF</button>
+  </div>
+
+  <!-- Bottom divider -->
+  <div class="db-bottom-bar"></div>
+
+  <!-- Styled start-over confirmation (replaces browser confirm()) -->
+  <div id="start-over-confirm" style="display:none;position:fixed;inset:0;z-index:10100;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;padding:24px;">
+    <div style="background:#0a1f1f;border:1px solid var(--border);border-radius:16px;padding:32px 28px;max-width:380px;width:100%;text-align:center;">
+      <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--cream);margin-bottom:12px;">Start Fresh?</div>
+      <div style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:28px;">This will delete all your scripts and reset your onboarding answers. You'll stay logged in and can generate new scripts right away. Your account and email stay intact.</div>
+      <div style="display:flex;gap:12px;justify-content:center;">
+        <button onclick="document.getElementById('start-over-confirm').style.display='none'" style="background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:10px 24px;color:var(--soft);font-size:15px;cursor:pointer;font-family:'Nunito',sans-serif;">Cancel</button>
+        <button onclick="restartWizard()" style="background:#ef4444;border:none;border-radius:8px;padding:10px 24px;color:white;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Yes, Delete Everything</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Next step card — level-aware -->
+  <div class="mission-card" id="mission-card">
+    <div class="m-label" id="mission-label">⭐ In Progress</div>
+    <div class="m-title" id="mission-title">KEEP GOING.</div>
+    <div class="m-cta" id="mission-cta"></div>
+  </div>
+
+  <!-- Community CTA -->
+  <div class="cta-section">
+    <h2>You Don't Have to Do This Alone</h2>
+    <p>Join a free group of people exactly like you, showing up, posting videos, and cheering each other on. No cost. No pitch. Just people who get it.</p>
+    <a class="btn-cta" href="https://facebook.com/groups/coloradobiz" target="_blank">Join the Free Community →</a>
+  </div>
+
+  <!-- Partner tools — hidden until videos are filmed, shown by JS -->
+  <div class="partner-section" id="partner-section" data-locked="true">
+    <div class="partner-eyebrow">Tools David Bee Actually Uses</div>
+    <h2 class="partner-heading">Make posting easier and actually start earning income, TODAY</h2>
+    <div class="partner-grid" id="partner-grid">
+
+      <!-- Vubli — unlocks after first script generated -->
+      <div class="partner-card" id="partner-vubli" style="display:none;">
+        <span class="partner-badge">David Uses This</span>
+        <div class="partner-card-name">Vubli</div>
+        <p class="partner-card-desc">Your scripts are done. Now you have to actually get them out there. Vubli posts your video to every platform at once. No juggling apps, no copy-pasting captions six times. I use it because it turns "I should post this" into "done." 😊</p>
+        <div style="margin-bottom:12px;padding:8px 12px;background:rgba(50,184,184,0.08);border:1px solid rgba(50,184,184,0.2);border-radius:8px;font-size:13px;color:var(--teal);font-family:'Space Mono',monospace;letter-spacing:0.06em;">Use code <strong>davidbee</strong> for a discount</div>
+        <a href="https://vubli.ai/?via=david" class="partner-cta" target="_blank" rel="noopener" onclick="trackSponsorClick('vubli')">Try Vubli Free →</a>
+      </div>
+
+      <!-- Temu — unlocks after 3 videos filmed -->
+      <div class="partner-card" id="partner-temu" style="display:none;">
+        <span class="partner-badge">Earn While You Post</span>
+        <div class="partner-card-name">Temu Creator</div>
+        <p class="partner-card-desc">This one actually surprised me. Temu has a creator program where you can earn money from your content by sharing things you'd buy anyway, which makes it one of the fastest ways to start seeing income from the audience you're building right now. Free to join. No minimum followers. No catch worth mentioning. 😌</p>
+        <a href="https://temu.to/k/plrsjlqz9v8" class="partner-cta" target="_blank" rel="noopener" onclick="trackSponsorClick('temu')">Join Temu Creator Free →</a>
+      </div>
+
+      <!-- Graduation Event — hidden until ENGAGE_LINKS.graduation is set in app.js -->
+      <div class="partner-card" id="engage-graduation" style="display:none;">
+        <span class="partner-badge">The Finish Line</span>
+        <div class="partner-card-name">The Graduation Event</div>
+        <p class="partner-card-desc">When you finish your seven videos, this is where we celebrate it together. Watch the Graduation Event to see what you built, hear what worked for people just like you, and find out what your next chapter can look like. 😊</p>
+        <a href="#" class="partner-cta" id="engage-graduation-cta" target="_blank" rel="noopener" onclick="return openEngageLink('graduation')">Watch the Graduation Event →</a>
+      </div>
+
+      <!-- 1-1 with David Bee — hidden until ENGAGE_LINKS.schedule is set in app.js -->
+      <div class="partner-card" id="engage-call" style="display:none;">
+        <span class="partner-badge">Talk With David Bee</span>
+        <div class="partner-card-name">Your 1-1 Call</div>
+        <p class="partner-card-desc">A short call with David Bee to look at what you built and talk about what comes next. Real feedback on your videos, real direction for your next step, and no pressure at any point. 😌</p>
+        <a href="#" class="partner-cta" id="engage-call-cta" target="_blank" rel="noopener" onclick="return openEngageLink('call')">Schedule Your 1-1 →</a>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<!-- ══ PDF EXPORT MODAL ══ -->
+<div id="pdf-modal-overlay">
+  <div id="pdf-modal">
+    <h3>Export Your Scripts</h3>
+    <p>Choose what you want in your PDF. Opens a clean print-ready page. Just hit Print and save as PDF.</p>
+    <div class="pdf-option" onclick="exportPDF('current')">
+      <div class="pdf-option-icon">📄</div>
+      <div>
+        <div class="pdf-option-label">Current Level Scripts</div>
+        <div class="pdf-option-desc">Your 7 scripts from this level, formatted and ready to film from.</div>
+      </div>
+    </div>
+    <div class="pdf-option" id="pdf-all-option" onclick="exportPDF('all')" style="display:none;">
+      <div class="pdf-option-icon">📚</div>
+      <div>
+        <div class="pdf-option-label">All Scripts (Both Levels)</div>
+        <div class="pdf-option-desc">Level 1 and Level 2 scripts together in one document.</div>
+      </div>
+    </div>
+    <button class="pdf-cancel" onclick="hidePdfModal()">Cancel</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════
+     JAVASCRIPT
+══════════════════════════════════════ -->
+<script src="/prompts/blueprints.js"></script>
+<script src="/js/supabase.js"></script>
+<script src="/js/points.js"></script>
+<script src="/js/app.js"></script>
+
+<!-- ══ DUAL COMPLETE OVERLAY ══ -->
+<div id="dual-complete-overlay">
+  <div class="dco-badge">🏆</div>
+  <div class="dco-headline">Both Levels.<br>14 Videos.<br>Done.</div>
+  <div class="dco-sub">You just did something most people only think about.<br>Level 1 and Level 2, complete.</div>
+  <button class="dco-close" onclick="document.getElementById('dual-complete-overlay').classList.remove('show');launchConfetti();">See My Full Plan →</button>
+</div>
+</body>
+</html>
+<!-- deployed Sun May 31 13:05:05 UTC 2026 -->

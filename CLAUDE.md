@@ -15,12 +15,15 @@ SeenInSeven is the delivery tool for the **777 Challenge** (Colorado Mastermind 
 ## File Structure
 
 ```
-index.html          Main single-page app (all screens live here)
+index.html          Colorado Mastermind Studio dashboard and login
+seeninseven.html    SeenInSeven single-page app (all challenge screens live here)
 js/app.js           All application logic (~5900 lines)
 js/supabase.js      Supabase client, auth, DB read/write, event logging
+js/studio.js        Studio auth, profile, theme, and app-access display
 js/points.js        Gamification points engine (client mirror of the SQL compute)
 css/app.css         Dark mode (default theme) — all structural + dark styles
 css/light.css       Light mode overrides only — see header comment in the file
+css/studio.css      Studio dashboard styles for both themes
 admin.html          Standalone admin panel (separate auth, no framework)
 prompts/blueprints.js  AI system prompts — DO NOT MODIFY without explicit instruction
 supabase_migrations/   Dated .sql files, one per applied change — chronological history of schema/RPC changes
@@ -32,7 +35,7 @@ supabase_migrations/   Dated .sql files, one per applied change — chronologica
 
 ### Do Not Touch
 - **`prompts/blueprints.js`** — proprietary Hero's Journey script logic. Never modify without explicit instruction from David Bee.
-- **Screen DOM structure** — all `.screen` elements must remain direct children of `<body>`. If a screen renders blank, check structure before changing JS. Verify with: `[...document.querySelectorAll('.screen')].filter(s => s.parentElement !== document.body).map(s => s.id)`
+- **Screen DOM structure** — all `.screen` elements in `seeninseven.html` must remain direct children of `<body>`. If a screen renders blank, check structure before changing JS. Verify with: `[...document.querySelectorAll('.screen')].filter(s => s.parentElement !== document.body).map(s => s.id)`
 
 ### Supabase Auth Rule (load-bearing)
 Never `await` Supabase database calls inside `onAuthStateChange` callback body. Defer with `setTimeout(0)`. This prevents a navigator lock bug that caused a hard-to-debug blank screen. See `js/supabase.js` — the pattern is already correct.
@@ -114,9 +117,12 @@ Level is determined by `determineLevel()` after `screen-content-intent`:
 - Points engine, dashboard trophy panel + wealth vault (8 milestone gems + money pile), posted-video tracking with link bonus, sponsor click tracking, Graduation Event + 1-1 call cards (hidden until `ENGAGE_LINKS` is filled in) are all live on production as of this merge.
 - Point values and milestone thresholds are **starting numbers**, not final — tune them in the `points_config` Supabase table (see Points System Rule above).
 
-**Phases 5–8 — Not started**
+**Phases 5–7 — Not started**
+**Phase 8 — Studio shell started by explicit owner direction**
+- Studio is the root dashboard; SeenInSeven remains intact at `/seeninseven`.
+- App-specific beta entitlements are live. Systeme automation remains deferred.
 
-Do not add paid gating, email automation, or superapp features. See `SEENINSEVEN_ROADMAP.md` for full phase definitions and current status detail.
+Do not add paid gating, email automation, more Studio apps, or cross-app history without explicit direction. See `SEENINSEVEN_ROADMAP.md` for full phase definitions and current status detail.
 
 ---
 
