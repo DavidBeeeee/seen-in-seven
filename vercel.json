@@ -5,6 +5,10 @@
     { "source": "/admin/", "destination": "/admin.html" },
     { "source": "/admin/seeninseven", "destination": "/admin-seeninseven.html" },
     { "source": "/admin/seeninseven/", "destination": "/admin-seeninseven.html" },
+    { "source": "/admin/boardroom", "destination": "/admin-boardroom.html" },
+    { "source": "/admin/boardroom/", "destination": "/admin-boardroom.html" },
+    { "source": "/boardroom", "destination": "https://boardroom2.vercel.app/boardroom" },
+    { "source": "/boardroom/:path*", "destination": "https://boardroom2.vercel.app/boardroom/:path*" },
     { "source": "/seeninseven", "destination": "/seeninseven.html" },
     { "source": "/seeninseven/", "destination": "/seeninseven.html" }
   ]

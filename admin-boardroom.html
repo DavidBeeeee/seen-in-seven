@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Boardroom Admin | Colorado Mastermind Studio</title>
+  <meta name="description" content="Manage AI Boardroom access and customer activity.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      try { if (localStorage.getItem('sis_theme_v1') === 'light') document.documentElement.classList.add('studio-light'); } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/studio.css">
+  <link rel="stylesheet" href="/css/admin-studio.css">
+  <link rel="stylesheet" href="/css/admin-boardroom.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <main class="admin-auth" id="auth-screen">
+    <section class="admin-auth-box">
+      <a class="studio-brand auth-brand" href="/" aria-label="Colorado Mastermind Studio home">
+        <span class="studio-mark">CM</span>
+        <span><strong>Colorado Mastermind Studio</strong><small>Brought to you by David Bee</small></span>
+      </a>
+      <p class="eyebrow">AI Boardroom Administration</p>
+      <h1>Welcome back.</h1>
+      <p>Use an approved administrator email to receive a secure sign-in link.</p>
+      <form id="admin-auth-form">
+        <label for="admin-email">Admin email</label>
+        <input id="admin-email" type="email" autocomplete="email" placeholder="email@davidbee.me" required>
+        <button class="primary-button" id="admin-auth-submit" type="submit"><span>Send login link</span><i data-lucide="arrow-right"></i></button>
+        <p class="admin-auth-message" id="auth-message" role="status"></p>
+      </form>
+    </section>
+  </main>
+
+  <div id="admin-app" hidden>
+    <header class="studio-header">
+      <a class="studio-brand" href="/admin" aria-label="Studio Admin home">
+        <span class="studio-mark">CM</span>
+        <span><strong>Colorado Mastermind Studio</strong><small>AI Boardroom Administration</small></span>
+      </a>
+      <div class="header-actions">
+        <button class="icon-button" id="refresh-button" type="button" title="Refresh activity" aria-label="Refresh activity"><i data-lucide="refresh-cw"></i></button>
+        <button class="icon-button" id="theme-button" type="button" title="Change color theme" aria-label="Change color theme"><i data-lucide="sun" class="theme-sun-icon"></i><i data-lucide="moon" class="theme-moon-icon"></i></button>
+        <button class="account-button" id="account-button" type="button"><span class="account-avatar" id="account-avatar">D</span><span class="account-email" id="account-email"></span><i data-lucide="chevron-down"></i></button>
+      </div>
+    </header>
+
+    <div class="studio-layout admin-layout">
+      <aside class="studio-sidebar admin-sidebar" aria-label="Studio admin navigation">
+        <nav>
+          <p class="sidebar-label">Studio</p>
+          <a class="nav-item" href="/admin"><i data-lucide="layout-dashboard"></i><span>Overview</span></a>
+          <p class="sidebar-label app-nav-label">Apps</p>
+          <a class="nav-item" href="/admin/seeninseven"><i data-lucide="video"></i><span>SeenInSeven</span></a>
+          <a class="nav-item active" href="/admin/boardroom"><i data-lucide="messages-square"></i><span>AI Boardroom</span></a>
+        </nav>
+        <a class="nav-item studio-return" href="/"><i data-lucide="arrow-left"></i><span>Back to Studio</span></a>
+      </aside>
+
+      <main class="admin-main boardroom-admin-main">
+        <section class="admin-page-head">
+          <div><p class="eyebrow">AI Boardroom</p><h1>Customer activity</h1><p>See who has access and how actively they are using their private advisor workspace.</p></div>
+          <a class="secondary-button" href="/boardroom"><i data-lucide="external-link"></i><span>Open Boardroom</span></a>
+        </section>
+
+        <div class="admin-notice" id="admin-notice" hidden></div>
+
+        <section class="admin-metrics boardroom-metrics" aria-label="AI Boardroom summary">
+          <article class="admin-metric"><span class="metric-icon"><i data-lucide="key-round"></i></span><div><strong id="metric-access">-</strong><span>With access</span><small>Active Studio passes</small></div></article>
+          <article class="admin-metric"><span class="metric-icon"><i data-lucide="messages-square"></i></span><div><strong id="metric-conversations">-</strong><span>Conversations</span><small>Across all workspaces</small></div></article>
+          <article class="admin-metric"><span class="metric-icon"><i data-lucide="message-circle"></i></span><div><strong id="metric-messages">-</strong><span>Messages</span><small>User and advisor turns</small></div></article>
+          <article class="admin-metric"><span class="metric-icon"><i data-lucide="list-checks"></i></span><div><strong id="metric-cards">-</strong><span>Open cards</span><small>Suggested and active</small></div></article>
+          <article class="admin-metric"><span class="metric-icon"><i data-lucide="file-text"></i></span><div><strong id="metric-documents">-</strong><span>Documents</span><small>Saved business context</small></div></article>
+        </section>
+
+        <section class="admin-section" aria-labelledby="boardroom-users-title">
+          <div class="admin-section-head customer-heading">
+            <div><p class="eyebrow">Customers</p><h2 id="boardroom-users-title">Boardroom access and progress</h2></div>
+            <span class="load-time" id="last-loaded">Not loaded</span>
+          </div>
+          <div class="customer-toolbar">
+            <label class="search-field"><i data-lucide="search"></i><input id="customer-search" type="search" placeholder="Search name or email"></label>
+            <select id="access-filter" aria-label="Filter customers by Boardroom access"><option value="all">All Boardroom records</option><option value="active">Active access</option><option value="revoked">No access</option></select>
+          </div>
+          <div class="customer-table-wrap">
+            <table class="customer-table boardroom-table">
+              <thead><tr><th>Customer</th><th>Workspace</th><th>Conversations</th><th>Messages</th><th>Open cards</th><th>Documents</th><th>Last active</th><th>Access</th></tr></thead>
+              <tbody id="boardroom-rows"><tr><td colspan="8" class="table-loading">Loading Boardroom activity...</td></tr></tbody>
+            </table>
+          </div>
+          <p class="table-count" id="customer-count"></p>
+        </section>
+      </main>
+    </div>
+
+    <div class="account-menu" id="account-menu" hidden>
+      <div class="account-menu-email" id="menu-email"></div>
+      <a href="/admin"><i data-lucide="layout-dashboard"></i>Studio admin</a>
+      <a href="/"><i data-lucide="layout-grid"></i>My Studio</a>
+      <button id="sign-out-button" type="button"><i data-lucide="log-out"></i>Sign out</button>
+    </div>
+  </div>
+  <script src="/js/admin-boardroom.js"></script>
+</body>
+</html>

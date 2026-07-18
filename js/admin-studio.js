@@ -6,12 +6,12 @@ const adminSb = supabase.createClient(ADMIN_SUPABASE_URL, ADMIN_SUPABASE_KEY);
 
 const APP_CATALOG = [
   { key: 'seeninseven', name: 'SeenInSeven', connected: true, adminPath: '/admin/seeninseven' },
-  { key: 'boardroom', name: 'AI Boardroom', connected: false, adminPath: '/admin/boardroom' }
+  { key: 'boardroom', name: 'AI Boardroom', connected: true, adminPath: '/admin/boardroom' }
 ];
 
 const adminEl = id => document.getElementById(id);
 let studioAdminSession = null;
-let studioAdminState = { users: [], entitlements: [], scripts: [], progress: [], logs: [], rows: [], errors: {} };
+let studioAdminState = { users: [], entitlements: [], scripts: [], progress: [], logs: [], boardroom: [], rows: [], errors: {} };
 
 function refreshAdminIcons() {
   if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
@@ -147,7 +147,8 @@ async function loadStudioAdmin() {
     rpcSafe('entitlements', 'admin_get_studio_entitlements'),
     rpcSafe('scripts', 'admin_get_scripts'),
     rpcSafe('progress', 'admin_get_progress'),
-    rpcSafe('logs', 'admin_get_logs')
+    rpcSafe('logs', 'admin_get_logs'),
+    rpcSafe('boardroom', 'admin_get_boardroom_activity')
   ]);
   const loaded = Object.fromEntries(results.map(result => [result.name, result]));
   studioAdminState.users = loaded.users.data;
@@ -155,6 +156,7 @@ async function loadStudioAdmin() {
   studioAdminState.scripts = loaded.scripts.data;
   studioAdminState.progress = loaded.progress.data;
   studioAdminState.logs = loaded.logs.data;
+  studioAdminState.boardroom = loaded.boardroom.data;
   studioAdminState.errors = Object.fromEntries(results.filter(result => result.error).map(result => [result.name, result.error]));
   studioAdminState.rows = buildCustomerRows();
   renderStudioAdmin();
@@ -168,6 +170,7 @@ function buildCustomerRows() {
   const scriptsByUser = groupBy(studioAdminState.scripts.filter(script => script.is_current !== false), 'user_id');
   const progressByUser = groupBy(studioAdminState.progress, 'user_id');
   const logsByUser = groupBy(studioAdminState.logs, 'user_id');
+  const boardroomByUser = groupBy(studioAdminState.boardroom, 'user_id');
 
   return studioAdminState.users.map(user => {
     const entitlements = accessByUser[user.id] || [];
@@ -176,6 +179,7 @@ function buildCustomerRows() {
     const progress = progressByUser[user.id] || [];
     const logs = (logsByUser[user.id] || []).slice().sort((a, b) => dateMs(b.created_at) - dateMs(a.created_at));
     const filmed = progress.filter(item => item.status === 'filmed');
+    const boardroom = boardroomByUser[user.id] || [];
     return {
       user,
       entitlements,
@@ -186,7 +190,9 @@ function buildCustomerRows() {
       scriptCount: uniqueVideoCount(scripts, 'video_number'),
       filmedCount: uniqueVideoCount(filmed, 'video_index'),
       lastActive: user.last_active || (logs[0] && logs[0].created_at) || user.created_at,
-      seenInSevenAccess: activeAccess.some(item => item.app_key === 'seeninseven')
+      seenInSevenAccess: activeAccess.some(item => item.app_key === 'seeninseven'),
+      boardroomAccess: activeAccess.some(item => item.app_key === 'boardroom'),
+      boardroom: boardroom[0] || null
     };
   }).sort((a, b) => dateMs(b.lastActive) - dateMs(a.lastActive));
 }
@@ -227,6 +233,10 @@ function renderAppSummary() {
   adminEl('sis-users').textContent = sisRows.length;
   adminEl('sis-progress').textContent = filmed.length;
   adminEl('sis-errors').textContent = issues.length;
+  const boardroomRows = studioAdminState.rows.filter(row => row.boardroomAccess);
+  adminEl('boardroom-users').textContent = boardroomRows.length;
+  adminEl('boardroom-sessions').textContent = studioAdminState.boardroom.reduce((sum, row) => sum + Number(row.conversations || 0), 0);
+  adminEl('boardroom-cards').textContent = studioAdminState.boardroom.reduce((sum, row) => sum + Number(row.active_cards || 0), 0);
 }
 
 function filteredCustomerRows() {
@@ -238,6 +248,7 @@ function filteredCustomerRows() {
     if (filter === 'any' && row.activeAccess.length === 0) return false;
     if (filter === 'none' && row.activeAccess.length > 0) return false;
     if (filter === 'seeninseven' && !row.seenInSevenAccess) return false;
+    if (filter === 'boardroom' && !row.boardroomAccess) return false;
     return true;
   });
 }
@@ -258,15 +269,18 @@ function renderCustomers() {
       return '<span class="access-badge' + (active ? ' active' : '') + '">' + escapeHtml(app.name) + '</span>';
     }).join('');
     const progressPercent = Math.round((row.filmedCount / 7) * 100);
-    const accessButton = row.seenInSevenAccess
+    const sisButton = row.seenInSevenAccess
       ? '<button class="revoke" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'seeninseven\',false)">Remove SIS</button>'
       : '<button onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'seeninseven\',true)">Grant SIS</button>';
+    const boardroomButton = row.boardroomAccess
+      ? '<button class="revoke" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'boardroom\',false)">Remove Boardroom</button>'
+      : '<button onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'boardroom\',true)">Grant Boardroom</button>';
     return '<tr>' +
       '<td><div class="customer-name">' + escapeHtml(name) + (row.user.is_admin ? '<span class="customer-role">Admin</span>' : '') + '</div><div class="customer-email">' + escapeHtml(row.user.email || 'No email') + '</div></td>' +
       '<td><div class="access-badges">' + badges + '</div></td>' +
       '<td><div class="progress-mini"><div class="progress-mini-bar"><div class="progress-mini-fill" style="width:' + progressPercent + '%"></div></div><span>' + row.filmedCount + '/7 filmed · ' + row.scriptCount + '/7 scripts</span></div></td>' +
       '<td>' + escapeHtml(formatDate(row.lastActive)) + '</td>' +
-      '<td><div class="access-control">' + accessButton + '</div></td>' +
+      '<td><div class="access-control">' + sisButton + boardroomButton + '</div></td>' +
       '<td><button class="icon-button row-detail-button" type="button" title="View customer" aria-label="View ' + safeAttr(name) + '" onclick="openCustomer(\'' + safeAttr(row.user.id) + '\')"><i data-lucide="chevron-right"></i></button></td>' +
       '</tr>';
   }).join('');
@@ -312,6 +326,8 @@ function openCustomer(userId) {
   const name = row.user.name || 'Studio customer';
   adminEl('drawer-title').textContent = name;
   const sisAccess = row.seenInSevenAccess;
+  const boardroomAccess = row.boardroomAccess;
+  const boardroom = row.boardroom || {};
   adminEl('drawer-content').innerHTML =
     '<div class="drawer-profile"><h3>' + escapeHtml(name) + '</h3><p>' + escapeHtml(row.user.email || 'No email') + '</p></div>' +
     '<section class="drawer-section"><h4>Studio summary</h4>' +
@@ -328,7 +344,14 @@ function openCustomer(userId) {
           : '<button class="secondary-button" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'seeninseven\',true)">Grant access</button>') +
         '<a class="secondary-button" href="/admin/seeninseven">Open app admin</a>' +
       '</div></article>' +
-      '<article class="drawer-app"><div class="drawer-app-head"><strong>AI Boardroom</strong><span class="access-badge">Not connected</span></div><p>This control becomes available when the Boardroom joins Studio.</p></article>' +
+      '<article class="drawer-app"><div class="drawer-app-head"><strong>AI Boardroom</strong><span class="access-badge' + (boardroomAccess ? ' active' : '') + '">' + (boardroomAccess ? 'Active' : 'No access') + '</span></div>' +
+      '<p>' + Number(boardroom.conversations || 0) + ' conversations, ' + Number(boardroom.messages || 0) + ' messages, and ' + Number(boardroom.active_cards || 0) + ' open cards.</p>' +
+      '<div class="drawer-actions">' +
+        (boardroomAccess
+          ? '<button class="secondary-button" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'boardroom\',false)">Remove access</button>'
+          : '<button class="secondary-button" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'boardroom\',true)">Grant access</button>') +
+        '<a class="secondary-button" href="/admin/boardroom">Open app admin</a>' +
+      '</div></article>' +
     '</section>';
   adminEl('drawer-backdrop').hidden = false;
   document.body.style.overflow = 'hidden';

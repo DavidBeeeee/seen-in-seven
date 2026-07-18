@@ -115,6 +115,7 @@ a { color: inherit; text-decoration: none; }
 .text-button { color: var(--studio-teal); font-size: 13px; font-weight: 900; }
 
 .apps-section { padding-top: 42px; }
+.apps-section .app-card + .app-card { margin-top: 18px; }
 .section-heading { display: flex; align-items: end; justify-content: space-between; gap: 20px; margin-bottom: 18px; }
 .section-heading h2 { margin: 0; font-family: 'Oswald', sans-serif; font-size: 24px; font-weight: 600; }
 .app-count { color: var(--studio-muted); font-size: 12px; }
