@@ -1,5 +1,8 @@
 {
   "rewrites": [
-    { "source": "/((?!api/|css/|js/|prompts/|admin\\.html).*)", "destination": "/index.html" }
+    { "source": "/", "destination": "/studio.html" },
+    { "source": "/studio", "destination": "/studio.html" },
+    { "source": "/seeninseven", "destination": "/index.html" },
+    { "source": "/seeninseven/", "destination": "/index.html" }
   ]
 }
