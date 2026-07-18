@@ -1,0 +1,1492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Studio Admin: SeenInSeven</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:#0D2828; --bg2:#091d1d; --panel:#102f2f; --panel2:#0a2222;
+      --line:rgba(168,222,222,0.18); --line2:rgba(168,222,222,0.09);
+      --teal:#32B8B8; --teal2:#68C8C8; --soft:#A8DEDE; --cream:#F8FAFA;
+      --muted:#7daaaa; --green:#4ade80; --gold:#C8A84B; --red:#ef4444;
+      --orange:#f59e0b; --blue:#60a5fa;
+    }
+    body {
+      min-height:100vh; background:var(--bg); color:var(--cream);
+      font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+      font-size:14px; line-height:1.45;
+    }
+    button, input, select, textarea { font:inherit; }
+    button { cursor:pointer; }
+
+    #auth-screen { min-height:100vh; display:flex; align-items:center; justify-content:center; padding:24px; }
+    .auth-box { width:100%; max-width:420px; padding:38px 34px; background:var(--panel); border:1px solid var(--line); border-radius:14px; text-align:center; }
+    .auth-box h1 { font-size:24px; color:var(--teal); margin-bottom:8px; letter-spacing:0.04em; }
+    .auth-box p { color:var(--muted); font-size:14px; line-height:1.7; margin-bottom:24px; }
+    .auth-input { width:100%; background:#071a1a; border:1px solid var(--line); border-radius:8px; padding:12px 14px; color:var(--cream); margin-bottom:12px; }
+    .auth-input:focus { outline:none; border-color:var(--teal); }
+    .auth-btn { width:100%; border:0; border-radius:8px; padding:12px; background:var(--teal); color:#062121; font-weight:800; }
+    .auth-msg { margin-top:12px; color:var(--muted); font-size:13px; }
+    .auth-msg.error { color:var(--red); }
+
+    #admin-screen { display:none; min-height:100vh; }
+    .command-header {
+      position:sticky; top:0; z-index:20; display:flex; justify-content:space-between; gap:20px; align-items:center;
+      padding:16px 26px; background:rgba(9,29,29,0.97); backdrop-filter:blur(12px); border-bottom:1px solid var(--line);
+    }
+    .brand-kicker { font-family:ui-monospace,SFMono-Regular,Menlo,monospace; font-size:11px; letter-spacing:0.18em; text-transform:uppercase; color:var(--teal2); margin-bottom:4px; }
+    .command-title { font-size:22px; font-weight:800; letter-spacing:0.01em; }
+    .command-sub { color:var(--muted); font-size:12px; margin-top:3px; }
+    .command-actions { display:flex; flex-wrap:wrap; gap:10px; justify-content:flex-end; align-items:center; }
+    .admin-pill { border:1px solid var(--line); border-radius:999px; padding:7px 10px; color:var(--soft); font-size:12px; background:rgba(50,184,184,0.05); }
+    .health-pill { border-radius:999px; padding:7px 11px; font-size:12px; font-weight:800; }
+    .health-ok { color:#052216; background:var(--green); }
+    .health-warn { color:#261a04; background:var(--gold); }
+    .health-bad { color:#fff; background:var(--red); }
+    .btn { border:1px solid var(--line); border-radius:8px; padding:8px 13px; color:var(--soft); background:transparent; }
+    .btn:hover { border-color:var(--teal); color:var(--cream); }
+    .btn-primary { background:var(--teal); border-color:var(--teal); color:#062121; font-weight:800; }
+    .btn-small { padding:6px 9px; font-size:11px; border-radius:7px; }
+    .copy-toast {
+      position:fixed; right:18px; bottom:18px; z-index:80; padding:10px 13px;
+      border:1px solid rgba(50,184,184,0.45); border-radius:8px;
+      background:#061818; color:var(--soft); box-shadow:0 14px 40px rgba(0,0,0,0.35);
+      opacity:0; transform:translateY(8px); pointer-events:none; transition:opacity .18s ease, transform .18s ease;
+    }
+    .copy-toast.show { opacity:1; transform:translateY(0); }
+    .context-modal {
+      position:fixed; inset:0; z-index:90; display:none; align-items:center; justify-content:center;
+      padding:20px; background:rgba(2,10,10,0.78);
+    }
+    .context-modal.open { display:flex; }
+    .context-box {
+      width:min(840px,100%); max-height:82vh; overflow:auto;
+      background:#081f1f; border:1px solid var(--line); border-radius:10px; box-shadow:0 24px 80px rgba(0,0,0,0.42);
+    }
+    .context-head {
+      position:sticky; top:0; display:flex; justify-content:space-between; align-items:center; gap:12px;
+      padding:14px 16px; background:#081f1f; border-bottom:1px solid var(--line);
+    }
+    .context-body { padding:16px; white-space:pre-wrap; color:var(--soft); line-height:1.7; }
+    .context-snippet { color:var(--soft); font-size:12px; line-height:1.65; }
+
+    .admin-body { max-width:1560px; margin:0 auto; padding:24px; }
+    .grid { display:grid; gap:14px; }
+    .snapshot-grid { grid-template-columns:repeat(7,minmax(130px,1fr)); margin-bottom:18px; }
+    .insight-grid { grid-template-columns:minmax(0,1.1fr) minmax(320px,0.8fr) minmax(320px,0.8fr); margin-bottom:18px; }
+    .main-grid { grid-template-columns:minmax(0,1fr) 390px; align-items:start; }
+    .card { background:var(--panel); border:1px solid var(--line); border-radius:10px; }
+    .card-pad { padding:16px; }
+    .metric { padding:15px 16px; min-height:96px; }
+    .metric-num { font-size:30px; line-height:1; color:var(--teal); font-weight:850; margin-bottom:7px; }
+    .metric-label { color:var(--muted); text-transform:uppercase; letter-spacing:0.12em; font-size:10px; font-weight:800; }
+    .metric-sub { color:var(--soft); font-size:12px; margin-top:7px; }
+    .section-head { display:flex; justify-content:space-between; gap:14px; align-items:flex-start; margin-bottom:14px; }
+    .section-title { font-size:13px; text-transform:uppercase; letter-spacing:0.14em; color:var(--teal2); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .section-note { color:var(--muted); font-size:12px; margin-top:4px; }
+
+    .funnel-step { margin-bottom:12px; }
+    .funnel-row { display:flex; justify-content:space-between; gap:10px; color:var(--soft); font-size:12px; margin-bottom:5px; }
+    .bar { height:9px; border-radius:99px; background:rgba(168,222,222,0.11); overflow:hidden; }
+    .bar-fill { height:100%; background:var(--teal); border-radius:99px; min-width:2px; }
+
+    .stall-list, .issue-list, .timeline-list, .script-list, .answers-list { display:flex; flex-direction:column; gap:8px; }
+    .mini-row { border:1px solid var(--line2); border-radius:8px; padding:10px 11px; background:rgba(6,22,22,0.35); }
+    .mini-top { display:flex; justify-content:space-between; gap:10px; margin-bottom:4px; }
+    .mini-name { color:var(--cream); font-weight:800; font-size:13px; }
+    .mini-meta { color:var(--muted); font-size:11px; }
+    .mini-body { color:var(--soft); font-size:12px; }
+
+    .toolbar { display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin-bottom:12px; }
+    .search { min-width:240px; flex:1; background:#071a1a; border:1px solid var(--line); border-radius:8px; padding:10px 11px; color:var(--cream); }
+    .select { background:#071a1a; border:1px solid var(--line); border-radius:8px; padding:10px 11px; color:var(--cream); }
+    .table-wrap { overflow:auto; border:1px solid var(--line2); border-radius:9px; }
+    table { width:100%; border-collapse:collapse; min-width:980px; }
+    th { position:sticky; top:0; background:#0b2424; color:var(--muted); text-align:left; font-size:10px; text-transform:uppercase; letter-spacing:0.12em; padding:10px 12px; border-bottom:1px solid var(--line); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    td { padding:12px; border-bottom:1px solid var(--line2); vertical-align:middle; }
+    tr.user-row:hover td { background:rgba(50,184,184,0.05); }
+    tr.selected td { background:rgba(50,184,184,0.1); }
+    .name-main { color:var(--cream); font-weight:800; }
+    .name-sub { color:var(--muted); font-size:12px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; margin-top:2px; }
+    .progress-stack { min-width:110px; }
+    .progress-text { color:var(--soft); font-size:12px; margin-top:5px; }
+    .badge { display:inline-flex; align-items:center; border-radius:5px; padding:3px 7px; font-size:10px; letter-spacing:0.08em; text-transform:uppercase; font-weight:850; border:1px solid var(--line); color:var(--soft); background:rgba(168,222,222,0.07); white-space:nowrap; }
+    .badge.green { color:var(--green); border-color:rgba(74,222,128,0.3); background:rgba(74,222,128,0.08); }
+    .badge.gold { color:var(--gold); border-color:rgba(200,168,75,0.35); background:rgba(200,168,75,0.08); }
+    .badge.red { color:#fecaca; border-color:rgba(239,68,68,0.35); background:rgba(239,68,68,0.12); }
+    .badge.blue { color:#bfdbfe; border-color:rgba(96,165,250,0.35); background:rgba(96,165,250,0.1); }
+    .badge.orange { color:#fed7aa; border-color:rgba(245,158,11,0.35); background:rgba(245,158,11,0.1); }
+    .toggle-paid { background:transparent; border:1px solid var(--line); color:var(--muted); border-radius:5px; padding:4px 8px; font-size:11px; }
+    .points-num { color:var(--gold); font-weight:850; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .toggle-paid:hover { border-color:var(--teal); color:var(--cream); }
+    .bulk-bar {
+      display:none; align-items:center; justify-content:space-between; gap:12px;
+      margin-bottom:12px; padding:10px 12px; border:1px solid rgba(245,158,11,0.35);
+      border-radius:8px; background:rgba(245,158,11,0.08); color:var(--soft);
+    }
+    .bulk-bar.show { display:flex; }
+    .row-check { width:16px; height:16px; accent-color:var(--teal); }
+    .select-col { width:42px; min-width:42px; }
+
+    .drawer { position:sticky; top:86px; max-height:calc(100vh - 108px); overflow:auto; background:var(--panel2); border:1px solid var(--line); border-radius:10px; }
+    .drawer-empty { padding:34px 18px; color:var(--muted); text-align:center; line-height:1.7; }
+    .drawer-head { padding:16px; border-bottom:1px solid var(--line); }
+    .drawer-title { font-size:19px; font-weight:850; margin-bottom:3px; }
+    .drawer-sub { color:var(--muted); font-size:12px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; word-break:break-word; }
+    .drawer-section { padding:16px; border-bottom:1px solid var(--line2); }
+    .kv { display:grid; grid-template-columns:120px 1fr; gap:8px; font-size:13px; margin-bottom:8px; }
+    .kv-label { color:var(--muted); text-transform:uppercase; letter-spacing:0.08em; font-size:10px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .kv-val { color:var(--soft); word-break:break-word; }
+    .timeline-item { display:grid; grid-template-columns:92px 1fr; gap:10px; padding:9px 0; border-bottom:1px solid var(--line2); }
+    .timeline-time { color:var(--muted); font-size:11px; font-family:ui-monospace,SFMono-Regular,Menlo,monospace; }
+    .timeline-event { color:var(--cream); font-weight:800; font-size:12px; }
+    .timeline-detail { color:var(--muted); font-size:12px; margin-top:2px; word-break:break-word; }
+    .script-card { border:1px solid var(--line2); border-radius:8px; background:rgba(6,22,22,0.45); overflow:hidden; }
+    .script-card summary { padding:10px 11px; cursor:pointer; color:var(--cream); font-weight:800; }
+    .script-text { padding:0 11px 12px; white-space:pre-wrap; color:var(--soft); font-family:Georgia,serif; font-style:italic; line-height:1.75; max-height:260px; overflow:auto; }
+    .note-box textarea { width:100%; min-height:92px; resize:vertical; background:#071a1a; border:1px solid var(--line); color:var(--cream); border-radius:8px; padding:10px; margin-top:8px; }
+    .note-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px; }
+    .check-row { display:flex; gap:8px; align-items:center; color:var(--soft); font-size:13px; margin:8px 0; }
+    .muted { color:var(--muted); }
+    .empty { color:var(--muted); font-style:italic; padding:14px 0; }
+    .loading { color:var(--muted); font-family:ui-monospace,SFMono-Regular,Menlo,monospace; padding:18px 0; }
+    .denied { text-align:center; padding:80px 24px; color:var(--red); font-size:15px; }
+
+    @media(max-width:1200px) {
+      .snapshot-grid { grid-template-columns:repeat(3,1fr); }
+      .insight-grid, .main-grid { grid-template-columns:1fr; }
+      .drawer { position:relative; top:0; max-height:none; }
+    }
+    @media(max-width:720px) {
+      .command-header { align-items:flex-start; flex-direction:column; }
+      .admin-body { padding:14px; }
+      .snapshot-grid { grid-template-columns:repeat(2,1fr); }
+      .metric-num { font-size:25px; }
+    }
+  </style>
+</head>
+<body>
+
+<div id="auth-screen">
+  <div class="auth-box">
+    <h1>SeenInSeven App Admin</h1>
+    <p>Enter your admin email address to receive a login link.</p>
+    <input type="email" id="admin-email" class="auth-input" placeholder="email@davidbee.me" autocomplete="email">
+    <button class="auth-btn" onclick="sendAdminLink()">Send Login Link</button>
+    <div id="auth-msg" class="auth-msg"></div>
+  </div>
+</div>
+
+<div id="admin-screen">
+  <header class="command-header">
+    <div>
+      <div class="brand-kicker">Colorado Mastermind Studio / SeenInSeven</div>
+      <div class="command-title">App Admin Command Center</div>
+      <div class="command-sub">Test-user progress, friction, support context, and issue triage.</div>
+    </div>
+    <div class="command-actions">
+      <a class="btn" href="/admin">Studio Overview</a>
+      <span class="admin-pill" id="environment-pill">Local</span>
+      <span class="admin-pill" id="last-loaded">Not loaded</span>
+      <span class="health-pill health-warn" id="health-pill">Waiting</span>
+      <span class="admin-pill" id="admin-user-email"></span>
+      <button class="btn" onclick="copyDashboardSummary()">Copy Dashboard</button>
+      <button class="btn btn-primary" onclick="loadAll()">Refresh</button>
+      <button class="btn" onclick="adminLogout()">Log Out</button>
+    </div>
+  </header>
+
+  <main class="admin-body">
+    <section class="grid snapshot-grid" id="snapshot-grid"></section>
+
+    <section class="grid insight-grid">
+      <div class="card card-pad">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Activation Funnel</div>
+            <div class="section-note">A fast read on where test users move or stall.</div>
+          </div>
+          <button class="btn btn-small" onclick="copyFunnelSummary()">Copy</button>
+        </div>
+        <div id="funnel-panel" class="loading">Loading funnel...</div>
+      </div>
+      <div class="card card-pad">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Stall Points</div>
+            <div class="section-note">Users who may need a human check-in.</div>
+          </div>
+          <button class="btn btn-small" onclick="copyStallSummary()">Copy</button>
+        </div>
+        <div id="stall-panel" class="stall-list loading">Loading stalls...</div>
+      </div>
+      <div class="card card-pad">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Issue Triage</div>
+            <div class="section-note">Grouped errors and script failures.</div>
+          </div>
+          <button class="btn btn-small" onclick="copyIssueSummary()">Copy</button>
+        </div>
+        <div id="issue-panel" class="issue-list loading">Loading issues...</div>
+      </div>
+    </section>
+
+    <section class="grid main-grid">
+      <div class="card card-pad">
+        <div class="section-head">
+          <div>
+            <div class="section-title">User Workbench</div>
+            <div class="section-note" id="user-count-note">Loading users...</div>
+          </div>
+          <button class="btn btn-small" onclick="copyFilteredUsers()">Copy Users</button>
+        </div>
+        <div class="toolbar">
+          <input id="user-search" class="search" placeholder="Search name, email, status, or latest event" oninput="applyFilters()">
+          <select id="status-filter" class="select" onchange="applyFilters()">
+            <option value="all">All users</option>
+            <option value="needs_help">Needs help</option>
+            <option value="has_errors">Has errors</option>
+            <option value="stalled">Stalled</option>
+            <option value="no_script">No script generated</option>
+            <option value="script_no_film">Script generated, not filmed</option>
+            <option value="onboarded">Completed onboarding</option>
+            <option value="complete">Completed all 7</option>
+            <option value="preauth">Unverified / anonymous</option>
+            <option value="l1">Level 1</option>
+            <option value="l2">Level 2</option>
+            <option value="test_group">Test group only</option>
+          </select>
+          <select id="sort-filter" class="select" onchange="applyFilters()">
+            <option value="attention">Needs attention first</option>
+            <option value="recent">Most recently active</option>
+            <option value="anon" selected>Anonymous / unverified first</option>
+            <option value="progress">Most progress</option>
+            <option value="points">Most points</option>
+            <option value="name">Name A-Z</option>
+          </select>
+        </div>
+        <div class="bulk-bar" id="bulk-bar">
+          <div><strong id="bulk-count">0 selected</strong><span class="muted"> | deletion removes app data and pre-auth lead events, not the Supabase Auth account.</span></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;">
+            <button class="btn btn-small" onclick="clearSelection()">Clear</button>
+            <button class="btn btn-small" style="border-color:rgba(239,68,68,0.5);color:#fecaca;" onclick="deleteSelectedUsers()">Delete Selected</button>
+          </div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th class="select-col"><input type="checkbox" class="row-check" id="select-visible" onchange="toggleVisibleSelection(this.checked)" title="Select visible rows"></th>
+                <th>User</th>
+                <th>Status</th>
+                <th>Level</th>
+                <th>Progress</th>
+                <th>Points</th>
+                <th>Latest Event</th>
+                <th>Errors</th>
+                <th>Support</th>
+                <th>Studio</th>
+                <th>Paid</th>
+              </tr>
+            </thead>
+            <tbody id="user-tbody">
+              <tr><td colspan="10" class="loading">Loading...</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <aside class="drawer" id="user-drawer">
+        <div class="drawer-empty">Select a user to inspect their journey, scripts, events, issues, and support notes.</div>
+      </aside>
+    </section>
+  </main>
+</div>
+
+<div class="copy-toast" id="copy-toast">Copied</div>
+<div class="context-modal" id="context-modal" onclick="if(event.target.id==='context-modal') closeContextModal()">
+  <div class="context-box">
+    <div class="context-head">
+      <div>
+        <div class="section-title">Full Pasted Context</div>
+        <div class="mini-meta" id="context-modal-meta"></div>
+      </div>
+      <button class="btn btn-small" onclick="closeContextModal()">Close</button>
+    </div>
+    <div class="context-body" id="context-modal-body"></div>
+  </div>
+</div>
+
+<script>
+const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const ADMIN_EMAILS = new Set(['email@davidbee.me', 'davidkamau@live.com']);
+const NOTE_KEY = 'sis_admin_notes_v1';
+const PREF_KEY = 'sis_admin_prefs_v1';
+
+let adminState = {
+  users: [], scripts: [], currentScripts: [], progress: [], onboarding: [], logs: [], preauthEvents: [], studioAccess: [],
+  rows: [], selectedUserId: null, selectedIds: new Set(), notes: loadNotes(), loadErrors: {}, optionalWarnings: {}
+};
+
+async function sendAdminLink() {
+  const email = document.getElementById('admin-email').value.trim();
+  const msg = document.getElementById('auth-msg');
+  if (!email) { msg.textContent = 'Enter your email first.'; msg.className = 'auth-msg error'; return; }
+  if (!ADMIN_EMAILS.has(email)) { msg.textContent = 'Access denied.'; msg.className = 'auth-msg error'; return; }
+  try {
+    const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + '/admin/seeninseven' } });
+    if (error) throw error;
+    msg.textContent = 'Link sent. Check your inbox.';
+    msg.className = 'auth-msg';
+  } catch(e) {
+    msg.textContent = 'Error: ' + e.message;
+    msg.className = 'auth-msg error';
+  }
+}
+
+async function adminLogout() {
+  await sb.auth.signOut();
+  document.getElementById('auth-screen').style.display = 'flex';
+  document.getElementById('admin-screen').style.display = 'none';
+}
+
+sb.auth.onAuthStateChange((event, session) => {
+  if (event !== 'SIGNED_IN' && event !== 'INITIAL_SESSION') return;
+  if (!session || !session.user) return;
+  if (!ADMIN_EMAILS.has(session.user.email)) {
+    document.getElementById('auth-screen').innerHTML =
+      '<div class="denied">Access denied for ' + h(session.user.email) + '. <button onclick="adminLogout()" class="btn" style="margin-left:8px;">Log Out</button></div>';
+    return;
+  }
+  document.getElementById('auth-screen').style.display = 'none';
+  document.getElementById('admin-screen').style.display = 'block';
+  document.getElementById('admin-user-email').textContent = session.user.email;
+  document.getElementById('environment-pill').textContent = window.location.hostname.includes('localhost') || window.location.hostname.includes('127.0.0.1') ? 'Local' : 'Production';
+  setTimeout(async () => {
+    // Ensure this admin has a users row with is_admin = true so the RPCs work.
+    // Goes through provision_admin_account() — a server-side gated RPC that
+    // checks the caller's JWT email against its own allowlist — rather than
+    // writing is_admin directly from the client. A DB trigger also blocks
+    // any direct client write to is_admin/is_paid unless the caller is
+    // already an admin, so this RPC is the only way this ever succeeds.
+    try {
+      await sb.rpc('provision_admin_account');
+    } catch(e) {}
+    loadAll();
+  }, 0);
+});
+
+async function loadAll() {
+  applyAdminPrefs();
+  setLoading();
+  const calls = await Promise.all([
+    rpcSafe('users', 'admin_get_users'),
+    rpcSafe('scripts', 'admin_get_scripts'),
+    rpcSafe('progress', 'admin_get_progress'),
+    rpcSafe('onboarding', 'admin_get_onboarding'),
+    rpcSafe('logs', 'admin_get_logs'),
+    rpcSafe('preauth', 'admin_get_preauth_events'),
+    rpcSafe('points', 'admin_get_points'),
+    rpcSafe('studioAccess', 'admin_get_studio_entitlements')
+  ]);
+  const byName = Object.fromEntries(calls.map(c => [c.name, c]));
+  adminState.users = byName.users.data || [];
+  adminState.scripts = byName.scripts.data || [];
+  adminState.currentScripts = adminState.scripts.filter(s => s.is_current !== false);
+  adminState.progress = byName.progress.data || [];
+  adminState.onboarding = byName.onboarding.data || [];
+  adminState.logs = byName.logs.data || [];
+  adminState.preauthEvents = byName.preauth.data || [];
+  adminState.points = byName.points.data || [];
+  adminState.studioAccess = byName.studioAccess.data || [];
+  adminState.optionalWarnings = Object.fromEntries(calls.filter(c => (c.name === 'preauth' || c.name === 'points' || c.name === 'studioAccess') && c.error).map(c => [c.name, c.error]));
+  adminState.loadErrors = Object.fromEntries(calls.filter(c => c.error && c.name !== 'preauth' && c.name !== 'points' && c.name !== 'studioAccess').map(c => [c.name, c.error]));
+  adminState.rows = buildRows();
+  pruneSelectedIds();
+  document.getElementById('last-loaded').textContent = 'Loaded ' + new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
+  renderAll();
+}
+
+async function rpcSafe(name, rpcName) {
+  try {
+    const res = await sb.rpc(rpcName);
+    return { name, data: res.data || [], error: res.error ? res.error.message : null };
+  } catch(e) {
+    return { name, data: [], error: e.message || String(e) };
+  }
+}
+
+function setLoading() {
+  document.getElementById('snapshot-grid').innerHTML = metricCard('-', 'Loading', 'Fetching admin data');
+  document.getElementById('funnel-panel').innerHTML = '<div class="loading">Loading funnel...</div>';
+  document.getElementById('stall-panel').innerHTML = '<div class="loading">Loading stalls...</div>';
+  document.getElementById('issue-panel').innerHTML = '<div class="loading">Loading issues...</div>';
+  document.getElementById('user-tbody').innerHTML = '<tr><td colspan="11" class="loading">Loading...</td></tr>';
+}
+
+function buildRows() {
+  const scriptsByUser = groupBy(adminState.currentScripts, 'user_id');
+  const allScriptsByUser = groupBy(adminState.scripts, 'user_id');
+  const progressByUser = groupBy(adminState.progress, 'user_id');
+  const logsByUser = groupBy(adminState.logs, 'user_id');
+  const onboardingByUser = Object.fromEntries(adminState.onboarding.map(o => [o.user_id, o]));
+  const pointsByUser = Object.fromEntries((adminState.points || []).map(p => [p.user_id, p.points]));
+  const studioByUser = Object.fromEntries((adminState.studioAccess || [])
+    .filter(e => e.app_key === 'seeninseven')
+    .map(e => [e.user_id, e]));
+  const userRows = adminState.users.map(user => {
+    const scripts = scriptsByUser[user.id] || [];
+    const allScripts = allScriptsByUser[user.id] || [];
+    const progress = progressByUser[user.id] || [];
+    const logs = (logsByUser[user.id] || []).sort((a,b) => dateMs(b.created_at) - dateMs(a.created_at));
+    const ob = onboardingByUser[user.id] || null;
+    const points = pointsByUser[user.id] || null;
+    const studioAccess = studioByUser[user.id] || null;
+    const filmed = progress.filter(p => p.status === 'filmed');
+    const skipped = progress.filter(p => p.status === 'skipped');
+    const errorLogs = logs.filter(isErrorLog);
+    const recentErrors = errorLogs.filter(l => isWithin(l.created_at, 24));
+    const latest = logs[0] || null;
+    const notes = getNote(user.id);
+    const onboardingComplete = !!(ob || user.level);
+    const scriptCount = uniqueVideoCount(scripts);
+    const filmedCount = uniqueProgressCount(filmed);
+    const lastActiveMs = dateMs(user.last_active || (latest && latest.created_at));
+    const stalled = isStalled(lastActiveMs, onboardingComplete, scriptCount, filmedCount);
+    const status = computeStatus({ recentErrors, filmedCount, scriptCount, onboardingComplete, user, stalled });
+    const attention = attentionScore({ notes, recentErrors, stalled, scriptCount, filmedCount, onboardingComplete, latest });
+    return {
+      user, scripts, allScripts, progress, filmed, skipped, logs, ob, latest, notes,
+      onboardingComplete, scriptCount, filmedCount, errorLogs, recentErrors, status,
+      stalled, attention, lastActiveMs, points, studioAccess
+    };
+  });
+  return userRows.concat(buildPreauthRows());
+}
+
+function buildPreauthRows() {
+  const unlinked = (adminState.preauthEvents || []).filter(e => !e.user_id);
+  const bySession = groupBy(unlinked, 'anon_session_id');
+  return Object.entries(bySession).map(([sessionId, events]) => {
+    const sorted = events.slice().sort((a,b) => dateMs(b.created_at) - dateMs(a.created_at));
+    const latest = sorted[0] || null;
+    const email = firstTruthy(sorted.map(e => e.email || (e.detail && e.detail.email)));
+    const snapshot = latestOnboardingSnapshot(sorted);
+    const user = {
+      id: 'preauth:' + sessionId,
+      auth_id: '',
+      email: email || '',
+      name: snapshot.name || '',
+      level: snapshot.level || null,
+      blocker: snapshot.blocker || null,
+      business_stage: snapshot.business || null,
+      is_paid: false,
+      last_active: latest && latest.created_at,
+      created_at: sorted.length ? sorted[sorted.length - 1].created_at : ''
+    };
+    const logs = sorted.map(e => ({
+      user_id: user.id,
+      event_type: e.event_type,
+      detail: e.detail || {},
+      created_at: e.created_at,
+      preauth: true
+    }));
+    const ob = snapshotToOnboarding(sessionId, snapshot);
+    const recentErrors = logs.filter(isErrorLog).filter(l => isWithin(l.created_at, 24));
+    const notes = getNote(user.id);
+    const onboardingComplete = logs.some(l => l.event_type === 'onboarding_completed');
+    const skippedAuth = logs.some(l => l.event_type === 'auth_skipped');
+    const status = recentErrors.length
+      ? { label:'Error', tone:'red' }
+      : onboardingComplete
+        ? { label:'Unverified Complete', tone:'orange' }
+        : skippedAuth
+          ? { label:'Skipped Auth', tone:'gold' }
+          : email
+            ? { label:'Email Entered', tone:'blue' }
+            : { label:'Unverified', tone:'' };
+    const lastActiveMs = latest ? dateMs(latest.created_at) : 0;
+    return {
+      preauth: true, anonSessionId: sessionId, user, scripts: [], allScripts: [], progress: [],
+      filmed: [], skipped: [], logs, ob, latest, notes, onboardingComplete, scriptCount: 0,
+      filmedCount: 0, errorLogs: logs.filter(isErrorLog), recentErrors, status,
+      stalled: isStalled(lastActiveMs, onboardingComplete, 0, 0), attention: 15 + (skippedAuth ? 8 : 0) + (onboardingComplete ? 14 : 0),
+      lastActiveMs, studioAccess: null
+    };
+  });
+}
+
+function computeStatus(row) {
+  if (row.recentErrors.length) return { label:'Error', tone:'red' };
+  if (row.filmedCount >= 7) return { label:'Complete', tone:'green' };
+  if (row.stalled) return { label:'Stalled', tone:'orange' };
+  if (row.filmedCount > 0) return { label:'Filming', tone:'gold' };
+  if (row.scriptCount > 0) return { label:'Script Started', tone:'blue' };
+  if (row.onboardingComplete) return { label:'Ready To Generate', tone:'green' };
+  if (row.user.name || row.user.email) return { label:'Onboarding', tone:'gold' };
+  return { label:'New', tone:'' };
+}
+
+function attentionScore(row) {
+  let score = 0;
+  if (row.notes.support_status === 'needs_help') score += 100;
+  if (row.notes.priority === 'high') score += 50;
+  if (row.recentErrors.length) score += 40;
+  if (row.stalled) score += 25;
+  if (row.scriptCount > 0 && row.filmedCount === 0) score += 10;
+  if (!row.onboardingComplete) score += 4;
+  return score;
+}
+
+function isStalled(lastActiveMs, onboardingComplete, scriptCount, filmedCount) {
+  if (!lastActiveMs || filmedCount >= 7) return false;
+  const hours = (Date.now() - lastActiveMs) / 36e5;
+  const meaningful = onboardingComplete || scriptCount > 0 || filmedCount > 0;
+  return meaningful && hours >= 48;
+}
+
+function renderAll() {
+  renderHealth();
+  renderSnapshot();
+  renderFunnel();
+  renderStalls();
+  renderIssues();
+  applyFilters();
+  if (adminState.selectedUserId) renderDrawer(adminState.selectedUserId);
+}
+
+function renderHealth() {
+  const pill = document.getElementById('health-pill');
+  const errors = Object.keys(adminState.loadErrors);
+  const recentErrors = adminState.logs.filter(l => isErrorLog(l) && isWithin(l.created_at, 24)).length;
+  if (errors.length) {
+    pill.textContent = 'Data warning';
+    pill.className = 'health-pill health-bad';
+  } else if (recentErrors) {
+    pill.textContent = recentErrors + ' recent issue' + (recentErrors === 1 ? '' : 's');
+    pill.className = 'health-pill health-warn';
+  } else {
+    pill.textContent = 'Healthy';
+    pill.className = 'health-pill health-ok';
+  }
+}
+
+function renderSnapshot() {
+  const rows = adminState.rows;
+  const todayActive = rows.filter(r => isWithin(r.user.last_active || (r.latest && r.latest.created_at), 24)).length;
+  const onboarded = rows.filter(r => r.onboardingComplete).length;
+  const firstScript = rows.filter(r => r.scripts.some(s => Number(s.video_number) === 1)).length;
+  const anyFilmed = rows.filter(r => r.filmedCount > 0).length;
+  const complete = rows.filter(r => r.filmedCount >= 7).length;
+  const errors24 = adminState.logs.filter(l => isErrorLog(l) && isWithin(l.created_at, 24)).length;
+  const errorNote = Object.keys(adminState.loadErrors).length ? 'Dataset warning: ' + Object.keys(adminState.loadErrors).join(', ') : 'Operational view';
+  document.getElementById('snapshot-grid').innerHTML = [
+    metricCard(rows.length, 'Total Users', errorNote),
+    metricCard(todayActive, 'Active 24hr', 'Last active or latest event'),
+    metricCard(onboarded, 'Onboarded', pct(onboarded, rows.length) + ' of users'),
+    metricCard(firstScript, 'First Script', pct(firstScript, rows.length) + ' reached value'),
+    metricCard(anyFilmed, 'Any Filmed', pct(anyFilmed, rows.length) + ' took action'),
+    metricCard(complete, 'All 7 Filmed', pct(complete, rows.length) + ' complete'),
+    metricCard(errors24, 'Errors 24hr', errors24 ? 'Needs review' : 'Clear')
+  ].join('');
+}
+
+function renderFunnel() {
+  const rows = adminState.rows;
+  const total = rows.length;
+  const steps = [
+    ['Users created', total],
+    ['Email or auth present', rows.filter(r => !!r.user.email || hasLog(r, ['magic_link_requested','auth_completed','email_submitted'])).length],
+    ['Onboarding complete', rows.filter(r => r.onboardingComplete).length],
+    ['Script 1 generated', rows.filter(r => r.scripts.some(s => Number(s.video_number) === 1)).length],
+    ['Script copied', rows.filter(r => hasLog(r, ['script_copied','all_scripts_copied'])).length],
+    ['Script locked', rows.filter(r => hasLog(r, ['script_locked'])).length],
+    ['Video filmed', rows.filter(r => r.filmedCount > 0).length],
+    ['Dashboard returned', rows.filter(r => hasLog(r, ['dashboard_viewed'])).length],
+    ['All 7 filmed', rows.filter(r => r.filmedCount >= 7).length]
+  ];
+  document.getElementById('funnel-panel').innerHTML = steps.map(([label, count]) => {
+    const width = total ? Math.round((count / total) * 100) : 0;
+    return '<div class="funnel-step"><div class="funnel-row"><span>' + h(label) + '</span><strong>' + count + ' / ' + total + '</strong></div><div class="bar"><div class="bar-fill" style="width:' + width + '%"></div></div></div>';
+  }).join('') || '<div class="empty">No users yet.</div>';
+}
+
+function renderStalls() {
+  const stalls = adminState.rows.filter(r => r.stalled || (r.scriptCount > 0 && r.filmedCount === 0)).sort((a,b) => b.attention - a.attention).slice(0, 8);
+  document.getElementById('stall-panel').innerHTML = stalls.length ? stalls.map(r => {
+    const reason = r.stalled ? 'No movement for 48+ hours' : 'Generated script but has not filmed yet';
+    return '<button class="mini-row" onclick="selectUser(\'' + safeAttr(r.user.id) + '\')" style="text-align:left;width:100%;"><div class="mini-top"><span class="mini-name">' + h(displayName(r)) + '</span><span class="badge orange">' + h(r.status.label) + '</span></div><div class="mini-body">' + h(reason) + '</div><div class="mini-meta">' + h(lastActiveText(r)) + '</div></button>';
+  }).join('') : '<div class="empty">No obvious stalls yet.</div>';
+}
+
+function renderIssues() {
+  const issueLogs = adminState.logs.filter(isErrorLog);
+  const groups = {};
+  issueLogs.forEach(log => {
+    const key = issueKey(log);
+    if (!groups[key]) groups[key] = { label:key, logs:[], users:new Set(), first:log.created_at, last:log.created_at };
+    groups[key].logs.push(log);
+    if (log.user_id) groups[key].users.add(log.user_id);
+    if (dateMs(log.created_at) < dateMs(groups[key].first)) groups[key].first = log.created_at;
+    if (dateMs(log.created_at) > dateMs(groups[key].last)) groups[key].last = log.created_at;
+  });
+  const items = Object.values(groups).sort((a,b) => dateMs(b.last) - dateMs(a.last)).slice(0, 8);
+  document.getElementById('issue-panel').innerHTML = items.length ? items.map(g => {
+    return '<div class="mini-row"><div class="mini-top"><span class="mini-name">' + h(g.label) + '</span><span class="badge red">' + g.logs.length + ' event' + (g.logs.length === 1 ? '' : 's') + '</span></div><div class="mini-body">' + g.users.size + ' affected user' + (g.users.size === 1 ? '' : 's') + '</div><div class="mini-meta">First seen ' + h(formatDate(g.first)) + ' | Last seen ' + h(formatDate(g.last)) + '</div></div>';
+  }).join('') : '<div class="empty">No logged errors or script failures.</div>';
+}
+
+function applyFilters() {
+  const q = (document.getElementById('user-search').value || '').toLowerCase();
+  const filter = document.getElementById('status-filter').value;
+  const sort = document.getElementById('sort-filter').value;
+  saveAdminPrefs(filter, sort);
+  let rows = filteredRows(q, filter, sort);
+  renderUserRows(rows);
+  document.getElementById('user-count-note').textContent = rows.length + ' shown from ' + adminState.rows.length + ' total';
+}
+
+function filteredRows(q, filter, sort) {
+  const query = q == null ? (document.getElementById('user-search').value || '').toLowerCase() : q;
+  const statusFilter = filter || document.getElementById('status-filter').value;
+  const sortMode = sort || document.getElementById('sort-filter').value;
+  let rows = adminState.rows.filter(r => rowMatches(r, query, statusFilter));
+  rows.sort((a,b) => {
+    if (sortMode === 'recent') return b.lastActiveMs - a.lastActiveMs;
+    if (sortMode === 'anon') return Number(!!b.preauth) - Number(!!a.preauth) || (b.lastActiveMs - a.lastActiveMs);
+    if (sortMode === 'progress') return (b.scriptCount + b.filmedCount * 2) - (a.scriptCount + a.filmedCount * 2);
+    if (sortMode === 'points') return ((b.points && b.points.total) || 0) - ((a.points && a.points.total) || 0);
+    if (sortMode === 'name') return displayName(a).localeCompare(displayName(b));
+    return (b.attention - a.attention) || (b.lastActiveMs - a.lastActiveMs);
+  });
+  return rows;
+}
+
+function rowMatches(r, q, filter) {
+  const note = r.notes || {};
+  const haystack = [displayName(r), r.user.email, r.status.label, latestEventLabel(r), note.support_status, note.note].join(' ').toLowerCase();
+  if (q && !haystack.includes(q)) return false;
+  if (filter === 'needs_help') return note.support_status === 'needs_help';
+  if (filter === 'has_errors') return r.errorLogs.length > 0;
+  if (filter === 'stalled') return r.stalled;
+  if (filter === 'no_script') return r.scriptCount === 0;
+  if (filter === 'script_no_film') return r.scriptCount > 0 && r.filmedCount === 0;
+  if (filter === 'onboarded') return r.onboardingComplete;
+  if (filter === 'complete') return r.filmedCount >= 7;
+  if (filter === 'preauth') return !!r.preauth;
+  if (filter === 'l1') return Number(r.user.level) === 1;
+  if (filter === 'l2') return Number(r.user.level) === 2;
+  if (filter === 'test_group') return !!note.test_group;
+  return true;
+}
+
+function renderUserRows(rows) {
+  const tbody = document.getElementById('user-tbody');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="11" class="empty">No users match this view.</td></tr>';
+    updateBulkBar();
+    return;
+  }
+  tbody.innerHTML = rows.map(r => {
+    const selected = r.user.id === adminState.selectedUserId ? ' selected' : '';
+    const checked = adminState.selectedIds.has(r.user.id) ? ' checked' : '';
+    return '<tr class="user-row' + selected + '" onclick="selectUser(\'' + safeAttr(r.user.id) + '\')">' +
+      '<td class="select-col"><input type="checkbox" class="row-check" onclick="event.stopPropagation()" onchange="toggleRowSelection(\'' + safeAttr(r.user.id) + '\', this.checked)"' + checked + '></td>' +
+      '<td><div class="name-main">' + h(displayName(r)) + '</div><div class="name-sub">' + h(r.user.email || r.user.id) + '</div></td>' +
+      '<td>' + badge(r.status.label, r.status.tone) + (r.stalled ? ' ' + badge('Watch', 'orange') : '') + '</td>' +
+      '<td>' + h(levelLabel(r.user.level)) + '</td>' +
+      '<td><div class="progress-stack"><div class="bar"><div class="bar-fill" style="width:' + Math.round((r.filmedCount / 7) * 100) + '%"></div></div><div class="progress-text">' + r.scriptCount + '/7 scripts | ' + r.filmedCount + '/7 filmed</div></div></td>' +
+      '<td>' + (r.points ? '<span class="points-num">' + r.points.total + '</span>' : '<span class="muted">-</span>') + '</td>' +
+      '<td><div>' + h(latestEventLabel(r)) + '</div><div class="mini-meta">' + h(lastActiveText(r)) + '</div></td>' +
+      '<td>' + (r.recentErrors.length ? badge(r.recentErrors.length + ' recent', 'red') : '<span class="muted">0</span>') + '</td>' +
+      '<td>' + badge(supportLabel(r.notes.support_status), supportTone(r.notes.support_status)) + '</td>' +
+      '<td>' + (r.preauth ? '<span class="muted">-</span>' : studioAccessControl(r)) + '</td>' +
+      '<td>' + (r.preauth ? '<span class="muted">-</span>' : (r.user.is_paid ? badge('Paid','green') : '<button class="toggle-paid" onclick="togglePaid(event,\'' + safeAttr(r.user.id) + '\')">Set Paid</button>')) + '</td>' +
+    '</tr>';
+  }).join('');
+  updateBulkBar(rows);
+}
+
+function toggleRowSelection(userId, checked) {
+  if (checked) adminState.selectedIds.add(userId);
+  else adminState.selectedIds.delete(userId);
+  updateBulkBar();
+}
+
+function toggleVisibleSelection(checked) {
+  filteredRows().forEach(r => {
+    if (checked) adminState.selectedIds.add(r.user.id);
+    else adminState.selectedIds.delete(r.user.id);
+  });
+  applyFilters();
+}
+
+function clearSelection() {
+  adminState.selectedIds.clear();
+  applyFilters();
+}
+
+function pruneSelectedIds() {
+  const valid = new Set((adminState.rows || []).map(r => r.user.id));
+  Array.from(adminState.selectedIds || []).forEach(id => { if (!valid.has(id)) adminState.selectedIds.delete(id); });
+}
+
+function updateBulkBar(visibleRows) {
+  const count = adminState.selectedIds ? adminState.selectedIds.size : 0;
+  const bar = document.getElementById('bulk-bar');
+  const countEl = document.getElementById('bulk-count');
+  if (bar) bar.classList.toggle('show', count > 0);
+  if (countEl) countEl.textContent = count + ' selected';
+  const selectVisible = document.getElementById('select-visible');
+  if (selectVisible) {
+    const rows = visibleRows || filteredRows();
+    const visibleIds = rows.map(r => r.user.id);
+    const selectedVisible = visibleIds.filter(id => adminState.selectedIds.has(id)).length;
+    selectVisible.checked = visibleIds.length > 0 && selectedVisible === visibleIds.length;
+    selectVisible.indeterminate = selectedVisible > 0 && selectedVisible < visibleIds.length;
+  }
+}
+
+function selectUser(userId) {
+  adminState.selectedUserId = userId;
+  applyFilters();
+  renderDrawer(userId);
+}
+
+function renderDrawer(userId) {
+  const r = adminState.rows.find(row => row.user.id === userId);
+  const drawer = document.getElementById('user-drawer');
+  if (!r) {
+    drawer.innerHTML = '<div class="drawer-empty">User not found after refresh.</div>';
+    return;
+  }
+  drawer.innerHTML =
+    '<div class="drawer-head"><div style="display:flex;justify-content:space-between;gap:10px;align-items:flex-start;"><div><div class="drawer-title">' + h(displayName(r)) + '</div><div class="drawer-sub">' + h(r.user.email || r.user.id) + '</div></div><button class="btn btn-small" onclick="copySelectedUser()">Copy User</button></div></div>' +
+    '<div class="drawer-section">' + renderProfile(r) + '</div>' +
+    '<div class="drawer-section">' + renderJourney(r) + '</div>' +
+    '<div class="drawer-section">' + renderNotes(r) + '</div>' +
+    '<div class="drawer-section"><div class="section-title">Onboarding Answers</div><div class="answers-list">' + renderAnswers(r.ob, r) + '</div></div>' +
+    '<div class="drawer-section"><div class="section-title">Script Review</div><div class="script-list">' + renderScripts(r) + '</div></div>' +
+    '<div class="drawer-section"><div class="section-title">Issue Panel</div><div class="issue-list">' + renderUserIssues(r) + '</div></div>' +
+    '<div class="drawer-section"><div class="section-title">Event Timeline</div><div class="timeline-list">' + renderTimeline(r.logs) + '</div></div>';
+}
+
+function renderProfile(r) {
+  return '<div class="section-title" style="margin-bottom:12px;">Profile Summary</div>' +
+    kv('Status', badge(r.status.label, r.status.tone)) +
+    (r.preauth ? kv('Pre-auth session', h(r.anonSessionId || '-')) : kv('Database ID', h(r.user.id))) +
+    kv('Auth ID', h(r.user.auth_id || (r.preauth ? 'Not verified yet' : '-'))) +
+    (r.preauth ? kv('Email entered', h(r.user.email || '-')) : '') +
+    kv('Level', h(levelLabel(r.user.level))) +
+    kv('Studio access', r.preauth ? badge('Not verified','') : studioAccessControl(r)) +
+    kv('Paid flag', r.preauth ? badge('Not verified','') : (r.user.is_paid ? badge('Paid','green') : badge('Not paid',''))) +
+    kv('Last active', h(lastActiveText(r))) +
+    kv('Next action', h(nextAction(r)));
+}
+
+function renderJourney(r) {
+  const postedRows = (r.progress || []).filter(p => p.posted || p.post_url);
+  // post_url is user-supplied. h() escapes HTML but a javascript: URL
+  // survives escaping and would execute in the ADMIN's session on click —
+  // only linkify http(s), render anything else as inert text.
+  const safeUrl = u => /^https?:\/\//i.test(String(u || '').trim());
+  const postedHtml = postedRows.length
+    ? postedRows.map(p =>
+        kv('Posted V' + (Number(p.video_index) + 1),
+          p.post_url
+            ? (safeUrl(p.post_url)
+                ? '<a href="' + h(p.post_url) + '" target="_blank" rel="noopener" style="color:var(--teal);word-break:break-all;">' + h(p.post_url) + '</a>'
+                : '<span style="word-break:break-all;">' + h(p.post_url) + '</span>')
+            : h('Self-reported, no link'))
+      ).join('')
+    : '';
+  const pointsBreakdown = r.points && r.points.breakdown
+    ? Object.keys(r.points.breakdown).map(k => {
+        const v = r.points.breakdown[k];
+        const pts = (typeof v === 'object') ? v.points : v;
+        return h(k) + ' +' + pts;
+      }).join(' · ')
+    : '';
+  return '<div class="section-title" style="margin-bottom:12px;">Journey State</div>' +
+    kv('Points', r.points
+      ? '<span class="points-num">' + r.points.total + '</span>' +
+        (pointsBreakdown ? '<div class="mini-meta" style="margin-top:4px;">' + pointsBreakdown + '</div>' : '')
+      : '-') +
+    kv('Scripts', h(r.scriptCount + ' of 7 current scripts')) +
+    kv('Filmed', h(r.filmedCount + ' of 7 videos')) +
+    kv('Skipped', h(r.skipped.length + ' skipped')) +
+    postedHtml +
+    kv('Latest event', h(latestEventLabel(r))) +
+    kv('Support read', h(nextAction(r)));
+}
+
+function noteOpt(val, label, current) {
+  return '<option value="' + val + '"' + (current === val ? ' selected' : '') + '>' + label + '</option>';
+}
+
+function renderNotes(r) {
+  const n = r.notes;
+  return '<div class="section-title" style="margin-bottom:12px;">Admin Notes <span class="muted" style="font-size:10px;">local-only v1</span></div>' +
+    '<div class="note-box">' +
+    '<div class="note-row">' +
+      '<select class="select" id="note-status">' +
+        noteOpt('none','None', n.support_status) +
+        noteOpt('watch','Watch', n.support_status) +
+        noteOpt('needs_help','Needs Help', n.support_status) +
+        noteOpt('resolved','Resolved', n.support_status) +
+      '</select>' +
+      '<select class="select" id="note-priority">' +
+        noteOpt('normal','Normal', n.priority) +
+        noteOpt('low','Low', n.priority) +
+        noteOpt('high','High', n.priority) +
+      '</select>' +
+    '</div>' +
+    '<label class="check-row"><input type="checkbox" id="note-test-group"' + (n.test_group ? ' checked' : '') + '> Test group user</label>' +
+    '<input class="search" id="note-contacted" placeholder="Last contacted note or date" value="' + h(n.last_contacted_at || '') + '">' +
+    '<textarea id="note-text" placeholder="What does David Bee need to know about this user?">' + h(n.note || '') + '</textarea>' +
+    '<button class="btn btn-primary" style="margin-top:8px;" onclick="saveCurrentNote()">Save Note</button>' +
+    '</div>';
+}
+
+
+function renderAnswers(ob, row) {
+  if (!ob) return '<div class="empty">No onboarding row found.</div>';
+  const p2 = getPhase2Context(ob);
+  const context = p2.knowledgeContext || '';
+  const customAnswers = p2.custom && Object.keys(p2.custom).length ? JSON.stringify(p2.custom, null, 2) : '';
+  const contextSnippet = context
+    ? '<div class="mini-row"><div class="mini-top"><span class="mini-name">Pasted context</span><button class="btn btn-small" onclick="openContextModal(\'' + safeAttr(ob.user_id) + '\')">View Full</button></div><div class="context-snippet">' + h(context.slice(0, 320)) + (context.length > 320 ? '...' : '') + '</div></div>'
+    : '';
+  return [
+    answerRow('Posted', ob.posted),
+    answerRow('History', ob.history),
+    answerRow('Business', ob.business),
+    answerRow('Goal', ob.goal),
+    answerRow('Mini goal', ob.mini_goal),
+    answerRow('Mini goal text', ob.mini_goal_text),
+    answerRow('Content intent', p2.contentIntentTitle || p2.contentIntent),
+    answerRow('Content intent raw', p2.contentIntent),
+    answerRow('Main blocker', commitmentText('blocker', row && row.user ? row.user.blocker : ob.blocker, p2.custom && p2.custom.blocker)),
+    answerRow('Blocker custom', p2.custom && p2.custom.blocker),
+    answerRow('All custom answers', customAnswers),
+    answerRow('Pain title', p2.commitmentPainTitle),
+    answerRow('Pain full text', p2.commitmentPainText),
+    answerRow('Pain raw', p2.commitmentPain),
+    answerRow('Pain custom', p2.commitmentPainCustom),
+    answerRow('Pain source', p2.commitmentPainType),
+    answerRow('Vision title', p2.commitmentDesireTitle),
+    answerRow('Vision full text', p2.commitmentDesireText),
+    answerRow('Vision raw', p2.commitmentDesire),
+    answerRow('Vision custom', p2.commitmentDesireCustom),
+    answerRow('Vision source', p2.commitmentDesireType),
+    answerRow('Commitment reasons', valueText(p2.commitmentReasons || ob.commitment_reasons)),
+    answerRow('Commitment declaration', p2.commitmentDeclaration || ob.commitment_declaration),
+    answerRow('Mission statement', p2.missionStatement || ob.mission_statement),
+    answerRow('Context mode', p2.contentMode),
+    answerRow('Audience context', p2.audienceContext),
+    answerRow('Message context', p2.messageContext),
+    answerRow('First script notes', p2.firstScriptNotes),
+    answerRow('Script 1 mode', p2.mvoMode),
+    answerRow('MVO Q1 / stopped', valueText(ob.mvo_q2)),
+    answerRow('MVO Q2 / why now', valueText(ob.mvo_q3)),
+    answerRow('MVO Q3 / who reach', valueText(ob.mvo_q4)),
+    answerRow('Freewrite', ob.topic_freewrite),
+    contextSnippet
+  ].join('');
+}
+
+function getPhase2Context(ob) {
+  const p2 = (ob && ob.phase2_context && typeof ob.phase2_context === 'object') ? ob.phase2_context : {};
+  return Object.assign({
+    custom:{},
+    contentMode:'',
+    audienceContext:'',
+    messageContext:'',
+    knowledgeContext:'',
+    firstScriptNotes:'',
+    contentIntent:'',
+    contentIntentTitle:'',
+    commitmentPain:'',
+    commitmentPainCustom:'',
+    commitmentPainTitle:'',
+    commitmentPainText:'',
+    commitmentPainType:'',
+    commitmentDesire:'',
+    commitmentDesireCustom:'',
+    commitmentDesireTitle:'',
+    commitmentDesireText:'',
+    commitmentDesireType:'',
+    commitmentReasons:[],
+    commitmentDeclaration:'',
+    missionStatement:'',
+    missionGeneratedAt:'',
+    mvoMode:''
+  }, p2, { custom: Object.assign({}, p2.custom || {}) });
+}
+
+function commitmentText(kind, value, customValue) {
+  if (kind === 'blocker') {
+    const map = {
+      ideas:"I don't know what to say.",
+      camera:"I don't like how I come across.",
+      care:"I'm worried people won't care.",
+      procrastinating:"I keep putting it off."
+    };
+    return customValue || map[value] || value || '';
+  }
+  const pain = {
+    hiding:'Hiding even though I have something worth saying',
+    waiting:'Waiting until I feel more ready',
+    scattered:'Feeling scattered every time I try to explain myself',
+    invisible:'Watching the right people never discover me'
+  };
+  const desire = {
+    confidence:'A calmer kind of confidence on camera',
+    connection:'The right people recognizing themselves in my story',
+    proof:'Proof that I can finish what I start',
+    momentum:'Real momentum for my voice, my brand, or my business'
+  };
+  if (value === 'custom') return customValue || '';
+  return (kind === 'pain' ? pain[value] : desire[value]) || value || '';
+}
+
+function openContextModal(userId) {
+  const selected = adminState.rows.find(row => row.user.id === userId);
+  const ob = selected && selected.ob ? selected.ob : adminState.onboarding.find(row => row.user_id === userId);
+  const p2 = getPhase2Context(ob);
+  const modal = document.getElementById('context-modal');
+  const body = document.getElementById('context-modal-body');
+  const meta = document.getElementById('context-modal-meta');
+  if (body) body.textContent = p2.knowledgeContext || 'No pasted context saved.';
+  if (meta) meta.textContent = (p2.knowledgeContext || '').length + ' characters';
+  if (modal) modal.classList.add('open');
+}
+
+function closeContextModal() {
+  const modal = document.getElementById('context-modal');
+  if (modal) modal.classList.remove('open');
+}
+
+function renderScripts(r) {
+  if (!r.scripts.length) return '<div class="empty">No current scripts generated yet.</div>';
+  return r.scripts.slice().sort((a,b) => Number(a.video_number) - Number(b.video_number)).map(s => {
+    const clean = cleanScriptText(s);
+    const feedback = s.thumbs_up === true ? 'thumbs up' : s.thumbs_up === false ? 'thumbs down' : 'no feedback';
+    return '<details class="script-card"><summary>Video ' + h(s.video_number) + ' | v' + h(s.version || 1) + ' | ' + h(feedback) + '</summary><div style="padding:0 11px 8px;"><button class="btn btn-small" onclick="copyAdminScript(event,\'' + safeAttr(r.user.id) + '\',' + Number(s.video_number || 0) + ')">Copy Script</button></div><div class="script-text">' + h(clean || 'Empty script') + '</div></details>';
+  }).join('');
+}
+
+function renderUserIssues(r) {
+  if (!r.errorLogs.length) return '<div class="empty">No errors for this user.</div>';
+  return r.errorLogs.slice(0, 8).map(l => '<div class="mini-row"><div class="mini-top"><span class="mini-name">' + h(l.event_type) + '</span><span class="mini-meta">' + h(formatDate(l.created_at)) + '</span></div><div class="mini-body">' + h(detailText(l.detail)) + '</div></div>').join('');
+}
+
+function renderTimeline(logs) {
+  if (!logs.length) return '<div class="empty">No events logged yet.</div>';
+  return logs.slice(0, 80).map(l => '<div class="timeline-item"><div class="timeline-time">' + h(formatDate(l.created_at)) + '</div><div><div class="timeline-event">' + h(l.event_type) + '</div><div class="timeline-detail">' + h(detailText(l.detail)) + '</div></div></div>').join('');
+}
+
+function saveCurrentNote() {
+  const userId = adminState.selectedUserId;
+  if (!userId) return;
+  adminState.notes[userId] = {
+    support_status: document.getElementById('note-status').value,
+    priority: document.getElementById('note-priority').value,
+    test_group: document.getElementById('note-test-group').checked,
+    last_contacted_at: document.getElementById('note-contacted').value.trim(),
+    note: document.getElementById('note-text').value.trim(),
+    updated_at: new Date().toISOString()
+  };
+  saveNotes();
+  adminState.rows = buildRows();
+  applyFilters();
+  renderDrawer(userId);
+}
+
+async function togglePaid(e, userId) {
+  e.stopPropagation();
+  const btn = e.target;
+  btn.textContent = '...';
+  try {
+    const { error } = await sb.rpc('admin_set_paid', { target_user_id: userId, paid: true });
+    if (error) throw error;
+    await loadAll();
+  } catch(err) {
+    btn.textContent = 'Error';
+    console.error(err);
+  }
+}
+
+function studioAccessControl(r) {
+  const active = r.studioAccess && r.studioAccess.status === 'active';
+  if (active) {
+    const source = r.studioAccess.access_source === 'beta' ? 'Beta' : 'Active';
+    return badge(source, 'green') + ' <button class="toggle-paid" onclick="toggleStudioAccess(event,\'' + safeAttr(r.user.id) + '\',false)">Remove</button>';
+  }
+  return '<button class="toggle-paid" onclick="toggleStudioAccess(event,\'' + safeAttr(r.user.id) + '\',true)">Grant Beta</button>';
+}
+
+async function toggleStudioAccess(e, userId, enabled) {
+  e.stopPropagation();
+  const btn = e.target;
+  btn.textContent = '...';
+  try {
+    const { error } = await sb.rpc('admin_set_studio_access', {
+      target_user_id: userId,
+      target_app_key: 'seeninseven',
+      enabled: enabled,
+      target_access_source: 'beta'
+    });
+    if (error) throw error;
+    await loadAll();
+  } catch(err) {
+    btn.textContent = 'Error';
+    console.error(err);
+  }
+}
+
+async function deleteSelectedUsers() {
+  const ids = Array.from(adminState.selectedIds || []);
+  if (!ids.length) return;
+  const rows = ids.map(id => adminState.rows.find(r => r.user.id === id)).filter(Boolean);
+  const realIds = rows.filter(r => !r.preauth).map(r => r.user.id);
+  const anonIds = rows.filter(r => r.preauth).map(r => r.anonSessionId).filter(Boolean);
+  const label = rows.map(displayName).slice(0, 8).join(', ') + (rows.length > 8 ? ', ...' : '');
+  const ok = window.confirm('Delete ' + rows.length + ' selected admin row' + (rows.length === 1 ? '' : 's') + '?\n\n' + label + '\n\nThis removes app data and pre-auth lead events. It does not delete Supabase Auth accounts.');
+  if (!ok) return;
+  try {
+    const { error } = await sb.rpc('admin_delete_subjects', {
+      target_user_ids: realIds,
+      target_anon_session_ids: anonIds
+    });
+    if (error) throw error;
+    adminState.selectedIds.clear();
+    adminState.selectedUserId = null;
+    await loadAll();
+    document.getElementById('user-drawer').innerHTML = '<div class="drawer-empty">Deleted selected rows. Select a user to inspect their journey, scripts, events, issues, and support notes.</div>';
+    showCopyToast('Deleted selected rows');
+  } catch(err) {
+    showCopyToast('Delete failed');
+    alert('Delete failed: ' + (err.message || err));
+  }
+}
+
+function copyDashboardSummary() {
+  const rows = adminState.rows;
+  const text = [
+    exportHeader('SeenInSeven Admin Dashboard'),
+    '',
+    exportSnapshot(),
+    '',
+    exportFunnel(),
+    '',
+    exportStalls(),
+    '',
+    exportIssues(),
+    '',
+    'VISIBLE USERS',
+    exportRows(filteredRows()).join('\n\n') || 'No users in current filter.',
+    '',
+    'LOAD WARNINGS',
+    Object.keys(adminState.loadErrors).length ? Object.entries(adminState.loadErrors).map(([k,v]) => '- ' + k + ': ' + v).join('\n') : 'None',
+    '',
+    'OPTIONAL SETUP NOTES',
+    Object.keys(adminState.optionalWarnings || {}).length ? Object.entries(adminState.optionalWarnings).map(([k,v]) => '- ' + k + ': ' + v).join('\n') : 'None',
+    '',
+    'TOTAL USERS: ' + rows.length
+  ].join('\n');
+  copyPlainText(text, 'Dashboard copied');
+}
+
+function copyFunnelSummary() {
+  copyPlainText([exportHeader('SeenInSeven Activation Funnel'), '', exportFunnel()].join('\n'), 'Funnel copied');
+}
+
+function copyStallSummary() {
+  copyPlainText([exportHeader('SeenInSeven Stall Points'), '', exportStalls()].join('\n'), 'Stalls copied');
+}
+
+function copyIssueSummary() {
+  copyPlainText([exportHeader('SeenInSeven Issue Triage'), '', exportIssues()].join('\n'), 'Issues copied');
+}
+
+function copyFilteredUsers() {
+  const rows = filteredRows();
+  copyPlainText([
+    exportHeader('SeenInSeven Filtered Users'),
+    'FILTER: ' + document.getElementById('status-filter').value,
+    'SEARCH: ' + (document.getElementById('user-search').value || 'none'),
+    'SORT: ' + document.getElementById('sort-filter').value,
+    'COUNT: ' + rows.length + ' of ' + adminState.rows.length,
+    '',
+    exportRows(rows).join('\n\n') || 'No users in current filter.'
+  ].join('\n'), 'Users copied');
+}
+
+function copySelectedUser() {
+  const r = adminState.rows.find(row => row.user.id === adminState.selectedUserId);
+  if (!r) return copyPlainText('No selected user.', 'No user selected');
+  copyPlainText(exportUserDetail(r), 'User copied');
+}
+
+function copyAdminScript(e, userId, videoNumber) {
+  if (e) e.stopPropagation();
+  const r = adminState.rows.find(row => row.user.id === userId);
+  const script = r && r.scripts.find(s => Number(s.video_number) === Number(videoNumber));
+  if (!script) return copyPlainText('Script not found.', 'Script missing');
+  copyPlainText([
+    exportHeader('SeenInSeven Script'),
+    'USER: ' + displayName(r) + ' <' + (r.user.email || 'no email') + '>',
+    'USER ID: ' + r.user.id,
+    'VIDEO: ' + (script.video_number || videoNumber),
+    'LEVEL: ' + levelLabel(script.level || r.user.level),
+    'VERSION: ' + (script.version || 1),
+    'FEEDBACK: ' + (script.thumbs_up === true ? 'thumbs up' : script.thumbs_up === false ? 'thumbs down' : 'none'),
+    'CREATED: ' + (script.generated_at || '-'),
+    'UPDATED: ' + (script.edited_at || '-'),
+    '',
+    cleanScriptText(script)
+  ].join('\n'), 'Script copied');
+}
+
+function exportHeader(title) {
+  return title + '\nGenerated: ' + new Date().toISOString() + '\nEnvironment: ' + document.getElementById('environment-pill').textContent + '\nHealth: ' + document.getElementById('health-pill').textContent;
+}
+
+function exportSnapshot() {
+  const rows = adminState.rows;
+  const todayActive = rows.filter(r => isWithin(r.user.last_active || (r.latest && r.latest.created_at), 24)).length;
+  const onboarded = rows.filter(r => r.onboardingComplete).length;
+  const firstScript = rows.filter(r => r.scripts.some(s => Number(s.video_number) === 1)).length;
+  const anyFilmed = rows.filter(r => r.filmedCount > 0).length;
+  const complete = rows.filter(r => r.filmedCount >= 7).length;
+  const errors24 = adminState.logs.filter(l => isErrorLog(l) && isWithin(l.created_at, 24)).length;
+  return [
+    'SNAPSHOT',
+    '- Total users: ' + rows.length,
+    '- Active 24hr: ' + todayActive,
+    '- Onboarded: ' + onboarded,
+    '- First script generated: ' + firstScript,
+    '- Any video filmed: ' + anyFilmed,
+    '- All 7 filmed: ' + complete,
+    '- Errors 24hr: ' + errors24
+  ].join('\n');
+}
+
+function exportFunnel() {
+  const rows = adminState.rows;
+  const total = rows.length;
+  const steps = [
+    ['Users created', total],
+    ['Email or auth present', rows.filter(r => !!r.user.email || hasLog(r, ['magic_link_requested','auth_completed','email_submitted'])).length],
+    ['Onboarding complete', rows.filter(r => r.onboardingComplete).length],
+    ['Script 1 generated', rows.filter(r => r.scripts.some(s => Number(s.video_number) === 1)).length],
+    ['Script copied', rows.filter(r => hasLog(r, ['script_copied','all_scripts_copied'])).length],
+    ['Script locked', rows.filter(r => hasLog(r, ['script_locked'])).length],
+    ['Video filmed', rows.filter(r => r.filmedCount > 0).length],
+    ['Dashboard returned', rows.filter(r => hasLog(r, ['dashboard_viewed'])).length],
+    ['All 7 filmed', rows.filter(r => r.filmedCount >= 7).length]
+  ];
+  return 'FUNNEL\n' + steps.map(([label, count]) => '- ' + label + ': ' + count + ' / ' + total + ' (' + pct(count, total) + ')').join('\n');
+}
+
+function exportStalls() {
+  const stalls = adminState.rows.filter(r => r.stalled || (r.scriptCount > 0 && r.filmedCount === 0)).sort((a,b) => b.attention - a.attention);
+  if (!stalls.length) return 'STALL POINTS\nNone';
+  return 'STALL POINTS\n' + stalls.map(r => {
+    const reason = r.stalled ? 'No movement for 48+ hours' : 'Generated script but has not filmed yet';
+    return '- ' + displayName(r) + ' | ' + r.status.label + ' | ' + reason + ' | Last active: ' + lastActiveText(r) + ' | User ID: ' + r.user.id;
+  }).join('\n');
+}
+
+function exportIssues() {
+  const issueLogs = adminState.logs.filter(isErrorLog);
+  if (!issueLogs.length) return 'ISSUES\nNone';
+  const groups = {};
+  issueLogs.forEach(log => {
+    const key = issueKey(log);
+    if (!groups[key]) groups[key] = { label:key, logs:[], users:new Set(), first:log.created_at, last:log.created_at };
+    groups[key].logs.push(log);
+    if (log.user_id) groups[key].users.add(log.user_id);
+    if (dateMs(log.created_at) < dateMs(groups[key].first)) groups[key].first = log.created_at;
+    if (dateMs(log.created_at) > dateMs(groups[key].last)) groups[key].last = log.created_at;
+  });
+  return 'ISSUES\n' + Object.values(groups).sort((a,b) => dateMs(b.last) - dateMs(a.last)).map(g => [
+    '- ' + g.label,
+    '  Events: ' + g.logs.length,
+    '  Affected users: ' + Array.from(g.users).join(', '),
+    '  First seen: ' + g.first,
+    '  Last seen: ' + g.last,
+    '  Latest detail: ' + detailText(g.logs.slice().sort((a,b) => dateMs(b.created_at) - dateMs(a.created_at))[0].detail)
+  ].join('\n')).join('\n');
+}
+
+function exportRows(rows) {
+  return rows.map(r => [
+    displayName(r) + ' <' + (r.user.email || 'no email') + '>',
+    '- User ID: ' + r.user.id,
+    '- Auth ID: ' + (r.user.auth_id || '-'),
+    '- Status: ' + r.status.label,
+    '- Level: ' + levelLabel(r.user.level),
+    '- Progress: ' + r.scriptCount + '/7 scripts, ' + r.filmedCount + '/7 filmed, ' + r.skipped.length + ' skipped',
+    '- Last active: ' + lastActiveText(r),
+    '- Latest event: ' + latestEventLabel(r),
+    '- Errors: ' + r.errorLogs.length + ' total, ' + r.recentErrors.length + ' in 24hr',
+    '- Support: ' + supportLabel(r.notes.support_status) + ', priority ' + (r.notes.priority || 'normal'),
+    '- Paid flag: ' + (r.preauth ? 'unverified' : (!!r.user.is_paid)),
+    '- Pre-auth session: ' + (r.anonSessionId || '-'),
+    '- Next action: ' + nextAction(r)
+  ].join('\n'));
+}
+
+function exportUserDetail(r) {
+  return [
+    exportHeader('SeenInSeven User Detail'),
+    '',
+    exportRows([r])[0],
+    '',
+    'CREATED: ' + (r.user.created_at || '-'),
+    'LAST ACTIVE RAW: ' + (r.user.last_active || '-'),
+    '',
+    'ADMIN NOTES',
+    '- Status: ' + supportLabel(r.notes.support_status),
+    '- Priority: ' + (r.notes.priority || 'normal'),
+    '- Test group: ' + (!!r.notes.test_group),
+    '- Last contacted: ' + (r.notes.last_contacted_at || '-'),
+    '- Note: ' + (r.notes.note || '-'),
+    '',
+    'ONBOARDING',
+    exportOnboarding(r.ob, r),
+    '',
+    'SCRIPTS',
+    r.scripts.length ? r.scripts.slice().sort((a,b) => Number(a.video_number) - Number(b.video_number)).map(exportScriptSummary).join('\n\n') : 'No current scripts.',
+    '',
+    'ERRORS',
+    r.errorLogs.length ? r.errorLogs.map(l => '- ' + l.created_at + ' | ' + l.event_type + ' | ' + detailText(l.detail)).join('\n') : 'No errors.',
+    '',
+    'RECENT TIMELINE',
+    r.logs.slice(0, 30).map(l => '- ' + l.created_at + ' | ' + l.event_type + ' | ' + detailText(l.detail)).join('\n') || 'No logs.'
+  ].join('\n');
+}
+
+function exportOnboarding(ob, row) {
+  if (!ob) return 'No onboarding row found.';
+  const p2 = getPhase2Context(ob);
+  return [
+    '- Posted: ' + valueText(ob.posted),
+    '- History: ' + valueText(ob.history),
+    '- Business: ' + valueText(ob.business),
+    '- Goal: ' + valueText(ob.goal),
+    '- Mini goal: ' + valueText(ob.mini_goal),
+    '- Mini goal text: ' + valueText(ob.mini_goal_text),
+    '- Content intent: ' + valueText(p2.contentIntentTitle || p2.contentIntent),
+    '- Content intent raw: ' + valueText(p2.contentIntent),
+    '- Main blocker: ' + valueText(commitmentText('blocker', row && row.user ? row.user.blocker : ob.blocker, p2.custom && p2.custom.blocker)),
+    '- Blocker custom: ' + valueText(p2.custom && p2.custom.blocker),
+    '- All custom answers: ' + valueText(p2.custom && Object.keys(p2.custom).length ? JSON.stringify(p2.custom) : ''),
+    '- Pain title: ' + valueText(p2.commitmentPainTitle),
+    '- Pain full text: ' + valueText(p2.commitmentPainText),
+    '- Pain raw: ' + valueText(p2.commitmentPain),
+    '- Pain custom: ' + valueText(p2.commitmentPainCustom),
+    '- Pain source: ' + valueText(p2.commitmentPainType),
+    '- Vision title: ' + valueText(p2.commitmentDesireTitle),
+    '- Vision full text: ' + valueText(p2.commitmentDesireText),
+    '- Vision raw: ' + valueText(p2.commitmentDesire),
+    '- Vision custom: ' + valueText(p2.commitmentDesireCustom),
+    '- Vision source: ' + valueText(p2.commitmentDesireType),
+    '- Commitment reasons: ' + valueText(p2.commitmentReasons || ob.commitment_reasons),
+    '- Commitment declaration: ' + valueText(p2.commitmentDeclaration || ob.commitment_declaration),
+    '- Mission statement: ' + valueText(p2.missionStatement || ob.mission_statement),
+    '- Context mode: ' + valueText(p2.contentMode),
+    '- Audience context: ' + valueText(p2.audienceContext),
+    '- Message context: ' + valueText(p2.messageContext),
+    '- First script notes: ' + valueText(p2.firstScriptNotes),
+    '- Script 1 mode: ' + valueText(p2.mvoMode),
+    '- Topic freewrite: ' + valueText(ob.topic_freewrite),
+    '- Pasted context: ' + valueText(p2.knowledgeContext),
+    '- MVO Q1 / stopped: ' + valueText(ob.mvo_q2),
+    '- MVO Q2 / why now: ' + valueText(ob.mvo_q3),
+    '- MVO Q3 / who reach: ' + valueText(ob.mvo_q4)
+  ].join('\n');
+}
+
+function exportScriptSummary(s) {
+  return [
+    'Video ' + (s.video_number || '-') + ' | Level ' + (s.level || '-') + ' | Version ' + (s.version || 1),
+    '- Created: ' + (s.generated_at || '-'),
+    '- Updated: ' + (s.edited_at || '-'),
+    '- Feedback: ' + (s.thumbs_up === true ? 'thumbs up' : s.thumbs_up === false ? 'thumbs down' : 'none'),
+    cleanScriptText(s)
+  ].join('\n');
+}
+
+function cleanScriptText(s) {
+  return String(s.content || s.script || '').replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim() || '[empty script]';
+}
+
+async function copyPlainText(text, successMessage) {
+  try {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = text;
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      ta.remove();
+    }
+    showCopyToast(successMessage || 'Copied');
+  } catch(e) {
+    console.error('Copy failed', e);
+    showCopyToast('Copy failed');
+  }
+}
+
+function showCopyToast(msg) {
+  const toast = document.getElementById('copy-toast');
+  if (!toast) return;
+  toast.textContent = msg;
+  toast.classList.add('show');
+  clearTimeout(showCopyToast._timer);
+  showCopyToast._timer = setTimeout(() => toast.classList.remove('show'), 1800);
+}
+
+function metricCard(num, label, sub) {
+  return '<div class="card metric"><div class="metric-num">' + h(num) + '</div><div class="metric-label">' + h(label) + '</div><div class="metric-sub">' + h(sub || '') + '</div></div>';
+}
+function kv(label, value) { return '<div class="kv"><div class="kv-label">' + h(label) + '</div><div class="kv-val">' + value + '</div></div>'; }
+function answerRow(label, value) { return '<div class="mini-row"><div class="mini-meta">' + h(label) + '</div><div class="mini-body">' + h(valueText(value) || '-') + '</div></div>'; }
+function badge(label, tone) { return '<span class="badge ' + h(tone || '') + '">' + h(label) + '</span>'; }
+function groupBy(items, key) { return (items || []).reduce((acc, item) => { const k = item[key] || 'none'; (acc[k] = acc[k] || []).push(item); return acc; }, {}); }
+function firstTruthy(values) { return (values || []).find(v => v != null && String(v).trim()) || ''; }
+function latestOnboardingSnapshot(events) {
+  const completed = events.find(e => e.event_type === 'onboarding_completed' && e.detail && e.detail.onboarding_snapshot);
+  const latest = events[0] || {};
+  const detail = completed ? completed.detail : (latest.detail || {});
+  const inner = detail.onboarding_snapshot || {};
+  const snapshot = Object.assign({}, inner, detail);
+  snapshot.phase2 = Object.assign({}, inner.phase2 || detail.phase2 || {});
+  return snapshot;
+}
+function snapshotToOnboarding(sessionId, snapshot) {
+  if (!snapshot || (!snapshot.phase2 && !snapshot.level && !snapshot.posted && !snapshot.business && !snapshot.topic_freewrite)) return null;
+  return {
+    user_id: 'preauth:' + sessionId,
+    posted: snapshot.posted || null,
+    blocker: snapshot.blocker || null,
+    history: snapshot.history || null,
+    business: snapshot.business || null,
+    goal: snapshot.goal || null,
+    mini_goal: snapshot.mini_goal || null,
+    mini_goal_text: snapshot.mini_goal_text || '',
+    mvo_q2: snapshot.mvo_q2 || null,
+    mvo_q3: snapshot.mvo_q3 || null,
+    mvo_q4: snapshot.mvo_q4 || null,
+    topic_freewrite: snapshot.topic_freewrite || '',
+    phase2_context: snapshot.phase2 || {},
+    commitment_declaration: snapshot.phase2 && snapshot.phase2.commitmentDeclaration,
+    commitment_reasons: snapshot.phase2 && snapshot.phase2.commitmentReasons,
+    mission_statement: snapshot.phase2 && snapshot.phase2.missionStatement
+  };
+}
+function hasLog(r, events) { return r.logs.some(l => events.includes(l.event_type)); }
+function isErrorLog(l) { return l && (l.event_type === 'error' || l.event_type === 'script_failed' || String(l.event_type || '').includes('failed')); }
+function isWithin(date, hours) { const ms = dateMs(date); return !!ms && (Date.now() - ms) <= hours * 3600000; }
+function dateMs(date) { const ms = date ? new Date(date).getTime() : 0; return Number.isFinite(ms) ? ms : 0; }
+function uniqueVideoCount(items) { return new Set((items || []).map(i => Number(i.video_number)).filter(Boolean)).size; }
+function uniqueProgressCount(items) { return new Set((items || []).map(i => Number(i.video_index)).filter(n => Number.isFinite(n))).size; }
+function pct(n, d) { return d ? Math.round((n / d) * 100) + '%' : '0%'; }
+function displayName(r) { return r.user.name || r.user.email || ('User ' + String(r.user.id || '').slice(0,8)); }
+function levelLabel(level) { return Number(level) === 1 ? 'L1' : Number(level) === 2 ? 'L2' : 'Unset'; }
+function supportLabel(v) { return ({none:'None', watch:'Watch', needs_help:'Needs Help', resolved:'Resolved'}[v || 'none'] || 'None'); }
+function supportTone(v) { return v === 'needs_help' ? 'red' : v === 'watch' ? 'orange' : v === 'resolved' ? 'green' : ''; }
+function latestEventLabel(r) { return r.latest ? r.latest.event_type : 'No events'; }
+function lastActiveText(r) { return r.lastActiveMs ? timeSince(r.lastActiveMs) + ' ago' : 'No activity'; }
+function nextAction(r) {
+  if (r.preauth && r.user.email) return 'Unverified lead. Watch for magic-link verification or follow up manually.';
+  if (r.preauth) return 'Anonymous visitor. Watch whether they enter email or complete onboarding.';
+  if (r.recentErrors.length) return 'Review error and contact if blocked.';
+  if (!r.onboardingComplete) return 'Watch onboarding completion.';
+  if (!r.scriptCount) return 'User is ready for first script.';
+  if (r.scriptCount && !r.filmedCount) return 'Encourage filming first video.';
+  if (r.filmedCount < 7) return 'Keep momentum to next video.';
+  return 'Complete. Review scripts and next-step readiness.';
+}
+function issueKey(log) {
+  const detail = detailText(log.detail);
+  const msg = detail || log.event_type || 'unknown issue';
+  return (log.event_type || 'issue') + ': ' + msg.slice(0, 80);
+}
+function detailText(detail) {
+  if (!detail) return '';
+  if (typeof detail === 'string') return detail;
+  try { return JSON.stringify(detail).replace(/[{}"]/g, '').replace(/,/g, ', '); } catch(e) { return String(detail); }
+}
+function valueText(value) {
+  if (value == null) return '';
+  if (typeof value === 'string') return value;
+  if (Array.isArray(value)) return value.filter(Boolean).join(', ') || '';
+  if (typeof value === 'object') return value.before_full || value.catalyst_full || value.village_full || value.crack_full || value.text || JSON.stringify(value);
+  return String(value);
+}
+function formatDate(d) { return d ? new Date(d).toLocaleString([], {month:'short', day:'numeric', hour:'numeric', minute:'2-digit'}) : '-'; }
+function timeSince(ms) {
+  const s = Math.max(0, Math.floor((Date.now() - ms) / 1000));
+  if (s < 60) return s + 's';
+  if (s < 3600) return Math.floor(s / 60) + 'm';
+  if (s < 86400) return Math.floor(s / 3600) + 'h';
+  return Math.floor(s / 86400) + 'd';
+}
+function h(s) {
+  return String(s == null ? '' : s)
+    .replace(/&/g,'&amp;')
+    .replace(/</g,'&lt;')
+    .replace(/>/g,'&gt;')
+    .replace(/"/g,'&quot;')
+    .replace(/'/g,'&#39;');
+}
+function safeAttr(s) {
+  return h(String(s || '')
+    .replace(/\\/g, '\\\\')
+    .replace(/'/g, "\\'")
+    .replace(/\n/g, '\\n')
+    .replace(/\r/g, '\\r'));
+}
+function loadNotes() { try { return JSON.parse(localStorage.getItem(NOTE_KEY) || '{}'); } catch(e) { return {}; } }
+function saveNotes() { localStorage.setItem(NOTE_KEY, JSON.stringify(adminState.notes)); }
+function loadAdminPrefs() {
+  try { return Object.assign({statusFilter:'all', sortFilter:'anon'}, JSON.parse(localStorage.getItem(PREF_KEY) || '{}')); }
+  catch(e) { return {statusFilter:'all', sortFilter:'anon'}; }
+}
+function saveAdminPrefs(statusFilter, sortFilter) {
+  try { localStorage.setItem(PREF_KEY, JSON.stringify({statusFilter: statusFilter || 'all', sortFilter: sortFilter || 'anon'})); } catch(e) {}
+}
+function applyAdminPrefs() {
+  const prefs = loadAdminPrefs();
+  const statusEl = document.getElementById('status-filter');
+  const sortEl = document.getElementById('sort-filter');
+  if (statusEl && [...statusEl.options].some(o => o.value === prefs.statusFilter)) statusEl.value = prefs.statusFilter;
+  if (sortEl && [...sortEl.options].some(o => o.value === prefs.sortFilter)) sortEl.value = prefs.sortFilter;
+}
+function getNote(userId) {
+  return Object.assign({support_status:'none', priority:'normal', note:'', last_contacted_at:'', test_group:false}, adminState.notes[userId] || {});
+}
+
+document.addEventListener('input', e => {
+  if (e.target && e.target.id && e.target.id.startsWith('note-')) return;
+});
+document.addEventListener('change', e => {
+  if (!adminState.selectedUserId) return;
+});
+</script>
+</body>
+</html>

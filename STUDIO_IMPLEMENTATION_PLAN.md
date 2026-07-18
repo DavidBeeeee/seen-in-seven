@@ -20,8 +20,21 @@ The first app key is `seeninseven`. Existing SeenInSeven profiles receive `beta`
 
 - `/` is the Colorado Mastermind Studio dashboard.
 - `/seeninseven` is the existing SeenInSeven app.
-- `/admin.html` remains the admin command center.
+- `/admin` is the Studio-wide customer and app access control room.
+- `/admin/seeninseven` is the detailed SeenInSeven progress and support command center.
+- `/admin.html` remains a working direct link to the Studio-wide admin for old bookmarks.
 - `/api/generate` remains the SeenInSeven AI endpoint.
+
+## Admin Model
+
+The Studio admin owns the customer directory and app access. Each connected app keeps its own detailed admin area for app-specific progress, content, errors, and support context.
+
+The current app registry contains:
+
+- `seeninseven`: connected, grantable, and linked to `/admin/seeninseven`.
+- `boardroom`: reserved as the next app, but not grantable until the Boardroom itself is connected.
+
+This means a future Boardroom customer can have a Studio account and Boardroom access without receiving SeenInSeven access.
 
 ## Release Sequence
 

@@ -128,6 +128,9 @@ function renderStudio() {
   el('sign-in-button').hidden = signedIn;
   el('account-button').hidden = !signedIn;
   el('device-progress').hidden = !localProgress || Boolean(studioAccess);
+  const isAdmin = Boolean(signedIn && studioProfile && studioProfile.is_admin === true);
+  el('admin-nav-item').hidden = !isAdmin;
+  el('admin-menu-item').hidden = !isAdmin;
 
   if (signedIn) {
     el('account-email').textContent = email;

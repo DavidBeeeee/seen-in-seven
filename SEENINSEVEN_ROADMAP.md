@@ -92,7 +92,7 @@ This phase is the immediate priority. It should give David Bee enough data to un
 Fix these known issues before or during the admin overhaul:
 
 - Returning local users can land on the dashboard with the header nav hidden because startup restores the dashboard and then updates progress as if still on `screen-0`.
-- `admin.html` currently awaits admin data loading directly inside the Supabase auth callback. It should follow the same deferred pattern used by the main app.
+- Both Studio and SeenInSeven admin auth callbacks must keep database loading deferred to the next tick.
 - The admin "errors in last 24 hours" statistic should count both `error` and `script_failed` only inside the 24-hour window.
 - Admin-rendered user data should be escaped before display so unusual pasted content cannot break the admin layout or run as HTML.
 
@@ -363,22 +363,22 @@ Supabase built-in email should not be treated as the long-term lifecycle email s
 
 ## Phase 8: Long-Term Superapp Foundation
 
-**Status as of July 18, 2026:** The first narrow foundation is in progress by explicit owner direction.
+**Status as of July 18, 2026:** The Studio front door and the first Studio-wide admin layer are in progress by explicit owner direction.
 
 **Goal:** Establish the Colorado Mastermind Studio front door without rewriting SeenInSeven or prematurely moving other apps.
 
-SeenInSeven is the first module inside Colorado Mastermind Studio. The first release adds the Studio dashboard, shared login session, app-specific beta access, and a stable `/seeninseven` route. It does not add another app, paid enforcement, cross-app history, or Systeme automation.
+SeenInSeven is the first module inside Colorado Mastermind Studio. The first release adds the Studio dashboard, shared login session, app-specific beta access, and a stable `/seeninseven` route. The next approved release adds `/admin` as the Studio-wide customer and access view while preserving the detailed SeenInSeven command center at `/admin/seeninseven`. It does not add another working app, paid enforcement, cross-app history, or Systeme automation.
 
 Future possibilities include:
 
 - Shared account system across multiple tools.
 - A unified dashboard for multiple Colorado Mastermind apps.
-- A broader admin control center.
+- Additional app-specific admin areas as apps are connected.
 - More robust authentication options.
 - Cross-tool user history.
 - Support and progress visibility across the full offer ecosystem.
 
-Do not turn this foundation into a major architecture rewrite. SeenInSeven remains vanilla HTML/CSS/JS and keeps its current auth, saved work, AI prompts, points, and screen system.
+Do not turn this foundation into a major architecture rewrite. SeenInSeven remains vanilla HTML/CSS/JS and keeps its current auth, saved work, AI prompts, points, screen system, and detailed app admin tools.
 
 ---
 
