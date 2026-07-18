@@ -103,7 +103,7 @@ function renderBoardroomRows() {
     return (!query || haystack.includes(query)) && (filter === 'all' || (filter === 'active' ? row.active : !row.active));
   });
   const tbody = boardroomEl('boardroom-rows');
-  if (!rows.length) tbody.innerHTML = '<tr><td colspan="8" class="table-loading">No Boardroom customers match this view.</td></tr>';
+  if (!rows.length) tbody.innerHTML = '<tr><td colspan="9" class="table-loading">No Boardroom customers match this view.</td></tr>';
   else tbody.innerHTML = rows.map(row => {
     const a = row.activity || {};
     const button = row.active
@@ -111,6 +111,7 @@ function renderBoardroomRows() {
       : '<button class="boardroom-access-button" onclick="setBoardroomAccess(event,\'' + boardroomAttr(row.user.id) + '\',true)">Grant access</button>';
     return '<tr><td><div class="customer-name">' + boardroomEscape(row.user.name || 'Studio customer') + '</div><div class="customer-email">' + boardroomEscape(row.user.email || '') + '</div></td>' +
       '<td>' + (a.workspace_name ? '<span class="boardroom-workspace">' + boardroomEscape(a.workspace_name) + '</span>' : '<span class="boardroom-empty">Opens on first visit</span>') + '</td>' +
+      '<td>' + (a.profile_complete ? '<span class="profile-status complete">Complete</span><small class="profile-name">' + boardroomEscape(a.profile_name || '') + '</small>' : '<span class="profile-status">Not started</span>') + '</td>' +
       '<td>' + Number(a.conversations || 0) + '</td><td>' + Number(a.messages || 0) + '</td><td>' + Number(a.active_cards || 0) + '</td><td>' + Number(a.documents || 0) + '</td>' +
       '<td>' + boardroomEscape(boardroomDate(a.last_active)) + '</td><td><div class="access-control">' + button + '</div></td></tr>';
   }).join('');

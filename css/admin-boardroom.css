@@ -1,10 +1,13 @@
 .boardroom-admin-main { width: min(1540px, 100%); }
 .boardroom-metrics { grid-template-columns: repeat(5, minmax(0, 1fr)); }
-.boardroom-table { min-width: 1120px; }
+.boardroom-table { min-width: 1220px; }
 .boardroom-table td { vertical-align: middle; }
 .boardroom-workspace { color: var(--studio-soft); font-weight: 800; }
 .boardroom-empty { color: var(--studio-muted); font-size: 12px; }
 .boardroom-access-button { min-width: 96px; }
+.profile-status { display: inline-flex; border: 1px solid var(--studio-line); padding: 4px 7px; color: var(--studio-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.profile-status.complete { border-color: rgba(45, 180, 163, 0.35); color: var(--studio-soft); }
+.profile-name { display: block; margin-top: 5px; color: var(--studio-muted); font-size: 11px; }
 @media (max-width: 1260px) { .boardroom-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (max-width: 760px) { .boardroom-metrics { grid-template-columns: 1fr 1fr; } }
 @media (max-width: 470px) { .boardroom-metrics { grid-template-columns: 1fr; } }
