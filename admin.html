@@ -288,6 +288,7 @@
                 <th>Latest Event</th>
                 <th>Errors</th>
                 <th>Support</th>
+                <th>Studio</th>
                 <th>Paid</th>
               </tr>
             </thead>
@@ -328,7 +329,7 @@ const NOTE_KEY = 'sis_admin_notes_v1';
 const PREF_KEY = 'sis_admin_prefs_v1';
 
 let adminState = {
-  users: [], scripts: [], currentScripts: [], progress: [], onboarding: [], logs: [], preauthEvents: [],
+  users: [], scripts: [], currentScripts: [], progress: [], onboarding: [], logs: [], preauthEvents: [], studioAccess: [],
   rows: [], selectedUserId: null, selectedIds: new Set(), notes: loadNotes(), loadErrors: {}, optionalWarnings: {}
 };
 
@@ -390,7 +391,8 @@ async function loadAll() {
     rpcSafe('onboarding', 'admin_get_onboarding'),
     rpcSafe('logs', 'admin_get_logs'),
     rpcSafe('preauth', 'admin_get_preauth_events'),
-    rpcSafe('points', 'admin_get_points')
+    rpcSafe('points', 'admin_get_points'),
+    rpcSafe('studioAccess', 'admin_get_studio_entitlements')
   ]);
   const byName = Object.fromEntries(calls.map(c => [c.name, c]));
   adminState.users = byName.users.data || [];
@@ -401,8 +403,9 @@ async function loadAll() {
   adminState.logs = byName.logs.data || [];
   adminState.preauthEvents = byName.preauth.data || [];
   adminState.points = byName.points.data || [];
-  adminState.optionalWarnings = Object.fromEntries(calls.filter(c => (c.name === 'preauth' || c.name === 'points') && c.error).map(c => [c.name, c.error]));
-  adminState.loadErrors = Object.fromEntries(calls.filter(c => c.error && c.name !== 'preauth' && c.name !== 'points').map(c => [c.name, c.error]));
+  adminState.studioAccess = byName.studioAccess.data || [];
+  adminState.optionalWarnings = Object.fromEntries(calls.filter(c => (c.name === 'preauth' || c.name === 'points' || c.name === 'studioAccess') && c.error).map(c => [c.name, c.error]));
+  adminState.loadErrors = Object.fromEntries(calls.filter(c => c.error && c.name !== 'preauth' && c.name !== 'points' && c.name !== 'studioAccess').map(c => [c.name, c.error]));
   adminState.rows = buildRows();
   pruneSelectedIds();
   document.getElementById('last-loaded').textContent = 'Loaded ' + new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
@@ -423,7 +426,7 @@ function setLoading() {
   document.getElementById('funnel-panel').innerHTML = '<div class="loading">Loading funnel...</div>';
   document.getElementById('stall-panel').innerHTML = '<div class="loading">Loading stalls...</div>';
   document.getElementById('issue-panel').innerHTML = '<div class="loading">Loading issues...</div>';
-  document.getElementById('user-tbody').innerHTML = '<tr><td colspan="10" class="loading">Loading...</td></tr>';
+  document.getElementById('user-tbody').innerHTML = '<tr><td colspan="11" class="loading">Loading...</td></tr>';
 }
 
 function buildRows() {
@@ -433,6 +436,9 @@ function buildRows() {
   const logsByUser = groupBy(adminState.logs, 'user_id');
   const onboardingByUser = Object.fromEntries(adminState.onboarding.map(o => [o.user_id, o]));
   const pointsByUser = Object.fromEntries((adminState.points || []).map(p => [p.user_id, p.points]));
+  const studioByUser = Object.fromEntries((adminState.studioAccess || [])
+    .filter(e => e.app_key === 'seeninseven')
+    .map(e => [e.user_id, e]));
   const userRows = adminState.users.map(user => {
     const scripts = scriptsByUser[user.id] || [];
     const allScripts = allScriptsByUser[user.id] || [];
@@ -440,6 +446,7 @@ function buildRows() {
     const logs = (logsByUser[user.id] || []).sort((a,b) => dateMs(b.created_at) - dateMs(a.created_at));
     const ob = onboardingByUser[user.id] || null;
     const points = pointsByUser[user.id] || null;
+    const studioAccess = studioByUser[user.id] || null;
     const filmed = progress.filter(p => p.status === 'filmed');
     const skipped = progress.filter(p => p.status === 'skipped');
     const errorLogs = logs.filter(isErrorLog);
@@ -456,7 +463,7 @@ function buildRows() {
     return {
       user, scripts, allScripts, progress, filmed, skipped, logs, ob, latest, notes,
       onboardingComplete, scriptCount, filmedCount, errorLogs, recentErrors, status,
-      stalled, attention, lastActiveMs, points
+      stalled, attention, lastActiveMs, points, studioAccess
     };
   });
   return userRows.concat(buildPreauthRows());
@@ -509,7 +516,7 @@ function buildPreauthRows() {
       filmed: [], skipped: [], logs, ob, latest, notes, onboardingComplete, scriptCount: 0,
       filmedCount: 0, errorLogs: logs.filter(isErrorLog), recentErrors, status,
       stalled: isStalled(lastActiveMs, onboardingComplete, 0, 0), attention: 15 + (skippedAuth ? 8 : 0) + (onboardingComplete ? 14 : 0),
-      lastActiveMs
+      lastActiveMs, studioAccess: null
     };
   });
 }
@@ -681,7 +688,7 @@ function rowMatches(r, q, filter) {
 function renderUserRows(rows) {
   const tbody = document.getElementById('user-tbody');
   if (!rows.length) {
-    tbody.innerHTML = '<tr><td colspan="10" class="empty">No users match this view.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="11" class="empty">No users match this view.</td></tr>';
     updateBulkBar();
     return;
   }
@@ -698,6 +705,7 @@ function renderUserRows(rows) {
       '<td><div>' + h(latestEventLabel(r)) + '</div><div class="mini-meta">' + h(lastActiveText(r)) + '</div></td>' +
       '<td>' + (r.recentErrors.length ? badge(r.recentErrors.length + ' recent', 'red') : '<span class="muted">0</span>') + '</td>' +
       '<td>' + badge(supportLabel(r.notes.support_status), supportTone(r.notes.support_status)) + '</td>' +
+      '<td>' + (r.preauth ? '<span class="muted">-</span>' : studioAccessControl(r)) + '</td>' +
       '<td>' + (r.preauth ? '<span class="muted">-</span>' : (r.user.is_paid ? badge('Paid','green') : '<button class="toggle-paid" onclick="togglePaid(event,\'' + safeAttr(r.user.id) + '\')">Set Paid</button>')) + '</td>' +
     '</tr>';
   }).join('');
@@ -775,6 +783,7 @@ function renderProfile(r) {
     kv('Auth ID', h(r.user.auth_id || (r.preauth ? 'Not verified yet' : '-'))) +
     (r.preauth ? kv('Email entered', h(r.user.email || '-')) : '') +
     kv('Level', h(levelLabel(r.user.level))) +
+    kv('Studio access', r.preauth ? badge('Not verified','') : studioAccessControl(r)) +
     kv('Paid flag', r.preauth ? badge('Not verified','') : (r.user.is_paid ? badge('Paid','green') : badge('Not paid',''))) +
     kv('Last active', h(lastActiveText(r))) +
     kv('Next action', h(nextAction(r)));
@@ -1005,6 +1014,34 @@ async function togglePaid(e, userId) {
   btn.textContent = '...';
   try {
     const { error } = await sb.rpc('admin_set_paid', { target_user_id: userId, paid: true });
+    if (error) throw error;
+    await loadAll();
+  } catch(err) {
+    btn.textContent = 'Error';
+    console.error(err);
+  }
+}
+
+function studioAccessControl(r) {
+  const active = r.studioAccess && r.studioAccess.status === 'active';
+  if (active) {
+    const source = r.studioAccess.access_source === 'beta' ? 'Beta' : 'Active';
+    return badge(source, 'green') + ' <button class="toggle-paid" onclick="toggleStudioAccess(event,\'' + safeAttr(r.user.id) + '\',false)">Remove</button>';
+  }
+  return '<button class="toggle-paid" onclick="toggleStudioAccess(event,\'' + safeAttr(r.user.id) + '\',true)">Grant Beta</button>';
+}
+
+async function toggleStudioAccess(e, userId, enabled) {
+  e.stopPropagation();
+  const btn = e.target;
+  btn.textContent = '...';
+  try {
+    const { error } = await sb.rpc('admin_set_studio_access', {
+      target_user_id: userId,
+      target_app_key: 'seeninseven',
+      enabled: enabled,
+      target_access_source: 'beta'
+    });
     if (error) throw error;
     await loadAll();
   } catch(err) {
