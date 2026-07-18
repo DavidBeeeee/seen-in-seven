@@ -28,8 +28,11 @@ css/studio.css      Studio dashboard styles for both themes
 css/admin-studio.css Studio-wide admin layout and responsive styles
 admin.html          Studio-wide customer and app-access admin
 admin-seeninseven.html Detailed SeenInSeven app admin
+admin-prompt-tester.html Admin-only prompt experiment workspace
 js/admin-studio.js  Studio admin auth, summaries, customer directory, and access controls
+js/admin-prompt-tester.js Read-only user test assembly, draft editing, confirmations, and undo controls
 prompts/blueprints.js  AI system prompts — DO NOT MODIFY without explicit instruction
+api/prompt-blueprint.js Admin-verified GitHub publisher restricted to prompts/blueprints.js
 supabase_migrations/   Dated .sql files, one per applied change — chronological history of schema/RPC changes
 ```
 
@@ -49,6 +52,9 @@ Never `await` Supabase database calls inside `onAuthStateChange` callback body. 
 
 ### No Frameworks
 Do not introduce React, Vue, build steps, bundlers, or major abstractions. This is intentional. The app is vanilla and should stay that way unless David Bee explicitly asks to change it.
+
+### Prompt Tester Publishing Rule
+`/admin/seeninseven/prompt-tester` may test the complete blueprint against copies of real admin data, but test generations must never write to user records or the `scripts` table. Publishing is handled only by `api/prompt-blueprint.js`, which verifies the Supabase user and `is_admin()` result, validates the full source shape, and is hardcoded to `prompts/blueprints.js` on `main`. It requires a fine-grained `GITHUB_PROMPT_TOKEN` Vercel environment variable with Contents read/write access to only `DavidBeeeee/seen-in-seven`. Do not replace it with a broad personal token. Undo must create a reversal commit and remain available only when the latest blueprint commit came from the Prompt Tester.
 
 ### Points System Rule (load-bearing)
 Points are **derived, never ledgered**. There is no points-transactions table. `js/points.js` (`computePoints(state)`) and the SQL function `compute_user_points(uuid)` each independently recompute a user's total from data that already exists (onboarding answers, scripts, video_progress, logs) — they must be kept in exact agreement rule-for-rule. If you add or change a point rule, edit **three places together**: `POINTS_RULES` in `js/points.js`, the matching branch in `compute_user_points()`, and the seed row in `points_config` (Supabase table — this is the row David can tune live without a redeploy; the client only uses its baked-in copy as an offline/anonymous fallback). A rule mismatch between client and server shows up as a different total in the dashboard vs. the admin panel — that is the symptom to check first if points look wrong. `compute_user_points()` itself has no direct grants; it is only reachable through `get_my_points()` (self) and `admin_get_points()` (admin-gated).
