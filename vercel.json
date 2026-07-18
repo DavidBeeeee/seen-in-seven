@@ -1,6 +1,10 @@
 {
   "rewrites": [
     { "source": "/studio", "destination": "/index.html" },
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/admin/", "destination": "/admin.html" },
+    { "source": "/admin/seeninseven", "destination": "/admin-seeninseven.html" },
+    { "source": "/admin/seeninseven/", "destination": "/admin-seeninseven.html" },
     { "source": "/seeninseven", "destination": "/seeninseven.html" },
     { "source": "/seeninseven/", "destination": "/seeninseven.html" }
   ]

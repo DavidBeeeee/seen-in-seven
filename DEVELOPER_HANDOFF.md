@@ -6,7 +6,8 @@
 **Date:** June 2026  
 **Repo:** https://github.com/DavidBeeeee/seen-in-seven  
 **Live app:** https://studio.coloradomastermind.com
-**Admin panel:** https://studio.coloradomastermind.com/admin.html
+**Studio admin:** https://studio.coloradomastermind.com/admin
+**SeenInSeven admin:** https://studio.coloradomastermind.com/admin/seeninseven
 **Contact:** contact@davidbee.me / 303-596-0511
 
 ---
@@ -67,7 +68,8 @@ This repo is the entire 777 Challenge project folder, not just the app. Here's e
 **The SeenInSeven app (deployed to Vercel):**
 - `index.html` — Colorado Mastermind Studio dashboard
 - `seeninseven.html` — the full SeenInSeven app
-- `admin.html` — admin dashboard
+- `admin.html` — Studio-wide customer and app-access dashboard
+- `admin-seeninseven.html` — detailed SeenInSeven progress and support dashboard
 - `css/app.css` — all styles
 - `js/app.js` — all application logic
 - `js/supabase.js` — auth and database layer
@@ -128,13 +130,16 @@ Both tools commit under the same author name (`David Bee <contact@davidbee.me>`)
 seen-in-seven/
 ├── index.html          — Colorado Mastermind Studio dashboard and login
 ├── seeninseven.html    — SeenInSeven screens, modals, and overlays
-├── admin.html          — admin dashboard (magic link, allowlisted emails only — see ADMIN_EMAILS)
+├── admin.html          — Studio-wide admin (magic link, allowlisted emails only)
+├── admin-seeninseven.html — detailed SeenInSeven app admin
+├── css/admin-studio.css — Studio-wide admin styles
 ├── css/studio.css      — Studio dashboard dark and light themes
 ├── css/app.css         — dark mode (default) — structural + dark styles
 ├── css/light.css        — light mode overrides only, kept in a separate file by convention
 ├── js/
 │   ├── app.js          — all application logic, global state (~5,900 lines)
 │   ├── studio.js       — Studio auth, theme, and app access display
+│   ├── admin-studio.js — Studio admin summaries, customers, and app access
 │   ├── supabase.js     — auth + database layer, event logging, sync queue
 │   └── points.js       — gamification points engine (client mirror of the SQL compute)
 ├── prompts/
@@ -174,7 +179,7 @@ All tables in `public` schema. RLS enabled on all.
 
 **Auth method:** Supabase magic link (passwordless email OTP) **or password** (added mid-2026 — both coexist; see the sign-in screen's password toggle).
 
-**Admin access:** Gated by `is_admin = true` in the users table, granted only via `provision_admin_account()` against the `ADMIN_EMAILS` allowlist in `admin.html` (currently more than one email — check that file for the current list).
+**Admin access:** Gated by `is_admin = true` in the users table, granted only via `provision_admin_account()` against the matching `ADMIN_EMAILS` allowlists in `js/admin-studio.js` and `admin-seeninseven.html` (currently more than one email — check those files for the current list).
 
 ---
 
@@ -262,7 +267,8 @@ Quick summary of phases in order — do not skip ahead:
 - Dashboard with progress ring, video cards, version history modal
 - Lock In workflow: Lock → Next Video button → filmed toggle → confetti → dashboard
 - Settings panel (accessible from any screen): name, email, level switch, re-run onboarding
-- Admin panel: all users, onboarding answers, script content, activity log, set paid toggle
+- Studio admin: all customer profiles, connected-app access, cross-app entry points, and app-level summaries
+- SeenInSeven admin: onboarding answers, script content, activity log, progress, support notes, and the legacy paid toggle
 - Event logging: script_generated, script_failed, auth_completed, video_filmed, magic_link_sent
 - Start Over (clears scripts and onboarding, stays logged in, stays on dashboard)
 - Fullscreen preview mode for scripts
@@ -395,7 +401,8 @@ Should return an empty array. If it doesn't, find and close the unclosed tag.
 | Resource | URL / Value |
 |----------|-------------|
 | App | https://studio.coloradomastermind.com |
-| Admin | https://studio.coloradomastermind.com/admin.html |
+| Studio admin | https://studio.coloradomastermind.com/admin |
+| SeenInSeven admin | https://studio.coloradomastermind.com/admin/seeninseven |
 | GitHub | https://github.com/DavidBeeeee/seen-in-seven |
 | Supabase project | zdtkwpzdwnzzmdwrvmka |
 | Supabase URL | https://zdtkwpzdwnzzmdwrvmka.supabase.co |

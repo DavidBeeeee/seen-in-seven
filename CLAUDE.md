@@ -8,7 +8,8 @@ SeenInSeven is the delivery tool for the **777 Challenge** (Colorado Mastermind 
 **Stack:** Vanilla HTML + CSS + JS — no framework, no build step, no bundler. Supabase for auth and database. Vercel for hosting. DeepSeek for script and mission-statement generation.
 **Repo:** github.com/DavidBeeeee/seen-in-seven
 **Live URL:** https://studio.coloradomastermind.com
-**Admin panel:** https://studio.coloradomastermind.com/admin.html
+**Studio admin:** https://studio.coloradomastermind.com/admin
+**SeenInSeven admin:** https://studio.coloradomastermind.com/admin/seeninseven
 
 ---
 
@@ -24,7 +25,10 @@ js/points.js        Gamification points engine (client mirror of the SQL compute
 css/app.css         Dark mode (default theme) — all structural + dark styles
 css/light.css       Light mode overrides only — see header comment in the file
 css/studio.css      Studio dashboard styles for both themes
-admin.html          Standalone admin panel (separate auth, no framework)
+css/admin-studio.css Studio-wide admin layout and responsive styles
+admin.html          Studio-wide customer and app-access admin
+admin-seeninseven.html Detailed SeenInSeven app admin
+js/admin-studio.js  Studio admin auth, summaries, customer directory, and access controls
 prompts/blueprints.js  AI system prompts — DO NOT MODIFY without explicit instruction
 supabase_migrations/   Dated .sql files, one per applied change — chronological history of schema/RPC changes
 ```
@@ -41,7 +45,7 @@ supabase_migrations/   Dated .sql files, one per applied change — chronologica
 Never `await` Supabase database calls inside `onAuthStateChange` callback body. Defer with `setTimeout(0)`. This prevents a navigator lock bug that caused a hard-to-debug blank screen. See `js/supabase.js` — the pattern is already correct.
 
 ### Admin Privilege Rule (load-bearing)
-`users.is_admin` and `users.is_paid` cannot be set by a direct client-side `update()`/`insert()` — a `BEFORE UPDATE` trigger (`prevent_privilege_self_escalation`) silently reverts any change to those two columns unless the caller is already an admin or is `service_role`. The only way to grant admin from the client is `sb.rpc('provision_admin_account')`, which checks the caller's JWT email against a hardcoded allowlist server-side before granting anything. Do not try to "fix" a broken admin-provisioning flow by writing `is_admin` directly from JS again — that reintroduces a real privilege-escalation hole (any signed-in user could self-grant admin). To add a new admin email, update the allowlist in `provision_admin_account()` (Supabase) **and** `ADMIN_EMAILS` in `admin.html`.
+`users.is_admin` and `users.is_paid` cannot be set by a direct client-side `update()`/`insert()` — a `BEFORE UPDATE` trigger (`prevent_privilege_self_escalation`) silently reverts any change to those two columns unless the caller is already an admin or is `service_role`. The only way to grant admin from the client is `sb.rpc('provision_admin_account')`, which checks the caller's JWT email against a hardcoded allowlist server-side before granting anything. Do not try to "fix" a broken admin-provisioning flow by writing `is_admin` directly from JS again — that reintroduces a real privilege-escalation hole (any signed-in user could self-grant admin). To add a new admin email, update the allowlist in `provision_admin_account()` (Supabase) and `ADMIN_EMAILS` in both `js/admin-studio.js` and `admin-seeninseven.html`.
 
 ### No Frameworks
 Do not introduce React, Vue, build steps, bundlers, or major abstractions. This is intentional. The app is vanilla and should stay that way unless David Bee explicitly asks to change it.
@@ -65,10 +69,11 @@ Points are **derived, never ledgered**. There is no points-transactions table. `
 | `logs` | user_id, event_type, detail (jsonb), created_at |
 | `preauth_events` | anon_session_id, user_id (nullable), email, event_type, detail (jsonb), created_at — pre-auth funnel tracking, attached to a user via `attach_preauth_session()` after sign-in |
 | `points_config` | id=1 (single row), version, rules (jsonb) — tunable point values + milestone thresholds, world-readable |
+| `studio_entitlements` | user_id, app_key, status, access_source, granted_at, expires_at — app access independent of login and SeenInSeven progress |
 
 Scripts use `generated_at` / `edited_at` (not `created_at` / `updated_at`). `video_progress.status` allows `null` (a script can be locked before it's filmed).
 
-Admin RPCs: `admin_get_users`, `admin_get_scripts`, `admin_get_progress`, `admin_get_onboarding`, `admin_get_logs`, `admin_get_preauth_events`, `admin_get_points`, `admin_set_paid`, `admin_delete_subjects`, `provision_admin_account` — all gated by `is_admin = true` on the users row (or, for `provision_admin_account`, a server-side email allowlist). Granted to `authenticated` only, not `anon`. Trigger-only functions (`prevent_privilege_self_escalation`, `set_script_version`) have no RPC grants at all — they only fire via their triggers.
+Admin RPCs: `admin_get_users`, `admin_get_scripts`, `admin_get_progress`, `admin_get_onboarding`, `admin_get_logs`, `admin_get_preauth_events`, `admin_get_points`, `admin_get_studio_entitlements`, `admin_set_studio_access`, `admin_set_paid`, `admin_delete_subjects`, `provision_admin_account` — all gated by `is_admin = true` on the users row (or, for `provision_admin_account`, a server-side email allowlist). Granted to `authenticated` only, not `anon`. Trigger-only functions (`prevent_privilege_self_escalation`, `set_script_version`) have no RPC grants at all — they only fire via their triggers.
 
 ---
 
@@ -121,6 +126,8 @@ Level is determined by `determineLevel()` after `screen-content-intent`:
 **Phase 8 — Studio shell started by explicit owner direction**
 - Studio is the root dashboard; SeenInSeven remains intact at `/seeninseven`.
 - App-specific beta entitlements are live. Systeme automation remains deferred.
+- Studio-wide administration lives at `/admin`; detailed SeenInSeven administration lives at `/admin/seeninseven`.
+- AI Boardroom has a reserved admin slot but is not connected or grantable yet.
 
 Do not add paid gating, email automation, more Studio apps, or cross-app history without explicit direction. See `SEENINSEVEN_ROADMAP.md` for full phase definitions and current status detail.
 
