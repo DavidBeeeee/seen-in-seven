@@ -112,6 +112,7 @@ export default async function handler(req, res) {
       return json(res, 200, {
         source: current.source,
         sha: current.sha,
+        branch: BRANCH,
         publishConfigured: !!process.env.GITHUB_PROMPT_TOKEN,
         latestCommit: latest ? {
           sha: latest.sha,

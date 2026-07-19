@@ -12,6 +12,7 @@ const promptState = {
   scripts: [],
   publishedSource: '',
   publishedSha: '',
+  publishedBranch: '',
   publishConfigured: false,
   canUndoPublish: false,
   rawOutput: '',
@@ -106,10 +107,11 @@ async function loadPublishedBlueprint(preserveDraft) {
   if (!response.ok) throw new Error(data.error || 'Published blueprint could not be loaded.');
   promptState.publishedSource = data.source || '';
   promptState.publishedSha = data.sha || '';
+  promptState.publishedBranch = data.branch || '';
   promptState.publishConfigured = data.publishConfigured === true;
   promptState.canUndoPublish = data.canUndo === true;
   const commit = data.latestCommit || {};
-  promptEl('published-status').textContent = 'Published ' + shortSha(commit.sha || promptState.publishedSha);
+  promptEl('published-status').textContent = (promptState.publishedBranch || 'Published') + ' ' + shortSha(commit.sha || promptState.publishedSha);
   promptEl('published-status').className = 'status-pill ' + (promptState.publishConfigured ? 'ready' : 'warning');
   promptEl('publish-meta').textContent = promptState.publishConfigured
     ? 'GitHub connected. Last change: ' + (commit.message || 'unknown commit').split('\n')[0]
@@ -123,16 +125,27 @@ async function loadPublishedBlueprint(preserveDraft) {
 function initializeEditor() {
   const editor = promptEl('blueprint-editor');
   const stored = loadStoredDraft();
-  if (stored && stored.source && stored.baseSha === promptState.publishedSha) {
+  const storedIsStaleSectionDraft = stored && stored.source && hasL1V1Conclusion(promptState.publishedSource) && !hasL1V1Conclusion(stored.source);
+  if (stored && stored.source && stored.baseSha === promptState.publishedSha && !storedIsStaleSectionDraft) {
     editor.value = stored.source;
     promptEl('autosave-status').textContent = 'Draft restored from this browser';
   } else {
     editor.value = promptState.publishedSource;
-    if (stored && stored.source) showBanner('A draft from an older published blueprint was not restored.');
+    if (storedIsStaleSectionDraft) showBanner('An older browser draft without [CONCLUSION] was not restored. The current test blueprint is loaded.');
+    else if (stored && stored.source) showBanner('A draft from an older published blueprint was not restored.');
   }
   editor.addEventListener('beforeinput', captureDraftHistoryBase);
   editor.addEventListener('input', handleBlueprintInput);
   updateDraftMeta();
+}
+
+function hasL1V1Conclusion(source) {
+  const text = String(source || '');
+  const start = text.indexOf('<l1_v1_rules>');
+  const end = text.indexOf('</l1_v1_rules>', start);
+  if (start === -1 || end === -1) return false;
+  const block = text.slice(start, end);
+  return block.includes('[CONCLUSION]') && block.includes('CONCLUSION patterns:');
 }
 
 function captureDraftHistoryBase() {
@@ -242,9 +255,9 @@ function highlightActiveBlueprint() {
   const end = source.indexOf(closeTag);
   updateJumpButton();
   if (start === -1 || end === -1) return;
-  const selEnd = end + closeTag.length;
+  const selEnd = start + openTag.length;
   var targetScroll = scrollOffsetForChar(editor, start);
-  editor.focus();
+  editor.focus({ preventScroll: true });
   editor.setSelectionRange(start, selEnd);
   editor.scrollTop = targetScroll;
   setTimeout(function() { editor.scrollTop = targetScroll; }, 0);
@@ -272,11 +285,14 @@ function scrollOffsetForChar(textarea, charIndex) {
   mirror.style.tabSize = cs.tabSize;
   var before = textarea.value.substring(0, charIndex);
   mirror.textContent = before;
+  var lineHeight = parseFloat(cs.lineHeight);
+  if (!lineHeight || Number.isNaN(lineHeight)) lineHeight = parseFloat(cs.fontSize) * 1.65;
+  var lineEstimate = before.split('\n').length * lineHeight;
   var marker = document.createElement('span');
   marker.textContent = '|';
   mirror.appendChild(marker);
   var offset = marker.offsetTop - parseInt(cs.paddingTop, 10);
-  return Math.max(0, offset - 20);
+  return Math.max(0, Math.max(offset, lineEstimate) - 20);
 }
 
 function selectedUser() {
