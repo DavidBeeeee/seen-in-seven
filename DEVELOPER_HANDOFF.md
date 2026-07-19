@@ -3,7 +3,7 @@
 **Prepared for:** Incoming developer  
 **Project:** SeenInSeven — AI video script builder  
 **Owner:** David Bee, Colorado Mastermind  
-**Date:** June 2026  
+**Date:** June 2026, updated July 18, 2026
 **Repo:** https://github.com/DavidBeeeee/seen-in-seven  
 **Live app:** https://studio.coloradomastermind.com
 **Studio admin:** https://studio.coloradomastermind.com/admin
@@ -17,6 +17,211 @@
 Before planning or implementing roadmap work, read `SEENINSEVEN_ROADMAP.md`.
 
 This handoff remains the source of truth for architecture, stack, debugging history, and current implementation shape. Its older roadmap notes are partially superseded by `SEENINSEVEN_ROADMAP.md`, especially around admin priorities, test-user timing, delayed email nudges, delayed paid access, removed posted-vs-filmed work, and the placeholder-only gamification phase.
+
+---
+
+## July 18, 2026 implementation record: Studio, AI Boardroom, and Prompt Tester
+
+This section records the complete Studio expansion completed on July 18, 2026. It supersedes older statements in this document that describe the superapp, unified administration, AI Boardroom, or prompt editing as future work.
+
+### Final product shape
+
+`studio.coloradomastermind.com` is now the master Colorado Mastermind Studio application. It provides one login and one home for all current and future tools. SeenInSeven is one app inside Studio, not the Studio itself. AI Boardroom is the second connected app.
+
+| Surface | Purpose | Source |
+|---------|---------|--------|
+| `/` | Studio login and customer app hub | this repository |
+| `/seeninseven` | Full SeenInSeven experience | this repository |
+| `/boardroom` | Full AI Boardroom experience under the Studio domain | proxied to the `DavidBeeeee/boardroom2` Vercel app |
+| `/admin` | Studio-wide customers, access, and app summaries | this repository |
+| `/admin/seeninseven` | Detailed SeenInSeven progress and support admin | this repository |
+| `/admin/seeninseven/prompt-tester` | Restricted prompt testing and publishing workspace | this repository |
+| `/admin/boardroom` | AI Boardroom access and activity admin | this repository |
+
+The two code repositories are deliberately separate:
+
+- Studio, SeenInSeven, shared access, and all production Supabase migrations: `https://github.com/DavidBeeeee/seen-in-seven`
+- Full AI Boardroom Next.js app: `https://github.com/DavidBeeeee/boardroom2`
+
+`vercel.json` rewrites `/boardroom` and its child paths to `https://boardroom2.vercel.app/boardroom`. This lets Boardroom keep its own deployment while appearing under the Studio domain and using the same Studio Supabase session. Do not copy the Boardroom source into this repository or point customers directly at `boardroom2.vercel.app` without a deliberate architecture change.
+
+### 1. Studio customer hub
+
+The former standalone SeenInSeven root was moved to `seeninseven.html`. `index.html` is now the Studio home.
+
+Studio provides:
+
+- One Supabase login shared by every Studio app.
+- A customer profile greeting and app workspace.
+- Dark and light modes, using the same preference pattern as SeenInSeven.
+- App cards that show whether access is active or locked.
+- SeenInSeven and AI Boardroom as separate entitlements.
+- A restrained early-access message for locked apps instead of an aggressive upsell.
+- A direct email path to David Bee for early access.
+
+Studio access is not the same as authentication. A person may have a valid Studio login but no entitlement to a particular app.
+
+Access is stored in `studio_entitlements` using:
+
+- `app_key`: currently `seeninseven` or `boardroom`
+- `status`: `active` or `revoked`
+- `access_source`: `beta`, `manual`, `systeme`, or `admin`
+- optional `expires_at`
+
+All users who existed when Studio launched received active SeenInSeven beta access. AI Boardroom access is granted separately. The old SeenInSeven `users.is_paid` field remains for legacy/future use but is not the Studio entitlement system.
+
+Systeme.io automation is intentionally deferred. A future Systeme webhook should grant or revoke rows in `studio_entitlements`; it should not create another login system or write app access into `is_paid`.
+
+### 2. Studio-wide administration
+
+`/admin` is the master control room. It loads customers, Studio entitlements, SeenInSeven scripts/progress/logs, and Boardroom activity through admin-gated RPCs.
+
+It supports:
+
+- Total customer and active-access summaries.
+- SeenInSeven and Boardroom usage summaries.
+- Customer search and access filters.
+- Granting and revoking SeenInSeven or Boardroom access.
+- A per-customer drawer showing each connected app.
+- Direct entry into each app-specific admin.
+
+App-specific administration remains available because the master view cannot replace detailed troubleshooting:
+
+- `/admin/seeninseven` shows onboarding, scripts, video progress, events, errors, and SeenInSeven support details.
+- `/admin/boardroom` shows access, profile completion, conversation/message/document counts, active and completed work cards, and last activity.
+
+Revoking Boardroom access blocks entry immediately but does not delete the user's workspace or saved work. Regranting access restores the same data.
+
+### 3. AI Boardroom integration
+
+The fully developed `boardroom2` app was connected, not the old single-file HTML experiment.
+
+Boardroom now uses the Studio Supabase project and enforces two checks on every workspace operation:
+
+1. The signed-in Studio customer has an active `boardroom` entitlement.
+2. The authenticated Supabase user is a member of the requested Boardroom workspace.
+
+First entry calls `boardroom_ensure_workspace()`. It creates a private workspace, owner membership, workspace settings, and starter profile when needed. Every Boardroom data row carries `workspace_id`, and Row Level Security prevents one customer from seeing another customer's data.
+
+Boardroom data includes:
+
+- Workspaces and workspace members.
+- Workspace settings and guardrails.
+- Private uploaded documents in the `boardroom-documents` Storage bucket.
+- Conversations and messages.
+- Advisor Work Cards.
+- Generated memory entries.
+- One private CEO profile per workspace.
+
+The customer's CEO profile contains preferred name, role, business name, business description, ideal customer, offers, goals, constraints, and additional context. New customers complete it before entering the Boardroom and can edit it later under My Profile.
+
+The profile is verified workspace context in every group and one-to-one conversation. Context order is important: profile and workspace guardrails, documents, memory, recent conversation, then active work-card context. The prompt explicitly tells advisors not to assume every customer is David or reuse another workspace's identity.
+
+David's existing workspace was seeded with his Colorado Mastermind profile so his current behavior stayed intact. Other customers receive their own blank/starter profile.
+
+Fresh Start intentionally clears conversations, cards, and generated memory while preserving the profile, uploaded documents, workspace settings, and membership.
+
+Advisor personalities and the current team were intentionally left functionally unchanged. A future phase may add advisor creation, removal, and personality editing, but this was not part of today's integration.
+
+### 4. SeenInSeven Prompt Tester
+
+The Prompt Tester at `/admin/seeninseven/prompt-tester` is an administrator-only workspace for rapid blueprint iteration.
+
+It contains:
+
+- The complete currently published `prompts/blueprints.js` source.
+- A browser-local working draft with edit undo and restore-published controls.
+- Real user onboarding, previous scripts, and available prompt answers loaded as read-only copies.
+- Level- and video-specific question boxes.
+- Easy and Extended question modes for Videos 2 through 7.
+- Prefilled answers when a user has saved them.
+- Blank editable test fields when no answer exists, plus Clear Test Answers and Restore User Answers.
+- The complete assembled user-message window showing all context that will influence the test.
+- Test generation through the existing DeepSeek proxy without saving the output to the user.
+- Raw and final output views.
+
+Tester state is stored only in the administrator's browser. The selected user, video, level, question mode, test answers, and assembled message survive reloads or navigating away. Tester changes never update the selected user's onboarding, scripts, or prompt answers.
+
+SeenInSeven itself now saves a level-keyed copy of users' prompt answers in `onboarding.video_answers`. Level 1 and Level 2 are separated to prevent their shared field names from colliding. This enables future cross-device restore and Prompt Tester prefilling. Video 1 can also be reconstructed from onboarding data. Older Video 2 through 7 answers that only existed in a user's browser before this change cannot be recovered centrally; future answers are saved as users type.
+
+The Prompt Tester question catalog is in `js/admin-prompt-questions.js`. It is an admin-only copy of the question labels, hints, keys, and placeholders in `js/app.js`. When SeenInSeven questions change, update both and run a parity check.
+
+### 5. Blueprint publishing safety
+
+Prompt publishing is handled by `api/prompt-blueprint.js`, not by direct browser access to GitHub.
+
+The publishing flow:
+
+1. Validates the Supabase session and current admin status.
+2. Validates the complete blueprint structure and required markers.
+3. Shows a change review.
+4. Requires two confirmations, including typing `APPLY BLUEPRINT`.
+5. Creates a commit directly on `main` for `prompts/blueprints.js` only.
+6. Allows Undo Last Publish only when the latest relevant commit came from the Prompt Tester. Undo creates a new reversal commit rather than rewriting history.
+
+Vercel has a restricted `GITHUB_PROMPT_TOKEN`. It must remain a fine-grained token with Contents read/write access to only `DavidBeeeee/seen-in-seven`. Never replace it with a broad personal token or expose it to the browser.
+
+Outside this explicit admin publishing flow, `prompts/blueprints.js` remains protected core IP and must not be edited without David's direct instruction.
+
+### 6. Authentication and administrator corrections
+
+All Studio admin surfaces currently recognize these administrator emails:
+
+- `contact@davidbee.me`
+- `davidkamau.t@gmail.com`
+- `davidkamau@live.com`
+
+The matching server-side allowlist lives inside `provision_admin_account()`. Client allowlists exist in `js/admin-studio.js`, `admin-seeninseven.html`, `js/admin-boardroom.js`, and `js/admin-prompt-tester.js`. All copies must be changed together when an admin is added or removed.
+
+`contact@davidbee.me` and `davidkamau.t@gmail.com` are separate Supabase identities even though they belong to David. Both were granted admin access. Do not try to merge their database identities merely because the inboxes belong to the same person.
+
+`shytanthecat@yahoo.com` remains a non-admin test account.
+
+The Prompt Tester originally appeared to remain logged out because `.auth-screen` had a display rule that overrode the HTML `hidden` attribute. The stylesheet now contains `[hidden] { display:none !important; }`. Preserve that rule on admin pages that use the `hidden` attribute.
+
+The critical Supabase auth rule still applies everywhere: do not await database work directly inside `onAuthStateChange`. Defer it with `setTimeout(0)` so Supabase can release its internal navigator lock.
+
+### 7. Supabase migrations applied during this implementation
+
+These migration files in the Studio repository describe the production changes and were applied to project `zdtkwpzdwnzzmdwrvmka`:
+
+1. `2026-07-18-add-studio-entitlements.sql`
+2. `2026-07-18-add-boardroom-to-studio.sql`
+3. `2026-07-18-fix-boardroom-admin-activity-order.sql`
+4. `2026-07-18-add-boardroom-user-profiles.sql`
+5. `2026-07-18-fix-boardroom-profile-workspace-setup.sql`
+6. `2026-07-19-fix-admin-email-allowlist.sql`
+7. `2026-07-20-add-video-prompt-answers.sql`
+
+The SQL files inside the `boardroom2/supabase` directory belong to the older standalone Boardroom setup and are historical reference only. Do not apply them to Studio. The Studio repository migrations are the production schema source of truth.
+
+### 8. Deployment and verification record
+
+The work shipped through SeenInSeven pull requests #1 through #8 and Boardroom pull request #1 plus the private-profile follow-up commit.
+
+Production verification covered:
+
+- Studio and each admin route.
+- Shared authentication behavior.
+- App entitlement grant and revoke flows.
+- Boardroom workspace creation, profile isolation, and admin activity.
+- Prompt Tester authentication and hidden-state behavior.
+- Correct Level 1 and Level 2 question catalogs.
+- Prefill, clear, restore, and browser persistence in the Prompt Tester.
+- Desktop and mobile overflow checks.
+- SeenInSeven startup after answer persistence was added.
+- Confirmation that `prompts/blueprints.js` remained byte-for-byte unchanged during the tester build.
+
+### 9. Deliberately deferred next steps
+
+- Systeme.io webhook automation for Studio entitlements.
+- Paid-access enforcement outside the current beta period.
+- Additional EEE apps inside Studio.
+- Cross-app progress reporting beyond the current Studio summaries.
+- Custom Boardroom advisor creation, removal, and personality editing.
+- General-purpose ongoing prompt controls after David finishes the intensive blueprint iteration phase.
+
+Do not create a second Studio, second SeenInSeven deployment, or separate login for a future app. New tools should use the Studio Supabase identity and `studio_entitlements`, then appear in the Studio hub and both levels of administration.
 
 ---
 
@@ -34,7 +239,7 @@ The current business model: $7 gets access to the community challenge, with this
 
 ## Where the code lives
 
-**There is no local codebase to hand off.** The GitHub repository is the single source of truth:
+The GitHub repository is the shared source of truth. Developers and coding tools may work from local or temporary clones, but completed work must be committed and published here:
 
 `https://github.com/DavidBeeeee/seen-in-seven`
 
@@ -45,7 +250,7 @@ git clone https://github.com/DavidBeeeee/seen-in-seven
 cd seen-in-seven
 ```
 
-No build step, no `npm install`, no bundler. Static files served directly. You can run it locally with any static file server:
+The Studio and SeenInSeven repository has no build step, package install, or bundler. Its static files can be run locally with any static file server:
 
 ```bash
 npx serve .
@@ -57,7 +262,7 @@ Note: the DeepSeek API proxy (`/api/generate.js`) requires the `DEEPSEEK_API_KEY
 
 **Deployment is automatic.** Every push to the `main` branch on GitHub triggers a Vercel deploy in approximately 30 seconds. There is no manual deployment step.
 
-**Claude works out of a temporary container** (`/home/claude/seen-in-seven`) that resets between sessions. All changes are committed and pushed to GitHub before the session ends. If a new Claude session or developer picks this up, they pull from GitHub — the container history is irrelevant.
+Coding tools may work from David's local checkout or from a temporary cloud clone. In either case, GitHub `main` is the handoff point and Vercel deployment source. Pull the latest published changes before beginning new work.
 
 ---
 
@@ -70,11 +275,17 @@ This repo is the entire 777 Challenge project folder, not just the app. Here's e
 - `seeninseven.html` — the full SeenInSeven app
 - `admin.html` — Studio-wide customer and app-access dashboard
 - `admin-seeninseven.html` — detailed SeenInSeven progress and support dashboard
+- `admin-boardroom.html` — AI Boardroom access and activity dashboard
+- `admin-prompt-tester.html` — restricted SeenInSeven prompt testing workspace
 - `css/app.css` — all styles
 - `js/app.js` — all application logic
+- `js/admin-boardroom.js` — Boardroom administration
+- `js/admin-prompt-tester.js` — Prompt Tester state, testing, and publishing
+- `js/admin-prompt-questions.js` — Prompt Tester's level/video question catalog
 - `js/supabase.js` — auth and database layer
 - `prompts/blueprints.js` — core IP, never modify
 - `api/generate.js` — DeepSeek serverless proxy
+- `api/prompt-blueprint.js` — admin-gated blueprint read, publish, and undo endpoint
 - `vercel.json` — URL routing
 
 **Landing page HTML blocks (for Systeme.io):**
@@ -113,12 +324,13 @@ Both tools commit under the same author name (`David Bee <contact@davidbee.me>`)
 | Layer | Technology |
 |-------|-----------|
 | Hosting | Vercel (auto-deploys from GitHub main branch, ~30s) |
-| Database + Auth | Supabase (PostgreSQL, Row Level Security, magic link auth) |
+| Database + Auth | Supabase (PostgreSQL, Row Level Security, shared email/password and magic link auth) |
 | AI scripts | DeepSeek API via Vercel serverless proxy (`/api/generate.js`) |
-| Frontend | Vanilla HTML/CSS/JS — no framework |
+| Studio + SeenInSeven frontend | Vanilla HTML/CSS/JS, no framework |
+| AI Boardroom | Separate Next.js app in `DavidBeeeee/boardroom2`, proxied under `/boardroom` |
 | Node version | 24.x on Vercel |
 
-**No build step. No bundler. No npm install needed to run.** Static files served directly.
+This repository has no frontend build step. AI Boardroom has its own Node/Next.js build and deployment.
 
 ---
 
@@ -132,6 +344,8 @@ seen-in-seven/
 ├── seeninseven.html    — SeenInSeven screens, modals, and overlays
 ├── admin.html          — Studio-wide admin (magic link, allowlisted emails only)
 ├── admin-seeninseven.html — detailed SeenInSeven app admin
+├── admin-boardroom.html — AI Boardroom access and activity admin
+├── admin-prompt-tester.html — restricted SeenInSeven prompt tester
 ├── css/admin-studio.css — Studio-wide admin styles
 ├── css/studio.css      — Studio dashboard dark and light themes
 ├── css/app.css         — dark mode (default) — structural + dark styles
@@ -140,12 +354,16 @@ seen-in-seven/
 │   ├── app.js          — all application logic, global state (~5,900 lines)
 │   ├── studio.js       — Studio auth, theme, and app access display
 │   ├── admin-studio.js — Studio admin summaries, customers, and app access
+│   ├── admin-boardroom.js — Boardroom access and activity administration
+│   ├── admin-prompt-tester.js — prompt testing, draft state, publish, and undo
+│   ├── admin-prompt-questions.js — admin copy of level/video question definitions
 │   ├── supabase.js     — auth + database layer, event logging, sync queue
 │   └── points.js       — gamification points engine (client mirror of the SQL compute)
 ├── prompts/
 │   └── blueprints.js   — SYSTEM_PROMPT + Hero's Journey blueprints ← CORE IP. NEVER MODIFY.
 ├── api/
-│   └── generate.js     — DeepSeek proxy serverless function
+│   ├── generate.js     — DeepSeek proxy serverless function
+│   └── prompt-blueprint.js — admin-gated blueprint read/publish/undo endpoint
 ├── supabase_migrations/ — dated .sql files, one per applied schema/RPC change
 ├── vercel.json         — URL rewrites
 ├── DEAR_FUTURE_CLAUDE.md — debugging history (READ THIS FIRST)
@@ -161,25 +379,34 @@ All tables in `public` schema. RLS enabled on all.
 | Table | Purpose |
 |-------|---------|
 | `users` | id, auth_id, email, name, level, blocker, business_stage, is_paid, is_admin, last_active |
-| `onboarding` | user_id (UNIQUE), posted, history, goal, mini_goal, mini_goal_text, business, mvo_q2/q3/q4, topic_freewrite, phase2_context (jsonb) |
+| `onboarding` | user_id (UNIQUE), posted, history, goal, mini_goal, mini_goal_text, business, mvo_q2/q3/q4, topic_freewrite, phase2_context (jsonb), video_answers (jsonb) |
 | `scripts` | user_id, video_number, level, content, version, is_current, thumbs_up, generated_at, edited_at. Trigger auto-increments version on insert. |
 | `video_progress` | user_id, video_index, level, status ('filmed'/'skipped'/**null**), filmed_at, **locked_at, posted, posted_at, post_url** (added July 2026 for gamification) |
 | `logs` | user_id, event_type, detail (JSONB), created_at — admin activity log |
 | `preauth_events` | anon_session_id, user_id (nullable), email, event_type, detail (jsonb), created_at — pre-auth funnel tracking, added mid-2026 |
 | `points_config` | id=1, version, rules (jsonb) — tunable point values + milestone thresholds, added July 2026 |
+| `studio_entitlements` | Per-user access to each Studio app, including status, source, and optional expiration |
+| `boardroom_workspaces`, `boardroom_workspace_members` | Private Boardroom workspace ownership and membership |
+| `boardroom_workspace_settings`, `boardroom_user_profiles` | Workspace guardrails and the customer's private CEO profile |
+| `boardroom_documents` | Uploaded-document metadata; private files live in the `boardroom-documents` Storage bucket |
+| `boardroom_conversations`, `boardroom_messages` | Private Boardroom chat history |
+| `boardroom_advisor_cards`, `boardroom_memory_entries` | Advisor Work Cards and generated workspace memory |
 
 **RPC functions (SECURITY DEFINER — bypass RLS):**
 - `check_email_exists(email)` — pre-auth lookup for returning users
 - `is_admin()` — checks if current user has is_admin flag
 - `admin_get_users/scripts/progress/onboarding/logs/preauth_events/points()` — admin panel data
 - `admin_set_paid(user_id, paid)` — toggle is_paid from admin panel
+- `admin_get_studio_entitlements()` / `admin_set_studio_access(...)` — read and control per-app Studio access
+- `boardroom_ensure_workspace()` — safely create or return the signed-in customer's private Boardroom workspace
+- `admin_get_boardroom_activity()` — Boardroom activity and completion summary for administrators
 - `admin_delete_subjects(user_ids[], anon_session_ids[])` — bulk delete from admin panel
 - `provision_admin_account()` — the only way to self-grant `is_admin`; checks the caller's JWT email against a hardcoded allowlist. See the Admin Privilege Rule in `CLAUDE.md` — do not write `is_admin` directly from client code, a `BEFORE UPDATE` trigger blocks it.
 - `get_my_points()` / `admin_get_points()` — wrap `compute_user_points()`, which has no direct grants of its own
 
 **Auth method:** Supabase magic link (passwordless email OTP) **or password** (added mid-2026 — both coexist; see the sign-in screen's password toggle).
 
-**Admin access:** Gated by `is_admin = true` in the users table, granted only via `provision_admin_account()` against the matching `ADMIN_EMAILS` allowlists in `js/admin-studio.js` and `admin-seeninseven.html` (currently more than one email — check those files for the current list).
+**Admin access:** Gated by `is_admin = true` in the users table, granted only via `provision_admin_account()` against matching allowlists. The client copies are in `js/admin-studio.js`, `admin-seeninseven.html`, `js/admin-boardroom.js`, and `js/admin-prompt-tester.js`; the server-side allowlist is inside the RPC. Update all copies together.
 
 ---
 
@@ -189,9 +416,9 @@ All tables in `public` schema. RLS enabled on all.
 
 The entire app state lives in a single `state` object plus a handful of globals (`currentIndex`, `currentVideoIndex`, `screenOrder`, `editingFromPlan`). This is a deliberate choice — the app started as a single-file HTML and was refactored incrementally. A full state management rewrite is on the long-term roadmap but was intentionally deferred to prove the core product first.
 
-**2. Magic link auth only**
+**2. One shared Supabase identity across Studio apps**
 
-Users never create passwords. They enter their email, get a link, click it. This creates less friction for a 50+ non-technical audience (David's primary user base) but means persistent sessions depend on the same device/browser until the token expires. The Supabase session auto-refreshes silently.
+Email/password and magic-link login coexist. The same Supabase session identifies the customer across Studio, SeenInSeven, and AI Boardroom. App entry is then controlled separately through `studio_entitlements`; being logged in does not automatically grant access to every tool.
 
 **3. `onAuthStateChange` deadlock pattern — critical**
 
@@ -256,12 +483,14 @@ Quick summary of phases in order — do not skip ahead:
 5. **Script Output Update** — improve personalization depth and output quality before the paywall goes live
 6. **Paid Access and Checkout Bridge** — Systeme.io webhook, is_paid enforcement
 7. **Email and Follow-Up System** — automated nudges, requires proper transactional email provider
-8. **Long-Term Superapp Foundation** — future direction, not current scope
+8. **Long-Term Superapp Foundation** — foundation is now live; future app additions remain separately scoped
 
 ---
 
+## What is built now
+
 - Full onboarding flow (all 21 screens)
-- Magic link authentication — new and returning users
+- Shared email/password and magic-link authentication for new and returning users
 - Script generation for all 7 videos, both levels (Relatable Hero L1, Authority Series L2)
 - Section-level regeneration with undo/redo
 - Dashboard with progress ring, video cards, version history modal
@@ -269,6 +498,10 @@ Quick summary of phases in order — do not skip ahead:
 - Settings panel (accessible from any screen): name, email, level switch, re-run onboarding
 - Studio admin: all customer profiles, connected-app access, cross-app entry points, and app-level summaries
 - SeenInSeven admin: onboarding answers, script content, activity log, progress, support notes, and the legacy paid toggle
+- Studio customer hub with independent SeenInSeven and AI Boardroom entitlements
+- Full AI Boardroom under `/boardroom`, with isolated workspaces, profiles, documents, conversations, cards, and memory
+- Boardroom app-specific admin with access and activity reporting
+- SeenInSeven Prompt Tester with real read-only user context, editable test answers, safe blueprint publishing, and undo
 - Event logging: script_generated, script_failed, auth_completed, video_filmed, magic_link_sent
 - Start Over (clears scripts and onboarding, stays logged in, stays on dashboard)
 - Fullscreen preview mode for scripts
@@ -282,8 +515,8 @@ Quick summary of phases in order — do not skip ahead:
 
 **Phase 5 — The business-critical items:**
 
-**1. `is_paid` access control**
-The `is_paid` column exists on every user row but is never checked. Anyone who finds the app URL can use all 7 scripts for free. When real money flows through the $7 checkout, this needs to gate access to videos 2-7. The mechanism: Systeme.io fires a webhook to a Vercel API endpoint after purchase → the endpoint updates `is_paid = true` for the matching email. David can manually flip it via the admin panel in the meantime.
+**1. Systeme.io entitlement automation**
+Studio app access currently works and can be granted or revoked manually by an administrator. The remaining payment work is a Systeme.io webhook that finds the customer by email and grants or revokes the correct `studio_entitlements` row. Do not build a second login system or use legacy `users.is_paid` as the master Studio access record.
 
 **2. Community bridge**
 The Facebook group (`facebook.com/groups/coloradobiz`) is a core part of the product, not a footnote. Three moments in the app need a prominent, emotional bridge to the community: after first script generated, after each video filmed, and after all 7 completed. Currently there is only a small card at the bottom of the dashboard.
@@ -294,19 +527,9 @@ When all 7 videos are filmed, the completion screen needs to explicitly name the
 **4. Email touchpoints**
 Transactional emails for: first script generated (save your progress), 3-day nudge if stuck, completion congratulations, Graduation Event reminder. Requires a transactional email provider — Supabase's built-in mailer is rate-limited and unreliable for this. Postmark or Resend are recommended.
 
-**5. "Posted" distinction**
-The app tracks "filmed" but the challenge requires videos to be posted publicly. Separating these two states would allow measuring real challenge completion and triggering the community bridge at the right moment.
+**Studio expansion after the current apps:**
 
-**Long-term — The superapp vision:**
-
-SeenInSeven is intended to become one module in a unified superapp that links 4+ Colorado Mastermind coaching tools. Long-term priorities include:
-
-- A proper login screen (email/password + magic link option) rather than magic-link-only
-- Supabase auth configured for email/password with OTP as an option
-- A unified user account that works across multiple tools
-- The admin panel growing into a full control center across all tools
-
-When that refactor happens, the auth layer in `supabase.js` is the main thing to rewrite. The rest of the app (state, screens, generation) is largely independent of auth mechanism.
+The superapp foundation is built. Future priorities are connecting Systeme.io to entitlements, adding EEE tools to the existing Studio catalog and shared session, and expanding cross-app progress reporting. Every future app should plug into the existing identity, entitlement, hub, and master-admin model instead of creating another login or customer-facing deployment.
 
 ---
 
@@ -394,16 +617,27 @@ Should return an empty array. If it doesn't, find and close the unclosed tag.
 
 10. `goBackToPrompts` set `editingFromPlan = true` when navigating backwards through normal flow. This caused the script view footer to show "Done — Back to Dashboard" instead of the normal "Next Video" CTA.
 
+11. The Prompt Tester auth overlay remained visible after a successful session because an `.auth-screen` display rule overrode the HTML `hidden` attribute. Admin styles that use hidden panels must preserve `[hidden] { display: none !important; }`.
+
+12. Prompt Tester selections and editable answers initially reset when the page was left or reloaded. They are now namespaced in browser storage by selected user, level, and video. This storage is an administrator's test draft only and must never overwrite customer data.
+
+13. Older SeenInSeven prompt answers lived only in each customer's browser, so they could not reliably prefill an administrator's tester. `onboarding.video_answers` now stores future answers by level while keeping Level 1 and Level 2 field names isolated.
+
 ---
 
 ## Key URLs and credentials (for reference)
 
 | Resource | URL / Value |
 |----------|-------------|
-| App | https://studio.coloradomastermind.com |
+| Studio | https://studio.coloradomastermind.com |
+| SeenInSeven | https://studio.coloradomastermind.com/seeninseven |
+| AI Boardroom | https://studio.coloradomastermind.com/boardroom |
 | Studio admin | https://studio.coloradomastermind.com/admin |
 | SeenInSeven admin | https://studio.coloradomastermind.com/admin/seeninseven |
+| Prompt Tester | https://studio.coloradomastermind.com/admin/seeninseven/prompt-tester |
+| AI Boardroom admin | https://studio.coloradomastermind.com/admin/boardroom |
 | GitHub | https://github.com/DavidBeeeee/seen-in-seven |
+| AI Boardroom GitHub | https://github.com/DavidBeeeee/boardroom2 |
 | Supabase project | zdtkwpzdwnzzmdwrvmka |
 | Supabase URL | https://zdtkwpzdwnzzmdwrvmka.supabase.co |
 | Vercel project ID | prj_z0cydoxLzaTOusdNd7kpkDyMdFou |
