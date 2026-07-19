@@ -2,6 +2,7 @@ const PROMPT_SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const PROMPT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
 const PROMPT_ADMIN_EMAILS = new Set(['contact@davidbee.me', 'davidkamau.t@gmail.com', 'davidkamau@live.com']);
 const PROMPT_DRAFT_KEY = 'sis_prompt_tester_draft_v1';
+const PROMPT_WORKSPACE_KEY = 'sis_prompt_tester_workspace_v1';
 const promptSb = supabase.createClient(PROMPT_SUPABASE_URL, PROMPT_SUPABASE_KEY);
 
 const promptState = {
@@ -19,7 +20,8 @@ const promptState = {
   draftHistory: [],
   draftEditBase: null,
   draftHistoryTimer: null,
-  autosaveTimer: null
+  autosaveTimer: null,
+  workspace: loadPromptWorkspace()
 };
 
 function promptEl(id) {
@@ -91,7 +93,10 @@ async function initializePromptTester() {
   promptState.onboarding = onboarding;
   promptState.scripts = scripts.filter(script => script.is_current !== false);
   renderUserOptions();
+  restoreWorkspaceControls();
   initializeEditor();
+  promptEl('user-message-editor').addEventListener('input', saveCurrentRawMessage);
+  refreshTestMessage(true);
 }
 
 async function loadPublishedBlueprint(preserveDraft) {
@@ -193,16 +198,24 @@ function updateDraftMeta() {
 
 function renderUserOptions() {
   const select = promptEl('test-user');
+  const previousValue = select.value || promptState.workspace.selectedUserId || '';
   const sorted = promptState.users.slice().sort((a, b) => displayUser(a).localeCompare(displayUser(b)));
   select.innerHTML = '<option value="">Choose a user</option>' + sorted.map(user =>
     '<option value="' + escapeHtml(user.id) + '">' + escapeHtml(displayUser(user)) + ' | L' + escapeHtml(user.level || '?') + '</option>'
   ).join('');
+  if (sorted.some(user => String(user.id) === String(previousValue))) select.value = String(previousValue);
 }
 
 function handleUserChange() {
   const user = selectedUser();
   if (user && (Number(user.level) === 1 || Number(user.level) === 2)) promptEl('test-level').value = String(user.level);
-  refreshTestMessage();
+  saveWorkspaceControls();
+  refreshTestMessage(true);
+}
+
+function handleTesterContextChange() {
+  saveWorkspaceControls();
+  refreshTestMessage(true);
 }
 
 function selectedUser() {
@@ -218,21 +231,220 @@ function getPhase2(ob) {
   return ob && ob.phase2_context && typeof ob.phase2_context === 'object' ? ob.phase2_context : {};
 }
 
-function refreshTestMessage() {
+function loadPromptWorkspace() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(PROMPT_WORKSPACE_KEY) || 'null');
+    return stored && typeof stored === 'object' ? stored : {};
+  } catch (error) {
+    return {};
+  }
+}
+
+function savePromptWorkspace() {
+  try { localStorage.setItem(PROMPT_WORKSPACE_KEY, JSON.stringify(promptState.workspace)); }
+  catch (error) {}
+}
+
+function restoreWorkspaceControls() {
+  if (promptState.workspace.video) promptEl('test-video').value = String(promptState.workspace.video);
+  if (promptState.workspace.level) promptEl('test-level').value = String(promptState.workspace.level);
+  if (promptState.workspace.selectedUserId) promptEl('test-user').value = String(promptState.workspace.selectedUserId);
+}
+
+function saveWorkspaceControls() {
+  promptState.workspace.selectedUserId = promptEl('test-user').value || '';
+  promptState.workspace.video = Number(promptEl('test-video').value || 1);
+  promptState.workspace.level = Number(promptEl('test-level').value || 1);
+  savePromptWorkspace();
+}
+
+function testerBaseContextKey(user, video, level) {
+  return [user ? user.id : 'none', level, video].join(':');
+}
+
+function testerContextKey(user, video, level, mode) {
+  return testerBaseContextKey(user, video, level) + ':' + mode;
+}
+
+function currentPromptMode(user, video, level, answers) {
+  if (video === 1) return 'extended';
+  const key = testerBaseContextKey(user, video, level);
+  const saved = promptState.workspace.modeByContext && promptState.workspace.modeByContext[key];
+  if (saved === 'easy' || saved === 'extended') return saved;
+  const easy = PROMPT_QUESTION_CATALOG.easy[video - 1];
+  if (easy && answers && answers[easy.key]) return 'easy';
+  const extended = questionVideoDefinition(video, level).prompts || [];
+  return extended.some(question => answers && answers[question.key]) ? 'extended' : 'easy';
+}
+
+function setTesterPromptMode(mode) {
+  const user = selectedUser();
+  if (!user || (mode !== 'easy' && mode !== 'extended')) return;
+  const video = Number(promptEl('test-video').value || 1);
+  const level = Number(promptEl('test-level').value || 1);
+  if (!promptState.workspace.modeByContext) promptState.workspace.modeByContext = {};
+  promptState.workspace.modeByContext[testerBaseContextKey(user, video, level)] = mode;
+  savePromptWorkspace();
+  refreshTestMessage(true);
+}
+
+function questionVideoDefinition(video, level) {
+  const catalog = level === 1 ? PROMPT_QUESTION_CATALOG.l1 : PROMPT_QUESTION_CATALOG.l2;
+  return catalog[video - 1] || { title:'Video ' + video, note:'', prompts:[] };
+}
+
+function videoOneQuestions(user, ob, level) {
+  const name = user.name || '(name not provided)';
+  const declaration = level === 1
+    ? 'Hi, my name is ' + name + ". I never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me... some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of."
+    : "For those of you who don't know me yet, my name is " + name + ". I kinda never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me, some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of. I'm specifically doing this 7 Video Challenge because I have to share my knowledge, my experience, and my lived reality for the specific people I want to help before the world changes forever and I won't have the chance. These 7 videos are how I'm establishing myself as a credible voice in my field, but I'm scared, I'm frustrated, I don't know how it's going to go, but I'm committed to finishing.";
+  return [
+    { key:level === 1 ? 'v0p0' : 'v0decl', label:'Opening declaration', hint:'The fixed opening SeenInSeven supplies for this level.', placeholder:'Opening declaration', fallback:declaration },
+    { key:'v0p1', label:"What's been stopping you from posting until now?", hint:"Edit it until it sounds like the user's own words.", placeholder:'What has been stopping them?', fallback:level === 1 ? mvoField(ob && ob.mvo_q2, 'before_full') : mvoField(ob && ob.mvo_q3, 'before_full') },
+    { key:'v0p2', label:"Why are you doing this challenge right now?", hint:'What changed or made now the right moment?', placeholder:'Why now?', fallback:level === 1 ? mvoField(ob && ob.mvo_q3, 'catalyst_full') : mvoField(ob && ob.mvo_q4, 'crack_full') },
+    { key:'v0p3', label:'Who are you here to reach?', hint:'The person or group this video is meant to reach.', placeholder:'Who are they speaking to?', fallback:level === 1 ? mvoField(ob && ob.mvo_q4, 'village_full') : mvoField(ob && ob.mvo_q2, 'village_full') },
+    { key:'v0p4', label:"Anything else you'd like to add?", hint:'Any extra story, trait, or context the AI should weave in.', placeholder:'Optional extra context', fallback:getPhase2(ob).firstScriptNotes || '' }
+  ];
+}
+
+function mvoField(value, key) {
+  return value && typeof value === 'object' ? value[key] || '' : valueText(value);
+}
+
+function databaseAnswers(user, ob, video, level) {
+  const archive = ob && ob.video_answers && typeof ob.video_answers === 'object' ? ob.video_answers : {};
+  const saved = archive[String(level)] && typeof archive[String(level)] === 'object' ? archive[String(level)] : {};
+  if (video !== 1) return Object.assign({}, saved);
+  const answers = Object.assign({}, saved);
+  videoOneQuestions(user, ob, level).forEach(question => {
+    if (!answers[question.key] && question.fallback) answers[question.key] = question.fallback;
+  });
+  return answers;
+}
+
+function answersForContext(user, ob, video, level, mode) {
+  const key = testerContextKey(user, video, level, mode);
+  const drafts = promptState.workspace.answersByContext || {};
+  if (Object.prototype.hasOwnProperty.call(drafts, key)) return Object.assign({}, drafts[key]);
+  return databaseAnswers(user, ob, video, level);
+}
+
+function currentQuestionSet(user, ob, video, level, mode) {
+  if (video === 1) return videoOneQuestions(user, ob, level);
+  if (mode === 'easy') {
+    const easy = PROMPT_QUESTION_CATALOG.easy[video - 1];
+    return easy ? [{ key:easy.key, label:easy.label, hint:easy.hint, placeholder:'Write whatever comes naturally.' }] : [];
+  }
+  return questionVideoDefinition(video, level).prompts || [];
+}
+
+function renderPromptQuestions(user, ob, video, level, mode, answers) {
+  const definition = questionVideoDefinition(video, level);
+  const modeControl = promptEl('question-mode-control');
+  modeControl.hidden = video === 1;
+  promptEl('question-mode-easy').classList.toggle('active', mode === 'easy');
+  promptEl('question-mode-extended').classList.toggle('active', mode === 'extended');
+  promptEl('question-meta').textContent = 'Video ' + video + ' | Level ' + level + ' | ' + definition.title;
+  promptEl('question-note').textContent = definition.note || 'Use these answers to build the test input.';
+  const questions = currentQuestionSet(user, ob, video, level, mode);
+  promptEl('prompt-questions').innerHTML = questions.map((question, index) =>
+    '<label class="question-field">' +
+      '<span class="question-label">' + (index + 1) + '. ' + escapeHtml(question.label) + '</span>' +
+      '<span class="question-hint">' + escapeHtml(question.hint || '') + '</span>' +
+      '<textarea class="question-input" rows="4" placeholder="' + escapeHtml(question.placeholder || '') + '" oninput="testerAnswerChanged(\'' + escapeHtml(question.key) + '\', this.value)">' + escapeHtml(answers[question.key] || '') + '</textarea>' +
+    '</label>'
+  ).join('');
+}
+
+function testerAnswerChanged(key, value) {
+  const user = selectedUser();
+  if (!user) return;
+  const video = Number(promptEl('test-video').value || 1);
+  const level = Number(promptEl('test-level').value || 1);
+  const ob = selectedOnboarding(user.id);
+  const baseAnswers = databaseAnswers(user, ob, video, level);
+  const mode = currentPromptMode(user, video, level, baseAnswers);
+  const contextKey = testerContextKey(user, video, level, mode);
+  if (!promptState.workspace.answersByContext) promptState.workspace.answersByContext = {};
+  const answers = answersForContext(user, ob, video, level, mode);
+  answers[key] = value;
+  promptState.workspace.answersByContext[contextKey] = answers;
+  savePromptWorkspace();
+  rebuildUserMessage(user, ob, video, level, mode, answers);
+}
+
+function clearTestAnswers() {
+  const user = selectedUser();
+  if (!user) return;
+  const video = Number(promptEl('test-video').value || 1);
+  const level = Number(promptEl('test-level').value || 1);
+  const ob = selectedOnboarding(user.id);
+  const mode = currentPromptMode(user, video, level, databaseAnswers(user, ob, video, level));
+  if (!promptState.workspace.answersByContext) promptState.workspace.answersByContext = {};
+  promptState.workspace.answersByContext[testerContextKey(user, video, level, mode)] = {};
+  savePromptWorkspace();
+  refreshTestMessage();
+}
+
+function restoreUserAnswers() {
+  const user = selectedUser();
+  if (!user) return;
+  const video = Number(promptEl('test-video').value || 1);
+  const level = Number(promptEl('test-level').value || 1);
+  const ob = selectedOnboarding(user.id);
+  const mode = currentPromptMode(user, video, level, databaseAnswers(user, ob, video, level));
+  if (promptState.workspace.answersByContext) delete promptState.workspace.answersByContext[testerContextKey(user, video, level, mode)];
+  savePromptWorkspace();
+  refreshTestMessage();
+}
+
+function saveCurrentRawMessage() {
+  const user = selectedUser();
+  if (!user) return;
+  const video = Number(promptEl('test-video').value || 1);
+  const level = Number(promptEl('test-level').value || 1);
+  const ob = selectedOnboarding(user.id);
+  const mode = currentPromptMode(user, video, level, databaseAnswers(user, ob, video, level));
+  if (!promptState.workspace.rawMessages) promptState.workspace.rawMessages = {};
+  promptState.workspace.rawMessages[testerContextKey(user, video, level, mode)] = promptEl('user-message-editor').value;
+  savePromptWorkspace();
+}
+
+function refreshTestMessage(useStoredMessage) {
   const user = selectedUser();
   if (!user) {
     promptEl('user-message-editor').value = '';
     promptEl('user-data-meta').textContent = 'Select a user';
+    promptEl('question-meta').textContent = 'Select a user';
+    promptEl('question-note').textContent = 'Choose a user, level, and video to load its questions.';
+    promptEl('prompt-questions').innerHTML = '';
+    promptEl('question-mode-control').hidden = true;
     return;
   }
   const video = Number(promptEl('test-video').value || 1);
   const level = Number(promptEl('test-level').value || user.level || 1);
   const ob = selectedOnboarding(user.id);
-  promptEl('user-message-editor').value = buildTestUserMessage(user, ob, video, level);
+  const database = databaseAnswers(user, ob, video, level);
+  const mode = currentPromptMode(user, video, level, database);
+  const answers = answersForContext(user, ob, video, level, mode);
+  renderPromptQuestions(user, ob, video, level, mode, answers);
+  const contextKey = testerContextKey(user, video, level, mode);
+  const storedMessage = useStoredMessage && promptState.workspace.rawMessages && promptState.workspace.rawMessages[contextKey];
+  if (storedMessage != null) promptEl('user-message-editor').value = storedMessage;
+  else rebuildUserMessage(user, ob, video, level, mode, answers);
   promptEl('user-data-meta').textContent = displayUser(user) + ' | Video ' + video + ' | Level ' + level;
+  saveWorkspaceControls();
 }
 
-function buildTestUserMessage(user, ob, video, level) {
+function rebuildUserMessage(user, ob, video, level, mode, answers) {
+  const message = buildTestUserMessage(user, ob, video, level, mode, answers);
+  promptEl('user-message-editor').value = message;
+  if (!promptState.workspace.rawMessages) promptState.workspace.rawMessages = {};
+  promptState.workspace.rawMessages[testerContextKey(user, video, level, mode)] = message;
+  savePromptWorkspace();
+}
+
+function buildTestUserMessage(user, ob, video, level, mode, answers) {
   const p2 = getPhase2(ob);
   const lines = [
     '- Name: ' + (user.name || '(not provided)'),
@@ -250,32 +462,34 @@ function buildTestUserMessage(user, ob, video, level) {
   ];
   let message = 'Generate Video ' + video + ' script.\n\nLEVEL: ' + level + '\nVIDEO: ' + video + '\n\nONBOARDING DATA:\n' + lines.join('\n');
   if (video === 1) {
-    const name = user.name || '(name not provided)';
-    const declaration = level === 1
-      ? 'Hi, my name is ' + name + ". I never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me... some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of."
-      : "For those of you who don't know me yet, my name is " + name + ". I kinda never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me, some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of. I'm specifically doing this 7 Video Challenge because I have to share my knowledge, my experience, and my lived reality for the specific people I want to help before the world changes forever and I won't have the chance. These 7 videos are how I'm establishing myself as a credible voice in my field, but I'm scared, I'm frustrated, I don't know how it's going to go, but I'm committed to finishing.";
-    const stopped = level === 1 ? valueText(ob && ob.mvo_q2) : valueText(ob && ob.mvo_q3);
-    const whyNow = level === 1 ? valueText(ob && ob.mvo_q3) : valueText(ob && ob.mvo_q4);
-    const who = level === 1 ? valueText(ob && ob.mvo_q4) : valueText(ob && ob.mvo_q2);
-    message += '\n\nVIDEO 1 PREFILLED PROMPTS (read-only database copy; edits here are test-only):\n';
-    message += '1. Opening declaration (read-only): ' + declaration + '\n';
-    message += "2. What's been stopping you from posting until now: " + (stopped || '(not provided)') + '\n';
-    message += "3. Why you're doing this challenge right now: " + (whyNow || '(not provided)') + '\n';
-    message += "4. Who you're here to reach: " + (who || '(not provided)') + '\n';
-    message += '5. Anything else they want to add: ' + valueText(p2.firstScriptNotes || '(not provided)');
+    const questions = videoOneQuestions(user, ob, level);
+    message += '\n\nVIDEO 1 PROMPTS (tester copy):\n' + questions.map((question, index) =>
+      (index + 1) + '. ' + question.label + ': ' + (answers[question.key] || '(not provided)')
+    ).join('\n');
     return message;
   }
-  const previous = promptState.scripts
-    .filter(script => String(script.user_id) === String(user.id) && Number(script.video_number) < video)
-    .sort((a, b) => Number(a.video_number) - Number(b.video_number));
-  if (previous.length) {
-    message += '\n\nPREVIOUS SAVED SCRIPTS:\n\n' + previous.map(script =>
-      'Video ' + script.video_number + ':\n' + valueText(script.content || script.script)
-    ).join('\n\n---\n\n');
+  for (let previousVideo = 1; previousVideo < video; previousVideo++) {
+    const previousAnswers = databaseAnswers(user, ob, previousVideo, level);
+    const previousMode = currentPromptMode(user, previousVideo, level, previousAnswers);
+    const previousContextAnswers = answersForContext(user, ob, previousVideo, level, previousMode);
+    const previousQuestions = currentQuestionSet(user, ob, previousVideo, level, previousMode);
+    message += '\n\nVIDEO ' + previousVideo + ' PROMPTS:\n' + previousQuestions.map((question, index) =>
+      (index + 1) + '. ' + question.label + ': ' + (previousContextAnswers[question.key] || '(no answer)')
+    ).join('\n');
+    const previousScript = promptState.scripts.find(script => String(script.user_id) === String(user.id) && Number(script.video_number) === previousVideo);
+    if (previousScript) message += '\n\nVideo ' + previousVideo + ' saved script:\n' + valueText(previousScript.content || previousScript.script);
   }
-  const current = promptState.scripts.find(script => String(script.user_id) === String(user.id) && Number(script.video_number) === video);
-  message += '\n\nCURRENT VIDEO ' + video + ' JOURNAL ENTRY (replace or expand this test-only copy as needed):\n';
-  message += current ? 'Use this saved script as source material for a fresh version:\n' + valueText(current.content || current.script) : '[Paste the journal answer for this test here]';
+  const currentQuestions = currentQuestionSet(user, ob, video, level, mode);
+  if (mode === 'easy') {
+    const question = currentQuestions[0];
+    message += '\n\nCURRENT VIDEO ' + video + ' JOURNAL ENTRY (easy mode):\n' + (question && answers[question.key] || '(no answer provided)');
+  } else {
+    message += '\n\nCURRENT VIDEO ' + video + ' PROMPTS:\n' + currentQuestions.map((question, index) =>
+      (index + 1) + '. ' + question.label + ': ' + (answers[question.key] || '(no answer provided)')
+    ).join('\n');
+    const easy = PROMPT_QUESTION_CATALOG.easy[video - 1];
+    if (easy && answers[easy.key]) message += '\n\nAdditional free-write context from user: ' + answers[easy.key];
+  }
   return message;
 }
 
@@ -325,10 +539,12 @@ function buildFinalOutput(raw, video, level, user) {
   if (video !== 1) return raw.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
   const sections = parseSections(raw);
   if (!sections || !sections['OPEN LOOP'] || !sections.MEAT) return raw;
-  const name = user.name || '(name not provided)';
-  const declaration = level === 1
-    ? 'Hi, my name is ' + name + ". I never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me... some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of."
-    : "For those of you who don't know me yet, my name is " + name + ". I kinda never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me, some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of. I'm specifically doing this 7 Video Challenge because I have to share my knowledge, my experience, and my lived reality for the specific people I want to help before the world changes forever and I won't have the chance. These 7 videos are how I'm establishing myself as a credible voice in my field, but I'm scared, I'm frustrated, I don't know how it's going to go, but I'm committed to finishing.";
+  const ob = selectedOnboarding(user.id);
+  const database = databaseAnswers(user, ob, video, level);
+  const mode = currentPromptMode(user, video, level, database);
+  const answers = answersForContext(user, ob, video, level, mode);
+  const declarationKey = level === 1 ? 'v0p0' : 'v0decl';
+  const declaration = answers[declarationKey] || videoOneQuestions(user, ob, level)[0].fallback;
   return [sections.HOOK, sections['OPEN LOOP'], declaration, sections.MEAT, sections.CTA].filter(Boolean).join('\n\n');
 }
 
