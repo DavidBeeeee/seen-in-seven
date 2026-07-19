@@ -1,4 +1,5 @@
 *, *::before, *::after { box-sizing:border-box; }
+[hidden] { display:none !important; }
 :root {
   color-scheme:dark;
   --bg:#091d1d; --surface:#0d2828; --surface-2:#102f2f; --surface-3:#071a1a;
