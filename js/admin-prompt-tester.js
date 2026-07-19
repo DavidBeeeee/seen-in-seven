@@ -1,6 +1,6 @@
 const PROMPT_SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const PROMPT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
-const PROMPT_ADMIN_EMAILS = new Set(['email@davidbee.me', 'davidkamau@live.com']);
+const PROMPT_ADMIN_EMAILS = new Set(['contact@davidbee.me', 'davidkamau.t@gmail.com', 'davidkamau@live.com']);
 const PROMPT_DRAFT_KEY = 'sis_prompt_tester_draft_v1';
 const promptSb = supabase.createClient(PROMPT_SUPABASE_URL, PROMPT_SUPABASE_KEY);
 
