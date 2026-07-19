@@ -1,6 +1,6 @@
 const ADMIN_SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const ADMIN_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
-const ADMIN_EMAILS = new Set(['email@davidbee.me', 'davidkamau@live.com']);
+const ADMIN_EMAILS = new Set(['contact@davidbee.me', 'davidkamau.t@gmail.com', 'davidkamau@live.com']);
 const ADMIN_THEME_KEY = 'sis_theme_v1';
 const adminSb = supabase.createClient(ADMIN_SUPABASE_URL, ADMIN_SUPABASE_KEY);
 

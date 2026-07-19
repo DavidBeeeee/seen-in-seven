@@ -1,6 +1,6 @@
 const BOARDROOM_ADMIN_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const BOARDROOM_ADMIN_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
-const BOARDROOM_ADMIN_EMAILS = new Set(['email@davidbee.me', 'davidkamau@live.com']);
+const BOARDROOM_ADMIN_EMAILS = new Set(['contact@davidbee.me', 'davidkamau.t@gmail.com', 'davidkamau@live.com']);
 const boardroomAdminSb = supabase.createClient(BOARDROOM_ADMIN_URL, BOARDROOM_ADMIN_KEY);
 const boardroomEl = id => document.getElementById(id);
 let boardroomAdminState = { users: [], entitlements: [], activity: [], rows: [] };
