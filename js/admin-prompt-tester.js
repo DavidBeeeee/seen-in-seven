@@ -240,12 +240,12 @@ function highlightActiveBlueprint() {
   updateJumpButton();
   if (start === -1 || end === -1) return;
   const selEnd = end + closeTag.length;
+  var targetScroll = scrollOffsetForChar(editor, start);
   editor.focus();
   editor.setSelectionRange(start, selEnd);
-  var targetScroll = scrollOffsetForChar(editor, start);
-  setTimeout(function() {
+  requestAnimationFrame(function() {
     editor.scrollTop = targetScroll;
-  }, 0);
+  });
 }
 
 function scrollOffsetForChar(textarea, charIndex) {
