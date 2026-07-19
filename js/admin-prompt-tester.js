@@ -240,9 +240,11 @@ function highlightActiveBlueprint() {
   updateJumpButton();
   if (start === -1 || end === -1) return;
   const selEnd = end + closeTag.length;
-  editor.focus();
-  editor.setSelectionRange(start, selEnd);
   scrollTextareaToSelection(editor, start);
+  setTimeout(function() {
+    editor.focus();
+    editor.setSelectionRange(start, selEnd);
+  }, 0);
 }
 
 function scrollTextareaToSelection(textarea, charIndex) {

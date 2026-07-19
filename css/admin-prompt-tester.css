@@ -60,6 +60,7 @@ select { width:100%; min-height:40px; padding:8px 10px; border:1px solid var(--l
 .pane-meta { margin-top:3px; color:var(--muted); font-size:12px; }
 #blueprint-jump { color:var(--gold); border-color:rgba(200,168,75,.4); }
 #blueprint-jump:hover { color:#e8c86c; border-color:var(--gold); }
+#blueprint-editor::selection { background:rgba(200,168,75,.32); color:var(--text); }
 .code-editor, .data-editor { width:100%; flex:1; min-height:500px; padding:15px; resize:vertical; border:0; outline:0; background:var(--surface-3); color:var(--soft); font:12px/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; tab-size:2; }
 .data-editor { background:#0a2222; color:#c9e6e6; }
 .editor-footer { display:flex; justify-content:space-between; gap:12px; padding:8px 12px; border-top:1px solid var(--line); color:var(--muted); font-size:11px; }
