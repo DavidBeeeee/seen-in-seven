@@ -125,7 +125,7 @@ async function loadPublishedBlueprint(preserveDraft) {
 function initializeEditor() {
   const editor = promptEl('blueprint-editor');
   const stored = loadStoredDraft();
-  const storedIsStaleSectionDraft = stored && stored.source && hasL1V1Conclusion(promptState.publishedSource) && !hasL1V1Conclusion(stored.source);
+  const storedIsStaleSectionDraft = stored && stored.source && isStaleFourSectionDraft(stored.source);
   if (stored && stored.source && stored.baseSha === promptState.publishedSha && !storedIsStaleSectionDraft) {
     editor.value = stored.source;
     promptEl('autosave-status').textContent = 'Draft restored from this browser';
@@ -146,6 +146,16 @@ function hasL1V1Conclusion(source) {
   if (start === -1 || end === -1) return false;
   const block = text.slice(start, end);
   return block.includes('[CONCLUSION]') && block.includes('CONCLUSION patterns:');
+}
+
+function isStaleFourSectionDraft(source) {
+  const text = String(source || '');
+  if (!hasL1V1Conclusion(text)) return hasL1V1Conclusion(promptState.publishedSource);
+  return text.includes('exactly these four labeled sections') ||
+    text.includes('all four sections') ||
+    text.includes('across all four sections') ||
+    text.includes('No other text, labels, headers, or stage directions outside these four sections') ||
+    text.includes('Each section label must be exactly: [HOOK], [OPEN LOOP], [MEAT], [CTA]');
 }
 
 function captureDraftHistoryBase() {
