@@ -244,7 +244,9 @@ function highlightActiveBlueprint() {
   editor.focus();
   editor.setSelectionRange(start, selEnd);
   requestAnimationFrame(function() {
-    editor.scrollTop = targetScroll;
+    requestAnimationFrame(function() {
+      editor.scrollTop = targetScroll;
+    });
   });
 }
 
