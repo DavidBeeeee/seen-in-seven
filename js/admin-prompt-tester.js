@@ -97,6 +97,7 @@ async function initializePromptTester() {
   initializeEditor();
   promptEl('user-message-editor').addEventListener('input', saveCurrentRawMessage);
   refreshTestMessage(true);
+  updateJumpButton();
 }
 
 async function loadPublishedBlueprint(preserveDraft) {
@@ -216,6 +217,40 @@ function handleUserChange() {
 function handleTesterContextChange() {
   saveWorkspaceControls();
   refreshTestMessage(true);
+  highlightActiveBlueprint();
+}
+
+function updateJumpButton() {
+  const video = Number(promptEl('test-video').value || 1);
+  const source = promptEl('blueprint-editor').value;
+  const jumpButton = promptEl('blueprint-jump');
+  if (!jumpButton) return;
+  jumpButton.textContent = 'Jump to Video ' + video;
+  jumpButton.hidden = source.indexOf('<video_' + video + '_blueprint>') === -1;
+}
+
+function highlightActiveBlueprint() {
+  const video = Number(promptEl('test-video').value || 1);
+  const editor = promptEl('blueprint-editor');
+  const source = editor.value;
+  const openTag = '<video_' + video + '_blueprint>';
+  const closeTag = '</video_' + video + '_blueprint>';
+  const start = source.indexOf(openTag);
+  const end = source.indexOf(closeTag);
+  updateJumpButton();
+  if (start === -1 || end === -1) return;
+  const selEnd = end + closeTag.length;
+  editor.focus();
+  editor.setSelectionRange(start, selEnd);
+  scrollTextareaToSelection(editor, start);
+}
+
+function scrollTextareaToSelection(textarea, charIndex) {
+  const text = textarea.value.substring(0, charIndex);
+  const lines = text.split('\n').length - 1;
+  const lineHeight = parseFloat(getComputedStyle(textarea).lineHeight) || 19.5;
+  const targetScroll = Math.max(0, lines * lineHeight - 60);
+  textarea.scrollTop = targetScroll;
 }
 
 function selectedUser() {
