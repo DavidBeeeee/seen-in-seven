@@ -249,10 +249,31 @@ function highlightActiveBlueprint() {
 }
 
 function scrollOffsetForChar(textarea, charIndex) {
-  const text = textarea.value.substring(0, charIndex);
-  const lines = text.split('\n').length - 1;
-  const lineHeight = parseFloat(getComputedStyle(textarea).lineHeight) || 19.5;
-  return Math.max(0, lines * lineHeight - 40);
+  var mirror = document.getElementById('blueprint-mirror');
+  if (!mirror) {
+    mirror = document.createElement('div');
+    mirror.id = 'blueprint-mirror';
+    mirror.style.cssText = 'position:absolute;left:-9999px;top:0;visibility:hidden;overflow:hidden;';
+    document.body.appendChild(mirror);
+  }
+  var cs = getComputedStyle(textarea);
+  mirror.style.width = cs.width;
+  mirror.style.font = cs.font;
+  mirror.style.lineHeight = cs.lineHeight;
+  mirror.style.letterSpacing = cs.letterSpacing;
+  mirror.style.wordWrap = 'break-word';
+  mirror.style.whiteSpace = 'pre-wrap';
+  mirror.style.padding = cs.padding;
+  mirror.style.borderWidth = cs.borderWidth;
+  mirror.style.boxSizing = cs.boxSizing;
+  mirror.style.tabSize = cs.tabSize;
+  var before = textarea.value.substring(0, charIndex);
+  mirror.textContent = before;
+  var marker = document.createElement('span');
+  marker.textContent = '|';
+  mirror.appendChild(marker);
+  var offset = marker.offsetTop - parseInt(cs.paddingTop, 10);
+  return Math.max(0, offset - 20);
 }
 
 function selectedUser() {
