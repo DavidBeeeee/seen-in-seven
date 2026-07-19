@@ -174,7 +174,7 @@
   <div class="auth-box">
     <h1>SeenInSeven App Admin</h1>
     <p>Enter your admin email address to receive a login link.</p>
-    <input type="email" id="admin-email" class="auth-input" placeholder="email@davidbee.me" autocomplete="email">
+    <input type="email" id="admin-email" class="auth-input" placeholder="contact@davidbee.me" autocomplete="email">
     <button class="auth-btn" onclick="sendAdminLink()">Send Login Link</button>
     <div id="auth-msg" class="auth-msg"></div>
   </div>
@@ -326,7 +326,7 @@
 const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-const ADMIN_EMAILS = new Set(['email@davidbee.me', 'davidkamau@live.com']);
+const ADMIN_EMAILS = new Set(['contact@davidbee.me', 'davidkamau.t@gmail.com', 'davidkamau@live.com']);
 const NOTE_KEY = 'sis_admin_notes_v1';
 const PREF_KEY = 'sis_admin_prefs_v1';
 

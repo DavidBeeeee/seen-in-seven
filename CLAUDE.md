@@ -86,7 +86,7 @@ Admin RPCs: `admin_get_users`, `admin_get_scripts`, `admin_get_progress`, `admin
 ## Auth Flow
 
 - Users sign in via magic link (OTP) or password
-- Magic link sends to `email@davidbee.me` for admin, user email for regular users
+- Admin magic links are approved for `contact@davidbee.me`, `davidkamau.t@gmail.com`, and `davidkamau@live.com`; regular users receive links at their own email
 - `initAuth()` in supabase.js handles session restore on page load
 - `loadProgress()` in app.js handles localStorage restore for unauthenticated users
 - Both paths converge on `showDashboard()` if `state.level` is set
