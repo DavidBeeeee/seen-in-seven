@@ -1,7 +1,7 @@
 const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
 const REPOSITORY = 'DavidBeeeee/seen-in-seven';
-const BRANCH = 'main';
+const BRANCH = process.env.PROMPT_BLUEPRINT_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || 'main';
 const BLUEPRINT_PATH = 'prompts/blueprints.js';
 const PUBLISH_PREFIX = 'Update SeenInSeven blueprint via Prompt Tester';
 
@@ -55,7 +55,7 @@ function validateBlueprintSource(source) {
   if (!/^const SYSTEM_PROMPT = `[^]*`;\s*$/.test(source)) errors.push('The file must contain only the SYSTEM_PROMPT template.');
   if ((source.match(/`/g) || []).length !== 2) errors.push('Backticks are not allowed inside the prompt text.');
   if (source.includes('${')) errors.push('JavaScript interpolation syntax is not allowed inside the prompt text.');
-  const required = ['<global_rules>', '</global_rules>', '[HOOK]', '[OPEN LOOP]', '[MEAT]', '[CTA]'];
+  const required = ['<global_rules>', '</global_rules>', '[HOOK]', '[OPEN LOOP]', '[MEAT]', '[CONCLUSION]', '[CTA]'];
   [1, 2].forEach(level => {
     for (let video = 1; video <= 7; video++) {
       required.push('<l' + level + '_v' + video + '_rules>', '</l' + level + '_v' + video + '_rules>');

@@ -1868,19 +1868,19 @@ async function generateValidatedScript(userMessage, level, video) {
   if (validation.valid) return script;
 
   const repairMessage = userMessage + '\n\nYOUR PREVIOUS RESPONSE WAS MALFORMED:\n' + script +
-    '\n\nRewrite the complete script now. Include all four required sections exactly once: [HOOK], [OPEN LOOP], [MEAT], and [CTA]. Do not add commentary outside those sections.';
+    '\n\nRewrite the complete script now. Include all five required sections exactly once: [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA]. Do not add commentary outside those sections.';
   script = await callDeepSeekAPIWithRetry(repairMessage, 0, level, video);
   validation = SISPromptEngine.validateOutput(script);
   if (!validation.valid) throw new Error('The script response was missing: ' + validation.missing.join(', ') + '. Please try again.');
   return script;
 }
 
-// Parse [HOOK] / [OPEN LOOP] / [MEAT] / [CTA] sections from AI response
+// Parse [HOOK] / [OPEN LOOP] / [MEAT] / [CONCLUSION] / [CTA] sections from AI response
 function parseScriptSections(scriptText) {
   if (window.SISPromptEngine) return SISPromptEngine.parseSections(scriptText);
   if (!scriptText) return null;
-  const sections = { HOOK: '', 'OPEN LOOP': '', MEAT: '', CTA: '' };
-  const sectionOrder = ['HOOK', 'OPEN LOOP', 'MEAT', 'CTA'];
+  const sections = { HOOK: '', 'OPEN LOOP': '', MEAT: '', CONCLUSION: '', CTA: '' };
+  const sectionOrder = ['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA'];
   // Find each label and extract content between it and the next label (or end)
   for (let i = 0; i < sectionOrder.length; i++) {
     const label = sectionOrder[i];
@@ -1905,7 +1905,7 @@ function parseScriptSections(scriptText) {
 // Build full script text from sections object
 function sectionsToFullScript(sections) {
   if (!sections) return '';
-  return ['HOOK', 'OPEN LOOP', 'MEAT', 'CTA']
+  return ['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA']
     .filter(key => sections[key])
     .map(key => '[' + key + ']\n' + String(sections[key]).trim())
     .join('\n\n');
@@ -1914,14 +1914,14 @@ function sectionsToFullScript(sections) {
 function finalScriptText(idx, rawScript, level) {
   const script = rawScript == null ? state.videos['script_v' + idx] || '' : rawScript;
   const activeLevel = Number(level || state.level || 1);
-  if (!window.SISPromptEngine) return String(script).replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  if (!window.SISPromptEngine) return String(script).replace(/\[(HOOK|OPEN LOOP|MEAT|CONCLUSION|CTA)\]\s*/g, '').trim();
   return SISPromptEngine.canonicalScript(script, idx + 1, idx === 0 ? videoOneDeclaration(activeLevel) : '');
 }
 
 function archivedScriptText(collection, idx, level) {
   const scripts = collection || {};
   const raw = scripts['script_v' + idx] || '';
-  if (idx !== 0 || !window.SISPromptEngine) return String(raw).replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  if (idx !== 0 || !window.SISPromptEngine) return String(raw).replace(/\[(HOOK|OPEN LOOP|MEAT|CONCLUSION|CTA)\]\s*/g, '').trim();
   const declaration = Number(level) === 2
     ? scripts.v0decl || videoOneDeclaration(2)
     : scripts.v0p0 || videoOneDeclaration(1);
@@ -2945,20 +2945,21 @@ function _doShowScriptViewInner(idx) {
   const rationaleEl = document.getElementById('sv-rationale-text');
   if (rationaleEl) rationaleEl.textContent = VIDEO_RATIONALE[idx] || '';
 
-  // Populate guided view (HOOK / OPEN LOOP / story section / CTA)
+  // Populate guided view (HOOK / OPEN LOOP / story section / CONCLUSION / CTA)
   const storyLabel = VIDEO_STORY_LABELS[idx] || 'YOUR STORY';
   const storyBeats = VIDEO_STORY_BEATS[idx] || [];
   const beatsEl = document.getElementById('sv-beats');
   if (beatsEl) {
     const sections = state.videos[sectionsKey];
-    if (sections && (sections.HOOK || sections['OPEN LOOP'] || sections.MEAT || sections.CTA)) {
+    if (sections && (sections.HOOK || sections['OPEN LOOP'] || sections.MEAT || sections.CONCLUSION || sections.CTA)) {
       // AI-generated script with parsed sections — show sections with psychological labels
       const sectionDefs = [
         { key: 'HOOK',       label: 'HOOK',       desc: 'Stops the scroll in the first 7 words. Grabs attention before anything else.' },
         { key: 'OPEN LOOP',  label: 'OPEN LOOP',  desc: 'Creates tension or curiosity. Signals something important is coming.' },
         ...(isV1 && declText ? [{ key: 'DECLARATION', label: 'DECLARATION', desc: 'Your commitment, out loud. Say this close to verbatim. It signals trust and sets up everything that follows.', fixed: true, fixedText: declText }] : []),
         { key: 'MEAT',       label: storyLabel,    desc: null, beats: storyBeats },
-        { key: 'CTA',        label: 'CTA',         desc: 'The forward pull. Earns the next watch without demanding it.' },
+        { key: 'CONCLUSION', label: 'CONCLUSION',  desc: 'Closes the thought with a turn, sharper meaning, or emotional landing.' },
+        { key: 'CTA',        label: 'CTA',         desc: 'The direct next action. Gives the viewer a clear reason to follow, comment, DM, or keep watching.' },
       ];
       beatsEl.innerHTML = sectionDefs.map(s => {
         const safeKey = s.key.replace(' ', '-');
@@ -3009,7 +3010,7 @@ function _doShowScriptViewInner(idx) {
     }
   }
 
-  // Populate clean (editable) view — strip [HOOK][OPEN LOOP][MEAT][CTA] labels, inject DECLARATION for V1
+  // Populate clean (editable) view — strip section labels, inject DECLARATION for V1
   const editor = document.getElementById('script-editor');
   if (editor) {
     const rawScript = state.videos[editKey] || '';

@@ -620,7 +620,7 @@ async function generateTest() {
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
           systemMsg:systemPrompt,
-          userMsg:userMessage + '\n\nYOUR PREVIOUS RESPONSE WAS MALFORMED:\n' + raw + '\n\nRewrite the complete script now with [HOOK], [OPEN LOOP], [MEAT], and [CTA] exactly once.',
+          userMsg:userMessage + '\n\nYOUR PREVIOUS RESPONSE WAS MALFORMED:\n' + raw + '\n\nRewrite the complete script now with [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] exactly once.',
           temperature
         })
       });
@@ -695,7 +695,7 @@ function validateBlueprint(source) {
   if (source.includes('${')) errors.push('JavaScript interpolation syntax is not allowed inside the prompt text.');
   const structuralMarkers = ['<global_rules>', '</global_rules>'];
   SISPromptEngine.SECTION_KEYS.forEach(key => structuralMarkers.push('<' + key + '>', '</' + key + '>'));
-  structuralMarkers.concat(['[HOOK]', '[OPEN LOOP]', '[MEAT]', '[CTA]']).forEach(marker => {
+  structuralMarkers.concat(['[HOOK]', '[OPEN LOOP]', '[MEAT]', '[CONCLUSION]', '[CTA]']).forEach(marker => {
     const count = source.split(marker).length - 1;
     if (count !== 1 && marker.startsWith('<')) errors.push(marker + ' must appear exactly once.');
     else if (!count) errors.push('Missing ' + marker + '.');

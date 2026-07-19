@@ -109,8 +109,8 @@
   }
 
   function parseSections(text) {
-    const sections = { HOOK: '', 'OPEN LOOP': '', MEAT: '', CTA: '' };
-    const pattern = /\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*([\s\S]*?)(?=\n\s*\[(?:HOOK|OPEN LOOP|MEAT|CTA)\]|$)/g;
+    const sections = { HOOK: '', 'OPEN LOOP': '', MEAT: '', CONCLUSION: '', CTA: '' };
+    const pattern = /\[(HOOK|OPEN LOOP|MEAT|CONCLUSION|CTA)\]\s*([\s\S]*?)(?=\n\s*\[(?:HOOK|OPEN LOOP|MEAT|CONCLUSION|CTA)\]|$)/g;
     let match;
     while ((match = pattern.exec(String(text || '')))) sections[match[1]] = match[2].trim();
     return Object.values(sections).some(Boolean) ? sections : null;
@@ -119,13 +119,13 @@
   function validateOutput(text) {
     const source = String(text || '');
     const sections = parseSections(text);
-    if (!sections) return { valid: false, sections: null, missing: ['HOOK', 'OPEN LOOP', 'MEAT', 'CTA'] };
+    if (!sections) return { valid: false, sections: null, missing: ['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA'] };
     const missing = Object.keys(sections).filter(key => !sections[key] || (source.match(new RegExp('\\[' + key.replace(' ', '\\s+') + '\\]', 'g')) || []).length !== 1);
     return { valid: missing.length === 0, sections, missing };
   }
 
   function stripSectionLabels(text) {
-    return String(text || '').replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+    return String(text || '').replace(/\[(HOOK|OPEN LOOP|MEAT|CONCLUSION|CTA)\]\s*/g, '').trim();
   }
 
   function canonicalScript(text, video, declaration) {
@@ -133,7 +133,7 @@
     const parsed = parseSections(raw);
     if (Number(video) !== 1 || !String(declaration || '').trim()) return stripSectionLabels(raw);
     if (!parsed || !parsed['OPEN LOOP'] || !parsed.MEAT) return stripSectionLabels(raw);
-    return [parsed.HOOK, parsed['OPEN LOOP'], String(declaration).trim(), parsed.MEAT, parsed.CTA]
+    return [parsed.HOOK, parsed['OPEN LOOP'], String(declaration).trim(), parsed.MEAT, parsed.CONCLUSION, parsed.CTA]
       .filter(Boolean).join('\n\n');
   }
 
