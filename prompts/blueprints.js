@@ -245,27 +245,46 @@ CTA patterns (pick one): "Follow along because I'm filming all 7 videos — and 
 </l1_v1_rules>
 
 <l1_v2_rules>
-VIDEO 2 — INTRODUCING THE HERO
-"Here's who I actually am."
-Framework: Modified Hero's Journey
-Audience feels: Identification + Warmth
-Speaker feels: Seen
+VIDEO 2 — THE HIDDEN THREAD
+"There was always something there, but I didn't know how to name it yet."
+Framework: Ordinary World + Refusal of the Call
+Prompt type: Personal history / identity clue
+Audience feels: Recognition + "there's more to this person"
+Speaker feels: Honest, reflective, not yet transformed
+
+CORE PURPOSE:
+This video is not the origin story of the offer, product, business, or expertise.
+This video reveals an early hidden thread in the speaker's life: a recurring interest, tension, pattern, frustration, sensitivity, obsession, or way of seeing the world that mattered before they knew what it meant.
+
+The audience should not feel like the speaker has arrived.
+They should feel like they are seeing evidence that the speaker was never as random, stuck, or ordinary as they thought.
+
+HERO'S JOURNEY PLACEMENT:
+The speaker is still in the Ordinary World.
+They have not crossed the threshold.
+They have not become the guide.
+They do not yet understand the full meaning of the thread.
+This is the "there was always something there, but I didn't know how to name it yet" moment.
 
 AUDIENCE JOURNEY:
 Before: "I saw them start, but I do not really know who they are yet."
-After: "There is more to this person than the first impression. I understand a piece of what shaped them."
-Open question: "What else about their story explains why this matters so much?"
-Social impulse: Comment with recognition, curiosity, or a shared background detail.
+After: "There is more to this person than the first impression. I can see one early clue before they could."
+Open question: "What kept them from following that thread sooner?"
+Social impulse: Comment with recognition, curiosity, or their own version of that hidden thread.
 
 STRUCTURAL BEATS:
-1. Catalyst Moment (Hook) — Open with something that makes the viewer curious about this person specifically. Lead with one surprising or unexpected detail that doesn't quite make sense yet. The audience leans in because they want context.
-2. Vulnerability Entry (The Internal World) — Something real about who they are. Not trauma-dumping — but a piece of their story that most people wouldn't guess. The audience is building a mental picture beyond surface level.
-3. Enemy Identification (The False Version) — There's a version of this person the world sees that isn't the full picture. The gap between perceived self and real self. The audience wants to see the real one.
-4. Agency Reclaim / Path Clarity — The speaker connects who they are to why they're here. Not mission-statement energy. "This is what I care about and I think it's worth talking about."
+1. Recognition Door (Hook) — Start with a universal emotional condition the audience can recognize. Do not reveal the hidden thread yet. Do not create the main mystery yet. The hook should make the viewer feel: "I know that kind of life / feeling / season."
+2. Hidden Thread (Open Loop) — Introduce the existence of one specific recurring clue from the speaker's life, but do not fully explain its meaning yet. The viewer should wonder: "What was the clue?" or "Why did that matter later?"
+3. Ordinary World Evidence (Meat) — Show the speaker inside the ordinary world. Use concrete personal details. Reveal the hidden thread as something they kept returning to, noticing, caring about, resisting, or being bothered by.
+4. Identity Clue Landing (Conclusion) — Land on the idea that this thread was probably trying to tell them something before they understood it. The conclusion should feel reflective, not triumphant.
+5. Next Belief (CTA) — Point toward the next video by naming the belief, assumption, fear, or misunderstanding that kept them from following the thread sooner. Give a clear reason to follow/watch next.
 
-TONE: Warm, relaxed, storytelling energy. Like the second conversation with someone. Specific details, not generalities. A moment of surprise. Settling-in energy.
+TONE: Warm, relaxed, reflective storytelling energy. Like the second conversation with someone. Specific details, not generalities. A moment of recognition. Still in the ordinary world, still pre-transformation.
 
-LEVEL 1 SPECIFIC: "About Me" — make the audience feel like they just met someone interesting at a party. Not impressive — interesting. Revealing a human being, not building a brand.
+LEVEL 1 SPECIFIC: This is still the Ordinary World and Refusal of the Call. Make the audience feel like they just noticed an important clue before the speaker fully understands it. Revealing a human being, not building a brand.
+
+ABSOLUTE RULE:
+Reveal the clue, not the conclusion. Do not reveal the final meaning of the thread yet. Do not explain the product, offer, business, expertise, or final mission. Do not make the speaker sound like they already understood where it was all going.
 
 
 PROMPTS (L1): 1) Where from + one shaping detail, 2) Something surprising about them, 3) What they care about and why it's worth talking about
@@ -275,11 +294,11 @@ The hook, open loop, conclusion, and CTA patterns below are not suggestions — 
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should introduce the tension, the open loop should leave a concrete unfinished thought, the conclusion should pay off that unfinished thought with a pattern interrupt or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
-VIDEO 2, LEVEL 1: Tone = Warm, storytelling, campfire energy (Gregory Alan Isakov "Big Black Car" — folk acoustic, settling in, revealing)
-HOOK patterns: "I grew up in [specific place]. That's not the interesting part. The interesting part is what it taught me about [theme]." / "Most people think I'm [common perception]. They don't see the version of me that [unexpected contradiction]."
-OPEN LOOP patterns: "On the surface, it looks like [obvious story]. But that's not the full picture." / "Here's what took me years to figure out: why did [formative experience] shape me so differently than everyone else?"
-CONCLUSION patterns: "So yeah, I am [surface identity]. But I'm also the person who [unexpected truth]. That's probably the part worth paying attention to." / "Most people hear [obvious detail] and assume [false read]. I think the more interesting question is what that made me notice about [theme]."
-CTA patterns: "Follow because next video I'm sharing the exact moment I realized [theme from their answers] wasn't working — and it took me years to see it." / "Most people tell their story like it's a resume. Next video I'll show you why that's exactly backwards."
+VIDEO 2, LEVEL 1: Tone = Warm, reflective, ordinary-world energy (Gregory Alan Isakov "Big Black Car" — folk acoustic, settling in, revealing)
+HOOK patterns: "Have you ever had a season of life that made it hard to hear yourself think?" / "Sometimes the thing that looks like being stuck is actually where the first clue shows up."
+OPEN LOOP patterns: "I didn't know it then, but there was one thing I kept coming back to every time I had a little space to breathe." / "At the time, I thought it was random. Looking back, I think it was trying to tell me something."
+CONCLUSION patterns: "I used to think that thread was just a weird detail about me. Now I'm wondering if it was the first clue I kept ignoring." / "Maybe the thing I kept returning to wasn't random. Maybe it was the part of me that knew before the rest of me did."
+CTA patterns: "Follow because next video I'm talking about the belief that kept me from following that thread sooner." / "Watch the next one because this is where the story starts to show what I misunderstood for way too long."
 </l1_v2_rules>
 
 <l1_v3_rules>

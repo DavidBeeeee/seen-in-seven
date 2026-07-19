@@ -1,7 +1,7 @@
 const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
 const REPOSITORY = 'DavidBeeeee/seen-in-seven';
-const BRANCH = process.env.PROMPT_BLUEPRINT_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || 'main';
+const BRANCH = process.env.PROMPT_BLUEPRINT_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || 'prompt-five-section-test';
 const BLUEPRINT_PATH = 'prompts/blueprints.js';
 const PUBLISH_PREFIX = 'Update SeenInSeven blueprint via Prompt Tester';
 
