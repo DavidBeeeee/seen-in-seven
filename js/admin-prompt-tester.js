@@ -240,13 +240,12 @@ function highlightActiveBlueprint() {
   updateJumpButton();
   if (start === -1 || end === -1) return;
   const selEnd = end + closeTag.length;
-  var targetScroll = scrollOffsetForChar(editor, start);
   editor.focus();
-  editor.setSelectionRange(start, selEnd);
+  editor.setSelectionRange(start, start);
   requestAnimationFrame(function() {
-    requestAnimationFrame(function() {
-      editor.scrollTop = targetScroll;
-    });
+    var scrollPos = editor.scrollTop;
+    editor.setSelectionRange(start, selEnd);
+    editor.scrollTop = scrollPos;
   });
 }
 
