@@ -43,7 +43,7 @@
         </label>
         <label>
           <span>Video</span>
-          <select id="test-video" onchange="refreshTestMessage()">
+          <select id="test-video" onchange="handleTesterContextChange()">
             <option value="1">Video 1</option>
             <option value="2">Video 2</option>
             <option value="3">Video 3</option>
@@ -55,7 +55,7 @@
         </label>
         <label>
           <span>Level</span>
-          <select id="test-level" onchange="refreshTestMessage()">
+          <select id="test-level" onchange="handleTesterContextChange()">
             <option value="1">Level 1</option>
             <option value="2">Level 2</option>
           </select>
@@ -67,6 +67,29 @@
       </section>
 
       <div id="page-message" class="banner" hidden aria-live="polite"></div>
+
+      <section class="question-workspace" aria-labelledby="question-title">
+        <div class="question-head">
+          <div>
+            <div class="pane-title" id="question-title">Prompt Questions</div>
+            <div class="pane-meta" id="question-meta">Select a user</div>
+          </div>
+          <div class="question-actions">
+            <div class="mode-control" id="question-mode-control" hidden aria-label="Prompt style">
+              <button class="mode-button active" id="question-mode-easy" type="button" onclick="setTesterPromptMode('easy')">Easy</button>
+              <button class="mode-button" id="question-mode-extended" type="button" onclick="setTesterPromptMode('extended')">Extended</button>
+            </div>
+            <button class="button small" type="button" onclick="restoreUserAnswers()">Restore User Answers</button>
+            <button class="button small" type="button" onclick="clearTestAnswers()">Clear Test Answers</button>
+          </div>
+        </div>
+        <div class="question-note" id="question-note">Choose a user, level, and video to load its questions.</div>
+        <div class="question-grid" id="prompt-questions"></div>
+        <div class="question-footer">
+          <span>Tester edits are private to this browser</span>
+          <span>No user records are changed</span>
+        </div>
+      </section>
 
       <section class="editor-grid">
         <article class="tool-pane prompt-pane">
@@ -160,6 +183,7 @@
   </div>
 
   <div id="toast" class="toast" aria-live="polite"></div>
+  <script src="/js/admin-prompt-questions.js"></script>
   <script src="/js/admin-prompt-tester.js"></script>
 </body>
 </html>

@@ -215,7 +215,7 @@
 const state = {
   posted:null, blocker:null, history:null, business:null,
   goal:null, minigoal:null, minigoalText:'', name:'',
-  level:null, videos:{}, videoStatus:{},
+  level:null, videos:{}, videoStatus:{}, videoAnswersByLevel:{},
   mvoQ2:null, mvoQ3:null, mvoQ4:null,
   topicFreewrite: '',
   l1VideoStatus: null,
@@ -1636,6 +1636,32 @@ const VIDEO_EASY_PROMPTS = [
 ];
 
 const videoPromptMode = {};
+const VIDEO_ANSWER_KEY_PATTERN = /^(?:v[0-6]p\d+|v0decl|easyAnswer_v[1-6])$/;
+let videoAnswerSaveTimer = null;
+
+function collectCurrentVideoAnswers() {
+  const answers = {};
+  Object.keys(state.videos || {}).forEach(key => {
+    if (VIDEO_ANSWER_KEY_PATTERN.test(key) && typeof state.videos[key] === 'string') {
+      answers[key] = state.videos[key];
+    }
+  });
+  return answers;
+}
+
+function captureVideoAnswersByLevel() {
+  if (!state.videoAnswersByLevel || typeof state.videoAnswersByLevel !== 'object') state.videoAnswersByLevel = {};
+  const levelKey = String(state.level || 1);
+  state.videoAnswersByLevel[levelKey] = Object.assign({}, state.videoAnswersByLevel[levelKey] || {}, collectCurrentVideoAnswers());
+  return state.videoAnswersByLevel;
+}
+
+function setVideoAnswer(key, value) {
+  if (!VIDEO_ANSWER_KEY_PATTERN.test(key)) return;
+  state.videos[key] = value;
+  clearTimeout(videoAnswerSaveTimer);
+  videoAnswerSaveTimer = setTimeout(saveProgress, 600);
+}
 
 const SCRIPT_LOADING_MSGS = [
   "The best video you'll make is the honest one.",
@@ -2444,7 +2470,7 @@ function _buildPromptsContent(container, v, idx) {
             <label class="input-label">${p.label}</label>
             <span class="input-hint" style="font-size:10px;opacity:0.65;">${p.hint}</span>
             <textarea class="text-input" rows="2" placeholder="e.g. I have a background in healthcare but I've never talked about it on camera. Mention that I'm nervous but committed"
-              oninput="state.videos['${p.key}']=this.value">${sv[p.key] || p.def}</textarea>
+              oninput="setVideoAnswer('${p.key}', this.value)">${sv[p.key] || p.def}</textarea>
           </div>`).join('');
       // Also store the declaration in state so API can use it
       if (!sv.v0p0) sv.v0p0 = introDeclaration;
@@ -2468,7 +2494,7 @@ function _buildPromptsContent(container, v, idx) {
             <label class="input-label">${p.label}</label>
             <span class="input-hint" style="font-size:10px;opacity:0.65;">${p.hint}</span>
             <textarea class="text-input" rows="2" placeholder="Add any extra context, a story, or anything else for the AI..."
-              oninput="state.videos['${p.key}']=this.value">${sv[p.key] || ''}</textarea>
+              oninput="setVideoAnswer('${p.key}', this.value)">${sv[p.key] || ''}</textarea>
           </div>`;
           } else {
             // Pre-filled answers — read-only display, editable on next page
@@ -2505,7 +2531,7 @@ function _buildPromptsContent(container, v, idx) {
         <label class="input-label">${p.label}</label>
         <span class="input-hint">${p.hint}</span>
         <textarea class="text-input" rows="2" placeholder="${p.ph}"
-          oninput="state.videos['${p.key}']=this.value">${state.videos[p.key] || ''}</textarea>
+          oninput="setVideoAnswer('${p.key}', this.value)">${state.videos[p.key] || ''}</textarea>
       </div>`).join('');
 
     if (easyPrompt) {
@@ -2515,7 +2541,7 @@ function _buildPromptsContent(container, v, idx) {
           <label class="input-label">${easyPrompt.label}</label>
           <span class="input-hint">${easyPrompt.hint}</span>
           <textarea class="text-input" rows="4" placeholder="Write whatever comes naturally. You can always add more later."
-            oninput="state.videos['${easyPrompt.key}']=this.value">${easyAnswerVal}</textarea>
+            oninput="setVideoAnswer('${easyPrompt.key}', this.value)">${easyAnswerVal}</textarea>
         </div>`;
 
       promptsHTML = `
@@ -3429,6 +3455,7 @@ function markFilmedFromPlan(idx) {
 }
 
 function runItAgain() {
+  captureVideoAnswersByLevel();
   // Level 1 completers graduate to Level 2
   if (state.level === 1) {
     state.level = 2;
@@ -4319,6 +4346,7 @@ function showLevelChangeConfirm() {
 async function confirmLevelChange(newLevel) {
   const oldLevel = state.level;
   if (oldLevel === newLevel) return;
+  captureVideoAnswersByLevel();
 
   // Archive scripts properly to avoid scrambling
   // If switching FROM L1 → L2 and L1 has scripts: stash them in l1Videos
@@ -5834,6 +5862,7 @@ function copyScript(btn) {
 // ── LOCAL STORAGE / RETURNING USER ────────────────────
 
 function saveProgress() {
+  captureVideoAnswersByLevel();
   const data = {
     name:          state.name          || '',
     level:         state.level         || '',
@@ -5846,6 +5875,7 @@ function saveProgress() {
     goal:          state.goal          || '',
     videoStatus:   state.videoStatus   || {},
     videos:        state.videos        || {},
+    videoAnswersByLevel: state.videoAnswersByLevel || {},
     l1VideoStatus: state.l1VideoStatus || null,
     l1Videos:      state.l1Videos      || null,
     topicFreewrite:state.topicFreewrite|| '',
@@ -5896,6 +5926,7 @@ function loadProgress() {
       if (data.goal)        state.goal        = data.goal;
       if (data.videoStatus) state.videoStatus = data.videoStatus;
       if (data.videos)      state.videos      = data.videos;
+      if (data.videoAnswersByLevel) state.videoAnswersByLevel = data.videoAnswersByLevel;
       if (data.mvoQ2)         state.mvoQ2         = data.mvoQ2;
       if (data.mvoQ3)         state.mvoQ3         = data.mvoQ3;
       if (data.mvoQ4)         state.mvoQ4         = data.mvoQ4;
@@ -5941,7 +5972,7 @@ function dismissBanner() {
   // Just hide the banner and let them start fresh locally
   // Don't sign out — they may want to keep their account
   localStorage.removeItem(SAVE_KEY);
-  Object.keys(state).forEach(k => state[k] = k === 'videos' || k === 'videoStatus' ? {} : null);
+  Object.keys(state).forEach(k => state[k] = k === 'videos' || k === 'videoStatus' || k === 'videoAnswersByLevel' ? {} : null);
   state.name = ''; state.minigoalText = ''; state.topicFreewrite = '';
   resetPhase2();
   document.getElementById('returning-banner').classList.remove('visible');

@@ -207,6 +207,9 @@ function _mergeLocalStorage() {
     if (d.phase2) state.phase2 = Object.assign({}, state.phase2 || {}, d.phase2);
     if (typeof ensurePhase2 === 'function') ensurePhase2();
     if (d.topicFreewrite && !state.topicFreewrite) state.topicFreewrite = d.topicFreewrite;
+    if (d.videoAnswersByLevel) {
+      state.videoAnswersByLevel = Object.assign({}, d.videoAnswersByLevel, state.videoAnswersByLevel || {});
+    }
     // Merge videos additively — DB scripts take priority,
     // but localStorage-only keys (locked_v*, _undo_v*, v0p*, etc.) are preserved
     if (d.videos) {
@@ -332,17 +335,27 @@ async function saveOnboardingToDb() {
       updated_at:       new Date().toISOString()
     };
     const phase2Context = typeof ensurePhase2 === 'function' ? ensurePhase2() : (state.phase2 || null);
+    const videoAnswers = typeof captureVideoAnswersByLevel === 'function'
+      ? captureVideoAnswersByLevel()
+      : (state.videoAnswersByLevel || {});
     const richOnboarding = Object.assign({}, baseOnboarding, {
       phase2_context: phase2Context,
       mission_statement: phase2Context && phase2Context.missionStatement ? phase2Context.missionStatement : null,
       mission_generated_at: phase2Context && phase2Context.missionGeneratedAt ? phase2Context.missionGeneratedAt : null,
       commitment_declaration: phase2Context && phase2Context.commitmentDeclaration ? phase2Context.commitmentDeclaration : null,
-      commitment_reasons: phase2Context && Array.isArray(phase2Context.commitmentReasons) ? phase2Context.commitmentReasons : []
+      commitment_reasons: phase2Context && Array.isArray(phase2Context.commitmentReasons) ? phase2Context.commitmentReasons : [],
+      video_answers: videoAnswers
     });
     let { error: obErr } = await _sb.from('onboarding').upsert(richOnboarding, { onConflict: 'user_id' });
-    if (obErr && obErr.message && /phase2_context|mission_statement|mission_generated_at|commitment_declaration|commitment_reasons/i.test(obErr.message)) {
-      const retry = await _sb.from('onboarding').upsert(baseOnboarding, { onConflict: 'user_id' });
+    if (obErr && obErr.message && /video_answers/i.test(obErr.message)) {
+      const withoutVideoAnswers = Object.assign({}, richOnboarding);
+      delete withoutVideoAnswers.video_answers;
+      const retry = await _sb.from('onboarding').upsert(withoutVideoAnswers, { onConflict: 'user_id' });
       obErr = retry.error;
+    }
+    if (obErr && obErr.message && /phase2_context|mission_statement|mission_generated_at|commitment_declaration|commitment_reasons/i.test(obErr.message)) {
+      const baseRetry = await _sb.from('onboarding').upsert(baseOnboarding, { onConflict: 'user_id' });
+      obErr = baseRetry.error;
     }
     if (obErr) console.warn('[SeenInSeven] saveOnboardingToDb onboarding error:', obErr.message);
   } catch(e) {
@@ -486,6 +499,15 @@ async function _restoreFromDatabase() {
       if (onboarding.mvo_q3)          state.mvoQ3          = onboarding.mvo_q3;
       if (onboarding.mvo_q4)          state.mvoQ4          = onboarding.mvo_q4;
       if (onboarding.topic_freewrite) state.topicFreewrite = onboarding.topic_freewrite;
+      if (onboarding.video_answers && typeof onboarding.video_answers === 'object') {
+        state.videoAnswersByLevel = onboarding.video_answers;
+        const savedAnswers = onboarding.video_answers[String(activeLevel)];
+        if (savedAnswers && typeof savedAnswers === 'object') {
+          Object.keys(savedAnswers).forEach(key => {
+            if (state.videos[key] == null || state.videos[key] === '') state.videos[key] = savedAnswers[key];
+          });
+        }
+      }
       if (onboarding.phase2_context)  state.phase2         = onboarding.phase2_context;
       if (typeof ensurePhase2 === 'function') ensurePhase2();
       if (onboarding.mission_statement) {
