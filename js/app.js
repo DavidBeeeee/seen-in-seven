@@ -1801,8 +1801,14 @@ function populateRecap() {
 
 // ── API SCRIPT ENGINE ────────────────────────────────
 
-async function callDeepSeekAPI(userMessage) {
-  return callDeepSeekAPIRaw(SYSTEM_PROMPT, userMessage);
+function focusedSystemPrompt(level, video) {
+  return window.SISPromptEngine
+    ? SISPromptEngine.buildSystemPrompt(SYSTEM_PROMPT, level, video)
+    : SYSTEM_PROMPT;
+}
+
+async function callDeepSeekAPI(userMessage, level, video) {
+  return callDeepSeekAPIRaw(focusedSystemPrompt(level, video), userMessage);
 }
 
 // One automatic, silent retry on failure — the user never sees the first
@@ -1810,11 +1816,11 @@ async function callDeepSeekAPI(userMessage) {
 // block show the error screen. Keeps script generation from dead-ending
 // on a single transient hiccup, without silently substituting a template
 // (unlike the mission-statement generator, which falls back automatically).
-async function callDeepSeekAPIWithRetry(userMessage, retries = 1) {
+async function callDeepSeekAPIWithRetry(userMessage, retries = 1, level, video) {
   let lastErr;
   for (let attempt = 0; attempt <= retries; attempt++) {
     try {
-      const script = await callDeepSeekAPI(userMessage);
+      const script = await callDeepSeekAPI(userMessage, level, video);
       if (!script) throw new Error('No script returned. Empty response from API.');
       return script;
     } catch(e) {
@@ -1850,12 +1856,28 @@ async function callDeepSeekAPIRaw(systemMsg, userMsg) {
     throw new Error(err.error ? err.error : 'API error ' + response.status);
   }
   const data = await response.json();
+  window._SIS_lastPromptVersion = data.prompt_version || '';
   return data.choices && data.choices[0] && data.choices[0].message
     ? data.choices[0].message.content.trim() : null;
 }
 
+async function generateValidatedScript(userMessage, level, video) {
+  let script = await callDeepSeekAPIWithRetry(userMessage, 1, level, video);
+  if (!window.SISPromptEngine) return script;
+  let validation = SISPromptEngine.validateOutput(script);
+  if (validation.valid) return script;
+
+  const repairMessage = userMessage + '\n\nYOUR PREVIOUS RESPONSE WAS MALFORMED:\n' + script +
+    '\n\nRewrite the complete script now. Include all four required sections exactly once: [HOOK], [OPEN LOOP], [MEAT], and [CTA]. Do not add commentary outside those sections.';
+  script = await callDeepSeekAPIWithRetry(repairMessage, 0, level, video);
+  validation = SISPromptEngine.validateOutput(script);
+  if (!validation.valid) throw new Error('The script response was missing: ' + validation.missing.join(', ') + '. Please try again.');
+  return script;
+}
+
 // Parse [HOOK] / [OPEN LOOP] / [MEAT] / [CTA] sections from AI response
 function parseScriptSections(scriptText) {
+  if (window.SISPromptEngine) return SISPromptEngine.parseSections(scriptText);
   if (!scriptText) return null;
   const sections = { HOOK: '', 'OPEN LOOP': '', MEAT: '', CTA: '' };
   const sectionOrder = ['HOOK', 'OPEN LOOP', 'MEAT', 'CTA'];
@@ -1883,8 +1905,27 @@ function parseScriptSections(scriptText) {
 // Build full script text from sections object
 function sectionsToFullScript(sections) {
   if (!sections) return '';
-  return [sections.HOOK, sections['OPEN LOOP'], sections.MEAT, sections.CTA]
-    .filter(Boolean).join('\n\n');
+  return ['HOOK', 'OPEN LOOP', 'MEAT', 'CTA']
+    .filter(key => sections[key])
+    .map(key => '[' + key + ']\n' + String(sections[key]).trim())
+    .join('\n\n');
+}
+
+function finalScriptText(idx, rawScript, level) {
+  const script = rawScript == null ? state.videos['script_v' + idx] || '' : rawScript;
+  const activeLevel = Number(level || state.level || 1);
+  if (!window.SISPromptEngine) return String(script).replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  return SISPromptEngine.canonicalScript(script, idx + 1, idx === 0 ? videoOneDeclaration(activeLevel) : '');
+}
+
+function archivedScriptText(collection, idx, level) {
+  const scripts = collection || {};
+  const raw = scripts['script_v' + idx] || '';
+  if (idx !== 0 || !window.SISPromptEngine) return String(raw).replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  const declaration = Number(level) === 2
+    ? scripts.v0decl || videoOneDeclaration(2)
+    : scripts.v0p0 || videoOneDeclaration(1);
+  return SISPromptEngine.canonicalScript(raw, 1, declaration);
 }
 
 // Show feedback modal before regenerating — returns promise resolving to feedback string (or null if cancelled)
@@ -1952,30 +1993,18 @@ async function regenerateSection(videoIdx, sectionKey, btnEl) {
   const sections = state.videos[sectionsKey] || {};
   const currentScript = state.videos[editKey] || '';
 
-  // Build context from the current script and section
-  const sectionSystemMsg = `You are the Script Engine for the 7 Video Challenge by Build With Bee. Your job is to regenerate ONE specific section of an existing video script.
-
-The speaker's full current script is provided. Regenerate ONLY the [${sectionKey}] section.
-
-Rules for ${sectionKey} regeneration:
-${sectionKey === 'HOOK' ? '- The hook must stop the scroll in the first 7 words\n- Start mid-thought, no "hey guys" or "in this video"\n- 1-3 sentences\n- Must feel specific, not generic' : ''}
-${sectionKey === 'OPEN LOOP' ? '- Creates tension or curiosity between the hook and the main content\n- Signals something important is coming without revealing it\n- 2-4 sentences\n- Should feel like a story being suspended mid-breath' : ''}
-${sectionKey === 'MEAT' ? '- The heart of the video — all the structural beats, in the speaker\'s voice\n- 120-160 words\n- Use all the journal answers provided\n- Must flow naturally from the Open Loop' : ''}
-${sectionKey === 'CTA' ? '- The forward pull — earns the follow without demanding it\n- 1-3 sentences\n- Conversational, not transactional\n- Must feel like a natural ending to THIS specific video' : ''}
-
-Return ONLY the new ${sectionKey} section text — no label, no other sections, no commentary.`;
-
-  const sectionUserMsg = `VIDEO: ${videoNum}, LEVEL: ${level}
+  const sectionUserMsg = `${buildAPIUserMessage(videoIdx)}
 
 CURRENT FULL SCRIPT (for context):
-${currentScript}
+${finalScriptText(videoIdx, currentScript, level)}
 
 FEEDBACK FOR THIS REGENERATION: ${regenFeedback}
 
-Regenerate ONLY the [${sectionKey}] section, applying the feedback above. Return only the new section text.`;
+Regenerate ONLY the [${sectionKey}] section, applying the feedback above while following the same Video ${videoNum}, Level ${level} blueprint and all supplied user context. Return only the new section text with no label, no other sections, and no commentary.`;
 
   try {
-    const newSectionText = await callDeepSeekAPIRaw(sectionSystemMsg, sectionUserMsg);
+    const responseText = await callDeepSeekAPIRaw(focusedSystemPrompt(level, videoNum), sectionUserMsg);
+    const newSectionText = String(responseText || '').replace(new RegExp('^\\s*\\[' + sectionKey.replace(' ', '\\s+') + '\\]\\s*', 'i'), '').trim();
     if (!newSectionText) throw new Error('Empty response');
 
     // Update sections state
@@ -1988,13 +2017,15 @@ Regenerate ONLY the [${sectionKey}] section, applying the feedback above. Return
 
     // Also update the editor textarea if visible
     const editor = document.getElementById('script-editor');
-    if (editor) editor.value = state.videos[editKey];
+    const finalContent = finalScriptText(videoIdx, state.videos[editKey], level);
+    if (editor) editor.value = finalContent;
 
     // Update just this section's text in the guided view
     const sectionEl = document.getElementById('sv-section-text-' + sectionKey.replace(' ', '-'));
     if (sectionEl) sectionEl.textContent = newSectionText.trim();
 
     saveProgress();
+    saveScriptEditToDb(videoNum, level, state.videos[editKey], finalContent);
     // Push undo snapshot after section regen — but do NOT call queueScriptSave
     // (new DB version is only created via Lock In or Delete & Start Over)
     if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(videoIdx);
@@ -2006,134 +2037,92 @@ Regenerate ONLY the [${sectionKey}] section, applying the feedback above. Return
   }
 }
 
+function videoOneDeclaration(level) {
+  const name = state.name || '';
+  if (Number(level) === 2) {
+    return state.videos.v0decl || `For those of you who don't know me yet, my name is ${name}. I kinda never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me, some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of. I'm specifically doing this 7 Video Challenge because I have to share my knowledge, my experience, and my lived reality for the specific people I want to help before the world changes forever and I won't have the chance. These 7 videos are how I'm establishing myself as a credible voice in my field, but I'm scared, I'm frustrated, I don't know how it's going to go, but I'm committed to finishing.`;
+  }
+  return state.videos.v0p0 || `Hi, my name is ${name}. I never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me... some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of.`;
+}
+
+function videoOnePromptAnswers(level) {
+  const sv = state.videos;
+  const q2 = state.mvoQ2 || {};
+  const q3 = state.mvoQ3 || {};
+  const q4 = state.mvoQ4 || {};
+  const isL2 = Number(level) === 2;
+  const p2 = ensurePhase2();
+  return [
+    { label:'Opening declaration (read-only)', value:videoOneDeclaration(level) },
+    { label:"What's been stopping you from posting until now", value:sv.v0p1 || (isL2 ? q3.before_full : q2.before_full) || '' },
+    { label:"Why you're doing this challenge right now", value:sv.v0p2 || (isL2 ? q4.crack_full : q3.catalyst_full) || p2.commitmentDeclaration || '' },
+    { label:"Who you're here to reach", value:sv.v0p3 || (isL2 ? q2.village_full : q4.village_full) || '' },
+    { label:'Anything else they want to add', value:sv.v0p4 || p2.firstScriptNotes || '' }
+  ];
+}
+
+function extendedPromptAnswers(videoDefinition) {
+  return (videoDefinition && videoDefinition.prompts || []).map(prompt => ({
+    label: prompt.label.replace(/\s*___\s*$/, '').trim(),
+    value: state.videos[prompt.key] || ''
+  }));
+}
+
 function buildAPIUserMessage(videoIdx) {
   const level = state.level || 1;
-  const videoNum = videoIdx + 1;
-  const sv = state.videos;
-  const name = state.name || '';
+  const video = videoIdx + 1;
   const p2 = ensurePhase2();
+  const custom = p2.custom || {};
+  const commitment = p2.commitmentDeclaration || buildCommitmentDeclaration();
+  const onboardingLines = SISPromptEngine.buildOnboardingLines({
+    name: state.name || '(not provided)',
+    postingExperience: historyLabels[state.posted] || (state.posted === 'no' ? 'No, never' : state.posted || '(not provided)'),
+    postingHistory: state.history ? (historyLabels[state.history] || state.history) : '',
+    blocker: state.blocker ? (blockerLabels[state.blocker] || state.blocker) : '',
+    customBlocker: custom.blocker || '',
+    businessStage: state.business ? (businessLabels[state.business] || state.business) : '',
+    contentIntent: p2.contentIntentTitle || p2.contentIntent || '',
+    contextMode: p2.contentMode === 'extended' ? 'Extended' : 'Simple',
+    audienceContext: p2.audienceContext || '',
+    messageContext: p2.messageContext || '',
+    firstScriptNotes: p2.firstScriptNotes || '',
+    commitmentPain: p2.commitmentPainText || phase2ValueText('pain', p2.commitmentPain, p2.commitmentPainCustom),
+    commitmentDesire: p2.commitmentDesireText || phase2ValueText('desire', p2.commitmentDesire, p2.commitmentDesireCustom),
+    commitment,
+    missionStatement: p2.missionStatement || '',
+    topic: state.topicFreewrite || '',
+    knowledgeContext: p2.knowledgeContext || ''
+  });
 
-  // Onboarding data block
-  const lines = ['- Name: ' + (name || '(not provided)')];
-  lines.push('- Posting experience: ' + (historyLabels[state.posted] || (state.posted === 'no' ? 'No, never' : state.posted || '(not provided)')));
-  if (state.history) lines.push('- Posting history: ' + (historyLabels[state.history] || state.history));
-  if (state.blocker) lines.push('- Blocker: ' + (blockerLabels[state.blocker] || state.blocker));
-  if (state.business) lines.push('- Business stage: ' + (businessLabels[state.business] || state.business));
-  const customLines = buildPhase2ContextLines();
-  customLines.forEach(line => lines.push(line));
-  const commitText = p2.commitmentDeclaration || buildCommitmentDeclaration();
-  lines.push('- Commitment: ' + commitText);
-
-  if (state.topicFreewrite) lines.push('- Topic / what they want to talk about: ' + state.topicFreewrite);
-  if (p2.knowledgeContext) lines.push('- Pasted context / knowledge base: ' + p2.knowledgeContext);
-
-  let msg = 'Generate Video ' + videoNum + ' script.\n\nLEVEL: ' + level + '\nVIDEO: ' + videoNum + '\n\nONBOARDING DATA:\n' + lines.join('\n');
-
-  // V1: prefilled editable prompts
-  if (videoIdx === 0) {
-    const q2 = state.mvoQ2 || {};
-    const q3 = state.mvoQ3 || {};
-    const q4 = state.mvoQ4 || {};
-    if (level === 1) {
-      const declaration = sv.v0p0 || `Hi, my name is ${name}. I never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me... some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of.`;
-      const stopping    = sv.v0p1 || q2.before_full || '';
-      const whyNow      = sv.v0p2 || q3.catalyst_full || '';
-      const whoReach    = sv.v0p3 || q4.village_full || '';
-      const extra       = sv.v0p4 || '';
-      msg += '\n\nVIDEO 1 PREFILLED PROMPTS (user may have edited these):\n';
-      msg += '1. Opening declaration (read-only): ' + declaration + '\n';
-      msg += '2. What\'s been stopping you from posting until now: ' + (stopping || '(not provided)') + '\n';
-      msg += '3. Why you\'re doing this challenge right now: ' + (whyNow || commitText) + '\n';
-      msg += '4. Who you\'re here to reach: ' + (whoReach || '(not specified)') + '\n';
-      if (extra) msg += '5. Anything else they want to add: ' + extra + '\n';
-    } else {
-      // Level 2 V1 — same 4-answer structure as Level 1, with Authority Series declaration
-      // Level 2 MVO field mapping: Q2→village_full, Q3→before_full, Q4→crack_full
-      const l2Decl = sv.v0decl || `For those of you who don't know me yet, my name is ${name}. I kinda never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me, some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of. I'm specifically doing this 7 Video Challenge because I have to share my knowledge, my experience, and my lived reality for the specific people I want to help before the world changes forever and I won't have the chance. These 7 videos are how I'm establishing myself as a credible voice in my field, but I'm scared, I'm frustrated, I don't know how it's going to go, but I'm committed to finishing.`;
-      const stopping = sv.v0p1 || q3.before_full || '';
-      const whyNow   = sv.v0p2 || q4.crack_full  || '';
-      const whoReach = sv.v0p3 || q2.village_full || '';
-      const extra    = sv.v0p4 || '';
-      msg += '\n\nVIDEO 1 PREFILLED PROMPTS (user may have edited these):\n';
-      msg += '1. Opening declaration (read-only): ' + l2Decl + '\n';
-      msg += '2. What\'s been stopping you from posting until now: ' + (stopping || '(not provided)') + '\n';
-      msg += '3. Why you\'re doing this challenge right now: ' + (whyNow || '') + '\n';
-      msg += '4. Who you\'re here to reach: ' + (whoReach || '(not specified)') + '\n';
-      if (extra) msg += '5. Anything else they want to add: ' + extra + '\n';
-    }
-    return msg;
-  }
-
-  // V2-V7: add previous video answers + scripts
   const videos = getVideos();
-
-  // Voice reference block for videos 3+ — gives AI concrete voice patterns to match
-  if (videoIdx >= 2) {
-    const voiceScripts = [];
-    for (let i = 0; i < Math.min(videoIdx, 3); i++) {
-      const s = sv['script_v' + i];
-      if (s) voiceScripts.push('Video ' + (i+1) + ':\n' + s.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim());
-    }
-    if (voiceScripts.length > 0) {
-      msg += '\n\nVOICE REFERENCE — These are this speaker\'s actual generated scripts. Study the sentence length, word choice, emotional register, and rhythm. Video ' + videoNum + ' must sound like the same person:\n\n' + voiceScripts.join('\n\n---\n\n');
-    }
-  }
-
-  for (let i = 0; i < videoIdx; i++) {
-    const prevVideo = videos[i];
-    let prevBlock = '\n\nVideo ' + (i + 1) + ' prompts:';
-    if (i === 0) {
-      // V1 answers from prefilled prompts
-      const q2 = state.mvoQ2 || {};
-      const q3 = state.mvoQ3 || {};
-      const q4 = state.mvoQ4 || {};
-      if (level === 1) {
-        const decl = sv.v0p0 || `Hi, my name is ${name}. I never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me.`;
-        prevBlock += '\n1. Opening declaration: ' + decl;
-        prevBlock += '\n2. What stopped them: ' + (sv.v0p1 || q2.before_full || '(not provided)');
-        prevBlock += '\n3. Why doing this challenge: ' + (sv.v0p2 || q3.catalyst_full || commitText);
-        prevBlock += '\n4. Who they\'re reaching: ' + (sv.v0p3 || q4.village_full || '(not specified)');
-        if (sv.v0p4) prevBlock += '\n5. Extra context: ' + sv.v0p4;
-      } else {
-        // Level 2 V1 — 4-answer structure matching V1 prompts
-        // Level 2 MVO field mapping: Q2→village_full, Q3→before_full, Q4→crack_full
-        const l2DeclPrev = sv.v0decl || `For those of you who don't know me yet, my name is ${name}. I kinda never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me, some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of. I'm specifically doing this 7 Video Challenge because I have to share my knowledge, my experience, and my lived reality for the specific people I want to help before the world changes forever and I won't have the chance. These 7 videos are how I'm establishing myself as a credible voice in my field, but I'm scared, I'm frustrated, I don't know how it's going to go, but I'm committed to finishing.`;
-        prevBlock += '\n1. Opening declaration: ' + l2DeclPrev;
-        prevBlock += '\n2. What stopped them: ' + (sv.v0p1 || q3.before_full || '(not provided)');
-        prevBlock += '\n3. Why doing this challenge: ' + (sv.v0p2 || q4.crack_full  || '');
-        prevBlock += '\n4. Who they\'re reaching: ' + (sv.v0p3 || q2.village_full || '(not specified)');
-        if (sv.v0p4) prevBlock += '\n5. Extra context: ' + sv.v0p4;
-      }
-    } else {
-      prevVideo.prompts.forEach(function(p, pi) {
-        const val = sv[p.key] || '';
-        const cleanLabel = p.label.replace(/\s*___\s*$/, '').trim();
-        prevBlock += '\n' + (pi + 1) + '. ' + cleanLabel + ': ' + (val || '(no answer)');
-      });
-    }
-    const prevScript = sv['script_v' + i];
-    if (prevScript) prevBlock += '\n\nVideo ' + (i + 1) + ' script:\n' + prevScript;
-    msg += prevBlock;
-  }
-
-  // Current video prompts
-  const curVideo = videos[videoIdx];
-  const easyDef = VIDEO_EASY_PROMPTS[videoIdx];
-  const easyAnswer = easyDef ? (sv[easyDef.key] || '') : '';
-  if (easyAnswer && (videoPromptMode[videoIdx] === 'easy' || !videoPromptMode[videoIdx])) {
-    // Easy mode: provide the single free-write answer as full context
-    msg += '\n\nCURRENT VIDEO ' + videoNum + ' JOURNAL ENTRY (easy mode — use this to infer all story beats):\n' + easyAnswer;
-  } else {
-    msg += '\n\nCURRENT VIDEO ' + videoNum + ' PROMPTS:';
-    curVideo.prompts.forEach(function(p, pi) {
-      const val = sv[p.key] || '';
-      const cleanLabel = p.label.replace(/\s*___\s*$/, '').trim();
-      msg += '\n' + (pi + 1) + '. ' + cleanLabel + ': ' + (val || '(no answer provided)');
+  const previousVideos = [];
+  for (let index = 0; index < videoIdx; index++) {
+    const definition = videos[index];
+    const easy = VIDEO_EASY_PROMPTS[index];
+    const mode = index === 0 ? 'extended' : getSavedVideoPromptMode(index, level);
+    const declaration = index === 0 ? videoOneDeclaration(level) : '';
+    const rawScript = state.videos['script_v' + index] || '';
+    previousVideos.push({
+      video: index + 1,
+      mode,
+      easyAnswer: easy ? state.videos[easy.key] || '' : '',
+      answers: index === 0 ? videoOnePromptAnswers(level) : extendedPromptAnswers(definition),
+      script: rawScript ? SISPromptEngine.canonicalScript(rawScript, index + 1, declaration) : ''
     });
-    // Also append easy answer as bonus context if they wrote one
-    if (easyAnswer) msg += '\n\nAdditional free-write context from user: ' + easyAnswer;
   }
-  return msg;
+
+  const currentDefinition = videos[videoIdx];
+  const currentEasy = VIDEO_EASY_PROMPTS[videoIdx];
+  const currentMode = videoIdx === 0 ? 'extended' : getSavedVideoPromptMode(videoIdx, level);
+  return SISPromptEngine.buildUserMessage({
+    level,
+    video,
+    onboardingLines,
+    previousVideos,
+    currentMode,
+    currentEasyAnswer: currentEasy ? state.videos[currentEasy.key] || '' : '',
+    currentAnswers: videoIdx === 0 ? videoOnePromptAnswers(level) : extendedPromptAnswers(currentDefinition)
+  });
 }
 
 // ── VIDEO DATA ────────────────────────────────────────
@@ -2363,8 +2352,25 @@ function updateDots(idx) {
 
 // Per-video prompt mode: 'easy' or 'extended'
 
+function getSavedVideoPromptMode(idx, level) {
+  const levelKey = String(level || state.level || 1);
+  const memoryKey = levelKey + ':' + String(idx);
+  if (videoPromptMode[memoryKey] === 'easy' || videoPromptMode[memoryKey] === 'extended') return videoPromptMode[memoryKey];
+  const p2 = ensurePhase2();
+  const levelModes = p2.videoPromptModesByLevel && p2.videoPromptModesByLevel[levelKey];
+  const saved = levelModes && levelModes[String(idx)];
+  if (saved === 'easy' || saved === 'extended') return saved;
+  return 'easy';
+}
+
 function setVideoPromptMode(idx, mode) {
-  videoPromptMode[idx] = mode;
+  const p2 = ensurePhase2();
+  if (!p2.videoPromptModesByLevel || typeof p2.videoPromptModesByLevel !== 'object') p2.videoPromptModesByLevel = {};
+  const levelKey = String(state.level || 1);
+  videoPromptMode[levelKey + ':' + String(idx)] = mode;
+  if (!p2.videoPromptModesByLevel[levelKey]) p2.videoPromptModesByLevel[levelKey] = {};
+  p2.videoPromptModesByLevel[levelKey][String(idx)] = mode;
+  saveProgress();
   const easyBtn = document.getElementById('prompt-easy-btn-' + idx);
   const extBtn = document.getElementById('prompt-ext-btn-' + idx);
   const easySection = document.getElementById('prompt-easy-section-' + idx);
@@ -2525,7 +2531,7 @@ function _buildPromptsContent(container, v, idx) {
       </div>`;
   } else {
     const easyPrompt = VIDEO_EASY_PROMPTS[idx];
-    const defaultMode = videoPromptMode[idx] || 'easy';
+    const defaultMode = getSavedVideoPromptMode(idx);
     const extHTML = v.prompts.map(p => `
       <div class="input-group">
         <label class="input-label">${p.label}</label>
@@ -2783,14 +2789,19 @@ async function showScriptView(idx, skipLoading) {
       }
       const userMessage = buildAPIUserMessage(idx);
       window._SIS_log && _SIS_log('gen:built-message', {len: userMessage ? userMessage.length : 0});
-      const script = await callDeepSeekAPIWithRetry(userMessage, 1);
+      const level = state.level || 1;
+      const video = idx + 1;
+      const script = await generateValidatedScript(userMessage, level, video);
+      const promptVersion = window._SIS_lastPromptVersion || '';
+      const finalContent = finalScriptText(idx, script, level);
       window._SIS_log && _SIS_log('gen:got-response', {len: script ? script.length : 0});
       state.videos[editKey] = script;
+      state.videos['prompt_version_v' + idx] = promptVersion;
       saveProgress();
       trackSession();
-      queueScriptSave(idx + 1, state.level || 1, script);
+      queueScriptSave(video, level, script, finalContent, promptVersion);
       if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(idx);
-      if (typeof logEvent === 'function') logEvent('script_generated', {video_number: idx + 1, level: state.level || 1});
+      if (typeof logEvent === 'function') logEvent('script_generated', {video_number: video, level, prompt_version: promptVersion || null});
       _doShowScriptView(idx);
       // Show the legacy verification gate only if the newer save-progress overlay never appeared.
       if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
@@ -2907,11 +2918,7 @@ function _doShowScriptViewInner(idx) {
 
   // For V1: get declaration text to inject between OPEN LOOP and MEAT in the output
   const isV1 = idx === 0;
-  const declText = isV1
-    ? (state.level === 2
-        ? (state.videos.v0decl || '')
-        : (state.videos.v0p0 || ''))
-    : '';
+  const declText = isV1 ? videoOneDeclaration(state.level || 1) : '';
 
   // store the edited script (keyed so edits persist per video)
   const editKey = 'script_v' + idx;
@@ -3006,26 +3013,7 @@ function _doShowScriptViewInner(idx) {
   const editor = document.getElementById('script-editor');
   if (editor) {
     const rawScript = state.videos[editKey] || '';
-    let cleanScript = rawScript.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
-    // For V1: inject the declaration text between the OPEN LOOP content and the MEAT content
-    if (isV1 && declText) {
-      const sections = state.videos[sectionsKey];
-      if (sections && sections['OPEN LOOP'] && sections.MEAT) {
-        // Build a clean version with declaration injected between OPEN LOOP and MEAT
-        const hookPart      = (sections.HOOK || '').trim();
-        const openLoopPart  = (sections['OPEN LOOP'] || '').trim();
-        const meatPart      = (sections.MEAT || '').trim();
-        const ctaPart       = (sections.CTA || '').trim();
-        cleanScript = [hookPart, openLoopPart, declText.trim(), meatPart, ctaPart].filter(Boolean).join('\n\n');
-      } else if (cleanScript && !cleanScript.includes(declText.trim().slice(0, 40))) {
-        // Fallback: we don't have parsed sections yet — just append declaration after first paragraph
-        const paras = cleanScript.split('\n\n');
-        if (paras.length >= 2) {
-          paras.splice(2, 0, declText.trim());
-          cleanScript = paras.join('\n\n');
-        }
-      }
-    }
+    const cleanScript = finalScriptText(idx, rawScript, state.level || 1);
     editor.value = cleanScript;
     let _editSaveTimer = null;
     editor.oninput = () => {
@@ -3034,7 +3022,7 @@ function _doShowScriptViewInner(idx) {
       if (reParsed) state.videos[sectionsKey] = reParsed;
       clearTimeout(_editSaveTimer);
       _editSaveTimer = setTimeout(() => {
-        saveScriptEditToDb(idx + 1, state.level || 1, editor.value);
+        saveScriptEditToDb(idx + 1, state.level || 1, editor.value, editor.value);
         if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(idx);
         if (typeof flashSavedIndicator === 'function') flashSavedIndicator();
       }, 2000);
@@ -3376,6 +3364,7 @@ async function handleScriptViewFeedback(thumbsUp) {
 
 // Store for version content (avoids escaping issues with inline onclick)
 const _versionStore = {};
+const _versionFinalStore = {};
 
 async function loadScriptVersions(idx) {
   const versionsEl  = document.getElementById('sv-versions');
@@ -3392,10 +3381,13 @@ async function loadScriptVersions(idx) {
   versionsEl.style.display = '';
 
   // Store content by id to avoid escaping issues
-  previous.forEach(v => { _versionStore[v.id] = v.content; });
+  previous.forEach(v => {
+    _versionStore[v.id] = v.content;
+    _versionFinalStore[v.id] = v.final_content || finalScriptText(idx, v.content, state.level || 1);
+  });
 
   versionsList.innerHTML = previous.map(v => {
-    const clean = v.content.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+    const clean = v.final_content || finalScriptText(idx, v.content, state.level || 1);
     const preview = clean.substring(0, 120) + (clean.length > 120 ? '...' : '');
     const date = new Date(v.generated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
     return `
@@ -3609,7 +3601,7 @@ function _applyUndoSnapshot(idx, text) {
   state.videos['script_v' + idx] = text;
   saveProgress();
 
-  const clean = text.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  const clean = finalScriptText(idx, text, state.level || 1);
 
   // Always switch to Edit tab — undo/redo is most visible and reliable there
   if (typeof setScriptView === 'function') setScriptView('clean');
@@ -3863,7 +3855,7 @@ async function deleteAndStartOver() {
   // First, ensure the current script is persisted in DB before wiping (in case of unsaved edits)
   const currentScript = state.videos['script_v' + idx];
   if (currentScript && typeof saveScriptEditToDb === 'function') {
-    await saveScriptEditToDb(idx + 1, state.level || 1, currentScript);
+    await saveScriptEditToDb(idx + 1, state.level || 1, currentScript, finalScriptText(idx, currentScript, state.level || 1));
   }
   // Clear the script and its undo history and lock state
   delete state.videos['script_v' + idx];
@@ -3901,8 +3893,7 @@ function openFullscreenPreview() {
   const videos = getVideos();
   const v = videos[idx];
   if (!v) return;
-  const script = state.videos['script_v' + idx] || '';
-  const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  const clean = finalScriptText(idx);
   const titleEl = document.getElementById('fullscreen-preview-title');
   const contentEl = document.getElementById('fullscreen-preview-content');
   if (titleEl) titleEl.textContent = 'Video ' + (idx + 1) + ' · ' + v.title;
@@ -3960,7 +3951,8 @@ async function openVersionModal(idx) {
   const listEl = document.getElementById('version-modal-list');
   versions.forEach(ver => {
     _versionStore[ver.id] = ver.content;
-    const clean = ver.content.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+    _versionFinalStore[ver.id] = ver.final_content || finalScriptText(idx, ver.content, state.level || 1);
+    const clean = _versionFinalStore[ver.id];
     const date = new Date(ver.generated_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
     const isCurrent = ver.is_current;
     const item = document.createElement('div');
@@ -3990,20 +3982,20 @@ function closeVersionModal() {
 }
 
 function copyVersion(scriptId, btn) {
-  const content = _versionStore[scriptId];
+  const content = _versionFinalStore[scriptId] || _versionStore[scriptId];
   if (!content) return;
-  const clean = content.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  const clean = content.trim();
   navigator.clipboard && navigator.clipboard.writeText(clean).then(() => {
     if (btn) { const orig = btn.textContent; btn.textContent = '✓ Copied'; setTimeout(() => btn.textContent = orig, 1500); }
   });
 }
 
 function printVersion(scriptId, idx) {
-  const content = _versionStore[scriptId];
+  const content = _versionFinalStore[scriptId] || _versionStore[scriptId];
   if (!content) return;
   const videos = getVideos();
   const v = videos[idx];
-  const clean = content.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  const clean = content.trim();
   const win = window.open('', '_blank');
   win.document.write(`<html><head><title>Video ${idx + 1} — ${v.title}</title>
     <style>body{font-family:Georgia,serif;max-width:680px;margin:40px auto;padding:0 24px;color:#111;line-height:1.8;}
@@ -4027,6 +4019,7 @@ async function deleteVersion(scriptId, idx, btn) {
   const ok = await deleteScriptVersion(scriptId);
   if (ok) {
     delete _versionStore[scriptId];
+    delete _versionFinalStore[scriptId];
     const item = btn.closest('[style*="border:1px"]') || btn.closest('div');
     if (item) item.remove();
     // Re-open modal to refresh the list
@@ -4097,8 +4090,7 @@ function showEmailScreenFromToast() {
 
 // ── COPY SINGLE SCRIPT ────────────────────────────────
 function copyScriptFromDashboard(idx, btn) {
-  const script = state.videos['script_v' + idx] || '';
-  const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  const clean = finalScriptText(idx);
   if (!clean) return;
   if (typeof logEvent === 'function') {
     logEvent('script_copied', {
@@ -4122,7 +4114,7 @@ function exportSinglePDF(idx) {
   const v = videos[idx];
   const script = state.videos['script_v' + idx] || '';
   if (!script || !v) return;
-  const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  const clean = finalScriptText(idx, script, state.level || 1);
   const win = window.open('', '_blank');
   win.document.write(`<html><head><title>Video ${idx + 1} — ${v.title}</title>
     <style>body{font-family:Georgia,serif;max-width:680px;margin:40px auto;padding:0 24px;color:#111;line-height:1.8;}
@@ -4793,7 +4785,7 @@ function buildPlan(){
     const hasScript = !!state.videos['script_v' + i];
     const isLocked = !!state.videos['locked_v' + i];
     const script = state.videos['script_v' + i] || '';
-    const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+    const clean = finalScriptText(i, script, state.level || 1);
     const preview = clean ? clean.substring(0, 90) + (clean.length > 90 ? '…' : '') : 'Script not yet generated';
 
     const statusClass = filmed ? 'card-filmed' : hasScript ? 'card-ready' : 'card-pending';
@@ -4854,7 +4846,7 @@ function buildPlan(){
     l1grid.className = 'db-video-grid';
     level1Videos.forEach((v, i) => {
       const script = state.l1Videos['script_v' + i] || '';
-      const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+      const clean = archivedScriptText(state.l1Videos, i, 1);
       const preview = clean ? clean.substring(0, 90) + '…' : '';
       const card = document.createElement('div');
       card.className = 'db-video-card card-filmed db-l1-card';
@@ -5015,7 +5007,7 @@ function buildPlanTracker() {
 // ── L1 ARCHIVE SCRIPT VIEWER ─────────────────────────
 function showL1ScriptModal(idx) {
   const script = state.l1Videos && state.l1Videos['script_v' + idx] || '';
-  const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  const clean = archivedScriptText(state.l1Videos, idx, 1);
   if (!clean) return;
   const videos = level1Videos || [];
   const title = (videos[idx] && videos[idx].title) ? videos[idx].title : 'Script ' + (idx + 1);
@@ -5255,7 +5247,7 @@ function exportPDF(mode) {
       if(v.beats) script = v.beats().map(b=>b.text).join('\n\n');
       else if(v.compile) script = v.compile(state.videos);
     }
-    const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+    const clean = finalScriptText(i, script, state.level || 1);
     const filmed = state.videoStatus[i] === 'filmed';
     const statusHtml = filmed
       ? `<span class="status-badge status-filmed">✓ Filmed</span>`
@@ -5275,7 +5267,7 @@ function exportPDF(mode) {
     level1Videos.forEach((v, i) => {
       let script = state.l1Videos['script_v'+i] || '';
       if (!script && v.beats) script = v.beats().map(b=>b.text).join('\n\n');
-      const clean = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+      const clean = archivedScriptText(state.l1Videos, i, 1);
       html += `
       <div class="video-block">
         <div class="video-num">L1 VIDEO ${i+1} OF 7</div>
@@ -5742,7 +5734,7 @@ function copyAllScripts(btn) {
       else if (v.compile) { script = v.compile(state.videos); }
       else if (v.prebuilt) { script = v.script(); }
     }
-    var cleanScript = script.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+    var cleanScript = finalScriptText(i, script, state.level || 1);
     if (cleanScript) {
       allText += 'VIDEO ' + (i+1) + ' — ' + v.title + '\n\n' + cleanScript + '\n\n—\n\n';
     }
@@ -5786,7 +5778,7 @@ function setScriptView(view) {
       const currentEditorText = editor.value;
       // Only sync if it differs from stored (user actually typed something)
       const stored = state.videos[editKey] || '';
-      const storedClean = stored.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+      const storedClean = finalScriptText(idx, stored, state.level || 1);
       if (currentEditorText.trim() !== storedClean) {
         state.videos[editKey] = currentEditorText;
         const reParsed = typeof parseScriptSections === 'function' ? parseScriptSections(currentEditorText) : null;
@@ -5816,8 +5808,7 @@ function setScriptView(view) {
 
 function copyScript(btn) {
   // Get text from state (source of truth) — not the textarea which may be stale or hidden
-  const raw = state.videos['script_v' + currentVideoIndex] || '';
-  const text = raw.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
+  const text = finalScriptText(currentVideoIndex);
   // Also sync textarea value in case user expects it to match
   const editor = document.getElementById('script-editor');
   if (editor && !editor.value.trim() && text) editor.value = text;

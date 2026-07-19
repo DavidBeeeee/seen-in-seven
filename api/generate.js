@@ -1,3 +1,5 @@
+import { createHash } from 'node:crypto';
+
 export default async function handler(req, res) {
   // Only allow POST
   if (req.method !== 'POST') {
@@ -5,6 +7,10 @@ export default async function handler(req, res) {
   }
 
   const { systemMsg, userMsg } = req.body;
+  const requestedTemperature = Number(req.body && req.body.temperature);
+  const temperature = Number.isFinite(requestedTemperature)
+    ? Math.min(1.2, Math.max(0, requestedTemperature))
+    : 0.8;
 
   if (!systemMsg || !userMsg) {
     return res.status(400).json({ error: 'Missing systemMsg or userMsg' });
@@ -32,7 +38,7 @@ export default async function handler(req, res) {
           { role: 'user', content: userMsg }
         ],
         max_tokens: 1200,
-        temperature: 0.8
+        temperature
       }),
       signal: controller.signal
     });
@@ -45,6 +51,8 @@ export default async function handler(req, res) {
     }
 
     const data = await response.json();
+    data.prompt_version = createHash('sha256').update(systemMsg).digest('hex').slice(0, 12);
+    data.temperature = temperature;
     return res.status(200).json(data);
 
   } catch (err) {

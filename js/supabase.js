@@ -85,7 +85,7 @@ async function _flushSaveQueue() {
   _saveQueue.length = 0;
   for (const item of items) {
     try {
-      if (item.type === 'script')     await saveScriptToDb(item.videoNumber, item.level, item.content);
+      if (item.type === 'script')     await saveScriptToDb(item.videoNumber, item.level, item.content, item.finalContent, item.promptVersion);
       else if (item.type === 'progress') await saveVideoProgressToDb(item.videoIndex, item.level, item.status);
       else if (item.type === 'onboarding') await saveOnboardingToDb();
       else if (item.type === 'lock')   await saveVideoLockToDb(item.videoIndex, item.level);
@@ -94,9 +94,9 @@ async function _flushSaveQueue() {
   }
 }
 
-function queueScriptSave(videoNumber, level, content) {
-  if (_currentUser) { saveScriptToDb(videoNumber, level, content); }
-  else { _saveQueue.push({ type: 'script', videoNumber, level, content }); }
+function queueScriptSave(videoNumber, level, content, finalContent, promptVersion) {
+  if (_currentUser) { saveScriptToDb(videoNumber, level, content, finalContent, promptVersion); }
+  else { _saveQueue.push({ type: 'script', videoNumber, level, content, finalContent, promptVersion }); }
 }
 
 function queueProgressSave(videoIndex, level, status) {
@@ -364,21 +364,26 @@ async function saveOnboardingToDb() {
 }
 
 // ── SAVE SCRIPT TO DB ─────────────────────────────────
-async function saveScriptToDb(videoNumber, level, content) {
+async function saveScriptToDb(videoNumber, level, content, finalContent, promptVersion) {
   if (!_currentUser) return;
   try {
     const { error } = await _sb.from('scripts').insert({
-      user_id: _currentUser.id, video_number: videoNumber, level, content
+      user_id: _currentUser.id,
+      video_number: videoNumber,
+      level,
+      content,
+      final_content: finalContent || content,
+      prompt_version: promptVersion || null
     });
     if (error) console.warn('[SeenInSeven] Script save error:', error.message, error.code);
   } catch(e) { console.warn('[SeenInSeven] Script save exception:', e.message); }
 }
 
 // ── SAVE SCRIPT EDIT TO DB ────────────────────────────
-async function saveScriptEditToDb(videoNumber, level, content) {
+async function saveScriptEditToDb(videoNumber, level, content, finalContent) {
   if (!_currentUser) return;
   try {
-    await _sb.from('scripts').update({ content, edited_at: new Date().toISOString() })
+    await _sb.from('scripts').update({ content, final_content: finalContent || content, edited_at: new Date().toISOString() })
       .eq('user_id', _currentUser.id).eq('video_number', videoNumber)
       .eq('level', level).eq('is_current', true);
   } catch(e) {}
@@ -519,7 +524,11 @@ async function _restoreFromDatabase() {
     }
 
     if (scripts && scripts.length) {
-      scripts.forEach(s => { state.videos['script_v' + (s.video_number - 1)] = s.content; });
+      scripts.forEach(s => {
+        const index = s.video_number - 1;
+        state.videos['script_v' + index] = s.content;
+        if (s.prompt_version) state.videos['prompt_version_v' + index] = s.prompt_version;
+      });
     }
     if (progress && progress.length) {
       progress.forEach(p => {
@@ -562,7 +571,7 @@ function getCurrentUser() { return _currentUser; }
 async function fetchScriptVersions(videoNumber, level) {
   if (!_currentUser) return [];
   try {
-    const { data } = await _sb.from('scripts').select('id, content, version, generated_at, is_current, thumbs_up')
+    const { data } = await _sb.from('scripts').select('id, content, final_content, prompt_version, version, generated_at, is_current, thumbs_up')
       .eq('user_id', _currentUser.id).eq('video_number', videoNumber).eq('level', level)
       .order('version', { ascending: false });
     return data || [];

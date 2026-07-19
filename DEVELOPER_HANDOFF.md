@@ -146,6 +146,18 @@ SeenInSeven itself now saves a level-keyed copy of users' prompt answers in `onb
 
 The Prompt Tester question catalog is in `js/admin-prompt-questions.js`. It is an admin-only copy of the question labels, hints, keys, and placeholders in `js/app.js`. When SeenInSeven questions change, update both and run a parity check.
 
+#### Focused prompt architecture
+
+`prompts/blueprints.js` remains one source file, but its generation rules are now organized in level order: Level 1 Videos 1 through 7, followed by Level 2 Videos 1 through 7. Each of the 14 sections contains that exact level/video combination's existing video blueprint, level rules, and Fix Guide rules. The restructuring was mechanical: existing prompt language was combined rather than rewritten or deleted, so intentional and accidental duplication was preserved for David to refine later.
+
+`js/script-prompt-engine.js` is the shared assembly layer used by both SeenInSeven and the Prompt Tester. For a generation request, it sends the global rules plus only the matching level/video section. This prevents one video from receiving all 14 sets of specialized instructions while keeping a single editable blueprint source.
+
+Generation context is cumulative within the active level only. Each prior video contributes its latest current or locked script and its actual saved answers once. The current video's answers are placed last so they have the strongest immediate relevance. Edited script-version history is not sent.
+
+Both production and the Prompt Tester now use the same prompt focusing, context assembly, output validation, and final-script assembly. A malformed response gets one narrowly instructed repair attempt. Video 1's prewritten declaration is inserted between Open Loop and Meat in the canonical final script used for display, copy, PDF, database `final_content`, and future-video context. Section regeneration uses the same focused system prompt and cumulative context as full generation.
+
+The tester's Comparison Mode still produces one output at a time. Consistent Test uses lower creativity (`0.25`) for close comparisons; Production Preview uses the production setting (`0.8`). Every newly generated script records a 12-character fingerprint of the exact system prompt in `scripts.prompt_version`. Existing scripts remain unchanged with a null version. Prompt versions are administrator-facing only.
+
 ### 5. Blueprint publishing safety
 
 Prompt publishing is handled by `api/prompt-blueprint.js`, not by direct browser access to GitHub.
@@ -192,6 +204,7 @@ These migration files in the Studio repository describe the production changes a
 5. `2026-07-18-fix-boardroom-profile-workspace-setup.sql`
 6. `2026-07-19-fix-admin-email-allowlist.sql`
 7. `2026-07-20-add-video-prompt-answers.sql`
+8. `2026-07-19-add-script-prompt-version.sql`
 
 The SQL files inside the `boardroom2/supabase` directory belong to the older standalone Boardroom setup and are historical reference only. Do not apply them to Studio. The Studio repository migrations are the production schema source of truth.
 
@@ -211,6 +224,10 @@ Production verification covered:
 - Desktop and mobile overflow checks.
 - SeenInSeven startup after answer persistence was added.
 - Confirmation that `prompts/blueprints.js` remained byte-for-byte unchanged during the tester build.
+- Focused selection of exactly one of the 14 level/video rule sections per generation.
+- Same-level cumulative context with one latest current script per prior video.
+- Production and Prompt Tester parity for prompt assembly, validation, repair, and Video 1 declaration placement.
+- Prompt-version recording for newly generated scripts.
 
 ### 9. Deliberately deferred next steps
 
@@ -283,7 +300,7 @@ This repo is the entire 777 Challenge project folder, not just the app. Here's e
 - `js/admin-prompt-tester.js` — Prompt Tester state, testing, and publishing
 - `js/admin-prompt-questions.js` — Prompt Tester's level/video question catalog
 - `js/supabase.js` — auth and database layer
-- `prompts/blueprints.js` — core IP, never modify
+- `prompts/blueprints.js` — protected core IP; modify only with David's explicit instruction
 - `api/generate.js` — DeepSeek serverless proxy
 - `api/prompt-blueprint.js` — admin-gated blueprint read, publish, and undo endpoint
 - `vercel.json` — URL routing
@@ -424,9 +441,9 @@ Email/password and magic-link login coexist. The same Supabase session identifie
 
 Supabase holds an internal navigator lock during `onAuthStateChange` callbacks. Any `await` on a Supabase database call inside this callback deadlocks forever. All DB work in the auth callback is deferred via `setTimeout(0)`. This pattern is load-bearing — do not remove it or move the DB calls back into the synchronous callback body.
 
-**4. `blueprints.js` is untouchable**
+**4. `blueprints.js` is protected core IP**
 
-The AI system prompt and Hero's Journey blueprints in `prompts/blueprints.js` are David's core intellectual property. They run through multiple API iterations and produce something that cannot be replicated by a base LLM. This file has never been modified and must never be modified without explicit instruction from David.
+The AI system prompt and Hero's Journey blueprints in `prompts/blueprints.js` are David's core intellectual property. They run through multiple API iterations and produce something that cannot be replicated by a base LLM. Modify this file only when David directly authorizes the work. The administrator Prompt Tester is the approved browser-based editing and publishing path.
 
 **5. DeepSeek proxy**
 
@@ -555,7 +572,7 @@ The superapp foundation is built. Future priorities are connecting Systeme.io to
 **Development preferences:**
 - Make it work, don't over-engineer. Prove the core product before adding complexity.
 - No new offer layers or feature additions before the existing funnel is proven.
-- IP in `blueprints.js` is never touched.
+- IP in `blueprints.js` is changed only with David's explicit instruction and the protected publishing flow.
 - Straightforward UX — the user base is non-technical, often 50+, camera-shy, first-time content creators.
 - Progress and momentum matter more than feature completeness. Every screen should answer: where am I, what's done, what's next.
 

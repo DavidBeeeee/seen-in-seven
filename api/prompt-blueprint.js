@@ -55,14 +55,16 @@ function validateBlueprintSource(source) {
   if (!/^const SYSTEM_PROMPT = `[^]*`;\s*$/.test(source)) errors.push('The file must contain only the SYSTEM_PROMPT template.');
   if ((source.match(/`/g) || []).length !== 2) errors.push('Backticks are not allowed inside the prompt text.');
   if (source.includes('${')) errors.push('JavaScript interpolation syntax is not allowed inside the prompt text.');
-  const required = [
-    '<core_rules>', '<level_context>', '<video_1_blueprint>', '<video_2_blueprint>',
-    '<video_3_blueprint>', '<video_4_blueprint>', '<video_5_blueprint>', '<video_6_blueprint>',
-    '<video_7_blueprint>', '<script_generation_instructions>', '<quality_standards>',
-    '[HOOK]', '[OPEN LOOP]', '[MEAT]', '[CTA]'
-  ];
+  const required = ['<global_rules>', '</global_rules>', '[HOOK]', '[OPEN LOOP]', '[MEAT]', '[CTA]'];
+  [1, 2].forEach(level => {
+    for (let video = 1; video <= 7; video++) {
+      required.push('<l' + level + '_v' + video + '_rules>', '</l' + level + '_v' + video + '_rules>');
+    }
+  });
   required.forEach(marker => {
-    if (!source.includes(marker)) errors.push('Missing required marker: ' + marker);
+    const count = source.split(marker).length - 1;
+    if (marker.startsWith('<') && count !== 1) errors.push('Required marker must appear exactly once: ' + marker);
+    else if (!count) errors.push('Missing required marker: ' + marker);
   });
   return errors;
 }
