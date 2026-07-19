@@ -240,19 +240,19 @@ function highlightActiveBlueprint() {
   updateJumpButton();
   if (start === -1 || end === -1) return;
   const selEnd = end + closeTag.length;
-  scrollTextareaToSelection(editor, start);
+  editor.focus();
+  editor.setSelectionRange(start, selEnd);
+  var targetScroll = scrollOffsetForChar(editor, start);
   setTimeout(function() {
-    editor.focus();
-    editor.setSelectionRange(start, selEnd);
+    editor.scrollTop = targetScroll;
   }, 0);
 }
 
-function scrollTextareaToSelection(textarea, charIndex) {
+function scrollOffsetForChar(textarea, charIndex) {
   const text = textarea.value.substring(0, charIndex);
   const lines = text.split('\n').length - 1;
   const lineHeight = parseFloat(getComputedStyle(textarea).lineHeight) || 19.5;
-  const targetScroll = Math.max(0, lines * lineHeight - 60);
-  textarea.scrollTop = targetScroll;
+  return Math.max(0, lines * lineHeight - 40);
 }
 
 function selectedUser() {
