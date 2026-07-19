@@ -60,6 +60,13 @@
             <option value="2">Level 2</option>
           </select>
         </label>
+        <div>
+          <span class="control-label">Comparison mode</span>
+          <div class="mode-control generation-mode" aria-label="Generation comparison mode">
+            <button class="mode-button active" id="generation-mode-consistent" type="button" onclick="setGenerationMode('consistent')">Consistent Test</button>
+            <button class="mode-button" id="generation-mode-production" type="button" onclick="setGenerationMode('production')">Production Preview</button>
+          </div>
+        </div>
         <div class="control-actions">
           <button class="button" type="button" onclick="refreshTestMessage()">Reload Test Copy</button>
           <button class="button primary" id="generate-button" type="button" onclick="generateTest()">Generate Test</button>
@@ -99,7 +106,7 @@
               <div class="pane-meta" id="draft-meta">Not loaded</div>
             </div>
             <div class="pane-actions">
-              <button class="button small" id="blueprint-jump" type="button" onmousedown="event.preventDefault()" onclick="highlightActiveBlueprint()" hidden>Jump to Video 1</button>
+              <button class="button small" id="blueprint-jump" type="button" onmousedown="event.preventDefault()" onclick="highlightActiveBlueprint()" hidden>Jump to L1V1</button>
               <button class="button small" type="button" onclick="undoDraftEdit()">Undo Edit</button>
               <button class="button small" type="button" onclick="restorePublishedDraft()">Restore Published</button>
             </div>
@@ -185,6 +192,7 @@
 
   <div id="toast" class="toast" aria-live="polite"></div>
   <script src="/js/admin-prompt-questions.js"></script>
+  <script src="/js/script-prompt-engine.js"></script>
   <script src="/js/admin-prompt-tester.js"></script>
 </body>
 </html>

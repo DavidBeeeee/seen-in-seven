@@ -222,19 +222,22 @@ function handleTesterContextChange() {
 
 function updateJumpButton() {
   const video = Number(promptEl('test-video').value || 1);
+  const level = Number(promptEl('test-level').value || 1);
   const source = promptEl('blueprint-editor').value;
   const jumpButton = promptEl('blueprint-jump');
   if (!jumpButton) return;
-  jumpButton.textContent = 'Jump to Video ' + video;
-  jumpButton.hidden = source.indexOf('<video_' + video + '_blueprint>') === -1;
+  const tag = '<l' + level + '_v' + video + '_rules>';
+  jumpButton.textContent = 'Jump to L' + level + 'V' + video;
+  jumpButton.hidden = source.indexOf(tag) === -1;
 }
 
 function highlightActiveBlueprint() {
   const video = Number(promptEl('test-video').value || 1);
+  const level = Number(promptEl('test-level').value || 1);
   const editor = promptEl('blueprint-editor');
   const source = editor.value;
-  const openTag = '<video_' + video + '_blueprint>';
-  const closeTag = '</video_' + video + '_blueprint>';
+  const openTag = '<l' + level + '_v' + video + '_rules>';
+  const closeTag = '</l' + level + '_v' + video + '_rules>';
   const start = source.indexOf(openTag);
   const end = source.indexOf(closeTag);
   updateJumpButton();
@@ -307,6 +310,7 @@ function restoreWorkspaceControls() {
   if (promptState.workspace.video) promptEl('test-video').value = String(promptState.workspace.video);
   if (promptState.workspace.level) promptEl('test-level').value = String(promptState.workspace.level);
   if (promptState.workspace.selectedUserId) promptEl('test-user').value = String(promptState.workspace.selectedUserId);
+  setGenerationMode(promptState.workspace.generationMode === 'production' ? 'production' : 'consistent', false);
 }
 
 function saveWorkspaceControls() {
@@ -314,6 +318,14 @@ function saveWorkspaceControls() {
   promptState.workspace.video = Number(promptEl('test-video').value || 1);
   promptState.workspace.level = Number(promptEl('test-level').value || 1);
   savePromptWorkspace();
+}
+
+function setGenerationMode(mode, persist) {
+  const selected = mode === 'production' ? 'production' : 'consistent';
+  promptState.workspace.generationMode = selected;
+  promptEl('generation-mode-consistent').classList.toggle('active', selected === 'consistent');
+  promptEl('generation-mode-production').classList.toggle('active', selected === 'production');
+  if (persist !== false) savePromptWorkspace();
 }
 
 function testerBaseContextKey(user, video, level) {
@@ -329,6 +341,20 @@ function currentPromptMode(user, video, level, answers) {
   const key = testerBaseContextKey(user, video, level);
   const saved = promptState.workspace.modeByContext && promptState.workspace.modeByContext[key];
   if (saved === 'easy' || saved === 'extended') return saved;
+  const p2 = getPhase2(selectedOnboarding(user && user.id));
+  const productionModes = p2.videoPromptModesByLevel && p2.videoPromptModesByLevel[String(level)];
+  if (productionModes && (productionModes[video - 1] === 'easy' || productionModes[video - 1] === 'extended')) return productionModes[video - 1];
+  const easy = PROMPT_QUESTION_CATALOG.easy[video - 1];
+  if (easy && answers && answers[easy.key]) return 'easy';
+  const extended = questionVideoDefinition(video, level).prompts || [];
+  return extended.some(question => answers && answers[question.key]) ? 'extended' : 'easy';
+}
+
+function productionPromptMode(user, video, level, answers) {
+  if (video === 1) return 'extended';
+  const p2 = getPhase2(selectedOnboarding(user && user.id));
+  const productionModes = p2.videoPromptModesByLevel && p2.videoPromptModesByLevel[String(level)];
+  if (productionModes && (productionModes[video - 1] === 'easy' || productionModes[video - 1] === 'extended')) return productionModes[video - 1];
   const easy = PROMPT_QUESTION_CATALOG.easy[video - 1];
   if (easy && answers && answers[easy.key]) return 'easy';
   const extended = questionVideoDefinition(video, level).prompts || [];
@@ -504,51 +530,58 @@ function rebuildUserMessage(user, ob, video, level, mode, answers) {
 
 function buildTestUserMessage(user, ob, video, level, mode, answers) {
   const p2 = getPhase2(ob);
-  const lines = [
-    '- Name: ' + (user.name || '(not provided)'),
-    '- Posting experience: ' + valueText(ob && ob.posted || user.posted || '(not provided)'),
-    '- Posting history: ' + valueText(ob && ob.history || '(not provided)'),
-    '- Blocker: ' + valueText((p2.custom && p2.custom.blocker) || user.blocker || (ob && ob.blocker) || '(not provided)'),
-    '- Business stage: ' + valueText(ob && ob.business || user.business_stage || '(not provided)'),
-    '- Content intent: ' + valueText(p2.contentIntentTitle || p2.contentIntent || '(not provided)'),
-    '- Audience context: ' + valueText(p2.audienceContext || '(not provided)'),
-    '- Desired audience reaction: ' + valueText(p2.messageContext || '(not provided)'),
-    '- Extra first-script notes: ' + valueText(p2.firstScriptNotes || '(not provided)'),
-    '- Commitment: ' + valueText(p2.commitmentDeclaration || (ob && ob.commitment_declaration) || '(not provided)'),
-    '- Topic / what they want to talk about: ' + valueText(ob && ob.topic_freewrite || '(not provided)'),
-    '- Pasted context / knowledge base: ' + valueText(p2.knowledgeContext || '(not provided)')
-  ];
-  let message = 'Generate Video ' + video + ' script.\n\nLEVEL: ' + level + '\nVIDEO: ' + video + '\n\nONBOARDING DATA:\n' + lines.join('\n');
-  if (video === 1) {
-    const questions = videoOneQuestions(user, ob, level);
-    message += '\n\nVIDEO 1 PROMPTS (tester copy):\n' + questions.map((question, index) =>
-      (index + 1) + '. ' + question.label + ': ' + (answers[question.key] || '(not provided)')
-    ).join('\n');
-    return message;
-  }
+  const onboardingLines = SISPromptEngine.buildOnboardingLines({
+    name:user.name || '(not provided)',
+    postingExperience:ob && ob.posted || user.posted || '(not provided)',
+    postingHistory:ob && ob.history || '',
+    blocker:user.blocker || ob && ob.blocker || '',
+    customBlocker:p2.custom && p2.custom.blocker || '',
+    businessStage:ob && ob.business || user.business_stage || '',
+    contentIntent:p2.contentIntentTitle || p2.contentIntent || '',
+    contextMode:p2.contentMode === 'extended' ? 'Extended' : 'Simple',
+    audienceContext:p2.audienceContext || '',
+    messageContext:p2.messageContext || '',
+    firstScriptNotes:p2.firstScriptNotes || '',
+    commitmentPain:p2.commitmentPainText || p2.commitmentPainCustom || p2.commitmentPain || '',
+    commitmentDesire:p2.commitmentDesireText || p2.commitmentDesireCustom || p2.commitmentDesire || '',
+    commitment:p2.commitmentDeclaration || ob && ob.commitment_declaration || '',
+    missionStatement:p2.missionStatement || ob && ob.mission_statement || '',
+    topic:ob && ob.topic_freewrite || '',
+    knowledgeContext:p2.knowledgeContext || ''
+  });
+  const previousVideos = [];
   for (let previousVideo = 1; previousVideo < video; previousVideo++) {
     const previousAnswers = databaseAnswers(user, ob, previousVideo, level);
-    const previousMode = currentPromptMode(user, previousVideo, level, previousAnswers);
-    const previousContextAnswers = answersForContext(user, ob, previousVideo, level, previousMode);
+    const previousMode = productionPromptMode(user, previousVideo, level, previousAnswers);
     const previousQuestions = currentQuestionSet(user, ob, previousVideo, level, previousMode);
-    message += '\n\nVIDEO ' + previousVideo + ' PROMPTS:\n' + previousQuestions.map((question, index) =>
-      (index + 1) + '. ' + question.label + ': ' + (previousContextAnswers[question.key] || '(no answer)')
-    ).join('\n');
-    const previousScript = promptState.scripts.find(script => String(script.user_id) === String(user.id) && Number(script.video_number) === previousVideo);
-    if (previousScript) message += '\n\nVideo ' + previousVideo + ' saved script:\n' + valueText(previousScript.content || previousScript.script);
+    const previousScript = promptState.scripts.find(script =>
+      String(script.user_id) === String(user.id) &&
+      Number(script.video_number) === previousVideo &&
+      Number(script.level) === Number(level)
+    );
+    const declarationQuestion = previousVideo === 1 ? videoOneQuestions(user, ob, level)[0] : null;
+    const declaration = declarationQuestion ? previousAnswers[declarationQuestion.key] || declarationQuestion.fallback : '';
+    previousVideos.push({
+      video:previousVideo,
+      mode:previousMode,
+      easyAnswer:previousQuestions[0] ? previousAnswers[previousQuestions[0].key] || '' : '',
+      answers:previousQuestions.map(question => ({label:question.label, value:previousAnswers[question.key] || ''})),
+      script:previousScript
+        ? previousScript.final_content || SISPromptEngine.canonicalScript(previousScript.content || previousScript.script || '', previousVideo, declaration)
+        : ''
+    });
   }
   const currentQuestions = currentQuestionSet(user, ob, video, level, mode);
-  if (mode === 'easy') {
-    const question = currentQuestions[0];
-    message += '\n\nCURRENT VIDEO ' + video + ' JOURNAL ENTRY (easy mode):\n' + (question && answers[question.key] || '(no answer provided)');
-  } else {
-    message += '\n\nCURRENT VIDEO ' + video + ' PROMPTS:\n' + currentQuestions.map((question, index) =>
-      (index + 1) + '. ' + question.label + ': ' + (answers[question.key] || '(no answer provided)')
-    ).join('\n');
-    const easy = PROMPT_QUESTION_CATALOG.easy[video - 1];
-    if (easy && answers[easy.key]) message += '\n\nAdditional free-write context from user: ' + answers[easy.key];
-  }
-  return message;
+  const easy = PROMPT_QUESTION_CATALOG.easy[video - 1];
+  return SISPromptEngine.buildUserMessage({
+    level,
+    video,
+    onboardingLines,
+    previousVideos,
+    currentMode:mode,
+    currentEasyAnswer:easy ? answers[easy.key] || '' : '',
+    currentAnswers:currentQuestions.map(question => ({label:question.label, value:answers[question.key] || ''}))
+  });
 }
 
 async function generateTest() {
@@ -557,7 +590,9 @@ async function generateTest() {
   const source = promptEl('blueprint-editor').value;
   const errors = validateBlueprint(source);
   if (errors.length) return showBanner(errors.join(' '), true);
-  const systemPrompt = extractSystemPrompt(source);
+  const video = Number(promptEl('test-video').value || 1);
+  const level = Number(promptEl('test-level').value || 1);
+  const systemPrompt = SISPromptEngine.buildSystemPrompt(extractSystemPrompt(source), level, video);
   const userMessage = promptEl('user-message-editor').value.trim();
   if (!userMessage) return showBanner('The test user message is empty.', true);
   const button = promptEl('generate-button');
@@ -567,20 +602,39 @@ async function generateTest() {
   promptEl('test-output').textContent = 'Generating test output...';
   promptEl('test-output').className = 'test-output empty-output';
   try {
-    const response = await fetch('/api/generate', {
+    const generationMode = promptState.workspace.generationMode === 'production' ? 'production' : 'consistent';
+    const temperature = generationMode === 'production' ? 0.8 : 0.25;
+    let response = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ systemMsg: systemPrompt, userMsg: userMessage })
+      body: JSON.stringify({ systemMsg: systemPrompt, userMsg: userMessage, temperature })
     });
-    const data = await response.json().catch(() => ({}));
+    let data = await response.json().catch(() => ({}));
     if (!response.ok) throw new Error(data.error || 'Test generation failed.');
-    const raw = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    let raw = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
     if (!raw) throw new Error('The AI returned an empty test.');
+    let validation = SISPromptEngine.validateOutput(raw);
+    if (!validation.valid) {
+      response = await fetch('/api/generate', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({
+          systemMsg:systemPrompt,
+          userMsg:userMessage + '\n\nYOUR PREVIOUS RESPONSE WAS MALFORMED:\n' + raw + '\n\nRewrite the complete script now with [HOOK], [OPEN LOOP], [MEAT], and [CTA] exactly once.',
+          temperature
+        })
+      });
+      data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'Test repair failed.');
+      raw = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+      validation = SISPromptEngine.validateOutput(raw);
+      if (!validation.valid) throw new Error('The AI response was missing: ' + validation.missing.join(', ') + '.');
+    }
     promptState.rawOutput = raw.trim();
-    promptState.finalOutput = buildFinalOutput(raw.trim(), Number(promptEl('test-video').value), Number(promptEl('test-level').value), user);
+    promptState.finalOutput = buildFinalOutput(raw.trim(), video, level, user);
     promptState.showRaw = false;
     renderTestOutput();
-    promptEl('result-meta').textContent = 'Generated ' + new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }) + ' | Read-only test';
+    promptEl('result-meta').textContent = 'Generated ' + new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }) + ' | ' + (generationMode === 'production' ? 'Production Preview' : 'Consistent Test') + ' | Prompt ' + (data.prompt_version || 'unknown');
     showBanner('Test generated. No user data or saved script was changed.');
   } catch (error) {
     promptEl('test-output').textContent = error.message || 'Test generation failed.';
@@ -594,24 +648,17 @@ async function generateTest() {
 }
 
 function buildFinalOutput(raw, video, level, user) {
-  if (video !== 1) return raw.replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim();
-  const sections = parseSections(raw);
-  if (!sections || !sections['OPEN LOOP'] || !sections.MEAT) return raw;
   const ob = selectedOnboarding(user.id);
   const database = databaseAnswers(user, ob, video, level);
   const mode = currentPromptMode(user, video, level, database);
   const answers = answersForContext(user, ob, video, level, mode);
   const declarationKey = level === 1 ? 'v0p0' : 'v0decl';
   const declaration = answers[declarationKey] || videoOneQuestions(user, ob, level)[0].fallback;
-  return [sections.HOOK, sections['OPEN LOOP'], declaration, sections.MEAT, sections.CTA].filter(Boolean).join('\n\n');
+  return SISPromptEngine.canonicalScript(raw, video, declaration);
 }
 
 function parseSections(text) {
-  const sections = { HOOK:'', 'OPEN LOOP':'', MEAT:'', CTA:'' };
-  const pattern = /\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*([\s\S]*?)(?=\n\s*\[(?:HOOK|OPEN LOOP|MEAT|CTA)\]|$)/g;
-  let match;
-  while ((match = pattern.exec(text))) sections[match[1]] = match[2].trim();
-  return Object.values(sections).some(Boolean) ? sections : null;
+  return SISPromptEngine.parseSections(text);
 }
 
 function renderTestOutput() {
@@ -646,8 +693,12 @@ function validateBlueprint(source) {
   if (!/^const SYSTEM_PROMPT = `[^]*`;\s*$/.test(source)) errors.push('The file must contain only the SYSTEM_PROMPT template.');
   if ((source.match(/`/g) || []).length !== 2) errors.push('Backticks are not allowed inside the prompt text.');
   if (source.includes('${')) errors.push('JavaScript interpolation syntax is not allowed inside the prompt text.');
-  ['<core_rules>', '<level_context>', '<video_1_blueprint>', '<video_2_blueprint>', '<video_3_blueprint>', '<video_4_blueprint>', '<video_5_blueprint>', '<video_6_blueprint>', '<video_7_blueprint>', '<script_generation_instructions>', '<quality_standards>', '[HOOK]', '[OPEN LOOP]', '[MEAT]', '[CTA]'].forEach(marker => {
-    if (!source.includes(marker)) errors.push('Missing ' + marker + '.');
+  const structuralMarkers = ['<global_rules>', '</global_rules>'];
+  SISPromptEngine.SECTION_KEYS.forEach(key => structuralMarkers.push('<' + key + '>', '</' + key + '>'));
+  structuralMarkers.concat(['[HOOK]', '[OPEN LOOP]', '[MEAT]', '[CTA]']).forEach(marker => {
+    const count = source.split(marker).length - 1;
+    if (count !== 1 && marker.startsWith('<')) errors.push(marker + ' must appear exactly once.');
+    else if (!count) errors.push('Missing ' + marker + '.');
   });
   return errors;
 }

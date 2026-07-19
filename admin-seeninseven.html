@@ -979,7 +979,8 @@ function renderScripts(r) {
   return r.scripts.slice().sort((a,b) => Number(a.video_number) - Number(b.video_number)).map(s => {
     const clean = cleanScriptText(s);
     const feedback = s.thumbs_up === true ? 'thumbs up' : s.thumbs_up === false ? 'thumbs down' : 'no feedback';
-    return '<details class="script-card"><summary>Video ' + h(s.video_number) + ' | v' + h(s.version || 1) + ' | ' + h(feedback) + '</summary><div style="padding:0 11px 8px;"><button class="btn btn-small" onclick="copyAdminScript(event,\'' + safeAttr(r.user.id) + '\',' + Number(s.video_number || 0) + ')">Copy Script</button></div><div class="script-text">' + h(clean || 'Empty script') + '</div></details>';
+    const promptVersion = s.prompt_version ? ' | prompt ' + h(s.prompt_version) : '';
+    return '<details class="script-card"><summary>Video ' + h(s.video_number) + ' | v' + h(s.version || 1) + promptVersion + ' | ' + h(feedback) + '</summary><div style="padding:0 11px 8px;"><button class="btn btn-small" onclick="copyAdminScript(event,\'' + safeAttr(r.user.id) + '\',' + Number(s.video_number || 0) + ')">Copy Script</button></div><div class="script-text">' + h(clean || 'Empty script') + '</div></details>';
   }).join('');
 }
 
@@ -1328,7 +1329,7 @@ function exportScriptSummary(s) {
 }
 
 function cleanScriptText(s) {
-  return String(s.content || s.script || '').replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim() || '[empty script]';
+  return String(s.final_content || s.content || s.script || '').replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim() || '[empty script]';
 }
 
 async function copyPlainText(text, successMessage) {
