@@ -409,28 +409,28 @@ CTA patterns: Invite the viewer to follow or comment because Video 4 shows what 
 </l1_v3_rules>
 
 <l1_v4_rules>
-VIDEO 4 — THE PROGRESS SIGNAL — ROAD OF TRIALS
-"I'm in the middle of this and here's what's actually happening."
+VIDEO 4 — THE MIDPOINT TRIAL — ROAD OF TRIALS
+"The old version of me got tested, and for once it did not fully win."
 Framework: Modified Hero's Journey
-Audience feels: Trust + Credibility
+Audience feels: Trust + Midpoint Orientation
 Speaker feels: Momentum
 
 AUDIENCE JOURNEY:
-Before: "Did they actually keep going after the first few videos?"
-After: "They are in the middle now, and the middle is changing them in real time."
-Open question: "What is this challenge starting to reveal that they did not expect?"
-Social impulse: Follow or comment because watching the middle makes the outcome feel alive.
+Before: "I may be finding this person in the middle of the story. Why should I care where they are?"
+After: "This is part four of a real seven-part transformation, and I can see the old self being tested by the new behavior."
+Open question: "What happens when this early proof gets tested by the deeper fear?"
+Social impulse: Follow forward to see how it ends, or go back to see why this midpoint matters.
 
 STRUCTURAL BEATS:
-1. Pattern Interrupt (Hook) — Open with a jarring contradiction about progress: what should feel easier does not, what should feel small is changing them, or what they expected is not what is happening. Do not recap the challenge.
-2. Behind-the-Curtain Access — What this has actually been like. Not highlight reel. The real texture. This is where the honest status report belongs.
-3. Small Win Proof — Something has shifted. Might be small and subtle. Name it. For L2, this might show competence in action.
-4. Real-Time Transparency — What's still hard. Name it. This is what separates authentic content from motivational fluff.
-5. Objection Pre-emption — By showing up mid-challenge with honest energy, they demonstrate consistency doesn't require constant excitement.
-6. Expert Ease (L2) — Expertise surfaces naturally through HOW they talk about their experience, not through explicit teaching.
-7. Social Evidence — End with quiet continuation. Any external validation surfaces as surprise, not bragging.
+1. Pattern Interrupt (Hook) — Open with a jarring contradiction from the trial: the old pattern should have taken over, but something different happened. Do not recap the challenge.
+2. Trial Stakes (Open Loop) — Make a cold viewer understand why this midpoint matters: they are seeing video 4 of 7, after the declaration and first epiphany, before the deeper ordeal. Do not summarize the earlier videos.
+3. Old Pattern vs. New Behavior (Meat) — Show one concrete moment where the old self met the new behavior. The proof must be behavioral, not just emotional: what they would normally do vs. what they actually did this time.
+4. Small Win Proof — Something shifted under pressure. Might be small and subtle. Name it without making it sound complete.
+5. Real-Time Transparency — What's still hard. Name it. The hero is not transformed yet; they are being tested.
+6. Objection Pre-emption — Show that progress does not require constant confidence, excitement, or certainty. The trial proves continuation, not mastery.
+7. Midpoint Orientation (CTA Bridge) — End by making the series discoverable from the middle: this is video 4 of 7, the viewer can follow to see how it ends or go back to see how it started, and the reason must come from the conclusion.
 
-TONE: Relaxed, reflective, slightly surprised. Feels like pressing record without a plan. Grounding statement to start. Uses contrast naturally. Small win is understated. Honesty about difficulty is specific. Ends with quiet continuation.
+TONE: Relaxed, reflective, slightly surprised. Feels like the hero realizing the journey is acting on them. Uses contrast naturally. Small win is understated. Honesty about difficulty is specific. Ends with midpoint orientation, not a generic follow request.
 
 THIS VIDEO EARNS THE RIGHT FOR VIDEO 5. Without the road of trials, the fall feels melodramatic. With it, the ordeal feels like the honest cost of the journey, and Video 6's second epiphany can feel earned.
 
@@ -441,11 +441,11 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should interrupt the viewer's scroll with a sharp jolt, the open loop should give them a concrete reason to stay, the conclusion should pay off that unfinished thought with a meaning turn or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
-VIDEO 4, LEVEL 1: Tone = Grounded, relaxed, mid-process honesty (Iron & Wine "Naked as We Came" — soft, slightly messy, morning light)
+VIDEO 4, LEVEL 1: Tone = Grounded, relaxed, mid-trial honesty (Iron & Wine "Naked as We Came" — soft, slightly messy, morning light)
 HOOK patterns: "I thought this would get less awkward by now. It got more honest instead." / "The weird part about showing up consistently is that confidence was not the first thing that changed."
 OPEN LOOP patterns: "Which would be discouraging — except something else is happening that I didn't expect." / "Here's what I can't figure out yet: why does [specific hard thing] still feel hard when [specific win] is getting easier?"
 CONCLUSION patterns: "So no, I don't feel confident yet. But I do feel less willing to disappear, and I think that might be the actual progress." / "Maybe the middle doesn't feel like momentum while you're in it. Maybe it just feels like not quitting on the weird day."
-CTA guidance: Continue from the progress landing into the next unresolved difficulty. Invite follow, comment, or watch-next because the challenge is still unfolding and the next video reveals what is still genuinely hard.
+CTA guidance: Because this is the midpoint, explicitly name that this is video 4 of 7. Continue from the conclusion into the larger transformation the speaker is documenting. Invite the viewer to follow to see how it ends and/or go back to see how it started because the difference between the beginning and this trial is the point. The CTA must feel like a natural continuation of the conclusion, not a navigation label.
 </l1_v4_rules>
 
 <l1_v5_rules>
@@ -770,28 +770,28 @@ CTA patterns: Invite the viewer to follow, comment, or keep watching because Vid
 </l2_v3_rules>
 
 <l2_v4_rules>
-VIDEO 4 — THE PROGRESS SIGNAL — ROAD OF TRIALS
-"I'm in the middle of this and here's what's actually happening."
+VIDEO 4 — THE MIDPOINT TRIAL — ROAD OF TRIALS
+"My expertise is being tested in public now."
 Framework: Modified Hero's Journey
-Audience feels: Trust + Credibility
+Audience feels: Trust + Midpoint Orientation
 Speaker feels: Momentum
 
 AUDIENCE JOURNEY:
-Before: "Does this person's expertise actually land with people?"
-After: "They are noticing real response patterns, not just performing expertise."
-Open question: "What actually made people respond?"
-Social impulse: Ask a question, compare their own experience, or follow for the pattern.
+Before: "I may be finding this expert in the middle of the story. Why should I care where they are?"
+After: "This is part four of a real seven-part visibility journey, and I can see their expertise being tested in public."
+Open question: "What happens when this early proof gets tested by the deeper visibility fear?"
+Social impulse: Follow forward to see how it ends, or go back to see why this midpoint matters.
 
 STRUCTURAL BEATS:
-1. Pattern Interrupt (Hook) — Open with a jarring contradiction about progress, audience response, or expertise becoming visible. Do not recap. Do not calmly report status.
-2. Behind-the-Curtain Access — What this has actually been like. Not highlight reel. The real texture. This is where the honest status report belongs.
-3. Small Win Proof — Something has shifted. Might be small and subtle. Name it. For L2, this might show competence in action.
-4. Real-Time Transparency — What's still hard. Name it. This is what separates authentic content from motivational fluff.
-5. Objection Pre-emption — By showing up mid-challenge with honest energy, they demonstrate consistency doesn't require constant excitement.
-6. Expert Ease (L2) — Expertise surfaces naturally through HOW they talk about their experience, not through explicit teaching.
-7. Social Evidence — End with quiet continuation. Any external validation surfaces as surprise, not bragging.
+1. Pattern Interrupt (Hook) — Open with a jarring contradiction about expertise under public pressure: what should have landed did not, what seemed too obvious mattered, or the expert expected one response and got another. Do not recap. Do not calmly report status.
+2. Trial Stakes (Open Loop) — Make a cold viewer understand why this midpoint matters: they are seeing video 4 of 7, after the declaration and first professional epiphany, before the deeper ordeal. Do not summarize the earlier videos.
+3. Old Pattern vs. New Behavior (Meat) — Show one concrete moment where the old expert pattern met the new public behavior. The proof must be behavioral, not just emotional: what they would normally hide, overexplain, dismiss, or control vs. what they actually did this time.
+4. Small Win Proof — Something shifted under pressure. Might be small and subtle. Name it. This may show competence in action, but do not brag.
+5. Real-Time Transparency — What's still hard. Name it. The expert is not fully comfortable being visible yet; they are being tested.
+6. Expert Ease — Expertise surfaces naturally through HOW they interpret the trial, not through explicit teaching.
+7. Midpoint Orientation (CTA Bridge) — End by making the series discoverable from the middle: this is video 4 of 7, the viewer can follow to see how it ends or go back to see how it started, and the reason must come from the conclusion.
 
-TONE: Relaxed, reflective, slightly surprised. Feels like pressing record without a plan. Grounding statement to start. Uses contrast naturally. Small win is understated. Honesty about difficulty is specific. Ends with quiet continuation.
+TONE: Relaxed, reflective, slightly surprised. Feels like the expert realizing the journey is acting on their public voice. Uses contrast naturally. Small win is understated. Honesty about difficulty is specific. Ends with midpoint orientation, not a generic follow request.
 
 THIS VIDEO EARNS THE RIGHT FOR VIDEO 5. Without the road of trials, the fall feels melodramatic. With it, the ordeal feels like the honest cost of the journey, and Video 6's second epiphany can feel earned.
 
@@ -806,7 +806,7 @@ VIDEO 4, LEVEL 2: Tone = Analytical, pattern-focused, thoughtful (Tycho "A Walk"
 HOOK patterns: "The video I thought was too obvious is the one people needed most." / "I thought the algorithm was ignoring me. I think I was explaining the wrong thing."
 OPEN LOOP patterns: "At first I thought it was random. But then I noticed a pattern in which videos actually landed." / "I was about to dismiss it as luck. Then I looked closer at one [comment/response/moment] in particular."
 CONCLUSION patterns: "The weird part is, the videos that landed weren't the ones where I sounded the smartest. They were the ones where I sounded the most specific." / "I'm starting to think the algorithm wasn't the thing I needed to understand first. It was the moment someone decided, 'oh, this is for me.'"
-CTA guidance: Continue from the progress landing into the next response pattern or audience realization. Invite follow, comment, or watch-next because the next video reveals what the responses taught them about who needs to hear this.
+CTA guidance: Because this is the midpoint, explicitly name that this is video 4 of 7. Continue from the conclusion into the larger visibility journey the speaker is documenting. Invite the viewer to follow to see how it ends and/or go back to see how it started because the difference between the beginning and this public trial is the point. The CTA must feel like a natural continuation of the conclusion, not a navigation label.
 </l2_v4_rules>
 
 <l2_v5_rules>
