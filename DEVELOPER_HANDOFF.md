@@ -148,13 +148,17 @@ The Prompt Tester question catalog is in `js/admin-prompt-questions.js`. It is a
 
 #### Focused prompt architecture
 
-`prompts/blueprints.js` remains one source file, but its generation rules are now organized in level order: Level 1 Videos 1 through 7, followed by Level 2 Videos 1 through 7. Each of the 14 sections contains that exact level/video combination's existing video blueprint, level rules, and Fix Guide rules. The restructuring was mechanical: existing prompt language was combined rather than rewritten or deleted, so intentional and accidental duplication was preserved for David to refine later.
+`prompts/blueprints.js` remains one source file, but its generation rules are organized in level order: Level 1 Videos 1 through 7, followed by Level 2 Videos 1 through 7. Each of the 14 sections contains that exact level/video combination's video blueprint, level rules, and local section guidance.
+
+On July 20, 2026, David explicitly authorized a full prompt refinement pass. The old copyable Hook/Open Loop/Conclusion/CTA examples were replaced with per-video guidance about the move each section must make. The global generation order is now: choose the engagement ending, write MEAT, write CONCLUSION, design OPEN LOOP backward from that conclusion, engineer HOOK as a separate pattern interrupt, then write CTA. The hook captures pre-story attention; the open loop converts that interruption into one exact unanswered question; the conclusion answers it; and the CTA bridges from the conclusion before stating an action and reason. Hooks must not be progress reports, summaries, soft identification, or early lesson reveals. Open loops must not disclose the result or use an unnamed "something changed" as the mystery. CTAs must not begin with a video/series label.
+
+The seven-video arc is currently: V1 declaration/introduction, V2 ordinary world or origin, V3 first epiphany, V4 road of trials, V5 fall/ordeal, V6 second epiphany/finding the elixir, V7 return. V4 no longer behaves as a generic progress report or Level 2 teaching video. V4 questions now collect one concrete collision between an old pattern and a new behavior, the observable action taken, what actually happened, and what remains difficult. V2 questions now collect the ordinary-world or origin thread without asking for the Video 3 reframe early. The user-facing question catalog in `js/app.js` and the admin copy in `js/admin-prompt-questions.js` must remain identical.
 
 `js/script-prompt-engine.js` is the shared assembly layer used by both SeenInSeven and the Prompt Tester. For a generation request, it sends the global rules plus only the matching level/video section. This prevents one video from receiving all 14 sets of specialized instructions while keeping a single editable blueprint source.
 
 Generation context is cumulative within the active level only. Each prior video contributes its latest current or locked script and its actual saved answers once. The current video's answers are placed last so they have the strongest immediate relevance. Edited script-version history is not sent.
 
-Both production and the Prompt Tester now use the same prompt focusing, context assembly, output validation, and final-script assembly. A malformed response gets one narrowly instructed repair attempt. Video 1's prewritten declaration is inserted between Open Loop and Meat in the canonical final script used for display, copy, PDF, database `final_content`, and future-video context. Section regeneration uses the same focused system prompt and cumulative context as full generation.
+Both production and the Prompt Tester now use the same prompt focusing, context assembly, output validation, and final-script assembly. A malformed response gets one narrowly instructed repair attempt. Validation checks all five labels and also rejects repeatable architecture failures: an overlong Open Loop, an Open Loop that announces the realization or uses vague "what happened next" suspense, and a CTA that begins with a series label instead of bridging from the Conclusion. The repair request names the exact failure while preserving the supplied facts, voice, and story beats. Video 1's prewritten declaration is inserted between Open Loop and Meat in the canonical final script used for display, copy, PDF, database `final_content`, and future-video context. Section regeneration uses the same focused system prompt and cumulative context as full generation.
 
 The tester's Comparison Mode still produces one output at a time. Consistent Test uses lower creativity (`0.25`) for close comparisons; Production Preview uses the production setting (`0.8`). Every newly generated script records a 12-character fingerprint of the exact system prompt in `scripts.prompt_version`. Existing scripts remain unchanged with a null version. Prompt versions are administrator-facing only.
 
@@ -473,7 +477,7 @@ The app has 21 screens, all `<div class="screen">` elements that are direct chil
 1. User answers onboarding questions (screens 2-6, MVO screens, prompts screen)
 2. `buildAPIUserMessage(videoIdx)` constructs the user prompt from state
 3. `callDeepSeekAPIRaw(systemMsg, userMsg)` calls the proxy
-4. Response is parsed by `parseScriptSections(text)` into sections (HOOK, OPEN LOOP, MEAT, CTA)
+4. Response is parsed by `parseScriptSections(text)` into sections (HOOK, OPEN LOOP, MEAT, CONCLUSION, CTA)
 5. Rendered in two views: **Structured** (section-by-section with psychological rationale) and **Edit** (clean textarea for direct editing)
 6. Individual sections can be regenerated via `regenerateSection()`
 7. Undo/redo system: every generation and edit (debounced 2s) pushes to a per-video undo stack in `state.videos['_undo_v' + idx]`
@@ -678,5 +682,5 @@ The following principles govern every word of copy in this app and the broader C
 - David is a peer doing the challenge alongside participants, not an expert coaching from above.
 - The Facebook community is the participant's first real audience and an active algorithm boost, not just accountability. Never undersell it.
 - The framework behind the 7 videos is described publicly as "scientifically, sociologically, and historically proven." Never use: framework, psychological architecture, Hero's Journey, or algorithm in public-facing copy.
-- The open loop in each script is a specific mechanical device. It looks like a loose or unnecessary sentence. It is not. Never remove it.
+- The hook and open loop have separate jobs. The hook is a truthful pattern interrupt that captures attention before the viewer cares. The open loop converts that attention into one specific unanswered question that the conclusion later pays off. Never merge them or remove either one.
 - If it sounds like David, it stays. Loose, conversational, and playful language is correct, not a mistake.

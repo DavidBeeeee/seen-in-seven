@@ -1329,7 +1329,7 @@ function exportScriptSummary(s) {
 }
 
 function cleanScriptText(s) {
-  return String(s.final_content || s.content || s.script || '').replace(/\[(HOOK|OPEN LOOP|MEAT|CTA)\]\s*/g, '').trim() || '[empty script]';
+  return String(s.final_content || s.content || s.script || '').replace(/\[(HOOK|OPEN LOOP|MEAT|CONCLUSION|CTA)\]\s*/g, '').trim() || '[empty script]';
 }
 
 async function copyPlainText(text, successMessage) {

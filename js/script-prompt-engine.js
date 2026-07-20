@@ -119,9 +119,32 @@
   function validateOutput(text) {
     const source = String(text || '');
     const sections = parseSections(text);
-    if (!sections) return { valid: false, sections: null, missing: ['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA'] };
+    if (!sections) return { valid: false, sections: null, missing: ['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA'], issues: [] };
     const missing = Object.keys(sections).filter(key => !sections[key] || (source.match(new RegExp('\\[' + key.replace(' ', '\\s+') + '\\]', 'g')) || []).length !== 1);
-    return { valid: missing.length === 0, sections, missing };
+    const issues = [];
+    const openLoop = sections['OPEN LOOP'] || '';
+    const openLoopWords = (openLoop.match(/\b[\w’'-]+\b/g) || []).length;
+    if (openLoopWords > 60) issues.push('OPEN LOOP is too long; keep it to 25-50 words.');
+    if (/\b(?:I\s+(?:realized|learned|discovered|understood)|it\s+(?:showed|taught|proved)\s+me|the\s+(?:truth|point|lesson)\s+is)\b/i.test(openLoop)) {
+      issues.push('OPEN LOOP announces the realization or lesson before the MEAT earns it.');
+    }
+    if (/\b(?:what happened next|something (?:changed|stopped me|was different))\b/i.test(openLoop)) {
+      issues.push('OPEN LOOP uses vague suspense instead of one named unanswered question.');
+    }
+    const cta = String(sections.CTA || '').trim();
+    if (/^(?:this|that(?:'s| is)|video|part)\s+(?:is\s+)?(?:video\s+)?(?:\w+|\d+)\s+(?:of|in)\s+(?:seven|7)\b/i.test(cta)) {
+      issues.push('CTA begins with a series label instead of bridging from the CONCLUSION.');
+    }
+    return { valid: missing.length === 0 && issues.length === 0, sections, missing, issues };
+  }
+
+  function validationFeedback(validation) {
+    const parts = [];
+    if (validation && validation.missing && validation.missing.length) {
+      parts.push('Missing or repeated sections: ' + validation.missing.join(', ') + '.');
+    }
+    (validation && validation.issues || []).forEach(issue => parts.push(issue));
+    return parts.join(' ') || 'The response did not follow the required five-section architecture.';
   }
 
   function stripSectionLabels(text) {
@@ -145,6 +168,7 @@
     buildUserMessage,
     parseSections,
     validateOutput,
+    validationFeedback,
     stripSectionLabels,
     canonicalScript
   };

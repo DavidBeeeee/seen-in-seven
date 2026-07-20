@@ -3,8 +3,8 @@ const PROMPT_QUESTION_CATALOG = {
   "easy": [
     null,
     {
-      "label": "Tell me your origin story",
-      "hint": "How did you become the person you are today, and what shaped the way you see things? Could be one pivotal moment, or just the honest version of your background.",
+      "label": "What part of your past kept shaping you before you understood why?",
+      "hint": "Describe the ordinary world you were in, the thread or unlikely chapter that kept showing up, and why you did not recognize or follow it yet.",
       "key": "easyAnswer_v1"
     },
     {
@@ -13,8 +13,8 @@ const PROMPT_QUESTION_CATALOG = {
       "key": "easyAnswer_v2"
     },
     {
-      "label": "What's actually been happening since you started?",
-      "hint": "The real version, not the highlight reel. What's been harder than expected? What surprised you? What's actually working?",
+      "label": "Tell me about one moment when an old pattern met a new behavior.",
+      "hint": "What happened, what would you normally have done, what did you do differently, what did that reveal, and what is still difficult?",
       "key": "easyAnswer_v3"
     },
     {
@@ -40,26 +40,26 @@ const PROMPT_QUESTION_CATALOG = {
       "prompts": []
     },
     {
-      "title": "The Turning Point",
-      "note": "Your audience doesn't follow creators because of what they know. They follow because of who they are. Video 2 is where you let them in. One surprising detail, something they wouldn't expect, and the thing you actually care about.",
+      "title": "The Hidden Thread",
+      "note": "You're still in the ordinary world. This video lets the audience notice one interest, frustration, obsession, or pattern that kept showing up before you understood what it meant. Reveal the clue, not the final lesson.",
       "prompts": [
         {
-          "label": "Where are you from, and what's one thing about your background that shaped who you are today?",
-          "hint": "Not your whole life story. Just the one detail that if someone knew it, they'd understand you a little better. The town, the household, the experience, the thing that left a mark.",
+          "label": "What did your ordinary life look like before you started following this thread? Give me one concrete detail that captures that period.",
+          "hint": "A schedule, place, responsibility, routine, or situation. Set the world you were living in without explaining what it all meant yet.",
           "key": "v1p0",
-          "placeholder": "e.g. I grew up in a tiny town where the big Friday night event was the gas station... which sounds like nothing until you understand what it taught me about showing up when nobody's watching"
+          "placeholder": "Describe one specific detail from that part of your life."
         },
         {
-          "label": "What's something about you that surprises people when they find out?",
-          "hint": "The thing that doesn't match the rest of your story. The unexpected hobby, the weird skill, the career pivot nobody saw coming, the thing you're secretly passionate about that has nothing to do with anything else.",
+          "label": "What interest, frustration, obsession, or pattern did you keep returning to during that time?",
+          "hint": "The thing that seemed random, impractical, or unrelated then but kept catching your attention. Be specific about what you did, noticed, collected, watched, questioned, or cared about.",
           "key": "v1p1",
-          "placeholder": "e.g. most people are surprised that I spent three years competing in improv comedy, which probably explains more about how I think than anything on my resume"
+          "placeholder": "Describe the recurring thread and what you actually did with it."
         },
         {
-          "label": "What do you actually care about, and why does it feel important enough to talk about publicly?",
-          "hint": "Not your job description. The thing underneath it. The reason you light up about certain topics. The thing you wish more people understood or paid attention to.",
+          "label": "Why didn't you follow that thread sooner, and what did you think it meant about you back then?",
+          "hint": "Stay inside the old perspective. What made the outside world feel unavailable, unrealistic, embarrassing, or not meant for you? Do not jump ahead to the lesson you know now.",
           "key": "v1p2",
-          "placeholder": "e.g. what I actually care about is that people stop waiting to feel ready and start trusting that showing up imperfectly is worth more than not showing up at all"
+          "placeholder": "Describe the belief or circumstance that kept the thread in the background."
         }
       ]
     },
@@ -100,32 +100,32 @@ const PROMPT_QUESTION_CATALOG = {
       ]
     },
     {
-      "title": "The Progress Signal",
-      "note": "You showed up again. That alone is the story. Now tell the truth about what this has actually been like: what surprised you, what's shifted, what's still hard. Real-time honesty builds trust faster than any polished content.",
+      "title": "The Road Of Trials",
+      "note": "Your first epiphany was a win. Now show what happened when the old pattern met a new behavior in real life. One specific trial gives the audience something they can witness, while what remains difficult keeps the journey honest.",
       "prompts": [
         {
-          "label": "What's surprised you most about doing this so far, something you didn't expect, good or bad?",
-          "hint": "Maybe filming was easier than you thought. Maybe it was harder. Maybe people reacted in a way you didn't anticipate. What caught you off guard?",
+          "label": "Tell me about one specific moment when your old pattern showed up while you were making or posting these videos.",
+          "hint": "A real scene, not a progress summary. What happened, where were you, and what did the old version of you normally do in that moment?",
           "key": "v3p0",
-          "placeholder": "e.g. what surprised me most is how much lighter I feel after each video, like I'm putting something down I didn't realize I was carrying"
+          "placeholder": "Describe the exact moment and the old reaction it triggered."
         },
         {
-          "label": "What's one small thing that's shifted for you, even if it's subtle? A moment, a feeling, a realization, a reaction from someone?",
-          "hint": "It doesn't have to be dramatic. Maybe you noticed you were less nervous on Video 3 than Video 1. Maybe someone sent you a message. Name the small shift.",
+          "label": "What did you actually do differently this time?",
+          "hint": "Make the change observable. What did you click, say, leave alone, finish, post, or stop yourself from doing? Small behavioral proof is stronger than saying you felt more confident.",
           "key": "v3p1",
-          "placeholder": "e.g. someone I hadn't talked to in two years messaged me after Video 2 and said 'I didn't know you felt that way'... and somehow that one message made the whole thing worth it"
+          "placeholder": "Describe the different action you took, even if it felt minor."
         },
         {
-          "label": "What's still hard? What are you still figuring out? Be specific.",
-          "hint": "Don't clean this up. The messy middle is where people trust you the most. What's the thing you're wrestling with right now (about this challenge, about yourself, about putting yourself out there)?",
+          "label": "What happened because you acted differently, and what did that reveal?",
+          "hint": "The result can be internal or external. Use only what really happened. Do not invent comments, views, messages, or praise if there were none.",
           "key": "v3p2",
-          "placeholder": "e.g. I still hate watching myself back. Like physically uncomfortable. I don't know if that goes away or if you just learn to tolerate it"
+          "placeholder": "Describe the real consequence and what made it surprising."
         },
         {
-          "label": "What would you tell someone who's watching you do this and thinking about starting themselves?",
-          "hint": "Not advice. Not motivation. Just the honest truth from someone who's a few days ahead of them. What do you know now that you didn't know before Video 1?",
+          "label": "Where is the old pattern still winning? What's still difficult even after this small shift?",
+          "hint": "This is the road of trials, not the finish line. Name the remaining resistance specifically so the win feels honest and the fall in Video 5 can be earned.",
           "key": "v3p3",
-          "placeholder": "e.g. I'd tell them the first video is the hardest one, not because of the filming, but because it makes real something you've been keeping theoretical for a long time"
+          "placeholder": "Describe the part that still has not become easy."
         }
       ]
     },
@@ -240,7 +240,7 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "The Origin Story",
-      "note": "Your audience doesn't just want to know what you do. They want to understand how you became someone who knows this. This video tells the origin: how you got here, what you've seen, and why you can't stop caring about it.",
+      "note": "Your audience needs to understand the path that formed what you know. Stay with the detour, wound, obsession, or unlikely chapter before you understood its professional meaning. This is the origin, not the industry lesson yet.",
       "prompts": [
         {
           "label": "How did you get into this? Not the professional version. The real story of how you ended up knowing what you know.",
@@ -249,16 +249,16 @@ const PROMPT_QUESTION_CATALOG = {
           "placeholder": "e.g. I got into this because my sister was drowning in debt after her divorce and I helped her build a plan that got her out in 18 months. Her friends started asking me for help. Then their friends."
         },
         {
-          "label": "What's the thing you've noticed that most people get wrong about your area of expertise?",
-          "hint": "The mistake you see over and over. The bad advice that makes you cringe. The thing you wish you could shake people and tell them. You don't need to name names. Just describe what you see happening.",
+          "label": "What detour, wound, obsession, or unlikely chapter shaped the way you understand this work?",
+          "hint": "The part of the story that may not look professional on paper but changed what you notice, care about, or do differently. Give one concrete detail.",
           "key": "v1p1",
-          "placeholder": "e.g. everyone thinks the problem is discipline. It's not. Most people's money problems aren't math problems. They're emotional regulation problems wearing a math costume."
+          "placeholder": "Describe the chapter that formed your lens before you had language for it."
         },
         {
-          "label": "Why does this matter to you personally (not professionally)?",
-          "hint": "Strip away the business angle entirely. Why do you CARE about this? What's the deeper reason this topic or this work gets under your skin in a way you can't ignore?",
+          "label": "What did you misunderstand about that path at the time, or why did you resist seeing it as part of your expertise?",
+          "hint": "Stay inside the earlier perspective. Maybe it looked like wasted time, failure, a side interest, or something that did not count. Save the clean professional reframe for Video 3.",
           "key": "v1p2",
-          "placeholder": "e.g. because I grew up watching money destroy my parents' marriage and I know it doesn't have to be like that."
+          "placeholder": "Describe what you believed about that path before its meaning became clear."
         }
       ]
     },
@@ -299,32 +299,32 @@ const PROMPT_QUESTION_CATALOG = {
       ]
     },
     {
-      "title": "The Progress Signal",
-      "note": "You're in the middle of this challenge. Report honestly from there. Not a performance of progress. Actual progress. What surprised you, what's working, what's still hard, and what you're starting to understand.",
+      "title": "The Road Of Trials",
+      "note": "Your first professional epiphany now has to survive public practice. Show one concrete collision between your expert instincts and the new behavior visibility required. Authority comes from how you read the trial, not from teaching or reporting progress.",
       "prompts": [
         {
-          "label": "What's surprised you about trying to communicate your expertise on camera? What's different about it than you expected?",
-          "hint": "Maybe you realized how hard it is to be simple. Maybe you discovered that the thing you thought was your main message isn't actually what resonates. Maybe doing this publicly is teaching you something about your own expertise that you didn't see before.",
+          "label": "Tell me about one specific moment when your usual expert instinct showed up while you were communicating publicly.",
+          "hint": "A real scene. What were you tempted to overexplain, hide, control, perfect, dismiss, or avoid? What would you normally have done?",
           "key": "v3p0",
-          "placeholder": "e.g. I assumed the hard part would be the camera. It's not. The hard part is figuring out what to leave out. I know too much and I'm still learning how to be concise without losing the point."
+          "placeholder": "Describe the exact public moment and the expert habit it triggered."
         },
         {
-          "label": "What's one moment or result so far that made you think 'okay, this is actually working,' even if it was small?",
-          "hint": "A comment from the right kind of person. A conversation that started because of a video. A moment where you explained something and it landed better than you expected. Something that showed you there's traction here.",
+          "label": "What did you actually do differently this time?",
+          "hint": "Make the change observable. What did you simplify, say plainly, leave imperfect, publish, ask, or allow the audience to see?",
           "key": "v3p1",
-          "placeholder": "e.g. someone I've never met messaged me after Video 2 to say they'd been thinking about what I said for two days. That was the moment I stopped wondering if this was worth doing."
+          "placeholder": "Describe the different action you took in that moment."
         },
         {
-          "label": "What's still hard about this? What are you still wrestling with (about the content, about showing up, about putting your knowledge out there?",
-          "hint": "The real friction. Maybe it's the vulnerability of being visible. Maybe it's the gap between what you know and how to say it concisely. Maybe it's imposter syndrome showing up even though you KNOW you're good at this. Name it.",
+          "label": "What happened because you acted differently, and what did it reveal about your expertise or communication?",
+          "hint": "Use only a real result. It can be something you noticed internally; you do not need a client, comment, message, metric, or public response.",
           "key": "v3p2",
-          "placeholder": "e.g. the thing I'm still wrestling with is the gap between how clearly I can think through this with a client and how fuzzy it feels when I try to say it into a camera in two minutes."
+          "placeholder": "Describe the real consequence and what made it unexpected."
         },
         {
-          "label": "What are you starting to understand about your audience, your message, or yourself that you didn't understand before this challenge?",
-          "hint": "A few days of putting yourself out there teaches you things that years of planning never could. What's becoming clearer? About who responds to you, about what you actually want to say, about how this could grow into something real?",
+          "label": "What is still difficult about being seen doing this work, even after that small win?",
+          "hint": "Name the remaining friction specifically. This is a trial, not proof that visibility is solved, and the unresolved cost prepares the fall in Video 5.",
           "key": "v3p3",
-          "placeholder": "e.g. I'm starting to understand that the people who need me most aren't the ones I was picturing — they're quieter, more self-aware, and they're looking for permission to trust what they already know, not more information."
+          "placeholder": "Describe where the old expert pattern still has a hold on you."
         }
       ]
     },

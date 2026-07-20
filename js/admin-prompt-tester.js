@@ -649,7 +649,9 @@ async function generateTest() {
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
           systemMsg:systemPrompt,
-          userMsg:userMessage + '\n\nYOUR PREVIOUS RESPONSE WAS MALFORMED:\n' + raw + '\n\nRewrite the complete script now with [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] exactly once.',
+          userMsg:userMessage + '\n\nYOUR PREVIOUS RESPONSE WAS MALFORMED:\n' + raw +
+            '\n\nREQUIRED CORRECTIONS:\n' + SISPromptEngine.validationFeedback(validation) +
+            '\n\nRewrite the complete script now. Preserve the supplied facts, voice, and story beats, with [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] exactly once.',
           temperature
         })
       });
@@ -657,7 +659,7 @@ async function generateTest() {
       if (!response.ok) throw new Error(data.error || 'Test repair failed.');
       raw = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
       validation = SISPromptEngine.validateOutput(raw);
-      if (!validation.valid) throw new Error('The AI response was missing: ' + validation.missing.join(', ') + '.');
+      if (!validation.valid) throw new Error('The AI response still needs correction: ' + SISPromptEngine.validationFeedback(validation));
     }
     promptState.rawOutput = raw.trim();
     promptState.finalOutput = buildFinalOutput(raw.trim(), video, level, user);

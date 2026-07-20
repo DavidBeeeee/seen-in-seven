@@ -1507,30 +1507,30 @@ const INTRO_COPY = {
   },
   4: {
     L1: {
-      label: 'Video 4 of 7: The Progress Signal',
-      title: "Show Them You're Still Doing This",
-      body: "Most people disappear after their first few videos. You're still here, and that matters more than you think. This video is proof that you're the kind of person who follows through. You don't have to have everything figured out. You just have to be honest about where you are and why you're still going.",
-      result: 'Credibility',
+      label: 'Video 4 of 7: The Road of Trials',
+      title: 'Show What Changed Under Pressure',
+      body: "The first epiphany was a real win. Now it has to survive real life. This video shows one concrete place where your old pattern met a new behavior, what shifted, and what is still difficult. The audience trusts the change because they can see it being tested instead of hearing you announce it.",
+      result: 'Trust',
       framework: [
-        {name:'Hook',                    trigger:'Momentum Validation'},
-        {name:'The Experience So Far',   trigger:'Small Win Proof'},
-        {name:'The Reality of the Work', trigger:'Real-Time Transparency'},
-        {name:'The Forward Shift',       trigger:'Social Evidence'}
+        {name:'The Old Pattern',          trigger:'Behavioral Contrast'},
+        {name:'The New Behavior',         trigger:'Small Win Proof'},
+        {name:'What Is Still Hard',       trigger:'Real-Time Transparency'},
+        {name:'What The Trial Proves',    trigger:'Objection Pre-emption'}
       ],
-      triggers: ['Behind-the-Curtain Access','Momentum Validation','Small Win Proof','Expert Ease','Objection Pre-emption','Real-Time Transparency','Social Evidence']
+      triggers: ['Behavioral Contrast','Small Win Proof','Objection Pre-emption','Real-Time Transparency','Midpoint Orientation']
     },
     L2: {
-      label: 'Video 4 of 7: The Teaching Moment',
-      title: 'Give Them Something They Can Use Right Now',
-      body: "This is where you demonstrate real value, not by talking about what you offer, but by actually giving something useful. One insight, explained simply, proves your expertise better than any testimonial. The person watching is already asking: can this person actually help me? Answer it by teaching.",
-      result: 'Credibility',
+      label: 'Video 4 of 7: The Road of Trials',
+      title: 'Let Your Expertise Be Tested In Public',
+      body: "Your first professional epiphany sounded good in theory. Now the audience needs to see what happened when you used your voice in public. Show one real collision between your expert instincts and this new visibility, what surprised you, and what is still difficult. Authority emerges through how you interpret the trial, not through a lesson or a claim.",
+      result: 'Trust',
       framework: [
-        {name:'Hook',                   trigger:'Momentum Validation'},
-        {name:'The Live Demonstration', trigger:'Method / Expert Ease'},
-        {name:'The Specific Result',    trigger:'Small Win Proof'},
-        {name:'The Client Evidence',    trigger:'Social Evidence'}
+        {name:'The Expert Pattern',      trigger:'Behavioral Contrast'},
+        {name:'The Public Test',         trigger:'Small Win Proof'},
+        {name:'What Is Still Hard',      trigger:'Real-Time Transparency'},
+        {name:'What The Trial Reveals',  trigger:'Expert Ease'}
       ],
-      triggers: ['Behind-the-Curtain Access','Momentum Validation','Small Win Proof','Expert Ease','Objection Pre-emption','Real-Time Transparency','Social Evidence']
+      triggers: ['Behavioral Contrast','Small Win Proof','Expert Ease','Real-Time Transparency','Midpoint Orientation']
     }
   },
   5: {
@@ -1621,12 +1621,12 @@ const INTRO_COPY = {
 
 const VIDEO_EASY_PROMPTS = [
   null, // V1 uses pre-filled fields, no easy mode needed
-  // V2 — YOUR ORIGIN
-  { label: 'Tell me your origin story', hint: 'How did you become the person you are today, and what shaped the way you see things? Could be one pivotal moment, or just the honest version of your background.', key: 'easyAnswer_v1' },
+  // V2 — ORDINARY WORLD / ORIGIN
+  { label: 'What part of your past kept shaping you before you understood why?', hint: 'Describe the ordinary world you were in, the thread or unlikely chapter that kept showing up, and why you did not recognize or follow it yet.', key: 'easyAnswer_v1' },
   // V3 — YOUR EPIPHANY
   { label: 'What\'s a belief you held for a long time that turned out to be wrong?', hint: 'What cracked it open? Walk me through how you arrived at seeing it differently. The journey matters more than the conclusion.', key: 'easyAnswer_v2' },
-  // V4 — YOUR REALITY CHECK
-  { label: 'What\'s actually been happening since you started?', hint: 'The real version, not the highlight reel. What\'s been harder than expected? What surprised you? What\'s actually working?', key: 'easyAnswer_v3' },
+  // V4 — ROAD OF TRIALS
+  { label: 'Tell me about one moment when an old pattern met a new behavior.', hint: 'What happened, what would you normally have done, what did you do differently, what did that reveal, and what is still difficult?', key: 'easyAnswer_v3' },
   // V5 — THE FALL
   { label: 'What\'s something you\'ve been avoiding saying out loud?', hint: 'The thing that would make you feel most exposed. Not for shock. For honesty. The thing that makes the next lesson earned.', key: 'easyAnswer_v4' },
   // V6 — THE ELIXIR
@@ -1715,24 +1715,23 @@ function buildPhase2ContextLines() {
 const VIDEO_STORY_LABELS = [
   'YOUR INTRODUCTION',   // V1
   'YOUR ORIGIN',         // V2
-  'YOUR EPIPHANY',       // V3
-  'YOUR REALITY CHECK',  // V4
-  'YOUR TRUTH',          // V5
-  'YOUR CONFESSION',     // V6
-  'YOUR ELIXIR',         // V7
+  'YOUR FIRST EPIPHANY', // V3
+  'YOUR ROAD OF TRIALS', // V4
+  'YOUR FALL',           // V5
+  'YOUR SECOND EPIPHANY',// V6
+  'YOUR RETURN',         // V7
 ];
 
 const VIDEO_STORY_BEATS = [
-  // V1 — YOUR INTRODUCTION (Audience Signal, Trust Layer, Empathy Lock)
-  ['Audience Signal: mirror the universal experience of wanting to start but not starting',
-   'Trust Layer: name, one grounding detail, personality through HOW you talk',
-   'Empathy Lock: your specific flavor of why you haven\'t been doing this (your blocker)',
-   'Open Loop: you\'re doing this challenge, forward motion + uncertainty'],
-  // V2 — YOUR ORIGIN (Catalyst, Vulnerability, Enemy Identification, Agency Reclaim)
-  ['Catalyst Moment: the surprising/unexpected detail that makes viewers curious about you',
-   'Vulnerability Entry: something real about who you are that people wouldn\'t guess',
-   'Enemy Identification: the gap between how the world sees you and who you actually are',
-   'Agency Reclaim: connecting who you are to why you\'re here, in your own words'],
+  // V1 — YOUR INTRODUCTION
+  ['Empathy Lock: your specific flavor of why you have not been doing this',
+   'Why Now: what made this attempt matter today instead of someday',
+   'Who: the specific person you hope recognizes themselves in your story'],
+  // V2 — YOUR ORIGIN / ORDINARY WORLD
+  ['The Ordinary World: the concrete life you were living before anything changed',
+   'The Hidden Thread: the interest, frustration, detour, or pattern you kept returning to',
+   'The Identity Clue: why that detail may have mattered before you understood it',
+   'The Refusal: what kept you from following the thread sooner'],
   // V3 — YOUR EPIPHANY (7-beat structure)
   ['Pattern Break: a familiar experience seen an unfamiliar way (cognitive friction)',
    'Discovery Arc: how you arrived at the insight (the journey, not just the conclusion)',
@@ -1741,27 +1740,28 @@ const VIDEO_STORY_BEATS = [
    'Cost Revelation: what it costs to not see it this way (honest, not fear-based)',
    'Simplicity Signal: the reframe in one sentence. Screenshot-worthy.',
    'Authority Anchor: viewer associates you with insight without you claiming it'],
-  // V4 — YOUR REALITY CHECK (Momentum Validation, Behind-the-Curtain, Objection Pre-emption)
-  ['Momentum Validation: acknowledge what\'s actually happened (no inflation, no minimizing)',
-   'Behind-the-Curtain Access: show the real texture, not the highlight reel',
-   'Small Win Proof: concrete, specific evidence that something is working',
-   'Real-Time Transparency: this is happening now, not a polished retrospective',
-   'Objection Pre-emption: address the doubt your audience already has'],
+  // V4 — THE ROAD OF TRIALS
+  ['Old Pattern vs. New Behavior: one concrete moment where the two collided',
+   'Small Win Proof: the subtle behavioral evidence that something shifted',
+   'Real-Time Transparency: what still feels difficult right now',
+   'Trial Meaning: what this test proves without claiming the journey is complete'],
   // V5 — THE FALL (The Unsaid Thing, Root, Internal Battle, Admission)
-  ['Convicted Belief Challenge: plant a flag: something you believe most people won\'t say',
-   'Discovery of the Lie: the moment you realized the old way wasn\'t working',
-   'Cost of the Old Way: what it cost you (and costs others) to stay in the old belief',
-   'The Reframe: what you believe instead, stated with quiet certainty'],
-  // V6 — THE ELIXIR (Conviction, Discovery, Cost)
   ['The Unsaid Thing: name what nobody\'s been saying out loud',
    'The Root: where does this actually come from? The real origin.',
    'The Internal Battle: the back-and-forth said out loud, present tense',
-   'The Admission: the thing you finally let yourself say'],
-  // V7 — YOUR ELIXIR (Return, Full Circle, The Gift)
-  ['The Return with the Elixir: you\'re not the same person who started Video 1',
+   'The Admission: the thing you finally let yourself say',
+   'The Cost: what obeying it has taken while you kept showing up'],
+  // V6 — THE SECOND EPIPHANY / ELIXIR
+  ['The Old Belief or Myth: what survived until the fall exposed it',
+   'The Ordeal Evidence: what made that belief impossible to keep',
+   'The Elixir: the deeper truth you can now carry forward',
+   'The Other Side: what becomes possible when the old belief stops deciding'],
+  // V7 — THE RETURN
+  ['The Return: the concrete difference between the person who started and the person here now',
    'Full Circle: loop back to where you started, the audience feels the arc close',
    'What Changed: not performance of growth, but the actual honest accounting',
-   'The Gift: what you want to give your audience, a truth, a permission, a next step'],
+   'The Gift: what you can now give the audience because you completed the journey',
+   'The Next Chapter: the relationship, direction, or work that opens from here'],
 ];
 
 
@@ -1868,10 +1868,11 @@ async function generateValidatedScript(userMessage, level, video) {
   if (validation.valid) return script;
 
   const repairMessage = userMessage + '\n\nYOUR PREVIOUS RESPONSE WAS MALFORMED:\n' + script +
-    '\n\nRewrite the complete script now. Include all five required sections exactly once: [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA]. Do not add commentary outside those sections.';
+    '\n\nREQUIRED CORRECTIONS:\n' + SISPromptEngine.validationFeedback(validation) +
+    '\n\nRewrite the complete script now. Preserve the supplied facts, voice, and story beats. Include all five required sections exactly once: [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA]. Do not add commentary outside those sections.';
   script = await callDeepSeekAPIWithRetry(repairMessage, 0, level, video);
   validation = SISPromptEngine.validateOutput(script);
-  if (!validation.valid) throw new Error('The script response was missing: ' + validation.missing.join(', ') + '. Please try again.');
+  if (!validation.valid) throw new Error('The script response still needs correction: ' + SISPromptEngine.validationFeedback(validation) + ' Please try again.');
   return script;
 }
 
@@ -2135,14 +2136,14 @@ const level1Videos = [
     prompts:[]
   },
   {
-    title:"The Turning Point",
-    note:"Your audience doesn't follow creators because of what they know. They follow because of who they are. Video 2 is where you let them in. One surprising detail, something they wouldn't expect, and the thing you actually care about.",
+    title:"The Hidden Thread",
+    note:"You're still in the ordinary world. This video lets the audience notice one interest, frustration, obsession, or pattern that kept showing up before you understood what it meant. Reveal the clue, not the final lesson.",
     prompts:[
-      {label:"Where are you from, and what's one thing about your background that shaped who you are today?",hint:"Not your whole life story. Just the one detail that if someone knew it, they'd understand you a little better. The town, the household, the experience, the thing that left a mark.",key:"v1p0",ph:"e.g. I grew up in a tiny town where the big Friday night event was the gas station... which sounds like nothing until you understand what it taught me about showing up when nobody's watching"},
-      {label:"What's something about you that surprises people when they find out?",hint:"The thing that doesn't match the rest of your story. The unexpected hobby, the weird skill, the career pivot nobody saw coming, the thing you're secretly passionate about that has nothing to do with anything else.",key:"v1p1",ph:"e.g. most people are surprised that I spent three years competing in improv comedy, which probably explains more about how I think than anything on my resume"},
-      {label:"What do you actually care about, and why does it feel important enough to talk about publicly?",hint:"Not your job description. The thing underneath it. The reason you light up about certain topics. The thing you wish more people understood or paid attention to.",key:"v1p2",ph:"e.g. what I actually care about is that people stop waiting to feel ready and start trusting that showing up imperfectly is worth more than not showing up at all"}
+      {label:"What did your ordinary life look like before you started following this thread? Give me one concrete detail that captures that period.",hint:"A schedule, place, responsibility, routine, or situation. Set the world you were living in without explaining what it all meant yet.",key:"v1p0",ph:"Describe one specific detail from that part of your life."},
+      {label:"What interest, frustration, obsession, or pattern did you keep returning to during that time?",hint:"The thing that seemed random, impractical, or unrelated then but kept catching your attention. Be specific about what you did, noticed, collected, watched, questioned, or cared about.",key:"v1p1",ph:"Describe the recurring thread and what you actually did with it."},
+      {label:"Why didn't you follow that thread sooner, and what did you think it meant about you back then?",hint:"Stay inside the old perspective. What made the outside world feel unavailable, unrealistic, embarrassing, or not meant for you? Do not jump ahead to the lesson you know now.",key:"v1p2",ph:"Describe the belief or circumstance that kept the thread in the background."}
     ],
-    compile:v=>`Where I'm from: ${v.v1p0||'___'}. The thing that surprises people about me: ${v.v1p1||'___'}. What I actually care about: ${v.v1p2||'___'}.`
+    compile:v=>`My ordinary world: ${v.v1p0||'___'}. The hidden thread I kept returning to: ${v.v1p1||'___'}. Why I did not follow it sooner: ${v.v1p2||'___'}.`
   },
   {
     title:"The First Epiphany",
@@ -2157,15 +2158,15 @@ const level1Videos = [
     compile:v=>`I used to believe ${v.v2p0||'___'}. The moment that changed it: ${v.v2p1||'___'}. The new truth: ${v.v2p2||'___'}. What the old belief costs: ${v.v2p3||'___'}. Why I'm saying this: ${v.v2p4||'___'}.`
   },
   {
-    title:"The Progress Signal",
-    note:"You showed up again. That alone is the story. Now tell the truth about what this has actually been like: what surprised you, what's shifted, what's still hard. Real-time honesty builds trust faster than any polished content.",
+    title:"The Road Of Trials",
+    note:"Your first epiphany was a win. Now show what happened when the old pattern met a new behavior in real life. One specific trial gives the audience something they can witness, while what remains difficult keeps the journey honest.",
     prompts:[
-      {label:"What's surprised you most about doing this so far, something you didn't expect, good or bad?",hint:"Maybe filming was easier than you thought. Maybe it was harder. Maybe people reacted in a way you didn't anticipate. What caught you off guard?",key:"v3p0",ph:"e.g. what surprised me most is how much lighter I feel after each video, like I'm putting something down I didn't realize I was carrying"},
-      {label:"What's one small thing that's shifted for you, even if it's subtle? A moment, a feeling, a realization, a reaction from someone?",hint:"It doesn't have to be dramatic. Maybe you noticed you were less nervous on Video 3 than Video 1. Maybe someone sent you a message. Name the small shift.",key:"v3p1",ph:"e.g. someone I hadn't talked to in two years messaged me after Video 2 and said 'I didn't know you felt that way'... and somehow that one message made the whole thing worth it"},
-      {label:"What's still hard? What are you still figuring out? Be specific.",hint:"Don't clean this up. The messy middle is where people trust you the most. What's the thing you're wrestling with right now (about this challenge, about yourself, about putting yourself out there)?",key:"v3p2",ph:"e.g. I still hate watching myself back. Like physically uncomfortable. I don't know if that goes away or if you just learn to tolerate it"},
-      {label:"What would you tell someone who's watching you do this and thinking about starting themselves?",hint:"Not advice. Not motivation. Just the honest truth from someone who's a few days ahead of them. What do you know now that you didn't know before Video 1?",key:"v3p3",ph:"e.g. I'd tell them the first video is the hardest one, not because of the filming, but because it makes real something you've been keeping theoretical for a long time"}
+      {label:"Tell me about one specific moment when your old pattern showed up while you were making or posting these videos.",hint:"A real scene, not a progress summary. What happened, where were you, and what did the old version of you normally do in that moment?",key:"v3p0",ph:"Describe the exact moment and the old reaction it triggered."},
+      {label:"What did you actually do differently this time?",hint:"Make the change observable. What did you click, say, leave alone, finish, post, or stop yourself from doing? Small behavioral proof is stronger than saying you felt more confident.",key:"v3p1",ph:"Describe the different action you took, even if it felt minor."},
+      {label:"What happened because you acted differently, and what did that reveal?",hint:"The result can be internal or external. Use only what really happened. Do not invent comments, views, messages, or praise if there were none.",key:"v3p2",ph:"Describe the real consequence and what made it surprising."},
+      {label:"Where is the old pattern still winning? What's still difficult even after this small shift?",hint:"This is the road of trials, not the finish line. Name the remaining resistance specifically so the win feels honest and the fall in Video 5 can be earned.",key:"v3p3",ph:"Describe the part that still has not become easy."}
     ],
-    compile:v=>`What's surprised me: ${v.v3p0||'___'}. One small shift: ${v.v3p1||'___'}. What's still hard: ${v.v3p2||'___'}. What I'd tell someone starting: ${v.v3p3||'___'}.`
+    compile:v=>`The specific trial: ${v.v3p0||'___'}. What I did differently: ${v.v3p1||'___'}. What happened and what it revealed: ${v.v3p2||'___'}. Where the old pattern is still winning: ${v.v3p3||'___'}.`
   },
   {
     title:"The Fall",
@@ -2214,13 +2215,13 @@ const level2Videos = [
   },
   {
     title:"The Origin Story",
-    note:"Your audience doesn't just want to know what you do. They want to understand how you became someone who knows this. This video tells the origin: how you got here, what you've seen, and why you can't stop caring about it.",
+    note:"Your audience needs to understand the path that formed what you know. Stay with the detour, wound, obsession, or unlikely chapter before you understood its professional meaning. This is the origin, not the industry lesson yet.",
     prompts:[
       {label:"How did you get into this? Not the professional version. The real story of how you ended up knowing what you know.",hint:"Maybe it was accidental. Maybe you were trying to solve your own problem. Maybe someone else's problem landed in your lap and you realized you were good at this. What actually happened?",key:"v1p0",ph:"e.g. I got into this because my sister was drowning in debt after her divorce and I helped her build a plan that got her out in 18 months. Her friends started asking me for help. Then their friends."},
-      {label:"What's the thing you've noticed that most people get wrong about your area of expertise?",hint:"The mistake you see over and over. The bad advice that makes you cringe. The thing you wish you could shake people and tell them. You don't need to name names. Just describe what you see happening.",key:"v1p1",ph:"e.g. everyone thinks the problem is discipline. It's not. Most people's money problems aren't math problems. They're emotional regulation problems wearing a math costume."},
-      {label:"Why does this matter to you personally (not professionally)?",hint:"Strip away the business angle entirely. Why do you CARE about this? What's the deeper reason this topic or this work gets under your skin in a way you can't ignore?",key:"v1p2",ph:"e.g. because I grew up watching money destroy my parents' marriage and I know it doesn't have to be like that."}
+      {label:"What detour, wound, obsession, or unlikely chapter shaped the way you understand this work?",hint:"The part of the story that may not look professional on paper but changed what you notice, care about, or do differently. Give one concrete detail.",key:"v1p1",ph:"Describe the chapter that formed your lens before you had language for it."},
+      {label:"What did you misunderstand about that path at the time, or why did you resist seeing it as part of your expertise?",hint:"Stay inside the earlier perspective. Maybe it looked like wasted time, failure, a side interest, or something that did not count. Save the clean professional reframe for Video 3.",key:"v1p2",ph:"Describe what you believed about that path before its meaning became clear."}
     ],
-    compile:v=>`How I got into this: ${v.v1p0||'___'}. What most people get wrong: ${v.v1p1||'___'}. Why it matters personally: ${v.v1p2||'___'}.`
+    compile:v=>`How I got into this: ${v.v1p0||'___'}. The unlikely chapter that shaped my lens: ${v.v1p1||'___'}. What I misunderstood or resisted about that path: ${v.v1p2||'___'}.`
   },
   {
     title:"The First Epiphany",
@@ -2235,15 +2236,15 @@ const level2Videos = [
     compile:v=>`What 'everyone knows' that I think is wrong: ${v.v2p0||'___'}. When I first saw the cracks: ${v.v2p1||'___'}. What's actually true: ${v.v2p2||'___'}. What it costs people to follow the old way: ${v.v2p3||'___'}. Why this needs to be said: ${v.v2p4||'___'}.`
   },
   {
-    title:"The Progress Signal",
-    note:"You're in the middle of this challenge. Report honestly from there. Not a performance of progress. Actual progress. What surprised you, what's working, what's still hard, and what you're starting to understand.",
+    title:"The Road Of Trials",
+    note:"Your first professional epiphany now has to survive public practice. Show one concrete collision between your expert instincts and the new behavior visibility required. Authority comes from how you read the trial, not from teaching or reporting progress.",
     prompts:[
-      {label:"What's surprised you about trying to communicate your expertise on camera? What's different about it than you expected?",hint:"Maybe you realized how hard it is to be simple. Maybe you discovered that the thing you thought was your main message isn't actually what resonates. Maybe doing this publicly is teaching you something about your own expertise that you didn't see before.",key:"v3p0",ph:"e.g. I assumed the hard part would be the camera. It's not. The hard part is figuring out what to leave out. I know too much and I'm still learning how to be concise without losing the point."},
-      {label:"What's one moment or result so far that made you think 'okay, this is actually working,' even if it was small?",hint:"A comment from the right kind of person. A conversation that started because of a video. A moment where you explained something and it landed better than you expected. Something that showed you there's traction here.",key:"v3p1",ph:"e.g. someone I've never met messaged me after Video 2 to say they'd been thinking about what I said for two days. That was the moment I stopped wondering if this was worth doing."},
-      {label:"What's still hard about this? What are you still wrestling with (about the content, about showing up, about putting your knowledge out there?",hint:"The real friction. Maybe it's the vulnerability of being visible. Maybe it's the gap between what you know and how to say it concisely. Maybe it's imposter syndrome showing up even though you KNOW you're good at this. Name it.",key:"v3p2",ph:"e.g. the thing I'm still wrestling with is the gap between how clearly I can think through this with a client and how fuzzy it feels when I try to say it into a camera in two minutes."},
-      {label:"What are you starting to understand about your audience, your message, or yourself that you didn't understand before this challenge?",hint:"A few days of putting yourself out there teaches you things that years of planning never could. What's becoming clearer? About who responds to you, about what you actually want to say, about how this could grow into something real?",key:"v3p3",ph:"e.g. I'm starting to understand that the people who need me most aren't the ones I was picturing — they're quieter, more self-aware, and they're looking for permission to trust what they already know, not more information."}
+      {label:"Tell me about one specific moment when your usual expert instinct showed up while you were communicating publicly.",hint:"A real scene. What were you tempted to overexplain, hide, control, perfect, dismiss, or avoid? What would you normally have done?",key:"v3p0",ph:"Describe the exact public moment and the expert habit it triggered."},
+      {label:"What did you actually do differently this time?",hint:"Make the change observable. What did you simplify, say plainly, leave imperfect, publish, ask, or allow the audience to see?",key:"v3p1",ph:"Describe the different action you took in that moment."},
+      {label:"What happened because you acted differently, and what did it reveal about your expertise or communication?",hint:"Use only a real result. It can be something you noticed internally; you do not need a client, comment, message, metric, or public response.",key:"v3p2",ph:"Describe the real consequence and what made it unexpected."},
+      {label:"What is still difficult about being seen doing this work, even after that small win?",hint:"Name the remaining friction specifically. This is a trial, not proof that visibility is solved, and the unresolved cost prepares the fall in Video 5.",key:"v3p3",ph:"Describe where the old expert pattern still has a hold on you."}
     ],
-    compile:v=>`What surprised me about doing this: ${v.v3p0||'___'}. One moment traction showed up: ${v.v3p1||'___'}. What's still hard: ${v.v3p2||'___'}. What I'm learning about my audience, message, or myself: ${v.v3p3||'___'}.`
+    compile:v=>`The specific public trial: ${v.v3p0||'___'}. What I did differently: ${v.v3p1||'___'}. What happened and what it revealed: ${v.v3p2||'___'}. What is still difficult about being seen: ${v.v3p3||'___'}.`
   },
   {
     title:"The Fall",
@@ -2878,12 +2879,12 @@ async function showScriptView(idx, skipLoading) {
 const VIDEO_RATIONALE = [
   // V1 — Still in the Ordinary World
   'WHERE WE ARE: The very first step of the Hero\'s Journey, still in the Ordinary World. The hero hasn\'t crossed the threshold yet. This is the moment before everything changes. Your audience sees themselves in you because you haven\'t become anything yet. You\'re just starting, exactly like they want to.',
-  // V2 — Crossing the Threshold / Meeting the Mentor
-  'WHERE WE ARE: Crossing the Threshold. The audience said yes to following you in Video 1. Now they need to know who they actually said yes to. This is where the bond forms, not through impressiveness, but through specificity. The more real the details, the more they feel like they know you.',
-  // V3 — The Road of Trials (First Epiphany)
-  'WHERE WE ARE: The Road of Trials, the crown jewel. The hero has entered a new world and faces their first real challenge: the challenge of a stuck belief. This video doesn\'t teach. It restructures how your audience sees something they thought they already understood. This is the one that gets shared.',
-  // V4 — Approaching the Innermost Cave
-  'WHERE WE ARE: Approaching the Innermost Cave. The hero is deep in the journey now, past the easy part, not yet at the breakthrough. This video is where trust compounds. Showing the real texture of what\'s happening (not a highlight reel) builds more credibility than any success story could.',
+  // V2 — Ordinary World / Refusal of the Call
+  'WHERE WE ARE: Still in the Ordinary World. The audience sees the life, detour, obsession, or frustration that was shaping you before you knew what it meant. This is an identity clue, not the final lesson. They should notice the hidden thread and wonder why you did not follow it sooner.',
+  // V3 — First Epiphany
+  'WHERE WE ARE: The first Epiphany. One old belief meets an experience it cannot explain, and the viewer watches a new lens become inevitable. This is the first win, not final wisdom. It gives the hero momentum and gives the audience a way to see something familiar differently.',
+  // V4 — Road of Trials
+  'WHERE WE ARE: The Road of Trials, exactly halfway through the journey. The first insight now has to survive behavior. One old pattern collides with one new action, creating a small win while something real remains difficult. The audience trusts the change because they can see it being tested.',
   // V5 — The Fall / Ordeal
   'WHERE WE ARE: The Fall. The first breakthrough was real, but it did not erase the deeper fear. This is where the hero names the thing they have been avoiding and lets the audience see the cost of the journey.',
   // V6 — Finding the Elixir
