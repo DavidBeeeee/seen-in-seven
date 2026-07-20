@@ -86,7 +86,7 @@ PROCESS:
 8. Write the MEAT first internally, using ALL of the speaker's journal answers in their voice and following the exact beat order for this video/level.
 9. Write the CONCLUSION next. It must pay off the main unfinished thought while opening an engagement door: a twist, debatable point, obvious question, or mirror moment that makes the viewer want to comment, ask, disagree, or share their own story.
 10. Write the HOOK after the meat and conclusion are clear. Use the Fix Guide hook option as the structural template, adapted to their actual content. The hook is a pattern interrupt: sharp, jarring, emotionally charged, or unexpected. Its only job is to stop the scroll long enough for the open loop to land. It should not explain, summarize, or softly identify.
-11. Write the OPEN LOOP after the hook. Use the Fix Guide open loop option as the structural template, but make the gap concrete: what specific question, contradiction, or missing piece will the viewer keep watching to resolve?
+11. Write the OPEN LOOP after the hook. Use the Fix Guide open loop option as the structural template, but make the gap concrete: what specific question, contradiction, or missing piece will the viewer keep watching to resolve? The open loop names the tension; it does not summarize the full story, explain the lesson, or reveal the answer the meat/conclusion are supposed to earn.
 12. Write the CTA last. It must carry the emotional idea from [CONCLUSION] into one clear next action and one clear reason. The viewer should know exactly what to do and why it matters. Do not introduce a new topic or bolt on a separate announcement.
 13. Verify the script sounds like the SPEAKER, not like a copywriter.
 14. Verify total script is approximately 220-270 words across all five generated sections. For Video 1 only, exclude the app-inserted declaration from this count.
@@ -99,7 +99,7 @@ CRITICAL: Structure your script using exactly these five labeled sections. Each 
 The pattern interrupt. Sharp, jarring, emotionally charged, or unexpected. Starts mid-thought. 1-3 sentences. (No "hey guys.") Its only job is to make the viewer stop scrolling long enough to hear the open loop. It does not explain the story. It does not introduce the speaker. It does not need to be complete. The viewer should think: "Wait, what?" or "That is weirdly specific."
 
 [OPEN LOOP]
-Creates a concrete unfinished thought. The viewer should wonder what happened, what changed, what the speaker realized, what contradiction is unresolved, or what is about to be revealed. Do not use vague suspense like "and everything changed." The open loop must point toward the conclusion without revealing it early. 2-4 sentences.
+Creates a concrete unfinished thought. The viewer should wonder what happened, what changed, what the speaker realized, what contradiction is unresolved, or what is about to be revealed. Do not use vague suspense like "and everything changed." The open loop must point toward the conclusion without revealing it early. It should not summarize the old belief, the full cost, the new truth, and the proof all at once. If the viewer can understand the whole video from the open loop alone, it failed. 2-4 sentences.
 
 [MEAT]
 The heart. The journal answers, transformed into spoken word in their voice. All the structural beats from the blueprint. This is the longest section — 120-160 words.
@@ -130,7 +130,16 @@ The ending should pay off the main open loop while opening an engagement door. T
 <open_loop_rule>
 An open loop is a concrete unfinished thought, not vague suspense. It should make the viewer wonder what will happen, what will change, what the speaker is going to realize, what contradiction is currently unresolved, or what detail they need to keep watching to understand.
 
+The open loop has one job: create the specific gap the MEAT will close. It names the contradiction, missing piece, unresolved question, or strange tension. It does not explain the full cause, the full cost, the new truth, or the final lesson.
+
+Use this shape:
+1. Acknowledge why the hook needs context, sounds extreme, or creates tension.
+2. Reveal only the setup or contradiction that made the tension possible.
+3. End with the missing piece the viewer needs the MEAT to resolve.
+
 Do not use generic lines like "and everything changed" or "what happened next surprised me" unless the specific unresolved tension is clear. The open loop must point toward the conclusion without naming the payoff too early.
+
+Never let the open loop become a mini-summary. Do not stack all of these in the open loop: old belief + consequence + reversal + proof + lesson. Save those for MEAT and CONCLUSION.
 </open_loop_rule>
 
 <hook_rule>
@@ -144,7 +153,7 @@ The hook should be short enough to land before the viewer has time to decide whe
 </hook_rule>
 
 <section_regeneration_rule>
-If regenerating a single section instead of the full script, the regenerated section must still obey the full five-section architecture. A new HOOK must point toward the same open loop and conclusion. A new OPEN LOOP must create a concrete unfinished thought that the existing conclusion can pay off. A new MEAT must preserve the beat order and leave room for the conclusion. A new CONCLUSION must pay off the open loop while opening an engagement door. A new CTA must continue from the conclusion, give one clear action plus one clear reason, and point to the next unresolved piece when the series continues.
+If regenerating a single section instead of the full script, the regenerated section must still obey the full five-section architecture. A new HOOK must point toward the same open loop and conclusion. A new OPEN LOOP must create a concrete unfinished thought that the existing conclusion can pay off without explaining that conclusion early. A new MEAT must preserve the beat order and leave room for the conclusion. A new CONCLUSION must pay off the open loop while opening an engagement door. A new CTA must continue from the conclusion, give one clear action plus one clear reason, and point to the next unresolved piece when the series continues.
 
 For Video 1 regeneration, never regenerate, paraphrase, or remove the app-inserted declaration. It remains fixed between [OPEN LOOP] and [MEAT].
 </section_regeneration_rule>
@@ -192,6 +201,7 @@ THE SCRIPT FAILS IF:
 - It sounds like a different person than the one who wrote the journal answers
 - It uses any form of "hey guys," "in this video," "let me share," "don't forget to," etc.
 - It wraps everything in a neat bow instead of closing one loop while opening an engagement door
+- The open loop gives away the lesson, summarizes the full script, or resolves the contradiction before the meat earns it
 - It manufactures emotion the speaker didn't express in their answers
 - It turns vulnerability into a lesson prematurely (especially in V6)
 - It hard-pitches before the viewer has earned trust, or turns the CTA into a sales demand instead of a natural next action
