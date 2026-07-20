@@ -173,6 +173,7 @@ When it sounds natural, the CTA may name the series context so a cold viewer und
 Do not introduce a totally new topic in the CTA.
 Do not make the CTA sound like a label, ad, or system instruction.
 Do not let the CTA resolve the story. It should convert the conclusion into one clear next action.
+Do not use stock transition phrases like "if that landed," "stick around," or "hit follow" unless the speaker actually talks that way. Generate the CTA from the specific conclusion, not from memorized social media phrasing.
 
 Match the CTA to the engagement ending:
 - TWIST ending: pull them into the next video or next reveal.
@@ -217,6 +218,7 @@ THE SCRIPT FAILS IF:
 - It manufactures emotion the speaker didn't express in their answers
 - It turns vulnerability into a lesson prematurely (especially in V5)
 - It hard-pitches before the viewer has earned trust, or turns the CTA into a sales demand instead of a natural next action
+- It repeats stock CTA language from the blueprint instead of creating a specific action and reason from the speaker's actual conclusion
 - It reads like a script instead of sounding like a person talking
 </quality_standards>
 </global_rules>
@@ -276,8 +278,8 @@ For Video 1 of BOTH levels, the speaker's name introduction and challenge declar
 - [MEAT] must start AFTER the identity introduction — open with a transition sentence that leads directly into the empathy lock (their specific blocker)
 - The video's final structure for the viewer is: [HOOK] → [OPEN LOOP] → [DECLARATION — pre-written] → [MEAT] → [CONCLUSION] → [CTA]
 
-THE FIX GUIDE — THESE ARE NON-NEGOTIABLE STRUCTURAL TEMPLATES:
-The hook, open loop, conclusion, and CTA patterns below are not suggestions — they are the tested structural templates for this video/level combination. Use one listed pattern for each section as your structural model, adapted to the speaker's actual content. The brackets indicate placeholders to fill with their real language. Never use a hook, open loop, conclusion, or CTA from a different video/level combination.
+THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
+The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should interrupt the viewer's scroll with a sharp jolt, the open loop should give them a concrete reason to stay, the conclusion should pay off that unfinished thought with a meaning turn or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
@@ -337,8 +339,8 @@ Do not let the meat or conclusion fully explain the lesson hidden inside the thr
 
 PROMPTS (L1): 1) Where from + one shaping detail, 2) Something surprising about them, 3) What they care about and why it's worth talking about
 
-THE FIX GUIDE — THESE ARE NON-NEGOTIABLE STRUCTURAL TEMPLATES:
-The hook, open loop, conclusion, and CTA patterns below are not suggestions — they are the tested structural templates for this video/level combination. Use one listed pattern for each section as your structural model, adapted to the speaker's actual content. The brackets indicate placeholders to fill with their real language. Never use a hook, open loop, conclusion, or CTA from a different video/level combination.
+THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
+The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should interrupt the viewer's scroll with a sharp jolt, the open loop should give them a concrete reason to stay, the conclusion should pay off that unfinished thought with a meaning turn or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
@@ -394,8 +396,8 @@ SECTION MAP FOR VIDEO 3:
 
 PROMPTS (L1): 1) Old belief held for a long time, 2) The actual experience that cracked it, 3) New truth stated simply, 4) Cost of the old way, 5) Why this matters enough to say on camera
 
-THE FIX GUIDE — THESE ARE NON-NEGOTIABLE STRUCTURAL TEMPLATES:
-The hook, open loop, conclusion, and CTA patterns below are not suggestions — they are the tested structural templates for this video/level combination. Use one listed pattern for each section as your structural model, adapted to the speaker's actual content. The brackets indicate placeholders to fill with their real language. Never use a hook, open loop, conclusion, or CTA from a different video/level combination.
+THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
+The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should interrupt the viewer's scroll with a sharp jolt, the open loop should give them a concrete reason to stay, the conclusion should pay off that unfinished thought with a meaning turn or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
@@ -434,8 +436,8 @@ THIS VIDEO EARNS THE RIGHT FOR VIDEO 5. Without the road of trials, the fall fee
 
 PROMPTS (L1): 1) What surprised them, 2) One small shift, 3) What's still hard, 4) What they'd tell someone thinking about starting
 
-THE FIX GUIDE — THESE ARE NON-NEGOTIABLE STRUCTURAL TEMPLATES:
-The hook, open loop, conclusion, and CTA patterns below are not suggestions — they are the tested structural templates for this video/level combination. Use one listed pattern for each section as your structural model, adapted to the speaker's actual content. The brackets indicate placeholders to fill with their real language. Never use a hook, open loop, conclusion, or CTA from a different video/level combination.
+THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
+The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should interrupt the viewer's scroll with a sharp jolt, the open loop should give them a concrete reason to stay, the conclusion should pay off that unfinished thought with a meaning turn or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
@@ -443,7 +445,7 @@ VIDEO 4, LEVEL 1: Tone = Grounded, relaxed, mid-process honesty (Iron & Wine "Na
 HOOK patterns: "I thought this would get less awkward by now. It got more honest instead." / "The weird part about showing up consistently is that confidence was not the first thing that changed."
 OPEN LOOP patterns: "Which would be discouraging — except something else is happening that I didn't expect." / "Here's what I can't figure out yet: why does [specific hard thing] still feel hard when [specific win] is getting easier?"
 CONCLUSION patterns: "So no, I don't feel confident yet. But I do feel less willing to disappear, and I think that might be the actual progress." / "Maybe the middle doesn't feel like momentum while you're in it. Maybe it just feels like not quitting on the weird day."
-CTA patterns: "Follow because I'm in the middle of this and I don't know how it ends — and next video I'm showing you what's still actually hard." / "If this is landing, follow because there are three more of these and they get more honest each time."
+CTA guidance: Continue from the progress landing into the next unresolved difficulty. Invite follow, comment, or watch-next because the challenge is still unfolding and the next video reveals what is still genuinely hard.
 </l1_v4_rules>
 
 <l1_v5_rules>
@@ -476,8 +478,8 @@ LEVEL 1 SPECIFIC: The fear, doubt, or struggle that's been present the whole cha
 
 PROMPTS (L1): 1) The unsaid thing they've been carrying, 2) Where it comes from — the root, 3) What becomes possible without it, 4) Message to someone fighting the same battle
 
-THE FIX GUIDE — THESE ARE NON-NEGOTIABLE STRUCTURAL TEMPLATES:
-The hook, open loop, conclusion, and CTA patterns below are not suggestions — they are the tested structural templates for this video/level combination. Use one listed pattern for each section as your structural model, adapted to the speaker's actual content. The brackets indicate placeholders to fill with their real language. Never use a hook, open loop, conclusion, or CTA from a different video/level combination.
+THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
+The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should interrupt the viewer's scroll with a sharp jolt, the open loop should give them a concrete reason to stay, the conclusion should pay off that unfinished thought with a meaning turn or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
@@ -485,7 +487,7 @@ VIDEO 5, LEVEL 1: Tone = Quiet, slow, every word matters (Yann Tiersen "Comptine
 HOOK patterns: "I've made it this far and still haven't said the thing I think about every single day." / "There's a voice that starts talking right before I hit post. It says [specific fear from their answers]. I've been trying to ignore it. Today I'm naming it."
 OPEN LOOP patterns: "I've shown up, answered the prompts, filmed the videos. But here's the part I haven't said out loud." / "The question I keep coming back to, the one I can't shake, is this: [deepest fear/doubt from their answers]."
 CONCLUSION patterns: "Naming it didn't make it go away. It just made it harder for that fear to pretend it was wisdom." / "I don't have the clean lesson yet. I just know [specific fear] has been louder than it deserves to be."
-CTA patterns: "Follow because next video is what I found after finally saying this out loud." / "If you've heard that same voice, comment or follow because the next one is about what changes when you stop letting it make the decisions."
+CTA guidance: Connect the unresolved fear to the next video. Invite follow, comment, or watch-next because Video 6 reveals what changed after naming the thing they had been avoiding.
 </l1_v5_rules>
 
 <l1_v6_rules>
@@ -528,8 +530,8 @@ SECTION MAP FOR VIDEO 6:
 
 PROMPTS (L1): 1) Belief most would disagree with, 2) Experience that forced this belief, 3) Cost of the old way, 4) What opened up after letting go, 5) What they'd say to one specific person still stuck
 
-THE FIX GUIDE — THESE ARE NON-NEGOTIABLE STRUCTURAL TEMPLATES:
-The hook, open loop, conclusion, and CTA patterns below are not suggestions — they are the tested structural templates for this video/level combination. Use one listed pattern for each section as your structural model, adapted to the speaker's actual content. The brackets indicate placeholders to fill with their real language. Never use a hook, open loop, conclusion, or CTA from a different video/level combination.
+THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
+The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should interrupt the viewer's scroll with a sharp jolt, the open loop should give them a concrete reason to stay, the conclusion should pay off that unfinished thought with a meaning turn or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
@@ -578,8 +580,8 @@ CRITICAL FOR L2: Prompt 4 asks "what do you still need?" The speaker names their
 
 PROMPTS (L1): 1) What they expected vs. reality, 2) What actually happened, 3) One truth they now know, 4) Message to someone where they were 7 videos ago, 5) What's next — the direction
 
-THE FIX GUIDE — THESE ARE NON-NEGOTIABLE STRUCTURAL TEMPLATES:
-The hook, open loop, conclusion, and CTA patterns below are not suggestions — they are the tested structural templates for this video/level combination. Use one listed pattern for each section as your structural model, adapted to the speaker's actual content. The brackets indicate placeholders to fill with their real language. Never use a hook, open loop, conclusion, or CTA from a different video/level combination.
+THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
+The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should interrupt the viewer's scroll with a sharp jolt, the open loop should give them a concrete reason to stay, the conclusion should pay off that unfinished thought with a meaning turn or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
@@ -647,8 +649,8 @@ For Video 1 of BOTH levels, the speaker's name introduction and challenge declar
 - Your [OPEN LOOP] should end with emotional tension that makes the declaration feel like a natural next step, not a gear shift
 - The video's final structure for the viewer is: [HOOK] → [OPEN LOOP] → [DECLARATION — pre-written] → [MEAT] → [CONCLUSION] → [CTA]
 
-THE FIX GUIDE — THESE ARE NON-NEGOTIABLE STRUCTURAL TEMPLATES:
-The hook, open loop, conclusion, and CTA patterns below are not suggestions — they are the tested structural templates for this video/level combination. Use one listed pattern for each section as your structural model, adapted to the speaker's actual content. The brackets indicate placeholders to fill with their real language. Never use a hook, open loop, conclusion, or CTA from a different video/level combination.
+THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
+The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should interrupt the viewer's scroll with a sharp jolt, the open loop should give them a concrete reason to stay, the conclusion should pay off that unfinished thought with a meaning turn or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
@@ -664,7 +666,7 @@ Option C (universal): "And I'm honestly not sure why I've been keeping this to m
 MEAT guidance: Open directly with their SPECIFIC BLOCKER — what has specifically kept an expert from showing up publicly (use their exact words from the "what's been stopping you" answer). The expert-specific empathy lock is different from a regular person's: it's "I have the knowledge, I just haven't made it visible" vs. "I don't know what to say." Then: why now, what shifted. Then: who needs to hear what they know. Never write the speaker's name or challenge announcement here — that's handled by the declaration. Never manufacture clients, results, or credentials they didn't provide.
 CONCLUSION patterns: "Being good at the work isn't enough if nobody who needs it can find you. I hate that that's true, but I think it is." / "I thought staying behind the scenes was humility. Now I'm wondering if it was just a more respectable name for hiding."
 CTA patterns — choose whichever fits what they actually provided. NEVER use Option A if they didn't mention client work:
-Option A (ONLY if they mentioned client work): "Stick around because I'm testing whether the way I work with clients one-on-one actually works on camera — and I'm showing you the whole experiment."
+Option A (ONLY if they mentioned client work): "Follow because I'm testing whether the way I work with clients one-on-one actually works on camera — and I'm showing you the whole experiment."
 Option B (universal): "Follow because this is the first of seven videos where I stop hiding behind [their work/expertise/the scenes] and actually show up here."
 Option C (universal): "Follow because this is seven videos, starting today, and I do not know how this ends yet."
 </l2_v1_rules>
@@ -698,8 +700,8 @@ LEVEL 2 SPECIFIC: "About My Expertise" — the origin story of how they became s
 
 PROMPTS (L2): 1) Real story of how they got into this, 2) What most people get wrong in their space, 3) Why this matters personally
 
-THE FIX GUIDE — THESE ARE NON-NEGOTIABLE STRUCTURAL TEMPLATES:
-The hook, open loop, conclusion, and CTA patterns below are not suggestions — they are the tested structural templates for this video/level combination. Use one listed pattern for each section as your structural model, adapted to the speaker's actual content. The brackets indicate placeholders to fill with their real language. Never use a hook, open loop, conclusion, or CTA from a different video/level combination.
+THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
+The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should interrupt the viewer's scroll with a sharp jolt, the open loop should give them a concrete reason to stay, the conclusion should pay off that unfinished thought with a meaning turn or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
@@ -707,7 +709,7 @@ VIDEO 2, LEVEL 2: Tone = Origin-story pacing, building momentum (The War on Drug
 HOOK patterns: "I didn't plan to become the person who knows about [topic]. I planned to be a [completely different thing]. Then [origin moment] happened." / "The best thing I ever did for my expertise was almost quit it entirely. Here's why."
 OPEN LOOP patterns: "I was [specific location/situation] when something shifted that I didn't recognize at the time." / "But there was a pattern underneath that moment that took me years to name."
 CONCLUSION patterns: "I used to treat that detour like proof I was late. Now I think it might be the reason I understand this the way I do." / "The part of my story I kept trying to edit out might be the part that made the work useful in the first place."
-CTA patterns: "Stick around because next video I'm naming the one thing most people in my field get wrong — the thing that kept me stuck for years." / "If you've ever felt like the 'expert' label never quite fit, follow because you're exactly who I'm making these for."
+CTA guidance: Continue from the origin landing into the next belief, mistake, myth, or misunderstanding. Invite follow, comment, or watch-next because the next video reveals the idea their origin taught them to question.
 </l2_v2_rules>
 
 <l2_v3_rules>
@@ -755,8 +757,8 @@ SECTION MAP FOR VIDEO 3:
 
 PROMPTS (L2): 1) Conventional wisdom that's wrong/incomplete, 2) Story of when they saw the cracks, 3) What's actually true instead, 4) Cost to people who follow the old way, 5) Why this needs to be said
 
-THE FIX GUIDE — THESE ARE NON-NEGOTIABLE STRUCTURAL TEMPLATES:
-The hook, open loop, conclusion, and CTA patterns below are not suggestions — they are the tested structural templates for this video/level combination. Use one listed pattern for each section as your structural model, adapted to the speaker's actual content. The brackets indicate placeholders to fill with their real language. Never use a hook, open loop, conclusion, or CTA from a different video/level combination.
+THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
+The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should interrupt the viewer's scroll with a sharp jolt, the open loop should give them a concrete reason to stay, the conclusion should pay off that unfinished thought with a meaning turn or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
@@ -795,8 +797,8 @@ THIS VIDEO EARNS THE RIGHT FOR VIDEO 5. Without the road of trials, the fall fee
 
 PROMPTS (L2): 1) What surprised them about communicating expertise, 2) One moment/result that showed traction, 3) What's still hard, 4) What they're understanding about audience/message/self
 
-THE FIX GUIDE — THESE ARE NON-NEGOTIABLE STRUCTURAL TEMPLATES:
-The hook, open loop, conclusion, and CTA patterns below are not suggestions — they are the tested structural templates for this video/level combination. Use one listed pattern for each section as your structural model, adapted to the speaker's actual content. The brackets indicate placeholders to fill with their real language. Never use a hook, open loop, conclusion, or CTA from a different video/level combination.
+THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
+The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should interrupt the viewer's scroll with a sharp jolt, the open loop should give them a concrete reason to stay, the conclusion should pay off that unfinished thought with a meaning turn or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
@@ -804,7 +806,7 @@ VIDEO 4, LEVEL 2: Tone = Analytical, pattern-focused, thoughtful (Tycho "A Walk"
 HOOK patterns: "The video I thought was too obvious is the one people needed most." / "I thought the algorithm was ignoring me. I think I was explaining the wrong thing."
 OPEN LOOP patterns: "At first I thought it was random. But then I noticed a pattern in which videos actually landed." / "I was about to dismiss it as luck. Then I looked closer at one [comment/response/moment] in particular."
 CONCLUSION patterns: "The weird part is, the videos that landed weren't the ones where I sounded the smartest. They were the ones where I sounded the most specific." / "I'm starting to think the algorithm wasn't the thing I needed to understand first. It was the moment someone decided, 'oh, this is for me.'"
-CTA patterns: "Stick around because next video I'm sharing what the responses actually taught me about who needs to hear this." / "Follow because most people think success on here is about the algorithm, and next video shows what it's actually about."
+CTA guidance: Continue from the progress landing into the next response pattern or audience realization. Invite follow, comment, or watch-next because the next video reveals what the responses taught them about who needs to hear this.
 </l2_v4_rules>
 
 <l2_v5_rules>
@@ -836,8 +838,8 @@ LEVEL 2 SPECIFIC: The internal war of claiming expertise publicly. Imposter synd
 
 PROMPTS (L2): 1) Internal battle about claiming expertise, 2) The specific fear, 3) Cost of staying small, 4) Why they're still here despite the doubt
 
-THE FIX GUIDE — THESE ARE NON-NEGOTIABLE STRUCTURAL TEMPLATES:
-The hook, open loop, conclusion, and CTA patterns below are not suggestions — they are the tested structural templates for this video/level combination. Use one listed pattern for each section as your structural model, adapted to the speaker's actual content. The brackets indicate placeholders to fill with their real language. Never use a hook, open loop, conclusion, or CTA from a different video/level combination.
+THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
+The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should interrupt the viewer's scroll with a sharp jolt, the open loop should give them a concrete reason to stay, the conclusion should pay off that unfinished thought with a meaning turn or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
@@ -845,7 +847,7 @@ VIDEO 5, LEVEL 2: Tone = Raw, intimate, almost uncomfortable (Damien Rice "The B
 HOOK patterns: "I've made it this far sounding like I know what I'm talking about. And I do. But here's the part I haven't said: [specific fear about claiming expertise from their answers]." / "The gap between what I know and who knows I know it? That gap has cost me [specific thing]. I haven't said that out loud before."
 OPEN LOOP patterns: "What staying small has cost me isn't just opportunity. It's something harder to name." / "I was about to make another excuse. Then [specific moment from their answers] made me stop."
 CONCLUSION patterns: "The uncomfortable truth is I can know this work deeply and still be scared to be seen knowing it. Both things are true." / "Maybe expertise doesn't remove the fear of being visible. Maybe it just gives you a better reason to stop obeying it."
-CTA patterns: "Stick around because next video is what I found after naming the thing I was avoiding." / "If this landed, follow because the next one is the truth I could not have said before this."
+CTA guidance: Connect the unresolved visibility fear to the next video. Invite follow, comment, or watch-next because Video 6 reveals the truth they could not have said before naming the thing they were avoiding.
 </l2_v5_rules>
 
 <l2_v6_rules>
@@ -888,8 +890,8 @@ SECTION MAP FOR VIDEO 6:
 
 PROMPTS (L2): 1) Biggest myth in their field, 2) Their own journey from believer to heretic, 3) The actual truth nobody says, 4) What it costs people who follow the myth, 5) Who needs to hear this and what changes for them
 
-THE FIX GUIDE — THESE ARE NON-NEGOTIABLE STRUCTURAL TEMPLATES:
-The hook, open loop, conclusion, and CTA patterns below are not suggestions — they are the tested structural templates for this video/level combination. Use one listed pattern for each section as your structural model, adapted to the speaker's actual content. The brackets indicate placeholders to fill with their real language. Never use a hook, open loop, conclusion, or CTA from a different video/level combination.
+THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
+The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should interrupt the viewer's scroll with a sharp jolt, the open loop should give them a concrete reason to stay, the conclusion should pay off that unfinished thought with a meaning turn or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
@@ -897,7 +899,7 @@ VIDEO 6, LEVEL 2: Tone = Done being polite, resolved, purposeful (The National "
 HOOK patterns: "There's a lie my industry tells itself every single day. I used to tell it too. Here's why I stopped." / "I watched the 'proven formula' cost people something worse than money."
 OPEN LOOP patterns: "The lie works because it's almost true. That's what makes it dangerous." / "It took me years to see why the formula kept failing — because I was blaming the wrong thing."
 CONCLUSION patterns: "I don't think [industry myth] is just wrong. I think it's expensive, because it makes good people solve the wrong problem for years." / "The more I look at it, the more I think [industry myth] survives because it flatters the people who benefit from it."
-CTA patterns: "Stick around because the final video is where I bring this back to what changes next." / "Comment if you have seen this too, because the final video is about what I am doing with this now."
+CTA guidance: Continue from the elixir into the final return. Invite follow, comment, or watch-next because the final video shows what changes now that the speaker can carry this truth forward.
 </l2_v6_rules>
 
 <l2_v7_rules>
@@ -938,8 +940,8 @@ CRITICAL FOR L2: Prompt 4 asks "what do you still need?" The speaker names their
 
 PROMPTS (L2): 1) What they were trying to prove and whether they proved it, 2) What this taught them about their expertise, 3) One thing they'd tell someone hiding behind their work, 4) What they still need — honestly, 5) The invitation to the right person
 
-THE FIX GUIDE — THESE ARE NON-NEGOTIABLE STRUCTURAL TEMPLATES:
-The hook, open loop, conclusion, and CTA patterns below are not suggestions — they are the tested structural templates for this video/level combination. Use one listed pattern for each section as your structural model, adapted to the speaker's actual content. The brackets indicate placeholders to fill with their real language. Never use a hook, open loop, conclusion, or CTA from a different video/level combination.
+THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
+The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Before choosing the final hook/open loop/conclusion/CTA, decide the engagement ending for this script: TWIST, DEBATE, QUESTION, or MIRROR. The hook should interrupt the viewer's scroll with a sharp jolt, the open loop should give them a concrete reason to stay, the conclusion should pay off that unfinished thought with a meaning turn or engagement trigger, and the CTA should tell the viewer exactly what to do because of that ending.
 
@@ -947,5 +949,5 @@ VIDEO 7, LEVEL 2: Tone = Expansive, horizon-looking, earned clarity (M83 "Outro"
 HOOK patterns: "I thought seven videos would prove I had something to say. That was the wrong question." / "The scary part wasn't putting my expertise out there. It was finding out people might actually need it."
 OPEN LOOP patterns: "I came into this wanting [original goal]. What I didn't expect was what I'd learn about my own work." / "The question I couldn't answer on Day 1 was: will anyone care? Here's what I figured out."
 CONCLUSION patterns: "I started this trying to prove [original goal]. What I actually proved is that my voice gets clearer when I stop hiding it from the people who need it." / "Seven videos later, the question isn't whether I have something to say. It's what changes now that I'm finally saying it where people can hear it."
-CTA patterns: "If that landed, reach out — because I'm only having a few conversations right now and you might be exactly who I'm looking for." / "If you're the person who's been hiding behind your work, follow or reach out because I made these seven for you."
+CTA guidance: Create a warm next relationship, not a hard pitch. Invite the right person to follow, reach out, ask a question, book, or start a conversation because the seven-video journey has made the invitation feel earned.
 </l2_v7_rules>`;
