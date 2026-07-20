@@ -349,8 +349,9 @@ function saveWorkspaceControls() {
 function setGenerationMode(mode, persist) {
   const selected = mode === 'production' ? 'production' : 'consistent';
   promptState.workspace.generationMode = selected;
-  promptEl('generation-mode-consistent').classList.toggle('active', selected === 'consistent');
-  promptEl('generation-mode-production').classList.toggle('active', selected === 'production');
+  document.querySelectorAll('[data-generation-mode-button]').forEach(button => {
+    button.classList.toggle('active', button.dataset.generationModeButton === selected);
+  });
   if (persist !== false) savePromptWorkspace();
 }
 
@@ -621,9 +622,11 @@ async function generateTest() {
   const systemPrompt = SISPromptEngine.buildSystemPrompt(extractSystemPrompt(source), level, video);
   const userMessage = promptEl('user-message-editor').value.trim();
   if (!userMessage) return showBanner('The test user message is empty.', true);
-  const button = promptEl('generate-button');
-  button.disabled = true;
-  button.textContent = 'Generating...';
+  const buttons = Array.from(document.querySelectorAll('[data-generate-test-button]'));
+  buttons.forEach(button => {
+    button.disabled = true;
+    button.textContent = 'Generating...';
+  });
   promptEl('result-meta').textContent = 'DeepSeek is writing a test. Nothing will be saved to the user.';
   promptEl('test-output').textContent = 'Generating test output...';
   promptEl('test-output').className = 'test-output empty-output';
@@ -668,8 +671,10 @@ async function generateTest() {
     promptEl('result-meta').textContent = 'Test failed';
     showBanner(error.message || 'Test generation failed.', true);
   } finally {
-    button.disabled = false;
-    button.textContent = 'Generate Test';
+    buttons.forEach(button => {
+      button.disabled = false;
+      button.textContent = 'Generate Test';
+    });
   }
 }
 
@@ -704,6 +709,68 @@ async function copyTestOutput() {
   if (!output) return showToast('No test output to copy');
   await navigator.clipboard.writeText(output);
   showToast('Test output copied');
+}
+
+function currentTesterSnapshot() {
+  const user = selectedUser();
+  const video = Number(promptEl('test-video').value || 1);
+  const level = Number(promptEl('test-level').value || 1);
+  const ob = user ? selectedOnboarding(user.id) : null;
+  const database = user ? databaseAnswers(user, ob, video, level) : {};
+  const mode = user ? currentPromptMode(user, video, level, database) : 'easy';
+  const answers = user ? answersForContext(user, ob, video, level, mode) : {};
+  const questions = user ? currentQuestionSet(user, ob, video, level, mode) : [];
+  const answerLines = questions.length
+    ? questions.map((question, index) => (index + 1) + '. ' + question.label + '\n' + (answers[question.key] || '(blank)'))
+    : ['No question answers loaded.'];
+  return {
+    user,
+    video,
+    level,
+    mode,
+    answersText: answerLines.join('\n\n'),
+    testCopy: promptEl('user-message-editor').value.trim(),
+    output: promptState.showRaw ? promptState.rawOutput : promptState.finalOutput
+  };
+}
+
+async function copyTestAnswers() {
+  const snapshot = currentTesterSnapshot();
+  if (!snapshot.user) return showToast('Choose a test user first');
+  const text = [
+    'SeenInSeven prompt tester answers',
+    'User: ' + displayUser(snapshot.user),
+    'Level ' + snapshot.level + ' | Video ' + snapshot.video + ' | ' + (snapshot.mode === 'extended' ? 'Extended' : 'Easy'),
+    '',
+    snapshot.answersText,
+    '',
+    '--- Test Copy ---',
+    snapshot.testCopy || '(blank)'
+  ].join('\n');
+  await navigator.clipboard.writeText(text);
+  showToast('Answers and test copy copied');
+}
+
+async function copyTroubleshootingPack() {
+  const snapshot = currentTesterSnapshot();
+  if (!snapshot.user) return showToast('Choose a test user first');
+  const text = [
+    'SeenInSeven prompt tester troubleshooting pack',
+    'User: ' + displayUser(snapshot.user),
+    'Level ' + snapshot.level + ' | Video ' + snapshot.video + ' | ' + (snapshot.mode === 'extended' ? 'Extended' : 'Easy'),
+    'Generation mode: ' + (promptState.workspace.generationMode === 'production' ? 'Production Preview' : 'Consistent Test'),
+    '',
+    '--- Answers ---',
+    snapshot.answersText,
+    '',
+    '--- Test Copy ---',
+    snapshot.testCopy || '(blank)',
+    '',
+    '--- Output ---',
+    snapshot.output || '(no output generated)'
+  ].join('\n');
+  await navigator.clipboard.writeText(text);
+  showToast('Answers and output copied');
 }
 
 function extractSystemPrompt(source) {
