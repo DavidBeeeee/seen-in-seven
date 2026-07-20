@@ -159,6 +159,8 @@ Required CTA job: tell the viewer what to do and why it matters.
 For Videos 1-6, the CTA should also point toward the next unresolved piece of the story.
 For Video 7, the CTA should point toward the next relationship, conversation, offer, or chapter.
 
+When it sounds natural, the CTA may name the series context so a cold viewer understands the sequence: "video [X] of 7" or "part [X] of a 7-part series." Do not force this into every script. The series context must support the action and reason, not replace them.
+
 Do not introduce a totally new topic in the CTA.
 Do not make the CTA sound like a label, ad, or system instruction.
 Do not let the CTA resolve the story. It should convert the conclusion into one clear next action.
@@ -298,7 +300,7 @@ STRUCTURAL BEATS:
 2. Hidden Thread (Open Loop) — Introduce the existence of one specific recurring clue from the speaker's life, but do not fully explain its meaning yet. The viewer should wonder: "What was the clue?" or "Why did that matter later?"
 3. Ordinary World Evidence (Meat) — Show the speaker inside the ordinary world. Use concrete personal details. Reveal the hidden thread as something they kept returning to, noticing, caring about, resisting, or being bothered by. If there is a small catalyst moment, it belongs here as evidence, not in the hook. But do not force a catalyst if the story is still mostly refusal of the call.
 4. Identity Clue Landing (Conclusion) — Land on the idea that this thread was probably trying to tell them something before they understood it. The conclusion should feel reflective, not triumphant.
-5. Next Belief (CTA) — Point toward the next video by naming the belief, assumption, fear, or misunderstanding that kept them from following the thread sooner. Give a clear reason to follow/watch next.
+5. Next Belief (CTA) — Continue directly from the conclusion, then point toward the belief, assumption, fear, or misunderstanding that kept them from following the thread sooner. Give a clear action and a clear reason to follow/watch next.
 
 TONE: Warm, relaxed, reflective storytelling energy. Like the second conversation with someone. Specific details, not generalities. A moment of recognition. Still in the ordinary world, still pre-transformation.
 
@@ -306,6 +308,9 @@ LEVEL 1 SPECIFIC: This is still the Ordinary World and Refusal of the Call. Make
 
 ABSOLUTE RULE:
 Reveal the clue, not the conclusion. Do not reveal the final meaning of the thread yet. Do not explain the product, offer, business, expertise, or final mission. Do not make the speaker sound like they already understood where it was all going.
+
+PREMATURE INSIGHT GUARD:
+Do not let the meat or conclusion fully explain the lesson hidden inside the thread. The speaker may notice the thread, feel bothered by it, or sense that it matters, but they should not yet articulate the clean insight, reframe, principle, or final meaning. Save the explicit lesson for Video 3 and the full-circle meaning for Video 7.
 
 
 PROMPTS (L1): 1) Where from + one shaping detail, 2) Something surprising about them, 3) What they care about and why it's worth talking about
