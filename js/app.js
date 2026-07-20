@@ -1451,17 +1451,17 @@ const INTRO_COPY = {
   },
   2: {
     L1: {
-      label: 'Video 2 of 7: The Turning Point',
-      title: 'Tell Them What Finally Moved You',
-      body: "People don't follow creators because of what they do. They follow them because of why they started. This video gives your audience a reason to root for you. You're not being dramatic. You're being honest about the moment everything shifted. That honesty is what turns a viewer into a follower.",
-      result: 'Inspiration',
+      label: "Video 2 of 7: Here's Who I Am",
+      title: 'Let Them Meet The Real You',
+      body: "Before people care where your story goes, they need to know the person living it. Share the background that shaped you, something people may not expect, and the thing you naturally keep caring about. You are not explaining the lesson yet. You are giving them a human reason to stay.",
+      result: 'Recognition',
       framework: [
-        {name:'Hook',                        trigger:'Catalyst Moment'},
-        {name:'The Internal Conflict',       trigger:'Vulnerability Entry'},
-        {name:'The False Solution',          trigger:'Enemy Identification'},
-        {name:'The Decision to Show Up',     trigger:'Agency Reclaim / Path Clarity'}
+        {name:'Hook',                 trigger:'Pattern Interrupt'},
+        {name:'Your Background',      trigger:'Human Context'},
+        {name:'The Unexpected Detail',trigger:'Identity Contrast'},
+        {name:'What You Care About',  trigger:'Recognition'}
       ],
-      triggers: ['Vulnerability Entry','Catalyst Moment','Enemy Identification','Agency Reclaim','Relatable Stakes','Path Clarity','Shared Mission']
+      triggers: ['Pattern Interrupt','Human Context','Identity Contrast','Recognition','Curiosity']
     },
     L2: {
       label: 'Video 2 of 7: The Origin Story',
@@ -1479,9 +1479,9 @@ const INTRO_COPY = {
   },
   3: {
     L1: {
-      label: 'Video 3 of 7: The First Epiphany',
-      title: "Say The Thing Most People Won't",
-      body: "Every person watching you held some version of the belief you're about to challenge. This video isn't about being controversial. It's about being the person who finally said the thing they'd been thinking but never heard out loud. One honest reframe, told through your real experience, is what builds intellectual trust.",
+      label: 'Video 3 of 7: What I Used To Think Was True',
+      title: 'Show Them What Changed Your Mind',
+      body: "Start with something you used to think was true and let the audience watch the old idea stop making sense. The script will build the realization from the experience and cost you describe, so the new truth feels discovered instead of announced.",
       result: 'Insight',
       framework: [
         {name:'Hook',                             trigger:'Pattern Break'},
@@ -1507,15 +1507,15 @@ const INTRO_COPY = {
   },
   4: {
     L1: {
-      label: 'Video 4 of 7: The Road of Trials',
-      title: 'Show What Changed Under Pressure',
-      body: "The first epiphany was a real win. Now it has to survive real life. This video shows one concrete place where your old pattern met a new behavior, what shifted, and what is still difficult. The audience trusts the change because they can see it being tested instead of hearing you announce it.",
+      label: "Video 4 of 7: Here's What It's Actually Been Like",
+      title: 'Tell The Truth From The Middle',
+      body: "The middle of a challenge is rarely a victory speech. Compare what you expected with what has actually happened, give one detail people can picture, and be honest about what is changing, what is still difficult, and why you are continuing.",
       result: 'Trust',
       framework: [
-        {name:'The Old Pattern',          trigger:'Behavioral Contrast'},
-        {name:'The New Behavior',         trigger:'Small Win Proof'},
-        {name:'What Is Still Hard',       trigger:'Real-Time Transparency'},
-        {name:'What The Trial Proves',    trigger:'Objection Pre-emption'}
+        {name:'Expected vs. Actual',       trigger:'Behavioral Contrast'},
+        {name:'The Real Detail',           trigger:'Concrete Proof'},
+        {name:'What Is Changing',          trigger:'Small Win Proof'},
+        {name:'What Is Still Hard',        trigger:'Real-Time Transparency'}
       ],
       triggers: ['Behavioral Contrast','Small Win Proof','Objection Pre-emption','Real-Time Transparency','Midpoint Orientation']
     },
@@ -1535,15 +1535,15 @@ const INTRO_COPY = {
   },
   5: {
     L1: {
-      label: 'Video 5 of 7: The Fall',
-      title: "Say The Thing You've Been Avoiding",
-      body: "The first breakthrough was real, but it doesn't magically erase the deeper fear. This is the honest middle of the journey: the doubt, the cost, the thing you've been carrying while still showing up. Saying it plainly is what makes the next insight earned.",
+      label: 'Video 5 of 7: The Hardest Part',
+      title: 'Tell The Part That Tested Everything',
+      body: "Return to the larger life story you have been telling. This is the difficult experience that came after your first realization: what happened, what felt at risk, what you tried, and what you still could not understand. Do not solve it yet. The unanswered part is what makes the next video matter.",
       result: 'Trust',
       framework: [
-        {name:'Hook',                 trigger:'The Admission'},
-        {name:'The Internal Battle',  trigger:'Shared Values'},
-        {name:'The Cost',             trigger:'Polarization'},
-        {name:'The Forward Lean',     trigger:'Ethical Bridge'}
+        {name:'Hook',                 trigger:'Charged Evidence'},
+        {name:'What Happened',        trigger:'The Ordeal'},
+        {name:'What Was At Risk',     trigger:'Human Stakes'},
+        {name:'What Stayed Unanswered',trigger:'Open Question'}
       ],
       triggers: ['The Internal Battle','Shared Values','The Admission','Polarization','Ethical Bridge']
     },
@@ -1563,15 +1563,15 @@ const INTRO_COPY = {
   },
   6: {
     L1: {
-      label: 'Video 6 of 7: The Second Epiphany',
-      title: 'Find The Elixir',
-      body: "After naming the harder truth, you can finally see what the journey has been teaching you. This is the deeper reframe: the truth that feels simple now, but only because you earned it by going through the fall.",
+      label: 'Video 6 of 7: What I See Differently Now',
+      title: 'Share The Bigger Realization',
+      body: "Now reveal what the hardest part eventually taught you. This realization should deepen the first one, not repeat it. Show how it became clear, how it changed your understanding of yourself, and what became different because you lived it.",
       result: 'Authority',
       framework: [
         {name:'Hook',                  trigger:'Earned Reversal'},
-        {name:'The Aftermath',         trigger:'Discovery Arc'},
-        {name:'The Elixir',            trigger:'Cognitive Reframe'},
-        {name:'The Carryable Truth',   trigger:'Simplicity Signal'}
+        {name:'How It Became Clear',   trigger:'Discovery Arc'},
+        {name:'The Bigger Realization',trigger:'Cognitive Reframe'},
+        {name:'What Changed',          trigger:'Simplicity Signal'}
       ],
       triggers: ['Earned Reversal','Discovery Arc','Cognitive Reframe','Aha Transfer','Cost Revelation','Simplicity Signal','Natural Invitation']
     },
@@ -1591,14 +1591,15 @@ const INTRO_COPY = {
   },
   7: {
     L1: {
-      label: 'Video 7 of 7: The Resolution',
-      title: 'Close The Arc. Open The Door.',
-      body: "This is the final video, and it's the most important one for building loyalty. You started this challenge as someone deciding to show up. You're finishing it as someone who did. That arc is the story. Share what this actually did for you, what surprised you, and leave the right person an honest open door.",
+      label: 'Video 7 of 7: What I Learned',
+      title: 'Show Who You Are Now',
+      body: "Bring the larger story home. Compare who you were before both realizations with who you are now, name what is still unfinished, and share what telling this story across seven videos helped you finally understand. Close this chapter without pretending the rest of your story is finished.",
       result: 'Loyalty',
       framework: [
         {name:'Hook',               trigger:'Full Circle Loop'},
-        {name:'The Internal Shift', trigger:'New Normal Declaration'},
-        {name:'The Final Lesson',   trigger:'Authority Affirmation'},
+        {name:'Who You Were',       trigger:'Identity Contrast'},
+        {name:'Who You Are Now',    trigger:'New Normal Declaration'},
+        {name:'What Remains',       trigger:'Honest Reflection'},
         {name:'The New Chapter',    trigger:'Unfolding Horizon'}
       ],
       triggers: ['Full Circle Loop','Narrative Satisfaction','New Normal Declaration','Reciprocity','Bridge to Forever','Authority Affirmation','Unfolding Horizon']
@@ -1619,21 +1620,31 @@ const INTRO_COPY = {
   }
 };
 
-const VIDEO_EASY_PROMPTS = [
-  null, // V1 uses pre-filled fields, no easy mode needed
-  // V2 — ORDINARY WORLD / ORIGIN
-  { label: 'What part of your past kept shaping you before you understood why?', hint: 'Describe the ordinary world you were in, the thread or unlikely chapter that kept showing up, and why you did not recognize or follow it yet.', key: 'easyAnswer_v1' },
-  // V3 — YOUR EPIPHANY
-  { label: 'What\'s a belief you held for a long time that turned out to be wrong?', hint: 'What cracked it open? Walk me through how you arrived at seeing it differently. The journey matters more than the conclusion.', key: 'easyAnswer_v2' },
-  // V4 — ROAD OF TRIALS
-  { label: 'Tell me about one moment when an old pattern met a new behavior.', hint: 'What happened, what would you normally have done, what did you do differently, what did that reveal, and what is still difficult?', key: 'easyAnswer_v3' },
-  // V5 — THE FALL
-  { label: 'What\'s something you\'ve been avoiding saying out loud?', hint: 'The thing that would make you feel most exposed. Not for shock. For honesty. The thing that makes the next lesson earned.', key: 'easyAnswer_v4' },
-  // V6 — THE ELIXIR
-  { label: 'What do you believe now that you couldn\'t have said before the fall?', hint: 'The deeper truth, reframe, or conviction you earned by naming the hard thing. Not a generic lesson. The truth you can carry forward.', key: 'easyAnswer_v5' },
-  // V7 — YOUR ELIXIR
-  { label: 'What did doing these 7 videos teach you that you didn\'t know at the start?', hint: 'The honest accounting. What changed? What would you tell yourself at the beginning? What do you want to give your audience?', key: 'easyAnswer_v6' },
-];
+const VIDEO_EASY_PROMPTS = {
+  1: [
+    null,
+    { label: 'What should someone know about your background, what makes you unexpected, and what you naturally care about?', hint: 'Share whatever feels most important. The AI will organize it into the story.', key: 'easyAnswer_v1' },
+    { label: 'What is one thing you used to think was true that is not true?', hint: 'Explain how it shaped you, what made you question it, and why the old way of thinking matters.', key: 'easyAnswer_v2' },
+    { label: 'What has making these videos actually been like so far?', hint: 'Compare it with what you expected, share one real detail, and include what is changing, what is still difficult, and why you are continuing.', key: 'easyAnswer_v3' },
+    { label: 'What was the hardest experience in this part of your life after your first realization?', hint: 'Describe what happened, what felt at risk, what you tried, and what remained unresolved before you understood the larger lesson.', key: 'easyAnswer_v4' },
+    { label: 'What larger truth did you discover because you lived through that difficult experience?', hint: 'Describe how you discovered it, what it changed in you, and who else may need to understand it.', key: 'easyAnswer_v5' },
+    { label: 'Who were you before these realizations, and who are you now?', hint: 'Describe what changed, what remains unfinished, what telling the story helped you understand, and where you go next.', key: 'easyAnswer_v6' }
+  ],
+  2: [
+    null,
+    { label: 'What part of your past kept shaping you before you understood why?', hint: 'Describe the ordinary world you were in, the thread or unlikely chapter that kept showing up, and why you did not recognize or follow it yet.', key: 'easyAnswer_v1' },
+    { label: 'What\'s a belief you held for a long time that turned out to be wrong?', hint: 'What cracked it open? Walk me through how you arrived at seeing it differently. The journey matters more than the conclusion.', key: 'easyAnswer_v2' },
+    { label: 'Tell me about one moment when an old pattern met a new behavior.', hint: 'What happened, what would you normally have done, what did you do differently, what did that reveal, and what is still difficult?', key: 'easyAnswer_v3' },
+    { label: 'What\'s something you\'ve been avoiding saying out loud?', hint: 'The thing that would make you feel most exposed. Not for shock. For honesty. The thing that makes the next lesson earned.', key: 'easyAnswer_v4' },
+    { label: 'What do you believe now that you couldn\'t have said before the fall?', hint: 'The deeper truth, reframe, or conviction you earned by naming the hard thing. Not a generic lesson. The truth you can carry forward.', key: 'easyAnswer_v5' },
+    { label: 'What did doing these 7 videos teach you that you didn\'t know at the start?', hint: 'The honest accounting. What changed? What would you tell yourself at the beginning? What do you want to give your audience?', key: 'easyAnswer_v6' }
+  ]
+};
+
+function getEasyPrompt(videoIdx, level) {
+  const prompts = VIDEO_EASY_PROMPTS[Number(level) === 2 ? 2 : 1];
+  return prompts[videoIdx] || null;
+}
 
 const videoPromptMode = {};
 const VIDEO_ANSWER_KEY_PATTERN = /^(?:v[0-6]p\d+|v0decl|easyAnswer_v[1-6])$/;
@@ -1712,17 +1723,12 @@ function buildPhase2ContextLines() {
   return lines;
 }
 
-const VIDEO_STORY_LABELS = [
-  'YOUR INTRODUCTION',   // V1
-  'YOUR ORIGIN',         // V2
-  'YOUR FIRST EPIPHANY', // V3
-  'YOUR ROAD OF TRIALS', // V4
-  'YOUR FALL',           // V5
-  'YOUR SECOND EPIPHANY',// V6
-  'YOUR RETURN',         // V7
-];
+const VIDEO_STORY_LABELS = {
+  1: ['YOUR INTRODUCTION', 'HERE\'S WHO I AM', 'WHAT I USED TO THINK WAS TRUE', 'WHAT IT\'S ACTUALLY BEEN LIKE', 'THE HARDEST PART', 'WHAT I SEE DIFFERENTLY NOW', 'WHAT I LEARNED'],
+  2: ['YOUR INTRODUCTION', 'YOUR ORIGIN', 'YOUR FIRST EPIPHANY', 'YOUR ROAD OF TRIALS', 'YOUR FALL', 'YOUR SECOND EPIPHANY', 'YOUR RETURN']
+};
 
-const VIDEO_STORY_BEATS = [
+const LEVEL_2_STORY_BEATS = [
   // V1 — YOUR INTRODUCTION
   ['Empathy Lock: your specific flavor of why you have not been doing this',
    'Why Now: what made this attempt matter today instead of someday',
@@ -1763,6 +1769,40 @@ const VIDEO_STORY_BEATS = [
    'The Gift: what you can now give the audience because you completed the journey',
    'The Next Chapter: the relationship, direction, or work that opens from here'],
 ];
+
+const VIDEO_STORY_BEATS = {
+  1: [
+    ['Empathy Lock: the specific reason you have not been posting',
+     'Why Now: why you are doing this challenge now instead of continuing to wait'],
+    ['Your Background: the part of your life that helps people understand you',
+     'The Unexpected Detail: the part of you that complicates the obvious first impression',
+     'What You Care About: what naturally keeps drawing your attention and why it matters'],
+    ['What You Thought Was True: the old idea and how it shaped real choices',
+     'What Made You Question It: the moment or evidence the old idea could not explain',
+     'The First Realization: the new lens the audience reaches through your story',
+     'Why It Matters: the quiet cost of continuing to think the old way'],
+    ['Expected vs. Actual: what you thought the experience would be and what it has really been',
+     'The Real Detail: one moment or behavior the audience can picture',
+     'What Is Changing: the small shift you are beginning to notice',
+     'What Is Still Hard: the unresolved part and why you are continuing'],
+    ['After The First Realization: what you understood before the difficult chapter',
+     'The Ordeal: what happened and why it was so difficult',
+     'What Was At Risk: what you feared losing, failing at, or never changing',
+     'The Failed Answers: what you tried and why it was not enough',
+     'The Unanswered Question: what you still could not understand yet'],
+    ['The Larger Realization: what the ordeal eventually made clear',
+     'How It Emerged: the moment or evidence that brought it into focus',
+     'The Deeper Meaning: how it changed your understanding of the first realization',
+     'What Changed: the real difference in your identity, choices, or life',
+     'Who Needs It: the person this truth may help see differently'],
+    ['Who You Were: how you saw yourself before both realizations',
+     'Who You Are Now: what is genuinely different',
+     'What Remains: the unfinished or familiar part of the earlier you',
+     'What The Challenge Clarified: what seven videos helped you connect or put into words',
+     'The Next Chapter: what you carry forward and where the story goes next']
+  ],
+  2: LEVEL_2_STORY_BEATS
+};
 
 
 
@@ -1864,14 +1904,14 @@ async function callDeepSeekAPIRaw(systemMsg, userMsg) {
 async function generateValidatedScript(userMessage, level, video) {
   let script = await callDeepSeekAPIWithRetry(userMessage, 1, level, video);
   if (!window.SISPromptEngine) return script;
-  let validation = SISPromptEngine.validateOutput(script);
+  let validation = SISPromptEngine.validateOutput(script, video);
   if (validation.valid) return script;
 
   const repairMessage = userMessage + '\n\nYOUR PREVIOUS RESPONSE WAS MALFORMED:\n' + script +
     '\n\nREQUIRED CORRECTIONS:\n' + SISPromptEngine.validationFeedback(validation) +
     '\n\nRewrite the complete script now. Preserve the supplied facts, voice, and story beats. Include all five required sections exactly once: [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA]. Do not add commentary outside those sections.';
   script = await callDeepSeekAPIWithRetry(repairMessage, 0, level, video);
-  validation = SISPromptEngine.validateOutput(script);
+  validation = SISPromptEngine.validateOutput(script, video);
   if (!validation.valid) throw new Error('The script response still needs correction: ' + SISPromptEngine.validationFeedback(validation) + ' Please try again.');
   return script;
 }
@@ -2053,13 +2093,14 @@ function videoOnePromptAnswers(level) {
   const q4 = state.mvoQ4 || {};
   const isL2 = Number(level) === 2;
   const p2 = ensurePhase2();
-  return [
+  const answers = [
     { label:'Opening declaration (read-only)', value:videoOneDeclaration(level) },
     { label:"What's been stopping you from posting until now", value:sv.v0p1 || (isL2 ? q3.before_full : q2.before_full) || '' },
-    { label:"Why you're doing this challenge right now", value:sv.v0p2 || (isL2 ? q4.crack_full : q3.catalyst_full) || p2.commitmentDeclaration || '' },
-    { label:"Who you're here to reach", value:sv.v0p3 || (isL2 ? q2.village_full : q4.village_full) || '' },
-    { label:'Anything else they want to add', value:sv.v0p4 || p2.firstScriptNotes || '' }
+    { label:"Why you're doing this challenge right now", value:sv.v0p2 || (isL2 ? q4.crack_full : q3.catalyst_full) || p2.commitmentDeclaration || '' }
   ];
+  if (isL2) answers.push({ label:"Who you're here to reach", value:sv.v0p3 || q2.village_full || '' });
+  answers.push({ label:'Anything else they want to add', value:sv.v0p4 || p2.firstScriptNotes || '' });
+  return answers;
 }
 
 function extendedPromptAnswers(videoDefinition) {
@@ -2099,7 +2140,7 @@ function buildAPIUserMessage(videoIdx) {
   const previousVideos = [];
   for (let index = 0; index < videoIdx; index++) {
     const definition = videos[index];
-    const easy = VIDEO_EASY_PROMPTS[index];
+    const easy = getEasyPrompt(index, level);
     const mode = index === 0 ? 'extended' : getSavedVideoPromptMode(index, level);
     const declaration = index === 0 ? videoOneDeclaration(level) : '';
     const rawScript = state.videos['script_v' + index] || '';
@@ -2113,7 +2154,7 @@ function buildAPIUserMessage(videoIdx) {
   }
 
   const currentDefinition = videos[videoIdx];
-  const currentEasy = VIDEO_EASY_PROMPTS[videoIdx];
+  const currentEasy = getEasyPrompt(videoIdx, level);
   const currentMode = videoIdx === 0 ? 'extended' : getSavedVideoPromptMode(videoIdx, level);
   return SISPromptEngine.buildUserMessage({
     level,
@@ -2136,72 +2177,70 @@ const level1Videos = [
     prompts:[]
   },
   {
-    title:"The Hidden Thread",
-    note:"You're still in the ordinary world. This video lets the audience notice one interest, frustration, obsession, or pattern that kept showing up before you understood what it meant. Reveal the clue, not the final lesson.",
+    title:"Here's Who I Am",
+    note:"Let people meet the person behind the videos: where you came from, something they might not expect, and what naturally holds your attention. You do not need to explain what it all means yet.",
     prompts:[
-      {label:"What did your ordinary life look like before you started following this thread? Give me one concrete detail that captures that period.",hint:"A schedule, place, responsibility, routine, or situation. Set the world you were living in without explaining what it all meant yet.",key:"v1p0",ph:"Describe one specific detail from that part of your life."},
-      {label:"What interest, frustration, obsession, or pattern did you keep returning to during that time?",hint:"The thing that seemed random, impractical, or unrelated then but kept catching your attention. Be specific about what you did, noticed, collected, watched, questioned, or cared about.",key:"v1p1",ph:"Describe the recurring thread and what you actually did with it."},
-      {label:"Why didn't you follow that thread sooner, and what did you think it meant about you back then?",hint:"Stay inside the old perspective. What made the outside world feel unavailable, unrealistic, embarrassing, or not meant for you? Do not jump ahead to the lesson you know now.",key:"v1p2",ph:"Describe the belief or circumstance that kept the thread in the background."}
+      {label:"What part of your background or everyday life would help someone understand you better?",hint:"Choose one part of where you came from, what your life looked like, or an experience that left a mark. You do not need to tell your entire life story.",key:"v1p0",ph:"Share the part of your background that helps someone understand you."},
+      {label:"What is something about you that people usually do not expect?",hint:"It could be an interest, habit, skill, obsession, contradiction, past chapter, or part of your personality that does not fit the obvious version of you.",key:"v1p1",ph:"Share something real about you that people may not expect."},
+      {label:"What do you find yourself caring about, noticing, or returning to, even when nobody asks you to?",hint:"What gets your attention, bothers you, fascinates you, or makes you want to say something? Why does it matter to you personally?",key:"v1p2",ph:"Describe what naturally keeps drawing your attention and why you care."}
     ],
-    compile:v=>`My ordinary world: ${v.v1p0||'___'}. The hidden thread I kept returning to: ${v.v1p1||'___'}. Why I did not follow it sooner: ${v.v1p2||'___'}.`
+    compile:v=>`The background that helps someone understand me: ${v.v1p0||'___'}. Something people do not expect about me: ${v.v1p1||'___'}. What I keep caring about or returning to: ${v.v1p2||'___'}.`
   },
   {
-    title:"The First Epiphany",
-    note:"Seven beats, one shift. The audience knows you and likes you after Video 2. Now you give them something they can't unsee. A belief you held, the moment it cracked, the new truth, simple enough to text to a friend.",
+    title:"What I Used To Think Was True",
+    note:"Share one thing you used to think was true, the experience that made you question it, and why that old way of thinking matters. The script will shape the larger realization from your answers.",
     prompts:[
-      {label:"What's something you used to believe (about life, success, fear, identity, or how things work) that you held onto for a long time before you realized it wasn't true?",hint:"Not a small preference change. A deep belief, maybe one you built decisions around. Something that felt like bedrock until it cracked.",key:"v2p0",ph:"e.g. I used to believe that if I just worked hard enough and stayed quiet, the right people would eventually notice... and I built years of decisions around that idea"},
-      {label:"Tell the story of what happened that made you see it differently. Not when you 'decided to change your mind' but the actual experience. Where were you? What did you see, hear, or feel?",hint:"This is a moment, not a summary. Ground it in a real scene. The more specific and human, the more powerful it becomes.",key:"v2p1",ph:"e.g. I was sitting in my car after a meeting where I'd watched someone say something I'd been thinking for months... and they got all the credit. That was the moment I understood that staying quiet wasn't humility, it was just fear"},
-      {label:"Now that you see it differently, what's the new truth? Say it as simply as you can, like you're explaining it to someone you care about.",hint:"One or two sentences. If the old belief was the lens you were wearing, what's the prescription of the new one? The simpler you can make this, the harder it will hit.",key:"v2p2",ph:"e.g. the new truth is that waiting to be discovered is a strategy for staying invisible. The only people who get found are the ones who decide to be seen"},
-      {label:"What does it cost someone to keep believing the old way? Not in a dramatic sense. Just honestly, what do they miss or lose without realizing it?",hint:"You can see both sides now. What's the invisible price someone pays when they're still stuck in the old one? It's about caring enough to name what you wish someone had named for you.",key:"v2p3",ph:"e.g. what it costs them is years... years of doing good work that nobody outside their immediate circle ever hears about, wondering why they feel invisible when they've been choosing invisibility"},
-      {label:"Why does this matter to you enough to say it out loud on camera?",hint:"You could have kept this to yourself. Why are you sharing it? Maybe because you see other people stuck where you were. That reason is the emotional engine of this video.",key:"v2p4",ph:"e.g. because I spent too long believing I wasn't the kind of person who did things like this, and I watch other people believe that same lie about themselves every day"}
+      {label:"What is one thing you used to think was true (that isn't true), and how did it shape the way you acted, waited, chose, or saw yourself?",hint:"Choose something that affected real decisions, not a minor opinion you happened to change.",key:"v2p0",ph:"Describe what you used to think was true and how it affected your life."},
+      {label:"What experience, moment, or repeated pattern first made you question whether it was actually true?",hint:"If there was one clear moment, describe it. If the change happened gradually, describe the evidence that kept piling up.",key:"v2p1",ph:"Describe what made the old idea stop making sense."},
+      {label:"What does continuing to think the old way quietly cost someone, and why do you care enough to say that aloud?",hint:"Name the honest consequence and why another person recognizing it matters to you.",key:"v2p2",ph:"Describe the cost of the old way of thinking and why you want to name it."}
     ],
-    compile:v=>`I used to believe ${v.v2p0||'___'}. The moment that changed it: ${v.v2p1||'___'}. The new truth: ${v.v2p2||'___'}. What the old belief costs: ${v.v2p3||'___'}. Why I'm saying this: ${v.v2p4||'___'}.`
+    compile:v=>`What I used to think was true and how it shaped me: ${v.v2p0||'___'}. What made me question it: ${v.v2p1||'___'}. What the old way costs and why I care: ${v.v2p2||'___'}.`
   },
   {
-    title:"The Road Of Trials",
-    note:"Your first epiphany was a win. Now show what happened when the old pattern met a new behavior in real life. One specific trial gives the audience something they can witness, while what remains difficult keeps the journey honest.",
+    title:"Here's What It's Actually Been Like",
+    note:"Report honestly from the middle. Compare the experience with what you expected, notice any early change, name what remains difficult, and explain why you are continuing.",
     prompts:[
-      {label:"Tell me about one specific moment when your old pattern showed up while you were making or posting these videos.",hint:"A real scene, not a progress summary. What happened, where were you, and what did the old version of you normally do in that moment?",key:"v3p0",ph:"Describe the exact moment and the old reaction it triggered."},
-      {label:"What did you actually do differently this time?",hint:"Make the change observable. What did you click, say, leave alone, finish, post, or stop yourself from doing? Small behavioral proof is stronger than saying you felt more confident.",key:"v3p1",ph:"Describe the different action you took, even if it felt minor."},
-      {label:"What happened because you acted differently, and what did that reveal?",hint:"The result can be internal or external. Use only what really happened. Do not invent comments, views, messages, or praise if there were none.",key:"v3p2",ph:"Describe the real consequence and what made it surprising."},
-      {label:"Where is the old pattern still winning? What's still difficult even after this small shift?",hint:"This is the road of trials, not the finish line. Name the remaining resistance specifically so the win feels honest and the fall in Video 5 can be earned.",key:"v3p3",ph:"Describe the part that still has not become easy."}
+      {label:"What has making these videos actually been like so far, compared with what you expected? Share one moment or detail that captures the difference.",hint:"What has been stranger, easier, harder, quieter, more emotional, or more ordinary than you imagined? Include something you did, almost did, noticed, avoided, or handled differently.",key:"v3p0",ph:"Describe the reality so far and one detail that captures it."},
+      {label:"What, if anything, is beginning to change in the way you approach recording, posting, or trusting yourself?",hint:"A small change counts. It is also fine if the change is incomplete or difficult to describe.",key:"v3p1",ph:"Describe any small change you are beginning to notice."},
+      {label:"What is still difficult, awkward, uncertain, or unresolved right now?",hint:"Name the specific part you have not conquered. The middle is allowed to remain messy.",key:"v3p2",ph:"Describe what is still difficult or unresolved."},
+      {label:"Why are you continuing even though that part is still difficult?",hint:"What is enough to make you record the next video even without certainty that this is working?",key:"v3p3",ph:"Describe the honest reason you are continuing."}
     ],
-    compile:v=>`The specific trial: ${v.v3p0||'___'}. What I did differently: ${v.v3p1||'___'}. What happened and what it revealed: ${v.v3p2||'___'}. Where the old pattern is still winning: ${v.v3p3||'___'}.`
+    compile:v=>`What making these videos has actually been like: ${v.v3p0||'___'}. What is beginning to change: ${v.v3p1||'___'}. What is still difficult: ${v.v3p2||'___'}. Why I am continuing: ${v.v3p3||'___'}.`
   },
   {
-    title:"The Fall",
-    note:"The first breakthrough was real, but it didn't magically erase the deeper fear. Video 5 is where you name the thing you've been carrying while still showing up. This is the fall that makes the next epiphany earned.",
+    title:"The Hardest Part",
+    note:"Return to your larger life story. Tell the most difficult experience that came after you first began seeing this part of your life differently. This is not about making the videos.",
     prompts:[
-      {label:"What's the thing you've been carrying through this challenge that you haven't said on camera yet? The fear, the doubt, the struggle that's still present even though you keep showing up.",hint:"Not the surface-level stuff. Not 'filming is hard.' The REAL thing. Maybe it's the voice that says nobody cares. Maybe it's the comparison. Say the thing you've been avoiding.",key:"v4p0",ph:"e.g. the thing I've been carrying is the very specific fear that I'll finish all seven videos, put everything into this, and wake up to silence... and that silence will confirm the thing I've been trying to prove wrong"},
-      {label:"Where does that come from? Not the logical explanation. The deeper root. When did you first start believing that about yourself?",hint:"This fear or doubt didn't start with the challenge. It was there before. Trace it back. You don't have to go into full detail. Just name the root.",key:"v4p1",ph:"e.g. it goes back further than this challenge. I think it started in the years I spent doing good work that nobody outside my immediate circle ever saw, slowly convincing myself that was fine"},
-      {label:"What would it mean to you, really honestly, if you could let go of that? What becomes possible on the other side of this battle?",hint:"Don't make this aspirational fluff. Think about it practically. What would you DO differently? How would you FEEL differently? What would you stop avoiding?",key:"v4p2",ph:"e.g. if I could let go of it, I think I'd stop waiting for proof before I acted. I'd just act. And I'd stop treating my own work like it needs to earn the right to exist before I show it to anyone"},
-      {label:"What do you want to say to anyone watching this who's fighting their own version of the same battle?",hint:"You've just told your story. The fear, the root, the possibility. What do you want to leave them with? Not advice. A message. The thing you wish someone had said to you when you were in the middle of the fight.",key:"v4p3",ph:"e.g. I want to say: the fact that you're watching this means part of you already knows. You don't need more proof. Just decide that this thing you're carrying doesn't get to keep making your decisions"}
+      {label:"After you first started seeing this part of your life differently, what was the most difficult experience or period you went through next? What happened, and what made it so difficult for you?",hint:"Stay with the main part of your life or story you have been discussing. Describe the situation and the part that affected you most.",key:"v4p0",ph:"Describe the hardest experience that followed your first realization."},
+      {label:"At the hardest point, what did you think you might lose, fail at, or never be able to change?",hint:"Answer from the perspective you had while living through it, before you knew what you would eventually learn.",key:"v4p1",ph:"Describe what felt most at risk at the time."},
+      {label:"What did you try to do about it, and why was that not enough yet?",hint:"What actions, coping strategies, decisions, or old ways of thinking did you rely on? What continued to hurt, fail, or remain unanswered?",key:"v4p2",ph:"Describe what you tried and what remained unsolved."},
+      {label:"Before you finally understood what this experience had taught you, what was still unanswered or unresolved?",hint:"End inside the uncertainty. What could you not yet explain, accept, or see clearly at the time?",key:"v4p3",ph:"Describe the question or struggle that still had no answer."}
     ],
-    compile:v=>`What I've been carrying: ${v.v4p0||'___'}. Where it comes from: ${v.v4p1||'___'}. What letting go would mean: ${v.v4p2||'___'}. To anyone watching who's in the same battle: ${v.v4p3||'___'}.`
+    compile:v=>`The hardest experience after my first realization: ${v.v4p0||'___'}. What felt most at risk: ${v.v4p1||'___'}. What I tried and why it was not enough: ${v.v4p2||'___'}. What was still unanswered: ${v.v4p3||'___'}.`
   },
   {
-    title:"The Second Epiphany",
-    note:"Now that you've named the fall, Video 6 finds the elixir. This is your second big reframe: what you can see now, what the old way was costing you, and what becomes possible when it stops making the decisions.",
+    title:"What I See Differently Now",
+    note:"Share the larger realization you discovered because you lived through the hardest part of your story. This should deepen the first realization, not repeat it.",
     prompts:[
-      {label:"What's something you now believe that most people around you would disagree with (or at least wouldn't say out loud)?",hint:"Not something designed to be controversial. Something genuinely true for you because of what you've just had to face.",key:"v5p0",ph:"e.g. I believe that most of what we call 'not being ready' is actually just fear of being judged, and the preparation is usually a delay tactic we've convinced ourselves is responsible"},
-      {label:"What did naming the fear or fall help you see that you couldn't see before?",hint:"There was a before and an after. What became obvious only after you stopped avoiding the hard thing?",key:"v5p1",ph:"e.g. once I named the fear, I realized it had been making practical decisions for me while pretending to be wisdom"},
-      {label:"What was the old way costing you? Be specific about what you were doing, tolerating, or missing.",hint:"Before you saw this clearly, you were living inside the old belief. What did that actually look like day to day?",key:"v5p2",ph:"e.g. it was costing me time I'll never get back and conversations I kept not having because I kept waiting to feel qualified enough to have them"},
-      {label:"What opened up or changed when you stopped letting the old belief make the decisions?",hint:"The other side. Not a fantasy. Your actual experience of life after the shift. What does the world look like through the new lens?",key:"v5p3",ph:"e.g. what opened up was the ability to act before I felt ready, which sounds simple, but it changed everything about how I show up"},
-      {label:"If you could say this to one specific person who's still stuck in the old belief... what would you say to them?",hint:"Picture one person. What do you want to say to them through the camera? Not a lecture. A direct, personal message.",key:"v5p4",ph:"e.g. I'd say: you're not getting more ready. Every day you wait, you're not building courage. You're building a bigger story about why you can't start yet"}
+      {label:"What is the biggest thing you eventually understood because you lived through the difficult experience you just described?",hint:"Choose something you could not have fully understood before living through it. Say it in your own words.",key:"v5p0",ph:"Describe the larger truth the difficult experience taught you."},
+      {label:"How did you come to understand that? Was there a moment when it became clear, or did you recognize it gradually?",hint:"Describe the experience, evidence, conversation, consequence, or repeated pattern that brought the deeper truth into focus.",key:"v5p1",ph:"Describe how the larger realization became clear."},
+      {label:"How did this larger realization change the way you understand your first realization or the person you were before it?",hint:"What became deeper, more complete, or different after the hard experience?",key:"v5p2",ph:"Describe how the second realization changed your understanding of the first."},
+      {label:"What changed in who you became, the choices you made, or the way you live because you understood this?",hint:"Describe real consequences in your life. The change can be imperfect or ongoing.",key:"v5p3",ph:"Describe what genuinely changed in you or your life."},
+      {label:"Who most needs to understand what you discovered, and what might it help them see differently?",hint:"Think of someone still living inside the part of the story you have already lived through.",key:"v5p4",ph:"Describe who needs this realization and what it could help them see."}
     ],
-    compile:v=>`Something I now believe that most people wouldn't say out loud: ${v.v5p0||'___'}. What naming the fall helped me see: ${v.v5p1||'___'}. What the old belief cost me: ${v.v5p2||'___'}. What opened up: ${v.v5p3||'___'}. To the person still stuck: ${v.v5p4||'___'}.`
+    compile:v=>`The biggest thing I understood because of the difficult experience: ${v.v5p0||'___'}. How I came to understand it: ${v.v5p1||'___'}. How it deepened my first realization: ${v.v5p2||'___'}. What changed in me or my life: ${v.v5p3||'___'}. Who needs this and what it could help them see: ${v.v5p4||'___'}.`
   },
   {
     title:"What I Learned",
-    note:"Seven videos. You did it. Now close the arc honestly. What did you think this was going to be? What actually happened? What do you know now that you didn't before? And where are you going next?",
+    note:"Close the larger life story you have told. Compare who you were before both realizations with who you are now, acknowledge what remains, and connect the seven videos to what comes next.",
     prompts:[
-      {label:"When you filmed Video 1, what did you think this challenge was going to be about? What did you expect to happen?",hint:"Think back to the person who pressed record on day one. What were you bracing for? What did you think would be hard? Be honest about the expectations, even the ones that seem naive now.",key:"v6p0",ph:"e.g. honestly, I thought this challenge was going to be about overcoming camera fear. I figured by Video 7 I'd just feel comfortable on camera. That's not what happened at all"},
-      {label:"What actually happened instead? What surprised you most (about the experience, about yourself, about how people responded)?",hint:"The real version. Not the Instagram version. What was harder than expected? What was easier? What completely blindsided you?",key:"v6p1",ph:"e.g. what actually happened is that the camera got comfortable faster than I expected, and what surprised me most is that the videos I almost didn't post were the ones people responded to most"},
-      {label:"What's the one thing you know now that you didn't know before Video 1? Not a tip. A truth. Something you can only learn by doing, not by thinking about it.",hint:"The elixir. The thing you're bringing back from this journey. If you could go back and whisper one sentence to the person you were before this challenge, what would it be?",key:"v6p2",ph:"e.g. the one thing I know now is that showing up is the work, not what you show up saying. I kept thinking I needed better ideas. What I needed was just to start"},
-      {label:"If someone is watching this right now and they're exactly where you were seven videos ago (scared, uncertain, overthinking it): what do you want to say to them?",hint:"Not advice from a guru. A message from someone who JUST went through it. What's the honest truth from the other side?",key:"v6p3",ph:"e.g. I want to say: it's not going to feel the way you think it will. It's going to feel harder in some ways and easier in others. But the version of you on the other side of Video 7 is worth it"},
-      {label:"What's next for you? You don't need a plan, just a direction. What did this challenge open up that you want to keep going with?",hint:"You don't need to have figured out the rest of your life. But this challenge showed you something: a direction, a possibility, a next step. Saying it out loud is the beginning of making it real.",key:"v6p4",ph:"e.g. what's next for me is keeping going, not as a challenge, but because I finally understand that this is what showing up actually looks like, and I want to keep doing it"}
+      {label:"Before either of the realizations you have talked about, who were you and how did you see yourself or this part of your life?",hint:"Think about how you thought, chose, or moved through the world before the first truth changed and before the difficult experience that led to the second one.",key:"v6p0",ph:"Describe who you were and how you saw this part of your life before either realization."},
+      {label:"Who are you now, and what is genuinely different in the way you think, choose, respond, or live?",hint:"Point to real differences rather than saying you are a completely different person. What would the earlier version of you notice?",key:"v6p1",ph:"Describe who you are now and what is genuinely different."},
+      {label:"What part of the earlier version of you is still present or still being worked through?",hint:"Growth does not erase a person. What remains complicated, unfinished, useful, or recognizably you?",key:"v6p2",ph:"Describe what remains present or unfinished."},
+      {label:"What did telling this story across seven videos help you notice, understand, or finally put into words about your larger story?",hint:"The videos did not create your entire transformation. What did telling the story help you connect or express?",key:"v6p3",ph:"Describe what telling the story helped you understand or express."},
+      {label:"What are you carrying forward from everything you lived and learned, and where do you want your story to go next?",hint:"You do not need a complete plan. Name the truth, direction, relationship, work, or possibility that now matters enough to continue.",key:"v6p4",ph:"Describe what you are carrying forward and where the story goes next."}
     ],
-    compile:v=>`What I expected: ${v.v6p0||'___'}. What actually happened: ${v.v6p1||'___'}. The one truth I know now: ${v.v6p2||'___'}. To someone at the beginning where I was: ${v.v6p3||'___'}. What's next: ${v.v6p4||'___'}.`
+    compile:v=>`Who I was before both realizations: ${v.v6p0||'___'}. Who I am now and what is different: ${v.v6p1||'___'}. What remains present or unfinished: ${v.v6p2||'___'}. What telling this story helped me understand: ${v.v6p3||'___'}. What I am carrying forward and what comes next: ${v.v6p4||'___'}.`
   }
 ];
 
@@ -2433,11 +2472,8 @@ function _buildPromptsContent(container, v, idx) {
           {key:'v0p2', label:"Why you're doing this challenge right now?",
            hint:'What shifted? Adjust to sound like you.',
            def: q3.catalyst_full || ''},
-          {key:'v0p3', label:"Who are you here to reach?",
-           hint:'Who is watching this? Who do you want to show up for?',
-           def: q4.village_full || ''},
           {key:'v0p4', label:"Anything else you'd like to add?",
-           hint:'A detail that makes you uniquely you: a background, a personality trait, something surprising. The AI will weave it in.',
+           hint:'Optional: add anything that would help the first video sound or feel more like you.',
            def: ''}
         ]
       : [
@@ -2531,7 +2567,7 @@ function _buildPromptsContent(container, v, idx) {
         <div class="script-text">"${prebuiltScript}"</div>
       </div>`;
   } else {
-    const easyPrompt = VIDEO_EASY_PROMPTS[idx];
+    const easyPrompt = getEasyPrompt(idx, state.level || 1);
     const defaultMode = getSavedVideoPromptMode(idx);
     const extHTML = v.prompts.map(p => `
       <div class="input-group">
@@ -2876,22 +2912,26 @@ async function showScriptView(idx, skipLoading) {
 
 // Per-video psychological sub-elements for the story section
 
-const VIDEO_RATIONALE = [
-  // V1 — Still in the Ordinary World
-  'WHERE WE ARE: The very first step of the Hero\'s Journey, still in the Ordinary World. The hero hasn\'t crossed the threshold yet. This is the moment before everything changes. Your audience sees themselves in you because you haven\'t become anything yet. You\'re just starting, exactly like they want to.',
-  // V2 — Ordinary World / Refusal of the Call
-  'WHERE WE ARE: Still in the Ordinary World. The audience sees the life, detour, obsession, or frustration that was shaping you before you knew what it meant. This is an identity clue, not the final lesson. They should notice the hidden thread and wonder why you did not follow it sooner.',
-  // V3 — First Epiphany
-  'WHERE WE ARE: The first Epiphany. One old belief meets an experience it cannot explain, and the viewer watches a new lens become inevitable. This is the first win, not final wisdom. It gives the hero momentum and gives the audience a way to see something familiar differently.',
-  // V4 — Road of Trials
-  'WHERE WE ARE: The Road of Trials, exactly halfway through the journey. The first insight now has to survive behavior. One old pattern collides with one new action, creating a small win while something real remains difficult. The audience trusts the change because they can see it being tested.',
-  // V5 — The Fall / Ordeal
-  'WHERE WE ARE: The Fall. The first breakthrough was real, but it did not erase the deeper fear. This is where the hero names the thing they have been avoiding and lets the audience see the cost of the journey.',
-  // V6 — Finding the Elixir
-  'WHERE WE ARE: Finding the Elixir. After the fall, the hero can finally name the deeper truth. This is the earned reframe, the thing they can carry forward because they did not skip the hard part.',
-  // V7 — The Road Back / Return with the Elixir
-  'WHERE WE ARE: The Road Back. The Hero returns changed, carrying the Elixir. The circle closes. Your audience has watched a transformation happen in real time, and this video is where they feel it complete. The CTA here isn\'t about the next video. It\'s about the next chapter.',
-];
+const VIDEO_RATIONALE = {
+  1: [
+    'WHERE WE ARE: You are making the declaration and letting people see the real reason you have waited. The audience does not need confidence from you yet. They need honesty and a reason to believe you will finish the challenge.',
+    'WHERE WE ARE: Let people meet you before asking them to care about a lesson. Your background, an unexpected detail, and what naturally matters to you give the audience a human reason to recognize themselves and stay curious.',
+    'WHERE WE ARE: One thing you used to think was true meets evidence it cannot explain. The audience should arrive at the new way of seeing it through your story, not because you lecture them.',
+    'WHERE WE ARE: You are halfway through the challenge and reporting honestly from the middle. The contrast between what you expected and what is really happening builds trust, especially when some part is still difficult.',
+    'WHERE WE ARE: Return to the hardest part of the larger life story you are telling. Show what happened, what was at risk, and what still had no answer. Do not reveal the lesson yet.',
+    'WHERE WE ARE: The difficult chapter has finally produced a larger realization. Show how it became clear, how it deepened the first realization, and what genuinely changed because of it.',
+    'WHERE WE ARE: Bring the larger story home by comparing who you were before both realizations with who you are now. The challenge helped you tell and understand that story. It did not create your whole transformation.'
+  ],
+  2: [
+    'WHERE WE ARE: The very first step of the Hero\'s Journey, still in the Ordinary World. The hero hasn\'t crossed the threshold yet. This is the moment before everything changes. Your audience sees themselves in you because you haven\'t become anything yet. You\'re just starting, exactly like they want to.',
+    'WHERE WE ARE: Still in the Ordinary World. The audience sees the life, detour, obsession, or frustration that was shaping you before you knew what it meant. This is an identity clue, not the final lesson. They should notice the hidden thread and wonder why you did not follow it sooner.',
+    'WHERE WE ARE: The first Epiphany. One old belief meets an experience it cannot explain, and the viewer watches a new lens become inevitable. This is the first win, not final wisdom. It gives the hero momentum and gives the audience a way to see something familiar differently.',
+    'WHERE WE ARE: The Road of Trials, exactly halfway through the journey. The first insight now has to survive behavior. One old pattern collides with one new action, creating a small win while something real remains difficult. The audience trusts the change because they can see it being tested.',
+    'WHERE WE ARE: The Fall. The first breakthrough was real, but it did not erase the deeper fear. This is where the hero names the thing they have been avoiding and lets the audience see the cost of the journey.',
+    'WHERE WE ARE: Finding the Elixir. After the fall, the hero can finally name the deeper truth. This is the earned reframe, the thing they can carry forward because they did not skip the hard part.',
+    'WHERE WE ARE: The Road Back. The Hero returns changed, carrying the Elixir. The circle closes. Your audience has watched a transformation happen in real time, and this video is where they feel it complete. The CTA here isn\'t about the next video. It\'s about the next chapter.'
+  ]
+};
 
 function _doShowScriptView(idx) {
   window._SIS_log && _SIS_log('_doShowScriptView', {idx, hasScript: !!(state.videos && state.videos['script_v'+idx])});
@@ -2944,11 +2984,14 @@ function _doShowScriptViewInner(idx) {
 
   // Set psychological rationale text
   const rationaleEl = document.getElementById('sv-rationale-text');
-  if (rationaleEl) rationaleEl.textContent = VIDEO_RATIONALE[idx] || '';
+  const levelRationale = VIDEO_RATIONALE[state.level || 1] || VIDEO_RATIONALE[1];
+  if (rationaleEl) rationaleEl.textContent = levelRationale[idx] || '';
 
   // Populate guided view (HOOK / OPEN LOOP / story section / CONCLUSION / CTA)
-  const storyLabel = VIDEO_STORY_LABELS[idx] || 'YOUR STORY';
-  const storyBeats = VIDEO_STORY_BEATS[idx] || [];
+  const levelStoryLabels = VIDEO_STORY_LABELS[state.level || 1] || VIDEO_STORY_LABELS[1];
+  const levelStoryBeats = VIDEO_STORY_BEATS[state.level || 1] || VIDEO_STORY_BEATS[1];
+  const storyLabel = levelStoryLabels[idx] || 'YOUR STORY';
+  const storyBeats = levelStoryBeats[idx] || [];
   const beatsEl = document.getElementById('sv-beats');
   if (beatsEl) {
     const sections = state.videos[sectionsKey];
@@ -3321,7 +3364,7 @@ function clearVideoPromptAnswers(idx) {
   const videos = getVideos();
   const v = videos[idx];
   const keys = new Set();
-  const easyPrompt = VIDEO_EASY_PROMPTS[idx];
+  const easyPrompt = getEasyPrompt(idx, state.level || 1);
   if (easyPrompt && easyPrompt.key) keys.add(easyPrompt.key);
   if (v && v.prompts) v.prompts.forEach(p => { if (p.key) keys.add(p.key); });
   if (idx === 0) ['_v1_seen', 'v0p0', 'v0p1', 'v0p2', 'v0p3', 'v0p4', 'v0decl'].forEach(key => keys.add(key));
@@ -5697,9 +5740,8 @@ function compileMvoBeats() {
   // Apply any edits the user made on the V1 journal-prompts screen
   const sv = state.videos;
   if (level === 1) {
-    if (sv.v0p0) q2 = Object.assign({}, q2, {before_full: sv.v0p0});
-    if (sv.v0p1) q3 = Object.assign({}, q3, {catalyst_full: sv.v0p1});
-    if (sv.v0p2) q4 = Object.assign({}, q4, {village_full: sv.v0p2, village_hook: 'If you are someone looking for '+sv.v0p2});
+    if (sv.v0p1) q2 = Object.assign({}, q2, {before_full: sv.v0p1});
+    if (sv.v0p2) q3 = Object.assign({}, q3, {catalyst_full: sv.v0p2});
   } else {
     if (sv.v0p0) q2 = Object.assign({}, q2, {village_full: sv.v0p0, village_hook: 'If you are someone who values '+sv.v0p0});
     if (sv.v0p1) q3 = Object.assign({}, q3, {before_full: sv.v0p1});

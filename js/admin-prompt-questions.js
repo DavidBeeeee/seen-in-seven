@@ -1,38 +1,25 @@
 // Admin-only copy of the SeenInSeven question catalog. Keep labels aligned with js/app.js.
 const PROMPT_QUESTION_CATALOG = {
-  "easy": [
-    null,
-    {
-      "label": "What part of your past kept shaping you before you understood why?",
-      "hint": "Describe the ordinary world you were in, the thread or unlikely chapter that kept showing up, and why you did not recognize or follow it yet.",
-      "key": "easyAnswer_v1"
-    },
-    {
-      "label": "What's a belief you held for a long time that turned out to be wrong?",
-      "hint": "What cracked it open? Walk me through how you arrived at seeing it differently. The journey matters more than the conclusion.",
-      "key": "easyAnswer_v2"
-    },
-    {
-      "label": "Tell me about one moment when an old pattern met a new behavior.",
-      "hint": "What happened, what would you normally have done, what did you do differently, what did that reveal, and what is still difficult?",
-      "key": "easyAnswer_v3"
-    },
-    {
-      "label": "What's something you've been avoiding saying out loud?",
-      "hint": "The thing that would make you feel most exposed. Not for shock. For honesty. The thing that makes the next lesson earned.",
-      "key": "easyAnswer_v4"
-    },
-    {
-      "label": "What do you believe now that you couldn't have said before the fall?",
-      "hint": "The deeper truth, reframe, or conviction you earned by naming the hard thing. Not a generic lesson. The truth you can carry forward.",
-      "key": "easyAnswer_v5"
-    },
-    {
-      "label": "What did doing these 7 videos teach you that you didn't know at the start?",
-      "hint": "The honest accounting. What changed? What would you tell yourself at the beginning? What do you want to give your audience?",
-      "key": "easyAnswer_v6"
-    }
-  ],
+  "easy": {
+    "l1": [
+      null,
+      {"label":"What should someone know about your background, what makes you unexpected, and what you naturally care about?","hint":"Share whatever feels most important. The AI will organize it into the story.","key":"easyAnswer_v1"},
+      {"label":"What is one thing you used to think was true that is not true?","hint":"Explain how it shaped you, what made you question it, and why the old way of thinking matters.","key":"easyAnswer_v2"},
+      {"label":"What has making these videos actually been like so far?","hint":"Compare it with what you expected, share one real detail, and include what is changing, what is still difficult, and why you are continuing.","key":"easyAnswer_v3"},
+      {"label":"What was the hardest experience in this part of your life after your first realization?","hint":"Describe what happened, what felt at risk, what you tried, and what remained unresolved before you understood the larger lesson.","key":"easyAnswer_v4"},
+      {"label":"What larger truth did you discover because you lived through that difficult experience?","hint":"Describe how you discovered it, what it changed in you, and who else may need to understand it.","key":"easyAnswer_v5"},
+      {"label":"Who were you before these realizations, and who are you now?","hint":"Describe what changed, what remains unfinished, what telling the story helped you understand, and where you go next.","key":"easyAnswer_v6"}
+    ],
+    "l2": [
+      null,
+      {"label":"What part of your past kept shaping you before you understood why?","hint":"Describe the ordinary world you were in, the thread or unlikely chapter that kept showing up, and why you did not recognize or follow it yet.","key":"easyAnswer_v1"},
+      {"label":"What's a belief you held for a long time that turned out to be wrong?","hint":"What cracked it open? Walk me through how you arrived at seeing it differently. The journey matters more than the conclusion.","key":"easyAnswer_v2"},
+      {"label":"Tell me about one moment when an old pattern met a new behavior.","hint":"What happened, what would you normally have done, what did you do differently, what did that reveal, and what is still difficult?","key":"easyAnswer_v3"},
+      {"label":"What's something you've been avoiding saying out loud?","hint":"The thing that would make you feel most exposed. Not for shock. For honesty. The thing that makes the next lesson earned.","key":"easyAnswer_v4"},
+      {"label":"What do you believe now that you couldn't have said before the fall?","hint":"The deeper truth, reframe, or conviction you earned by naming the hard thing. Not a generic lesson. The truth you can carry forward.","key":"easyAnswer_v5"},
+      {"label":"What did doing these 7 videos teach you that you didn't know at the start?","hint":"The honest accounting. What changed? What would you tell yourself at the beginning? What do you want to give your audience?","key":"easyAnswer_v6"}
+    ]
+  },
   "l1": [
     {
       "title": "I'm Doing This",
@@ -40,195 +27,63 @@ const PROMPT_QUESTION_CATALOG = {
       "prompts": []
     },
     {
-      "title": "The Hidden Thread",
-      "note": "You're still in the ordinary world. This video lets the audience notice one interest, frustration, obsession, or pattern that kept showing up before you understood what it meant. Reveal the clue, not the final lesson.",
+      "title": "Here's Who I Am",
+      "note": "Let people meet the person behind the videos: where you came from, something they might not expect, and what naturally holds your attention. You do not need to explain what it all means yet.",
       "prompts": [
-        {
-          "label": "What did your ordinary life look like before you started following this thread? Give me one concrete detail that captures that period.",
-          "hint": "A schedule, place, responsibility, routine, or situation. Set the world you were living in without explaining what it all meant yet.",
-          "key": "v1p0",
-          "placeholder": "Describe one specific detail from that part of your life."
-        },
-        {
-          "label": "What interest, frustration, obsession, or pattern did you keep returning to during that time?",
-          "hint": "The thing that seemed random, impractical, or unrelated then but kept catching your attention. Be specific about what you did, noticed, collected, watched, questioned, or cared about.",
-          "key": "v1p1",
-          "placeholder": "Describe the recurring thread and what you actually did with it."
-        },
-        {
-          "label": "Why didn't you follow that thread sooner, and what did you think it meant about you back then?",
-          "hint": "Stay inside the old perspective. What made the outside world feel unavailable, unrealistic, embarrassing, or not meant for you? Do not jump ahead to the lesson you know now.",
-          "key": "v1p2",
-          "placeholder": "Describe the belief or circumstance that kept the thread in the background."
-        }
+        {"label":"What part of your background or everyday life would help someone understand you better?","hint":"Choose one part of where you came from, what your life looked like, or an experience that left a mark. You do not need to tell your entire life story.","key":"v1p0","placeholder":"Share the part of your background that helps someone understand you."},
+        {"label":"What is something about you that people usually do not expect?","hint":"It could be an interest, habit, skill, obsession, contradiction, past chapter, or part of your personality that does not fit the obvious version of you.","key":"v1p1","placeholder":"Share something real about you that people may not expect."},
+        {"label":"What do you find yourself caring about, noticing, or returning to, even when nobody asks you to?","hint":"What gets your attention, bothers you, fascinates you, or makes you want to say something? Why does it matter to you personally?","key":"v1p2","placeholder":"Describe what naturally keeps drawing your attention and why you care."}
       ]
     },
     {
-      "title": "The First Epiphany",
-      "note": "Seven beats, one shift. The audience knows you and likes you after Video 2. Now you give them something they can't unsee. A belief you held, the moment it cracked, the new truth, simple enough to text to a friend.",
+      "title": "What I Used To Think Was True",
+      "note": "Share one thing you used to think was true, the experience that made you question it, and why that old way of thinking matters. The script will shape the larger realization from your answers.",
       "prompts": [
-        {
-          "label": "What's something you used to believe (about life, success, fear, identity, or how things work) that you held onto for a long time before you realized it wasn't true?",
-          "hint": "Not a small preference change. A deep belief, maybe one you built decisions around. Something that felt like bedrock until it cracked.",
-          "key": "v2p0",
-          "placeholder": "e.g. I used to believe that if I just worked hard enough and stayed quiet, the right people would eventually notice... and I built years of decisions around that idea"
-        },
-        {
-          "label": "Tell the story of what happened that made you see it differently. Not when you 'decided to change your mind' but the actual experience. Where were you? What did you see, hear, or feel?",
-          "hint": "This is a moment, not a summary. Ground it in a real scene. The more specific and human, the more powerful it becomes.",
-          "key": "v2p1",
-          "placeholder": "e.g. I was sitting in my car after a meeting where I'd watched someone say something I'd been thinking for months... and they got all the credit. That was the moment I understood that staying quiet wasn't humility, it was just fear"
-        },
-        {
-          "label": "Now that you see it differently, what's the new truth? Say it as simply as you can, like you're explaining it to someone you care about.",
-          "hint": "One or two sentences. If the old belief was the lens you were wearing, what's the prescription of the new one? The simpler you can make this, the harder it will hit.",
-          "key": "v2p2",
-          "placeholder": "e.g. the new truth is that waiting to be discovered is a strategy for staying invisible. The only people who get found are the ones who decide to be seen"
-        },
-        {
-          "label": "What does it cost someone to keep believing the old way? Not in a dramatic sense. Just honestly, what do they miss or lose without realizing it?",
-          "hint": "You can see both sides now. What's the invisible price someone pays when they're still stuck in the old one? It's about caring enough to name what you wish someone had named for you.",
-          "key": "v2p3",
-          "placeholder": "e.g. what it costs them is years... years of doing good work that nobody outside their immediate circle ever hears about, wondering why they feel invisible when they've been choosing invisibility"
-        },
-        {
-          "label": "Why does this matter to you enough to say it out loud on camera?",
-          "hint": "You could have kept this to yourself. Why are you sharing it? Maybe because you see other people stuck where you were. That reason is the emotional engine of this video.",
-          "key": "v2p4",
-          "placeholder": "e.g. because I spent too long believing I wasn't the kind of person who did things like this, and I watch other people believe that same lie about themselves every day"
-        }
+        {"label":"What is one thing you used to think was true (that isn't true), and how did it shape the way you acted, waited, chose, or saw yourself?","hint":"Choose something that affected real decisions, not a minor opinion you happened to change.","key":"v2p0","placeholder":"Describe what you used to think was true and how it affected your life."},
+        {"label":"What experience, moment, or repeated pattern first made you question whether it was actually true?","hint":"If there was one clear moment, describe it. If the change happened gradually, describe the evidence that kept piling up.","key":"v2p1","placeholder":"Describe what made the old idea stop making sense."},
+        {"label":"What does continuing to think the old way quietly cost someone, and why do you care enough to say that aloud?","hint":"Name the honest consequence and why another person recognizing it matters to you.","key":"v2p2","placeholder":"Describe the cost of the old way of thinking and why you want to name it."}
       ]
     },
     {
-      "title": "The Road Of Trials",
-      "note": "Your first epiphany was a win. Now show what happened when the old pattern met a new behavior in real life. One specific trial gives the audience something they can witness, while what remains difficult keeps the journey honest.",
+      "title": "Here's What It's Actually Been Like",
+      "note": "Report honestly from the middle. Compare the experience with what you expected, notice any early change, name what remains difficult, and explain why you are continuing.",
       "prompts": [
-        {
-          "label": "Tell me about one specific moment when your old pattern showed up while you were making or posting these videos.",
-          "hint": "A real scene, not a progress summary. What happened, where were you, and what did the old version of you normally do in that moment?",
-          "key": "v3p0",
-          "placeholder": "Describe the exact moment and the old reaction it triggered."
-        },
-        {
-          "label": "What did you actually do differently this time?",
-          "hint": "Make the change observable. What did you click, say, leave alone, finish, post, or stop yourself from doing? Small behavioral proof is stronger than saying you felt more confident.",
-          "key": "v3p1",
-          "placeholder": "Describe the different action you took, even if it felt minor."
-        },
-        {
-          "label": "What happened because you acted differently, and what did that reveal?",
-          "hint": "The result can be internal or external. Use only what really happened. Do not invent comments, views, messages, or praise if there were none.",
-          "key": "v3p2",
-          "placeholder": "Describe the real consequence and what made it surprising."
-        },
-        {
-          "label": "Where is the old pattern still winning? What's still difficult even after this small shift?",
-          "hint": "This is the road of trials, not the finish line. Name the remaining resistance specifically so the win feels honest and the fall in Video 5 can be earned.",
-          "key": "v3p3",
-          "placeholder": "Describe the part that still has not become easy."
-        }
+        {"label":"What has making these videos actually been like so far, compared with what you expected? Share one moment or detail that captures the difference.","hint":"What has been stranger, easier, harder, quieter, more emotional, or more ordinary than you imagined? Include something you did, almost did, noticed, avoided, or handled differently.","key":"v3p0","placeholder":"Describe the reality so far and one detail that captures it."},
+        {"label":"What, if anything, is beginning to change in the way you approach recording, posting, or trusting yourself?","hint":"A small change counts. It is also fine if the change is incomplete or difficult to describe.","key":"v3p1","placeholder":"Describe any small change you are beginning to notice."},
+        {"label":"What is still difficult, awkward, uncertain, or unresolved right now?","hint":"Name the specific part you have not conquered. The middle is allowed to remain messy.","key":"v3p2","placeholder":"Describe what is still difficult or unresolved."},
+        {"label":"Why are you continuing even though that part is still difficult?","hint":"What is enough to make you record the next video even without certainty that this is working?","key":"v3p3","placeholder":"Describe the honest reason you are continuing."}
       ]
     },
     {
-      "title": "The Fall",
-      "note": "The first breakthrough was real, but it didn't magically erase the deeper fear. Video 5 is where you name the thing you've been carrying while still showing up. This is the fall that makes the next epiphany earned.",
+      "title": "The Hardest Part",
+      "note": "Return to your larger life story. Tell the most difficult experience that came after you first began seeing this part of your life differently. This is not about making the videos.",
       "prompts": [
-        {
-          "label": "What's the thing you've been carrying through this challenge that you haven't said on camera yet? The fear, the doubt, the struggle that's still present even though you keep showing up.",
-          "hint": "Not the surface-level stuff. Not 'filming is hard.' The REAL thing. Maybe it's the voice that says nobody cares. Maybe it's the comparison. Say the thing you've been avoiding.",
-          "key": "v4p0",
-          "placeholder": "e.g. the thing I've been carrying is the very specific fear that I'll finish all seven videos, put everything into this, and wake up to silence... and that silence will confirm the thing I've been trying to prove wrong"
-        },
-        {
-          "label": "Where does that come from? Not the logical explanation. The deeper root. When did you first start believing that about yourself?",
-          "hint": "This fear or doubt didn't start with the challenge. It was there before. Trace it back. You don't have to go into full detail. Just name the root.",
-          "key": "v4p1",
-          "placeholder": "e.g. it goes back further than this challenge. I think it started in the years I spent doing good work that nobody outside my immediate circle ever saw, slowly convincing myself that was fine"
-        },
-        {
-          "label": "What would it mean to you, really honestly, if you could let go of that? What becomes possible on the other side of this battle?",
-          "hint": "Don't make this aspirational fluff. Think about it practically. What would you DO differently? How would you FEEL differently? What would you stop avoiding?",
-          "key": "v4p2",
-          "placeholder": "e.g. if I could let go of it, I think I'd stop waiting for proof before I acted. I'd just act. And I'd stop treating my own work like it needs to earn the right to exist before I show it to anyone"
-        },
-        {
-          "label": "What do you want to say to anyone watching this who's fighting their own version of the same battle?",
-          "hint": "You've just told your story. The fear, the root, the possibility. What do you want to leave them with? Not advice. A message. The thing you wish someone had said to you when you were in the middle of the fight.",
-          "key": "v4p3",
-          "placeholder": "e.g. I want to say: the fact that you're watching this means part of you already knows. You don't need more proof. Just decide that this thing you're carrying doesn't get to keep making your decisions"
-        }
+        {"label":"After you first started seeing this part of your life differently, what was the most difficult experience or period you went through next? What happened, and what made it so difficult for you?","hint":"Stay with the main part of your life or story you have been discussing. Describe the situation and the part that affected you most.","key":"v4p0","placeholder":"Describe the hardest experience that followed your first realization."},
+        {"label":"At the hardest point, what did you think you might lose, fail at, or never be able to change?","hint":"Answer from the perspective you had while living through it, before you knew what you would eventually learn.","key":"v4p1","placeholder":"Describe what felt most at risk at the time."},
+        {"label":"What did you try to do about it, and why was that not enough yet?","hint":"What actions, coping strategies, decisions, or old ways of thinking did you rely on? What continued to hurt, fail, or remain unanswered?","key":"v4p2","placeholder":"Describe what you tried and what remained unsolved."},
+        {"label":"Before you finally understood what this experience had taught you, what was still unanswered or unresolved?","hint":"End inside the uncertainty. What could you not yet explain, accept, or see clearly at the time?","key":"v4p3","placeholder":"Describe the question or struggle that still had no answer."}
       ]
     },
     {
-      "title": "The Second Epiphany",
-      "note": "Now that you've named the fall, Video 6 finds the elixir. This is your second big reframe: what you can see now, what the old way was costing you, and what becomes possible when it stops making the decisions.",
+      "title": "What I See Differently Now",
+      "note": "Share the larger realization you discovered because you lived through the hardest part of your story. This should deepen the first realization, not repeat it.",
       "prompts": [
-        {
-          "label": "What's something you now believe that most people around you would disagree with (or at least wouldn't say out loud)?",
-          "hint": "Not something designed to be controversial. Something genuinely true for you because of what you've just had to face.",
-          "key": "v5p0",
-          "placeholder": "e.g. I believe that most of what we call 'not being ready' is actually just fear of being judged, and the preparation is usually a delay tactic we've convinced ourselves is responsible"
-        },
-        {
-          "label": "What did naming the fear or fall help you see that you couldn't see before?",
-          "hint": "There was a before and an after. What became obvious only after you stopped avoiding the hard thing?",
-          "key": "v5p1",
-          "placeholder": "e.g. once I named the fear, I realized it had been making practical decisions for me while pretending to be wisdom"
-        },
-        {
-          "label": "What was the old way costing you? Be specific about what you were doing, tolerating, or missing.",
-          "hint": "Before you saw this clearly, you were living inside the old belief. What did that actually look like day to day?",
-          "key": "v5p2",
-          "placeholder": "e.g. it was costing me time I'll never get back and conversations I kept not having because I kept waiting to feel qualified enough to have them"
-        },
-        {
-          "label": "What opened up or changed when you stopped letting the old belief make the decisions?",
-          "hint": "The other side. Not a fantasy. Your actual experience of life after the shift. What does the world look like through the new lens?",
-          "key": "v5p3",
-          "placeholder": "e.g. what opened up was the ability to act before I felt ready, which sounds simple, but it changed everything about how I show up"
-        },
-        {
-          "label": "If you could say this to one specific person who's still stuck in the old belief... what would you say to them?",
-          "hint": "Picture one person. What do you want to say to them through the camera? Not a lecture. A direct, personal message.",
-          "key": "v5p4",
-          "placeholder": "e.g. I'd say: you're not getting more ready. Every day you wait, you're not building courage. You're building a bigger story about why you can't start yet"
-        }
+        {"label":"What is the biggest thing you eventually understood because you lived through the difficult experience you just described?","hint":"Choose something you could not have fully understood before living through it. Say it in your own words.","key":"v5p0","placeholder":"Describe the larger truth the difficult experience taught you."},
+        {"label":"How did you come to understand that? Was there a moment when it became clear, or did you recognize it gradually?","hint":"Describe the experience, evidence, conversation, consequence, or repeated pattern that brought the deeper truth into focus.","key":"v5p1","placeholder":"Describe how the larger realization became clear."},
+        {"label":"How did this larger realization change the way you understand your first realization or the person you were before it?","hint":"What became deeper, more complete, or different after the hard experience?","key":"v5p2","placeholder":"Describe how the second realization changed your understanding of the first."},
+        {"label":"What changed in who you became, the choices you made, or the way you live because you understood this?","hint":"Describe real consequences in your life. The change can be imperfect or ongoing.","key":"v5p3","placeholder":"Describe what genuinely changed in you or your life."},
+        {"label":"Who most needs to understand what you discovered, and what might it help them see differently?","hint":"Think of someone still living inside the part of the story you have already lived through.","key":"v5p4","placeholder":"Describe who needs this realization and what it could help them see."}
       ]
     },
     {
       "title": "What I Learned",
-      "note": "Seven videos. You did it. Now close the arc honestly. What did you think this was going to be? What actually happened? What do you know now that you didn't before? And where are you going next?",
+      "note": "Close the larger life story you have told. Compare who you were before both realizations with who you are now, acknowledge what remains, and connect the seven videos to what comes next.",
       "prompts": [
-        {
-          "label": "When you filmed Video 1, what did you think this challenge was going to be about? What did you expect to happen?",
-          "hint": "Think back to the person who pressed record on day one. What were you bracing for? What did you think would be hard? Be honest about the expectations, even the ones that seem naive now.",
-          "key": "v6p0",
-          "placeholder": "e.g. honestly, I thought this challenge was going to be about overcoming camera fear. I figured by Video 7 I'd just feel comfortable on camera. That's not what happened at all"
-        },
-        {
-          "label": "What actually happened instead? What surprised you most (about the experience, about yourself, about how people responded)?",
-          "hint": "The real version. Not the Instagram version. What was harder than expected? What was easier? What completely blindsided you?",
-          "key": "v6p1",
-          "placeholder": "e.g. what actually happened is that the camera got comfortable faster than I expected, and what surprised me most is that the videos I almost didn't post were the ones people responded to most"
-        },
-        {
-          "label": "What's the one thing you know now that you didn't know before Video 1? Not a tip. A truth. Something you can only learn by doing, not by thinking about it.",
-          "hint": "The elixir. The thing you're bringing back from this journey. If you could go back and whisper one sentence to the person you were before this challenge, what would it be?",
-          "key": "v6p2",
-          "placeholder": "e.g. the one thing I know now is that showing up is the work, not what you show up saying. I kept thinking I needed better ideas. What I needed was just to start"
-        },
-        {
-          "label": "If someone is watching this right now and they're exactly where you were seven videos ago (scared, uncertain, overthinking it): what do you want to say to them?",
-          "hint": "Not advice from a guru. A message from someone who JUST went through it. What's the honest truth from the other side?",
-          "key": "v6p3",
-          "placeholder": "e.g. I want to say: it's not going to feel the way you think it will. It's going to feel harder in some ways and easier in others. But the version of you on the other side of Video 7 is worth it"
-        },
-        {
-          "label": "What's next for you? You don't need a plan, just a direction. What did this challenge open up that you want to keep going with?",
-          "hint": "You don't need to have figured out the rest of your life. But this challenge showed you something: a direction, a possibility, a next step. Saying it out loud is the beginning of making it real.",
-          "key": "v6p4",
-          "placeholder": "e.g. what's next for me is keeping going, not as a challenge, but because I finally understand that this is what showing up actually looks like, and I want to keep doing it"
-        }
+        {"label":"Before either of the realizations you have talked about, who were you and how did you see yourself or this part of your life?","hint":"Think about how you thought, chose, or moved through the world before the first truth changed and before the difficult experience that led to the second one.","key":"v6p0","placeholder":"Describe who you were and how you saw this part of your life before either realization."},
+        {"label":"Who are you now, and what is genuinely different in the way you think, choose, respond, or live?","hint":"Point to real differences rather than saying you are a completely different person. What would the earlier version of you notice?","key":"v6p1","placeholder":"Describe who you are now and what is genuinely different."},
+        {"label":"What part of the earlier version of you is still present or still being worked through?","hint":"Growth does not erase a person. What remains complicated, unfinished, useful, or recognizably you?","key":"v6p2","placeholder":"Describe what remains present or unfinished."},
+        {"label":"What did telling this story across seven videos help you notice, understand, or finally put into words about your larger story?","hint":"The videos did not create your entire transformation. What did telling the story help you connect or express?","key":"v6p3","placeholder":"Describe what telling the story helped you understand or express."},
+        {"label":"What are you carrying forward from everything you lived and learned, and where do you want your story to go next?","hint":"You do not need a complete plan. Name the truth, direction, relationship, work, or possibility that now matters enough to continue.","key":"v6p4","placeholder":"Describe what you are carrying forward and where the story goes next."}
       ]
     }
   ],

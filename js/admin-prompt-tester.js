@@ -363,6 +363,14 @@ function testerContextKey(user, video, level, mode) {
   return testerBaseContextKey(user, video, level) + ':' + mode;
 }
 
+function easyQuestion(video, level) {
+  const easyCatalog = PROMPT_QUESTION_CATALOG.easy;
+  const questions = Array.isArray(easyCatalog)
+    ? easyCatalog
+    : easyCatalog[level === 2 ? 'l2' : 'l1'];
+  return questions && questions[video - 1] || null;
+}
+
 function currentPromptMode(user, video, level, answers) {
   if (video === 1) return 'extended';
   const key = testerBaseContextKey(user, video, level);
@@ -371,7 +379,7 @@ function currentPromptMode(user, video, level, answers) {
   const p2 = getPhase2(selectedOnboarding(user && user.id));
   const productionModes = p2.videoPromptModesByLevel && p2.videoPromptModesByLevel[String(level)];
   if (productionModes && (productionModes[video - 1] === 'easy' || productionModes[video - 1] === 'extended')) return productionModes[video - 1];
-  const easy = PROMPT_QUESTION_CATALOG.easy[video - 1];
+  const easy = easyQuestion(video, level);
   if (easy && answers && answers[easy.key]) return 'easy';
   const extended = questionVideoDefinition(video, level).prompts || [];
   return extended.some(question => answers && answers[question.key]) ? 'extended' : 'easy';
@@ -382,7 +390,7 @@ function productionPromptMode(user, video, level, answers) {
   const p2 = getPhase2(selectedOnboarding(user && user.id));
   const productionModes = p2.videoPromptModesByLevel && p2.videoPromptModesByLevel[String(level)];
   if (productionModes && (productionModes[video - 1] === 'easy' || productionModes[video - 1] === 'extended')) return productionModes[video - 1];
-  const easy = PROMPT_QUESTION_CATALOG.easy[video - 1];
+  const easy = easyQuestion(video, level);
   if (easy && answers && answers[easy.key]) return 'easy';
   const extended = questionVideoDefinition(video, level).prompts || [];
   return extended.some(question => answers && answers[question.key]) ? 'extended' : 'easy';
@@ -409,13 +417,14 @@ function videoOneQuestions(user, ob, level) {
   const declaration = level === 1
     ? 'Hi, my name is ' + name + ". I never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me... some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of."
     : "For those of you who don't know me yet, my name is " + name + ". I kinda never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me, some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of. I'm specifically doing this 7 Video Challenge because I have to share my knowledge, my experience, and my lived reality for the specific people I want to help before the world changes forever and I won't have the chance. These 7 videos are how I'm establishing myself as a credible voice in my field, but I'm scared, I'm frustrated, I don't know how it's going to go, but I'm committed to finishing.";
-  return [
+  const questions = [
     { key:level === 1 ? 'v0p0' : 'v0decl', label:'Opening declaration', hint:'The fixed opening SeenInSeven supplies for this level.', placeholder:'Opening declaration', fallback:declaration },
     { key:'v0p1', label:"What's been stopping you from posting until now?", hint:"Edit it until it sounds like the user's own words.", placeholder:'What has been stopping them?', fallback:level === 1 ? mvoField(ob && ob.mvo_q2, 'before_full') : mvoField(ob && ob.mvo_q3, 'before_full') },
-    { key:'v0p2', label:"Why are you doing this challenge right now?", hint:'What changed or made now the right moment?', placeholder:'Why now?', fallback:level === 1 ? mvoField(ob && ob.mvo_q3, 'catalyst_full') : mvoField(ob && ob.mvo_q4, 'crack_full') },
-    { key:'v0p3', label:'Who are you here to reach?', hint:'The person or group this video is meant to reach.', placeholder:'Who are they speaking to?', fallback:level === 1 ? mvoField(ob && ob.mvo_q4, 'village_full') : mvoField(ob && ob.mvo_q2, 'village_full') },
-    { key:'v0p4', label:"Anything else you'd like to add?", hint:'Any extra story, trait, or context the AI should weave in.', placeholder:'Optional extra context', fallback:getPhase2(ob).firstScriptNotes || '' }
+    { key:'v0p2', label:"Why are you doing this challenge right now?", hint:'What changed or made now the right moment?', placeholder:'Why now?', fallback:level === 1 ? mvoField(ob && ob.mvo_q3, 'catalyst_full') : mvoField(ob && ob.mvo_q4, 'crack_full') }
   ];
+  if (level === 2) questions.push({ key:'v0p3', label:'Who are you here to reach?', hint:'The person or group this video is meant to reach.', placeholder:'Who are they speaking to?', fallback:mvoField(ob && ob.mvo_q2, 'village_full') });
+  questions.push({ key:'v0p4', label:"Anything else you'd like to add?", hint:'Any extra story, trait, or context the AI should weave in.', placeholder:'Optional extra context', fallback:getPhase2(ob).firstScriptNotes || '' });
+  return questions;
 }
 
 function mvoField(value, key) {
@@ -443,7 +452,7 @@ function answersForContext(user, ob, video, level, mode) {
 function currentQuestionSet(user, ob, video, level, mode) {
   if (video === 1) return videoOneQuestions(user, ob, level);
   if (mode === 'easy') {
-    const easy = PROMPT_QUESTION_CATALOG.easy[video - 1];
+    const easy = easyQuestion(video, level);
     return easy ? [{ key:easy.key, label:easy.label, hint:easy.hint, placeholder:'Write whatever comes naturally.' }] : [];
   }
   return questionVideoDefinition(video, level).prompts || [];
@@ -599,7 +608,7 @@ function buildTestUserMessage(user, ob, video, level, mode, answers) {
     });
   }
   const currentQuestions = currentQuestionSet(user, ob, video, level, mode);
-  const easy = PROMPT_QUESTION_CATALOG.easy[video - 1];
+  const easy = easyQuestion(video, level);
   return SISPromptEngine.buildUserMessage({
     level,
     video,
@@ -642,7 +651,7 @@ async function generateTest() {
     if (!response.ok) throw new Error(data.error || 'Test generation failed.');
     let raw = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
     if (!raw) throw new Error('The AI returned an empty test.');
-    let validation = SISPromptEngine.validateOutput(raw);
+    let validation = SISPromptEngine.validateOutput(raw, video);
     if (!validation.valid) {
       response = await fetch('/api/generate', {
         method:'POST',
@@ -658,7 +667,7 @@ async function generateTest() {
       data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || 'Test repair failed.');
       raw = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-      validation = SISPromptEngine.validateOutput(raw);
+      validation = SISPromptEngine.validateOutput(raw, video);
       if (!validation.valid) throw new Error('The AI response still needs correction: ' + SISPromptEngine.validationFeedback(validation));
     }
     promptState.rawOutput = raw.trim();

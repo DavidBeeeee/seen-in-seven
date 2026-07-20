@@ -291,11 +291,10 @@ Current Level 1 declaration text:
 "Hi, my name is [name]. I never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me... some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of."
 
 [MEAT] — Empathy Lock + Commitment (110–140 words)
-Because the declaration handles name and identity, [MEAT] for Video 1 has three specific jobs — in order:
+Because the declaration handles name and identity, [MEAT] for Video 1 has two required jobs — in order:
 1. EMPATHY LOCK: The specific flavor of WHY they haven't been posting until now (use their exact words from the "stopping you" prompt answer). Camera fear is different from "I don't know what to say" which is different from "I keep starting over." NEVER genericize this. If their answer is in the data, use their language. This is the "wait, are you me?" moment. This is the most important line in the script.
 2. WHY NOW: What shifted — why today instead of six months from now (from their "why you're doing this" answer). 1–2 sentences.
-3. WHO: Who is watching this. Who they're showing up for (from their "who to reach" answer). 1–2 sentences. Make the right person feel called in, not described at.
-If extra context was provided, weave it in naturally — don't append it.
+If the onboarding data clearly identifies who they hope to reach, make that person feel called in without inventing a separate audience statement. If extra context was provided, weave it in naturally — don't append it.
 
 [CONCLUSION] — Engagement Landing (20–35 words)
 Close the emotional tension created by the hook/open loop without resolving the whole challenge. Use a mirror or question ending most of the time: make the viewer think, "I know exactly what that feels like," or "why did I wait so long too?" This should land after the blocker/why now/who sequence and before the CTA opens the next-video loop.
@@ -322,58 +321,54 @@ Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Build th
 VIDEO 1, LEVEL 1: Tone = Nervous, embarrassed, voice-memo energy (Bon Iver "Skinny Love" — acoustic, raw, voice cracking slightly)
 HOOK guidance: Use a concrete artifact of avoidance or a socially exposed action from their real answers: a repeated deletion, an absurd delay, a private ritual, a physical reaction, or the uncomfortable fact that they are recording despite it. Present the charged detail before its explanation. Do not summarize their readiness lesson.
 OPEN LOOP guidance: Make the viewer need to know what kept the speaker trapped or what made this attempt different enough to survive. Connect the hook to that question, then stop before revealing the blocker or why-now answer that belongs after the declaration.
-MEAT guidance: Open directly with their SPECIFIC BLOCKER — use their own words from the "what's been stopping you" answer. Do not soften it or genericize it. Name the exact flavor of their stuck. Then: why now, what shifted. Then: who they're here for — make the right person feel called in. Never write the speaker's name or challenge announcement here — that's handled by the declaration.
+MEAT guidance: Open directly with their SPECIFIC BLOCKER — use their own words from the "what's been stopping you" answer. Do not soften it or genericize it. Name the exact flavor of their stuck. Then explain why now and what shifted. Use onboarding audience context only when it fits naturally. Never write the speaker's name or challenge announcement here — that's handled by the declaration.
 CONCLUSION guidance: Pay off why this start matters now by revealing what the surface blocker had been protecting or postponing. Keep the challenge unresolved and favor a mirror or honest question over a motivational lesson.
 CTA guidance: Carry that unresolved admission directly into a clear follow or watch-next request because the speaker is committing to all seven videos and Video 2 reveals the person and history underneath this decision.
 </l1_v1_rules>
 
 <l1_v2_rules>
-VIDEO 2 — THE HIDDEN THREAD
-"There was always something there, but I didn't know how to name it yet."
+VIDEO 2 — HERE'S WHO I AM
+"This is the life behind the person who made that declaration."
 Framework: Ordinary World + Refusal of the Call
-Prompt type: Personal history / identity clue
+Prompt type: Personal history / unexpected identity detail
 Audience feels: Recognition + "there's more to this person"
 Speaker feels: Honest, reflective, not yet transformed
 
 CORE PURPOSE:
-This video is not the origin story of the offer, product, business, or expertise.
-This video reveals an early hidden thread in the speaker's life: a recurring interest, tension, pattern, frustration, sensitivity, obsession, or way of seeing the world that mattered before they knew what it meant.
-
-The audience should not feel like the speaker has arrived.
-They should feel like they are seeing evidence that the speaker was never as random, stuck, or ordinary as they thought.
+Let the audience meet the human being behind Video 1. Combine one grounding piece of background, one unexpected detail or contradiction, and one thing the speaker naturally cares about, notices, or returns to. The audience should leave feeling that they know this person, not that they received a biography or an expert origin story.
 
 HERO'S JOURNEY PLACEMENT:
 The speaker is still in the Ordinary World.
 They have not crossed the threshold.
 They have not become the guide.
-They do not yet understand the full meaning of the thread.
-This is the "there was always something there, but I didn't know how to name it yet" moment.
+They do not need to know what every detail means yet. This video establishes identity and belonging before Video 3 changes the lens.
 
 AUDIENCE JOURNEY:
 Before: "I saw them start, but I do not really know who they are yet."
-After: "There is more to this person than the first impression. I can see one early clue before they could."
-Open question: "What kept them from following that thread sooner?"
-Social impulse: Comment with recognition, curiosity, or their own version of that hidden thread.
+After: "There is more to this person than the first impression, and I recognize something of myself in them."
+Open question: "What did this person once think was true that shaped the life I just met?"
+Social impulse: Comment with recognition, curiosity, or their own unexpected detail.
 
 STRUCTURAL BEATS:
-1. Pattern Interrupt (Hook) — Open with a charged contradiction, blunt confession, or unexpected line that stops the scroll. Do not reveal the hidden thread yet. Do not explain the speaker. Do not start with background or broad relatability.
-2. Hidden Thread (Open Loop) — Introduce the existence of one specific recurring clue from the speaker's life, but do not fully explain its meaning yet. The viewer should wonder: "What was the clue?" or "Why did that matter later?"
-3. Ordinary World Evidence (Meat) — Show the speaker inside the ordinary world. Use concrete personal details. Reveal the hidden thread as something they kept returning to, noticing, caring about, resisting, or being bothered by. If there is a small catalyst moment, it belongs here as evidence, not in the hook. But do not force a catalyst if the story is still mostly refusal of the call.
-4. Identity Clue Landing (Conclusion) — Land on the idea that this thread was probably trying to tell them something before they understood it. The conclusion should feel reflective, not triumphant.
-5. Next Belief (CTA) — Continue directly from the conclusion, then point toward the belief, assumption, fear, or misunderstanding that kept them from following the thread sooner. Give a clear action and a clear reason to follow/watch next.
+1. Pattern Interrupt (Hook) — Pull the most charged truthful contrast, odd detail, blunt admission, or unexpected behavior from the speaker's answers. State it before explaining the person. Do not begin with biography, a soft identity statement, or the lesson.
+2. Identity Gap (Open Loop) — Connect that detail to one concrete contradiction the viewer needs explained. The question should be why these apparently mismatched pieces belong to the same person, not what lesson the speaker eventually learned.
+3. Grounding Background (Meat) — Give only the background needed for a cold viewer to understand the speaker's world.
+4. Unexpected Detail (Meat) — Show the interest, habit, past chapter, contradiction, or trait that complicates the obvious first impression.
+5. Natural Attention (Meat) — Reveal what the speaker keeps noticing, caring about, or returning to and why it matters personally. A small catalyst may appear as evidence, but do not force one or turn it into the transformation.
+6. Identity Landing (Conclusion) — Answer why the opening contrast belongs together. Land on a recognizable truth about who this person has always been, while leaving the meaning and first epiphany open.
+7. Next Belief (CTA) — Continue from that identity landing, identify this as Video 2 of the seven-part challenge when useful, and give one clear action because Video 3 reveals something the speaker used to think was true and what made it fall apart.
 
 TONE: Warm, relaxed, reflective storytelling energy. Like the second conversation with someone. Specific details, not generalities. A moment of recognition. Still in the ordinary world, still pre-transformation.
 
-LEVEL 1 SPECIFIC: This is still the Ordinary World and Refusal of the Call. Make the audience feel like they just noticed an important clue before the speaker fully understands it. Revealing a human being, not building a brand.
+LEVEL 1 SPECIFIC: This is still the Ordinary World and Refusal of the Call. Reveal a human being, not a brand, expert, product, or completed transformation.
 
 ABSOLUTE RULE:
-Reveal the clue, not the conclusion. Do not reveal the final meaning of the thread yet. Do not explain the product, offer, business, expertise, or final mission. Do not make the speaker sound like they already understood where it was all going.
+Reveal the person, not the final meaning of their story. Do not explain the product, offer, business, expertise, final mission, or clean lesson. Do not make the speaker sound like they already understood where it was all going.
 
 PREMATURE INSIGHT GUARD:
-Do not let the meat or conclusion fully explain the lesson hidden inside the thread. The speaker may notice the thread, feel bothered by it, or sense that it matters, but they should not yet articulate the clean insight, reframe, principle, or final meaning. Save the explicit lesson for Video 3 and the full-circle meaning for Video 7.
+The speaker may recognize that the details belong together, but they should not articulate the clean reframe, principle, or final meaning. Save the explicit first insight for Video 3 and the full-circle meaning for Video 7.
 
-
-PROMPTS (L1): 1) Concrete ordinary-world detail, 2) The recurring hidden thread, 3) Why they did not follow it and what they thought it meant then
+PROMPTS (L1): 1) Background or everyday life that helps someone understand them, 2) Something people do not expect about them, 3) What they naturally care about, notice, or return to and why it matters
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -381,10 +376,10 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Build the MEAT and CONCLUSION toward it. Then design the OPEN LOOP as the unanswered question that conclusion will pay off. Last, build the HOOK as a separate truthful pattern interrupt that captures a cold viewer without stating the question or answer. The CTA must begin by continuing the conclusion's exact thought, then give a clear action and reason; never open it with the video or series number.
 
 VIDEO 2, LEVEL 1: Tone = Warm, reflective, ordinary-world energy (Gregory Alan Isakov "Big Black Car" — folk acoustic, settling in, revealing)
-HOOK guidance: Extract the strangest concrete behavior, obsession, frustration, contrast, or identity mismatch from the ordinary-world material. State it before explaining what it meant. The hook must interrupt attention without announcing that it was a clue or revealing where it eventually led.
-OPEN LOOP guidance: Connect that odd detail to the ordinary world and make the viewer wonder why the speaker kept returning to it or why it mattered. Do not interpret the thread yet; create the need to watch it emerge through the story.
-CONCLUSION guidance: Reveal only that the recurring thread may not have been random. Let the audience recognize an identity clue before the speaker can fully name its meaning. Keep the speaker in the ordinary world and short of the Video 3 epiphany.
-CTA guidance: Continue from the still-unexplained thread into a clear follow, comment, or watch-next request because Video 3 exposes the belief or misunderstanding that kept the speaker from following it.
+HOOK guidance: Extract the strangest concrete behavior, interest, contradiction, or identity mismatch from the answers. State it before explaining the speaker or what it means. The line must interrupt attention on its own.
+OPEN LOOP guidance: Connect that unexpected detail to one grounding fact and make the viewer need to understand why those pieces belong to the same person. Do not promise a generic reveal or interpret the larger lesson.
+CONCLUSION guidance: Resolve the identity contradiction by showing what the details reveal about the person, but stop short of the Video 3 reframe. Warm recognition is enough; this is not a transformation speech.
+CTA guidance: Continue from that still-developing identity into a clear follow, comment, or watch-next request because Video 3 reveals one thing the speaker used to think was true and the experience that made it impossible to keep believing.
 </l1_v2_rules>
 
 <l1_v3_rules>
@@ -404,6 +399,8 @@ THIS IS THE MOST IMPORTANT VIDEO IN THE CHALLENGE. It must create a genuine cogn
 
 EPIPHANY CONSTRUCTION ORDER:
 Write the MEAT first internally. The MEAT carries the full belief-collapse sequence. Then write the CONCLUSION that lands the reframe, design the OPEN LOOP backward from that landing, and finally engineer the HOOK from concrete discovery evidence without revealing the reframe. Write the CTA last.
+
+The user is not required to hand you the new truth. Infer the narrowest defensible reframe from the old idea, the evidence that made it stop making sense, and the cost the speaker named. If the evidence is incomplete, preserve that uncertainty instead of manufacturing a clean conversion. The reframe must feel discovered from their material, not supplied by you.
 
 The HOOK must be derived from the sharpest concrete evidence that made the reframe possible, not from the old-belief summary or the final insight. Do NOT write a hook that starts with "I used to believe..." and immediately corrects it. The hook is a scroll-stopping jolt pulled from the weirdest, most uncomfortable, or most socially revealing action, consequence, or contradiction inside the discovery.
 
@@ -425,12 +422,12 @@ LEVEL 1 SPECIFIC: Personal epiphany — a belief about life, identity, fear, suc
 SECTION MAP FOR VIDEO 3:
 [HOOK] — Pattern Interrupt from the discovery evidence. Pull the most charged concrete consequence, action, or contradiction out of the MEAT and place it before its cause. It must make the viewer need an explanation without stating the reframe. No backstory, old-belief summary, or lesson reveal.
 [OPEN LOOP] — Context gap. Explain just enough for the viewer to understand why the hook is not random, then open the specific question: what was the speaker missing, what did they misread, or why did the normal belief stop making sense?
-[MEAT] — Full epiphany journey. Old belief -> why it felt reasonable/protective -> the actual experience that exposed a contradiction -> what the speaker noticed that they could not unsee -> the first new lens that gives them motion.
+[MEAT] — Full epiphany journey. What they used to think was true -> how it shaped real choices -> why it felt reasonable or protective -> the moment or repeated evidence that exposed a contradiction -> what they could no longer explain with the old idea -> the first new lens that emerges from the evidence.
 [CONCLUSION] — The reality flip. Name the simple reframe only after the MEAT earns it. The viewer should think, "that is obvious now, why did I never say it that way?"
 [CTA] — Continue from that reframe into Video 4's road of trials. Give one clear action and one reason tied to the unresolved cost of living by the old belief.
 
 
-PROMPTS (L1): 1) Old belief held for a long time, 2) The actual experience that cracked it, 3) New truth stated simply, 4) Cost of the old way, 5) Why this matters enough to say on camera
+PROMPTS (L1): 1) One thing they used to think was true, explicitly identified as untrue, and how it shaped them, 2) The moment, experience, or repeated pattern that made them question it, 3) What continuing to think that way quietly costs and why they care enough to say it aloud
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -446,32 +443,32 @@ CTA guidance: Continue from the first epiphany into a clear follow, comment, or 
 
 <l1_v4_rules>
 VIDEO 4 — THE MIDPOINT TRIAL — ROAD OF TRIALS
-"The old version of me got tested, and for once it did not fully win."
+"Here is what this has actually been like from the middle."
 Framework: Modified Hero's Journey
 Audience feels: Trust + Midpoint Orientation
 Speaker feels: Momentum
 
 AUDIENCE JOURNEY:
 Before: "I may be finding this person in the middle of the story. Why should I care where they are?"
-After: "This is part four of a real seven-part transformation, and I can see the old self being tested by the new behavior."
+After: "This is part four of a real seven-part challenge, and the honest middle tells me more than a victory speech would."
 Open question: "What happens when this early proof gets tested by the deeper fear?"
 Social impulse: Follow forward to see how it ends, or go back to see why this midpoint matters.
 
 STRUCTURAL BEATS:
-1. Pattern Interrupt (Hook) — Open with one concrete piece of surprising evidence from the trial before interpreting it as change. Do not recap the challenge, report progress, or state what the evidence proves.
-2. Trial Stakes (Open Loop) — Connect that evidence to the immediate collision between the old pattern and new behavior. Give a cold viewer enough present-tense context to understand the stakes, then leave the meaning of the change unanswered. Save the series orientation for the CTA.
-3. Old Pattern vs. New Behavior (Meat) — Show one concrete moment where the old self met the new behavior. The proof must be behavioral, not just emotional: what they would normally do vs. what they actually did this time.
-4. Small Win Proof — Something shifted under pressure. Might be small and subtle. Name it without making it sound complete.
-5. Real-Time Transparency — What's still hard. Name it. The hero is not transformed yet; they are being tested.
-6. Objection Pre-emption — Show that progress does not require constant confidence, excitement, or certainty. The trial proves continuation, not mastery.
-7. Trial Landing (Conclusion) — Answer what the opening evidence actually proves about change while preserving the difficulty that remains. Create a twist, debate, question, or mirror from that specific trial.
+1. Pattern Interrupt (Hook) — Pull one concrete, surprising detail from the lived experience so far. It may come from an expectation being violated, an action becoming unexpectedly easier or harder, or an awkward thing the speaker still does. Do not recap the challenge, report progress, or state what the evidence proves.
+2. Midpoint Gap (Open Loop) — Connect that detail to the difference between what the speaker expected and what is actually happening. Give a cold viewer enough context to understand the immediate tension, then leave what the difference means unanswered. Save the series orientation for the CTA.
+3. Expected vs. Actual (Meat) — Establish what the speaker thought making the videos would feel like and contrast it with the real experience.
+4. Concrete Evidence (Meat) — Use the specific moment or detail they provided. The video must contain something the audience can picture, not only a progress report.
+5. Emerging Change (Meat) — Name what may be beginning to shift without exaggerating it into confidence, transformation, or audience proof.
+6. Real-Time Transparency (Meat) — Name what is still difficult, awkward, uncertain, or unresolved and why the speaker continues anyway.
+7. Trial Landing (Conclusion) — Answer what this honest midpoint reveals. Progress may be a changed relationship to the difficulty, not the disappearance of it. Create a twist, debate, question, or mirror without pretending the journey is complete.
 8. Midpoint Orientation (CTA Bridge) — Continue from the trial landing and make the series discoverable from the middle: this is video 4 of 7, the viewer can follow to see how it ends or go back to see how it started, and the reason must come from the conclusion.
 
 TONE: Relaxed, reflective, slightly surprised. Feels like the hero realizing the journey is acting on them. Uses contrast naturally. Small win is understated. Honesty about difficulty is specific. Ends with midpoint orientation, not a generic follow request.
 
 THIS VIDEO EARNS THE RIGHT FOR VIDEO 5. Without the road of trials, the fall feels melodramatic. With it, the ordeal feels like the honest cost of the journey, and Video 6's second epiphany can feel earned.
 
-PROMPTS (L1): 1) One specific moment the old pattern appeared, 2) What they did differently, 3) What happened and what it revealed, 4) Where the old pattern is still winning
+PROMPTS (L1): 1) What making the videos has actually been like compared with expectations, including one concrete moment or detail, 2) What may be beginning to change, 3) What remains difficult, awkward, uncertain, or unresolved, 4) Why they are continuing anyway
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -479,43 +476,42 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Build the MEAT and CONCLUSION toward it. Then design the OPEN LOOP as the unanswered question that conclusion will pay off. Last, build the HOOK as a separate truthful pattern interrupt that captures a cold viewer without stating the question or answer. The CTA must begin by continuing the conclusion's exact thought, then give a clear action and reason; never open it with the video or series number.
 
 VIDEO 4, LEVEL 1: Tone = Grounded, relaxed, mid-trial honesty (Iron & Wine "Naked as We Came" — soft, slightly messy, morning light)
-HOOK guidance: Pull one surprising physical action, behavioral contrast, embarrassing residue, or concrete side effect from the current trial. State the evidence before saying it represents progress. Never open with how many videos they have made, how the challenge is going, what they expected, or a summary of what changed.
-OPEN LOOP guidance: Connect that evidence to the collision between the old pattern and the new behavior. Make the viewer need to know why one thing is getting easier while another still resists, without announcing which change counts as progress.
-CONCLUSION guidance: Pay off what the trial actually proves through behavior, while preserving what remains difficult. The landing should redefine progress specifically enough to matter without pretending the speaker has completed the transformation.
+HOOK guidance: Pull one surprising physical action, expectation violation, embarrassing residue, or concrete side effect from the current experience. State the evidence before saying it represents progress. Never open with how many videos they have made, how the challenge is going, what they expected, or a summary of what changed.
+OPEN LOOP guidance: Connect that evidence to the gap between expectation and reality. Make the viewer need to know why the experience is different from what the speaker braced for, without announcing what counts as progress.
+CONCLUSION guidance: Pay off what the honest midpoint reveals while preserving what remains difficult. The landing should redefine progress specifically enough to matter without pretending the speaker has completed the transformation.
 CTA guidance: Because this is the midpoint, explicitly name that this is video 4 of 7. Continue from the conclusion into the larger transformation the speaker is documenting. Invite the viewer to follow to see how it ends and/or go back to see how it started because the difference between the beginning and this trial is the point. The CTA must feel like a natural continuation of the conclusion, not a navigation label.
 </l1_v4_rules>
 
 <l1_v5_rules>
 VIDEO 5 — THE FALL — THE ORDEAL
-"Here's what I'm still fighting. Here's the truth I've been avoiding."
+"The first realization did not spare me from the hardest part."
 Framework: Modified Hero's Journey
 Audience feels: Deep trust + Connection
 Speaker feels: Exposed + Proud
 
 AUDIENCE JOURNEY:
-Before: "The first insight and road of trials made this look like it was working."
-After: "The first win was real, but it did not remove the deeper fear."
-Open question: "What truth does the speaker find after admitting this?"
-Social impulse: Comment with their own fear, or quietly become more loyal.
+Before: "The first realization and early progress may have made the path look simpler than it was."
+After: "I understand what this person actually endured after the first realization, and why the larger truth had to be earned."
+Open question: "What could this experience eventually teach them that the first realization could not?"
+Social impulse: Comment with their own difficult chapter, ask what happened next, or quietly become more loyal.
 
-THIS IS NOT A POSITIONING VIDEO. THIS IS NOT ABOUT VALUES OR IDENTITY. This is the fall after the first win — the moment the earlier epiphany gets tested and does not magically save them. The dragon in the cave. The audience witnesses the most courageous thing a person can do on camera: admit what's still unfinished inside them.
+THIS IS NOT A POSITIONING VIDEO AND IT IS NOT ABOUT THE DIFFICULTY OF MAKING THESE VIDEOS. Return to the larger life topic the speaker has been discussing. This is the ordeal that occurred after the first realization: the period when knowing something new was not enough to prevent loss, failure, pain, confusion, or an old strategy from failing. The audience must experience the hard chapter before Video 6 can reveal what it taught.
 
 STRUCTURAL BEATS:
-1. Pattern Interrupt (Hook) — Open with a confession sharp enough to stop the scroll. It should feel like the speaker just said the thing they almost edited out. Do not frame it as strength yet.
-2. Ordeal Gap (Open Loop) — Connect that confession to one exact unresolved question about what the fear is doing, where it came from, or what it has cost. Do not answer it yet.
-3. The Internal Battle — The thing they're fighting. PRESENT TENSE. Not conquered. Not past. Something alive right now.
-4. The First Win Fails to Save Them — Show that Video 3's insight was real, but incomplete. Knowing better did not make the deeper fear disappear.
-5. The Admission — ONE specific thing they've been avoiding saying. Not general — SPECIFIC.
-6. Polarization (through authenticity) — The people who stay after this are the ride-or-die audience.
-7. Ordeal Landing (Conclusion) — Answer what the confession reveals about the fear's role or cost without pretending the fear is solved. Open a twist, debate, question, or mirror.
-8. Ethical Bridge (CTA) — Continue from that unresolved truth into one clear action and reason connected to Video 6's second epiphany.
+1. Pattern Interrupt (Hook) — Pull the most charged truthful detail, consequence, failed attempt, or moment of risk from the ordeal. Present the evidence before explaining the chapter or what it eventually taught. Do not open with a summary such as "the hardest time of my life."
+2. Ordeal Gap (Open Loop) — Give enough context to establish what was at stake and create one exact unanswered question about why the first realization was not enough, what kept failing, or what the speaker still could not understand. Do not reveal the later lesson.
+3. After the First Realization (Meat) — Briefly establish what the speaker had begun to understand before this chapter. Use earlier scripts for continuity without recapping them.
+4. The Ordeal (Meat) — Tell what actually happened and why it was difficult. Use concrete consequences and the speaker's emotional reality, not inflated drama.
+5. What Was at Risk (Meat) — Name what the speaker believed they could lose, fail at, or never change from the perspective they had then.
+6. Failed Answers (Meat) — Show what they tried and why it did not solve the deeper problem yet.
+7. Unresolved Landing (Conclusion) — Answer what the ordeal exposed, but not what it ultimately taught. Land inside the question, contradiction, or limit the speaker still could not resolve. The conclusion must make Video 6 necessary.
+8. Ethical Bridge (CTA) — Continue from that unresolved point into one clear action and reason because Video 6 reveals the larger realization the ordeal eventually made possible.
 
-TONE: Quiet. Slow. Words chosen carefully. Present tense throughout. No neat resolution. The honesty IS the point. Ends with continuation despite vulnerability.
+TONE: Quiet. Slow. Words chosen carefully. Tell the hard period from inside the perspective the speaker had then, even when describing it in past tense. No neat resolution and no premature lesson. The honesty is the point.
 
-LEVEL 1 SPECIFIC: The fear, doubt, or struggle that's been present the whole challenge. The voice that says nobody cares. The comparison trap. The fear nothing will change.
+LEVEL 1 SPECIFIC: A real ordeal from the speaker's life or the main topic of their story. It may be personal, relational, professional, creative, financial, or internal. It must not collapse into a report about filming, posting, or completing the challenge unless that truly is the larger life story they chose.
 
-
-PROMPTS (L1): 1) The unsaid thing they've been carrying, 2) Where it comes from — the root, 3) What becomes possible without it, 4) Message to someone fighting the same battle
+PROMPTS (L1): 1) The most difficult experience or period after the first realization, what happened, and why it was difficult, 2) What they feared they might lose, fail at, or never change, 3) What they tried and why it was not enough, 4) What was still unanswered before they understood the larger lesson
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -523,10 +519,10 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Build the MEAT and CONCLUSION toward it. Then design the OPEN LOOP as the unanswered question that conclusion will pay off. Last, build the HOOK as a separate truthful pattern interrupt that captures a cold viewer without stating the question or answer. The CTA must begin by continuing the conclusion's exact thought, then give a clear action and reason; never open it with the video or series number.
 
 VIDEO 5, LEVEL 1: Tone = Quiet, slow, every word matters (Yann Tiersen "Comptine d'un autre été" — solo piano, sparse, intimate)
-HOOK guidance: Use the most concrete, socially risky fragment of the ordeal: the sentence they nearly removed, the action fear causes, the private cost, or the contradiction between continuing and still wanting to hide. Let the admission hit before explaining its history. Do not recap how far they have come.
-OPEN LOOP guidance: Make the viewer need to understand what this fear has been doing or costing beneath the visible challenge. Give enough context to establish present-tense stakes, but do not name the root or offer relief yet.
-CONCLUSION guidance: Pay off the admission honestly without curing it. Naming the fear may change its authority, disguise, or hold, but the ordeal must remain alive enough for Video 6's second epiphany to be earned.
-CTA guidance: Connect the unresolved fear to the next video. Invite follow, comment, or watch-next because Video 6 reveals what changed after naming the thing they had been avoiding.
+HOOK guidance: Use the most concrete, charged fragment of the life ordeal: a consequence, decision, failed attempt, object, place, loss, or contradiction. Let the evidence hit before explaining its history. Do not reveal the lesson or recap the journey.
+OPEN LOOP guidance: Make the viewer need to understand why the first realization could not protect the speaker from this experience, what kept failing, or what remained impossible to explain. Establish the stakes without revealing the larger truth found later.
+CONCLUSION guidance: Pay off what the ordeal exposed while preserving the unanswered question. Do not cure the pain, state the elixir, or turn suffering into a motivational lesson. The lack of an answer is what makes Video 6 earned.
+CTA guidance: Connect the unresolved question directly to the next video. Invite follow, comment, or watch-next because Video 6 reveals what the speaker eventually understood only after living through this ordeal.
 </l1_v5_rules>
 
 <l1_v6_rules>
@@ -537,37 +533,37 @@ Audience feels: Authority + Respect
 Speaker feels: Convicted
 
 AUDIENCE JOURNEY:
-Before: "They admitted the deeper fear. I want to know what that changed."
-After: "They found a hard-won truth, and the truth feels useful to me too."
+Before: "They reached the hardest part without an answer. I want to know what that experience eventually revealed."
+After: "They found a hard-won truth inside the ordeal, and the truth feels useful to me too."
 Open question: "What do they return with now?"
 Social impulse: Save, share, or comment because the idea reframed something.
 
-Video 3 worked through COGNITIVE SURPRISE. Video 6 works through EARNED CONVICTION. This is not another hot take. This is the elixir found after the fall: the deeper truth that could only exist because the speaker faced the thing they were avoiding.
+Video 3 worked through COGNITIVE SURPRISE. Video 6 works through EARNED CONVICTION. This is not another hot take. This is the elixir found after the life ordeal in Video 5: a larger realization that deepens, corrects, or completes the first one because the speaker lived through evidence they did not have before.
 
 ESCALATED EPIPHANY CONSTRUCTION ORDER:
-Write the MEAT first internally. Build from the fall in Video 5: what they admitted, what it exposed, what changed after they stopped hiding it, and what truth they can now carry back. Then write the CONCLUSION that names the elixir, design the OPEN LOOP backward from that landing, and finally engineer the HOOK from concrete ordeal evidence without revealing the elixir. Write the CTA last.
+Write the MEAT first internally. Build from the ordeal in Video 5: what happened, what remained unanswered, how the larger realization became clear, how it changed the meaning of the first realization, and what changed in the speaker's identity, choices, or life. Then write the CONCLUSION that names the elixir, design the OPEN LOOP backward from that landing, and finally engineer the HOOK from concrete ordeal evidence without revealing the elixir. Write the CTA last.
 
 THE 7 ESCALATED EPIPHANY BEATS:
-1. Pattern Break -> "Earned Reversal" — Open from a hard-won reversal that would not have been credible before Video 5.
-2. Discovery Arc -> "After the Fall" — Show how naming the fear changed the speaker's relationship to it. Through experience, not argument.
+1. Pattern Break -> "Earned Reversal" — Open from a hard-won reversal that would not have been credible before the ordeal in Video 5.
+2. Discovery Arc -> "After the Ordeal" — Show how the realization emerged from what happened, whether through one moment or evidence accumulating over time. Through experience, not argument.
 3. Cognitive Reframe -> "Elixir" — The new truth is not just an idea. It is something they can carry forward.
 4. "Aha" Transfer -> "Emotional Safety" — The viewer feels invited into the truth, not scolded by it.
-5. Cost Revelation -> "What Opens Up" — Show what becomes possible when the old fear no longer makes the decisions.
+5. Cost Revelation -> "What Opens Up" — Show what becomes possible once the larger realization changes the speaker's choices or understanding.
 6. Simplicity Signal -> "Carryable Truth" — The reframe is simple enough to remember and repeat.
 7. Authority Anchor -> "Natural Invitation" — The right person thinks, "I want more of this person's world."
 
 TONE: Convicted and steady. Not ranting, not defensive. The elixir is simple, grounded, and earned. The speaker has not solved everything, but they now understand something they can carry.
 
-LEVEL 1 SPECIFIC: A personal elixir — the deeper truth found after naming the fear. Not a grand lesson. A usable truth learned by doing.
+LEVEL 1 SPECIFIC: A personal elixir — the deeper truth found by living through the ordeal. Not a grand lesson. A usable truth earned through experience.
 
 SECTION MAP FOR VIDEO 6:
 [HOOK] — Pattern Interrupt from the earned evidence. Open with the sharpest concrete consequence, refusal, or behavior produced by the ordeal, before explaining what new truth made it possible.
-[OPEN LOOP] — Cost gap. Show why the reversal matters by pointing to what the old fear had been allowed to decide. Do not reveal the full elixir yet.
-[MEAT] — Escalated epiphany journey. Build from Video 5's fall -> what naming the fear exposed -> what changed after they stopped hiding it -> the carryable truth they can now bring forward.
+[OPEN LOOP] — Meaning gap. Show why the ordeal could not be explained by the speaker's first understanding and create the exact question of what they eventually saw differently. Do not reveal the full elixir yet.
+[MEAT] — Escalated epiphany journey. Build from Video 5's unresolved ordeal -> how the larger realization emerged -> how it deepened the first realization -> what genuinely changed in the speaker's identity, choices, or life -> who else can use this truth.
 [CONCLUSION] — The elixir. State the simple hard-won truth after the MEAT earns it. It should feel usable, not preachy.
 [CTA] — Continue from the elixir into Video 7's return. Give one clear action and one reason tied to seeing the whole journey come back to the beginning.
 
-PROMPTS (L1): 1) Belief most would disagree with, 2) Experience that forced this belief, 3) Cost of the old way, 4) What opened up after letting go, 5) What they'd say to one specific person still stuck
+PROMPTS (L1): 1) The biggest thing they eventually understood because of the difficult experience, 2) How that realization became clear, 3) How it changed their understanding of the first realization or earlier self, 4) What changed in their identity, choices, or life, 5) Who needs this truth and what it could help them see
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -575,8 +571,8 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Build the MEAT and CONCLUSION toward it. Then design the OPEN LOOP as the unanswered question that conclusion will pay off. Last, build the HOOK as a separate truthful pattern interrupt that captures a cold viewer without stating the question or answer. The CTA must begin by continuing the conclusion's exact thought, then give a clear action and reason; never open it with the video or series number.
 
 VIDEO 6, LEVEL 1: Tone = Convicted, steady, quiet certainty (Max Richter "On the Nature of Daylight" — strings, gravity, resolution)
-HOOK guidance: Use the most charged consequence, refusal, or contradiction created after the ordeal. Lead with what the speaker did, stopped obeying, or can no longer accept, without stating the elixir or explaining why it changed.
-OPEN LOOP guidance: Make the viewer need to know what the old belief had actually been deciding or taking from the speaker, and why naming it in Video 5 altered its power. Do not reveal the new truth yet.
+HOOK guidance: Use the most charged consequence, choice, contradiction, or piece of evidence created by the ordeal and its aftermath. Lead with what happened, changed, or became impossible to ignore without stating the elixir or explaining why.
+OPEN LOOP guidance: Make the viewer need to know what the ordeal eventually revealed that the first realization could not explain. Do not reveal the larger truth yet.
 CONCLUSION guidance: Deliver the second epiphany as a hard-won truth the speaker can now carry, including what becomes possible on the other side. It should have more conviction than Video 3 because the ordeal supplied the proof.
 CTA guidance: Continue from the elixir into a clear follow, comment, or watch-next request because the final video returns to the beginning and reveals what the speaker will carry forward.
 </l1_v6_rules>
@@ -595,29 +591,31 @@ Open question: "Where does this person go now?"
 Social impulse: Follow, DM, or keep watching because the story became an ongoing relationship.
 
 THE 7 RESOLUTION BEATS:
-1. Pattern Interrupt (Hook) — Open with one concrete action, reaction, or choice from now that would have been unlikely in Video 1. Present the evidence before explaining the change. Do not announce completion or recap the challenge.
-2. Full Circle Loop — Reach back to Video 1 after the hook. Use a specific callback so the audience feels the circle closing.
-3. Narrative Satisfaction — Expected vs. actual. What they thought this would be vs. what it turned out to be. Honest accounting, not highlight reel.
-4. New Normal Declaration — Name what's different. Specific, grounded. "I used to [X]. Now I [Y]." Small real shifts that reveal genuine change.
-5. Reciprocity (The Lesson / The Gift) — The elixir. "If you're where I was seven videos ago, here's what I wish someone had told me." Peer to peer, not teacher to student.
-6. Bridge to Forever — The challenge becomes an ongoing relationship. Not "subscribe" — "this opened something that isn't going to close."
-7. Unfolding Horizon — Ends with an opening, not a conclusion. The story continues. A new chapter is beginning.
+1. Pattern Interrupt (Hook) — Open with one concrete action, reaction, choice, or identity contrast from now that would have been unlikely before either realization. Present the evidence before explaining the change. Do not announce completion or recap the challenge.
+2. Full Circle Loop — Reach back to the earlier person and worldview after the hook. Use a specific callback from the previous scripts so the audience feels the larger life story closing.
+3. Narrative Satisfaction — Who the speaker was before both realizations versus who they are now. Honest accounting, not a claim that the seven videos caused the whole change.
+4. New Normal Declaration — Name what is genuinely different in thought, choice, response, or daily life. Keep it specific and grounded.
+5. Honest Remainder — Acknowledge what from the earlier self remains present, useful, complicated, or unfinished. Return does not mean perfection.
+6. Reciprocity (The Lesson / The Gift) — Offer the larger truth earned through both epiphanies and the ordeal. Peer to peer, not teacher to student.
+7. Challenge Reflection — Let the speaker name what telling this story across seven videos helped them notice, connect, or finally put into words. The challenge reveals or articulates the arc; it does not manufacture their entire transformation.
+8. Bridge to Forever — The challenge becomes an ongoing relationship. Not "subscribe" — "this opened something that isn't going to close."
+9. Unfolding Horizon — Ends with an opening, not a conclusion. The story continues. A new chapter is beginning.
 
-TONE: Warm, reflective, the slowest pace of any video. Callback to Video 1 is specific. Expected vs. actual is the emotional core. The lesson is a gift, not a lecture. Forward look is open-ended and honest. Last line feels like a door opening.
+TONE: Warm, reflective, the slowest pace of any video. Callbacks to the earlier life story are specific. Identity contrast is the emotional core. The lesson is a gift, not a lecture. Forward look is open-ended and honest. Last line feels like a door opening.
 
-LEVEL 1 SPECIFIC: Full circle from nervous beginner to someone who did the thing. The elixir is a personal truth learned by doing. Forward look doesn't need a plan — just a direction.
+LEVEL 1 SPECIFIC: Full circle across the speaker's larger life story, from who they were before the two realizations to who they are now. The seven-video challenge helps them tell and understand that story, but it must not be credited with causing years of life change. Forward look doesn't need a plan — just a direction.
 
 SECTION MAP FOR VIDEO 7:
-[HOOK] — Pattern Interrupt from present-day evidence. Open with the clearest concrete action, reaction, or choice that proves something changed, without stating what changed or summarizing the challenge.
-[OPEN LOOP] — Return gap. Reach back to Video 1 and create the question of what actually changed. Do not summarize all seven videos.
-[MEAT] — Resolution journey. Expected vs. actual -> specific change -> elixir/gift for the viewer -> bridge into what continues after the challenge.
+[HOOK] — Pattern Interrupt from present-day evidence. Open with the clearest concrete action, reaction, choice, or identity contrast that proves something changed, without stating what changed or summarizing the challenge.
+[OPEN LOOP] — Return gap. Reach back to the earlier self and create the question of what the two realizations and ordeal actually changed. Do not summarize all seven videos.
+[MEAT] — Resolution journey. Earlier self -> present self -> specific changes -> what remains unfinished -> what telling the story across seven videos helped clarify -> larger truth/gift -> what continues after the challenge.
 [CONCLUSION] — Doorway ending. Close the seven-video loop while making the next chapter feel open.
 [CTA] — Continue from that open door into the next relationship, follow, conversation, or direction. Give one clear action and one reason.
 
 
 CRITICAL FOR L2: Prompt 4 asks "what do you still need?" The speaker names their own gap. This is the funnel's secret weapon — the upsell becomes a warm answer to a question they already asked themselves ON CAMERA.
 
-PROMPTS (L1): 1) What they expected vs. reality, 2) What actually happened, 3) One truth they now know, 4) Message to someone where they were 7 videos ago, 5) What's next — the direction
+PROMPTS (L1): 1) Who they were before both realizations and how they saw this part of life, 2) Who they are now and what is genuinely different, 3) What from the earlier self remains present or unfinished, 4) What telling the story across seven videos helped them understand or put into words, 5) What they are carrying forward and where the story goes next
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -625,10 +623,10 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Build the MEAT and CONCLUSION toward it. Then design the OPEN LOOP as the unanswered question that conclusion will pay off. Last, build the HOOK as a separate truthful pattern interrupt that captures a cold viewer without stating the question or answer. The CTA must begin by continuing the conclusion's exact thought, then give a clear action and reason; never open it with the video or series number.
 
 VIDEO 7, LEVEL 1: Tone = Warm, reflective, looking back and forward (The Lumineers "Sleep on the Floor" — folk, complete but not closed)
-HOOK guidance: Pull the most startling concrete contrast between Video 1 and now: an action, reaction, sentence, or choice the earlier speaker would not have made. Lead with the evidence of change, not a recap, lesson, or announcement that seven videos are complete.
-OPEN LOOP guidance: Connect that contrast to the original expectation and make the viewer need to know what actually changed across the journey. Do not summarize all seven episodes or reveal the final meaning yet.
-CONCLUSION guidance: Pay off the original challenge question with the specific truth the speaker earned, then leave the next identity or direction open. Complete this story without implying that the speaker's larger work is finished.
-CTA guidance: Continue from that open doorway into one clear follow, comment, conversation, or next-step request because the viewer now knows what the seven videos unlocked and why the next chapter is worth seeing.
+HOOK guidance: Pull the most startling concrete contrast between the earlier self and now: an action, reaction, sentence, choice, or way of living the earlier speaker would not have recognized. Lead with the evidence of change, not a recap, lesson, or announcement that seven videos are complete.
+OPEN LOOP guidance: Connect that contrast to the earlier worldview and make the viewer need to know what actually changed across the two realizations and ordeal. Do not summarize all seven episodes or reveal the final meaning yet.
+CONCLUSION guidance: Pay off the larger identity question with the specific truth the speaker earned, acknowledge that some part remains unfinished, and leave the next direction open. Complete this story without implying that the speaker's larger work is finished.
+CTA guidance: Continue from that open doorway into one clear follow, comment, conversation, or next-step request because the seven-video challenge has made the larger story visible and the next chapter is worth seeing.
 </l1_v7_rules>
 
 <l2_v1_rules>

@@ -116,7 +116,7 @@
     return Object.values(sections).some(Boolean) ? sections : null;
   }
 
-  function validateOutput(text) {
+  function validateOutput(text, video) {
     const source = String(text || '');
     const sections = parseSections(text);
     if (!sections) return { valid: false, sections: null, missing: ['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA'], issues: [] };
@@ -134,6 +134,21 @@
     const cta = String(sections.CTA || '').trim();
     if (/^(?:this|that(?:'s| is)|video|part)\s+(?:is\s+)?(?:video\s+)?(?:\w+|\d+)\s+(?:of|in)\s+(?:seven|7)\b/i.test(cta)) {
       issues.push('CTA begins with a series label instead of bridging from the CONCLUSION.');
+    }
+    const directActionPattern = /\b(?:follow(?:\s+me|\s+along|\s+for)?|comment|(?:share|save)\s+(?:this|it|the\s+(?:video|story|post|series))|send\s+(?:this|it)\s+to|send\s+me\s+(?:a\s+)?dm|dm\s+me|message\s+me|reach\s+out|reply|subscribe|click|visit|book|download|tag\s+someone|watch|go\s+back|tell\s+me|ask\s+me|join\s+me|come\s+talk\s+to\s+me)\b/i;
+    if (!directActionPattern.test(cta)) {
+      issues.push('CTA does not give the viewer one explicit action such as follow, comment, share, save, DM, watch, or go back.');
+    }
+    if (!/\bbecause\b/i.test(cta)) {
+      issues.push('CTA does not use "because" to connect the action to its specific reason.');
+    }
+    const seriesMatch = cta.match(/\b(?:video|part)\s+(one|two|three|four|five|six|seven|[1-7])\s+of\s+(?:seven|7)\b/i);
+    if (seriesMatch && Number(video)) {
+      const numberWords = { one:1, two:2, three:3, four:4, five:5, six:6, seven:7 };
+      const statedVideo = numberWords[seriesMatch[1].toLowerCase()] || Number(seriesMatch[1]);
+      if (statedVideo !== Number(video)) {
+        issues.push('CTA identifies this as Video ' + statedVideo + ', but the current script is Video ' + Number(video) + '. If series context appears, identify the current installment as Video ' + Number(video) + ' and refer to the next video separately.');
+      }
     }
     return { valid: missing.length === 0 && issues.length === 0, sections, missing, issues };
   }
