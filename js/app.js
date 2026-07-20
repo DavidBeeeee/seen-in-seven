@@ -3316,27 +3316,52 @@ function confirmStartVideoOver() {
   }
 }
 
-function startVideoOver() {
+function clearVideoPromptAnswers(idx) {
+  const videos = getVideos();
+  const v = videos[idx];
+  const keys = new Set();
+  const easyPrompt = VIDEO_EASY_PROMPTS[idx];
+  if (easyPrompt && easyPrompt.key) keys.add(easyPrompt.key);
+  if (v && v.prompts) v.prompts.forEach(p => { if (p.key) keys.add(p.key); });
+  if (idx === 0) ['_v1_seen', 'v0p0', 'v0p1', 'v0p2', 'v0p3', 'v0p4', 'v0decl'].forEach(key => keys.add(key));
+  keys.forEach(key => { delete state.videos[key]; });
+  const levelKey = String(state.level || 1);
+  if (state.videoAnswersByLevel && state.videoAnswersByLevel[levelKey]) {
+    keys.forEach(key => { delete state.videoAnswersByLevel[levelKey][key]; });
+  }
+}
+
+async function clearVideoDraftForRegeneration(idx) {
+  const level = state.level || 1;
+  const videoNumber = idx + 1;
+  delete state.videos['script_v' + idx];
+  delete state.videos['sections_v' + idx];
+  delete state.videos['_undo_v' + idx];
+  delete state.videos['locked_v' + idx];
+  delete state.videos['prompt_version_v' + idx];
+  clearVideoPromptAnswers(idx);
+  if (typeof clearCurrentScriptForRegeneration === 'function') {
+    await clearCurrentScriptForRegeneration(videoNumber, level);
+  }
+}
+
+async function startVideoOver() {
   const idx = currentVideoIndex;
   // Push snapshot before wiping so undo can recover
   if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(idx);
   const videos = getVideos();
   const v = videos[idx];
-  delete state.videos['script_v' + idx];
+  await clearVideoDraftForRegeneration(idx);
   if (v.beats) {
     state.mvoQ2 = null; state.mvoQ3 = null; state.mvoQ4 = null;
     mvoQ2Skipped = false;
-    delete state.videos['_v1_seen'];
-    delete state.videos['v0p0'];
-    delete state.videos['v0p1'];
-    delete state.videos['v0p2'];
     goToMvoScreen();
   } else {
-    if (v.prompts) { v.prompts.forEach(p => { delete state.videos[p.key]; }); }
     renderVideoPrompts(idx);
     showScreen('screen-7');
     currentIndex = screenOrder.indexOf('screen-7');
   }
+  saveProgress();
   window.scrollTo(0, 0);
 }
 
@@ -3858,23 +3883,12 @@ async function deleteAndStartOver() {
   if (currentScript && typeof saveScriptEditToDb === 'function') {
     await saveScriptEditToDb(idx + 1, state.level || 1, currentScript, finalScriptText(idx, currentScript, state.level || 1));
   }
-  // Clear the script and its undo history and lock state
-  delete state.videos['script_v' + idx];
-  delete state.videos['sections_v' + idx];
-  delete state.videos['_undo_v' + idx];
-  delete state.videos['locked_v' + idx];
-  // Clear prompt answers for this video so they can answer fresh
-  const videos = getVideos();
-  const v = videos[idx];
-  if (v && v.prompts) v.prompts.forEach(p => { delete state.videos[p.key]; });
+  await clearVideoDraftForRegeneration(idx);
   // For V1 (idx 0), also reset the MVO answers and topic freewrite
   if (idx === 0) {
     state.mvoQ2 = null; state.mvoQ3 = null; state.mvoQ4 = null;
     state.topicFreewrite = '';
     mvoQ2Skipped = false;
-    delete state.videos['_v1_seen'];
-    delete state.videos['v0p0']; delete state.videos['v0p1'];
-    delete state.videos['v0p2']; delete state.videos['v0p3']; delete state.videos['v0p4'];
   }
   saveProgress();
   // Send back to prompts

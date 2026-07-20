@@ -389,6 +389,17 @@ async function saveScriptEditToDb(videoNumber, level, content, finalContent) {
   } catch(e) {}
 }
 
+async function clearCurrentScriptForRegeneration(videoNumber, level) {
+  if (!_currentUser) return;
+  try {
+    await _sb.from('scripts').update({ is_current: false })
+      .eq('user_id', _currentUser.id)
+      .eq('video_number', videoNumber)
+      .eq('level', level)
+      .eq('is_current', true);
+  } catch(e) {}
+}
+
 // ── SAVE THUMBS UP/DOWN ───────────────────────────────
 async function saveScriptFeedback(videoNumber, level, thumbsUp) {
   if (!_currentUser) return;
