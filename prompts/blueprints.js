@@ -87,7 +87,7 @@ PROCESS:
 9. Write the CONCLUSION next. It must pay off the main unfinished thought while opening an engagement door: a twist, debatable point, obvious question, or mirror moment that makes the viewer want to comment, ask, disagree, or share their own story.
 10. Write the HOOK after the meat and conclusion are clear. Use the Fix Guide hook option as the structural template, adapted to their actual content. The hook is a pattern interrupt: sharp, jarring, emotionally charged, or unexpected. Its only job is to stop the scroll long enough for the open loop to land. It should not explain, summarize, or softly identify.
 11. Write the OPEN LOOP after the hook. Use the Fix Guide open loop option as the structural template, but make the gap concrete: what specific question, contradiction, or missing piece will the viewer keep watching to resolve?
-12. Write the CTA last. It must be direct and specific: follow because, comment because, DM me because, share because, or watch the next video because. Always connect the action to a reason, and use the CTA to open the next loop when the video should continue the arc.
+12. Write the CTA last. It must carry the emotional idea from [CONCLUSION] into one clear next action and one clear reason. The viewer should know exactly what to do and why it matters. Do not introduce a new topic or bolt on a separate announcement.
 13. Verify the script sounds like the SPEAKER, not like a copywriter.
 14. Verify total script is approximately 220-270 words across all five generated sections. For Video 1 only, exclude the app-inserted declaration from this count.
 15. Verify no "content creator" language, hashtags, or emojis.
@@ -108,7 +108,7 @@ The heart. The journal answers, transformed into spoken word in their voice. All
 Closes the open loop, but does not wrap the video in a neat bow. The ending should create engagement through one of four paths: TWIST (the viewer realizes the video was about something deeper), DEBATE (a clear point of view people may agree or disagree with), QUESTION (the viewer naturally wants to ask something), or MIRROR (the viewer wants to share their own version of the story). This is the emotional landing and the comment trigger.
 
 [CTA]
-The direct forward pull. Tell the viewer exactly what to do and why: follow because, comment because, DM me because, share because, or watch the next video because. The CTA should match the conclusion type. If the conclusion is a debate, invite a comment. If it is a question, invite the question. If it is a mirror, invite their story. If it is a twist, pull them into the next video. Conversational, not transactional. ALWAYS uses the word “because” to link the action to the reason.
+The next action. Continue directly from the emotional idea in [CONCLUSION], then tell the viewer exactly what to do and why it matters. The CTA should match the conclusion type. If the conclusion is a debate, invite a comment. If it is a question, invite the question. If it is a mirror, invite their story. If it is a twist, point them to the next unresolved piece. Conversational, not transactional. ALWAYS uses the word “because” to link the action to the reason.
 
 IMPORTANT FORMATTING RULES:
 - Each section label must be exactly: [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], [CTA] — no variations
@@ -144,13 +144,24 @@ The hook should be short enough to land before the viewer has time to decide whe
 </hook_rule>
 
 <section_regeneration_rule>
-If regenerating a single section instead of the full script, the regenerated section must still obey the full five-section architecture. A new HOOK must point toward the same open loop and conclusion. A new OPEN LOOP must create a concrete unfinished thought that the existing conclusion can pay off. A new MEAT must preserve the beat order and leave room for the conclusion. A new CONCLUSION must pay off the open loop while opening an engagement door. A new CTA must give a direct action plus a reason and should open the next loop when the video continues the arc.
+If regenerating a single section instead of the full script, the regenerated section must still obey the full five-section architecture. A new HOOK must point toward the same open loop and conclusion. A new OPEN LOOP must create a concrete unfinished thought that the existing conclusion can pay off. A new MEAT must preserve the beat order and leave room for the conclusion. A new CONCLUSION must pay off the open loop while opening an engagement door. A new CTA must continue from the conclusion, give one clear action plus one clear reason, and point to the next unresolved piece when the series continues.
 
 For Video 1 regeneration, never regenerate, paraphrase, or remove the app-inserted declaration. It remains fixed between [OPEN LOOP] and [MEAT].
 </section_regeneration_rule>
 
 <cta_rule>
-Every CTA must be clear, direct, and connected to a reason. Use action + because. Examples: follow because, comment because, DM me because, share this because, or watch the next video because.
+Every CTA must be clear, direct, emotionally connected, and tied to a reason.
+
+The CTA must continue from the final emotional idea of [CONCLUSION]. It should feel like the next natural sentence, not a separate announcement.
+
+Required CTA job: tell the viewer what to do and why it matters.
+
+For Videos 1-6, the CTA should also point toward the next unresolved piece of the story.
+For Video 7, the CTA should point toward the next relationship, conversation, offer, or chapter.
+
+Do not introduce a totally new topic in the CTA.
+Do not make the CTA sound like a label, ad, or system instruction.
+Do not let the CTA resolve the story. It should convert the conclusion into one clear next action.
 
 Match the CTA to the engagement ending:
 - TWIST ending: pull them into the next video or next reveal.
@@ -227,8 +238,8 @@ If extra context was provided, weave it in naturally — don't append it.
 [CONCLUSION] — Engagement Landing (20–35 words)
 Close the emotional tension created by the hook/open loop without resolving the whole challenge. Use a mirror or question ending most of the time: make the viewer think, "I know exactly what that feels like," or "why did I wait so long too?" This should land after the blocker/why now/who sequence and before the CTA opens the next-video loop.
 
-[CTA] — Forward Pull (25–45 words)
-⚠️ MUST explicitly name "7 Video Challenge" or "7 videos" or "7-video series" — non-negotiable. The audience must understand this is a deliberate multi-video commitment. Give a clear next action and a reason. The CTA should open the next-video loop after the conclusion lands. Use the Fix Guide pattern.
+[CTA] — Next Action (25–45 words)
+⚠️ MUST explicitly name "7 Video Challenge" or "7 videos" or "7-video series" — non-negotiable. The audience must understand this is a deliberate multi-video commitment. Continue directly from the conclusion, then give one clear next action and one clear reason. The CTA should point toward the next unresolved piece after the conclusion lands. Use the Fix Guide pattern.
 
 TONE: Voice memo to a friend. Slightly self-deprecating. Starts mid-thought. Acknowledges the embarrassment. Ends with an honest landing and a reason to keep watching.
 
@@ -374,9 +385,9 @@ STRUCTURAL BEATS:
 4. Real-Time Transparency — What's still hard. Name it. This is what separates authentic content from motivational fluff.
 5. Objection Pre-emption — By showing up mid-challenge with honest energy, they demonstrate consistency doesn't require constant excitement.
 6. Expert Ease (L2) — Expertise surfaces naturally through HOW they talk about their experience, not through explicit teaching.
-7. Social Evidence — End with forward motion. Any external validation surfaces as surprise, not bragging.
+7. Social Evidence — End with quiet continuation. Any external validation surfaces as surprise, not bragging.
 
-TONE: Relaxed, reflective, slightly surprised. Feels like pressing record without a plan. Grounding statement to start. Uses contrast naturally. Small win is understated. Honesty about difficulty is specific. Ends with quiet forward motion.
+TONE: Relaxed, reflective, slightly surprised. Feels like pressing record without a plan. Grounding statement to start. Uses contrast naturally. Small win is understated. Honesty about difficulty is specific. Ends with quiet continuation.
 
 THIS VIDEO EARNS THE RIGHT FOR VIDEO 5. Without the road of trials, the second epiphany feels like another hot take. With it, it feels like a hard-won realization.
 
@@ -460,7 +471,7 @@ STRUCTURAL BEATS:
 5. Polarization (through authenticity) — The people who stay after this are the ride-or-die audience.
 6. Ethical Bridge — Quiet forward lean. Not resolution — continuation. "I don't have this solved, but I'm not stopping."
 
-TONE: Quiet. Slow. Words chosen carefully. Present tense throughout. No neat resolution. The honesty IS the point. Ends with forward motion despite vulnerability.
+TONE: Quiet. Slow. Words chosen carefully. Present tense throughout. No neat resolution. The honesty IS the point. Ends with continuation despite vulnerability.
 
 LEVEL 1 SPECIFIC: The fear, doubt, or struggle that's been present the whole challenge. The voice that says nobody cares. The comparison trap. The fear nothing will change.
 
@@ -563,8 +574,8 @@ If extra context was provided, weave it in naturally — don't append it.
 [CONCLUSION] — Authority Tension Landing (20–35 words)
 Close the tension by naming the contradiction: they have something real to say, and staying invisible is no longer neutral. Use DEBATE if there is a strong point of view, or QUESTION if the audience should ask what expertise they have been hiding. Keep it grounded; do not manufacture credentials.
 
-[CTA] — Forward Pull (25–45 words)
-⚠️ MUST explicitly name "7 Video Challenge" or "7 videos" or "7-video series" — non-negotiable. The audience must understand this is a deliberate multi-video commitment. Give a clear next action and a reason. The CTA should open the next-video loop after the conclusion lands. Use the Fix Guide pattern.
+[CTA] — Next Action (25–45 words)
+⚠️ MUST explicitly name "7 Video Challenge" or "7 videos" or "7-video series" — non-negotiable. The audience must understand this is a deliberate multi-video commitment. Continue directly from the conclusion, then give one clear next action and one clear reason. The CTA should point toward the next unresolved piece after the conclusion lands. Use the Fix Guide pattern.
 
 TONE: Voice memo to a friend. Slightly self-deprecating. Starts mid-thought. Acknowledges the embarrassment. Ends with an honest landing and a reason to keep watching.
 
@@ -702,9 +713,9 @@ STRUCTURAL BEATS:
 4. Real-Time Transparency — What's still hard. Name it. This is what separates authentic content from motivational fluff.
 5. Objection Pre-emption — By showing up mid-challenge with honest energy, they demonstrate consistency doesn't require constant excitement.
 6. Expert Ease (L2) — Expertise surfaces naturally through HOW they talk about their experience, not through explicit teaching.
-7. Social Evidence — End with forward motion. Any external validation surfaces as surprise, not bragging.
+7. Social Evidence — End with quiet continuation. Any external validation surfaces as surprise, not bragging.
 
-TONE: Relaxed, reflective, slightly surprised. Feels like pressing record without a plan. Grounding statement to start. Uses contrast naturally. Small win is understated. Honesty about difficulty is specific. Ends with quiet forward motion.
+TONE: Relaxed, reflective, slightly surprised. Feels like pressing record without a plan. Grounding statement to start. Uses contrast naturally. Small win is understated. Honesty about difficulty is specific. Ends with quiet continuation.
 
 THIS VIDEO EARNS THE RIGHT FOR VIDEO 5. Without the road of trials, the second epiphany feels like another hot take. With it, it feels like a hard-won realization.
 
@@ -788,7 +799,7 @@ STRUCTURAL BEATS:
 5. Polarization (through authenticity) — The people who stay after this are the ride-or-die audience.
 6. Ethical Bridge — Quiet forward lean. Not resolution — continuation. "I don't have this solved, but I'm not stopping."
 
-TONE: Quiet. Slow. Words chosen carefully. Present tense throughout. No neat resolution. The honesty IS the point. Ends with forward motion despite vulnerability.
+TONE: Quiet. Slow. Words chosen carefully. Present tense throughout. No neat resolution. The honesty IS the point. Ends with continuation despite vulnerability.
 
 
 LEVEL 2 SPECIFIC: The internal war of claiming expertise publicly. Imposter syndrome. The gap between knowing you're good and owning it. The fear of being visible. The contradiction between the confident person in V3/V5 and the real person underneath.
