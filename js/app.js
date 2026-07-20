@@ -1535,58 +1535,58 @@ const INTRO_COPY = {
   },
   5: {
     L1: {
-      label: 'Video 5 of 7: The Second Epiphany',
-      title: 'Plant Your Flag',
-      body: "You've shown up, shared your story, and kept going. Now it's time to state what you actually believe. This video is about the conviction you hold that most people in your world have backwards. You're not here to convince anyone. You're here to resonate with the people who already feel it too.",
-      result: 'Authority',
+      label: 'Video 5 of 7: The Fall',
+      title: "Say The Thing You've Been Avoiding",
+      body: "The first breakthrough was real, but it doesn't magically erase the deeper fear. This is the honest middle of the journey: the doubt, the cost, the thing you've been carrying while still showing up. Saying it plainly is what makes the next insight earned.",
+      result: 'Trust',
       framework: [
-        {name:'Hook',               trigger:'Sacred Cow Slaughter'},
-        {name:'The False Belief',   trigger:'Logic Re-stack'},
-        {name:'The New Realization',trigger:'Paradigm Break'},
-        {name:'The Future Self',    trigger:'Status Shift / Natural Invitation'}
+        {name:'Hook',                 trigger:'The Admission'},
+        {name:'The Internal Battle',  trigger:'Shared Values'},
+        {name:'The Cost',             trigger:'Polarization'},
+        {name:'The Forward Lean',     trigger:'Ethical Bridge'}
       ],
-      triggers: ['Sacred Cow Slaughter','Logic Re-stack','Emotional Safety','Paradigm Break','Future Pacing','Status Shift','Natural Invitation']
+      triggers: ['The Internal Battle','Shared Values','The Admission','Polarization','Ethical Bridge']
     },
     L2: {
-      label: 'Video 5 of 7: The Second Epiphany',
-      title: 'Let Them See Your Character',
-      body: "By now, your audience has seen you show up, teach, and share your origin. This video is where they get to see your judgment. A mistake you made, the lesson it cost you, and how it changed how you work... that combination creates something testimonials can't: genuine trust in who you are.",
-      result: 'Authority',
+      label: 'Video 5 of 7: The Fall',
+      title: 'Name The Cost Of Being Seen',
+      body: "Your audience has seen your knowledge. Now they need to see the person carrying it. This video names the internal battle of claiming your expertise publicly: the fear, the cost, and the reason you're still here anyway.",
+      result: 'Trust',
       framework: [
-        {name:'Hook',                    trigger:'Sacred Cow Slaughter'},
-        {name:'The Industry Myth',       trigger:'Logic Re-stack'},
-        {name:'The Better Way',          trigger:'Paradigm Break'},
-        {name:'The Natural Solution',    trigger:'Status Shift / Natural Invitation'}
+        {name:'Hook',                 trigger:'The Admission'},
+        {name:'The Internal Battle',  trigger:'Shared Values'},
+        {name:'The Cost',             trigger:'Polarization'},
+        {name:'The Forward Lean',     trigger:'Ethical Bridge'}
       ],
-      triggers: ['Sacred Cow Slaughter','Logic Re-stack','Emotional Safety','Paradigm Break','Future Pacing','Status Shift','Natural Invitation']
+      triggers: ['The Internal Battle','Shared Values','The Admission','Polarization','Ethical Bridge']
     }
   },
   6: {
     L1: {
-      label: 'Video 6 of 7: The Alignment Moment',
-      title: 'Connect Your Story To Their Future',
-      body: "Your audience is starting to get you. Now they need to understand what you actually want for them. This video connects your journey to their possibility. It's not a pitch. It's an alignment moment. The right person is watching and asking: is this for me? This video answers yes, without pressure.",
-      result: 'Alignment',
+      label: 'Video 6 of 7: The Second Epiphany',
+      title: 'Find The Elixir',
+      body: "After naming the harder truth, you can finally see what the journey has been teaching you. This is the deeper reframe: the truth that feels simple now, but only because you earned it by going through the fall.",
+      result: 'Authority',
       framework: [
-        {name:'Hook',                  trigger:'Identity Call-to-Arms'},
-        {name:'The Internal Values',   trigger:'Shared Values'},
-        {name:'Who This Is For',       trigger:'Polarization'},
-        {name:'The Personal Mission',  trigger:'Ethical Bridge'}
+        {name:'Hook',                  trigger:'Earned Reversal'},
+        {name:'The Aftermath',         trigger:'Discovery Arc'},
+        {name:'The Elixir',            trigger:'Cognitive Reframe'},
+        {name:'The Carryable Truth',   trigger:'Simplicity Signal'}
       ],
-      triggers: ['Identity Call-to-Arms','Shared Values','Transformation Story','External Validation','In-Group Belonging','Polarization','Ethical Bridge']
+      triggers: ['Earned Reversal','Discovery Arc','Cognitive Reframe','Aha Transfer','Cost Revelation','Simplicity Signal','Natural Invitation']
     },
     L2: {
-      label: 'Video 6 of 7: The Alignment Moment',
-      title: "Walk Them Through What It's Like to Work With You",
-      body: "People don't buy outcomes. They buy confidence in the process that gets them there. This video walks your audience through what it actually feels like to work with you, without selling anything. You're showing them the transformation through the experience, not the promise.",
-      result: 'Alignment',
+      label: 'Video 6 of 7: The Second Epiphany',
+      title: 'Name The Truth Your Industry Avoids',
+      body: "After naming what visibility costs you, this is where your harder point of view becomes earned. Challenge the myth, show why it breaks, and replace it with the truth your audience can actually use.",
+      result: 'Authority',
       framework: [
-        {name:'Hook',                  trigger:'Identity Call-to-Arms'},
-        {name:'The Business Values',   trigger:'Shared Values'},
-        {name:'Who We Serve',          trigger:'Polarization'},
-        {name:'The Industry Mission',  trigger:'Ethical Bridge'}
+        {name:'Hook',                  trigger:'Sacred Cow Slaughter'},
+        {name:'The Myth',              trigger:'Logic Re-stack'},
+        {name:'The Elixir',            trigger:'Paradigm Break'},
+        {name:'The Natural Invitation',trigger:'Status Shift'}
       ],
-      triggers: ['Identity Call-to-Arms','Shared Values','Transformation Story','External Validation','In-Group Belonging','Polarization','Ethical Bridge']
+      triggers: ['Sacred Cow Slaughter','Logic Re-stack','Emotional Safety','Paradigm Break','Future Pacing','Status Shift','Natural Invitation']
     }
   },
   7: {
@@ -1627,10 +1627,10 @@ const VIDEO_EASY_PROMPTS = [
   { label: 'What\'s a belief you held for a long time that turned out to be wrong?', hint: 'What cracked it open? Walk me through how you arrived at seeing it differently. The journey matters more than the conclusion.', key: 'easyAnswer_v2' },
   // V4 — YOUR REALITY CHECK
   { label: 'What\'s actually been happening since you started?', hint: 'The real version, not the highlight reel. What\'s been harder than expected? What surprised you? What\'s actually working?', key: 'easyAnswer_v3' },
-  // V5 — YOUR TRUTH
-  { label: 'What do you believe that most people in your situation won\'t say out loud?', hint: 'The thing you\'d say if you weren\'t worried about being judged. A conviction, a truth, a flag you want to plant.', key: 'easyAnswer_v4' },
-  // V6 — YOUR CONFESSION
-  { label: 'What\'s something you\'ve been avoiding saying out loud?', hint: 'The thing that would make you feel most exposed. Not for shock. For honesty. The thing that would make the right people lean in.', key: 'easyAnswer_v5' },
+  // V5 — THE FALL
+  { label: 'What\'s something you\'ve been avoiding saying out loud?', hint: 'The thing that would make you feel most exposed. Not for shock. For honesty. The thing that makes the next lesson earned.', key: 'easyAnswer_v4' },
+  // V6 — THE ELIXIR
+  { label: 'What do you believe now that you couldn\'t have said before the fall?', hint: 'The deeper truth, reframe, or conviction you earned by naming the hard thing. Not a generic lesson. The truth you can carry forward.', key: 'easyAnswer_v5' },
   // V7 — YOUR ELIXIR
   { label: 'What did doing these 7 videos teach you that you didn\'t know at the start?', hint: 'The honest accounting. What changed? What would you tell yourself at the beginning? What do you want to give your audience?', key: 'easyAnswer_v6' },
 ];
@@ -1747,12 +1747,12 @@ const VIDEO_STORY_BEATS = [
    'Small Win Proof: concrete, specific evidence that something is working',
    'Real-Time Transparency: this is happening now, not a polished retrospective',
    'Objection Pre-emption: address the doubt your audience already has'],
-  // V5 — YOUR TRUTH (Conviction, Discovery, Cost)
+  // V5 — THE FALL (The Unsaid Thing, Root, Internal Battle, Admission)
   ['Convicted Belief Challenge: plant a flag: something you believe most people won\'t say',
    'Discovery of the Lie: the moment you realized the old way wasn\'t working',
    'Cost of the Old Way: what it cost you (and costs others) to stay in the old belief',
    'The Reframe: what you believe instead, stated with quiet certainty'],
-  // V6 — YOUR CONFESSION (The Unsaid Thing, Root, Internal Battle, Admission)
+  // V6 — THE ELIXIR (Conviction, Discovery, Cost)
   ['The Unsaid Thing: name what nobody\'s been saying out loud',
    'The Root: where does this actually come from? The real origin.',
    'The Internal Battle: the back-and-forth said out loud, present tense',
@@ -2168,27 +2168,27 @@ const level1Videos = [
     compile:v=>`What's surprised me: ${v.v3p0||'___'}. One small shift: ${v.v3p1||'___'}. What's still hard: ${v.v3p2||'___'}. What I'd tell someone starting: ${v.v3p3||'___'}.`
   },
   {
-    title:"The Second Epiphany",
-    note:"You've earned the right to say something most people won't. This is your second big reframe: a belief you used to hold, what it cost you, and what opened up when you let it go. The more personal and specific, the more universal it lands.",
+    title:"The Fall",
+    note:"The first breakthrough was real, but it didn't magically erase the deeper fear. Video 5 is where you name the thing you've been carrying while still showing up. This is the fall that makes the next epiphany earned.",
     prompts:[
-      {label:"What's something you believe that most people around you would disagree with (or at least wouldn't say out loud)?",hint:"Not something designed to be controversial. Something genuinely true for you that goes against what your family, friends, coworkers, or culture treats as obvious.",key:"v4p0",ph:"e.g. I believe that most of what we call 'not being ready' is actually just fear of being judged, and the preparation is usually a delay tactic we've convinced ourselves is responsible"},
-      {label:"Where did this belief come from? What did you experience or witness that made you unable to keep believing the popular version?",hint:"There was a before and an after. Something happened (maybe gradually, maybe in a single moment) that made the conventional wisdom impossible to keep holding.",key:"v4p1",ph:"e.g. it came from watching myself get ready for three years. Reading every book, taking every course, building every system. And then watching someone less prepared than me just start... and build something real"},
-      {label:"What was it costing you when you still believed the old way? Be specific about what you were doing, tolerating, or missing.",hint:"Before you saw this clearly, you were living inside the old belief. What did that actually look like day to day? What were you putting up with? What were you chasing that turned out to be empty?",key:"v4p2",ph:"e.g. it was costing me time I'll never get back and conversations I kept not having because I kept waiting to feel qualified enough to have them"},
-      {label:"What opened up or changed when you let go of the old belief? What became possible that wasn't before?",hint:"The other side. Not a fantasy. Your actual experience of life after the shift. What does the world look like through the new lens?",key:"v4p3",ph:"e.g. what opened up was the ability to act before I felt ready, which sounds simple, but it changed everything about how I show up"},
-      {label:"If you could say this to one specific person who's still stuck in the old belief (someone you care about)... what would you say to them?",hint:"Picture one person. Someone you know who's living in the old belief right now. What do you want to say to them through the camera? Not a lecture. A direct, personal message.",key:"v4p4",ph:"e.g. I'd say: you're not getting more ready. Every day you wait, you're not building courage. You're building a bigger story about why you can't start yet"}
+      {label:"What's the thing you've been carrying through this challenge that you haven't said on camera yet? The fear, the doubt, the struggle that's still present even though you keep showing up.",hint:"Not the surface-level stuff. Not 'filming is hard.' The REAL thing. Maybe it's the voice that says nobody cares. Maybe it's the comparison. Say the thing you've been avoiding.",key:"v4p0",ph:"e.g. the thing I've been carrying is the very specific fear that I'll finish all seven videos, put everything into this, and wake up to silence... and that silence will confirm the thing I've been trying to prove wrong"},
+      {label:"Where does that come from? Not the logical explanation. The deeper root. When did you first start believing that about yourself?",hint:"This fear or doubt didn't start with the challenge. It was there before. Trace it back. You don't have to go into full detail. Just name the root.",key:"v4p1",ph:"e.g. it goes back further than this challenge. I think it started in the years I spent doing good work that nobody outside my immediate circle ever saw, slowly convincing myself that was fine"},
+      {label:"What would it mean to you, really honestly, if you could let go of that? What becomes possible on the other side of this battle?",hint:"Don't make this aspirational fluff. Think about it practically. What would you DO differently? How would you FEEL differently? What would you stop avoiding?",key:"v4p2",ph:"e.g. if I could let go of it, I think I'd stop waiting for proof before I acted. I'd just act. And I'd stop treating my own work like it needs to earn the right to exist before I show it to anyone"},
+      {label:"What do you want to say to anyone watching this who's fighting their own version of the same battle?",hint:"You've just told your story. The fear, the root, the possibility. What do you want to leave them with? Not advice. A message. The thing you wish someone had said to you when you were in the middle of the fight.",key:"v4p3",ph:"e.g. I want to say: the fact that you're watching this means part of you already knows. You don't need more proof. Just decide that this thing you're carrying doesn't get to keep making your decisions"}
     ],
-    compile:v=>`Something I believe that most people wouldn't say out loud: ${v.v4p0||'___'}. Where it came from: ${v.v4p1||'___'}. What the old belief cost me: ${v.v4p2||'___'}. What opened up: ${v.v4p3||'___'}. To the person still stuck: ${v.v4p4||'___'}.`
+    compile:v=>`What I've been carrying: ${v.v4p0||'___'}. Where it comes from: ${v.v4p1||'___'}. What letting go would mean: ${v.v4p2||'___'}. To anyone watching who's in the same battle: ${v.v4p3||'___'}.`
   },
   {
-    title:"Why I'm Here",
-    note:"You've been carrying something this whole challenge that you haven't said out loud yet. Video 6 is where you say it. The fear, the doubt, the deeper root, and what becomes possible when you name it. This is the video that turns viewers into believers.",
+    title:"The Second Epiphany",
+    note:"Now that you've named the fall, Video 6 finds the elixir. This is your second big reframe: what you can see now, what the old way was costing you, and what becomes possible when it stops making the decisions.",
     prompts:[
-      {label:"What's the thing you've been carrying through this whole challenge that you haven't said on camera yet? The fear, the doubt, the struggle that's still present even though you keep showing up.",hint:"Not the surface-level stuff. Not 'filming is hard.' The REAL thing. Maybe it's the voice that says nobody cares. Maybe it's the comparison. Say the thing you've been avoiding.",key:"v5p0",ph:"e.g. the thing I've been carrying is the very specific fear that I'll finish all seven videos, put everything into this, and wake up to silence... and that silence will confirm the thing I've been trying to prove wrong"},
-      {label:"Where does that come from? Not the logical explanation. The deeper root. When did you first start believing that about yourself?",hint:"This fear or doubt didn't start with the challenge. It was there before. Trace it back. You don't have to go into full detail. Just name the root.",key:"v5p1",ph:"e.g. it goes back further than this challenge. I think it started in the years I spent doing good work that nobody outside my immediate circle ever saw, slowly convincing myself that was fine"},
-      {label:"What would it mean to you, really honestly, if you could let go of that? What becomes possible on the other side of this battle?",hint:"Don't make this aspirational fluff. Think about it practically. What would you DO differently? How would you FEEL differently? What would you stop avoiding?",key:"v5p2",ph:"e.g. if I could let go of it, I think I'd stop waiting for proof before I acted. I'd just act. And I'd stop treating my own work like it needs to earn the right to exist before I show it to anyone"},
-      {label:"What do you want to say to anyone watching this who's fighting their own version of the same battle?",hint:"You've just told your story. The fear, the root, the possibility. What do you want to leave them with? Not advice. A message. The thing you wish someone had said to you when you were in the middle of the fight.",key:"v5p3",ph:"e.g. I want to say: the fact that you're watching this means part of you already knows. You don't need more proof. Just decide that this thing you're carrying doesn't get to keep making your decisions"}
+      {label:"What's something you now believe that most people around you would disagree with (or at least wouldn't say out loud)?",hint:"Not something designed to be controversial. Something genuinely true for you because of what you've just had to face.",key:"v5p0",ph:"e.g. I believe that most of what we call 'not being ready' is actually just fear of being judged, and the preparation is usually a delay tactic we've convinced ourselves is responsible"},
+      {label:"What did naming the fear or fall help you see that you couldn't see before?",hint:"There was a before and an after. What became obvious only after you stopped avoiding the hard thing?",key:"v5p1",ph:"e.g. once I named the fear, I realized it had been making practical decisions for me while pretending to be wisdom"},
+      {label:"What was the old way costing you? Be specific about what you were doing, tolerating, or missing.",hint:"Before you saw this clearly, you were living inside the old belief. What did that actually look like day to day?",key:"v5p2",ph:"e.g. it was costing me time I'll never get back and conversations I kept not having because I kept waiting to feel qualified enough to have them"},
+      {label:"What opened up or changed when you stopped letting the old belief make the decisions?",hint:"The other side. Not a fantasy. Your actual experience of life after the shift. What does the world look like through the new lens?",key:"v5p3",ph:"e.g. what opened up was the ability to act before I felt ready, which sounds simple, but it changed everything about how I show up"},
+      {label:"If you could say this to one specific person who's still stuck in the old belief... what would you say to them?",hint:"Picture one person. What do you want to say to them through the camera? Not a lecture. A direct, personal message.",key:"v5p4",ph:"e.g. I'd say: you're not getting more ready. Every day you wait, you're not building courage. You're building a bigger story about why you can't start yet"}
     ],
-    compile:v=>`What I've been carrying: ${v.v5p0||'___'}. Where it comes from: ${v.v5p1||'___'}. What letting go would mean: ${v.v5p2||'___'}. To anyone watching who's in the same battle: ${v.v5p3||'___'}.`
+    compile:v=>`Something I now believe that most people wouldn't say out loud: ${v.v5p0||'___'}. What naming the fall helped me see: ${v.v5p1||'___'}. What the old belief cost me: ${v.v5p2||'___'}. What opened up: ${v.v5p3||'___'}. To the person still stuck: ${v.v5p4||'___'}.`
   },
   {
     title:"What I Learned",
@@ -2246,27 +2246,27 @@ const level2Videos = [
     compile:v=>`What surprised me about doing this: ${v.v3p0||'___'}. One moment traction showed up: ${v.v3p1||'___'}. What's still hard: ${v.v3p2||'___'}. What I'm learning about my audience, message, or myself: ${v.v3p3||'___'}.`
   },
   {
-    title:"The Second Epiphany",
-    note:"Deeper. More personal. More convicted. The biggest myth in your field: not a tip, but a genuine paradigm shift earned through doing the work. You're not sharing an opinion, you're sharing what you can't unsee.",
+    title:"The Fall",
+    note:"This is the video most people skip because it feels too vulnerable. That's exactly why it matters. The internal battle about claiming your expertise publicly, said out loud on camera, is what makes the next epiphany earned.",
     prompts:[
-      {label:"What's the biggest myth or most overused piece of advice in your field that you've come to believe is actually wrong — or even harmful?",hint:"The sacred cow. The thing every guru says. The advice that gets repeated so often nobody questions it anymore. You question it. You've seen what happens when people follow it. What is it?",key:"v4p0",ph:"e.g. the biggest myth in my field is that consistency is the answer. Post every day, show up every day, grind every day. I've watched people burn out following that advice and then blame themselves for failing."},
-      {label:"Tell the story of your own relationship with this belief. Did you used to follow it? Teach it? What happened that made you turn against it?",hint:"The most powerful version of this is when YOU were a believer first. You followed the playbook. You recommended it to others. And then something happened that made you see it was broken. That personal journey from believer to heretic is what makes this credible, not preachy.",key:"v4p1",ph:"e.g. I used to tell my clients this. I believed in it. I built my own routine around it. And then I watched my most dedicated client — someone who followed every rule — completely crater her mental health in pursuit of consistency and end up taking six months off."},
-      {label:"What's the actual truth — the thing that works but nobody talks about because it's less sexy, less simple, or threatens the established way of doing things?",hint:"The real answer. The thing you've figured out through doing the work, not reading about the work. It might be simpler than the myth. It might be harder. But it's TRUE, and you can back it up with your own experience and results.",key:"v4p2",ph:"e.g. depth beats volume every time. One video that changes how someone thinks is worth more than thirty that they half-watch. The people winning aren't the ones posting most. They're the ones saying the most true thing."},
-      {label:"What happens to people who keep following the myth? What have you watched it cost your peers, your clients, or people in your space?",hint:"Be specific. Not 'they fail.' HOW do they fail? What does it look like? The wasted money, the wasted time, the frustration, the quitting.",key:"v4p3",ph:"e.g. they burn out. They create for months, see no results, decide they're not interesting enough, and quit. The myth told them consistency would compound. Nobody told them they also needed to have something worth saying."},
-      {label:"Who specifically needs to hear this, and what would change for them if they actually believed you?",hint:"Picture one specific person. A client, a peer, someone who asked you for advice last week. If THEY got this — really got it — what would shift for them? That's the emotional engine. That's why you're saying this out loud instead of keeping it to yourself.",key:"v4p4",ph:"e.g. this is for the expert who's been posting dutifully for months with nothing to show for it and is starting to think the problem is them. It's not them. They just got sold a system designed for content farms, not humans with something to say."}
+      {label:"What's the internal battle you're fighting about putting yourself out there as someone with real expertise? The thing that makes you hesitate even though you KNOW you're good at this.",hint:"Imposter syndrome. Comparison. The fear of being 'that person' who promotes themselves. The voice that says your experience doesn't count because you don't have the right credentials, the right following, the right whatever. What's YOUR version of that battle?",key:"v4p0",ph:"e.g. my version of this is the credential question — I don't have letters after my name. I learned everything I know from fifteen years of doing this work with real people. But the voice still shows up asking who I think I am."},
+      {label:"What's the specific fear? If you imagine fully owning your expertise publicly — being visible, being known for what you know — what's the worst thing that could happen? Say it out loud.",hint:"Sometimes the fear is concrete: 'people from my old life will judge me.' Sometimes it's abstract: 'what if I put myself out there and nobody cares.' Sometimes it's deeper: 'what if I'm not actually as good as I think I am.' Name the actual fear. Not the category — the specific thought.",key:"v4p1",ph:"e.g. the specific fear is that someone I respect will watch one of these videos and think 'she's overreaching.' That one imaginary judgment has cost me more than two years of staying quiet."},
+      {label:"What's it been costing you to stay small? Not in money, but in impact, in fulfillment, in the people you could be helping but aren't because you've been hiding.",hint:"You know there are people who need what you know. You've probably met some of them. What happens to them because you haven't stepped into this fully? And what happens to YOU... what are you leaving on the table by playing it safe?",key:"v4p2",ph:"e.g. what it's been costing me is harder to name than money. There are people right now making the exact mistakes I know how to prevent, and I haven't shown up for them because I've been waiting to feel ready."},
+      {label:"Despite all of that... why are you still here? Why haven't you quit? What's the thing that keeps pulling you forward even when the doubt is loud?",hint:"Something is stronger than the fear. A purpose, a person, a vision, a stubborn refusal to let the doubt win. That thing, whatever it is, is the real engine underneath everything you've built so far. Name it.",key:"v4p3",ph:"e.g. I'm still here because I keep meeting people who are stuck in the exact place I was stuck in. And when I talk to them, even for twenty minutes, something shifts. That shift is what I'm here for. The doubt is just the admission fee."}
     ],
-    compile:v=>`The biggest myth in my field: ${v.v4p0||'___'}. My own journey with this belief: ${v.v4p1||'___'}. What's actually true: ${v.v4p2||'___'}. What it costs people who keep following the myth: ${v.v4p3||'___'}. Who specifically needs to hear this: ${v.v4p4||'___'}.`
+    compile:v=>`The internal battle I'm fighting: ${v.v4p0||'___'}. The specific fear: ${v.v4p1||'___'}. What staying small has cost me: ${v.v4p2||'___'}. Why I'm still here despite the doubt: ${v.v4p3||'___'}.`
   },
   {
-    title:"Why I'm Still Here",
-    note:"This is the video most people skip because it feels too vulnerable. That's exactly why it's the most important one. The internal battle about claiming your expertise publicly — said out loud, on camera — is what makes every other video retroactively believable.",
+    title:"The Second Epiphany",
+    note:"Deeper. More personal. More convicted. After naming what visibility costs you, this is the myth or truth you can finally say with earned authority. You're not sharing an opinion, you're sharing what you can't unsee.",
     prompts:[
-      {label:"What's the internal battle you're fighting about putting yourself out there as someone with real expertise? The thing that makes you hesitate even though you KNOW you're good at this.",hint:"Imposter syndrome. Comparison. The fear of being 'that person' who promotes themselves. The voice that says your experience doesn't count because you don't have the right credentials, the right following, the right whatever. What's YOUR version of that battle?",key:"v5p0",ph:"e.g. my version of this is the credential question — I don't have letters after my name. I learned everything I know from fifteen years of doing this work with real people. But the voice still shows up asking who I think I am."},
-      {label:"What's the specific fear? If you imagine fully owning your expertise publicly — being visible, being known for what you know — what's the worst thing that could happen? Say it out loud.",hint:"Sometimes the fear is concrete: 'people from my old life will judge me.' Sometimes it's abstract: 'what if I put myself out there and nobody cares.' Sometimes it's deeper: 'what if I'm not actually as good as I think I am.' Name the actual fear. Not the category — the specific thought.",key:"v5p1",ph:"e.g. the specific fear is that someone I respect will watch one of these videos and think 'she's overreaching.' That one imaginary judgment has cost me more than two years of staying quiet."},
-      {label:"What's it been costing you to stay small? Not in money, but in impact, in fulfillment, in the people you could be helping but aren't because you've been hiding.",hint:"You know there are people who need what you know. You've probably met some of them. What happens to them because you haven't stepped into this fully? And what happens to YOU... what are you leaving on the table by playing it safe?",key:"v5p2",ph:"e.g. what it's been costing me is harder to name than money. There are people right now making the exact mistakes I know how to prevent, and I haven't shown up for them because I've been waiting to feel ready."},
-      {label:"Despite all of that... why are you still here? Why haven't you quit? What's the thing that keeps pulling you forward even when the doubt is loud?",hint:"Something is stronger than the fear. A purpose, a person, a vision, a stubborn refusal to let the doubt win. That thing — whatever it is — is the real engine underneath everything you've built so far. Name it.",key:"v5p3",ph:"e.g. I'm still here because I keep meeting people who are stuck in the exact place I was stuck in. And when I talk to them — even for twenty minutes — something shifts. That shift is what I'm here for. The doubt is just the admission fee."}
+      {label:"What's the biggest myth or most overused piece of advice in your field that you've come to believe is actually wrong — or even harmful?",hint:"The sacred cow. The thing every guru says. The advice that gets repeated so often nobody questions it anymore. You question it. You've seen what happens when people follow it. What is it?",key:"v5p0",ph:"e.g. the biggest myth in my field is that consistency is the answer. Post every day, show up every day, grind every day. I've watched people burn out following that advice and then blame themselves for failing."},
+      {label:"Tell the story of your own relationship with this belief. Did you used to follow it? Teach it? What happened that made you turn against it?",hint:"The most powerful version of this is when YOU were a believer first. You followed the playbook. You recommended it to others. And then something happened that made you see it was broken. That personal journey from believer to heretic is what makes this credible, not preachy.",key:"v5p1",ph:"e.g. I used to tell my clients this. I believed in it. I built my own routine around it. And then I watched my most dedicated client, someone who followed every rule, completely crater her mental health in pursuit of consistency and end up taking six months off."},
+      {label:"What's the actual truth — the thing that works but nobody talks about because it's less sexy, less simple, or threatens the established way of doing things?",hint:"The real answer. The thing you've figured out through doing the work, not reading about the work. It might be simpler than the myth. It might be harder. But it's TRUE, and you can back it up with your own experience and results.",key:"v5p2",ph:"e.g. depth beats volume every time. One video that changes how someone thinks is worth more than thirty that they half-watch. The people winning aren't the ones posting most. They're the ones saying the most true thing."},
+      {label:"What happens to people who keep following the myth? What have you watched it cost your peers, your clients, or people in your space?",hint:"Be specific. Not 'they fail.' HOW do they fail? What does it look like? The wasted money, the wasted time, the frustration, the quitting.",key:"v5p3",ph:"e.g. they burn out. They create for months, see no results, decide they're not interesting enough, and quit. The myth told them consistency would compound. Nobody told them they also needed to have something worth saying."},
+      {label:"Who specifically needs to hear this, and what would change for them if they actually believed you?",hint:"Picture one specific person. A client, a peer, someone who asked you for advice last week. If THEY got this, really got it, what would shift for them? That's the emotional engine. That's why you're saying this out loud instead of keeping it to yourself.",key:"v5p4",ph:"e.g. this is for the expert who's been posting dutifully for months with nothing to show for it and is starting to think the problem is them. It's not them. They just got sold a system designed for content farms, not humans with something to say."}
     ],
-    compile:v=>`The internal battle I'm fighting: ${v.v5p0||'___'}. The specific fear: ${v.v5p1||'___'}. What staying small has cost me: ${v.v5p2||'___'}. Why I'm still here despite the doubt: ${v.v5p3||'___'}.`
+    compile:v=>`The biggest myth in my field: ${v.v5p0||'___'}. My own journey with this belief: ${v.v5p1||'___'}. What's actually true: ${v.v5p2||'___'}. What it costs people who keep following the myth: ${v.v5p3||'___'}. Who specifically needs to hear this: ${v.v5p4||'___'}.`
   },
   {
     title:"What I Learned",
@@ -2884,10 +2884,10 @@ const VIDEO_RATIONALE = [
   'WHERE WE ARE: The Road of Trials, the crown jewel. The hero has entered a new world and faces their first real challenge: the challenge of a stuck belief. This video doesn\'t teach. It restructures how your audience sees something they thought they already understood. This is the one that gets shared.',
   // V4 — Approaching the Innermost Cave
   'WHERE WE ARE: Approaching the Innermost Cave. The hero is deep in the journey now, past the easy part, not yet at the breakthrough. This video is where trust compounds. Showing the real texture of what\'s happening (not a highlight reel) builds more credibility than any success story could.',
-  // V5 — The Ordeal
-  'WHERE WE ARE: The Ordeal, the darkest moment before the breakthrough. The hero confronts the central lie or false belief that\'s been holding them back. This is where conviction replaces performance. Your audience needs to see you mean what you say, not just say what sounds good.',
-  // V6 — The Inmost Cave (The Confession)
-  'WHERE WE ARE: The Inmost Cave. The deepest point of the journey, where the hero faces the thing they\'ve been avoiding. This is the most vulnerable video in the challenge, and the most powerful. What you say here is what people remember. The unsaid thing, finally said.',
+  // V5 — The Fall / Ordeal
+  'WHERE WE ARE: The Fall. The first breakthrough was real, but it did not erase the deeper fear. This is where the hero names the thing they have been avoiding and lets the audience see the cost of the journey.',
+  // V6 — Finding the Elixir
+  'WHERE WE ARE: Finding the Elixir. After the fall, the hero can finally name the deeper truth. This is the earned reframe, the thing they can carry forward because they did not skip the hard part.',
   // V7 — The Road Back / Return with the Elixir
   'WHERE WE ARE: The Road Back. The Hero returns changed, carrying the Elixir. The circle closes. Your audience has watched a transformation happen in real time, and this video is where they feel it complete. The CTA here isn\'t about the next video. It\'s about the next chapter.',
 ];

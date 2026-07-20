@@ -18,13 +18,13 @@ const PROMPT_QUESTION_CATALOG = {
       "key": "easyAnswer_v3"
     },
     {
-      "label": "What do you believe that most people in your situation won't say out loud?",
-      "hint": "The thing you'd say if you weren't worried about being judged. A conviction, a truth, a flag you want to plant.",
+      "label": "What's something you've been avoiding saying out loud?",
+      "hint": "The thing that would make you feel most exposed. Not for shock. For honesty. The thing that makes the next lesson earned.",
       "key": "easyAnswer_v4"
     },
     {
-      "label": "What's something you've been avoiding saying out loud?",
-      "hint": "The thing that would make you feel most exposed. Not for shock. For honesty. The thing that would make the right people lean in.",
+      "label": "What do you believe now that you couldn't have said before the fall?",
+      "hint": "The deeper truth, reframe, or conviction you earned by naming the hard thing. Not a generic lesson. The truth you can carry forward.",
       "key": "easyAnswer_v5"
     },
     {
@@ -130,68 +130,68 @@ const PROMPT_QUESTION_CATALOG = {
       ]
     },
     {
-      "title": "The Second Epiphany",
-      "note": "You've earned the right to say something most people won't. This is your second big reframe: a belief you used to hold, what it cost you, and what opened up when you let it go. The more personal and specific, the more universal it lands.",
+      "title": "The Fall",
+      "note": "The first breakthrough was real, but it didn't magically erase the deeper fear. Video 5 is where you name the thing you've been carrying while still showing up. This is the fall that makes the next epiphany earned.",
       "prompts": [
         {
-          "label": "What's something you believe that most people around you would disagree with (or at least wouldn't say out loud)?",
-          "hint": "Not something designed to be controversial. Something genuinely true for you that goes against what your family, friends, coworkers, or culture treats as obvious.",
-          "key": "v4p0",
-          "placeholder": "e.g. I believe that most of what we call 'not being ready' is actually just fear of being judged, and the preparation is usually a delay tactic we've convinced ourselves is responsible"
-        },
-        {
-          "label": "Where did this belief come from? What did you experience or witness that made you unable to keep believing the popular version?",
-          "hint": "There was a before and an after. Something happened (maybe gradually, maybe in a single moment) that made the conventional wisdom impossible to keep holding.",
-          "key": "v4p1",
-          "placeholder": "e.g. it came from watching myself get ready for three years. Reading every book, taking every course, building every system. And then watching someone less prepared than me just start... and build something real"
-        },
-        {
-          "label": "What was it costing you when you still believed the old way? Be specific about what you were doing, tolerating, or missing.",
-          "hint": "Before you saw this clearly, you were living inside the old belief. What did that actually look like day to day? What were you putting up with? What were you chasing that turned out to be empty?",
-          "key": "v4p2",
-          "placeholder": "e.g. it was costing me time I'll never get back and conversations I kept not having because I kept waiting to feel qualified enough to have them"
-        },
-        {
-          "label": "What opened up or changed when you let go of the old belief? What became possible that wasn't before?",
-          "hint": "The other side. Not a fantasy. Your actual experience of life after the shift. What does the world look like through the new lens?",
-          "key": "v4p3",
-          "placeholder": "e.g. what opened up was the ability to act before I felt ready, which sounds simple, but it changed everything about how I show up"
-        },
-        {
-          "label": "If you could say this to one specific person who's still stuck in the old belief (someone you care about)... what would you say to them?",
-          "hint": "Picture one person. Someone you know who's living in the old belief right now. What do you want to say to them through the camera? Not a lecture. A direct, personal message.",
-          "key": "v4p4",
-          "placeholder": "e.g. I'd say: you're not getting more ready. Every day you wait, you're not building courage. You're building a bigger story about why you can't start yet"
-        }
-      ]
-    },
-    {
-      "title": "Why I'm Here",
-      "note": "You've been carrying something this whole challenge that you haven't said out loud yet. Video 6 is where you say it. The fear, the doubt, the deeper root, and what becomes possible when you name it. This is the video that turns viewers into believers.",
-      "prompts": [
-        {
-          "label": "What's the thing you've been carrying through this whole challenge that you haven't said on camera yet? The fear, the doubt, the struggle that's still present even though you keep showing up.",
+          "label": "What's the thing you've been carrying through this challenge that you haven't said on camera yet? The fear, the doubt, the struggle that's still present even though you keep showing up.",
           "hint": "Not the surface-level stuff. Not 'filming is hard.' The REAL thing. Maybe it's the voice that says nobody cares. Maybe it's the comparison. Say the thing you've been avoiding.",
-          "key": "v5p0",
+          "key": "v4p0",
           "placeholder": "e.g. the thing I've been carrying is the very specific fear that I'll finish all seven videos, put everything into this, and wake up to silence... and that silence will confirm the thing I've been trying to prove wrong"
         },
         {
           "label": "Where does that come from? Not the logical explanation. The deeper root. When did you first start believing that about yourself?",
           "hint": "This fear or doubt didn't start with the challenge. It was there before. Trace it back. You don't have to go into full detail. Just name the root.",
-          "key": "v5p1",
+          "key": "v4p1",
           "placeholder": "e.g. it goes back further than this challenge. I think it started in the years I spent doing good work that nobody outside my immediate circle ever saw, slowly convincing myself that was fine"
         },
         {
           "label": "What would it mean to you, really honestly, if you could let go of that? What becomes possible on the other side of this battle?",
           "hint": "Don't make this aspirational fluff. Think about it practically. What would you DO differently? How would you FEEL differently? What would you stop avoiding?",
-          "key": "v5p2",
+          "key": "v4p2",
           "placeholder": "e.g. if I could let go of it, I think I'd stop waiting for proof before I acted. I'd just act. And I'd stop treating my own work like it needs to earn the right to exist before I show it to anyone"
         },
         {
           "label": "What do you want to say to anyone watching this who's fighting their own version of the same battle?",
           "hint": "You've just told your story. The fear, the root, the possibility. What do you want to leave them with? Not advice. A message. The thing you wish someone had said to you when you were in the middle of the fight.",
-          "key": "v5p3",
+          "key": "v4p3",
           "placeholder": "e.g. I want to say: the fact that you're watching this means part of you already knows. You don't need more proof. Just decide that this thing you're carrying doesn't get to keep making your decisions"
+        }
+      ]
+    },
+    {
+      "title": "The Second Epiphany",
+      "note": "Now that you've named the fall, Video 6 finds the elixir. This is your second big reframe: what you can see now, what the old way was costing you, and what becomes possible when it stops making the decisions.",
+      "prompts": [
+        {
+          "label": "What's something you now believe that most people around you would disagree with (or at least wouldn't say out loud)?",
+          "hint": "Not something designed to be controversial. Something genuinely true for you because of what you've just had to face.",
+          "key": "v5p0",
+          "placeholder": "e.g. I believe that most of what we call 'not being ready' is actually just fear of being judged, and the preparation is usually a delay tactic we've convinced ourselves is responsible"
+        },
+        {
+          "label": "What did naming the fear or fall help you see that you couldn't see before?",
+          "hint": "There was a before and an after. What became obvious only after you stopped avoiding the hard thing?",
+          "key": "v5p1",
+          "placeholder": "e.g. once I named the fear, I realized it had been making practical decisions for me while pretending to be wisdom"
+        },
+        {
+          "label": "What was the old way costing you? Be specific about what you were doing, tolerating, or missing.",
+          "hint": "Before you saw this clearly, you were living inside the old belief. What did that actually look like day to day?",
+          "key": "v5p2",
+          "placeholder": "e.g. it was costing me time I'll never get back and conversations I kept not having because I kept waiting to feel qualified enough to have them"
+        },
+        {
+          "label": "What opened up or changed when you stopped letting the old belief make the decisions?",
+          "hint": "The other side. Not a fantasy. Your actual experience of life after the shift. What does the world look like through the new lens?",
+          "key": "v5p3",
+          "placeholder": "e.g. what opened up was the ability to act before I felt ready, which sounds simple, but it changed everything about how I show up"
+        },
+        {
+          "label": "If you could say this to one specific person who's still stuck in the old belief... what would you say to them?",
+          "hint": "Picture one person. What do you want to say to them through the camera? Not a lecture. A direct, personal message.",
+          "key": "v5p4",
+          "placeholder": "e.g. I'd say: you're not getting more ready. Every day you wait, you're not building courage. You're building a bigger story about why you can't start yet"
         }
       ]
     },
@@ -329,68 +329,68 @@ const PROMPT_QUESTION_CATALOG = {
       ]
     },
     {
-      "title": "The Second Epiphany",
-      "note": "Deeper. More personal. More convicted. The biggest myth in your field: not a tip, but a genuine paradigm shift earned through doing the work. You're not sharing an opinion, you're sharing what you can't unsee.",
-      "prompts": [
-        {
-          "label": "What's the biggest myth or most overused piece of advice in your field that you've come to believe is actually wrong — or even harmful?",
-          "hint": "The sacred cow. The thing every guru says. The advice that gets repeated so often nobody questions it anymore. You question it. You've seen what happens when people follow it. What is it?",
-          "key": "v4p0",
-          "placeholder": "e.g. the biggest myth in my field is that consistency is the answer. Post every day, show up every day, grind every day. I've watched people burn out following that advice and then blame themselves for failing."
-        },
-        {
-          "label": "Tell the story of your own relationship with this belief. Did you used to follow it? Teach it? What happened that made you turn against it?",
-          "hint": "The most powerful version of this is when YOU were a believer first. You followed the playbook. You recommended it to others. And then something happened that made you see it was broken. That personal journey from believer to heretic is what makes this credible, not preachy.",
-          "key": "v4p1",
-          "placeholder": "e.g. I used to tell my clients this. I believed in it. I built my own routine around it. And then I watched my most dedicated client — someone who followed every rule — completely crater her mental health in pursuit of consistency and end up taking six months off."
-        },
-        {
-          "label": "What's the actual truth — the thing that works but nobody talks about because it's less sexy, less simple, or threatens the established way of doing things?",
-          "hint": "The real answer. The thing you've figured out through doing the work, not reading about the work. It might be simpler than the myth. It might be harder. But it's TRUE, and you can back it up with your own experience and results.",
-          "key": "v4p2",
-          "placeholder": "e.g. depth beats volume every time. One video that changes how someone thinks is worth more than thirty that they half-watch. The people winning aren't the ones posting most. They're the ones saying the most true thing."
-        },
-        {
-          "label": "What happens to people who keep following the myth? What have you watched it cost your peers, your clients, or people in your space?",
-          "hint": "Be specific. Not 'they fail.' HOW do they fail? What does it look like? The wasted money, the wasted time, the frustration, the quitting.",
-          "key": "v4p3",
-          "placeholder": "e.g. they burn out. They create for months, see no results, decide they're not interesting enough, and quit. The myth told them consistency would compound. Nobody told them they also needed to have something worth saying."
-        },
-        {
-          "label": "Who specifically needs to hear this, and what would change for them if they actually believed you?",
-          "hint": "Picture one specific person. A client, a peer, someone who asked you for advice last week. If THEY got this — really got it — what would shift for them? That's the emotional engine. That's why you're saying this out loud instead of keeping it to yourself.",
-          "key": "v4p4",
-          "placeholder": "e.g. this is for the expert who's been posting dutifully for months with nothing to show for it and is starting to think the problem is them. It's not them. They just got sold a system designed for content farms, not humans with something to say."
-        }
-      ]
-    },
-    {
-      "title": "Why I'm Still Here",
-      "note": "This is the video most people skip because it feels too vulnerable. That's exactly why it's the most important one. The internal battle about claiming your expertise publicly — said out loud, on camera — is what makes every other video retroactively believable.",
+      "title": "The Fall",
+      "note": "This is the video most people skip because it feels too vulnerable. That's exactly why it matters. The internal battle about claiming your expertise publicly, said out loud on camera, is what makes the next epiphany earned.",
       "prompts": [
         {
           "label": "What's the internal battle you're fighting about putting yourself out there as someone with real expertise? The thing that makes you hesitate even though you KNOW you're good at this.",
           "hint": "Imposter syndrome. Comparison. The fear of being 'that person' who promotes themselves. The voice that says your experience doesn't count because you don't have the right credentials, the right following, the right whatever. What's YOUR version of that battle?",
-          "key": "v5p0",
+          "key": "v4p0",
           "placeholder": "e.g. my version of this is the credential question — I don't have letters after my name. I learned everything I know from fifteen years of doing this work with real people. But the voice still shows up asking who I think I am."
         },
         {
           "label": "What's the specific fear? If you imagine fully owning your expertise publicly — being visible, being known for what you know — what's the worst thing that could happen? Say it out loud.",
           "hint": "Sometimes the fear is concrete: 'people from my old life will judge me.' Sometimes it's abstract: 'what if I put myself out there and nobody cares.' Sometimes it's deeper: 'what if I'm not actually as good as I think I am.' Name the actual fear. Not the category — the specific thought.",
-          "key": "v5p1",
+          "key": "v4p1",
           "placeholder": "e.g. the specific fear is that someone I respect will watch one of these videos and think 'she's overreaching.' That one imaginary judgment has cost me more than two years of staying quiet."
         },
         {
           "label": "What's it been costing you to stay small? Not in money, but in impact, in fulfillment, in the people you could be helping but aren't because you've been hiding.",
           "hint": "You know there are people who need what you know. You've probably met some of them. What happens to them because you haven't stepped into this fully? And what happens to YOU... what are you leaving on the table by playing it safe?",
-          "key": "v5p2",
+          "key": "v4p2",
           "placeholder": "e.g. what it's been costing me is harder to name than money. There are people right now making the exact mistakes I know how to prevent, and I haven't shown up for them because I've been waiting to feel ready."
         },
         {
           "label": "Despite all of that... why are you still here? Why haven't you quit? What's the thing that keeps pulling you forward even when the doubt is loud?",
-          "hint": "Something is stronger than the fear. A purpose, a person, a vision, a stubborn refusal to let the doubt win. That thing — whatever it is — is the real engine underneath everything you've built so far. Name it.",
+          "hint": "Something is stronger than the fear. A purpose, a person, a vision, a stubborn refusal to let the doubt win. That thing, whatever it is, is the real engine underneath everything you've built so far. Name it.",
+          "key": "v4p3",
+          "placeholder": "e.g. I'm still here because I keep meeting people who are stuck in the exact place I was stuck in. And when I talk to them, even for twenty minutes, something shifts. That shift is what I'm here for. The doubt is just the admission fee."
+        }
+      ]
+    },
+    {
+      "title": "The Second Epiphany",
+      "note": "Deeper. More personal. More convicted. After naming what visibility costs you, this is the myth or truth you can finally say with earned authority. You're not sharing an opinion, you're sharing what you can't unsee.",
+      "prompts": [
+        {
+          "label": "What's the biggest myth or most overused piece of advice in your field that you've come to believe is actually wrong — or even harmful?",
+          "hint": "The sacred cow. The thing every guru says. The advice that gets repeated so often nobody questions it anymore. You question it. You've seen what happens when people follow it. What is it?",
+          "key": "v5p0",
+          "placeholder": "e.g. the biggest myth in my field is that consistency is the answer. Post every day, show up every day, grind every day. I've watched people burn out following that advice and then blame themselves for failing."
+        },
+        {
+          "label": "Tell the story of your own relationship with this belief. Did you used to follow it? Teach it? What happened that made you turn against it?",
+          "hint": "The most powerful version of this is when YOU were a believer first. You followed the playbook. You recommended it to others. And then something happened that made you see it was broken. That personal journey from believer to heretic is what makes this credible, not preachy.",
+          "key": "v5p1",
+          "placeholder": "e.g. I used to tell my clients this. I believed in it. I built my own routine around it. And then I watched my most dedicated client, someone who followed every rule, completely crater her mental health in pursuit of consistency and end up taking six months off."
+        },
+        {
+          "label": "What's the actual truth — the thing that works but nobody talks about because it's less sexy, less simple, or threatens the established way of doing things?",
+          "hint": "The real answer. The thing you've figured out through doing the work, not reading about the work. It might be simpler than the myth. It might be harder. But it's TRUE, and you can back it up with your own experience and results.",
+          "key": "v5p2",
+          "placeholder": "e.g. depth beats volume every time. One video that changes how someone thinks is worth more than thirty that they half-watch. The people winning aren't the ones posting most. They're the ones saying the most true thing."
+        },
+        {
+          "label": "What happens to people who keep following the myth? What have you watched it cost your peers, your clients, or people in your space?",
+          "hint": "Be specific. Not 'they fail.' HOW do they fail? What does it look like? The wasted money, the wasted time, the frustration, the quitting.",
           "key": "v5p3",
-          "placeholder": "e.g. I'm still here because I keep meeting people who are stuck in the exact place I was stuck in. And when I talk to them — even for twenty minutes — something shifts. That shift is what I'm here for. The doubt is just the admission fee."
+          "placeholder": "e.g. they burn out. They create for months, see no results, decide they're not interesting enough, and quit. The myth told them consistency would compound. Nobody told them they also needed to have something worth saying."
+        },
+        {
+          "label": "Who specifically needs to hear this, and what would change for them if they actually believed you?",
+          "hint": "Picture one specific person. A client, a peer, someone who asked you for advice last week. If THEY got this, really got it, what would shift for them? That's the emotional engine. That's why you're saying this out loud instead of keeping it to yourself.",
+          "key": "v5p4",
+          "placeholder": "e.g. this is for the expert who's been posting dutifully for months with nothing to show for it and is starting to think the problem is them. It's not them. They just got sold a system designed for content farms, not humans with something to say."
         }
       ]
     },
