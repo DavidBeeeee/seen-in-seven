@@ -221,12 +221,12 @@
       lines.push(
         '',
         'OPEN LOOP PRECISION REQUIREMENT:',
-        'The current OPEN LOOP contains ' + openLoopWords + ' words. Replace it with an OPEN LOOP of 35-45 words. Count the words before responding. It must never exceed 50 words. Preserve one concrete unanswered question and do not reveal the conclusion.'
+        'The current OPEN LOOP contains ' + openLoopWords + ' words. Replace it with an OPEN LOOP of 35-45 words. Count the words before responding. It must never exceed 50 words. Preserve one concrete unfinished meaning, contradiction, cause, or question and do not reveal the conclusion.'
       );
     }
     lines.push(
       '',
-      'Rewrite the complete Video ' + Number(video || 1) + ' script now. Preserve the supplied facts, voice, and story beats. Include all five required sections exactly once: [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA]. Do not add commentary outside those sections.'
+      'Rewrite the complete Video ' + Number(video || 1) + ' script now. Preserve the supplied facts, voice, and story beats. Keep the five sections as distinct writing operations: CONCLUSION and CTA destination first, seamless MEAT second, OPEN LOOP after the MEAT, and independent pattern-interrupt HOOK last. Apply the Seamless Rule only inside [MEAT]. Include all five required sections exactly once: [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA]. Do not add commentary outside those sections.'
     );
     if (precisionPass) lines.push('This is the final validation pass. Follow every correction literally and verify the section lengths before returning the script.');
     return lines.join('\n');

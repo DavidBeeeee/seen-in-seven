@@ -2142,7 +2142,7 @@ ${finalScriptText(videoIdx, currentScript, level)}
 
 FEEDBACK FOR THIS REGENERATION: ${regenFeedback}
 
-Regenerate the entire Video ${videoNum}, Level ${level} script from the supplied user context and feedback. Write all five sections as one cohesive spoken video. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
+Regenerate the entire Video ${videoNum}, Level ${level} script from the supplied user context and feedback. Treat the five sections as distinct writing operations: design the CONCLUSION and CTA first, reverse-engineer a seamless MEAT from that destination, write the OPEN LOOP afterward, and write the independent pattern-interrupt HOOK last. Apply the Seamless Rule only inside [MEAT]. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
 
   try {
     const script = await generateValidatedScript(fullScriptUserMsg, level, videoNum);
