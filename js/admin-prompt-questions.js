@@ -6,7 +6,7 @@ const PROMPT_QUESTION_CATALOG = {
       {"label":"What should someone know about your background, what makes you unexpected, and what you naturally care about?","hint":"Share whatever feels most important. The AI will organize it into the story.","key":"easyAnswer_v1"},
       {"label":"What is one thing you used to think was true that is not true?","hint":"Explain how it shaped you, what made you question it, and why the old way of thinking matters.","key":"easyAnswer_v2"},
       {"label":"What has making these videos actually been like so far?","hint":"Compare it with what you expected, share one real detail, and include what is changing, what is still difficult, and why you are continuing.","key":"easyAnswer_v3"},
-      {"label":"In the part of your life you have been discussing, what is the absolute worst thing that happened after you first started seeing it differently? What did you do, avoid, refuse to see, or get completely wrong that made it your fault, and what did you lose because of it?","hint":"Give us the defeat, not the lesson. What happened, what was your responsibility, what did it cost, what did you try that failed, and what still felt broken afterward? A rough answer is enough. Your script will build out the story, and you can correct or personalize any details afterward.","key":"easyAnswer_v4"},
+      {"label":"In the part of your life you have been discussing, what failure, loss, or period was so devastating that you thought it might ruin you or that you might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?","hint":"Tell us what collapsed, what you believed might be gone forever, and why you could not see a way back. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.","key":"easyAnswer_v4"},
       {"label":"What larger truth did you discover because you lived through that difficult experience?","hint":"Describe how you discovered it, what it changed in you, and who else may need to understand it.","key":"easyAnswer_v5"},
       {"label":"Who were you before these realizations, and who are you now?","hint":"Describe what changed, what remains unfinished, what telling the story helped you understand, and where you go next.","key":"easyAnswer_v6"}
     ],
@@ -15,7 +15,7 @@ const PROMPT_QUESTION_CATALOG = {
       {"label":"What part of your past kept shaping you before you understood why?","hint":"Describe the ordinary world you were in, the thread or unlikely chapter that kept showing up, and why you did not recognize or follow it yet.","key":"easyAnswer_v1"},
       {"label":"What's a belief you held for a long time that turned out to be wrong?","hint":"What cracked it open? Walk me through how you arrived at seeing it differently. The journey matters more than the conclusion.","key":"easyAnswer_v2"},
       {"label":"Tell me about one moment when an old pattern met a new behavior.","hint":"What happened, what would you normally have done, what did you do differently, what did that reveal, and what is still difficult?","key":"easyAnswer_v3"},
-      {"label":"In the work or expertise story you have been telling, what was your worst professional failure after your first breakthrough? What did you do, avoid, refuse to see, or get completely wrong that made it your fault, and what did it cost you?","hint":"Give us the professional defeat, not a fear about what might happen. Name what happened, your responsibility, the real loss, what you tried that failed, and what remained broken. A rough answer is enough. Your script will build out the story, and you can correct or personalize any details afterward.","key":"easyAnswer_v4"},
+      {"label":"In the work or expertise story you have been telling, what failure was so devastating that you thought your career, business, reputation, livelihood, or future might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?","hint":"Tell us what collapsed, what you believed might be gone forever, and why you could not see a professional way back. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.","key":"easyAnswer_v4"},
       {"label":"What do you believe now that you couldn't have said before the fall?","hint":"The deeper truth, reframe, or conviction you earned by naming the hard thing. Not a generic lesson. The truth you can carry forward.","key":"easyAnswer_v5"},
       {"label":"What did doing these 7 videos teach you that you didn't know at the start?","hint":"The honest accounting. What changed? What would you tell yourself at the beginning? What do you want to give your audience?","key":"easyAnswer_v6"}
     ]
@@ -56,12 +56,13 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "The Hardest Part",
-      "note": "Return to your larger life story and tell the defeat. Something bad happened, you helped cause it, and you lost something that mattered. Do not give the lesson yet.",
+      "note": "Now we are returning to the larger story you have been telling, not the experience of making these videos. This is the chapter where things went as badly as they could have gone. Choose the failure, loss, or period when you genuinely wondered whether you would recover. Do not tell us what you eventually learned or how everything worked out. Answer from who you were while it was happening, before you could see a way forward.",
       "prompts": [
-        {"label":"In the part of your life you have been discussing, what is the absolute worst thing that happened after you first started seeing it differently?","hint":"Give one completed event or period. Tell us what actually happened, not what you were afraid might happen.","key":"v4p0","placeholder":"Describe the defeat that actually happened."},
-        {"label":"Why was it your fault? What did you do, avoid, refuse to see, or get completely wrong that caused it or made it worse?","hint":"This is about responsibility, not villainy. Name the choice, pattern, blind spot, delay, refusal, or failure that was yours.","key":"v4p1","placeholder":"Describe your part in causing or worsening the defeat."},
-        {"label":"What did you lose, damage, delay, or make worse because of that failure?","hint":"Name the real cost from inside the experience: the relationship, opportunity, money, time, credibility, identity, peace, momentum, or something else that mattered.","key":"v4p2","placeholder":"Describe what the failure actually cost you."},
-        {"label":"What did you try afterward that still did not fix it, and what were you still unable to understand?","hint":"End inside the failed recovery. Name what you tried, why it was not enough, and what remained broken before the larger realization came.","key":"v4p3","placeholder":"Describe the failed recovery and the question that still had no answer."}
+        {"label":"Thinking about the main part of your life you have been discussing, what failure, loss, or period brought you closest to believing you might never recover?","hint":"Choose something that actually happened, rather than something you feared might happen. It could involve your work, money, family, health, identity, reputation, relationships, or the future you thought you were building. If there was not one dramatic event, describe the period when everything gradually fell apart.","key":"v4p0","placeholder":"Describe the failure, loss, or period when you thought you might not recover."},
+        {"label":"Take us to the moment you realized this was more than an ordinary setback. What had happened, and what made you think your life might not return to normal?","hint":"Give us something we can picture. Where were you? Who else was affected? What had just happened? What did you see, hear, lose, or finally understand that made the seriousness impossible to ignore?","key":"v4p4","placeholder":"Describe the moment the full seriousness became real."},
+        {"label":"Why was it your fault? What did you do, avoid, ignore, refuse to admit, or get completely wrong that caused the failure or made it worse?","hint":"You do not have to make yourself the villain. Look for the decision that was yours: the warning you ignored, the conversation you avoided, the risk you underestimated, the pattern you kept repeating, or the moment you knew better and continued anyway. Tell us what you should have done differently and why you did not do it.","key":"v4p1","placeholder":"Describe the decision, avoidance, or blind spot that was yours."},
+        {"label":"What did this failure take from you, and what did you believe might be permanently over because of it?","hint":"Go beyond saying it was difficult. What future disappeared? What relationship, livelihood, trust, identity, opportunity, belonging, confidence, or sense of purpose seemed impossible to restore? Why did that particular loss feel capable of ruining you?","key":"v4p2","placeholder":"Describe what seemed permanently lost and why it mattered so much."},
+        {"label":"What did you try afterward that still did not fix it, and what did you believe about yourself or your future when you could no longer see a way back?","hint":"Tell us about the attempted recovery that failed. What did you try to repair, replace, escape, prove, or force? What remained broken afterward? End before the realization or comeback. The next part of your story will deal with what eventually changed.","key":"v4p3","placeholder":"Describe the failed recovery and the lowest point before you could see a way forward."}
       ]
     },
     {
@@ -185,31 +186,37 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "The Fall",
-      "note": "Tell the professional defeat. Something went wrong, your own choice or blind spot helped cause it, and expertise did not save you from the loss. Do not give the lesson yet.",
+      "note": "Now we are returning to the larger work or expertise story you have been telling, not the experience of making these videos. This is the chapter where the professional world you had built came closest to collapsing. Choose the failure or period when you genuinely wondered whether your career, business, reputation, livelihood, or future would recover. Do not tell us what you eventually learned or how everything worked out. Answer from who you were while it was happening.",
       "prompts": [
         {
-          "label": "In the work or expertise story you have been telling, what was your worst professional failure after your first breakthrough?",
-          "hint": "Give one completed event or period when something actually went wrong. Do not give a fear about what might happen.",
+          "label": "Thinking about the work or expertise story you have been discussing, what failure or period brought you closest to believing your career, business, reputation, livelihood, or future might never recover?",
+          "hint": "Choose something that actually happened, rather than something you feared might happen. If there was not one dramatic event, describe the period when the professional world you had built gradually fell apart.",
           "key": "v4p0",
-          "placeholder": "Describe the professional defeat that actually happened."
+          "placeholder": "Describe the professional failure or period when you thought you might not recover."
         },
         {
-          "label": "Why was it your fault? What did you do, avoid, refuse to see, overestimate, or get completely wrong that caused it or made it worse?",
-          "hint": "Name the professional choice, blind spot, delay, overconfidence, avoidance, or failure that was yours. Expertise does not remove responsibility.",
+          "label": "Take us to the moment you realized this was more than an ordinary professional setback. What had happened, and what made the consequences feel impossible to repair?",
+          "hint": "Give us something we can picture. Where were you? Who else was affected? What result, conversation, loss, message, or realization made the seriousness impossible to ignore?",
+          "key": "v4p4",
+          "placeholder": "Describe the moment the full professional seriousness became real."
+        },
+        {
+          "label": "Why was it your fault? What did you do, avoid, ignore, refuse to admit, overestimate, or get completely wrong that caused the failure or made it worse?",
+          "hint": "Look for the professional decision that was yours: the warning you ignored, the conversation you avoided, the risk you underestimated, the responsibility you mishandled, or the moment you knew better and continued anyway. Tell us what you should have done differently and why you did not do it.",
           "key": "v4p1",
-          "placeholder": "Describe your part in causing or worsening the professional defeat."
+          "placeholder": "Describe the professional decision, avoidance, or blind spot that was yours."
         },
         {
-          "label": "What did that failure actually cost you, your work, or the people who depended on you?",
-          "hint": "Name the real loss: credibility, trust, money, time, an opportunity, a relationship, momentum, confidence, or something else that mattered.",
+          "label": "What did this failure take from you, your work, or the people who depended on you, and what did you believe might be permanently over?",
+          "hint": "Go beyond saying it was difficult. What livelihood, credibility, trust, opportunity, relationship, body of work, identity, or future seemed impossible to restore? Why did that loss feel capable of ending everything you had built?",
           "key": "v4p2",
-          "placeholder": "Describe the real cost of the professional failure."
+          "placeholder": "Describe what seemed permanently lost professionally and why it mattered so much."
         },
         {
-          "label": "What did you try afterward that still did not fix it, and what were you still unable to understand?",
-          "hint": "End inside the failed recovery. Name what you tried, why your expertise or old strategy was not enough, and what remained broken before the second epiphany.",
+          "label": "What did you try afterward that still did not fix it, and what did you believe about yourself or your future when you could no longer see a professional way back?",
+          "hint": "Tell us about the attempted recovery that failed. What did you try to repair, replace, explain, prove, or force? What remained broken afterward? End before the realization or comeback. The next part of your story will deal with what eventually changed.",
           "key": "v4p3",
-          "placeholder": "Describe the failed recovery and what still had no answer."
+          "placeholder": "Describe the failed recovery and the professional lowest point before you could see a way forward."
         }
       ]
     },

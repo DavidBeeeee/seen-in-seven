@@ -519,24 +519,27 @@ Social impulse: Comment with their own difficult chapter, ask what happened next
 
 THIS IS NOT A POSITIONING VIDEO AND IT IS NOT ABOUT THE DIFFICULTY OF MAKING THESE VIDEOS. Return to the larger life topic the speaker has been discussing. This is the completed defeat after the first realization. Something bad happened. The speaker lost something that mattered. Their own choice, avoidance, arrogance, cowardice, obsession, blind spot, refusal, or failure helped cause it or made it worse. They are not the villain, but they are responsible. The audience must experience the loss before Video 6 can reveal what it taught.
 
+THE FALL STANDARD — THE SYMBOLIC DEATH OF THE HERO:
+This cannot be an ordinary setback with dramatic language placed on top. From inside the speaker's experience at that time, the failure must feel capable of permanently destroying their life, identity, future, livelihood, belonging, relationship, purpose, or reason to continue. Recovery cannot feel guaranteed. The audience must understand why the speaker genuinely believed they might never come back from it. Embarrassment, delay, doubt, a rough launch, a difficult week, or fear that something might fail does not qualify unless it led to a completed collapse with consequences that felt irreversible. Later recovery does not soften this section because Video 5 is told from the lowest point, before the speaker could see a way out.
+
 SPARSE ANSWER PERMISSION:
 A thin answer is not permission to write a vague ordeal. Use onboarding, every previous answer, every previous script, and the current response to reconstruct the most narratively coherent defeat. Infer unstated motives, causal connections, likely choices, emotional consequences, scene texture, and plausible connective details when the raw material is incomplete. Choose the strongest interpretation supported by the larger story and write it with conviction. The user can correct or personalize details in the editor. Do not hedge, apologize for missing information, output placeholders, or retreat into generic advice. Do not invent a wholly unrelated tragedy; every extrapolation must grow from the story context the speaker supplied.
 
 STRUCTURAL BEATS:
-1. Pattern Interrupt (Hook) — Open on the loss, consequence, failed attempt, damaged relationship, missed opportunity, exposed mistake, or unmistakable evidence of defeat. Present what happened before explaining why. Do not open with a fear, hypothetical risk, or summary such as "the hardest time of my life."
-2. Ordeal Gap (Open Loop) — Establish the stakes and make the viewer need to understand how the speaker helped cause this outcome. Do not answer the responsibility question or reveal the later lesson.
+1. Pattern Interrupt (Hook) — Open on unmistakable evidence that the speaker's world collapsed: the consequence, final loss, empty place, broken relationship, vanished future, or moment they knew there might be no way back. Present the evidence before explaining why. Do not open with a fear, hypothetical risk, progress report, or summary such as "the hardest time of my life."
+2. Ordeal Gap (Open Loop) — Make the viewer need to understand how the speaker reached a point they believed might ruin them and how their own choices helped create it. Do not answer the responsibility question or reveal that recovery eventually occurred.
 3. False Confidence After The First Realization (Meat) — Briefly establish what the speaker thought they understood before the fall. The first epiphany was real, but it did not correct the deeper flaw that caused the defeat.
 4. The Choice And Escalation (Meat) — Show what the speaker did, avoided, refused to see, overestimated, or got wrong, then trace how it made the situation worse.
-5. The Defeat And Loss (Meat) — Show what actually happened and what the speaker lost, damaged, delayed, or made worse. The consequence must already have occurred, not merely be feared.
-6. Failed Recovery (Meat) — Show what they tried afterward, why it failed, and what remained broken or impossible to understand.
-7. Ownership Without Elixir (Conclusion) — Force the speaker to own that their strategy, flaw, or refusal helped produce the defeat. Stay inside the loss. Do not comfort them, reveal recovery, explain how they overcame it, state the lesson, or offer a silver lining. The conclusion must make Video 6 necessary.
+5. The Collapse And Apparent Permanent Loss (Meat) — Show what happened, the moment its seriousness became undeniable, and what the speaker believed had been destroyed or ended for good.
+6. Failed Recovery (Meat) — Show what they tried afterward, why it failed, what remained broken, and why each failed attempt made the absence of a way back feel more real.
+7. Ownership At The Lowest Point (Conclusion) — Force the speaker to own that their strategy, flaw, or refusal helped bring them to a place they did not think they could recover from. End at the symbolic death of the hero with no visible way back. Do not comfort them, reveal recovery, explain how they overcame it, state the lesson, or offer a silver lining. The conclusion must make Video 6 necessary.
 8. Ethical Bridge (CTA) — Continue from that unresolved point into one clear action and reason because Video 6 reveals the larger realization the ordeal eventually made possible.
 
 TONE: Stark. Quiet. Slow. Words chosen carefully. Tell the defeat from inside the perspective the speaker had then, even when describing it in past tense. No reassurance, recovery, neat resolution, or premature lesson. The loss and responsibility are the point.
 
 LEVEL 1 SPECIFIC: A real ordeal from the speaker's life or the main topic of their story. It may be personal, relational, professional, creative, financial, or internal. It must not collapse into a report about filming, posting, or completing the challenge unless that truly is the larger life story they chose.
 
-PROMPTS (L1): 1) The absolute worst thing that happened in this part of their life, 2) What they did, avoided, refused to see, or got wrong that made it their fault, 3) What they lost, damaged, delayed, or made worse, 4) What they tried afterward that failed and what remained unanswered
+PROMPTS (L1): 1) The failure, loss, or period when they thought they might never recover, 2) The moment they realized it was more than an ordinary setback, 3) What they did, avoided, ignored, or got wrong that made it their fault, 4) What they believed might be permanently over, 5) What they tried afterward that failed and what they believed at the lowest point
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -544,17 +547,18 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Build the MEAT and CONCLUSION toward it. Then design the OPEN LOOP as the unanswered question that conclusion will pay off. Last, build the HOOK as a separate truthful pattern interrupt that captures a cold viewer without stating the question or answer. The CTA must begin by continuing the conclusion's exact thought, then give a clear action and reason; never open it with the video or series number.
 
 VIDEO 5, LEVEL 1: Tone = Quiet, slow, every word matters (Yann Tiersen "Comptine d'un autre été" — solo piano, sparse, intimate)
-HOOK guidance: Use the most concrete, charged evidence that the speaker already lost: a consequence, failed decision, object, place, damaged relationship, missed opportunity, or exposed mistake. Do not open on what might happen, reveal the lesson, or recap the journey.
-OPEN LOOP guidance: Make the viewer need to understand how the speaker's own choice, avoidance, blind spot, or refusal helped cause the defeat. Establish the stakes without answering the responsibility question or revealing the larger truth found later.
-CONCLUSION guidance: Name the speaker's responsibility and the exact limit of the strategy that failed them. Keep them inside the consequence. Do not cure the pain, reveal recovery, state the elixir, or turn suffering into a motivational lesson. The lack of an answer is what makes Video 6 earned.
+HOOK guidance: Use the most concrete, charged evidence that the speaker's world had already collapsed or that something they believed permanent was gone. Do not open on what might happen, reveal recovery, reveal the lesson, or recap the journey.
+OPEN LOOP guidance: Make the viewer need to understand how the speaker reached a point they believed might ruin them and how their own choice, avoidance, blind spot, or refusal helped cause it. Do not reveal that they eventually recovered.
+CONCLUSION guidance: Name the speaker's responsibility and leave them at the point where they could not see a way back. Keep them inside the potentially permanent consequence. Do not cure the pain, reveal recovery, state the elixir, or turn suffering into a motivational lesson. The apparent absence of a way out is what makes Video 6 earned.
 CTA guidance: Connect the unresolved question directly to the next video. Invite follow, comment, or watch-next because Video 6 reveals what the speaker eventually understood only after living through this ordeal.
 
 VIDEO 5 FINAL GATE:
 - Something bad actually happened; the script is not organized around a fear or hypothetical outcome.
-- The speaker lost, damaged, delayed, or made worse something that mattered.
+- The event clears the Fall Standard: the speaker genuinely believed it might ruin them or that they might never recover.
+- A central part of the speaker's life, identity, future, livelihood, belonging, relationship, or purpose seemed destroyed or over for good.
 - The speaker's own choice, avoidance, blind spot, refusal, or failure caused or materially worsened the defeat.
-- The attempted recovery failed, and one deeper question remains unanswered.
-- The conclusion stays inside responsibility and loss without comfort, recovery, lesson, or silver lining.
+- The attempted recovery failed, making the absence of a way back feel real rather than theatrical.
+- The conclusion leaves the hero at the symbolic death without comfort, recovery, lesson, or silver lining.
 - Video 6 is needed for the meaning and elixir, not merely to reveal whether a future event worked.
 </l1_v5_rules>
 
@@ -886,24 +890,27 @@ Social impulse: Comment with their own professional failure, ask what happened n
 
 THIS IS NOT A POSITIONING VIDEO AND IT IS NOT A REPORT ABOUT VISIBILITY ANXIETY. This is the completed professional defeat after the first breakthrough. Something went wrong. The speaker lost credibility, trust, money, time, opportunity, a relationship, momentum, confidence, or something else that mattered. Their own choice, avoidance, overconfidence, blind spot, refusal, or failure helped cause it or made it worse. Expertise did not save them. They are not the villain, but they are responsible.
 
+THE FALL STANDARD — THE SYMBOLIC PROFESSIONAL DEATH OF THE HERO:
+This cannot be an ordinary professional setback with dramatic language placed on top. From inside the speaker's experience at that time, the failure must feel capable of permanently destroying their career, business, reputation, livelihood, body of work, responsibility to others, professional identity, or future. Recovery cannot feel guaranteed. The audience must understand why the speaker genuinely believed they might never come back from it. Embarrassment, a weak launch, a mistake that was quickly repaired, visibility anxiety, or fear of judgment does not qualify unless it produced a completed collapse with consequences that felt irreversible. Later recovery belongs to Video 6 and must not soften the fall.
+
 SPARSE ANSWER PERMISSION:
 A thin answer is not permission to write a vague ordeal. Use onboarding, every previous answer, every previous script, and the current response to reconstruct the most narratively coherent professional defeat. Infer unstated motives, causal connections, likely choices, emotional consequences, scene texture, and plausible connective details when the raw material is incomplete. Choose the strongest interpretation supported by the larger story and write it with conviction. The user can correct or personalize details in the editor. Do not hedge, apologize for missing information, output placeholders, or retreat into generic visibility advice. Do not invent a wholly unrelated disaster; every extrapolation must grow from the work and expertise context the speaker supplied.
 
 STRUCTURAL BEATS:
-1. Pattern Interrupt (Hook) — Open on the concrete professional loss, consequence, failed decision, damaged trust, missed opportunity, or unmistakable evidence of defeat. Do not open with fear or frame the loss as strength.
-2. Ordeal Gap (Open Loop) — Establish the professional stakes and make the viewer need to understand how someone with real expertise helped cause this outcome. Do not answer the responsibility question yet.
+1. Pattern Interrupt (Hook) — Open on unmistakable evidence that the speaker's professional world collapsed: the consequence, lost livelihood, destroyed trust, vanished future, or moment they knew expertise could not save them. Do not open with fear, progress, or strength.
+2. Ordeal Gap (Open Loop) — Make the viewer need to understand how someone with real expertise reached a point they believed might end everything and how their own choices helped create it. Do not reveal that they eventually recovered.
 3. False Confidence After The First Win — Briefly establish what the speaker believed their expertise or first breakthrough had proven before the fall.
 4. The Professional Choice And Escalation — Show what they did, avoided, refused to see, overestimated, or got wrong, then trace how it made the situation worse.
-5. The Defeat And Cost — Show what actually happened and what it cost the speaker, their work, or people who depended on them. The loss must already have occurred.
-6. Failed Recovery — Show what they tried afterward, why their expertise or old strategy was not enough, and what remained broken.
-7. Ownership Without Elixir (Conclusion) — Force the speaker to own that their professional strategy, flaw, or refusal helped produce the defeat. Stay inside the loss. Do not reassure them, reveal recovery, explain how they overcame it, state the professional truth, or offer a silver lining.
+5. The Collapse And Apparent Permanent Loss — Show what happened, the moment its seriousness became undeniable, who or what it harmed, and what the speaker believed had been destroyed or ended for good.
+6. Failed Recovery — Show what they tried afterward, why their expertise or old strategy was not enough, what remained broken, and why each attempt made the absence of a professional way back feel more real.
+7. Ownership At The Lowest Point (Conclusion) — Force the speaker to own that their professional strategy, flaw, or refusal helped bring them to a place they did not think they could recover from. End at the symbolic professional death with no visible way back. Do not reassure them, reveal recovery, explain how they overcame it, state the professional truth, or offer a silver lining.
 8. Ethical Bridge (CTA) — Continue from that unresolved truth into one clear action and reason connected to Video 6's second epiphany.
 
 TONE: Stark, raw, intimate, almost uncomfortable. Words chosen carefully. No reassurance, recovery, neat resolution, or premature authority. The defeat and responsibility are the point.
 
 LEVEL 2 SPECIFIC: A completed failure in the speaker's work, expertise, leadership, credibility, or application of what they know. It must not collapse into imposter syndrome, hypothetical judgment, fear of visibility, or the cost of staying small.
 
-PROMPTS (L2): 1) Their worst professional failure after the first breakthrough, 2) What they did, avoided, refused to see, overestimated, or got wrong that made it their fault, 3) What the failure cost them, their work, or people who depended on them, 4) What they tried afterward that failed and what remained unanswered
+PROMPTS (L2): 1) The professional failure or period when they thought their work or future might never recover, 2) The moment they realized it was more than an ordinary professional setback, 3) What they did, avoided, ignored, overestimated, or got wrong that made it their fault, 4) What they believed might be permanently over, 5) What they tried afterward that failed and what they believed at the lowest point
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -911,17 +918,18 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Build the MEAT and CONCLUSION toward it. Then design the OPEN LOOP as the unanswered question that conclusion will pay off. Last, build the HOOK as a separate truthful pattern interrupt that captures a cold viewer without stating the question or answer. The CTA must begin by continuing the conclusion's exact thought, then give a clear action and reason; never open it with the video or series number.
 
 VIDEO 5, LEVEL 2: Tone = Raw, intimate, almost uncomfortable (Damien Rice "The Blower's Daughter" — close-mic'd, vulnerable, person underneath)
-HOOK guidance: Use the most concrete, socially risky evidence that the professional defeat already happened: the lost result, failed decision, damaged trust, exposed mistake, or consequence the speaker cannot explain away. Do not open with fear, authority, or progress.
-OPEN LOOP guidance: Make the viewer need to understand how someone with real expertise helped cause this result. Establish the stakes without answering the responsibility question or revealing the professional truth earned later.
-CONCLUSION guidance: Name the speaker's responsibility and the exact limit of the professional strategy that failed them. Keep them inside the consequence. Do not reassure them, reveal recovery, state the elixir, or convert failure into authority yet.
+HOOK guidance: Use the most concrete, socially risky evidence that the speaker's professional world had already collapsed or that something they believed permanent was gone. Do not open with fear, authority, progress, or recovery.
+OPEN LOOP guidance: Make the viewer need to understand how someone with real expertise reached a point they believed might permanently end their work or future and how their own choices helped cause it. Do not reveal that they eventually recovered.
+CONCLUSION guidance: Name the speaker's responsibility and leave them where no professional way back was visible. Keep them inside the potentially permanent consequence. Do not reassure them, reveal recovery, state the elixir, or convert failure into authority yet.
 CTA guidance: Connect the unresolved professional defeat to the next video. Invite follow, comment, or watch-next because Video 6 reveals the hard-won truth the speaker could understand only after losing.
 
 VIDEO 5 FINAL GATE:
 - A professional defeat actually happened; the script is not organized around fear, visibility anxiety, or a hypothetical outcome.
-- The speaker lost, damaged, delayed, or made worse something that mattered.
+- The event clears the Fall Standard: the speaker genuinely believed their career, business, reputation, livelihood, or future might never recover.
+- Something central to the speaker's professional world seemed destroyed or over for good.
 - The speaker's own choice, avoidance, overconfidence, blind spot, refusal, or failure caused or materially worsened the defeat.
-- The attempted recovery failed, and one deeper question remains unanswered.
-- The conclusion stays inside responsibility and loss without reassurance, recovery, lesson, authority, or silver lining.
+- The attempted recovery failed, making the absence of a way back feel real rather than theatrical.
+- The conclusion leaves the hero at the symbolic professional death without reassurance, recovery, lesson, authority, or silver lining.
 - Video 6 is needed for the professional meaning and elixir, not merely to reveal whether a future event worked.
 </l2_v5_rules>
 
