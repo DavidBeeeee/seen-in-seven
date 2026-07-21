@@ -1875,7 +1875,7 @@ async function callDeepSeekAPIWithRetry(userMessage, retries = 1, level, video) 
   throw lastErr;
 }
 
-async function callDeepSeekAPIRaw(systemMsg, userMsg) {
+async function callDeepSeekAPIRaw(systemMsg, userMsg, temperature, trackPromptVersion = true) {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), 28000);
   let response;
@@ -1883,7 +1883,7 @@ async function callDeepSeekAPIRaw(systemMsg, userMsg) {
     response = await fetch('/api/generate', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ systemMsg, userMsg }),
+      body: JSON.stringify({ systemMsg, userMsg, ...(temperature == null ? {} : { temperature }) }),
       signal: controller.signal
     });
   } catch(e) {
@@ -1897,31 +1897,27 @@ async function callDeepSeekAPIRaw(systemMsg, userMsg) {
     throw new Error(err.error ? err.error : 'API error ' + response.status);
   }
   const data = await response.json();
-  window._SIS_lastPromptVersion = data.prompt_version || '';
+  if (trackPromptVersion) window._SIS_lastPromptVersion = data.prompt_version || '';
   return data.choices && data.choices[0] && data.choices[0].message
     ? data.choices[0].message.content.trim() : null;
 }
 
 async function generateValidatedScript(userMessage, level, video) {
-  let script = await callDeepSeekAPIWithRetry(userMessage, 1, level, video);
+  const systemPrompt = focusedSystemPrompt(level, video);
+  const script = await callDeepSeekAPIWithRetry(userMessage, 1, level, video);
   if (!window.SISPromptEngine) return script;
-  let validation = SISPromptEngine.validateOutput(script, video);
-  if (validation.valid) return script;
-
-  for (let repairAttempt = 0; repairAttempt < 2; repairAttempt++) {
-    const repairMessage = SISPromptEngine.buildRepairMessage(
-      userMessage,
-      script,
-      validation,
-      video,
-      repairAttempt === 1
-    );
-    script = await callDeepSeekAPIWithRetry(repairMessage, 0, level, video);
-    validation = SISPromptEngine.validateOutput(script, video);
-    if (validation.valid) return script;
-  }
-
-  throw new Error('The script response still needs correction: ' + SISPromptEngine.validationFeedback(validation) + ' Please try again.');
+  const promptVersion = window._SIS_lastPromptVersion;
+  const reviewed = await SISPromptEngine.reviewAndRepairScript({
+    script,
+    systemPrompt,
+    userMessage,
+    level,
+    video,
+    callModel:(reviewSystem, reviewMessage, temperature) =>
+      callDeepSeekAPIRaw(reviewSystem, reviewMessage, temperature, false)
+  });
+  window._SIS_lastPromptVersion = promptVersion;
+  return reviewed;
 }
 
 // Parse [HOOK] / [OPEN LOOP] / [MEAT] / [CONCLUSION] / [CTA] sections from AI response
@@ -2056,26 +2052,23 @@ Regenerate ONLY the [${sectionKey}] section, applying the feedback above while f
   try {
     const systemPrompt = focusedSystemPrompt(level, videoNum);
     const responseText = await callDeepSeekAPIRaw(systemPrompt, sectionUserMsg);
-    let newSectionText = String(responseText || '').replace(new RegExp('^\\s*\\[' + sectionKey.replace(' ', '\\s+') + '\\]\\s*', 'i'), '').trim();
+    const parsedResponse = SISPromptEngine.parseSections(responseText);
+    let newSectionText = parsedResponse && parsedResponse[sectionKey]
+      ? parsedResponse[sectionKey]
+      : String(responseText || '').replace(new RegExp('^\\s*\\[' + sectionKey.replace(' ', '\\s+') + '\\]\\s*', 'i'), '').trim();
     if (!newSectionText) throw new Error('Empty response');
 
-    const voiceIssues = window.SISPromptEngine && typeof SISPromptEngine.findVoiceIssues === 'function'
-      ? SISPromptEngine.findVoiceIssues(newSectionText) : [];
-    if (voiceIssues.length) {
-      const repairText = await callDeepSeekAPIRaw(systemPrompt, `${sectionUserMsg}
-
-YOUR PREVIOUS SECTION FAILED THE VOICE GUARD:
-${newSectionText}
-
-REQUIRED CORRECTIONS:
-${voiceIssues.join(' ')}
-
-Rewrite ONLY the [${sectionKey}] section. Keep the speaker's facts and intent, remove every flagged phrase or construction, and return only the replacement section text with no label or commentary.`);
-      newSectionText = String(repairText || '').replace(new RegExp('^\\s*\\[' + sectionKey.replace(' ', '\\s+') + '\\]\\s*', 'i'), '').trim();
-      if (!newSectionText) throw new Error('Empty repair response');
-      const remainingIssues = SISPromptEngine.findVoiceIssues(newSectionText);
-      if (remainingIssues.length) throw new Error('The regenerated section still needs a voice correction: ' + remainingIssues.join(' '));
-    }
+    const reviewSections = Object.assign({}, sections, { [sectionKey]:newSectionText });
+    newSectionText = await SISPromptEngine.reviewAndRepairSection({
+      script:sectionsToFullScript(reviewSections),
+      section:sectionKey,
+      systemPrompt,
+      userMessage:sectionUserMsg,
+      level,
+      video:videoNum,
+      callModel:(reviewSystem, reviewMessage, temperature) =>
+        callDeepSeekAPIRaw(reviewSystem, reviewMessage, temperature, false)
+    });
 
     // Update sections state
     const updatedSections = Object.assign({}, sections);
@@ -3110,7 +3103,7 @@ function _doShowScriptViewInner(idx) {
         ...(isV1 && declText ? [{ key: 'DECLARATION', label: 'DECLARATION', desc: 'Your commitment, out loud. Say this close to verbatim. It signals trust and sets up everything that follows.', fixed: true, fixedText: declText }] : []),
         { key: 'MEAT',       label: storyLabel,    desc: null, beats: storyBeats },
         { key: 'CONCLUSION', label: 'CONCLUSION',  desc: 'Closes the thought with a turn, sharper meaning, or emotional landing.' },
-        { key: 'CTA',        label: 'CTA',         desc: 'The direct next action. Gives the viewer a clear reason to follow, comment, DM, or keep watching.' },
+        { key: 'CTA',        label: 'CTA',         desc: 'The direct next action. Gives the viewer a clear, story-specific reason to follow.' },
       ];
       beatsEl.innerHTML = sectionDefs.map(s => {
         const safeKey = s.key.replace(' ', '-');

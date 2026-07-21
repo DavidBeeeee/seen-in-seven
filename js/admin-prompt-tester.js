@@ -642,43 +642,34 @@ async function generateTest() {
   try {
     const generationMode = promptState.workspace.generationMode === 'production' ? 'production' : 'consistent';
     const temperature = generationMode === 'production' ? 0.8 : 0.25;
-    let response = await fetch('/api/generate', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ systemMsg: systemPrompt, userMsg: userMessage, temperature })
-    });
-    let data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error || 'Test generation failed.');
-    let raw = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-    if (!raw) throw new Error('The AI returned an empty test.');
-    let validation = SISPromptEngine.validateOutput(raw, video);
-    for (let repairAttempt = 0; !validation.valid && repairAttempt < 2; repairAttempt++) {
-      response = await fetch('/api/generate', {
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify({
-          systemMsg:systemPrompt,
-          userMsg:SISPromptEngine.buildRepairMessage(
-            userMessage,
-            raw,
-            validation,
-            video,
-            repairAttempt === 1
-          ),
-          temperature
-        })
+    let promptVersion = 'unknown';
+    async function callTestModel(systemMsg, userMsg, requestTemperature, captureVersion) {
+      const response = await fetch('/api/generate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ systemMsg, userMsg, temperature:requestTemperature })
       });
-      data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.error || 'Test repair failed.');
-      raw = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-      validation = SISPromptEngine.validateOutput(raw, video);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'Test generation failed.');
+      if (captureVersion) promptVersion = data.prompt_version || 'unknown';
+      return data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
     }
-    if (!validation.valid) throw new Error('The AI response still needs correction: ' + SISPromptEngine.validationFeedback(validation));
+    let raw = await callTestModel(systemPrompt, userMessage, temperature, true);
+    if (!raw) throw new Error('The AI returned an empty test.');
+    raw = await SISPromptEngine.reviewAndRepairScript({
+      script:raw,
+      systemPrompt,
+      userMessage,
+      level,
+      video,
+      callModel:(reviewSystem, reviewMessage, reviewTemperature) =>
+        callTestModel(reviewSystem, reviewMessage, reviewTemperature, false)
+    });
     promptState.rawOutput = raw.trim();
     promptState.finalOutput = buildFinalOutput(raw.trim(), video, level, user);
     promptState.showRaw = false;
     renderTestOutput();
-    promptEl('result-meta').textContent = 'Generated ' + new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }) + ' | ' + (generationMode === 'production' ? 'Production Preview' : 'Consistent Test') + ' | Prompt ' + (data.prompt_version || 'unknown');
+    promptEl('result-meta').textContent = 'Generated ' + new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }) + ' | ' + (generationMode === 'production' ? 'Production Preview' : 'Consistent Test') + ' | Prompt ' + promptVersion;
     showBanner('Test generated. No user data or saved script was changed.');
   } catch (error) {
     promptEl('test-output').textContent = error.message || 'Test generation failed.';
