@@ -196,6 +196,8 @@ For Video 7, the CTA should point toward the next relationship, conversation, of
 
 When it sounds natural, the CTA may name the series context so a cold viewer understands the sequence: "video [X] of 7" or "part [X] of a 7-part series." Do not force this into every script. The series context must support the action and reason, not replace them.
 
+When the CTA points to a future numbered video, never say only "Video 3," "Part 3," or another bare episode label. A cold viewer must understand that the upcoming piece is the next installment of the speaker's 7 Video Challenge. Give that orientation before or alongside the action and reason. Do not assume the viewer has seen an earlier video or knows the sequence already.
+
 Do not introduce a totally new topic in the CTA.
 Do not make the CTA sound like a label, ad, or system instruction.
 Do not let the CTA resolve the story. It should convert the conclusion into one clear next action.
@@ -323,7 +325,7 @@ HOOK guidance: Use a concrete artifact of avoidance or a socially exposed action
 OPEN LOOP guidance: Make the viewer need to know what kept the speaker trapped or what made this attempt different enough to survive. Connect the hook to that question, then stop before revealing the blocker or why-now answer that belongs after the declaration.
 MEAT guidance: Open directly with their SPECIFIC BLOCKER — use their own words from the "what's been stopping you" answer. Do not soften it or genericize it. Name the exact flavor of their stuck. Then explain why now and what shifted. Use onboarding audience context only when it fits naturally. Never write the speaker's name or challenge announcement here — that's handled by the declaration.
 CONCLUSION guidance: Pay off why this start matters now by revealing what the surface blocker had been protecting or postponing. Keep the challenge unresolved and favor a mirror or honest question over a motivational lesson.
-CTA guidance: Carry that unresolved admission directly into a clear follow or watch-next request because the speaker is committing to all seven videos and Video 2 reveals the person and history underneath this decision.
+CTA guidance: Carry that unresolved admission directly into a clear follow or watch-next request because the next installment of the speaker's 7 Video Challenge reveals the person and history underneath this decision. Never name Video 2 without that challenge context.
 </l1_v1_rules>
 
 <l1_v2_rules>
@@ -356,7 +358,7 @@ STRUCTURAL BEATS:
 4. Unexpected Detail (Meat) — Show the interest, habit, past chapter, contradiction, or trait that complicates the obvious first impression.
 5. Natural Attention (Meat) — Reveal what the speaker keeps noticing, caring about, or returning to and why it matters personally. A small catalyst may appear as evidence, but do not force one or turn it into the transformation.
 6. Identity Landing (Conclusion) — Answer why the opening contrast belongs together. Land on a recognizable truth about who this person has always been, while leaving the meaning and first epiphany open.
-7. Next Belief (CTA) — Continue from that identity landing, identify this as Video 2 of the seven-part challenge when useful, and give one clear action because Video 3 reveals something the speaker used to think was true and what made it fall apart.
+7. Next Belief (CTA) — Continue from that identity landing, identify this as Video 2 of the seven-part challenge when useful, and give one clear action because the next installment of the 7 Video Challenge reveals something the speaker used to think was true and what made it fall apart.
 
 TONE: Warm, relaxed, reflective storytelling energy. Like the second conversation with someone. Specific details, not generalities. A moment of recognition. Still in the ordinary world, still pre-transformation.
 
@@ -379,7 +381,7 @@ VIDEO 2, LEVEL 1: Tone = Warm, reflective, ordinary-world energy (Gregory Alan I
 HOOK guidance: Extract the strangest concrete behavior, interest, contradiction, or identity mismatch from the answers. State it before explaining the speaker or what it means. The line must interrupt attention on its own.
 OPEN LOOP guidance: Connect that unexpected detail to one grounding fact and make the viewer need to understand why those pieces belong to the same person. Do not promise a generic reveal or interpret the larger lesson.
 CONCLUSION guidance: Resolve the identity contradiction by showing what the details reveal about the person, but stop short of the Video 3 reframe. Warm recognition is enough; this is not a transformation speech.
-CTA guidance: Continue from that still-developing identity into a clear follow, comment, or watch-next request because Video 3 reveals one thing the speaker used to think was true and the experience that made it impossible to keep believing.
+CTA guidance: Continue from that still-developing identity into a clear follow, comment, or watch-next request because the next installment of the 7 Video Challenge reveals one thing the speaker used to think was true and the experience that made it impossible to keep believing. Put that challenge orientation with the action and reason, not in the bridge sentence. Never use a bare "Video 3" reference.
 </l1_v2_rules>
 
 <l1_v3_rules>
@@ -696,7 +698,7 @@ HOOK guidance: Use a concrete contradiction between private competence and publi
 OPEN LOOP guidance: Make the viewer need to understand why someone with this knowledge stayed behind the scenes or what that silence has been costing. Stop before revealing their blocker or why-now answer that belongs after the declaration.
 MEAT guidance: Open directly with their SPECIFIC BLOCKER — what has specifically kept an expert from showing up publicly (use their exact words from the "what's been stopping you" answer). The expert-specific empathy lock is different from a regular person's: it's "I have the knowledge, I just haven't made it visible" vs. "I don't know what to say." Then: why now, what shifted. Then: who needs to hear what they know. Never write the speaker's name or challenge announcement here — that's handled by the declaration. Never manufacture clients, results, or credentials they didn't provide.
 CONCLUSION guidance: Pay off what public silence has really meant without turning the speaker into a guru. Let the tension between competence and invisibility land as an honest question, mirror, or uncomfortable reclassification of the blocker.
-CTA guidance: Carry that tension into a clear follow or watch-next request because the speaker is committing to all seven videos and Video 2 reveals the path that formed what they know. Refer to clients or results only when explicitly supplied.
+CTA guidance: Carry that tension into a clear follow or watch-next request because the next installment of the speaker's 7 Video Challenge reveals the path that formed what they know. Never name Video 2 without that challenge context. Refer to clients or results only when explicitly supplied.
 </l2_v1_rules>
 
 <l2_v2_rules>

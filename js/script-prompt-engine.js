@@ -132,6 +132,10 @@
       issues.push('OPEN LOOP uses vague suspense instead of one named unanswered question.');
     }
     const cta = String(sections.CTA || '').trim();
+    const firstCtaSentence = (cta.match(/^\s*[\s\S]*?[.!?](?:\s|$)/) || [cta])[0];
+    if (/\b(?:video|part|series|challenge)\b/i.test(firstCtaSentence)) {
+      issues.push('CTA puts series context in its bridge sentence. Keep the first sentence connected only to the CONCLUSION; put the 7 Video Challenge orientation with the action and reason in the next sentence.');
+    }
     if (/^(?:this|that(?:'s| is)|video|part)\s+(?:is\s+)?(?:video\s+)?(?:\w+|\d+)\s+(?:of|in)\s+(?:seven|7)\b/i.test(cta)) {
       issues.push('CTA begins with a series label instead of bridging from the CONCLUSION.');
     }
@@ -149,6 +153,12 @@
       if (statedVideo !== Number(video)) {
         issues.push('CTA identifies this as Video ' + statedVideo + ', but the current script is Video ' + Number(video) + '. If series context appears, identify the current installment as Video ' + Number(video) + ' and refer to the next video separately.');
       }
+    }
+    const numberedVideoReference = /\b(?:next\s+)?(?:video|part)\s+(?:one|two|three|four|five|six|seven|[1-7])\b/i.test(cta);
+    const numberedSeriesContext = /\b(?:video|part)\s+(?:one|two|three|four|five|six|seven|[1-7])\s+of\s+(?:seven|7)\b/i.test(cta);
+    const challengeContext = /\b(?:7|seven)[-\s]?(?:(?:video|part)\s+)?(?:challenge|series)\b/i.test(cta);
+    if (numberedVideoReference && !numberedSeriesContext && !challengeContext) {
+      issues.push('CTA names a future video without explaining that it is part of the speaker\'s 7 Video Challenge. Give cold viewers the challenge context before directing them to that next installment.');
     }
     return { valid: missing.length === 0 && issues.length === 0, sections, missing, issues, metrics: { openLoopWords } };
   }
