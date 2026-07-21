@@ -112,7 +112,7 @@ The heart. The journal answers, transformed into spoken word in their voice. All
 Answers the exact question created by the open loop, but does not wrap the larger journey in a neat bow. The ending should create engagement through one of four paths: TWIST (the viewer realizes the video was about something deeper), DEBATE (a clear point of view people may agree or disagree with), QUESTION (the viewer naturally wants to ask something), or MIRROR (the viewer wants to share their own version of the story). This is the earned emotional landing, not a recap of the meat.
 
 [CTA]
-The next action, written in this mandatory order. Sentence 1 is the BRIDGE: continue the same thought, image, tension, or consequence that ended [CONCLUSION], without mentioning the video number, series, or social action. Sentence 2 is the ACTION + REASON: tell the viewer exactly what to do and why it matters; series context may be woven in here when useful. The first CTA word must not be "This," "That," "Video," "Part," "Follow," "Comment," "Share," "DM," or "Watch." Match the action to the conclusion type. Conversational, not transactional. ALWAYS uses the word “because” to link the action to the reason.
+The next action, written in this mandatory order. Sentence 1 is the BRIDGE: continue the same thought, image, tension, or consequence that ended [CONCLUSION], without mentioning the video number, series, or social action. Sentence 2 is the ACTION + REASON: tell the viewer exactly what to do and why it matters, explicitly placing the viewer inside the speaker's 7 Video Challenge or seven-part series. Name the continuing journey naturally and explain what the next installment will reveal. Do not use a bare episode number or vague phrase like "the next one." The first CTA word must not be "This," "That," "Video," "Part," "Follow," "Comment," "Share," "DM," or "Watch." Match the action to the conclusion type. Conversational, not transactional. ALWAYS uses the word “because” to link the action to the reason.
 
 IMPORTANT FORMATTING RULES:
 - Each section label must be exactly: [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], [CTA] — no variations
@@ -352,13 +352,13 @@ Open question: "What did this person once think was true that shaped the life I 
 Social impulse: Comment with recognition, curiosity, or their own unexpected detail.
 
 STRUCTURAL BEATS:
-1. Pattern Interrupt (Hook) — Pull the most charged truthful contrast, odd detail, blunt admission, or unexpected behavior from the speaker's answers. State it before explaining the person. Do not begin with biography, a soft identity statement, or the lesson.
-2. Identity Gap (Open Loop) — Connect that detail to one concrete contradiction the viewer needs explained. The question should be why these apparently mismatched pieces belong to the same person, not what lesson the speaker eventually learned.
-3. Grounding Background (Meat) — Give only the background needed for a cold viewer to understand the speaker's world.
-4. Unexpected Detail (Meat) — Show the interest, habit, past chapter, contradiction, or trait that complicates the obvious first impression.
-5. Natural Attention (Meat) — Reveal what the speaker keeps noticing, caring about, or returning to and why it matters personally. A small catalyst may appear as evidence, but do not force one or turn it into the transformation.
-6. Identity Landing (Conclusion) — Answer why the opening contrast belongs together. Land on a recognizable truth about who this person has always been, while leaving the meaning and first epiphany open.
-7. Next Belief (CTA) — Continue from that identity landing, identify this as Video 2 of the seven-part challenge when useful, and give one clear action because the next installment of the 7 Video Challenge reveals something the speaker used to think was true and what made it fall apart.
+1. Pattern Interrupt (Hook) — Use the unexpected trait, behavior, interest, or contradiction from Prompt 2 as the hook source whenever the speaker provided one. State that concrete detail before explaining the person. Do not use background, work schedule, exhaustion, waiting, general life conditions, biography, a soft identity statement, or the lesson as the hook when Prompt 2 contains a usable unexpected detail.
+2. Identity Gap (Open Loop) — Refer directly back to the exact hook detail, then connect it to one grounding fact the viewer needs to understand. The open loop cannot introduce a different surprising detail. The unanswered question is why these apparently mismatched pieces belong to the same person, not what lesson the speaker eventually learned.
+3. Grounding Background (Meat) — Use Prompt 1 to give only the background needed for a cold viewer to understand the speaker's world. Tell each grounding fact once; do not repeat the same setup from the hook or elsewhere in the meat.
+4. Unexpected Detail (Meat) — Deepen the hook detail only after the grounding background gives it context. Show the interest, habit, past chapter, contradiction, or trait that complicates the obvious first impression.
+5. Natural Attention (Meat) — Use Prompt 3 to reveal what the speaker keeps noticing, caring about, or returning to and why it matters personally. A small catalyst may appear as evidence, but do not force one or turn it into the transformation.
+6. Identity Landing (Conclusion) — Answer why the opening contrast belongs together. Land on a recognizable truth about who this person has always been, while leaving the meaning and first epiphany open. Do not solve their stuckness, prescribe a change, explain their offer or professional role, or state the lesson that belongs in Video 3.
+7. Next Belief (CTA) — Continue from that identity landing, then give one clear action because the next installment of the speaker's 7 Video Challenge reveals something they used to think was true and what made it fall apart.
 
 TONE: Warm, relaxed, reflective storytelling energy. Like the second conversation with someone. Specific details, not generalities. A moment of recognition. Still in the ordinary world, still pre-transformation.
 
@@ -378,10 +378,17 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Build the MEAT and CONCLUSION toward it. Then design the OPEN LOOP as the unanswered question that conclusion will pay off. Last, build the HOOK as a separate truthful pattern interrupt that captures a cold viewer without stating the question or answer. The CTA must begin by continuing the conclusion's exact thought, then give a clear action and reason; never open it with the video or series number.
 
 VIDEO 2, LEVEL 1: Tone = Warm, reflective, ordinary-world energy (Gregory Alan Isakov "Big Black Car" — folk acoustic, settling in, revealing)
-HOOK guidance: Extract the strangest concrete behavior, interest, contradiction, or identity mismatch from the answers. State it before explaining the speaker or what it means. The line must interrupt attention on its own.
-OPEN LOOP guidance: Connect that unexpected detail to one grounding fact and make the viewer need to understand why those pieces belong to the same person. Do not promise a generic reveal or interpret the larger lesson.
-CONCLUSION guidance: Resolve the identity contradiction by showing what the details reveal about the person, but stop short of the Video 3 reframe. Warm recognition is enough; this is not a transformation speech.
-CTA guidance: Continue from that still-developing identity into a clear follow, comment, or watch-next request because the next installment of the 7 Video Challenge reveals one thing the speaker used to think was true and the experience that made it impossible to keep believing. Put that challenge orientation with the action and reason, not in the bridge sentence. Never use a bare "Video 3" reference.
+HOOK guidance: Prompt 2 owns the hook. Extract its strangest concrete behavior, interest, contradiction, or identity mismatch and state it before explaining the speaker or what it means. The line must interrupt attention on its own. If the opening could describe almost anyone with a hard job or difficult season, it is not the hook.
+OPEN LOOP guidance: The first sentence must directly refer to the hook's concrete detail, then connect it to one grounding fact and make the viewer need to understand why those pieces belong to the same person. Do not introduce a new twist, promise a generic reveal, or interpret the larger lesson.
+CONCLUSION guidance: Resolve the identity contradiction by showing what the details reveal about the person, but stop short of the Video 3 reframe. Warm recognition is enough; this is not a transformation speech. Do not turn the identity into a strategy, a professional positioning statement, or an explanation of how to escape being stuck.
+CTA guidance: Continue from that still-developing identity into a clear follow, comment, or watch-next request. In the action-and-reason sentence, explicitly name the 7 Video Challenge or seven-part series and explain that the next installment reveals one thing the speaker used to think was true and the experience that made it impossible to keep believing. Never use a bare "Video 3" reference or vague wording such as "the next one."
+
+VIDEO 2 FINAL CHECK:
+- The unexpected Prompt 2 detail is already present in [HOOK], not first introduced in [OPEN LOOP] or [MEAT].
+- [OPEN LOOP] directly continues the same detail from [HOOK]; it does not swap in a new attention grabber.
+- Prompt 1's background appears once in [MEAT], not as the opening setup and not as repeated biography.
+- [CONCLUSION] gives identity recognition only. It does not deliver Video 3's reframe, a solution, a professional claim, or an offer.
+- [CTA] names the continuing 7 Video Challenge or seven-part series, gives a clear action, and uses “because” to say why.
 </l1_v2_rules>
 
 <l1_v3_rules>
