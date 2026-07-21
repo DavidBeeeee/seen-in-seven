@@ -652,15 +652,19 @@ async function generateTest() {
     let raw = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
     if (!raw) throw new Error('The AI returned an empty test.');
     let validation = SISPromptEngine.validateOutput(raw, video);
-    if (!validation.valid) {
+    for (let repairAttempt = 0; !validation.valid && repairAttempt < 2; repairAttempt++) {
       response = await fetch('/api/generate', {
         method:'POST',
         headers:{'Content-Type':'application/json'},
         body:JSON.stringify({
           systemMsg:systemPrompt,
-          userMsg:userMessage + '\n\nYOUR PREVIOUS RESPONSE WAS MALFORMED:\n' + raw +
-            '\n\nREQUIRED CORRECTIONS:\n' + SISPromptEngine.validationFeedback(validation) +
-            '\n\nRewrite the complete script now. Preserve the supplied facts, voice, and story beats, with [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] exactly once.',
+          userMsg:SISPromptEngine.buildRepairMessage(
+            userMessage,
+            raw,
+            validation,
+            video,
+            repairAttempt === 1
+          ),
           temperature
         })
       });
@@ -668,8 +672,8 @@ async function generateTest() {
       if (!response.ok) throw new Error(data.error || 'Test repair failed.');
       raw = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
       validation = SISPromptEngine.validateOutput(raw, video);
-      if (!validation.valid) throw new Error('The AI response still needs correction: ' + SISPromptEngine.validationFeedback(validation));
     }
+    if (!validation.valid) throw new Error('The AI response still needs correction: ' + SISPromptEngine.validationFeedback(validation));
     promptState.rawOutput = raw.trim();
     promptState.finalOutput = buildFinalOutput(raw.trim(), video, level, user);
     promptState.showRaw = false;

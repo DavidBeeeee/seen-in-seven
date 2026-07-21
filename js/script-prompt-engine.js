@@ -124,7 +124,7 @@
     const issues = [];
     const openLoop = sections['OPEN LOOP'] || '';
     const openLoopWords = (openLoop.match(/\b[\w’'-]+\b/g) || []).length;
-    if (openLoopWords > 60) issues.push('OPEN LOOP is too long; keep it to 25-50 words.');
+    if (openLoopWords > 60) issues.push('OPEN LOOP has ' + openLoopWords + ' words; replace it with 35-45 words and never exceed 50.');
     if (/\b(?:I\s+(?:realized|learned|discovered|understood)|it\s+(?:showed|taught|proved)\s+me|the\s+(?:truth|point|lesson)\s+is)\b/i.test(openLoop)) {
       issues.push('OPEN LOOP announces the realization or lesson before the MEAT earns it.');
     }
@@ -150,7 +150,7 @@
         issues.push('CTA identifies this as Video ' + statedVideo + ', but the current script is Video ' + Number(video) + '. If series context appears, identify the current installment as Video ' + Number(video) + ' and refer to the next video separately.');
       }
     }
-    return { valid: missing.length === 0 && issues.length === 0, sections, missing, issues };
+    return { valid: missing.length === 0 && issues.length === 0, sections, missing, issues, metrics: { openLoopWords } };
   }
 
   function validationFeedback(validation) {
@@ -160,6 +160,33 @@
     }
     (validation && validation.issues || []).forEach(issue => parts.push(issue));
     return parts.join(' ') || 'The response did not follow the required five-section architecture.';
+  }
+
+  function buildRepairMessage(userMessage, script, validation, video, precisionPass) {
+    const corrections = validationFeedback(validation);
+    const lines = [
+      String(userMessage || '').trim(),
+      '',
+      precisionPass ? 'YOUR FIRST REPAIR ALSO FAILED VALIDATION:' : 'YOUR PREVIOUS RESPONSE FAILED VALIDATION:',
+      String(script || '').trim(),
+      '',
+      'REQUIRED CORRECTIONS:',
+      corrections
+    ];
+    const openLoopWords = validation && validation.metrics && validation.metrics.openLoopWords;
+    if (openLoopWords > 60) {
+      lines.push(
+        '',
+        'OPEN LOOP PRECISION REQUIREMENT:',
+        'The current OPEN LOOP contains ' + openLoopWords + ' words. Replace it with an OPEN LOOP of 35-45 words. Count the words before responding. It must never exceed 50 words. Preserve one concrete unanswered question and do not reveal the conclusion.'
+      );
+    }
+    lines.push(
+      '',
+      'Rewrite the complete Video ' + Number(video || 1) + ' script now. Preserve the supplied facts, voice, and story beats. Include all five required sections exactly once: [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA]. Do not add commentary outside those sections.'
+    );
+    if (precisionPass) lines.push('This is the final validation pass. Follow every correction literally and verify the section lengths before returning the script.');
+    return lines.join('\n');
   }
 
   function stripSectionLabels(text) {
@@ -184,6 +211,7 @@
     parseSections,
     validateOutput,
     validationFeedback,
+    buildRepairMessage,
     stripSectionLabels,
     canonicalScript
   };

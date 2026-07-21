@@ -1907,13 +1907,20 @@ async function generateValidatedScript(userMessage, level, video) {
   let validation = SISPromptEngine.validateOutput(script, video);
   if (validation.valid) return script;
 
-  const repairMessage = userMessage + '\n\nYOUR PREVIOUS RESPONSE WAS MALFORMED:\n' + script +
-    '\n\nREQUIRED CORRECTIONS:\n' + SISPromptEngine.validationFeedback(validation) +
-    '\n\nRewrite the complete script now. Preserve the supplied facts, voice, and story beats. Include all five required sections exactly once: [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA]. Do not add commentary outside those sections.';
-  script = await callDeepSeekAPIWithRetry(repairMessage, 0, level, video);
-  validation = SISPromptEngine.validateOutput(script, video);
-  if (!validation.valid) throw new Error('The script response still needs correction: ' + SISPromptEngine.validationFeedback(validation) + ' Please try again.');
-  return script;
+  for (let repairAttempt = 0; repairAttempt < 2; repairAttempt++) {
+    const repairMessage = SISPromptEngine.buildRepairMessage(
+      userMessage,
+      script,
+      validation,
+      video,
+      repairAttempt === 1
+    );
+    script = await callDeepSeekAPIWithRetry(repairMessage, 0, level, video);
+    validation = SISPromptEngine.validateOutput(script, video);
+    if (validation.valid) return script;
+  }
+
+  throw new Error('The script response still needs correction: ' + SISPromptEngine.validationFeedback(validation) + ' Please try again.');
 }
 
 // Parse [HOOK] / [OPEN LOOP] / [MEAT] / [CONCLUSION] / [CTA] sections from AI response
