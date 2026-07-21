@@ -1537,29 +1537,29 @@ const INTRO_COPY = {
   5: {
     L1: {
       label: 'Video 5 of 7: The Hardest Part',
-      title: 'Tell The Part That Tested Everything',
-      body: "Return to the larger life story you have been telling. This is the difficult experience that came after your first realization: what happened, what felt at risk, what you tried, and what you still could not understand. Do not solve it yet. The unanswered part is what makes the next video matter.",
+      title: 'Own The Defeat',
+      body: "This is the fall. Something bad actually happened, your own choice or blind spot helped cause it, and you lost something that mattered. Tell the defeat, your responsibility, what it cost, and the recovery that still failed. Do not give the lesson yet.",
       result: 'Trust',
       framework: [
-        {name:'Hook',                 trigger:'Charged Evidence'},
-        {name:'What Happened',        trigger:'The Ordeal'},
-        {name:'What Was At Risk',     trigger:'Human Stakes'},
-        {name:'What Stayed Unanswered',trigger:'Open Question'}
+        {name:'Evidence Of Defeat', trigger:'Charged Evidence'},
+        {name:'Your Responsibility',trigger:'Causal Responsibility'},
+        {name:'The Actual Loss',    trigger:'Human Stakes'},
+        {name:'The Failed Recovery',trigger:'Unresolved Tension'}
       ],
-      triggers: ['The Internal Battle','Shared Values','The Admission','Polarization','Ethical Bridge']
+      triggers: ['Charged Evidence','Causal Responsibility','Human Stakes','Failed Recovery','Ethical Bridge']
     },
     L2: {
       label: 'Video 5 of 7: The Fall',
-      title: 'Name The Cost Of Being Seen',
-      body: "Your audience has seen your knowledge. Now they need to see the person carrying it. This video names the internal battle of claiming your expertise publicly: the fear, the cost, and the reason you're still here anyway.",
+      title: 'Own The Professional Failure',
+      body: "This is the professional fall. Something failed, your own decision or blind spot helped cause it, and your expertise did not save you from the consequences. Tell the defeat, your responsibility, the real loss, and the recovery that still failed. Do not give the lesson yet.",
       result: 'Trust',
       framework: [
-        {name:'Hook',                 trigger:'The Admission'},
-        {name:'The Internal Battle',  trigger:'Shared Values'},
-        {name:'The Cost',             trigger:'Polarization'},
-        {name:'The Forward Lean',     trigger:'Ethical Bridge'}
+        {name:'Evidence Of Defeat', trigger:'Charged Evidence'},
+        {name:'Your Responsibility',trigger:'Causal Responsibility'},
+        {name:'The Actual Loss',    trigger:'Professional Stakes'},
+        {name:'The Failed Recovery',trigger:'Unresolved Tension'}
       ],
-      triggers: ['The Internal Battle','Shared Values','The Admission','Polarization','Ethical Bridge']
+      triggers: ['Charged Evidence','Causal Responsibility','Professional Stakes','Failed Recovery','Ethical Bridge']
     }
   },
   6: {
@@ -1579,7 +1579,7 @@ const INTRO_COPY = {
     L2: {
       label: 'Video 6 of 7: The Second Epiphany',
       title: 'Name The Truth Your Industry Avoids',
-      body: "After naming what visibility costs you, this is where your harder point of view becomes earned. Challenge the myth, show why it breaks, and replace it with the truth your audience can actually use.",
+      body: "After owning the professional failure, this is where the deeper truth becomes earned. Show what the defeat finally made impossible to ignore, then give the audience the truth you carried out of it.",
       result: 'Authority',
       framework: [
         {name:'Hook',                  trigger:'Sacred Cow Slaughter'},
@@ -1627,7 +1627,7 @@ const VIDEO_EASY_PROMPTS = {
     { label: 'What should someone know about your background, what makes you unexpected, and what you naturally care about?', hint: 'Share whatever feels most important. The AI will organize it into the story.', key: 'easyAnswer_v1' },
     { label: 'What is one thing you used to think was true that is not true?', hint: 'Explain how it shaped you, what made you question it, and why the old way of thinking matters.', key: 'easyAnswer_v2' },
     { label: 'What has making these videos actually been like so far?', hint: 'Compare it with what you expected, share one real detail, and include what is changing, what is still difficult, and why you are continuing.', key: 'easyAnswer_v3' },
-    { label: 'What was the hardest experience in this part of your life after your first realization?', hint: 'Describe what happened, what felt at risk, what you tried, and what remained unresolved before you understood the larger lesson.', key: 'easyAnswer_v4' },
+    { label: 'In the part of your life you have been discussing, what is the absolute worst thing that happened after you first started seeing it differently? What did you do, avoid, refuse to see, or get completely wrong that made it your fault, and what did you lose because of it?', hint: 'Give us the defeat, not the lesson. What happened, what was your responsibility, what did it cost, what did you try that failed, and what still felt broken afterward? A rough answer is enough. Your script will build out the story, and you can correct or personalize any details afterward.', key: 'easyAnswer_v4' },
     { label: 'What larger truth did you discover because you lived through that difficult experience?', hint: 'Describe how you discovered it, what it changed in you, and who else may need to understand it.', key: 'easyAnswer_v5' },
     { label: 'Who were you before these realizations, and who are you now?', hint: 'Describe what changed, what remains unfinished, what telling the story helped you understand, and where you go next.', key: 'easyAnswer_v6' }
   ],
@@ -1636,7 +1636,7 @@ const VIDEO_EASY_PROMPTS = {
     { label: 'What part of your past kept shaping you before you understood why?', hint: 'Describe the ordinary world you were in, the thread or unlikely chapter that kept showing up, and why you did not recognize or follow it yet.', key: 'easyAnswer_v1' },
     { label: 'What\'s a belief you held for a long time that turned out to be wrong?', hint: 'What cracked it open? Walk me through how you arrived at seeing it differently. The journey matters more than the conclusion.', key: 'easyAnswer_v2' },
     { label: 'Tell me about one moment when an old pattern met a new behavior.', hint: 'What happened, what would you normally have done, what did you do differently, what did that reveal, and what is still difficult?', key: 'easyAnswer_v3' },
-    { label: 'What\'s something you\'ve been avoiding saying out loud?', hint: 'The thing that would make you feel most exposed. Not for shock. For honesty. The thing that makes the next lesson earned.', key: 'easyAnswer_v4' },
+    { label: 'In the work or expertise story you have been telling, what was your worst professional failure after your first breakthrough? What did you do, avoid, refuse to see, or get completely wrong that made it your fault, and what did it cost you?', hint: 'Give us the professional defeat, not a fear about what might happen. Name what happened, your responsibility, the real loss, what you tried that failed, and what remained broken. A rough answer is enough. Your script will build out the story, and you can correct or personalize any details afterward.', key: 'easyAnswer_v4' },
     { label: 'What do you believe now that you couldn\'t have said before the fall?', hint: 'The deeper truth, reframe, or conviction you earned by naming the hard thing. Not a generic lesson. The truth you can carry forward.', key: 'easyAnswer_v5' },
     { label: 'What did doing these 7 videos teach you that you didn\'t know at the start?', hint: 'The honest accounting. What changed? What would you tell yourself at the beginning? What do you want to give your audience?', key: 'easyAnswer_v6' }
   ]
@@ -1752,12 +1752,11 @@ const LEVEL_2_STORY_BEATS = [
    'Small Win Proof: the subtle behavioral evidence that something shifted',
    'Real-Time Transparency: what still feels difficult right now',
    'Trial Meaning: what this test proves without claiming the journey is complete'],
-  // V5 — THE FALL (The Unsaid Thing, Root, Internal Battle, Admission)
-  ['The Unsaid Thing: name what nobody\'s been saying out loud',
-   'The Root: where does this actually come from? The real origin.',
-   'The Internal Battle: the back-and-forth said out loud, present tense',
-   'The Admission: the thing you finally let yourself say',
-   'The Cost: what obeying it has taken while you kept showing up'],
+  // V5 — THE FALL
+  ['False Confidence: what you thought the first realization had solved',
+   'Your Responsibility: the decision, avoidance, or blind spot that caused or worsened the failure',
+   'The Defeat And Loss: what actually happened and what it cost professionally or personally',
+   'Failed Recovery: what you tried that did not fix it and what remained broken'],
   // V6 — THE SECOND EPIPHANY / ELIXIR
   ['The Old Belief or Myth: what survived until the fall exposed it',
    'The Ordeal Evidence: what made that belief impossible to keep',
@@ -1786,11 +1785,10 @@ const VIDEO_STORY_BEATS = {
      'The Real Detail: one moment or behavior the audience can picture',
      'What Is Changing: the small shift you are beginning to notice',
      'What Is Still Hard: the unresolved part and why you are continuing'],
-    ['After The First Realization: what you understood before the difficult chapter',
-     'The Ordeal: what happened and why it was so difficult',
-     'What Was At Risk: what you feared losing, failing at, or never changing',
-     'The Failed Answers: what you tried and why it was not enough',
-     'The Unanswered Question: what you still could not understand yet'],
+    ['False Confidence: what you thought the first realization had solved',
+     'Your Responsibility: the choice, avoidance, refusal, or blind spot that caused or worsened the fall',
+     'The Defeat And Loss: what actually happened and what it cost',
+     'Failed Recovery: what you tried that did not fix it and what remained broken'],
     ['The Larger Realization: what the ordeal eventually made clear',
      'How It Emerged: the moment or evidence that brought it into focus',
      'The Deeper Meaning: how it changed your understanding of the first realization',
@@ -2314,14 +2312,14 @@ const level1Videos = [
   },
   {
     title:"The Hardest Part",
-    note:"Return to your larger life story. Tell the most difficult experience that came after you first began seeing this part of your life differently. This is not about making the videos.",
+    note:"Return to your larger life story and tell the defeat. Something bad happened, you helped cause it, and you lost something that mattered. Do not give the lesson yet.",
     prompts:[
-      {label:"After you first started seeing this part of your life differently, what was the most difficult experience or period you went through next? What happened, and what made it so difficult for you?",hint:"Stay with the main part of your life or story you have been discussing. Describe the situation and the part that affected you most.",key:"v4p0",ph:"Describe the hardest experience that followed your first realization."},
-      {label:"At the hardest point, what did you think you might lose, fail at, or never be able to change?",hint:"Answer from the perspective you had while living through it, before you knew what you would eventually learn.",key:"v4p1",ph:"Describe what felt most at risk at the time."},
-      {label:"What did you try to do about it, and why was that not enough yet?",hint:"What actions, coping strategies, decisions, or old ways of thinking did you rely on? What continued to hurt, fail, or remain unanswered?",key:"v4p2",ph:"Describe what you tried and what remained unsolved."},
-      {label:"Before you finally understood what this experience had taught you, what was still unanswered or unresolved?",hint:"End inside the uncertainty. What could you not yet explain, accept, or see clearly at the time?",key:"v4p3",ph:"Describe the question or struggle that still had no answer."}
+      {label:"In the part of your life you have been discussing, what is the absolute worst thing that happened after you first started seeing it differently?",hint:"Give one completed event or period. Tell us what actually happened, not what you were afraid might happen.",key:"v4p0",ph:"Describe the defeat that actually happened."},
+      {label:"Why was it your fault? What did you do, avoid, refuse to see, or get completely wrong that caused it or made it worse?",hint:"This is about responsibility, not villainy. Name the choice, pattern, blind spot, delay, refusal, or failure that was yours.",key:"v4p1",ph:"Describe your part in causing or worsening the defeat."},
+      {label:"What did you lose, damage, delay, or make worse because of that failure?",hint:"Name the real cost from inside the experience: the relationship, opportunity, money, time, credibility, identity, peace, momentum, or something else that mattered.",key:"v4p2",ph:"Describe what the failure actually cost you."},
+      {label:"What did you try afterward that still did not fix it, and what were you still unable to understand?",hint:"End inside the failed recovery. Name what you tried, why it was not enough, and what remained broken before the larger realization came.",key:"v4p3",ph:"Describe the failed recovery and the question that still had no answer."}
     ],
-    compile:v=>`The hardest experience after my first realization: ${v.v4p0||'___'}. What felt most at risk: ${v.v4p1||'___'}. What I tried and why it was not enough: ${v.v4p2||'___'}. What was still unanswered: ${v.v4p3||'___'}.`
+    compile:v=>`The worst thing that happened in this story: ${v.v4p0||'___'}. Why it was my fault: ${v.v4p1||'___'}. What I lost or made worse: ${v.v4p2||'___'}. What I tried that failed and what remained unanswered: ${v.v4p3||'___'}.`
   },
   {
     title:"What I See Differently Now",
@@ -2392,14 +2390,14 @@ const level2Videos = [
   },
   {
     title:"The Fall",
-    note:"This is the video most people skip because it feels too vulnerable. That's exactly why it matters. The internal battle about claiming your expertise publicly, said out loud on camera, is what makes the next epiphany earned.",
+    note:"Tell the professional defeat. Something went wrong, your own choice or blind spot helped cause it, and expertise did not save you from the loss. Do not give the lesson yet.",
     prompts:[
-      {label:"What's the internal battle you're fighting about putting yourself out there as someone with real expertise? The thing that makes you hesitate even though you KNOW you're good at this.",hint:"Imposter syndrome. Comparison. The fear of being 'that person' who promotes themselves. The voice that says your experience doesn't count because you don't have the right credentials, the right following, the right whatever. What's YOUR version of that battle?",key:"v4p0",ph:"e.g. my version of this is the credential question — I don't have letters after my name. I learned everything I know from fifteen years of doing this work with real people. But the voice still shows up asking who I think I am."},
-      {label:"What's the specific fear? If you imagine fully owning your expertise publicly — being visible, being known for what you know — what's the worst thing that could happen? Say it out loud.",hint:"Sometimes the fear is concrete: 'people from my old life will judge me.' Sometimes it's abstract: 'what if I put myself out there and nobody cares.' Sometimes it's deeper: 'what if I'm not actually as good as I think I am.' Name the actual fear. Not the category — the specific thought.",key:"v4p1",ph:"e.g. the specific fear is that someone I respect will watch one of these videos and think 'she's overreaching.' That one imaginary judgment has cost me more than two years of staying quiet."},
-      {label:"What's it been costing you to stay small? Not in money, but in impact, in fulfillment, in the people you could be helping but aren't because you've been hiding.",hint:"You know there are people who need what you know. You've probably met some of them. What happens to them because you haven't stepped into this fully? And what happens to YOU... what are you leaving on the table by playing it safe?",key:"v4p2",ph:"e.g. what it's been costing me is harder to name than money. There are people right now making the exact mistakes I know how to prevent, and I haven't shown up for them because I've been waiting to feel ready."},
-      {label:"Despite all of that... why are you still here? Why haven't you quit? What's the thing that keeps pulling you forward even when the doubt is loud?",hint:"Something is stronger than the fear. A purpose, a person, a vision, a stubborn refusal to let the doubt win. That thing, whatever it is, is the real engine underneath everything you've built so far. Name it.",key:"v4p3",ph:"e.g. I'm still here because I keep meeting people who are stuck in the exact place I was stuck in. And when I talk to them, even for twenty minutes, something shifts. That shift is what I'm here for. The doubt is just the admission fee."}
+      {label:"In the work or expertise story you have been telling, what was your worst professional failure after your first breakthrough?",hint:"Give one completed event or period when something actually went wrong. Do not give a fear about what might happen.",key:"v4p0",ph:"Describe the professional defeat that actually happened."},
+      {label:"Why was it your fault? What did you do, avoid, refuse to see, overestimate, or get completely wrong that caused it or made it worse?",hint:"Name the professional choice, blind spot, delay, overconfidence, avoidance, or failure that was yours. Expertise does not remove responsibility.",key:"v4p1",ph:"Describe your part in causing or worsening the professional defeat."},
+      {label:"What did that failure actually cost you, your work, or the people who depended on you?",hint:"Name the real loss: credibility, trust, money, time, an opportunity, a relationship, momentum, confidence, or something else that mattered.",key:"v4p2",ph:"Describe the real cost of the professional failure."},
+      {label:"What did you try afterward that still did not fix it, and what were you still unable to understand?",hint:"End inside the failed recovery. Name what you tried, why your expertise or old strategy was not enough, and what remained broken before the second epiphany.",key:"v4p3",ph:"Describe the failed recovery and what still had no answer."}
     ],
-    compile:v=>`The internal battle I'm fighting: ${v.v4p0||'___'}. The specific fear: ${v.v4p1||'___'}. What staying small has cost me: ${v.v4p2||'___'}. Why I'm still here despite the doubt: ${v.v4p3||'___'}.`
+    compile:v=>`My worst professional failure: ${v.v4p0||'___'}. Why it was my fault: ${v.v4p1||'___'}. What it actually cost: ${v.v4p2||'___'}. What I tried that failed and what remained unanswered: ${v.v4p3||'___'}.`
   },
   {
     title:"The Second Epiphany",
@@ -3023,7 +3021,7 @@ const VIDEO_RATIONALE = {
     'WHERE WE ARE: Let people meet you before asking them to care about a lesson. Your background, an unexpected detail, and what naturally matters to you give the audience a human reason to recognize themselves and stay curious.',
     'WHERE WE ARE: One thing you used to think was true meets evidence it cannot explain. The audience should arrive at the new way of seeing it through your story, not because you lecture them.',
     'WHERE WE ARE: You are halfway through the challenge and reporting honestly from the middle. The contrast between what you expected and what is really happening builds trust, especially when some part is still difficult.',
-    'WHERE WE ARE: Return to the hardest part of the larger life story you are telling. Show what happened, what was at risk, and what still had no answer. Do not reveal the lesson yet.',
+    'WHERE WE ARE: The Fall. Something bad already happened, your own choice or blind spot helped cause it, and you lost something that mattered. Stay inside the defeat, responsibility, and failed recovery. Video 6 owns the lesson.',
     'WHERE WE ARE: The difficult chapter has finally produced a larger realization. Show how it became clear, how it deepened the first realization, and what genuinely changed because of it.',
     'WHERE WE ARE: Bring the larger story home by comparing who you were before both realizations with who you are now. The challenge helped you tell and understand that story. It did not create your whole transformation.'
   ],
@@ -3032,7 +3030,7 @@ const VIDEO_RATIONALE = {
     'WHERE WE ARE: Still in the Ordinary World. The audience sees the life, detour, obsession, or frustration that was shaping you before you knew what it meant. This is an identity clue, not the final lesson. They should notice the hidden thread and wonder why you did not follow it sooner.',
     'WHERE WE ARE: The first Epiphany. One old belief meets an experience it cannot explain, and the viewer watches a new lens become inevitable. This is the first win, not final wisdom. It gives the hero momentum and gives the audience a way to see something familiar differently.',
     'WHERE WE ARE: The Road of Trials, exactly halfway through the journey. The first insight now has to survive behavior. One old pattern collides with one new action, creating a small win while something real remains difficult. The audience trusts the change because they can see it being tested.',
-    'WHERE WE ARE: The Fall. The first breakthrough was real, but it did not erase the deeper fear. This is where the hero names the thing they have been avoiding and lets the audience see the cost of the journey.',
+    'WHERE WE ARE: The Fall. A professional failure already happened, your own decision or blind spot helped cause it, and something real was lost. Stay inside the defeat, responsibility, and failed recovery. Video 6 owns the lesson.',
     'WHERE WE ARE: Finding the Elixir. After the fall, the hero can finally name the deeper truth. This is the earned reframe, the thing they can carry forward because they did not skip the hard part.',
     'WHERE WE ARE: The Road Back. The Hero returns changed, carrying the Elixir. The circle closes. Your audience has watched a transformation happen in real time, and this video is where they feel it complete. The CTA here isn\'t about the next video. It\'s about the next chapter.'
   ]

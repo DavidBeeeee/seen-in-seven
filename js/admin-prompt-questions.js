@@ -6,7 +6,7 @@ const PROMPT_QUESTION_CATALOG = {
       {"label":"What should someone know about your background, what makes you unexpected, and what you naturally care about?","hint":"Share whatever feels most important. The AI will organize it into the story.","key":"easyAnswer_v1"},
       {"label":"What is one thing you used to think was true that is not true?","hint":"Explain how it shaped you, what made you question it, and why the old way of thinking matters.","key":"easyAnswer_v2"},
       {"label":"What has making these videos actually been like so far?","hint":"Compare it with what you expected, share one real detail, and include what is changing, what is still difficult, and why you are continuing.","key":"easyAnswer_v3"},
-      {"label":"What was the hardest experience in this part of your life after your first realization?","hint":"Describe what happened, what felt at risk, what you tried, and what remained unresolved before you understood the larger lesson.","key":"easyAnswer_v4"},
+      {"label":"In the part of your life you have been discussing, what is the absolute worst thing that happened after you first started seeing it differently? What did you do, avoid, refuse to see, or get completely wrong that made it your fault, and what did you lose because of it?","hint":"Give us the defeat, not the lesson. What happened, what was your responsibility, what did it cost, what did you try that failed, and what still felt broken afterward? A rough answer is enough. Your script will build out the story, and you can correct or personalize any details afterward.","key":"easyAnswer_v4"},
       {"label":"What larger truth did you discover because you lived through that difficult experience?","hint":"Describe how you discovered it, what it changed in you, and who else may need to understand it.","key":"easyAnswer_v5"},
       {"label":"Who were you before these realizations, and who are you now?","hint":"Describe what changed, what remains unfinished, what telling the story helped you understand, and where you go next.","key":"easyAnswer_v6"}
     ],
@@ -15,7 +15,7 @@ const PROMPT_QUESTION_CATALOG = {
       {"label":"What part of your past kept shaping you before you understood why?","hint":"Describe the ordinary world you were in, the thread or unlikely chapter that kept showing up, and why you did not recognize or follow it yet.","key":"easyAnswer_v1"},
       {"label":"What's a belief you held for a long time that turned out to be wrong?","hint":"What cracked it open? Walk me through how you arrived at seeing it differently. The journey matters more than the conclusion.","key":"easyAnswer_v2"},
       {"label":"Tell me about one moment when an old pattern met a new behavior.","hint":"What happened, what would you normally have done, what did you do differently, what did that reveal, and what is still difficult?","key":"easyAnswer_v3"},
-      {"label":"What's something you've been avoiding saying out loud?","hint":"The thing that would make you feel most exposed. Not for shock. For honesty. The thing that makes the next lesson earned.","key":"easyAnswer_v4"},
+      {"label":"In the work or expertise story you have been telling, what was your worst professional failure after your first breakthrough? What did you do, avoid, refuse to see, or get completely wrong that made it your fault, and what did it cost you?","hint":"Give us the professional defeat, not a fear about what might happen. Name what happened, your responsibility, the real loss, what you tried that failed, and what remained broken. A rough answer is enough. Your script will build out the story, and you can correct or personalize any details afterward.","key":"easyAnswer_v4"},
       {"label":"What do you believe now that you couldn't have said before the fall?","hint":"The deeper truth, reframe, or conviction you earned by naming the hard thing. Not a generic lesson. The truth you can carry forward.","key":"easyAnswer_v5"},
       {"label":"What did doing these 7 videos teach you that you didn't know at the start?","hint":"The honest accounting. What changed? What would you tell yourself at the beginning? What do you want to give your audience?","key":"easyAnswer_v6"}
     ]
@@ -56,12 +56,12 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "The Hardest Part",
-      "note": "Return to your larger life story. Tell the most difficult experience that came after you first began seeing this part of your life differently. This is not about making the videos.",
+      "note": "Return to your larger life story and tell the defeat. Something bad happened, you helped cause it, and you lost something that mattered. Do not give the lesson yet.",
       "prompts": [
-        {"label":"After you first started seeing this part of your life differently, what was the most difficult experience or period you went through next? What happened, and what made it so difficult for you?","hint":"Stay with the main part of your life or story you have been discussing. Describe the situation and the part that affected you most.","key":"v4p0","placeholder":"Describe the hardest experience that followed your first realization."},
-        {"label":"At the hardest point, what did you think you might lose, fail at, or never be able to change?","hint":"Answer from the perspective you had while living through it, before you knew what you would eventually learn.","key":"v4p1","placeholder":"Describe what felt most at risk at the time."},
-        {"label":"What did you try to do about it, and why was that not enough yet?","hint":"What actions, coping strategies, decisions, or old ways of thinking did you rely on? What continued to hurt, fail, or remain unanswered?","key":"v4p2","placeholder":"Describe what you tried and what remained unsolved."},
-        {"label":"Before you finally understood what this experience had taught you, what was still unanswered or unresolved?","hint":"End inside the uncertainty. What could you not yet explain, accept, or see clearly at the time?","key":"v4p3","placeholder":"Describe the question or struggle that still had no answer."}
+        {"label":"In the part of your life you have been discussing, what is the absolute worst thing that happened after you first started seeing it differently?","hint":"Give one completed event or period. Tell us what actually happened, not what you were afraid might happen.","key":"v4p0","placeholder":"Describe the defeat that actually happened."},
+        {"label":"Why was it your fault? What did you do, avoid, refuse to see, or get completely wrong that caused it or made it worse?","hint":"This is about responsibility, not villainy. Name the choice, pattern, blind spot, delay, refusal, or failure that was yours.","key":"v4p1","placeholder":"Describe your part in causing or worsening the defeat."},
+        {"label":"What did you lose, damage, delay, or make worse because of that failure?","hint":"Name the real cost from inside the experience: the relationship, opportunity, money, time, credibility, identity, peace, momentum, or something else that mattered.","key":"v4p2","placeholder":"Describe what the failure actually cost you."},
+        {"label":"What did you try afterward that still did not fix it, and what were you still unable to understand?","hint":"End inside the failed recovery. Name what you tried, why it was not enough, and what remained broken before the larger realization came.","key":"v4p3","placeholder":"Describe the failed recovery and the question that still had no answer."}
       ]
     },
     {
@@ -185,31 +185,31 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "The Fall",
-      "note": "This is the video most people skip because it feels too vulnerable. That's exactly why it matters. The internal battle about claiming your expertise publicly, said out loud on camera, is what makes the next epiphany earned.",
+      "note": "Tell the professional defeat. Something went wrong, your own choice or blind spot helped cause it, and expertise did not save you from the loss. Do not give the lesson yet.",
       "prompts": [
         {
-          "label": "What's the internal battle you're fighting about putting yourself out there as someone with real expertise? The thing that makes you hesitate even though you KNOW you're good at this.",
-          "hint": "Imposter syndrome. Comparison. The fear of being 'that person' who promotes themselves. The voice that says your experience doesn't count because you don't have the right credentials, the right following, the right whatever. What's YOUR version of that battle?",
+          "label": "In the work or expertise story you have been telling, what was your worst professional failure after your first breakthrough?",
+          "hint": "Give one completed event or period when something actually went wrong. Do not give a fear about what might happen.",
           "key": "v4p0",
-          "placeholder": "e.g. my version of this is the credential question — I don't have letters after my name. I learned everything I know from fifteen years of doing this work with real people. But the voice still shows up asking who I think I am."
+          "placeholder": "Describe the professional defeat that actually happened."
         },
         {
-          "label": "What's the specific fear? If you imagine fully owning your expertise publicly — being visible, being known for what you know — what's the worst thing that could happen? Say it out loud.",
-          "hint": "Sometimes the fear is concrete: 'people from my old life will judge me.' Sometimes it's abstract: 'what if I put myself out there and nobody cares.' Sometimes it's deeper: 'what if I'm not actually as good as I think I am.' Name the actual fear. Not the category — the specific thought.",
+          "label": "Why was it your fault? What did you do, avoid, refuse to see, overestimate, or get completely wrong that caused it or made it worse?",
+          "hint": "Name the professional choice, blind spot, delay, overconfidence, avoidance, or failure that was yours. Expertise does not remove responsibility.",
           "key": "v4p1",
-          "placeholder": "e.g. the specific fear is that someone I respect will watch one of these videos and think 'she's overreaching.' That one imaginary judgment has cost me more than two years of staying quiet."
+          "placeholder": "Describe your part in causing or worsening the professional defeat."
         },
         {
-          "label": "What's it been costing you to stay small? Not in money, but in impact, in fulfillment, in the people you could be helping but aren't because you've been hiding.",
-          "hint": "You know there are people who need what you know. You've probably met some of them. What happens to them because you haven't stepped into this fully? And what happens to YOU... what are you leaving on the table by playing it safe?",
+          "label": "What did that failure actually cost you, your work, or the people who depended on you?",
+          "hint": "Name the real loss: credibility, trust, money, time, an opportunity, a relationship, momentum, confidence, or something else that mattered.",
           "key": "v4p2",
-          "placeholder": "e.g. what it's been costing me is harder to name than money. There are people right now making the exact mistakes I know how to prevent, and I haven't shown up for them because I've been waiting to feel ready."
+          "placeholder": "Describe the real cost of the professional failure."
         },
         {
-          "label": "Despite all of that... why are you still here? Why haven't you quit? What's the thing that keeps pulling you forward even when the doubt is loud?",
-          "hint": "Something is stronger than the fear. A purpose, a person, a vision, a stubborn refusal to let the doubt win. That thing, whatever it is, is the real engine underneath everything you've built so far. Name it.",
+          "label": "What did you try afterward that still did not fix it, and what were you still unable to understand?",
+          "hint": "End inside the failed recovery. Name what you tried, why your expertise or old strategy was not enough, and what remained broken before the second epiphany.",
           "key": "v4p3",
-          "placeholder": "e.g. I'm still here because I keep meeting people who are stuck in the exact place I was stuck in. And when I talk to them, even for twenty minutes, something shifts. That shift is what I'm here for. The doubt is just the admission fee."
+          "placeholder": "Describe the failed recovery and what still had no answer."
         }
       ]
     },
