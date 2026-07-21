@@ -403,6 +403,7 @@ async function trackSession() {
 
 // ── SCREEN NAVIGATION ─────────────────────────────────
 let _screenAnimTimers = [];
+let scriptEditSaveTimer = null;
 
 function showScreen(id, direction='forward') {
   const next = document.getElementById(id);
@@ -2033,6 +2034,8 @@ async function regenerateSection(videoIdx, sectionKey, btnEl) {
   const regenFeedback = await showRegenModal(sectionKey);
   if (regenFeedback === null) return; // user dismissed modal
 
+  await flushScriptEditSave(videoIdx);
+
   const originalText = btnEl ? btnEl.textContent : '';
   if (btnEl) { btnEl.textContent = '⏳ Regenerating...'; btnEl.disabled = true; }
 
@@ -2082,6 +2085,82 @@ Regenerate ONLY the [${sectionKey}] section, applying the feedback above while f
   } catch(err) {
     if (btnEl) { btnEl.textContent = '⚠️ Error'; btnEl.disabled = false; setTimeout(() => { if (btnEl) btnEl.textContent = originalText; }, 3000); }
     console.error('Regenerate section error:', err);
+  }
+}
+
+async function flushScriptEditSave(videoIdx) {
+  if (scriptEditSaveTimer) {
+    clearTimeout(scriptEditSaveTimer);
+    scriptEditSaveTimer = null;
+  }
+  const script = state.videos['script_v' + videoIdx];
+  if (!script || typeof saveScriptEditToDb !== 'function') return;
+  const level = state.level || 1;
+  await saveScriptEditToDb(videoIdx + 1, level, script, finalScriptText(videoIdx, script, level));
+}
+
+// Regenerate the complete script while preserving the user's answers and prior script version.
+async function regenerateFullScript(videoIdx, btnEl) {
+  const editKey = 'script_v' + videoIdx;
+  const sectionsKey = 'sections_v' + videoIdx;
+  const regenFeedback = await showRegenModal('full script');
+  if (regenFeedback === null) return;
+
+  const originalText = btnEl ? btnEl.textContent : '';
+  if (btnEl) {
+    btnEl.textContent = '⏳ Regenerating...';
+    btnEl.disabled = true;
+  }
+
+  const level = state.level || 1;
+  const videoNum = videoIdx + 1;
+  const currentScript = state.videos[editKey] || '';
+  await flushScriptEditSave(videoIdx);
+  const fullScriptUserMsg = `${buildAPIUserMessage(videoIdx)}
+
+CURRENT FULL SCRIPT (for context only; write a fresh complete version):
+${finalScriptText(videoIdx, currentScript, level)}
+
+FEEDBACK FOR THIS REGENERATION: ${regenFeedback}
+
+Regenerate the entire Video ${videoNum}, Level ${level} script from the supplied user context and feedback. Write all five sections as one cohesive spoken video. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
+
+  try {
+    const script = await generateValidatedScript(fullScriptUserMsg, level, videoNum);
+    if (!script) throw new Error('Empty response');
+
+    const promptVersion = window._SIS_lastPromptVersion || '';
+    const finalContent = finalScriptText(videoIdx, script, level);
+    const parsedSections = parseScriptSections(script);
+    state.videos[editKey] = script;
+    if (parsedSections) state.videos[sectionsKey] = parsedSections;
+    else delete state.videos[sectionsKey];
+    state.videos['prompt_version_v' + videoIdx] = promptVersion;
+    saveProgress();
+
+    // Inserting a new script preserves the earlier version and lets the database mark this one current.
+    queueScriptSave(videoNum, level, script, finalContent, promptVersion);
+    if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(videoIdx);
+    if (typeof logEvent === 'function') {
+      logEvent('script_regenerated', {
+        video_number: videoNum,
+        level,
+        scope: 'full_script',
+        prompt_version: promptVersion || null
+      });
+    }
+
+    _doShowScriptView(videoIdx);
+    if (typeof flashSavedIndicator === 'function') flashSavedIndicator();
+  } catch (err) {
+    if (btnEl) {
+      btnEl.textContent = '⚠️ Error';
+      btnEl.disabled = false;
+      setTimeout(() => {
+        if (btnEl) btnEl.textContent = originalText;
+      }, 3000);
+    }
+    console.error('Regenerate full script error:', err);
   }
 }
 
@@ -3067,13 +3146,13 @@ function _doShowScriptViewInner(idx) {
     const rawScript = state.videos[editKey] || '';
     const cleanScript = finalScriptText(idx, rawScript, state.level || 1);
     editor.value = cleanScript;
-    let _editSaveTimer = null;
     editor.oninput = () => {
       state.videos[editKey] = editor.value;
       const reParsed = parseScriptSections(editor.value);
       if (reParsed) state.videos[sectionsKey] = reParsed;
-      clearTimeout(_editSaveTimer);
-      _editSaveTimer = setTimeout(() => {
+      clearTimeout(scriptEditSaveTimer);
+      scriptEditSaveTimer = setTimeout(() => {
+        scriptEditSaveTimer = null;
         saveScriptEditToDb(idx + 1, state.level || 1, editor.value, editor.value);
         if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(idx);
         if (typeof flashSavedIndicator === 'function') flashSavedIndicator();
