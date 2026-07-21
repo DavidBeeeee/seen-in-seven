@@ -337,7 +337,7 @@ Audience feels: Recognition + "there's more to this person"
 Speaker feels: Honest, reflective, not yet transformed
 
 CORE PURPOSE:
-Let the audience meet the human being behind Video 1. Combine one grounding piece of background, one unexpected detail or contradiction, and one thing the speaker naturally cares about, notices, or returns to. The audience should leave feeling that they know this person, not that they received a biography or an expert origin story.
+Let the audience meet the human being behind Video 1 by letting them inhabit the speaker's ordinary world. Combine one recognizable piece of everyday life, one unexpected detail or contradiction, and one private thread the speaker kept returning to. Show what that ordinary life made easier to keep contained or avoid. The audience should leave feeling that they know this person and recognize some of themselves in the compromise, not that they received a biography, expert origin story, or lesson.
 
 HERO'S JOURNEY PLACEMENT:
 The speaker is still in the Ordinary World.
@@ -348,16 +348,16 @@ They do not need to know what every detail means yet. This video establishes ide
 AUDIENCE JOURNEY:
 Before: "I saw them start, but I do not really know who they are yet."
 After: "There is more to this person than the first impression, and I recognize something of myself in them."
-Open question: "What did this person once think was true that shaped the life I just met?"
+Open question: "What has this person been keeping contained, and what would it cost them to let it matter?"
 Social impulse: Comment with recognition, curiosity, or their own unexpected detail.
 
 STRUCTURAL BEATS:
 1. Pattern Interrupt (Hook) — Use the unexpected trait, behavior, interest, or contradiction from Prompt 2 as the hook source whenever the speaker provided one. State that concrete detail before explaining the person. Do not use background, work schedule, exhaustion, waiting, general life conditions, biography, a soft identity statement, or the lesson as the hook when Prompt 2 contains a usable unexpected detail.
 2. Identity Gap (Open Loop) — Refer directly back to the exact hook detail, then connect it to one grounding fact the viewer needs to understand. The open loop cannot introduce a different surprising detail. The unanswered question is why these apparently mismatched pieces belong to the same person, not what lesson the speaker eventually learned.
-3. Grounding Background (Meat) — Use Prompt 1 to give only the background needed for a cold viewer to understand the speaker's world. Tell each grounding fact once; do not repeat the same setup from the hook or elsewhere in the meat.
-4. Unexpected Detail (Meat) — Deepen the hook detail only after the grounding background gives it context. Show the interest, habit, past chapter, contradiction, or trait that complicates the obvious first impression.
-5. Natural Attention (Meat) — Use Prompt 3 to reveal what the speaker keeps noticing, caring about, or returning to and why it matters personally. A small catalyst may appear as evidence, but do not force one or turn it into the transformation.
-6. Identity Landing (Conclusion) — Answer why the opening contrast belongs together. Land on a recognizable truth about who this person has always been, while leaving the meaning and first epiphany open. Do not solve their stuckness, prescribe a change, explain their offer or professional role, or state the lesson that belongs in Video 3.
+3. Grounding Background (Meat) — Use Prompt 1 to let a cold viewer feel the speaker's ordinary world: the role, routine, obligation, expectation, or life condition that shaped their days. Tell each grounding fact once; do not repeat the same setup from the hook or elsewhere in the meat.
+4. Unexpected Detail (Meat) — Deepen the hook detail only after the grounding background gives it context. Show the interest, habit, past chapter, contradiction, or trait that quietly survived inside that ordinary life.
+5. Private Thread And Refusal (Meat) — Use Prompt 3, onboarding, and Video 1 context to show what the speaker kept returning to and what they kept themselves from doing because the ordinary life felt safer, more practical, or less exposing. Show the refusal as lived behavior or pressure, not as a named Hero's Journey concept. Do not resolve it, explain it away, or turn it into advice.
+6. Ordinary-World Landing (Conclusion) — Answer why the opening contrast belongs together by naming the pressure between the life the speaker knew and the part of themselves they kept contained. Land on a recognizable unresolved tension: what remained alive in them, and what felt too risky to let matter. Do not solve their stuckness, prescribe a change, explain their offer or professional role, state the lesson that belongs in Video 3, or explain why they are now on camera.
 7. Next Belief (CTA) — Continue from that identity landing, then give one clear action because the next installment of the speaker's 7 Video Challenge reveals something they used to think was true and what made it fall apart.
 
 TONE: Warm, relaxed, reflective storytelling energy. Like the second conversation with someone. Specific details, not generalities. A moment of recognition. Still in the ordinary world, still pre-transformation.
@@ -368,26 +368,27 @@ ABSOLUTE RULE:
 Reveal the person, not the final meaning of their story. Do not explain the product, offer, business, expertise, final mission, or clean lesson. Do not make the speaker sound like they already understood where it was all going.
 
 PREMATURE INSIGHT GUARD:
-The speaker may recognize that the details belong together, but they should not articulate the clean reframe, principle, or final meaning. Save the explicit first insight for Video 3 and the full-circle meaning for Video 7.
+The speaker may recognize that the details belong together, but they should not articulate the clean reframe, principle, solution, or final meaning. They do not yet know what the private thread will become. Save the explicit first insight for Video 3 and the full-circle meaning for Video 7.
 
 PROMPTS (L1): 1) Background or everyday life that helps someone understand them, 2) Something people do not expect about them, 3) What they naturally care about, notice, or return to and why it matters
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
-Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Build the MEAT and CONCLUSION toward it. Then design the OPEN LOOP as the unanswered question that conclusion will pay off. Last, build the HOOK as a separate truthful pattern interrupt that captures a cold viewer without stating the question or answer. The CTA must begin by continuing the conclusion's exact thought, then give a clear action and reason; never open it with the video or series number.
+Choose the engagement ending first. For Video 2, favor a MIRROR or identity QUESTION: the viewer should recognize the pressure of keeping part of themselves contained inside a life that feels ordinary and necessary. Do not turn this into an educational twist, debate, or self-improvement lesson. Build the MEAT and CONCLUSION toward it. Then design the OPEN LOOP as the unanswered question that conclusion will pay off. Last, build the HOOK as a separate truthful pattern interrupt that captures a cold viewer without stating the question or answer. The CTA must begin by continuing the conclusion's exact thought, then give a clear action and reason; never open it with the video or series number.
 
 VIDEO 2, LEVEL 1: Tone = Warm, reflective, ordinary-world energy (Gregory Alan Isakov "Big Black Car" — folk acoustic, settling in, revealing)
 HOOK guidance: Prompt 2 owns the hook. Extract its strangest concrete behavior, interest, contradiction, or identity mismatch and state it before explaining the speaker or what it means. The line must interrupt attention on its own. If the opening could describe almost anyone with a hard job or difficult season, it is not the hook.
-OPEN LOOP guidance: The first sentence must directly refer to the hook's concrete detail, then connect it to one grounding fact and make the viewer need to understand why those pieces belong to the same person. Do not introduce a new twist, promise a generic reveal, or interpret the larger lesson.
-CONCLUSION guidance: Resolve the identity contradiction by showing what the details reveal about the person, but stop short of the Video 3 reframe. Warm recognition is enough; this is not a transformation speech. Do not turn the identity into a strategy, a professional positioning statement, or an explanation of how to escape being stuck.
+OPEN LOOP guidance: The first sentence must directly refer to the hook's concrete detail, then connect it to one grounding fact and make the viewer need to understand why that detail survived inside this particular ordinary life. Do not introduce a new twist, promise a generic reveal, say what the detail became, or interpret the larger lesson.
+CONCLUSION guidance: Land on the human pressure between the ordinary life and the part of the speaker that had no safe or practical place to go. The audience should recognize why leaving that life, speaking up, or letting the private thread matter felt risky. Do not describe a completed realization, breakthrough, escape, or present-day action. Do not turn the identity into a strategy, a professional positioning statement, an explanation of how to escape being stuck, or the reason they are now on camera.
 CTA guidance: Continue from that still-developing identity into a clear follow, comment, or watch-next request. In the action-and-reason sentence, explicitly name the 7 Video Challenge or seven-part series and explain that the next installment reveals one thing the speaker used to think was true and the experience that made it impossible to keep believing. Never use a bare "Video 3" reference or vague wording such as "the next one."
 
 VIDEO 2 FINAL CHECK:
 - The unexpected Prompt 2 detail is already present in [HOOK], not first introduced in [OPEN LOOP] or [MEAT].
 - [OPEN LOOP] directly continues the same detail from [HOOK]; it does not swap in a new attention grabber.
 - Prompt 1's background appears once in [MEAT], not as the opening setup and not as repeated biography.
-- [CONCLUSION] gives identity recognition only. It does not deliver Video 3's reframe, a solution, a professional claim, or an offer.
+- [MEAT] shows both the ordinary life and the private thread, then shows what the speaker was keeping contained or refusing to risk without calling it a lesson.
+- [CONCLUSION] lands on unresolved human pressure, not a reframe, solution, professional claim, offer, explanation of present-day action, or Video 3 insight.
 - [CTA] names the continuing 7 Video Challenge or seven-part series, gives a clear action, and uses “because” to say why.
 </l1_v2_rules>
 
