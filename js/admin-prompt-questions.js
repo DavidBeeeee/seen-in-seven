@@ -12,12 +12,12 @@ const PROMPT_QUESTION_CATALOG = {
     ],
     "l2": [
       null,
-      {"label":"What part of your past kept shaping you before you understood why?","hint":"Describe the ordinary world you were in, the thread or unlikely chapter that kept showing up, and why you did not recognize or follow it yet.","key":"easyAnswer_v1"},
-      {"label":"What's a belief you held for a long time that turned out to be wrong?","hint":"What cracked it open? Walk me through how you arrived at seeing it differently. The journey matters more than the conclusion.","key":"easyAnswer_v2"},
-      {"label":"Tell me about one moment when an old pattern met a new behavior.","hint":"What happened, what would you normally have done, what did you do differently, what did that reveal, and what is still difficult?","key":"easyAnswer_v3"},
-      {"label":"In the work or expertise story you have been telling, what failure was so devastating that you thought your career, business, reputation, livelihood, or future might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?","hint":"Tell us what collapsed, what you believed might be gone forever, and why you could not see a professional way back. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.","key":"easyAnswer_v4"},
-      {"label":"What do you believe now that you couldn't have said before the fall?","hint":"The deeper truth, reframe, or conviction you earned by naming the hard thing. Not a generic lesson. The truth you can carry forward.","key":"easyAnswer_v5"},
-      {"label":"What did doing these 7 videos teach you that you didn't know at the start?","hint":"The honest accounting. What changed? What would you tell yourself at the beginning? What do you want to give your audience?","key":"easyAnswer_v6"}
+      {"label":"What part of your past kept shaping you before you understood why?","hint":"Describe the everyday life you were in, the thread or unlikely chapter that kept showing up, and why you did not recognize or follow it yet.","key":"easyAnswer_v1"},
+      {"label":"What is one thing you used to think was true about your work or field that experience proved was wrong or incomplete?","hint":"Describe the real situation that exposed the problem, the new lens you earned, what the old thinking costs, and why this matters to the people you understand.","key":"easyAnswer_v2"},
+      {"label":"Where has your first professional realization met the reality of communicating your expertise publicly?","hint":"Describe one concrete moment, what your usual expert instinct wanted to do, what you did instead, what it revealed, and what remains difficult.","key":"easyAnswer_v3"},
+      {"label":"In the work, craft, calling, or expertise story you have been telling, what failure was so devastating that you thought what you had built or hoped to build might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?","hint":"Tell us what collapsed, what seemed permanently lost, and why you could not see a way back in this part of your life. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.","key":"easyAnswer_v4"},
+      {"label":"What larger professional truth did that difficult experience force you to understand, and how did it deepen the first realization you shared?","hint":"Trace how the truth emerged through the aftermath or rebuilding, what it changed in your work or decisions, and what useful lens it gives someone facing the problem now.","key":"easyAnswer_v5"},
+      {"label":"Who were you before the two professional realizations and the hardest part of the story, and who are you now in relation to your expertise and the people you want to reach?","hint":"Describe what genuinely changed, what remains unfinished or still needed, what telling the story clarified about your work, and what perspective or mission you want the right viewer to keep following.","key":"easyAnswer_v6"}
     ]
   },
   "l1": [
@@ -95,11 +95,11 @@ const PROMPT_QUESTION_CATALOG = {
       "prompts": []
     },
     {
-      "title": "The Origin Story",
+      "title": "How I Got Here",
       "note": "Your audience needs to understand the path that formed what you know. Stay with the detour, wound, obsession, or unlikely chapter before you understood its professional meaning. This is the origin, not the industry lesson yet.",
       "prompts": [
         {
-          "label": "How did you get into this? Not the professional version. The real story of how you ended up knowing what you know.",
+          "label": "How did you get into this? Skip the polished professional answer. What is the real story of how you ended up knowing what you know?",
           "hint": "Maybe it was accidental. Maybe you were trying to solve your own problem. Maybe someone else's problem landed in your lap and you realized you were good at this. What actually happened?",
           "key": "v1p0",
           "placeholder": "e.g. I got into this because my sister was drowning in debt after her divorce and I helped her build a plan that got her out in 18 months. Her friends started asking me for help. Then their friends."
@@ -111,15 +111,15 @@ const PROMPT_QUESTION_CATALOG = {
           "placeholder": "Describe the chapter that formed your lens before you had language for it."
         },
         {
-          "label": "What did you misunderstand about that path at the time, or why did you resist seeing it as part of your expertise?",
-          "hint": "Stay inside the earlier perspective. Maybe it looked like wasted time, failure, a side interest, or something that did not count. Save the clean professional reframe for Video 3.",
+          "label": "What did you misunderstand or resist about treating that path as expertise, and why does this work matter to you personally now?",
+          "hint": "Start inside the earlier perspective: why did the chapter look irrelevant, unprofessional, or unworthy of claiming? Then name the human reason the work matters to you now without turning it into an industry lesson or business pitch.",
           "key": "v1p2",
-          "placeholder": "Describe what you believed about that path before its meaning became clear."
+          "placeholder": "Describe what you resisted about the path and why the work matters personally now."
         }
       ]
     },
     {
-      "title": "The First Epiphany",
+      "title": "What I See Differently",
       "note": "Seven beats, one shift. You're not sharing a hot take. You're sharing a genuine paradigm shift. Something 'everyone knows' in your field that you've come to believe is wrong, the moment you saw the cracks, and the reframe that changes everything.",
       "prompts": [
         {
@@ -155,8 +155,8 @@ const PROMPT_QUESTION_CATALOG = {
       ]
     },
     {
-      "title": "The Road Of Trials",
-      "note": "Your first professional epiphany now has to survive public practice. Show one concrete collision between your expert instincts and the new behavior visibility required. Authority comes from how you read the trial, not from teaching or reporting progress.",
+      "title": "What The Work Looks Like",
+      "note": "Your first professional realization now has to survive public practice. Show one concrete collision between your expert instincts and the new behavior visibility required. Authority comes from how you read the experience, not from teaching or reporting progress.",
       "prompts": [
         {
           "label": "Tell me about one specific moment when your usual expert instinct showed up while you were communicating publicly.",
@@ -178,21 +178,21 @@ const PROMPT_QUESTION_CATALOG = {
         },
         {
           "label": "What is still difficult about being seen doing this work, even after that small win?",
-          "hint": "Name the remaining friction specifically. This is a trial, not proof that visibility is solved, and the unresolved cost prepares the fall in Video 5.",
+          "hint": "Name the remaining friction specifically. This is one test, not proof that visibility is solved, and the unresolved cost prepares the hardest part of the story in Video 5.",
           "key": "v3p3",
           "placeholder": "Describe where the old expert pattern still has a hold on you."
         }
       ]
     },
     {
-      "title": "The Fall",
-      "note": "Now we are returning to the larger work or expertise story you have been telling, not the experience of making these videos. This is the chapter where the professional world you had built came closest to collapsing. Choose the failure or period when you genuinely wondered whether your career, business, reputation, livelihood, or future would recover. Do not tell us what you eventually learned or how everything worked out. Answer from who you were while it was happening.",
+      "title": "The Hardest Part",
+      "note": "Now we are returning to the larger work, craft, calling, or expertise story you have been telling, not the experience of making these videos. This is the chapter where what you had built or hoped to build came closest to collapsing. Choose the failure or period when you genuinely wondered whether this part of your future would recover. Do not tell us what you eventually learned or how everything worked out. Answer from who you were while it was happening.",
       "prompts": [
         {
-          "label": "Thinking about the work or expertise story you have been discussing, what failure or period brought you closest to believing your career, business, reputation, livelihood, or future might never recover?",
-          "hint": "Choose something that actually happened, rather than something you feared might happen. If there was not one dramatic event, describe the period when the professional world you had built gradually fell apart.",
+          "label": "Thinking about the work, craft, calling, or expertise story you have been discussing, what failure or period brought you closest to believing what you had built or hoped to build might never recover?",
+          "hint": "Choose something that actually happened, rather than something you feared might happen. You do not need to own a business or have clients. If there was not one dramatic event, describe the period when your work, confidence, reputation, livelihood, direction, or hoped-for future gradually fell apart.",
           "key": "v4p0",
-          "placeholder": "Describe the professional failure or period when you thought you might not recover."
+          "placeholder": "Describe the failure or period when what you had built or hoped to build seemed lost."
         },
         {
           "label": "Take us to the moment you realized this was more than an ordinary professional setback. What had happened, and what made the consequences feel impossible to repair?",
@@ -221,74 +221,74 @@ const PROMPT_QUESTION_CATALOG = {
       ]
     },
     {
-      "title": "The Second Epiphany",
-      "note": "Deeper. More personal. More convicted. After naming what visibility costs you, this is the myth or truth you can finally say with earned authority. You're not sharing an opinion, you're sharing what you can't unsee.",
+      "title": "What The Hardest Part Taught Me",
+      "note": "This is the larger professional truth earned through the difficult experience you just described. It must deepen or correct the first realization rather than becoming another unrelated hot take. Show how the defeat changed your understanding, your work, and the lens you can now give someone else.",
       "prompts": [
         {
-          "label": "What's the biggest myth or most overused piece of advice in your field that you've come to believe is actually wrong — or even harmful?",
-          "hint": "The sacred cow. The thing every guru says. The advice that gets repeated so often nobody questions it anymore. You question it. You've seen what happens when people follow it. What is it?",
+          "label": "Looking back at the difficult experience you just described, what larger truth about your work, your field, or the people you serve became impossible for you to ignore?",
+          "hint": "Choose the truth you could not have earned before that defeat. It may challenge familiar advice, but it must grow directly from what happened to you rather than becoming a separate industry opinion.",
           "key": "v5p0",
-          "placeholder": "e.g. the biggest myth in my field is that consistency is the answer. Post every day, show up every day, grind every day. I've watched people burn out following that advice and then blame themselves for failing."
+          "placeholder": "Describe the larger professional truth the difficult experience made impossible to ignore."
         },
         {
-          "label": "Tell the story of your own relationship with this belief. Did you used to follow it? Teach it? What happened that made you turn against it?",
-          "hint": "The most powerful version of this is when YOU were a believer first. You followed the playbook. You recommended it to others. And then something happened that made you see it was broken. That personal journey from believer to heretic is what makes this credible, not preachy.",
+          "label": "How did that truth become clear through the aftermath, failed recovery, or rebuilding?",
+          "hint": "Walk through the evidence. What did you try, notice, lose, rebuild, or finally stop doing that changed your interpretation of the failure? Give the story that earned the truth instead of jumping straight to the lesson.",
           "key": "v5p1",
-          "placeholder": "e.g. I used to tell my clients this. I believed in it. I built my own routine around it. And then I watched my most dedicated client, someone who followed every rule, completely crater her mental health in pursuit of consistency and end up taking six months off."
+          "placeholder": "Describe how the larger truth emerged through the aftermath or rebuilding."
         },
         {
-          "label": "What's the actual truth — the thing that works but nobody talks about because it's less sexy, less simple, or threatens the established way of doing things?",
-          "hint": "The real answer. The thing you've figured out through doing the work, not reading about the work. It might be simpler than the myth. It might be harder. But it's TRUE, and you can back it up with your own experience and results.",
+          "label": "How does this larger realization deepen, correct, or complete the first professional realization you shared earlier?",
+          "hint": "The first realization changed the direction of the story. The difficult experience showed what that lens still could not explain. Name what became more complete without simply repeating the first insight.",
           "key": "v5p2",
-          "placeholder": "e.g. depth beats volume every time. One video that changes how someone thinks is worth more than thirty that they half-watch. The people winning aren't the ones posting most. They're the ones saying the most true thing."
+          "placeholder": "Describe how the second realization changes or completes the first."
         },
         {
-          "label": "What happens to people who keep following the myth? What have you watched it cost your peers, your clients, or people in your space?",
-          "hint": "Be specific. Not 'they fail.' HOW do they fail? What does it look like? The wasted money, the wasted time, the frustration, the quitting.",
+          "label": "What changed in the way you work, decide, communicate, or help people once you understood this?",
+          "hint": "Make the larger truth observable. Describe a real choice, standard, boundary, method, or way of seeing that changed because the difficult experience taught you something theory could not.",
           "key": "v5p3",
-          "placeholder": "e.g. they burn out. They create for months, see no results, decide they're not interesting enough, and quit. The myth told them consistency would compound. Nobody told them they also needed to have something worth saying."
+          "placeholder": "Describe what genuinely changed in your work or decisions."
         },
         {
-          "label": "Who specifically needs to hear this, and what would change for them if they actually believed you?",
-          "hint": "Picture one specific person. A client, a peer, someone who asked you for advice last week. If THEY got this, really got it, what would shift for them? That's the emotional engine. That's why you're saying this out loud instead of keeping it to yourself.",
+          "label": "Who is still facing this problem the way you once did, and what could this truth help them recognize or do differently?",
+          "hint": "Picture one specific person whether or not they are a client. What are they misreading, repeating, or blaming themselves for? Give them the useful lens you paid for through experience.",
           "key": "v5p4",
-          "placeholder": "e.g. this is for the expert who's been posting dutifully for months with nothing to show for it and is starting to think the problem is them. It's not them. They just got sold a system designed for content farms, not humans with something to say."
+          "placeholder": "Describe who needs this lens and what it could help them recognize."
         }
       ]
     },
     {
-      "title": "What I Learned",
-      "note": "Seven videos. A complete arc. Close it honestly: what you set out to prove, what you actually learned, what you'd tell someone at the beginning, and one open door for the right person.",
+      "title": "What I Carry Forward",
+      "note": "Close the larger expert story, not merely the filming experience. Compare your earlier relationship to your expertise with who you are now, acknowledge what remains unfinished, name what telling the story clarified, and open an ongoing relationship with the people who value your perspective.",
       "prompts": [
         {
-          "label": "When you filmed Video 1, what were you trying to prove — to yourself, to your audience, to your industry? Did you prove it?",
-          "hint": "Go back to the beginning. You had an intention — maybe it was clear, maybe it was vague. What was it? And now, seven videos later — did the challenge deliver what you expected? Or did it deliver something else entirely?",
+          "label": "Before the two professional realizations and the hardest part of the story, how did you see your expertise, your place in the work, and your right to speak about it publicly?",
+          "hint": "Return to the person behind Video 1 and the origin in Video 2. What did you believe made knowledge count? What were you waiting to prove, earn, perfect, or receive permission for?",
           "key": "v6p0",
-          "placeholder": "e.g. I started this wanting to prove I could show up consistently without a perfect strategy in place. Did I prove it? Sort of. What I actually proved was more interesting — that the strategy becomes obvious once you start."
+          "placeholder": "Describe your earlier relationship to your expertise and public voice."
         },
         {
-          "label": "What did this challenge teach you about your own expertise that you didn't know before? Not about content or filming. About the actual WORK you do and who you do it for.",
-          "hint": "Putting your knowledge on camera forces a kind of clarity that nothing else does. You had to simplify. You had to choose what matters. What did that process reveal about what you actually know and what you actually care about?",
+          "label": "Who are you now in relation to your expertise and the people you want to reach, and what do you do differently because of what you lived through?",
+          "hint": "Make the return observable. Name a real change in how you decide, communicate, practice, teach, create, lead, or allow yourself to be seen.",
           "key": "v6p1",
-          "placeholder": "e.g. this challenge taught me that I know far more than I realize, and I've been gatekeeping it behind a fear of saying something imperfect. The act of saying it imperfectly taught me more about my expertise than a year of preparation would have."
+          "placeholder": "Describe who you are now and what is genuinely different in your work or public voice."
         },
         {
-          "label": "What's the one thing you'd tell someone in your field who's been hiding behind their work instead of putting themselves out there?",
-          "hint": "You were that person seven videos ago. Now you're not. What do you know from the inside that they can't see from the outside? Not motivational fluff. The real, practical, emotional truth about what it takes and what it gives back.",
+          "label": "What remains unfinished, and what do you still need in order to grow into the work, impact, or public role you now see more clearly?",
+          "hint": "Authority does not require pretending you are complete. Name the specific skill, support, courage, structure, experience, or unresolved tension that belongs to the next chapter without asking the audience to rescue you.",
           "key": "v6p2",
-          "placeholder": "e.g. I'd tell them: the fear doesn't go away before you start. It goes away because you started. There's no version of this where you feel ready first."
+          "placeholder": "Describe what remains unfinished or what you still need."
         },
         {
-          "label": "What do you still need? Be honest. What did this challenge show you about where you need to grow, what support you need, or what's missing from your next chapter?",
-          "hint": "You just did something real. You proved something. And in the process, you probably saw clearly what the next level requires. Maybe it's help with systems. Maybe it's community. Maybe it's accountability. Whatever it is — naming it isn't weakness. It's the most strategic thing you can do.",
+          "label": "What did telling this larger story across seven videos help you understand or finally put into words about your work and the people you understand?",
+          "hint": "The videos did not create your expertise or your whole transformation. What connection, pattern, responsibility, audience, or professional truth became clearer when you had to tell the complete story?",
           "key": "v6p3",
-          "placeholder": "e.g. what I still need is a real framework for turning this visibility into actual conversations with the right people. The videos are working. I don't yet have a clear path from 'someone watches' to 'someone reaches out.'"
+          "placeholder": "Describe what telling the story helped you clarify about your work and audience."
         },
         {
-          "label": "If the right person is watching this — the exact person you've been making these videos for — what's your invitation to them? Not a pitch. An open door.",
-          "hint": "You've spent seven videos showing this person who you are, what you know, and what you believe. They trust you. So what do you want to say to them? The specific person, the specific problem, the specific next step. That's it. That's enough.",
+          "label": "What perspective, work, or mission are you carrying forward, and why would the right person want to keep following where you take it?",
+          "hint": "Name the direction and the relationship, not an offer. What will you keep noticing, questioning, building, practicing, or saying that makes your continuing story worth staying connected to?",
           "key": "v6p4",
-          "placeholder": "e.g. if you're a consultant or coach who knows you're good at what you do but keeps struggling to get visible in a way that feels authentic — reach out. Not to pitch you anything. Just to talk about what's actually in the way."
+          "placeholder": "Describe what you are carrying forward and why the right viewer should stay."
         }
       ]
     }

@@ -945,10 +945,10 @@ const COMMITMENT_COPY = {
       {e:'📖', v:'l1_regret', t:"The regret of carrying a story worth telling that I'm not confident enough to share.", full:"There are things I know, things I've lived through, and things I wish someone had told me when I needed it most. And I carry them almost entirely to myself. Not because they don't matter. Because somewhere along the way I convinced myself that I needed to be more ready, more polished, more certain before I had the right to say them out loud."}
     ],
     2: [
-      {e:'💼', v:'l2_income', t:"The exhaustion of working this hard while the income still doesn't reflect what I actually know.", full:"The thing that follows me around is knowing how much I've invested in getting good at this, the years, the experience, the results I've produced, and still watching my income not reflect any of that. I'm not lazy. I'm not inexperienced. I just haven't figured out how to make what I know work for me at the scale it should."},
-      {e:'📣', v:'l2_louder', t:"The frustration of watching people with less experience get paid more than me because they're louder online.", full:"It's not bitterness, it's just true. There are people in my space with a fraction of my experience who have built audiences, attracted clients, and created income I haven't because they figured out how to show up online and I haven't yet. The difference between us isn't the knowledge or the results. It's the visibility. And I'm tired of letting that be the reason."},
-      {e:'🎁', v:'l2_free', t:'The resentment of giving away my best knowledge for free while others monetize the same thing.', full:"I give a lot away. In conversations, in consultations, in the advice I hand out before anyone has paid me a dollar. And somewhere in the back of my mind I know that the same knowledge I'm giving away for free is exactly what other people are building real income around. I want to stop being generous to everyone except myself."},
-      {e:'⌛', v:'l2_window', t:"The fear that I've waited too long and the window to build something real is closing.", full:"The thing I don't say out loud is that I'm afraid the timing has passed. That the people who were going to build something already did, and I spent too long watching instead of starting. I know that's probably not true. But the longer I wait the louder that fear gets, and I'm done letting it make my decisions for me."}
+      {e:'🧠', v:'l2_income', t:'The frustration of knowing this deeply while almost nobody knows I am the person to ask.', full:"I have spent years learning this through work, experience, mistakes, and paying attention. People close to me know they can ask me about it, but almost none of that knowledge exists publicly. I am tired of carrying something useful as though it only counts in private conversations."},
+      {e:'📣', v:'l2_louder', t:'The frustration of watching shallow advice shape the conversation while my perspective stays private.', full:"I keep seeing confident advice spread through my field even when it leaves out the part that matters most. I can see the missing context from experience, yet I have mostly watched from the edge instead of adding my own perspective. I am tired of letting volume decide which ideas get heard."},
+      {e:'🎁', v:'l2_free', t:'The regret of giving my best guidance privately without building anything people can return to.', full:"I explain this in conversations, messages, meetings, and moments when someone needs help, then the insight disappears when the conversation ends. I want to create a public body of thought that the right person can find, use, and return to even when I am not there to explain it again."},
+      {e:'⌛', v:'l2_window', t:'The fear that I will keep waiting for permission while the work I could contribute remains invisible.', full:"I have spent too long treating public visibility as something I will earn after one more achievement, credential, plan, or burst of confidence. Waiting has kept my perspective out of conversations where it could matter, and I am ready to stop asking an imaginary gatekeeper for permission."}
     ]
   },
   desire: {
@@ -959,10 +959,10 @@ const COMMITMENT_COPY = {
       {e:'🤝', v:'l1_people', t:'The community of people who found you because you finally let them.', full:"What I want on the other side of this is people. Real ones who resonate with my story, who see themselves in what I share, who show up in my comments or my messages because something I said actually mattered to them. I don't want an audience. I want to find my people."}
     ],
     2: [
-      {e:'🌅', v:'l2_life', t:'The life that opens up when your expertise finally has the reach it deserves.', full:"What I'm really after isn't just more income. It's what that income represents. The ability to choose my work, my hours, my clients, and my focus. The version of this where my knowledge is working for me even when I'm not in the room. That's the life I've been building toward and content is the thing that finally makes it possible."},
-      {e:'🧲', v:'l2_clients', t:'The clients who arrive already convinced, already wanting what you do.', full:"The thing I want more than anything is to stop starting from zero in every conversation. To have people find me already understanding what I do, already believing in my approach, already decided that I'm the right person. Content is how that happens. That's why I'm here."},
-      {e:'👑', v:'l2_authority', t:'The authority that makes every conversation start from a completely different place.', full:"There's a version of this where my name carries weight before I say a word. Where people come into a conversation with me already having a sense of who I am and what I stand for. That's not ego. That's what real visibility actually does. And I want to know what it feels like to operate from that place."},
-      {e:'🕊️', v:'l2_freedom', t:'The freedom to do only the work you actually want to do.', full:"What I want at the end of this is options. The ability to say no to the wrong clients, the wrong projects, the wrong opportunities, because the right ones are finding me instead. Content is how you stop chasing work and start attracting it. That's the specific freedom I'm building toward."}
+      {e:'🌅', v:'l2_life', t:'The reach that lets useful expertise travel farther than one private conversation.', full:"I want what I have learned to reach people I may never meet in person. The right story or explanation can help someone recognize a problem, make a better decision, or feel less alone in what they are trying to understand. I want my knowledge to keep doing useful work after I stop speaking."},
+      {e:'🧲', v:'l2_clients', t:'The right people finding me already understanding how I think.', full:"I want the right people to encounter my perspective before we ever speak. Whether that leads to a conversation, an opportunity, a collaboration, or simply a follow, I want them to arrive with a real sense of what I notice, what I care about, and how I approach the work."},
+      {e:'👑', v:'l2_authority', t:'The earned authority that comes from giving people a lens they can use.', full:"I want to become known for making difficult ideas clearer and helping people notice what they were missing. That kind of authority comes from being consistently useful in public, which means letting people experience how I think instead of asking them to trust a title."},
+      {e:'🕊️', v:'l2_freedom', t:'The freedom that comes from publicly owning what I know and where I stand.', full:"I want the freedom to choose the work, questions, people, and ideas that deserve my energy. Building a visible body of thought gives me more ways to contribute and more chances for the right opportunities to find me, whether or not I have a formal business today."}
     ]
   }
 };
@@ -978,7 +978,7 @@ const COMMITMENT_REASONS = [
 
 function determineLevel() {
   const p2 = ensurePhase2();
-  state.level = (p2.contentIntent === 'teach' && (state.business === 'yes' || state.business === 'building')) ? 2 : 1;
+  state.level = p2.contentIntent === 'teach' ? 2 : 1;
 }
 
 function renderContentIntentGrid() {
@@ -1371,8 +1371,8 @@ const MVO_DATA = {
           before_short:'the endless delay',
           before_full:'I have been meaning to start for longer than I want to admit. Life gets in the way, or I get in the way. It just keeps not happening.'}
        ]},
-    2:{question:"What does your audience come to you for?",
-       placeholder:"What topic or niche does your content focus on?",
+    2:{question:"Who needs what you know, and what part of life or work are they trying to understand?",
+       placeholder:"Describe the people you want to reach and what they need help seeing...",
        cards:MVO_TOPIC_CARDS}
   },
   q3:{
@@ -1388,34 +1388,34 @@ const MVO_DATA = {
          {icon:'⚡',text:'I just decided. No more waiting.',
           catalyst_full:'There was no big moment. I just decided. I looked at where I was heading if I kept waiting and decided that was not the version of this story I wanted to tell.'}
        ]},
-    2:{question:"What's the biggest challenge your audience is dealing with?",
-       placeholder:"Describe the main challenge your audience faces...",
+    2:{question:"What has kept you from making what you know visible until now?",
+       placeholder:"Describe the specific expert visibility blocker you keep running into...",
        cards:[
-         {icon:'👤',text:'They feel invisible in their niche',
-          before_full:'The people I work with are genuinely good at what they do, but nobody knows they exist. They watch others with less skill get the attention, the clients, the opportunities, and they cannot figure out how to change that.'},
-         {icon:'🌊',text:'They feel overwhelmed and stuck',
-          before_full:'The people I work with know what they want, but the path there feels impossibly complicated. They are doing everything, nothing is clicking, and the gap between where they are and where they want to be keeps growing.'},
-         {icon:'🧱',text:'They know what they want but cannot get there',
-          before_full:'The people I work with can see exactly where they want to be. The problem is every time they get close, something blocks them, or they second-guess themselves back to square one.'},
-         {icon:'📉',text:'They are undercharging or undervalued',
-          before_full:'The people I work with are delivering real results but not getting paid what that is worth. They have to prove themselves over and over to clients who do not see the value they actually provide.'}
+         {icon:'🧠',text:'I know too much and struggle to make it simple',
+          before_full:'I understand the subject deeply, which makes it hard to know where to begin or what to leave out. Every short explanation feels incomplete, so I keep waiting until I can say everything instead of publishing the clearest useful piece.'},
+         {icon:'📣',text:'Talking about my expertise feels self-promotional',
+          before_full:'I am comfortable doing the work and helping someone who asks, but publicly saying what I know feels like claiming attention I have not earned. I keep confusing visibility with bragging, which makes staying behind the work feel safer.'},
+         {icon:'📜',text:'I keep thinking my experience does not count yet',
+          before_full:'I have real experience, but I keep comparing it with someone who has a bigger title, longer resume, larger audience, or more formal credentials. That comparison gives me a permanent reason to wait before speaking with confidence.'},
+         {icon:'🫥',text:'I have been hiding behind the work itself',
+          before_full:'I have let the work, referrals, private conversations, or people around me speak on my behalf. Putting my own face and voice beside what I know feels like a separate skill, and it is the part I have kept avoiding.'}
        ]}
   },
   q4:{
     1:{question:"What do you want to make videos about?",
        placeholder:"What topic or niche do you want to focus on?",
        cards:MVO_TOPIC_CARDS},
-    2:{question:"What makes you the right person to help them?",
-       placeholder:"What have you done, built, or lived through that gives you real insight here?",
+    2:{question:"Why does sharing this now matter enough for you to begin?",
+       placeholder:"What made staying quiet stop feeling acceptable?",
        cards:[
-         {icon:'🗺️',text:'I have been exactly where they are',
-          crack_full:'I know this because I have been exactly where they are. I lived through the thing they are dealing with and found a way through it. That is not a pitch. That is why this work matters to me.'},
-         {icon:'🔨',text:'I built something that actually works',
-          crack_full:'I know this because I built a system that solved it. Not a theory borrowed from someone else, something I put together through years of actual work that produces real results.'},
-         {icon:'🤝',text:'I have helped dozens of people through this',
-          crack_full:'I know this because I have watched dozens of people work through this problem. I have seen every version of what keeps people stuck and I know what actually moves things forward.'},
-         {icon:'🔍',text:'I see the patterns they cannot see',
-          crack_full:'I know this because I can see what they cannot see from inside it. When you are stuck in a problem, it looks like a wall. From where I stand, I can see the door. That is what I bring.'}
+         {icon:'💬',text:'People keep asking me about this privately',
+          crack_full:'People already come to me with these questions in private, and I keep giving answers that disappear when the conversation ends. I am starting now because the same perspective could help someone I will never meet unless I make it public.'},
+         {icon:'⚠️',text:'I keep watching incomplete advice create avoidable problems',
+          crack_full:'I keep seeing advice spread without the context that makes it useful, and I know from experience what gets missed. Staying silent has started to feel like choosing not to contribute when I have something honest and practical to add.'},
+         {icon:'🚪',text:'I am done waiting for permission to claim what I know',
+          crack_full:'I have treated visibility like something another achievement or credential would eventually grant me. I am starting now because the permission was never coming from outside me, and waiting longer would only make my knowledge harder to find.'},
+         {icon:'🧭',text:'The right person needs this perspective now',
+          crack_full:'There is someone trying to solve a problem I recognize, and the usual explanations are leaving out what they most need to see. I am starting now because my perspective can give that person a clearer next decision.'}
        ]}
   }
 };
@@ -1439,7 +1439,7 @@ const INTRO_COPY = {
     L2: {
       label: 'Video 1 of 7: The Origin Signal',
       title: "Let's Start With Why You're Here",
-      body: "You're about to build your first expert script. This is Video 1 of 7, the one that signals you're here and you know your space. We'll ask you three questions, then build your script from your answers. What comes next is a full arc: your origin story, your first industry reframe, how you think about the work, what others get wrong, and why your audience should keep coming back. Seven videos. Real authority. A content body that actually does something for your business. Three questions. Let's go.",
+      body: "You're about to build your first expert script. This is Video 1 of 7, where you step out from behind what you know and let people see why your voice belongs in the conversation. You do not need a business, clients, or a polished public identity. You need real experience, something you care about, and the willingness to begin.",
       result: 'Recognition',
       framework: [
         {name:'Hook',                     trigger:'Audience Signal'},
@@ -1465,9 +1465,9 @@ const INTRO_COPY = {
       triggers: ['Pattern Interrupt','Human Context','Identity Contrast','Recognition','Curiosity']
     },
     L2: {
-      label: 'Video 2 of 7: The Origin Story',
-      title: 'Show Them Why You Built This',
-      body: "Your audience doesn't just want to buy from you. They want to understand you. This video answers the question they're already asking: why did you build this, and why should I trust you? You're not pitching anything. You're showing them the moment you decided this work mattered.",
+      label: 'Video 2 of 7: How I Got Here',
+      title: 'Show Them What Formed Your Perspective',
+      body: "Before people trust what you know, they need to understand how you came to know it. Share the real path, including the detour or unlikely chapter that shaped your perspective, what you resisted about claiming it, and why the work matters to you personally.",
       result: 'Inspiration',
       framework: [
         {name:'Hook',                        trigger:'Catalyst Moment'},
@@ -1493,7 +1493,7 @@ const INTRO_COPY = {
       triggers: ['Pattern Break','Discovery Arc','Cognitive Reframe','The "Aha" Transfer','Cost Revelation','Simplicity Signal','Authority Anchor']
     },
     L2: {
-      label: 'Video 3 of 7: The First Epiphany',
+      label: 'Video 3 of 7: What I See Differently',
       title: 'Challenge What Your Industry Gets Wrong',
       body: "Your audience has been told things that aren't working for them. This video positions you as someone who sees what others miss. You're not tearing down your industry. You're offering a better lens. One clear reframe, backed by what you've actually seen, is what makes people think: this person gets it.",
       result: 'Insight',
@@ -1521,9 +1521,9 @@ const INTRO_COPY = {
       triggers: ['Behavioral Contrast','Small Win Proof','Objection Pre-emption','Real-Time Transparency','Midpoint Orientation']
     },
     L2: {
-      label: 'Video 4 of 7: The Road of Trials',
+      label: 'Video 4 of 7: What The Work Looks Like',
       title: 'Let Your Expertise Be Tested In Public',
-      body: "Your first professional epiphany sounded good in theory. Now the audience needs to see what happened when you used your voice in public. Show one real collision between your expert instincts and this new visibility, what surprised you, and what is still difficult. Authority emerges through how you interpret the trial, not through a lesson or a claim.",
+      body: "Your first professional realization sounded good in theory. Now the audience needs to see what happened when you used your voice in public. Show one real collision between your expert instincts and this new visibility, what surprised you, and what remains difficult. Authority emerges through how you interpret the experience, not through a lesson or a claim.",
       result: 'Trust',
       framework: [
         {name:'The Expert Pattern',      trigger:'Behavioral Contrast'},
@@ -1549,9 +1549,9 @@ const INTRO_COPY = {
       triggers: ['Charged Evidence','Causal Responsibility','Human Stakes','Failed Recovery','Ethical Bridge']
     },
     L2: {
-      label: 'Video 5 of 7: The Fall',
+      label: 'Video 5 of 7: The Hardest Part',
       title: 'Tell The Failure That Nearly Ended It',
-      body: "Return to the larger work or expertise story you have been telling. This is the failure that seemed capable of permanently destroying your work, reputation, livelihood, or future. Your own decision or blind spot helped cause it, expertise did not save you, and recovery did not feel guaranteed. Do not give the lesson yet.",
+      body: "Return to the larger work, craft, calling, or expertise story you have been telling. This is the failure that seemed capable of destroying what you had built or hoped to build. Your own decision or blind spot helped cause it, what you knew did not save you, and recovery did not feel guaranteed. Do not give the lesson yet.",
       result: 'Trust',
       framework: [
         {name:'Evidence Of Defeat', trigger:'Charged Evidence'},
@@ -1577,17 +1577,17 @@ const INTRO_COPY = {
       triggers: ['Earned Reversal','Discovery Arc','Cognitive Reframe','Aha Transfer','Cost Revelation','Simplicity Signal','Natural Invitation']
     },
     L2: {
-      label: 'Video 6 of 7: The Second Epiphany',
-      title: 'Name The Truth Your Industry Avoids',
-      body: "After owning the professional failure, this is where the deeper truth becomes earned. Show what the defeat finally made impossible to ignore, then give the audience the truth you carried out of it.",
+      label: 'Video 6 of 7: What The Hardest Part Taught Me',
+      title: 'Name The Larger Truth You Earned',
+      body: "After owning the failure, show what the aftermath made impossible to ignore. This larger professional truth must grow from that defeat, deepen your first realization, change something observable in your work, and give the audience a lens they can use.",
       result: 'Authority',
       framework: [
-        {name:'Hook',                  trigger:'Sacred Cow Slaughter'},
-        {name:'The Myth',              trigger:'Logic Re-stack'},
-        {name:'The Elixir',            trigger:'Paradigm Break'},
-        {name:'The Natural Invitation',trigger:'Status Shift'}
+        {name:'Hook',                    trigger:'Earned Evidence'},
+        {name:'What The Failure Exposed',trigger:'Discovery Arc'},
+        {name:'The Larger Truth',        trigger:'Cognitive Reframe'},
+        {name:'The Useful Lens',         trigger:'Authority Through Value'}
       ],
-      triggers: ['Sacred Cow Slaughter','Logic Re-stack','Emotional Safety','Paradigm Break','Future Pacing','Status Shift','Natural Invitation']
+      triggers: ['Earned Evidence','Discovery Arc','Cognitive Reframe','Usable Lens','Stakes and Possibility','Clear Professional Truth','Earned Perspective']
     }
   },
   7: {
@@ -1606,15 +1606,15 @@ const INTRO_COPY = {
       triggers: ['Full Circle Loop','Narrative Satisfaction','New Normal Declaration','Reciprocity','Bridge to Forever','Authority Affirmation','Unfolding Horizon']
     },
     L2: {
-      label: 'Video 7 of 7: The Resolution',
-      title: 'Reflect On What You Built. Invite The Right Person.',
-      body: "Seven videos. That's a full story: your origin, your beliefs, your process, your character. This final video closes the arc. You're reflecting on what you set out to do and what actually happened. And you're leaving one open door for exactly the right person. No hard sell. Just honest intention.",
+      label: 'Video 7 of 7: What I Carry Forward',
+      title: 'Show What You Own Now',
+      body: "Bring the larger expert story home. Compare your earlier relationship to your knowledge and visibility with who you are now, acknowledge what remains unfinished, and name what telling this story clarified about your work and the people you understand. The final invitation is relational: give the right viewer a reason to keep following your perspective.",
       result: 'Loyalty',
       framework: [
         {name:'Hook',                      trigger:'Full Circle Loop'},
-        {name:'The Business Shift',        trigger:'New Normal Declaration'},
-        {name:'The Final Proof',           trigger:'Authority Affirmation'},
-        {name:'The Partnership Invitation',trigger:'Unfolding Horizon'}
+        {name:'What Changed',              trigger:'New Normal Declaration'},
+        {name:'What Remains',              trigger:'Honest Authority'},
+        {name:'What Continues',            trigger:'Unfolding Horizon'}
       ],
       triggers: ['Full Circle Loop','Narrative Satisfaction','New Normal Declaration','Reciprocity','Bridge to Forever','Authority Affirmation','Unfolding Horizon']
     }
@@ -1633,12 +1633,12 @@ const VIDEO_EASY_PROMPTS = {
   ],
   2: [
     null,
-    { label: 'What part of your past kept shaping you before you understood why?', hint: 'Describe the ordinary world you were in, the thread or unlikely chapter that kept showing up, and why you did not recognize or follow it yet.', key: 'easyAnswer_v1' },
-    { label: 'What\'s a belief you held for a long time that turned out to be wrong?', hint: 'What cracked it open? Walk me through how you arrived at seeing it differently. The journey matters more than the conclusion.', key: 'easyAnswer_v2' },
-    { label: 'Tell me about one moment when an old pattern met a new behavior.', hint: 'What happened, what would you normally have done, what did you do differently, what did that reveal, and what is still difficult?', key: 'easyAnswer_v3' },
-    { label: 'In the work or expertise story you have been telling, what failure was so devastating that you thought your career, business, reputation, livelihood, or future might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?', hint: 'Tell us what collapsed, what you believed might be gone forever, and why you could not see a professional way back. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.', key: 'easyAnswer_v4' },
-    { label: 'What do you believe now that you couldn\'t have said before the fall?', hint: 'The deeper truth, reframe, or conviction you earned by naming the hard thing. Not a generic lesson. The truth you can carry forward.', key: 'easyAnswer_v5' },
-    { label: 'What did doing these 7 videos teach you that you didn\'t know at the start?', hint: 'The honest accounting. What changed? What would you tell yourself at the beginning? What do you want to give your audience?', key: 'easyAnswer_v6' }
+    { label: 'What part of your past kept shaping you before you understood why?', hint: 'Describe the everyday life you were in, the thread or unlikely chapter that kept showing up, and why you did not recognize or follow it yet.', key: 'easyAnswer_v1' },
+    { label: 'What is one thing you used to think was true about your work or field that experience proved was wrong or incomplete?', hint: 'Describe the real situation that exposed the problem, the new lens you earned, what the old thinking costs, and why this matters to the people you understand.', key: 'easyAnswer_v2' },
+    { label: 'Where has your first professional realization met the reality of communicating your expertise publicly?', hint: 'Describe one concrete moment, what your usual expert instinct wanted to do, what you did instead, what it revealed, and what remains difficult.', key: 'easyAnswer_v3' },
+    { label: 'In the work, craft, calling, or expertise story you have been telling, what failure was so devastating that you thought what you had built or hoped to build might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?', hint: 'Tell us what collapsed, what seemed permanently lost, and why you could not see a way back in this part of your life. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.', key: 'easyAnswer_v4' },
+    { label: 'What larger professional truth did that difficult experience force you to understand, and how did it deepen the first realization you shared?', hint: 'Trace how the truth emerged through the aftermath or rebuilding, what it changed in your work or decisions, and what useful lens it gives someone facing the problem now.', key: 'easyAnswer_v5' },
+    { label: 'Who were you before the two professional realizations and the hardest part of the story, and who are you now in relation to your expertise and the people you want to reach?', hint: 'Describe what genuinely changed, what remains unfinished or still needed, what telling the story clarified about your work, and what perspective or mission you want the right viewer to keep following.', key: 'easyAnswer_v6' }
   ]
 };
 
@@ -1726,7 +1726,7 @@ function buildPhase2ContextLines() {
 
 const VIDEO_STORY_LABELS = {
   1: ['YOUR INTRODUCTION', 'HERE\'S WHO I AM', 'WHAT I USED TO THINK WAS TRUE', 'WHAT IT\'S ACTUALLY BEEN LIKE', 'THE HARDEST PART', 'WHAT I SEE DIFFERENTLY NOW', 'WHAT I LEARNED'],
-  2: ['YOUR INTRODUCTION', 'YOUR ORIGIN', 'YOUR FIRST EPIPHANY', 'YOUR ROAD OF TRIALS', 'YOUR FALL', 'YOUR SECOND EPIPHANY', 'YOUR RETURN']
+  2: ['YOUR INTRODUCTION', 'HOW YOU GOT HERE', 'WHAT YOU SEE DIFFERENTLY', 'WHAT THE WORK LOOKS LIKE', 'THE HARDEST PART', 'WHAT THE HARDEST PART TAUGHT YOU', 'WHAT YOU CARRY FORWARD']
 };
 
 const LEVEL_2_STORY_BEATS = [
@@ -1739,7 +1739,7 @@ const LEVEL_2_STORY_BEATS = [
    'The Hidden Thread: the interest, frustration, detour, or pattern you kept returning to',
    'The Identity Clue: why that detail may have mattered before you understood it',
    'The Refusal: what kept you from following the thread sooner'],
-  // V3 — YOUR EPIPHANY (7-beat structure)
+  // V3 — YOUR FIRST PROFESSIONAL REALIZATION (7-beat structure)
   ['Pattern Break: a familiar experience seen an unfamiliar way (cognitive friction)',
    'Discovery Arc: how you arrived at the insight (the journey, not just the conclusion)',
    'Cognitive Reframe: the old lens cracks; the new one snaps into place',
@@ -1747,23 +1747,23 @@ const LEVEL_2_STORY_BEATS = [
    'Cost Revelation: what it costs to not see it this way (honest, not fear-based)',
    'Simplicity Signal: the reframe in one sentence. Screenshot-worthy.',
    'Authority Anchor: viewer associates you with insight without you claiming it'],
-  // V4 — THE ROAD OF TRIALS
+  // V4 — THE WORK IN PUBLIC
   ['Old Pattern vs. New Behavior: one concrete moment where the two collided',
    'Small Win Proof: the subtle behavioral evidence that something shifted',
    'Real-Time Transparency: what still feels difficult right now',
    'Trial Meaning: what this test proves without claiming the journey is complete'],
-  // V5 — THE FALL
+  // V5 — THE HARDEST PART
   ['False Confidence: what you thought the first realization had solved',
    'The Collapse: the moment the failure became impossible to dismiss',
    'Your Responsibility: the decision, avoidance, or blind spot that caused or worsened it',
    'Apparent Permanent Loss: what seemed destroyed or over for good',
    'Failed Recovery: what you tried, why it failed, and why no way back was visible'],
-  // V6 — THE SECOND EPIPHANY / ELIXIR
-  ['The Old Belief or Myth: what survived until the fall exposed it',
-   'The Ordeal Evidence: what made that belief impossible to keep',
-   'The Elixir: the deeper truth you can now carry forward',
-   'The Other Side: what becomes possible when the old belief stops deciding'],
-  // V7 — THE RETURN
+  // V6 — THE LARGER PROFESSIONAL TRUTH
+  ['The Earlier Understanding: what the hardest part proved was incomplete',
+   'The Aftermath: how the larger truth became impossible to ignore',
+   'The Larger Truth: what you can now carry into the work',
+   'The Useful Lens: what someone else can recognize or do differently'],
+  // V7 — WHAT YOU CARRY FORWARD
   ['The Return: the concrete difference between the person who started and the person here now',
    'Full Circle: loop back to where you started, the audience feels the arc close',
    'What Changed: not performance of growth, but the actual honest accounting',
@@ -2352,17 +2352,17 @@ const level2Videos = [
     prompts:[]
   },
   {
-    title:"The Origin Story",
+    title:"How I Got Here",
     note:"Your audience needs to understand the path that formed what you know. Stay with the detour, wound, obsession, or unlikely chapter before you understood its professional meaning. This is the origin, not the industry lesson yet.",
     prompts:[
-      {label:"How did you get into this? Not the professional version. The real story of how you ended up knowing what you know.",hint:"Maybe it was accidental. Maybe you were trying to solve your own problem. Maybe someone else's problem landed in your lap and you realized you were good at this. What actually happened?",key:"v1p0",ph:"e.g. I got into this because my sister was drowning in debt after her divorce and I helped her build a plan that got her out in 18 months. Her friends started asking me for help. Then their friends."},
+      {label:"How did you get into this? Skip the polished professional answer. What is the real story of how you ended up knowing what you know?",hint:"Maybe it was accidental. Maybe you were trying to solve your own problem. Maybe someone else's problem landed in your lap and you realized you were good at this. What actually happened?",key:"v1p0",ph:"e.g. I got into this because my sister was drowning in debt after her divorce and I helped her build a plan that got her out in 18 months. Her friends started asking me for help. Then their friends."},
       {label:"What detour, wound, obsession, or unlikely chapter shaped the way you understand this work?",hint:"The part of the story that may not look professional on paper but changed what you notice, care about, or do differently. Give one concrete detail.",key:"v1p1",ph:"Describe the chapter that formed your lens before you had language for it."},
-      {label:"What did you misunderstand about that path at the time, or why did you resist seeing it as part of your expertise?",hint:"Stay inside the earlier perspective. Maybe it looked like wasted time, failure, a side interest, or something that did not count. Save the clean professional reframe for Video 3.",key:"v1p2",ph:"Describe what you believed about that path before its meaning became clear."}
+      {label:"What did you misunderstand or resist about treating that path as expertise, and why does this work matter to you personally now?",hint:"Start inside the earlier perspective: why did the chapter look irrelevant, unprofessional, or unworthy of claiming? Then name the human reason the work matters to you now without turning it into an industry lesson or business pitch.",key:"v1p2",ph:"Describe what you resisted about the path and why the work matters personally now."}
     ],
     compile:v=>`How I got into this: ${v.v1p0||'___'}. The unlikely chapter that shaped my lens: ${v.v1p1||'___'}. What I misunderstood or resisted about that path: ${v.v1p2||'___'}.`
   },
   {
-    title:"The First Epiphany",
+    title:"What I See Differently",
     note:"Seven beats, one shift. You're not sharing a hot take. You're sharing a genuine paradigm shift. Something 'everyone knows' in your field that you've come to believe is wrong, the moment you saw the cracks, and the reframe that changes everything.",
     prompts:[
       {label:"What's something that 'everyone knows' in your field or area of expertise that you've come to believe is wrong, incomplete, or actually harmful?",hint:"The advice that gets passed around like gospel. The method everyone defaults to. The first thing a beginner is told that a veteran knows is oversimplified. You've been close enough to see the cracks in it. What is it?",key:"v2p0",ph:"e.g. everyone says 'make a budget and stick to it'... the discipline narrative. I've watched hundreds of people make perfect budgets and fail completely within three weeks."},
@@ -2374,21 +2374,21 @@ const level2Videos = [
     compile:v=>`What 'everyone knows' that I think is wrong: ${v.v2p0||'___'}. When I first saw the cracks: ${v.v2p1||'___'}. What's actually true: ${v.v2p2||'___'}. What it costs people to follow the old way: ${v.v2p3||'___'}. Why this needs to be said: ${v.v2p4||'___'}.`
   },
   {
-    title:"The Road Of Trials",
-    note:"Your first professional epiphany now has to survive public practice. Show one concrete collision between your expert instincts and the new behavior visibility required. Authority comes from how you read the trial, not from teaching or reporting progress.",
+    title:"What The Work Looks Like",
+    note:"Your first professional realization now has to survive public practice. Show one concrete collision between your expert instincts and the new behavior visibility required. Authority comes from how you read the experience, not from teaching or reporting progress.",
     prompts:[
       {label:"Tell me about one specific moment when your usual expert instinct showed up while you were communicating publicly.",hint:"A real scene. What were you tempted to overexplain, hide, control, perfect, dismiss, or avoid? What would you normally have done?",key:"v3p0",ph:"Describe the exact public moment and the expert habit it triggered."},
       {label:"What did you actually do differently this time?",hint:"Make the change observable. What did you simplify, say plainly, leave imperfect, publish, ask, or allow the audience to see?",key:"v3p1",ph:"Describe the different action you took in that moment."},
       {label:"What happened because you acted differently, and what did it reveal about your expertise or communication?",hint:"Use only a real result. It can be something you noticed internally; you do not need a client, comment, message, metric, or public response.",key:"v3p2",ph:"Describe the real consequence and what made it unexpected."},
-      {label:"What is still difficult about being seen doing this work, even after that small win?",hint:"Name the remaining friction specifically. This is a trial, not proof that visibility is solved, and the unresolved cost prepares the fall in Video 5.",key:"v3p3",ph:"Describe where the old expert pattern still has a hold on you."}
+      {label:"What is still difficult about being seen doing this work, even after that small win?",hint:"Name the remaining friction specifically. This is one test, not proof that visibility is solved, and the unresolved cost prepares the hardest part of the story in Video 5.",key:"v3p3",ph:"Describe where the old expert pattern still has a hold on you."}
     ],
     compile:v=>`The specific public trial: ${v.v3p0||'___'}. What I did differently: ${v.v3p1||'___'}. What happened and what it revealed: ${v.v3p2||'___'}. What is still difficult about being seen: ${v.v3p3||'___'}.`
   },
   {
-    title:"The Fall",
-    note:"Now we are returning to the larger work or expertise story you have been telling, not the experience of making these videos. This is the chapter where the professional world you had built came closest to collapsing. Choose the failure or period when you genuinely wondered whether your career, business, reputation, livelihood, or future would recover. Do not tell us what you eventually learned or how everything worked out. Answer from who you were while it was happening.",
+    title:"The Hardest Part",
+    note:"Now we are returning to the larger work, craft, calling, or expertise story you have been telling, not the experience of making these videos. This is the chapter where what you had built or hoped to build came closest to collapsing. Choose the failure or period when you genuinely wondered whether this part of your future would recover. Do not tell us what you eventually learned or how everything worked out. Answer from who you were while it was happening.",
     prompts:[
-      {label:"Thinking about the work or expertise story you have been discussing, what failure or period brought you closest to believing your career, business, reputation, livelihood, or future might never recover?",hint:"Choose something that actually happened, rather than something you feared might happen. If there was not one dramatic event, describe the period when the professional world you had built gradually fell apart.",key:"v4p0",ph:"Describe the professional failure or period when you thought you might not recover."},
+      {label:"Thinking about the work, craft, calling, or expertise story you have been discussing, what failure or period brought you closest to believing what you had built or hoped to build might never recover?",hint:"Choose something that actually happened, rather than something you feared might happen. You do not need to own a business or have clients. If there was not one dramatic event, describe the period when your work, confidence, reputation, livelihood, direction, or hoped-for future gradually fell apart.",key:"v4p0",ph:"Describe the failure or period when what you had built or hoped to build seemed lost."},
       {label:"Take us to the moment you realized this was more than an ordinary professional setback. What had happened, and what made the consequences feel impossible to repair?",hint:"Give us something we can picture. Where were you? Who else was affected? What result, conversation, loss, message, or realization made the seriousness impossible to ignore?",key:"v4p4",ph:"Describe the moment the full professional seriousness became real."},
       {label:"Why was it your fault? What did you do, avoid, ignore, refuse to admit, overestimate, or get completely wrong that caused the failure or made it worse?",hint:"Look for the professional decision that was yours: the warning you ignored, the conversation you avoided, the risk you underestimated, the responsibility you mishandled, or the moment you knew better and continued anyway. Tell us what you should have done differently and why you did not do it.",key:"v4p1",ph:"Describe the professional decision, avoidance, or blind spot that was yours."},
       {label:"What did this failure take from you, your work, or the people who depended on you, and what did you believe might be permanently over?",hint:"Go beyond saying it was difficult. What livelihood, credibility, trust, opportunity, relationship, body of work, identity, or future seemed impossible to restore? Why did that loss feel capable of ending everything you had built?",key:"v4p2",ph:"Describe what seemed permanently lost professionally and why it mattered so much."},
@@ -2397,28 +2397,28 @@ const level2Videos = [
     compile:v=>`The professional failure or period when I thought I might not recover: ${v.v4p0||'___'}. The moment I realized this was more than a setback: ${v.v4p4||'___'}. Why it was my fault: ${v.v4p1||'___'}. What I believed might be permanently over: ${v.v4p2||'___'}. What I tried that failed and what I believed at the lowest point: ${v.v4p3||'___'}.`
   },
   {
-    title:"The Second Epiphany",
-    note:"Deeper. More personal. More convicted. After naming what visibility costs you, this is the myth or truth you can finally say with earned authority. You're not sharing an opinion, you're sharing what you can't unsee.",
+    title:"What The Hardest Part Taught Me",
+    note:"This is the larger professional truth earned through the difficult experience you just described. It must deepen or correct the first realization rather than becoming another unrelated hot take. Show how the defeat changed your understanding, your work, and the lens you can now give someone else.",
     prompts:[
-      {label:"What's the biggest myth or most overused piece of advice in your field that you've come to believe is actually wrong — or even harmful?",hint:"The sacred cow. The thing every guru says. The advice that gets repeated so often nobody questions it anymore. You question it. You've seen what happens when people follow it. What is it?",key:"v5p0",ph:"e.g. the biggest myth in my field is that consistency is the answer. Post every day, show up every day, grind every day. I've watched people burn out following that advice and then blame themselves for failing."},
-      {label:"Tell the story of your own relationship with this belief. Did you used to follow it? Teach it? What happened that made you turn against it?",hint:"The most powerful version of this is when YOU were a believer first. You followed the playbook. You recommended it to others. And then something happened that made you see it was broken. That personal journey from believer to heretic is what makes this credible, not preachy.",key:"v5p1",ph:"e.g. I used to tell my clients this. I believed in it. I built my own routine around it. And then I watched my most dedicated client, someone who followed every rule, completely crater her mental health in pursuit of consistency and end up taking six months off."},
-      {label:"What's the actual truth — the thing that works but nobody talks about because it's less sexy, less simple, or threatens the established way of doing things?",hint:"The real answer. The thing you've figured out through doing the work, not reading about the work. It might be simpler than the myth. It might be harder. But it's TRUE, and you can back it up with your own experience and results.",key:"v5p2",ph:"e.g. depth beats volume every time. One video that changes how someone thinks is worth more than thirty that they half-watch. The people winning aren't the ones posting most. They're the ones saying the most true thing."},
-      {label:"What happens to people who keep following the myth? What have you watched it cost your peers, your clients, or people in your space?",hint:"Be specific. Not 'they fail.' HOW do they fail? What does it look like? The wasted money, the wasted time, the frustration, the quitting.",key:"v5p3",ph:"e.g. they burn out. They create for months, see no results, decide they're not interesting enough, and quit. The myth told them consistency would compound. Nobody told them they also needed to have something worth saying."},
-      {label:"Who specifically needs to hear this, and what would change for them if they actually believed you?",hint:"Picture one specific person. A client, a peer, someone who asked you for advice last week. If THEY got this, really got it, what would shift for them? That's the emotional engine. That's why you're saying this out loud instead of keeping it to yourself.",key:"v5p4",ph:"e.g. this is for the expert who's been posting dutifully for months with nothing to show for it and is starting to think the problem is them. It's not them. They just got sold a system designed for content farms, not humans with something to say."}
+      {label:"Looking back at the difficult experience you just described, what larger truth about your work, your field, or the people you serve became impossible for you to ignore?",hint:"Choose the truth you could not have earned before that defeat. It may challenge familiar advice, but it must grow directly from what happened to you rather than becoming a separate industry opinion.",key:"v5p0",ph:"Describe the larger professional truth the difficult experience made impossible to ignore."},
+      {label:"How did that truth become clear through the aftermath, failed recovery, or rebuilding?",hint:"Walk through the evidence. What did you try, notice, lose, rebuild, or finally stop doing that changed your interpretation of the failure? Give the story that earned the truth instead of jumping straight to the lesson.",key:"v5p1",ph:"Describe how the larger truth emerged through the aftermath or rebuilding."},
+      {label:"How does this larger realization deepen, correct, or complete the first professional realization you shared earlier?",hint:"The first realization changed the direction of the story. The difficult experience showed what that lens still could not explain. Name what became more complete without simply repeating the first insight.",key:"v5p2",ph:"Describe how the second realization changes or completes the first."},
+      {label:"What changed in the way you work, decide, communicate, or help people once you understood this?",hint:"Make the larger truth observable. Describe a real choice, standard, boundary, method, or way of seeing that changed because the difficult experience taught you something theory could not.",key:"v5p3",ph:"Describe what genuinely changed in your work or decisions."},
+      {label:"Who is still facing this problem the way you once did, and what could this truth help them recognize or do differently?",hint:"Picture one specific person whether or not they are a client. What are they misreading, repeating, or blaming themselves for? Give them the useful lens you paid for through experience.",key:"v5p4",ph:"Describe who needs this lens and what it could help them recognize."}
     ],
-    compile:v=>`The biggest myth in my field: ${v.v5p0||'___'}. My own journey with this belief: ${v.v5p1||'___'}. What's actually true: ${v.v5p2||'___'}. What it costs people who keep following the myth: ${v.v5p3||'___'}. Who specifically needs to hear this: ${v.v5p4||'___'}.`
+    compile:v=>`The larger professional truth the difficult experience exposed: ${v.v5p0||'___'}. How it became clear through the aftermath: ${v.v5p1||'___'}. How it deepens or corrects my first realization: ${v.v5p2||'___'}. What changed in my work or decisions: ${v.v5p3||'___'}. Who needs this lens and what it could help them recognize: ${v.v5p4||'___'}.`
   },
   {
-    title:"What I Learned",
-    note:"Seven videos. A complete arc. Close it honestly: what you set out to prove, what you actually learned, what you'd tell someone at the beginning, and one open door for the right person.",
+    title:"What I Carry Forward",
+    note:"Close the larger expert story, not merely the filming experience. Compare your earlier relationship to your expertise with who you are now, acknowledge what remains unfinished, name what telling the story clarified, and open an ongoing relationship with the people who value your perspective.",
     prompts:[
-      {label:"When you filmed Video 1, what were you trying to prove — to yourself, to your audience, to your industry? Did you prove it?",hint:"Go back to the beginning. You had an intention — maybe it was clear, maybe it was vague. What was it? And now, seven videos later — did the challenge deliver what you expected? Or did it deliver something else entirely?",key:"v6p0",ph:"e.g. I started this wanting to prove I could show up consistently without a perfect strategy in place. Did I prove it? Sort of. What I actually proved was more interesting — that the strategy becomes obvious once you start."},
-      {label:"What did this challenge teach you about your own expertise that you didn't know before? Not about content or filming. About the actual WORK you do and who you do it for.",hint:"Putting your knowledge on camera forces a kind of clarity that nothing else does. You had to simplify. You had to choose what matters. What did that process reveal about what you actually know and what you actually care about?",key:"v6p1",ph:"e.g. this challenge taught me that I know far more than I realize, and I've been gatekeeping it behind a fear of saying something imperfect. The act of saying it imperfectly taught me more about my expertise than a year of preparation would have."},
-      {label:"What's the one thing you'd tell someone in your field who's been hiding behind their work instead of putting themselves out there?",hint:"You were that person seven videos ago. Now you're not. What do you know from the inside that they can't see from the outside? Not motivational fluff. The real, practical, emotional truth about what it takes and what it gives back.",key:"v6p2",ph:"e.g. I'd tell them: the fear doesn't go away before you start. It goes away because you started. There's no version of this where you feel ready first."},
-      {label:"What do you still need? Be honest. What did this challenge show you about where you need to grow, what support you need, or what's missing from your next chapter?",hint:"You just did something real. You proved something. And in the process, you probably saw clearly what the next level requires. Maybe it's help with systems. Maybe it's community. Maybe it's accountability. Whatever it is — naming it isn't weakness. It's the most strategic thing you can do.",key:"v6p3",ph:"e.g. what I still need is a real framework for turning this visibility into actual conversations with the right people. The videos are working. I don't yet have a clear path from 'someone watches' to 'someone reaches out.'"},
-      {label:"If the right person is watching this — the exact person you've been making these videos for — what's your invitation to them? Not a pitch. An open door.",hint:"You've spent seven videos showing this person who you are, what you know, and what you believe. They trust you. So what do you want to say to them? The specific person, the specific problem, the specific next step. That's it. That's enough.",key:"v6p4",ph:"e.g. if you're a consultant or coach who knows you're good at what you do but keeps struggling to get visible in a way that feels authentic — reach out. Not to pitch you anything. Just to talk about what's actually in the way."}
+      {label:"Before the two professional realizations and the hardest part of the story, how did you see your expertise, your place in the work, and your right to speak about it publicly?",hint:"Return to the person behind Video 1 and the origin in Video 2. What did you believe made knowledge count? What were you waiting to prove, earn, perfect, or receive permission for?",key:"v6p0",ph:"Describe your earlier relationship to your expertise and public voice."},
+      {label:"Who are you now in relation to your expertise and the people you want to reach, and what do you do differently because of what you lived through?",hint:"Make the return observable. Name a real change in how you decide, communicate, practice, teach, create, lead, or allow yourself to be seen.",key:"v6p1",ph:"Describe who you are now and what is genuinely different in your work or public voice."},
+      {label:"What remains unfinished, and what do you still need in order to grow into the work, impact, or public role you now see more clearly?",hint:"Authority does not require pretending you are complete. Name the specific skill, support, courage, structure, experience, or unresolved tension that belongs to the next chapter without asking the audience to rescue you.",key:"v6p2",ph:"Describe what remains unfinished or what you still need."},
+      {label:"What did telling this larger story across seven videos help you understand or finally put into words about your work and the people you understand?",hint:"The videos did not create your expertise or your whole transformation. What connection, pattern, responsibility, audience, or professional truth became clearer when you had to tell the complete story?",key:"v6p3",ph:"Describe what telling the story helped you clarify about your work and audience."},
+      {label:"What perspective, work, or mission are you carrying forward, and why would the right person want to keep following where you take it?",hint:"Name the direction and the relationship, not an offer. What will you keep noticing, questioning, building, practicing, or saying that makes your continuing story worth staying connected to?",key:"v6p4",ph:"Describe what you are carrying forward and why the right viewer should stay."}
     ],
-    compile:v=>`What I was trying to prove + did I: ${v.v6p0||'___'}. What the challenge taught me about my expertise: ${v.v6p1||'___'}. What I'd tell someone still hiding: ${v.v6p2||'___'}. What I still need: ${v.v6p3||'___'}. My invitation to the right person: ${v.v6p4||'___'}.`
+    compile:v=>`Who I was before both professional realizations and the hardest part of the story: ${v.v6p0||'___'}. Who I am now in relation to my expertise and audience: ${v.v6p1||'___'}. What remains unfinished or still needed: ${v.v6p2||'___'}. What telling the story clarified about my work and audience: ${v.v6p3||'___'}. What I am carrying forward and why the right viewer should stay: ${v.v6p4||'___'}.`
   }
 ];
 
@@ -3023,13 +3023,13 @@ const VIDEO_RATIONALE = {
     'WHERE WE ARE: Bring the larger story home by comparing who you were before both realizations with who you are now. The challenge helped you tell and understand that story. It did not create your whole transformation.'
   ],
   2: [
-    'WHERE WE ARE: The very first step of the Hero\'s Journey, still in the Ordinary World. The hero hasn\'t crossed the threshold yet. This is the moment before everything changes. Your audience sees themselves in you because you haven\'t become anything yet. You\'re just starting, exactly like they want to.',
-    'WHERE WE ARE: Still in the Ordinary World. The audience sees the life, detour, obsession, or frustration that was shaping you before you knew what it meant. This is an identity clue, not the final lesson. They should notice the hidden thread and wonder why you did not follow it sooner.',
-    'WHERE WE ARE: The first Epiphany. One old belief meets an experience it cannot explain, and the viewer watches a new lens become inevitable. This is the first win, not final wisdom. It gives the hero momentum and gives the audience a way to see something familiar differently.',
-    'WHERE WE ARE: The Road of Trials, exactly halfway through the journey. The first insight now has to survive behavior. One old pattern collides with one new action, creating a small win while something real remains difficult. The audience trusts the change because they can see it being tested.',
-    'WHERE WE ARE: This is the lowest point in the larger work or expertise story you have been telling: the failure that felt capable of permanently destroying your work, reputation, livelihood, or future. Your own decision or blind spot helped cause it, and recovery did not feel guaranteed. Stay inside what you believed then. The next video deals with the way back and what you eventually understood.',
-    'WHERE WE ARE: Finding the Elixir. After the fall, the hero can finally name the deeper truth. This is the earned reframe, the thing they can carry forward because they did not skip the hard part.',
-    'WHERE WE ARE: The Road Back. The Hero returns changed, carrying the Elixir. The circle closes. Your audience has watched a transformation happen in real time, and this video is where they feel it complete. The CTA here isn\'t about the next video. It\'s about the next chapter.'
+    'WHERE WE ARE: You are making the declaration and letting people see the gap between what you know privately and what you have been willing to own publicly. The audience needs quiet confidence, honest hesitation, and a reason to believe you will finish.',
+    'WHERE WE ARE: Let people see the path that formed your perspective before you explain the lesson. The real origin, unlikely chapter, resistance, and personal reason for caring make expertise feel human and earned.',
+    'WHERE WE ARE: One familiar professional belief meets an experience it cannot explain. Let the audience arrive at the new lens through the story. This is the first useful realization, not your final wisdom.',
+    'WHERE WE ARE: Your first professional realization now meets public practice. Show one expert instinct colliding with a different action, the real result, and what remains difficult. The quality of your observation reveals competence without a claim.',
+    'WHERE WE ARE: This is the lowest point in the larger work, craft, calling, or expertise story: the failure that threatened what you had built or hoped to build. Your own decision or blind spot helped cause it, and recovery did not feel guaranteed. Stay inside what you believed then.',
+    'WHERE WE ARE: The difficult experience has produced a larger professional truth. Show how the aftermath earned it, how it deepens the first realization, what changed in your work, and what useful lens another person can carry away.',
+    'WHERE WE ARE: Bring the larger expert story home. Compare your earlier relationship to your knowledge and visibility with who you are now, acknowledge what remains unfinished, and show why your continuing perspective is worth following.'
   ]
 };
 
@@ -5656,8 +5656,7 @@ function goToMvoScreen() {
 function renderMvoQuestion(qNum, level, mode) {
   const data = MVO_DATA['q'+qNum][level];
   const selected = state['mvoQ'+qNum] || {};
-  const isExtendedL2 = level === 2 && mode === 'extended';
-  const showFreewrite = level === 1 || isExtendedL2;
+  const showFreewrite = level === 1 || level === 2;
   const sub = getMvoSubtitle(qNum, level, mode);
   const chips = '<div class="mvo-chip-grid">' + data.cards.map(card => {
     const active = mvoCardMatches(selected, card);
@@ -5738,12 +5737,13 @@ function getMvoSubtitle(qNum, level, mode) {
   if (level === 1 && qNum === 2) return 'Pick the closest one.';
   if (level === 1 && qNum === 3) return 'Pick the closest one.';
   if (level === 1 && qNum === 4) return 'Pick the closest one, or describe it below in your own words.';
-  if (level === 2 && mode === 'simple') return 'Pick one.';
+  if (level === 2 && mode === 'simple') return "Pick the closest one, then add anything the choices don't capture.";
   return 'Use your own words if you want to give the script builder more context.';
 }
 
 function getMvoFreewriteLabel(qNum, level, mode) {
   if (level === 1 && mode === 'simple') return 'Add anything else that brought you here.';
+  if (level === 2 && mode === 'simple') return "Add what the choices don't capture.";
   if (level === 2 && mode === 'extended') return 'Use your words.';
   return 'Say it your way.';
 }

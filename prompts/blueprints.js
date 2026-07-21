@@ -781,7 +781,7 @@ TONE: Warm, relaxed, storytelling energy. Like the second conversation with some
 
 LEVEL 2 SPECIFIC: "About My Expertise" — the origin story of how they became someone who knows this stuff. Not a business pitch — the JOURNEY that created their knowledge. Works whether they have an LLC or just 15 years of experience.
 
-PROMPTS (L2): 1) Real story of how they got into this, 2) The detour, wound, obsession, or unlikely chapter that shaped their lens, 3) What they misunderstood or resisted about that path then
+PROMPTS (L2): 1) Real story of how they got into this, 2) The detour, wound, obsession, or unlikely chapter that shaped their lens, 3) What they resisted about treating that path as expertise and why the work matters personally now
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -906,29 +906,29 @@ After: "They failed, their own professional choices helped cause it, and experti
 Open question: "What truth could they eventually carry only after owning this defeat?"
 Social impulse: Follow because the professional failure makes the speaker trustworthy and the viewer needs to know what came out of it.
 
-THIS IS NOT A POSITIONING VIDEO AND IT IS NOT A REPORT ABOUT VISIBILITY ANXIETY. This is the completed professional defeat after the first breakthrough. Something went wrong. The speaker lost credibility, trust, money, time, opportunity, a relationship, momentum, confidence, or something else that mattered. Their own choice, avoidance, overconfidence, blind spot, refusal, or failure helped cause it or made it worse. Expertise did not save them. They are not the villain, but they are responsible.
+THIS IS NOT A POSITIONING VIDEO AND IT IS NOT A REPORT ABOUT VISIBILITY ANXIETY. This is the completed defeat inside the speaker's work, craft, calling, or developing expertise after the first breakthrough. Something went wrong. The speaker lost credibility, trust, money, time, opportunity, a relationship, momentum, confidence, direction, access to the work, or a future they were trying to build. Their own choice, avoidance, overconfidence, blind spot, refusal, or failure helped cause it or made it worse. What they knew did not save them. They are not the villain, but they are responsible.
 
 THE FALL STANDARD — THE SYMBOLIC PROFESSIONAL DEATH OF THE HERO:
-This cannot be an ordinary professional setback with dramatic language placed on top. From inside the speaker's experience at that time, the failure must feel capable of permanently destroying their career, business, reputation, livelihood, body of work, responsibility to others, professional identity, or future. Recovery cannot feel guaranteed. The audience must understand why the speaker genuinely believed they might never come back from it. Embarrassment, a weak launch, a mistake that was quickly repaired, visibility anxiety, or fear of judgment does not qualify unless it produced a completed collapse with consequences that felt irreversible. Later recovery belongs to Video 6 and must not soften the fall.
+This cannot be an ordinary setback with dramatic language placed on top. From inside the speaker's experience at that time, the failure must feel capable of permanently destroying their career, business, reputation, livelihood, body of work, responsibility to others, confidence in their ability, path into the field, or hoped-for future. Recovery cannot feel guaranteed. The audience must understand why the speaker genuinely believed they might never come back from it. Embarrassment, a weak launch, a mistake that was quickly repaired, visibility anxiety, or fear of judgment does not qualify unless it produced a completed collapse with consequences that felt irreversible. Later recovery belongs to Video 6 and must not soften the fall. Do not assume an aspiring expert has clients, revenue, a company, or an established career.
 
 SPARSE ANSWER PERMISSION:
 A thin answer is not permission to write a vague ordeal. Use onboarding, every previous answer, every previous script, and the current response to reconstruct the most narratively coherent professional defeat. Infer unstated motives, causal connections, likely choices, emotional consequences, scene texture, and plausible connective details when the raw material is incomplete. Choose the strongest interpretation supported by the larger story and write it with conviction. The user can correct or personalize details in the editor. Do not hedge, apologize for missing information, output placeholders, or retreat into generic visibility advice. Do not invent a wholly unrelated disaster; every extrapolation must grow from the work and expertise context the speaker supplied.
 
 STRUCTURAL BEATS:
-1. Pattern Interrupt (Hook) — Open on unmistakable evidence that the speaker's professional world collapsed: the consequence, lost livelihood, destroyed trust, vanished future, or moment they knew expertise could not save them. Do not open with fear, progress, or strength.
-2. Ordeal Gap (Open Loop) — Make the viewer need to understand how someone with real expertise reached a point they believed might end everything and how their own choices helped create it. Do not reveal that they eventually recovered.
+1. Pattern Interrupt (Hook) — Open on unmistakable evidence that the speaker's work, path, or hoped-for future collapsed: the consequence, lost livelihood, destroyed trust, abandoned calling, vanished opportunity, or moment they knew what they knew could not save them. Do not open with fear, progress, or strength.
+2. Ordeal Gap (Open Loop) — Make the viewer need to understand how someone with real knowledge or a serious calling reached a point they believed might end everything and how their own choices helped create it. Do not reveal that they eventually recovered.
 3. False Confidence After The First Win — Briefly establish what the speaker believed their expertise or first breakthrough had proven before the fall.
 4. The Professional Choice And Escalation — Show what they did, avoided, refused to see, overestimated, or got wrong, then trace how it made the situation worse.
 5. The Collapse And Apparent Permanent Loss — Show what happened, the moment its seriousness became undeniable, who or what it harmed, and what the speaker believed had been destroyed or ended for good.
-6. Failed Recovery — Show what they tried afterward, why their expertise or old strategy was not enough, what remained broken, and why each attempt made the absence of a professional way back feel more real.
-7. Ownership At The Lowest Point (Conclusion) — Force the speaker to own that their professional strategy, flaw, or refusal helped bring them to a place they did not think they could recover from. End at the symbolic professional death with no visible way back. Do not reassure them, reveal recovery, explain how they overcame it, state the professional truth, or offer a silver lining.
+6. Failed Recovery — Show what they tried afterward, why their knowledge or old strategy was not enough, what remained broken, and why each attempt made the absence of a way back into the work feel more real.
+7. Ownership At The Lowest Point (Conclusion) — Force the speaker to own that their choice, strategy, flaw, or refusal helped bring them to a place they did not think they could recover from. End at the symbolic death of the work, identity, or hoped-for future with no visible way back. Do not reassure them, reveal recovery, explain how they overcame it, state the larger truth, or offer a silver lining.
 8. Ethical Bridge (CTA) — Continue from that unresolved truth into one clear action and reason connected to Video 6's second epiphany.
 
 TONE: Stark, raw, intimate, almost uncomfortable. Words chosen carefully. No reassurance, recovery, neat resolution, or premature authority. The defeat and responsibility are the point.
 
-LEVEL 2 SPECIFIC: A completed failure in the speaker's work, expertise, leadership, credibility, or application of what they know. It must not collapse into imposter syndrome, hypothetical judgment, fear of visibility, or the cost of staying small.
+LEVEL 2 SPECIFIC: A completed failure in the speaker's work, craft, calling, leadership, credibility, path into the field, or application of what they know. It must work for an aspiring expert as well as an established professional, and it must not collapse into imposter syndrome, hypothetical judgment, fear of visibility, or the cost of staying small.
 
-PROMPTS (L2): 1) The professional failure or period when they thought their work or future might never recover, 2) The moment they realized it was more than an ordinary professional setback, 3) What they did, avoided, ignored, overestimated, or got wrong that made it their fault, 4) What they believed might be permanently over, 5) What they tried afterward that failed and what they believed at the lowest point
+PROMPTS (L2): 1) The failure or period when they thought their work, calling, path, or future might never recover, 2) The moment they realized it was more than an ordinary setback, 3) What they did, avoided, ignored, overestimated, or got wrong that made it their fault, 4) What they believed might be permanently over, 5) What they tried afterward that failed and what they believed at the lowest point
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -937,18 +937,18 @@ Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design t
 
 VIDEO 5, LEVEL 2: Tone = Raw, intimate, almost uncomfortable (Damien Rice "The Blower's Daughter" — close-mic'd, vulnerable, person underneath)
 HOOK guidance: Use the most concrete, socially risky evidence that the speaker's professional world had already collapsed or that something they believed permanent was gone. Do not open with fear, authority, progress, or recovery.
-OPEN LOOP guidance: Make the viewer need to understand how someone with real expertise reached a point they believed might permanently end their work or future and how their own choices helped cause it. Do not reveal that they eventually recovered.
-CONCLUSION guidance: Name the speaker's responsibility and leave them where no professional way back was visible. Keep them inside the potentially permanent consequence. Do not reassure them, reveal recovery, state the elixir, or convert failure into authority yet.
-CTA guidance: Connect the unresolved professional defeat to the next video. Ask the viewer to follow because the next installment of the 7 Video Challenge reveals the hard-won truth the speaker could understand only after losing.
+OPEN LOOP guidance: Make the viewer need to understand how someone with real knowledge or a serious calling reached a point they believed might permanently end their work, path, or future and how their own choices helped cause it. Do not reveal that they eventually recovered.
+CONCLUSION guidance: Name the speaker's responsibility and leave them where no way back into the work was visible. Keep them inside the potentially permanent consequence. Do not reassure them, reveal recovery, state the elixir, or convert failure into authority yet.
+CTA guidance: Connect the unresolved defeat to the next video. Ask the viewer to follow because the next installment of the 7 Video Challenge reveals the hard-won truth the speaker could understand only after losing.
 
 VIDEO 5 FINAL GATE:
-- A professional defeat actually happened; the script is not organized around fear, visibility anxiety, or a hypothetical outcome.
-- The event clears the Fall Standard: the speaker genuinely believed their career, business, reputation, livelihood, or future might never recover.
-- Something central to the speaker's professional world seemed destroyed or over for good.
+- A real defeat inside the work, craft, calling, or path actually happened; the script is not organized around fear, visibility anxiety, or a hypothetical outcome.
+- The event clears the Fall Standard: the speaker genuinely believed their work, confidence, path, livelihood, reputation, body of work, or hoped-for future might never recover.
+- Something central to the speaker's relationship with the work seemed destroyed or over for good.
 - The speaker's own choice, avoidance, overconfidence, blind spot, refusal, or failure caused or materially worsened the defeat.
 - The attempted recovery failed, making the absence of a way back feel real rather than theatrical.
-- The conclusion leaves the hero at the symbolic professional death without reassurance, recovery, lesson, authority, or silver lining.
-- Video 6 is needed for the professional meaning and elixir, not merely to reveal whether a future event worked.
+- The conclusion leaves the speaker at the symbolic death of the work, identity, or hoped-for future without reassurance, recovery, lesson, authority, or silver lining.
+- Video 6 is needed for the larger meaning and elixir, not merely to reveal whether a future event worked.
 </l2_v5_rules>
 
 <l2_v6_rules>
@@ -959,37 +959,37 @@ Audience feels: Authority + Respect
 Speaker feels: Convicted
 
 AUDIENCE JOURNEY:
-Before: "They admitted what visibility costs them. I want to know what they see now."
-After: "They are willing to name the myth, and the myth suddenly feels expensive."
+Before: "I saw this expert lose something real. I need to know what that defeat ultimately exposed."
+After: "Their larger professional truth was paid for by the fall, and I can now use that lens in my own decisions."
 Open question: "What do they return with now?"
 Social impulse: Follow because the hard-won professional truth gives the viewer a perspective they want more of.
 
-Video 3 worked through COGNITIVE SURPRISE. Video 6 works through EARNED CONVICTION. This is not another hot take. This is the elixir found after the fall: the professional truth, industry myth, or hard-won point of view the speaker can now carry forward.
+Video 3 worked through COGNITIVE SURPRISE. Video 6 works through EARNED CONVICTION. This is not another hot take or an unrelated industry opinion. This is the elixir found inside the specific Video 5 fall: the larger professional truth the ordeal made impossible to avoid. It may expose a protected industry myth, but only when that myth is causally connected to what the speaker lost, tried, and eventually understood.
 
 ESCALATED EPIPHANY CONSTRUCTION ORDER:
 Design the CONCLUSION elixir first. It is the destination that determines which facts from the fall must be reinterpreted and what professional truth can now be carried forward. Design the CTA with that conclusion. Then reverse-engineer the seamless MEAT through what the speaker admitted, what the fall exposed, what changed after they stopped avoiding it, and how the elixir was earned. Design the OPEN LOOP from the missing meaning without revealing the elixir, then engineer the independent HOOK last from concrete ordeal evidence.
 
 THE 7 ESCALATED EPIPHANY BEATS:
-1. Pattern Break -> "Sacred Cow Slaughter" — Goes after something PROTECTED. A belief people defend. The audience feels a jolt.
-2. Discovery Arc -> "Logic Re-stack" — Not just a story — a dismantling. Walk through the logic of the old belief and show it falls apart. Through experience, not argument.
-3. Cognitive Reframe -> "Elixir" — The new truth is not just a take. It is something they can carry into their work and relationships.
-4. "Aha" Transfer -> "Emotional Safety" — This epiphany is more threatening to the viewer's beliefs. Create a safe container. Not "you're wrong" but "I believed it too, and letting go was the best thing I ever did."
-5. Cost Revelation -> "Future Pacing" — Instead of just showing the cost, show what life or work looks like on the OTHER side. What opens up when you let go?
-6. Simplicity Signal -> "Status Shift" — The viewer feels smarter for seeing this. "I was asleep to this and now I'm awake."
-7. Authority Anchor -> "Natural Invitation" — The video ends making the right person think "I want more of this person's world."
+1. Pattern Break -> Earned Evidence — Open with a concrete consequence, choice, or contradiction from the fall or its aftermath. The jolt comes from what happened, not a generic attack on industry advice.
+2. Discovery Arc -> Rebuilding the Logic — Walk from the failed understanding through the aftermath and the evidence that forced a deeper interpretation. Dismantle the old logic through lived experience, not argument.
+3. Cognitive Reframe -> Elixir — State the larger professional truth that the speaker could not have earned before the fall. It must deepen, correct, or complete Video 3 rather than repeat it.
+4. "Aha" Transfer -> Usable Lens — Give the viewer a way to recognize the same hidden structure in their own work or decisions. The insight becomes useful without turning into a lesson list.
+5. Cost Revelation -> Stakes and Possibility — Show what the old understanding cost and what becomes possible when the new truth changes behavior.
+6. Simplicity Signal -> Clear Professional Truth — Compress the elixir into one plain idea that feels obvious only after the story has earned it.
+7. Authority Anchor -> Earned Perspective — The audience associates the speaker with depth because they converted a real defeat into a useful lens, not because they declared expertise.
 
 TONE: Done being polite, resolved, purposeful. Not angry — resolved. Logic re-stack through personal narrative. Paradigm break delivered as simple truth. Unapologetic without being aggressive.
 
-LEVEL 2 SPECIFIC: Industry sacred cow or professional elixir — a myth that needs to die, or a truth they now trust because the ordeal made it impossible to avoid.
+LEVEL 2 SPECIFIC: A professional elixir earned by the ordeal. It can challenge an industry sacred cow, but it must begin with the speaker's own defeat and end with a useful lens for the people they understand. This is how Level 2 turns pain into authority without making the speaker preach, posture, or claim credentials.
 
 SECTION MAP FOR VIDEO 6:
-[HOOK] — Pattern Interrupt from the earned evidence. Open with the sharpest concrete consequence or contradiction produced by the myth, before naming the myth or explaining the professional truth.
-[OPEN LOOP] — Cost gap. Show why the myth is seductive, almost true, or hard to abandon. Do not reveal the full elixir yet.
-[MEAT] — Escalated epiphany journey. Build from Video 5's fall -> what avoiding visibility exposed -> why the old professional belief stopped working -> the elixir the speaker can now carry forward.
+[HOOK] — Pattern Interrupt from the earned evidence. Open with the sharpest concrete consequence, choice, or contradiction from the fall or its aftermath, before explaining the larger professional truth.
+[OPEN LOOP] — Meaning gap. Make the viewer need to know what the Video 5 defeat exposed that the speaker's first epiphany could not explain. Do not reveal the larger truth yet.
+[MEAT] — Escalated epiphany journey. Build from the specific Video 5 fall -> the failed recovery or aftermath -> the evidence that changed the speaker's interpretation -> how this deepens or corrects Video 3 -> the professional elixir they can now carry forward.
 [CONCLUSION] — The elixir. State the simple professional truth after the MEAT earns it. It should feel useful and hard-won, not like a generic take.
 [CTA] — Continue from the elixir into Video 7's return. Give one clear action and one reason tied to seeing what changes now.
 
-PROMPTS (L2): 1) Biggest myth in their field, 2) Their own journey from believer to heretic, 3) The actual truth nobody says, 4) What it costs people who follow the myth, 5) Who needs to hear this and what changes for them
+PROMPTS (L2): 1) The larger professional truth the fall made impossible to ignore, 2) How that truth became clear through the aftermath or rebuilding, 3) How it deepens or corrects the first epiphany, 4) What changed in their work or decisions, 5) Who needs this lens and what it could help them recognize
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -997,9 +997,9 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so its facts support that destination without announcing it. Design the OPEN LOOP from the unfinished meaning, contradiction, cause, or question the conclusion will transform, then write the independent HOOK last as a truthful pattern interrupt. Do not smooth these separate section jobs into one prose rhythm.
 
 VIDEO 6, LEVEL 2: Tone = Done being polite, resolved, purposeful (The National "Fake Empire" energy — driven, eyes forward, no apology)
-HOOK guidance: Use the sharpest concrete consequence, protected contradiction, or unsettling evidence exposed by the industry myth. Lead with what the belief causes or permits before naming the belief or delivering the elixir. Do not open with a generic declaration that an industry is lying.
-OPEN LOOP guidance: Make the viewer need to know why the protected belief remains seductive, almost true, or difficult to abandon despite that evidence. Do not reveal the professional truth the speaker earned through the ordeal.
-CONCLUSION guidance: Deliver the elixir as a simple, hard-won professional truth: what the myth was protecting, what problem it misidentified, and what becomes possible once the viewer sees it. Keep conviction grounded in the speaker's supplied experience.
+HOOK guidance: Use the sharpest concrete consequence, choice, or contradiction from the fall or its aftermath. Lead with the evidence that the speaker's old understanding could no longer explain. Do not open with a generic declaration that an industry is lying or state the elixir early.
+OPEN LOOP guidance: Make the viewer need to know what the defeat eventually revealed that the first professional epiphany could not explain. Preserve the causal link to Video 5 and do not reveal the larger truth yet.
+CONCLUSION guidance: Deliver the elixir as a simple, hard-won professional truth that deepens or corrects Video 3, names what the fall exposed, and gives the viewer a useful new lens. Keep every claim grounded in the speaker's supplied experience.
 CTA guidance: Continue from the elixir into the final return. Ask the viewer to follow because the final installment of the 7 Video Challenge shows what changes now that the speaker can carry this truth forward.
 </l2_v6_rules>
 
@@ -1016,30 +1016,30 @@ After: "Their voice and work belong in public, and I want to know how to stay co
 Open question: "What becomes possible now that they are no longer hiding?"
 Social impulse: Follow because the relationship now feels earned.
 
-THE 7 RESOLUTION BEATS:
-1. Pattern Interrupt (Hook) — Open with one concrete public action, reaction, or invitation from now that would have been unlikely in Video 1. Present the evidence before explaining the change. Do not announce completion or recap the challenge.
-2. Full Circle Loop — Reach back to Video 1 after the hook. Use a specific callback so the audience feels the circle closing.
-3. Narrative Satisfaction — Expected vs. actual. What they thought this would be vs. what it turned out to be. Honest accounting, not highlight reel.
-4. New Normal Declaration — Name what's different. Specific, grounded. "I used to [X]. Now I [Y]." Small real shifts that reveal genuine change.
-5. Reciprocity (The Lesson / The Gift) — The elixir. "If you're where I was seven videos ago, here's what I wish someone had told me." Peer to peer, not teacher to student.
-6. Bridge to Forever — The challenge becomes an ongoing relationship. Not "subscribe" — "this opened something that isn't going to close."
-7. Unfolding Horizon — Ends with an opening, not a conclusion. The story continues. A new chapter is beginning.
+THE 7 RETURN BEATS:
+1. Present-Day Evidence (Hook) — Open with one concrete public action, reaction, invitation, or choice from now that would have been unlikely in Video 1. Present the evidence before explaining the change. Do not announce completion or recap the challenge.
+2. Full-Circle Recognition — Reach back to the private competence and public hesitation from Video 1. Use a specific callback so the audience feels the circle closing without hearing a summary.
+3. One Connected Correction — Join the origin, first professional realization, public test, fall, and second realization into one coherent change in how the speaker sees their work. Do not march through the videos in order or recap each lesson.
+4. Observable Public Ownership — Show what the speaker now does, says, chooses, builds, teaches, or allows people to see that makes the change undeniable. Avoid formulaic before-and-after phrasing.
+5. Honest Remainder — Name what still feels unfinished, difficult, or in need of growth without surrendering the authority already earned or asking the audience for rescue.
+6. Professional Gift — Give the viewer the perspective the speaker can now carry back from the journey. It should help the right person feel seen and give them a reason to trust how this speaker thinks.
+7. Relational Horizon — Close the seven-video arc by making the continuing relationship feel meaningful. The viewer follows because they value this person's humanity, perspective, and unfolding work, not because an offer is waiting.
 
-TONE: Warm, reflective, the slowest pace of any video. Callback to Video 1 is specific. Expected vs. actual is the emotional core. The lesson is a gift, not a lecture. Forward look is open-ended and honest. Last line feels like a door opening.
+TONE: Warm, reflective, and expansive, with the slowest pace of any video. The emotional core is the distance between private knowledge and public ownership. The connected journey should feel discovered rather than recited. The final movement cements the relationship and leaves the future open.
 
 
-LEVEL 2 SPECIFIC: Full circle from invisible expert to someone who claimed their space. The elixir bridges personal growth and professional mission. Includes a soft, natural invitation — not a pitch, an open door. "If you're [specific person] dealing with [specific problem], here's how to find me." The invitation works BECAUSE of everything that came before it.
+LEVEL 2 SPECIFIC: Full circle from invisible expert to someone who can publicly own a useful perspective. The return bridges personal growth, professional mission, and the audience relationship. The goal is not a pitch or lead capture. The right viewer should feel that this person's way of seeing is worth continuing to follow.
 
 SECTION MAP FOR VIDEO 7:
 [HOOK] — Pattern Interrupt from present-day evidence. Open with the clearest concrete public action, reaction, or invitation that proves something changed, without stating what changed or summarizing the challenge.
 [OPEN LOOP] — Return gap. Reach back to Video 1 and create the question of what actually changed in their visibility, voice, or relationship to their work. Do not summarize all seven videos.
-[MEAT] — Resolution journey. Expected vs. actual -> specific change -> professional elixir/gift for the viewer -> bridge into the relationship, mission, or chapter that continues after the challenge.
+[MEAT] — Resolution journey. Earlier relationship to expertise and visibility -> the two professional epiphanies and fall as one connected correction -> specific change in work, voice, or decisions -> what remains unfinished or still needed -> what telling the story clarified -> the perspective and mission carried forward.
 [CONCLUSION] — Doorway ending. Close the seven-video loop while making the next chapter feel open and earned.
 [CTA] — Continue from that open door into an ongoing relationship. Clearly ask the viewer to follow, acknowledge this is Video 7 of 7, and invite anyone who arrived late to go back to Video 1. Give one specific relational reason to stay connected; do not turn the close into a pitch.
 
-CRITICAL FOR L2: Prompt 4 asks "what do you still need?" The speaker names their own gap. This is the funnel's secret weapon — the upsell becomes a warm answer to a question they already asked themselves ON CAMERA.
+CRITICAL FOR L2: The speaker names what remains unfinished or what they still need without turning the admission into a funnel setup. The gap keeps them human and makes the continuing relationship believable. It must not erase the authority they earned or become an invitation to rescue them.
 
-PROMPTS (L2): 1) What they were trying to prove and whether they proved it, 2) What this taught them about their expertise, 3) One thing they'd tell someone hiding behind their work, 4) What they still need — honestly, 5) The invitation to the right person
+PROMPTS (L2): 1) Who they were before both professional epiphanies and the fall, 2) Who they are now in relation to their expertise and audience, 3) What remains unfinished or still needed, 4) What telling the story clarified about their work and the people they understand, 5) What perspective or mission they are carrying forward and why the right viewer should stay
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -1049,6 +1049,6 @@ Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design t
 VIDEO 7, LEVEL 2: Tone = Expansive, horizon-looking, earned clarity (M83 "Outro" — wide, cinematic, victory lap energy)
 HOOK guidance: Pull the most startling concrete contrast between private expertise at Video 1 and public ownership now: an action, reaction, invitation, or choice the earlier speaker would not have made. Lead with evidence of the return, not a recap, lesson, or announcement that seven videos are complete.
 OPEN LOOP guidance: Connect that contrast to the original professional question and make the viewer need to know what actually changed in the speaker's relationship to their voice, work, or audience. Do not summarize all seven episodes or reveal the final meaning.
-CONCLUSION guidance: Complete, reverse, or deepen the original visibility question with the specific professional and personal truth the speaker earned. Close the challenge while opening the relationship, mission, or work that continues after it.
+CONCLUSION guidance: Complete, reverse, or deepen the original visibility question with the specific professional and personal truth the speaker earned across both epiphanies and the fall. Make public ownership visible through a real choice, behavior, or way of speaking while acknowledging what remains unfinished. Close the challenge while opening the relationship, mission, or work that continues after it.
 CTA guidance: Create a warm next relationship, not a pitch. Ask the right person to follow because the seven-video journey has made the speaker's perspective and humanity worth staying connected to. Explicitly identify this as Video 7 of 7 and invite anyone who missed the arc to go back to Video 1. Do not imply there is a Video 8, introduce an offer, or manufacture urgency.
 </l2_v7_rules>`;
