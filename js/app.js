@@ -2054,9 +2054,28 @@ FEEDBACK FOR THIS REGENERATION: ${regenFeedback}
 Regenerate ONLY the [${sectionKey}] section, applying the feedback above while following the same Video ${videoNum}, Level ${level} blueprint and all supplied user context. Return only the new section text with no label, no other sections, and no commentary.`;
 
   try {
-    const responseText = await callDeepSeekAPIRaw(focusedSystemPrompt(level, videoNum), sectionUserMsg);
-    const newSectionText = String(responseText || '').replace(new RegExp('^\\s*\\[' + sectionKey.replace(' ', '\\s+') + '\\]\\s*', 'i'), '').trim();
+    const systemPrompt = focusedSystemPrompt(level, videoNum);
+    const responseText = await callDeepSeekAPIRaw(systemPrompt, sectionUserMsg);
+    let newSectionText = String(responseText || '').replace(new RegExp('^\\s*\\[' + sectionKey.replace(' ', '\\s+') + '\\]\\s*', 'i'), '').trim();
     if (!newSectionText) throw new Error('Empty response');
+
+    const voiceIssues = window.SISPromptEngine && typeof SISPromptEngine.findVoiceIssues === 'function'
+      ? SISPromptEngine.findVoiceIssues(newSectionText) : [];
+    if (voiceIssues.length) {
+      const repairText = await callDeepSeekAPIRaw(systemPrompt, `${sectionUserMsg}
+
+YOUR PREVIOUS SECTION FAILED THE VOICE GUARD:
+${newSectionText}
+
+REQUIRED CORRECTIONS:
+${voiceIssues.join(' ')}
+
+Rewrite ONLY the [${sectionKey}] section. Keep the speaker's facts and intent, remove every flagged phrase or construction, and return only the replacement section text with no label or commentary.`);
+      newSectionText = String(repairText || '').replace(new RegExp('^\\s*\\[' + sectionKey.replace(' ', '\\s+') + '\\]\\s*', 'i'), '').trim();
+      if (!newSectionText) throw new Error('Empty repair response');
+      const remainingIssues = SISPromptEngine.findVoiceIssues(newSectionText);
+      if (remainingIssues.length) throw new Error('The regenerated section still needs a voice correction: ' + remainingIssues.join(' '));
+    }
 
     // Update sections state
     const updatedSections = Object.assign({}, sections);

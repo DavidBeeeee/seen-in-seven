@@ -116,6 +116,38 @@
     return Object.values(sections).some(Boolean) ? sections : null;
   }
 
+  const BANNED_LANGUAGE = [
+    'version of me', 'if that landed', 'this landed', 'most people', 'everybody',
+    'nobody ever talks about', 'nobody talks about', 'the part nobody tells you',
+    'let that sink in', 'read that again', 'this is your sign',
+    'you owe it to yourself', 'in a world where', 'at the end of the day',
+    'game changer', 'secret sauce', 'deep dive', 'dive into', 'delve',
+    'tapestry', 'realm', 'multifaceted', 'ultimately', 'webinar', 'ebook',
+    'sell', 'buy', 'pay', 'guru', 'cohort'
+  ];
+
+  function escapeRegExp(value) {
+    return String(value).replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  }
+
+  function findVoiceIssues(text) {
+    const source = String(text || '');
+    const issues = [];
+    const normalized = source.replace(/[’‘]/g, "'");
+    if (/[—]/.test(source)) issues.push('Do not use em dashes. Restructure the sentence with natural story logic instead.');
+    BANNED_LANGUAGE.forEach(phrase => {
+      const pattern = new RegExp('\\b' + escapeRegExp(phrase).replace(/ /g, '\\s+') + '\\b', 'i');
+      if (pattern.test(normalized)) issues.push('Remove the banned language: "' + phrase + '."');
+    });
+    if (/\b(?:it|this|that)\s*(?:isn't|is not|wasn't|was not)\s+[^.!?]{1,80}?,\s*(?:it|this|that)(?:'s| is| was)\b/i.test(normalized)) {
+      issues.push('Remove the false-balance construction "it is not X, it is Y" and state the actual point directly.');
+    }
+    if (/\byou(?:'re| are)\s+not\s+[^.!?]{1,80}?,\s*you(?:'re| are)\b/i.test(normalized)) {
+      issues.push('Remove the fake-reassurance construction "you are not X, you are Y" and return to the speaker\'s lived story.');
+    }
+    return issues;
+  }
+
   function validateOutput(text, video) {
     const source = String(text || '');
     const sections = parseSections(text);
@@ -160,6 +192,7 @@
     if (numberedVideoReference && !numberedSeriesContext && !challengeContext) {
       issues.push('CTA names a future video without explaining that it is part of the speaker\'s 7 Video Challenge. Give cold viewers the challenge context before directing them to that next installment.');
     }
+    issues.push(...findVoiceIssues(source));
     return { valid: missing.length === 0 && issues.length === 0, sections, missing, issues, metrics: { openLoopWords } };
   }
 
@@ -219,6 +252,7 @@
     buildOnboardingLines,
     buildUserMessage,
     parseSections,
+    findVoiceIssues,
     validateOutput,
     validationFeedback,
     buildRepairMessage,
