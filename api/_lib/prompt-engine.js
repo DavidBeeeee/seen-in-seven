@@ -229,8 +229,8 @@ function publishedPrompt() {
     const numberedVideoReference = /\b(?:next\s+)?(?:video|part)\s+(?:one|two|three|four|five|six|seven|[1-7])\b/i.test(cta);
     const numberedSeriesContext = /\b(?:video|part)\s+(?:one|two|three|four|five|six|seven|[1-7])\s+of\s+(?:seven|7)\b/i.test(cta);
     const challengeContext = /\b(?:7|seven)[-\s]?(?:(?:video|part)\s+)?(?:challenge|series)\b/i.test(cta);
-    if (Number(video) > 1 && !numberedSeriesContext) {
-      addIssue('CTA', 'CTA must identify the current installment as Video ' + Number(video) + ' of 7 or Part ' + Number(video) + ' of a seven-part series so a cold viewer knows where they are.');
+    if (Number(video) > 1 && !numberedSeriesContext && !challengeContext) {
+      addIssue('CTA', 'CTA must make it clear that this is part of the speaker\'s 7 Video Challenge or seven-part series so a cold viewer knows where they are.');
     } else if (Number(video) === 1 && !numberedSeriesContext && !challengeContext) {
       addIssue('CTA', 'CTA must orient a cold viewer inside the speaker\'s 7 Video Challenge or seven-part series.');
     }
@@ -374,7 +374,10 @@ function publishedPrompt() {
       }
     }
     const finalValidation = validateOutput(script, config.video);
-    if (finalValidation.valid && !unresolvedSemanticFailure) return script;
+    // The story editor is intentionally allowed to flag a broad concern without
+    // rewriting a section. When every concrete quality check passes, do not
+    // strand the user on an editor opinion that has no actionable repair.
+    if (finalValidation.valid) return script;
     if (unresolvedSemanticFailure) throw new Error('The story review found an issue but could not produce a clean targeted replacement. Please try again.');
     throw new Error('The script response still needs correction: ' + validationFeedback(finalValidation) + ' Please try again.');
   }

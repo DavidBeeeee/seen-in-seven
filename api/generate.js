@@ -146,7 +146,7 @@ async function generateScript(input, prompt) {
       ? '\n\nA previous draft did not pass the final story check. Write a genuinely fresh complete script. Follow the five-section format exactly, make the CTA current-video orientation precise, and avoid every banned phrase. Do not explain the rewrite.\n\nEXACT FEEDBACK FROM THE PREVIOUS DRAFT:\n' + String(lastError && lastError.message || '')
       : '';
     try {
-      const draft = await callModel(systemPrompt, userMessage + retryNote, 0.8);
+      const draft = await callModel(systemPrompt, userMessage + retryNote, attempt ? 0.45 : 0.8);
       const content = await reviewAndRepairScript({
         script: draft,
         systemPrompt,
