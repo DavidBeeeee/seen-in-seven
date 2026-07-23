@@ -143,7 +143,7 @@ async function generateScript(input, prompt) {
   // a clean draft twice before putting any recovery work in front of the user.
   for (let attempt = 0; attempt < 3; attempt++) {
     const retryNote = attempt
-      ? '\n\nA previous draft did not pass the final story check. Write a genuinely fresh complete script. Follow the five-section format exactly, make the CTA's current-video orientation precise, and avoid every banned phrase. Do not explain the rewrite.'
+      ? '\n\nA previous draft did not pass the final story check. Write a genuinely fresh complete script. Follow the five-section format exactly, make the CTA current-video orientation precise, and avoid every banned phrase. Do not explain the rewrite.'
       : '';
     try {
       const draft = await callModel(systemPrompt, userMessage + retryNote, 0.8);
