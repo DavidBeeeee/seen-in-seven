@@ -7,6 +7,8 @@ let studioSession = null;
 let studioProfile = null;
 let studioAccess = [];
 let authMode = 'magic';
+const ACCESS_APP_NAMES = { seeninseven: 'SeenInSeven', boardroom: 'AI Boardroom' };
+const accessNoticeApp = new URLSearchParams(window.location.search).get('access');
 
 const el = id => document.getElementById(id);
 
@@ -63,6 +65,9 @@ function setAuthMessage(message, type) {
 }
 
 async function ensureStudioProfile(user) {
+  const { data: claimed, error: claimError } = await studioSb.rpc('claim_studio_profile');
+  if (!claimError && claimed) return claimed;
+
   const { data: existing, error: selectError } = await studioSb
     .from('users')
     .select('*')
@@ -160,6 +165,12 @@ function renderStudio() {
 
   renderAppAccess('seeninseven', seenInSevenUnlocked, 'Included in your Studio beta access.');
   renderAppAccess('boardroom', boardroomUnlocked, 'Your private advisor team is ready.');
+  const accessName = ACCESS_APP_NAMES[accessNoticeApp];
+  el('access-notice').hidden = !accessName || !signedIn;
+  if (accessName && signedIn) {
+    el('access-notice-title').textContent = accessName + ' is ready for you.';
+    el('access-notice-copy').textContent = 'Your Studio access is active. Open the app whenever you are ready.';
+  }
   refreshIcons();
 }
 
@@ -208,7 +219,57 @@ async function signOutStudio() {
   studioSession = null;
   studioProfile = null;
   studioAccess = [];
+  closeSettingsModal();
   renderStudio();
+}
+
+function setPasswordMessage(message, type) {
+  const messageEl = el('settings-password-message');
+  messageEl.textContent = message || '';
+  messageEl.className = 'auth-message' + (type ? ' ' + type : '');
+}
+
+function openSettingsModal() {
+  if (!studioSession || !studioSession.user) return;
+  el('account-menu').hidden = true;
+  el('settings-email').textContent = studioSession.user.email || '';
+  el('settings-modal').hidden = false;
+  el('settings-password').focus();
+}
+
+function closeSettingsModal() {
+  el('settings-modal').hidden = true;
+  el('settings-password-form').reset();
+  setPasswordMessage('');
+}
+
+async function saveStudioPassword(event) {
+  event.preventDefault();
+  const password = el('settings-password').value;
+  const confirmation = el('settings-password-confirm').value;
+  const button = el('settings-password-submit');
+  if (password.length < 6) {
+    setPasswordMessage('Use at least 6 characters.', 'error');
+    return;
+  }
+  if (password !== confirmation) {
+    setPasswordMessage('Those passwords do not match.', 'error');
+    return;
+  }
+  button.disabled = true;
+  button.querySelector('span').textContent = 'Saving...';
+  setPasswordMessage('');
+  try {
+    const { error } = await studioSb.auth.updateUser({ password });
+    if (error) throw error;
+    el('settings-password-form').reset();
+    setPasswordMessage('Password saved. You can use it next time you sign in.', 'success');
+  } catch (error) {
+    setPasswordMessage('We could not save that password. Please try again.', 'error');
+  } finally {
+    button.disabled = false;
+    button.querySelector('span').textContent = 'Save password';
+  }
 }
 
 studioSb.auth.onAuthStateChange((event, session) => {
@@ -236,12 +297,25 @@ el('account-button').addEventListener('click', () => {
   el('account-menu').hidden = !el('account-menu').hidden;
 });
 el('sign-out-button').addEventListener('click', signOutStudio);
+el('settings-button').addEventListener('click', openSettingsModal);
+el('settings-close').addEventListener('click', closeSettingsModal);
+el('settings-modal').addEventListener('click', event => {
+  if (event.target === el('settings-modal')) closeSettingsModal();
+});
+el('settings-password-form').addEventListener('submit', saveStudioPassword);
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape') {
     closeAuthModal();
+    closeSettingsModal();
     el('account-menu').hidden = true;
   }
 });
+
+if (ACCESS_APP_NAMES[accessNoticeApp] && window.history && window.history.replaceState) {
+  const cleanUrl = new URL(window.location.href);
+  cleanUrl.searchParams.delete('access');
+  window.history.replaceState({}, '', cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
+}
 
 refreshIcons();
 renderStudio();

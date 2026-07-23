@@ -237,6 +237,18 @@ function _mergeLocalStorage() {
 async function _syncUserProfile(authUser) {
   try {
     window._SIS_log && _SIS_log('sync:start', {authId: authUser.id});
+    // Studio may have created this customer's profile before their first app visit.
+    // Claim it first so their approved access and saved profile stay unified.
+    try {
+      const { data: claimed, error: claimError } = await _sb.rpc('claim_studio_profile');
+      if (!claimError && claimed) {
+        window._SIS_log && _SIS_log('sync:claimed-studio-profile', {id: claimed.id});
+        return claimed;
+      }
+      if (claimError) window._SIS_log && _SIS_log('sync:claimErr', claimError.message);
+    } catch (claimException) {
+      window._SIS_log && _SIS_log('sync:claimException', claimException.message);
+    }
     const { data: existing, error: selErr } = await _sb
       .from('users').select('*').eq('auth_id', authUser.id).maybeSingle();
     if (selErr) { window._SIS_log && _SIS_log('sync:selErr', selErr.message); }

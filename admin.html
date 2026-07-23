@@ -55,6 +55,10 @@
         </span>
       </a>
       <div class="header-actions">
+        <a class="secondary-button admin-home-button" href="/" title="Return to Studio home">
+          <i data-lucide="arrow-left"></i>
+          <span>Studio home</span>
+        </a>
         <span class="admin-live-pill"><span></span>Live</span>
         <button class="icon-button" id="theme-button" type="button" title="Change color theme" aria-label="Change color theme">
           <i data-lucide="sun" class="theme-sun-icon"></i>
@@ -178,6 +182,19 @@
             <div><p class="eyebrow">Customers</p><h2 id="customers-title">People and app access</h2></div>
             <span class="load-time" id="last-loaded">Not loaded</span>
           </div>
+          <form class="enrollment-form" id="enrollment-form">
+            <div class="enrollment-form-head">
+              <div><h3>Enroll someone</h3><p>Add their name and email, choose their apps, and Studio will send their secure access email automatically.</p></div>
+              <span class="status-chip status-live">Manual enrollment</span>
+            </div>
+            <div class="enrollment-fields">
+              <label>Name<input id="enrollment-name" type="text" maxlength="120" placeholder="Their name"></label>
+              <label>Email <span aria-hidden="true">*</span><input id="enrollment-email" type="email" maxlength="320" autocomplete="email" required placeholder="person@example.com"></label>
+              <fieldset><legend>Give access to</legend><label><input id="enrollment-seeninseven" type="checkbox" checked> SeenInSeven</label><label><input id="enrollment-boardroom" type="checkbox"> AI Boardroom</label></fieldset>
+              <button class="secondary-button" id="enrollment-submit" type="submit"><i data-lucide="user-plus"></i><span>Enroll person</span></button>
+            </div>
+            <p class="enrollment-message" id="enrollment-message" role="status" aria-live="polite"></p>
+          </form>
           <div class="customer-toolbar">
             <label class="search-field">
               <i data-lucide="search"></i>
@@ -222,6 +239,6 @@
     </div>
   </div>
 
-  <script src="/js/admin-studio.js"></script>
+  <script src="/js/admin-studio.js?v=studio-access-v1"></script>
 </body>
 </html>

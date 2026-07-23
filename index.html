@@ -75,6 +75,14 @@
         </div>
       </section>
 
+      <section class="studio-notice" id="access-notice" role="status" hidden>
+        <i data-lucide="badge-check"></i>
+        <div>
+          <strong id="access-notice-title"></strong>
+          <span id="access-notice-copy"></span>
+        </div>
+      </section>
+
       <section class="device-progress" id="device-progress" hidden>
         <i data-lucide="hard-drive"></i>
         <div>
@@ -192,8 +200,35 @@
     </section>
   </div>
 
+  <div class="modal-backdrop" id="settings-modal" hidden>
+    <section class="auth-dialog settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <button class="icon-button modal-close" id="settings-close" type="button" title="Close" aria-label="Close account settings">
+        <i data-lucide="x"></i>
+      </button>
+      <p class="eyebrow">Account settings</p>
+      <h2 id="settings-title">Set your password.</h2>
+      <p class="auth-intro">Use a password next time instead of waiting for a sign-in email.</p>
+      <p class="settings-email" id="settings-email"></p>
+      <form id="settings-password-form">
+        <label for="settings-password">New password</label>
+        <input id="settings-password" type="password" autocomplete="new-password" minlength="6" placeholder="At least 6 characters" required>
+        <label for="settings-password-confirm">Confirm password</label>
+        <input id="settings-password-confirm" type="password" autocomplete="new-password" minlength="6" placeholder="Type it again" required>
+        <button class="primary-button auth-submit" id="settings-password-submit" type="submit">
+          <span>Save password</span>
+          <i data-lucide="key-round"></i>
+        </button>
+        <p class="auth-message" id="settings-password-message" role="status"></p>
+      </form>
+    </section>
+  </div>
+
   <div class="account-menu" id="account-menu" hidden>
     <div class="account-menu-email" id="menu-email"></div>
+    <button id="settings-button" type="button">
+      <i data-lucide="settings"></i>
+      Account settings
+    </button>
     <a href="/seeninseven">
       <i data-lucide="video"></i>
       SeenInSeven
@@ -208,6 +243,6 @@
     </button>
   </div>
 
-  <script src="/js/studio.js"></script>
+  <script src="/js/studio.js?v=studio-access-v1"></script>
 </body>
 </html>
