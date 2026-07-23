@@ -2808,35 +2808,42 @@ const LOADING_MESSAGES_BANK = [
   "Seven videos is not a lot. Seven videos is everything.",
 ];
 
-function startLoadingAnimation() {
-  // Pick 4 random unique messages from the bank
-  const bank = [...LOADING_MESSAGES_BANK];
-  const picks = [];
-  for (let i = 0; i < 4; i++) {
-    const ri = Math.floor(Math.random() * bank.length);
-    picks.push(bank.splice(ri, 1)[0]);
-  }
+let loadingAnimationTimers = [];
 
+function stopLoadingAnimation() {
+  loadingAnimationTimers.forEach(timer => clearTimeout(timer));
+  loadingAnimationTimers = [];
+}
+
+function startLoadingAnimation() {
+  stopLoadingAnimation();
   const ids = ['sl-ep1','sl-ep2','sl-ep3','sl-ep4','sl-ep5'];
   const epiphanyWrap = document.getElementById('script-loading-epiphany');
-
-  ids.forEach((id, i) => {
-    const el = document.getElementById(id);
-    if (el) {
-      el.textContent = i < 4 ? picks[i] : 'Yours is almost ready.';
-      el.classList.remove('visible');
-    }
-  });
   if (epiphanyWrap) epiphanyWrap.style.display = '';
 
-  // Slightly longer delays for 5 messages
-  const delays = [450, 2000, 3600, 5200, 6800];
-  ids.forEach((id, i) => {
-    setTimeout(() => {
-      const el = document.getElementById(id);
-      if (el) el.classList.add('visible');
-    }, delays[i]);
-  });
+  function showCycle() {
+    const bank = [...LOADING_MESSAGES_BANK];
+    const picks = [];
+    for (let i = 0; i < 4; i++) picks.push(bank.splice(Math.floor(Math.random() * bank.length), 1)[0]);
+
+    ids.forEach((id, i) => {
+      const line = document.getElementById(id);
+      if (!line) return;
+      line.textContent = i < 4 ? picks[i] : 'Still shaping your story...';
+      line.classList.remove('visible');
+    });
+
+    const delays = [250, 1700, 3150, 4600, 6050];
+    ids.forEach((id, i) => {
+      loadingAnimationTimers.push(setTimeout(() => {
+        const line = document.getElementById(id);
+        if (line) line.classList.add('visible');
+      }, delays[i]));
+    });
+    loadingAnimationTimers.push(setTimeout(showCycle, 8300));
+  }
+
+  showCycle();
 }
 
 let guestAccessVerified = false;
@@ -2979,6 +2986,7 @@ async function showScriptView(idx, skipLoading) {
       const level = state.level || 1;
       const video = idx + 1;
       const script = await generateValidatedScript(userMessage, level, video);
+      stopLoadingAnimation();
       const promptVersion = window._SIS_lastPromptVersion || '';
       const finalContent = finalScriptText(idx, script, level);
       window._SIS_log && _SIS_log('gen:got-response', {len: script ? script.length : 0});
@@ -3000,6 +3008,7 @@ async function showScriptView(idx, skipLoading) {
         }
       }
     } catch(err) {
+      stopLoadingAnimation();
       if (loadingWrap) loadingWrap.style.display = 'none';
       if (epiphanyWrap) epiphanyWrap.style.display = 'none';
       if (msgEl) { msgEl.textContent = ''; msgEl.style.display = ''; }
