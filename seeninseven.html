@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
 <link rel="stylesheet" href="/css/app.css">
 <link rel="stylesheet" href="/css/light.css">
 
@@ -825,6 +826,18 @@
 
 </div>
 
+<!-- Guest human check: shown once before an unsigned visitor creates Video 2. -->
+<div id="guest-human-check" class="guest-human-check" hidden>
+  <div class="guest-human-card" role="dialog" aria-modal="true" aria-labelledby="guest-human-title">
+    <div class="eyebrow">One Quick Check</div>
+    <h2 class="screen-title" id="guest-human-title">Let’s keep <span class="accent">going.</span></h2>
+    <p class="screen-sub">Confirm you’re a real person, then the rest of your scripts stay open. No account required.</p>
+    <div id="guest-turnstile-widget" class="guest-turnstile-widget"></div>
+    <div id="guest-human-error" class="guest-human-error" hidden></div>
+    <button type="button" class="btn-back" id="guest-human-cancel">Not right now</button>
+  </div>
+</div>
+
 <!-- ══ PDF EXPORT MODAL ══ -->
 <div id="pdf-modal-overlay">
   <div id="pdf-modal">
@@ -851,11 +864,10 @@
 <!-- ══════════════════════════════════════
      JAVASCRIPT
 ══════════════════════════════════════ -->
-<script src="/prompts/blueprints.js"></script>
-<script src="/js/script-prompt-engine.js"></script>
-<script src="/js/supabase.js"></script>
-<script src="/js/points.js"></script>
-<script src="/js/app.js"></script>
+<script src="/js/script-prompt-engine.js?v=security-1"></script>
+<script src="/js/supabase.js?v=security-1"></script>
+<script src="/js/points.js?v=security-1"></script>
+<script src="/js/app.js?v=security-1"></script>
 
 <!-- ══ DUAL COMPLETE OVERLAY ══ -->
 <div id="dual-complete-overlay">

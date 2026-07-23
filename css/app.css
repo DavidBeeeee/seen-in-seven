@@ -3053,3 +3053,42 @@ body::after {
   .choice-card:hover, .db-video-card:hover, .partner-card:hover,
   .btn-primary:hover, .db-hero-cta:hover { transform: none; }
 }
+.guest-human-check {
+  position: fixed;
+  inset: 0;
+  z-index: 12000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  background: rgba(3, 12, 12, 0.82);
+  backdrop-filter: blur(8px);
+}
+
+.guest-human-check[hidden] {
+  display: none;
+}
+
+.guest-human-card {
+  width: min(100%, 440px);
+  padding: 32px 28px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.42);
+  text-align: center;
+}
+
+.guest-turnstile-widget {
+  min-height: 70px;
+  margin: 22px auto 12px;
+  display: flex;
+  justify-content: center;
+}
+
+.guest-human-error {
+  margin: 12px 0;
+  color: #fca5a5;
+  font-size: 14px;
+  line-height: 1.5;
+}

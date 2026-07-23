@@ -1,8 +1,8 @@
-const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
+import { authenticatedAdmin } from './_lib/security.js';
+
 const REPOSITORY = 'DavidBeeeee/seen-in-seven';
 const BRANCH = process.env.PROMPT_BLUEPRINT_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || 'main';
-const BLUEPRINT_PATH = 'prompts/blueprints.js';
+const BLUEPRINT_PATH = 'api/_lib/blueprints.txt';
 const PUBLISH_PREFIX = 'Update SeenInSeven blueprint via Prompt Tester';
 
 function json(res, status, body) {
@@ -69,23 +69,6 @@ function validateBlueprintSource(source) {
   return errors;
 }
 
-async function verifyAdmin(req) {
-  const authorization = req.headers.authorization || '';
-  const token = authorization.startsWith('Bearer ') ? authorization.slice(7) : '';
-  if (!token) return null;
-  const authHeaders = { apikey: SUPABASE_KEY, Authorization: 'Bearer ' + token };
-  const userResponse = await fetch(SUPABASE_URL + '/auth/v1/user', { headers: authHeaders });
-  if (!userResponse.ok) return null;
-  const user = await userResponse.json();
-  const adminResponse = await fetch(SUPABASE_URL + '/rest/v1/rpc/is_admin', {
-    method: 'POST',
-    headers: { ...authHeaders, 'Content-Type': 'application/json' },
-    body: '{}'
-  });
-  if (!adminResponse.ok || (await adminResponse.json()) !== true) return null;
-  return user;
-}
-
 async function updateBlueprint(source, currentSha, message) {
   return github('/contents/' + BLUEPRINT_PATH, {
     method: 'PUT',
@@ -106,6 +89,9 @@ export default async function handler(req, res) {
   }
 
   try {
+    const admin = await authenticatedAdmin(req);
+    if (!admin) return json(res, 403, { error: 'Administrator access required.' });
+
     if (req.method === 'GET') {
       const [current, commits] = await Promise.all([currentBlueprint(BRANCH), recentBlueprintCommits()]);
       const latest = commits[0] || null;
@@ -123,8 +109,6 @@ export default async function handler(req, res) {
       });
     }
 
-    const admin = await verifyAdmin(req);
-    if (!admin) return json(res, 403, { error: 'Administrator access required.' });
     if (!process.env.GITHUB_PROMPT_TOKEN) return json(res, 503, { error: 'GitHub publishing is not configured yet.' });
 
     const body = req.body || {};

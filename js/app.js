@@ -375,26 +375,9 @@ async function trackSession() {
   if (_sbTracked) return;
   _sbTracked = true;
   try {
-    await _sb.from('sessions_legacy').insert({
-      name:           state.name || null,
-      level:          state.level || null,
-      blocker:        state.blocker || null,
-      history:        state.history || null,
-      goal:           state.goal || null,
-      business_stage: state.businessStage || null,
-      topic:          state.topicFreewrite || null,
-      answers: {
-        posted:   state.posted,
-        blocker:  state.blocker,
-        history:  state.history,
-        goal:     state.goal,
-        phase2:   ensurePhase2(),
-        mvoQ2:    state.mvoQ2,
-        mvoQ3:    state.mvoQ3,
-        mvoQ4:    state.mvoQ4
-      },
-      completed_videos: Object.keys(state.videoStatus || {}).length,
-      user_agent: navigator.userAgent
+    if (typeof recordPreauthEvent === 'function') await recordPreauthEvent('first_script_generated', {
+      level: state.level || null,
+      completed_videos: Object.keys(state.videoStatus || {}).length
     });
   } catch(e) {
     // Tracking failure is silent — never block the user
@@ -1271,19 +1254,6 @@ function renderCommitmentDeclaration() {
   }
 }
 
-const MISSION_SYSTEM_PROMPT = `You are writing a first-person mission statement for someone who just committed to completing a 7-video content challenge. This statement will live on their dashboard and should feel like their own words, not an outside analysis.
-
-Write 3 grounded sentences, 65 to 90 words total.
-
-Requirements:
-1. Use first person: I, my, me.
-2. Mention the real thing they are done carrying or moving beyond.
-3. Mention what they are moving toward.
-4. Include why being seen matters to them or to the people they want to reach.
-5. End with a simple commitment to finish the 7 videos.
-
-Tone: warm, direct, grounded, human. No corporate language. No buzzwords. No exclamation points. No diagnosis. No second-person analysis. No em dashes. No phrases like "embark on," "journey," or "unlock your potential." Return only the mission statement.`;
-
 function cleanMissionText(text) {
   return String(text || '')
     .replace(/[—–]/g, ', ')
@@ -1324,7 +1294,10 @@ async function generateMissionForRecap() {
   if (btn) { btn.disabled = true; btn.textContent = 'Writing your mission...'; }
   let missionText;
   try {
-    const mission = await callDeepSeekAPIRaw(MISSION_SYSTEM_PROMPT, buildMissionUserMessage());
+    const mission = await callGenerationAPI({
+      mode: 'mission',
+      userContext: buildMissionUserMessage()
+    });
     missionText = cleanMissionText(mission) || buildMissionFallback();
   } catch(e) {
     missionText = cleanMissionText(buildMissionFallback());
@@ -1842,48 +1815,25 @@ function populateRecap() {
 
 // ── API SCRIPT ENGINE ────────────────────────────────
 
-function focusedSystemPrompt(level, video) {
-  return window.SISPromptEngine
-    ? SISPromptEngine.buildSystemPrompt(SYSTEM_PROMPT, level, video)
-    : SYSTEM_PROMPT;
+async function apiAuthorizationHeaders() {
+  const headers = { 'Content-Type': 'application/json' };
+  try {
+    const result = await _sb.auth.getSession();
+    const token = result && result.data && result.data.session && result.data.session.access_token;
+    if (token) headers.Authorization = 'Bearer ' + token;
+  } catch(e) {}
+  return headers;
 }
 
-async function callDeepSeekAPI(userMessage, level, video) {
-  return callDeepSeekAPIRaw(focusedSystemPrompt(level, video), userMessage);
-}
-
-// One automatic, silent retry on failure — the user never sees the first
-// attempt fail. Only after both attempts fail does the caller's own catch
-// block show the error screen. Keeps script generation from dead-ending
-// on a single transient hiccup, without silently substituting a template
-// (unlike the mission-statement generator, which falls back automatically).
-async function callDeepSeekAPIWithRetry(userMessage, retries = 1, level, video) {
-  let lastErr;
-  for (let attempt = 0; attempt <= retries; attempt++) {
-    try {
-      const script = await callDeepSeekAPI(userMessage, level, video);
-      if (!script) throw new Error('No script returned. Empty response from API.');
-      return script;
-    } catch(e) {
-      lastErr = e;
-      if (attempt < retries) {
-        window._SIS_log && _SIS_log('gen:retry', {attempt: attempt + 1, error: e.message});
-        await new Promise(r => setTimeout(r, 800));
-      }
-    }
-  }
-  throw lastErr;
-}
-
-async function callDeepSeekAPIRaw(systemMsg, userMsg, temperature, trackPromptVersion = true) {
+async function callGenerationAPI(payload) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 28000);
+  const timeoutId = setTimeout(() => controller.abort(), 85000);
   let response;
   try {
     response = await fetch('/api/generate', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ systemMsg, userMsg, ...(temperature == null ? {} : { temperature }) }),
+      headers: await apiAuthorizationHeaders(),
+      body: JSON.stringify(payload),
       signal: controller.signal
     });
   } catch(e) {
@@ -1894,30 +1844,23 @@ async function callDeepSeekAPIRaw(systemMsg, userMsg, temperature, trackPromptVe
   }
   if (!response.ok) {
     const err = await response.json().catch(() => ({}));
-    throw new Error(err.error ? err.error : 'API error ' + response.status);
+    const error = new Error(err.error ? err.error : 'API error ' + response.status);
+    error.code = err.code || '';
+    throw error;
   }
   const data = await response.json();
-  if (trackPromptVersion) window._SIS_lastPromptVersion = data.prompt_version || '';
-  return data.choices && data.choices[0] && data.choices[0].message
-    ? data.choices[0].message.content.trim() : null;
+  window._SIS_lastPromptVersion = data.promptVersion || '';
+  return data.content ? String(data.content).trim() : null;
 }
 
-async function generateValidatedScript(userMessage, level, video) {
-  const systemPrompt = focusedSystemPrompt(level, video);
-  const script = await callDeepSeekAPIWithRetry(userMessage, 1, level, video);
-  if (!window.SISPromptEngine) return script;
-  const promptVersion = window._SIS_lastPromptVersion;
-  const reviewed = await SISPromptEngine.reviewAndRepairScript({
-    script,
-    systemPrompt,
-    userMessage,
+async function generateValidatedScript(userMessage, level, video, mode, details) {
+  const payload = Object.assign({
+    mode: mode || 'script',
+    userContext: userMessage,
     level,
-    video,
-    callModel:(reviewSystem, reviewMessage, temperature) =>
-      callDeepSeekAPIRaw(reviewSystem, reviewMessage, temperature, false)
-  });
-  window._SIS_lastPromptVersion = promptVersion;
-  return reviewed;
+    videoNumber: video
+  }, details || {});
+  return callGenerationAPI(payload);
 }
 
 // Parse [HOOK] / [OPEN LOOP] / [MEAT] / [CONCLUSION] / [CTA] sections from AI response
@@ -2040,35 +1983,19 @@ async function regenerateSection(videoIdx, sectionKey, btnEl) {
   const sections = state.videos[sectionsKey] || {};
   const currentScript = state.videos[editKey] || '';
 
-  const sectionUserMsg = `${buildAPIUserMessage(videoIdx)}
-
-CURRENT FULL SCRIPT (for context):
-${finalScriptText(videoIdx, currentScript, level)}
-
-FEEDBACK FOR THIS REGENERATION: ${regenFeedback}
-
-Regenerate ONLY the [${sectionKey}] section, applying the feedback above while following the same Video ${videoNum}, Level ${level} blueprint and all supplied user context. Return only the new section text with no label, no other sections, and no commentary.`;
-
   try {
-    const systemPrompt = focusedSystemPrompt(level, videoNum);
-    const responseText = await callDeepSeekAPIRaw(systemPrompt, sectionUserMsg);
-    const parsedResponse = SISPromptEngine.parseSections(responseText);
-    let newSectionText = parsedResponse && parsedResponse[sectionKey]
-      ? parsedResponse[sectionKey]
-      : String(responseText || '').replace(new RegExp('^\\s*\\[' + sectionKey.replace(' ', '\\s+') + '\\]\\s*', 'i'), '').trim();
-    if (!newSectionText) throw new Error('Empty response');
-
-    const reviewSections = Object.assign({}, sections, { [sectionKey]:newSectionText });
-    newSectionText = await SISPromptEngine.reviewAndRepairSection({
-      script:sectionsToFullScript(reviewSections),
-      section:sectionKey,
-      systemPrompt,
-      userMessage:sectionUserMsg,
+    const newSectionText = await generateValidatedScript(
+      buildAPIUserMessage(videoIdx),
       level,
-      video:videoNum,
-      callModel:(reviewSystem, reviewMessage, temperature) =>
-        callDeepSeekAPIRaw(reviewSystem, reviewMessage, temperature, false)
-    });
+      videoNum,
+      'section',
+      {
+        sectionKey,
+        existingScript: sectionsToFullScript(sections) || currentScript,
+        feedback: regenFeedback
+      }
+    );
+    if (!newSectionText) throw new Error('Empty response');
 
     // Update sections state
     const updatedSections = Object.assign({}, sections);
@@ -2128,17 +2055,17 @@ async function regenerateFullScript(videoIdx, btnEl) {
   const videoNum = videoIdx + 1;
   const currentScript = state.videos[editKey] || '';
   await flushScriptEditSave(videoIdx);
-  const fullScriptUserMsg = `${buildAPIUserMessage(videoIdx)}
-
-CURRENT FULL SCRIPT (for context only; write a fresh complete version):
-${finalScriptText(videoIdx, currentScript, level)}
-
-FEEDBACK FOR THIS REGENERATION: ${regenFeedback}
-
-Regenerate the entire Video ${videoNum}, Level ${level} script from the supplied user context and feedback. Treat the five sections as distinct writing operations: design the CONCLUSION and CTA first, reverse-engineer a seamless MEAT from that destination, write the OPEN LOOP afterward, and write the independent pattern-interrupt HOOK last. Apply the Seamless Rule only inside [MEAT]. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
-
   try {
-    const script = await generateValidatedScript(fullScriptUserMsg, level, videoNum);
+    const script = await generateValidatedScript(
+      buildAPIUserMessage(videoIdx),
+      level,
+      videoNum,
+      'full-regeneration',
+      {
+        existingScript: finalScriptText(videoIdx, currentScript, level),
+        feedback: regenFeedback
+      }
+    );
     if (!script) throw new Error('Empty response');
 
     const promptVersion = window._SIS_lastPromptVersion || '';
@@ -2892,6 +2819,103 @@ function startLoadingAnimation() {
   });
 }
 
+let guestAccessVerified = false;
+let guestGatePromise = null;
+
+async function guestAccessConfig() {
+  const response = await fetch('/api/guest-config', {
+    headers: await apiAuthorizationHeaders()
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || 'The human check could not be prepared.');
+  return data;
+}
+
+function waitForTurnstile() {
+  return new Promise((resolve, reject) => {
+    let checks = 0;
+    const timer = setInterval(() => {
+      checks += 1;
+      if (window.turnstile) {
+        clearInterval(timer);
+        resolve(window.turnstile);
+      } else if (checks > 50) {
+        clearInterval(timer);
+        reject(new Error('The human check did not load. Please refresh and try again.'));
+      }
+    }, 100);
+  });
+}
+
+async function showGuestHumanCheck(siteKey) {
+  if (guestGatePromise) return guestGatePromise;
+  guestGatePromise = new Promise(async resolve => {
+    const overlay = document.getElementById('guest-human-check');
+    const widget = document.getElementById('guest-turnstile-widget');
+    const errorEl = document.getElementById('guest-human-error');
+    const cancel = document.getElementById('guest-human-cancel');
+    let widgetId = null;
+
+    function finish(result) {
+      overlay.hidden = true;
+      cancel.onclick = null;
+      if (widgetId != null && window.turnstile) window.turnstile.remove(widgetId);
+      widget.innerHTML = '';
+      guestGatePromise = null;
+      resolve(result);
+    }
+
+    try {
+      overlay.hidden = false;
+      errorEl.hidden = true;
+      errorEl.textContent = '';
+      cancel.onclick = () => finish(false);
+      const turnstile = await waitForTurnstile();
+      widgetId = turnstile.render(widget, {
+        sitekey: siteKey,
+        action: 'sis_guest_unlock',
+        theme: document.body.classList.contains('light-mode') ? 'light' : 'dark',
+        callback: async token => {
+          try {
+            const response = await fetch('/api/guest-verify', {
+              method: 'POST',
+              headers: await apiAuthorizationHeaders(),
+              body: JSON.stringify({ token })
+            });
+            const data = await response.json().catch(() => ({}));
+            if (!response.ok || !data.verified) throw new Error(data.error || 'The human check did not complete.');
+            guestAccessVerified = true;
+            finish(true);
+          } catch (error) {
+            errorEl.textContent = error.message || 'Please try the check again.';
+            errorEl.hidden = false;
+            turnstile.reset(widgetId);
+          }
+        },
+        'error-callback': () => {
+          errorEl.textContent = 'The human check had trouble loading. Please try again.';
+          errorEl.hidden = false;
+        }
+      });
+    } catch (error) {
+      errorEl.textContent = error.message || 'The human check could not load.';
+      errorEl.hidden = false;
+    }
+  });
+  return guestGatePromise;
+}
+
+async function ensureGuestCanGenerate(videoIdx) {
+  if (videoIdx < 1 || guestAccessVerified || (typeof getCurrentUser === 'function' && getCurrentUser())) return true;
+  const config = await guestAccessConfig();
+  if (config.authenticated || config.verified) {
+    guestAccessVerified = true;
+    return true;
+  }
+  if (!config.siteKey) throw new Error('The human check is not configured yet.');
+  return showGuestHumanCheck(config.siteKey);
+}
+
 async function showScriptView(idx, skipLoading) {
   const editKey = 'script_v' + idx;
   // If already has script — just show it (skip loading screen)
@@ -2901,6 +2925,12 @@ async function showScriptView(idx, skipLoading) {
   }
   // Generate the script if it doesn't exist yet
   if (!state.videos[editKey]) {
+    try {
+      if (!(await ensureGuestCanGenerate(idx))) return;
+    } catch (error) {
+      alert(error.message || 'The human check could not be completed.');
+      return;
+    }
     const msgEl = document.getElementById('script-loading-msg');
     const loadingWrap = document.querySelector('#screen-script-loading .v1-loading-wrap');
     const loadingLabel = document.getElementById('script-loading-label');
