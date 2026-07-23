@@ -603,7 +603,7 @@ async function handleEmailSubmit() {
     }
 
     // New user save prompt — send link silently and continue through questions
-    sendMagicLink(email).catch(() => {});
+    sendMagicLink(email, 'onboarding_save').catch(() => {});
     if (typeof logEvent === 'function') logEvent('magic_link_requested', {source: 'new_user', email: email});
 
   } catch(e) {
@@ -756,7 +756,7 @@ async function handleSaveProgressEmail() {
   if (err) err.style.display = 'none';
   if (btn) { btn.disabled = true; btn.textContent = 'Sending...'; }
   try {
-    await sendMagicLink(email);
+    await sendMagicLink(email, 'save_progress_overlay');
     if (typeof logEvent === 'function') logEvent('magic_link_requested', {source: 'save_progress_overlay', email: email});
     if (btn) btn.textContent = 'Check your inbox';
     setTimeout(() => closeSaveProgressOverlay(true), 900);
@@ -3767,7 +3767,7 @@ async function handleGateEmailSubmit() {
   if (errEl) errEl.style.display = 'none';
 
   try {
-    await sendMagicLink(email);
+    await sendMagicLink(email, 'video_one_gate');
     const gate = document.getElementById('verify-gate-overlay');
     if (gate) {
       gate.querySelector('button[onclick*="handleGateEmailSubmit"]').textContent = '✓ Link sent! Check your inbox.';
@@ -4396,13 +4396,19 @@ function openSettings() {
   // Populate with current state
   const nameInput = document.getElementById('settings-name');
   const emailDisplay = document.getElementById('settings-email-display');
+  const emailSaved = document.getElementById('settings-email-saved');
+  const emailAdd = document.getElementById('settings-email-add');
+  const emailInput = document.getElementById('settings-email-input');
   const levelDisplay = document.getElementById('settings-level-display');
+  const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
 
   if (nameInput) nameInput.value = state.name || '';
   if (emailDisplay) {
-    const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
     emailDisplay.textContent = (user && user.email) ? user.email : 'Not saved yet';
   }
+  if (emailSaved) emailSaved.style.display = user && user.email ? 'flex' : 'none';
+  if (emailAdd) emailAdd.style.display = user && user.email ? 'none' : 'block';
+  if (emailInput) emailInput.value = '';
   if (levelDisplay) {
     levelDisplay.textContent = state.level === 1
       ? 'Level 1: The Relatable Hero'
@@ -4429,7 +4435,6 @@ function openSettings() {
 
   // Only show password section when authenticated
   const pwSection = document.getElementById('settings-password-section');
-  const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
   if (pwSection) pwSection.style.display = user ? '' : 'none';
 
   panel.classList.add('open');
@@ -4473,7 +4478,8 @@ async function sendSettingsEmailChange() {
   const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
   const emailMsg = document.getElementById('settings-email-msg');
   if (!user || !user.email) {
-    if (emailMsg) emailMsg.textContent = 'No email on file — go through onboarding to add one.';
+    const emailInput = document.getElementById('settings-email-input');
+    if (emailInput) emailInput.focus();
     return;
   }
   try {
@@ -4486,6 +4492,49 @@ async function sendSettingsEmailChange() {
     if (emailMsg) {
       emailMsg.textContent = 'Could not send — try again in a moment.';
       emailMsg.style.color = '#ef4444';
+    }
+  }
+}
+
+async function saveSettingsEmail() {
+  const input = document.getElementById('settings-email-input');
+  const emailMsg = document.getElementById('settings-email-msg');
+  const btn = document.getElementById('settings-email-add-btn');
+  const email = input ? input.value.trim() : '';
+
+  if (!email || !email.includes('@') || !email.includes('.')) {
+    if (emailMsg) {
+      emailMsg.textContent = 'Please enter a valid email address.';
+      emailMsg.style.color = '#ef4444';
+    }
+    return;
+  }
+
+  saveProgress();
+  if (btn) {
+    btn.disabled = true;
+    btn.textContent = 'Sending secure link...';
+  }
+  if (emailMsg) emailMsg.textContent = '';
+
+  try {
+    await sendMagicLink(email, 'settings');
+    if (emailMsg) {
+      emailMsg.textContent = 'Link sent to ' + email + '. Open it in this browser to attach your saved scripts.';
+      emailMsg.style.color = 'var(--teal)';
+    }
+    if (btn) btn.textContent = 'Check Your Inbox';
+    if (typeof logEvent === 'function') {
+      logEvent('magic_link_requested', {source: 'settings_add_email', email: email});
+    }
+  } catch(e) {
+    if (emailMsg) {
+      emailMsg.textContent = e.message || 'Could not send the link. Try again in a moment.';
+      emailMsg.style.color = '#ef4444';
+    }
+    if (btn) {
+      btn.disabled = false;
+      btn.textContent = 'Add Email & Save My Work';
     }
   }
 }

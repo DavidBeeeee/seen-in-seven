@@ -6,6 +6,39 @@ const _sb = supabase.createClient(
 
 let _currentUser = null;
 const PREAUTH_SESSION_KEY = 'sis_preauth_session_v1';
+const PENDING_ACCOUNT_LINK_KEY = 'sis_pending_account_link_v1';
+const LOCAL_PROGRESS_KEY = 'bwb_challenge_v1';
+let _pendingAccountLinkSync = null;
+
+function _markPendingAccountLink(email, source) {
+  try {
+    localStorage.setItem(PENDING_ACCOUNT_LINK_KEY, JSON.stringify({
+      email: String(email || '').trim().toLowerCase(),
+      source: source || 'save_progress',
+      createdAt: Date.now()
+    }));
+  } catch(e) {}
+}
+
+function _clearPendingAccountLink() {
+  try { localStorage.removeItem(PENDING_ACCOUNT_LINK_KEY); } catch(e) {}
+}
+
+function _getPendingAccountLink(authUser) {
+  try {
+    const marker = JSON.parse(localStorage.getItem(PENDING_ACCOUNT_LINK_KEY) || 'null');
+    const authEmail = String(authUser && authUser.email || '').trim().toLowerCase();
+    if (!marker || !marker.email || marker.email !== authEmail) return null;
+    if (!marker.createdAt || Date.now() - marker.createdAt > 24 * 60 * 60 * 1000) {
+      _clearPendingAccountLink();
+      return null;
+    }
+    const snapshot = JSON.parse(localStorage.getItem(LOCAL_PROGRESS_KEY) || 'null');
+    return snapshot ? Object.assign({}, marker, { snapshot }) : null;
+  } catch(e) {
+    return null;
+  }
+}
 
 function getPreauthSessionId() {
   try {
@@ -119,6 +152,64 @@ function queuePostedSave(videoIndex, level, posted, postUrl) {
   else { _saveQueue.push({ type: 'posted', videoIndex, level, posted, postUrl }); }
 }
 
+async function _syncPendingAccountProgress(pending) {
+  if (!pending || !pending.snapshot || !_currentUser) return;
+  if (_pendingAccountLinkSync) return _pendingAccountLinkSync;
+
+  _pendingAccountLinkSync = (async () => {
+    const snapshot = pending.snapshot;
+    const level = Number(snapshot.level || state.level || 1);
+    const localVideos = snapshot.videos && typeof snapshot.videos === 'object'
+      ? snapshot.videos
+      : {};
+
+    await saveOnboardingToDb();
+
+    const { data: existingScripts, error: scriptsError } = await _sb
+      .from('scripts')
+      .select('video_number')
+      .eq('user_id', _currentUser.id)
+      .eq('level', level)
+      .eq('is_current', true);
+    if (scriptsError) throw scriptsError;
+
+    const existingNumbers = new Set((existingScripts || []).map(row => Number(row.video_number)));
+    for (let i = 0; i < 7; i++) {
+      const content = localVideos['script_v' + i];
+      if (content && !existingNumbers.has(i + 1)) {
+        await saveScriptToDb(i + 1, level, content);
+      }
+
+      const status = snapshot.videoStatus && snapshot.videoStatus[i];
+      if (status === 'filmed' || status === 'skipped') {
+        await saveVideoProgressToDb(i, level, status);
+      }
+      if (localVideos['locked_v' + i]) {
+        await saveVideoLockToDb(i, level);
+      }
+      const posted = snapshot.videoPosted && snapshot.videoPosted[i];
+      if (posted && (posted.posted || posted.url)) {
+        await savePostedToDb(i, level, posted.posted, posted.url);
+      }
+    }
+
+    _clearPendingAccountLink();
+    if (typeof logEvent === 'function') {
+      logEvent('anonymous_progress_attached', {
+        source: pending.source || 'save_progress',
+        level: level,
+        scripts: Object.keys(localVideos).filter(key => key.startsWith('script_v') && localVideos[key]).length
+      });
+    }
+  })();
+
+  try {
+    await _pendingAccountLinkSync;
+  } finally {
+    _pendingAccountLinkSync = null;
+  }
+}
+
 // ── AUTH STATE ────────────────────────────────────────
 // Track page load time to distinguish initial auth from token refreshes
 const _pageLoadTime = Date.now();
@@ -129,6 +220,8 @@ _sb.auth.onAuthStateChange((event, session) => {
     const u = session.user;
     setTimeout(async () => {
       try {
+        const pendingAccountLink = _getPendingAccountLink(u);
+        if (pendingAccountLink) _mergeLocalStorage();
         _currentUser = await _syncUserProfile(u);
         window._SIS_log && _SIS_log('auth:synced', {userId: _currentUser ? _currentUser.id : null, level: _currentUser ? _currentUser.level : null});
         await _flushSaveQueue();
@@ -158,12 +251,16 @@ _sb.auth.onAuthStateChange((event, session) => {
             return;
           }
 
-          // Clear any previous user's localStorage before restoring the new session
-          try { localStorage.removeItem('bwb_challenge_v1'); } catch(e) {}
+          // Normal sign-ins discard another user's browser state. A deliberate
+          // account link preserves the anonymous work so it can be attached.
+          if (!pendingAccountLink) {
+            try { localStorage.removeItem(LOCAL_PROGRESS_KEY); } catch(e) {}
+          }
           const banner = document.getElementById('returning-banner');
           if (banner) banner.classList.remove('visible');
           await _restoreFromDatabase();
           _mergeLocalStorage();
+          if (pendingAccountLink) await _syncPendingAccountProgress(pendingAccountLink);
           await _flushSaveQueue();
           _syncPointsStateToDb();
           fetchPointsConfig();
@@ -280,12 +377,14 @@ async function _syncUserProfile(authUser) {
 }
 
 // ── SEND MAGIC LINK ───────────────────────────────────
-async function sendMagicLink(email) {
+async function sendMagicLink(email, accountLinkSource) {
+  if (accountLinkSource) _markPendingAccountLink(email, accountLinkSource);
   const { error } = await _sb.auth.signInWithOtp({
     email,
     options: { emailRedirectTo: window.location.origin + window.location.pathname, shouldCreateUser: true }
   });
   if (error) {
+    if (accountLinkSource) _clearPendingAccountLink();
     if (error.message && (error.message.includes('rate') || error.status === 429))
       throw new Error('Too many attempts — please wait a few minutes before trying again.');
     throw error;
@@ -654,10 +753,13 @@ async function initAuth() {
     const session = await getCurrentSession();
     window._SIS_log && _SIS_log('initAuth:session', {hasSession: !!session, hasUser: !!(session && session.user)});
     if (session && session.user) {
+      const pendingAccountLink = _getPendingAccountLink(session.user);
+      if (pendingAccountLink) _mergeLocalStorage();
       _currentUser = await _syncUserProfile(session.user);
       window._SIS_log && _SIS_log('initAuth:profile', {level: _currentUser ? _currentUser.level : null, id: _currentUser ? _currentUser.id : null});
       await _restoreFromDatabase();
       _mergeLocalStorage();
+      if (pendingAccountLink) await _syncPendingAccountProgress(pendingAccountLink);
       await _flushSaveQueue();
       _syncPointsStateToDb();
       fetchPointsConfig();

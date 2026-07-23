@@ -447,6 +447,8 @@ All tables in `public` schema. RLS enabled on all.
 
 **Auth method:** Supabase magic link (passwordless email OTP) **or password** (added mid-2026 — both coexist; see the sign-in screen's password toggle).
 
+Anonymous users can add their first email directly from SeenInSeven Settings without repeating onboarding. Email-save actions write a short-lived `sis_pending_account_link_v1` marker before sending the magic link. When the matching email returns in the same browser, the auth flow preserves `bwb_challenge_v1`, creates or restores the account, and uploads onboarding, scripts, filmed/skipped status, locks, and posted progress before returning to the dashboard. Normal sign-ins without the matching marker still discard unrelated browser state. Keep this distinction intact.
+
 **Admin access:** Gated by `is_admin = true` in the users table, granted only via `provision_admin_account()` against matching allowlists. The client copies are in `js/admin-studio.js`, `admin-seeninseven.html`, `js/admin-boardroom.js`, and `js/admin-prompt-tester.js`; the server-side allowlist is inside the RPC. Update all copies together.
 
 ---
@@ -536,7 +538,7 @@ Quick summary of phases in order — do not skip ahead:
 - Section-level regeneration with undo/redo
 - Dashboard with progress ring, video cards, version history modal
 - Lock In workflow: Lock → Next Video button → filmed toggle → confetti → dashboard
-- Settings panel (accessible from any screen): name, email, level switch, re-run onboarding
+- Settings panel (accessible from any screen): name, first-time email attachment, password, level switch, re-run onboarding
 - Studio admin: all customer profiles, connected-app access, cross-app entry points, and app-level summaries
 - SeenInSeven admin: onboarding answers, script content, activity log, progress, support notes, and the legacy paid toggle
 - Studio customer hub with independent SeenInSeven and AI Boardroom entitlements
@@ -659,6 +661,8 @@ Should return an empty array. If it doesn't, find and close the unclosed tag.
 10. `goBackToPrompts` set `editingFromPlan = true` when navigating backwards through normal flow. This caused the script view footer to show "Done — Back to Dashboard" instead of the normal "Next Video" CTA.
 
 11. The Prompt Tester auth overlay remained visible after a successful session because an `.auth-screen` display rule overrode the HTML `hidden` attribute. Admin styles that use hidden panels must preserve `[hidden] { display: none !important; }`.
+
+12. First-time email attachment originally routed anonymous users back through onboarding and the auth callback removed `bwb_challenge_v1` before `_mergeLocalStorage()` could preserve their work. Settings now has its own email form, and save-progress magic links use a matching, short-lived account-link marker so anonymous scripts and progress are uploaded before dashboard restoration.
 
 12. Prompt Tester selections and editable answers initially reset when the page was left or reloaded. They are now namespaced in browser storage by selected user, level, and video. This storage is an administrator's test draft only and must never overwrite customer data.
 

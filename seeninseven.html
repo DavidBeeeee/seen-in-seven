@@ -226,9 +226,14 @@
   </div>
   <div class="settings-section">
     <div class="settings-label">Email</div>
-    <div class="settings-email-row">
+    <div class="settings-email-row" id="settings-email-saved">
       <span id="settings-email-display" class="settings-email-val"></span>
-      <button class="settings-link-btn" onclick="sendSettingsEmailChange()">Change →</button>
+      <button class="settings-link-btn" onclick="sendSettingsEmailChange()">Verify →</button>
+    </div>
+    <div id="settings-email-add" style="display:none;">
+      <input type="email" id="settings-email-input" class="settings-input" placeholder="you@example.com" autocomplete="email">
+      <button class="settings-btn-primary" id="settings-email-add-btn" style="margin-top:10px;" onclick="saveSettingsEmail()">Add Email &amp; Save My Work</button>
+      <div class="settings-hint" style="margin-top:8px;">We will send a secure sign-in link. Open it in this browser and your scripts will be waiting.</div>
     </div>
     <div id="settings-email-msg" class="settings-hint"></div>
   </div>
