@@ -102,7 +102,10 @@ async function initializePromptTester() {
 }
 
 async function loadPublishedBlueprint(preserveDraft) {
-  const response = await fetch('/api/prompt-blueprint', { cache: 'no-store' });
+  const response = await fetch('/api/prompt-blueprint', {
+    cache: 'no-store',
+    headers: { Authorization: 'Bearer ' + promptState.session.access_token }
+  });
   const data = await response.json().catch(() => ({}));
   if (!response.ok) throw new Error(data.error || 'Published blueprint could not be loaded.');
   promptState.publishedSource = data.source || '';
@@ -628,7 +631,6 @@ async function generateTest() {
   if (errors.length) return showBanner(errors.join(' '), true);
   const video = Number(promptEl('test-video').value || 1);
   const level = Number(promptEl('test-level').value || 1);
-  const systemPrompt = SISPromptEngine.buildSystemPrompt(extractSystemPrompt(source), level, video);
   const userMessage = promptEl('user-message-editor').value.trim();
   if (!userMessage) return showBanner('The test user message is empty.', true);
   const buttons = Array.from(document.querySelectorAll('[data-generate-test-button]'));
@@ -641,35 +643,28 @@ async function generateTest() {
   promptEl('test-output').className = 'test-output empty-output';
   try {
     const generationMode = promptState.workspace.generationMode === 'production' ? 'production' : 'consistent';
-    const temperature = generationMode === 'production' ? 0.8 : 0.25;
-    let promptVersion = 'unknown';
-    async function callTestModel(systemMsg, userMsg, requestTemperature, captureVersion) {
-      const response = await fetch('/api/generate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ systemMsg, userMsg, temperature:requestTemperature })
-      });
-      const data = await response.json().catch(() => ({}));
-      if (!response.ok) throw new Error(data.error || 'Test generation failed.');
-      if (captureVersion) promptVersion = data.prompt_version || 'unknown';
-      return data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-    }
-    let raw = await callTestModel(systemPrompt, userMessage, temperature, true);
-    if (!raw) throw new Error('The AI returned an empty test.');
-    raw = await SISPromptEngine.reviewAndRepairScript({
-      script:raw,
-      systemPrompt,
-      userMessage,
-      level,
-      video,
-      callModel:(reviewSystem, reviewMessage, reviewTemperature) =>
-        callTestModel(reviewSystem, reviewMessage, reviewTemperature, false)
+    const response = await fetch('/api/prompt-test', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + promptState.session.access_token
+      },
+      body: JSON.stringify({
+        source,
+        userContext: userMessage,
+        level,
+        videoNumber: video,
+        generationMode
+      })
     });
-    promptState.rawOutput = raw.trim();
-    promptState.finalOutput = buildFinalOutput(raw.trim(), video, level, user);
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error || 'Test generation failed.');
+    if (!data.content) throw new Error('The AI returned an empty test.');
+    promptState.rawOutput = String(data.rawContent || data.content).trim();
+    promptState.finalOutput = buildFinalOutput(String(data.content).trim(), video, level, user);
     promptState.showRaw = false;
     renderTestOutput();
-    promptEl('result-meta').textContent = 'Generated ' + new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }) + ' | ' + (generationMode === 'production' ? 'Production Preview' : 'Consistent Test') + ' | Prompt ' + promptVersion;
+    promptEl('result-meta').textContent = 'Generated ' + new Date().toLocaleTimeString([], { hour:'numeric', minute:'2-digit' }) + ' | ' + (generationMode === 'production' ? 'Production Preview' : 'Consistent Test');
     showBanner('Test generated. No user data or saved script was changed.');
   } catch (error) {
     promptEl('test-output').textContent = error.message || 'Test generation failed.';
