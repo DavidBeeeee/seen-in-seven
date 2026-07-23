@@ -158,7 +158,8 @@ async function verifyTurnstile(token, req) {
       signal: controller.signal
     });
     const result = await response.json().catch(() => ({}));
-    return result.success === true && result.action === 'sis_guest_unlock';
+    const isTestKey = secret === '1x0000000000000000000000000000000AA';
+    return result.success === true && (isTestKey || result.action === 'sis_guest_unlock');
   } finally {
     clearTimeout(timeout);
   }

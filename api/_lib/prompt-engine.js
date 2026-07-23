@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { createHash } from 'node:crypto';
 
-const BLUEPRINT_FILE = new URL('./blueprints.txt', import.meta.url);
+const BLUEPRINT_FILE = process.cwd() + '/api/_lib/blueprints.txt';
 
 function blueprintSource() {
   return readFileSync(BLUEPRINT_FILE, 'utf8');
