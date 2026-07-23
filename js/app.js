@@ -1860,7 +1860,27 @@ async function generateValidatedScript(userMessage, level, video, mode, details)
     level,
     videoNumber: video
   }, details || {});
-  return callGenerationAPI(payload);
+  const content = await callGenerationAPI(payload);
+  return content;
+}
+
+const SCRIPT_RECOVERY_MESSAGES = [
+  'Your story is almost ready. The writing room is giving it one more careful pass so it sounds like you, not a template.',
+  'A first draft got a little tangled in the details. Your answers are safe, and a fresh take is one click away.',
+  'The script is close. We held it back for one more polish pass so the story lands cleanly from beginning to end.',
+  'Your story deserves better than a rushed draft. We are ready to take another swing with the same answers.',
+  'The editor spotted something worth tightening. Give us one more pass and we will keep shaping the good stuff.'
+];
+
+function friendlyScriptRecoveryMessage(error) {
+  const message = String(error && error.message || '').toLowerCase();
+  if (message.includes('generated a lot in a short time')) {
+    return 'You have made a lot of progress in a short stretch. Take a quick breather, then come back for the next script.';
+  }
+  if (message.includes('request took too long') || message.includes('timed out') || message.includes('did not respond')) {
+    return 'The writing room took longer than expected. Your answers are saved, and a fresh pass is ready when you are.';
+  }
+  return SCRIPT_RECOVERY_MESSAGES[Math.floor(Math.random() * SCRIPT_RECOVERY_MESSAGES.length)];
 }
 
 // Parse [HOOK] / [OPEN LOOP] / [MEAT] / [CONCLUSION] / [CTA] sections from AI response
@@ -2997,10 +3017,10 @@ async function showScriptView(idx, skipLoading) {
         });
       }
       if (errorMsg) {
-        errorMsg.textContent = 'Error: ' + errText;
-        errorMsg.style.whiteSpace = 'pre-wrap';
-        errorMsg.style.fontSize = '14px';
-        errorMsg.style.textAlign = 'left';
+        errorMsg.textContent = friendlyScriptRecoveryMessage(err);
+        errorMsg.style.whiteSpace = '';
+        errorMsg.style.fontSize = '';
+        errorMsg.style.textAlign = '';
       }
       if (retryBtn) retryBtn.onclick = () => showScriptView(idx);
       if (fallbackBtn) fallbackBtn.onclick = () => {

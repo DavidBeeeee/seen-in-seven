@@ -136,16 +136,35 @@ Regenerate ONLY the [${input.section}] section, applying the feedback above whil
 async function generateScript(input, prompt) {
   const systemPrompt = buildSystemPrompt(prompt.prompt, input.level, input.video);
   const userMessage = regenerationMessage(input);
-  const draft = await callModel(systemPrompt, userMessage, 0.8);
-  const content = await reviewAndRepairScript({
-    script: draft,
-    systemPrompt,
-    userMessage,
-    level: input.level,
-    video: input.video,
-    callModel
-  });
-  return { content, promptVersion: prompt.version };
+  let lastError;
+
+  // The editor can occasionally identify a real issue but decline to make a
+  // narrow patch, especially when a user gave brief answers. Start over with
+  // a clean draft twice before putting any recovery work in front of the user.
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const retryNote = attempt
+      ? '\n\nA previous draft did not pass the final story check. Write a genuinely fresh complete script. Follow the five-section format exactly, make the CTA's current-video orientation precise, and avoid every banned phrase. Do not explain the rewrite.'
+      : '';
+    try {
+      const draft = await callModel(systemPrompt, userMessage + retryNote, 0.8);
+      const content = await reviewAndRepairScript({
+        script: draft,
+        systemPrompt,
+        userMessage: userMessage + retryNote,
+        level: input.level,
+        video: input.video,
+        callModel
+      });
+      return { content, promptVersion: prompt.version, generationAttempts: attempt + 1 };
+    } catch (error) {
+      lastError = error;
+      const message = String(error && error.message || '');
+      const canRetry = /story review found an issue|script response still needs correction/i.test(message);
+      if (!canRetry || attempt === 2) throw error;
+    }
+  }
+
+  throw lastError || new Error('The script needs another pass.');
 }
 
 async function generateSection(input, prompt) {
