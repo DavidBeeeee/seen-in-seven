@@ -83,7 +83,7 @@ export async function callModel(system, user, temperature = 0.8, maxTokens = 120
         Authorization: 'Bearer ' + apiKey
       },
       body: JSON.stringify({
-        model: 'deepseek-chat',
+        model: 'deepseek-v4-pro',
         messages: [
           { role: 'system', content: system },
           { role: 'user', content: user }
