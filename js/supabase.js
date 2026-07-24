@@ -56,9 +56,28 @@ function getPreauthSessionId() {
   }
 }
 
+function getPreauthTrafficContext() {
+  try {
+    const url = new URL(window.location.href);
+    const source = String(url.searchParams.get('source') || url.searchParams.get('utm_source') || '').trim().slice(0, 80);
+    let referrerHost = '';
+    if (document.referrer) {
+      try { referrerHost = new URL(document.referrer).hostname.slice(0, 160); } catch(e) {}
+    }
+    return {
+      source: source || null,
+      referrer_host: referrerHost || null,
+      internal_test: source.toLowerCase() === 'davidbee-test'
+    };
+  } catch(e) {
+    return {};
+  }
+}
+
 function preauthSnapshot(eventType) {
   if (typeof state === 'undefined') return {};
   const p2 = typeof ensurePhase2 === 'function' ? ensurePhase2() : (state.phase2 || {});
+  const traffic = getPreauthTrafficContext();
   const base = {
     name: state.name || '',
     level: state.level || null,
@@ -70,7 +89,10 @@ function preauthSnapshot(eventType) {
     mini_goal: state.minigoal || null,
     mini_goal_text: state.minigoalText || '',
     content_intent: p2.contentIntentTitle || p2.contentIntent || null,
-    auth_mode: typeof authScreenMode !== 'undefined' ? authScreenMode : null
+    auth_mode: typeof authScreenMode !== 'undefined' ? authScreenMode : null,
+    source: traffic.source || null,
+    referrer_host: traffic.referrer_host || null,
+    internal_test: !!traffic.internal_test
   };
   if (eventType === 'onboarding_completed') {
     base.onboarding_snapshot = {
