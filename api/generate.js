@@ -89,6 +89,7 @@ export async function callModel(system, user, temperature = 0.8, maxTokens = 120
           { role: 'user', content: user }
         ],
         max_tokens: maxTokens,
+        thinking: { type: 'disabled' },
         temperature
       }),
       signal: controller.signal
