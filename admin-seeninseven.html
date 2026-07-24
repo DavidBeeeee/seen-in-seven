@@ -246,7 +246,7 @@
           <button class="btn btn-small" onclick="copyFilteredUsers()">Copy Users</button>
         </div>
         <div class="toolbar">
-          <input id="user-search" class="search" placeholder="Search name, email, status, or latest event" oninput="applyFilters()">
+          <input id="user-search" class="search" placeholder="Search name, email, source, status, or latest event" oninput="applyFilters()">
           <select id="status-filter" class="select" onchange="applyFilters()">
             <option value="all">All users</option>
             <option value="needs_help">Needs help</option>
@@ -257,6 +257,10 @@
             <option value="onboarded">Completed onboarding</option>
             <option value="complete">Completed all 7</option>
             <option value="preauth">Unverified / anonymous</option>
+            <option value="real_lead">Real leads</option>
+            <option value="interested_anon">Interested anonymous visitors</option>
+            <option value="passive_traffic">Passive traffic</option>
+            <option value="internal_test">Internal tests</option>
             <option value="l1">Level 1</option>
             <option value="l2">Level 2</option>
             <option value="test_group">Test group only</option>
@@ -431,7 +435,61 @@ function setLoading() {
   document.getElementById('user-tbody').innerHTML = '<tr><td colspan="11" class="loading">Loading...</td></tr>';
 }
 
+function eventDetailValue(event, key) {
+  return event && event.detail && typeof event.detail === 'object' ? event.detail[key] : null;
+}
+
+function sourceFromPath(pagePath) {
+  try {
+    const url = new URL(String(pagePath || ''), window.location.origin);
+    return String(url.searchParams.get('source') || url.searchParams.get('utm_source') || '').trim();
+  } catch(e) {
+    return '';
+  }
+}
+
+function buildTrafficInfo(events, email, verified) {
+  const list = events || [];
+  const source = firstTruthy(list.map(event => eventDetailValue(event, 'source') || sourceFromPath(event.page_path)));
+  const referrer = firstTruthy(list.map(event => eventDetailValue(event, 'referrer_host')));
+  const names = new Set(list.map(event => event.event_type));
+  const internal = String(source || '').toLowerCase() === 'davidbee-test' ||
+    list.some(event => eventDetailValue(event, 'internal_test') === true);
+
+  if (internal) return { key:'internal_test', label:'Internal Test', tone:'gold', source, referrer };
+  if (verified || email || names.has('onboarding_completed') || names.has('script_generated') || names.has('auth_completed')) {
+    return { key:'real_lead', label:'Real Lead', tone:'green', source, referrer };
+  }
+  if (list.some(event => event.event_type !== 'app_loaded')) {
+    return { key:'interested_anon', label:'Interested Visit', tone:'blue', source, referrer };
+  }
+  return { key:'passive_traffic', label:'Passive Traffic', tone:'', source, referrer };
+}
+
+function trafficLabel(r) {
+  return r.traffic ? badge(r.traffic.label, r.traffic.tone) : '';
+}
+
+function trafficSourceText(r) {
+  if (!r.traffic) return '';
+  return r.traffic.source || r.traffic.referrer || 'Direct or unknown';
+}
+
+function renderVisitTrail(r) {
+  const traffic = r.traffic || { label:'Visit', tone:'', source:'', referrer:'' };
+  const events = (r.visitLogs || []).slice().sort((a,b) => dateMs(a.created_at) - dateMs(b.created_at));
+  const source = traffic.source || 'Direct or unknown';
+  const referrer = traffic.referrer || 'Not supplied by browser';
+  return '<div class="section-title" style="margin-bottom:12px;">Visit Trail</div>' +
+    kv('Visit class', badge(traffic.label, traffic.tone)) +
+    kv('Source', h(source)) +
+    kv('Referrer', h(referrer)) +
+    kv('Actions', h(events.length + ' tracked event' + (events.length === 1 ? '' : 's'))) +
+    '<div class="timeline-list">' + renderTimeline(events) + '</div>';
+}
+
 function buildRows() {
+  const preauthByUser = groupBy((adminState.preauthEvents || []).filter(event => !!event.user_id), 'user_id');
   const scriptsByUser = groupBy(adminState.currentScripts, 'user_id');
   const allScriptsByUser = groupBy(adminState.scripts, 'user_id');
   const progressByUser = groupBy(adminState.progress, 'user_id');
@@ -446,6 +504,15 @@ function buildRows() {
     const allScripts = allScriptsByUser[user.id] || [];
     const progress = progressByUser[user.id] || [];
     const logs = (logsByUser[user.id] || []).sort((a,b) => dateMs(b.created_at) - dateMs(a.created_at));
+    const preauthEvents = preauthByUser[user.id] || [];
+    const visitLogs = preauthEvents.map(event => ({
+      user_id: user.id,
+      event_type: event.event_type,
+      detail: event.detail || {},
+      created_at: event.created_at,
+      preauth: true
+    }));
+    const traffic = buildTrafficInfo(preauthEvents, user.email, true);
     const ob = onboardingByUser[user.id] || null;
     const points = pointsByUser[user.id] || null;
     const studioAccess = studioByUser[user.id] || null;
@@ -463,7 +530,7 @@ function buildRows() {
     const status = computeStatus({ recentErrors, filmedCount, scriptCount, onboardingComplete, user, stalled });
     const attention = attentionScore({ notes, recentErrors, stalled, scriptCount, filmedCount, onboardingComplete, latest });
     return {
-      user, scripts, allScripts, progress, filmed, skipped, logs, ob, latest, notes,
+      user, scripts, allScripts, progress, filmed, skipped, logs, visitLogs, preauthEvents, traffic, ob, latest, notes,
       onboardingComplete, scriptCount, filmedCount, errorLogs, recentErrors, status,
       stalled, attention, lastActiveMs, points, studioAccess
     };
@@ -503,6 +570,7 @@ function buildPreauthRows() {
     const notes = getNote(user.id);
     const onboardingComplete = logs.some(l => l.event_type === 'onboarding_completed');
     const skippedAuth = logs.some(l => l.event_type === 'auth_skipped');
+    const traffic = buildTrafficInfo(events, email, false);
     const status = recentErrors.length
       ? { label:'Error', tone:'red' }
       : onboardingComplete
@@ -515,7 +583,7 @@ function buildPreauthRows() {
     const lastActiveMs = latest ? dateMs(latest.created_at) : 0;
     return {
       preauth: true, anonSessionId: sessionId, user, scripts: [], allScripts: [], progress: [],
-      filmed: [], skipped: [], logs, ob, latest, notes, onboardingComplete, scriptCount: 0,
+      filmed: [], skipped: [], logs, visitLogs: logs, preauthEvents: events, traffic, ob, latest, notes, onboardingComplete, scriptCount: 0,
       filmedCount: 0, errorLogs: logs.filter(isErrorLog), recentErrors, status,
       stalled: isStalled(lastActiveMs, onboardingComplete, 0, 0), attention: 15 + (skippedAuth ? 8 : 0) + (onboardingComplete ? 14 : 0),
       lastActiveMs, studioAccess: null
@@ -580,6 +648,10 @@ function renderHealth() {
 
 function renderSnapshot() {
   const rows = adminState.rows;
+  const realLeads = rows.filter(r => r.traffic && r.traffic.key === 'real_lead').length;
+  const interestedAnonymous = rows.filter(r => r.traffic && r.traffic.key === 'interested_anon').length;
+  const passiveTraffic = rows.filter(r => r.traffic && r.traffic.key === 'passive_traffic').length;
+  const internalTests = rows.filter(r => r.traffic && r.traffic.key === 'internal_test').length;
   const todayActive = rows.filter(r => isWithin(r.user.last_active || (r.latest && r.latest.created_at), 24)).length;
   const onboarded = rows.filter(r => r.onboardingComplete).length;
   const firstScript = rows.filter(r => r.scripts.some(s => Number(s.video_number) === 1)).length;
@@ -588,7 +660,11 @@ function renderSnapshot() {
   const errors24 = adminState.logs.filter(l => isErrorLog(l) && isWithin(l.created_at, 24)).length;
   const errorNote = Object.keys(adminState.loadErrors).length ? 'Dataset warning: ' + Object.keys(adminState.loadErrors).join(', ') : 'Operational view';
   document.getElementById('snapshot-grid').innerHTML = [
-    metricCard(rows.length, 'Total Users', errorNote),
+    metricCard(realLeads, 'Real Leads', 'Email, sign-in, onboarding, or script'),
+    metricCard(interestedAnonymous, 'Interested Anonymous', 'More than a page load'),
+    metricCard(passiveTraffic, 'Passive Traffic', 'Page load only'),
+    metricCard(internalTests, 'Internal Tests', 'Tagged davidbee-test'),
+    metricCard(rows.length, 'Total Records', errorNote),
     metricCard(todayActive, 'Active 24hr', 'Last active or latest event'),
     metricCard(onboarded, 'Onboarded', pct(onboarded, rows.length) + ' of users'),
     metricCard(firstScript, 'First Script', pct(firstScript, rows.length) + ' reached value'),
@@ -671,7 +747,7 @@ function filteredRows(q, filter, sort) {
 
 function rowMatches(r, q, filter) {
   const note = r.notes || {};
-  const haystack = [displayName(r), r.user.email, r.status.label, latestEventLabel(r), note.support_status, note.note].join(' ').toLowerCase();
+  const haystack = [displayName(r), r.user.email, r.status.label, latestEventLabel(r), trafficSourceText(r), r.traffic && r.traffic.label, note.support_status, note.note].join(' ').toLowerCase();
   if (q && !haystack.includes(q)) return false;
   if (filter === 'needs_help') return note.support_status === 'needs_help';
   if (filter === 'has_errors') return r.errorLogs.length > 0;
@@ -681,6 +757,10 @@ function rowMatches(r, q, filter) {
   if (filter === 'onboarded') return r.onboardingComplete;
   if (filter === 'complete') return r.filmedCount >= 7;
   if (filter === 'preauth') return !!r.preauth;
+  if (filter === 'real_lead') return !!r.traffic && r.traffic.key === 'real_lead';
+  if (filter === 'interested_anon') return !!r.traffic && r.traffic.key === 'interested_anon';
+  if (filter === 'passive_traffic') return !!r.traffic && r.traffic.key === 'passive_traffic';
+  if (filter === 'internal_test') return !!r.traffic && r.traffic.key === 'internal_test';
   if (filter === 'l1') return Number(r.user.level) === 1;
   if (filter === 'l2') return Number(r.user.level) === 2;
   if (filter === 'test_group') return !!note.test_group;
@@ -700,7 +780,7 @@ function renderUserRows(rows) {
     return '<tr class="user-row' + selected + '" onclick="selectUser(\'' + safeAttr(r.user.id) + '\')">' +
       '<td class="select-col"><input type="checkbox" class="row-check" onclick="event.stopPropagation()" onchange="toggleRowSelection(\'' + safeAttr(r.user.id) + '\', this.checked)"' + checked + '></td>' +
       '<td><div class="name-main">' + h(displayName(r)) + '</div><div class="name-sub">' + h(r.user.email || r.user.id) + '</div></td>' +
-      '<td>' + badge(r.status.label, r.status.tone) + (r.stalled ? ' ' + badge('Watch', 'orange') : '') + '</td>' +
+      '<td>' + trafficLabel(r) + (r.traffic ? ' ' : '') + badge(r.status.label, r.status.tone) + (r.stalled ? ' ' + badge('Watch', 'orange') : '') + '</td>' +
       '<td>' + h(levelLabel(r.user.level)) + '</td>' +
       '<td><div class="progress-stack"><div class="bar"><div class="bar-fill" style="width:' + Math.round((r.filmedCount / 7) * 100) + '%"></div></div><div class="progress-text">' + r.scriptCount + '/7 scripts | ' + r.filmedCount + '/7 filmed</div></div></td>' +
       '<td>' + (r.points ? '<span class="points-num">' + r.points.total + '</span>' : '<span class="muted">-</span>') + '</td>' +
@@ -775,12 +855,18 @@ function renderDrawer(userId) {
     '<div class="drawer-section"><div class="section-title">Onboarding Answers</div><div class="answers-list">' + renderAnswers(r.ob, r) + '</div></div>' +
     '<div class="drawer-section"><div class="section-title">Script Review</div><div class="script-list">' + renderScripts(r) + '</div></div>' +
     '<div class="drawer-section"><div class="section-title">Issue Panel</div><div class="issue-list">' + renderUserIssues(r) + '</div></div>' +
-    '<div class="drawer-section"><div class="section-title">Event Timeline</div><div class="timeline-list">' + renderTimeline(r.logs) + '</div></div>';
+    (r.preauth || (r.visitLogs && r.visitLogs.length)
+      ? '<div class="drawer-section">' + renderVisitTrail(r) + '</div>'
+      : '') +
+    (!r.preauth
+      ? '<div class="drawer-section"><div class="section-title">Event Timeline</div><div class="timeline-list">' + renderTimeline(r.logs) + '</div></div>'
+      : '');
 }
 
 function renderProfile(r) {
   return '<div class="section-title" style="margin-bottom:12px;">Profile Summary</div>' +
-    kv('Status', badge(r.status.label, r.status.tone)) +
+    kv('Status', trafficLabel(r) + (r.traffic ? ' ' : '') + badge(r.status.label, r.status.tone)) +
+    (r.traffic ? kv('Traffic source', h(trafficSourceText(r))) : '') +
     (r.preauth ? kv('Pre-auth session', h(r.anonSessionId || '-')) : kv('Database ID', h(r.user.id))) +
     kv('Auth ID', h(r.user.auth_id || (r.preauth ? 'Not verified yet' : '-'))) +
     (r.preauth ? kv('Email entered', h(r.user.email || '-')) : '') +
