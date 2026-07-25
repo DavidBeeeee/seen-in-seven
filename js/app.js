@@ -1472,11 +1472,11 @@ const INTRO_COPY = {
       result: 'Insight',
       framework: [
         {name:'Hook',                     trigger:'Pattern Break'},
-        {name:'The Person Who Guided You',trigger:'Mentor Function'},
+        {name:'The Person Who Guided You',trigger:'Received Guidance'},
         {name:'Testing The Guidance',      trigger:'Discovery Arc'},
         {name:'The First New Lens',        trigger:'Cognitive Reframe'}
       ],
-      triggers: ['Pattern Break','Mentor Function','Discovery Arc','Cognitive Reframe','The "Aha" Transfer','Cost Revelation','Simplicity Signal']
+      triggers: ['Pattern Break','Received Guidance','Discovery Arc','Cognitive Reframe','The "Aha" Transfer','Cost Revelation','Simplicity Signal']
     }
   },
   4: {
@@ -5617,7 +5617,7 @@ function showDashboard() {
 }
 
 // ── RESTART ───────────────────────────────────────────
-function restartWizard(){
+async function restartWizard(){
   // Use the styled confirmation overlay
   const overlay = document.getElementById('start-over-confirm');
   if (overlay) { overlay.style.display = 'none'; }
@@ -5631,6 +5631,7 @@ function restartWizard(){
   // Clear scripts and onboarding from state
   state.videos       = {};
   state.videoStatus  = {};
+  state.videoAnswersByLevel = {};
   state.videoPosted  = {};  // server rows are deleted below, keep points in parity
   state.l1Videos     = null;
   state.l1VideoStatus= null;
@@ -5650,19 +5651,24 @@ function restartWizard(){
   maxProgressPct = 0;
   maxProgressL2Pct = 0;
 
-  // Save cleared state to localStorage
-  saveProgress();
+  if (typeof clearPendingProgressSaves === 'function') clearPendingProgressSaves();
 
-  // Clear from DB if authenticated (fire and forget)
+  // Clear the browser immediately, then wait for the authenticated reset to
+  // finish so an old save cannot race back into a newly started journey.
+  saveProgress({ skipDbSync: true });
   const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
   if (user && typeof _sb !== 'undefined') {
-    _sb.from('scripts').delete().eq('user_id', user.id).then(() => {});
-    _sb.from('video_progress').delete().eq('user_id', user.id).then(() => {});
-    _sb.from('onboarding').delete().eq('user_id', user.id).then(() => {});
-    _sb.from('users').update({
-      level: state.level, // keep level
-      blocker: null, business_stage: null
-    }).eq('id', user.id).then(() => {});
+    const results = await Promise.all([
+      _sb.from('scripts').delete().eq('user_id', user.id),
+      _sb.from('video_progress').delete().eq('user_id', user.id),
+      _sb.from('onboarding').delete().eq('user_id', user.id),
+      _sb.from('users').update({
+        level: state.level, // keep level
+        blocker: null, business_stage: null
+      }).eq('id', user.id)
+    ]);
+    const failed = results.find(result => result && result.error);
+    if (failed) console.error('[SeenInSeven] Full restart database reset failed:', failed.error);
   }
 
   // Reset progress bar
@@ -6136,7 +6142,7 @@ function copyScript(btn) {
 
 // ── LOCAL STORAGE / RETURNING USER ────────────────────
 
-function saveProgress() {
+function saveProgress(options = {}) {
   captureVideoAnswersByLevel();
   const data = {
     name:          state.name          || '',
@@ -6164,7 +6170,7 @@ function saveProgress() {
   };
   try { localStorage.setItem(SAVE_KEY, JSON.stringify(data)); } catch(e) {}
   // Queue DB sync — fires immediately if authenticated, deferred if not
-  queueOnboardingSave();
+  if (!options.skipDbSync) queueOnboardingSave();
 }
 
 function loadProgress() {

@@ -504,6 +504,19 @@ The app has 21 screens, all `<div class="screen">` elements that are direct chil
 6. Individual sections can be regenerated via `regenerateSection()`
 7. Undo/redo system: every generation and edit (debounced 2s) pushes to a per-video undo stack in `state.videos['_undo_v' + idx]`
 
+**DeepSeek context and restart behavior:**
+- Every model call is stateless and sends one system message plus one user message. No DeepSeek conversation or session identifier is retained.
+- Per-video **Delete & Start Over** clears the active script, section drafts, prompt answers, lock state, and prompt-version state. The previous database row remains only as non-current history and is not included when Video 1 is generated again.
+- Full **Delete Everything** also clears the per-level answer cache and pending anonymous save queue, then waits for authenticated database deletion before the user begins again. This prevents stale answers or queued scripts from returning after a reset.
+- **Regenerate Full Script** intentionally includes the current script so DeepSeek can create a stronger replacement from the existing draft.
+- A restarted script can still resemble an earlier one when the onboarding answers, journal facts, and tightly defined story architecture are unchanged. That similarity comes from repeated source material, not hidden conversation memory.
+
+**Spoken-script language firewall:**
+- Hero's Journey chapter names, stage ownership, framework names, and production terminology are private construction tools. They must never appear in generated spoken copy.
+- Real relationships are still valid story material. A person can naturally be called a mentor, teacher, guide, supervisor, peer, client, elder, or collaborator when that description comes from the user's life.
+- Deterministic validation and the semantic story review both enforce the firewall.
+- False balance includes one-sentence formulas, causal pivots such as `not because`, and adjacent sentences that negate and then repeat the same verb as the correction.
+
 **Version model:**
 - Script is saved to DB on first generation (`queueScriptSave`)
 - Manual edits update the current row in-place (`saveScriptEditToDb`)

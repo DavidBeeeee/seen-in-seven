@@ -26,6 +26,14 @@ Never use false-balance constructions such as "it is not X, it is Y" or fake rea
 Prefer the speaker's actual, concrete language over generic motivational or social-media phrasing.
 </global_voice_rule>
 
+<internal_story_language_firewall>
+The Hero's Journey, chapter map, stage ownership, section architecture, psychological triggers, and framework names are private construction tools. The viewer must experience them without hearing them named.
+
+Never use internal framework language in the generated spoken script, including "Hero's Journey," "Ordinary World," "Refusal of the Call," "Call to Adventure," "Crossing the Threshold," "Road of Trials," "the Ordeal," "Finding the Elixir," "Return with the Elixir," "mentor function," "guide function," "stage ownership," or similar production terminology. Translate the underlying movement into ordinary human language drawn from the speaker's actual life.
+
+A real person may naturally be called a mentor, teacher, guide, supervisor, peer, client, elder, or collaborator when that is how the speaker would describe them. The firewall applies to framework labels, not to real relationships.
+</internal_story_language_firewall>
+
 <section_composition_rule>
 The five labeled sections are different writing operations, not paragraphs in one uninterrupted composition. Do not apply one prose rhythm or one transition rule across the entire script.
 

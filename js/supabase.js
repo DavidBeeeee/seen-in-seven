@@ -134,6 +134,11 @@ async function recordPreauthEvent(eventType, detail = {}) {
 // ── DEFERRED SAVE QUEUE ───────────────────────────────
 const _saveQueue = [];
 
+function clearPendingProgressSaves() {
+  _saveQueue.length = 0;
+  _clearPendingAccountLink();
+}
+
 async function _flushSaveQueue() {
   if (!_currentUser || _saveQueue.length === 0) return;
   const items = [..._saveQueue];
