@@ -131,24 +131,47 @@ export async function callModel(system, user, temperature = 0.8, maxTokens = 120
 }
 
 const L2V1_PRIVATE_STRATEGY_PATTERN = /\b(?:coach(?:ing)?|course|framework|tool|service|offer|client|customer|booking|book a call|direct message|dm|one[- ]to[- ]one|1[- ]to[- ]1|sign[- ]?up|buy|bought|purchase|purchased|pay|paid|sell|sale|conversion)\b/i;
+const L2V1_DIRECTIVE_SENTENCE_PATTERN = /\b(?:make it|keep the (?:ending|cta)|point (?:the|it)|the (?:ending|cta|next step) should|tell (?:them|the viewer)|ask (?:them|the viewer)|working with me|talk(?:ing)? to me|sign(?:ing)? up|book(?:ing)? a call|direct message)\b/i;
+const L2V1_PACKET_REPLACEMENTS = [
+  [/\bcoach(?:ing)?\b/gi, 'guidance'],
+  [/\bcourses?\b/gi, 'guidance'],
+  [/\bframeworks?\b/gi, 'approaches'],
+  [/\btools?\b/gi, 'projects'],
+  [/\bservices?\b/gi, 'work'],
+  [/\boffers?\b/gi, 'work'],
+  [/\bclients?\b/gi, 'people'],
+  [/\bcustomers?\b/gi, 'people'],
+  [/\bone[- ]to[- ]one\b|\b1[- ]to[- ]1\b/gi, 'direct'],
+  [/\b(?:buy|purchase|pay)\b/gi, 'try'],
+  [/\b(?:bought|purchased|paid)\b/gi, 'tried'],
+  [/\b(?:sell|sale|conversion)\b/gi, 'response']
+];
+
+function sanitizeLevelTwoVideoOneMaterial(value) {
+  let packet = String(value || '')
+    .split('\n')
+    .map(line => {
+      if (/^[A-Z ]+:\s*$/.test(line.trim())) return line.trim();
+      const sentences = line.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [];
+      return sentences
+        .map(sentence => sentence.trim())
+        .filter(sentence => sentence && !L2V1_DIRECTIVE_SENTENCE_PATTERN.test(sentence))
+        .join(' ');
+    })
+    .join('\n');
+  L2V1_PACKET_REPLACEMENTS.forEach(([pattern, replacement]) => {
+    packet = packet.replace(pattern, replacement);
+  });
+  return packet.replace(/[ \t]{2,}/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+}
 
 async function prepareLevelTwoVideoOneMaterial(userContext) {
   const raw = String(userContext || '').trim();
   const declarationMatch = raw.match(/^\d+\.\s+Opening declaration \(read-only\):\s*(.+)$/mi);
   const declaration = declarationMatch ? declarationMatch[1].trim() : '';
-  let packet = await callModel(L2V1_MATERIAL_ROUTER_SYSTEM, raw, 0.2, 1800);
-  for (let pass = 0; pass < 2 && L2V1_PRIVATE_STRATEGY_PATTERN.test(packet); pass++) {
-    const forbidden = Array.from(new Set(packet.match(new RegExp(L2V1_PRIVATE_STRATEGY_PATTERN.source, 'gi')) || []));
-    packet = await callModel(
-      L2V1_MATERIAL_ROUTER_SYSTEM,
-      'Rewrite this evidence packet. These forbidden commercial terms are still present: ' + forbidden.join(', ') + '. Remove every occurrence and express only the underlying human behavior or tension. Preserve the human story, audience struggle, commitment stakes, and voice. Return the same four-heading evidence packet only.\n\nPACKET TO CLEAN:\n' + packet,
-      0.1,
-      1800
-    );
-  }
-  if (L2V1_PRIVATE_STRATEGY_PATTERN.test(packet)) {
-    throw new Error('The private story material could not be prepared cleanly. Please try again.');
-  }
+  const routed = await callModel(L2V1_MATERIAL_ROUTER_SYSTEM, raw, 0.2, 1000);
+  const packet = sanitizeLevelTwoVideoOneMaterial(routed);
+  if (!packet) throw new Error('The private story material could not be prepared cleanly. Please try again.');
   return [
     'Generate Video 1 script.',
     '',
@@ -196,10 +219,10 @@ async function generateScript(input, prompt) {
     : rawUserMessage;
   let lastError;
 
-  // The editor can occasionally identify a real issue but decline to make a
-  // narrow patch, especially when a user gave brief answers. Start over with
-  // a clean draft twice before putting any recovery work in front of the user.
-  for (let attempt = 0; attempt < 3; attempt++) {
+  // L2V1 already uses a separate material-preparation call, so cap it at two
+  // complete drafts to keep the request comfortably inside the runtime limit.
+  const maxAttempts = input.level === 2 && input.video === 1 && input.mode === 'script' ? 2 : 3;
+  for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const retryNote = attempt
       ? '\n\nA previous draft did not pass the final story check. Write a genuinely fresh complete script. Follow the five-section format exactly, make the CTA current-video orientation precise, and avoid every banned phrase. Do not explain the rewrite.\n\nEXACT FEEDBACK FROM THE PREVIOUS DRAFT:\n' + String(lastError && lastError.message || '')
       : '';
@@ -218,7 +241,7 @@ async function generateScript(input, prompt) {
       lastError = error;
       const message = String(error && error.message || '');
       const canRetry = /story review found an issue|script response still needs correction/i.test(message);
-      if (!canRetry || attempt === 2) throw error;
+      if (!canRetry || attempt === maxAttempts - 1) throw error;
     }
   }
 
