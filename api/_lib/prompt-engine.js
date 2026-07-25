@@ -179,7 +179,7 @@ function publishedPrompt() {
     return issues;
   }
 
-  function validateOutput(text, video) {
+  function validateOutput(text, video, level) {
     const source = String(text || '');
     const sections = parseSections(text);
     if (!sections) return { valid: false, sections: null, missing: ['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA'], issues: [], sectionIssues: {} };
@@ -244,6 +244,14 @@ function publishedPrompt() {
     if (numberedVideoReference && !numberedSeriesContext && !challengeContext) {
       addIssue('CTA', 'CTA names a future video without explaining that it is part of the speaker\'s 7 Video Challenge. Give cold viewers the challenge context before directing them to that next installment.');
     }
+    if (Number(level) === 2 && Number(video) === 1) {
+      const privatePositioning = /\b(?:coach(?:ing)?|course|framework|one[- ]to[- ]one|1[- ]to[- ]1|client|customer|booking|book a call|direct message|sign[- ]?up|buy|bought|purchase|pay|sell|sale|conversion)\b/i;
+      Object.keys(sections).forEach(section => {
+        if (privatePositioning.test(String(sections[section] || ''))) {
+          addIssue(section, 'Level 2 Video 1 includes private commercial positioning instead of translating it into human story and audience tension.');
+        }
+      });
+    }
     if (Number(video) === 7) {
       if (!/\b(?:video|part)\s+(?:seven|7)\s+of\s+(?:seven|7)\b|\b(?:seventh|final|last)\s+(?:video|part)\b/i.test(cta)) {
         addIssue('CTA', 'Video 7 CTA must explicitly acknowledge that this is the seventh and final part of the seven-video journey.');
@@ -296,7 +304,7 @@ function publishedPrompt() {
   }
 
   function buildQualityReviewMessage(config) {
-    const validation = config.validation || validateOutput(config.script, config.video);
+    const validation = config.validation || validateOutput(config.script, config.video, config.level);
     const lines = [
       'LEVEL: ' + Number(config.level || 1),
       'VIDEO: ' + Number(config.video || 1),
@@ -374,7 +382,7 @@ function publishedPrompt() {
     let script = String(config.script || '').trim();
     let unresolvedSemanticFailure = false;
     for (let pass = 0; pass < 2; pass++) {
-      const validation = validateOutput(script, config.video);
+      const validation = validateOutput(script, config.video, config.level);
       const reviewRaw = await config.callModel(
         QUALITY_REVIEW_SYSTEM,
         buildQualityReviewMessage({
@@ -401,7 +409,7 @@ function publishedPrompt() {
         unresolvedSemanticFailure = true;
       }
     }
-    const finalValidation = validateOutput(script, config.video);
+    const finalValidation = validateOutput(script, config.video, config.level);
     // The story editor is intentionally allowed to flag a broad concern without
     // rewriting a section. When every concrete quality check passes, do not
     // strand the user on an editor opinion that has no actionable repair.
@@ -416,7 +424,7 @@ function publishedPrompt() {
     let script = String(config.script || '').trim();
     let unresolvedSemanticFailure = false;
     for (let pass = 0; pass < 2; pass++) {
-      const fullValidation = validateOutput(script, config.video);
+      const fullValidation = validateOutput(script, config.video, config.level);
       const targetIssues = fullValidation.sectionIssues && fullValidation.sectionIssues[section] || [];
       const targetValidation = {
         valid:targetIssues.length === 0,
@@ -453,7 +461,7 @@ function publishedPrompt() {
         unresolvedSemanticFailure = true;
       }
     }
-    const finalValidation = validateOutput(script, config.video);
+    const finalValidation = validateOutput(script, config.video, config.level);
     const remaining = finalValidation.sectionIssues && finalValidation.sectionIssues[section] || [];
     if (!remaining.length && !unresolvedSemanticFailure) return parseSections(script)[section];
     if (unresolvedSemanticFailure) throw new Error('The story review found an issue in ' + section + ' but could not produce a clean replacement. Please try again.');
