@@ -173,6 +173,9 @@ function publishedPrompt() {
     if (/\b(?:that(?:'s| is)|this(?:'s| is)|it(?:'s| is))\s+not\s+[^.!?]{1,100}[,;.]\s*(?:that(?:'s| is)|this(?:'s| is)|it(?:'s| is))\b/i.test(normalized)) {
       issues.push('Remove the disguised false-balance construction and state the chosen point through the story.');
     }
+    if (/\b(?:isn't|is not|wasn't|was not)\b[^.!?]{1,120}[.!?]\s*(?:it|this|that)(?:'s| is| was)\b/i.test(normalized)) {
+      issues.push('Remove the two-sentence false-balance construction and state the chosen point directly.');
+    }
     if (/\b(?:the\s+)?(problem|lesson|truth|point|answer)\s+(?:isn't|is not|wasn't|was not)\b[^.!?]{1,120}[.!?]\s*(?:the\s+)?\1\s+(?:is|was)\b/i.test(normalized)) {
       issues.push('Remove the two-sentence "the point was not X; the point was Y" construction and commit to the actual point directly.');
     }
