@@ -164,7 +164,7 @@ function publishedPrompt() {
       const pattern = new RegExp('\\b' + escapeRegExp(phrase).replace(/ /g, '\\s+') + '\\b', 'i');
       if (pattern.test(normalized)) issues.push('Remove the banned language: "' + phrase + '."');
     });
-    if (/\b(?:it|this|that)\s*(?:isn't|is not|wasn't|was not)\s+[^.!?]{1,80}?,\s*(?:it|this|that)(?:'s| is| was)\b/i.test(normalized)) {
+    if (/\b(?:isn't|is not|wasn't|was not)\s+[^.!?]{1,120}?,\s*(?:it|this|that)(?:'s| is| was)\b/i.test(normalized)) {
       issues.push('Remove the false-balance construction "it is not X, it is Y" and state the actual point directly.');
     }
     if (/\byou(?:'re| are)\s+not\s+[^.!?]{1,80}?,\s*you(?:'re| are)\b/i.test(normalized)) {
