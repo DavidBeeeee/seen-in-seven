@@ -5,16 +5,16 @@ const PROMPT_QUESTION_CATALOG = {
       null,
       {"label":"What should someone know about your background, what makes you unexpected, and what you naturally care about?","hint":"Share whatever feels most important. The AI will organize it into the story.","key":"easyAnswer_v1"},
       {"label":"What is one thing you used to think was true that is not true?","hint":"Explain how it shaped you, what made you question it, and why the old way of thinking matters.","key":"easyAnswer_v2"},
-      {"label":"What has making these videos actually been like so far?","hint":"Compare it with what you expected, share one real detail, and include what is changing, what is still difficult, and why you are continuing.","key":"easyAnswer_v3"},
+      {"label":"After your first realization, what did you do differently and what happened when real life tested it?","hint":"Describe the actions you changed, the situations that challenged you, what began working, what that success made you believe, and what still felt unresolved.","key":"easyAnswer_v3"},
       {"label":"In the part of your life you have been discussing, what failure, loss, or period was so devastating that you thought it might ruin you or that you might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?","hint":"Tell us what collapsed, what you believed might be gone forever, and why you could not see a way back. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.","key":"easyAnswer_v4"},
       {"label":"What larger truth did you discover because you lived through that difficult experience?","hint":"Describe how you discovered it, what it changed in you, and who else may need to understand it.","key":"easyAnswer_v5"},
       {"label":"Who were you before these realizations, and who are you now?","hint":"Describe what changed, what remains unfinished, what telling the story helped you understand, and where you go next.","key":"easyAnswer_v6"}
     ],
     "l2": [
       null,
-      {"label":"What part of your past kept shaping you before you understood why?","hint":"Describe the everyday life you were in, the thread or unlikely chapter that kept showing up, and why you did not recognize or follow it yet.","key":"easyAnswer_v1"},
-      {"label":"What is one thing you used to think was true about your work or field that experience proved was wrong or incomplete?","hint":"Describe the real situation that exposed the problem, the new lens you earned, what the old thinking costs, and why this matters to the people you understand.","key":"easyAnswer_v2"},
-      {"label":"Where has your first professional realization met the reality of communicating your expertise publicly?","hint":"Describe one concrete moment, what your usual expert instinct wanted to do, what you did instead, what it revealed, and what remains difficult.","key":"easyAnswer_v3"},
+      {"label":"Before you treated this as expertise, what ability or interest kept showing up, and why did you refuse to take it seriously?","hint":"Describe the ordinary work or life you were in, what other people might have valued before you did, and why staying where you were felt safer or more responsible.","key":"easyAnswer_v1"},
+      {"label":"What is one thing you used to think was true about your work or field that another person helped you question?","hint":"Describe who guided you, what they helped you notice, what happened when you tested it, the new lens you earned, and why it matters.","key":"easyAnswer_v2"},
+      {"label":"What happened when you started applying that first professional realization in the real world?","hint":"Describe the situations that tested it, what began working, what those wins made you believe, and what pressure, blind spot, or limit still remained.","key":"easyAnswer_v3"},
       {"label":"In the work, craft, calling, or expertise story you have been telling, what failure was so devastating that you thought what you had built or hoped to build might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?","hint":"Tell us what collapsed, what seemed permanently lost, and why you could not see a way back in this part of your life. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.","key":"easyAnswer_v4"},
       {"label":"What larger professional truth did that difficult experience force you to understand, and how did it deepen the first realization you shared?","hint":"Trace how the truth emerged through the aftermath or rebuilding, what it changed in your work or decisions, and what useful lens it gives someone facing the problem now.","key":"easyAnswer_v5"},
       {"label":"Who were you before the two professional realizations and the hardest part of the story, and who are you now in relation to your expertise and the people you want to reach?","hint":"Describe what genuinely changed, what remains unfinished or still needed, what telling the story clarified about your work, and what perspective or mission you want the right viewer to keep following.","key":"easyAnswer_v6"}
@@ -45,13 +45,13 @@ const PROMPT_QUESTION_CATALOG = {
       ]
     },
     {
-      "title": "Here's What It's Actually Been Like",
-      "note": "Report honestly from the middle. Compare the experience with what you expected, notice any early change, name what remains difficult, and explain why you are continuing.",
+      "title": "When The Insight Met Reality",
+      "note": "Show what happened when you began living by the first realization. Stay with the real tests, partial wins, growing confidence, and the limit you could not see clearly yet.",
       "prompts": [
-        {"label":"What has making these videos actually been like so far, compared with what you expected? Share one moment or detail that captures the difference.","hint":"What has been stranger, easier, harder, quieter, more emotional, or more ordinary than you imagined? Include something you did, almost did, noticed, avoided, or handled differently.","key":"v3p0","placeholder":"Describe the reality so far and one detail that captures it."},
-        {"label":"What, if anything, is beginning to change in the way you approach recording, posting, or trusting yourself?","hint":"A small change counts. It is also fine if the change is incomplete or difficult to describe.","key":"v3p1","placeholder":"Describe any small change you are beginning to notice."},
-        {"label":"What is still difficult, awkward, uncertain, or unresolved right now?","hint":"Name the specific part you have not conquered. The middle is allowed to remain messy.","key":"v3p2","placeholder":"Describe what is still difficult or unresolved."},
-        {"label":"Why are you continuing even though that part is still difficult?","hint":"What is enough to make you record the next video even without certainty that this is working?","key":"v3p3","placeholder":"Describe the honest reason you are continuing."}
+        {"label":"After the first realization you described, what did you actually do differently?","hint":"Choose a real action inside the main part of your life you are discussing. What choice, conversation, boundary, risk, habit, or response changed because you could no longer see things the old way?","key":"v3p0","placeholder":"Describe the first real action you changed after the realization."},
+        {"label":"What situations kept testing that new understanding, especially when returning to the old way would have been easier?","hint":"Describe the resistance, repeated problem, difficult choice, or imperfect attempt. Give us one or two moments we can picture rather than a general report of growth.","key":"v3p1","placeholder":"Describe the real situations that tested the new understanding."},
+        {"label":"What began working, and what did that success lead you to believe you now understood or could handle?","hint":"Name the partial win honestly. What changed enough to give you confidence, and what conclusion did you begin drawing from that success at the time?","key":"v3p2","placeholder":"Describe the partial win and the confidence it created."},
+        {"label":"What pressure, warning sign, or unresolved limit was still present even while things seemed to be working?","hint":"Stay with what you could see or feel then. Do not explain the later failure or the larger realization that eventually came from it.","key":"v3p3","placeholder":"Describe the unresolved limit beneath the progress."}
       ]
     },
     {
@@ -95,26 +95,26 @@ const PROMPT_QUESTION_CATALOG = {
       "prompts": []
     },
     {
-      "title": "How I Got Here",
-      "note": "Your audience needs to understand the path that formed what you know. Stay with the detour, wound, obsession, or unlikely chapter before you understood its professional meaning. This is the origin, not the industry lesson yet.",
+      "title": "Before I Knew What It Was",
+      "note": "Let people see the ability or interest that kept appearing before you treated it as expertise. Stay inside the ordinary life and the reasons you dismissed or refused the path. You do not need to explain what it eventually became.",
       "prompts": [
         {
-          "label": "How did you get into this? Skip the polished professional answer. What is the real story of how you ended up knowing what you know?",
-          "hint": "Maybe it was accidental. Maybe you were trying to solve your own problem. Maybe someone else's problem landed in your lap and you realized you were good at this. What actually happened?",
+          "label": "Before you thought of this as expertise or a possible path, what work, role, routine, or kind of life were you living?",
+          "hint": "Put us inside the ordinary world you were used to. What filled your time, shaped your choices, or made staying where you were feel normal and responsible?",
           "key": "v1p0",
-          "placeholder": "e.g. I got into this because my sister was drowning in debt after her divorce and I helped her build a plan that got her out in 18 months. Her friends started asking me for help. Then their friends."
+          "placeholder": "Describe the work or life you were in before you treated this ability as a path."
         },
         {
-          "label": "What detour, wound, obsession, or unlikely chapter shaped the way you understand this work?",
-          "hint": "The part of the story that may not look professional on paper but changed what you notice, care about, or do differently. Give one concrete detail.",
+          "label": "What ability, responsibility, interest, or recurring problem kept showing up even though you treated it as ordinary?",
+          "hint": "What did you repeatedly notice, solve, study, practice, or get asked about? Give one concrete example that lets someone else see its value before you explain it.",
           "key": "v1p1",
-          "placeholder": "Describe the chapter that formed your lens before you had language for it."
+          "placeholder": "Describe the ability or thread that kept appearing and one concrete example."
         },
         {
-          "label": "What did you misunderstand or resist about treating that path as expertise, and why does this work matter to you personally now?",
-          "hint": "Start inside the earlier perspective: why did the chapter look irrelevant, unprofessional, or unworthy of claiming? Then name the human reason the work matters to you now without turning it into an industry lesson or business pitch.",
+          "label": "What did you refuse to claim, pursue, share, or take seriously, and why did remaining where you were feel safer or more responsible?",
+          "hint": "Maybe it seemed too small, too strange, too uncertain, too easy for you, or not professional enough. Stay with what you believed then. Do not jump ahead to what you eventually learned.",
           "key": "v1p2",
-          "placeholder": "Describe what you resisted about the path and why the work matters personally now."
+          "placeholder": "Describe what you refused to claim and why staying in the ordinary role felt safer."
         }
       ]
     },
@@ -127,6 +127,12 @@ const PROMPT_QUESTION_CATALOG = {
           "hint": "The advice that gets passed around like gospel. The method everyone defaults to. The first thing a beginner is told that a veteran knows is oversimplified. You've been close enough to see the cracks in it. What is it?",
           "key": "v2p0",
           "placeholder": "e.g. everyone says 'make a budget and stick to it'... the discipline narrative. I've watched hundreds of people make perfect budgets and fail completely within three weeks."
+        },
+        {
+          "label": "Who helped you question the old understanding, and what did they say, show, ask, correct, or demonstrate that you could not see alone?",
+          "hint": "Name a real person who performed the guide role. It might be a mentor, teacher, supervisor, peer, client, elder, or collaborator. They do not need to be famous or formally called a mentor. Describe the specific guidance you received and what you did with it.",
+          "key": "v2p5",
+          "placeholder": "Describe the person who guided you, the specific thing they helped you see, and how you tested their guidance."
         },
         {
           "label": "Tell the story of when you first saw the cracks. What actually happened (the specific moment, client, project, or experience) that made you go 'wait, this doesn't work the way everyone says it does'?",
@@ -155,32 +161,32 @@ const PROMPT_QUESTION_CATALOG = {
       ]
     },
     {
-      "title": "What The Work Looks Like",
-      "note": "Your first professional realization now has to survive public practice. Show one concrete collision between your expert instincts and the new behavior visibility required. Authority comes from how you read the experience, not from teaching or reporting progress.",
+      "title": "When The Insight Met Reality",
+      "note": "Show what happened when you began applying the first professional realization. Stay with the real tests, partial wins, growing confidence, and the limit you could not see clearly yet.",
       "prompts": [
         {
-          "label": "Tell me about one specific moment when your usual expert instinct showed up while you were communicating publicly.",
-          "hint": "A real scene. What were you tempted to overexplain, hide, control, perfect, dismiss, or avoid? What would you normally have done?",
+          "label": "Where did you first try to apply what your guide helped you understand, and what did you do differently because of it?",
+          "hint": "Choose a real situation connected to your work, craft, calling, business, life, or public communication. Show the changed action rather than only describing a new mindset.",
           "key": "v3p0",
-          "placeholder": "Describe the exact public moment and the expert habit it triggered."
+          "placeholder": "Describe where you applied the first realization and the action you changed."
         },
         {
-          "label": "What did you actually do differently this time?",
-          "hint": "Make the change observable. What did you simplify, say plainly, leave imperfect, publish, ask, or allow the audience to see?",
+          "label": "What other situations tested that new understanding, especially when the old way would have been easier?",
+          "hint": "Describe the resistance, imperfect attempts, competing pressure, or repeated decisions that made this a road of trials rather than one clean success.",
           "key": "v3p1",
-          "placeholder": "Describe the different action you took in that moment."
+          "placeholder": "Describe the real situations that kept testing the new lens."
         },
         {
-          "label": "What happened because you acted differently, and what did it reveal about your expertise or communication?",
-          "hint": "Use only a real result. It can be something you noticed internally; you do not need a client, comment, message, metric, or public response.",
+          "label": "What began working, and what did those wins lead you to believe you now understood or could handle?",
+          "hint": "Name the partial success honestly. What result, pattern, decision, or change gave you earned confidence? Then describe the conclusion you began drawing from it at the time.",
           "key": "v3p2",
-          "placeholder": "Describe the real consequence and what made it unexpected."
+          "placeholder": "Describe the partial wins and the confidence they created."
         },
         {
-          "label": "What is still difficult about being seen doing this work, even after that small win?",
-          "hint": "Name the remaining friction specifically. This is one test, not proof that visibility is solved, and the unresolved cost prepares the hardest part of the story in Video 5.",
+          "label": "What pressure, blind spot, warning sign, or unresolved limit was still present even while things seemed to be working?",
+          "hint": "Stay with what you could see or feel then. Do not explain the later failure or what you eventually learned from it. We only need the unstable edge beneath the success.",
           "key": "v3p3",
-          "placeholder": "Describe where the old expert pattern still has a hold on you."
+          "placeholder": "Describe the unresolved limit that remained beneath the wins."
         }
       ]
     },

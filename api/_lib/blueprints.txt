@@ -62,7 +62,7 @@ CRITICAL: When generating a script for any video after Video 1, you will receive
 - Reference themes, phrases, or ideas from earlier videos when it strengthens the current script
 - Ensure the emotional arc feels like a JOURNEY, not seven disconnected posts
 - Avoid repeating the same stories, phrases, or insights across videos
-- Build on what came before — if Video 2 mentioned a specific detail about their background, Video 4's check-in might naturally reference how that detail connects to what they're experiencing now
+- Build on what came before — if Video 2 revealed an unclaimed thread and Video 3 changed how the speaker understood it, Video 4 should show that first realization meeting real tests without repeating either earlier chapter
 - Make Video 7's reflection feel earned by echoing the specific language and themes from Video 2 through 6
 </cumulative_context_rule>
 
@@ -88,12 +88,26 @@ Then write the script in THEIR voice, calibrated to these signals. The script sh
 
 <the_7_video_journey>
 The audience subconsciously experiences across the 7 videos:
-Curiosity → Identification → Insight → Trust → Authority → Alignment → Loyalty
+Curiosity → Identification → Insight → Trust → Investment → Respect → Loyalty
 
 The speaker experiences:
-Terror → Vulnerability → Discovery → Confidence → Conviction → Clarity → Ownership
+Terror → Vulnerability → Discovery → Testing → Defeat → Conviction → Ownership
 
 Each video's emotional energy should be distinctly different from the one before it. The journey is felt through tonal shifts, not stated.
+
+SEVEN-CHAPTER OWNERSHIP:
+This is one Hero's Journey cut into seven public chapters. Each chapter owns a different piece of meaning. Evidence may foreshadow a later chapter, but no video may resolve a stage that belongs later.
+
+1. VIDEO 1 — DECLARATION: The speaker steps forward before feeling ready and publicly commits to the journey. Curiosity comes from the gap between the declaration and their unresolved hesitation.
+2. VIDEO 2 — ORDINARY WORLD + REFUSAL: The audience meets the person inside the life, role, assumptions, and compromises that made staying where they were feel reasonable. The viewer may recognize a valuable trait, ability, or calling before the speaker fully claims it. Do not deliver the first epiphany, mature authority, offer, method, or mission.
+3. VIDEO 3 — GUIDE + FIRST EPIPHANY + THRESHOLD: A guide influence helps expose what the speaker could not see from inside the old understanding. For Level 1 this may be a person, encounter, or lived experience. For Level 2, a real person must briefly perform the mentor function. The resulting first epiphany gives the speaker enough motion to cross the first threshold. This is a first win, not the elixir or final authority.
+4. VIDEO 4 — ROAD OF TRIALS: The first epiphany meets repeated reality inside the actual subject of the speaker's larger story. Show application, resistance, partial success, complication, and growing confidence. The exact balance between life, work, business, and public communication is level- and story-specific. Making the seven videos may appear only when it genuinely tests the same underlying journey; it cannot replace that journey with a challenge progress report. Do not create a second full epiphany or reveal the coming fall.
+5. VIDEO 5 — FALL / ORDEAL: A real defeat occurs, and the speaker's own choice, avoidance, blind spot, or overconfidence materially contributes. End inside the loss with no recovery, lesson, authority, or silver lining.
+6. VIDEO 6 — SECOND EPIPHANY / ELIXIR: The fall produces the deeper truth the speaker could not have earned earlier. This insight corrects, deepens, or completes Video 3 and becomes a useful lens the speaker can carry forward.
+7. VIDEO 7 — RETURN: The speaker integrates both epiphanies and the ordeal, returns with observable change, and becomes capable of guiding someone who still recognizes the earlier struggle. Close the challenge while opening a lasting relationship with the viewer.
+
+LEVEL DIFFERENCE:
+Level 1 follows a relatable person discovering and testing a personal truth. Level 2 follows a knowledgeable but still-human person learning to accept guidance, test a professional truth, survive its limits, and eventually return as a guide. Level 2 expertise may be visible early, but mature authority belongs after the ordeal. The speaker must not sound like the viewer's guru in Videos 1 or 2.
 </the_7_video_journey>
 
 <audience_journey_rule>
@@ -502,43 +516,50 @@ CTA guidance: Continue from the first epiphany into a clear follow request becau
 
 <l1_v4_rules>
 VIDEO 4 — THE MIDPOINT TRIAL — ROAD OF TRIALS
-"Here is what this has actually been like from the middle."
+"The first realization worked. Then real life kept testing it."
 Framework: Modified Hero's Journey
 Audience feels: Trust + Midpoint Orientation
-Speaker feels: Momentum
+Speaker feels: Momentum + growing confidence
 
 AUDIENCE JOURNEY:
-Before: "I may be finding this person in the middle of the story. Why should I care where they are?"
-After: "This is part four of a real seven-part challenge, and the honest middle tells me more than a victory speech would."
-Open question: "What happens when this early proof gets tested by the deeper fear?"
+Before: "The first epiphany sounded powerful, but I do not know whether it changed anything in real life."
+After: "They tried to live by it, survived meaningful tests, and began trusting it before they understood its limits."
+Open question: "What was this early confidence still unable to see?"
 Social impulse: Follow forward to see how it ends, or go back to see why this midpoint matters.
 
 STRUCTURAL BEATS:
-1. Pattern Interrupt (Hook) — Pull one concrete, surprising detail from the lived experience so far. It may come from an expectation being violated, an action becoming unexpectedly easier or harder, or an awkward thing the speaker still does. Do not recap the challenge, report progress, or state what the evidence proves.
-2. Midpoint Gap (Open Loop) — Connect that detail to the difference between what the speaker expected and what is actually happening. Give a cold viewer enough context to understand the immediate tension, then leave what the difference means unanswered. Save the series orientation for the CTA.
-3. Expected vs. Actual (Meat) — Establish what the speaker thought making the videos would feel like and contrast it with the real experience.
-4. Concrete Evidence (Meat) — Use the specific moment or detail they provided. The video must contain something the audience can picture, not only a progress report.
-5. Emerging Change (Meat) — Name what may be beginning to shift without exaggerating it into confidence, transformation, or audience proof.
-6. Real-Time Transparency (Meat) — Name what is still difficult, awkward, uncertain, or unresolved and why the speaker continues anyway.
-7. Trial Turn (Conclusion) — Complete, reverse, or complicate what this honest midpoint appears to mean. Progress may be a changed relationship to the difficulty, not the disappearance of it. Create a twist, debate, question, or mirror without pretending the journey is complete.
+1. Pattern Interrupt (Hook) — Pull the sharpest concrete action, consequence, contradiction, or unexpected result from the trials. Put the evidence before its explanation. Do not open with a progress report, challenge update, lesson, or summary of change.
+2. Trial Gap (Open Loop) — Connect the hook evidence to the first epiphany without restating that epiphany. Make the viewer need to understand what happened when the speaker tried to live differently and why the apparent success may not tell the whole story.
+3. First Changed Action (Meat) — Show what the speaker actually did differently after Video 3's realization. The change must be observable inside the main life topic, not merely a new attitude.
+4. Escalating Tests (Meat) — Show the resistance, repeated situations, consequences, or difficult choices that tested the new understanding. Use one or two vivid moments rather than a list of progress.
+5. Partial Win (Meat) — Show what genuinely improved or worked. Let the audience see why the speaker began trusting the first epiphany.
+6. Growing Confidence + Unseen Limit (Meat) — Show what the success led the speaker to believe they now understood, controlled, or had moved beyond. Include a concrete unresolved pressure or warning sign without announcing the fall.
+7. Trial Turn (Conclusion) — Turn the apparent win into a more interesting midpoint truth: the speaker had earned confidence, but the evidence did not yet prove what they thought it proved. Do not reveal the ordeal, produce a second epiphany, or explain the later lesson.
 8. Midpoint Orientation (CTA Bridge) — Continue from the trial landing and make the series discoverable from the middle: this is video 4 of 7, the viewer can follow to see how it ends or go back to see how it started, and the reason must come from the conclusion.
 
-TONE: Relaxed, reflective, slightly surprised. Feels like the hero realizing the journey is acting on them. Uses contrast naturally. Small win is understated. Honesty about difficulty is specific. Ends with midpoint orientation, not a generic follow request.
+TONE: Active, grounded, and increasingly assured. This is the satisfying stretch where the first realization appears to be working. Let the confidence feel deserved so the later fall has something real to break.
 
 THIS VIDEO EARNS THE RIGHT FOR VIDEO 5. Without the road of trials, the fall feels melodramatic. With it, the ordeal feels like the honest cost of the journey, and Video 6's second epiphany can feel earned.
 
-PROMPTS (L1): 1) What making the videos has actually been like compared with expectations, including one concrete moment or detail, 2) What may be beginning to change, 3) What remains difficult, awkward, uncertain, or unresolved, 4) Why they are continuing anyway
+PROMPTS (L1): 1) What they did differently after the first realization, 2) The real situations that tested it, 3) What began working and what that success made them believe, 4) What pressure, limit, or warning sign still remained
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so its facts support that destination without announcing it. Design the OPEN LOOP from the unfinished meaning, contradiction, cause, or question the conclusion will transform, then write the independent HOOK last as a truthful pattern interrupt. Do not smooth these separate section jobs into one prose rhythm.
 
-VIDEO 4, LEVEL 1: Tone = Grounded, relaxed, mid-trial honesty (Iron & Wine "Naked as We Came" — soft, slightly messy, morning light)
-HOOK guidance: Pull one surprising physical action, expectation violation, embarrassing residue, or concrete side effect from the current experience. State the evidence before saying it represents progress. Never open with how many videos they have made, how the challenge is going, what they expected, or a summary of what changed.
-OPEN LOOP guidance: Connect that evidence to the gap between expectation and reality. Make the viewer need to know why the experience is different from what the speaker braced for, without announcing what counts as progress.
-CONCLUSION guidance: Turn what the honest midpoint appears to mean while preserving what remains difficult. Redefine progress specifically enough to matter without pretending the speaker has completed the transformation.
-CTA guidance: Because this is the midpoint, explicitly name that this is video 4 of 7. Continue from the conclusion into the larger transformation the speaker is documenting. Invite the viewer to follow to see how it ends and/or go back to see how it started because the difference between the beginning and this trial is the point. The CTA must feel like a natural continuation of the conclusion, not a navigation label.
+VIDEO 4, LEVEL 1: Tone = Earned momentum with an unstable edge.
+HOOK guidance: Pull one surprising action, consequence, contradiction, or result from the real-life tests that followed the first epiphany. State the evidence before interpreting it. Never open with the number of videos, how the challenge is going, or a summary of personal progress.
+OPEN LOOP guidance: Connect the evidence to the speaker acting on the first realization, then leave unanswered why success still failed to settle the deeper story. Do not disclose the later defeat or second epiphany.
+CONCLUSION guidance: Turn the partial win by exposing the difference between genuine progress and proof that the whole problem is solved. Preserve both the earned confidence and the unseen limit. Do not foreshadow Video 5 so heavily that the fall becomes predictable.
+CTA guidance: Explicitly identify this as Video 4 of 7 while continuing the conclusion's tension. Invite the viewer to follow to see how the tested confidence holds up and/or go back to see what first changed, using exactly one clear reason.
+
+VIDEO 4 FINAL CHECK:
+- The story tests Video 3's realization inside the speaker's larger life topic, not merely inside the act of recording videos.
+- At least one changed action, one real test, and one partial win are visible.
+- Growing confidence is understandable and earned.
+- A limit remains, but the fall and second epiphany are not revealed.
+- The conclusion turns the apparent success without summarizing progress or delivering a new lesson.
 </l1_v4_rules>
 
 <l1_v5_rules>
@@ -686,9 +707,6 @@ SECTION MAP FOR VIDEO 7:
 [CONCLUSION] — Doorway ending. Close the seven-video loop while making the next chapter feel open.
 [CTA] — Continue from that open door into an ongoing relationship. Clearly ask the viewer to follow, acknowledge this is Video 7 of 7, and invite anyone who arrived late to go back to Video 1. Give one specific relational reason to stay connected.
 
-
-CRITICAL FOR L2: Prompt 4 asks "what do you still need?" The speaker names their own gap. This is the funnel's secret weapon — the upsell becomes a warm answer to a question they already asked themselves ON CAMERA.
-
 PROMPTS (L1): 1) Who they were before both realizations and how they saw this part of life, 2) Who they are now and what is genuinely different, 3) What from the earlier self remains present or unfinished, 4) What telling the story across seven videos helped them understand or put into words, 5) What they are carrying forward and where the story goes next
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
@@ -784,44 +802,67 @@ CTA guidance: Carry that tension into a clear follow request because the next in
 </l2_v1_rules>
 
 <l2_v2_rules>
-VIDEO 2 — INTRODUCING THE HERO
-"Here's who I actually am."
-Framework: Modified Hero's Journey
+VIDEO 2 — BEFORE I KNEW WHAT IT WAS
+"The ability was already there. I was still living as if it did not count."
+Framework: Ordinary World + Refusal of the Call
 Audience feels: Identification + Warmth
-Speaker feels: Seen
+Speaker feels: Seen, human, not yet authoritative
+
+CORE PURPOSE:
+Let the viewer inhabit the speaker's professional ordinary world before the first breakthrough. Show the role, routine, detour, wound, obsession, responsibility, or unlikely chapter that shaped what they noticed. Reveal one useful ability or recurring pattern that the viewer can value before the speaker fully values it. Then show why the speaker kept dismissing, containing, or refusing that path. The viewer should nod in recognition because they have minimized something important in themselves too. They should not feel that a guru has arrived to explain the answer.
+
+HERO'S JOURNEY PLACEMENT:
+The speaker is still in the Ordinary World and Refusal of the Call.
+They possess knowledge or ability, but they have not crossed the threshold.
+They have not yet met the guide who helps the first epiphany land.
+They have not converted the origin into a clean professional lens, service philosophy, mission, method, or authority claim.
 
 AUDIENCE JOURNEY:
-Before: "I know they have expertise, but I do not know the path that formed it."
-After: "Their origin explains their lens. The detour, wound, or obsession is part of the authority."
-Open question: "How did that path shape what they now believe?"
-Social impulse: Follow because the origin makes the expert human and the viewer wants to understand what it taught them to question.
+Before: "I know this person has knowledge, but I do not know the life that formed it."
+After: "I can see something valuable in them that they once treated as ordinary, and I recognize that kind of refusal in myself."
+Open question: "Who or what finally helped them see that this mattered?"
+Social impulse: Follow because the viewer wants to see the unclaimed ability meet the person who helps the speaker understand it.
 
 STRUCTURAL BEATS:
-1. Pattern Interrupt (Hook) — Open with a sharp contradiction, strange career/life turn, or identity mismatch that stops the scroll. Do not explain the origin yet.
-2. Open Loop — Create the specific gap between who the viewer assumes the speaker is and the detour, wound, obsession, or contradiction that actually formed their expertise. Do not explain the full origin yet.
-3. Catalyst Moment / Vulnerability Entry — Show the moment or detour that started shaping their expertise. Something real about who they are. Not trauma-dumping — but a piece of their story that most people wouldn't guess.
-4. Enemy Identification (The Public Picture) — The person the world sees is not the full picture. The gap between perceived self and real self makes the audience want to see the real one.
-5. Agency Reclaim / Path Clarity — The speaker connects who they are to why they're here. Not mission-statement energy. "This is what I care about and I think it's worth talking about."
-6. Conclusion Turn — Complete, reverse, or complicate the origin gap by changing what the detour appears to mean, but do not turn it into a full professional manifesto.
-7. CTA Bridge — Continue from the conclusion into the next belief, mistake, myth, or misunderstanding. Give one clear action and one reason.
+1. Pattern Interrupt (Hook) — Use the sharpest concrete identity mismatch, strange responsibility, repeated behavior, unexpected ability, or unlikely chapter. Present it before its professional meaning. Do not open with a career summary, credential, lesson, or present-day service.
+2. Identity Gap (Open Loop) — Connect the exact hook detail to the ordinary role or life that made it seem small, irrelevant, accidental, or impractical. Make the viewer need to understand why someone capable of this still refused to treat it as a path.
+3. Professional Ordinary World (Meat) — Ground the viewer in the actual work, role, routine, obligation, or life condition surrounding the speaker before they claimed expertise.
+4. Unrecognized Ability (Meat) — Show what the speaker repeatedly noticed, solved, studied, practiced, or was trusted with. Let the viewer recognize its value through evidence. The speaker may describe it as easy, normal, accidental, too small, or simply what they did.
+5. Refusal Of The Call (Meat) — Show what the speaker did not pursue, claim, share, or allow themselves to become, and why staying in the existing role felt safer, more responsible, more credible, or less exposing.
+6. Ordinary-World Turn (Conclusion) — Join the unusual ability and the refusal without correcting the refusal. The speaker may recognize that the thread kept returning, but cannot explain the final professional lesson, present-day method, mission, offer, or way they now help people.
+7. Guide Threshold (CTA) — Continue from the unresolved refusal into the next installment, where a real person helps challenge what the speaker thought was true and the first professional epiphany begins.
 
-TONE: Warm, relaxed, storytelling energy. Like the second conversation with someone. Specific details, not generalities. A moment of surprise. Settling-in energy.
+TONE: Warm, grounded, and human. The audience sees the future possibility before the speaker does. The speaker is interesting because the value is present but unclaimed, not because they explain what it all became.
 
+LEVEL 2 SPECIFIC:
+This is the origin of unclaimed expertise, not the explanation of mature expertise. It works for someone with a business, someone inside a career, or someone whose knowledge has never been formalized. No offer, pitch, client promise, service philosophy, complete framework, or "this is what I do now" resolution.
 
-LEVEL 2 SPECIFIC: "About My Expertise" — the origin story of how they became someone who knows this stuff. Not a business pitch — the JOURNEY that created their knowledge. Works whether they have an LLC or just 15 years of experience.
+ABSOLUTE RULE:
+The audience may understand that the speaker's ability mattered. The speaker may not convert that recognition into a clean lesson or authority statement. Never say that the detour became their method, that the small task was the whole point, that this is why they now serve people a certain way, or that the origin proves what their audience needs. Those meanings belong after the threshold, fall, and elixir.
 
-PROMPTS (L2): 1) Real story of how they got into this, 2) The detour, wound, obsession, or unlikely chapter that shaped their lens, 3) What they resisted about treating that path as expertise and why the work matters personally now
+PREMATURE INSIGHT GUARD:
+The speaker can say they dismissed, minimized, or refused the thread. They cannot correct that refusal in the same video. Save the first professional reframe and the influence of the guide for Video 3. Save the mature professional truth for Video 6 and the speaker's return as a guide for Video 7.
+
+PROMPTS (L2): 1) The ordinary work or life they were in before they treated this as a path, 2) The unexpected ability, responsibility, obsession, or recurring pattern other people could have valued before they did, 3) What they refused to claim, pursue, share, or take seriously and why remaining where they were felt safer or more responsible
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
-Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so its facts support that destination without announcing it. Design the OPEN LOOP from the unfinished meaning, contradiction, cause, or question the conclusion will transform, then write the independent HOOK last as a truthful pattern interrupt. Do not smooth these separate section jobs into one prose rhythm.
+Choose the engagement ending first. Favor a MIRROR or identity QUESTION that makes the viewer recognize their own unclaimed ability or refusal. Do not turn the origin into an educational twist, a professional manifesto, or a completed transformation. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so its facts support that destination without announcing it. Design the OPEN LOOP from the unresolved gap between visible ability and private refusal, then write the independent HOOK last as a truthful pattern interrupt.
 
-VIDEO 2, LEVEL 2: Tone = Origin-story pacing, building momentum (The War on Drugs "Under the Pressure" — indie rock drive, grounded but pushing forward)
-HOOK guidance: Extract the sharpest identity mismatch, unlikely detour, specific origin object, or counterintuitive event that belongs to the path into their expertise. Present the strange turn before explaining how it formed them. Do not summarize their career or announce an origin story.
-OPEN LOOP guidance: Connect the charged detail to a missing causal link: why did this detour matter, how did an apparent failure shape their lens, or what pattern could they not name then? Preserve the answer for the meat and conclusion.
-CONCLUSION guidance: Reveal how the detour, wound, obsession, or supposedly irrelevant chapter became part of the speaker's way of seeing. Keep it personal and earned rather than converting it into a business pitch.
-CTA guidance: Continue from the origin landing into the next belief, mistake, myth, or misunderstanding. Ask the viewer to follow because the next installment of the 7 Video Challenge reveals the idea their origin taught them to question.
+VIDEO 2, LEVEL 2: Tone = Warm ordinary-world storytelling with restrained professional tension.
+HOOK guidance: Extract the strangest concrete mismatch between what the speaker was already capable of and the ordinary role or identity they remained inside. Present the charged evidence before explaining it. Do not announce expertise, a business origin, or what the ability became.
+OPEN LOOP guidance: Refer directly to the hook detail, ground it in the life or work that made it seem ordinary, and make the viewer need to understand why the speaker kept refusing to treat it as meaningful. Do not reveal the mentor, first epiphany, current work, or final professional lens.
+CONCLUSION guidance: Land on the unresolved human pressure between an ability that kept appearing and the safer identity the speaker continued choosing. Let the audience recognize the value without making the speaker explain it. No breakthrough, offer, method, service philosophy, mission, or present-day authority.
+CTA guidance: Continue from the unresolved refusal into a clear follow request because the next installment of the speaker's 7 Video Challenge introduces the person who challenged what they thought was true and helped the first professional epiphany begin.
+
+VIDEO 2 FINAL CHECK:
+- The hook contains concrete evidence of an unexpected ability, identity mismatch, or unlikely chapter before its meaning.
+- The meat establishes both the ordinary world and the refusal.
+- The viewer can recognize value that the speaker still minimizes or contains.
+- No section explains the speaker's current method, service, mission, offer, professional philosophy, or mature authority.
+- The conclusion does not correct the refusal, deliver Video 3's epiphany, or turn the origin into a lesson.
+- The CTA creates anticipation for a real guide and first epiphany in the continuing seven-video journey.
 </l2_v2_rules>
 
 <l2_v3_rules>
@@ -832,10 +873,10 @@ Audience feels: Insight + "I never thought of it that way"
 Speaker feels: Brave
 
 AUDIENCE JOURNEY:
-Before: "This person has experience, but I need proof they think differently."
-After: "They see a costly pattern most people in their space miss."
+Before: "I recognize why this person kept their ability contained, but they still cannot see the whole path alone."
+After: "They were willing to receive guidance, test it against experience, and discover a professional truth I can now see too."
 Open question: "What does this change about the way I should think or act?"
-Social impulse: Follow because the professional epiphany challenges familiar advice and the viewer wants to see it tested.
+Social impulse: Follow because the mentor-assisted epiphany changes the speaker's direction and the viewer wants to see it tested.
 
 THIS IS THE MOST IMPORTANT VIDEO IN THE CHALLENGE. It must create a genuine cognitive shift in the viewer — not teach them something new, but restructure how they see something they already knew. The trigger is "Whoa, I never thought of it like that before." This is the speaker's first win, not their final wisdom. It should give them momentum, but it should not make them sound complete, finished, or above the struggle.
 
@@ -846,9 +887,14 @@ The HOOK must be derived from the sharpest concrete evidence that made the refra
 
 The epiphany does not land because the speaker announces a lesson. It lands because the viewer watches the old belief become impossible to keep.
 
+MENTOR FUNCTION — REQUIRED FOR LEVEL 2:
+A real person must briefly appear in the discovery arc as the guide who helps the speaker cross the first threshold. This can be a formal mentor, teacher, supervisor, peer, client, elder, collaborator, or another identifiable person whose question, correction, example, permission, warning, or demonstration exposed what the speaker could not see alone. The mentor does not deliver the entire conclusion as a lecture and does not replace the speaker's lived evidence. They provide the tool, challenge, or lens that the speaker then tests.
+
+Prefer the person supplied in the current answer or cumulative context. If the user gives no formal mentor, infer the smallest plausible human guide interaction consistent with the supplied story, without inventing a name, credential, institution, result, or dramatic event. The point is to model accepting help, not to manufacture a famous teacher. The speaker must remain the hero receiving and applying guidance here. They do not become the viewer's guide until the return.
+
 THE 7 EPIPHANY BEATS — ALL MUST BE PRESENT:
 1. Pattern Break — The core idea disrupts default thinking. Find the cognitive friction inside the speaker's answer: a familiar experience hiding an unfamiliar structure, a respectable excuse hiding a cost, a normal habit hiding a social rule, or a protective belief causing the very harm it claims to prevent.
-2. Discovery Arc (Story) — Don't jump to the insight. Walk the viewer through HOW the speaker arrived at it. If you state the reframe, people resist. If you take them on the journey, they arrive at it themselves. Storytelling as a vehicle for cognition.
+2. Discovery Arc + Mentor (Story) — Don't jump to the insight. Show the real person who challenged, demonstrated, questioned, corrected, or named what the speaker could not yet see, then show what happened when the speaker tested that guidance against experience. The mentor opens the door; the evidence makes the old understanding impossible to keep.
 3. Cognitive Reframe (The Shift) — The old lens cracks, new one snaps into place. It lands as inevitability, not argument. The audience arrives at the reframe a split second before or right as the speaker says it.
 4. "Aha" Transfer — The viewer doesn't just learn — they receive a new intellectual tool they can USE. After this moment, they can see the pattern the speaker described and apply it. This makes the viewer feel intelligent and makes the speaker the source of that intelligence.
 5. Cost Revelation — What does it cost to NOT see it this way? Quiet, honest truth. Not a scare tactic. Briefly illuminate what staying in the old paradigm looks like.
@@ -858,16 +904,16 @@ THE 7 EPIPHANY BEATS — ALL MUST BE PRESENT:
 TONE: Gravity without heaviness. Present, considered. The old belief stated casually. Discovery arc is sensory and specific. Reframe delivered simply — short sentences, space to breathe. Cost revelation is compassionate. Simplicity signal is one sentence people screenshot. Feels like someone telling you something important at 1am.
 
 
-LEVEL 2 SPECIFIC: Professional/industry epiphany — something their field gets wrong. Calm authority mixed with genuine surprise. Conventional wisdom stated with respect, not straw-manned. ONE concrete story as evidence.
+LEVEL 2 SPECIFIC: A mentor-assisted professional epiphany about something the speaker or their field misunderstood. Calm authority begins to emerge from the speaker's willingness to receive guidance and test it, not from pretending they figured everything out alone. State conventional wisdom with respect, not as a straw man. Use one concrete story as evidence.
 
 SECTION MAP FOR VIDEO 3:
 [HOOK] — Pattern Interrupt from the discovery evidence. Pull the most charged concrete consequence, action, or contradiction out of the MEAT and place it before its cause. It must make the viewer need an explanation without stating the professional reframe. No backstory, old-belief summary, or lesson reveal.
 [OPEN LOOP] — Context gap. Explain just enough for the viewer to understand why the hook is not random, then open the specific question: what was the speaker missing, what did they misread, or why did the normal belief stop making sense?
-[MEAT] — Full epiphany journey. Old/conventional belief -> why it seemed responsible or useful -> the actual experience that exposed a contradiction -> what the speaker noticed that they could not unsee -> the first new lens that gives them motion.
+[MEAT] — Full epiphany journey. Old/conventional belief -> why it seemed responsible or useful -> the real person whose guidance exposed a contradiction -> what happened when the speaker tested that guidance -> what they noticed that they could not unsee -> the first new lens that gives them motion.
 [CONCLUSION] — The reality flip. Name the simple reframe only after the MEAT earns it. The viewer should think, "that is obvious now, why did I never say it that way?"
 [CTA] — Continue from that reframe into Video 4's road of trials. Give one clear action and one reason tied to watching the insight get tested in real life.
 
-PROMPTS (L2): 1) Conventional wisdom that's wrong/incomplete, 2) Story of when they saw the cracks, 3) What's actually true instead, 4) Cost to people who follow the old way, 5) Why this needs to be said
+PROMPTS (L2): 1) Conventional wisdom the speaker once accepted that proved wrong or incomplete, 2) The real person who challenged it and what that person helped the speaker notice, 3) The story of what happened when the speaker tested or witnessed that guidance, 4) What's actually true instead, 5) The cost of the old understanding and why this matters
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -876,50 +922,64 @@ Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design t
 
 VIDEO 3, LEVEL 2: Tone = Calm authority building to revelation (Explosions in the Sky "First Breath After Coma" — post-rock, quiet build to wide-open shift)
 HOOK guidance: Use a concrete, charged consequence or contradiction exposed by the professional discovery story, not the final reframe itself. Present the strange evidence before its cause. The viewer should need the open loop to understand why accepted advice produced that result.
-OPEN LOOP guidance: Show why the conventional belief seemed reasonable, then create the exact question of what it failed to explain. Do not reveal the speaker's new professional lens.
+OPEN LOOP guidance: Show why the conventional belief seemed reasonable, then create the exact question of what it failed to explain. Preserve the mentor's intervention and the speaker's new professional lens for the discovery arc.
 CONCLUSION guidance: After the discovery arc makes the old advice impossible to keep, land what it was protecting, misdiagnosing, or making harder to see. State the professional flip simply without claiming universal authority.
-CTA guidance: Continue from the first professional epiphany into a clear follow request because the next installment of the 7 Video Challenge shows what happened when the speaker tested that insight in public practice.
+CTA guidance: Continue from the first professional epiphany into a clear follow request because the next installment of the 7 Video Challenge shows what happened when the speaker tested that insight against real decisions and resistance.
+
+VIDEO 3 FINAL CHECK:
+- A real person briefly performs the mentor function through a question, correction, example, permission, warning, teaching, or demonstration.
+- The speaker receives and tests guidance rather than independently declaring themselves right.
+- The lived evidence, not the mentor's authority alone, makes the old understanding impossible to keep.
+- The conclusion delivers the first professional epiphany without claiming the final elixir or mature authority.
+- The viewer receives a usable lens while still seeing the speaker as a hero in motion.
 </l2_v3_rules>
 
 <l2_v4_rules>
 VIDEO 4 — THE MIDPOINT TRIAL — ROAD OF TRIALS
-"My expertise is being tested in public now."
+"The first professional truth has to survive contact with reality."
 Framework: Modified Hero's Journey
 Audience feels: Trust + Midpoint Orientation
-Speaker feels: Momentum
+Speaker feels: Momentum + provisional confidence
 
 AUDIENCE JOURNEY:
-Before: "I may be finding this expert in the middle of the story. Why should I care where they are?"
-After: "This is part four of a real seven-part visibility journey, and I can see their expertise being tested in public."
-Open question: "What happens when this early proof gets tested by the deeper visibility fear?"
+Before: "The first professional epiphany was compelling, but I do not know whether it survives real decisions."
+After: "They accepted guidance, applied the new lens through real trials, and earned confidence without becoming untouchable."
+Open question: "What did these wins still leave them unprepared to face?"
 Social impulse: Follow forward to see how it ends, or go back to see why this midpoint matters.
 
 STRUCTURAL BEATS:
-1. Pattern Interrupt (Hook) — Open with one concrete piece of surprising evidence from expertise under public pressure before interpreting it. Do not recap, calmly report status, or state what the evidence proves.
-2. Trial Stakes (Open Loop) — Connect that evidence to the immediate collision between expert instinct and public behavior. Give a cold viewer enough present-tense context to understand the stakes, then leave the meaning of the result unanswered. Save the series orientation for the CTA.
-3. Old Pattern vs. New Behavior (Meat) — Show one concrete moment where the old expert pattern met the new public behavior. The proof must be behavioral, not just emotional: what they would normally hide, overexplain, dismiss, or control vs. what they actually did this time.
-4. Small Win Proof — Something shifted under pressure. Might be small and subtle. Name it. This may show competence in action, but do not brag.
-5. Real-Time Transparency — What's still hard. Name it. The expert is not fully comfortable being visible yet; they are being tested.
-6. Expert Ease — Expertise surfaces naturally through HOW they interpret the trial, not through explicit teaching.
-7. Trial Turn (Conclusion) — Complete, reverse, or complicate what the opening evidence appears to prove about public expertise while preserving the difficulty that remains. Create a twist, debate, question, or mirror from that specific trial.
+1. Pattern Interrupt (Hook) — Open with one concrete consequence, failed prediction, difficult choice, exposed habit, or surprising result from applying the first professional epiphany. Present evidence before interpretation. Do not recap the challenge, report visibility progress, or state the lesson.
+2. Trial Stakes (Open Loop) — Connect that evidence to a real test of the new professional lens. Give a cold viewer enough context to understand what was at stake, then leave unanswered what the result actually proved.
+3. Guidance Put Into Practice (Meat) — Briefly carry forward the mentor-assisted shift from Video 3, then show what the speaker did with it in actual work, craft, calling, business, life, or public communication.
+4. Escalating Tests (Meat) — Show resistance, imperfect applications, competing pressures, or repeated decisions. The road of trials is a sequence of meaningful tests, not a single content-posting update.
+5. Partial Professional Win (Meat) — Show what worked, improved, or became possible. Let competence appear through action and interpretation rather than claims.
+6. Provisional Confidence + Unseen Limit (Meat) — Show what those wins led the speaker to believe they now understood, controlled, or could handle. Preserve one unresolved pressure, blind spot, or warning without announcing the ordeal.
+7. Trial Turn (Conclusion) — Complicate what the apparent win proves. The confidence can be real while still being incomplete. Do not deliver the second epiphany, mature authority, or the meaning of the coming fall.
 8. Midpoint Orientation (CTA Bridge) — Continue from the trial landing and make the series discoverable from the middle: this is video 4 of 7, the viewer can follow to see how it ends or go back to see how it started, and the reason must come from the conclusion.
 
-TONE: Relaxed, reflective, slightly surprised. Feels like the expert realizing the journey is acting on their public voice. Uses contrast naturally. Small win is understated. Honesty about difficulty is specific. Ends with midpoint orientation, not a generic follow request.
+TONE: Capable, observant, and increasingly assured without sounding complete. The speaker is learning through application. Authority is beginning to form, but the viewer still sees a hero being tested rather than a guide delivering final answers.
 
 THIS VIDEO EARNS THE RIGHT FOR VIDEO 5. Without the road of trials, the fall feels melodramatic. With it, the ordeal feels like the honest cost of the journey, and Video 6's second epiphany can feel earned.
 
-PROMPTS (L2): 1) One specific public moment the old expert pattern appeared, 2) What they did differently, 3) What happened and what it revealed, 4) What remains difficult about being seen
+PROMPTS (L2): 1) Where they first applied the mentor-assisted professional realization, 2) The repeated or escalating situations that tested it, 3) What worked and what those wins led them to believe, 4) What unresolved pressure, blind spot, or limit remained
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so its facts support that destination without announcing it. Design the OPEN LOOP from the unfinished meaning, contradiction, cause, or question the conclusion will transform, then write the independent HOOK last as a truthful pattern interrupt. Do not smooth these separate section jobs into one prose rhythm.
 
-VIDEO 4, LEVEL 2: Tone = Analytical, pattern-focused, thoughtful (Tycho "A Walk" — ambient electronic, observant, slightly detached)
-HOOK guidance: Pull one unexpected response, failed prediction, exposed habit, or concrete contradiction from expertise being tested in public. State the evidence before interpreting it. Never open with a progress update, a calm comparison of videos, or an unsupported claim about audience response.
-OPEN LOOP guidance: Connect that evidence to the collision between the speaker's expert instincts and what public communication demanded. Make the viewer need to know what caused the unexpected result without announcing the lesson.
-CONCLUSION guidance: Turn what the trial appears to reveal about how the speaker communicates or applies their expertise, while preserving what remains difficult. Let authority emerge from the quality of the observation, not from invented metrics or praise.
-CTA guidance: Because this is the midpoint, explicitly name that this is video 4 of 7. Continue from the conclusion into the larger visibility journey the speaker is documenting. Invite the viewer to follow to see how it ends and/or go back to see how it started because the difference between the beginning and this public trial is the point. The CTA must feel like a natural continuation of the conclusion, not a navigation label.
+VIDEO 4, LEVEL 2: Tone = Analytical, grounded, and provisionally confident.
+HOOK guidance: Pull one unexpected consequence, failed prediction, exposed habit, or concrete contradiction from applying the first professional epiphany. State the evidence before interpreting it. Never open with a challenge update, a general claim of growth, or unsupported audience response.
+OPEN LOOP guidance: Connect the evidence to the real decision or pressure that tested the new lens. Make the viewer need to understand why the result built confidence without proving the whole problem solved.
+CONCLUSION guidance: Turn what the trial appears to prove about the speaker's knowledge or judgment while preserving an unseen limit. Let emerging authority come from action and observation, not a lesson, pitch, metric, or praise.
+CTA guidance: Explicitly identify this as Video 4 of 7 while continuing the conclusion's tension. Invite the viewer to follow to see what the provisional confidence could not yet survive and/or go back to see the first shift, using exactly one clear reason.
+
+VIDEO 4 FINAL CHECK:
+- The story tests the first professional epiphany in a real arena connected to the speaker's larger subject.
+- The road may include work, craft, calling, business, life, or public communication; it is not reduced to making the seven videos.
+- The mentor's influence is carried into action without letting the mentor or speaker deliver another full lesson.
+- At least one meaningful test, partial win, and reason for growing confidence are visible.
+- The fall, recovery, second epiphany, and mature guide identity remain reserved for later videos.
 </l2_v4_rules>
 
 <l2_v5_rules>

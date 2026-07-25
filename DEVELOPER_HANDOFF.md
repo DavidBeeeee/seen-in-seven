@@ -3,7 +3,7 @@
 **Prepared for:** Incoming developer  
 **Project:** SeenInSeven — AI video script builder  
 **Owner:** David Bee, Colorado Mastermind  
-**Date:** June 2026, updated July 21, 2026
+**Date:** June 2026, updated July 25, 2026
 **Repo:** https://github.com/DavidBeeeee/seen-in-seven  
 **Live app:** https://studio.coloradomastermind.com
 **Studio admin:** https://studio.coloradomastermind.com/admin
@@ -129,7 +129,7 @@ The Prompt Tester at `/admin/seeninseven/prompt-tester` is an administrator-only
 
 It contains:
 
-- The complete currently published `prompts/blueprints.js` source.
+- The complete currently published `api/_lib/blueprints.txt` source.
 - A browser-local working draft with edit undo and restore-published controls.
 - Real user onboarding, previous scripts, and available prompt answers loaded as read-only copies.
 - Level- and video-specific question boxes.
@@ -148,13 +148,13 @@ The Prompt Tester question catalog is in `js/admin-prompt-questions.js`. It is a
 
 #### Focused prompt architecture
 
-`prompts/blueprints.js` remains one source file, but its generation rules are organized in level order: Level 1 Videos 1 through 7, followed by Level 2 Videos 1 through 7. Each of the 14 sections contains that exact level/video combination's video blueprint, level rules, and local section guidance.
+`api/_lib/blueprints.txt` remains one source file, but its generation rules are organized in level order: Level 1 Videos 1 through 7, followed by Level 2 Videos 1 through 7. Each of the 14 sections contains that exact level/video combination's video blueprint, level rules, and local section guidance.
 
 On July 20, 2026, David explicitly authorized a full prompt refinement pass. The old copyable Hook/Open Loop/Conclusion/CTA examples were replaced with per-video guidance about the move each section must make. The global generation order is now: choose the engagement ending, design the CONCLUSION destination and CTA together, reverse-engineer the MEAT from that destination, design the OPEN LOOP from the missing meaning, then engineer the independent HOOK last. The hook captures pre-story attention; the open loop converts that interruption into one exact unanswered question; the conclusion completes, reverses, complicates, challenges, or reopens the apparent meaning; and the CTA bridges from the conclusion before stating an action and reason. The Seamless Rule applies only inside MEAT. Hooks must not be progress reports, summaries, soft identification, or early lesson reveals. Open loops must not disclose the result or use an unnamed "something changed" as the mystery. CTAs must not begin with a video/series label.
 
 The internal seven-video arc is currently: V1 declaration/introduction, V2 ordinary world and human identity, V3 first epiphany, V4 road of trials, V5 fall/ordeal, V6 second epiphany/finding the elixir, V7 return. The challenge itself remains intentionally named in the fixed Video 1 declaration and existing series orientation. Internal Hero's Journey terms are not used in the revised Level 1 question titles or explanations.
 
-On July 20, the full Level 1 question contract was rebuilt around that arc. V1 keeps the fixed challenge declaration, the specific blocker, why the challenge matters now, and optional context; the required "who are you here to reach" field was removed for Level 1 because onboarding already provides audience context. V2 is a broad human introduction: background, an unexpected detail, and what the speaker naturally cares about. V3 collects one thing the speaker used to think was true, the moment or pattern that challenged it, and the cost; the blueprint infers the narrowest defensible first reframe rather than making the participant answer the same insight several ways. V4 is an honest midpoint report built from expected versus actual, one concrete detail, an emerging change, what remains difficult, and why the speaker continues. V5 now returns to the participant's larger life story and tells the ordeal that followed the first realization; it is explicitly not a report about filming the challenge. V6 reveals the larger second epiphany earned through that ordeal and must deepen rather than repeat V3. V7 compares the person's earlier and present identity, acknowledges what remains unfinished, and explains what telling the story across seven videos helped clarify without claiming the challenge caused their entire life transformation.
+On July 25, the shared stage ownership was tightened across both levels. V1 keeps the fixed declaration. V2 owns the Ordinary World and Refusal. V3 owns the guide influence, first epiphany, and first threshold. V4 owns the Road of Trials in the actual subject of the larger story, including changed action, resistance, partial wins, and incomplete confidence. V5 owns the fall with no recovery. V6 owns the second epiphany and elixir. V7 owns the return and ongoing viewer relationship. The exact Level 2 balance inside V4 remains intentionally broad across work, craft, calling, business, life, and public communication for a later refinement pass.
 
 Level 1 and Level 2 have separate Easy Mode and Extended question sets. The user-facing question catalog in `js/app.js` and the admin copy in `js/admin-prompt-questions.js` must remain identical. The Prompt Tester chooses the matching level's questions instead of using one shared list.
 
@@ -163,9 +163,9 @@ On July 21, 2026, the complete Level 2 path was rebuilt against `Hero's Journey 
 The current Level 2 path is:
 
 1. V1 introduces someone with real knowledge who has remained publicly invisible.
-2. V2 reveals the human origin, detour, wound, obsession, or unlikely chapter that formed their lens.
-3. V3 delivers the first professional 5E epiphany: a familiar idea in their field becomes impossible to see the old way.
-4. V4 tests that first realization in public practice. Expertise appears through the quality of the speaker's observation, while the unresolved difficulty remains visible.
+2. V2 remains inside the professional Ordinary World and Refusal. The viewer recognizes an ability, responsibility, obsession, or recurring thread that the speaker still minimizes or contains. It cannot explain the current method, mission, offer, service philosophy, or mature authority.
+3. V3 introduces a literal human guide. A mentor, teacher, supervisor, peer, client, elder, or collaborator briefly challenges what the speaker believed, and the speaker tests that guidance against lived evidence until the first professional epiphany lands.
+4. V4 tests that mentor-assisted realization through meaningful action, resistance, partial wins, and provisional confidence in the real subject of the story. It is not limited to public posting or the seven-video process, and it cannot deliver another epiphany or reveal the coming fall.
 5. V5 is the fall inside the speaker's work, craft, calling, developing expertise, or hoped-for future. A real defeat happened, the speaker helped cause or worsen it, attempted recovery failed, and no way back was visible. It must not collapse into visibility anxiety. Aspiring experts do not need a business-scale disaster, but the loss must feel permanent from inside their experience.
 6. V6 is the second professional epiphany and elixir earned specifically through V5. It must emerge through aftermath or rebuilding, deepen or correct V3, change the speaker's work or decisions, and give the viewer a useful lens. It cannot become an unrelated industry opinion.
 7. V7 returns from private competence to public ownership. It connects the origin, both realizations, the public test, and the fall as one correction without recapping seven episodes. It shows observable change, keeps an honest unfinished edge, gives the audience a professional gift, and asks for an ongoing follow because the relationship and perspective are worth continuing. It is not an offer or lead-capture video.
@@ -192,12 +192,12 @@ The publishing flow:
 2. Validates the complete blueprint structure and required markers.
 3. Shows a change review.
 4. Requires two confirmations, including typing `APPLY BLUEPRINT`.
-5. Creates a commit directly on `main` for `prompts/blueprints.js` only.
+5. Creates a commit directly on `main` for `api/_lib/blueprints.txt` only.
 6. Allows Undo Last Publish only when the latest relevant commit came from the Prompt Tester. Undo creates a new reversal commit rather than rewriting history.
 
 Vercel has a restricted `GITHUB_PROMPT_TOKEN`. It must remain a fine-grained token with Contents read/write access to only `DavidBeeeee/seen-in-seven`. Never replace it with a broad personal token or expose it to the browser.
 
-Outside this explicit admin publishing flow, `prompts/blueprints.js` remains protected core IP and must not be edited without David's direct instruction.
+Outside this explicit admin publishing flow, `api/_lib/blueprints.txt` remains protected core IP and must not be edited without David's direct instruction.
 
 ### 6. Authentication and administrator corrections
 
@@ -247,7 +247,7 @@ Production verification covered:
 - Prefill, clear, restore, and browser persistence in the Prompt Tester.
 - Desktop and mobile overflow checks.
 - SeenInSeven startup after answer persistence was added.
-- Confirmation that `prompts/blueprints.js` remained byte-for-byte unchanged during the tester build.
+- Confirmation that the protected blueprint source remained byte-for-byte unchanged during the tester build.
 - Focused selection of exactly one of the 14 level/video rule sections per generation.
 - Same-level cumulative context with one latest current script per prior video.
 - Production and Prompt Tester parity for prompt assembly, validation, repair, and Video 1 declaration placement.
@@ -324,7 +324,7 @@ This repo is the entire 777 Challenge project folder, not just the app. Here's e
 - `js/admin-prompt-tester.js` — Prompt Tester state, testing, and publishing
 - `js/admin-prompt-questions.js` — Prompt Tester's level/video question catalog
 - `js/supabase.js` — auth and database layer
-- `prompts/blueprints.js` — protected core IP; modify only with David's explicit instruction
+- `api/_lib/blueprints.txt` — protected core IP; modify only with David's explicit instruction
 - `api/generate.js` — DeepSeek serverless proxy
 - `api/prompt-blueprint.js` — admin-gated blueprint read, publish, and undo endpoint
 - `vercel.json` — URL routing
@@ -401,7 +401,7 @@ seen-in-seven/
 │   ├── supabase.js     — auth + database layer, event logging, sync queue
 │   └── points.js       — gamification points engine (client mirror of the SQL compute)
 ├── prompts/
-│   └── blueprints.js   — SYSTEM_PROMPT + Hero's Journey blueprints ← CORE IP. NEVER MODIFY.
+│   └── _lib/blueprints.txt — SYSTEM_PROMPT + Hero's Journey blueprints ← CORE IP. MODIFY ONLY WITH DAVID'S EXPLICIT INSTRUCTION.
 ├── api/
 │   ├── generate.js     — DeepSeek proxy serverless function
 │   └── prompt-blueprint.js — admin-gated blueprint read/publish/undo endpoint
@@ -467,9 +467,9 @@ Email/password and magic-link login coexist. The same Supabase session identifie
 
 Supabase holds an internal navigator lock during `onAuthStateChange` callbacks. Any `await` on a Supabase database call inside this callback deadlocks forever. All DB work in the auth callback is deferred via `setTimeout(0)`. This pattern is load-bearing — do not remove it or move the DB calls back into the synchronous callback body.
 
-**4. `blueprints.js` is protected core IP**
+**4. `api/_lib/blueprints.txt` is protected core IP**
 
-The AI system prompt and Hero's Journey blueprints in `prompts/blueprints.js` are David's core intellectual property. They run through multiple API iterations and produce something that cannot be replicated by a base LLM. Modify this file only when David directly authorizes the work. The administrator Prompt Tester is the approved browser-based editing and publishing path.
+The AI system prompt and Hero's Journey blueprints in `api/_lib/blueprints.txt` are David's core intellectual property. They run through multiple API iterations and produce something that cannot be replicated by a base LLM. Modify this file only when David directly authorizes the work. The administrator Prompt Tester is the approved browser-based editing and publishing path.
 
 **5. DeepSeek proxy**
 
@@ -598,7 +598,7 @@ The superapp foundation is built. Future priorities are connecting Systeme.io to
 **Development preferences:**
 - Make it work, don't over-engineer. Prove the core product before adding complexity.
 - No new offer layers or feature additions before the existing funnel is proven.
-- IP in `blueprints.js` is changed only with David's explicit instruction and the protected publishing flow.
+- IP in `api/_lib/blueprints.txt` is changed only with David's explicit instruction and the protected publishing flow.
 - Straightforward UX — the user base is non-technical, often 50+, camera-shy, first-time content creators.
 - Progress and momentum matter more than feature completeness. Every screen should answer: where am I, what's done, what's next.
 
