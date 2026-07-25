@@ -3092,3 +3092,19 @@ body::after {
   font-size: 14px;
   line-height: 1.5;
 }
+
+/* Regeneration feedback: keep the existing script visible while making its
+   temporarily read-only state unmistakable. */
+.sv-beat,
+#sv-beats,
+#script-editor {
+  transition: opacity 0.18s ease, filter 0.18s ease;
+}
+.sv-beat.is-regenerating,
+#sv-beats.is-regenerating,
+#script-editor.is-regenerating {
+  opacity: 0.42;
+  filter: grayscale(0.72);
+  pointer-events: none;
+  cursor: wait;
+}
