@@ -250,8 +250,9 @@ function publishedPrompt() {
     if (Number(level) === 2 && Number(video) === 1) {
       const privatePositioning = /\b(?:coach(?:ing)?|course|framework|one[- ]to[- ]one|1[- ]to[- ]1|client|customer|booking|book a call|direct message|sign[- ]?up|buy|bought|purchase|pay|sell|sale|conversion)\b/i;
       Object.keys(sections).forEach(section => {
-        if (privatePositioning.test(String(sections[section] || ''))) {
-          addIssue(section, 'Level 2 Video 1 includes private commercial positioning instead of translating it into human story and audience tension.');
+        const match = String(sections[section] || '').match(privatePositioning);
+        if (match) {
+          addIssue(section, 'Level 2 Video 1 uses the private commercial term "' + match[0] + '". Replace that term and its surrounding commercial idea with the underlying human story or audience tension.');
         }
       });
     }
