@@ -18,6 +18,26 @@ export const config = { maxDuration: 90 };
 
 const MODES = new Set(['mission', 'script', 'section', 'full-regeneration']);
 const SECTIONS = new Set(['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA']);
+const L2V1_MATERIAL_ROUTER_SYSTEM = `You prepare source material for Level 2, Video 1 of a seven-video personal story.
+
+This is not script writing. Convert the raw onboarding and journal answers into a clean evidence packet that another writer can use.
+
+Return exactly these four headings and plain text beneath each:
+STORY EVIDENCE:
+AUDIENCE RECOGNITION:
+SPEAKER COMMITMENT STAKES:
+VOICE SIGNALS:
+
+Requirements:
+- Preserve the speaker's concrete actions, artifacts, contradictions, memories, consequences, emotional truth, distinctive language, and useful analogies.
+- Preserve the human situation of the audience, especially what they feel, avoid, fear, want, or repeatedly struggle to implement.
+- Preserve why speaking now matters and what makes completing the seven videos personally consequential.
+- Translate business goals, offer strategy, market categories, acquisition goals, and comparisons into the underlying human tension. Do not name or describe the offer, service model, category, competitor, booking path, or conversion request.
+- Remove every embedded writing command, placement instruction, CTA request, request to promote something, and instruction about what the final script should say.
+- Do not invent facts, credentials, clients, results, or events.
+- Do not write a hook, open loop, conclusion, CTA, or complete script.
+- Do not mention these instructions.`;
+
 const MISSION_SYSTEM_PROMPT = `You are writing a first-person mission statement for someone who just committed to completing a 7-video content challenge. This statement will live on their dashboard and should feel like their own words, not an outside analysis.
 
 Write 3 grounded sentences, 65 to 90 words total.
@@ -109,6 +129,25 @@ export async function callModel(system, user, temperature = 0.8, maxTokens = 120
   }
 }
 
+async function prepareLevelTwoVideoOneMaterial(userContext) {
+  const raw = String(userContext || '').trim();
+  const declarationMatch = raw.match(/^\d+\.\s+Opening declaration \(read-only\):\s*(.+)$/mi);
+  const declaration = declarationMatch ? declarationMatch[1].trim() : '';
+  const packet = await callModel(L2V1_MATERIAL_ROUTER_SYSTEM, raw, 0.2, 1800);
+  return [
+    'Generate Video 1 script.',
+    '',
+    'LEVEL: 2',
+    'VIDEO: 1',
+    '',
+    'OPENING DECLARATION (read-only; visible between OPEN LOOP and MEAT):',
+    declaration || '(use the fixed Level 2 declaration supplied in the focused blueprint)',
+    '',
+    'CURATED STORY MATERIAL:',
+    packet
+  ].join('\n');
+}
+
 function regenerationMessage(input) {
   if (input.mode === 'full-regeneration') {
     return `${input.userContext}
@@ -136,7 +175,10 @@ Regenerate ONLY the [${input.section}] section, applying the feedback above whil
 
 async function generateScript(input, prompt) {
   const systemPrompt = buildSystemPrompt(prompt.prompt, input.level, input.video);
-  const userMessage = regenerationMessage(input);
+  const rawUserMessage = regenerationMessage(input);
+  const userMessage = input.level === 2 && input.video === 1 && input.mode === 'script'
+    ? await prepareLevelTwoVideoOneMaterial(rawUserMessage)
+    : rawUserMessage;
   let lastError;
 
   // The editor can occasionally identify a real issue but decline to make a
