@@ -1997,6 +1997,8 @@ async function regenerateSection(videoIdx, sectionKey, btnEl) {
 
   const originalText = btnEl ? btnEl.textContent : '';
   if (btnEl) { btnEl.textContent = '⏳ Regenerating...'; btnEl.disabled = true; }
+  const sectionContainer = document.getElementById('sv-section-' + sectionKey.replace(' ', '-'));
+  if (sectionContainer) sectionContainer.classList.add('is-regenerating');
 
   const level = state.level || 1;
   const videoNum = videoIdx + 1;
@@ -2044,6 +2046,8 @@ async function regenerateSection(videoIdx, sectionKey, btnEl) {
   } catch(err) {
     if (btnEl) { btnEl.textContent = '⚠️ Error'; btnEl.disabled = false; setTimeout(() => { if (btnEl) btnEl.textContent = originalText; }, 3000); }
     console.error('Regenerate section error:', err);
+  } finally {
+    if (sectionContainer) sectionContainer.classList.remove('is-regenerating');
   }
 }
 
@@ -2070,6 +2074,11 @@ async function regenerateFullScript(videoIdx, btnEl) {
     btnEl.textContent = '⏳ Regenerating...';
     btnEl.disabled = true;
   }
+  const fullScriptElements = [
+    document.getElementById('sv-beats'),
+    document.getElementById('script-editor')
+  ].filter(Boolean);
+  fullScriptElements.forEach(element => element.classList.add('is-regenerating'));
 
   const level = state.level || 1;
   const videoNum = videoIdx + 1;
@@ -2120,6 +2129,8 @@ async function regenerateFullScript(videoIdx, btnEl) {
       }, 3000);
     }
     console.error('Regenerate full script error:', err);
+  } finally {
+    fullScriptElements.forEach(element => element.classList.remove('is-regenerating'));
   }
 }
 
@@ -3188,7 +3199,7 @@ function _doShowScriptViewInner(idx) {
         const beatsHtml = (s.beats && s.beats.length)
           ? `<ul class="sv-psych-beats">${s.beats.map(b => `<li>${b}</li>`).join('')}</ul>`
           : (s.desc ? `<div class="sv-beat-desc">${s.desc}</div>` : '');
-        return `<div class="sv-beat">` +
+        return `<div class="sv-beat" id="sv-section-${safeKey}">` +
           `<div class="sv-beat-label" style="display:flex;justify-content:space-between;align-items:center;">` +
           `<span>${s.label}</span>` +
           `<button class="sv-regen-link" id="sv-regen-${safeKey}" onclick="regenerateSection(${idx},'${s.key}',this)" style="background:none;border:none;cursor:pointer;color:var(--teal);font-size:13px;padding:2px 6px;">↺ regenerate</button>` +
