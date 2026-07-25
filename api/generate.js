@@ -34,7 +34,7 @@ Requirements:
 - Preserve why speaking now matters and what makes completing the seven videos personally consequential.
 - Translate business goals, offer strategy, market categories, acquisition goals, and comparisons into the underlying human tension. Do not name or describe the offer, service model, category, competitor, booking path, or conversion request.
 - Remove every embedded writing command, placement instruction, CTA request, request to promote something, and instruction about what the final script should say.
-- The final packet must contain only life-story and human-behavior language. It must contain no calls to action and no commercial positioning vocabulary from the raw answers. When a commercially specific detail is the only available evidence, restate its underlying human experience without preserving its commercial nouns.
+- The final packet must contain only life-story and human-behavior language. It must contain no calls to action and no commercial positioning vocabulary from the raw answers. Forbidden packet vocabulary includes coach, coaching, course, framework, tool, service, offer, client, customer, booking, direct message, one-to-one, sign-up, buy, bought, purchase, pay, sell, sale, and conversion. When a commercially specific detail is the only available evidence, restate its underlying human experience without preserving any of those nouns or actions.
 - Do not invent facts, credentials, clients, results, or events.
 - Do not write a hook, open loop, conclusion, CTA, or complete script.
 - Do not mention these instructions.`;
@@ -137,13 +137,17 @@ async function prepareLevelTwoVideoOneMaterial(userContext) {
   const declarationMatch = raw.match(/^\d+\.\s+Opening declaration \(read-only\):\s*(.+)$/mi);
   const declaration = declarationMatch ? declarationMatch[1].trim() : '';
   let packet = await callModel(L2V1_MATERIAL_ROUTER_SYSTEM, raw, 0.2, 1800);
-  if (L2V1_PRIVATE_STRATEGY_PATTERN.test(packet)) {
+  for (let pass = 0; pass < 2 && L2V1_PRIVATE_STRATEGY_PATTERN.test(packet); pass++) {
+    const forbidden = Array.from(new Set(packet.match(new RegExp(L2V1_PRIVATE_STRATEGY_PATTERN.source, 'gi')) || []));
     packet = await callModel(
       L2V1_MATERIAL_ROUTER_SYSTEM,
-      'Clean this evidence packet again. It still contains private commercial positioning or conversion language. Preserve the human story, audience struggle, commitment stakes, and voice while translating every commercial detail into its underlying human tension. Return the same four-heading evidence packet only.\n\nPACKET TO CLEAN:\n' + packet,
+      'Rewrite this evidence packet. These forbidden commercial terms are still present: ' + forbidden.join(', ') + '. Remove every occurrence and express only the underlying human behavior or tension. Preserve the human story, audience struggle, commitment stakes, and voice. Return the same four-heading evidence packet only.\n\nPACKET TO CLEAN:\n' + packet,
       0.1,
       1800
     );
+  }
+  if (L2V1_PRIVATE_STRATEGY_PATTERN.test(packet)) {
+    throw new Error('The private story material could not be prepared cleanly. Please try again.');
   }
   return [
     'Generate Video 1 script.',
