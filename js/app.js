@@ -1931,7 +1931,7 @@ function archivedScriptText(collection, idx, level) {
   const raw = scripts['script_v' + idx] || '';
   if (idx !== 0 || !window.SISPromptEngine) return String(raw).replace(/\[(HOOK|OPEN LOOP|MEAT|CONCLUSION|CTA)\]\s*/g, '').trim();
   const declaration = Number(level) === 2
-    ? scripts.v0decl || videoOneDeclaration(2)
+    ? videoOneDeclaration(2)
     : scripts.v0p0 || videoOneDeclaration(1);
   return SISPromptEngine.canonicalScript(raw, 1, declaration);
 }
@@ -2126,7 +2126,11 @@ async function regenerateFullScript(videoIdx, btnEl) {
 function videoOneDeclaration(level) {
   const name = state.name || '';
   if (Number(level) === 2) {
-    return state.videos.v0decl || `For those of you who don't know me yet, my name is ${name}. I kinda never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me, some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of. I'm specifically doing this 7 Video Challenge because I have to share my knowledge, my experience, and my lived reality for the specific people I want to help before the world changes forever and I won't have the chance. These 7 videos are how I'm establishing myself as a credible voice in my field, but I'm scared, I'm frustrated, I don't know how it's going to go, but I'm committed to finishing.`;
+    const saved = String(state.videos.v0decl || '');
+    if (saved) {
+      return saved.replace(" These 7 videos are how I'm establishing myself as a credible voice in my field, but", '');
+    }
+    return `For those of you who don't know me yet, my name is ${name}. I kinda never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me, some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of. I'm specifically doing this 7 Video Challenge because I have to share my knowledge, my experience, and my lived reality for the specific people I want to help before the world changes forever and I won't have the chance. I'm scared, I'm frustrated, I don't know how it's going to go, but I'm committed to finishing.`;
   }
   return state.videos.v0p0 || `Hi, my name is ${name}. I never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me... some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of.`;
 }
@@ -2509,7 +2513,7 @@ function _buildPromptsContent(container, v, idx) {
     const introDeclaration = `Hi, my name is ${state.name || '(your name)'}. I never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me... some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of.`;
 
     // Level 2 declaration (for Authority Series)
-    const l2Declaration = `For those of you who don't know me yet, my name is ${state.name || '(your name)'}. I kinda never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me, some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of. I'm specifically doing this 7 Video Challenge because I have to share my knowledge, my experience, and my lived reality for the specific people I want to help before the world changes forever and I won't have the chance. These 7 videos are how I'm establishing myself as a credible voice in my field, but I'm scared, I'm frustrated, I don't know how it's going to go, but I'm committed to finishing.`;
+    const l2Declaration = `For those of you who don't know me yet, my name is ${state.name || '(your name)'}. I kinda never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me, some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of. I'm specifically doing this 7 Video Challenge because I have to share my knowledge, my experience, and my lived reality for the specific people I want to help before the world changes forever and I won't have the chance. I'm scared, I'm frustrated, I don't know how it's going to go, but I'm committed to finishing.`;
 
     const v0Prompts = level === 1
       ? [
@@ -2600,7 +2604,9 @@ function _buildPromptsContent(container, v, idx) {
           }
         }).join('');
       // Store declaration in a dedicated key — NOT v0p0 (which feeds the beats/village logic)
-      if (!sv.v0decl) sv.v0decl = l2Declaration;
+      if (!sv.v0decl || sv.v0decl.includes("These 7 videos are how I'm establishing myself as a credible voice in my field")) {
+        sv.v0decl = l2Declaration;
+      }
     }
   } else if (v.prebuilt) {
     // show the pre-written script right on the prompts screen
