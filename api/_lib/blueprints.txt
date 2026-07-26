@@ -227,13 +227,20 @@ The viewer has not chosen to care about the speaker yet. Therefore, do not use s
 
 A strong hook creates a jolt through a truthful expectation violation: a charged concrete detail, an odd action, a consequence before its cause, a socially risky admission, an uncomfortable contradiction, a collision between two things that normally do not belong together, or a sentence that feels like the viewer walked into the middle of something already happening.
 
-Build the hook from material inside the MEAT, not from the final lesson in the CONCLUSION. The hook may point toward the same central tension, but it must not state the video's meaning, reframe, answer, or audience transformation. It is a doorway into the tension, not the explanation of it.
+For Videos other than 3 and 6, build the hook from material inside the MEAT, not from the final lesson in the CONCLUSION. The hook may point toward the same central tension, but it must not state the video's meaning, reframe, answer, or audience transformation. It is a doorway into the tension, not the explanation of it.
+
+EPIPHANY HOOK EXCEPTION:
+Videos 3 and 6 use belief-disruption hooks because their content job is to restructure how the viewer sees something.
+- VIDEO 3 uses a FORBIDDEN-IDEA PROMISE. Signal that an accepted explanation, respectable assumption, or common way of measuring the subject is incomplete, backward, or protecting something people avoid naming. The hook promises a consequential new lens without disclosing the hidden relationship that makes the reframe true. It may sound contrarian or socially risky, but it cannot be a generic industry complaint, a finished lesson, or a stock claim that everyone is wrong.
+- VIDEO 6 uses an EARNED VERDICT. State the sharp paradox, costly contradiction, or protected belief that the fall gave the speaker the right to challenge. It may carry more conviction than Video 3 and may name what failed, but it must withhold the deeper causal truth the CONCLUSION will deliver. The authority comes from surviving the consequence, not from sounding certain.
+- For both epiphany chapters, the hook must be compelling before any personal backstory is supplied. It announces that a hidden structure is about to be exposed. The OPEN LOOP then names why that hidden structure matters and what exact relationship remains unexplained.
+- Generate original language from the speaker's subject and voice. Do not rely on reusable stems about what everyone gets wrong, what nobody says, secrets, lies, or unpopular opinions.
 
 The hook and open loop must perform different actions. The hook creates "wait, what?" The open loop creates "I need to know why." Do not let the hook ask the full story question, and do not let the open loop repeat the hook in softer language.
 
 Silently generate at least three hook candidates using different attention mechanisms. Reject any candidate that:
 - only becomes interesting after the viewer already knows or cares about the speaker
-- sounds like a recap, update, journal entry, progress report, or thesis
+- sounds like a recap, update, journal entry, or progress report; for Videos 3 and 6, a belief-disruption premise is allowed only when it withholds the exact reframe
 - begins by explaining what the speaker used to believe and immediately corrects it
 - gives away the conclusion, epiphany, lesson, or full meaning before the open loop
 - could open almost any video after swapping one topic word
@@ -479,16 +486,16 @@ Social impulse: Follow because the first epiphany reframed something and the vie
 THIS IS THE MOST IMPORTANT VIDEO IN THE CHALLENGE. It must create a genuine cognitive shift in the viewer — not teach them something new, but restructure how they see something they already knew. The trigger is "Whoa, I never thought of it like that before." This is the speaker's first win, not their final wisdom. It should give them momentum, but it should not make them sound complete, finished, or above the struggle.
 
 EPIPHANY CONSTRUCTION ORDER:
-Design the CONCLUSION reframe first. It is the destination that determines which belief-collapse facts the story must contain and whether the ending completes, reverses, complicates, challenges, or reopens their apparent meaning. Design the CTA with that conclusion. Then reverse-engineer the seamless MEAT through the full belief-collapse sequence, design the OPEN LOOP from the missing meaning without revealing the reframe, and engineer the independent HOOK last from concrete discovery evidence.
+Design the CONCLUSION reframe first. It is the destination that determines which belief-collapse facts the story must contain and whether the ending completes, reverses, complicates, challenges, or reopens their apparent meaning. Design the CTA with that conclusion. Then reverse-engineer the seamless MEAT through the full belief-collapse sequence, design the OPEN LOOP from the missing relationship without revealing the reframe, and engineer the independent HOOK last as a forbidden-idea promise built from the accepted belief and the contradiction the story will expose.
 
-The user is not required to hand you the new truth. Infer the narrowest defensible reframe from the old idea, the evidence that made it stop making sense, and the cost the speaker named. If the evidence is incomplete, preserve that uncertainty instead of manufacturing a clean conversion. The reframe must feel discovered from their material, not supplied by you.
+The user is not required to hand you the new truth. Infer one complete but bounded paradigm shift from the old idea, the evidence that made it stop making sense, and the cost the speaker named. Complete means the viewer receives a powerful new lens they can use immediately. Bounded means the lens does not explain the later fall, contain a complete method, or deliver the deeper truth reserved for Video 6. If the evidence is incomplete, preserve that uncertainty instead of manufacturing a clean conversion. The reframe must feel discovered from their material, not supplied by you.
 
-The HOOK must be derived from the sharpest concrete evidence that made the reframe possible, not from the old-belief summary or the final insight. Do NOT write a hook that starts with "I used to believe..." and immediately corrects it. The hook is a scroll-stopping jolt pulled from the weirdest, most uncomfortable, or most socially revealing action, consequence, or contradiction inside the discovery.
+The HOOK must promise that a familiar belief, accepted explanation, or respectable assumption is about to be exposed as incomplete, backward, or socially protected. It can announce the category of truth the speaker is willing to say aloud, but it cannot disclose the exact relationship the CONCLUSION will reveal. Do not default to a scene, progress report, soft confession, old-belief summary, or reusable contrarian slogan.
 
 The epiphany does not land because the speaker announces a lesson. It lands because the viewer watches the old belief become impossible to keep.
 
 THE 7 EPIPHANY BEATS — ALL MUST BE PRESENT:
-1. Pattern Break — The core idea disrupts default thinking. Find the cognitive friction inside the speaker's answer: a familiar experience hiding an unfamiliar structure, a respectable excuse hiding a cost, a normal habit hiding a social rule, or a protective belief causing the very harm it claims to prevent.
+1. Pattern Break — The HOOK promises a consequential forbidden idea: a familiar experience contains a hidden structure, a respectable belief protects a cost, a normal habit hides a social rule, or a protective belief may be producing the harm it claims to prevent. Promise the disruption without delivering the reframe.
 2. Discovery Arc (Story) — Don't jump to the insight. Walk the viewer through HOW the speaker arrived at it. If you state the reframe, people resist. If you take them on the journey, they arrive at it themselves. Storytelling as a vehicle for cognition.
 3. Cognitive Reframe (The Shift) — The old lens cracks, new one snaps into place. It lands as inevitability, not argument. The audience arrives at the reframe a split second before or right as the speaker says it.
 4. "Aha" Transfer — The viewer doesn't just learn — they receive a new intellectual tool they can USE. After this moment, they can see the pattern the speaker described and apply it. This makes the viewer feel intelligent and makes the speaker the source of that intelligence.
@@ -501,10 +508,10 @@ TONE: Gravity without heaviness. Present, considered. The old belief stated casu
 LEVEL 1 SPECIFIC: Personal epiphany — a belief about life, identity, fear, success, relationships. The more personal and specific, the more universal it feels.
 
 SECTION MAP FOR VIDEO 3:
-[HOOK] — Pattern Interrupt from the discovery evidence. Pull the most charged concrete consequence, action, or contradiction out of the MEAT and place it before its cause. It must make the viewer need an explanation without stating the reframe. No backstory, old-belief summary, or lesson reveal.
-[OPEN LOOP] — Context gap. Explain just enough for the viewer to understand why the hook is not random, then open the specific question: what was the speaker missing, what did they misread, or why did the normal belief stop making sense?
-[MEAT] — Full epiphany journey. What they used to think was true -> how it shaped real choices -> why it felt reasonable or protective -> the moment or repeated evidence that exposed a contradiction -> what they could no longer explain with the old idea -> the first new lens that emerges from the evidence.
-[CONCLUSION] — The reality flip. Name the simple reframe only after the MEAT earns it. The viewer should think, "that is obvious now, why did I never say it that way?"
+[HOOK] — Forbidden-Idea Promise. Signal that an accepted explanation, respectable assumption, or common interpretation is about to be challenged. Make the promise consequential and specific to the subject while withholding the exact reframe.
+[OPEN LOOP] — Paradigm Gap. Show why the old idea felt reasonable and name the concrete contradiction or human cost it could not explain. The viewer must need the hidden relationship, not merely the rest of the speaker's story.
+[MEAT] — Discovery arc. What they used to think was true -> how it shaped real choices -> why it felt reasonable or protective -> the moment or repeated evidence that exposed a contradiction -> what the old idea could no longer explain. Stop before stating the new lens.
+[CONCLUSION] — Paradigm Shift. Reveal the hidden relationship in one simple, memorable idea, transfer the lens to the viewer, and make the cost of the old interpretation newly visible. The insight must feel complete and powerful even though the larger journey remains unfinished.
 [CTA] — Continue from that reframe into Video 4's road of trials. Give one clear action and one reason tied to the unresolved cost of living by the old belief.
 
 
@@ -516,9 +523,9 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so its facts support that destination without announcing it. Design the OPEN LOOP from the unfinished meaning, contradiction, cause, or question the conclusion will transform, then write the independent HOOK last as a truthful pattern interrupt. Do not smooth these separate section jobs into one prose rhythm.
 
 VIDEO 3, LEVEL 1: Tone = Weighted, present, room to breathe (Sufjan Stevens "Fourth of July" — sparse piano, space between words)
-HOOK guidance: Use a concrete, charged consequence or contradiction exposed by the discovery story, not the final reframe itself. Present the strange evidence before its cause. The viewer should need the open loop to understand why it happened; they must not receive the epiphany in the first line.
-OPEN LOOP guidance: Show why the evidence conflicts with what the speaker reasonably believed, then create the exact question of what the old belief failed to explain. Do not state the new lens.
-CONCLUSION guidance: After the discovery arc makes the old belief impossible to keep, land the simple new lens and its cost. It should feel discovered in real time, not taught from above.
+HOOK guidance: Promise a truth that challenges an accepted personal explanation or names the existence of a hidden structure people rarely articulate. Make the viewer feel that their current interpretation may be incomplete without revealing the new lens. Do not use a scene-first opening, soft confession, progress report, or stock contrarian formula.
+OPEN LOOP guidance: Establish why the accepted idea felt sensible, then expose the specific consequence, contradiction, or human pressure it cannot explain. Make the missing relationship feel personally important enough to wait for.
+CONCLUSION guidance: After the discovery arc makes the old belief impossible to keep, deliver one complete paradigm shift, transfer that lens to the viewer, and make the old interpretation's cost newly visible. Powerful does not mean final; reserve only the truth that requires the later ordeal.
 CTA guidance: Continue from the first epiphany into a clear follow request because the next installment of the 7 Video Challenge shows what happened when the speaker had to test the new lens in behavior rather than merely understand it.
 </l1_v3_rules>
 
@@ -644,15 +651,15 @@ Social impulse: Follow because the second epiphany changes the meaning of the fa
 Video 3 worked through COGNITIVE SURPRISE. Video 6 works through EARNED CONVICTION. This is not another hot take. This is the elixir found after the life ordeal in Video 5: a larger realization that deepens, corrects, or completes the first one because the speaker lived through evidence they did not have before.
 
 ESCALATED EPIPHANY CONSTRUCTION ORDER:
-Design the CONCLUSION elixir first. It is the destination that determines which ordeal facts must be reinterpreted and how the second epiphany changes the meaning of the first. Design the CTA with that conclusion. Then reverse-engineer the seamless MEAT through what happened, what remained unanswered, how the larger realization became clear, and what changed in the speaker's identity, choices, or life. Design the OPEN LOOP from the missing meaning without revealing the elixir, then engineer the independent HOOK last from concrete ordeal evidence.
+Design the CONCLUSION elixir first. It is the destination that determines which ordeal facts must be reinterpreted and how the second epiphany changes the meaning of the first. Design the CTA with that conclusion. Then reverse-engineer the seamless MEAT through what happened, what remained unanswered, how the larger realization became clear, and what changed in the speaker's identity, choices, or life. Design the OPEN LOOP from the missing causal truth without revealing the elixir, then engineer the independent HOOK last as an earned verdict that only the ordeal gives the speaker the right to make.
 
-The user is not required to state the finished elixir perfectly. Infer the narrowest hard-won truth from the Video 5 ordeal, the aftermath evidence, the limit of Video 3's first realization, and the speaker's observable changed behavior. Treat the user's stated lesson as a candidate. Reject it when it is unrelated to the fall, merely repeats Video 3, or sounds like generic wisdom that could have been written before the ordeal.
+The user is not required to state the finished elixir perfectly. Infer one complete hard-won truth from the Video 5 ordeal, the aftermath evidence, the limit of Video 3's first realization, and the speaker's observable changed behavior. The truth should restructure the viewer's understanding and be simple enough to carry. Treat the user's stated lesson as a candidate. Reject it when it is unrelated to the fall, merely repeats Video 3, or sounds like generic wisdom that could have been written before the ordeal.
 
 SECOND EPIPHANY CAUSAL TEST:
 The elixir must answer all three questions: What did Video 3 help the speaker see? What did the Video 5 fall prove that first lens could not solve? What truth now changes how the speaker acts? If any link is missing, reconstruct it from cumulative context before writing. Video 6 works through EARNED CONVICTION, not novelty alone.
 
 THE 7 ESCALATED EPIPHANY BEATS:
-1. Pattern Break -> "Earned Reversal" — Open from a hard-won reversal that would not have been credible before the ordeal in Video 5.
+1. Pattern Break -> "Earned Verdict" — Open with the sharp paradox, protected belief, or costly contradiction the ordeal gives the speaker the right to challenge. Name what is at stake without disclosing the elixir's full causal truth.
 2. Discovery Arc -> "After the Ordeal" — Show how the realization emerged from what happened, whether through one moment or evidence accumulating over time. Through experience, not argument.
 3. Cognitive Reframe -> "Elixir" — The new truth is not just an idea. It is something they can carry forward.
 4. "Aha" Transfer -> "Emotional Safety" — The viewer feels invited into the truth, not scolded by it.
@@ -665,10 +672,10 @@ TONE: Convicted and steady. Not ranting, not defensive. The elixir is simple, gr
 LEVEL 1 SPECIFIC: A personal elixir — the deeper truth found by living through the ordeal. Not a grand lesson. A usable truth earned through experience.
 
 SECTION MAP FOR VIDEO 6:
-[HOOK] — Pattern Interrupt from the earned evidence. Open with the sharpest concrete consequence, refusal, or behavior produced by the ordeal, before explaining what new truth made it possible.
-[OPEN LOOP] — Meaning gap. Show why the ordeal could not be explained by the speaker's first understanding and create the exact question of what they eventually saw differently. Do not reveal the full elixir yet.
-[MEAT] — Escalated epiphany journey. Build from Video 5's unresolved ordeal -> how the larger realization emerged -> how it deepened the first realization -> what genuinely changed in the speaker's identity, choices, or life -> who else can use this truth.
-[CONCLUSION] — The elixir. State the simple hard-won truth after the MEAT earns it. It should feel usable, not preachy.
+[HOOK] — Earned Verdict. State the sharp paradox, failed rule, or protected belief that the ordeal gave the speaker the right to challenge. It may be more convicted than Video 3, but it must withhold the deeper causal truth.
+[OPEN LOOP] — Elixir Gap. Connect the verdict to the specific failure of the first realization: it was true, but it could not explain or prevent the ordeal. Make the viewer need the deeper principle that resolves both truths.
+[MEAT] — Escalated discovery arc. Build from Video 5's unresolved ordeal -> what the first lens could not explain -> aftermath or rebuilding evidence -> what changed in the speaker's behavior -> the contradiction that now demands a deeper interpretation. Stop before stating the elixir.
+[CONCLUSION] — The elixir. Deliver one complete hard-won paradigm shift, transfer it to the viewer, and make both the cost of the old understanding and the new possibility visible.
 [CTA] — Continue from the elixir into Video 7's return. Give one clear action and one reason tied to seeing the whole journey come back to the beginning.
 
 PROMPTS (L1): 1) The biggest thing they eventually understood because of the difficult experience, 2) How that realization became clear, 3) How it changed their understanding of the first realization or earlier self, 4) What changed in their identity, choices, or life, 5) Who needs this truth and what it could help them see
@@ -679,9 +686,9 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so its facts support that destination without announcing it. Design the OPEN LOOP from the unfinished meaning, contradiction, cause, or question the conclusion will transform, then write the independent HOOK last as a truthful pattern interrupt. Do not smooth these separate section jobs into one prose rhythm.
 
 VIDEO 6, LEVEL 1: Tone = Convicted, steady, quiet certainty (Max Richter "On the Nature of Daylight" — strings, gravity, resolution)
-HOOK guidance: Use the most charged consequence, choice, contradiction, or piece of evidence created by the ordeal and its aftermath. Lead with what happened, changed, or became impossible to ignore without stating the elixir or explaining why.
-OPEN LOOP guidance: Make the viewer need to know what the ordeal eventually revealed that the first realization could not explain. Do not reveal the larger truth yet.
-CONCLUSION guidance: Deliver the second epiphany as a hard-won truth the speaker can now carry, including what becomes possible on the other side. It should have more conviction than Video 3 because the ordeal supplied the proof.
+HOOK guidance: Deliver an earned verdict about the belief, rule, or assumption that failed under the ordeal. It may be blunt, provocative, or socially risky because the speaker has lived the consequence. Do not default to aftermath scenery or disclose the elixir's exact causal relationship.
+OPEN LOOP guidance: Name the collision between the true first realization and the fall it could not prevent. Make the missing deeper principle feel necessary, not merely interesting.
+CONCLUSION guidance: Deliver the second epiphany as a complete hard-won paradigm shift the speaker can now carry, transfer it to the viewer, and show what becomes possible once it changes behavior. It should have more conviction than Video 3 because the ordeal supplied the proof.
 CTA guidance: Continue from the elixir into a clear follow request because the final installment of the 7 Video Challenge returns to the beginning and reveals what the speaker will carry forward.
 </l1_v6_rules>
 
@@ -919,14 +926,14 @@ Social impulse: Follow because the mentor-assisted epiphany changes the speaker'
 THIS IS THE MOST IMPORTANT VIDEO IN THE CHALLENGE. It must create a genuine cognitive shift in the viewer — not teach them something new, but restructure how they see something they already knew. The trigger is "Whoa, I never thought of it like that before." This is the speaker's first win, not their final wisdom. It should give them momentum, but it should not make them sound complete, finished, or above the struggle.
 
 EPIPHANY CONSTRUCTION ORDER:
-Design the CONCLUSION reframe first. It is the destination that determines which belief-collapse facts the story must contain and whether the ending completes, reverses, complicates, challenges, or reopens their apparent meaning. Design the CTA with that conclusion. Then reverse-engineer the seamless MEAT through the full belief-collapse sequence, design the OPEN LOOP from the missing meaning without revealing the reframe, and engineer the independent HOOK last from concrete discovery evidence.
+Design the CONCLUSION reframe first. It is the destination that determines which belief-collapse facts the story must contain and whether the ending completes, reverses, complicates, challenges, or reopens their apparent meaning. Design the CTA with that conclusion. Then reverse-engineer the seamless MEAT through the full belief-collapse sequence, design the OPEN LOOP from the missing relationship without revealing the reframe, and engineer the independent HOOK last as a forbidden-idea promise built from the accepted professional belief and the contradiction the story will expose.
 
-The user is not required to hand you a polished professional truth. Infer the narrowest defensible first reframe from the old assumption, the guide's usable lens, the evidence that stopped matching the old assumption, and the human cost. Treat any answer that states what is true instead as a candidate, not controlling copy. Strip away pricing ladders, complete methods, current positioning, mature philosophy, and anything that explains the whole field. Video 3 needs the first smaller truth that creates motion before the trials and fall, not the final elixir.
+The user is not required to hand you a polished professional truth. Infer one complete but bounded paradigm shift from the old assumption, the guide's usable lens, the evidence that stopped matching the old assumption, and the human cost. Complete means the viewer receives a powerful new intellectual tool they can use immediately. Bounded means it does not explain the later ordeal, contain a complete method, or deliver the deeper truth reserved for Video 6. Treat any answer that states what is true instead as a candidate, not controlling copy. Strip away pricing ladders, complete methods, current positioning, mature philosophy, and anything that resolves the whole professional journey.
 
 FIRST EPIPHANY BOUNDARY:
-This chapter works through COGNITIVE SURPRISE. Reveal one hidden relationship the viewer can immediately recognize and use. It may change the speaker's direction, but it cannot explain the later ordeal, supply a complete method, establish the speaker's final business philosophy, or resolve the larger story. If the candidate truth already sounds like something the returned guide would teach after surviving the fall, save it for Video 6 or Video 7 and infer the earlier, smaller shift that made the first changed action possible.
+This chapter works through COGNITIVE SURPRISE. Reveal one hidden relationship the viewer can immediately recognize and use. It must feel substantial enough to restructure one piece of reality and establish the speaker as worth following. It may change the speaker's direction, but it cannot explain the later ordeal, supply a complete method, establish the speaker's final business philosophy, or resolve the larger story. Distinguish the chapters by what evidence the insight requires, not by making Video 3 weak: if a truth requires the later fall to be credible, save it for Video 6; otherwise let Video 3 land with full force.
 
-The HOOK must be derived from the sharpest concrete evidence that made the reframe possible, not from the old-belief summary or the final insight. Do NOT write a hook that starts with "I used to believe..." and immediately corrects it. The hook is a scroll-stopping jolt pulled from the weirdest, most uncomfortable, or most socially revealing action, consequence, or contradiction inside the discovery.
+The HOOK must promise that a familiar professional belief, accepted explanation, respectable standard, or common measurement is about to be exposed as incomplete, backward, or socially protected. It may announce the category of truth the speaker is willing to say aloud, but it cannot disclose the exact relationship the CONCLUSION will reveal. Do not default to a discovery scene, progress report, soft confession, old-belief summary, or reusable contrarian slogan.
 
 The epiphany does not land because the speaker announces a lesson. It lands because the viewer watches the old belief become impossible to keep.
 
@@ -945,7 +952,7 @@ COGNITIVE-SURPRISE DESTINATION:
 The conclusion must reveal a hidden relationship, cause, category error, or reversal made visible by the evidence. Do not reduce the epiphany to a recommendation framed as what something "should" be or what the industry ought to do. The viewer needs a new lens for interpreting what they already see, not a rule to agree with. The Open Loop must withhold that exact relationship without falsely denying the subject that the Meat actually explores.
 
 THE 7 EPIPHANY BEATS — ALL MUST BE PRESENT:
-1. Pattern Break — The core idea disrupts default thinking. Find the cognitive friction inside the speaker's answer: a familiar experience hiding an unfamiliar structure, a respectable excuse hiding a cost, a normal habit hiding a social rule, or a protective belief causing the very harm it claims to prevent.
+1. Pattern Break — The HOOK promises a consequential forbidden idea inside the speaker's field: a familiar practice contains a hidden structure, a respectable standard protects a cost, a normal measurement hides the wrong variable, or a protective belief may be producing the harm it claims to prevent. Promise the disruption without delivering the reframe.
 2. Discovery Arc + Mentor (Story) — Don't jump to the insight. Show the real person who challenged, demonstrated, questioned, corrected, or named what the speaker could not yet see, then show what happened when the speaker tested that guidance against experience. The mentor opens the door; the evidence makes the old understanding impossible to keep.
 3. Cognitive Reframe (The Shift) — The old lens cracks, new one snaps into place. It lands as inevitability, not argument. The audience arrives at the reframe a split second before or right as the speaker says it.
 4. "Aha" Transfer — The viewer doesn't just learn — they receive a new intellectual tool they can USE. After this moment, they can see the pattern the speaker described and apply it. This makes the viewer feel intelligent and makes the speaker the source of that intelligence.
@@ -959,18 +966,18 @@ TONE: Gravity without heaviness. Present, considered. The old belief stated casu
 LEVEL 2 SPECIFIC: A mentor-assisted professional epiphany about something the speaker or their field misunderstood. Calm authority begins to emerge from the speaker's willingness to receive guidance and test it, not from pretending they figured everything out alone. State conventional wisdom with respect, not as a straw man. Use one concrete story as evidence.
 
 SECTION MAP FOR VIDEO 3:
-[HOOK] — Pattern Interrupt from the discovery evidence. Pull the most charged concrete consequence, action, or contradiction out of the MEAT and place it before its cause. It must make the viewer need an explanation without stating the professional reframe. No backstory, old-belief summary, or lesson reveal.
-[OPEN LOOP] — Context gap. Explain just enough for the viewer to understand why the hook is not random, then open the specific question: what was the speaker missing, what did they misread, or why did the normal belief stop making sense?
-[MEAT] — Full epiphany journey. Old/conventional belief -> why it seemed responsible or useful -> the real person whose guidance exposed a contradiction -> what happened when the speaker tested that guidance -> what they noticed that they could not unsee -> the first new lens that gives them motion.
-[CONCLUSION] — The reality flip. Name the simple reframe only after the MEAT earns it. The viewer should think, "that is obvious now, why did I never say it that way?"
+[HOOK] — Forbidden-Idea Promise. Signal that an accepted professional explanation, respectable standard, or common measurement is about to be challenged. Make the promise consequential and specific to the subject while withholding the exact reframe.
+[OPEN LOOP] — Paradigm Gap. Show why the old idea seemed responsible and name the concrete contradiction or human cost it could not explain. The viewer must need the hidden relationship, not merely the rest of the speaker's story.
+[MEAT] — Discovery arc. Old/conventional belief -> why it seemed responsible or useful -> the real person whose guidance supplied a new way to look -> what happened when the speaker tested that lens against one representative occurrence -> what the old belief could no longer explain. Stop before stating the new lens.
+[CONCLUSION] — Paradigm Shift. Reveal the hidden relationship in one simple, memorable idea, transfer the lens to the viewer, and make the cost of the old interpretation newly visible. The insight must feel complete and powerful even though the larger professional journey remains unfinished.
 [CTA] — Continue from that reframe into Video 4's road of trials. Give one clear action and one reason tied to watching the insight get tested in real life.
 
 JOURNAL ANSWER ROUTING — MANDATORY:
 1. The accepted idea, why it made sense at the time, and how it shaped the speaker's actions supplies the old lens in the MEAT, not the HOOK.
 2. One real person and their specific lens, teaching, question, or demonstration belongs in the discovery arc. If the answer lists several people, select one and omit every other mentor or source name from the entire script.
-3. The representative moment when the old idea stopped matching reality supplies the HOOK, OPEN LOOP, and concrete evidence in the MEAT.
+3. The representative moment when the old idea stopped matching reality supplies concrete evidence in the MEAT. Its contradiction helps define the HOOK promise and OPEN LOOP gap, but the opening does not have to narrate the scene.
 4. The recognizable person still carrying the old idea, its real-life cost, and what the speaker wishes they could recognize sooner supports the late MEAT and compassionate viewer transfer. Do not use present-day service descriptions, offer mechanics, or commercial positioning from this or any other answer.
-Required path: charged discovery evidence first, old assumption and shaped action second, one guide's usable lens third, representative scene and tested contradiction fourth, then infer the smallest defensible first reframe from those three story elements in the CONCLUSION, followed by compassionate human stakes and a CTA toward the trials. The guide cannot be a name-only credential, the discovery cannot be an abstract industry argument, and the reframe cannot be given away before the conclusion. The Open Loop cannot manufacture suspense through a denial that the Meat contradicts, and the Conclusion cannot substitute a "should" recommendation for the discovered relationship.
+Required path: forbidden-idea promise, consequential paradigm gap, old assumption and shaped action, one guide's usable lens, representative scene and tested contradiction, then one complete but bounded paradigm shift in the CONCLUSION, followed by compassionate human stakes and a CTA toward the trials. The guide cannot be a name-only credential, the discovery cannot be an abstract industry argument, and the reframe cannot be given away before the conclusion. The Open Loop cannot manufacture suspense through a denial that the Meat contradicts, and the Conclusion cannot substitute a "should" recommendation for the discovered relationship.
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -978,19 +985,21 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so its facts support that destination without announcing it. Design the OPEN LOOP from the unfinished meaning, contradiction, cause, or question the conclusion will transform, then write the independent HOOK last as a truthful pattern interrupt. Do not smooth these separate section jobs into one prose rhythm.
 
 VIDEO 3, LEVEL 2: Tone = Calm authority building to revelation (Explosions in the Sky "First Breath After Coma" — post-rock, quiet build to wide-open shift)
-HOOK guidance: Use a concrete, charged consequence or contradiction exposed by the professional discovery story, not the final reframe itself. Present the strange evidence before its cause. The viewer should need the open loop to understand why accepted advice produced that result.
-OPEN LOOP guidance: Show why the conventional belief seemed reasonable, then create the exact question of what it failed to explain. Preserve the mentor's intervention and the speaker's new professional lens for the discovery arc.
-CONCLUSION guidance: After the discovery arc makes the old advice impossible to keep, land what it was protecting, misdiagnosing, or making harder to see. State the professional flip simply without claiming universal authority.
+HOOK guidance: Promise a truth that challenges an accepted professional explanation, respectable standard, or common measurement. Make the viewer feel that the field's current interpretation may be incomplete without revealing the new lens. Do not use a scene-first opening, soft confession, progress report, generic industry complaint, or stock contrarian formula.
+OPEN LOOP guidance: Establish why the accepted idea seemed responsible, then expose the specific consequence, contradiction, or human pressure it cannot explain. Make the missing relationship consequential enough that the viewer needs the answer. Preserve the mentor and the actual reframe for the discovery arc and conclusion.
+CONCLUSION guidance: After the discovery arc makes the old understanding impossible to keep, deliver one complete paradigm shift, transfer that lens to the viewer, and make the old interpretation's cost newly visible. Powerful does not mean final; reserve only the truth that requires the later ordeal.
 CTA guidance: Continue from the first professional epiphany into a clear follow request because the next installment of the 7 Video Challenge shows what happened when the speaker tested that insight against real decisions and resistance.
 
 VIDEO 3 FINAL CHECK:
+- The Hook is a specific forbidden-idea promise that challenges an accepted professional interpretation without narrating the evidence scene or revealing the reframe.
+- The Open Loop makes the unresolved relationship consequential by naming what the accepted belief cannot explain and why that matters.
 - A real person briefly provides one usable lens through a question, correction, example, permission, warning, teaching, source, or demonstration; a list of impressive names does not satisfy this.
 - Only that one guide or source figure is named anywhere in the script.
 - The speaker receives and tests guidance rather than independently declaring themselves right.
 - One representative scene or occurrence lets the viewer watch the old assumption stop matching reality.
 - The lived evidence, not the mentor's authority or the speaker's opinion alone, makes the old understanding impossible to keep.
 - The conclusion delivers the first professional epiphany without claiming the final elixir or mature authority.
-- The conclusion contains one narrow, carryable lens shift rather than a pricing ladder, complete method, present-day business philosophy, or pitch.
+- The conclusion contains one complete but bounded, carryable paradigm shift rather than a pricing ladder, complete method, present-day business philosophy, or pitch.
 - The conclusion reveals what the evidence means rather than prescribing what the industry should do.
 - The viewer receives a usable lens while still seeing the speaker as a hero in motion.
 </l2_v3_rules>
@@ -1135,15 +1144,15 @@ Social impulse: Follow because the hard-won professional truth gives the viewer 
 Video 3 worked through COGNITIVE SURPRISE. Video 6 works through EARNED CONVICTION. This is not another hot take or an unrelated industry opinion. This is the elixir found inside the specific Video 5 fall: the larger professional truth the ordeal made impossible to avoid. It may expose a protected industry myth, but only when that myth is causally connected to what the speaker lost, tried, and eventually understood.
 
 ESCALATED EPIPHANY CONSTRUCTION ORDER:
-Design the CONCLUSION elixir first. It is the destination that determines which facts from the fall must be reinterpreted and what professional truth can now be carried forward. Design the CTA with that conclusion. Then reverse-engineer the seamless MEAT through what the speaker admitted, what the fall exposed, what changed after they stopped avoiding it, and how the elixir was earned. Design the OPEN LOOP from the missing meaning without revealing the elixir, then engineer the independent HOOK last from concrete ordeal evidence.
+Design the CONCLUSION elixir first. It is the destination that determines which facts from the fall must be reinterpreted and what professional truth can now be carried forward. Design the CTA with that conclusion. Then reverse-engineer the seamless MEAT through what the speaker admitted, what the fall exposed, what changed after they stopped avoiding it, and how the elixir was earned. Design the OPEN LOOP from the missing causal truth without revealing the elixir, then engineer the independent HOOK last as an earned verdict that only the ordeal gives the speaker the right to make.
 
-The user is not required to state the finished professional elixir perfectly. Infer the narrowest hard-won truth from the Video 5 defeat, the aftermath evidence, the specific limit of Video 3's first realization, and the speaker's observable changed decision or behavior. Treat the user's claimed larger truth as a candidate, not controlling copy. Reject it when it is an unrelated industry opinion, a repetition of Video 3, a pre-existing business philosophy, or generic wisdom that did not require the fall.
+The user is not required to state the finished professional elixir perfectly. Infer one complete hard-won paradigm shift from the Video 5 defeat, the aftermath evidence, the specific limit of Video 3's first realization, and the speaker's observable changed decision or behavior. It must restructure the viewer's understanding and be simple enough to carry. Treat the user's claimed larger truth as a candidate, not controlling copy. Reject it when it is an unrelated industry opinion, a repetition of Video 3, a pre-existing business philosophy, or generic wisdom that did not require the fall.
 
 SECOND EPIPHANY CAUSAL TEST:
 The elixir must answer all three questions: What did Video 3 help the speaker see? What did the Video 5 fall prove that first lens could not solve? What professional truth now changes how the speaker works or decides? If any link is missing, reconstruct it from cumulative context before writing. Video 6 works through EARNED CONVICTION. A surprising opinion without this causal chain is not the elixir.
 
 THE 7 ESCALATED EPIPHANY BEATS:
-1. Pattern Break -> Earned Evidence — Open with a concrete consequence, choice, or contradiction from the fall or its aftermath. The jolt comes from what happened, not a generic attack on industry advice.
+1. Pattern Break -> Earned Verdict — Open with the sharp paradox, protected belief, or costly contradiction the fall gives the speaker the right to challenge. Name what is at stake without disclosing the elixir's full causal truth.
 2. Discovery Arc -> Rebuilding the Logic — Walk from the failed understanding through the aftermath and the evidence that forced a deeper interpretation. Dismantle the old logic through lived experience, not argument.
 3. Cognitive Reframe -> Elixir — State the larger professional truth that the speaker could not have earned before the fall. It must deepen, correct, or complete Video 3 rather than repeat it.
 4. "Aha" Transfer -> Usable Lens — Give the viewer a way to recognize the same hidden structure in their own work or decisions. The insight becomes useful without turning into a lesson list.
@@ -1156,19 +1165,19 @@ TONE: Done being polite, resolved, purposeful. Not angry — resolved. Logic re-
 LEVEL 2 SPECIFIC: A professional elixir earned by the ordeal. It can challenge an industry sacred cow, but it must begin with the speaker's own defeat and end with a useful lens for the people they understand. This is how Level 2 turns pain into authority without making the speaker preach, posture, or claim credentials.
 
 SECTION MAP FOR VIDEO 6:
-[HOOK] — Pattern Interrupt from the earned evidence. Open with the sharpest concrete consequence, choice, or contradiction from the fall or its aftermath, before explaining the larger professional truth.
-[OPEN LOOP] — Meaning gap. Make the viewer need to know what the Video 5 defeat exposed that the speaker's first epiphany could not explain. Do not reveal the larger truth yet.
-[MEAT] — Escalated epiphany journey. Build from the specific Video 5 fall -> the failed recovery or aftermath -> the evidence that changed the speaker's interpretation -> how this deepens or corrects Video 3 -> the professional elixir they can now carry forward.
-[CONCLUSION] — The elixir. State the simple professional truth after the MEAT earns it. It should feel useful and hard-won, not like a generic take.
+[HOOK] — Earned Verdict. State the sharp paradox, failed professional rule, or protected belief that the ordeal gave the speaker the right to challenge. It may be more convicted than Video 3, but it must withhold the deeper causal truth.
+[OPEN LOOP] — Elixir Gap. Connect the verdict to the specific failure of the first realization: it was true, but it could not explain or prevent the ordeal. Make the viewer need the deeper principle that resolves both truths.
+[MEAT] — Escalated discovery arc. Build from the specific Video 5 fall -> what the first lens could not explain -> failed recovery or aftermath evidence -> what changed in the speaker's behavior -> the contradiction that now demands a deeper interpretation. Stop before stating the elixir.
+[CONCLUSION] — The elixir. Deliver one complete hard-won paradigm shift, transfer it to the viewer, and make both the cost of the old understanding and the new possibility visible.
 [CTA] — Continue from the elixir into Video 7's return. Give one clear action and one reason tied to seeing what changes now.
 
 JOURNAL ANSWER ROUTING — MANDATORY:
 1. What became clear after the difficult experience is candidate material for the CONCLUSION, not language to copy into the opening.
-2. The aftermath or rebuilding evidence supplies the HOOK, OPEN LOOP, and causal discovery journey in the MEAT. Events and changed choices must precede interpretation.
+2. The aftermath or rebuilding evidence supplies the causal discovery journey in the MEAT. Its contradiction helps define the earned HOOK verdict and OPEN LOOP gap, but the opening does not have to narrate the evidence scene.
 3. What the first realization could not explain supplies the missing link between Video 3 and the fall. State the limit before delivering the correction.
 4. The observable action, boundary, standard, conversation, or decision supplies proof that the deeper truth changed behavior.
 5. The recognizable person still inside the old pattern supplies the viewer transfer after the truth lands, without becoming an offer, invitation, or pitch.
-Required path: concrete aftermath evidence, the unanswered limit of Video 3, rebuilding logic, observable changed behavior, useful viewer transfer, then the elixir in the CONCLUSION. Never state, paraphrase, or advertise answer 1 in the HOOK or OPEN LOOP. Never substitute a separate industry opinion for a truth caused by Video 5.
+Required path: earned verdict, the unresolved collision between Video 3 and Video 5, concrete aftermath evidence, rebuilding logic, observable changed behavior, useful viewer transfer, then the elixir in the CONCLUSION. Never state, paraphrase, or advertise answer 1 in the HOOK or OPEN LOOP. Never substitute a separate industry opinion for a truth caused by Video 5.
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -1176,13 +1185,13 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so its facts support that destination without announcing it. Design the OPEN LOOP from the unfinished meaning, contradiction, cause, or question the conclusion will transform, then write the independent HOOK last as a truthful pattern interrupt. Do not smooth these separate section jobs into one prose rhythm.
 
 VIDEO 6, LEVEL 2: Tone = Done being polite, resolved, purposeful (The National "Fake Empire" energy — driven, eyes forward, no apology)
-HOOK guidance: Use the sharpest concrete consequence, choice, or contradiction from the fall or its aftermath. Lead with the evidence that the speaker's old understanding could no longer explain. Do not open with a generic declaration that an industry is lying or state the elixir early.
-OPEN LOOP guidance: Make the viewer need to know what the defeat eventually revealed that the first professional epiphany could not explain. Preserve the causal link to Video 5 and do not reveal the larger truth yet.
-CONCLUSION guidance: Deliver the elixir as a simple, hard-won professional truth that deepens or corrects Video 3, names what the fall exposed, and gives the viewer a useful new lens. Keep every claim grounded in the speaker's supplied experience.
+HOOK guidance: Deliver an earned verdict about the belief, rule, standard, or assumption that failed under the ordeal. It may be blunt, provocative, or socially risky because the speaker has lived the consequence. Do not default to aftermath scenery, use a generic declaration that an industry is lying, or disclose the elixir's exact causal relationship.
+OPEN LOOP guidance: Name the collision between the true first realization and the fall it could not prevent. Make the missing deeper principle necessary rather than merely interesting, while preserving the causal link to Video 5.
+CONCLUSION guidance: Deliver the elixir as a complete hard-won paradigm shift that deepens or corrects Video 3, transfers a useful lens to the viewer, and names what the fall exposed. Keep every claim grounded in the speaker's supplied experience.
 CTA guidance: Continue from the elixir into the final return. Ask the viewer to follow because the final installment of the 7 Video Challenge shows what changes now that the speaker can carry this truth forward.
 
 VIDEO 6 FINAL CHECK:
-- The Hook and Open Loop come from aftermath evidence or changed behavior, not the stated lesson.
+- The Hook is an earned verdict backed by the fall, not an aftermath scene or a generic hot take; the Open Loop names the unresolved collision between the first lens and the ordeal without revealing the elixir.
 - Video 5 is causally necessary; the same script could not have been written before the fall.
 - The Meat explicitly exposes what Video 3's first realization could not explain.
 - Observable changed behavior proves the deeper truth instead of a lecture asserting it.

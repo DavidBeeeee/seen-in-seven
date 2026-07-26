@@ -16,6 +16,15 @@ The live source of truth for generation is `api/_lib/blueprints.txt`. The curren
 
 Whenever a later section of this document assigns Video 4 to a challenge progress check-in, Video 5 to the second epiphany, or Video 6 to the fall/internal battle, that assignment is obsolete. Preserve the underlying storytelling insight, but apply it to the current chapter owner above.
 
+### Current Epiphany Hook Standard
+
+Videos 3 and 6 deliberately use a different hook family from the other five chapters because their job is to restructure the viewer's understanding.
+
+- Video 3 opens with a forbidden-idea promise. It signals that an accepted explanation, respectable assumption, or common measurement is incomplete, backward, or protecting something people avoid naming. It promises a consequential new lens without revealing the hidden relationship. The first epiphany must be complete and powerful, not a miniature lesson; it is bounded only by the fact that it cannot contain the deeper truth that requires the later fall.
+- Video 6 opens with an earned verdict. It names the sharp paradox, failed rule, or protected belief that the fall gives the speaker the right to challenge. It carries more conviction than Video 3, but withholds the deeper causal elixir until the conclusion.
+- Neither epiphany video should default to narrating a discovery or aftermath scene in the hook. The evidence belongs in the discovery arc. The open loop names why the promised hidden structure matters and what exact relationship remains unresolved.
+- The complete 5E Epiphany movement remains Pattern Break, Discovery Arc, Cognitive Reframe, Aha Transfer, Cost Revelation, Simplicity Signal, and Authority Anchor. The Hook performs the Pattern Break; the Meat earns the shift through discovery; the Conclusion delivers the reframe, transfer, cost, and simple carryable lens; the authority is experienced by the viewer rather than claimed by the speaker.
+
 ## **VIDEO 1 — STILL IN THE ORDINARY WORLD** *Both levels: "I'm doing this thing and honestly I'm a little embarrassed about it."*
 
 ---

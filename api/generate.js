@@ -47,7 +47,7 @@ Return exactly these six headings and plain text beneath each:
 OLD ASSUMPTION:
 GUIDE LENS:
 REPRESENTATIVE EVIDENCE:
-FIRST SMALLER SHIFT:
+FIRST PARADIGM SHIFT:
 HUMAN COST:
 VOICE SIGNALS:
 
@@ -55,8 +55,8 @@ Requirements:
 - Preserve only facts, observations, actions, consequences, and distinctive language supported by the source.
 - OLD ASSUMPTION names one idea the speaker genuinely accepted and one way it shaped what they did.
 - GUIDE LENS selects exactly one real person whose specific supplied question, teaching, body of work, example, correction, or demonstration gave the speaker a useful reference point. Name that person only in GUIDE LENS. No other mentor, teacher, or source name may appear anywhere in the packet. A famous name without a supplied contribution is unusable. Never invent a private conversation, quote, meeting, or relationship.
-- REPRESENTATIVE EVIDENCE selects one supplied occurrence that lets the viewer watch the old assumption stop matching reality. A repeated pattern may be represented by one documented occurrence, but do not fabricate a lightning-bolt conversion.
-- FIRST SMALLER SHIFT is an internal inference, not a user-supplied conclusion. Derive the narrowest useful realization from OLD ASSUMPTION, GUIDE LENS, and REPRESENTATIVE EVIDENCE. Reveal a hidden relationship, cause, category error, or reversal rather than prescribing what an industry, price, method, or person should do. It is the first lens that creates movement, not the speaker's complete method, mature business philosophy, final answer, or current positioning.
+- REPRESENTATIVE EVIDENCE selects one supplied occurrence that lets the viewer watch the old assumption stop matching reality. Identify the consequential contradiction this occurrence exposes so the writer can promise a forbidden idea without narrating the scene in the opening. A repeated pattern may be represented by one documented occurrence, but do not fabricate a lightning-bolt conversion.
+- FIRST PARADIGM SHIFT is an internal inference, not a user-supplied conclusion. Derive one complete but bounded realization from OLD ASSUMPTION, GUIDE LENS, and REPRESENTATIVE EVIDENCE. Reveal a hidden relationship, cause, category error, or reversal rather than prescribing what an industry, price, method, or person should do. Complete means it gives the viewer a powerful usable lens. Bounded means it does not explain the later fall, become a complete method, state the speaker's mature business philosophy, or resolve the whole journey.
 - HUMAN COST describes one recognizable person, the real-life consequence of carrying the old idea, and what they may need to recognize sooner, without turning into an industry lecture or an offer.
 - VOICE SIGNALS preserves a few words about the speaker's rhythm, intensity, humor, or distinctive phrasing. Do not copy banned script phrases.
 - Omit mentor lists, credential summaries, pricing ladders, service tiers, current offers, current service descriptions, conversion requests, and any material that belongs to the later fall, elixir, or return.
@@ -82,7 +82,7 @@ VOICE SIGNALS:
 
 Requirements:
 - Preserve only facts, actions, pressures, consequences, and distinctive language supported by the supplied Video 2 and Video 3 scripts and current Video 4 answers.
-- FIRST LENS states the smallest usable realization carried out of Video 3 in one concise sentence. Do not repeat the mentor story or expand the lens into a method.
+- FIRST LENS states the complete but bounded realization carried out of Video 3 in one concise sentence. Do not repeat the mentor story or expand the lens into a method.
 - CHANGED ACTION identifies what the speaker actually chose, said, made, stopped, started, or handled differently afterward.
 - HIGHEST-FRICTION TRIAL selects the single supported moment with the strongest immediate conflict, difficult choice, contradiction, resistance, or social pressure. It must enter a test already in motion. Do not select the first application merely because it happened first, and do not state the lesson or partial win.
 - ADDITIONAL TRIAL preserves one other supported application or pressure that proves the change was tested more than once.
@@ -113,12 +113,12 @@ VOICE SIGNALS:
 
 Requirements:
 - Preserve only facts, observations, actions, consequences, and distinctive language supported by the source.
-- VIDEO 3 FIRST LENS states the smaller realization the speaker carried into the trials.
+- VIDEO 3 FIRST LENS states the complete but bounded realization the speaker carried into the trials.
 - VIDEO 5 FALL identifies the defeat and the speaker's owned contribution. The fall must be causally necessary to the later understanding.
 - AFTERMATH EVIDENCE contains what happened during failed recovery, rebuilding, or changed conditions before interpretation.
 - LIMIT EXPOSED states exactly what the first lens could not explain or solve once the fall occurred.
 - OBSERVABLE CHANGE gives one supplied action, boundary, standard, conversation, habit, or decision that changed afterward.
-- CANDIDATE ELIXIR infers one deeper truth that connects every earlier heading. Reject an unrelated hot take, a repetition of Video 3, a pre-existing philosophy, or generic wisdom that could have been written before the fall.
+- CANDIDATE ELIXIR infers one complete deeper paradigm shift that connects every earlier heading, restructures the viewer's understanding, and is simple enough to carry. Reject an unrelated hot take, a repetition of Video 3, a pre-existing philosophy, or generic wisdom that could have been written before the fall.
 - VIEWER TRANSFER names one recognizable person and what the earned lens may help them see.
 - VOICE SIGNALS preserves a few words about the speaker's rhythm, intensity, humor, or distinctive phrasing. Do not copy banned script phrases.
 - Omit pricing structures, service descriptions, current offers, conversion requests, method lists, and unrelated opinions.
@@ -134,8 +134,8 @@ Return only the corrected packet with exactly the same headings and heading orde
 For a Video 3 packet:
 - Keep exactly one real guide, mentor, teacher, or source figure. That person may be named more than once when needed for clarity.
 - Remove every other mentor, teacher, framework creator, or source figure name from every heading. Refer to other source material generically only when the evidence still needs it.
-- Preserve one old assumption, one honestly attributable guide lens, one representative occurrence, one narrow first realization, and one human cost.
-- The first realization must reveal a hidden relationship, cause, category error, or reversal. It cannot prescribe what an industry, price, method, or person should do.
+- Preserve one old assumption, one honestly attributable guide lens, one representative occurrence, one complete but bounded first paradigm shift, and one human cost.
+- The first paradigm shift must reveal a hidden relationship, cause, category error, or reversal and give the viewer a useful new lens. It cannot prescribe what an industry, price, method, or person should do, explain the later fall, or become a complete method.
 - Never invent a direct conversation, quote, meeting, credential, result, or event.
 
 For a Video 6 packet:
@@ -376,7 +376,7 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
   const isFirst = number === 3;
   const system = isFirst ? L2V3_MATERIAL_ROUTER_SYSTEM : L2V6_MATERIAL_ROUTER_SYSTEM;
   const headings = isFirst
-    ? ['OLD ASSUMPTION', 'GUIDE LENS', 'REPRESENTATIVE EVIDENCE', 'FIRST SMALLER SHIFT', 'HUMAN COST', 'VOICE SIGNALS']
+    ? ['OLD ASSUMPTION', 'GUIDE LENS', 'REPRESENTATIVE EVIDENCE', 'FIRST PARADIGM SHIFT', 'HUMAN COST', 'VOICE SIGNALS']
     : ['VIDEO 3 FIRST LENS', 'VIDEO 5 FALL', 'AFTERMATH EVIDENCE', 'LIMIT EXPOSED', 'OBSERVABLE CHANGE', 'CANDIDATE ELIXIR', 'VIEWER TRANSFER', 'VOICE SIGNALS'];
   const routed = await callModel(system, epiphanyRouterSource(userContext, number), 0.15, 1200);
   const routedPacket = String(routed || '').trim();
@@ -411,6 +411,9 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
   if (!packet) {
     throw new Error('The epiphany story material could not be cleaned safely. Please try again.');
   }
+  const draftingConstraints = isFirst
+    ? 'FINAL VIDEO 3 WRITING CONSTRAINTS: Use a FORBIDDEN-IDEA PROMISE for the HOOK. Signal that an accepted professional explanation, respectable standard, or common measurement is incomplete, backward, or socially protected, but do not disclose FIRST PARADIGM SHIFT. Do not narrate REPRESENTATIVE EVIDENCE in the opening. The OPEN LOOP must name why the unresolved relationship matters and what the accepted belief cannot explain. Keep the actual guide, evidence scene, and belief collapse in the MEAT, then deliver the complete but bounded paradigm shift, viewer transfer, and human cost in the CONCLUSION.'
+    : 'FINAL VIDEO 6 WRITING CONSTRAINTS: Use an EARNED VERDICT for the HOOK. State the sharp paradox, failed rule, or protected professional belief that VIDEO 5 FALL gives the speaker the right to challenge, but do not disclose CANDIDATE ELIXIR. Do not narrate AFTERMATH EVIDENCE in the opening. The OPEN LOOP must name the collision between VIDEO 3 FIRST LENS and the fall it could not explain or prevent. Keep the causal rebuilding journey in the MEAT, then deliver the complete deeper paradigm shift, viewer transfer, and new possibility in the CONCLUSION.';
   return [
     'Generate Video ' + number + ' script.',
     '',
@@ -420,7 +423,9 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
     'CURATED EPIPHANY MATERIAL:',
     packet,
     '',
-    'The raw answers have already been sorted for this chapter. Use only this packet and the prior-script facts inside it as story material. Do not reconstruct omitted methods, pricing, offers, mentor lists, or later-stage conclusions.'
+    'The raw answers have already been sorted for this chapter. Use only this packet and the prior-script facts inside it as story material. Do not reconstruct omitted methods, pricing, offers, mentor lists, or later-stage conclusions.',
+    '',
+    draftingConstraints
   ].join('\n');
 }
 
