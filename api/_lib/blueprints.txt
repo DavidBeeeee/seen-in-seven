@@ -1006,18 +1006,18 @@ Speaker feels: Momentum + provisional confidence
 
 AUDIENCE JOURNEY:
 Before: "The first professional epiphany was compelling, but I do not know whether it survives real decisions."
-After: "They accepted guidance, applied the new lens through real trials, and earned confidence without becoming untouchable."
-Open question: "What did these wins still leave them unprepared to face?"
+After: "They accepted guidance, acted on the new lens through real trials, and earned a partial win I can trust."
+Open question: "Where will that earned confidence lead when the stakes grow?"
 Social impulse: Follow forward to see how it ends, or go back to see why this midpoint matters.
 
 STRUCTURAL BEATS:
 1. Pattern Interrupt (Hook) — Open with one concrete consequence, failed prediction, difficult choice, exposed habit, or surprising result from applying the first professional epiphany. Present evidence before interpretation. Do not recap the challenge, report visibility progress, or state the lesson.
-2. Trial Stakes (Open Loop) — Connect that evidence to a real test of the new professional lens. Give a cold viewer enough context to understand what was at stake, then leave unanswered what the result actually proved.
-3. Guidance Put Into Practice (Meat) — Briefly carry forward the mentor-assisted shift from Video 3, then show what the speaker did with it in actual work, craft, calling, business, life, or public communication.
+2. Trial Stakes (Open Loop) — Connect that evidence to the decision or pressure that put the new lens at risk. Give a cold viewer enough context to understand what the speaker stood to gain or lose, then withhold how the attempt unfolded and where it led. Do not summarize the win, its meaning, or the unresolved limit.
+3. Guidance Put Into Practice (Meat) — Carry forward only the minimum context needed from Video 3, then show what the speaker did with it in actual work, craft, calling, business, life, or public communication. The guide or first epiphany may receive one brief continuity reference, never a recap or another lesson.
 4. Escalating Tests (Meat) — Show resistance, imperfect applications, competing pressures, or repeated decisions. The road of trials is a sequence of meaningful tests, not a single content-posting update.
 5. Partial Professional Win (Meat) — Show what worked, improved, or became possible. Let competence appear through action and interpretation rather than claims.
-6. Provisional Confidence + Unseen Limit (Meat) — Show what those wins led the speaker to believe they now understood, controlled, or could handle. Preserve one unresolved pressure, blind spot, or warning without announcing the ordeal.
-7. Trial Turn (Conclusion) — Complicate what the apparent win proves. The confidence can be real while still being incomplete. Do not deliver the second epiphany, mature authority, or the meaning of the coming fall.
+6. Provisional Confidence + Unseen Limit (Meat) — Show what those wins led the speaker to believe they now understood, controlled, or could handle. Preserve one concrete unresolved fact that existed at the time without diagnosing it as a blind spot, warning, or future cause.
+7. Trial Turn (Conclusion) — Land inside the speaker's reasonable confidence at that point in the story while placing the unresolved fact beside it. The audience may sense the instability, but the speaker cannot explain it with later hindsight. Do not use a false-balance correction, deliver another epiphany, announce the fall, or state what the trial ultimately taught.
 8. Midpoint Orientation (CTA Bridge) — Continue from the trial landing and make the series discoverable from the middle: this is video 4 of 7, the viewer can follow to see how it ends or go back to see how it started, and the reason must come from the conclusion.
 
 TONE: Capable, observant, and increasingly assured without sounding complete. The speaker is learning through application. Authority is beginning to form, but the viewer still sees a hero being tested rather than a guide delivering final answers.
@@ -1028,8 +1028,8 @@ JOURNAL ANSWER ROUTING — MANDATORY:
 1. The first application supplies the initial changed action.
 2. The repeated situations supply the escalating trials and may provide the HOOK or OPEN LOOP through one concrete consequence or difficult choice.
 3. What worked supplies the partial win and provisional confidence in the later MEAT.
-4. The unresolved pressure supplies the unstable edge in the CONCLUSION only as something present but not yet understood.
-Required path: a concrete test, changed action, escalating resistance, partial win, provisional confidence, then one unresolved limit. Do not let answer 4 explain or preview the Video 5 fall, and do not let the conclusion turn the partial win into the final lesson.
+4. What still felt difficult or unfinished supplies one observable unresolved fact. Strip away the user's later explanation of what caused it, what it predicted, or how it was eventually solved.
+Required path: a concrete test, changed action, escalating resistance, partial win, provisional confidence, then one unresolved fact. Source answers are evidence, not story architecture. Do not import the user's present-day expertise, offer, later failure, recovery, or mature interpretation. Do not let the conclusion turn the partial win into the final lesson.
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -1037,16 +1037,18 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so its facts support that destination without announcing it. Design the OPEN LOOP from the unfinished meaning, contradiction, cause, or question the conclusion will transform, then write the independent HOOK last as a truthful pattern interrupt. Do not smooth these separate section jobs into one prose rhythm.
 
 VIDEO 4, LEVEL 2: Tone = Analytical, grounded, and provisionally confident.
-HOOK guidance: Pull one unexpected consequence, failed prediction, exposed habit, or concrete contradiction from applying the first professional epiphany. State the evidence before interpreting it. Never open with a challenge update, a general claim of growth, or unsupported audience response.
-OPEN LOOP guidance: Connect the evidence to the real decision or pressure that tested the new lens. Make the viewer need to understand why the result built confidence without proving the whole problem solved.
-CONCLUSION guidance: Turn what the trial appears to prove about the speaker's knowledge or judgment while preserving an unseen limit. Let emerging authority come from action and observation, not a lesson, pitch, metric, or praise.
-CTA guidance: Explicitly identify this as Video 4 of 7 while continuing the conclusion's tension. Invite the viewer to follow to see what the provisional confidence could not yet survive and/or go back to see the first shift, using exactly one clear reason.
+HOOK guidance: Pull one unexpected consequence, difficult decision, exposed habit, partial result, or concrete contradiction from the trial evidence. State the evidence before interpreting it. The hook must make the viewer enter a test already in motion, not admire the speaker's expertise. Never open with a challenge update, a general claim of growth, a summary of the first epiphany, a present-day business milestone, or unsupported audience response.
+OPEN LOOP guidance: Identify the real decision or pressure behind the hook and why acting differently carried stakes. Withhold both the result and the meaning. Do not announce that the new lens worked, that confidence grew, or that a hidden problem remained.
+CONCLUSION guidance: Complete the trial by showing why the partial win felt like real proof to the speaker at that time, then preserve one unresolved fact without interpreting it. Create dramatic irony: the audience may notice the unstable edge while the speaker reasonably trusts the progress. No present-day lesson, hindsight diagnosis, pitch, metric, praise, or false-balance correction.
+CTA guidance: Explicitly identify this as Video 4 of 7 while continuing the conclusion's tension. Invite the viewer to follow to see where that earned confidence leads next and/or go back to see the first shift, using exactly one clear reason. Do not reveal, predict, or name the coming failure.
 
 VIDEO 4 FINAL CHECK:
 - The story tests the first professional epiphany in a real arena connected to the speaker's larger subject.
 - The road may include work, craft, calling, business, life, or public communication; it is not reduced to making the seven videos.
 - The mentor's influence is carried into action without letting the mentor or speaker deliver another full lesson.
-- At least one meaningful test, partial win, and reason for growing confidence are visible.
+- At least two meaningful pressures, decisions, or applications create a real sequence of trials rather than a single success report.
+- A partial win and the reason it created confidence are visible through action.
+- The conclusion remains inside what the speaker could reasonably believe then; later hindsight does not diagnose the unresolved fact.
 - The fall, recovery, second epiphany, and mature guide identity remain reserved for later videos.
 </l2_v4_rules>
 

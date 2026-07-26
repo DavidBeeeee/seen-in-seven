@@ -1,4 +1,8 @@
-import { callModel, prepareLevelTwoEpiphanyMaterial } from './generate.js';
+import {
+  callModel,
+  prepareLevelTwoEpiphanyMaterial,
+  prepareLevelTwoVideoFourMaterial
+} from './generate.js';
 import {
   buildSystemPrompt,
   extractSystemPrompt,
@@ -45,9 +49,12 @@ export default async function handler(req, res) {
     if (!prompt) return json(res, 400, { error: 'The draft prompt could not be read.' });
     const systemPrompt = buildSystemPrompt(prompt, level, video);
     const temperature = body.generationMode === 'production' ? 0.8 : 0.25;
-    const preparedUserMessage = level === 2 && (video === 3 || video === 6)
-      ? await prepareLevelTwoEpiphanyMaterial(userMessage, video)
-      : userMessage;
+    let preparedUserMessage = userMessage;
+    if (level === 2 && (video === 3 || video === 6)) {
+      preparedUserMessage = await prepareLevelTwoEpiphanyMaterial(userMessage, video);
+    } else if (level === 2 && video === 4) {
+      preparedUserMessage = await prepareLevelTwoVideoFourMaterial(userMessage);
+    }
     let rawContent = '';
     let content = '';
     let lastError;

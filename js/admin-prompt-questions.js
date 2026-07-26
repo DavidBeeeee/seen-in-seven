@@ -14,7 +14,7 @@ const PROMPT_QUESTION_CATALOG = {
       null,
       {"label":"Before you treated this as expertise, what ability or interest kept showing up, and why did you refuse to take it seriously?","hint":"Describe the ordinary work or life you were in, what other people might have valued before you did, and why staying where you were felt safer or more responsible.","key":"easyAnswer_v1"},
       {"label":"What is one idea you used to accept about your work, who gave you a different way to look at it, and what moment made the old idea stop fitting what you saw?","hint":"Include one real person, the specific lens they gave you, one concrete moment or representative example, and who pays the cost of the old idea. You do not need a polished final lesson. The AI will find the smallest useful shift.","key":"easyAnswer_v2"},
-      {"label":"What happened when you started applying that first professional realization in the real world?","hint":"Describe the situations that tested it, what began working, what those wins made you believe, and what pressure, blind spot, or limit still remained.","key":"easyAnswer_v3"},
+      {"label":"After that first change in how you saw things, what did you try, what made it difficult, and what happened?","hint":"Tell it like a journal entry. Include what you did differently, one or two moments that tested you, what started going better, and anything that still felt shaky or unfinished at the time.","key":"easyAnswer_v3"},
       {"label":"In the work, craft, calling, or expertise story you have been telling, what failure was so devastating that you thought what you had built or hoped to build might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?","hint":"Tell us what collapsed, what seemed permanently lost, and why you could not see a way back in this part of your life. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.","key":"easyAnswer_v4"},
       {"label":"After the hardest experience, what became clear that your first realization could not explain?","hint":"Describe the aftermath evidence that brought it into focus, one observable thing you changed afterward, and who might need the perspective you earned. Keep it connected to what actually happened.","key":"easyAnswer_v5"},
       {"label":"Who were you before the two professional realizations and the hardest part of the story, and who are you now in relation to your expertise and the people you want to reach?","hint":"Describe what genuinely changed, what remains unfinished or still needed, what telling the story clarified about your work, and what perspective or mission you want the right viewer to keep following.","key":"easyAnswer_v6"}
@@ -162,31 +162,31 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "When The Insight Met Reality",
-      "note": "Show what happened when you began applying the first professional realization. Stay with the real tests, partial wins, growing confidence, and the limit you could not see clearly yet.",
+      "note": "Think about the stretch after that first change in how you saw things. Tell us what you tried, what made it difficult, what started going better, and what still felt unfinished at the time. You do not need to explain what any of it meant later.",
       "prompts": [
         {
-          "label": "Where did you first try to apply what your guide helped you understand, and what did you do differently because of it?",
-          "hint": "Choose a real situation connected to your work, craft, calling, business, life, or public communication. Show the changed action rather than only describing a new mindset.",
+          "label": "After that first change in how you saw things, what did you try or handle differently?",
+          "hint": "Take us to the first real situation where you acted on it. What did you choose, say, make, stop, start, or approach differently? Tell us what happened rather than explaining the lesson.",
           "key": "v3p0",
-          "placeholder": "Describe where you applied the first realization and the action you changed."
+          "placeholder": "Describe the first situation where you acted differently and what you did."
         },
         {
-          "label": "What other situations tested that new understanding, especially when the old way would have been easier?",
-          "hint": "Describe the resistance, imperfect attempts, competing pressure, or repeated decisions that made this a road of trials rather than one clean success.",
+          "label": "What happened the next few times you tried to keep doing that?",
+          "hint": "Tell us about one or two moments when it was awkward, difficult, inconvenient, or tempting to fall back into the old way. Ordinary details are useful here.",
           "key": "v3p1",
-          "placeholder": "Describe the real situations that kept testing the new lens."
+          "placeholder": "Describe one or two moments that made the change difficult to keep practicing."
         },
         {
-          "label": "What began working, and what did those wins lead you to believe you now understood or could handle?",
-          "hint": "Name the partial success honestly. What result, pattern, decision, or change gave you earned confidence? Then describe the conclusion you began drawing from it at the time.",
+          "label": "What started going better, and what made you think you might finally be getting somewhere?",
+          "hint": "Give us something you could actually see, hear, finish, decide, or point to. Then tell us what that small success made you believe at the time.",
           "key": "v3p2",
-          "placeholder": "Describe the partial wins and the confidence they created."
+          "placeholder": "Describe what began working and what you believed because of it."
         },
         {
-          "label": "What pressure, blind spot, warning sign, or unresolved limit was still present even while things seemed to be working?",
-          "hint": "Stay with what you could see or feel then. Do not explain the later failure or what you eventually learned from it. We only need the unstable edge beneath the success.",
+          "label": "Even while that was going well, what still felt shaky, unfinished, or harder than you wanted it to?",
+          "hint": "Stay inside that point in time. What were you still struggling with, working around, or hoping would sort itself out? Do not explain the later failure or what you eventually learned.",
           "key": "v3p3",
-          "placeholder": "Describe the unresolved limit that remained beneath the wins."
+          "placeholder": "Describe what still felt unfinished while the early progress was happening."
         }
       ]
     },

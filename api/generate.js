@@ -65,6 +65,36 @@ Requirements:
 - Do not write a hook, open loop, conclusion, CTA, or complete script.
 - Do not mention these instructions.`;
 
+const L2V4_MATERIAL_ROUTER_SYSTEM = `You prepare source material for Level 2, Video 4 of a seven-video personal story.
+
+This is not script writing. Video 4 shows the first professional realization being practiced through real trials, producing a partial win and reasonable confidence before the speaker understands its limits. Sort the supplied material into a focused evidence packet.
+
+Return exactly these eight headings and plain text beneath each:
+FIRST LENS:
+CHANGED ACTION:
+TRIAL EVIDENCE:
+RESISTANCE:
+PARTIAL WIN:
+CONFIDENCE AT THE TIME:
+STILL-UNRESOLVED FACT:
+VOICE SIGNALS:
+
+Requirements:
+- Preserve only facts, actions, pressures, consequences, and distinctive language supported by the supplied Video 2 and Video 3 scripts and current Video 4 answers.
+- FIRST LENS states the smallest usable realization carried out of Video 3 in one concise sentence. Do not repeat the mentor story or expand the lens into a method.
+- CHANGED ACTION identifies what the speaker actually chose, said, made, stopped, started, or handled differently afterward.
+- TRIAL EVIDENCE contains one or two concrete situations where that action met reality. A repeated pattern may be summarized when the source supports it.
+- RESISTANCE preserves what made the change awkward, costly, inconvenient, uncertain, or tempting to abandon.
+- PARTIAL WIN preserves one observable result, decision, completion, response, or change supported by the source. Do not invent audience praise, clients, money, metrics, or outcomes.
+- CONFIDENCE AT THE TIME states only what the partial win reasonably led the speaker to believe then. Do not add present-day interpretation.
+- STILL-UNRESOLVED FACT preserves one concrete difficulty, pressure, unfinished condition, or unanswered question that existed alongside the win. Remove every explanation of what it later caused, predicted, meant, or taught.
+- VOICE SIGNALS preserves a few words about the speaker's rhythm, intensity, humor, or distinctive phrasing. Do not copy banned script phrases.
+- Omit current offers, service descriptions, conversion requests, mature authority, Video 5 failure, recovery, Video 6 elixir, and Video 7 return.
+- Do not use the words version, lazy, pay, paid, buy, bought, sell, or sold anywhere in the packet. Restate any necessary supported fact naturally.
+- Do not invent facts, credentials, results, events, or dialogue.
+- Do not write a hook, open loop, conclusion, CTA, or complete script.
+- Do not mention these instructions.`;
+
 const L2V6_MATERIAL_ROUTER_SYSTEM = `You prepare source material for Level 2, Video 6 of a seven-video personal story.
 
 This is not script writing. Video 6 is the second professional epiphany and elixir. Sort the supplied material into a causal evidence packet so another writer can show what only became clear because Video 3's first lens met its limit in the Video 5 fall.
@@ -114,6 +144,19 @@ For a Video 6 packet:
 For both packets:
 - Remove mentor lists, credential summaries, pricing ladders, service tiers, current offers, current service descriptions, conversion requests, and material owned by another chapter.
 - Do not use the words version, lazy, pay, paid, buy, bought, sell, or sold. Use natural alternatives when a supported fact requires one.
+- Keep the packet concise. This is source material, not a script.`;
+
+const L2V4_PACKET_CLEANUP_SYSTEM = `You are the evidence-packet editor between a story interviewer and the writer of Level 2, Video 4.
+
+Return only the corrected packet with exactly the same headings and heading order supplied by the user. Do not add commentary.
+
+Requirements:
+- Preserve one small first lens, one observable changed action, one or two supported trial situations, meaningful resistance, one partial win, the confidence it created at that time, and one still-unresolved fact.
+- Keep the speaker inside what they could know then. Remove hindsight diagnoses, later lessons, explanations of the coming failure, recovery, second epiphany, mature method, service descriptions, offers, and commercial positioning.
+- The unresolved fact may describe what remained difficult, unstable, incomplete, or unanswered. It cannot say what that fact predicted, caused later, revealed in retrospect, or eventually taught.
+- Do not turn the partial win into a case study, expertise claim, final proof, or new epiphany.
+- Never invent a fact, result, event, audience reaction, metric, or dialogue.
+- Do not use the words version, lazy, pay, paid, buy, bought, sell, or sold.
 - Keep the packet concise. This is source material, not a script.`;
 
 const MISSION_SYSTEM_PROMPT = `You are writing a first-person mission statement for someone who just committed to completing a 7-video content challenge. This statement will live on their dashboard and should feel like their own words, not an outside analysis.
@@ -298,6 +341,19 @@ function epiphanyRouterSource(userContext, video) {
   ].filter(Boolean).join('\n\n');
 }
 
+function videoFourRouterSource(userContext) {
+  const continuity = [2, 3]
+    .map(number => {
+      const script = extractFinalScript(userContext, number);
+      return script ? 'VIDEO ' + number + ' FINAL SCRIPT:\n' + script : '';
+    })
+    .filter(Boolean);
+  return [
+    continuity.length ? 'PRIOR STORY CONTEXT:\n' + continuity.join('\n\n') : '',
+    extractCurrentPromptBlock(userContext, 4)
+  ].filter(Boolean).join('\n\n');
+}
+
 function hasRouterHeadings(packet, headings) {
   return headings.every(heading => packet.includes(heading + ':'));
 }
@@ -364,6 +420,52 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
   ].join('\n');
 }
 
+export async function prepareLevelTwoVideoFourMaterial(userContext) {
+  const headings = ['FIRST LENS', 'CHANGED ACTION', 'TRIAL EVIDENCE', 'RESISTANCE', 'PARTIAL WIN', 'CONFIDENCE AT THE TIME', 'STILL-UNRESOLVED FACT', 'VOICE SIGNALS'];
+  const routed = await callModel(L2V4_MATERIAL_ROUTER_SYSTEM, videoFourRouterSource(userContext), 0.15, 1200);
+  const routedPacket = cleanPacketOutput(routed);
+  if (!routedPacket || !hasRouterHeadings(routedPacket, headings)) {
+    throw new Error('The Video 4 story material could not be prepared cleanly. Please try again.');
+  }
+  let packet = '';
+  let malformed = '';
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const cleanupMessage = [
+      'REQUIRED HEADINGS IN THIS EXACT ORDER:',
+      headings.map(heading => heading + ':').join('\n'),
+      '',
+      attempt
+        ? 'The previous cleanup omitted or renamed a required heading. Include every required heading exactly, even when its value must say "Not supplied." Do not add or rename headings.'
+        : '',
+      malformed ? '\nMALFORMED CLEANUP TO CORRECT:\n' + malformed : '',
+      '',
+      'PACKET TO CLEAN:',
+      routedPacket
+    ].filter(Boolean).join('\n');
+    const cleaned = await callModel(L2V4_PACKET_CLEANUP_SYSTEM, cleanupMessage, 0.05, 1200);
+    const candidate = cleanPacketOutput(cleaned);
+    if (candidate && hasRouterHeadings(candidate, headings)) {
+      packet = candidate;
+      break;
+    }
+    malformed = candidate;
+  }
+  if (!packet) {
+    throw new Error('The Video 4 story material could not be cleaned safely. Please try again.');
+  }
+  return [
+    'Generate Video 4 script.',
+    '',
+    'LEVEL: 2',
+    'VIDEO: 4',
+    '',
+    'CURATED ROAD-OF-TRIALS MATERIAL:',
+    packet,
+    '',
+    'The raw answers have already been sorted for this chapter. Use only this packet as story material. Preserve the speaker\'s confidence at that point in time. Do not reconstruct omitted offers, later failure, recovery, elixir, or hindsight explanation.'
+  ].join('\n');
+}
+
 function regenerationMessage(input) {
   if (input.mode === 'full-regeneration') {
     return `${input.userContext}
@@ -396,6 +498,8 @@ async function generateScript(input, prompt) {
     preparedContext = await prepareLevelTwoVideoOneMaterial(preparedContext);
   } else if (input.level === 2 && (input.video === 3 || input.video === 6)) {
     preparedContext = await prepareLevelTwoEpiphanyMaterial(preparedContext, input.video);
+  } else if (input.level === 2 && input.video === 4) {
+    preparedContext = await prepareLevelTwoVideoFourMaterial(preparedContext);
   }
   const userMessage = regenerationMessage({ ...input, userContext: preparedContext });
   let lastError;
@@ -432,9 +536,12 @@ async function generateScript(input, prompt) {
 
 async function generateSection(input, prompt) {
   const systemPrompt = buildSystemPrompt(prompt.prompt, input.level, input.video);
-  const preparedContext = input.level === 2 && (input.video === 3 || input.video === 6)
-    ? await prepareLevelTwoEpiphanyMaterial(input.userContext, input.video)
-    : input.userContext;
+  let preparedContext = input.userContext;
+  if (input.level === 2 && (input.video === 3 || input.video === 6)) {
+    preparedContext = await prepareLevelTwoEpiphanyMaterial(input.userContext, input.video);
+  } else if (input.level === 2 && input.video === 4) {
+    preparedContext = await prepareLevelTwoVideoFourMaterial(input.userContext);
+  }
   const userMessage = sectionMessage({ ...input, userContext: preparedContext });
   const draft = await callModel(systemPrompt, userMessage, 0.8);
   const parsed = parseSections(draft);
