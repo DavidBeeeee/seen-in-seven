@@ -69,10 +69,11 @@ const L2V4_MATERIAL_ROUTER_SYSTEM = `You prepare source material for Level 2, Vi
 
 This is not script writing. Video 4 shows the first professional realization being practiced through real trials, producing a partial win and reasonable confidence before the speaker understands its limits. Sort the supplied material into a focused evidence packet.
 
-Return exactly these eight headings and plain text beneath each:
+Return exactly these nine headings and plain text beneath each:
 FIRST LENS:
 CHANGED ACTION:
-TRIAL EVIDENCE:
+HIGHEST-FRICTION TRIAL:
+ADDITIONAL TRIAL:
 RESISTANCE:
 PARTIAL WIN:
 CONFIDENCE AT THE TIME:
@@ -83,7 +84,8 @@ Requirements:
 - Preserve only facts, actions, pressures, consequences, and distinctive language supported by the supplied Video 2 and Video 3 scripts and current Video 4 answers.
 - FIRST LENS states the smallest usable realization carried out of Video 3 in one concise sentence. Do not repeat the mentor story or expand the lens into a method.
 - CHANGED ACTION identifies what the speaker actually chose, said, made, stopped, started, or handled differently afterward.
-- TRIAL EVIDENCE contains one or two concrete situations where that action met reality. A repeated pattern may be summarized when the source supports it.
+- HIGHEST-FRICTION TRIAL selects the single supported moment with the strongest immediate conflict, difficult choice, contradiction, resistance, or social pressure. It must enter a test already in motion. Do not select the first application merely because it happened first, and do not state the lesson or partial win.
+- ADDITIONAL TRIAL preserves one other supported application or pressure that proves the change was tested more than once.
 - RESISTANCE preserves what made the change awkward, costly, inconvenient, uncertain, or tempting to abandon.
 - PARTIAL WIN preserves one observable result, decision, completion, response, or change supported by the source. Do not invent audience praise, clients, money, metrics, or outcomes.
 - CONFIDENCE AT THE TIME states only what the partial win reasonably led the speaker to believe then. Do not add present-day interpretation.
@@ -151,8 +153,9 @@ const L2V4_PACKET_CLEANUP_SYSTEM = `You are the evidence-packet editor between a
 Return only the corrected packet with exactly the same headings and heading order supplied by the user. Do not add commentary.
 
 Requirements:
-- Preserve one small first lens, one observable changed action, one or two supported trial situations, meaningful resistance, one partial win, the confidence it created at that time, and one still-unresolved fact.
+- Preserve one small first lens, one observable changed action, one highest-friction trial, one additional trial, meaningful resistance, one partial win, the confidence it created at that time, and one still-unresolved fact.
 - Compare every packet detail against the authoritative source material supplied beside it. Remove invented scenes, actions, reactions, dialogue, outcomes, and numerical precision. A direct paraphrase is allowed; a plausible detail absent from the source is not.
+- HIGHEST-FRICTION TRIAL must contain the strongest supported conflict, difficult choice, contradiction, resistance, or social pressure available in the source. It cannot contain the lesson, the partial win, a present-day interpretation, or a generic first application when stronger conflict evidence exists.
 - Keep the speaker inside what they could know then. Remove hindsight diagnoses, later lessons, explanations of the coming failure, recovery, second epiphany, mature method, service descriptions, offers, and commercial positioning.
 - The unresolved fact may describe what remained difficult, unstable, incomplete, or unanswered. It cannot say what that fact predicted, caused later, revealed in retrospect, or eventually taught.
 - Do not turn the partial win into a case study, expertise claim, final proof, or new epiphany.
@@ -422,7 +425,7 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
 }
 
 export async function prepareLevelTwoVideoFourMaterial(userContext) {
-  const headings = ['FIRST LENS', 'CHANGED ACTION', 'TRIAL EVIDENCE', 'RESISTANCE', 'PARTIAL WIN', 'CONFIDENCE AT THE TIME', 'STILL-UNRESOLVED FACT', 'VOICE SIGNALS'];
+  const headings = ['FIRST LENS', 'CHANGED ACTION', 'HIGHEST-FRICTION TRIAL', 'ADDITIONAL TRIAL', 'RESISTANCE', 'PARTIAL WIN', 'CONFIDENCE AT THE TIME', 'STILL-UNRESOLVED FACT', 'VOICE SIGNALS'];
   const source = videoFourRouterSource(userContext);
   const routed = await callModel(L2V4_MATERIAL_ROUTER_SYSTEM, source, 0.15, 1200);
   const routedPacket = cleanPacketOutput(routed);
@@ -467,7 +470,7 @@ export async function prepareLevelTwoVideoFourMaterial(userContext) {
     'CURATED ROAD-OF-TRIALS MATERIAL:',
     packet,
     '',
-    'The raw answers have already been sorted for this chapter. Use only this packet as story material. Preserve the speaker\'s confidence at that point in time. Do not reconstruct omitted offers, later failure, recovery, elixir, or hindsight explanation.'
+    'The raw answers have already been sorted for this chapter. Use only this packet as story material. Build the HOOK only from HIGHEST-FRICTION TRIAL. Use the OPEN LOOP to establish that trial\'s immediate stakes without explaining the old approach, result, confidence, or unresolved fact. Preserve the speaker\'s confidence at that point in time. Do not reconstruct omitted offers, later failure, recovery, elixir, or hindsight explanation.'
   ].join('\n');
 }
 
