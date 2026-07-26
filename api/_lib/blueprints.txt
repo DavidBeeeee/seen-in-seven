@@ -817,36 +817,37 @@ Audience feels: Identification + Warmth
 Speaker feels: Seen, human, not yet authoritative
 
 CORE PURPOSE:
-Let the viewer inhabit the speaker's professional ordinary world before the first breakthrough. Show the role, routine, detour, wound, obsession, responsibility, or unlikely chapter that shaped what they noticed. Reveal one useful ability or recurring pattern that the viewer can value before the speaker fully values it. Then show why the speaker kept dismissing, containing, or refusing that path. The viewer should nod in recognition because they have minimized something important in themselves too. They should not feel that a guru has arrived to explain the answer.
+Let the viewer meet a recognizable human being before the first breakthrough. Begin with the role, routine, pressure, compromise, responsibility, expectation, or unlikely chapter that made up the speaker's normal life. The audience must first understand why this life felt ordinary, sensible, and difficult to imagine leaving. A useful ability, private interest, recurring responsibility, or possible path may appear only as a quiet clue inside that life. Then show a real way the speaker dismissed, postponed, contained, or said no to moving beyond the identity they already understood. The viewer should recognize their own compromises and think, "I understand why they stayed." They should not feel that they have met a hidden expert whose value is about to be explained.
 
 HERO'S JOURNEY PLACEMENT:
 The speaker is still in the Ordinary World and Refusal of the Call.
 They possess knowledge or ability, but they have not crossed the threshold.
 They have not yet met the guide who helps the first epiphany land.
 They have not converted the origin into a clean professional lens, service philosophy, mission, method, or authority claim.
+The ordinary person and recognizable life must dominate the chapter. Future expertise is background information for the writer, not the identity the speaker performs for the viewer.
 
 AUDIENCE JOURNEY:
-Before: "I know this person has knowledge, but I do not know the life that formed it."
-After: "I can see something valuable in them that they once treated as ordinary, and I recognize that kind of refusal in myself."
+Before: "I know this person has knowledge, but I do not know them yet."
+After: "I recognize this person, their life, and why they kept choosing what was familiar. I have made choices like that too."
 Open question: "Who or what finally helped them see that this mattered?"
-Social impulse: Follow because the viewer wants to see the unclaimed ability meet the person who helps the speaker understand it.
+Social impulse: Follow because the viewer cares about this person and wants to see what finally challenged the life they had accepted.
 
 STRUCTURAL BEATS:
-1. Pattern Interrupt (Hook) — Use the sharpest concrete identity mismatch, strange responsibility, repeated behavior, unexpected ability, or unlikely chapter. Present it before its professional meaning. Do not open with a career summary, credential, lesson, or present-day service.
-2. Identity Gap (Open Loop) — Connect the exact hook detail to the ordinary role or life that made it seem small, irrelevant, accidental, or impractical. Make the viewer need to understand why someone capable of this still refused to treat it as a path.
-3. Professional Ordinary World (Meat) — Ground the viewer in the actual work, role, routine, obligation, or life condition surrounding the speaker before they claimed expertise.
-4. Unrecognized Ability (Meat) — Show what the speaker repeatedly noticed, solved, studied, practiced, or was trusted with. Let the viewer recognize its value through evidence. The speaker may describe it as easy, normal, accidental, too small, or simply what they did.
-5. Refusal Of The Call (Meat) — Show what the speaker did not pursue, claim, share, or allow themselves to become, and why staying in the existing role felt safer, more responsible, more credible, or less exposing.
-6. Ordinary-World Turn (Conclusion) — Join the unusual ability and the refusal without correcting the refusal. The speaker may recognize that the thread kept returning, but cannot explain the final professional lesson, present-day method, mission, offer, or way they now help people.
+1. Pattern Interrupt (Hook) — Use the sharpest concrete human contradiction, unusual ordinary-life detail, compromise, responsibility, or behavior from before the speaker saw another identity as possible. It must stop the scroll without using payment, clients, a business milestone, professional recognition, or a later realization as the source of attention.
+2. Identity Gap (Open Loop) — Connect the hook detail to the life and identity the speaker considered normal. Make the viewer need to understand what kept pulling against that life and why the speaker still could not picture themselves leaving it. Do not explain the value of the future path.
+3. Human Ordinary World (Meat) — Make the speaker recognizable before making them remarkable. Ground the viewer in the work, routine, obligations, relationships, pressures, assumptions, or compromises that shaped daily life and made staying feel sensible.
+4. Quiet Private Thread (Meat) — Let an interest, ability, responsibility, irritation, curiosity, or possible path appear through one or more ordinary moments. Keep it secondary to the human life. The audience may notice its future importance, but the speaker cannot interpret it for them.
+5. Lived Refusal (Meat) — Show an actual choice, non-choice, delay, dismissal, or retreat that kept the speaker inside the familiar identity. The refusal must happen in behavior, not merely in a retrospective sentence claiming they did not recognize their expertise. Make the reason understandable enough that the viewer might have made the same choice.
+6. Ordinary-World Turn (Conclusion) — Land on the unresolved assumption about who the speaker was, what people like them were allowed to do, or why the familiar life counted as more real. Do not correct the assumption. Do not explain the final professional lesson, present-day method, mission, offer, or way they now help people.
 7. Guide Threshold (CTA) — Continue from the unresolved refusal into the next installment, where a real person helps challenge what the speaker thought was true and the first professional epiphany begins.
 
 TONE: Warm, grounded, and human. The audience sees the future possibility before the speaker does. The speaker is interesting because the value is present but unclaimed, not because they explain what it all became.
 
 LEVEL 2 SPECIFIC:
-This is the origin of unclaimed expertise, not the explanation of mature expertise. It works for someone with a business, someone inside a career, or someone whose knowledge has never been formalized. No offer, pitch, client promise, service philosophy, complete framework, or "this is what I do now" resolution.
+This is the human origin surrounding future expertise, not an expertise origin story. It works for someone with a business, someone inside a career, or someone whose knowledge has never been formalized. Regardless of their present status, tell this chapter from when they still understood themselves as an ordinary person living a familiar life. No offer, pitch, client promise, service philosophy, complete framework, or "this is what I do now" resolution.
 
 ABSOLUTE RULE:
-The audience may understand that the speaker's ability mattered. The speaker may not convert that recognition into a clean lesson or authority statement. Never say that the detour became their method, that the small task was the whole point, that this is why they now serve people a certain way, or that the origin proves what their audience needs. Those meanings belong after the threshold, fall, and elixir.
+Identification comes before admiration. If the chapter primarily makes the speaker look secretly impressive, professionally validated, unusually insightful, or obviously destined for their current work, it has failed. The audience may quietly notice that a private thread mattered, but the speaker may not convert that recognition into a clean lesson or authority statement. Never say that the detour became their method, that the small task was the whole point, that this is why they now serve people a certain way, or that the origin proves what their audience needs. Those meanings belong after the threshold, fall, and elixir.
 
 PREMATURE INSIGHT GUARD:
 The speaker can say they dismissed, minimized, or refused the thread. They cannot correct that refusal in the same video. Save the first professional reframe and the influence of the guide for Video 3. Save the mature professional truth for Video 6 and the speaker's return as a guide for Video 7.
@@ -859,18 +860,20 @@ PROMPTS (L2): 1) The ordinary work or life they were in before they treated this
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
 
-Choose the engagement ending first. Favor a MIRROR or identity QUESTION that makes the viewer recognize their own unclaimed ability or refusal. Do not turn the origin into an educational twist, a professional manifesto, or a completed transformation. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so its facts support that destination without announcing it. Design the OPEN LOOP from the unresolved gap between visible ability and private refusal, then write the independent HOOK last as a truthful pattern interrupt.
+Choose the engagement ending first. Favor a MIRROR or identity QUESTION that makes the viewer recognize their own familiar compromises, limited self-concept, or refusal. Do not turn the origin into an educational twist, hidden-expert reveal, professional manifesto, or completed transformation. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so the recognizable life dominates and the private thread remains secondary. Design the OPEN LOOP from the unresolved pressure between the familiar identity and the path the speaker could not yet imagine taking, then write the independent HOOK last as a truthful pattern interrupt.
 
 VIDEO 2, LEVEL 2: Tone = Warm ordinary-world storytelling with restrained professional tension.
-HOOK guidance: Extract the strangest concrete mismatch between what the speaker was already capable of and the ordinary role or identity they remained inside. Present the charged evidence before explaining it. Do not announce expertise, a business origin, or what the ability became.
-OPEN LOOP guidance: Refer directly to the hook detail, ground it in the life or work that made it seem ordinary, and make the viewer need to understand why the speaker kept refusing to treat it as meaningful. Do not reveal the mentor, first epiphany, current work, or final professional lens.
+HOOK guidance: Extract a jarring, concrete contradiction or unexpected detail from the speaker's ordinary human life before professional recognition. The hook must interrupt attention without proving expertise or announcing an origin story. Do not use payment, clients, a business milestone, professional validation, the mentor, or the later meaning as the hook.
+OPEN LOOP guidance: Refer directly to the hook detail, ground it in the identity and life the speaker considered normal, and create a specific unanswered tension about why they could not imagine choosing differently. Do not explain the private thread's value or reveal the mentor, first epiphany, current work, or final professional lens.
 CONCLUSION guidance: Land on the unresolved reason the speaker still could not see, claim, or trust what kept happening. Let the audience recognize the value without making the speaker explain it. Use a fresh turn rather than repeating the evidence, wording, or scene already used in the MEAT. No breakthrough, offer, method, service philosophy, mission, or present-day authority.
 CTA guidance: Continue from the unresolved refusal into a clear follow request because the next installment of the speaker's 7 Video Challenge introduces the person who challenged what they thought was true and helped the first professional epiphany begin.
 
 VIDEO 2 FINAL CHECK:
-- The hook contains concrete evidence of an unexpected ability, identity mismatch, or unlikely chapter before its meaning.
-- The meat establishes both the ordinary world and the refusal.
-- The viewer can recognize value that the speaker still minimizes or contains.
+- The hook interrupts attention with a concrete ordinary-life contradiction or human detail, not payment, clients, professional recognition, or an epiphany.
+- The meat makes the speaker recognizable before allowing the future-professional clue to appear.
+- The viewer understands the familiar life, the identity it created, and why staying there felt reasonable.
+- The refusal appears as an actual choice, delay, dismissal, or retreat rather than a statement that the speaker did not recognize their expertise.
+- The private ability or future path remains a secondary clue and does not turn the speaker into a hidden expert.
 - The speaker shows the recurring pattern but does not explain its mature meaning or connect it to a present-day method or business philosophy.
 - No section explains the speaker's current method, service, mission, offer, professional philosophy, or mature authority.
 - The conclusion ends on the unresolved reason the speaker could not yet recognize the path, without repeating language or evidence from the meat.

@@ -1439,8 +1439,8 @@ const INTRO_COPY = {
     },
     L2: {
       label: 'Video 2 of 7: Before I Knew What It Was',
-      title: 'Let Them See What You Could Not See Yet',
-      body: "Before you explain what you know, let people see the ordinary life you were living, the ability or interest that kept appearing, and why you refused to treat it as a real path. The audience can recognize its value while you stay honest about why remaining where you were felt safer.",
+      title: 'Let Them Meet The Person You Were',
+      body: "Let people see what normal life looked like, what quietly pulled against it, and why staying with the identity you already understood felt like the reasonable choice. This chapter is about being recognized, not being impressive.",
       result: 'Recognition',
       framework: [
         {name:'The Unexpected Detail', trigger:'Pattern Interrupt'},
@@ -2315,7 +2315,7 @@ const level2Videos = [
   },
   {
     title:"Before I Knew What It Was",
-    note:"Let people see the ability or interest that kept appearing before you treated it as expertise. Stay inside the ordinary life and the reasons you dismissed or refused the path. You do not need to explain what it eventually became.",
+    note:"Let people see what your everyday life felt like and why staying there made sense. You do not need to understand the deeper meaning yet. Just answer from what life felt like at the time.",
     prompts:[
       {label:"Before you thought of this as expertise or a possible path, what work, role, routine, or kind of life were you living?",hint:"Put us inside the ordinary world you were used to. What filled your time, shaped your choices, or made staying where you were feel normal and responsible?",key:"v1p0",ph:"Describe the work or life you were in before you treated this ability as a path."},
       {label:"What ability, responsibility, interest, or recurring problem kept showing up even though you treated it as ordinary?",hint:"What did you repeatedly notice, solve, study, practice, or get asked about? Give one concrete example that lets someone else see its value before you explain it.",key:"v1p1",ph:"Describe the ability or thread that kept appearing and one concrete example."},

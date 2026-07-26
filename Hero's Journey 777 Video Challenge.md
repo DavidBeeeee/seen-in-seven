@@ -7,7 +7,7 @@ This document contains the original deep story architecture and remains useful f
 The live source of truth for generation is `api/_lib/blueprints.txt`. The current seven-chapter spine is:
 
 1. **Video 1 — Declaration:** The speaker commits before feeling ready.
-2. **Video 2 — Ordinary World + Refusal:** The audience sees the person, their unclaimed thread or ability, and why remaining where they were felt reasonable.
+2. **Video 2 — Ordinary World + Refusal:** The audience first recognizes an ordinary person inside a familiar life and understands why leaving that identity felt unreasonable. A future ability or calling appears only as a quiet clue. Identification comes before admiration, and Level 2 must not become a hidden-expert origin story.
 3. **Video 3 — Guide + First Epiphany + Threshold:** A guide influence helps break the old understanding. In Level 2, a real person must briefly perform this mentor function.
 4. **Video 4 — Road of Trials:** The first epiphany meets meaningful tests, partial wins, and growing but incomplete confidence in the actual subject of the larger story. The exact Level 2 balance among work, business, life, and public communication remains intentionally broad for further refinement.
 5. **Video 5 — Fall / Ordeal:** A real defeat occurs, and the speaker owns how their choices contributed. No recovery or lesson yet.

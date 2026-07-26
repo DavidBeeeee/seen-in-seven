@@ -96,7 +96,7 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "Before I Knew What It Was",
-      "note": "Let people see the ability or interest that kept appearing before you treated it as expertise. Stay inside the ordinary life and the reasons you dismissed or refused the path. You do not need to explain what it eventually became.",
+      "note": "Let people see what your everyday life felt like and why staying there made sense. You do not need to understand the deeper meaning yet. Just answer from what life felt like at the time.",
       "prompts": [
         {
           "label": "Before you thought of this as expertise or a possible path, what work, role, routine, or kind of life were you living?",
