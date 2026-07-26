@@ -349,7 +349,8 @@ function publishedPrompt() {
             addIssue(section, 'Level 2 Video 4 adds the unsupported precise detail "' + match + '". Keep approximate source details approximate and remove exact counts, durations, amounts, or metrics that are not in the curated evidence.');
           }
         });
-        if (/\b(?:what\s+)?I\s+(?:didn['’]t|did not|couldn['’]t|could not)\s+(?:notice|see|realize|understand|know|recognize)\b|\b(?:warning(?:\s+sign)?|red flag|blind spot|signal)\b/i.test(sectionText)) {
+        const futureNarratorDiagnosis = /\bwhat\s+I\s+(?:didn['’]t|did not|couldn['’]t|could not)\s+(?:notice|see|realize|understand|know|recognize)\b|\bI\s+(?:didn['’]t|did not|couldn['’]t|could not)\s+(?:notice|see|realize|understand|know|recognize)\b[^.!?]{0,80}\b(?:yet|then|at the time|back then|in that moment)\b|\bI\s+(?:would|did)\s+(?:later|eventually)\s+(?:notice|see|realize|understand|know|recognize)\b/i;
+        if (futureNarratorDiagnosis.test(sectionText) || /\b(?:warning(?:\s+sign)?|red flag|blind spot|signal)\b/i.test(sectionText)) {
           addIssue(section, 'Level 2 Video 4 diagnoses the unresolved fact with later hindsight. Keep the speaker inside their earned confidence and let the audience notice the instability without labels from the future narrator.');
         }
       });
