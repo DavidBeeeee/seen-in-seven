@@ -211,6 +211,21 @@ function publishedPrompt() {
     return issues;
   }
 
+  function repeatedSectionPhrase(first, second, minimumWords = 8) {
+    const firstWords = String(first || '').toLowerCase().match(/[a-z0-9]+(?:['’][a-z0-9]+)?/g) || [];
+    const secondWords = String(second || '').toLowerCase().match(/[a-z0-9]+(?:['’][a-z0-9]+)?/g) || [];
+    if (firstWords.length < minimumWords || secondWords.length < minimumWords) return '';
+    const firstPhrases = new Set();
+    for (let index = 0; index <= firstWords.length - minimumWords; index++) {
+      firstPhrases.add(firstWords.slice(index, index + minimumWords).join(' '));
+    }
+    for (let index = 0; index <= secondWords.length - minimumWords; index++) {
+      const phrase = secondWords.slice(index, index + minimumWords).join(' ');
+      if (firstPhrases.has(phrase)) return phrase;
+    }
+    return '';
+  }
+
   function validateOutput(text, video, level) {
     const source = String(text || '');
     const sections = parseSections(text);
@@ -299,6 +314,18 @@ function publishedPrompt() {
         addIssue('CTA', 'Video 7 CTA invents urgency instead of cementing the relationship with the viewer.');
       }
     }
+    const sectionOrder = ['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA'];
+    for (let laterIndex = 1; laterIndex < sectionOrder.length; laterIndex++) {
+      const laterSection = sectionOrder[laterIndex];
+      for (let earlierIndex = 0; earlierIndex < laterIndex; earlierIndex++) {
+        const earlierSection = sectionOrder[earlierIndex];
+        const repeated = repeatedSectionPhrase(sections[earlierSection], sections[laterSection]);
+        if (repeated) {
+          addIssue(laterSection, laterSection + ' repeats a long phrase from ' + earlierSection + ': "' + repeated + '..." Rewrite the later section with a fresh story move rather than restating earlier language.');
+          break;
+        }
+      }
+    }
     Object.keys(sections).forEach(section => {
       findVoiceIssues(sections[section]).forEach(message => addIssue(section, message));
     });
@@ -354,7 +381,7 @@ function publishedPrompt() {
     'Never allow private framework labels into spoken copy. Reject Hero\'s Journey, Ordinary World, Refusal of the Call, Call to Adventure, Crossing the Threshold, Road of Trials, Ordeal, Elixir, stage ownership, mentor function, guide function, or similar production terminology. A real person may still naturally be described as a mentor or guide.',
     'Reject a CTA or section transition that answers an unheard sentence, uses a pronoun or negation without a clear antecedent in the spoken script, or only makes sense when the private user context is visible.',
     'For Level 2 Video 1, require curiosity, genuine interest in the coming series, and public commitment from the speaker. Reject explicit commercial positioning, category comparisons, conversion requests, or explanations of how the speaker works. Private strategy is not introductory copy.',
-    'For Level 2 Video 2, keep the speaker inside the professional ordinary world and refusal. The audience may recognize their value, but the speaker cannot explain their current method, service philosophy, mission, offer, or mature authority.',
+    'For Level 2 Video 2, enforce a present-day interpretation embargo. Keep the speaker inside the professional ordinary world and refusal. Show the recurring pattern through past scenes and choices, but reject any explanation of what it truly meant, why it qualified as expertise, or how it became the speaker\'s current method, service philosophy, business philosophy, mission, offer, or mature authority. The conclusion must end on the unresolved reason the speaker still could not recognize the path.',
     'For Level 2 Video 3, require a literal person to perform the guide function through a question, correction, example, permission, warning, teaching, or demonstration. The speaker must receive and test the guidance before earning the first professional epiphany.',
     'For Video 4, require changed action, meaningful resistance, a partial win, and growing but incomplete confidence in the actual subject of the larger story. Reject challenge recaps, content-progress reports, second epiphanies, and premature fall explanations.',
     'For Video 5, reject recovery, reassurance, lessons, silver linings, or elixir language. For Video 6, require the second epiphany to emerge causally from the Video 5 fall and deepen or correct Video 3.',
