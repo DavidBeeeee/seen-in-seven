@@ -19,7 +19,7 @@ Use a conversational, contraction-friendly voice at roughly an eighth-grade read
 
 Never use em dashes in generated scripts. Do not lean on "because" as default explanatory scaffolding outside the CTA. The CTA is the intentional exception: it must use "because" once to connect the viewer's action to a specific reason.
 
-Never use these banned words or phrases in generated scripts, even when they appear in the speaker's answers: "version," "lazy," "resonate," "if that landed," "this landed," "most people," "everybody," "nobody ever talks about," "nobody talks about," "the part nobody tells you," "let that sink in," "read that again," "this is your sign," "you owe it to yourself," "in a world where," "at the end of the day," "game changer," "secret sauce," "deep dive," "dive into," "delve," "tapestry," "realm," "multifaceted," "ultimately," "here's the thing," "the thing is," "not gonna lie," "the truth is," "it hits different," "lean into," "step into," "hold space," "authentic self," "aligned," "empower," "unlock," "navigate," "transformative," "the magic happens," "this changed everything," "webinar," "ebook," "sell," "buy," "pay," "guru," or "cohort."
+Never use these banned words or phrases in generated scripts, even when they appear in the speaker's answers: "version," "lazy," "resonate," "if that landed," "this landed," "most people," "everybody," "nobody," "nobody ever talks about," "nobody talks about," "the part nobody tells you," "let that sink in," "read that again," "this is your sign," "you owe it to yourself," "in a world where," "at the end of the day," "game changer," "secret sauce," "deep dive," "dive into," "delve," "tapestry," "realm," "multifaceted," "ultimately," "here's the thing," "the thing is," "not gonna lie," "the truth is," "it hits different," "lean into," "step into," "hold space," "authentic self," "aligned," "empower," "unlock," "navigate," "transformative," "the magic happens," "this changed everything," "webinar," "ebook," "sell," "buy," "pay," "guru," or "cohort."
 
 Never use false-balance constructions such as "it is not X, it is Y" or fake reassurance such as "you are not X, you are Y." Do not use sweeping audience claims about what everybody, nobody, or most people do, feel, or believe.
 
@@ -48,6 +48,17 @@ The Seamless Rule applies ONLY to [MEAT]. Write the MEAT as one seamless spoken 
 Privately reserve the conclusion's central turn before writing any other section. The HOOK, OPEN LOOP, and MEAT may contain the evidence that makes that turn true, but they must not state, paraphrase, summarize, or explain its meaning early. The viewer should be able to understand the events before the conclusion without already knowing what those events ultimately mean.
 
 [CTA] and [CONCLUSION] form one closing unit. The CTA continues the conclusion's exact emotional idea, then asks the viewer to follow for one specific reason. Do not apply the MEAT's sentence-by-sentence Seamless Rule to this closing unit, and do not smooth away an intentional conclusion turn.
+
+Before drafting, privately create a five-line INFORMATION LEDGER with one exclusive story move for each section:
+- HOOK owns the forbidden territory or pattern interrupt, not the argument.
+- OPEN LOOP owns the unresolved contradiction and stakes, not the answer.
+- MEAT owns the events, guide, evidence, and belief collapse, not their final interpretation.
+- CONCLUSION owns one forceful interpretation or paradigm shift.
+- CTA owns the relational consequence and reason to continue, not a summary of the conclusion.
+
+Every section must contribute new information. If two ledger lines make substantially the same claim, redesign them before writing. Repetition includes paraphrases and synonym swaps, not only repeated wording. Once an idea has performed its assigned job, do not explain it again in a later section.
+
+Use no more than one governing metaphor family in a script. Choose it after deciding the conclusion, use it only where it sharpens the story, and normally use it no more than twice. Do not mix competing image systems such as maps, floors, bridges, mountains, roads, and ladders in the same video. Literal story details are not metaphors and may remain.
 </section_composition_rule>
 
 <input_material_authority_rule>
@@ -154,7 +165,7 @@ PROCESS:
 10. Reverse-engineer the MEAT from the conclusion destination. Arrange the local blueprint beats so the surface story remains compelling while every fact needed for the final turn is already present. Write the MEAT under the Meat-Only Seamless Rule.
 11. Design the OPEN LOOP after the CONCLUSION and MEAT. Create the exact unfinished meaning, contradiction, cause, or question that the conclusion will complete, reverse, complicate, challenge, or reopen. Do not reveal the destination.
 12. Write the HOOK last as an independent truthful pattern interrupt. Generate and compare multiple candidates, then choose the one that creates the strongest "wait, what?" without stating the open loop or conclusion.
-13. Audit each section according to its own job. Remove duplicated ideas and accidental incoherence, but do not smooth the five sections into one prose rhythm or weaken an intentional hook, open loop, or conclusion turn.
+13. Audit the five-line INFORMATION LEDGER before polishing prose. Confirm every section contributes a different story move, no section paraphrases an earlier section's claim, and the script uses no more than one governing metaphor family. Remove duplicated meaning and accidental incoherence, but do not smooth the five sections into one prose rhythm or weaken an intentional hook, open loop, or conclusion turn.
 14. Verify the video works for a cold viewer without recapping previous videos: the immediate situation makes sense, this episode has a complete emotional movement, and the larger seven-video story remains open.
 15. Verify the script sounds like the SPEAKER, not like a copywriter.
 16. Verify total script is approximately 220-270 words across all five generated sections. For Video 1 only, exclude the app-inserted declaration from this count.

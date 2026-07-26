@@ -139,7 +139,7 @@ function publishedPrompt() {
   }
 
   const BANNED_LANGUAGE = [
-    'version', 'lazy', 'resonate', 'if that landed', 'this landed', 'most people', 'everybody',
+    'version', 'lazy', 'resonate', 'if that landed', 'this landed', 'most people', 'everybody', 'nobody',
     'nobody ever talks about', 'nobody talks about', 'the part nobody tells you',
     'let that sink in', 'read that again', 'this is your sign',
     'you owe it to yourself', 'in a world where', 'at the end of the day',
@@ -446,6 +446,9 @@ function publishedPrompt() {
     'For Level 2 Video 7, build the opening from one observable present-day action, use only one full-circle callback and one connected correction, and reject episode-by-episode recap. Keep the unfinished element honest and the continuing mission relational rather than commercial.',
     'Judge meaning, not just formatting. The hook must create an immediate truthful pattern interrupt without stating the lesson. The open loop must create one concrete unanswered relationship and must not reveal or paraphrase the conclusion. The meat must tell the local story in connected spoken logic without repeating the hook, open loop, or conclusion. The conclusion must create an earned turn rather than recap. The CTA must bridge from that turn, make follow the primary action, use because once for a specific reason, and orient a cold viewer inside the seven-part journey.',
     'Treat the conclusion central meaning as reserved. Earlier sections may contain evidence for it but cannot explain, summarize, or paraphrase it. Reject scripts that spend the conclusion repeating a meaning already given away.',
+    'Perform a cross-section INFORMATION LEDGER audit before passing. Summarize the unique story move made by HOOK, OPEN LOOP, MEAT, CONCLUSION, and CTA. Every section must add new information. If two summaries make substantially the same claim, reject the later duplicate and replace it with the missing tension, evidence, interpretation, consequence, or progression assigned to that section. Treat paraphrases and synonym swaps as repetition. Do not solve repetition by merely changing repeated nouns.',
+    'Allow only one governing metaphor family per script and normally no more than two meaningful uses of it. Reject competing image systems such as maps mixed with floors, bridges, mountains, roads, or ladders. Preserve literal details even when they happen to name a physical object.',
+    'Epiphany conclusions may be absolute, controversial, and sharply opinionated when the supplied story earns them. Do not add hedges, disclaimers, reminders that the claim is only the speaker\'s opinion, or language that softens conviction merely to sound balanced.',
     'Reject generic motivational language, every form of false balance, vague suspense, progress-report hooks, recap-heavy endings, and stock AI phrasing even when the banned phrase is not an exact textual match.',
     'False balance includes negation followed by a correction across separate sentences, repeated-verb constructions such as "they are not asking... they are asking," and causal pivots built around "not because." Rewrite the actual point directly rather than polishing the contrast.',
     'For Video 7, require a relational close: acknowledge the completed Video 7 of 7 arc, ask the viewer to follow because they want to stay connected to this person and perspective, and invite late viewers back to Video 1. Do not imply Video 8, invent urgency, or introduce an offer.',

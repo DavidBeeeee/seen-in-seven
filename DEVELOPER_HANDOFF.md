@@ -734,6 +734,14 @@ The following principles govern every word of copy in this app and the broader C
 - The framework behind the 7 videos is described publicly as "scientifically, sociologically, and historically proven." Never use: framework, psychological architecture, Hero's Journey, or algorithm in public-facing copy.
 - The hook and open loop have separate jobs. The hook is a truthful pattern interrupt that captures attention before the viewer cares. The open loop converts that attention into one specific unanswered question that the conclusion later pays off. Never merge them or remove either one.
 - If it sounds like David, it stays. Loose, conversational, and playful language is correct, not a mistake.
+## 2026-07-26: Global information ownership and metaphor discipline
+
+- Added `nobody` as an exact global banned word. Previously, the style guide and deterministic validator only banned longer phrases containing it.
+- Added a five-section Information Ledger to the shared writing rules. Hook, Open Loop, Meat, Conclusion, and CTA must each contribute a different story move, and paraphrased meaning counts as repetition.
+- Added a one-metaphor-family rule with a normal limit of two meaningful uses per script.
+- Strengthened semantic review to compare section meanings, replace later duplicates with their missing story function, preserve forceful controversial epiphany conclusions, and reject synonym swapping as a fake repetition fix.
+- Deliberately avoided a deterministic semantic word-frequency check because it would risk another mechanical rejection loop on legitimate repeated subject words.
+
 ## 2026-07-26: False-balance generation loop repair
 
 - Removed one overbroad deterministic voice check that treated any negated word repeated in the following sentence as false balance. It could reject legitimate epiphany contrast or evidence, then keep rejecting the repair for using the same subject word.
