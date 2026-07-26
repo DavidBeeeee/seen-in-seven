@@ -1049,6 +1049,8 @@ VIDEO 4 FINAL CHECK:
 - At least two meaningful pressures, decisions, or applications create a real sequence of trials rather than a single success report.
 - A partial win and the reason it created confidence are visible through action.
 - The conclusion remains inside what the speaker could reasonably believe then; later hindsight does not diagnose the unresolved fact.
+- Approximate source details remain approximate. Do not invent exact durations, counts, money, reactions, or results to make a trial sound more concrete.
+- The CTA follows the confidence into the next chapter without saying it cannot solve, survive, handle, or prevent what comes next.
 - The fall, recovery, second epiphany, and mature guide identity remain reserved for later videos.
 </l2_v4_rules>
 
