@@ -503,7 +503,10 @@ function publishedPrompt() {
   async function reviewAndRepairScript(config) {
     let script = String(config.script || '').trim();
     let unresolvedSemanticFailure = false;
-    for (let pass = 0; pass < 2; pass++) {
+    // A replacement can solve the reported issue while introducing a new
+    // mechanical one. The third pass validates and cleans that replacement
+    // before the caller throws away the whole draft.
+    for (let pass = 0; pass < 3; pass++) {
       const validation = validateOutput(script, config.video, config.level);
       const reviewRaw = await config.callModel(
         QUALITY_REVIEW_SYSTEM,
@@ -514,13 +517,13 @@ function publishedPrompt() {
           userMessage: config.userMessage,
           script,
           validation,
-          precisionPass: pass === 1
+          precisionPass: pass > 0
         }),
         0.15
       );
       const review = parseQualityReview(reviewRaw);
       if (!review) {
-        if (validation.valid && pass === 1) return script;
+        if (validation.valid && pass > 0) return script;
         continue;
       }
       if (review.pass && validation.valid) return script;
@@ -545,7 +548,7 @@ function publishedPrompt() {
     if (!['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA'].includes(section)) throw new Error('Unknown script section.');
     let script = String(config.script || '').trim();
     let unresolvedSemanticFailure = false;
-    for (let pass = 0; pass < 2; pass++) {
+    for (let pass = 0; pass < 3; pass++) {
       const fullValidation = validateOutput(script, config.video, config.level);
       const targetIssues = fullValidation.sectionIssues && fullValidation.sectionIssues[section] || [];
       const targetValidation = {
@@ -565,14 +568,14 @@ function publishedPrompt() {
           userMessage:config.userMessage,
           script,
           validation:targetValidation,
-          precisionPass:pass === 1,
+          precisionPass:pass > 0,
           onlySection:section
         }),
         0.15
       );
       const review = parseQualityReview(reviewRaw);
       if (!review) {
-        if (targetValidation.valid && pass === 1) return parseSections(script)[section];
+        if (targetValidation.valid && pass > 0) return parseSections(script)[section];
         continue;
       }
       if (review.pass && targetValidation.valid) return parseSections(script)[section];

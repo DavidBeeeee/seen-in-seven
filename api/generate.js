@@ -219,9 +219,10 @@ async function generateScript(input, prompt) {
     : rawUserMessage;
   let lastError;
 
-  // L2V1 already uses a separate material-preparation call, so cap it at two
-  // complete drafts to keep the request comfortably inside the runtime limit.
-  const maxAttempts = input.level === 2 && input.video === 1 && input.mode === 'script' ? 2 : 3;
+  // Prefer repairing a nearly finished draft over repeatedly starting over.
+  // Each draft now receives up to three targeted cleanup passes, so two fresh
+  // drafts keep the request inside the runtime limit while improving repair.
+  const maxAttempts = 2;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const retryNote = attempt
       ? '\n\nA previous draft did not pass the final story check. Write a genuinely fresh complete script. Follow the five-section format exactly, make the CTA current-video orientation precise, and avoid every banned phrase. Do not explain the rewrite.\n\nEXACT FEEDBACK FROM THE PREVIOUS DRAFT:\n' + String(lastError && lastError.message || '')
