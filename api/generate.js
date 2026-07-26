@@ -54,9 +54,9 @@ VOICE SIGNALS:
 Requirements:
 - Preserve only facts, observations, actions, consequences, and distinctive language supported by the source.
 - OLD ASSUMPTION names one idea the speaker genuinely accepted and one way it shaped what they did.
-- GUIDE LENS selects exactly one real person whose specific supplied question, teaching, body of work, example, correction, or demonstration gave the speaker a useful reference point. A famous name without a supplied contribution is unusable. Never invent a private conversation, quote, meeting, or relationship.
+- GUIDE LENS selects exactly one real person whose specific supplied question, teaching, body of work, example, correction, or demonstration gave the speaker a useful reference point. Name that person only in GUIDE LENS. No other mentor, teacher, or source name may appear anywhere in the packet. A famous name without a supplied contribution is unusable. Never invent a private conversation, quote, meeting, or relationship.
 - REPRESENTATIVE EVIDENCE selects one supplied occurrence that lets the viewer watch the old assumption stop matching reality. A repeated pattern may be represented by one documented occurrence, but do not fabricate a lightning-bolt conversion.
-- FIRST SMALLER SHIFT infers the narrowest useful realization supported by the evidence. It is the first lens that creates movement, not the speaker's complete method, mature business philosophy, final answer, or current positioning.
+- FIRST SMALLER SHIFT infers the narrowest useful realization supported by the evidence. Reveal a hidden relationship, cause, category error, or reversal rather than prescribing what an industry, price, method, or person should do. It is the first lens that creates movement, not the speaker's complete method, mature business philosophy, final answer, or current positioning.
 - HUMAN COST describes one recognizable consequence for one kind of person without turning into an industry lecture.
 - VOICE SIGNALS preserves a few words about the speaker's rhythm, intensity, humor, or distinctive phrasing. Do not copy banned script phrases.
 - Omit mentor lists, credential summaries, pricing ladders, service tiers, current offers, current service descriptions, conversion requests, and any material that belongs to the later fall, elixir, or return.
