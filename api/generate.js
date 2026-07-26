@@ -152,6 +152,7 @@ Return only the corrected packet with exactly the same headings and heading orde
 
 Requirements:
 - Preserve one small first lens, one observable changed action, one or two supported trial situations, meaningful resistance, one partial win, the confidence it created at that time, and one still-unresolved fact.
+- Compare every packet detail against the authoritative source material supplied beside it. Remove invented scenes, actions, reactions, dialogue, outcomes, and numerical precision. A direct paraphrase is allowed; a plausible detail absent from the source is not.
 - Keep the speaker inside what they could know then. Remove hindsight diagnoses, later lessons, explanations of the coming failure, recovery, second epiphany, mature method, service descriptions, offers, and commercial positioning.
 - The unresolved fact may describe what remained difficult, unstable, incomplete, or unanswered. It cannot say what that fact predicted, caused later, revealed in retrospect, or eventually taught.
 - Do not turn the partial win into a case study, expertise claim, final proof, or new epiphany.
@@ -422,7 +423,8 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
 
 export async function prepareLevelTwoVideoFourMaterial(userContext) {
   const headings = ['FIRST LENS', 'CHANGED ACTION', 'TRIAL EVIDENCE', 'RESISTANCE', 'PARTIAL WIN', 'CONFIDENCE AT THE TIME', 'STILL-UNRESOLVED FACT', 'VOICE SIGNALS'];
-  const routed = await callModel(L2V4_MATERIAL_ROUTER_SYSTEM, videoFourRouterSource(userContext), 0.15, 1200);
+  const source = videoFourRouterSource(userContext);
+  const routed = await callModel(L2V4_MATERIAL_ROUTER_SYSTEM, source, 0.15, 1200);
   const routedPacket = cleanPacketOutput(routed);
   if (!routedPacket || !hasRouterHeadings(routedPacket, headings)) {
     throw new Error('The Video 4 story material could not be prepared cleanly. Please try again.');
@@ -438,6 +440,9 @@ export async function prepareLevelTwoVideoFourMaterial(userContext) {
         ? 'The previous cleanup omitted or renamed a required heading. Include every required heading exactly, even when its value must say "Not supplied." Do not add or rename headings.'
         : '',
       malformed ? '\nMALFORMED CLEANUP TO CORRECT:\n' + malformed : '',
+      '',
+      'AUTHORITATIVE SOURCE MATERIAL:',
+      source,
       '',
       'PACKET TO CLEAN:',
       routedPacket

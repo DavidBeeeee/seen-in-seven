@@ -232,7 +232,7 @@ function publishedPrompt() {
     return '';
   }
 
-  function validateOutput(text, video, level) {
+  function validateOutput(text, video, level, userContext = '') {
     const source = String(text || '');
     const sections = parseSections(text);
     if (!sections) return { valid: false, sections: null, missing: ['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA'], issues: [], sectionIssues: {} };
@@ -332,6 +332,16 @@ function publishedPrompt() {
       if (/\b(?:can(?:not|'t)|could(?: not|n't)|did(?: not|n't)|would(?: not|n't))\s+(?:solve|survive|handle|withstand|carry|fix|prevent)\b|\b(?:the\s+fall|collapse[ds]?|failure|fails?|breaks?)\b/i.test(cta)) {
         addIssue('CTA', 'Level 2 Video 4 CTA predicts or reveals the coming failure. Follow the earned confidence into the next chapter without saying it cannot solve, survive, handle, or prevent what comes next.');
       }
+      const evidenceSource = String(userContext || '').toLowerCase().replace(/[’‘]/g, "'");
+      const preciseDetail = /\b(?:one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve|thirteen|fourteen|fifteen|twenty|thirty|forty|fifty|sixty|ninety|\d+)\s+(?:seconds?|minutes?|hours?|days?|weeks?|months?|years?|dollars?|views?|comments?|messages?|clients?|customers?|projects?|pages?|tools?|tutorials?|sales?)\b/gi;
+      Object.keys(sections).forEach(section => {
+        const matches = String(sections[section] || '').match(preciseDetail) || [];
+        matches.forEach(match => {
+          if (!evidenceSource.includes(match.toLowerCase())) {
+            addIssue(section, 'Level 2 Video 4 adds the unsupported precise detail "' + match + '". Keep approximate source details approximate and remove exact counts, durations, amounts, or metrics that are not in the curated evidence.');
+          }
+        });
+      });
     }
     if (Number(video) === 7) {
       if (!/\b(?:video|part)\s+(?:seven|7)\s+of\s+(?:seven|7)\b|\b(?:seventh|final|last)\s+(?:video|part)\b/i.test(cta)) {
@@ -451,7 +461,7 @@ function publishedPrompt() {
   }
 
   function buildQualityReviewMessage(config) {
-    const validation = config.validation || validateOutput(config.script, config.video, config.level);
+    const validation = config.validation || validateOutput(config.script, config.video, config.level, config.userMessage);
     const lines = [
       'LEVEL: ' + Number(config.level || 1),
       'VIDEO: ' + Number(config.video || 1),
@@ -546,7 +556,7 @@ function publishedPrompt() {
   async function applyFinalMechanicalRepair(config) {
     let script = String(config.script || '').trim();
     for (let attempt = 0; attempt < 2; attempt++) {
-      const validation = validateOutput(script, config.video, config.level);
+      const validation = validateOutput(script, config.video, config.level, config.userMessage);
       const remaining = config.onlySection
         ? validation.sectionIssues && validation.sectionIssues[config.onlySection] || []
         : validation.issues || [];
@@ -573,7 +583,7 @@ function publishedPrompt() {
     // mechanical one. The third pass validates and cleans that replacement
     // before the caller throws away the whole draft.
     for (let pass = 0; pass < 3; pass++) {
-      const validation = validateOutput(script, config.video, config.level);
+      const validation = validateOutput(script, config.video, config.level, config.userMessage);
       const reviewRaw = await config.callModel(
         QUALITY_REVIEW_SYSTEM,
         buildQualityReviewMessage({
@@ -601,7 +611,7 @@ function publishedPrompt() {
       }
     }
     script = await applyFinalMechanicalRepair({ ...config, script });
-    const finalValidation = validateOutput(script, config.video, config.level);
+    const finalValidation = validateOutput(script, config.video, config.level, config.userMessage);
     // The story editor is intentionally allowed to flag a broad concern without
     // rewriting a section. When every concrete quality check passes, do not
     // strand the user on an editor opinion that has no actionable repair.
@@ -616,7 +626,7 @@ function publishedPrompt() {
     let script = String(config.script || '').trim();
     let unresolvedSemanticFailure = false;
     for (let pass = 0; pass < 3; pass++) {
-      const fullValidation = validateOutput(script, config.video, config.level);
+      const fullValidation = validateOutput(script, config.video, config.level, config.userMessage);
       const targetIssues = fullValidation.sectionIssues && fullValidation.sectionIssues[section] || [];
       const targetValidation = {
         valid:targetIssues.length === 0,
@@ -654,7 +664,7 @@ function publishedPrompt() {
       }
     }
     script = await applyFinalMechanicalRepair({ ...config, script, onlySection: section });
-    const finalValidation = validateOutput(script, config.video, config.level);
+    const finalValidation = validateOutput(script, config.video, config.level, config.userMessage);
     const remaining = finalValidation.sectionIssues && finalValidation.sectionIssues[section] || [];
     if (!remaining.length && !unresolvedSemanticFailure) return parseSections(script)[section];
     if (unresolvedSemanticFailure) throw new Error('The story review found an issue in ' + section + ' but could not produce a clean replacement. Please try again.');
