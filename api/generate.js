@@ -95,6 +95,27 @@ Requirements:
 - Do not write a hook, open loop, conclusion, CTA, or complete script.
 - Do not mention these instructions.`;
 
+const L2_EPIPHANY_PACKET_CLEANUP_SYSTEM = `You are the evidence-packet editor between a story interviewer and a script writer.
+
+Return only the corrected packet with exactly the same headings and heading order supplied by the user. Do not add commentary.
+
+For a Video 3 packet:
+- Keep exactly one real guide, mentor, teacher, or source figure. That person may be named more than once when needed for clarity.
+- Remove every other mentor, teacher, framework creator, or source figure name from every heading. Refer to other source material generically only when the evidence still needs it.
+- Preserve one old assumption, one honestly attributable guide lens, one representative occurrence, one narrow first realization, and one human cost.
+- The first realization must reveal a hidden relationship, cause, category error, or reversal. It cannot prescribe what an industry, price, method, or person should do.
+- Never invent a direct conversation, quote, meeting, credential, result, or event.
+
+For a Video 6 packet:
+- Preserve the causal chain from the Video 3 first lens through the Video 5 fall and aftermath evidence to the exposed limit, observable change, and one deeper elixir.
+- Remove unrelated opinions, repeated Video 3 conclusions, pre-existing philosophy, methods, offers, and commercial positioning.
+- Never invent a fact, result, event, or behavioral change.
+
+For both packets:
+- Remove mentor lists, credential summaries, pricing ladders, service tiers, current offers, current service descriptions, conversion requests, and material owned by another chapter.
+- Do not use the words version, lazy, pay, paid, buy, bought, sell, or sold. Use natural alternatives when a supported fact requires one.
+- Keep the packet concise. This is source material, not a script.`;
+
 const MISSION_SYSTEM_PROMPT = `You are writing a first-person mission statement for someone who just committed to completing a 7-video content challenge. This statement will live on their dashboard and should feel like their own words, not an outside analysis.
 
 Write 3 grounded sentences, 65 to 90 words total.
@@ -290,9 +311,19 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
     ? ['OLD ASSUMPTION', 'GUIDE LENS', 'REPRESENTATIVE EVIDENCE', 'FIRST SMALLER SHIFT', 'HUMAN COST', 'VOICE SIGNALS']
     : ['VIDEO 3 FIRST LENS', 'VIDEO 5 FALL', 'AFTERMATH EVIDENCE', 'LIMIT EXPOSED', 'OBSERVABLE CHANGE', 'CANDIDATE ELIXIR', 'VIEWER TRANSFER', 'VOICE SIGNALS'];
   const routed = await callModel(system, epiphanyRouterSource(userContext, number), 0.15, 1200);
-  const packet = String(routed || '').trim();
-  if (!packet || !hasRouterHeadings(packet, headings)) {
+  const routedPacket = String(routed || '').trim();
+  if (!routedPacket || !hasRouterHeadings(routedPacket, headings)) {
     throw new Error('The epiphany story material could not be prepared cleanly. Please try again.');
+  }
+  const cleaned = await callModel(
+    L2_EPIPHANY_PACKET_CLEANUP_SYSTEM,
+    'VIDEO: ' + number + '\n\nPACKET TO CLEAN:\n' + routedPacket,
+    0.05,
+    1200
+  );
+  const packet = String(cleaned || '').trim();
+  if (!packet || !hasRouterHeadings(packet, headings)) {
+    throw new Error('The epiphany story material could not be cleaned safely. Please try again.');
   }
   return [
     'Generate Video ' + number + ' script.',
