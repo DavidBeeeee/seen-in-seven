@@ -13,10 +13,10 @@ const PROMPT_QUESTION_CATALOG = {
     "l2": [
       null,
       {"label":"Before you treated this as expertise, what ability or interest kept showing up, and why did you refuse to take it seriously?","hint":"Describe the ordinary work or life you were in, what other people might have valued before you did, and why staying where you were felt safer or more responsible.","key":"easyAnswer_v1"},
-      {"label":"What is one thing you used to think was true about your work or field that another person helped you question?","hint":"Describe who guided you, what they helped you notice, what happened when you tested it, the new lens you earned, and why it matters.","key":"easyAnswer_v2"},
+      {"label":"What is one idea you used to accept about your work, who gave you a different way to look at it, and what moment made the old idea stop fitting what you saw?","hint":"Include one real person, the specific lens they gave you, one concrete moment or representative example, and who pays the cost of the old idea. You do not need a polished final lesson. The AI will find the smallest useful shift.","key":"easyAnswer_v2"},
       {"label":"What happened when you started applying that first professional realization in the real world?","hint":"Describe the situations that tested it, what began working, what those wins made you believe, and what pressure, blind spot, or limit still remained.","key":"easyAnswer_v3"},
       {"label":"In the work, craft, calling, or expertise story you have been telling, what failure was so devastating that you thought what you had built or hoped to build might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?","hint":"Tell us what collapsed, what seemed permanently lost, and why you could not see a way back in this part of your life. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.","key":"easyAnswer_v4"},
-      {"label":"What larger professional truth did that difficult experience force you to understand, and how did it deepen the first realization you shared?","hint":"Trace how the truth emerged through the aftermath or rebuilding, what it changed in your work or decisions, and what useful lens it gives someone facing the problem now.","key":"easyAnswer_v5"},
+      {"label":"After the hardest experience, what became clear that your first realization could not explain?","hint":"Describe the aftermath evidence that brought it into focus, one observable thing you changed afterward, and who might need the perspective you earned. Keep it connected to what actually happened.","key":"easyAnswer_v5"},
       {"label":"Who were you before the two professional realizations and the hardest part of the story, and who are you now in relation to your expertise and the people you want to reach?","hint":"Describe what genuinely changed, what remains unfinished or still needed, what telling the story clarified about your work, and what perspective or mission you want the right viewer to keep following.","key":"easyAnswer_v6"}
     ]
   },
@@ -120,43 +120,43 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "What I See Differently",
-      "note": "Seven beats, one shift. You're not sharing a hot take. You're sharing a genuine paradigm shift. Something 'everyone knows' in your field that you've come to believe is wrong, the moment you saw the cracks, and the reframe that changes everything.",
+      "note": "Think of one idea you used to accept, the person or experience that gave you another way to look at it, and the moment the old idea stopped matching what you could see. You do not need a polished lesson. Just give us the real pieces.",
       "prompts": [
         {
-          "label": "What's something that 'everyone knows' in your field or area of expertise that you've come to believe is wrong, incomplete, or actually harmful?",
-          "hint": "The advice that gets passed around like gospel. The method everyone defaults to. The first thing a beginner is told that a veteran knows is oversimplified. You've been close enough to see the cracks in it. What is it?",
+          "label": "What is one idea people in your field tend to accept as true, and how did you used to act as if it were true too?",
+          "hint": "Keep it to one assumption. What advice, decision, standard, or habit did it shape before you started questioning it?",
           "key": "v2p0",
-          "placeholder": "e.g. everyone says 'make a budget and stick to it'... the discipline narrative. I've watched hundreds of people make perfect budgets and fail completely within three weeks."
+          "placeholder": "Describe the idea you accepted and how it affected what you did."
         },
         {
-          "label": "Who helped you question the old understanding, and what did they say, show, ask, correct, or demonstrate that you could not see alone?",
-          "hint": "Name a real person who performed the guide role. It might be a mentor, teacher, supervisor, peer, client, elder, or collaborator. They do not need to be famous or formally called a mentor. Describe the specific guidance you received and what you did with it.",
+          "label": "Who gave you a question, example, piece of information, or way of looking at the work that stayed with you?",
+          "hint": "Choose one real person. They do not have to be a formal mentor or even know they changed your thinking. What specifically did they say, show, teach, correct, or demonstrate? You do not need to explain the final lesson yet.",
           "key": "v2p5",
-          "placeholder": "Describe the person who guided you, the specific thing they helped you see, and how you tested their guidance."
+          "placeholder": "Describe one person and the specific lens or idea they gave you."
         },
         {
-          "label": "Tell the story of when you first saw the cracks. What actually happened (the specific moment, client, project, or experience) that made you go 'wait, this doesn't work the way everyone says it does'?",
-          "hint": "A real story. Not 'I gradually realized over time.' A SCENE. The client who succeeded by doing the opposite. The project that failed despite following the playbook perfectly.",
+          "label": "Tell us about one moment when the old idea stopped matching what you were seeing.",
+          "hint": "Where were you? What happened? What concrete detail made the usual explanation feel incomplete? If it happened gradually, choose one moment that represents the pattern instead of summarizing the whole pattern.",
           "key": "v2p1",
-          "placeholder": "e.g. I had a client, smart woman, good job, made great money. She'd done every budget app, every system. Nothing stuck. An hour of conversation revealed she wasn't overspending from lack of discipline. She was overspending because spending was the only way she knew how to soothe herself after a bad day."
+          "placeholder": "Describe one moment when the old idea stopped fitting the evidence."
         },
         {
-          "label": "What's actually true instead? Say it as plainly as you can, like you're letting someone in on something the industry doesn't want to admit.",
-          "hint": "The reframe. The new lens. If the old belief is the map everyone's using, your reframe shows them the map is wrong and the real terrain looks different. Make it feel inevitable. Not clever, not contrarian. Just true.",
+          "label": "After that moment, what was the first smaller thing you could no longer dismiss or keep believing?",
+          "hint": "Give us the earliest shift in your own words, even if it was incomplete. Do not turn it into your complete method, philosophy, or answer to everything.",
           "key": "v2p2",
-          "placeholder": "e.g. money problems are almost never math problems. They're emotional regulation problems wearing a math costume. Until you address why someone spends, no spreadsheet on earth will save them."
+          "placeholder": "Describe the first smaller truth the evidence made hard to ignore."
         },
         {
-          "label": "What happens to people who keep following the conventional wisdom? What does it cost them that they don't even realize?",
-          "hint": "You've watched people go down this path. What do they sacrifice, waste, or miss because they're following a map that doesn't match the territory? Be specific. Not 'they fail' but HOW they fail, what it looks like from the inside.",
+          "label": "Who gets hurt when the old idea keeps being treated as true, and what does that cost look like in real life?",
+          "hint": "Think about one recognizable person. What do they waste, lose, postpone, misunderstand, or blame themselves for? Show the human consequence rather than making a general industry argument.",
           "key": "v2p3",
-          "placeholder": "e.g. they keep failing at budgets and thinking THEY'RE broken. They're not broken. The approach is broken. They just keep getting more ashamed every time they 'fail' at something that was never designed to work for them."
+          "placeholder": "Describe who pays the cost of the old idea and what happens to them."
         },
         {
-          "label": "Why do you feel like this needs to be said? What's at stake if people in your space keep getting this wrong?",
-          "hint": "This is where your passion lives. The reason you can't just let this go. Maybe people are wasting years. Maybe the shame spiral is costing people their relationships. Why does this matter enough to put on camera?",
+          "label": "When you picture someone still living by the old idea, what do you wish they could recognize sooner?",
+          "hint": "Speak to what you understand about their situation. Stay with what you want them to see, rather than describing your current service, offer, or way of working.",
           "key": "v2p4",
-          "placeholder": "e.g. because the shame spiral is killing people. Financial stress is the number one cause of relationship problems and one of the top causes of anxiety and depression. And we're out here telling people to track their lattes."
+          "placeholder": "Describe what you wish one person could recognize before the old idea costs them more."
         }
       ]
     },
@@ -228,37 +228,37 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "What The Hardest Part Taught Me",
-      "note": "This is the larger professional truth earned through the difficult experience you just described. It must deepen or correct the first realization rather than becoming another unrelated hot take. Show how the defeat changed your understanding, your work, and the lens you can now give someone else.",
+      "note": "Look back at the hardest experience you just described. Focus on what only became clear afterward and what changed because of it. This should grow directly from that experience, not from a separate opinion about your field.",
       "prompts": [
         {
-          "label": "Looking back at the difficult experience you just described, what larger truth about your work, your field, or the people you serve became impossible for you to ignore?",
-          "hint": "Choose the truth you could not have earned before that defeat. It may challenge familiar advice, but it must grow directly from what happened to you rather than becoming a separate industry opinion.",
+          "label": "After the hardest part was over, what did you eventually understand that you could not have understood before living through it?",
+          "hint": "Say it in your own words. It does not need to sound polished. It should come from what happened, rather than from a separate opinion you already held.",
           "key": "v5p0",
-          "placeholder": "Describe the larger professional truth the difficult experience made impossible to ignore."
+          "placeholder": "Describe what only became clear after you lived through the difficult experience."
         },
         {
-          "label": "How did that truth become clear through the aftermath, failed recovery, or rebuilding?",
-          "hint": "Walk through the evidence. What did you try, notice, lose, rebuild, or finally stop doing that changed your interpretation of the failure? Give the story that earned the truth instead of jumping straight to the lesson.",
+          "label": "What happened during the aftermath or rebuilding that made this understanding harder and harder to ignore?",
+          "hint": "Walk us through the evidence. What did you try, notice, lose, rebuild, stop doing, or finally do differently? Give us what happened before giving us a lesson.",
           "key": "v5p1",
-          "placeholder": "Describe how the larger truth emerged through the aftermath or rebuilding."
+          "placeholder": "Describe the aftermath evidence that brought the deeper understanding into focus."
         },
         {
-          "label": "How does this larger realization deepen, correct, or complete the first professional realization you shared earlier?",
-          "hint": "The first realization changed the direction of the story. The difficult experience showed what that lens still could not explain. Name what became more complete without simply repeating the first insight.",
+          "label": "Think back to the first thing you saw differently earlier in this story. What could that first realization still not explain once everything fell apart?",
+          "hint": "Name the limit you discovered in the earlier idea. What was still missing, incomplete, or unable to help you through the hardest part?",
           "key": "v5p2",
-          "placeholder": "Describe how the second realization changes or completes the first."
+          "placeholder": "Describe what your first realization could not explain after the fall."
         },
         {
-          "label": "What changed in the way you work, decide, communicate, or help people once you understood this?",
-          "hint": "Make the larger truth observable. Describe a real choice, standard, boundary, method, or way of seeing that changed because the difficult experience taught you something theory could not.",
+          "label": "What did you actually change afterward that another person could see in your decisions or work?",
+          "hint": "Choose a real action, boundary, standard, conversation, habit, or way of responding. Show the effect of the deeper understanding without turning it into a list of advice.",
           "key": "v5p3",
-          "placeholder": "Describe what genuinely changed in your work or decisions."
+          "placeholder": "Describe one observable change you made afterward."
         },
         {
-          "label": "Who is still facing this problem the way you once did, and what could this truth help them recognize or do differently?",
-          "hint": "Picture one specific person whether or not they are a client. What are they misreading, repeating, or blaming themselves for? Give them the useful lens you paid for through experience.",
+          "label": "Who do you recognize in the place you were, and what do you wish they could see before repeating what happened to you?",
+          "hint": "Picture one specific person. What are they misreading, repeating, or blaming themselves for? Stay with the useful perspective you earned, not an offer or invitation to work with you.",
           "key": "v5p4",
-          "placeholder": "Describe who needs this lens and what it could help them recognize."
+          "placeholder": "Describe who needs the hard-won perspective and what it could help them recognize."
         }
       ]
     },

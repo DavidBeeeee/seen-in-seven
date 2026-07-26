@@ -1,4 +1,4 @@
-import { callModel } from './generate.js';
+import { callModel, prepareLevelTwoEpiphanyMaterial } from './generate.js';
 import {
   buildSystemPrompt,
   extractSystemPrompt,
@@ -6,7 +6,7 @@ import {
 } from './_lib/prompt-engine.js';
 import { authenticatedAdmin, consumeQuota, json } from './_lib/security.js';
 
-export const config = { maxDuration: 90 };
+export const config = { maxDuration: 180 };
 
 function validateBlueprintSource(source) {
   const errors = [];
@@ -45,11 +45,14 @@ export default async function handler(req, res) {
     if (!prompt) return json(res, 400, { error: 'The draft prompt could not be read.' });
     const systemPrompt = buildSystemPrompt(prompt, level, video);
     const temperature = body.generationMode === 'production' ? 0.8 : 0.25;
-    const rawContent = await callModel(systemPrompt, userMessage, temperature);
+    const preparedUserMessage = level === 2 && (video === 3 || video === 6)
+      ? await prepareLevelTwoEpiphanyMaterial(userMessage, video)
+      : userMessage;
+    const rawContent = await callModel(systemPrompt, preparedUserMessage, temperature);
     const content = await reviewAndRepairScript({
       script: rawContent,
       systemPrompt,
-      userMessage,
+      userMessage: preparedUserMessage,
       level,
       video,
       callModel
