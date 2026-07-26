@@ -470,7 +470,9 @@ export async function prepareLevelTwoVideoFourMaterial(userContext) {
     'CURATED ROAD-OF-TRIALS MATERIAL:',
     packet,
     '',
-    'The raw answers have already been sorted for this chapter. Use only this packet as story material. Build the HOOK only from HIGHEST-FRICTION TRIAL. Use the OPEN LOOP to establish that trial\'s immediate stakes without explaining the old approach, result, confidence, or unresolved fact. Preserve the speaker\'s confidence at that point in time. Do not reconstruct omitted offers, later failure, recovery, elixir, or hindsight explanation.'
+    'The raw answers have already been sorted for this chapter. Use only this packet as story material. Build the HOOK only from HIGHEST-FRICTION TRIAL. Use the OPEN LOOP to establish that trial\'s immediate stakes without explaining the old approach, result, confidence, or unresolved fact. Preserve the speaker\'s confidence at that point in time. Do not reconstruct omitted offers, later failure, recovery, elixir, or hindsight explanation.',
+    '',
+    'FINAL VIDEO 4 WRITING CONSTRAINTS: Write entirely from the speaker\'s perspective at that point in time. Never call the unresolved fact a warning, signal, blind spot, or red flag, and never say the speaker failed to notice, see, know, realize, recognize, or understand something then. In the CTA, the first sentence must continue the CONCLUSION and contain no mention of a video, part, series, or challenge. The next sentence must naturally combine the follow request, exactly one use of "because," its specific reason, and the fact that this is Video 4 of 7.'
   ].join('\n');
 }
 
