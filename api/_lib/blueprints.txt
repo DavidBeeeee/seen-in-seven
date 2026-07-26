@@ -855,7 +855,22 @@ The speaker can say they dismissed, minimized, or refused the thread. They canno
 PRESENT-DAY INTERPRETATION EMBARGO:
 Show the recurring pattern through scenes, choices, responsibilities, and the way the speaker described it at the time. Do not let present-day hindsight explain what the pattern truly meant, why it qualified as expertise, what professional principle it proved, or how it became the speaker's current method or business philosophy. The audience is allowed to understand more than the speaker explains. When a sentence interprets the pattern from the mature speaker's current vantage point, replace it with evidence from the ordinary world or the refusal.
 
-PROMPTS (L2): 1) The ordinary work or life they were in before they treated this as a path, 2) The unexpected ability, responsibility, obsession, or recurring pattern other people could have valued before they did, 3) What they refused to claim, pursue, share, or take seriously and why remaining where they were felt safer or more responsible
+JOURNAL ANSWER ROUTING — MANDATORY:
+The three journal answers are not interchangeable pools of material. Give each answer a specific story job:
+1. "How did you get into this?" supplies the accidental beginning and quiet recurring thread. It belongs in the middle of the MEAT only, after the viewer understands the ordinary human life. Payment, people seeking help, early recognition, or evidence of usefulness from this answer may appear briefly here as something the speaker minimized. Never promote those details into the HOOK or OPEN LOOP.
+2. "What detour, wound, obsession, or unlikely chapter shaped the way you understand this work?" supplies the HOOK, OPEN LOOP, and beginning of the MEAT. Extract the sharpest concrete human detail from this chapter. Show the routine, pressure, responsibility, compromise, or identity the speaker considered normal. Do not let the speaker explain what this chapter taught them.
+3. "What made you dismiss this, resist taking it seriously, or assume it could never become real work?" supplies the lived refusal at the end of the MEAT and the unresolved assumption in the CONCLUSION. Show the practical choice or non-choice that followed from what they believed then. Do not correct that belief.
+
+Required section path:
+HOOK = answer 2's concrete ordinary-life detail or contradiction.
+OPEN LOOP = answer 2's familiar identity and the pressure pulling against it, without professional validation or hindsight.
+MEAT beginning = answer 2's ordinary world.
+MEAT middle = answer 1's accidental beginning as a quiet clue, not an expertise reveal.
+MEAT ending = answer 3's understandable refusal shown through behavior.
+CONCLUSION = answer 3's unresolved assumption, still believed.
+CTA = preserve the unresolved refusal and point toward the real person in Video 3 who challenges it.
+
+If answer 2 is sparse, infer a plausible ordinary scene from the life details the user supplied elsewhere. Do not solve the shortage by moving payment, clients, professional recognition, present-day work, or the meaning of answer 1 into the opening.
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -863,13 +878,15 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first. Favor a MIRROR or identity QUESTION that makes the viewer recognize their own familiar compromises, limited self-concept, or refusal. Do not turn the origin into an educational twist, hidden-expert reveal, professional manifesto, or completed transformation. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so the recognizable life dominates and the private thread remains secondary. Design the OPEN LOOP from the unresolved pressure between the familiar identity and the path the speaker could not yet imagine taking, then write the independent HOOK last as a truthful pattern interrupt.
 
 VIDEO 2, LEVEL 2: Tone = Warm ordinary-world storytelling with restrained professional tension.
-HOOK guidance: Extract a jarring, concrete contradiction or unexpected detail from the speaker's ordinary human life before professional recognition. The hook must interrupt attention without proving expertise or announcing an origin story. Do not use payment, clients, a business milestone, professional validation, the mentor, or the later meaning as the hook.
-OPEN LOOP guidance: Refer directly to the hook detail, ground it in the identity and life the speaker considered normal, and create a specific unanswered tension about why they could not imagine choosing differently. Do not explain the private thread's value or reveal the mentor, first epiphany, current work, or final professional lens.
+HOOK guidance: Build this section from journal answer 2. Extract a jarring, concrete contradiction or unexpected detail from the speaker's ordinary human life before professional recognition. The hook must interrupt attention without proving expertise or announcing an origin story. Do not use journal answer 1's payment, clients, people seeking help, business milestone, professional validation, recurring demand, the mentor, or the later meaning as the hook.
+OPEN LOOP guidance: Build this section from journal answer 2. Refer directly to the hook detail, ground it in the identity and life the speaker considered normal, and create a specific unanswered tension about why they could not imagine choosing differently. Do not mention payment, charging, clients, people repeatedly seeking their help, professional demand, or the possibility that this could become a path. Do not explain the private thread's value or reveal the mentor, first epiphany, current work, or final professional lens.
 CONCLUSION guidance: Land on the unresolved reason the speaker still could not see, claim, or trust what kept happening. Let the audience recognize the value without making the speaker explain it. Use a fresh turn rather than repeating the evidence, wording, or scene already used in the MEAT. No breakthrough, offer, method, service philosophy, mission, or present-day authority.
 CTA guidance: Continue from the unresolved refusal into a clear follow request because the next installment of the speaker's 7 Video Challenge introduces the person who challenged what they thought was true and helped the first professional epiphany begin.
 
 VIDEO 2 FINAL CHECK:
 - The hook interrupts attention with a concrete ordinary-life contradiction or human detail, not payment, clients, professional recognition, or an epiphany.
+- The hook and open loop come from the detour, wound, obsession, or unlikely ordinary-life chapter in journal answer 2, not the accidental professional-origin material in answer 1.
+- Payment, people seeking help, and evidence of usefulness appear only after the ordinary world is established in the meat, and remain secondary.
 - The meat makes the speaker recognizable before allowing the future-professional clue to appear.
 - The viewer understands the familiar life, the identity it created, and why staying there felt reasonable.
 - The refusal appears as an actual choice, delay, dismissal, or retreat rather than a statement that the speaker did not recognize their expertise.
@@ -929,7 +946,14 @@ SECTION MAP FOR VIDEO 3:
 [CONCLUSION] — The reality flip. Name the simple reframe only after the MEAT earns it. The viewer should think, "that is obvious now, why did I never say it that way?"
 [CTA] — Continue from that reframe into Video 4's road of trials. Give one clear action and one reason tied to watching the insight get tested in real life.
 
-PROMPTS (L2): 1) Conventional wisdom the speaker once accepted that proved wrong or incomplete, 2) The real person who challenged it and what that person helped the speaker notice, 3) The story of what happened when the speaker tested or witnessed that guidance, 4) What's actually true instead, 5) The cost of the old understanding and why this matters
+JOURNAL ANSWER ROUTING — MANDATORY:
+1. The conventional understanding supplies the old lens in the MEAT, not the HOOK.
+2. The real guide and their specific intervention belong in the discovery arc inside the MEAT.
+3. The concrete scene where the old lens failed supplies the HOOK, OPEN LOOP, and evidence inside the MEAT.
+4. What is actually true instead is reserved for the CONCLUSION. Do not state or paraphrase it in the HOOK or OPEN LOOP.
+5. The cost of the old understanding supports the late MEAT and CONCLUSION after the evidence earns it.
+6. Why this matters supplies emotional stakes, not a pitch or premature mature mission.
+Required path: concrete discovery evidence first, old understanding second, guide intervention and test third, first reframe in the CONCLUSION, then a CTA toward the trials. The guide cannot be omitted, and the final reframe cannot be given away before the conclusion.
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -977,7 +1001,12 @@ TONE: Capable, observant, and increasingly assured without sounding complete. Th
 
 THIS VIDEO EARNS THE RIGHT FOR VIDEO 5. Without the road of trials, the fall feels melodramatic. With it, the ordeal feels like the honest cost of the journey, and Video 6's second epiphany can feel earned.
 
-PROMPTS (L2): 1) Where they first applied the mentor-assisted professional realization, 2) The repeated or escalating situations that tested it, 3) What worked and what those wins led them to believe, 4) What unresolved pressure, blind spot, or limit remained
+JOURNAL ANSWER ROUTING — MANDATORY:
+1. The first application supplies the initial changed action.
+2. The repeated situations supply the escalating trials and may provide the HOOK or OPEN LOOP through one concrete consequence or difficult choice.
+3. What worked supplies the partial win and provisional confidence in the later MEAT.
+4. The unresolved pressure supplies the unstable edge in the CONCLUSION only as something present but not yet understood.
+Required path: a concrete test, changed action, escalating resistance, partial win, provisional confidence, then one unresolved limit. Do not let answer 4 explain or preview the Video 5 fall, and do not let the conclusion turn the partial win into the final lesson.
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -1033,7 +1062,13 @@ TONE: Stark, raw, intimate, almost uncomfortable. Words chosen carefully. No rea
 
 LEVEL 2 SPECIFIC: A completed failure in the speaker's work, craft, calling, leadership, credibility, path into the field, or application of what they know. It must work for an aspiring expert as well as an established professional, and it must not collapse into imposter syndrome, hypothetical judgment, fear of visibility, or the cost of staying small.
 
-PROMPTS (L2): 1) The failure or period when they thought their work, calling, path, or future might never recover, 2) The moment they realized it was more than an ordinary setback, 3) What they did, avoided, ignored, overestimated, or got wrong that made it their fault, 4) What they believed might be permanently over, 5) What they tried afterward that failed and what they believed at the lowest point
+JOURNAL ANSWER ROUTING — MANDATORY:
+1. The larger failure or period establishes the ordeal inside the MEAT.
+2. The concrete moment when its seriousness became undeniable supplies the HOOK and the collapse scene.
+3. The speaker's consequential choice, avoidance, or mistake supplies the causal OPEN LOOP, escalation, and ownership.
+4. What seemed permanently over supplies the apparent permanent loss.
+5. The failed recovery supplies the final descent and lowest point.
+Required path: unmistakable evidence of collapse, unanswered causation, false confidence, owned choice and escalation, apparent permanent loss, failed recovery, then a CONCLUSION inside the lowest point. Do not use any answer to imply recovery, meaning, gratitude, redemption, or what the failure eventually taught.
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -1094,7 +1129,13 @@ SECTION MAP FOR VIDEO 6:
 [CONCLUSION] — The elixir. State the simple professional truth after the MEAT earns it. It should feel useful and hard-won, not like a generic take.
 [CTA] — Continue from the elixir into Video 7's return. Give one clear action and one reason tied to seeing what changes now.
 
-PROMPTS (L2): 1) The larger professional truth the fall made impossible to ignore, 2) How that truth became clear through the aftermath or rebuilding, 3) How it deepens or corrects the first epiphany, 4) What changed in their work or decisions, 5) Who needs this lens and what it could help them recognize
+JOURNAL ANSWER ROUTING — MANDATORY:
+1. The larger truth is the CONCLUSION destination. Reserve it until the fall and aftermath earn it.
+2. The aftermath or rebuilding supplies the HOOK, OPEN LOOP, and causal discovery evidence in the MEAT.
+3. The relationship to the first epiphany belongs late in the MEAT, where the old lens reaches its limit.
+4. The changed work or decisions supplies observable proof after the deeper truth becomes clear.
+5. The person who needs the lens supplies the viewer transfer after the truth lands, without becoming an offer or pitch.
+Required path: concrete aftermath evidence, unanswered limit in the first epiphany, rebuilding logic, deeper correction, useful viewer lens, then the elixir in the CONCLUSION. Never state, paraphrase, or advertise answer 1 in the HOOK or OPEN LOOP.
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -1144,7 +1185,13 @@ SECTION MAP FOR VIDEO 7:
 
 CRITICAL FOR L2: The speaker names what remains unfinished or what they still need without turning the admission into a funnel setup. The gap keeps them human and makes the continuing relationship believable. It must not erase the authority they earned or become an invitation to rescue them.
 
-PROMPTS (L2): 1) Who they were before both professional epiphanies and the fall, 2) Who they are now in relation to their expertise and audience, 3) What remains unfinished or still needed, 4) What telling the story clarified about their work and the people they understand, 5) What perspective or mission they are carrying forward and why the right viewer should stay
+JOURNAL ANSWER ROUTING — MANDATORY:
+1. The earlier self supplies one specific full-circle callback, not a recap of Video 1 or Video 2.
+2. The present self supplies the HOOK through one observable action or choice and supplies proof of change in the MEAT.
+3. What remains unfinished supplies the honest remainder near the end.
+4. What telling the story clarified supplies one connected correction, not a summary of seven episodes.
+5. What continues supplies the professional gift, relational horizon, and reason to follow. It must remain a relationship invitation rather than an offer.
+Required path: present-day evidence, one callback, one connected correction across the arc, observable ownership, honest remainder, useful gift, and a relational CTA. Do not march through the seven videos, turn the mission into a sales pitch, or use the CTA to announce a product, service, or next installment.
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
