@@ -420,6 +420,20 @@ function publishedPrompt() {
     'A passing script may be surprising, unresolved, opinionated, or structurally sharp. Do not smooth away an intentional twist or force every section into one prose rhythm.'
   ].join('\n');
 
+  const MECHANICAL_REPAIR_SYSTEM = [
+    'You are the final mechanical copy editor for a five-section spoken script.',
+    'Return JSON only. Do not wrap it in markdown.',
+    'Use this exact shape: {"pass":false,"issues":[],"replacements":{"SECTION":"replacement spoken text"}}.',
+    'Replace every section named in the supplied deterministic failures and no other section.',
+    'Preserve the section\'s facts, meaning, voice, stage, and story function. This is cleanup, not a new creative draft.',
+    'Satisfy every supplied failure literally. Before returning, re-read each replacement and verify the same problem does not remain in a different form.',
+    'For false balance, state the chosen point directly. Do not replace one negation-and-correction construction with another.',
+    'For banned language, remove every occurrence and use a natural alternative.',
+    'For OPEN LOOP length, keep it between 35 and 45 words and never exceed 50.',
+    'For CTA continuity, keep the conclusion bridge first, then put the follow action, exactly one "because," its specific reason, and the seven-part orientation together naturally.',
+    'Return spoken text only inside each replacement value. Do not include section labels in replacement text.'
+  ].join('\n');
+
   function videoOneDeclarationFromContext(userMessage) {
     const match = String(userMessage || '').match(/^(?:\d+\.\s+)?OPENING DECLARATION(?: \(read-only(?:;[^)]*)?\))?:\s*(.+)$/mi);
     return match ? match[1].trim() : '';
@@ -503,6 +517,44 @@ function publishedPrompt() {
     return composeSections(sections);
   }
 
+  function mechanicalRepairMessage(script, validation, onlySection = '') {
+    const sectionIssues = validation && validation.sectionIssues || {};
+    const failingSections = Object.keys(sectionIssues)
+      .filter(section => !onlySection || section === onlySection);
+    return [
+      'FAILING SECTIONS: ' + failingSections.join(', '),
+      '',
+      'DETERMINISTIC FAILURES:',
+      failingSections.map(section => '[' + section + '] ' + sectionIssues[section].join(' ')).join('\n'),
+      '',
+      'CURRENT SCRIPT:',
+      String(script || '').trim()
+    ].join('\n');
+  }
+
+  async function applyFinalMechanicalRepair(config) {
+    let script = String(config.script || '').trim();
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const validation = validateOutput(script, config.video, config.level);
+      const remaining = config.onlySection
+        ? validation.sectionIssues && validation.sectionIssues[config.onlySection] || []
+        : validation.issues || [];
+      if (!remaining.length) return script;
+      const repairRaw = await config.callModel(
+        MECHANICAL_REPAIR_SYSTEM,
+        mechanicalRepairMessage(script, validation, config.onlySection),
+        0.05
+      );
+      const repair = parseQualityReview(repairRaw);
+      if (!repair || !Object.keys(repair.replacements).length) break;
+      const replacements = config.onlySection
+        ? { [config.onlySection]: repair.replacements[config.onlySection] }
+        : repair.replacements;
+      script = applySectionReplacements(script, replacements);
+    }
+    return script;
+  }
+
   async function reviewAndRepairScript(config) {
     let script = String(config.script || '').trim();
     let unresolvedSemanticFailure = false;
@@ -537,6 +589,7 @@ function publishedPrompt() {
         unresolvedSemanticFailure = true;
       }
     }
+    script = await applyFinalMechanicalRepair({ ...config, script });
     const finalValidation = validateOutput(script, config.video, config.level);
     // The story editor is intentionally allowed to flag a broad concern without
     // rewriting a section. When every concrete quality check passes, do not
@@ -589,6 +642,7 @@ function publishedPrompt() {
         unresolvedSemanticFailure = true;
       }
     }
+    script = await applyFinalMechanicalRepair({ ...config, script, onlySection: section });
     const finalValidation = validateOutput(script, config.video, config.level);
     const remaining = finalValidation.sectionIssues && finalValidation.sectionIssues[section] || [];
     if (!remaining.length && !unresolvedSemanticFailure) return parseSections(script)[section];
