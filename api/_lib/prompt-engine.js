@@ -190,9 +190,6 @@ function publishedPrompt() {
     if (/\bnot because\b/i.test(normalized)) {
       issues.push('Remove the false-balance setup built around "not because." State the real cause directly through the story.');
     }
-    if (/\b(?:am|is|are|was|were|do|does|did|can|could|will|would|should|have|has|had)(?:n['’]t|\s+not)\s+([a-z][a-z'’-]+)\b[^.!?]{0,140}[.!?]\s+[^.!?]{0,100}\b\1\b/i.test(normalized)) {
-      issues.push('Remove the two-sentence false balance that negates one idea and then repeats the same action or quality as the correction.');
-    }
     if (/\b(?:isn't|is not|wasn't|was not)\s+[^.!?]{1,120}?,\s*(?:it|this|that)(?:'s| is| was)\b/i.test(normalized)) {
       issues.push('Remove the false-balance construction "it is not X, it is Y" and state the actual point directly.');
     }

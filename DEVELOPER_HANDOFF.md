@@ -734,3 +734,8 @@ The following principles govern every word of copy in this app and the broader C
 - The framework behind the 7 videos is described publicly as "scientifically, sociologically, and historically proven." Never use: framework, psychological architecture, Hero's Journey, or algorithm in public-facing copy.
 - The hook and open loop have separate jobs. The hook is a truthful pattern interrupt that captures attention before the viewer cares. The open loop converts that attention into one specific unanswered question that the conclusion later pays off. Never merge them or remove either one.
 - If it sounds like David, it stays. Loose, conversational, and playful language is correct, not a mistake.
+## 2026-07-26: False-balance generation loop repair
+
+- Removed one overbroad deterministic voice check that treated any negated word repeated in the following sentence as false balance. It could reject legitimate epiphany contrast or evidence, then keep rejecting the repair for using the same subject word.
+- Kept the precise deterministic bans for actual canned false-balance constructions, including `not because`, `it is not X, it is Y`, `you are not X, you are Y`, repeated `the point is not...the point is...`, and mirrored correction patterns.
+- The semantic story reviewer still rejects false balance by meaning. The deterministic layer now blocks only shapes it can identify reliably.
