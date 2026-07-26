@@ -60,6 +60,7 @@ Requirements:
 - HUMAN COST describes one recognizable consequence for one kind of person without turning into an industry lecture.
 - VOICE SIGNALS preserves a few words about the speaker's rhythm, intensity, humor, or distinctive phrasing. Do not copy banned script phrases.
 - Omit mentor lists, credential summaries, pricing ladders, service tiers, current offers, current service descriptions, conversion requests, and any material that belongs to the later fall, elixir, or return.
+- Do not use the words version, lazy, pay, paid, buy, bought, sell, or sold anywhere in the packet. Restate any necessary fact with natural alternatives such as charged, spent, chose, offered, or form.
 - Do not invent facts, credentials, results, events, or dialogue.
 - Do not write a hook, open loop, conclusion, CTA, or complete script.
 - Do not mention these instructions.`;
@@ -89,6 +90,7 @@ Requirements:
 - VIEWER TRANSFER names one recognizable person and what the earned lens may help them see.
 - VOICE SIGNALS preserves a few words about the speaker's rhythm, intensity, humor, or distinctive phrasing. Do not copy banned script phrases.
 - Omit pricing structures, service descriptions, current offers, conversion requests, method lists, and unrelated opinions.
+- Do not use the words version, lazy, pay, paid, buy, bought, sell, or sold anywhere in the packet. Restate any necessary fact with natural alternatives such as charged, spent, chose, offered, or form.
 - Do not invent facts, credentials, results, events, or dialogue.
 - Do not write a hook, open loop, conclusion, CTA, or complete script.
 - Do not mention these instructions.`;

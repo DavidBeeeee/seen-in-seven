@@ -48,15 +48,30 @@ export default async function handler(req, res) {
     const preparedUserMessage = level === 2 && (video === 3 || video === 6)
       ? await prepareLevelTwoEpiphanyMaterial(userMessage, video)
       : userMessage;
-    const rawContent = await callModel(systemPrompt, preparedUserMessage, temperature);
-    const content = await reviewAndRepairScript({
-      script: rawContent,
-      systemPrompt,
-      userMessage: preparedUserMessage,
-      level,
-      video,
-      callModel
-    });
+    let rawContent = '';
+    let content = '';
+    let lastError;
+    for (let attempt = 0; attempt < 2; attempt++) {
+      const retryNote = attempt
+        ? '\n\nA previous test draft did not pass the final story check. Write a genuinely fresh complete script that fixes every mechanical issue as well as the story architecture. Keep the OPEN LOOP under 50 words, keep the CTA bridge, follow action, exactly one "because," reason, and seven-part orientation together, and avoid every banned word. Return only the five labeled sections.\n\nEXACT FEEDBACK FROM THE PREVIOUS DRAFT:\n' + String(lastError && lastError.message || '')
+        : '';
+      try {
+        rawContent = await callModel(systemPrompt, preparedUserMessage + retryNote, attempt ? 0.45 : temperature);
+        content = await reviewAndRepairScript({
+          script: rawContent,
+          systemPrompt,
+          userMessage: preparedUserMessage + retryNote,
+          level,
+          video,
+          callModel
+        });
+        break;
+      } catch (error) {
+        lastError = error;
+        const canRetry = /story review found an issue|script response still needs correction/i.test(String(error && error.message || ''));
+        if (!canRetry || attempt === 1) throw error;
+      }
+    }
     return json(res, 200, { rawContent, content });
   } catch (error) {
     return json(res, 500, { error: error.message || 'Test generation failed.' });
