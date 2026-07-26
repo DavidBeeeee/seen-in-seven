@@ -302,6 +302,14 @@ function hasRouterHeadings(packet, headings) {
   return headings.every(heading => packet.includes(heading + ':'));
 }
 
+function cleanPacketOutput(value) {
+  return String(value || '')
+    .trim()
+    .replace(/^```(?:text|markdown)?\s*/i, '')
+    .replace(/\s*```$/, '')
+    .trim();
+}
+
 export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
   const number = Number(video);
   if (number !== 3 && number !== 6) return String(userContext || '').trim();
@@ -315,14 +323,32 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
   if (!routedPacket || !hasRouterHeadings(routedPacket, headings)) {
     throw new Error('The epiphany story material could not be prepared cleanly. Please try again.');
   }
-  const cleaned = await callModel(
-    L2_EPIPHANY_PACKET_CLEANUP_SYSTEM,
-    'VIDEO: ' + number + '\n\nPACKET TO CLEAN:\n' + routedPacket,
-    0.05,
-    1200
-  );
-  const packet = String(cleaned || '').trim();
-  if (!packet || !hasRouterHeadings(packet, headings)) {
+  let packet = '';
+  let malformed = '';
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const cleanupMessage = [
+      'VIDEO: ' + number,
+      '',
+      'REQUIRED HEADINGS IN THIS EXACT ORDER:',
+      headings.map(heading => heading + ':').join('\n'),
+      '',
+      attempt
+        ? 'The previous cleanup omitted or renamed a required heading. Include every required heading exactly, even when its value must say "Not supplied." Do not add or rename headings.'
+        : '',
+      malformed ? '\nMALFORMED CLEANUP TO CORRECT:\n' + malformed : '',
+      '',
+      'PACKET TO CLEAN:',
+      routedPacket
+    ].filter(Boolean).join('\n');
+    const cleaned = await callModel(L2_EPIPHANY_PACKET_CLEANUP_SYSTEM, cleanupMessage, 0.05, 1200);
+    const candidate = cleanPacketOutput(cleaned);
+    if (candidate && hasRouterHeadings(candidate, headings)) {
+      packet = candidate;
+      break;
+    }
+    malformed = candidate;
+  }
+  if (!packet) {
     throw new Error('The epiphany story material could not be cleaned safely. Please try again.');
   }
   return [
