@@ -518,6 +518,7 @@ The app has 21 screens, all `<div class="screen">` elements that are direct chil
 - False balance includes one-sentence formulas, causal pivots such as `not because`, and adjacent sentences that negate and then repeat the same verb as the correction.
 - Cross-section validation rejects any repeated phrase of eight or more consecutive words and assigns the repair to the later section.
 - Level 2 Video 2 has a present-day interpretation embargo: evidence can reveal the unclaimed ability, but the speaker cannot explain its mature meaning or connect it to a current method or business philosophy. Its conclusion must preserve the unresolved reason the speaker could not yet recognize the path.
+- Level 2 Video 2 Extended Mode uses three natural journal prompts: the unpolished origin of how the speaker came to know what they know, the detour/wound/obsession/unlikely chapter that shaped their relationship with the work, and what made them dismiss or resist taking it seriously. These prompts gather rich life material without exposing the private story architecture. Easy Mode remains unchanged pending a separate review.
 
 **Version model:**
 - Script is saved to DB on first generation (`queueScriptSave`)
