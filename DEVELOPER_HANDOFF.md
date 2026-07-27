@@ -833,3 +833,12 @@ The following principles govern every word of copy in this app and the broader C
 - Local points use `ever_locked_v*`, populated from `locked_at`, so deleting or unlocking a script does not remove earned lock credit.
 - `scripts/check-lock-state.mjs` guards the migration, deletion, unlock, restore, rendering, and historical-points boundaries.
 - Script asset queries are `active-lock-1` for `supabase.js`, `points.js`, and `app.js`.
+
+## 2026-07-27: CTA grammatical hinge and specific conditional bridges
+
+- Replaced the old mandatory two-sentence CTA template, which structurally created an isolated bridge sentence followed by a detached follow command.
+- Every CTA now carries one concrete element from the Conclusion through a conjunction, relative clause, or subordinating clause into the follow request without a full stop. The bridge, follow action, seven-video orientation, exactly one `because`, and specific reason remain one connected spoken movement.
+- Conditional viewer-recognition bridges remain available when they name the exact situation, consequence, or emotion created by the current story. Generic approval tests such as `if that landed`, `if this resonates`, or interchangeable validation language remain prohibited.
+- Added `somebody` to the canonical machine-readable banned-term list. The writer and validator must replace it with a specific role or relationship supported by the story rather than another vague placeholder.
+- Deterministic CTA validation now rejects a period, question mark, or exclamation point between the CTA bridge and follow request. Regression coverage confirms that a connected hinge passes and the former period-plus-command structure fails.
+- This change deliberately did not alter Open Loop construction. Payoff leakage remains the next architecture issue to resolve separately.

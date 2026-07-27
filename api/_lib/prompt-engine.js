@@ -342,15 +342,19 @@ function publishedPrompt() {
       addIssue('OPEN LOOP', 'OPEN LOOP uses vague suspense instead of one named unanswered relationship, contradiction, cause, or question.');
     }
     const cta = String(sections.CTA || '').trim();
-    const firstCtaSentence = (cta.match(/^\s*[\s\S]*?[.!?](?:\s|$)/) || [cta])[0];
-    if (/\b(?:video|part|series|challenge)\b/i.test(firstCtaSentence)) {
-      addIssue('CTA', 'CTA puts series context in its bridge sentence. Keep the first sentence connected only to the CONCLUSION; put the 7 Video Challenge orientation with the follow request and reason afterward.');
-    }
     if (/^(?:this|that(?:'s| is)|video|part)\s+(?:is\s+)?(?:video\s+)?(?:\w+|\d+)\s+(?:of|in)\s+(?:seven|7)\b/i.test(cta)) {
       addIssue('CTA', 'CTA begins with a series label instead of bridging from the CONCLUSION.');
     }
-    if (!/\bfollow(?:\s+me|\s+along|\s+for)?\b/i.test(cta)) {
+    const followMatch = cta.match(/\bfollow(?:\s+me|\s+along|\s+for)?\b/i);
+    if (!followMatch) {
       addIssue('CTA', 'CTA must make follow the explicit primary action. Comments, DMs, shares, bookings, and navigation cannot replace it.');
+    } else {
+      const bridge = cta.slice(0, followMatch.index).trim();
+      if (!bridge) {
+        addIssue('CTA', 'CTA begins with the follow command instead of carrying a concrete idea from the CONCLUSION into it.');
+      } else if (/[.!?](?:["']?\s|$)/.test(bridge)) {
+        addIssue('CTA', 'CTA ends its bridge before the follow request. Connect the concrete CONCLUSION bridge and follow command in one sentence with a natural grammatical hinge.');
+      }
     }
     const becauseCount = (cta.match(/\bbecause\b/gi) || []).length;
     if (becauseCount !== 1) {
@@ -524,7 +528,7 @@ function publishedPrompt() {
     'For Level 2 Video 5, enforce only the chapter\'s hard boundaries. Require one real event or gradual collapse that the speaker experienced as an objective loss or symbolic professional death, one precise consequential choice they own, and one attempted recovery that still left something broken. A calling, judgment, identity, confidence, path, or belief in the value of the work may qualify; do not demand bankruptcy, public disgrace, harmed dependents, or one cinematic event. Reject a script only when it has no actual defeat, no owned contribution, no failed way back, or when it reveals recovery, reassurance, a lesson, mature diagnosis, authority, silver lining, or Video 6 truth. Do not fail a script merely because the loss is internal, gradual, commercially specific, morally complicated, unusually phrased, or less dramatic than another person\'s hardship. The HOOK remains a pure pattern interrupt and the OPEN LOOP remains one pressing unfinished meaning; neither receives a mandatory summary or causation format.',
     'For Level 2 Video 6, ground the Epiphany in the specific fall and its aftermath without stating the elixir early. Require an explicit causal chain: Video 3 supplied a useful first lens; Video 5 produced evidence that lens could not explain; aftermath evidence intensifies the cognitive dissonance; changed behavior supports the deeper truth; and the CONCLUSION resolves the exact Open Loop with one complete carryable professional elixir. Reject an unrelated industry opinion, a repetition of Video 3, generic wisdom that did not require the fall, a pre-existing business philosophy, a method list, service description, pricing structure, or pitch.',
     'For Level 2 Video 7, leave the HOOK to the global Hook Studio with no required present-day action or return beat. Inside the story, use only one full-circle callback and one connected correction, and reject episode-by-episode recap. Keep the unfinished element honest and the continuing mission relational rather than commercial.',
-    'Judge meaning, not just formatting. The Hook is an independent attention event outside the journey and chronological story; it does not need to transition into the Open Loop or communicate a story beat. It may use rhetorical exaggeration or provocative framing that is defensible in the speaker\'s voice, but it cannot invent a personal event, credential, measurable result, or quotation, and it cannot perform the Open Loop, Meat, Conclusion, or CTA\'s job. The Open Loop must independently create one concrete unanswered relationship from the completed story and must not explain the Hook or reveal or paraphrase the Conclusion. The Meat must tell the local story in connected spoken logic without repeating the Open Loop or Conclusion. The Conclusion must create an earned turn rather than recap. The CTA must bridge from that turn, make follow the primary action, use because once for a specific reason, and orient a cold viewer inside the seven-part journey.',
+    'Judge meaning, not just formatting. The Hook is an independent attention event outside the journey and chronological story; it does not need to transition into the Open Loop or communicate a story beat. It may use rhetorical exaggeration or provocative framing that is defensible in the speaker\'s voice, but it cannot invent a personal event, credential, measurable result, or quotation, and it cannot perform the Open Loop, Meat, Conclusion, or CTA\'s job. The Open Loop must independently create one concrete unanswered relationship from the completed story and must not explain the Hook or reveal or paraphrase the Conclusion. The Meat must tell the local story in connected spoken logic without repeating the Open Loop or Conclusion. The Conclusion must create an earned turn rather than recap. The CTA must carry a concrete element from that turn through a natural grammatical hinge into the follow request without a full stop, make follow the primary action, use because once for a specific reason, and orient a cold viewer inside the seven-part journey. Conditional bridges are valid only when they name a precise situation, consequence, or emotion from this story; reject generic approval tests.',
     'Treat the conclusion central meaning as reserved. Earlier sections may contain evidence for it but cannot explain, summarize, or paraphrase it. Reject scripts that spend the conclusion repeating a meaning already given away.',
     'Honor the focused composition rule. Apply sentence-level continuity only inside MEAT. Treat OPEN LOOP as an independent retention device, CONCLUSION and CTA as one closing unit, and HOOK as a final independent attention layer outside story-fact ownership. Every retained story fact has one primary section among OPEN LOOP, MEAT, CONCLUSION, and CTA. If a later story section repeats or paraphrases an earlier fact instead of adding a consequence, escalation, contradiction, interpretation, decision, or relational progression, replace only that later duplicate. Do not force the Hook into this information sequence, mistake necessary subject clarity for repetition, or solve repetition by merely changing repeated nouns.',
     'Allow only one governing metaphor family per script and normally no more than two meaningful uses of it. Reject competing image systems such as maps mixed with floors, bridges, mountains, roads, or ladders. Preserve literal details even when they happen to name a physical object.',
@@ -546,7 +550,7 @@ function publishedPrompt() {
     'For banned language, remove every occurrence and use a specific natural alternative. Never replace a vague banned noun with another vague placeholder.',
     'Preserve intentional bluntness, profanity, controversy, dark facts, and emotional force while repairing mechanics. Do not sanitize the speaker.',
     'For OPEN LOOP length, keep it between 35 and 45 words and never exceed 50.',
-    'For CTA continuity, keep the conclusion bridge first, then put the follow action, exactly one "because," its specific reason, and the seven-part orientation together naturally.',
+    'For CTA continuity, carry the concrete conclusion bridge through a conjunction, relative clause, or subordinating clause into the follow action without a full stop. Keep the bridge, follow action, exactly one "because," its specific reason, and the seven-part orientation in one connected sentence.',
     'Return spoken text only inside each replacement value. Do not include section labels in replacement text.'
   ].join('\n');
 

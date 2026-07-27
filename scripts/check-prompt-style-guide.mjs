@@ -9,6 +9,7 @@ import {
   parseSections,
   publishedPrompt,
   reviewAndRepairScript,
+  validateOutput,
   validateBlueprintSource
 } from '../api/_lib/prompt-engine.js';
 import { regenerationMessage } from '../api/generate.js';
@@ -82,6 +83,7 @@ const bannedTerms = extractBannedScriptTerms(focusedPrompt);
   'payments',
   'purchased',
   'anyone',
+  'somebody',
   'most people'
 ].forEach(term => {
   assert(bannedTerms.includes(term), 'Canonical list is missing "' + term + '".');
@@ -92,6 +94,7 @@ const bannedTerms = extractBannedScriptTerms(focusedPrompt);
   'I had nothing left to prove.',
   'I kept selling the same offer.',
   'Someone paid me for the answer.',
+  'Somebody messaged me after reading the comment.',
   'I could tell the message landed with her.',
   'I finally shipped the product.'
 ].forEach(sample => {
@@ -145,7 +148,22 @@ I had spent years handling difficult conversations without rehearsing every sent
 I could survive being recorded. Letting the recording remain visible was the part I kept refusing.
 
 [CTA]
-That refusal followed me longer than the recording did. Follow because this is Video 2 of my 7 Video Challenge, and the next chapter reveals the belief that kept choosing silence for me.`;
+The refusal followed me longer than the recording did, so follow because this is Video 2 of my 7 Video Challenge, and the next chapter reveals the belief that kept choosing silence for me.`;
+
+const connectedCtaValidation = validateOutput(validFreshScript, 2, 1, '', focusedPrompt);
+assert(
+  !(connectedCtaValidation.sectionIssues.CTA || []).some(issue => /bridge|hinge|follow request/i.test(issue)),
+  'A grammatically connected CTA bridge was rejected.'
+);
+const brokenCtaScript = validFreshScript.replace(
+  'The refusal followed me longer than the recording did, so follow because',
+  'The refusal followed me longer than the recording did. Follow because'
+);
+const brokenCtaValidation = validateOutput(brokenCtaScript, 2, 1, '', focusedPrompt);
+assert(
+  (brokenCtaValidation.sectionIssues.CTA || []).some(issue => /ends its bridge|grammatical hinge/i.test(issue)),
+  'A CTA with a full stop between its bridge and follow command passed validation.'
+);
 const flawedFreshDraft = validFreshScript.replace(
   'I had spent years handling difficult conversations without rehearsing every sentence.',
   'I had nothing useful to say during difficult conversations.'
