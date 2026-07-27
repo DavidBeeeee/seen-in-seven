@@ -634,9 +634,8 @@ function publishedPrompt() {
 
   function parseOpenLoopWriterResult(text) {
     const parsed = cleanJsonObject(text);
-    return parsed && typeof parsed.open_loop === 'string'
-      ? stripSectionLabels(parsed.open_loop)
-      : '';
+    if (parsed && typeof parsed.open_loop === 'string') return stripSectionLabels(parsed.open_loop);
+    return stripSectionLabels(text);
   }
 
   function openLoopWriterMessage(config, contract, correction = '') {
@@ -702,6 +701,7 @@ function publishedPrompt() {
     if (!contract) throw new Error('The Open Loop architecture could not be prepared cleanly. Please try again.');
 
     let correction = '';
+    let lastOpenLoop = '';
     for (let attempt = 0; attempt < 2; attempt++) {
       const raw = await config.callModel(
         OPEN_LOOP_WRITER_SYSTEM,
@@ -714,11 +714,19 @@ function publishedPrompt() {
         correction = 'Return one nonempty open_loop value in the exact JSON shape.';
         continue;
       }
+      lastOpenLoop = openLoop;
       const issues = openLoopValidationIssues(config, openLoop);
       if (!issues.length) return openLoop;
       correction = issues.join(' ');
+      console.warn('[SeenInSeven Open Loop cleanup]', JSON.stringify({
+        level:Number(config.level || 1),
+        video:Number(config.video || 1),
+        attempt:attempt + 1,
+        issues
+      }));
     }
-    throw new Error('The final Open Loop could not be written cleanly from its Zeigarnik contract. Please try again.');
+    if (lastOpenLoop) return lastOpenLoop;
+    throw new Error('The Open Loop Writer returned no usable text. Please try again.');
   }
 
   async function finalizeScriptOpenLoop(config) {

@@ -296,6 +296,38 @@ assert(parseSections(openLoopStudioResult).MEAT === parseSections(payoffScript).
 assert(parseSections(openLoopStudioResult).CONCLUSION === parseSections(payoffScript).CONCLUSION, 'Open Loop Studio changed the Conclusion.');
 assert(parseSections(openLoopStudioResult).CTA === parseSections(payoffScript).CTA, 'Open Loop Studio changed the CTA.');
 
+const imperfectRetentionGap = 'Three likes looked final, while the quiet work still left me wondering whether visible reaction measured its real reach.';
+let imperfectWriterCalls = 0;
+const imperfectOpenLoopResult = await finalizeScriptOpenLoop({
+  script: payoffScript,
+  systemPrompt: buildSystemPrompt(published.prompt, 1, 4),
+  userMessage: 'Use the same supported story facts.',
+  level: 1,
+  video: 4,
+  callModel: async system => {
+    if (system === OPEN_LOOP_ARCHITECT_SYSTEM) {
+      return JSON.stringify({
+        answer_kind: 'EVENT',
+        retention_question: 'Could quiet useful work matter beyond visible reaction?',
+        conclusion_answer: 'A private response shows that one reader was helped.',
+        meat_boundary: 'Stop before evidence that the work reached a reader.',
+        known_before_payoff: 'The public reaction looked discouraging.',
+        quarantined_details: ['direct message']
+      });
+    }
+    if (system === OPEN_LOOP_WRITER_SYSTEM) {
+      imperfectWriterCalls += 1;
+      return imperfectRetentionGap;
+    }
+    throw new Error('Unexpected imperfect Open Loop test call.');
+  }
+});
+assert(imperfectWriterCalls === 2, 'Open Loop Writer did not receive one focused cleanup attempt.');
+assert(
+  parseSections(imperfectOpenLoopResult)['OPEN LOOP'] === imperfectRetentionGap,
+  'A nonempty Open Loop was discarded after its focused cleanup attempt.'
+);
+
 const hookStudioCalls = [];
 const hookStudioResult = await finalizeScriptHook({
   script: openLoopStudioResult,

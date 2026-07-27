@@ -874,3 +874,11 @@ The following principles govern every word of copy in this app and the broader C
 - The Writer receives the contract, Meat, and Conclusion. It writes one 25-to-50-word Open Loop directly from `retention_question` and `known_before_payoff`, stops at `meat_boundary`, and withholds `conclusion_answer` and every quarantined detail.
 - There is no semantic pass/fail judge after writing. Existing deterministic format, banned-language, length, stage, and repetition checks may request one targeted mechanical rewrite, but they do not choose among competing story interpretations.
 - Regression coverage verifies that the Open Loop draft remains withheld, the Writer receives the exact approved retention question and Meat boundary, and only Open Loop changes during installation.
+
+## 2026-07-27: Open Loop cleanup made non-blocking
+
+- Production logs after the contract-first deployment showed that the Architect succeeded, but both Writer attempts were still converted into a 500 response when the old deterministic cleanup checks disliked the resulting prose.
+- The Writer now receives at most one focused cleanup request. When the second nonempty Open Loop still has a mechanical or style imperfection, the app returns that written section instead of discarding the entire script.
+- JSON remains the preferred Writer response, but plain spoken text is now accepted as a resilient fallback.
+- Mechanical cleanup issues are logged with level, video, attempt, and issue descriptions without logging user answers or script content.
+- The only remaining hard failure at this stage is an empty Writer response after both attempts. Regression coverage confirms that a nonempty Open Loop survives an unsuccessful cleanup pass.
