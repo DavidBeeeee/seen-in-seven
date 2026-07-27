@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "check:prompt-style": "node scripts/check-prompt-style-guide.mjs",
+    "check:story-architecture": "node scripts/check-story-architecture.mjs",
     "check:lock-state": "node scripts/check-lock-state.mjs",
-    "test": "npm run check:prompt-style && npm run check:lock-state"
+    "test": "npm run check:prompt-style && npm run check:story-architecture && npm run check:lock-state"
   }
 }

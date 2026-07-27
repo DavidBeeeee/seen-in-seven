@@ -7,7 +7,7 @@ const PROMPT_QUESTION_CATALOG = {
       {"label":"What is one thing you used to think was true that is not true?","hint":"Explain how it shaped you, what made you question it, and why the old way of thinking matters.","key":"easyAnswer_v2"},
       {"label":"After your first realization, what did you do differently and what happened when real life tested it?","hint":"Describe the actions you changed, the situations that challenged you, what began working, what that success made you believe, and what still felt unresolved.","key":"easyAnswer_v3"},
       {"label":"In the part of your life you have been discussing, what failure, loss, or period was so devastating that you thought it might ruin you or that you might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?","hint":"Tell us what collapsed, what you believed might be gone forever, and why you could not see a way back. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.","key":"easyAnswer_v4"},
-      {"label":"What larger truth did you discover because you lived through that difficult experience?","hint":"Describe how you discovered it, what it changed in you, and who else may need to understand it.","key":"easyAnswer_v5"},
+      {"label":"What larger truth did you discover only because you lived through that difficult experience?","hint":"Describe what happened afterward that made it clear, what you changed because of it, and who may need the perspective you earned. It does not have to connect to your first realization.","key":"easyAnswer_v5"},
       {"label":"Who were you before these realizations, and who are you now?","hint":"Describe what changed, what remains unfinished, what telling the story helped you understand, and where you go next.","key":"easyAnswer_v6"}
     ],
     "l2": [
@@ -16,7 +16,7 @@ const PROMPT_QUESTION_CATALOG = {
       {"label":"What is one idea you used to accept about your work that you now strongly disagree with? Why did it make sense to you at the time, and what made the old idea stop fitting what you saw?","hint":"Tell it like a journal entry. Include one concrete moment and who still pays the cost of the old idea. You do not need to explain the final lesson.","key":"easyAnswer_v2"},
       {"label":"After that first change in how you saw things, what did you do differently before you knew whether it would work?","hint":"Tell it like a journal entry. What made the old way tempting to return to, what did you choose anyway, and what small but meaningful result made continuing feel possible?","key":"easyAnswer_v3"},
       {"label":"What is the worst failure in this part of your work or life, and what made you wonder whether you or what you were building would ever recover?","hint":"Tell it as one honest journal entry. What happened, what part was your fault, what did you believe was gone for good, and what did you try afterward that still failed? End with what you believed at the lowest point, before the comeback or lesson.","key":"easyAnswer_v4"},
-      {"label":"After the hardest experience, what became clear that your first realization could not explain?","hint":"Describe the aftermath evidence that brought it into focus, one observable thing you changed afterward, and who might need the perspective you earned. Keep it connected to what actually happened.","key":"easyAnswer_v5"},
+      {"label":"After the hardest experience, what became clear that you could not have understood before living through it?","hint":"Describe the aftermath evidence that brought it into focus, one observable change you made afterward, and who might need the perspective you earned. It may connect to your first realization, but it does not have to.","key":"easyAnswer_v5"},
       {"label":"Who were you before the two professional realizations and the hardest part of the story, and who are you now in relation to your expertise and the people you want to reach?","hint":"Describe what genuinely changed, what remains unfinished or still needed, what telling the story clarified about your work, and what perspective or mission you want the right viewer to keep following.","key":"easyAnswer_v6"}
     ]
   },
@@ -67,13 +67,15 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "What I See Differently Now",
-      "note": "Share the larger realization you discovered because you lived through the hardest part of your story. This should deepen the first realization, not repeat it.",
+      "note": "Share the hard-won realization you discovered because you lived through the hardest part of your story. It may connect to the first realization, but it does not have to. It must grow from the ordeal rather than repeat an earlier lesson or introduce a separate opinion.",
       "prompts": [
-        {"label":"What is the biggest thing you eventually understood because you lived through the difficult experience you just described?","hint":"Choose something you could not have fully understood before living through it. Say it in your own words.","key":"v5p0","placeholder":"Describe the larger truth the difficult experience taught you."},
-        {"label":"How did you come to understand that? Was there a moment when it became clear, or did you recognize it gradually?","hint":"Describe the experience, evidence, conversation, consequence, or repeated pattern that brought the deeper truth into focus.","key":"v5p1","placeholder":"Describe how the larger realization became clear."},
-        {"label":"How did this larger realization change the way you understand your first realization or the person you were before it?","hint":"What became deeper, more complete, or different after the hard experience?","key":"v5p2","placeholder":"Describe how the second realization changed your understanding of the first."},
-        {"label":"What changed in who you became, the choices you made, or the way you live because you understood this?","hint":"Describe real consequences in your life. The change can be imperfect or ongoing.","key":"v5p3","placeholder":"Describe what genuinely changed in you or your life."},
-        {"label":"Who most needs to understand what you discovered, and what might it help them see differently?","hint":"Think of someone still living inside the part of the story you have already lived through.","key":"v5p4","placeholder":"Describe who needs this realization and what it could help them see."}
+        {"label":"After the hardest part was over, what did you eventually understand that you could not have understood before living through it?","hint":"Say it in your own words. It does not need to sound polished. Keep it rooted in what happened rather than a separate idea you already believed.","key":"v5p0","placeholder":"Describe what only became clear after you lived through the difficult experience."},
+        {"label":"What happened during the aftermath or rebuilding that made this understanding harder and harder to ignore?","hint":"Walk us through the evidence. What did you try, notice, lose, rebuild, stop doing, or finally do differently before the realization became clear?","key":"v5p1","placeholder":"Describe the aftermath evidence that brought the understanding into focus."},
+        {"label":"What did you actually change afterward that another person could see in your choices or life?","hint":"Choose a real action, boundary, standard, conversation, habit, or way of responding. The change can be imperfect or ongoing.","key":"v5p3","placeholder":"Describe one observable change you made afterward."},
+        {"label":"Who do you recognize in the place you were, and what do you wish they could see before repeating what happened to you?","hint":"Picture one specific person. What are they misreading, repeating, or blaming themselves for? Stay with the perspective you earned rather than turning it into advice.","key":"v5p4","placeholder":"Describe who needs this hard-won perspective and what it could help them recognize."}
+      ],
+      "legacyPrompts": [
+        {"label":"Previously saved optional connection to the first realization","key":"v5p2"}
       ]
     },
     {
@@ -202,7 +204,7 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "What The Hardest Part Taught Me",
-      "note": "Look back at the hardest experience you just described. Focus on what only became clear afterward and what changed because of it. This should grow directly from that experience, not from a separate opinion about your field.",
+      "note": "Look back at the hardest experience you just described. Focus on what only became clear afterward and what changed because of it. This must grow directly from that experience, but it does not have to connect to your first realization.",
       "prompts": [
         {
           "label": "After the hardest part was over, what did you eventually understand that you could not have understood before living through it?",
@@ -217,12 +219,6 @@ const PROMPT_QUESTION_CATALOG = {
           "placeholder": "Describe the aftermath evidence that brought the deeper understanding into focus."
         },
         {
-          "label": "Think back to the first thing you saw differently earlier in this story. What could that first realization still not explain once everything fell apart?",
-          "hint": "Name the limit you discovered in the earlier idea. What was still missing, incomplete, or unable to help you through the hardest part?",
-          "key": "v5p2",
-          "placeholder": "Describe what your first realization could not explain after the fall."
-        },
-        {
           "label": "What did you actually change afterward that another person could see in your decisions or work?",
           "hint": "Choose a real action, boundary, standard, conversation, habit, or way of responding. Show the effect of the deeper understanding without turning it into a list of advice.",
           "key": "v5p3",
@@ -234,6 +230,9 @@ const PROMPT_QUESTION_CATALOG = {
           "key": "v5p4",
           "placeholder": "Describe who needs the hard-won perspective and what it could help them recognize."
         }
+      ],
+      "legacyPrompts": [
+        {"label":"Previously saved optional connection to the first realization","key":"v5p2"}
       ]
     },
     {

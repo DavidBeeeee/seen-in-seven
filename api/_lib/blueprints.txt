@@ -251,7 +251,7 @@ This is one Hero's Journey cut into seven public chapters. Each chapter owns a d
 3. VIDEO 3 — FIRST EPIPHANY + THRESHOLD: Evidence makes the speaker's old understanding impossible to keep, and one paradigm shift gives them enough motion to cross the first threshold. A naturally supplied person, teaching, conversation, or influence may appear when it genuinely belongs to the discovery, but no mentor is required or manufactured. This is a first win, not the elixir or final authority.
 4. VIDEO 4 — ROAD OF TRIALS: The first epiphany becomes a real choice before the speaker has enough proof. Show a recoverable trial, the human temptation to retreat, the choice made under uncertainty, and the first meaningful result that makes continuing feel possible. The exact balance between life, work, business, and public communication is level- and story-specific. Making the seven videos may appear only when it genuinely tests the same underlying journey; it cannot replace that journey with a challenge progress report. Do not create a second full epiphany, turn the result into a case study, or borrow catastrophic stakes from the coming fall.
 5. VIDEO 5 — FALL / ORDEAL: A real defeat occurs, and the speaker's own choice, avoidance, blind spot, or overconfidence materially contributes. End inside the loss with no recovery, lesson, authority, or silver lining.
-6. VIDEO 6 — SECOND EPIPHANY / ELIXIR: The fall produces the deeper truth the speaker could not have earned earlier. This insight corrects, deepens, or completes Video 3 and becomes a useful lens the speaker can carry forward.
+6. VIDEO 6 — SECOND EPIPHANY / ELIXIR: The fall produces a hard-won truth the speaker could not have earned before living through Video 5. This second epiphany may deepen, correct, or complete Video 3 when the story naturally connects them, but that relationship is optional. It may instead be an independent realization earned by the ordeal. It must not merely repeat Video 3 or arrive as an opinion unrelated to Video 5.
 7. VIDEO 7 — RETURN: The speaker integrates both epiphanies and the ordeal, returns with observable change, and becomes capable of guiding someone who still recognizes the earlier struggle. Close the challenge while opening a lasting relationship with the viewer.
 
 LEVEL DIFFERENCE:
@@ -505,7 +505,7 @@ EXACT SECTION MAPPING — each output section has one specific job:
 Do not use background, a progress report, a soft relatability statement, or the lesson about starting. The viewer should stop before they know who the speaker is.
 
 [OPEN LOOP] — Tension Bridge (30–50 words)
-Create a concrete unfinished thought that bridges from the hook into the identity declaration. The viewer should feel a specific question forming: what finally made this person stop waiting, deleting, hiding, or postponing? End with emotional tension that makes the declaration feel earned, not abrupt. Use the Fix Guide pattern.
+Independently create a concrete unfinished thought about what finally made this person stop waiting, deleting, hiding, or postponing. Do not explain, continue, or refer back to the Hook. End with emotional tension that makes the identity declaration feel earned, not abrupt. Use the Fix Guide pattern.
 
 [DECLARATION INJECTION] — App-Inserted, Read-Only
 The app inserts the fixed opening declaration here. Treat it as visible to the viewer but NOT written by the AI. Do not rewrite, paraphrase, duplicate, or summarize it in any generated section.
@@ -520,7 +520,7 @@ Because the declaration handles name and identity, [MEAT] for Video 1 has two re
 If the onboarding data clearly identifies who they hope to reach, make that person feel called in without inventing a separate audience statement. If extra context was provided, weave it in naturally — don't append it.
 
 [CONCLUSION] — Engagement Landing (20–35 words)
-Close the emotional tension created by the hook/open loop without resolving the whole challenge. Use a mirror or question ending most of the time: make the viewer think, "I know exactly what that feels like," or "why did I wait so long too?" This should land after the blocker/why now/who sequence and before the CTA opens the next-video loop.
+Close the emotional tension created by the story and Open Loop without resolving the whole challenge. Use a mirror or question ending most of the time: make the viewer think, "I know exactly what that feels like," or "why did I wait so long too?" This should land after the blocker/why now/who sequence and before the CTA opens the next-video loop.
 
 [CTA] — Next Action (25–45 words)
 ⚠️ MUST explicitly name "7 Video Challenge" or "7 videos" or "7-video series" — non-negotiable. The audience must understand this is a deliberate multi-video commitment. Continue directly from the conclusion, then give one clear next action and one clear reason. The CTA should point toward the next unresolved piece after the conclusion lands. Use the Fix Guide pattern.
@@ -605,8 +605,8 @@ CONCLUSION guidance: Land on the human pressure between the ordinary life and th
 CTA guidance: Continue from that still-developing identity into a clear follow request. In the action-and-reason sentence, explicitly name the current place in the 7 Video Challenge or seven-part series and explain that the next installment reveals one thing the speaker used to think was true and the experience that made it impossible to keep believing. Never use a bare "Video 3" reference or vague wording such as "the next one."
 
 VIDEO 2 FINAL CHECK:
-- The unexpected Prompt 2 detail is already present in [HOOK], not first introduced in [OPEN LOOP] or [MEAT].
-- [OPEN LOOP] directly continues the same detail from [HOOK]; it does not swap in a new attention grabber.
+- The independent [HOOK] stops attention without being assigned the unexpected detail, ordinary-world setup, or another story beat.
+- [OPEN LOOP] starts one unanswered identity tension from the completed story without explaining, continuing, or referring back to [HOOK].
 - Prompt 1's background appears once in [MEAT], not as the opening setup and not as repeated biography.
 - [MEAT] shows both the ordinary life and the private thread, then shows what the speaker was keeping contained or refusing to risk without calling it a lesson.
 - [CONCLUSION] lands on unresolved human pressure, not a reframe, solution, professional claim, offer, explanation of present-day action, or Video 3 insight.
@@ -687,7 +687,7 @@ Social impulse: Follow forward to see how it ends, or go back to see why this mi
 
 STRUCTURAL BEATS:
 1. Attention Interrupt (Hook) — This sits outside the narrative beats and receives no required story material. The global Hook Studio writes it last from the speaker's full context solely to interrupt attention without performing another section's job.
-2. Trial Gap (Open Loop) — Connect the hook evidence to the first epiphany without restating that epiphany. Make the viewer need to understand what happened when the speaker tried to live differently and why the apparent success may not tell the whole story.
+2. Trial Gap (Open Loop) — Independently make the viewer need to understand what happened when the speaker tried to live differently and why the apparent success may not tell the whole story. Do not explain, continue, or refer back to the Hook.
 3. First Changed Action (Meat) — Show what the speaker actually did differently after Video 3's realization. The change must be observable inside the main life topic, not merely a new attitude.
 4. Escalating Tests (Meat) — Show the resistance, repeated situations, consequences, or difficult choices that tested the new understanding. Use one or two vivid moments rather than a list of progress.
 5. Partial Win (Meat) — Show what genuinely improved or worked. Let the audience see why the speaker began trusting the first epiphany.
@@ -791,26 +791,29 @@ After: "They found a hard-won truth inside the ordeal, and the truth feels usefu
 Open question: "What do they return with now?"
 Social impulse: Follow because the second epiphany changes the meaning of the fall and the viewer wants to see what the speaker carries home.
 
-Video 3 worked through COGNITIVE SURPRISE. Video 6 works through EARNED CONVICTION. This is not another hot take. This is the elixir found after the life ordeal in Video 5: a larger realization that deepens, corrects, or completes the first one because the speaker lived through evidence they did not have before.
+Video 3 worked through COGNITIVE SURPRISE. Video 6 works through EARNED CONVICTION. This is not another hot take. This is the elixir found after the life ordeal in Video 5: a hard-won realization the speaker could not have earned before living through the fall. It may deepen, correct, or complete Video 3 when the story naturally connects them, but it may also be a separate truth. Never force a relationship that the speaker's life does not support.
 
 ESCALATED EPIPHANY CONSTRUCTION ORDER:
-Design the CONCLUSION elixir first. Privately write two plain-language lines: UNANSWERED QUESTION and CONCLUSION ANSWER. The answer must resolve the exact collision between the first realization and the fall, and no part of that answer may appear in the HOOK, OPEN LOOP, or MEAT. Design the CTA with that conclusion. Reverse-engineer the seamless MEAT so the aftermath evidence makes the first lens unable to explain the ordeal, ending at the edge of the deeper understanding. Write the OPEN LOOP from the reserved unanswered question, then write the independent pattern-interrupt HOOK last.
+Design the CONCLUSION elixir first. Privately write two plain-language lines: UNANSWERED QUESTION and CONCLUSION ANSWER. The answer must resolve the exact unanswered meaning created by the fall and its aftermath, and no part of that answer may appear in the HOOK, OPEN LOOP, or MEAT. Design the CTA with that conclusion. Reverse-engineer the seamless MEAT so the aftermath evidence makes the speaker's pre-fall understanding unable to explain what happened, ending at the edge of the deeper understanding. Write the OPEN LOOP from the reserved unanswered question, then write the independent pattern-interrupt HOOK last.
 
-The user is not required to state the finished elixir perfectly. Infer one complete hard-won truth from the Video 5 ordeal, the aftermath evidence, the limit of Video 3's first realization, and the speaker's observable changed behavior. The truth should restructure the viewer's understanding and be simple enough to carry. Treat the user's stated lesson as a candidate. Reject it when it is unrelated to the fall, merely repeats Video 3, or sounds like generic wisdom that could have been written before the ordeal.
+The user is not required to state the finished elixir perfectly. Infer one complete hard-won truth from the Video 5 ordeal, the aftermath evidence, the belief or model that failed inside that ordeal, and the speaker's observable changed behavior. The truth should restructure the viewer's understanding and be simple enough to carry. Treat the user's stated lesson as a candidate. Reject it when it is unrelated to the fall, merely repeats Video 3, or sounds like generic wisdom that could have been written before the ordeal.
 
 SECOND EPIPHANY CAUSAL TEST:
-The elixir must answer all three questions: What did Video 3 help the speaker see? What did the Video 5 fall prove that first lens could not solve? What truth now changes how the speaker acts? If any link is missing, reconstruct it from cumulative context before writing. Video 6 works through EARNED CONVICTION, not novelty alone.
+The elixir must answer all three questions: What did the Video 5 fall expose that the speaker could not understand from inside it? What aftermath evidence made the old explanation impossible to keep? What truth now changes how the speaker acts? If any link is missing, reconstruct it from cumulative context before writing. Video 6 works through EARNED CONVICTION, not novelty alone. Video 3 is optional continuity evidence, never a required cause.
 
 5E ESCALATED EPIPHANY ENGINE:
-The full video resolves cognitive dissonance that only exists because the true first lens collided with the Video 5 ordeal. It gives the viewer a deeper philosophical lens that could not have been credible before the fall.
+The full video resolves cognitive dissonance created by the Video 5 ordeal and its aftermath. It gives the viewer a philosophical lens that could not have been credible before the fall.
 
 The spoken story needs only four content moves:
-1. Incomplete First Model — Reestablish only the part of Video 3 needed to understand what it could not explain.
-2. Ordeal Evidence — Show the fall or aftermath fact that refuses to fit that first model.
-3. Earned Cognitive Dissonance — Let both truths remain valid and unresolved until a deeper relationship becomes necessary. Do not interpret that relationship yet.
-4. Deeper Paradigm Shift — In the CONCLUSION only, reveal the hidden cause, correction, completion, or complexity bridge that resolves both the first lens and the fall.
+1. Pre-Fall Understanding — Establish only the belief, assumption, strategy, or explanation involved in the ordeal.
+2. Ordeal And Aftermath Evidence — Show the fall or aftermath fact that refuses to fit that understanding.
+3. Earned Cognitive Dissonance — Let the old explanation and lived evidence remain unresolved until a new relationship becomes necessary. Do not interpret that relationship yet.
+4. Hard-Won Paradigm Shift — In the CONCLUSION only, reveal the hidden cause, correction, reversal, category error, or complexity bridge that resolves the fall's unanswered meaning.
 
 Aha Transfer, Simplicity Signal, and Authority Anchor are quality outcomes, not separate spoken beats. The finished elixir should make the viewer feel smarter, feel obvious only after the ordeal earns it, and make the speaker's authority experiential rather than claimed.
+
+OPTIONAL VIDEO 3 CONTINUITY:
+If the supplied story naturally connects the two epiphanies, Video 3 may appear in one brief continuity clause that clarifies what changed. Do not retell its evidence, repeat its reframe, or require Video 6 to correct it. When the second epiphany is independent, omit Video 3 and let the shared journey continuity come from the speaker who lived through both chapters.
 
 TONE: Convicted and steady. Not ranting, not defensive. The elixir is simple, grounded, and earned. The speaker has not solved everything, but they now understand something they can carry.
 
@@ -818,12 +821,12 @@ LEVEL 1 SPECIFIC: A personal elixir — the deeper truth found by living through
 
 SECTION MAP FOR VIDEO 6:
 [HOOK] — Independent Attention Interrupt. The global Hook Studio writes this after every story section is settled. No journal answer, story fact, chronological event, or journey beat is assigned here. Its only job is to stop a cold viewer without performing another section's job.
-[OPEN LOOP] — Exact Unanswered Question. Create the specific conceptually unfinished relationship between the true first lens and the fall that the reserved CONCLUSION ANSWER will resolve. Make the answer necessary without implying it.
-[MEAT] — Earned Cognitive-Dissonance Story. Build from the unresolved ordeal through the limit of the first lens and one coherent aftermath or rebuilding evidence thread. End with both truths visible and irreconcilable under the old model. Do not state, paraphrase, or circle the elixir.
+[OPEN LOOP] — Exact Unanswered Question. Create the specific conceptually unfinished relationship between the fall, its aftermath, and the missing meaning that the reserved CONCLUSION ANSWER will resolve. Make the answer necessary without implying it.
+[MEAT] — Earned Cognitive-Dissonance Story. Build from the unresolved ordeal through one coherent aftermath or rebuilding evidence thread and the pre-fall understanding that can no longer explain it. End with the collision visible and unresolved. Do not state, paraphrase, or circle the elixir.
 [CONCLUSION] — The Elixir. Answer the exact OPEN LOOP for the first time in one complete hard-won paradigm shift, then show one new possibility or human consequence. Do not stack alternate formulations.
 [CTA] — Continue from the elixir into Video 7's return. Give one clear action and one reason tied to seeing the whole journey come back to the beginning.
 
-PROMPTS (L1): 1) The biggest thing they eventually understood because of the difficult experience, 2) How that realization became clear, 3) How it changed their understanding of the first realization or earlier self, 4) What changed in their identity, choices, or life, 5) Who needs this truth and what it could help them see
+PROMPTS (L1): 1) What they eventually understood only because they lived through the difficult experience, 2) What happened in the aftermath that made it impossible to ignore, 3) What they changed afterward that another person could observe, 4) Who they recognize in where they were and what this truth could help that person see
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -832,7 +835,7 @@ Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design t
 
 VIDEO 6, LEVEL 1: Tone = Convicted, steady, quiet certainty (Max Richter "On the Nature of Daylight" — strings, gravity, resolution)
 HOOK guidance: Apply the global Hook Studio after all other sections are complete. This video assigns no required journal answer, story fact, chronological event, or journey beat to the Hook. Choose the strongest independent attention move available from the speaker's full context. It may pivot directly into an unrelated Open Loop. Do not perform the Open Loop, Meat, Conclusion, or CTA's job.
-OPEN LOOP guidance: Express the privately reserved UNANSWERED QUESTION as the exact unresolved relationship between the first realization and the fall. The viewer must know what they need resolved and why it matters, but not the answer.
+OPEN LOOP guidance: Express the privately reserved UNANSWERED QUESTION as the exact missing meaning created by the fall and its aftermath. The viewer must know what they need resolved and why it matters, but not the answer.
 CONCLUSION guidance: Resolve the exact Open Loop with one hard-won paradigm shift and one new possibility. It should have more conviction than Video 3 because the ordeal supplied the proof.
 CTA guidance: Continue from the elixir into a clear follow request because the final installment of the 7 Video Challenge returns to the beginning and reveals what the speaker will carry forward.
 </l1_v6_rules>
@@ -960,7 +963,7 @@ Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design t
 
 VIDEO 1, LEVEL 2: Tone = Quiet confidence underneath nerves. Grounded, brooding, thoughtful (The National "I Need My Girl" — low-key, every word weighed)
 HOOK guidance: Apply the global Hook Studio after all other sections are complete. This video assigns no required journal answer, story fact, chronological event, or journey beat to the Hook. Choose the strongest independent attention move available from the speaker's full context. It may pivot directly into an unrelated Open Loop. Do not perform the Open Loop, Meat, Conclusion, or CTA's job.
-OPEN LOOP guidance: Make the viewer need to understand why someone with this knowledge stayed behind the scenes or what that silence has been costing. Stop before revealing their blocker or why-now answer that belongs after the declaration.
+OPEN LOOP guidance: Independently make the viewer need to understand why someone with this knowledge stayed behind the scenes or what that silence has been costing. Do not explain, continue, or refer back to the Hook. Stop before revealing their blocker or why-now answer that belongs after the declaration.
 MEAT guidance: Open directly with their SPECIFIC BLOCKER — what has specifically kept an expert from showing up publicly (use their exact words from the "what's been stopping you" answer). The expert-specific empathy lock is different from a regular person's: it's "I have the knowledge, I just haven't made it visible" vs. "I don't know what to say." Then: why now, what shifted. Then: who needs to hear what they know. Never write the speaker's name or challenge announcement here — that's handled by the declaration. Never manufacture clients, results, or credentials they didn't provide.
 CONCLUSION guidance: Reclassify what public silence has really meant without turning the speaker into a guru. Let the tension between competence and invisibility land as an honest question, mirror, or uncomfortable turn in how the blocker is understood.
 CTA guidance: Carry that tension into a clear follow request because the next installment of the speaker's 7 Video Challenge reveals the path that formed what they know. Never name Video 2 without that challenge context. Refer to clients or results only when explicitly supplied.
@@ -1300,26 +1303,29 @@ After: "Their larger professional truth was paid for by the fall, and I can now 
 Open question: "What do they return with now?"
 Social impulse: Follow because the hard-won professional truth gives the viewer a perspective they want more of.
 
-Video 3 worked through COGNITIVE SURPRISE. Video 6 works through EARNED CONVICTION. This is not another hot take or an unrelated industry opinion. This is the elixir found inside the specific Video 5 fall: the larger professional truth the ordeal made impossible to avoid. It may expose a protected industry myth, but only when that myth is causally connected to what the speaker lost, tried, and eventually understood.
+Video 3 worked through COGNITIVE SURPRISE. Video 6 works through EARNED CONVICTION. This is not another hot take or an unrelated industry opinion. This is the elixir found inside the specific Video 5 fall: a professional truth the ordeal made impossible to avoid. It may deepen, correct, or complete Video 3 when the story naturally connects them, but it may also be an independent realization. It may expose a protected industry myth only when that myth is causally connected to what the speaker lost, tried, and eventually understood.
 
 ESCALATED EPIPHANY CONSTRUCTION ORDER:
-Design the CONCLUSION elixir first. Privately write two plain-language lines: UNANSWERED QUESTION and CONCLUSION ANSWER. The answer must resolve the exact collision between the first professional lens and the fall, and no part of that answer may appear in the HOOK, OPEN LOOP, or MEAT. Design the CTA with that conclusion. Reverse-engineer the seamless MEAT so the aftermath evidence makes the first lens unable to explain the ordeal, ending at the edge of the deeper understanding. Write the OPEN LOOP from the reserved unanswered question, then write the independent pattern-interrupt HOOK last.
+Design the CONCLUSION elixir first. Privately write two plain-language lines: UNANSWERED QUESTION and CONCLUSION ANSWER. The answer must resolve the exact unanswered meaning created by the fall and its aftermath, and no part of that answer may appear in the HOOK, OPEN LOOP, or MEAT. Design the CTA with that conclusion. Reverse-engineer the seamless MEAT so the aftermath evidence makes the speaker's pre-fall professional understanding unable to explain what happened, ending at the edge of the deeper understanding. Write the OPEN LOOP from the reserved unanswered question, then write the independent pattern-interrupt HOOK last.
 
-The user is not required to state the finished professional elixir perfectly. Infer one complete hard-won paradigm shift from the Video 5 defeat, the aftermath evidence, the specific limit of Video 3's first realization, and the speaker's observable changed decision or behavior. It must restructure the viewer's understanding and be simple enough to carry. Treat the user's claimed larger truth as a candidate, not controlling copy. Reject it when it is an unrelated industry opinion, a repetition of Video 3, a pre-existing business philosophy, or generic wisdom that did not require the fall.
+The user is not required to state the finished professional elixir perfectly. Infer one complete hard-won paradigm shift from the Video 5 defeat, the aftermath evidence, the belief or professional model that failed inside the ordeal, and the speaker's observable changed decision or behavior. It must restructure the viewer's understanding and be simple enough to carry. Treat the user's claimed larger truth as a candidate, not controlling copy. Reject it when it is an unrelated industry opinion, a repetition of Video 3, a pre-existing business philosophy, or generic wisdom that did not require the fall.
 
 SECOND EPIPHANY CAUSAL TEST:
-The elixir must answer all three questions: What did Video 3 help the speaker see? What did the Video 5 fall prove that first lens could not solve? What professional truth now changes how the speaker works or decides? If any link is missing, reconstruct it from cumulative context before writing. Video 6 works through EARNED CONVICTION. A surprising opinion without this causal chain is not the elixir.
+The elixir must answer all three questions: What did the Video 5 fall expose that the speaker could not understand from inside it? What aftermath evidence made the old professional explanation impossible to keep? What truth now changes how the speaker works or decides? If any link is missing, reconstruct it from cumulative context before writing. Video 6 works through EARNED CONVICTION. A surprising opinion without this causal chain is not the elixir. Video 3 is optional continuity evidence, never a required cause.
 
 5E ESCALATED EPIPHANY ENGINE:
-The full video resolves cognitive dissonance that only exists because the true first lens collided with the Video 5 ordeal. It gives the viewer a deeper professional lens that could not have been credible before the fall.
+The full video resolves cognitive dissonance created by the Video 5 ordeal and its aftermath. It gives the viewer a professional lens that could not have been credible before the fall.
 
 The spoken story needs only four content moves:
-1. Incomplete First Model — Reestablish only the part of Video 3 needed to understand what it could not explain.
-2. Ordeal Evidence — Show the fall or aftermath fact that refuses to fit that first model.
-3. Earned Cognitive Dissonance — Let both truths remain valid and unresolved until a deeper relationship becomes necessary. Do not interpret that relationship yet.
-4. Deeper Paradigm Shift — In the CONCLUSION only, reveal the hidden cause, correction, completion, or complexity bridge that resolves both the first lens and the fall.
+1. Pre-Fall Professional Understanding — Establish only the belief, assumption, strategy, or explanation involved in the ordeal.
+2. Ordeal And Aftermath Evidence — Show the fall or aftermath fact that refuses to fit that understanding.
+3. Earned Cognitive Dissonance — Let the old explanation and lived evidence remain unresolved until a new relationship becomes necessary. Do not interpret that relationship yet.
+4. Hard-Won Paradigm Shift — In the CONCLUSION only, reveal the hidden cause, correction, reversal, category error, or complexity bridge that resolves the fall's unanswered meaning.
 
 Aha Transfer, Simplicity Signal, and Authority Anchor are quality outcomes, not separate spoken beats. The finished elixir should make the viewer feel smarter, feel obvious only after the ordeal earns it, and make the speaker's authority experiential rather than claimed.
+
+OPTIONAL VIDEO 3 CONTINUITY:
+If the supplied professional story naturally connects the two epiphanies, Video 3 may appear in one brief continuity clause that clarifies what changed. Do not retell its evidence, repeat its reframe, or require Video 6 to correct it. When the second epiphany is independent, omit Video 3 and let the shared journey continuity come from the speaker who lived through both chapters.
 
 TONE: Done being polite, resolved, purposeful. Not angry — resolved. Logic re-stack through personal narrative. Paradigm break delivered as simple truth. Unapologetic without being aggressive.
 
@@ -1327,18 +1333,18 @@ LEVEL 2 SPECIFIC: A professional elixir earned by the ordeal. It can challenge a
 
 SECTION MAP FOR VIDEO 6:
 [HOOK] — Independent Attention Interrupt. The global Hook Studio writes this after every story section is settled. No journal answer, story fact, chronological event, or journey beat is assigned here. Its only job is to stop a cold viewer without performing another section's job.
-[OPEN LOOP] — Exact Unanswered Question. Create the specific conceptually unfinished relationship between the true first lens and the fall that the reserved CONCLUSION ANSWER will resolve. Make the answer necessary without implying it.
-[MEAT] — Earned Cognitive-Dissonance Story. Build from the specific fall through the limit of the first lens and one coherent aftermath or rebuilding evidence thread. End with both truths visible and irreconcilable under the old model. Do not state, paraphrase, or circle the elixir.
+[OPEN LOOP] — Exact Unanswered Question. Create the specific conceptually unfinished relationship between the fall, its aftermath, and the missing meaning that the reserved CONCLUSION ANSWER will resolve. Make the answer necessary without implying it.
+[MEAT] — Earned Cognitive-Dissonance Story. Build from the specific fall through one coherent aftermath or rebuilding evidence thread and the pre-fall understanding that can no longer explain it. End with the collision visible and unresolved. Do not state, paraphrase, or circle the elixir.
 [CONCLUSION] — The Elixir. Answer the exact OPEN LOOP for the first time in one complete hard-won paradigm shift, then show one new possibility or human consequence. Do not stack alternate formulations.
 [CTA] — Continue from the elixir into Video 7's return. Give one clear action and one reason tied to seeing what changes now.
 
 JOURNAL ANSWER ROUTING — MANDATORY:
 1. What became clear after the difficult experience is candidate material for the CONCLUSION, not language to copy into the opening.
 2. The aftermath or rebuilding evidence supplies the cognitive-dissonance journey in the MEAT. Its contradiction helps define the OPEN LOOP question, but it does not determine the HOOK.
-3. What the first realization could not explain supplies the missing link between Video 3 and the fall. State the limit before delivering the correction.
-4. The observable action, boundary, standard, conversation, or decision supplies proof that the deeper truth changed behavior.
-5. The recognizable person still inside the old pattern supplies the viewer transfer after the truth lands, without becoming an offer, invitation, or pitch.
-Required path: pure pattern interrupt, exact unanswered relationship between Video 3 and Video 5, concrete aftermath evidence, earned cognitive dissonance, observable changed behavior, then the elixir in the CONCLUSION, followed by one useful viewer consequence. Never state, paraphrase, or advertise answer 1 in the HOOK, OPEN LOOP, or MEAT. Never substitute a separate industry opinion for a truth caused by Video 5.
+3. The observable action, boundary, standard, conversation, or decision supplies proof that the deeper truth changed behavior.
+4. The recognizable person still inside the old pattern supplies the viewer transfer after the truth lands, without becoming an offer, invitation, or pitch.
+5. Previously saved Video 3 connection material is optional continuity. Use it only when it clarifies a relationship already supported by the fall and aftermath; otherwise omit it.
+Required path: pure pattern interrupt, exact unanswered meaning created by Video 5, concrete aftermath evidence, earned cognitive dissonance, observable changed behavior, then the elixir in the CONCLUSION, followed by one useful viewer consequence. Never state, paraphrase, or advertise answer 1 in the HOOK, OPEN LOOP, or MEAT. Never substitute a separate industry opinion for a truth caused by Video 5.
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -1347,16 +1353,16 @@ Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design t
 
 VIDEO 6, LEVEL 2: Tone = Done being polite, resolved, purposeful (The National "Fake Empire" energy — driven, eyes forward, no apology)
 HOOK guidance: Apply the global Hook Studio after all other sections are complete. This video assigns no required journal answer, story fact, chronological event, or journey beat to the Hook. Choose the strongest independent attention move available from the speaker's full context. It may pivot directly into an unrelated Open Loop. Do not perform the Open Loop, Meat, Conclusion, or CTA's job.
-OPEN LOOP guidance: Express the privately reserved UNANSWERED QUESTION as the exact unresolved relationship between the first realization and the fall. The viewer must know what they need resolved and why it matters, but not the answer.
+OPEN LOOP guidance: Express the privately reserved UNANSWERED QUESTION as the exact missing meaning created by the fall and its aftermath. The viewer must know what they need resolved and why it matters, but not the answer.
 CONCLUSION guidance: Resolve the exact Open Loop with one hard-won professional paradigm shift and one new possibility. Keep every claim grounded in the speaker's supplied experience.
 CTA guidance: Continue from the elixir into the final return. Ask the viewer to follow because the final installment of the 7 Video Challenge shows what changes now that the speaker can carry this truth forward.
 
 VIDEO 6 FINAL CHECK:
-- The Hook is an independent attention interrupt created last by the global Hook Studio with no assigned story material; the Open Loop independently creates one exact unresolved relationship between the first lens and the ordeal.
+- The Hook is an independent attention interrupt created last by the global Hook Studio with no assigned story material; the Open Loop independently creates one exact unresolved question from the ordeal and aftermath.
 - Video 5 is causally necessary; the same script could not have been written before the fall.
-- The Meat explicitly exposes what Video 3's first realization could not explain.
+- The Meat explicitly exposes what the speaker's pre-fall understanding could not explain.
 - Observable changed behavior proves the deeper truth instead of a lecture asserting it.
-- The Conclusion delivers one carryable elixir that deepens or corrects Video 3 without repeating it.
+- The Conclusion delivers one carryable elixir earned by Video 5. It may connect to Video 3 when the story supports that connection, but it never repeats or forcibly corrects it.
 - The viewer transfer is useful and relational, with no offer, service description, pricing structure, or pitch.
 </l2_v6_rules>
 

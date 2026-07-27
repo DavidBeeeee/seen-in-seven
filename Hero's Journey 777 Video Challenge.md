@@ -11,7 +11,7 @@ The live source of truth for generation is `api/_lib/blueprints.txt`. The curren
 3. **Video 3 — First Epiphany + Threshold:** One evidence thread makes the old understanding impossible to keep, and the resulting paradigm shift moves the speaker across the first threshold. A naturally supplied person or influence may appear, but no mentor is required or manufactured.
 4. **Video 4 — Road of Trials:** The first epiphany becomes a real choice before enough proof exists. Level 2 centers one recoverable trial, the human temptation to return to the old way, the choice made under uncertainty, and the first meaningful result revealed only in the Conclusion. The result creates hope, not a case study or another lesson.
 5. **Video 5 — Fall / Ordeal:** A real defeat crosses a one-way door, and the speaker owns how their choices contributed. Something central is destroyed, ended, lost, or believed impossible to restore. This is different in kind from Video 4's recoverable pressure, not merely a worse setback. No recovery or lesson yet.
-6. **Video 6 — Second Epiphany / Elixir:** The ordeal produces the deeper truth that corrects or completes the first epiphany.
+6. **Video 6 — Second Epiphany / Elixir:** The ordeal produces a hard-won truth the speaker could not have earned before Video 5. It may correct, deepen, or complete the first epiphany when the story naturally connects them, but it may also be an independent second realization. Video 5 is required; a Video 3 relationship is not.
 7. **Video 7 — Return:** The speaker integrates the journey, returns with the elixir, and becomes capable of guiding someone who recognizes the earlier struggle.
 
 Whenever a later section of this document assigns Video 4 to a challenge progress check-in, Video 5 to the second epiphany, or Video 6 to the fall/internal battle, that assignment is obsolete. Preserve the underlying storytelling insight, but apply it to the current chapter owner above.
@@ -41,7 +41,7 @@ Videos 3 and 6 use the same five-section architecture as every other chapter. Th
 - The Meat carries one continuous cognitive-dissonance story: a familiar model meets evidence it cannot explain, and the section ends with that collision unresolved.
 - The Conclusion resolves the exact Open Loop for the first time with one paradigm-shifting philosophical lens, followed by one human consequence or new possibility.
 - Aha Transfer, Simplicity Signal, and Authority Anchor are review outcomes, not separate spoken beats.
-- Video 3 creates a complete but bounded first lens. Video 6 uses the same engine at greater depth, resolving cognitive dissonance that only exists because the first lens collided with the Video 5 fall.
+- Video 3 creates a complete but bounded first lens. Video 6 uses the same engine at greater depth to resolve cognitive dissonance created by the Video 5 fall and its aftermath. A natural relationship to Video 3 may remain, but the second epiphany can stand independently and must never be forced into correcting the first.
 - A naturally supplied mentor, teacher, conversation, example, or influence may appear as evidence. No mentor is required, manufactured, or treated as a separate subplot.
 
 ## **VIDEO 1 — STILL IN THE ORDINARY WORLD** *Both levels: "I'm doing this thing and honestly I'm a little embarrassed about it."*

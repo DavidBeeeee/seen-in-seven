@@ -142,28 +142,30 @@ Requirements:
 
 const L2V6_MATERIAL_ROUTER_SYSTEM = `You prepare source material for Level 2, Video 6 of a seven-video personal story.
 
-This is not script writing. Video 6 is the second professional epiphany and elixir. Sort the supplied material into a causal evidence packet so another writer can show what only became clear because Video 3's first lens met its limit in the Video 5 fall.
+This is not script writing. Video 6 is the second professional epiphany and elixir. Sort the supplied material into a causal evidence packet so another writer can show what only became clear because of the Video 5 fall and its aftermath. Video 3 may be related, but that relationship is optional and must never be manufactured.
 
-Return exactly these eight headings and plain text beneath each:
-VIDEO 3 FIRST LENS:
+Return exactly these nine headings and plain text beneath each:
 VIDEO 5 FALL:
+PRE-FALL UNDERSTANDING:
 AFTERMATH EVIDENCE:
-LIMIT EXPOSED:
+UNRESOLVED COLLISION:
 OBSERVABLE CHANGE:
 RESERVED PARADIGM SHIFT:
 VIEWER TRANSFER:
+OPTIONAL VIDEO 3 CONNECTION:
 VOICE SIGNALS:
 
 Requirements:
 - Treat the headings as non-overlapping evidence ownership. Keep the strongest and most specific expression of each fact once. When a later heading depends on an earlier fact, add only the new relationship or consequence instead of restating the fact, phrase, number, duration, or judgment.
 - Preserve only facts, observations, actions, consequences, and distinctive language supported by the source.
-- VIDEO 3 FIRST LENS states the complete but bounded realization the speaker carried into the trials.
 - VIDEO 5 FALL identifies the defeat and the speaker's owned contribution. The fall must be causally necessary to the later understanding.
+- PRE-FALL UNDERSTANDING states the belief, assumption, strategy, or explanation involved in the ordeal. Derive it from Video 5 and the current answers rather than assuming it came from Video 3.
 - AFTERMATH EVIDENCE contains what happened during failed recovery, rebuilding, or changed conditions before interpretation.
-- LIMIT EXPOSED states the exact unresolved cognitive dissonance between the true first lens and the fall it could not explain or prevent.
+- UNRESOLVED COLLISION states the exact cognitive dissonance between PRE-FALL UNDERSTANDING and the fall or aftermath evidence without resolving it.
 - OBSERVABLE CHANGE gives one supplied action, boundary, standard, conversation, habit, or decision that changed afterward.
-- RESERVED PARADIGM SHIFT infers one complete deeper paradigm shift that resolves LIMIT EXPOSED, restructures the viewer's understanding, and is simple enough to carry. Reject an unrelated hot take, a repetition of Video 3, a pre-existing philosophy, or generic wisdom that could have been written before the fall.
+- RESERVED PARADIGM SHIFT infers one complete hard-won paradigm shift that resolves UNRESOLVED COLLISION, restructures the viewer's understanding, and is simple enough to carry. Reject an unrelated hot take, a repetition of Video 3, a pre-existing philosophy, or generic wisdom that could have been written before the fall.
 - VIEWER TRANSFER names one recognizable person and what the earned lens may help them see.
+- OPTIONAL VIDEO 3 CONNECTION contains one brief relationship only when the supplied story genuinely shows that the second epiphany deepens, corrects, or completes the first. Otherwise write "Not supplied." Never force this relationship and never use it as the causal source of Video 6.
 - VOICE SIGNALS preserves a few words about the speaker's rhythm, intensity, humor, or distinctive phrasing. Do not copy banned script phrases.
 - Omit pricing structures, service descriptions, current offers, conversion requests, method lists, and unrelated opinions.
 - Do not use the words version, lazy, pay, paid, buy, bought, sell, or sold anywhere in the packet. Restate any necessary fact with natural alternatives such as charged, spent, chose, offered, or form.
@@ -182,8 +184,9 @@ For a Video 3 packet:
 - Never invent a direct conversation, quote, meeting, credential, result, or event.
 
 For a Video 6 packet:
-- Preserve the causal chain from the Video 3 first lens through the Video 5 fall and aftermath evidence to the unresolved cognitive dissonance, observable change, and one deeper reserved paradigm shift.
-- Remove unrelated opinions, repeated Video 3 conclusions, pre-existing philosophy, methods, offers, and commercial positioning.
+- Preserve the causal chain from the Video 5 fall through the pre-fall understanding, aftermath evidence, unresolved cognitive dissonance, observable change, and one hard-won reserved paradigm shift.
+- Preserve an optional Video 3 connection only when the source explicitly or naturally supports it. "Not supplied" is correct when the epiphanies are independent.
+- Remove forced Video 3 corrections, unrelated opinions, repeated Video 3 conclusions, pre-existing philosophy, methods, offers, and commercial positioning.
 - Never invent a fact, result, event, or behavioral change.
 
 For both packets:
@@ -337,7 +340,7 @@ function sanitizeLevelTwoVideoOneMaterial(value) {
   return packet.replace(/[ \t]{2,}/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
 }
 
-async function prepareLevelTwoVideoOneMaterial(userContext) {
+export async function prepareLevelTwoVideoOneMaterial(userContext) {
   const raw = String(userContext || '').trim();
   const declarationMatch = raw.match(/^\d+\.\s+Opening declaration \(read-only\):\s*(.+)$/mi);
   const declaration = declarationMatch ? declarationMatch[1].trim() : '';
@@ -453,7 +456,7 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
   const system = isFirst ? L2V3_MATERIAL_ROUTER_SYSTEM : L2V6_MATERIAL_ROUTER_SYSTEM;
   const headings = isFirst
     ? ['OLD ASSUMPTION', 'CONTRADICTING EVIDENCE', 'COGNITIVE DISSONANCE', 'RESERVED PARADIGM SHIFT', 'HUMAN COST', 'VOICE SIGNALS']
-    : ['VIDEO 3 FIRST LENS', 'VIDEO 5 FALL', 'AFTERMATH EVIDENCE', 'LIMIT EXPOSED', 'OBSERVABLE CHANGE', 'RESERVED PARADIGM SHIFT', 'VIEWER TRANSFER', 'VOICE SIGNALS'];
+    : ['VIDEO 5 FALL', 'PRE-FALL UNDERSTANDING', 'AFTERMATH EVIDENCE', 'UNRESOLVED COLLISION', 'OBSERVABLE CHANGE', 'RESERVED PARADIGM SHIFT', 'VIEWER TRANSFER', 'OPTIONAL VIDEO 3 CONNECTION', 'VOICE SIGNALS'];
   const routed = await callModel(system, epiphanyRouterSource(userContext, number), 0.15, 1200);
   const routedPacket = String(routed || '').trim();
   if (!routedPacket || !hasRouterHeadings(routedPacket, headings)) {
@@ -489,7 +492,7 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
   }
   const draftingConstraints = isFirst
     ? 'FINAL VIDEO 3 WRITING CONSTRAINTS: Privately pair one exact UNANSWERED QUESTION with the RESERVED PARADIGM SHIFT that answers it. The OPEN LOOP is written independently from the completed Meat and reserved Conclusion and creates that exact conceptually unfinished question without implying the answer. It does not explain or continue the Hook. The MEAT carries OLD ASSUMPTION through CONTRADICTING EVIDENCE and ends with COGNITIVE DISSONANCE unresolved. State RESERVED PARADIGM SHIFT for the first time in the CONCLUSION, followed by one HUMAN COST. Supply a provisional HOOK label for formatting; the global Hook Studio will replace its text after the story is settled.'
-    : 'FINAL VIDEO 6 WRITING CONSTRAINTS: Privately pair one exact UNANSWERED QUESTION with the RESERVED PARADIGM SHIFT that answers it. The OPEN LOOP is written independently from the completed Meat and reserved Conclusion and creates the exact unresolved relationship between VIDEO 3 FIRST LENS and VIDEO 5 FALL without implying its resolution. It does not explain or continue the Hook. The MEAT carries the fall and AFTERMATH EVIDENCE through LIMIT EXPOSED and ends with that cognitive dissonance unresolved. State RESERVED PARADIGM SHIFT for the first time in the CONCLUSION, followed by one new possibility or VIEWER TRANSFER. Supply a provisional HOOK label for formatting; the global Hook Studio will replace its text after the story is settled.';
+    : 'FINAL VIDEO 6 WRITING CONSTRAINTS: Privately pair one exact UNANSWERED QUESTION with the RESERVED PARADIGM SHIFT that answers it. The OPEN LOOP is written independently from the completed Meat and reserved Conclusion and creates the exact unanswered meaning produced by VIDEO 5 FALL and its aftermath without implying its resolution. It does not explain or continue the Hook. The MEAT carries VIDEO 5 FALL and AFTERMATH EVIDENCE through PRE-FALL UNDERSTANDING and UNRESOLVED COLLISION, ending with that cognitive dissonance unresolved. State RESERVED PARADIGM SHIFT for the first time in the CONCLUSION, followed by one new possibility or VIEWER TRANSFER. Use OPTIONAL VIDEO 3 CONNECTION only when it contains a genuine supported relationship; otherwise omit Video 3 completely. Supply a provisional HOOK label for formatting; the global Hook Studio will replace its text after the story is settled.';
   return [
     'Generate Video ' + number + ' script.',
     '',
@@ -700,7 +703,9 @@ async function generateScript(input, prompt) {
 async function generateSection(input, prompt) {
   const systemPrompt = buildSystemPrompt(prompt.prompt, input.level, input.video);
   let preparedContext = input.userContext;
-  if (input.level === 2 && (input.video === 3 || input.video === 6)) {
+  if (input.level === 2 && input.video === 1) {
+    preparedContext = await prepareLevelTwoVideoOneMaterial(input.userContext);
+  } else if (input.level === 2 && (input.video === 3 || input.video === 6)) {
     preparedContext = await prepareLevelTwoEpiphanyMaterial(input.userContext, input.video);
   } else if (input.level === 2 && input.video === 4) {
     preparedContext = await prepareLevelTwoVideoFourMaterial(input.userContext);

@@ -1,6 +1,7 @@
 import {
   callModel,
   prepareLevelTwoEpiphanyMaterial,
+  prepareLevelTwoVideoOneMaterial,
   prepareLevelTwoVideoFourMaterial,
   prepareLevelTwoVideoFiveMaterial
 } from './generate.js';
@@ -44,7 +45,9 @@ export default async function handler(req, res) {
     const systemPrompt = buildSystemPrompt(prompt, level, video);
     const temperature = body.generationMode === 'production' ? 0.8 : 0.25;
     let preparedUserMessage = userMessage;
-    if (level === 2 && (video === 3 || video === 6)) {
+    if (level === 2 && video === 1) {
+      preparedUserMessage = await prepareLevelTwoVideoOneMaterial(userMessage);
+    } else if (level === 2 && (video === 3 || video === 6)) {
       preparedUserMessage = await prepareLevelTwoEpiphanyMaterial(userMessage, video);
     } else if (level === 2 && video === 4) {
       preparedUserMessage = await prepareLevelTwoVideoFourMaterial(userMessage);

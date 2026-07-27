@@ -83,7 +83,11 @@ hookGuidanceLines.forEach((line, index) => {
   /hook and open loop come from/i,
   /unanswered question created by the Hook/i,
   /\[HOOK\][^\n]*\nLead with/i,
-  /continuous composition pass from \[?HOOK\]?/i
+  /continuous composition pass from \[?HOOK\]?/i,
+  /detail is already present in \[HOOK\]/i,
+  /\[OPEN LOOP\] directly continues .* \[HOOK\]/i,
+  /connect the hook evidence/i,
+  /bridges? from (?:the )?hook/i
 ].forEach(pattern => {
   assert(!pattern.test(published.source), 'Protected Hook architecture contains forbidden coupling: ' + pattern.source);
 });
@@ -384,4 +388,43 @@ assert(parseSections(hookStudioResult).MEAT === parseSections(openLoopStudioResu
 assert(parseSections(hookStudioResult).CONCLUSION === parseSections(openLoopStudioResult).CONCLUSION, 'Hook Studio changed the Conclusion.');
 assert(parseSections(hookStudioResult).CTA === parseSections(openLoopStudioResult).CTA, 'Hook Studio changed the CTA.');
 
-console.log('Prompt style guide checks passed with ' + bannedTerms.length + ' canonical banned terms.');
+const levelTwoHookCalls = [];
+const levelTwoHookResult = await finalizeScriptHook({
+  script: openLoopStudioResult,
+  systemPrompt: buildSystemPrompt(published.prompt, 2, 6),
+  userMessage: 'Level 2 Video 6 context with an ordeal-earned but independent second epiphany.',
+  level: 2,
+  video: 6,
+  callModel: async (system, user) => {
+    levelTwoHookCalls.push({ system, user });
+    if (system === HOOK_STUDIO_SYSTEM) {
+      assert(user.includes('LEVEL: 2'), 'Level 2 Hook Studio lost the active level.');
+      assert(user.includes('VIDEO: 6'), 'Level 2 Hook Studio lost the active video.');
+      assert(user.includes('VIDEO 6 — EPIPHANY #2'), 'Level 2 Hook Studio lost the focused Video 6 blueprint.');
+      return JSON.stringify({
+        candidates: [
+          'Certainty can survive failure right up until the evidence learns your name.',
+          'A polished answer can hide a year of being wrong.',
+          'The worst lesson is the one that almost works.',
+          'Conviction gets expensive when reality sends the invoice.',
+          'I trusted the explanation longer than I trusted the evidence.',
+          'Failure has terrible timing and excellent memory.'
+        ]
+      });
+    }
+    if (system === HOOK_JUDGE_SYSTEM) {
+      return JSON.stringify({
+        pass: true,
+        hook: 'The worst lesson is the one that almost works.',
+        reason: ''
+      });
+    }
+    throw new Error('Unexpected Level 2 Hook Studio test call.');
+  }
+});
+assert(levelTwoHookCalls.length === 2, 'Level 2 Hook Studio did not use the shared Studio and judge path.');
+assert(parseSections(levelTwoHookResult).HOOK === 'The worst lesson is the one that almost works.', 'Level 2 Hook Studio did not install the selected Hook.');
+assert(parseSections(levelTwoHookResult)['OPEN LOOP'] === parseSections(openLoopStudioResult)['OPEN LOOP'], 'Level 2 Hook Studio changed the Open Loop.');
+assert(parseSections(levelTwoHookResult).MEAT === parseSections(openLoopStudioResult).MEAT, 'Level 2 Hook Studio changed the Meat.');
+
+console.log('Prompt style guide checks passed with ' + bannedTerms.length + ' canonical banned terms across both Hook Studio levels.');
