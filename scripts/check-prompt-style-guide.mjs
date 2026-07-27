@@ -8,8 +8,8 @@ import {
   findVoiceIssues,
   HOOK_JUDGE_SYSTEM,
   HOOK_STUDIO_SYSTEM,
-  OPEN_LOOP_JUDGE_SYSTEM,
-  OPEN_LOOP_STUDIO_SYSTEM,
+  OPEN_LOOP_ARCHITECT_SYSTEM,
+  OPEN_LOOP_WRITER_SYSTEM,
   parseSections,
   publishedPrompt,
   reviewAndRepairScript,
@@ -270,27 +270,26 @@ const openLoopStudioResult = await finalizeScriptOpenLoop({
   video: 4,
   callModel: async (system, user) => {
     openLoopStudioCalls.push({ system, user });
-    if (system === OPEN_LOOP_STUDIO_SYSTEM) {
-      assert(!user.includes('I wondered whether a direct message'), 'Open Loop Studio received the draft Open Loop it was meant to replace.');
+    if (system === OPEN_LOOP_ARCHITECT_SYSTEM) {
+      assert(!user.includes('I wondered whether a direct message'), 'Open Loop Architect received the draft Open Loop it was meant to replace.');
       return JSON.stringify({
-        quarantined_terms: ['direct message', 'group member', 'private response', 'inbox'],
-        candidates: [
-          'I kept waiting for a direct message to prove the work had reached a real reader, although the public reaction made that possibility feel increasingly remote every evening.',
-          'The group member had not appeared yet, which left me measuring whether the work mattered through the tiny public reaction beneath each answer I wrote.',
-          cleanRetentionGap,
-          'I could not know whether my inbox would finally contain the evidence I needed, although each quiet reply made stopping feel more reasonable than continuing.'
-        ]
+        answer_kind: 'EVENT',
+        retention_question: 'Could quiet useful work matter beyond the public reaction visible beneath it?',
+        conclusion_answer: 'A private response proves the answer reached and helped one reader.',
+        meat_boundary: 'The Meat establishes the choice to keep answering and must stop before evidence that the work reached a reader.',
+        known_before_payoff: 'Three visible likes made the work appear ignored while the speaker continued without proof of reach.',
+        quarantined_details: ['direct message', 'group member', 'private response', 'inbox']
       });
     }
-    if (system === OPEN_LOOP_JUDGE_SYSTEM) {
-      assert(user.includes(cleanRetentionGap), 'Open Loop judge lost the clean candidate.');
-      assert(!user.includes('I kept waiting for a direct message'), 'A quarantined payoff candidate reached the Open Loop judge.');
-      return JSON.stringify({ pass: true, open_loop: cleanRetentionGap, reason: '' });
+    if (system === OPEN_LOOP_WRITER_SYSTEM) {
+      assert(user.includes('Could quiet useful work matter beyond the public reaction visible beneath it?'), 'Open Loop Writer lost the approved retention question.');
+      assert(user.includes('must stop before evidence that the work reached a reader'), 'Open Loop Writer lost the Meat boundary.');
+      return JSON.stringify({ open_loop: cleanRetentionGap });
     }
-    throw new Error('Unexpected Open Loop Studio test call.');
+    throw new Error('Unexpected Open Loop architecture test call.');
   }
 });
-assert(openLoopStudioCalls.length === 2, 'Open Loop Studio did not use one focused slate and one independent judgment.');
+assert(openLoopStudioCalls.length === 2, 'Open Loop construction did not use one architecture pass and one writing pass.');
 assert(parseSections(openLoopStudioResult)['OPEN LOOP'] === cleanRetentionGap, 'Open Loop Studio did not install the selected retention gap.');
 assert(parseSections(openLoopStudioResult).HOOK === parseSections(payoffScript).HOOK, 'Open Loop Studio changed the Hook.');
 assert(parseSections(openLoopStudioResult).MEAT === parseSections(payoffScript).MEAT, 'Open Loop Studio changed the Meat.');

@@ -556,54 +556,56 @@ function publishedPrompt() {
     'Return spoken text only inside each replacement value. Do not include section labels in replacement text.'
   ].join('\n');
 
-  const OPEN_LOOP_STUDIO_SYSTEM = [
-    'You are the SeenInSeven Open Loop Studio.',
-    'The story has already been written. Your only job is to create the final Zeigarnik Retention Gap that will replace the draft OPEN LOOP.',
-    'A Zeigarnik Retention Gap creates one precise piece of unfinished mental business that a cold viewer needs resolved. It is not a section heading, setup summary, incomplete sentence, generic suspense line, or early conclusion.',
-    'First identify the concrete payoff reserved for the CONCLUSION. Privately quarantine every reveal-only person or role, event, action, delivery method, quotation, evidence, result, and distinctive phrase that would let the viewer predict how the question gets answered.',
-    'Do not quarantine ordinary setup facts already established in the MEAT. The Open Loop may use the situation and pressure, but it cannot name, paraphrase, foreshadow, or imply the mechanism that resolves them.',
-    'Generate exactly four materially different candidates. Each candidate must be 25 to 50 words and create one specific unresolved relationship, contradiction, cause, or consequence.',
-    'Every candidate must pass three tests. KNOWLEDGE: the speaker could have said it immediately before the conclusion event occurred. PREDICTION: the viewer cannot predict the person, event, action, evidence, or result that will resolve it. RETENTION: the viewer knows exactly what they are waiting to understand and why it matters.',
-    'The current-video Open Loop must be fulfilled or intentionally reframed by the current CONCLUSION. The CTA opens the next-video question; the Open Loop does not.',
-    'The Open Loop is independent from the HOOK. Never explain, continue, repeat, justify, or transition from the Hook.',
-    'Follow the focused video blueprint, journey-stage boundaries, canonical banned terms, voice rules, and 25-to-50-word limit. Do not invent a personal event, result, quotation, credential, or measurable reaction.',
-    'Return JSON only in this exact shape: {"quarantined_terms":["reveal-only phrase","reveal-only phrase"],"candidates":["spoken open loop 1","spoken open loop 2","spoken open loop 3","spoken open loop 4"]}'
+  const OPEN_LOOP_ARCHITECT_SYSTEM = [
+    'You are the SeenInSeven Open Loop Architect. Do not write visible script prose.',
+    'Read the completed MEAT and CONCLUSION, then define the exact Zeigarnik contract that the final OPEN LOOP must execute.',
+    'The contract must be driven by what the CONCLUSION uniquely answers, not by the most dramatic decision or tension inside the MEAT.',
+    'RETENTION QUESTION is the single question the viewer carries through the MEAT. The MEAT must not answer it. The CONCLUSION must answer, reverse, complicate, or reframe it.',
+    'CONCLUSION ANSWER states the exact new event, meaning, verdict, or consequence owned only by the CONCLUSION.',
+    'MEAT BOUNDARY states what the MEAT may establish and the precise answer it must stop before.',
+    'KNOWN BEFORE PAYOFF states the unresolved situation the speaker could honestly describe immediately before the CONCLUSION arrived.',
+    'QUARANTINED DETAILS lists only reveal-specific people, events, actions, delivery methods, quotations, evidence, results, and phrases that would disclose how the answer arrives.',
+    'For a result-driven Conclusion, the Retention Question must ask whether, why, or under what condition the action could matter. It must never collapse into what the speaker decided to do when the Meat already shows that decision.',
+    'Return JSON only in this exact shape: {"answer_kind":"EVENT|REFRAME|VERDICT|CONSEQUENCE","retention_question":"one exact question","conclusion_answer":"the answer owned only by the Conclusion","meat_boundary":"what the Meat establishes and must not resolve","known_before_payoff":"the unresolved situation available before the payoff","quarantined_details":["reveal-only detail"]}'
   ].join('\n');
 
-  const OPEN_LOOP_JUDGE_SYSTEM = [
-    'You are the independent final judge for SeenInSeven Zeigarnik Retention Gaps.',
-    'Select the strongest supplied candidate that creates one pressing unresolved mental question without leaking the reserved CONCLUSION payoff.',
-    'Apply three tests. KNOWLEDGE: the speaker could say the line immediately before the payoff occurred. PREDICTION: a viewer cannot predict the person, event, action, delivery method, evidence, quotation, or result that resolves it. RETENTION: a cold viewer can name what they are waiting to understand and cares about receiving the answer.',
-    'Fail a candidate that names or paraphrases a quarantined payoff detail, identifies the category of event that will answer the question, announces cognition or a lesson, summarizes the Meat, uses vague suspense, creates a binary outcome with the answer embedded inside it, or opens the next video instead of the current conclusion.',
-    'Do not require the Open Loop to connect to the Hook. Do not reward smooth transition, chronology, or repeated Hook language.',
-    'Select only an exact supplied candidate. Return JSON only as {"pass":true,"open_loop":"exact selected candidate","reason":""} or {"pass":false,"open_loop":"","reason":"one precise reason every candidate failed"}.'
+  const OPEN_LOOP_WRITER_SYSTEM = [
+    'You write one final SeenInSeven OPEN LOOP from an approved Zeigarnik contract.',
+    'Write 25 to 50 spoken words that make the RETENTION QUESTION urgent without answering it.',
+    'Use only KNOWN BEFORE PAYOFF and setup already present in the MEAT. Stop at the MEAT BOUNDARY.',
+    'Do not name, paraphrase, imply, or foreshadow the CONCLUSION ANSWER or any QUARANTINED DETAIL.',
+    'Do not ask what the speaker decided when the Meat already shows that decision. Do not summarize the Meat, repeat its opening, create generic suspense, announce cognition, or open the next video.',
+    'The OPEN LOOP is independent from the HOOK and does not need to transition from it.',
+    'Follow the supplied blueprint, stage boundaries, style guide, and banned terms.',
+    'Return JSON only as {"open_loop":"spoken Open Loop text"}.'
   ].join('\n');
 
-  function parseOpenLoopStudioResult(text) {
+  function cleanJsonObject(text) {
     let cleaned = String(text || '').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
     const jsonStart = cleaned.indexOf('{');
     const jsonEnd = cleaned.lastIndexOf('}');
     if (jsonStart !== -1 && jsonEnd > jsonStart) cleaned = cleaned.slice(jsonStart, jsonEnd + 1);
-    try {
-      const parsed = JSON.parse(cleaned);
-      const candidates = parsed && Array.isArray(parsed.candidates) ? parsed.candidates : [];
-      const quarantinedTerms = parsed && Array.isArray(parsed.quarantined_terms) ? parsed.quarantined_terms : [];
-      return {
-        candidates:[...new Set(candidates
-          .filter(candidate => typeof candidate === 'string')
-          .map(candidate => stripSectionLabels(candidate))
-          .filter(Boolean))],
-        quarantinedTerms:[...new Set(quarantinedTerms
-          .filter(term => typeof term === 'string')
-          .map(term => term.trim().replace(/[’‘]/g, "'"))
-          .filter(Boolean))]
-      };
-    } catch (error) {
-      return { candidates:[], quarantinedTerms:[] };
-    }
+    try { return JSON.parse(cleaned); } catch (error) { return null; }
   }
 
-  function openLoopStudioMessage(config, failures = []) {
+  function parseOpenLoopContract(text) {
+    const parsed = cleanJsonObject(text);
+    const contract = {
+      answerKind:String(parsed && parsed.answer_kind || '').trim(),
+      retentionQuestion:String(parsed && parsed.retention_question || '').trim(),
+      conclusionAnswer:String(parsed && parsed.conclusion_answer || '').trim(),
+      meatBoundary:String(parsed && parsed.meat_boundary || '').trim(),
+      knownBeforePayoff:String(parsed && parsed.known_before_payoff || '').trim(),
+      quarantinedDetails:Array.isArray(parsed && parsed.quarantined_details)
+        ? parsed.quarantined_details.filter(value => typeof value === 'string' && value.trim()).map(value => value.trim())
+        : []
+    };
+    return contract.retentionQuestion && contract.conclusionAnswer && contract.meatBoundary && contract.knownBeforePayoff
+      ? contract
+      : null;
+  }
+
+  function openLoopArchitectMessage(config, correction = '') {
     const sections = parseSections(config.script) || {};
     return [
       'LEVEL: ' + Number(config.level || 1),
@@ -615,51 +617,6 @@ function publishedPrompt() {
       'STAGE OWNERSHIP CONTRACT:',
       stageContract(config.level, config.video),
       '',
-      'FULL USER CONTEXT:',
-      String(config.userMessage || '').trim(),
-      '',
-      'READ-ONLY COMPLETED STORY. THE DRAFT OPEN LOOP IS INTENTIONALLY WITHHELD:',
-      '[MEAT]',
-      String(sections.MEAT || '').trim(),
-      '',
-      '[CONCLUSION]',
-      String(sections.CONCLUSION || '').trim(),
-      '',
-      '[CTA]',
-      String(sections.CTA || '').trim(),
-      '',
-      failures.length ? 'PREVIOUS OPEN LOOP FAILURES:\n' + failures.join('\n') : '',
-      '',
-      'Create the four-candidate Zeigarnik Retention Gap slate now. Keep the exact conclusion payoff quarantined.'
-    ].filter(Boolean).join('\n');
-  }
-
-  function parseOpenLoopJudgeResult(text) {
-    let cleaned = String(text || '').trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '');
-    const jsonStart = cleaned.indexOf('{');
-    const jsonEnd = cleaned.lastIndexOf('}');
-    if (jsonStart !== -1 && jsonEnd > jsonStart) cleaned = cleaned.slice(jsonStart, jsonEnd + 1);
-    try {
-      const parsed = JSON.parse(cleaned);
-      return {
-        pass:parsed && parsed.pass === true,
-        openLoop:parsed && typeof parsed.open_loop === 'string' ? stripSectionLabels(parsed.open_loop) : '',
-        reason:parsed && typeof parsed.reason === 'string' ? parsed.reason.trim() : ''
-      };
-    } catch (error) {
-      return { pass:false, openLoop:'', reason:'The Open Loop judge did not return a valid decision.' };
-    }
-  }
-
-  function openLoopJudgeMessage(config, candidates, quarantinedTerms) {
-    const sections = parseSections(config.script) || {};
-    return [
-      'OPEN LOOP CANDIDATES TO JUDGE:',
-      (candidates || []).map((candidate, index) => (index + 1) + '. ' + String(candidate || '').trim()).join('\n'),
-      '',
-      'QUARANTINED CONCLUSION PAYOFF TERMS:',
-      (quarantinedTerms || []).join(', ') || '(The Studio supplied no usable terms; infer the payoff directly from the Conclusion.)',
-      '',
       'READ-ONLY MEAT:',
       String(sections.MEAT || '').trim(),
       '',
@@ -669,98 +626,99 @@ function publishedPrompt() {
       'READ-ONLY CTA:',
       String(sections.CTA || '').trim(),
       '',
-      'Select the strongest exact candidate. The current Open Loop must retain attention through this Meat and be resolved or reframed by this Conclusion.'
-    ].join('\n');
+      correction ? 'CORRECTION REQUIRED:\n' + correction : '',
+      '',
+      'Build the Zeigarnik contract now. The draft Hook and Open Loop are intentionally withheld.'
+    ].filter(Boolean).join('\n');
   }
 
-  function containsQuarantinedPayoff(text, quarantinedTerms) {
-    const source = String(text || '').replace(/[’‘]/g, "'");
-    return (quarantinedTerms || []).some(term => {
-      const clean = String(term || '').trim();
-      if (!clean) return false;
-      const pattern = new RegExp('(^|[^a-z0-9])' + escapeRegExp(clean).replace(/ /g, '\\s+') + '(?=[^a-z0-9]|$)', 'i');
-      return pattern.test(source);
-    });
+  function parseOpenLoopWriterResult(text) {
+    const parsed = cleanJsonObject(text);
+    return parsed && typeof parsed.open_loop === 'string'
+      ? stripSectionLabels(parsed.open_loop)
+      : '';
   }
 
-  function activeQuarantinedTerms(sections, quarantinedTerms) {
-    const meat = String(sections && sections.MEAT || '').replace(/[’‘]/g, "'");
-    const generic = new Set([
-      'person', 'people', 'answer', 'result', 'evidence', 'work', 'story',
-      'question', 'meaning', 'change', 'moment', 'feeling', 'response'
-    ]);
-    return (quarantinedTerms || []).filter(term => {
-      const clean = String(term || '').trim().toLowerCase();
-      if (!clean || generic.has(clean)) return false;
-      return !containsQuarantinedPayoff(meat, [clean]);
-    }).slice(0, 16);
+  function openLoopWriterMessage(config, contract, correction = '') {
+    const sections = parseSections(config.script) || {};
+    return [
+      'LEVEL: ' + Number(config.level || 1),
+      'VIDEO: ' + Number(config.video || 1),
+      '',
+      'APPROVED ZEIGARNIK CONTRACT:',
+      'ANSWER KIND: ' + contract.answerKind,
+      'RETENTION QUESTION: ' + contract.retentionQuestion,
+      'CONCLUSION ANSWER: ' + contract.conclusionAnswer,
+      'MEAT BOUNDARY: ' + contract.meatBoundary,
+      'KNOWN BEFORE PAYOFF: ' + contract.knownBeforePayoff,
+      'QUARANTINED DETAILS: ' + (contract.quarantinedDetails.join(', ') || '(none supplied)'),
+      '',
+      'READ-ONLY MEAT:',
+      String(sections.MEAT || '').trim(),
+      '',
+      'READ-ONLY CONCLUSION:',
+      String(sections.CONCLUSION || '').trim(),
+      '',
+      correction ? 'MECHANICAL CORRECTION REQUIRED:\n' + correction : '',
+      '',
+      'Write the single final OPEN LOOP now.'
+    ].filter(Boolean).join('\n');
+  }
+
+  function openLoopValidationIssues(config, openLoop) {
+    const sections = parseSections(config.script) || {};
+    const candidateScript = composeSections({ ...sections, 'OPEN LOOP': openLoop });
+    const validation = validateOutput(
+      candidateScript,
+      config.video,
+      config.level,
+      config.userMessage,
+      config.systemPrompt
+    );
+    const sectionIssues = validation.sectionIssues && validation.sectionIssues['OPEN LOOP'] || [];
+    const repetitionIssues = (validation.issues || []).filter(issue =>
+      /repeats a long phrase from OPEN LOOP|OPEN LOOP repeats a long phrase/i.test(issue)
+    );
+    const wordCount = (String(openLoop || '').match(/\b[\w’'-]+\b/g) || []).length;
+    const lengthIssue = wordCount < 25 ? ['OPEN LOOP has ' + wordCount + ' words; use 25 to 50.'] : [];
+    return [...lengthIssue, ...sectionIssues, ...repetitionIssues];
   }
 
   async function generateFinalOpenLoop(config) {
     const sections = parseSections(config.script);
-    if (!sections) throw new Error('The script does not have all five labeled sections for final Open Loop selection.');
-    let failures = [];
+    if (!sections) throw new Error('The script does not have all five labeled sections for final Open Loop construction.');
+    let contract = null;
+    let contractCorrection = '';
+    for (let attempt = 0; attempt < 2 && !contract; attempt++) {
+      const raw = await config.callModel(
+        OPEN_LOOP_ARCHITECT_SYSTEM,
+        openLoopArchitectMessage(config, contractCorrection),
+        0.05,
+        550
+      );
+      contract = parseOpenLoopContract(raw);
+      contractCorrection = 'Return every required contract field in the exact JSON shape. Do not write visible Open Loop prose.';
+    }
+    if (!contract) throw new Error('The Open Loop architecture could not be prepared cleanly. Please try again.');
+
+    let correction = '';
     for (let attempt = 0; attempt < 2; attempt++) {
       const raw = await config.callModel(
-        OPEN_LOOP_STUDIO_SYSTEM,
-        openLoopStudioMessage(config, failures),
-        attempt ? 0.35 : 0.55,
-        650
+        OPEN_LOOP_WRITER_SYSTEM,
+        openLoopWriterMessage(config, contract, correction),
+        attempt ? 0.2 : 0.45,
+        350
       );
-      const slate = parseOpenLoopStudioResult(raw);
-      if (!slate.candidates.length) {
-        failures = ['The previous response did not return any usable Open Loop candidates. Return exactly four candidates in the required JSON shape.'];
+      const openLoop = parseOpenLoopWriterResult(raw);
+      if (!openLoop) {
+        correction = 'Return one nonempty open_loop value in the exact JSON shape.';
         continue;
       }
-      const quarantine = activeQuarantinedTerms(sections, slate.quarantinedTerms);
-      const candidateFailures = [];
-      const validCandidates = slate.candidates.filter((candidate, index) => {
-        const wordCount = (candidate.match(/\b[\w’'-]+\b/g) || []).length;
-        if (wordCount < 25 || wordCount > 50) {
-          candidateFailures.push('Candidate ' + (index + 1) + ' has ' + wordCount + ' words; use 25 to 50.');
-          return false;
-        }
-        const leakedTerm = quarantine.find(term => containsQuarantinedPayoff(candidate, [term]));
-        if (leakedTerm) {
-          candidateFailures.push('Candidate ' + (index + 1) + ' names the quarantined payoff detail "' + leakedTerm + '."');
-          return false;
-        }
-        const candidateScript = composeSections({ ...sections, 'OPEN LOOP': candidate });
-        const validation = validateOutput(
-          candidateScript,
-          config.video,
-          config.level,
-          config.userMessage,
-          config.systemPrompt
-        );
-        const openLoopIssues = validation.sectionIssues && validation.sectionIssues['OPEN LOOP'] || [];
-        const repetitionIssues = (validation.issues || []).filter(issue =>
-          /repeats a long phrase from OPEN LOOP|OPEN LOOP repeats a long phrase/i.test(issue)
-        );
-        const issues = [...openLoopIssues, ...repetitionIssues];
-        if (issues.length) {
-          candidateFailures.push('Candidate ' + (index + 1) + ': ' + issues.join(' '));
-          return false;
-        }
-        return true;
-      });
-      if (!validCandidates.length) {
-        failures = candidateFailures.length
-          ? candidateFailures.slice(0, 6)
-          : ['Every candidate violated an Open Loop rule.'];
-        continue;
-      }
-      const judgmentRaw = await config.callModel(
-        OPEN_LOOP_JUDGE_SYSTEM,
-        openLoopJudgeMessage(config, validCandidates, quarantine),
-        0.05,
-        300
-      );
-      const judgment = parseOpenLoopJudgeResult(judgmentRaw);
-      if (judgment.pass && validCandidates.includes(judgment.openLoop)) return judgment.openLoop;
-      failures = [judgment.reason || 'The previous candidates did not create a clean unresolved retention gap.'];
+      const issues = openLoopValidationIssues(config, openLoop);
+      if (!issues.length) return openLoop;
+      correction = issues.join(' ');
     }
-    throw new Error('The script response still needs correction: the final Open Loop did not pass the Zeigarnik Retention Gap checks. Please try again.');
+    throw new Error('The final Open Loop could not be written cleanly from its Zeigarnik contract. Please try again.');
   }
 
   async function finalizeScriptOpenLoop(config) {
@@ -1337,8 +1295,8 @@ export {
     validationFeedback,
     stageContract,
     QUALITY_REVIEW_SYSTEM,
-    OPEN_LOOP_STUDIO_SYSTEM,
-    OPEN_LOOP_JUDGE_SYSTEM,
+    OPEN_LOOP_ARCHITECT_SYSTEM,
+    OPEN_LOOP_WRITER_SYSTEM,
     HOOK_STUDIO_SYSTEM,
     HOOK_JUDGE_SYSTEM,
     buildQualityReviewMessage,
@@ -1347,10 +1305,10 @@ export {
     applySectionReplacements,
     reviewAndRepairScript,
     reviewAndRepairSection,
-    parseOpenLoopStudioResult,
-    openLoopStudioMessage,
-    parseOpenLoopJudgeResult,
-    openLoopJudgeMessage,
+    parseOpenLoopContract,
+    openLoopArchitectMessage,
+    parseOpenLoopWriterResult,
+    openLoopWriterMessage,
     generateFinalOpenLoop,
     finalizeScriptOpenLoop,
     parseHookStudioResult,

@@ -864,3 +864,13 @@ The following principles govern every word of copy in this app and the broader C
 - Payoff quarantine now discards broad abstract terms and details already established in the Meat. A detail visible before the Conclusion cannot be treated as reveal-only merely because the Studio repeated it in `quarantined_terms`.
 - The Studio accepts a usable deduplicated candidate slate even when the model does not return four unique strings. Each rejected candidate now produces exact retry feedback for word count, named payoff leakage, banned language, stage rules, or cross-section repetition.
 - Regression coverage proves that an overlong draft Open Loop containing banned language cannot block the story before the Studio and never reaches the story reviewer.
+
+## 2026-07-27: Contract-first Zeigarnik architecture
+
+- This section supersedes the earlier four-candidate Open Loop Studio and independent Open Loop judge described above. That design prevented direct payoff leakage but could still select the wrong unresolved question. In L2V4 it chose whether the speaker would continue, even though the Meat answered that decision immediately and the Conclusion actually owned a meaningful result.
+- Removed the candidate contest and semantic rejection judge. Open Loop construction now has two affirmative steps: an Architect defines the exact retention contract, then a Writer executes that approved contract once.
+- The Architect returns `answer_kind`, `retention_question`, `conclusion_answer`, `meat_boundary`, `known_before_payoff`, and `quarantined_details`. It is explicitly required to derive the retention target from what the Conclusion uniquely answers rather than from the loudest tension in the Meat.
+- The `meat_boundary` is the load-bearing addition. It states what the Meat may establish and the exact answer it must stop before. For result-driven Conclusions, the Architect cannot use what the speaker decided as the retention question when the Meat already shows that decision.
+- The Writer receives the contract, Meat, and Conclusion. It writes one 25-to-50-word Open Loop directly from `retention_question` and `known_before_payoff`, stops at `meat_boundary`, and withholds `conclusion_answer` and every quarantined detail.
+- There is no semantic pass/fail judge after writing. Existing deterministic format, banned-language, length, stage, and repetition checks may request one targeted mechanical rewrite, but they do not choose among competing story interpretations.
+- Regression coverage verifies that the Open Loop draft remains withheld, the Writer receives the exact approved retention question and Meat boundary, and only Open Loop changes during installation.
