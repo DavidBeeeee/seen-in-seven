@@ -22,7 +22,7 @@ Level 2 Video 4 is the choice before proof. Its humanity comes from watching the
 
 The Hook is a pure pattern interrupt. The Open Loop creates one exact pressing question that the viewer can name. The Meat carries the trial through the choice but stops before the answer. The Conclusion reveals the first meaningful result for the first time and shows only what it made possible then. The result cannot become professional proof, a method, universal advice, or a hidden warning about Video 5.
 
-Video 4 gives the speaker and audience something worth believing in and therefore something worth losing. It does not need to cause or foreshadow the ordeal. Video 5 remains the apparently irreversible collapse inside the same larger quest.
+Video 4 gives the speaker and audience something worth believing in and therefore something worth losing. It does not need to cause the ordeal. After the Conclusion closes the local question with hope, the CTA deliberately foreshadows that the next chapter is catastrophic and that the speaker helped cause it. The CTA reveals the magnitude and responsibility while withholding the event, exact loss, causal choices, recovery, and later truth. Video 5 remains the apparently irreversible collapse inside the same larger quest.
 
 ### Current 5E Epiphany Standard
 

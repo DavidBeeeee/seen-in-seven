@@ -1012,14 +1012,14 @@ Speaker feels: Uncertain + Tempted + Newly encouraged
 AUDIENCE JOURNEY:
 Before: "The first epiphany sounded compelling, but saying something and living by it are different."
 After: "They chose the harder path while the old way still appeared to be winning, and one meaningful result made continuing feel possible."
-Open question: "What will they build now that this path finally feels possible?"
-Social impulse: Follow because the viewer recognizes the temptation, cares about the choice, and wants to see where the first real hope leads.
+Open question: "What happened after this first hope became real enough to lose?"
+Social impulse: Follow because the viewer recognizes the choice, feels the relief of the result, and needs to know what nearly destroyed what had just begun.
 
 THE RECOVERABILITY STANDARD — KEEP VIDEO 5 SACRED:
 Video 4 may be awkward, discouraging, frustrating, socially unrewarded, inconvenient, or tempting to abandon. It is still recoverable. If the speaker could wake up and try again with roughly the same life, identity, work, relationships, and resources, the event may belong here. If something central was destroyed, ended, lost, or appeared impossible to restore, reserve it for Video 5. Video 4 is not a smaller ordeal. It is the moment the speaker chooses without proof and receives the first meaningful reason to hope.
 
 THE HUMANITY STANDARD — NO PROFESSIONAL CASE STUDY:
-The emotional center is not whether the speaker's professional idea was correct. It is what happened inside a recognizable person while the surrounding world appeared to reward the old way. Preserve uncertainty, comparison, embarrassment, envy, discouragement, or temptation only when supported by the source. The viewer should recognize the choice before admiring the result. Never turn the partial win into proof of a method, a superiority claim, a client-success story, or a lesson about what other people should do.
+The emotional center is not whether the speaker's professional idea was correct. It is what happened inside a recognizable person while the surrounding world appeared to reward the old way. Preserve uncertainty, comparison, embarrassment, envy, discouragement, or temptation only when supported by the source. The viewer should recognize the choice before admiring the result. Never turn the partial win into proof of a method, a superiority claim, a client-success story, or a lesson about what other people should do. Do not position the speaker commercially through negation. Phrases about having no pitch, nothing to purchase, nothing to join, or no offer still make the scene about marketing. Describe the human action directly.
 
 THE OPEN LOOP CONTRACT — PRESSING QUESTION, RESERVED ANSWER:
 Privately define one exact UNANSWERED QUESTION created by the Hook and one CONCLUSION ANSWER supplied by the first meaningful result. The Open Loop exists only to make the viewer need that answer. It may create a missing cause, consequence, choice, reversal, or outcome, but it cannot function as general setup, a summary of the decision, a statement of stakes, or vague anticipation. The viewer should be able to say exactly what they are waiting to discover. No part of the answer may appear in the Hook, Open Loop, or Meat.
@@ -1027,17 +1027,20 @@ Privately define one exact UNANSWERED QUESTION created by the Hook and one CONCL
 STRUCTURAL BEATS:
 1. Pattern Interrupt (Hook) — Open with the most arresting truthful evidence inside the recoverable trial or the temptation to return to the old way. Its only job is to interrupt attention long enough for the Open Loop. Do not recap Video 3, report progress, announce growth, teach the lens, or state the result.
 2. Pressing Unanswered Question (Open Loop) — Create the exact question whose answer is reserved for the Conclusion. Make the missing information specific and urgent enough to carry the viewer through the Meat. Do not supply the result, imply the answer, summarize a decision, or substitute generic stakes.
-3. First Lens In Action (Meat) — Carry forward only the minimum context needed from Video 3, then show what the speaker actually did differently in work, craft, calling, business, life, or public communication.
+3. First Lens In Action (Meat) — Carry forward only the minimum context needed from Video 3, preferably one short clause and never more than one short sentence. Do not repeat its polished wording, governing metaphor, human-cost argument, or completed reframe. Move immediately into what the speaker actually did differently in work, craft, calling, business, life, or public communication.
 4. Recoverable Trial (Meat) — Stay inside one representative sequence. Show how the old way appeared to be winning and why retreating, imitating it, hiding, stopping, or returning to the familiar choice felt appealing. Repeated pressure may appear inside the sequence, but do not create a montage of unrelated tests.
 5. Choice Before Proof (Meat) — Show what the speaker chose while the outcome remained unknown. End before the meaningful result. Do not explain why the choice was correct, state what it taught, or let later authority narrate the moment.
 6. First Meaningful Result (Conclusion) — Answer the exact Open Loop for the first time with the supported consequence that made continuing feel worthwhile.
-7. Possibility, Not Proof (Conclusion) — Show only what that result reasonably made the speaker hope, attempt, or believe was possible then. One ordinary uncertainty or dependency may remain visible when naturally supplied, but never manufacture a warning or future failure seed. Do not turn the result into a universal lesson, method, case study, or second epiphany.
-8. Midpoint Pull (CTA) — Continue from a specific consequence of the result, identify this as Video 4 of 7, and ask the viewer to follow for one concrete reason tied to what this new possibility sets in motion. Do not use generic promises about the next challenge, the real test, or what happens next. Do not reveal or predict Video 5.
+7. Possibility, Not Proof (Conclusion) — Show only what that result reasonably made the speaker hope, attempt, or believe was possible then. The result may prove that this one choice reached or mattered to one person; it cannot validate the complete philosophy, prove the speaker's professional approach, repeat Video 3's lesson, or become a second epiphany. One ordinary uncertainty or dependency may remain visible when naturally supplied, but never manufacture a warning.
+8. Ordeal Cliff (CTA) — Let the emotional temperature drop after the hopeful Conclusion. Carry forward what had finally become possible or valuable, then clearly foreshadow that the next chapter contains the devastating event that nearly destroyed it and that the speaker's own choices contributed. Identify this as Video 4 of 7 and ask the viewer to follow for one concrete reason. Reveal the magnitude and responsibility, but withhold the event, exact loss, causal choices, failed recovery, outcome, and Video 6 truth. Do not frame Video 5 as the Video 4 tactic merely becoming insufficient, and do not use generic promises about the next challenge, real test, or what happens next.
 
 TONE: Human, observant, uncertain, and quietly hopeful. The speaker is not demonstrating expertise. They are choosing what they believe before the world has given them enough reason to feel certain.
 
 THIS VIDEO MAKES VIDEO 5 HURT:
-Video 4 gives the hero momentum, commitment, emerging identity, and something worth losing. It does not need to cause or foreshadow the ordeal. Video 5 is a different category of event: an apparently irreversible collapse inside the same larger quest. Without this first hope, the fall is merely bad news. With it, the audience understands what has been put at risk.
+Video 4 gives the hero momentum, commitment, emerging identity, and something worth losing. It does not need to cause the ordeal. Video 5 is a different category of event: an apparently irreversible collapse inside the same larger quest. Without this first hope, the fall is merely bad news. With it, the audience understands what has been put at risk. The CTA should foreshadow that catastrophic category and the speaker's responsibility while withholding every plot detail.
+
+INFORMATION PROGRESSION — DO NOT REPLAY THE OPENING:
+Once the Hook introduces the charged contrast and the Open Loop creates the pressing question, the Meat must advance into behavior, internal conflict, temptation, and choice. Do not restage the same external comparison, metric, reaction, or unanswered question in new wording. A necessary anchor may receive one brief callback, but the Meat cannot rebuild the Hook and Open Loop before moving forward.
 
 JOURNAL ANSWER ROUTING — MANDATORY:
 1. What the speaker tried supplies the changed action.
@@ -1055,8 +1058,8 @@ Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design t
 VIDEO 4, LEVEL 2: Tone = Human, pressured, uncertain, and quietly hopeful.
 HOOK guidance: Pull the most arresting truthful evidence from the recoverable trial or the apparent success of the old way. Lead with the lived contradiction, not professional interpretation. Never open with a challenge update, growth summary, Video 3 recap, lesson, current milestone, or the meaningful result.
 OPEN LOOP guidance: Create one exact pressing question from the Hook and reserve its answer for the Conclusion. A cold viewer must be able to name what they are waiting to discover. Do not use the section for setup, a decision summary, general stakes, vague curiosity, or a promise that something interesting is coming.
-CONCLUSION guidance: Answer the exact Open Loop for the first time with the supported meaningful result, then show what that result made possible to the speaker at that moment. Keep the result human and proportionate. Do not declare the approach proven, convert it into advice, diagnose an unseen limit, or foreshadow the ordeal.
-CTA guidance: Explicitly identify this as Video 4 of 7 while continuing a specific consequence of the result. Ask the viewer to follow because they want to see what this newly possible future sets in motion. Do not use generic commentary about the next challenge, a real test, being in the middle, or what happens next. Do not reveal, predict, or name the coming failure.
+CONCLUSION guidance: Answer the exact Open Loop for the first time with the supported meaningful result, then show what that result made possible to the speaker at that moment. Keep the result human and proportionate. Let one result prove only that one choice mattered; do not declare the philosophy or professional approach proven, repeat Video 3's reframe, convert the moment into advice, or diagnose the future.
+CTA guidance: Drop the emotional temperature after the hopeful result. Explicitly identify this as Video 4 of 7 and ask the viewer to follow because the next part contains the devastating event that nearly destroyed what had begun to feel possible and the speaker must own their role in it. Foreshadow the severity and responsibility, not the plot. Withhold what happened, what was lost, how the speaker caused it, whether they recovered, and what they learned. Never describe Video 5 as the Video 4 approach merely stopping, failing, or becoming insufficient. Avoid generic commentary about the next challenge, a real test, being in the middle, or what happens next.
 
 VIDEO 4 FINAL CHECK:
 - The story puts the first professional epiphany into action in a real arena connected to the speaker's larger subject.
@@ -1065,10 +1068,13 @@ VIDEO 4 FINAL CHECK:
 - One representative sequence contains real pressure, an old-world temptation, and a choice made before the outcome is known.
 - The emotional center is the speaker's uncertainty and choice, not proof of professional superiority.
 - The Hook interrupts attention. The Open Loop creates one exact pressing question. The Meat withholds its answer. The Conclusion answers it with the first meaningful result.
+- The Meat advances beyond the Hook and Open Loop instead of restaging their external comparison, metric, reaction, or question.
+- Video 3 receives no more than one brief continuity sentence and is not retaught.
 - The result is supported, proportionate, and framed as possibility rather than proof, advice, a method, or a case study.
+- Commercial positioning does not re-enter through statements about what the speaker was not pitching, promoting, charging for, or asking people to join.
 - Approximate source details remain approximate. Do not invent exact durations, counts, money, reactions, or results to make a trial sound more concrete.
 - If the source does not supply a meaningful result, do not invent one. Preserve the unresolved question instead.
-- The CTA grows from the result and opens a concrete reason to follow without generic chapter narration.
+- The CTA deliberately foreshadows the catastrophic scale and speaker responsibility of Video 5 while withholding the event, cause, loss, recovery, and later truth.
 - The fall, recovery, second epiphany, and mature guide identity remain reserved for later videos.
 </l2_v4_rules>
 
