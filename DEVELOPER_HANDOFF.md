@@ -3,7 +3,7 @@
 **Prepared for:** Incoming developer  
 **Project:** SeenInSeven — AI video script builder  
 **Owner:** David Bee, Colorado Mastermind  
-**Date:** June 2026, updated July 25, 2026
+**Date:** June 2026, updated July 27, 2026
 **Repo:** https://github.com/DavidBeeeee/seen-in-seven  
 **Live app:** https://studio.coloradomastermind.com
 **Studio admin:** https://studio.coloradomastermind.com/admin
@@ -769,3 +769,12 @@ The following principles govern every word of copy in this app and the broader C
 - Corrected the shared current-answer extractor so Easy journal mode is recognized by the Level 2 preparation paths instead of accidentally forwarding the entire unsorted message.
 - Restored the section boundary inside Video 5: the Hook is only a pattern interrupt, the Open Loop is only the pressing unfinished meaning, the Meat carries one causal descent, the Conclusion owns the lowest-point belief, and the CTA cannot announce that recovery has begun.
 - Kept quality review deliberately narrow. Level 2 Video 5 may fail review for lacking a real defeat, owned contribution, or failed recovery, or for leaking recovery and Video 6 meaning. It must not fail merely because the ordeal is gradual, internal, commercially specific, morally complicated, unusually phrased, or less objectively dramatic than another person's hardship.
+
+## 2026-07-27: Canonical script style guide
+
+- Restored David's complete script style guide inside `<style_guide>` in `api/_lib/blueprints.txt`, where the initial writer, full regeneration, section regeneration, production preview, consistent test, and semantic reviewer all receive it through the same focused prompt.
+- The Hook-and-Eye Seamless Rule applies only inside MEAT. Hook, Open Loop, Conclusion, and CTA remain independent writing operations, so continuity editing cannot soften the Hook or convert the Open Loop into setup.
+- Added explicit rules for eighth-grade conversational speech, contractions, I/me/my perspective, one-listener language, concrete specificity, contextual `land` and `ship` bans, false balance, commercial wording, cross-section repetition, and preservation of intentional profanity, aggression, controversy, unusual facts, and emotional force.
+- `<banned_script_terms>` is now the single machine-readable source for hard script bans. It includes complete vague-noun, generalization, LLM-cliche, and commercial word forms, including `thing`, `things`, `something`, `anything`, `everything`, `nothing`, `selling`, `sold`, `paid`, `payments`, and related inflections.
+- `api/_lib/prompt-engine.js` parses that exact list for deterministic checks instead of maintaining a second JavaScript list. Prompt Tester draft validation and published blueprint validation now share one server-side validator and reject a missing or malformed style guide before generation or publishing.
+- The Prompt Tester's Blueprint Draft toolbar includes a Style Guide jump button so the canonical guide remains directly editable alongside the 14 video sections.

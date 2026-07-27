@@ -277,6 +277,20 @@ function highlightActiveBlueprint() {
   setTimeout(function() { editor.scrollTop = targetScroll; }, 50);
 }
 
+function highlightStyleGuide() {
+  const editor = promptEl('blueprint-editor');
+  const source = editor.value;
+  const openTag = '<style_guide>';
+  const start = source.indexOf(openTag);
+  if (start === -1) return showToast('Style guide marker not found');
+  const selEnd = start + openTag.length;
+  const targetScroll = scrollOffsetForChar(editor, start);
+  editor.focus({ preventScroll: true });
+  editor.setSelectionRange(start, selEnd);
+  editor.scrollTop = targetScroll;
+  setTimeout(function() { editor.scrollTop = targetScroll; }, 0);
+}
+
 function scrollOffsetForChar(textarea, charIndex) {
   var mirror = document.getElementById('blueprint-mirror');
   if (!mirror) {
@@ -795,7 +809,14 @@ function validateBlueprint(source) {
   if (!/^const SYSTEM_PROMPT = `[^]*`;\s*$/.test(source)) errors.push('The file must contain only the SYSTEM_PROMPT template.');
   if ((source.match(/`/g) || []).length !== 2) errors.push('Backticks are not allowed inside the prompt text.');
   if (source.includes('${')) errors.push('JavaScript interpolation syntax is not allowed inside the prompt text.');
-  const structuralMarkers = ['<global_rules>', '</global_rules>'];
+  const structuralMarkers = [
+    '<global_rules>',
+    '</global_rules>',
+    '<style_guide>',
+    '</style_guide>',
+    '<banned_script_terms>',
+    '</banned_script_terms>'
+  ];
   SISPromptEngine.SECTION_KEYS.forEach(key => structuralMarkers.push('<' + key + '>', '</' + key + '>'));
   structuralMarkers.concat(['[HOOK]', '[OPEN LOOP]', '[MEAT]', '[CONCLUSION]', '[CTA]']).forEach(marker => {
     const count = source.split(marker).length - 1;

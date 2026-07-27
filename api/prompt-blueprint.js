@@ -1,4 +1,5 @@
 import { authenticatedAdmin } from './_lib/security.js';
+import { validateBlueprintSource } from './_lib/prompt-engine.js';
 
 const REPOSITORY = 'DavidBeeeee/seen-in-seven';
 const BRANCH = process.env.PROMPT_BLUEPRINT_BRANCH || process.env.VERCEL_GIT_COMMIT_REF || 'main';
@@ -46,27 +47,6 @@ async function currentBlueprint(ref) {
 
 async function recentBlueprintCommits() {
   return github('/commits?sha=' + BRANCH + '&path=' + encodeURIComponent(BLUEPRINT_PATH) + '&per_page=2');
-}
-
-function validateBlueprintSource(source) {
-  const errors = [];
-  if (typeof source !== 'string') return ['Blueprint source is missing.'];
-  if (source.length < 10000 || source.length > 200000) errors.push('Blueprint length is outside the expected range.');
-  if (!/^const SYSTEM_PROMPT = `[^]*`;\s*$/.test(source)) errors.push('The file must contain only the SYSTEM_PROMPT template.');
-  if ((source.match(/`/g) || []).length !== 2) errors.push('Backticks are not allowed inside the prompt text.');
-  if (source.includes('${')) errors.push('JavaScript interpolation syntax is not allowed inside the prompt text.');
-  const required = ['<global_rules>', '</global_rules>', '[HOOK]', '[OPEN LOOP]', '[MEAT]', '[CONCLUSION]', '[CTA]'];
-  [1, 2].forEach(level => {
-    for (let video = 1; video <= 7; video++) {
-      required.push('<l' + level + '_v' + video + '_rules>', '</l' + level + '_v' + video + '_rules>');
-    }
-  });
-  required.forEach(marker => {
-    const count = source.split(marker).length - 1;
-    if (marker.startsWith('<') && count !== 1) errors.push('Required marker must appear exactly once: ' + marker);
-    else if (!count) errors.push('Missing required marker: ' + marker);
-  });
-  return errors;
 }
 
 async function updateBlueprint(source, currentSha, message) {

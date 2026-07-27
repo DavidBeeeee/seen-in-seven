@@ -7,21 +7,12 @@ import {
 import {
   buildSystemPrompt,
   extractSystemPrompt,
+  validateBlueprintSource,
   reviewAndRepairScript
 } from './_lib/prompt-engine.js';
 import { authenticatedAdmin, consumeQuota, json } from './_lib/security.js';
 
 export const config = { maxDuration: 180 };
-
-function validateBlueprintSource(source) {
-  const errors = [];
-  if (typeof source !== 'string') return ['Blueprint source is missing.'];
-  if (source.length < 10000 || source.length > 200000) errors.push('Blueprint length is outside the expected range.');
-  if (!/^const SYSTEM_PROMPT = `[^]*`;\s*$/.test(source)) errors.push('The file must contain only the SYSTEM_PROMPT template.');
-  if ((source.match(/`/g) || []).length !== 2) errors.push('Backticks are not allowed inside the prompt text.');
-  if (source.includes('${')) errors.push('JavaScript interpolation syntax is not allowed inside the prompt text.');
-  return errors;
-}
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' });
