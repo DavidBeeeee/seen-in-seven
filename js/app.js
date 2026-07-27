@@ -2077,6 +2077,22 @@ function showFullRegenerationStatus(kind, message, videoIdx) {
     : null;
 }
 
+function clearFullRegenerationStatus(videoIdx) {
+  const status = document.getElementById('sv-regeneration-status');
+  const messageEl = document.getElementById('sv-regeneration-message');
+  const retryBtn = document.getElementById('sv-regeneration-retry');
+  if (!status) return;
+  if (videoIdx != null && status.dataset.video !== String(videoIdx)) return;
+  status.hidden = true;
+  status.classList.remove('is-error');
+  delete status.dataset.video;
+  if (messageEl) messageEl.textContent = '';
+  if (retryBtn) {
+    retryBtn.hidden = true;
+    retryBtn.onclick = null;
+  }
+}
+
 // Regenerate the complete script while preserving the user's answers and prior script version.
 async function regenerateFullScript(videoIdx, btnEl) {
   const editKey = 'script_v' + videoIdx;
@@ -3068,6 +3084,7 @@ async function showScriptView(idx, skipLoading) {
       queueScriptSave(video, level, script, finalContent, promptVersion);
       if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(idx);
       if (typeof logEvent === 'function') logEvent('script_generated', {video_number: video, level, prompt_version: promptVersion || null});
+      clearFullRegenerationStatus(idx);
       _doShowScriptView(idx);
       // Show the legacy verification gate only if the newer save-progress overlay never appeared.
       if (typeof getCurrentUser === 'function' && !getCurrentUser()) {
@@ -3612,6 +3629,7 @@ function clearVideoPromptAnswers(idx) {
 async function clearVideoDraftForRegeneration(idx) {
   const level = state.level || 1;
   const videoNumber = idx + 1;
+  clearFullRegenerationStatus(idx);
   delete state.videos['script_v' + idx];
   delete state.videos['sections_v' + idx];
   delete state.videos['_undo_v' + idx];

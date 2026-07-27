@@ -805,4 +805,5 @@ The following principles govern every word of copy in this app and the broader C
 - The client refuses to save or label an exact unchanged response as a fresh script.
 - The generation API now logs rejected requests with mode, level, video number, and error message without logging the user's answers. Error responses include a stable diagnostic code.
 - Fresh regeneration still receives one independent story review. If that review or a hard rule finds a problem, all subsequent corrections rewrite the complete script. A final hard-format correction no longer requires another subjective review and never stitches section replacements together.
-- The script asset query was changed to `full-regen-2` so existing browsers load the corrected interface immediately.
+- The script asset query was changed to `full-regen-3` so existing browsers load the corrected interface immediately.
+- Deleting and re-answering a video now clears any earlier full-regeneration status immediately. A successful standard generation also clears stale regeneration feedback before showing the newly generated script.
