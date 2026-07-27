@@ -1494,17 +1494,17 @@ const INTRO_COPY = {
       triggers: ['Behavioral Proof','Escalating Resistance','Earned Confidence','Unresolved Tension','Midpoint Orientation']
     },
     L2: {
-      label: 'Video 4 of 7: When The Insight Met Reality',
-      title: 'Put The First Realization Under Pressure',
-      body: "Show what happened when you applied the first realization to real decisions. The arena may be work, craft, calling, business, life, or public communication. Give us the repeated tests, partial wins, confidence they created, and the limit that remained beneath them.",
+      label: 'Video 4 of 7: Before I Knew It Would Work',
+      title: 'Show The Choice You Made Without Proof',
+      body: "Show what you tried after the first realization, why the old way still looked tempting, and what you chose while the result remained uncertain. The first meaningful sign belongs at the end, where it gives the audience hope without turning your experience into a lesson.",
       result: 'Trust',
       framework: [
         {name:'The New Lens In Practice', trigger:'Behavioral Proof'},
-        {name:'The Real Tests',       trigger:'Escalating Resistance'},
-        {name:'The Partial Win',      trigger:'Provisional Confidence'},
-        {name:'The Unseen Limit',     trigger:'Unresolved Tension'}
+        {name:'The Old Way Still Winning', trigger:'Human Temptation'},
+        {name:'The Choice Before Proof', trigger:'Character In Action'},
+        {name:'The First Meaningful Result', trigger:'Earned Hope'}
       ],
-      triggers: ['Behavioral Proof','Escalating Resistance','Provisional Confidence','Unresolved Tension','Midpoint Orientation']
+      triggers: ['Behavioral Proof','Human Temptation','Character In Action','Earned Hope','Midpoint Pull']
     }
   },
   5: {
@@ -1524,7 +1524,7 @@ const INTRO_COPY = {
     L2: {
       label: 'Video 5 of 7: The Hardest Part',
       title: 'Tell The Failure That Nearly Ended It',
-      body: "Return to the larger work, craft, calling, or expertise story you have been telling. This is the failure that seemed capable of destroying what you had built or hoped to build. Your own decision or blind spot helped cause it, what you knew did not save you, and recovery did not feel guaranteed. Do not give the lesson yet.",
+      body: "Return to the larger work, craft, calling, or expertise story you have been telling. This is not another difficult attempt. Something real was lost, broken, ended, or seemed impossible to restore. Your own decision or blind spot helped cause it, what you knew did not save you, and every attempted way back failed. Do not give the lesson yet.",
       result: 'Trust',
       framework: [
         {name:'Evidence Of Defeat', trigger:'Charged Evidence'},
@@ -1608,8 +1608,8 @@ const VIDEO_EASY_PROMPTS = {
     null,
     { label: 'Before you treated this as expertise, what ability or interest kept showing up, and why did you refuse to take it seriously?', hint: 'Describe the ordinary work or life you were in, what other people might have valued before you did, and why staying where you were felt safer or more responsible.', key: 'easyAnswer_v1' },
     { label: 'What is one idea you used to accept about your work that you now strongly disagree with? Why did it make sense to you at the time, and what made the old idea stop fitting what you saw?', hint: 'Tell it like a journal entry. Include one concrete moment and who still pays the cost of the old idea. You do not need to explain the final lesson.', key: 'easyAnswer_v2' },
-    { label: 'After that first change in how you saw things, what did you try, what made it difficult, and what happened?', hint: 'Tell it like a journal entry. Include what you did differently, one or two moments that tested you, what started going better, and anything that still felt shaky or unfinished at the time.', key: 'easyAnswer_v3' },
-    { label: 'In the work, craft, calling, or expertise story you have been telling, what failure was so devastating that you thought what you had built or hoped to build might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?', hint: 'Tell us what collapsed, what seemed permanently lost, and why you could not see a way back in this part of your life. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.', key: 'easyAnswer_v4' },
+    { label: 'After that first change in how you saw things, what did you do differently before you knew whether it would work?', hint: 'Tell it like a journal entry. What made the old way tempting to return to, what did you choose anyway, and what small but meaningful result made continuing feel possible?', key: 'easyAnswer_v3' },
+    { label: 'In the work, craft, calling, or expertise story you have been telling, what failure was so devastating that you thought what you had built or hoped to build might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?', hint: 'This is not a frustrating day you could simply try again after. Tell us what was actually lost, broken, ended, or seemed impossible to restore, why you could not see a way back, and what you tried afterward that still failed. Answer from who you were before you knew what you would eventually learn.', key: 'easyAnswer_v4' },
     { label: 'After the hardest experience, what became clear that your first realization could not explain?', hint: 'Describe the aftermath evidence that brought it into focus, one observable thing you changed afterward, and who might need the perspective you earned. Keep it connected to what actually happened.', key: 'easyAnswer_v5' },
     { label: 'Who were you before the two professional realizations and the hardest part of the story, and who are you now in relation to your expertise and the people you want to reach?', hint: 'Describe what genuinely changed, what remains unfinished or still needed, what telling the story clarified about your work, and what perspective or mission you want the right viewer to keep following.', key: 'easyAnswer_v6' }
   ]
@@ -2334,21 +2334,21 @@ const level2Videos = [
     compile:v=>`The idea I accepted, why it made sense at the time, and how it shaped my actions: ${v.v2p0||'___'}. The moment the old idea stopped matching the evidence: ${v.v2p1||'___'}. Who still carries the old idea, what it costs them, and what I wish they could recognize sooner: ${v.v2p3||'___'}.`
   },
   {
-    title:"When The Insight Met Reality",
-    note:"Think about the stretch after that first change in how you saw things. Tell us what you tried, what made it difficult, what started going better, and what still felt unfinished at the time. You do not need to explain what any of it meant later.",
+    title:"What I Chose Before I Knew",
+    note:"Think about the first time you tried to live by what you had started seeing differently. Tell us what you did, why returning to the old way was tempting, what you chose before you knew the result, and the first sign that made continuing feel possible.",
     prompts:[
-      {label:"After that first change in how you saw things, what did you try or handle differently?",hint:"Take us to the first real situation where you acted on it. What did you choose, say, make, stop, start, or approach differently? Tell us what happened rather than explaining the lesson.",key:"v3p0",ph:"Describe the first situation where you acted differently and what you did."},
-      {label:"What happened the next few times you tried to keep doing that?",hint:"Tell us about one or two moments when it was awkward, difficult, inconvenient, or tempting to fall back into the old way. Ordinary details are useful here.",key:"v3p1",ph:"Describe one or two moments that made the change difficult to keep practicing."},
-      {label:"What started going better, and what made you think you might finally be getting somewhere?",hint:"Give us something you could actually see, hear, finish, decide, or point to. Then tell us what that small success made you believe at the time.",key:"v3p2",ph:"Describe what began working and what you believed because of it."},
-      {label:"Even while that was going well, what still felt shaky, unfinished, or harder than you wanted it to?",hint:"Stay inside that point in time. What were you still struggling with, working around, or hoping would sort itself out? Do not explain the later failure or what you eventually learned.",key:"v3p3",ph:"Describe what still felt unfinished while the early progress was happening."}
+      {label:"After you started seeing this differently, what did you actually try or do differently?",hint:"Take us to one real situation. What did you choose, say, make, stop, start, or handle differently before you knew whether it would help?",key:"v3p0",ph:"Describe what you tried and the situation where you tried it."},
+      {label:"Tell us about a moment when the old way appeared to be working better than what you were trying.",hint:"What happened around you? What made stopping, hiding, copying someone else, or returning to the familiar choice feel tempting? Give us ordinary details we can picture.",key:"v3p1",ph:"Describe the moment the old way looked more rewarding and why it tempted you."},
+      {label:"What did you choose to do while you still did not know whether it would work?",hint:"Stay inside that moment. What did you do next, and what made you continue without having proof that it was the right choice?",key:"v3p4",ph:"Describe what you chose while the result was still uncertain."},
+      {label:"What small but meaningful result made you believe continuing might be worth it, and what did it make seem possible?",hint:"Give us something you could actually see, hear, finish, decide, or point to. Keep it honest and proportionate. This is the first reason for hope, not the worst moment or the final lesson.",key:"v3p2",ph:"Describe the first meaningful result and what it made seem possible."}
     ],
-    compile:v=>`The first situation where I acted differently and what I did: ${v.v3p0||'___'}. What happened when I kept trying and what made it difficult: ${v.v3p1||'___'}. What began working and what I believed because of it at the time: ${v.v3p2||'___'}. What still felt shaky or unfinished then, without the later explanation: ${v.v3p3||'___'}.`
+    compile:v=>`What I tried after I started seeing this differently: ${v.v3p0||'___'}. The moment the old way appeared to be working better and why it tempted me: ${v.v3p1||'___'}. What I chose while the result was still uncertain: ${v.v3p4||'___'}. The first meaningful result and what it made seem possible: ${v.v3p2||'___'}.`
   },
   {
     title:"The Hardest Part",
-    note:"Now we are returning to the larger work, craft, calling, or expertise story you have been telling, not the experience of making these videos. This is the chapter where what you had built or hoped to build came closest to collapsing. Choose the failure or period when you genuinely wondered whether this part of your future would recover. Do not tell us what you eventually learned or how everything worked out. Answer from who you were while it was happening.",
+    note:"Now we are returning to the larger work, craft, calling, or expertise story you have been telling, not the experience of making these videos. This is not a frustrating day you could simply try again after. Choose the failure or period when something real was lost, broken, ended, or seemed impossible to restore and you genuinely wondered whether this part of your future would recover. Do not tell us what you eventually learned or how everything worked out.",
     prompts:[
-      {label:"Thinking about the work, craft, calling, or expertise story you have been discussing, what failure or period brought you closest to believing what you had built or hoped to build might never recover?",hint:"Choose something that actually happened, rather than something you feared might happen. You do not need to own a business or have clients. If there was not one dramatic event, describe the period when your work, confidence, reputation, livelihood, direction, or hoped-for future gradually fell apart.",key:"v4p0",ph:"Describe the failure or period when what you had built or hoped to build seemed lost."},
+      {label:"Thinking about the work, craft, calling, or expertise story you have been discussing, what failure or period brought you closest to believing what you had built or hoped to build might never recover?",hint:"Choose something that actually happened, rather than something you feared might happen. If you could wake up and try essentially the same thing again, choose a deeper moment. You do not need to own a business or have clients. A gradual collapse qualifies when it left your work, confidence, reputation, livelihood, direction, or hoped-for future feeling impossible to restore.",key:"v4p0",ph:"Describe the failure or period when what you had built or hoped to build seemed lost."},
       {label:"Take us to the moment you realized this was more than an ordinary professional setback. What had happened, and what made the consequences feel impossible to repair?",hint:"Give us something we can picture. Where were you? Who else was affected? What result, conversation, loss, message, or realization made the seriousness impossible to ignore?",key:"v4p4",ph:"Describe the moment the full professional seriousness became real."},
       {label:"Why was it your fault? What did you do, avoid, ignore, refuse to admit, overestimate, or get completely wrong that caused the failure or made it worse?",hint:"Look for the professional decision that was yours: the warning you ignored, the conversation you avoided, the risk you underestimated, the responsibility you mishandled, or the moment you knew better and continued anyway. Tell us what you should have done differently and why you did not do it.",key:"v4p1",ph:"Describe the professional decision, avoidance, or blind spot that was yours."},
       {label:"What did this failure take from you, your work, or the people who depended on you, and what did you believe might be permanently over?",hint:"Go beyond saying it was difficult. What livelihood, credibility, trust, opportunity, relationship, body of work, identity, or future seemed impossible to restore? Why did that loss feel capable of ending everything you had built?",key:"v4p2",ph:"Describe what seemed permanently lost professionally and why it mattered so much."},
@@ -3100,8 +3100,8 @@ const VIDEO_RATIONALE = {
     'WHERE WE ARE: You are making the declaration and letting people see the gap between what you know privately and what you have been willing to own publicly. The audience needs quiet confidence, honest hesitation, and a reason to believe you will finish.',
     'WHERE WE ARE: Let people see the ordinary life, unclaimed ability, and refusal that came before you treated this as expertise. The viewer can recognize its value before you do, but this chapter cannot explain what it eventually became.',
     'WHERE WE ARE: A familiar professional belief meets lived evidence it cannot explain. Let the audience feel that cognitive dissonance through one story, then reveal the first useful lens only in the conclusion.',
-    'WHERE WE ARE: The first realization now meets real decisions and resistance. Show repeated tests, partial wins, the confidence they created, and the unresolved limit beneath them without revealing the fall.',
-    'WHERE WE ARE: This is the lowest point in the larger work, craft, calling, or expertise story: the failure that threatened what you had built or hoped to build. Your own decision or blind spot helped cause it, and recovery did not feel guaranteed. Stay inside what you believed then.',
+    'WHERE WE ARE: You are trying to live by the first realization before you know whether it will work. Show why the old way still looked tempting, what you chose while the result was uncertain, and the first meaningful sign that made continuing feel possible. This is a recoverable trial, not the devastating fall.',
+    'WHERE WE ARE: This is the one-way door in the larger work, craft, calling, or expertise story. Something real was lost, broken, ended, or seemed impossible to restore. Your own decision or blind spot helped cause it, attempted recovery failed, and you could not see a way back. This is different in kind from the recoverable pressure in the previous video.',
     'WHERE WE ARE: The difficult experience has produced a larger professional truth. Show how the aftermath earned it, how it deepens the first realization, what changed in your work, and what useful lens another person can carry away.',
     'WHERE WE ARE: Bring the larger expert story home. Compare your earlier relationship to your knowledge and visibility with who you are now, acknowledge what remains unfinished, and show why your continuing perspective is worth following.'
   ]

@@ -9,12 +9,20 @@ The live source of truth for generation is `api/_lib/blueprints.txt`. The curren
 1. **Video 1 — Declaration:** The speaker commits before feeling ready.
 2. **Video 2 — Ordinary World + Refusal:** The audience first recognizes an ordinary person inside a familiar life and understands why leaving that identity felt unreasonable. A future ability or calling appears only as a quiet clue. Identification comes before admiration, and Level 2 must not become a hidden-expert origin story.
 3. **Video 3 — First Epiphany + Threshold:** One evidence thread makes the old understanding impossible to keep, and the resulting paradigm shift moves the speaker across the first threshold. A naturally supplied person or influence may appear, but no mentor is required or manufactured.
-4. **Video 4 — Road of Trials:** The first epiphany meets meaningful tests, partial wins, and growing but incomplete confidence in the actual subject of the larger story. The exact Level 2 balance among work, business, life, and public communication remains intentionally broad for further refinement.
-5. **Video 5 — Fall / Ordeal:** A real defeat occurs, and the speaker owns how their choices contributed. No recovery or lesson yet.
+4. **Video 4 — Road of Trials:** The first epiphany becomes a real choice before enough proof exists. Level 2 centers one recoverable trial, the human temptation to return to the old way, the choice made under uncertainty, and the first meaningful result revealed only in the Conclusion. The result creates hope, not a case study or another lesson.
+5. **Video 5 — Fall / Ordeal:** A real defeat crosses a one-way door, and the speaker owns how their choices contributed. Something central is destroyed, ended, lost, or believed impossible to restore. This is different in kind from Video 4's recoverable pressure, not merely a worse setback. No recovery or lesson yet.
 6. **Video 6 — Second Epiphany / Elixir:** The ordeal produces the deeper truth that corrects or completes the first epiphany.
 7. **Video 7 — Return:** The speaker integrates the journey, returns with the elixir, and becomes capable of guiding someone who recognizes the earlier struggle.
 
 Whenever a later section of this document assigns Video 4 to a challenge progress check-in, Video 5 to the second epiphany, or Video 6 to the fall/internal battle, that assignment is obsolete. Preserve the underlying storytelling insight, but apply it to the current chapter owner above.
+
+### Current Level 2 Video 4 Standard
+
+Level 2 Video 4 is the choice before proof. Its humanity comes from watching the speaker act on the first Epiphany while the old way still appears to be winning. One representative recoverable trial should contain the changed action, the temptation to retreat, and the choice made while the result remains unknown.
+
+The Hook is a pure pattern interrupt. The Open Loop creates one exact pressing question that the viewer can name. The Meat carries the trial through the choice but stops before the answer. The Conclusion reveals the first meaningful result for the first time and shows only what it made possible then. The result cannot become professional proof, a method, universal advice, or a hidden warning about Video 5.
+
+Video 4 gives the speaker and audience something worth believing in and therefore something worth losing. It does not need to cause or foreshadow the ordeal. Video 5 remains the apparently irreversible collapse inside the same larger quest.
 
 ### Current 5E Epiphany Standard
 

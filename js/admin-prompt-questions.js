@@ -14,8 +14,8 @@ const PROMPT_QUESTION_CATALOG = {
       null,
       {"label":"Before you treated this as expertise, what ability or interest kept showing up, and why did you refuse to take it seriously?","hint":"Describe the ordinary work or life you were in, what other people might have valued before you did, and why staying where you were felt safer or more responsible.","key":"easyAnswer_v1"},
       {"label":"What is one idea you used to accept about your work that you now strongly disagree with? Why did it make sense to you at the time, and what made the old idea stop fitting what you saw?","hint":"Tell it like a journal entry. Include one concrete moment and who still pays the cost of the old idea. You do not need to explain the final lesson.","key":"easyAnswer_v2"},
-      {"label":"After that first change in how you saw things, what did you try, what made it difficult, and what happened?","hint":"Tell it like a journal entry. Include what you did differently, one or two moments that tested you, what started going better, and anything that still felt shaky or unfinished at the time.","key":"easyAnswer_v3"},
-      {"label":"In the work, craft, calling, or expertise story you have been telling, what failure was so devastating that you thought what you had built or hoped to build might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?","hint":"Tell us what collapsed, what seemed permanently lost, and why you could not see a way back in this part of your life. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.","key":"easyAnswer_v4"},
+      {"label":"After that first change in how you saw things, what did you do differently before you knew whether it would work?","hint":"Tell it like a journal entry. What made the old way tempting to return to, what did you choose anyway, and what small but meaningful result made continuing feel possible?","key":"easyAnswer_v3"},
+      {"label":"In the work, craft, calling, or expertise story you have been telling, what failure was so devastating that you thought what you had built or hoped to build might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?","hint":"This is not a frustrating day you could simply try again after. Tell us what was actually lost, broken, ended, or seemed impossible to restore, why you could not see a way back, and what you tried afterward that still failed. Answer from who you were before you knew what you would eventually learn.","key":"easyAnswer_v4"},
       {"label":"After the hardest experience, what became clear that your first realization could not explain?","hint":"Describe the aftermath evidence that brought it into focus, one observable thing you changed afterward, and who might need the perspective you earned. Keep it connected to what actually happened.","key":"easyAnswer_v5"},
       {"label":"Who were you before the two professional realizations and the hardest part of the story, and who are you now in relation to your expertise and the people you want to reach?","hint":"Describe what genuinely changed, what remains unfinished or still needed, what telling the story clarified about your work, and what perspective or mission you want the right viewer to keep following.","key":"easyAnswer_v6"}
     ]
@@ -143,42 +143,42 @@ const PROMPT_QUESTION_CATALOG = {
       ]
     },
     {
-      "title": "When The Insight Met Reality",
-      "note": "Think about the stretch after that first change in how you saw things. Tell us what you tried, what made it difficult, what started going better, and what still felt unfinished at the time. You do not need to explain what any of it meant later.",
+      "title": "What I Chose Before I Knew",
+      "note": "Think about the first time you tried to live by what you had started seeing differently. Tell us what you did, why returning to the old way was tempting, what you chose before you knew the result, and the first sign that made continuing feel possible.",
       "prompts": [
         {
-          "label": "After that first change in how you saw things, what did you try or handle differently?",
-          "hint": "Take us to the first real situation where you acted on it. What did you choose, say, make, stop, start, or approach differently? Tell us what happened rather than explaining the lesson.",
+          "label": "After you started seeing this differently, what did you actually try or do differently?",
+          "hint": "Take us to one real situation. What did you choose, say, make, stop, start, or handle differently before you knew whether it would help?",
           "key": "v3p0",
-          "placeholder": "Describe the first situation where you acted differently and what you did."
+          "placeholder": "Describe what you tried and the situation where you tried it."
         },
         {
-          "label": "What happened the next few times you tried to keep doing that?",
-          "hint": "Tell us about one or two moments when it was awkward, difficult, inconvenient, or tempting to fall back into the old way. Ordinary details are useful here.",
+          "label": "Tell us about a moment when the old way appeared to be working better than what you were trying.",
+          "hint": "What happened around you? What made stopping, hiding, copying someone else, or returning to the familiar choice feel tempting? Give us ordinary details we can picture.",
           "key": "v3p1",
-          "placeholder": "Describe one or two moments that made the change difficult to keep practicing."
+          "placeholder": "Describe the moment the old way looked more rewarding and why it tempted you."
         },
         {
-          "label": "What started going better, and what made you think you might finally be getting somewhere?",
-          "hint": "Give us something you could actually see, hear, finish, decide, or point to. Then tell us what that small success made you believe at the time.",
+          "label": "What did you choose to do while you still did not know whether it would work?",
+          "hint": "Stay inside that moment. What did you do next, and what made you continue without having proof that it was the right choice?",
+          "key": "v3p4",
+          "placeholder": "Describe what you chose while the result was still uncertain."
+        },
+        {
+          "label": "What small but meaningful result made you believe continuing might be worth it, and what did it make seem possible?",
+          "hint": "Give us something you could actually see, hear, finish, decide, or point to. Keep it honest and proportionate. This is the first reason for hope, not the worst moment or the final lesson.",
           "key": "v3p2",
-          "placeholder": "Describe what began working and what you believed because of it."
-        },
-        {
-          "label": "Even while that was going well, what still felt shaky, unfinished, or harder than you wanted it to?",
-          "hint": "Stay inside that point in time. What were you still struggling with, working around, or hoping would sort itself out? Do not explain the later failure or what you eventually learned.",
-          "key": "v3p3",
-          "placeholder": "Describe what still felt unfinished while the early progress was happening."
+          "placeholder": "Describe the first meaningful result and what it made seem possible."
         }
       ]
     },
     {
       "title": "The Hardest Part",
-      "note": "Now we are returning to the larger work, craft, calling, or expertise story you have been telling, not the experience of making these videos. This is the chapter where what you had built or hoped to build came closest to collapsing. Choose the failure or period when you genuinely wondered whether this part of your future would recover. Do not tell us what you eventually learned or how everything worked out. Answer from who you were while it was happening.",
+      "note": "Now we are returning to the larger work, craft, calling, or expertise story you have been telling, not the experience of making these videos. This is not a frustrating day you could simply try again after. Choose the failure or period when something real was lost, broken, ended, or seemed impossible to restore and you genuinely wondered whether this part of your future would recover. Do not tell us what you eventually learned or how everything worked out.",
       "prompts": [
         {
           "label": "Thinking about the work, craft, calling, or expertise story you have been discussing, what failure or period brought you closest to believing what you had built or hoped to build might never recover?",
-          "hint": "Choose something that actually happened, rather than something you feared might happen. You do not need to own a business or have clients. If there was not one dramatic event, describe the period when your work, confidence, reputation, livelihood, direction, or hoped-for future gradually fell apart.",
+          "hint": "Choose something that actually happened, rather than something you feared might happen. If you could wake up and try essentially the same thing again, choose a deeper moment. You do not need to own a business or have clients. A gradual collapse qualifies when it left your work, confidence, reputation, livelihood, direction, or hoped-for future feeling impossible to restore.",
           "key": "v4p0",
           "placeholder": "Describe the failure or period when what you had built or hoped to build seemed lost."
         },

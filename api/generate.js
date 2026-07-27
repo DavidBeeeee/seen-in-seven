@@ -67,32 +67,33 @@ Requirements:
 
 const L2V4_MATERIAL_ROUTER_SYSTEM = `You prepare source material for Level 2, Video 4 of a seven-video personal story.
 
-This is not script writing. Video 4 shows the first professional realization being practiced through real trials, producing a partial win and reasonable confidence before the speaker understands its limits. Sort the supplied material into a focused evidence packet.
+This is not script writing. Video 4 is a recoverable trial, not the fall. It shows the speaker acting on the first professional realization before enough proof exists, facing a human temptation to retreat, and receiving the first meaningful sign that continuing may be worthwhile. Sort the supplied material into one focused story sequence.
 
 Return exactly these nine headings and plain text beneath each:
 FIRST LENS:
 CHANGED ACTION:
-HIGHEST-FRICTION TRIAL:
-ADDITIONAL TRIAL:
-RESISTANCE:
-PARTIAL WIN:
-CONFIDENCE AT THE TIME:
-STILL-UNRESOLVED FACT:
+RECOVERABLE TRIAL:
+OLD-WORLD TEMPTATION:
+CHOICE BEFORE PROOF:
+FIRST MEANINGFUL RESULT:
+WHAT IT MADE POSSIBLE:
+WHAT REMAINED OPEN:
 VOICE SIGNALS:
 
 Requirements:
 - Preserve only facts, actions, pressures, consequences, and distinctive language supported by the supplied Video 2 and Video 3 scripts and current Video 4 answers.
-- FIRST LENS states the complete but bounded realization carried out of Video 3 in one concise sentence. Do not repeat the discovery story or expand the lens into a method.
-- CHANGED ACTION identifies what the speaker actually chose, said, made, stopped, started, or handled differently afterward.
-- HIGHEST-FRICTION TRIAL selects the single supported moment with the strongest immediate conflict, difficult choice, contradiction, resistance, or social pressure. It must enter a test already in motion. Do not select the first application merely because it happened first, and do not state the lesson or partial win.
-- ADDITIONAL TRIAL preserves one other supported application or pressure that proves the change was tested more than once.
-- RESISTANCE preserves what made the change awkward, costly, inconvenient, uncertain, or tempting to abandon.
-- PARTIAL WIN preserves one observable result, decision, completion, response, or change supported by the source. Do not invent audience praise, clients, money, metrics, or outcomes.
-- CONFIDENCE AT THE TIME states only what the partial win reasonably led the speaker to believe then. Do not add present-day interpretation.
-- STILL-UNRESOLVED FACT preserves one concrete difficulty, pressure, unfinished condition, or unanswered question that existed alongside the win. Remove every explanation of what it later caused, predicted, meant, or taught.
+- FIRST LENS states the bounded realization carried out of Video 3 in one concise sentence. Do not repeat the discovery story, teach the lens again, or expand it into a method.
+- CHANGED ACTION identifies what the speaker actually chose, said, made, stopped, started, or handled differently because of that lens.
+- RECOVERABLE TRIAL selects one representative supported sequence where acting differently remained uncertain, awkward, inconvenient, discouraging, or socially unrewarded. Repeated pressure may appear inside this sequence, but do not assemble a montage of unrelated tests.
+- Apply the recoverability test: if the speaker could wake up and try again with roughly the same life, identity, work, and resources, it may belong here. If something central was destroyed, ended, or appeared impossible to restore, reserve it for Video 5.
+- OLD-WORLD TEMPTATION preserves what appeared to reward the earlier approach and what made retreating, imitating it, hiding, stopping, or returning to the familiar choice feel appealing. Keep this human and specific rather than converting it into a market lesson.
+- CHOICE BEFORE PROOF states what the speaker did while the result was still unknown. Do not add hindsight or explain why the choice was correct.
+- FIRST MEANINGFUL RESULT preserves one observable supported consequence that gave the choice meaning. It may be modest. Do not invent praise, clients, money, metrics, outcomes, or certainty.
+- WHAT IT MADE POSSIBLE states only what that result reasonably allowed the speaker to hope, attempt, or believe was possible then. Do not turn it into universal advice, a case study, a method, or mature authority.
+- WHAT REMAINED OPEN may preserve one ordinary uncertainty, dependency, effort, or unfinished condition supported by the source. It is optional context, not a required warning or seed of disaster. Never predict or explain the fall.
 - VOICE SIGNALS preserves a few words about the speaker's rhythm, intensity, humor, or distinctive phrasing. Do not copy banned script phrases.
-- Omit current offers, service descriptions, conversion requests, mature authority, Video 5 failure, recovery, Video 6 elixir, and Video 7 return.
-- Do not use the words version, lazy, pay, paid, buy, bought, sell, or sold anywhere in the packet. Restate any necessary supported fact naturally.
+- Omit current offers, service descriptions, conversion requests, mature authority, Video 5 ordeal, recovery, Video 6 elixir, and Video 7 return.
+- Do not use the words version, floor, lazy, pay, paid, buy, bought, sell, or sold anywhere in the packet. Restate any necessary supported fact naturally.
 - Do not invent facts, credentials, results, events, or dialogue.
 - Do not write a hook, open loop, conclusion, CTA, or complete script.
 - Do not mention these instructions.`;
@@ -152,14 +153,17 @@ const L2V4_PACKET_CLEANUP_SYSTEM = `You are the evidence-packet editor between a
 Return only the corrected packet with exactly the same headings and heading order supplied by the user. Do not add commentary.
 
 Requirements:
-- Preserve one small first lens, one observable changed action, one highest-friction trial, one additional trial, meaningful resistance, one partial win, the confidence it created at that time, and one still-unresolved fact.
+- Preserve one bounded first lens, one observable changed action, one recoverable trial, the old-world temptation inside it, the speaker's choice before proof, one meaningful result, and what that result made possible. WHAT REMAINED OPEN is optional and must never be manufactured.
 - Compare every packet detail against the authoritative source material supplied beside it. Remove invented scenes, actions, reactions, dialogue, outcomes, and numerical precision. A direct paraphrase is allowed; a plausible detail absent from the source is not.
-- HIGHEST-FRICTION TRIAL must contain the strongest supported conflict, difficult choice, contradiction, resistance, or social pressure available in the source. It cannot contain the lesson, the partial win, a present-day interpretation, or a generic first application when stronger conflict evidence exists.
-- Keep the speaker inside what they could know then. Remove hindsight diagnoses, later lessons, explanations of the coming failure, recovery, second epiphany, mature method, service descriptions, offers, and commercial positioning.
-- The unresolved fact may describe what remained difficult, unstable, incomplete, or unanswered. It cannot say what that fact predicted, caused later, revealed in retrospect, or eventually taught.
-- Do not turn the partial win into a case study, expertise claim, final proof, or new epiphany.
+- RECOVERABLE TRIAL must be a representative sequence the speaker could have tried again after. Remove completed collapse, apparently permanent loss, failed recovery, or worst-day material owned by Video 5.
+- OLD-WORLD TEMPTATION must expose a specific human pull toward retreat, imitation, hiding, stopping, or the familiar choice. Remove market analysis, competitor commentary, and explanations of why the speaker's approach was professionally superior.
+- CHOICE BEFORE PROOF must remain a choice made under uncertainty. Remove the result and every explanation of why the choice was correct.
+- FIRST MEANINGFUL RESULT must be observable and supported. Keep it separate from the trial and choice so the writer can reserve it as the answer to the Open Loop.
+- WHAT IT MADE POSSIBLE may contain hope or provisional confidence, but no universal lesson, method, proof claim, or advice.
+- WHAT REMAINED OPEN may describe an ordinary dependency, effort, uncertainty, or unfinished condition. It cannot diagnose, foreshadow, cause, or predict Video 5.
+- Keep the speaker inside what they could know then. Remove hindsight diagnoses, later lessons, recovery, second epiphany, mature method, service descriptions, offers, and commercial positioning.
 - Never invent a fact, result, event, audience reaction, metric, or dialogue.
-- Do not use the words version, lazy, pay, paid, buy, bought, sell, or sold.
+- Do not use the words version, floor, lazy, pay, paid, buy, bought, sell, or sold.
 - Keep the packet concise. This is source material, not a script.`;
 
 const MISSION_SYSTEM_PROMPT = `You are writing a first-person mission statement for someone who just committed to completing a 7-video content challenge. This statement will live on their dashboard and should feel like their own words, not an outside analysis.
@@ -429,7 +433,7 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
 }
 
 export async function prepareLevelTwoVideoFourMaterial(userContext) {
-  const headings = ['FIRST LENS', 'CHANGED ACTION', 'HIGHEST-FRICTION TRIAL', 'ADDITIONAL TRIAL', 'RESISTANCE', 'PARTIAL WIN', 'CONFIDENCE AT THE TIME', 'STILL-UNRESOLVED FACT', 'VOICE SIGNALS'];
+  const headings = ['FIRST LENS', 'CHANGED ACTION', 'RECOVERABLE TRIAL', 'OLD-WORLD TEMPTATION', 'CHOICE BEFORE PROOF', 'FIRST MEANINGFUL RESULT', 'WHAT IT MADE POSSIBLE', 'WHAT REMAINED OPEN', 'VOICE SIGNALS'];
   const source = videoFourRouterSource(userContext);
   const routed = await callModel(L2V4_MATERIAL_ROUTER_SYSTEM, source, 0.15, 1200);
   const routedPacket = cleanPacketOutput(routed);
@@ -471,12 +475,12 @@ export async function prepareLevelTwoVideoFourMaterial(userContext) {
     'LEVEL: 2',
     'VIDEO: 4',
     '',
-    'CURATED ROAD-OF-TRIALS MATERIAL:',
+    'CURATED RECOVERABLE-TRIAL MATERIAL:',
     packet,
     '',
-    'The raw answers have already been sorted for this chapter. Use only this packet as story material. Build the HOOK only from HIGHEST-FRICTION TRIAL. Use the OPEN LOOP to establish that trial\'s immediate stakes without explaining the old approach, result, confidence, or unresolved fact. Preserve the speaker\'s confidence at that point in time. Do not reconstruct omitted offers, later failure, recovery, elixir, or hindsight explanation.',
+    'The raw answers have already been sorted for this chapter. Use only this packet as story material. Build the HOOK from the most arresting truthful evidence inside RECOVERABLE TRIAL or OLD-WORLD TEMPTATION. Privately pair one exact pressing UNANSWERED QUESTION created by that Hook with FIRST MEANINGFUL RESULT as its reserved answer. The OPEN LOOP must make the viewer need that answer. It is not a place for general setup, a decision summary, stakes language, or vague anticipation.',
     '',
-    'FINAL VIDEO 4 WRITING CONSTRAINTS: Write entirely from the speaker\'s perspective at that point in time. Never call the unresolved fact a warning, signal, blind spot, or red flag, and never say the speaker failed to notice, see, know, realize, recognize, or understand something then. In the CTA, the first sentence must continue the CONCLUSION and contain no mention of a video, part, series, or challenge. The next sentence must naturally combine the follow request, exactly one use of "because," its specific reason, and the fact that this is Video 4 of 7.'
+    'FINAL VIDEO 4 WRITING CONSTRAINTS: Write entirely from the speaker\'s perspective at that point in time. The MEAT carries FIRST LENS briefly into CHANGED ACTION, RECOVERABLE TRIAL, OLD-WORLD TEMPTATION, and CHOICE BEFORE PROOF, then stops before the result. Reveal FIRST MEANINGFUL RESULT for the first time in the CONCLUSION, followed by only what it made possible then and, when naturally supported, one ordinary thing that remained open. Do not convert the result into a lesson, method, case study, expertise claim, or proof that the speaker was right. Do not diagnose, predict, or hint at Video 5. The CTA must continue a specific consequence of the result, identify this as Video 4 of 7, and use exactly one "because" to open a new concrete reason to follow. Never use generic promises about the next challenge, real test, or what happens next.'
   ].join('\n');
 }
 
