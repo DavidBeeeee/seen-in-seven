@@ -1,11 +1,15 @@
+import { readFileSync } from 'node:fs';
 import {
   buildSystemPrompt,
   extractBannedScriptTerms,
   extractTaggedSection,
   finalizeScriptHook,
+  finalizeScriptOpenLoop,
   findVoiceIssues,
   HOOK_JUDGE_SYSTEM,
   HOOK_STUDIO_SYSTEM,
+  OPEN_LOOP_JUDGE_SYSTEM,
+  OPEN_LOOP_STUDIO_SYSTEM,
   parseSections,
   publishedPrompt,
   reviewAndRepairScript,
@@ -37,7 +41,27 @@ assert(
   focusedPrompt.includes('[OPEN LOOP] is an independent retention device.'),
   'Focused prompt lost the protected Open Loop architecture.'
 );
+assert(focusedPrompt.includes('Zeigarnik Retention Gap'), 'Focused prompt lost the Zeigarnik Retention Gap definition.');
+assert(focusedPrompt.includes('Payoff Firewall'), 'Focused prompt lost the Open Loop payoff firewall.');
 assert(focusedPrompt.includes('It may pivot abruptly away from the Hook.'), 'Open Loop was incorrectly coupled back to the Hook.');
+
+const generationSource = readFileSync(new URL('../api/generate.js', import.meta.url), 'utf8');
+const promptTestSource = readFileSync(new URL('../api/prompt-test.js', import.meta.url), 'utf8');
+assert(
+  generationSource.indexOf('const retentionContent = await finalizeScriptOpenLoop') <
+    generationSource.indexOf('const finalContent = await finalizeScriptHook'),
+  'Production generation no longer finalizes the Open Loop before the Hook.'
+);
+assert(
+  generationSource.includes("if (input.section === 'OPEN LOOP')") &&
+    generationSource.includes('const content = await generateFinalOpenLoop'),
+  'Single-section Open Loop regeneration bypasses the Open Loop Studio.'
+);
+assert(
+  promptTestSource.indexOf('const retentionContent = await finalizeScriptOpenLoop') <
+    promptTestSource.indexOf('content = await finalizeScriptHook'),
+  'Admin Prompt Tester no longer mirrors the production Open Loop and Hook order.'
+);
 
 const hookGuidanceLines = published.source.match(/^HOOK guidance:.*$/gm) || [];
 assert(hookGuidanceLines.length === 14, 'Expected one Hook Studio guidance line for every video.');
@@ -197,9 +221,60 @@ assert(!wholeRewriteResult.includes('A section replacement that must not be stit
 assert(parseSections(wholeRewriteResult).HOOK === 'Hold on.', 'Story review did not preserve the provisional Hook boundary.');
 assert(parseSections(wholeRewriteResult).MEAT === parseSections(validFreshScript).MEAT, 'Full regeneration did not return the complete fresh story rewrite.');
 
+const payoffScript = `[HOOK]
+Hold on.
+
+[OPEN LOOP]
+I wondered whether a direct message would prove the work had reached the right person.
+
+[MEAT]
+I kept answering detailed questions in the same group, even while each response seemed to disappear beneath louder posts. One reply collected three likes while a polished promotion nearby collected a wall of praise. I considered copying the presentation that looked successful, although I kept returning to the plain answer in front of me. The visible reaction gave me little reason to continue, yet I typed another response the following evening.
+
+[CONCLUSION]
+A group member sent me a direct message saying my answer was the first explanation that had made sense all week.
+
+[CTA]
+That private response gave the quiet work a pulse, so follow because this is Video 4 of my 7 Video Challenge, and the next chapter shows the collapse that nearly ended it.`;
+const cleanRetentionGap = 'Three likes made the work look invisible, although the number could only measure public reaction. I kept returning to the same question: how long could I continue when the evidence I could see kept telling me to stop?';
+const openLoopStudioCalls = [];
+const openLoopStudioResult = await finalizeScriptOpenLoop({
+  script: payoffScript,
+  systemPrompt: buildSystemPrompt(published.prompt, 1, 4),
+  userMessage: 'The source supplied the group, three likes, and the later private response.',
+  level: 1,
+  video: 4,
+  callModel: async (system, user) => {
+    openLoopStudioCalls.push({ system, user });
+    if (system === OPEN_LOOP_STUDIO_SYSTEM) {
+      assert(!user.includes('I wondered whether a direct message'), 'Open Loop Studio received the draft Open Loop it was meant to replace.');
+      return JSON.stringify({
+        quarantined_terms: ['direct message', 'group member', 'private response', 'inbox'],
+        candidates: [
+          'I kept waiting for a direct message to prove the work had reached a real reader, although the public reaction made that possibility feel increasingly remote every evening.',
+          'The group member had not appeared yet, which left me measuring whether the work mattered through the tiny public reaction beneath each answer I wrote.',
+          cleanRetentionGap,
+          'I could not know whether my inbox would finally contain the evidence I needed, although each quiet reply made stopping feel more reasonable than continuing.'
+        ]
+      });
+    }
+    if (system === OPEN_LOOP_JUDGE_SYSTEM) {
+      assert(user.includes(cleanRetentionGap), 'Open Loop judge lost the clean candidate.');
+      assert(!user.includes('I kept waiting for a direct message'), 'A quarantined payoff candidate reached the Open Loop judge.');
+      return JSON.stringify({ pass: true, open_loop: cleanRetentionGap, reason: '' });
+    }
+    throw new Error('Unexpected Open Loop Studio test call.');
+  }
+});
+assert(openLoopStudioCalls.length === 2, 'Open Loop Studio did not use one focused slate and one independent judgment.');
+assert(parseSections(openLoopStudioResult)['OPEN LOOP'] === cleanRetentionGap, 'Open Loop Studio did not install the selected retention gap.');
+assert(parseSections(openLoopStudioResult).HOOK === parseSections(payoffScript).HOOK, 'Open Loop Studio changed the Hook.');
+assert(parseSections(openLoopStudioResult).MEAT === parseSections(payoffScript).MEAT, 'Open Loop Studio changed the Meat.');
+assert(parseSections(openLoopStudioResult).CONCLUSION === parseSections(payoffScript).CONCLUSION, 'Open Loop Studio changed the Conclusion.');
+assert(parseSections(openLoopStudioResult).CTA === parseSections(payoffScript).CTA, 'Open Loop Studio changed the CTA.');
+
 const hookStudioCalls = [];
 const hookStudioResult = await finalizeScriptHook({
-  script: wholeRewriteResult,
+  script: openLoopStudioResult,
   systemPrompt: buildSystemPrompt(published.prompt, 1, 2),
   userMessage: freshRequest,
   level: 1,
@@ -243,9 +318,9 @@ const hookStudioResult = await finalizeScriptHook({
 });
 assert(hookStudioCalls.length === 4, 'Hook Studio did not retry a scene-setting Hook through its independent judge.');
 assert(parseSections(hookStudioResult).HOOK === 'Perfection is the most expensive hiding place.', 'Hook Studio did not install the selected Hook.');
-assert(parseSections(hookStudioResult)['OPEN LOOP'] === parseSections(wholeRewriteResult)['OPEN LOOP'], 'Hook Studio changed the Open Loop.');
-assert(parseSections(hookStudioResult).MEAT === parseSections(wholeRewriteResult).MEAT, 'Hook Studio changed the Meat.');
-assert(parseSections(hookStudioResult).CONCLUSION === parseSections(wholeRewriteResult).CONCLUSION, 'Hook Studio changed the Conclusion.');
-assert(parseSections(hookStudioResult).CTA === parseSections(wholeRewriteResult).CTA, 'Hook Studio changed the CTA.');
+assert(parseSections(hookStudioResult)['OPEN LOOP'] === parseSections(openLoopStudioResult)['OPEN LOOP'], 'Hook Studio changed the Open Loop.');
+assert(parseSections(hookStudioResult).MEAT === parseSections(openLoopStudioResult).MEAT, 'Hook Studio changed the Meat.');
+assert(parseSections(hookStudioResult).CONCLUSION === parseSections(openLoopStudioResult).CONCLUSION, 'Hook Studio changed the Conclusion.');
+assert(parseSections(hookStudioResult).CTA === parseSections(openLoopStudioResult).CTA, 'Hook Studio changed the CTA.');
 
 console.log('Prompt style guide checks passed with ' + bannedTerms.length + ' canonical banned terms.');

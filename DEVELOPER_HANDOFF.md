@@ -842,3 +842,16 @@ The following principles govern every word of copy in this app and the broader C
 - Added `somebody` to the canonical machine-readable banned-term list. The writer and validator must replace it with a specific role or relationship supported by the story rather than another vague placeholder.
 - Deterministic CTA validation now rejects a period, question mark, or exclamation point between the CTA bridge and follow request. Regression coverage confirms that a connected hinge passes and the former period-plus-command structure fails.
 - This change deliberately did not alter Open Loop construction. Payoff leakage remains the next architecture issue to resolve separately.
+
+## 2026-07-27: Zeigarnik Open Loop Studio and payoff firewall
+
+- `[OPEN LOOP]` remains the stored and visible section label, but its internal writing job is now defined as the Zeigarnik Retention Gap: one precise piece of unfinished mental business that the current Conclusion must fulfill or reframe.
+- Added a Payoff Firewall to the global blueprint. Before the final Open Loop is written, the system quarantines every reveal-only person or role, event, action, delivery method, quotation, evidence, result, and distinctive phrase that would let the viewer predict how the Conclusion arrives.
+- Added a dedicated Open Loop Studio after story review and before the existing Hook Studio. It receives the focused blueprint, stage contract, user context, Meat, Conclusion, and CTA. The draft Open Loop and Hook are deliberately withheld.
+- The Studio generates exactly four 25-to-50-word candidates. Deterministic filtering removes banned language, invalid length, long cross-section repetition, and exact quarantined payoff leakage before an independent Open Loop judge sees the slate.
+- The judge applies three semantic tests: the speaker could say the line immediately before the payoff occurred; the viewer cannot predict the person, event, action, delivery method, evidence, quotation, or result that resolves it; and a cold viewer can name the unresolved relationship and wants the answer.
+- The current Open Loop closes in the current Conclusion. The CTA remains responsible for opening the next-video question.
+- First-time generation, full regeneration, admin Prompt Tester production output, and single-section Open Loop regeneration all use the same Studio. Prompt Tester now also mirrors production by installing the final Open Loop before running the unchanged Hook Studio.
+- The Open Loop Studio can replace only `[OPEN LOOP]`. Regression checks prove that Hook, Meat, Conclusion, and CTA remain byte-for-byte unchanged, that the old draft Open Loop is withheld, and that candidates naming a reserved delivery method do not reach the judge.
+- Studio responses are capped at 650 tokens and judge responses at 300 tokens to keep the added generation time focused.
+- Rollback point: Git tag `before-open-loop-studio-2026-07-27` targets commit `fb9a999`, immediately before this architecture was added.

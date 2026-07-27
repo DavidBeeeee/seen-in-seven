@@ -1,7 +1,9 @@
 import {
   buildSystemPrompt,
   composeSections,
+  finalizeScriptOpenLoop,
   finalizeScriptHook,
+  generateFinalOpenLoop,
   generateFinalHook,
   parseSections,
   publishedPrompt,
@@ -666,8 +668,16 @@ async function generateScript(input, prompt) {
         wholeScriptRewrite: input.mode === 'full-regeneration',
         provisionalHook: true
       });
-      const finalContent = await finalizeScriptHook({
+      const retentionContent = await finalizeScriptOpenLoop({
         script: content,
+        systemPrompt,
+        userMessage: userMessage + retryNote,
+        level: input.level,
+        video: input.video,
+        callModel
+      });
+      const finalContent = await finalizeScriptHook({
+        script: retentionContent,
         systemPrompt,
         userMessage: userMessage + retryNote,
         level: input.level,
@@ -699,6 +709,17 @@ async function generateSection(input, prompt) {
   const userMessage = sectionMessage({ ...input, userContext: preparedContext });
   if (input.section === 'HOOK') {
     const content = await generateFinalHook({
+      script: input.existingScript,
+      systemPrompt,
+      userMessage,
+      level: input.level,
+      video: input.video,
+      callModel
+    });
+    return { content, promptVersion: prompt.version };
+  }
+  if (input.section === 'OPEN LOOP') {
+    const content = await generateFinalOpenLoop({
       script: input.existingScript,
       systemPrompt,
       userMessage,

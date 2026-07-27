@@ -7,6 +7,8 @@ import {
 import {
   buildSystemPrompt,
   extractSystemPrompt,
+  finalizeScriptHook,
+  finalizeScriptOpenLoop,
   validateBlueprintSource,
   reviewAndRepairScript
 } from './_lib/prompt-engine.js';
@@ -54,12 +56,29 @@ export default async function handler(req, res) {
     let lastError;
     for (let attempt = 0; attempt < 2; attempt++) {
       const retryNote = attempt
-        ? '\n\nA previous test draft did not pass the final story check. Write a genuinely fresh complete script that fixes every mechanical issue as well as the story architecture. Keep the OPEN LOOP under 50 words, keep the CTA bridge, follow action, exactly one "because," reason, and seven-part orientation together, and avoid every banned word. Return only the five labeled sections.\n\nEXACT FEEDBACK FROM THE PREVIOUS DRAFT:\n' + String(lastError && lastError.message || '')
+        ? '\n\nA previous test draft did not pass the final story check. Write a genuinely fresh complete script that fixes every mechanical issue as well as the story architecture. Keep the OPEN LOOP under 50 words, connect the concrete CTA bridge into the follow action without a full stop, use exactly one "because," include the seven-part orientation, and avoid every banned word. Return only the five labeled sections.\n\nEXACT FEEDBACK FROM THE PREVIOUS DRAFT:\n' + String(lastError && lastError.message || '')
         : '';
       try {
         rawContent = await callModel(systemPrompt, preparedUserMessage + retryNote, attempt ? 0.45 : temperature);
-        content = await reviewAndRepairScript({
+        const reviewedContent = await reviewAndRepairScript({
           script: rawContent,
+          systemPrompt,
+          userMessage: preparedUserMessage + retryNote,
+          level,
+          video,
+          callModel,
+          provisionalHook: true
+        });
+        const retentionContent = await finalizeScriptOpenLoop({
+          script: reviewedContent,
+          systemPrompt,
+          userMessage: preparedUserMessage + retryNote,
+          level,
+          video,
+          callModel
+        });
+        content = await finalizeScriptHook({
+          script: retentionContent,
           systemPrompt,
           userMessage: preparedUserMessage + retryNote,
           level,
