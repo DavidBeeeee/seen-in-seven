@@ -575,8 +575,9 @@ function publishedPrompt() {
     'Use only KNOWN BEFORE PAYOFF and setup already present in the MEAT. Stop at the MEAT BOUNDARY.',
     'Do not name, paraphrase, imply, or foreshadow the CONCLUSION ANSWER or any QUARANTINED DETAIL.',
     'Do not ask what the speaker decided when the Meat already shows that decision. Do not summarize the Meat, repeat its opening, create generic suspense, announce cognition, or open the next video.',
+    'Use the minimum setup needed to make the retention question understandable. Do not copy a complete sentence or distinctive phrase from the Meat or Conclusion.',
     'The OPEN LOOP is independent from the HOOK and does not need to transition from it.',
-    'Follow the supplied blueprint, stage boundaries, style guide, and banned terms.',
+    'Follow the supplied visible-script style packet, stage boundary, retention contract, and banned terms.',
     'Return JSON only as {"open_loop":"spoken Open Loop text"}.'
   ].join('\n');
 
@@ -638,11 +639,29 @@ function publishedPrompt() {
     return stripSectionLabels(text);
   }
 
+  function visibleWritingStylePacket(systemPrompt) {
+    const source = String(systemPrompt || '');
+    const styleGuide = extractTaggedSection(source, 'style_guide');
+    const languageFirewall = extractTaggedSection(source, 'internal_story_language_firewall');
+    return [
+      styleGuide ? '<style_guide>\n' + styleGuide + '\n</style_guide>' : '',
+      languageFirewall
+        ? '<internal_story_language_firewall>\n' + languageFirewall + '\n</internal_story_language_firewall>'
+        : ''
+    ].filter(Boolean).join('\n\n');
+  }
+
   function openLoopWriterMessage(config, contract, correction = '') {
     const sections = parseSections(config.script) || {};
     return [
       'LEVEL: ' + Number(config.level || 1),
       'VIDEO: ' + Number(config.video || 1),
+      '',
+      'VISIBLE SCRIPT STYLE PACKET:',
+      visibleWritingStylePacket(config.systemPrompt),
+      '',
+      'STAGE OWNERSHIP CONTRACT:',
+      stageContract(config.level, config.video),
       '',
       'APPROVED ZEIGARNIK CONTRACT:',
       'ANSWER KIND: ' + contract.answerKind,

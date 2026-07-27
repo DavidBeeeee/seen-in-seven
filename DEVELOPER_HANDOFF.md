@@ -882,3 +882,12 @@ The following principles govern every word of copy in this app and the broader C
 - JSON remains the preferred Writer response, but plain spoken text is now accepted as a resilient fallback.
 - Mechanical cleanup issues are logged with level, video, attempt, and issue descriptions without logging user answers or script content.
 - The only remaining hard failure at this stage is an empty Writer response after both attempts. Regression coverage confirms that a nonempty Open Loop survives an unsuccessful cleanup pass.
+
+## 2026-07-27: Narrow style packet for the Open Loop Writer
+
+- The Open Loop Architect remains the only Open Loop step that receives the complete focused blueprint. It distills those story instructions into the approved Zeigarnik contract.
+- The Open Loop Writer now receives only the canonical visible-script style guide, internal-story-language firewall, active video stage contract, approved Zeigarnik contract, Meat, and Conclusion.
+- The full focused blueprint is deliberately not repeated in the Writer call. This avoids giving the prose step competing story maps or instructions from unrelated videos while restoring the banned-term and voice rules that had been missing from that call.
+- The Writer is instructed to use the minimum setup required to make the retention question understandable and not copy complete sentences or distinctive phrases from Meat or Conclusion.
+- Hook Studio code, prompts, candidate generation, judge behavior, and inputs were not changed. Existing regression checks continue to prove that Open Loop construction cannot change Hook and that final Hook installation cannot change Open Loop, Meat, Conclusion, or CTA.
+- Regression coverage confirms that the Writer receives the canonical banned-term block and active stage ownership contract without receiving the full focused blueprint.

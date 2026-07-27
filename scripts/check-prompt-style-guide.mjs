@@ -284,6 +284,11 @@ const openLoopStudioResult = await finalizeScriptOpenLoop({
     if (system === OPEN_LOOP_WRITER_SYSTEM) {
       assert(user.includes('Could quiet useful work matter beyond the public reaction visible beneath it?'), 'Open Loop Writer lost the approved retention question.');
       assert(user.includes('must stop before evidence that the work reached a reader'), 'Open Loop Writer lost the Meat boundary.');
+      assert(user.includes('VISIBLE SCRIPT STYLE PACKET:'), 'Open Loop Writer lost the visible-script style packet.');
+      assert(user.includes('<banned_script_terms>'), 'Open Loop Writer lost the canonical banned terms.');
+      assert(user.includes('<internal_story_language_firewall>'), 'Open Loop Writer lost the internal-language firewall.');
+      assert(user.includes('STAGE OWNERSHIP CONTRACT:'), 'Open Loop Writer lost the active stage boundary.');
+      assert(!user.includes('FOCUSED BLUEPRINT AND STYLE GUIDE:'), 'Open Loop Writer received the full focused blueprint instead of the narrow style packet.');
       return JSON.stringify({ open_loop: cleanRetentionGap });
     }
     throw new Error('Unexpected Open Loop architecture test call.');
