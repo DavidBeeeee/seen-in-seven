@@ -1827,7 +1827,7 @@ async function apiAuthorizationHeaders() {
 
 async function callGenerationAPI(payload) {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), 85000);
+  const timeoutId = setTimeout(() => controller.abort(), 150000);
   let response;
   try {
     response = await fetch('/api/generate', {

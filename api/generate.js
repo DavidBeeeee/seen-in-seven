@@ -1,6 +1,8 @@
 import {
   buildSystemPrompt,
   composeSections,
+  finalizeScriptHook,
+  generateFinalHook,
   parseSections,
   publishedPrompt,
   reviewAndRepairScript,
@@ -89,7 +91,7 @@ Requirements:
 - CHANGED ACTION identifies what the speaker actually chose, said, made, stopped, started, or handled differently because of that lens.
 - RECOVERABLE TRIAL selects one representative supported sequence where acting differently remained uncertain, awkward, inconvenient, discouraging, or socially unrewarded. Repeated pressure may appear inside this sequence, but do not assemble a montage of unrelated tests.
 - Apply the recoverability test: if the speaker could wake up and try again with roughly the same life, identity, work, and resources, it may belong here. If something central was destroyed, ended, or appeared impossible to restore, reserve it for Video 5.
-- OLD-WORLD TEMPTATION preserves what appeared to reward the earlier approach and what made retreating, imitating it, hiding, stopping, or returning to the familiar choice feel appealing. Keep this human and specific rather than converting it into a market lesson. Remove commercial positioning by negation, including claims that the speaker had no pitch, nothing to purchase, nothing to join, or no offer.
+- OLD-WORLD TEMPTATION preserves what appeared to reward the earlier approach and what made retreating, imitating it, hiding, stopping, or returning to the familiar choice feel appealing. Keep this human and specific rather than converting it into a market lesson. Concrete commercial contrasts may remain when they belong to the lived scene and choice; remove them only when they become present-day positioning or a sales argument.
 - CHOICE BEFORE PROOF states what the speaker did while the result was still unknown. Do not add hindsight or explain why the choice was correct.
 - FIRST MEANINGFUL RESULT preserves one observable supported consequence that gave the choice meaning. It may be modest. Do not invent praise, clients, money, metrics, outcomes, or certainty.
 - WHAT IT MADE POSSIBLE states only what that result reasonably allowed the speaker to hope, attempt, or believe was possible then. Do not turn it into universal advice, a case study, a method, or mature authority.
@@ -198,7 +200,7 @@ Requirements:
 - Compare every packet detail against the authoritative source material supplied beside it. Remove invented scenes, actions, reactions, dialogue, outcomes, and numerical precision. A direct paraphrase is allowed; a plausible detail absent from the source is not.
 - RECOVERABLE TRIAL must be a representative sequence the speaker could have tried again after. Remove completed collapse, apparently permanent loss, failed recovery, or worst-day material owned by Video 5.
 - OLD-WORLD TEMPTATION must expose a specific human pull toward retreat, imitation, hiding, stopping, or the familiar choice. Remove market analysis, competitor commentary, and explanations of why the speaker's approach was professionally superior.
-- Remove commercial positioning by negation. Describe what the speaker did, not the pitch, purchase, sign-up, offer, or promotion they say was absent.
+- Preserve concrete commercial contrasts when they belong to the lived scene and human choice. Remove them only when they become present-day positioning or a sales argument.
 - CHOICE BEFORE PROOF must remain a choice made under uncertainty. Remove the result and every explanation of why the choice was correct.
 - FIRST MEANINGFUL RESULT must be observable and supported. Keep it separate from the trial and choice so the writer can reserve it as the answer to the Open Loop.
 - WHAT IT MADE POSSIBLE may contain hope or provisional confidence, but no universal lesson, method, proof claim, or advice.
@@ -484,8 +486,8 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
     throw new Error('The epiphany story material could not be cleaned safely. Please try again.');
   }
   const draftingConstraints = isFirst
-    ? 'FINAL VIDEO 3 WRITING CONSTRAINTS: Privately pair one exact UNANSWERED QUESTION with the RESERVED PARADIGM SHIFT that answers it. Write the pure pattern-interrupt HOOK last; it must only capture attention and cannot state the accepted belief, question, or answer. The OPEN LOOP creates that exact conceptually unfinished question without implying the answer. The MEAT carries OLD ASSUMPTION through CONTRADICTING EVIDENCE and ends with COGNITIVE DISSONANCE unresolved. State RESERVED PARADIGM SHIFT for the first time in the CONCLUSION, followed by one HUMAN COST.'
-    : 'FINAL VIDEO 6 WRITING CONSTRAINTS: Privately pair one exact UNANSWERED QUESTION with the RESERVED PARADIGM SHIFT that answers it. Write the pure pattern-interrupt HOOK last; it may be provocative or convicted but cannot state the verdict or answer. The OPEN LOOP creates the exact unresolved relationship between VIDEO 3 FIRST LENS and VIDEO 5 FALL without implying its resolution. The MEAT carries the fall and AFTERMATH EVIDENCE through LIMIT EXPOSED and ends with that cognitive dissonance unresolved. State RESERVED PARADIGM SHIFT for the first time in the CONCLUSION, followed by one new possibility or VIEWER TRANSFER.';
+    ? 'FINAL VIDEO 3 WRITING CONSTRAINTS: Privately pair one exact UNANSWERED QUESTION with the RESERVED PARADIGM SHIFT that answers it. The OPEN LOOP is written independently from the completed Meat and reserved Conclusion and creates that exact conceptually unfinished question without implying the answer. It does not explain or continue the Hook. The MEAT carries OLD ASSUMPTION through CONTRADICTING EVIDENCE and ends with COGNITIVE DISSONANCE unresolved. State RESERVED PARADIGM SHIFT for the first time in the CONCLUSION, followed by one HUMAN COST. Supply a provisional HOOK label for formatting; the global Hook Studio will replace its text after the story is settled.'
+    : 'FINAL VIDEO 6 WRITING CONSTRAINTS: Privately pair one exact UNANSWERED QUESTION with the RESERVED PARADIGM SHIFT that answers it. The OPEN LOOP is written independently from the completed Meat and reserved Conclusion and creates the exact unresolved relationship between VIDEO 3 FIRST LENS and VIDEO 5 FALL without implying its resolution. It does not explain or continue the Hook. The MEAT carries the fall and AFTERMATH EVIDENCE through LIMIT EXPOSED and ends with that cognitive dissonance unresolved. State RESERVED PARADIGM SHIFT for the first time in the CONCLUSION, followed by one new possibility or VIEWER TRANSFER. Supply a provisional HOOK label for formatting; the global Hook Studio will replace its text after the story is settled.';
   return [
     'Generate Video ' + number + ' script.',
     '',
@@ -547,9 +549,9 @@ export async function prepareLevelTwoVideoFourMaterial(userContext) {
     'CURATED RECOVERABLE-TRIAL MATERIAL:',
     packet,
     '',
-    'The raw answers have already been sorted for this chapter. Use only this packet as story material. Build the HOOK from the most arresting truthful evidence inside RECOVERABLE TRIAL or OLD-WORLD TEMPTATION. Privately pair one exact pressing UNANSWERED QUESTION created by that Hook with FIRST MEANINGFUL RESULT as its reserved answer. The OPEN LOOP must make the viewer need that answer. It is not a place for general setup, a decision summary, stakes language, or vague anticipation.',
+    'The raw answers have already been sorted for this chapter. Use only this packet as story material. Privately pair one exact pressing UNANSWERED QUESTION from the completed Meat with FIRST MEANINGFUL RESULT as its reserved answer. Write the OPEN LOOP independently from that unfinished relationship after the Meat and Conclusion are settled. It does not explain or continue the Hook. It is not a place for general setup, a decision summary, stakes language, or vague anticipation. Supply a provisional HOOK label for formatting; the global Hook Studio will replace its text after the story is settled.',
     '',
-    'FINAL VIDEO 4 WRITING CONSTRAINTS: Write entirely from the speaker\'s perspective at that point in time. After the HOOK establishes the charged evidence and the OPEN LOOP creates the pressing unanswered question, the MEAT must advance rather than restaging that comparison, metric, reaction, or question. Reduce FIRST LENS to one brief continuity clause, then carry CHANGED ACTION through RECOVERABLE TRIAL, OLD-WORLD TEMPTATION, and CHOICE BEFORE PROOF before stopping ahead of the result. Describe the human action directly; never position the speaker through having no pitch, nothing to purchase, nothing to join, or no offer. Reveal FIRST MEANINGFUL RESULT for the first time in the CONCLUSION. Let it prove only that this one choice mattered, then state what it made possible then. Do not repeat Video 3, validate the complete philosophy, or convert the result into a lesson, method, case study, expertise claim, or professional proof. The CTA must deliberately drop the emotional temperature: identify this as Video 4 of 7 and use exactly one "because" to foreshadow that the next chapter contains the devastating event that nearly destroyed what had begun to feel possible and that the speaker must own their role. Reveal the magnitude and responsibility, but withhold the event, exact loss, causal choices, recovery, and later truth. Never frame Video 5 as the Video 4 approach merely becoming insufficient, and never use generic promises about the next challenge, real test, or what happens next.'
+    'FINAL VIDEO 4 WRITING CONSTRAINTS: Write entirely from the speaker\'s perspective at that point in time. The OPEN LOOP independently creates the pressing unanswered question from the completed story. The MEAT must advance through behavior rather than restaging that question. Reduce FIRST LENS to one brief continuity clause, then carry CHANGED ACTION through RECOVERABLE TRIAL, OLD-WORLD TEMPTATION, and CHOICE BEFORE PROOF before stopping ahead of the result. Concrete contrasts involving names, diagrams, pages, promotions, prices, or presentation may remain when they are part of the lived scene and temptation; do not convert them into present-day positioning or a sales argument. Reveal FIRST MEANINGFUL RESULT for the first time in the CONCLUSION. Let it prove only that this one choice mattered, then state what it made possible then. Do not repeat Video 3, validate the complete philosophy, or convert the result into a lesson, method, case study, expertise claim, or professional proof. The CTA must deliberately drop the emotional temperature: identify this as Video 4 of 7 and use exactly one "because" to foreshadow that the next chapter contains the devastating event that nearly destroyed what had begun to feel possible and that the speaker must own their role. Reveal the magnitude and responsibility, but withhold the event, exact loss, causal choices, recovery, and later truth. Never frame Video 5 as the Video 4 approach merely becoming insufficient, and never use generic promises about the next challenge, real test, or what happens next.'
   ].join('\n');
 }
 
@@ -596,7 +598,7 @@ export async function prepareLevelTwoVideoFiveMaterial(userContext) {
         '',
         'The raw answers have already been sorted for this chapter. Use only this packet as story material. Choose one emotional destination from SYMBOLIC DEATH and LOWEST-POINT THOUGHT before drafting. Build one causal descent rather than a list of hardships. Facts about money, clients, offers, services, attention, or public response are evidence only; they cannot become the thesis or lesson.',
         '',
-        'FINAL VIDEO 5 WRITING CONSTRAINTS: Design the CONCLUSION first and reserve the owned lowest-point belief for it. Build the MEAT as one chronological descent through what mattered, the consequential choice, ignored warning or escalation, collapse, and failed recovery. Stop before explaining what any of it eventually meant. Design the OPEN LOOP after the Conclusion and Meat as one pressing unfinished meaning, contradiction, cause, or question that the Conclusion will finally close or transform. It exists only to retain attention and cannot state the speaker\'s mistake, summarize the stakes, or imply the answer. Write the HOOK last as a pure truthful pattern interrupt whose only job is to stop the scroll long enough to reach the Open Loop. It may use any arresting truthful admission, consequence, contradiction, or socially risky detail in the packet, but it cannot summarize the failure, explain its significance, establish the full story, or reveal the lesson. Reveal the lowest-point belief for the first time in the CONCLUSION and leave the speaker inside the apparent loss with no recovery, diagnosis, authority, reassurance, or silver lining. Continue that exact emotional state into the CTA. Ask the viewer to follow, identify this as Video 5 of the seven-part journey, and explain that Video 6 confronts what the ordeal exposed. Do not say the confusion lifted, something cracked open, recovery began, the answer appeared, or the speaker found a way back.'
+        'FINAL VIDEO 5 WRITING CONSTRAINTS: Design the CONCLUSION first and reserve the owned lowest-point belief for it. Build the MEAT as one chronological descent through what mattered, the consequential choice, ignored warning or escalation, collapse, and failed recovery. Stop before explaining what any of it eventually meant. Design the OPEN LOOP after the Conclusion and Meat as one independent pressing unfinished meaning, contradiction, cause, or question that the Conclusion will finally close or transform. It exists only to retain attention, does not explain or continue the Hook, and cannot state the speaker\'s mistake, summarize the stakes, or imply the answer. Supply a provisional HOOK label for formatting; the global Hook Studio will replace its text after the story is settled. Reveal the lowest-point belief for the first time in the CONCLUSION and leave the speaker inside the apparent loss with no recovery, diagnosis, authority, reassurance, or silver lining. Continue that exact emotional state into the CTA. Ask the viewer to follow, identify this as Video 5 of the seven-part journey, and explain that Video 6 confronts what the ordeal exposed. Do not say the confusion lifted, something cracked open, recovery began, the answer appeared, or the speaker found a way back.'
       ].join('\n');
     }
     malformed = packet;
@@ -613,7 +615,7 @@ FEEDBACK FOR THIS REGENERATION: ${input.feedback}
 
 This is a FRESH FULL REGENERATION. The previous script has been intentionally withheld. Rebuild Video ${input.video}, Level ${input.level} from the original answers, cumulative story context, active blueprint, and feedback. Do not attempt to preserve, reconstruct, or imitate wording from an earlier draft.
 
-Use the same unified composition process as first-time generation: privately settle the distinct jobs of CONCLUSION, CTA, MEAT, OPEN LOOP, and HOOK, then write the final visible script once from [HOOK] through [CTA]. Apply sentence-level Hook-and-Eye only inside [MEAT]. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
+Use the same focused composition process as first-time generation. Apply sentence-level Hook-and-Eye only inside [MEAT]. Build [OPEN LOOP] independently after [MEAT] and [CONCLUSION] are settled. Supply a provisional [HOOK] for the required format; the global Hook Studio will replace it after the story is finished. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
   }
   return input.userContext;
 }
@@ -661,9 +663,18 @@ async function generateScript(input, prompt) {
         level: input.level,
         video: input.video,
         callModel,
-        wholeScriptRewrite: input.mode === 'full-regeneration'
+        wholeScriptRewrite: input.mode === 'full-regeneration',
+        provisionalHook: true
       });
-      return { content, promptVersion: prompt.version, generationAttempts: attempt + 1 };
+      const finalContent = await finalizeScriptHook({
+        script: content,
+        systemPrompt,
+        userMessage: userMessage + retryNote,
+        level: input.level,
+        video: input.video,
+        callModel
+      });
+      return { content: finalContent, promptVersion: prompt.version, generationAttempts: attempt + 1 };
     } catch (error) {
       lastError = error;
       const message = String(error && error.message || '');
@@ -686,6 +697,17 @@ async function generateSection(input, prompt) {
     preparedContext = await prepareLevelTwoVideoFiveMaterial(input.userContext);
   }
   const userMessage = sectionMessage({ ...input, userContext: preparedContext });
+  if (input.section === 'HOOK') {
+    const content = await generateFinalHook({
+      script: input.existingScript,
+      systemPrompt,
+      userMessage,
+      level: input.level,
+      video: input.video,
+      callModel
+    });
+    return { content, promptVersion: prompt.version };
+  }
   const draft = await callModel(systemPrompt, userMessage, 0.8);
   const parsed = parseSections(draft);
   const replacement = parsed && parsed[input.section]

@@ -807,3 +807,17 @@ The following principles govern every word of copy in this app and the broader C
 - Fresh regeneration still receives one independent story review. If that review or a hard rule finds a problem, all subsequent corrections rewrite the complete script. A final hard-format correction no longer requires another subjective review and never stitches section replacements together.
 - The script asset query was changed to `full-regen-3` so existing browsers load the corrected interface immediately.
 - Deleting and re-answering a video now clears any earlier full-regeneration status immediately. A successful standard generation also clears stale regeneration feedback before showing the newly generated script.
+
+## 2026-07-27: Global Hook Studio and Open Loop separation
+
+- This architecture supersedes every older handoff note that assigns a Hook to a journal answer, trial, scene, evidence source, present-day action, Hero's Journey beat, or chronological story opening.
+- The story writer now creates `[OPEN LOOP]`, `[MEAT]`, `[CONCLUSION]`, and `[CTA]` around a disposable nonempty Hook placeholder. The story reviewer is explicitly prohibited from reviewing, replacing, connecting, or assigning story material to that placeholder.
+- After the story passes, the global Hook Studio receives the completed story and full user context. It creates six materially different candidates across at least five attention mechanisms. Hooks may use defensible rhetorical compression, exaggeration, provocative framing, playful absurdity, or opinion, but may not invent a personal event, credential, measurable result, quotation, or audience reaction.
+- A separate Hook judge chooses the strongest candidate. It rejects chronology, scene setup, biography, progress reports, chapter summaries, generic curiosity, explanations, lessons, results, and lines that require prior interest in the speaker. A Hook does not need to introduce the story, contain a Meat fact, represent the journey stage, or transition into the Open Loop.
+- The Open Loop is also independent. It is written from the completed Meat and reserved Conclusion, not from the Hook. An abrupt pivot is valid. Its only job is to create one specific unfinished meaning, contradiction, cause, consequence, or question that retains the viewer without revealing the Conclusion.
+- The Hook-and-Eye Seamless Rule applies only inside Meat. Conclusion and CTA remain their existing closing unit. CTA guidance was not changed in this correction.
+- Regenerating only a Hook uses the same Hook Studio and judge. First-time generation and full regeneration both discard the draft Hook before story review and install the final selected Hook afterward.
+- Blueprint validation now refuses publication unless all 14 video rules preserve global Hook Studio ownership. It also rejects known regression phrases that reconnect the Hook to the Open Loop, assign it to an answer, or restore composition from Hook through CTA.
+- `scripts/check-prompt-style-guide.mjs` verifies all 14 ownership lines, forbidden coupling phrases, Meat-only continuity, provisional-Hook story review, judge-directed Hook retry, and byte-for-byte preservation of Open Loop, Meat, Conclusion, and CTA during final Hook installation.
+- The generation request timeout is now 150 seconds to accommodate the final Hook Studio and judge without the browser abandoning a valid in-progress request.
+- The current script asset query is `hook-studio-1`.
