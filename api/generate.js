@@ -750,7 +750,16 @@ export default async function handler(req, res) {
     return json(res, 200, result);
   } catch (error) {
     const message = error && error.message ? error.message : 'Script generation failed.';
+    console.error('[SeenInSeven generate]', JSON.stringify({
+      mode: req && req.body && req.body.mode || 'unknown',
+      level: req && req.body && req.body.level,
+      videoNumber: req && req.body && req.body.videoNumber,
+      message
+    }));
     const badRequest = /required|must be|too long|Unknown|not accepted|does not have/.test(message);
-    return json(res, badRequest ? 400 : 500, { error: message });
+    return json(res, badRequest ? 400 : 500, {
+      error: message,
+      code: badRequest ? 'INVALID_GENERATION_REQUEST' : 'GENERATION_REJECTED'
+    });
   }
 }

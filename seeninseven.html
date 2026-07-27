@@ -685,6 +685,10 @@
           <span class="sv-redo-link danger" onclick="confirmDeleteAndStartOver()">Delete &amp; Re-answer Questions</span>
         </div>
       </div>
+      <div id="sv-regeneration-status" class="sv-regeneration-status" role="status" aria-live="polite" hidden>
+        <span id="sv-regeneration-message"></span>
+        <button id="sv-regeneration-retry" type="button" class="sv-regeneration-retry" hidden>Try Again</button>
+      </div>
       <div id="sv-beats" class="sv-beats-view"></div>
       <div id="sv-clean" style="display:none;">
         <textarea class="script-editor" id="script-editor" rows="8" placeholder="Your script will appear here..."></textarea>
@@ -872,7 +876,7 @@
 <script src="/js/script-prompt-engine.js?v=security-1"></script>
 <script src="/js/supabase.js?v=studio-access-v1"></script>
 <script src="/js/points.js?v=security-1"></script>
-<script src="/js/app.js?v=security-1"></script>
+<script src="/js/app.js?v=full-regen-2"></script>
 
 <!-- ══ DUAL COMPLETE OVERLAY ══ -->
 <div id="dual-complete-overlay">

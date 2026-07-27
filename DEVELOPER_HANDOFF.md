@@ -797,3 +797,12 @@ The following principles govern every word of copy in this app and the broader C
 - Section regeneration is unchanged. It still receives the current complete script and replaces only the requested section.
 - Level 2 Video 1 full regeneration now receives the same private material routing as its first generation, restoring parity for that chapter.
 - `scripts/check-prompt-style-guide.mjs` verifies that a sentinel from the previous script cannot enter the full-regeneration prompt and that a failed semantic review produces one complete replacement rather than a section merge.
+
+## 2026-07-27: Full-regeneration failure recovery
+
+- The script view now keeps a persistent regeneration status visible. It clearly distinguishes writing, success, and failure, states that the previous script remains unchanged on failure, and offers an immediate retry button.
+- A failed regeneration no longer flashes `Error` for three seconds and silently returns to the old script. The client records a `script_regeneration_failed` event with video, level, error code, and server message.
+- The client refuses to save or label an exact unchanged response as a fresh script.
+- The generation API now logs rejected requests with mode, level, video number, and error message without logging the user's answers. Error responses include a stable diagnostic code.
+- Fresh regeneration still receives one independent story review. If that review or a hard rule finds a problem, all subsequent corrections rewrite the complete script. A final hard-format correction no longer requires another subjective review and never stitches section replacements together.
+- The script asset query was changed to `full-regen-2` so existing browsers load the corrected interface immediately.

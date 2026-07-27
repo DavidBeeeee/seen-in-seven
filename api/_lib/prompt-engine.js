@@ -676,41 +676,41 @@ function publishedPrompt() {
 
   async function reviewAndRewriteWholeScript(config) {
     let script = String(config.script || '').trim();
-    let lastReview = null;
-    for (let pass = 0; pass < 2; pass++) {
-      const validation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
-      const reviewRaw = await config.callModel(
-        QUALITY_REVIEW_SYSTEM,
-        buildQualityReviewMessage({
-          level: config.level,
-          video: config.video,
-          systemPrompt: config.systemPrompt,
-          userMessage: config.userMessage,
-          script,
-          validation,
-          precisionPass: pass > 0
-        }),
-        0.15
-      );
-      const review = parseQualityReview(reviewRaw);
-      lastReview = review;
-      if (review && review.pass && validation.valid) return script;
-      if (!review && validation.valid && pass > 0) return script;
-      if (!review && validation.valid) continue;
-      if (pass === 0) {
-        script = await config.callModel(
-          config.systemPrompt,
-          wholeScriptRewriteMessage(config, script, review, validation),
-          0.45
-        );
-      }
-    }
-    const finalValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
+    const initialValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
+    const reviewRaw = await config.callModel(
+      QUALITY_REVIEW_SYSTEM,
+      buildQualityReviewMessage({
+        level: config.level,
+        video: config.video,
+        systemPrompt: config.systemPrompt,
+        userMessage: config.userMessage,
+        script,
+        validation: initialValidation,
+        precisionPass: false
+      }),
+      0.15
+    );
+    const review = parseQualityReview(reviewRaw);
+    if ((!review || review.pass) && initialValidation.valid) return script;
+
+    script = await config.callModel(
+      config.systemPrompt,
+      wholeScriptRewriteMessage(config, script, review, initialValidation),
+      0.45
+    );
+    let finalValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
     if (finalValidation.valid) return script;
-    const semanticIssue = lastReview && !lastReview.pass;
-    if (semanticIssue) {
-      throw new Error('The script response still needs correction: the fresh full script requires another complete rewrite. Please try again.');
-    }
+
+    // A complete rewrite can solve the story issue while accidentally adding a
+    // banned term or malformed label. Correct the entire composition once more
+    // instead of discarding it or stitching a repaired section into place.
+    script = await config.callModel(
+      config.systemPrompt,
+      wholeScriptRewriteMessage(config, script, null, finalValidation),
+      0.25
+    );
+    finalValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
+    if (finalValidation.valid) return script;
     throw new Error('The script response still needs correction: ' + validationFeedback(finalValidation) + ' Please try again.');
   }
 

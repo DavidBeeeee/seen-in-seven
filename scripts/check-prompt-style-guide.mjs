@@ -128,12 +128,13 @@ const wholeRewriteResult = await reviewAndRepairScript({
         replacements: { HOOK: 'A section replacement that must not be stitched into the draft.' }
       });
     }
-    if (wholeRewriteCalls.length === 2) return validFreshScript;
-    return JSON.stringify({ pass: true, issues: [], replacements: {} });
+    if (wholeRewriteCalls.length === 2) return flawedFreshDraft;
+    return validFreshScript;
   }
 });
-assert(wholeRewriteCalls.length === 3, 'Fresh full review did not use one review, one whole rewrite, and one re-review.');
+assert(wholeRewriteCalls.length === 3, 'Fresh full review did not use one review followed by complete-script correction passes.');
 assert(wholeRewriteCalls[1].user.includes('DRAFT TO REPLACE COMPLETELY'), 'Whole rewrite lost its complete-replacement instruction.');
+assert(wholeRewriteCalls[2].user.includes('DRAFT TO REPLACE COMPLETELY'), 'Hard validation correction did not remain a complete rewrite.');
 assert(!wholeRewriteResult.includes('A section replacement that must not be stitched'), 'Full regeneration stitched in a section replacement.');
 assert(wholeRewriteResult === validFreshScript, 'Full regeneration did not return the complete fresh rewrite.');
 

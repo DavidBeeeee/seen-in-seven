@@ -2062,6 +2062,21 @@ async function flushScriptEditSave(videoIdx) {
   await saveScriptEditToDb(videoIdx + 1, level, script, finalScriptText(videoIdx, script, level));
 }
 
+function showFullRegenerationStatus(kind, message, videoIdx) {
+  const status = document.getElementById('sv-regeneration-status');
+  const messageEl = document.getElementById('sv-regeneration-message');
+  const retryBtn = document.getElementById('sv-regeneration-retry');
+  if (!status || !messageEl || !retryBtn) return;
+  status.hidden = false;
+  status.dataset.video = String(videoIdx);
+  status.classList.toggle('is-error', kind === 'error');
+  messageEl.textContent = message;
+  retryBtn.hidden = kind !== 'error';
+  retryBtn.onclick = kind === 'error'
+    ? () => regenerateFullScript(videoIdx, document.getElementById('sv-regen-full'))
+    : null;
+}
+
 // Regenerate the complete script while preserving the user's answers and prior script version.
 async function regenerateFullScript(videoIdx, btnEl) {
   const editKey = 'script_v' + videoIdx;
@@ -2074,6 +2089,11 @@ async function regenerateFullScript(videoIdx, btnEl) {
     btnEl.textContent = '⏳ Regenerating...';
     btnEl.disabled = true;
   }
+  showFullRegenerationStatus(
+    'working',
+    'Writing a completely new script from your saved answers. Your current draft will stay here until the new one is ready.',
+    videoIdx
+  );
   const fullScriptElements = [
     document.getElementById('sv-beats'),
     document.getElementById('script-editor')
@@ -2082,6 +2102,7 @@ async function regenerateFullScript(videoIdx, btnEl) {
 
   const level = state.level || 1;
   const videoNum = videoIdx + 1;
+  const previousScript = String(state.videos[editKey] || '').trim();
   await flushScriptEditSave(videoIdx);
   if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(videoIdx);
   try {
@@ -2095,6 +2116,9 @@ async function regenerateFullScript(videoIdx, btnEl) {
       }
     );
     if (!script) throw new Error('Empty response');
+    if (String(script).trim() === previousScript) {
+      throw new Error('The regeneration returned the unchanged draft, so it was not saved as a new script.');
+    }
 
     const promptVersion = window._SIS_lastPromptVersion || '';
     const finalContent = finalScriptText(videoIdx, script, level);
@@ -2118,16 +2142,40 @@ async function regenerateFullScript(videoIdx, btnEl) {
     }
 
     _doShowScriptView(videoIdx);
-    if (typeof flashSavedIndicator === 'function') flashSavedIndicator();
-  } catch (err) {
+    showFullRegenerationStatus(
+      'success',
+      'Your fresh script is ready. The previous draft is still available with Undo.',
+      videoIdx
+    );
     if (btnEl) {
-      btnEl.textContent = '⚠️ Error';
+      btnEl.textContent = '✓ Fresh Script Ready';
       btnEl.disabled = false;
       setTimeout(() => {
         if (btnEl) btnEl.textContent = originalText;
       }, 3000);
     }
-    console.error('Regenerate full script error:', err);
+    if (typeof flashSavedIndicator === 'function') flashSavedIndicator();
+  } catch (err) {
+    const errText = err && err.message ? err.message : String(err);
+    if (btnEl) {
+      btnEl.textContent = '⚠️ Try Again';
+      btnEl.disabled = false;
+    }
+    showFullRegenerationStatus(
+      'error',
+      friendlyScriptRecoveryMessage(err) + ' Your previous script was preserved and has not been presented as a new draft.',
+      videoIdx
+    );
+    console.error('Regenerate full script error:', errText);
+    if (typeof logEvent === 'function') {
+      logEvent('script_regeneration_failed', {
+        video_number: videoNum,
+        level,
+        scope: 'full_script',
+        error: errText,
+        error_code: err && err.code || null
+      });
+    }
   } finally {
     fullScriptElements.forEach(element => element.classList.remove('is-regenerating'));
   }
@@ -3127,6 +3175,10 @@ function _doShowScriptView(idx) {
 }
 
 function _doShowScriptViewInner(idx) {
+  const regenerationStatus = document.getElementById('sv-regeneration-status');
+  if (regenerationStatus && regenerationStatus.dataset.video !== String(idx)) {
+    regenerationStatus.hidden = true;
+  }
   const videos = getVideos();
   const v = videos[idx];
   if (!v) { console.error('[SeenInSeven] _doShowScriptView: no video at idx ' + idx + ' (videos.length=' + videos.length + ')'); return; }
