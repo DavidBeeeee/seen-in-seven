@@ -29,6 +29,7 @@ SPEAKER COMMITMENT STAKES:
 VOICE SIGNALS:
 
 Requirements:
+- Treat the headings as non-overlapping evidence ownership. Keep the strongest and most specific expression of each fact once. When a later heading depends on an earlier fact, add only the new relationship or consequence instead of restating the fact, phrase, number, duration, or judgment.
 - Preserve the speaker's concrete actions, artifacts, contradictions, memories, consequences, emotional truth, distinctive language, and useful analogies.
 - Preserve the human situation of the audience, especially what they feel, avoid, fear, want, or repeatedly struggle to implement.
 - Preserve why speaking now matters and what makes completing the seven videos personally consequential.
@@ -52,6 +53,7 @@ HUMAN COST:
 VOICE SIGNALS:
 
 Requirements:
+- Treat the headings as non-overlapping evidence ownership. Keep the strongest and most specific expression of each fact once. When a later heading depends on an earlier fact, add only the new relationship or consequence instead of restating the fact, phrase, number, duration, or judgment.
 - Preserve only facts, observations, actions, consequences, and distinctive language supported by the source.
 - OLD ASSUMPTION names one idea the speaker genuinely accepted and one way it shaped what they did.
 - CONTRADICTING EVIDENCE selects one supplied occurrence or coherent pattern that the old assumption cannot explain. Preserve a naturally mentioned person, teaching, conversation, or influence only when it belongs to that evidence. Never require, manufacture, or cast someone as a mentor.
@@ -81,6 +83,7 @@ WHAT REMAINED OPEN:
 VOICE SIGNALS:
 
 Requirements:
+- Treat the headings as non-overlapping evidence ownership. Keep the strongest and most specific expression of each fact once. When a later heading depends on an earlier fact, add only the new relationship or consequence instead of restating the fact, phrase, number, duration, or judgment.
 - Preserve only facts, actions, pressures, consequences, and distinctive language supported by the supplied Video 2 and Video 3 scripts and current Video 4 answers.
 - FIRST LENS reduces the bounded realization carried out of Video 3 to one short clause. Do not copy its polished wording, governing metaphor, discovery story, human-cost argument, or completed reframe.
 - CHANGED ACTION identifies what the speaker actually chose, said, made, stopped, started, or handled differently because of that lens.
@@ -114,6 +117,7 @@ LOWEST-POINT THOUGHT:
 VOICE SIGNALS:
 
 Requirements:
+- Treat the headings as non-overlapping evidence ownership. Keep the strongest and most specific expression of each fact once. When a later heading depends on an earlier fact, add only the new relationship or consequence instead of restating the fact, phrase, number, duration, or judgment.
 - Give priority to the current Video 5 journal entry or answers. Use Videos 2 through 4 only to preserve continuity and identify what had become meaningful enough to lose. Video 4 does not need to cause the fall.
 - ORDEAL NUCLEUS selects one event or gradual collapse and states the causal spine. Do not assemble a montage of unrelated failures.
 - A gradual collapse qualifies. A calling, identity, confidence, judgment, path, relationship to the work, or belief in the value of what the speaker knows may suffer symbolic death even when no company literally closes.
@@ -147,6 +151,7 @@ VIEWER TRANSFER:
 VOICE SIGNALS:
 
 Requirements:
+- Treat the headings as non-overlapping evidence ownership. Keep the strongest and most specific expression of each fact once. When a later heading depends on an earlier fact, add only the new relationship or consequence instead of restating the fact, phrase, number, duration, or judgment.
 - Preserve only facts, observations, actions, consequences, and distinctive language supported by the source.
 - VIDEO 3 FIRST LENS states the complete but bounded realization the speaker carried into the trials.
 - VIDEO 5 FALL identifies the defeat and the speaker's owned contribution. The fall must be causally necessary to the later understanding.
@@ -178,6 +183,7 @@ For a Video 6 packet:
 - Never invent a fact, result, event, or behavioral change.
 
 For both packets:
+- Deduplicate across headings before returning the packet. Keep each fact, phrase, number, duration, event, and consequence in its strongest location once. A dependent heading adds only the new relationship or interpretation.
 - Remove credential summaries, pricing ladders, service tiers, current offers, current service descriptions, conversion requests, and material owned by another chapter.
 - Do not use the words version, lazy, pay, paid, buy, bought, sell, or sold. Use natural alternatives when a supported fact requires one.
 - Keep the packet concise. This is source material, not a script.`;
@@ -187,6 +193,7 @@ const L2V4_PACKET_CLEANUP_SYSTEM = `You are the evidence-packet editor between a
 Return only the corrected packet with exactly the same headings and heading order supplied by the user. Do not add commentary.
 
 Requirements:
+- Deduplicate across headings before returning the packet. Keep each fact, phrase, number, duration, event, and consequence in its strongest location once. A dependent heading adds only the new relationship or interpretation.
 - Preserve one bounded first lens, one observable changed action, one recoverable trial, the old-world temptation inside it, the speaker's choice before proof, one meaningful result, and what that result made possible. WHAT REMAINED OPEN is optional and must never be manufactured.
 - Compare every packet detail against the authoritative source material supplied beside it. Remove invented scenes, actions, reactions, dialogue, outcomes, and numerical precision. A direct paraphrase is allowed; a plausible detail absent from the source is not.
 - RECOVERABLE TRIAL must be a representative sequence the speaker could have tried again after. Remove completed collapse, apparently permanent loss, failed recovery, or worst-day material owned by Video 5.

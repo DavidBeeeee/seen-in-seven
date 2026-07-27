@@ -778,3 +778,12 @@ The following principles govern every word of copy in this app and the broader C
 - `<banned_script_terms>` is now the single machine-readable source for hard script bans. It includes complete vague-noun, generalization, LLM-cliche, and commercial word forms, including `thing`, `things`, `something`, `anything`, `everything`, `nothing`, `selling`, `sold`, `paid`, `payments`, and related inflections.
 - `api/_lib/prompt-engine.js` parses that exact list for deterministic checks instead of maintaining a second JavaScript list. Prompt Tester draft validation and published blueprint validation now share one server-side validator and reject a missing or malformed style guide before generation or publishing.
 - The Prompt Tester's Blueprint Draft toolbar includes a Style Guide jump button so the canonical guide remains directly editable alongside the 14 video sections.
+
+## 2026-07-27: Reversible unified-composition experiment
+
+- Replaced the five-line Information Ledger with one source-compression and whole-script composition rule. This is a replacement, not an additional framework.
+- Material routers now treat their headings as non-overlapping evidence ownership. A fact, phrase, number, duration, event, or consequence is kept in its strongest location once; dependent headings add only the new relationship.
+- The writer silently collapses duplicate source material, gives every retained fact one primary section, privately settles the Conclusion, CTA, Meat, Open Loop, and Hook jobs, then writes the visible five-section script once from Hook through CTA.
+- The Hook and Open Loop definitions were deliberately preserved. The Hook remains an independent pattern interrupt, the Open Loop remains one pressing unanswered question, and sentence-level Hook-and-Eye remains limited to Meat.
+- No word-frequency rejection or new repetition repair loop was added. The structural goal is to prevent duplicate material from reaching the visible draft.
+- Rollback point: Git tag `before-unified-composition-2026-07-27` targets commit `33d3beca90c2cba5a1fd70a282ebcc7d8399ae0e`. Revert the isolated experiment commit or restore that tag if testing weakens Hooks, Open Loops, or overall output.

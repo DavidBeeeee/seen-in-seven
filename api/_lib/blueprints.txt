@@ -27,7 +27,7 @@ HOOK-AND-EYE FLOW:
 - Apply the Hook-and-Eye Seamless Rule ONLY inside [MEAT]. Every MEAT sentence must have a clear relationship to the sentence before it. If a sentence could move elsewhere without changing the flow, connect it to the surrounding story or rewrite it.
 - Use natural story logic, relative clauses, and varied subordinating conjunctions such as since, while, although, which, who, and unless when they genuinely clarify the relationship. Do not bolt a connector onto every sentence or create long ornamental sentences merely to satisfy this rule.
 - The HOOK, OPEN LOOP, CONCLUSION, and CTA remain independent writing operations with their own jobs. Never smooth, soften, or weaken one of those sections merely to make it share the MEAT's rhythm.
-- Write the complete MEAT in one pass as a professional storyteller would. Do not create five disconnected beat summaries and stitch them together afterward.
+- Compose the MEAT as part of the complete visible script pass, as a professional storyteller would. Do not create disconnected beat summaries and stitch them together afterward.
 
 PUNCTUATION AND CONNECTORS:
 - Never use em dashes in generated scripts. Use an ellipsis, a relative clause, a subordinating conjunction, or restructure the thought so it flows naturally.
@@ -165,7 +165,7 @@ A real person may naturally be called a mentor, teacher, guide, supervisor, peer
 </internal_story_language_firewall>
 
 <section_composition_rule>
-The five labeled sections are different writing operations, not paragraphs in one uninterrupted composition. Do not apply one prose rhythm or one transition rule across the entire script.
+The five labeled sections have different storytelling jobs, but the final script is one composed performance. Privately settle each section's job before drafting visible prose, then write the complete five-section script in one continuous composition pass from [HOOK] through [CTA]. Do not draft five independent mini-scripts and stitch them together. The labels mark changes in storytelling function, not places where the speaker restarts, recaps, or changes into a different voice.
 
 The Seamless Rule applies ONLY to [MEAT]. Write the MEAT as one seamless spoken story. Every sentence inside the MEAT must have a clear hook-and-eye connection to the sentence before it. Remove or rewrite any MEAT sentence that could move elsewhere without changing the flow. When a connection needs support, use natural story logic and varied connectors such as "since," "while," "although," "which," or a fresh sentence that makes the relationship clear. Do not force long or ornate sentences just to connect ideas.
 
@@ -179,14 +179,12 @@ Privately reserve the conclusion's central turn before writing any other section
 
 [CTA] and [CONCLUSION] form one closing unit. The CTA continues the conclusion's exact emotional idea, then asks the viewer to follow for one specific reason. Do not apply the MEAT's sentence-by-sentence Seamless Rule to this closing unit, and do not smooth away an intentional conclusion turn.
 
-Before drafting, privately create a five-line INFORMATION LEDGER with one exclusive story move for each section:
-- HOOK owns the forbidden territory or pattern interrupt, not the argument.
-- OPEN LOOP owns one pressing unanswered question or missing relationship, not setup, stakes, or the answer.
-- MEAT owns the events, guide, evidence, and belief collapse, not their final interpretation.
-- CONCLUSION owns one forceful interpretation or paradigm shift.
-- CTA owns the relational consequence and reason to continue, not a summary of the conclusion.
-
-Every section must contribute new information. If two ledger lines make substantially the same claim, redesign them before writing. Repetition includes paraphrases and synonym swaps, not only repeated wording. Once an idea has performed its assigned job, do not explain it again in a later section.
+Before composing, silently compress the source material:
+- When the same event, belief, duration, number, consequence, observation, or distinctive phrase appears in multiple answers, previous scripts, or prepared headings, keep its strongest and most specific expression once.
+- Give each retained fact one primary place in the script. HOOK owns the pattern interrupt. OPEN LOOP owns one pressing unanswered question or missing relationship. MEAT owns the causal events and evidence. CONCLUSION owns the reserved interpretation or turn. CTA owns the relational consequence and reason to continue.
+- A later section may deepen an earlier fact only by adding a new consequence, escalation, contradiction, interpretation, or decision. It may not recap, rename, paraphrase, or synonym-swap the earlier fact.
+- Inside MEAT, create hook-and-eye continuity through cause, consequence, time, escalation, contradiction, or changed action. Repeating the previous sentence's central noun or claim does not create continuity.
+- Omit valid source material when another retained detail already performs the same narrative job. Preserving every supplied detail is less important than writing one clear human story.
 
 Use no more than one governing metaphor family in a script. Choose it after deciding the conclusion, use it only where it sharpens the story, and normally use it no more than twice. Do not mix competing image systems such as maps, floors, bridges, mountains, roads, and ladders in the same video. Literal story details are not metaphors and may remain.
 </section_composition_rule>
@@ -290,12 +288,12 @@ PROCESS:
 5. Scan previous video answers for themes, phrases, and details to reference or build on.
 6. Identify the AUDIENCE JOURNEY for this video: before, after, open question, and social impulse.
 7. Choose the ENGAGEMENT ENDING first: twist, debate, question, or mirror. Decide what the audience should think, feel, question, debate, or reinterpret at the final turn.
-8. Write the CONCLUSION destination first. It may complete, reverse, complicate, challenge, or reopen the apparent meaning of the story. A twist may contradict the audience's expected interpretation of the MEAT, but it may not contradict the facts.
+8. Privately reserve the CONCLUSION destination first. It may complete, reverse, complicate, challenge, or reopen the apparent meaning of the story. A twist may contradict the audience's expected interpretation of the MEAT, but it may not contradict the facts.
 9. Design the CTA with the CONCLUSION as one closing unit. Continue the conclusion's exact emotional idea, then ask the viewer to follow and give one clear reason rooted in what remains worth seeing from this person. Do not introduce a new topic or bolt on a separate announcement.
-10. Reverse-engineer the MEAT from the conclusion destination. Arrange the local blueprint beats so the surface story remains compelling while every fact needed for the final turn is already present. Write the MEAT under the Meat-Only Seamless Rule.
+10. Plan the MEAT from the conclusion destination. Arrange the local blueprint beats so the surface story remains compelling while every fact needed for the final turn is already present. Apply the Meat-Only Seamless Rule to this plan.
 11. Design the OPEN LOOP after the CONCLUSION and MEAT. Create the exact unfinished meaning, contradiction, cause, or question that the conclusion will complete, reverse, complicate, challenge, or reopen. Do not reveal the destination.
-12. Write the HOOK last as an independent truthful pattern interrupt. Generate and compare multiple candidates, then choose the one that creates the strongest "wait, what?" without stating the open loop or conclusion.
-13. Audit the five-line INFORMATION LEDGER before polishing prose. Confirm every section contributes a different story move, no section paraphrases an earlier section's claim, and the script uses no more than one governing metaphor family. Remove duplicated meaning and accidental incoherence, but do not smooth the five sections into one prose rhythm or weaken an intentional hook, open loop, or conclusion turn.
+12. Design the HOOK last as an independent truthful pattern interrupt. Generate and compare multiple candidates, then choose the one that creates the strongest "wait, what?" without stating the open loop or conclusion.
+13. Silently compress duplicate source material, assign every retained fact one primary section, and then write the final visible script once from [HOOK] through [CTA]. Preserve each section's distinct job while carrying one human voice across the complete performance. Remove repeated facts and meanings, but never smooth the sections into one prose rhythm or weaken an intentional hook, open loop, or conclusion turn.
 14. Verify the video works for a cold viewer without recapping previous videos: the immediate situation makes sense, this episode has a complete emotional movement, and the larger seven-video story remains open.
 15. Verify the script sounds like the SPEAKER, not like a copywriter.
 16. Verify total script is approximately 220-270 words across all five generated sections for Videos 1, 2, 4, 5, and 7. Allow 240-300 words for Videos 3 and 6 so cognitive dissonance and its resolution can be expressed in complete spoken thoughts. For Video 1 only, exclude the app-inserted declaration from this count.

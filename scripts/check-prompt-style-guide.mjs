@@ -20,6 +20,16 @@ assert(focusedPrompt.includes('<style_guide>'), 'Focused prompt lost the canonic
 assert(focusedPrompt.includes('VIDEO 5 — THE FALL — THE ORDEAL'), 'Focused prompt lost the active video rules.');
 assert(!focusedPrompt.includes('VIDEO 4 — THE CHOICE BEFORE PROOF'), 'Focused prompt leaked Video 4 rules.');
 assert(!focusedPrompt.includes('VIDEO 6 — EPIPHANY #2'), 'Focused prompt leaked Video 6 rules.');
+assert(focusedPrompt.includes('one continuous composition pass'), 'Focused prompt lost the unified composition rule.');
+assert(!focusedPrompt.includes('INFORMATION LEDGER'), 'Focused prompt still contains the superseded Information Ledger.');
+assert(
+  focusedPrompt.includes('[HOOK] is an independent pattern interrupt.'),
+  'Unified composition changed the protected Hook contract.'
+);
+assert(
+  focusedPrompt.includes('[OPEN LOOP] is an independent interest device.'),
+  'Unified composition changed the protected Open Loop contract.'
+);
 
 for (const level of [1, 2]) {
   for (let video = 1; video <= 7; video++) {
