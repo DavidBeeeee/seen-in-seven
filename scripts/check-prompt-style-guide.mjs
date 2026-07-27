@@ -188,6 +188,31 @@ assert(
   (brokenCtaValidation.sectionIssues.CTA || []).some(issue => /ends its bridge|grammatical hinge/i.test(issue)),
   'A CTA with a full stop between its bridge and follow command passed validation.'
 );
+const disposableOpenLoopDraft = validFreshScript.replace(
+  "The camera exposed a question I couldn't answer yet: why did a ten-minute recording feel heavier than work I had already survived?",
+  'Anybody could call this the thing that changed everything, although the draft kept expanding into a long summary that repeated every event, every result, and every explanation before the conclusion had a chance to reveal its own meaning to the viewer watching the full story.'
+);
+const provisionalStudioReviewCalls = [];
+const provisionalStudioReviewResult = await reviewAndRepairScript({
+  script: disposableOpenLoopDraft,
+  systemPrompt: buildSystemPrompt(published.prompt, 1, 2),
+  userMessage: freshRequest,
+  level: 1,
+  video: 2,
+  provisionalHook: true,
+  provisionalOpenLoop: true,
+  callModel: async (system, user) => {
+    provisionalStudioReviewCalls.push({ system, user });
+    assert(user.includes('[HOOK] and [OPEN LOOP] are temporary placeholders'), 'Story review was not told to ignore both Studio-owned sections.');
+    assert(!user.includes('Anybody could call this'), 'The disposable draft Open Loop reached story review.');
+    return JSON.stringify({ pass: true, issues: [], replacements: {} });
+  }
+});
+assert(provisionalStudioReviewCalls.length === 1, 'A disposable Open Loop caused extra story-review passes before the Studio.');
+assert(
+  parseSections(provisionalStudioReviewResult)['OPEN LOOP'].startsWith('A central question remains unresolved'),
+  'Story review did not preserve the provisional Open Loop boundary for the Studio.'
+);
 const flawedFreshDraft = validFreshScript.replace(
   'I had spent years handling difficult conversations without rehearsing every sentence.',
   'I had nothing useful to say during difficult conversations.'

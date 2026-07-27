@@ -666,7 +666,8 @@ async function generateScript(input, prompt) {
         video: input.video,
         callModel,
         wholeScriptRewrite: input.mode === 'full-regeneration',
-        provisionalHook: true
+        provisionalHook: true,
+        provisionalOpenLoop: true
       });
       const retentionContent = await finalizeScriptOpenLoop({
         script: content,

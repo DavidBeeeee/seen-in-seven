@@ -67,7 +67,8 @@ export default async function handler(req, res) {
           level,
           video,
           callModel,
-          provisionalHook: true
+          provisionalHook: true,
+          provisionalOpenLoop: true
         });
         const retentionContent = await finalizeScriptOpenLoop({
           script: reviewedContent,

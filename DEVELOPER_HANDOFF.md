@@ -855,3 +855,12 @@ The following principles govern every word of copy in this app and the broader C
 - The Open Loop Studio can replace only `[OPEN LOOP]`. Regression checks prove that Hook, Meat, Conclusion, and CTA remain byte-for-byte unchanged, that the old draft Open Loop is withheld, and that candidates naming a reserved delivery method do not reach the judge.
 - Studio responses are capped at 650 tokens and judge responses at 300 tokens to keep the added generation time focused.
 - Rollback point: Git tag `before-open-loop-studio-2026-07-27` targets commit `fb9a999`, immediately before this architecture was added.
+
+## 2026-07-27: L2V4 Open Loop Studio failure repair
+
+- Production logs showed two distinct failures after the Studio launch. Standard L2V4 generation reached the Studio but exhausted both Open Loop attempts. Full regeneration sometimes failed earlier because the legacy story review still rejected the disposable draft Open Loop for 65-to-67-word length, banned terms, and false balance before the final Studio could replace it.
+- Hook and Open Loop are now both true provisional sections during whole-story review. Their draft text is replaced with safe placeholders, their deterministic and semantic issues are excluded from that review, and the reviewer receives an explicit scope limiting it to Meat, Conclusion, and CTA.
+- The Open Loop Studio remains the only owner of the final Open Loop. This removes competing review authority rather than loosening the final retention standards.
+- Payoff quarantine now discards broad abstract terms and details already established in the Meat. A detail visible before the Conclusion cannot be treated as reveal-only merely because the Studio repeated it in `quarantined_terms`.
+- The Studio accepts a usable deduplicated candidate slate even when the model does not return four unique strings. Each rejected candidate now produces exact retry feedback for word count, named payoff leakage, banned language, stage rules, or cross-section repetition.
+- Regression coverage proves that an overlong draft Open Loop containing banned language cannot block the story before the Studio and never reaches the story reviewer.

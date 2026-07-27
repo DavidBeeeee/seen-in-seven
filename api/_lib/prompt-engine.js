@@ -683,6 +683,19 @@ function publishedPrompt() {
     });
   }
 
+  function activeQuarantinedTerms(sections, quarantinedTerms) {
+    const meat = String(sections && sections.MEAT || '').replace(/[’‘]/g, "'");
+    const generic = new Set([
+      'person', 'people', 'answer', 'result', 'evidence', 'work', 'story',
+      'question', 'meaning', 'change', 'moment', 'feeling', 'response'
+    ]);
+    return (quarantinedTerms || []).filter(term => {
+      const clean = String(term || '').trim().toLowerCase();
+      if (!clean || generic.has(clean)) return false;
+      return !containsQuarantinedPayoff(meat, [clean]);
+    }).slice(0, 16);
+  }
+
   async function generateFinalOpenLoop(config) {
     const sections = parseSections(config.script);
     if (!sections) throw new Error('The script does not have all five labeled sections for final Open Loop selection.');
@@ -695,13 +708,23 @@ function publishedPrompt() {
         650
       );
       const slate = parseOpenLoopStudioResult(raw);
-      if (slate.candidates.length !== 4) {
-        failures = ['The previous response did not return exactly four usable Open Loop candidates.'];
+      if (!slate.candidates.length) {
+        failures = ['The previous response did not return any usable Open Loop candidates. Return exactly four candidates in the required JSON shape.'];
         continue;
       }
-      const validCandidates = slate.candidates.filter(candidate => {
+      const quarantine = activeQuarantinedTerms(sections, slate.quarantinedTerms);
+      const candidateFailures = [];
+      const validCandidates = slate.candidates.filter((candidate, index) => {
         const wordCount = (candidate.match(/\b[\w’'-]+\b/g) || []).length;
-        if (wordCount < 25 || wordCount > 50 || containsQuarantinedPayoff(candidate, slate.quarantinedTerms)) return false;
+        if (wordCount < 25 || wordCount > 50) {
+          candidateFailures.push('Candidate ' + (index + 1) + ' has ' + wordCount + ' words; use 25 to 50.');
+          return false;
+        }
+        const leakedTerm = quarantine.find(term => containsQuarantinedPayoff(candidate, [term]));
+        if (leakedTerm) {
+          candidateFailures.push('Candidate ' + (index + 1) + ' names the quarantined payoff detail "' + leakedTerm + '."');
+          return false;
+        }
         const candidateScript = composeSections({ ...sections, 'OPEN LOOP': candidate });
         const validation = validateOutput(
           candidateScript,
@@ -714,15 +737,22 @@ function publishedPrompt() {
         const repetitionIssues = (validation.issues || []).filter(issue =>
           /repeats a long phrase from OPEN LOOP|OPEN LOOP repeats a long phrase/i.test(issue)
         );
-        return !openLoopIssues.length && !repetitionIssues.length;
+        const issues = [...openLoopIssues, ...repetitionIssues];
+        if (issues.length) {
+          candidateFailures.push('Candidate ' + (index + 1) + ': ' + issues.join(' '));
+          return false;
+        }
+        return true;
       });
       if (!validCandidates.length) {
-        failures = ['Every candidate leaked a quarantined payoff detail or violated a deterministic Open Loop, style, length, or repetition rule.'];
+        failures = candidateFailures.length
+          ? candidateFailures.slice(0, 6)
+          : ['Every candidate violated an Open Loop rule.'];
         continue;
       }
       const judgmentRaw = await config.callModel(
         OPEN_LOOP_JUDGE_SYSTEM,
-        openLoopJudgeMessage(config, validCandidates, slate.quarantinedTerms),
+        openLoopJudgeMessage(config, validCandidates, quarantine),
         0.05,
         300
       );
@@ -934,8 +964,12 @@ function publishedPrompt() {
     );
     if (config.onlySection) {
       lines.push('REVIEW SCOPE: Review only [' + config.onlySection + '] in the context of the complete script. The other four sections are read-only. Return either a pass or a replacement for [' + config.onlySection + '] only.');
+    } else if (config.provisionalHook && config.provisionalOpenLoop) {
+      lines.push('REVIEW SCOPE: [HOOK] and [OPEN LOOP] are temporary placeholders. Ignore both completely and do not report, replace, connect, or assign story material to either one. Review only [MEAT], [CONCLUSION], and [CTA]. Dedicated Open Loop and Hook Studios run after every story correction is complete.');
     } else if (config.provisionalHook) {
       lines.push('REVIEW SCOPE: The [HOOK] text is a temporary placeholder. Ignore it completely and do not report, replace, connect, or assign story material to it. Review only [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA]. A separate Hook Studio runs after every story correction is complete.');
+    } else if (config.provisionalOpenLoop) {
+      lines.push('REVIEW SCOPE: The [OPEN LOOP] text is a temporary placeholder. Ignore it completely and review only [HOOK], [MEAT], [CONCLUSION], and [CTA]. A separate Open Loop Studio runs after every story correction is complete.');
     } else {
       lines.push(config.precisionPass ? 'This is a precision re-review after targeted replacements. Repair only what still fails.' : 'Review the complete story once, then return replacements only for failed sections.');
     }
@@ -984,17 +1018,58 @@ function publishedPrompt() {
     return composeSections({ ...sections, HOOK: 'Hold on.' });
   }
 
-  function ignoreProvisionalHookReview(review, enabled) {
-    if (!enabled || !review) return review;
+  function provisionalOpenLoopScript(script) {
+    const sections = parseSections(script);
+    if (!sections) return String(script || '').trim();
+    return composeSections({
+      ...sections,
+      'OPEN LOOP':'A central question remains unresolved while the story holds back the exact answer until the conclusion.'
+    });
+  }
+
+  function provisionalStudioScript(script, config = {}) {
+    let result = String(script || '').trim();
+    if (config.provisionalOpenLoop) result = provisionalOpenLoopScript(result);
+    if (config.provisionalHook) result = provisionalHookScript(result);
+    return result;
+  }
+
+  function ignoreProvisionalSectionReview(review, config = {}) {
+    if (!review) return review;
+    const ignored = new Set();
+    if (config.provisionalHook) ignored.add('HOOK');
+    if (config.provisionalOpenLoop) ignored.add('OPEN LOOP');
+    if (!ignored.size) return review;
     const replacements = { ...review.replacements };
-    delete replacements.HOOK;
+    ignored.forEach(section => delete replacements[section]);
     const issues = (review.issues || []).filter(issue =>
-      String(issue && issue.section || '').toUpperCase().replace(/_/g, ' ') !== 'HOOK'
+      !ignored.has(String(issue && issue.section || '').toUpperCase().replace(/_/g, ' '))
     );
     return {
       pass:issues.length === 0 && Object.keys(replacements).length === 0,
       issues,
       replacements
+    };
+  }
+
+  function ignoreProvisionalSectionValidation(validation, config = {}) {
+    if (!validation) return validation;
+    const ignored = new Set();
+    if (config.provisionalHook) ignored.add('HOOK');
+    if (config.provisionalOpenLoop) ignored.add('OPEN LOOP');
+    if (!ignored.size) return validation;
+    const sectionIssues = {};
+    Object.keys(validation.sectionIssues || {}).forEach(section => {
+      if (!ignored.has(section)) sectionIssues[section] = validation.sectionIssues[section];
+    });
+    const missing = (validation.missing || []).filter(section => !ignored.has(section));
+    const issues = Object.values(sectionIssues).flat();
+    return {
+      ...validation,
+      valid:missing.length === 0 && issues.length === 0,
+      missing,
+      issues,
+      sectionIssues
     };
   }
 
@@ -1016,7 +1091,10 @@ function publishedPrompt() {
   async function applyFinalMechanicalRepair(config) {
     let script = String(config.script || '').trim();
     for (let attempt = 0; attempt < 2; attempt++) {
-      const validation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
+      const validation = ignoreProvisionalSectionValidation(
+        validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt),
+        config
+      );
       const remaining = config.onlySection
         ? validation.sectionIssues && validation.sectionIssues[config.onlySection] || []
         : validation.issues || [];
@@ -1053,8 +1131,13 @@ function publishedPrompt() {
       String(config.userMessage || '').trim(),
       '',
       'A complete fresh draft was generated, but it needs another full composition pass.',
-      'Do not patch or preserve individual story sections. Rewrite [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] from the original answers and active blueprint.',
+      config.provisionalOpenLoop
+        ? 'Do not patch or preserve individual story sections. Rewrite [MEAT], [CONCLUSION], and [CTA] from the original answers and active blueprint, then supply a temporary nonempty [OPEN LOOP] placeholder for formatting.'
+        : 'Do not patch or preserve individual story sections. Rewrite [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] from the original answers and active blueprint.',
       'Use [HOOK] only as a temporary nonempty placeholder. Do not spend story material there; the global Hook Studio replaces it after the story is complete.',
+      config.provisionalOpenLoop
+        ? 'Use [OPEN LOOP] only as a temporary nonempty placeholder. The Open Loop Studio replaces it after the Meat, Conclusion, and CTA pass story review.'
+        : '',
       'Apply sentence-level Hook-and-Eye only inside [MEAT]. Keep [OPEN LOOP] independent from the Hook and do not imitate wording from the draft below.',
       '',
       'ISSUES TO SOLVE IN THE NEW COMPLETE DRAFT:',
@@ -1068,10 +1151,11 @@ function publishedPrompt() {
   }
 
   async function reviewAndRewriteWholeScript(config) {
-    let script = config.provisionalHook
-      ? provisionalHookScript(config.script)
-      : String(config.script || '').trim();
-    const initialValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
+    let script = provisionalStudioScript(config.script, config);
+    const initialValidation = ignoreProvisionalSectionValidation(
+      validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt),
+      config
+    );
     const reviewRaw = await config.callModel(
       QUALITY_REVIEW_SYSTEM,
       buildQualityReviewMessage({
@@ -1082,11 +1166,12 @@ function publishedPrompt() {
         script,
         validation: initialValidation,
         precisionPass: false,
-        provisionalHook: config.provisionalHook
+        provisionalHook: config.provisionalHook,
+        provisionalOpenLoop: config.provisionalOpenLoop
       }),
       0.15
     );
-    const review = ignoreProvisionalHookReview(parseQualityReview(reviewRaw), config.provisionalHook);
+    const review = ignoreProvisionalSectionReview(parseQualityReview(reviewRaw), config);
     if ((!review || review.pass) && initialValidation.valid) return script;
 
     script = await config.callModel(
@@ -1094,8 +1179,11 @@ function publishedPrompt() {
       wholeScriptRewriteMessage(config, script, review, initialValidation),
       0.45
     );
-    if (config.provisionalHook) script = provisionalHookScript(script);
-    let finalValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
+    script = provisionalStudioScript(script, config);
+    let finalValidation = ignoreProvisionalSectionValidation(
+      validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt),
+      config
+    );
     if (finalValidation.valid) return script;
 
     // A complete rewrite can solve the story issue while accidentally adding a
@@ -1106,23 +1194,27 @@ function publishedPrompt() {
       wholeScriptRewriteMessage(config, script, null, finalValidation),
       0.25
     );
-    if (config.provisionalHook) script = provisionalHookScript(script);
-    finalValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
+    script = provisionalStudioScript(script, config);
+    finalValidation = ignoreProvisionalSectionValidation(
+      validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt),
+      config
+    );
     if (finalValidation.valid) return script;
     throw new Error('The script response still needs correction: ' + validationFeedback(finalValidation) + ' Please try again.');
   }
 
   async function reviewAndRepairScript(config) {
     if (config.wholeScriptRewrite) return reviewAndRewriteWholeScript(config);
-    let script = config.provisionalHook
-      ? provisionalHookScript(config.script)
-      : String(config.script || '').trim();
+    let script = provisionalStudioScript(config.script, config);
     let unresolvedSemanticFailure = false;
     // A replacement can solve the reported issue while introducing a new
     // mechanical one. The third pass validates and cleans that replacement
     // before the caller throws away the whole draft.
     for (let pass = 0; pass < 3; pass++) {
-      const validation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
+      const validation = ignoreProvisionalSectionValidation(
+        validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt),
+        config
+      );
       const reviewRaw = await config.callModel(
         QUALITY_REVIEW_SYSTEM,
         buildQualityReviewMessage({
@@ -1133,11 +1225,12 @@ function publishedPrompt() {
           script,
           validation,
           precisionPass: pass > 0,
-          provisionalHook: config.provisionalHook
+          provisionalHook: config.provisionalHook,
+          provisionalOpenLoop: config.provisionalOpenLoop
         }),
         0.15
       );
-      const review = ignoreProvisionalHookReview(parseQualityReview(reviewRaw), config.provisionalHook);
+      const review = ignoreProvisionalSectionReview(parseQualityReview(reviewRaw), config);
       if (!review) {
         if (validation.valid && pass > 0) return script;
         continue;
@@ -1151,7 +1244,10 @@ function publishedPrompt() {
       }
     }
     script = await applyFinalMechanicalRepair({ ...config, script });
-    const finalValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
+    const finalValidation = ignoreProvisionalSectionValidation(
+      validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt),
+      config
+    );
     // The story editor is intentionally allowed to flag a broad concern without
     // rewriting a section. When every concrete quality check passes, do not
     // strand the user on an editor opinion that has no actionable repair.
