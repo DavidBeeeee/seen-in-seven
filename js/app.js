@@ -1467,16 +1467,16 @@ const INTRO_COPY = {
     },
     L2: {
       label: 'Video 3 of 7: What I See Differently',
-      title: 'Show The Person Who Helped You See It',
-      body: "A real person helped you question something you once accepted about your work or field. Tell us who guided you, what they helped you notice, and what happened when you tested their guidance. The first useful realization should feel discovered with the viewer, not delivered from above.",
+      title: 'Show What Made The Old Idea Break',
+      body: "Let the audience watch something you once accepted stop matching what you could see. The script will build one unresolved contradiction through the story, then reveal the first useful professional lens only after the evidence earns it.",
       result: 'Insight',
       framework: [
         {name:'Hook',                     trigger:'Pattern Break'},
-        {name:'The Person Who Guided You',trigger:'Received Guidance'},
-        {name:'Testing The Guidance',      trigger:'Discovery Arc'},
+        {name:'The Familiar Explanation',  trigger:'Familiar Model'},
+        {name:'The Evidence It Could Not Explain', trigger:'Cognitive Dissonance'},
         {name:'The First New Lens',        trigger:'Cognitive Reframe'}
       ],
-      triggers: ['Pattern Break','Received Guidance','Discovery Arc','Cognitive Reframe','The "Aha" Transfer','Cost Revelation','Simplicity Signal']
+      triggers: ['Pattern Break','Cognitive Dissonance','Cognitive Reframe','The "Aha" Transfer','Simplicity Signal']
     }
   },
   4: {
@@ -1496,10 +1496,10 @@ const INTRO_COPY = {
     L2: {
       label: 'Video 4 of 7: When The Insight Met Reality',
       title: 'Put The First Realization Under Pressure',
-      body: "Show what happened when you applied the mentor-assisted realization to real decisions. The arena may be work, craft, calling, business, life, or public communication. Give us the repeated tests, partial wins, confidence they created, and the limit that remained beneath them.",
+      body: "Show what happened when you applied the first realization to real decisions. The arena may be work, craft, calling, business, life, or public communication. Give us the repeated tests, partial wins, confidence they created, and the limit that remained beneath them.",
       result: 'Trust',
       framework: [
-        {name:'Guidance In Practice', trigger:'Behavioral Proof'},
+        {name:'The New Lens In Practice', trigger:'Behavioral Proof'},
         {name:'The Real Tests',       trigger:'Escalating Resistance'},
         {name:'The Partial Win',      trigger:'Provisional Confidence'},
         {name:'The Unseen Limit',     trigger:'Unresolved Tension'}
@@ -1607,7 +1607,7 @@ const VIDEO_EASY_PROMPTS = {
   2: [
     null,
     { label: 'Before you treated this as expertise, what ability or interest kept showing up, and why did you refuse to take it seriously?', hint: 'Describe the ordinary work or life you were in, what other people might have valued before you did, and why staying where you were felt safer or more responsible.', key: 'easyAnswer_v1' },
-    { label: 'What is one idea you used to accept about your work that you now strongly disagree with? Why did it make sense to you at the time, who gave you another way to look at it, and what made the old idea stop fitting what you saw?', hint: 'Tell it like a journal entry. Include one real person, the specific lens they gave you, one concrete moment, and who still pays the cost of the old idea. You do not need to explain the final lesson.', key: 'easyAnswer_v2' },
+    { label: 'What is one idea you used to accept about your work that you now strongly disagree with? Why did it make sense to you at the time, and what made the old idea stop fitting what you saw?', hint: 'Tell it like a journal entry. Include one concrete moment and who still pays the cost of the old idea. You do not need to explain the final lesson.', key: 'easyAnswer_v2' },
     { label: 'After that first change in how you saw things, what did you try, what made it difficult, and what happened?', hint: 'Tell it like a journal entry. Include what you did differently, one or two moments that tested you, what started going better, and anything that still felt shaky or unfinished at the time.', key: 'easyAnswer_v3' },
     { label: 'In the work, craft, calling, or expertise story you have been telling, what failure was so devastating that you thought what you had built or hoped to build might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?', hint: 'Tell us what collapsed, what seemed permanently lost, and why you could not see a way back in this part of your life. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.', key: 'easyAnswer_v4' },
     { label: 'After the hardest experience, what became clear that your first realization could not explain?', hint: 'Describe the aftermath evidence that brought it into focus, one observable thing you changed afterward, and who might need the perspective you earned. Keep it connected to what actually happened.', key: 'easyAnswer_v5' },
@@ -2325,14 +2325,13 @@ const level2Videos = [
   },
   {
     title:"What I See Differently",
-    note:"Think of one idea you used to accept, the person or experience that gave you another way to look at it, and the moment the old idea stopped matching what you could see. You do not need a polished lesson. Just give us the real pieces.",
+    note:"Think of one idea you used to accept and the moment it stopped matching what you could see. You do not need a polished lesson. Just give us the real pieces.",
     prompts:[
       {label:"What is one idea people in your field tend to accept as true that you now strongly disagree with? Why did you used to think it was true?",hint:"Keep it to one assumption. Describe why it made sense at the time and how it shaped a decision, standard, habit, or way you judged your work.",key:"v2p0",ph:"Describe the idea you accepted, why it made sense then, and how it affected what you did."},
-      {label:"Who gave you a question, example, piece of information, or way of looking at the work or world that stayed with you? What was it?",hint:"Choose one real person. They do not have to be a formal mentor or even know they changed your thinking. Tell us exactly what they said, showed, taught, corrected, or demonstrated. You do not need to explain the lesson yet.",key:"v2p5",ph:"Describe one person and the specific lens, question, or example they gave you."},
       {label:"Tell us about one moment when the old idea stopped matching what you were seeing.",hint:"Where were you? What happened? What concrete detail made the usual explanation feel incomplete? If it happened gradually, choose one moment that represents the pattern instead of summarizing the whole pattern.",key:"v2p1",ph:"Describe one moment when the old idea stopped fitting the evidence."},
       {label:"Who do you picture still living by the old idea, what does it cost them in real life, and what do you wish they could recognize sooner?",hint:"Think of one recognizable person. Show what they lose, postpone, waste, or blame themselves for, then say what you understand about their situation. Do not describe your current service, offer, or method.",key:"v2p3",ph:"Describe who still carries the old idea, what it costs them, and what you wish they could recognize sooner."}
     ],
-    compile:v=>`The idea I accepted, why it made sense at the time, and how it shaped my actions: ${v.v2p0||'___'}. The person who gave me a useful lens and what they gave me: ${v.v2p5||'___'}. The moment the old idea stopped matching the evidence: ${v.v2p1||'___'}. Who still carries the old idea, what it costs them, and what I wish they could recognize sooner: ${v.v2p3||'___'}.`
+    compile:v=>`The idea I accepted, why it made sense at the time, and how it shaped my actions: ${v.v2p0||'___'}. The moment the old idea stopped matching the evidence: ${v.v2p1||'___'}. Who still carries the old idea, what it costs them, and what I wish they could recognize sooner: ${v.v2p3||'___'}.`
   },
   {
     title:"When The Insight Met Reality",
@@ -3100,8 +3099,8 @@ const VIDEO_RATIONALE = {
   2: [
     'WHERE WE ARE: You are making the declaration and letting people see the gap between what you know privately and what you have been willing to own publicly. The audience needs quiet confidence, honest hesitation, and a reason to believe you will finish.',
     'WHERE WE ARE: Let people see the ordinary life, unclaimed ability, and refusal that came before you treated this as expertise. The viewer can recognize its value before you do, but this chapter cannot explain what it eventually became.',
-    'WHERE WE ARE: A real person helps you question a familiar professional belief, then lived evidence makes the old understanding impossible to keep. Receive and test the guidance so the audience arrives at the first useful realization with you.',
-    'WHERE WE ARE: The mentor-assisted realization now meets real decisions and resistance. Show repeated tests, partial wins, the confidence they created, and the unresolved limit beneath them without revealing the fall.',
+    'WHERE WE ARE: A familiar professional belief meets lived evidence it cannot explain. Let the audience feel that cognitive dissonance through one story, then reveal the first useful lens only in the conclusion.',
+    'WHERE WE ARE: The first realization now meets real decisions and resistance. Show repeated tests, partial wins, the confidence they created, and the unresolved limit beneath them without revealing the fall.',
     'WHERE WE ARE: This is the lowest point in the larger work, craft, calling, or expertise story: the failure that threatened what you had built or hoped to build. Your own decision or blind spot helped cause it, and recovery did not feel guaranteed. Stay inside what you believed then.',
     'WHERE WE ARE: The difficult experience has produced a larger professional truth. Show how the aftermath earned it, how it deepens the first realization, what changed in your work, and what useful lens another person can carry away.',
     'WHERE WE ARE: Bring the larger expert story home. Compare your earlier relationship to your knowledge and visibility with who you are now, acknowledge what remains unfinished, and show why your continuing perspective is worth following.'

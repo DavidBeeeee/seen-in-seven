@@ -8,7 +8,7 @@ The live source of truth for generation is `api/_lib/blueprints.txt`. The curren
 
 1. **Video 1 — Declaration:** The speaker commits before feeling ready.
 2. **Video 2 — Ordinary World + Refusal:** The audience first recognizes an ordinary person inside a familiar life and understands why leaving that identity felt unreasonable. A future ability or calling appears only as a quiet clue. Identification comes before admiration, and Level 2 must not become a hidden-expert origin story.
-3. **Video 3 — Guide + First Epiphany + Threshold:** A guide influence helps break the old understanding. In Level 2, a real person must briefly perform this mentor function.
+3. **Video 3 — First Epiphany + Threshold:** One evidence thread makes the old understanding impossible to keep, and the resulting paradigm shift moves the speaker across the first threshold. A naturally supplied person or influence may appear, but no mentor is required or manufactured.
 4. **Video 4 — Road of Trials:** The first epiphany meets meaningful tests, partial wins, and growing but incomplete confidence in the actual subject of the larger story. The exact Level 2 balance among work, business, life, and public communication remains intentionally broad for further refinement.
 5. **Video 5 — Fall / Ordeal:** A real defeat occurs, and the speaker owns how their choices contributed. No recovery or lesson yet.
 6. **Video 6 — Second Epiphany / Elixir:** The ordeal produces the deeper truth that corrects or completes the first epiphany.
@@ -16,14 +16,17 @@ The live source of truth for generation is `api/_lib/blueprints.txt`. The curren
 
 Whenever a later section of this document assigns Video 4 to a challenge progress check-in, Video 5 to the second epiphany, or Video 6 to the fall/internal battle, that assignment is obsolete. Preserve the underlying storytelling insight, but apply it to the current chapter owner above.
 
-### Current Epiphany Hook Standard
+### Current 5E Epiphany Standard
 
-Videos 3 and 6 deliberately use a different hook family from the other five chapters because their job is to restructure the viewer's understanding.
+Videos 3 and 6 use the same five-section architecture as every other chapter. The Hero's Journey determines where the Epiphany belongs in the larger arc; the 5E determines the intellectual experience the viewer receives.
 
-- Video 3 opens with a forbidden-idea promise. It signals that an accepted explanation, respectable assumption, or common measurement is incomplete, backward, or protecting something people avoid naming. It promises a consequential new lens without revealing the hidden relationship. The first epiphany must be complete and powerful, not a miniature lesson; it is bounded only by the fact that it cannot contain the deeper truth that requires the later fall.
-- Video 6 opens with an earned verdict. It names the sharp paradox, failed rule, or protected belief that the fall gives the speaker the right to challenge. It carries more conviction than Video 3, but withholds the deeper causal elixir until the conclusion.
-- Neither epiphany video should default to narrating a discovery or aftermath scene in the hook. The evidence belongs in the discovery arc. The open loop names why the promised hidden structure matters and what exact relationship remains unresolved.
-- The complete 5E Epiphany movement remains Pattern Break, Discovery Arc, Cognitive Reframe, Aha Transfer, Cost Revelation, Simplicity Signal, and Authority Anchor. The Hook performs the Pattern Break; the Meat earns the shift through discovery; the Conclusion delivers the reframe, transfer, cost, and simple carryable lens; the authority is experienced by the viewer rather than claimed by the speaker.
+- The Hook is always a pure truthful pattern interrupt. Videos 3 and 6 do not receive a special thesis, promise, verdict, or explanation job.
+- The Open Loop creates one exact conceptually unfinished question. Before drafting, the writer privately pairs that question with the Conclusion answer. No part of the answer may appear in the Hook, Open Loop, or Meat.
+- The Meat carries one continuous cognitive-dissonance story: a familiar model meets evidence it cannot explain, and the section ends with that collision unresolved.
+- The Conclusion resolves the exact Open Loop for the first time with one paradigm-shifting philosophical lens, followed by one human consequence or new possibility.
+- Aha Transfer, Simplicity Signal, and Authority Anchor are review outcomes, not separate spoken beats.
+- Video 3 creates a complete but bounded first lens. Video 6 uses the same engine at greater depth, resolving cognitive dissonance that only exists because the first lens collided with the Video 5 fall.
+- A naturally supplied mentor, teacher, conversation, example, or influence may appear as evidence. No mentor is required, manufactured, or treated as a separate subplot.
 
 ## **VIDEO 1 — STILL IN THE ORDINARY WORLD** *Both levels: "I'm doing this thing and honestly I'm a little embarrassed about it."*
 

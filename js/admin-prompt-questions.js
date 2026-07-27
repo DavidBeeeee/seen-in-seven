@@ -13,7 +13,7 @@ const PROMPT_QUESTION_CATALOG = {
     "l2": [
       null,
       {"label":"Before you treated this as expertise, what ability or interest kept showing up, and why did you refuse to take it seriously?","hint":"Describe the ordinary work or life you were in, what other people might have valued before you did, and why staying where you were felt safer or more responsible.","key":"easyAnswer_v1"},
-      {"label":"What is one idea you used to accept about your work that you now strongly disagree with? Why did it make sense to you at the time, who gave you another way to look at it, and what made the old idea stop fitting what you saw?","hint":"Tell it like a journal entry. Include one real person, the specific lens they gave you, one concrete moment, and who still pays the cost of the old idea. You do not need to explain the final lesson.","key":"easyAnswer_v2"},
+      {"label":"What is one idea you used to accept about your work that you now strongly disagree with? Why did it make sense to you at the time, and what made the old idea stop fitting what you saw?","hint":"Tell it like a journal entry. Include one concrete moment and who still pays the cost of the old idea. You do not need to explain the final lesson.","key":"easyAnswer_v2"},
       {"label":"After that first change in how you saw things, what did you try, what made it difficult, and what happened?","hint":"Tell it like a journal entry. Include what you did differently, one or two moments that tested you, what started going better, and anything that still felt shaky or unfinished at the time.","key":"easyAnswer_v3"},
       {"label":"In the work, craft, calling, or expertise story you have been telling, what failure was so devastating that you thought what you had built or hoped to build might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?","hint":"Tell us what collapsed, what seemed permanently lost, and why you could not see a way back in this part of your life. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.","key":"easyAnswer_v4"},
       {"label":"After the hardest experience, what became clear that your first realization could not explain?","hint":"Describe the aftermath evidence that brought it into focus, one observable thing you changed afterward, and who might need the perspective you earned. Keep it connected to what actually happened.","key":"easyAnswer_v5"},
@@ -120,19 +120,13 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "What I See Differently",
-      "note": "Think of one idea you used to accept, the person or experience that gave you another way to look at it, and the moment the old idea stopped matching what you could see. You do not need a polished lesson. Just give us the real pieces.",
+      "note": "Think of one idea you used to accept and the moment it stopped matching what you could see. You do not need a polished lesson. Just give us the real pieces.",
       "prompts": [
         {
           "label": "What is one idea people in your field tend to accept as true that you now strongly disagree with? Why did you used to think it was true?",
           "hint": "Keep it to one assumption. Describe why it made sense at the time and how it shaped a decision, standard, habit, or way you judged your work.",
           "key": "v2p0",
           "placeholder": "Describe the idea you accepted, why it made sense then, and how it affected what you did."
-        },
-        {
-          "label": "Who gave you a question, example, piece of information, or way of looking at the work or world that stayed with you? What was it?",
-          "hint": "Choose one real person. They do not have to be a formal mentor or even know they changed your thinking. Tell us exactly what they said, showed, taught, corrected, or demonstrated. You do not need to explain the lesson yet.",
-          "key": "v2p5",
-          "placeholder": "Describe one person and the specific lens, question, or example they gave you."
         },
         {
           "label": "Tell us about one moment when the old idea stopped matching what you were seeing.",

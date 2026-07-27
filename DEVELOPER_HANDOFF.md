@@ -734,6 +734,16 @@ The following principles govern every word of copy in this app and the broader C
 - The framework behind the 7 videos is described publicly as "scientifically, sociologically, and historically proven." Never use: framework, psychological architecture, Hero's Journey, or algorithm in public-facing copy.
 - The hook and open loop have separate jobs. The hook is a truthful pattern interrupt that captures attention before the viewer cares. The open loop converts that attention into one specific unanswered question that the conclusion later pays off. Never merge them or remove either one.
 - If it sounds like David, it stays. Loose, conversational, and playful language is correct, not a mistake.
+## 2026-07-26: Restore the actual 5E Epiphany engine
+
+- Untangled Hero's Journey chapter placement from 5E content construction for Videos 3 and 6 at both levels.
+- Restored the Hook to a pure pattern interrupt in every video. Removed the Video 3 forbidden-idea and Video 6 earned-verdict Hook jobs.
+- Added a private `UNANSWERED QUESTION` / `CONCLUSION ANSWER` contract. The Open Loop creates the exact conceptual gap, the Meat intensifies it through one evidence thread, and only the Conclusion may resolve it.
+- Replaced mandatory seven-beat spoken checklists with four 5E content moves: familiar model, contradicting evidence, unresolved cognitive dissonance, and paradigm shift. Aha Transfer, Simplicity Signal, and Authority Anchor are now review outcomes.
+- Removed the mandatory Level 2 mentor question and every runtime mentor requirement. Naturally supplied people or influences remain allowed as evidence.
+- Simplified the Level 2 Video 3 and Video 6 private packets around cognitive dissonance and a reserved paradigm shift.
+- Allowed Videos 3 and 6 a 240-300 word range so connective story logic is not compressed into slogan stacks.
+
 ## 2026-07-26: Global information ownership and metaphor discipline
 
 - Added `nobody` as an exact global banned word. Previously, the style guide and deterministic validator only banned longer phrases containing it.

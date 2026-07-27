@@ -45,21 +45,21 @@ This is not script writing. Video 3 is the first raw professional epiphany. Sort
 
 Return exactly these six headings and plain text beneath each:
 OLD ASSUMPTION:
-GUIDE LENS:
-REPRESENTATIVE EVIDENCE:
-FIRST PARADIGM SHIFT:
+CONTRADICTING EVIDENCE:
+COGNITIVE DISSONANCE:
+RESERVED PARADIGM SHIFT:
 HUMAN COST:
 VOICE SIGNALS:
 
 Requirements:
 - Preserve only facts, observations, actions, consequences, and distinctive language supported by the source.
 - OLD ASSUMPTION names one idea the speaker genuinely accepted and one way it shaped what they did.
-- GUIDE LENS selects exactly one real person whose specific supplied question, teaching, body of work, example, correction, or demonstration gave the speaker a useful reference point. Name that person only in GUIDE LENS. No other mentor, teacher, or source name may appear anywhere in the packet. A famous name without a supplied contribution is unusable. Never invent a private conversation, quote, meeting, or relationship.
-- REPRESENTATIVE EVIDENCE selects one supplied occurrence that lets the viewer watch the old assumption stop matching reality. Identify the consequential contradiction this occurrence exposes so the writer can promise a forbidden idea without narrating the scene in the opening. A repeated pattern may be represented by one documented occurrence, but do not fabricate a lightning-bolt conversion.
-- FIRST PARADIGM SHIFT is an internal inference, not a user-supplied conclusion. Derive one complete but bounded realization from OLD ASSUMPTION, GUIDE LENS, and REPRESENTATIVE EVIDENCE. Reveal a hidden relationship, cause, category error, or reversal rather than prescribing what an industry, price, method, or person should do. Complete means it gives the viewer a powerful usable lens. Bounded means it does not explain the later fall, become a complete method, state the speaker's mature business philosophy, or resolve the whole journey.
+- CONTRADICTING EVIDENCE selects one supplied occurrence or coherent pattern that the old assumption cannot explain. Preserve a naturally mentioned person, teaching, conversation, or influence only when it belongs to that evidence. Never require, manufacture, or cast someone as a mentor.
+- COGNITIVE DISSONANCE states the exact unresolved collision between OLD ASSUMPTION and CONTRADICTING EVIDENCE without interpreting or resolving it.
+- RESERVED PARADIGM SHIFT is an internal inference, not user-facing copy. Derive one complete but bounded realization that resolves COGNITIVE DISSONANCE through a hidden relationship, cause, category error, reversal, or complexity bridge. Complete means it gives the viewer a powerful usable lens. Bounded means it does not explain the later fall, become a complete method, state the speaker's mature business philosophy, or resolve the whole journey.
 - HUMAN COST describes one recognizable person, the real-life consequence of carrying the old idea, and what they may need to recognize sooner, without turning into an industry lecture or an offer.
 - VOICE SIGNALS preserves a few words about the speaker's rhythm, intensity, humor, or distinctive phrasing. Do not copy banned script phrases.
-- Omit mentor lists, credential summaries, pricing ladders, service tiers, current offers, current service descriptions, conversion requests, and any material that belongs to the later fall, elixir, or return.
+- Omit credential summaries, pricing ladders, service tiers, current offers, current service descriptions, conversion requests, and any material that belongs to the later fall, elixir, or return.
 - Do not use the words version, lazy, pay, paid, buy, bought, sell, or sold anywhere in the packet. Restate any necessary fact with natural alternatives such as charged, spent, chose, offered, or form.
 - Do not invent facts, credentials, results, events, or dialogue.
 - Do not write a hook, open loop, conclusion, CTA, or complete script.
@@ -82,7 +82,7 @@ VOICE SIGNALS:
 
 Requirements:
 - Preserve only facts, actions, pressures, consequences, and distinctive language supported by the supplied Video 2 and Video 3 scripts and current Video 4 answers.
-- FIRST LENS states the complete but bounded realization carried out of Video 3 in one concise sentence. Do not repeat the mentor story or expand the lens into a method.
+- FIRST LENS states the complete but bounded realization carried out of Video 3 in one concise sentence. Do not repeat the discovery story or expand the lens into a method.
 - CHANGED ACTION identifies what the speaker actually chose, said, made, stopped, started, or handled differently afterward.
 - HIGHEST-FRICTION TRIAL selects the single supported moment with the strongest immediate conflict, difficult choice, contradiction, resistance, or social pressure. It must enter a test already in motion. Do not select the first application merely because it happened first, and do not state the lesson or partial win.
 - ADDITIONAL TRIAL preserves one other supported application or pressure that proves the change was tested more than once.
@@ -107,7 +107,7 @@ VIDEO 5 FALL:
 AFTERMATH EVIDENCE:
 LIMIT EXPOSED:
 OBSERVABLE CHANGE:
-CANDIDATE ELIXIR:
+RESERVED PARADIGM SHIFT:
 VIEWER TRANSFER:
 VOICE SIGNALS:
 
@@ -116,9 +116,9 @@ Requirements:
 - VIDEO 3 FIRST LENS states the complete but bounded realization the speaker carried into the trials.
 - VIDEO 5 FALL identifies the defeat and the speaker's owned contribution. The fall must be causally necessary to the later understanding.
 - AFTERMATH EVIDENCE contains what happened during failed recovery, rebuilding, or changed conditions before interpretation.
-- LIMIT EXPOSED states exactly what the first lens could not explain or solve once the fall occurred.
+- LIMIT EXPOSED states the exact unresolved cognitive dissonance between the true first lens and the fall it could not explain or prevent.
 - OBSERVABLE CHANGE gives one supplied action, boundary, standard, conversation, habit, or decision that changed afterward.
-- CANDIDATE ELIXIR infers one complete deeper paradigm shift that connects every earlier heading, restructures the viewer's understanding, and is simple enough to carry. Reject an unrelated hot take, a repetition of Video 3, a pre-existing philosophy, or generic wisdom that could have been written before the fall.
+- RESERVED PARADIGM SHIFT infers one complete deeper paradigm shift that resolves LIMIT EXPOSED, restructures the viewer's understanding, and is simple enough to carry. Reject an unrelated hot take, a repetition of Video 3, a pre-existing philosophy, or generic wisdom that could have been written before the fall.
 - VIEWER TRANSFER names one recognizable person and what the earned lens may help them see.
 - VOICE SIGNALS preserves a few words about the speaker's rhythm, intensity, humor, or distinctive phrasing. Do not copy banned script phrases.
 - Omit pricing structures, service descriptions, current offers, conversion requests, method lists, and unrelated opinions.
@@ -132,19 +132,18 @@ const L2_EPIPHANY_PACKET_CLEANUP_SYSTEM = `You are the evidence-packet editor be
 Return only the corrected packet with exactly the same headings and heading order supplied by the user. Do not add commentary.
 
 For a Video 3 packet:
-- Keep exactly one real guide, mentor, teacher, or source figure. That person may be named more than once when needed for clarity.
-- Remove every other mentor, teacher, framework creator, or source figure name from every heading. Refer to other source material generically only when the evidence still needs it.
-- Preserve one old assumption, one honestly attributable guide lens, one representative occurrence, one complete but bounded first paradigm shift, and one human cost.
-- The first paradigm shift must reveal a hidden relationship, cause, category error, or reversal and give the viewer a useful new lens. It cannot prescribe what an industry, price, method, or person should do, explain the later fall, or become a complete method.
+- Preserve one old assumption, one contradicting evidence thread, the unresolved cognitive dissonance between them, one complete but bounded reserved paradigm shift, and one human cost.
+- Preserve a naturally supplied person or influence only when they belong to the evidence. Never require or manufacture a mentor, and never turn names into a credential list.
+- The reserved paradigm shift must reveal a hidden relationship, cause, category error, reversal, or complexity bridge and give the viewer a useful new lens. It cannot prescribe what an industry, price, method, or person should do, explain the later fall, or become a complete method.
 - Never invent a direct conversation, quote, meeting, credential, result, or event.
 
 For a Video 6 packet:
-- Preserve the causal chain from the Video 3 first lens through the Video 5 fall and aftermath evidence to the exposed limit, observable change, and one deeper elixir.
+- Preserve the causal chain from the Video 3 first lens through the Video 5 fall and aftermath evidence to the unresolved cognitive dissonance, observable change, and one deeper reserved paradigm shift.
 - Remove unrelated opinions, repeated Video 3 conclusions, pre-existing philosophy, methods, offers, and commercial positioning.
 - Never invent a fact, result, event, or behavioral change.
 
 For both packets:
-- Remove mentor lists, credential summaries, pricing ladders, service tiers, current offers, current service descriptions, conversion requests, and material owned by another chapter.
+- Remove credential summaries, pricing ladders, service tiers, current offers, current service descriptions, conversion requests, and material owned by another chapter.
 - Do not use the words version, lazy, pay, paid, buy, bought, sell, or sold. Use natural alternatives when a supported fact requires one.
 - Keep the packet concise. This is source material, not a script.`;
 
@@ -376,8 +375,8 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
   const isFirst = number === 3;
   const system = isFirst ? L2V3_MATERIAL_ROUTER_SYSTEM : L2V6_MATERIAL_ROUTER_SYSTEM;
   const headings = isFirst
-    ? ['OLD ASSUMPTION', 'GUIDE LENS', 'REPRESENTATIVE EVIDENCE', 'FIRST PARADIGM SHIFT', 'HUMAN COST', 'VOICE SIGNALS']
-    : ['VIDEO 3 FIRST LENS', 'VIDEO 5 FALL', 'AFTERMATH EVIDENCE', 'LIMIT EXPOSED', 'OBSERVABLE CHANGE', 'CANDIDATE ELIXIR', 'VIEWER TRANSFER', 'VOICE SIGNALS'];
+    ? ['OLD ASSUMPTION', 'CONTRADICTING EVIDENCE', 'COGNITIVE DISSONANCE', 'RESERVED PARADIGM SHIFT', 'HUMAN COST', 'VOICE SIGNALS']
+    : ['VIDEO 3 FIRST LENS', 'VIDEO 5 FALL', 'AFTERMATH EVIDENCE', 'LIMIT EXPOSED', 'OBSERVABLE CHANGE', 'RESERVED PARADIGM SHIFT', 'VIEWER TRANSFER', 'VOICE SIGNALS'];
   const routed = await callModel(system, epiphanyRouterSource(userContext, number), 0.15, 1200);
   const routedPacket = String(routed || '').trim();
   if (!routedPacket || !hasRouterHeadings(routedPacket, headings)) {
@@ -412,8 +411,8 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
     throw new Error('The epiphany story material could not be cleaned safely. Please try again.');
   }
   const draftingConstraints = isFirst
-    ? 'FINAL VIDEO 3 WRITING CONSTRAINTS: Use a FORBIDDEN-IDEA PROMISE for the HOOK. Signal that an accepted professional explanation, respectable standard, or common measurement is incomplete, backward, or socially protected, but do not disclose FIRST PARADIGM SHIFT. Do not narrate REPRESENTATIVE EVIDENCE in the opening. The OPEN LOOP must name why the unresolved relationship matters and what the accepted belief cannot explain. Keep the actual guide, evidence scene, and belief collapse in the MEAT, then deliver the complete but bounded paradigm shift, viewer transfer, and human cost in the CONCLUSION.'
-    : 'FINAL VIDEO 6 WRITING CONSTRAINTS: Use an EARNED VERDICT for the HOOK. State the sharp paradox, failed rule, or protected professional belief that VIDEO 5 FALL gives the speaker the right to challenge, but do not disclose CANDIDATE ELIXIR. Do not narrate AFTERMATH EVIDENCE in the opening. The OPEN LOOP must name the collision between VIDEO 3 FIRST LENS and the fall it could not explain or prevent. Keep the causal rebuilding journey in the MEAT, then deliver the complete deeper paradigm shift, viewer transfer, and new possibility in the CONCLUSION.';
+    ? 'FINAL VIDEO 3 WRITING CONSTRAINTS: Privately pair one exact UNANSWERED QUESTION with the RESERVED PARADIGM SHIFT that answers it. Write the pure pattern-interrupt HOOK last; it must only capture attention and cannot state the accepted belief, question, or answer. The OPEN LOOP creates that exact conceptually unfinished question without implying the answer. The MEAT carries OLD ASSUMPTION through CONTRADICTING EVIDENCE and ends with COGNITIVE DISSONANCE unresolved. State RESERVED PARADIGM SHIFT for the first time in the CONCLUSION, followed by one HUMAN COST.'
+    : 'FINAL VIDEO 6 WRITING CONSTRAINTS: Privately pair one exact UNANSWERED QUESTION with the RESERVED PARADIGM SHIFT that answers it. Write the pure pattern-interrupt HOOK last; it may be provocative or convicted but cannot state the verdict or answer. The OPEN LOOP creates the exact unresolved relationship between VIDEO 3 FIRST LENS and VIDEO 5 FALL without implying its resolution. The MEAT carries the fall and AFTERMATH EVIDENCE through LIMIT EXPOSED and ends with that cognitive dissonance unresolved. State RESERVED PARADIGM SHIFT for the first time in the CONCLUSION, followed by one new possibility or VIEWER TRANSFER.';
   return [
     'Generate Video ' + number + ' script.',
     '',
