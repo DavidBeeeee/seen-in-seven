@@ -2082,8 +2082,8 @@ async function regenerateFullScript(videoIdx, btnEl) {
 
   const level = state.level || 1;
   const videoNum = videoIdx + 1;
-  const currentScript = state.videos[editKey] || '';
   await flushScriptEditSave(videoIdx);
+  if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(videoIdx);
   try {
     const script = await generateValidatedScript(
       buildAPIUserMessage(videoIdx),
@@ -2091,7 +2091,6 @@ async function regenerateFullScript(videoIdx, btnEl) {
       videoNum,
       'full-regeneration',
       {
-        existingScript: finalScriptText(videoIdx, currentScript, level),
         feedback: regenFeedback
       }
     );

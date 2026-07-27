@@ -644,7 +644,78 @@ function publishedPrompt() {
     return script;
   }
 
+  function wholeScriptRewriteFeedback(review, validation) {
+    const notes = [];
+    const deterministic = validationFeedback(validation);
+    if (deterministic) notes.push(deterministic);
+    (review && review.issues || []).forEach(issue => {
+      const section = issue && issue.section ? '[' + String(issue.section).toUpperCase() + '] ' : '';
+      const reason = issue && issue.reason ? String(issue.reason).trim() : '';
+      if (reason) notes.push(section + reason);
+    });
+    return [...new Set(notes)].join('\n') || 'The complete draft needs a stronger fresh execution of the active blueprint.';
+  }
+
+  function wholeScriptRewriteMessage(config, script, review, validation) {
+    return [
+      String(config.userMessage || '').trim(),
+      '',
+      'A complete fresh draft was generated, but it needs another full composition pass.',
+      'Do not patch, preserve, or replace individual sections. Rewrite the entire script once from [HOOK] through [CTA] using the original answers and active blueprint.',
+      'Keep the five section jobs distinct, apply sentence-level Hook-and-Eye only inside [MEAT], and do not imitate wording from the draft below.',
+      '',
+      'ISSUES TO SOLVE IN THE NEW COMPLETE DRAFT:',
+      wholeScriptRewriteFeedback(review, validation),
+      '',
+      'DRAFT TO REPLACE COMPLETELY:',
+      String(script || '').trim(),
+      '',
+      'Return only one newly composed script with exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA].'
+    ].join('\n');
+  }
+
+  async function reviewAndRewriteWholeScript(config) {
+    let script = String(config.script || '').trim();
+    let lastReview = null;
+    for (let pass = 0; pass < 2; pass++) {
+      const validation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
+      const reviewRaw = await config.callModel(
+        QUALITY_REVIEW_SYSTEM,
+        buildQualityReviewMessage({
+          level: config.level,
+          video: config.video,
+          systemPrompt: config.systemPrompt,
+          userMessage: config.userMessage,
+          script,
+          validation,
+          precisionPass: pass > 0
+        }),
+        0.15
+      );
+      const review = parseQualityReview(reviewRaw);
+      lastReview = review;
+      if (review && review.pass && validation.valid) return script;
+      if (!review && validation.valid && pass > 0) return script;
+      if (!review && validation.valid) continue;
+      if (pass === 0) {
+        script = await config.callModel(
+          config.systemPrompt,
+          wholeScriptRewriteMessage(config, script, review, validation),
+          0.45
+        );
+      }
+    }
+    const finalValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
+    if (finalValidation.valid) return script;
+    const semanticIssue = lastReview && !lastReview.pass;
+    if (semanticIssue) {
+      throw new Error('The script response still needs correction: the fresh full script requires another complete rewrite. Please try again.');
+    }
+    throw new Error('The script response still needs correction: ' + validationFeedback(finalValidation) + ' Please try again.');
+  }
+
   async function reviewAndRepairScript(config) {
+    if (config.wholeScriptRewrite) return reviewAndRewriteWholeScript(config);
     let script = String(config.script || '').trim();
     let unresolvedSemanticFailure = false;
     // A replacement can solve the reported issue while introducing a new

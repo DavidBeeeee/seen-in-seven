@@ -254,7 +254,6 @@ function validateRequest(body) {
     result.existingScript = boundedString(input.existingScript, 'Current script', 16000, true);
     result.feedback = boundedString(input.feedback, 'Regeneration feedback', 3000, true);
   } else if (mode === 'full-regeneration') {
-    result.existingScript = boundedString(input.existingScript, 'Current script', 16000, true);
     result.feedback = boundedString(input.feedback, 'Regeneration feedback', 3000, true);
   }
   return result;
@@ -606,16 +605,15 @@ export async function prepareLevelTwoVideoFiveMaterial(userContext) {
   throw new Error('The Video 5 story material could not be prepared cleanly. Please try again.');
 }
 
-function regenerationMessage(input) {
+export function regenerationMessage(input) {
   if (input.mode === 'full-regeneration') {
     return `${input.userContext}
 
-CURRENT FULL SCRIPT (for context only; write a fresh complete script):
-${input.existingScript}
-
 FEEDBACK FOR THIS REGENERATION: ${input.feedback}
 
-Regenerate the entire Video ${input.video}, Level ${input.level} script from the supplied user context and feedback. Treat the five sections as distinct writing operations: design the CONCLUSION and CTA first, reverse-engineer a seamless MEAT from that destination, write the OPEN LOOP afterward, and write the independent pattern-interrupt HOOK last. Apply the Seamless Rule only inside [MEAT]. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
+This is a FRESH FULL REGENERATION. The previous script has been intentionally withheld. Rebuild Video ${input.video}, Level ${input.level} from the original answers, cumulative story context, active blueprint, and feedback. Do not attempt to preserve, reconstruct, or imitate wording from an earlier draft.
+
+Use the same unified composition process as first-time generation: privately settle the distinct jobs of CONCLUSION, CTA, MEAT, OPEN LOOP, and HOOK, then write the final visible script once from [HOOK] through [CTA]. Apply sentence-level Hook-and-Eye only inside [MEAT]. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
   }
   return input.userContext;
 }
@@ -634,7 +632,7 @@ Regenerate ONLY the [${input.section}] section, applying the feedback above whil
 async function generateScript(input, prompt) {
   const systemPrompt = buildSystemPrompt(prompt.prompt, input.level, input.video);
   let preparedContext = input.userContext;
-  if (input.level === 2 && input.video === 1 && input.mode === 'script') {
+  if (input.level === 2 && input.video === 1 && input.mode !== 'section') {
     preparedContext = await prepareLevelTwoVideoOneMaterial(preparedContext);
   } else if (input.level === 2 && (input.video === 3 || input.video === 6)) {
     preparedContext = await prepareLevelTwoEpiphanyMaterial(preparedContext, input.video);
@@ -646,9 +644,9 @@ async function generateScript(input, prompt) {
   const userMessage = regenerationMessage({ ...input, userContext: preparedContext });
   let lastError;
 
-  // Prefer repairing a nearly finished draft over repeatedly starting over.
-  // Each draft now receives up to three targeted cleanup passes, so two fresh
-  // drafts keep the request inside the runtime limit while improving repair.
+  // Standard generation may receive targeted cleanup. Full regeneration keeps
+  // its one-piece composition contract and receives a complete rewrite instead.
+  // Two fresh attempts keep either path inside the runtime limit.
   const maxAttempts = 2;
   for (let attempt = 0; attempt < maxAttempts; attempt++) {
     const retryNote = attempt
@@ -662,7 +660,8 @@ async function generateScript(input, prompt) {
         userMessage: userMessage + retryNote,
         level: input.level,
         video: input.video,
-        callModel
+        callModel,
+        wholeScriptRewrite: input.mode === 'full-regeneration'
       });
       return { content, promptVersion: prompt.version, generationAttempts: attempt + 1 };
     } catch (error) {

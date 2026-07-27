@@ -787,3 +787,13 @@ The following principles govern every word of copy in this app and the broader C
 - The Hook and Open Loop definitions were deliberately preserved. The Hook remains an independent pattern interrupt, the Open Loop remains one pressing unanswered question, and sentence-level Hook-and-Eye remains limited to Meat.
 - No word-frequency rejection or new repetition repair loop was added. The structural goal is to prevent duplicate material from reaching the visible draft.
 - Rollback point: Git tag `before-unified-composition-2026-07-27` targets commit `33d3beca90c2cba5a1fd70a282ebcc7d8399ae0e`. Revert the isolated experiment commit or restore that tag if testing weakens Hooks, Open Loops, or overall output.
+
+## 2026-07-27: True full-script regeneration
+
+- `Regenerate Full Script` now means a genuinely fresh script from the saved answers, cumulative prior-video context, active blueprint, and new feedback. The previous script is not included in the browser request or API writing prompt.
+- The previous script is still saved before regeneration and pushed into the local undo history. Database script versioning continues to preserve it when the new complete script is saved.
+- Full regeneration now uses the same unified composition contract as first-time generation. The older regeneration-only instruction that described five distinct drafting operations was removed.
+- Semantic review no longer stitches targeted section replacements into a full regeneration. If the first new draft needs substantive correction, the writer receives the issue descriptions and produces another complete five-section script. Reviewer replacement prose is deliberately ignored.
+- Section regeneration is unchanged. It still receives the current complete script and replaces only the requested section.
+- Level 2 Video 1 full regeneration now receives the same private material routing as its first generation, restoring parity for that chapter.
+- `scripts/check-prompt-style-guide.mjs` verifies that a sentinel from the previous script cannot enter the full-regeneration prompt and that a failed semantic review produces one complete replacement rather than a section merge.
