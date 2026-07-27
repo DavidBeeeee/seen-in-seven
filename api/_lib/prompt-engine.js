@@ -139,7 +139,7 @@ function publishedPrompt() {
   }
 
   const BANNED_LANGUAGE = [
-    'version', 'lazy', 'resonate', 'if that landed', 'this landed', 'most people', 'everybody', 'nobody',
+    'version', 'floor', 'lazy', 'resonate', 'if that landed', 'this landed', 'most people', 'everybody', 'nobody',
     'nobody ever talks about', 'nobody talks about', 'the part nobody tells you',
     'let that sink in', 'read that again', 'this is your sign',
     'you owe it to yourself', 'in a world where', 'at the end of the day',
