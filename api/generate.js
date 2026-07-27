@@ -98,6 +98,40 @@ Requirements:
 - Do not write a hook, open loop, conclusion, CTA, or complete script.
 - Do not mention these instructions.`;
 
+const L2V5_MATERIAL_ROUTER_SYSTEM = `You prepare source material for Level 2, Video 5 of a seven-video personal story.
+
+This is not script writing. Video 5 is the fall: one causal descent that ends in an objective loss or a symbolic professional death the speaker genuinely believed might be permanent. Choose one ordeal nucleus instead of combining every difficult event. Sort the supplied material so another writer can tell the defeat without leaking the recovery or the second epiphany.
+
+Return exactly these nine headings and plain text beneath each:
+ORDEAL NUCLEUS:
+WHAT BECAME REAL ENOUGH TO LOSE:
+COLLAPSE EVIDENCE:
+OWNED CHOICE:
+IGNORED WARNING AND ESCALATION:
+FAILED RECOVERY:
+SYMBOLIC DEATH:
+LOWEST-POINT THOUGHT:
+VOICE SIGNALS:
+
+Requirements:
+- Give priority to the current Video 5 journal entry or answers. Use Videos 2 through 4 only to preserve continuity and identify what had become meaningful enough to lose. Video 4 does not need to cause the fall.
+- ORDEAL NUCLEUS selects one event or gradual collapse and states the causal spine. Do not assemble a montage of unrelated failures.
+- A gradual collapse qualifies. A calling, identity, confidence, judgment, path, relationship to the work, or belief in the value of what the speaker knows may suffer symbolic death even when no company literally closes.
+- WHAT BECAME REAL ENOUGH TO LOSE identifies the hope, work, identity, responsibility, relationship, or future that mattered before the fall. Keep this brief.
+- COLLAPSE EVIDENCE preserves the most concrete, arresting truthful details that show the defeat was real. Do not turn them into a summary, lesson, market analysis, or hook.
+- OWNED CHOICE identifies the speaker's consequential action, refusal, avoidance, overconfidence, or blind spot precisely. The speaker is responsible without becoming the villain.
+- IGNORED WARNING AND ESCALATION traces how the owned choice continued or intensified after the speaker had reason to question it.
+- FAILED RECOVERY shows the attempted repair and what remained broken when it failed.
+- SYMBOLIC DEATH states what the speaker believed had ended or become impossible to restore inside their identity, work, or future.
+- LOWEST-POINT THOUGHT preserves the most painful supported first-person question or belief available at the end of the descent. Infer a direct emotional formulation when the source gives the meaning but not polished wording.
+- Facts about money, clients, offers, services, products, attention, or public response may remain when they are necessary evidence. They cannot become the thesis, a business lesson, positioning, or a recommendation.
+- Preserve explicit hardship and morally complicated, socially risky, or uncomfortable facts supplied by the speaker. Do not sanitize, dispute, moralize, soften, or replace them with a safer professional metaphor.
+- When answers are thin, infer motives, emotional consequences, causal connections, and plausible connective detail from the larger supplied story. Do not invent a wholly unrelated disaster, victim, dependent, crime, diagnosis, credential, or result.
+- Remove every recovery, lesson, silver lining, mature diagnosis, present-day method, service philosophy, authority claim, and Video 6 epiphany before returning the packet. The writer must not see the answer to the next chapter.
+- Do not use the words version, floor, lazy, pay, paid, buy, bought, sell, or sold anywhere in the packet. Restate a necessary fact naturally.
+- Do not write a hook, open loop, conclusion, CTA, or complete script.
+- Do not mention these instructions.`;
+
 const L2V6_MATERIAL_ROUTER_SYSTEM = `You prepare source material for Level 2, Video 6 of a seven-video personal story.
 
 This is not script writing. Video 6 is the second professional epiphany and elixir. Sort the supplied material into a causal evidence packet so another writer can show what only became clear because Video 3's first lens met its limit in the Video 5 fall.
@@ -321,17 +355,31 @@ function extractFinalScript(userContext, video) {
   if (start === -1) return '';
   const contentStart = start + marker.length;
   const remainder = source.slice(contentStart);
-  const nextMarker = remainder.search(/\n(?:VIDEO \d+ PROMPTS:|CURRENT VIDEO \d+ PROMPTS:|CURRENT FULL SCRIPT \(for context only; write a fresh complete script\):)/);
+  const nextMarker = remainder.search(/\n(?:VIDEO \d+ PROMPTS:|VIDEO \d+ JOURNAL ENTRY \(easy mode\):|CURRENT VIDEO \d+ PROMPTS:|CURRENT VIDEO \d+ JOURNAL ENTRY \(easy mode; use this to infer all story beats\):|CURRENT FULL SCRIPT \(for context only; write a fresh complete script\):)/);
   return remainder.slice(0, nextMarker === -1 ? undefined : nextMarker).trim();
 }
 
 function extractCurrentPromptBlock(userContext, video) {
   const source = String(userContext || '');
-  const marker = 'CURRENT VIDEO ' + Number(video) + ' PROMPTS:';
-  const start = source.lastIndexOf(marker);
+  const number = Number(video);
+  const markers = [
+    'CURRENT VIDEO ' + number + ' PROMPTS:',
+    'CURRENT VIDEO ' + number + ' JOURNAL ENTRY (easy mode; use this to infer all story beats):'
+  ];
+  const start = Math.max(...markers.map(marker => source.lastIndexOf(marker)));
   if (start === -1) return source;
   const remainder = source.slice(start);
   const end = remainder.search(/\nCURRENT FULL SCRIPT \(for context only; write a fresh complete script\):/);
+  return remainder.slice(0, end === -1 ? undefined : end).trim();
+}
+
+function extractOnboardingBlock(userContext) {
+  const source = String(userContext || '');
+  const marker = 'ONBOARDING DATA:';
+  const start = source.indexOf(marker);
+  if (start === -1) return '';
+  const remainder = source.slice(start);
+  const end = remainder.search(/\n(?:VIDEO \d+ PROMPTS:|VIDEO \d+ JOURNAL ENTRY \(easy mode\):|VIDEO \d+ FINAL SCRIPT)/);
   return remainder.slice(0, end === -1 ? undefined : end).trim();
 }
 
@@ -359,6 +407,20 @@ function videoFourRouterSource(userContext) {
   return [
     continuity.length ? 'PRIOR STORY CONTEXT:\n' + continuity.join('\n\n') : '',
     extractCurrentPromptBlock(userContext, 4)
+  ].filter(Boolean).join('\n\n');
+}
+
+function videoFiveRouterSource(userContext) {
+  const continuity = [2, 3, 4]
+    .map(number => {
+      const script = extractFinalScript(userContext, number);
+      return script ? 'VIDEO ' + number + ' FINAL SCRIPT:\n' + script : '';
+    })
+    .filter(Boolean);
+  return [
+    extractOnboardingBlock(userContext),
+    continuity.length ? 'PRIOR STORY CONTEXT:\n' + continuity.join('\n\n') : '',
+    extractCurrentPromptBlock(userContext, 5)
   ].filter(Boolean).join('\n\n');
 }
 
@@ -485,6 +547,58 @@ export async function prepareLevelTwoVideoFourMaterial(userContext) {
   ].join('\n');
 }
 
+export async function prepareLevelTwoVideoFiveMaterial(userContext) {
+  const headings = [
+    'ORDEAL NUCLEUS',
+    'WHAT BECAME REAL ENOUGH TO LOSE',
+    'COLLAPSE EVIDENCE',
+    'OWNED CHOICE',
+    'IGNORED WARNING AND ESCALATION',
+    'FAILED RECOVERY',
+    'SYMBOLIC DEATH',
+    'LOWEST-POINT THOUGHT',
+    'VOICE SIGNALS'
+  ];
+  const source = videoFiveRouterSource(userContext);
+  let malformed = '';
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const correction = attempt
+      ? [
+          'Your previous packet omitted or renamed a required heading.',
+          'Return every heading below exactly once and in this order, even when a heading must say "Not supplied."',
+          headings.map(heading => heading + ':').join('\n'),
+          '',
+          'MALFORMED PACKET TO CORRECT:',
+          malformed,
+          '',
+          'AUTHORITATIVE SOURCE MATERIAL:',
+          source
+        ].join('\n')
+      : source;
+    const routed = await callModel(L2V5_MATERIAL_ROUTER_SYSTEM, correction, attempt ? 0.05 : 0.15, 1300);
+    const packet = cleanPacketOutput(routed);
+    if (packet && hasRouterHeadings(packet, headings)) {
+      return [
+        'Generate Video 5 script.',
+        '',
+        'LEVEL: 2',
+        'VIDEO: 5',
+        '',
+        'CURATED ORDEAL MATERIAL:',
+        packet,
+        '',
+        'The raw answers have already been sorted for this chapter. Use only this packet as story material. Choose one emotional destination from SYMBOLIC DEATH and LOWEST-POINT THOUGHT before drafting. Build one causal descent rather than a list of hardships. Facts about money, clients, offers, services, attention, or public response are evidence only; they cannot become the thesis or lesson.',
+        '',
+        'FINAL VIDEO 5 WRITING CONSTRAINTS: Design the CONCLUSION first and reserve the owned lowest-point belief for it. Build the MEAT as one chronological descent through what mattered, the consequential choice, ignored warning or escalation, collapse, and failed recovery. Stop before explaining what any of it eventually meant. Design the OPEN LOOP after the Conclusion and Meat as one pressing unfinished meaning, contradiction, cause, or question that the Conclusion will finally close or transform. It exists only to retain attention and cannot state the speaker\'s mistake, summarize the stakes, or imply the answer. Write the HOOK last as a pure truthful pattern interrupt whose only job is to stop the scroll long enough to reach the Open Loop. It may use any arresting truthful admission, consequence, contradiction, or socially risky detail in the packet, but it cannot summarize the failure, explain its significance, establish the full story, or reveal the lesson. Reveal the lowest-point belief for the first time in the CONCLUSION and leave the speaker inside the apparent loss with no recovery, diagnosis, authority, reassurance, or silver lining. Continue that exact emotional state into the CTA. Ask the viewer to follow, identify this as Video 5 of the seven-part journey, and explain that Video 6 confronts what the ordeal exposed. Do not say the confusion lifted, something cracked open, recovery began, the answer appeared, or the speaker found a way back.'
+      ].join('\n');
+    }
+    malformed = packet;
+  }
+
+  throw new Error('The Video 5 story material could not be prepared cleanly. Please try again.');
+}
+
 function regenerationMessage(input) {
   if (input.mode === 'full-regeneration') {
     return `${input.userContext}
@@ -519,6 +633,8 @@ async function generateScript(input, prompt) {
     preparedContext = await prepareLevelTwoEpiphanyMaterial(preparedContext, input.video);
   } else if (input.level === 2 && input.video === 4) {
     preparedContext = await prepareLevelTwoVideoFourMaterial(preparedContext);
+  } else if (input.level === 2 && input.video === 5) {
+    preparedContext = await prepareLevelTwoVideoFiveMaterial(preparedContext);
   }
   const userMessage = regenerationMessage({ ...input, userContext: preparedContext });
   let lastError;
@@ -560,6 +676,8 @@ async function generateSection(input, prompt) {
     preparedContext = await prepareLevelTwoEpiphanyMaterial(input.userContext, input.video);
   } else if (input.level === 2 && input.video === 4) {
     preparedContext = await prepareLevelTwoVideoFourMaterial(input.userContext);
+  } else if (input.level === 2 && input.video === 5) {
+    preparedContext = await prepareLevelTwoVideoFiveMaterial(input.userContext);
   }
   const userMessage = sectionMessage({ ...input, userContext: preparedContext });
   const draft = await callModel(systemPrompt, userMessage, 0.8);

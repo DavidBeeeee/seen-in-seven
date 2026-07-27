@@ -1099,12 +1099,15 @@ This cannot be an ordinary setback with dramatic language placed on top. From in
 THE ONE-WAY-DOOR TEST — DIFFERENT IN KIND FROM VIDEO 4:
 Video 4 contains recoverable pressure: the speaker could still wake up and try again with roughly the same life, identity, work, relationships, and resources. Video 5 crosses a one-way door. After the event, something central was gone, ended, broken, or believed impossible to restore in its previous form. The ordeal does not have to grow directly from Video 4's inconvenience, but it must occur inside the same larger quest and threaten something the audience has now watched the speaker begin to value, trust, build, or hope for. Do not escalate low attention, embarrassment, comparison, uncertainty, or an ordinary professional disappointment with stronger adjectives. Require a real loss and a failed way back.
 
+SYMBOLIC DEATH COUNTS:
+Do not require bankruptcy, public disgrace, a closed company, harmed dependents, or one cinematic disaster. A gradual collapse may permanently change the speaker's relationship with their calling, judgment, identity, confidence, path, or belief that what they know has value. The ordeal is valid when that internal or professional loss felt irreversible from inside the speaker's life and the attempted way back failed. Facts about money, clients, offers, services, products, attention, or public response may prove the descent, but they are evidence only. They cannot become the video's thesis, business lesson, or future solution.
+
 SPARSE ANSWER PERMISSION:
 A thin answer is not permission to write a vague ordeal. Use onboarding, every previous answer, every previous script, and the current response to reconstruct the most narratively coherent professional defeat. Infer unstated motives, causal connections, likely choices, emotional consequences, scene texture, and plausible connective details when the raw material is incomplete. Choose the strongest interpretation supported by the larger story and write it with conviction. The user can correct or personalize details in the editor. Do not hedge, apologize for missing information, output placeholders, or retreat into generic visibility advice. Do not invent a wholly unrelated disaster; every extrapolation must grow from the work and expertise context the speaker supplied.
 
 STRUCTURAL BEATS:
-1. Pattern Interrupt (Hook) — Open on unmistakable evidence that the speaker's work, path, or hoped-for future collapsed: the consequence, lost livelihood, destroyed trust, abandoned calling, vanished opportunity, or moment they knew what they knew could not save them. Do not open with fear, progress, or strength.
-2. Ordeal Gap (Open Loop) — Make the viewer need to understand how someone with real knowledge or a serious calling reached a point they believed might end everything and how their own choices helped create it. Do not reveal that they eventually recovered.
+1. Pattern Interrupt (Hook) — Write this last. Its only job is to interrupt attention long enough for the viewer to hear the Open Loop. Select the most arresting truthful admission, consequence, contradiction, or socially risky detail available. It does not need to establish the fall, explain the stakes, introduce the story, create the full question, or prove the chapter. Do not summarize the failure or reveal its meaning.
+2. Ordeal Gap (Open Loop) — Design this after the Conclusion and Meat. Create the one pressing unfinished meaning, contradiction, cause, or question that the Conclusion will close or transform. Its only job is retention. Do not force every ordeal into the same causation question, summarize the setup or stakes, state the speaker's mistake, or imply the answer.
 3. What Was Now At Stake — Briefly establish the work, hope, identity, responsibility, relationship, or future that had become real enough to lose. Video 4 gives the fall emotional contrast; it does not need to be blamed as the direct cause.
 4. The Professional Choice And Escalation — Show what they did, avoided, refused to see, overestimated, or got wrong, then trace how it made the situation worse.
 5. The Collapse And Apparent Permanent Loss — Show what happened, the moment its seriousness became undeniable, who or what it harmed, and what the speaker believed had been destroyed or ended for good.
@@ -1117,12 +1120,11 @@ TONE: Stark, raw, intimate, almost uncomfortable. Words chosen carefully. No rea
 LEVEL 2 SPECIFIC: A completed failure in the speaker's work, craft, calling, leadership, credibility, path into the field, or application of what they know. It must work for an aspiring expert as well as an established professional, and it must not collapse into imposter syndrome, hypothetical judgment, fear of visibility, or the cost of staying small.
 
 JOURNAL ANSWER ROUTING — MANDATORY:
-1. The larger failure or period establishes the ordeal inside the MEAT.
-2. The concrete moment when its seriousness became undeniable supplies the HOOK and the collapse scene.
-3. The speaker's consequential choice, avoidance, or mistake supplies the causal OPEN LOOP, escalation, and ownership.
-4. What seemed permanently over supplies the apparent permanent loss.
-5. The failed recovery supplies the final descent and lowest point.
-Required path: unmistakable evidence of collapse, unanswered causation, something real now at stake, owned choice and escalation, apparent permanent loss, failed recovery, then a CONCLUSION inside the lowest point. Do not use any answer to imply recovery, meaning, gratitude, redemption, or what the failure eventually taught.
+1. The fall answer supplies the central ordeal, what became real enough to lose, the collapse evidence, and the apparent permanent loss.
+2. The responsibility answer supplies the owned choice, ignored warning, escalation, and precise reason the speaker contributed without becoming the villain.
+3. The failed-recovery answer supplies the attempted repair, what remained broken, the symbolic death, and the lowest-point thought reserved for the CONCLUSION.
+Previously saved detail from the older five-question form may supplement these answers, but it never creates additional spoken beats.
+Required path inside the MEAT: something real at stake, owned choice, ignored warning or escalation, collapse, then failed recovery. Reserve the final lowest-point belief for the CONCLUSION. Do not use any answer to imply recovery, meaning, gratitude, redemption, or what the failure eventually taught.
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -1130,15 +1132,15 @@ The hook, open loop, conclusion, and CTA guidance below defines the kind of move
 Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so its facts support that destination without announcing it. Design the OPEN LOOP from the unfinished meaning, contradiction, cause, or question the conclusion will transform, then write the independent HOOK last as a truthful pattern interrupt. Do not smooth these separate section jobs into one prose rhythm.
 
 VIDEO 5, LEVEL 2: Tone = Raw, intimate, almost uncomfortable (Damien Rice "The Blower's Daughter" — close-mic'd, vulnerable, person underneath)
-HOOK guidance: Use the most concrete, socially risky evidence that the speaker's professional world had already collapsed or that something they believed permanent was gone. Do not open with fear, authority, progress, or recovery.
-OPEN LOOP guidance: Make the viewer need to understand how someone with real knowledge or a serious calling reached a point they believed might permanently end their work, path, or future and how their own choices helped cause it. Do not reveal that they eventually recovered.
+HOOK guidance: Write a pure pattern interrupt after every other section exists. Choose the most arresting truthful line available because it can stop the scroll, not because it summarizes the fall or performs another section's job. It cannot state the lesson or final lowest-point meaning.
+OPEN LOOP guidance: Use the privately reserved Conclusion to identify one exact missing relationship the viewer must understand. Open that gap without stating the mistake, answer, stakes summary, recovery, or lesson. The gap may involve causation, contradiction, consequence, identity, or meaning; choose what this ordeal actually needs.
 CONCLUSION guidance: Name the speaker's responsibility and leave them where no way back into the work was visible. Keep them inside the potentially permanent consequence. Do not reassure them, reveal recovery, state the elixir, or convert failure into authority yet.
-CTA guidance: Connect the unresolved defeat to the next video. Ask the viewer to follow because the next installment of the 7 Video Challenge reveals the hard-won truth the speaker could understand only after losing.
+CTA guidance: Continue from the exact lowest-point emotion without lifting it. Ask the viewer to follow because the next installment of the 7 Video Challenge confronts what the ordeal exposed and reveals the deeper truth that could only be earned through the loss. Do not say the confusion lifted, something cracked open, recovery began, the answer appeared, or the speaker found a way back.
 
 VIDEO 5 FINAL GATE:
 - A real defeat inside the work, craft, calling, or path actually happened; the script is not organized around fear, visibility anxiety, or a hypothetical outcome.
 - The event passes the one-way-door test. It is different in kind from Video 4's recoverable pressure, not merely a somewhat worse setback.
-- The event clears the Fall Standard: the speaker genuinely believed their work, confidence, path, livelihood, reputation, body of work, or hoped-for future might never recover.
+- The event clears the Fall Standard: the speaker genuinely believed their work, confidence, judgment, calling, path, livelihood, reputation, body of work, identity, or hoped-for future might never recover. A gradual or symbolic death qualifies.
 - Something central to the speaker's relationship with the work seemed destroyed or over for good.
 - The speaker's own choice, avoidance, overconfidence, blind spot, refusal, or failure caused or materially worsened the defeat.
 - The attempted recovery failed, making the absence of a way back feel real rather than theatrical.

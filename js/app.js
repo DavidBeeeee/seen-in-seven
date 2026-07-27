@@ -1609,7 +1609,7 @@ const VIDEO_EASY_PROMPTS = {
     { label: 'Before you treated this as expertise, what ability or interest kept showing up, and why did you refuse to take it seriously?', hint: 'Describe the ordinary work or life you were in, what other people might have valued before you did, and why staying where you were felt safer or more responsible.', key: 'easyAnswer_v1' },
     { label: 'What is one idea you used to accept about your work that you now strongly disagree with? Why did it make sense to you at the time, and what made the old idea stop fitting what you saw?', hint: 'Tell it like a journal entry. Include one concrete moment and who still pays the cost of the old idea. You do not need to explain the final lesson.', key: 'easyAnswer_v2' },
     { label: 'After that first change in how you saw things, what did you do differently before you knew whether it would work?', hint: 'Tell it like a journal entry. What made the old way tempting to return to, what did you choose anyway, and what small but meaningful result made continuing feel possible?', key: 'easyAnswer_v3' },
-    { label: 'In the work, craft, calling, or expertise story you have been telling, what failure was so devastating that you thought what you had built or hoped to build might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?', hint: 'This is not a frustrating day you could simply try again after. Tell us what was actually lost, broken, ended, or seemed impossible to restore, why you could not see a way back, and what you tried afterward that still failed. Answer from who you were before you knew what you would eventually learn.', key: 'easyAnswer_v4' },
+    { label: 'What is the worst failure in this part of your work or life, and what made you wonder whether you or what you were building would ever recover?', hint: 'Tell it as one honest journal entry. What happened, what part was your fault, what did you believe was gone for good, and what did you try afterward that still failed? End with what you believed at the lowest point, before the comeback or lesson.', key: 'easyAnswer_v4' },
     { label: 'After the hardest experience, what became clear that your first realization could not explain?', hint: 'Describe the aftermath evidence that brought it into focus, one observable thing you changed afterward, and who might need the perspective you earned. Keep it connected to what actually happened.', key: 'easyAnswer_v5' },
     { label: 'Who were you before the two professional realizations and the hardest part of the story, and who are you now in relation to your expertise and the people you want to reach?', hint: 'Describe what genuinely changed, what remains unfinished or still needed, what telling the story clarified about your work, and what perspective or mission you want the right viewer to keep following.', key: 'easyAnswer_v6' }
   ]
@@ -2164,10 +2164,17 @@ function videoOnePromptAnswers(level) {
 }
 
 function extendedPromptAnswers(videoDefinition) {
-  return (videoDefinition && videoDefinition.prompts || []).map(prompt => ({
+  const visible = (videoDefinition && videoDefinition.prompts || []).map(prompt => ({
     label: prompt.label.replace(/\s*___\s*$/, '').trim(),
     value: state.videos[prompt.key] || ''
   }));
+  const legacy = (videoDefinition && videoDefinition.legacyPrompts || [])
+    .map(prompt => ({
+      label: prompt.label,
+      value: state.videos[prompt.key] || ''
+    }))
+    .filter(answer => answer.value);
+  return visible.concat(legacy);
 }
 
 function buildAPIUserMessage(videoIdx) {
@@ -2346,15 +2353,17 @@ const level2Videos = [
   },
   {
     title:"The Hardest Part",
-    note:"Now we are returning to the larger work, craft, calling, or expertise story you have been telling, not the experience of making these videos. This is not a frustrating day you could simply try again after. Choose the failure or period when something real was lost, broken, ended, or seemed impossible to restore and you genuinely wondered whether this part of your future would recover. Do not tell us what you eventually learned or how everything worked out.",
+    note:"Return to the larger part of your work or life you have been discussing, not the experience of making these videos. Answer from who you were while things were falling apart. You do not need to understand the story or explain what it eventually taught you.",
     prompts:[
-      {label:"Thinking about the work, craft, calling, or expertise story you have been discussing, what failure or period brought you closest to believing what you had built or hoped to build might never recover?",hint:"Choose something that actually happened, rather than something you feared might happen. If you could wake up and try essentially the same thing again, choose a deeper moment. You do not need to own a business or have clients. A gradual collapse qualifies when it left your work, confidence, reputation, livelihood, direction, or hoped-for future feeling impossible to restore.",key:"v4p0",ph:"Describe the failure or period when what you had built or hoped to build seemed lost."},
-      {label:"Take us to the moment you realized this was more than an ordinary professional setback. What had happened, and what made the consequences feel impossible to repair?",hint:"Give us something we can picture. Where were you? Who else was affected? What result, conversation, loss, message, or realization made the seriousness impossible to ignore?",key:"v4p4",ph:"Describe the moment the full professional seriousness became real."},
-      {label:"Why was it your fault? What did you do, avoid, ignore, refuse to admit, overestimate, or get completely wrong that caused the failure or made it worse?",hint:"Look for the professional decision that was yours: the warning you ignored, the conversation you avoided, the risk you underestimated, the responsibility you mishandled, or the moment you knew better and continued anyway. Tell us what you should have done differently and why you did not do it.",key:"v4p1",ph:"Describe the professional decision, avoidance, or blind spot that was yours."},
-      {label:"What did this failure take from you, your work, or the people who depended on you, and what did you believe might be permanently over?",hint:"Go beyond saying it was difficult. What livelihood, credibility, trust, opportunity, relationship, body of work, identity, or future seemed impossible to restore? Why did that loss feel capable of ending everything you had built?",key:"v4p2",ph:"Describe what seemed permanently lost professionally and why it mattered so much."},
-      {label:"What did you try afterward that still did not fix it, and what did you believe about yourself or your future when you could no longer see a professional way back?",hint:"Tell us about the attempted recovery that failed. What did you try to repair, replace, explain, prove, or force? What remained broken afterward? End before the realization or comeback. The next part of your story will deal with what eventually changed.",key:"v4p3",ph:"Describe the failed recovery and the professional lowest point before you could see a way forward."}
+      {label:"Thinking about the part of your work or life you have been discussing, what is the worst thing that happened, the thing that made you wonder whether you or what you were building would ever recover?",hint:"It may have happened in one terrible moment or gradually. Tell us what happened, when you could no longer dismiss it as a rough patch, and what you believed had been lost for good.",key:"v4p0",ph:"Describe what happened and what you believed might never recover."},
+      {label:"Looking back, what part of it was your fault?",hint:"What did you ignore, avoid, overestimate, refuse to admit, or continue doing after something felt wrong? Why did that choice make sense to you at the time?",key:"v4p1",ph:"Describe the choice, avoidance, or blind spot that was yours."},
+      {label:"What did you try afterward, and what did you start believing when that failed too?",hint:"Describe what you tried to repair or replace, what remained broken, and the darkest thing you believed about yourself or your future. Stop before explaining the comeback or lesson.",key:"v4p3",ph:"Describe the failed recovery and what you believed at the lowest point."}
     ],
-    compile:v=>`The professional failure or period when I thought I might not recover: ${v.v4p0||'___'}. The moment I realized this was more than a setback: ${v.v4p4||'___'}. Why it was my fault: ${v.v4p1||'___'}. What I believed might be permanently over: ${v.v4p2||'___'}. What I tried that failed and what I believed at the lowest point: ${v.v4p3||'___'}.`
+    legacyPrompts:[
+      {label:"Previously saved detail about when the seriousness became undeniable",key:"v4p4"},
+      {label:"Previously saved detail about what seemed permanently lost",key:"v4p2"}
+    ],
+    compile:v=>`What happened and what I believed might never recover: ${v.v4p0||'___'}. Why it was my fault: ${v.v4p1||'___'}. What I tried afterward and what I believed when it failed: ${v.v4p3||'___'}.${v.v4p4 ? ` Previously saved detail about when the seriousness became undeniable: ${v.v4p4}.` : ''}${v.v4p2 ? ` Previously saved detail about what seemed permanently lost: ${v.v4p2}.` : ''}`
   },
   {
     title:"What The Hardest Part Taught Me",

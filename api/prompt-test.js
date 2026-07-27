@@ -1,7 +1,8 @@
 import {
   callModel,
   prepareLevelTwoEpiphanyMaterial,
-  prepareLevelTwoVideoFourMaterial
+  prepareLevelTwoVideoFourMaterial,
+  prepareLevelTwoVideoFiveMaterial
 } from './generate.js';
 import {
   buildSystemPrompt,
@@ -54,6 +55,8 @@ export default async function handler(req, res) {
       preparedUserMessage = await prepareLevelTwoEpiphanyMaterial(userMessage, video);
     } else if (level === 2 && video === 4) {
       preparedUserMessage = await prepareLevelTwoVideoFourMaterial(userMessage);
+    } else if (level === 2 && video === 5) {
+      preparedUserMessage = await prepareLevelTwoVideoFiveMaterial(userMessage);
     }
     let rawContent = '';
     let content = '';

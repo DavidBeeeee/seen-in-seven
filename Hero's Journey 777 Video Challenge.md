@@ -24,6 +24,14 @@ The Hook is a pure pattern interrupt. The Open Loop creates one exact pressing q
 
 Video 4 gives the speaker and audience something worth believing in and therefore something worth losing. It does not need to cause the ordeal. After the Conclusion closes the local question with hope, the CTA deliberately foreshadows that the next chapter is catastrophic and that the speaker helped cause it. The CTA reveals the magnitude and responsibility while withholding the event, exact loss, causal choices, recovery, and later truth. Video 5 remains the apparently irreversible collapse inside the same larger quest.
 
+### Current Level 2 Video 5 Standard
+
+Level 2 Video 5 tells one causal descent, not a business postmortem or a collection of difficult moments. A gradual collapse or symbolic professional death qualifies when the speaker genuinely believed their calling, judgment, identity, confidence, path, or future might not recover. Commercial facts may prove what happened, but they are evidence rather than the thesis or lesson.
+
+The user answers three journal-style questions: what happened and seemed lost, what part was their fault, and what they tried when the first attempt to recover failed. A private story-sorting pass chooses one ordeal nucleus, preserves the owned choice and escalation, identifies the failed recovery and lowest-point thought, and removes every recovery, mature diagnosis, and Video 6 truth before the writer drafts.
+
+The Conclusion is designed first around the symbolic death. The Meat builds the descent and stops before that final belief. The Open Loop is then designed as the exact unfinished meaning the Conclusion will close or transform. The Hook is written last as a pure truthful pattern interrupt whose only job is to capture attention. The CTA preserves the emotional low point while asking for the follow because the next chapter confronts what the loss exposed; it cannot announce that recovery has already begun.
+
 ### Current 5E Epiphany Standard
 
 Videos 3 and 6 use the same five-section architecture as every other chapter. The Hero's Journey determines where the Epiphany belongs in the larger arc; the 5E determines the intellectual experience the viewer receives.

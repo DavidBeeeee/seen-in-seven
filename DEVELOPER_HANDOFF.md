@@ -761,3 +761,11 @@ The following principles govern every word of copy in this app and the broader C
 - Removed one overbroad deterministic voice check that treated any negated word repeated in the following sentence as false balance. It could reject legitimate epiphany contrast or evidence, then keep rejecting the repair for using the same subject word.
 - Kept the precise deterministic bans for actual canned false-balance constructions, including `not because`, `it is not X, it is Y`, `you are not X, you are Y`, repeated `the point is not...the point is...`, and mirrored correction patterns.
 - The semantic story reviewer still rejects false balance by meaning. The deterministic layer now blocks only shapes it can identify reliably.
+
+## 2026-07-27: Level 2 Video 5 ordeal reconstruction
+
+- Reduced the Level 2 Video 5 extended journal from five demanding questions to three human prompts: what happened and seemed lost, what part was the speaker's fault, and what they tried when recovery still failed. Existing `v4p4` and `v4p2` answers remain stored and are silently supplied as legacy context when present.
+- Added a dedicated Level 2 Video 5 material router for production generation, full regeneration, section regeneration, and the admin Prompt Tester. It chooses one ordeal nucleus, distinguishes gradual or symbolic professional death from an ordinary setback, preserves the owned choice and failed recovery, and removes hindsight, recovery, and Video 6 meaning before the writer sees the packet.
+- Corrected the shared current-answer extractor so Easy journal mode is recognized by the Level 2 preparation paths instead of accidentally forwarding the entire unsorted message.
+- Restored the section boundary inside Video 5: the Hook is only a pattern interrupt, the Open Loop is only the pressing unfinished meaning, the Meat carries one causal descent, the Conclusion owns the lowest-point belief, and the CTA cannot announce that recovery has begun.
+- Kept quality review deliberately narrow. Level 2 Video 5 may fail review for lacking a real defeat, owned contribution, or failed recovery, or for leaking recovery and Video 6 meaning. It must not fail merely because the ordeal is gradual, internal, commercially specific, morally complicated, unusually phrased, or less objectively dramatic than another person's hardship.

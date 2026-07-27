@@ -461,6 +461,14 @@ function currentQuestionSet(user, ob, video, level, mode) {
   return questionVideoDefinition(video, level).prompts || [];
 }
 
+function contextQuestionSet(user, ob, video, level, mode, answers) {
+  const visible = currentQuestionSet(user, ob, video, level, mode);
+  if (video === 1 || mode === 'easy') return visible;
+  const legacy = (questionVideoDefinition(video, level).legacyPrompts || [])
+    .filter(question => answers && answers[question.key]);
+  return visible.concat(legacy);
+}
+
 function renderPromptQuestions(user, ob, video, level, mode, answers) {
   const definition = questionVideoDefinition(video, level);
   const modeControl = promptEl('question-mode-control');
@@ -592,7 +600,7 @@ function buildTestUserMessage(user, ob, video, level, mode, answers) {
   for (let previousVideo = 1; previousVideo < video; previousVideo++) {
     const previousAnswers = databaseAnswers(user, ob, previousVideo, level);
     const previousMode = productionPromptMode(user, previousVideo, level, previousAnswers);
-    const previousQuestions = currentQuestionSet(user, ob, previousVideo, level, previousMode);
+    const previousQuestions = contextQuestionSet(user, ob, previousVideo, level, previousMode, previousAnswers);
     const previousScript = promptState.scripts.find(script =>
       String(script.user_id) === String(user.id) &&
       Number(script.video_number) === previousVideo &&
@@ -610,7 +618,7 @@ function buildTestUserMessage(user, ob, video, level, mode, answers) {
         : ''
     });
   }
-  const currentQuestions = currentQuestionSet(user, ob, video, level, mode);
+  const currentQuestions = contextQuestionSet(user, ob, video, level, mode, answers);
   const easy = easyQuestion(video, level);
   return SISPromptEngine.buildUserMessage({
     level,
