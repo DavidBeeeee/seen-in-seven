@@ -94,7 +94,10 @@ function computePoints(s) {
   let genCount = 0, lockCount = 0, filmCount = 0, postCount = 0, urlCount = 0;
   for (let i = 0; i < 7; i++) {
     if (vids['script_v' + i] || l1v['script_v' + i]) genCount++;
-    if (vids['locked_v' + i] || l1v['locked_v' + i]) lockCount++;
+    if (
+      vids['ever_locked_v' + i] || vids['locked_v' + i] ||
+      l1v['ever_locked_v' + i] || l1v['locked_v' + i]
+    ) lockCount++;
     if (vs[i] === 'filmed' || l1s[i] === 'filmed') filmCount++;
     const p = posted[i] || {};
     if (p.posted) postCount++;

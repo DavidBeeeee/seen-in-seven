@@ -821,3 +821,15 @@ The following principles govern every word of copy in this app and the broader C
 - `scripts/check-prompt-style-guide.mjs` verifies all 14 ownership lines, forbidden coupling phrases, Meat-only continuity, provisional-Hook story review, judge-directed Hook retry, and byte-for-byte preservation of Open Loop, Meat, Conclusion, and CTA during final Hook installation.
 - The generation request timeout is now 150 seconds to accommodate the final Hook Studio and judge without the browser abandoning a valid in-progress request.
 - The current script asset query is `hook-studio-1`.
+
+## 2026-07-27: Active script locks separated from lock history
+
+- `video_progress.locked_at` remains the historical first-lock achievement used by the points engine. It no longer controls whether the current script appears locked.
+- The additive `video_progress.is_locked` column is now the current cross-device UI state. Its migration backfills `true` only when a historical lock and a current script both exist.
+- Deleting and restarting a script marks its current script version inactive and sets `is_locked = false`. The historical `locked_at` value remains intact.
+- `Unlock to edit again` now persists `is_locked = false` instead of changing only local storage.
+- Database restoration requires both `is_locked = true` and a current script before restoring `locked_v*`. A database `false` actively removes stale local lock state.
+- Dashboard and tracker rendering also require a script to exist before showing `Locked`, providing a second defense against stale state.
+- Local points use `ever_locked_v*`, populated from `locked_at`, so deleting or unlocking a script does not remove earned lock credit.
+- `scripts/check-lock-state.mjs` guards the migration, deletion, unlock, restore, rendering, and historical-points boundaries.
+- Script asset queries are `active-lock-1` for `supabase.js`, `points.js`, and `app.js`.

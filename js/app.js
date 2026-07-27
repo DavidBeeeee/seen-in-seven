@@ -3504,8 +3504,8 @@ function _buildTrackerHTML(videos, context) {
   // Current level row (L2 gets glowing purple)
   const currentRow = labels.map((label, i) => {
     const st = state.videoStatus[i];
-    const isLocked = !!state.videos['locked_v' + i];
     const hasScript = !!state.videos['script_v' + i];
+    const isLocked = hasScript && !!state.videos['locked_v' + i];
     let cls, status;
 
     if (st === 'filmed') {
@@ -3638,6 +3638,8 @@ async function clearVideoDraftForRegeneration(idx) {
   clearVideoPromptAnswers(idx);
   if (typeof clearCurrentScriptForRegeneration === 'function') {
     await clearCurrentScriptForRegeneration(videoNumber, level);
+  } else if (typeof queueLockStateSave === 'function') {
+    queueLockStateSave(idx, level, false);
   }
 }
 
@@ -4022,6 +4024,7 @@ function skipFilmedBtn() {
 function lockInScript() {
   const idx = currentVideoIndex;
   state.videos['locked_v' + idx] = true;
+  state.videos['ever_locked_v' + idx] = true;
   saveProgress();
   // Persist lock server-side (points: first lock per video). Queued if
   // anonymous, flushed after auth.
@@ -4152,6 +4155,9 @@ function unlockScript() {
   const idx = currentVideoIndex;
   delete state.videos['locked_v' + idx];
   saveProgress();
+  if (typeof queueLockStateSave === 'function') {
+    queueLockStateSave(idx, state.level || 1, false);
+  }
   _updateLockUI(idx);
 }
 
@@ -5143,7 +5149,7 @@ function buildPlan(){
     const filmed = videoStatus[i] === 'filmed';
     const skipped = videoStatus[i] === 'skipped';
     const hasScript = !!state.videos['script_v' + i];
-    const isLocked = !!state.videos['locked_v' + i];
+    const isLocked = hasScript && !!state.videos['locked_v' + i];
     const script = state.videos['script_v' + i] || '';
     const clean = finalScriptText(i, script, state.level || 1);
     const preview = clean ? clean.substring(0, 90) + (clean.length > 90 ? '…' : '') : 'Script not yet generated';
@@ -5314,7 +5320,7 @@ function buildPlanTracker() {
   const labels = videos.map((_,i) => 'V'+(i+1));
 
   function makeItem(label, st, hasScript, isL2, idx, isL1Ghost) {
-    const isLocked = idx !== null && !!state.videos['locked_v' + idx];
+    const isLocked = !!hasScript && idx !== null && !!state.videos['locked_v' + idx];
     let cls, statusIcon;
     if (st === 'filmed') {
       cls = 'vt-done'; statusIcon = '✓';

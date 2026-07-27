@@ -148,7 +148,8 @@ async function _flushSaveQueue() {
       if (item.type === 'script')     await saveScriptToDb(item.videoNumber, item.level, item.content, item.finalContent, item.promptVersion);
       else if (item.type === 'progress') await saveVideoProgressToDb(item.videoIndex, item.level, item.status);
       else if (item.type === 'onboarding') await saveOnboardingToDb();
-      else if (item.type === 'lock')   await saveVideoLockToDb(item.videoIndex, item.level);
+      else if (item.type === 'lock')   await saveVideoLockStateToDb(item.videoIndex, item.level, item.isLocked);
+      else if (item.type === 'clear_script') await clearCurrentScriptForRegeneration(item.videoNumber, item.level);
       else if (item.type === 'posted') await savePostedToDb(item.videoIndex, item.level, item.posted, item.postUrl);
     } catch(e) {}
   }
@@ -170,8 +171,21 @@ function queueOnboardingSave() {
 }
 
 function queueLockSave(videoIndex, level) {
-  if (_currentUser) { saveVideoLockToDb(videoIndex, level); }
-  else { _saveQueue.push({ type: 'lock', videoIndex, level }); }
+  queueLockStateSave(videoIndex, level, true);
+}
+
+function queueLockStateSave(videoIndex, level, isLocked) {
+  if (_currentUser) {
+    saveVideoLockStateToDb(videoIndex, level, isLocked);
+  } else {
+    for (let i = _saveQueue.length - 1; i >= 0; i--) {
+      const item = _saveQueue[i];
+      if (item.type === 'lock' && item.videoIndex === videoIndex && item.level === level) {
+        _saveQueue.splice(i, 1);
+      }
+    }
+    _saveQueue.push({ type: 'lock', videoIndex, level, isLocked: !!isLocked });
+  }
 }
 
 function queuePostedSave(videoIndex, level, posted, postUrl) {
@@ -528,13 +542,26 @@ async function saveScriptEditToDb(videoNumber, level, content, finalContent) {
 }
 
 async function clearCurrentScriptForRegeneration(videoNumber, level) {
-  if (!_currentUser) return;
+  if (!_currentUser) {
+    for (let i = _saveQueue.length - 1; i >= 0; i--) {
+      const item = _saveQueue[i];
+      const sameScript = item.type === 'script' && item.videoNumber === videoNumber && item.level === level;
+      const sameLock = item.type === 'lock' && item.videoIndex === videoNumber - 1 && item.level === level;
+      const sameClear = item.type === 'clear_script' && item.videoNumber === videoNumber && item.level === level;
+      if (sameScript || sameLock || sameClear) _saveQueue.splice(i, 1);
+    }
+    _saveQueue.push({ type: 'clear_script', videoNumber, level });
+    return;
+  }
   try {
-    await _sb.from('scripts').update({ is_current: false })
-      .eq('user_id', _currentUser.id)
-      .eq('video_number', videoNumber)
-      .eq('level', level)
-      .eq('is_current', true);
+    await Promise.all([
+      _sb.from('scripts').update({ is_current: false })
+        .eq('user_id', _currentUser.id)
+        .eq('video_number', videoNumber)
+        .eq('level', level)
+        .eq('is_current', true),
+      saveVideoLockStateToDb(videoNumber - 1, level, false)
+    ]);
   } catch(e) {}
 }
 
@@ -559,18 +586,37 @@ async function saveVideoProgressToDb(videoIndex, level, status) {
   } catch(e) {}
 }
 
-// ── SAVE LOCK STATE TO DB (points: first lock per video) ──────────────
-// Upsert touches only its own columns, so it never clobbers status/posted
-// on an existing row. locked_at is set once and never cleared — matching
-// the points rule that only the FIRST lock per video counts.
-async function saveVideoLockToDb(videoIndex, level) {
+// ── SAVE ACTIVE LOCK STATE TO DB ─────────────────────────
+// is_locked drives the current UI. locked_at is historical and remains set
+// after an unlock or restart so the first-lock achievement is not erased.
+async function saveVideoLockStateToDb(videoIndex, level, isLocked) {
   if (!_currentUser) return;
   try {
+    if (!isLocked) {
+      await _sb.from('video_progress').update({ is_locked: false })
+        .eq('user_id', _currentUser.id)
+        .eq('video_index', videoIndex)
+        .eq('level', level);
+      return;
+    }
+    const { data: existing } = await _sb.from('video_progress')
+      .select('locked_at')
+      .eq('user_id', _currentUser.id)
+      .eq('video_index', videoIndex)
+      .eq('level', level)
+      .maybeSingle();
     await _sb.from('video_progress').upsert({
-      user_id: _currentUser.id, video_index: videoIndex, level,
-      locked_at: new Date().toISOString()
+      user_id: _currentUser.id,
+      video_index: videoIndex,
+      level,
+      is_locked: true,
+      locked_at: existing && existing.locked_at ? existing.locked_at : new Date().toISOString()
     }, { onConflict: 'user_id,video_index,level' });
   } catch(e) {}
+}
+
+async function saveVideoLockToDb(videoIndex, level) {
+  return saveVideoLockStateToDb(videoIndex, level, true);
 }
 
 // ── SAVE POSTED STATE TO DB (points: posted + optional URL bonus) ─────
@@ -686,8 +732,13 @@ async function _restoreFromDatabase() {
         // indexes the DB already knows so _syncPointsStateToDb only pushes
         // genuinely local-only state (preserves original timestamps).
         if (p.locked_at) {
+          state.videos['ever_locked_v' + p.video_index] = true;
+        }
+        if (p.is_locked && state.videos['script_v' + p.video_index]) {
           state.videos['locked_v' + p.video_index] = true;
           _dbLockedIdx.add(p.video_index);
+        } else {
+          delete state.videos['locked_v' + p.video_index];
         }
         if (p.posted || p.post_url) {
           if (!state.videoPosted) state.videoPosted = {};

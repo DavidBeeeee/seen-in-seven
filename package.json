@@ -3,6 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "check:prompt-style": "node scripts/check-prompt-style-guide.mjs"
+    "check:prompt-style": "node scripts/check-prompt-style-guide.mjs",
+    "check:lock-state": "node scripts/check-lock-state.mjs",
+    "test": "npm run check:prompt-style && npm run check:lock-state"
   }
 }
