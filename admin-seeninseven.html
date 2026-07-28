@@ -950,7 +950,20 @@ function renderAnswers(ob, row) {
   const contextSnippet = context
     ? '<div class="mini-row"><div class="mini-top"><span class="mini-name">Pasted context</span><button class="btn btn-small" onclick="openContextModal(\'' + safeAttr(ob.user_id) + '\')">View Full</button></div><div class="context-snippet">' + h(context.slice(0, 320)) + (context.length > 320 ? '...' : '') + '</div></div>'
     : '';
+  const journeyArchive = ob.video_answers && typeof ob.video_answers === 'object'
+    ? ob.video_answers._journey_maps
+    : null;
+  const journeyMaps = journeyArchive && typeof journeyArchive === 'object'
+    ? journeyArchive
+    : {};
+  const journeyText = level => {
+    const answers = journeyMaps[level] || journeyMaps[String(level)] || [];
+    if (!Array.isArray(answers) || !answers.some(Boolean)) return '';
+    return answers.map((answer, index) => 'Video ' + (index + 1) + ': ' + (answer || '(blank)')).join('\n');
+  };
   return [
+    answerRow('Level 1 Journey Map', journeyText(1)),
+    answerRow('Level 2 Journey Map', journeyText(2)),
     answerRow('Posted', ob.posted),
     answerRow('History', ob.history),
     answerRow('Business', ob.business),

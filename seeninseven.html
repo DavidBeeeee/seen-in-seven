@@ -267,6 +267,11 @@
     <div class="settings-hint">Updates your script personalization. Your existing scripts are kept.</div>
   </div>
   <div class="settings-section">
+    <div class="settings-label">My Story Journey</div>
+    <button class="settings-btn-secondary" onclick="openJourneyMapSettings()">Edit My Seven-Part Journey →</button>
+    <div class="settings-hint">Keep separate Level 1 and Level 2 directions. Changes affect only future generation or an explicit regeneration.</div>
+  </div>
+  <div class="settings-section">
     <div class="settings-label">Appearance</div>
     <button class="settings-link-btn" onclick="toggleTheme()" style="font-size:15px;">
       <span id="settings-theme-label">Light mode</span> →
@@ -278,6 +283,8 @@
   </div>
   <div class="settings-danger">
     <div class="settings-label" style="color:#ef4444;">Danger Zone</div>
+    <button class="settings-btn-danger" onclick="confirmDeleteLevelScripts(1)">Delete Level 1 Scripts</button>
+    <button class="settings-btn-danger" onclick="confirmDeleteLevelScripts(2)">Delete Level 2 Scripts</button>
     <button class="settings-btn-danger" onclick="confirmStartOver()">Delete Everything &amp; Start Over</button>
     <button class="settings-btn-danger" style="border-color:rgba(100,100,100,0.3);color:var(--muted);" onclick="logOut()">Log Out</button>
   </div>
@@ -514,8 +521,8 @@
 
 <!-- ══ S-FREEWRITE ══ -->
 <div class="screen" id="screen-checklist">
-  <div class="eyebrow">New Feature</div>
-  <h2 class="screen-title">What do you want to talk about in this <span class="accent">video series?</span></h2>
+  <div class="eyebrow">Overview</div>
+  <h2 class="screen-title">Give us an overview of your <span class="accent">7 video series.</span></h2>
   <p class="screen-sub" style="font-size:15px;">Give me a full overview of what you want to talk about over these seven videos, who you are, what you do, and what you want the goal of this series of yours to communicate. The more info the better.</p>
   <div class="mode-tutorial talk-tutorial">
     <div class="tutorial-arrow">↘</div>
@@ -547,9 +554,49 @@
     <div class="input-hint" id="knowledge-count">0 / 12,000 characters</div>
   </div>
   <div class="btn-row">
-    <button class="btn-primary" onclick="goNext()">Let's Build My Scripts →</button>
+    <button class="btn-primary" onclick="goNext()">Map My Seven-Part Journey →</button>
     <button class="btn-back" onclick="goBack()">Back</button>
   </div>
+</div>
+
+<!-- ══ SEVEN-PART JOURNEY MAP ══ -->
+<div class="screen" id="screen-journey-map">
+  <div class="journey-map-shell">
+    <div class="journey-map-head">
+      <div>
+        <div class="eyebrow">Your Story Direction</div>
+        <h2 class="screen-title">See your complete <span class="accent">seven-part journey.</span></h2>
+        <p class="screen-sub">Answer each in one sentence. These are private directions for the story, not finished scripts. You will add the real details before each video.</p>
+      </div>
+      <button class="journey-help-btn" type="button" onclick="openJourneyHelp()">ⓘ Need Help?</button>
+    </div>
+    <div class="journey-level-tabs" id="journey-level-tabs" role="tablist" aria-label="Journey level">
+      <button class="context-toggle-btn" id="journey-level-1" type="button" onclick="selectJourneyMapLevel(1)">Level 1</button>
+      <button class="context-toggle-btn" id="journey-level-2" type="button" onclick="selectJourneyMapLevel(2)">Level 2</button>
+    </div>
+    <div class="journey-map-note" id="journey-map-note"></div>
+    <div class="journey-question-list" id="journey-question-list"></div>
+    <div class="journey-map-actions">
+      <button class="btn-secondary" type="button" onclick="copyCurrentJourney(this)">Copy My Journey</button>
+      <button class="btn-primary" id="journey-confirm-btn" type="button" onclick="completeJourneyMap()">This Feels Like My Story →</button>
+      <button class="btn-back" id="journey-back-btn" type="button" onclick="backFromJourneyMap()">Back</button>
+    </div>
+  </div>
+</div>
+
+<div class="journey-help-overlay" id="journey-help-overlay" hidden onclick="if(event.target===this) closeJourneyHelp()">
+  <section class="journey-help-modal" role="dialog" aria-modal="true" aria-labelledby="journey-help-title">
+    <div class="journey-help-header">
+      <div>
+        <div class="eyebrow">Use Your Favorite AI</div>
+        <h2 id="journey-help-title">Get three possible journeys.</h2>
+      </div>
+      <button class="settings-close" type="button" onclick="closeJourneyHelp()" aria-label="Close">✕</button>
+    </div>
+    <p>Copy this prompt into ChatGPT, Claude, Gemini, or another AI. Choose the answer set that feels strongest, then paste its seven answers into the matching boxes one at a time.</p>
+    <textarea id="journey-help-prompt" class="journey-help-prompt" readonly></textarea>
+    <button class="btn-primary" id="journey-help-copy" type="button" onclick="copyJourneyHelpPrompt(this)">Copy Full Prompt</button>
+  </section>
 </div>
 
 
@@ -769,7 +816,7 @@
   <div id="start-over-confirm" style="display:none;position:fixed;inset:0;z-index:10100;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;padding:24px;">
     <div style="background:#0a1f1f;border:1px solid var(--border);border-radius:16px;padding:32px 28px;max-width:380px;width:100%;text-align:center;">
       <div style="font-family:'Oswald',sans-serif;font-size:22px;color:var(--cream);margin-bottom:12px;">Start Fresh?</div>
-      <div style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:28px;">This will delete all your scripts and reset your onboarding answers. You'll stay logged in and can generate new scripts right away. Your account and email stay intact.</div>
+      <div style="font-size:15px;color:var(--muted);line-height:1.7;margin-bottom:28px;">This deletes both levels of scripts, answers, filming progress, your Overview, and both Journey Maps. You'll return to the first onboarding screen. Your account, email, password, and Studio access stay intact.</div>
       <div style="display:flex;gap:12px;justify-content:center;">
         <button onclick="document.getElementById('start-over-confirm').style.display='none'" style="background:var(--card);border:1.5px solid var(--border);border-radius:8px;padding:10px 24px;color:var(--soft);font-size:15px;cursor:pointer;font-family:'Nunito',sans-serif;">Cancel</button>
         <button onclick="restartWizard()" style="background:#ef4444;border:none;border-radius:8px;padding:10px 24px;color:white;font-size:15px;font-weight:700;cursor:pointer;font-family:'Nunito',sans-serif;">Yes, Delete Everything</button>
@@ -873,10 +920,11 @@
 <!-- ══════════════════════════════════════
      JAVASCRIPT
 ══════════════════════════════════════ -->
-<script src="/js/script-prompt-engine.js?v=security-1"></script>
-<script src="/js/supabase.js?v=active-lock-1"></script>
+<script src="/js/script-prompt-engine.js?v=journey-map-1"></script>
+<script src="/js/journey-map.js?v=journey-map-1"></script>
+<script src="/js/supabase.js?v=journey-map-1"></script>
 <script src="/js/points.js?v=active-lock-1"></script>
-<script src="/js/app.js?v=l2v6-independent-1"></script>
+<script src="/js/app.js?v=journey-map-1"></script>
 
 <!-- ══ DUAL COMPLETE OVERLAY ══ -->
 <div id="dual-complete-overlay">

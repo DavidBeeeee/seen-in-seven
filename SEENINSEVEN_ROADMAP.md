@@ -403,6 +403,10 @@ These items are intentionally not part of the current implementation plan:
 
 ## Verification Standards For Future Work
 
+### Implemented July 27, 2026: Overview and Journey Map
+
+The onboarding flow now includes a private seven-part Journey Map after the Overview and before Video 1 preparation. It uses one shared set of seven questions per level, keeps planned directions separate from detailed answers, and sends only the active video's direction into generation. Existing users edit either level from Settings. Level-specific resets preserve both the Overview and Journey Maps; Delete Everything returns to onboarding while preserving the Studio account.
+
 After any app change, verify:
 
 - `git status` is understood before editing.

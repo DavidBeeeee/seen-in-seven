@@ -91,6 +91,11 @@
           </div>
         </div>
         <div class="question-note" id="question-note">Choose a user, level, and video to load its questions.</div>
+        <label class="question-field journey-test-field">
+          <span class="question-label">Current Video Journey Direction</span>
+          <span class="question-hint">Loaded from the user’s saved Journey Map. Editing this copy affects only the current test.</span>
+          <textarea class="question-input" id="journey-direction-test" rows="3" oninput="testerJourneyDirectionChanged(this.value)"></textarea>
+        </label>
         <div class="question-grid" id="prompt-questions"></div>
         <div class="question-footer">
           <span>Tester edits are private to this browser</span>
@@ -209,8 +214,9 @@
   </div>
 
   <div id="toast" class="toast" aria-live="polite"></div>
-  <script src="/js/admin-prompt-questions.js?v=l2v6-independent-1"></script>
-  <script src="/js/script-prompt-engine.js"></script>
-  <script src="/js/admin-prompt-tester.js"></script>
+  <script src="/js/journey-map.js?v=journey-map-1"></script>
+  <script src="/js/admin-prompt-questions.js?v=journey-map-1"></script>
+  <script src="/js/script-prompt-engine.js?v=journey-map-1"></script>
+  <script src="/js/admin-prompt-tester.js?v=journey-map-1"></script>
 </body>
 </html>

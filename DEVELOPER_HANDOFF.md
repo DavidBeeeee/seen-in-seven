@@ -913,3 +913,15 @@ The following principles govern every word of copy in this app and the broader C
 - The app and admin tester use the same four journal questions: the counterintuitive truth, its lived evidence, the speaker's observable practice, and the person who needs the resulting lens.
 - Production generation now routes Level 2 Video 6 through source evidence, the common-sense model, contradicting evidence, unresolved cognitive dissonance, observable practice, and a reserved elixir. Earlier chapters are optional continuity only.
 - The Hook Studio, Open Loop architecture, Level 1 Video 6, and existing saved `v5p2` answers were preserved.
+
+## 2026-07-27 — Seven-part Journey Map and Overview flow
+
+- The existing full-context onboarding page is now presented as the user's `Overview`. New users complete the recap, Overview, and a one-page seven-answer Journey Map before the existing Video 1 preparation.
+- `js/journey-map.js` is the canonical shared source for the seven Level 1 questions, seven Level 2 questions, the external-AI help prompt, normalization, and copy formatting. Do not duplicate these questions in app or admin code.
+- Journey answers are private planning directions, not finished scripts. They remain separate from detailed video answers and are stored under `onboarding.video_answers._journey_maps`, avoiding a database migration.
+- Production generation and the Prompt Tester send only the active video's Journey direction. Future Journey answers are never included in an earlier video's prompt.
+- The direction appears above the active video's detailed questions and can be edited without changing those detailed answers. Existing scripts never change automatically; the latest direction is used only for a new generation or explicit regeneration.
+- Existing users are not forced through the new screen. Both level maps are available from Settings, while onboarding shows only the selected level.
+- Settings can delete Level 1 or Level 2 scripts independently while preserving onboarding, Overview, detailed answers, and Journey Maps. Delete Everything clears both levels of SeenInSeven data, returns to the first onboarding screen, and preserves the Studio account, email, password, and access.
+- The SeenInSeven admin user drawer now displays both Journey Maps. Journey help and completion actions also appear in the existing visit/event trail.
+- `scripts/check-journey-map.mjs` guards the 7+7 question source, first-person wording, onboarding placement, Settings access, current-video prompt inclusion, and future-answer isolation.

@@ -215,7 +215,7 @@
 const state = {
   posted:null, blocker:null, history:null, business:null,
   goal:null, minigoal:null, minigoalText:'', name:'',
-  level:null, videos:{}, videoStatus:{}, videoAnswersByLevel:{},
+  level:null, videos:{}, videoStatus:{}, videoAnswersByLevel:{}, journeyMaps:{1:[],2:[]},
   mvoQ2:null, mvoQ3:null, mvoQ4:null,
   topicFreewrite: '',
   l1VideoStatus: null,
@@ -248,7 +248,7 @@ const state = {
   }
 };
 
-const ONBOARDING_ORDER = ['screen-0','screen-1','screen-3','screen-content-intent','screen-2a','screen-commit-pain','screen-commit-desire','screen-6','screen-recap','screen-checklist','screen-mvo2','screen-7','screen-script','plan-screen'];
+const ONBOARDING_ORDER = ['screen-0','screen-1','screen-3','screen-content-intent','screen-2a','screen-commit-pain','screen-commit-desire','screen-6','screen-recap','screen-checklist','screen-journey-map','screen-mvo2','screen-7','screen-script','plan-screen'];
 let screenOrder = ['screen-0','screen-1'];
 let currentIndex = 0;
 let currentVideoIndex = 0;
@@ -259,6 +259,9 @@ let editingFromPlan = false;
 let mvoQ2Skipped = false;
 let maxProgressPct = 0;    // L1 blue bar — never decreases
 let maxProgressL2Pct = 0;  // L2 green bar — never decreases
+let journeyMapMode = 'onboarding';
+let journeyMapLevel = 1;
+let journeyMapReturnVideo = null;
 
 const SAVE_KEY = 'bwb_challenge_v1';
 let authScreenMode = 'signin';
@@ -458,6 +461,12 @@ function goNext() {
     // Populate freewrite textarea from state (safe - no template literal in HTML)
     renderTalkContext();
   }
+  if (nextId === 'screen-journey-map') {
+    journeyMapMode = 'onboarding';
+    journeyMapLevel = Number(state.level || 1);
+    journeyMapReturnVideo = null;
+    renderJourneyMap();
+  }
   if (cur === 'screen-checklist' && state.topicFreewrite && typeof logEvent === 'function') {
     logEvent('topic_freewrite_saved', {
       level: state.level || null,
@@ -490,6 +499,7 @@ function goBack() {
     currentIndex--;
     const prevId = screenOrder[currentIndex];
     if (prevId === 'screen-checklist') renderTalkContext();
+    else if (prevId === 'screen-journey-map') renderJourneyMap();
     else if (prevId === 'screen-3') renderChoiceGrid(BUSINESS_OPTIONS, 'business', 'business-choice-grid');
     else if (prevId === 'screen-2a') renderChoiceGrid(BLOCKER_OPTIONS, 'blocker', 'blocker-choice-grid');
     else if (prevId === 'screen-content-intent') renderContentIntentGrid();
@@ -1109,6 +1119,220 @@ function renderTalkContext() {
   if (message) message.value = p2.messageContext || '';
   if (knowledge) knowledge.value = state.topicFreewrite || p2.knowledgeContext || '';
   setTalkContext(state.topicFreewrite || p2.knowledgeContext || '');
+}
+
+// ── SEVEN-PART JOURNEY MAP ───────────────────────────
+function ensureJourneyMaps() {
+  if (window.SISJourneyMap) state.journeyMaps = SISJourneyMap.normalizeMap(state.journeyMaps);
+  else if (!state.journeyMaps || typeof state.journeyMaps !== 'object') state.journeyMaps = {1:[],2:[]};
+  return state.journeyMaps;
+}
+
+function journeyAnswersForLevel(level) {
+  const maps = ensureJourneyMaps();
+  return maps[Number(level) === 2 ? 2 : 1];
+}
+
+function journeyDirectionFor(videoIdx, level = state.level) {
+  return String(journeyAnswersForLevel(level)[Number(videoIdx)] || '').trim();
+}
+
+function journeyWordCount(value) {
+  return String(value || '').trim().split(/\s+/).filter(Boolean).length;
+}
+
+function journeyOnboardingContext() {
+  const p2 = ensurePhase2();
+  return [
+    state.name ? 'My name: ' + state.name : '',
+    state.business ? 'My current work or business stage: ' + (businessLabels[state.business] || state.business) : '',
+    state.blocker ? 'What has been getting in my way: ' + (blockerLabels[state.blocker] || state.blocker) : '',
+    p2.contentIntentTitle ? 'What I want these videos to do: ' + p2.contentIntentTitle : '',
+    p2.commitmentPainText ? 'What I want to move away from: ' + p2.commitmentPainText : '',
+    p2.commitmentDesireText ? 'What I want to move toward: ' + p2.commitmentDesireText : '',
+    p2.audienceContext ? 'Who I want to reach: ' + p2.audienceContext : ''
+  ].filter(Boolean).join('\n');
+}
+
+function renderJourneyMap() {
+  if (!window.SISJourneyMap) return;
+  const level = Number(journeyMapLevel) === 2 ? 2 : 1;
+  const questions = SISJourneyMap.QUESTIONS[level];
+  const answers = journeyAnswersForLevel(level);
+  const list = document.getElementById('journey-question-list');
+  const tabs = document.getElementById('journey-level-tabs');
+  const note = document.getElementById('journey-map-note');
+  const confirm = document.getElementById('journey-confirm-btn');
+  if (!list) return;
+
+  if (tabs) tabs.style.display = journeyMapMode === 'settings' ? 'flex' : 'none';
+  [1, 2].forEach(number => {
+    const tab = document.getElementById('journey-level-' + number);
+    if (tab) tab.classList.toggle('active', number === level);
+  });
+  if (note) {
+    note.textContent = journeyMapMode === 'onboarding'
+      ? 'You are mapping Level ' + level + '. You can build or edit the other level later in Settings.'
+      : 'Editing Level ' + level + '. Saved changes guide future scripts and intentional regenerations only.';
+  }
+  if (confirm) confirm.textContent = journeyMapMode === 'onboarding' ? 'This Feels Like My Story →' : 'Save My Journey →';
+
+  list.innerHTML = questions.map((question, index) => {
+    const value = answers[index] || '';
+    const count = journeyWordCount(value);
+    return `
+      <article class="journey-question-card">
+        <div class="journey-question-top">
+          <span class="journey-step">Video ${index + 1}</span>
+          <span class="journey-word-count${count > 25 ? ' over' : ''}" id="journey-count-${index}">${count} / 25 words</span>
+        </div>
+        <label for="journey-answer-${index}">${escapeHTML(question)}</label>
+        <textarea class="journey-answer-input" id="journey-answer-${index}" rows="3" placeholder="One sentence is enough."
+          oninput="setJourneyMapAnswer(${index}, this.value)">${escapeHTML(value)}</textarea>
+        <button class="journey-unsure-btn" type="button" onclick="setJourneyAnswerUnsure(${index})">I'm not sure yet</button>
+      </article>`;
+  }).join('');
+  if (journeyMapMode === 'video' && journeyMapReturnVideo != null) {
+    Array.from(list.children).forEach((card, index) => {
+      card.style.display = index === Number(journeyMapReturnVideo) ? '' : 'none';
+    });
+  }
+}
+
+function setJourneyMapAnswer(index, value) {
+  const answers = journeyAnswersForLevel(journeyMapLevel);
+  answers[Number(index)] = String(value || '').slice(0, 600);
+  const count = journeyWordCount(value);
+  const label = document.getElementById('journey-count-' + index);
+  if (label) {
+    label.textContent = count + ' / 25 words';
+    label.classList.toggle('over', count > 25);
+  }
+  clearTimeout(videoAnswerSaveTimer);
+  videoAnswerSaveTimer = setTimeout(saveProgress, 600);
+}
+
+function setJourneyAnswerUnsure(index) {
+  const input = document.getElementById('journey-answer-' + index);
+  if (input) {
+    input.value = "I'm not sure yet.";
+    setJourneyMapAnswer(index, input.value);
+  }
+}
+
+function selectJourneyMapLevel(level) {
+  journeyMapLevel = Number(level) === 2 ? 2 : 1;
+  renderJourneyMap();
+}
+
+function openJourneyHelp() {
+  if (!window.SISJourneyMap) return;
+  const prompt = SISJourneyMap.buildHelperPrompt(
+    journeyMapLevel,
+    state.topicFreewrite || ensurePhase2().knowledgeContext || '',
+    journeyOnboardingContext()
+  );
+  const field = document.getElementById('journey-help-prompt');
+  const overlay = document.getElementById('journey-help-overlay');
+  if (field) field.value = prompt;
+  if (overlay) overlay.hidden = false;
+  if (typeof logEvent === 'function') logEvent('journey_help_opened', { level: journeyMapLevel });
+}
+
+function closeJourneyHelp() {
+  const overlay = document.getElementById('journey-help-overlay');
+  if (overlay) overlay.hidden = true;
+}
+
+async function copyJourneyHelpPrompt(button) {
+  const field = document.getElementById('journey-help-prompt');
+  if (!field || !window.SISJourneyMap) return;
+  await SISJourneyMap.copyText(field.value);
+  if (button) {
+    const old = button.textContent;
+    button.textContent = 'Copied!';
+    setTimeout(() => { button.textContent = old; }, 1600);
+  }
+  if (typeof logEvent === 'function') logEvent('journey_help_copied', { level: journeyMapLevel });
+}
+
+async function copyCurrentJourney(button) {
+  if (!window.SISJourneyMap) return;
+  await SISJourneyMap.copyText(SISJourneyMap.formatJourney(journeyMapLevel, journeyAnswersForLevel(journeyMapLevel)));
+  if (button) {
+    const old = button.textContent;
+    button.textContent = 'Journey Copied!';
+    setTimeout(() => { button.textContent = old; }, 1600);
+  }
+}
+
+function completeJourneyMap() {
+  const answers = journeyAnswersForLevel(journeyMapLevel);
+  const missing = journeyMapMode === 'onboarding'
+    ? answers.findIndex(answer => !String(answer || '').trim())
+    : journeyMapMode === 'video' && journeyMapReturnVideo != null && !String(answers[journeyMapReturnVideo] || '').trim()
+      ? Number(journeyMapReturnVideo)
+      : -1;
+  if (missing >= 0) {
+    const input = document.getElementById('journey-answer-' + missing);
+    if (input) {
+      input.focus();
+      input.closest('.journey-question-card')?.classList.add('needs-answer');
+      setTimeout(() => input.closest('.journey-question-card')?.classList.remove('needs-answer'), 1400);
+    }
+    return;
+  }
+  saveProgress();
+  if (typeof logEvent === 'function') logEvent('journey_map_completed', {
+    level: journeyMapLevel,
+    answered: answers.filter(answer => SISJourneyMap.isUsableAnswer(answer)).length
+  });
+  if (journeyMapMode === 'onboarding') {
+    goNext();
+    return;
+  }
+  if (journeyMapReturnVideo != null) {
+    const video = journeyMapReturnVideo;
+    journeyMapReturnVideo = null;
+    renderVideoPrompts(video);
+    showScreen('screen-7');
+    currentIndex = screenOrder.indexOf('screen-7');
+    return;
+  }
+  showDashboard();
+}
+
+function backFromJourneyMap() {
+  if (journeyMapMode === 'onboarding') {
+    goBack();
+    return;
+  }
+  if (journeyMapReturnVideo != null) {
+    const video = journeyMapReturnVideo;
+    journeyMapReturnVideo = null;
+    renderVideoPrompts(video);
+    showScreen('screen-7');
+    currentIndex = screenOrder.indexOf('screen-7');
+    return;
+  }
+  showDashboard();
+}
+
+function openJourneyMapSettings() {
+  closeSettings();
+  journeyMapMode = 'settings';
+  journeyMapLevel = Number(state.level || 1);
+  journeyMapReturnVideo = null;
+  renderJourneyMap();
+  showScreen('screen-journey-map');
+}
+
+function editJourneyDirection(videoIdx) {
+  journeyMapMode = 'video';
+  journeyMapLevel = Number(state.level || 1);
+  journeyMapReturnVideo = Number(videoIdx);
+  renderJourneyMap();
+  showScreen('screen-journey-map');
 }
 
 function renderCommitmentCards(kind) {
@@ -2293,7 +2517,8 @@ function buildAPIUserMessage(videoIdx) {
     previousVideos,
     currentMode,
     currentEasyAnswer: currentEasy ? state.videos[currentEasy.key] || '' : '',
-    currentAnswers: videoIdx === 0 ? videoOnePromptAnswers(level) : extendedPromptAnswers(currentDefinition)
+    currentAnswers: videoIdx === 0 ? videoOnePromptAnswers(level) : extendedPromptAnswers(currentDefinition),
+    currentJourneyDirection: journeyDirectionFor(videoIdx, level)
   });
 }
 
@@ -2738,12 +2963,25 @@ function _buildPromptsContent(container, v, idx) {
     }
   }
 
+  const journeyDirection = journeyDirectionFor(idx);
+  const journeyDirectionHTML = `
+    <section class="journey-direction-card">
+      <div class="journey-direction-top">
+        <div>
+          <div class="journey-direction-label">Your direction for Video ${idx + 1}</div>
+          <div class="journey-direction-copy">${journeyDirection ? escapeHTML(journeyDirection) : '<em>No direction saved yet. You can add one without changing these detailed answers.</em>'}</div>
+        </div>
+        <button type="button" onclick="editJourneyDirection(${idx})">Edit</button>
+      </div>
+    </section>`;
+
   card.innerHTML = `
     <div class="journal-header">
       <div class="video-badge">VIDEO ${idx+1}</div>
       <div class="video-title-text">${v.title}</div>
     </div>
     <div class="video-note">${v.note}</div>
+    ${journeyDirectionHTML}
     ${promptsHTML}
   `;
   container.appendChild(card);
@@ -4734,6 +4972,9 @@ async function confirmLevelChange(newLevel) {
       state.videoStatus = {};
     }
   }
+  if (!Object.keys(state.videos || {}).some(key => VIDEO_ANSWER_KEY_PATTERN.test(key))) {
+    state.videos = Object.assign({}, state.videos || {}, state.videoAnswersByLevel[String(newLevel)] || {});
+  }
 
   state.level = newLevel;
   saveProgress();
@@ -4758,6 +4999,50 @@ async function confirmLevelChange(newLevel) {
     levelMsg.textContent = 'Switched. Your dashboard will update.';
     levelMsg.style.color = 'var(--teal)';
   }
+  buildPlan();
+}
+
+function confirmDeleteLevelScripts(level) {
+  const number = Number(level) === 2 ? 2 : 1;
+  const label = number === 1 ? 'Level 1' : 'Level 2';
+  const approved = window.confirm(
+    'Delete every ' + label + ' script, edit, lock, and filming update?\n\nYour Overview, onboarding answers, detailed question answers, and Journey Map will be kept.'
+  );
+  if (approved) deleteLevelScripts(number);
+}
+
+async function deleteLevelScripts(level) {
+  const number = Number(level) === 2 ? 2 : 1;
+  captureVideoAnswersByLevel();
+  const preservedAnswers = Object.assign({}, state.videoAnswersByLevel[String(number)] || {});
+
+  if (Number(state.level) === number) {
+    state.videos = preservedAnswers;
+    state.videoStatus = {};
+    state.videoPosted = {};
+  }
+  if (number === 1) {
+    state.l1Videos = null;
+    state.l1VideoStatus = null;
+  }
+
+  const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
+  if (user && typeof _sb !== 'undefined') {
+    const results = await Promise.all([
+      _sb.from('scripts').delete().eq('user_id', user.id).eq('level', number),
+      _sb.from('video_progress').delete().eq('user_id', user.id).eq('level', number)
+    ]);
+    const failed = results.find(result => result && result.error);
+    if (failed) {
+      console.error('[SeenInSeven] Level reset failed:', failed.error);
+      window.alert('The reset did not finish. Please try again.');
+      return;
+    }
+  }
+
+  saveProgress();
+  if (typeof logEvent === 'function') logEvent('level_scripts_deleted', { level: number });
+  closeSettings();
   buildPlan();
 }
 
@@ -5717,6 +6002,7 @@ async function restartWizard(){
   state.videos       = {};
   state.videoStatus  = {};
   state.videoAnswersByLevel = {};
+  state.journeyMaps  = {1:[],2:[]};
   state.videoPosted  = {};  // server rows are deleted below, keep points in parity
   state.l1Videos     = null;
   state.l1VideoStatus= null;
@@ -5731,6 +6017,9 @@ async function restartWizard(){
   state.mvoQ3        = null;
   state.mvoQ4        = null;
   state.topicFreewrite = '';
+  state.name         = '';
+  state.level        = null;
+  state.engage       = {};
   resetPhase2();
   mvoQ2Skipped = false;
   maxProgressPct = 0;
@@ -5748,8 +6037,7 @@ async function restartWizard(){
       _sb.from('video_progress').delete().eq('user_id', user.id),
       _sb.from('onboarding').delete().eq('user_id', user.id),
       _sb.from('users').update({
-        level: state.level, // keep level
-        blocker: null, business_stage: null
+        name: null, level: null, blocker: null, business_stage: null
       }).eq('id', user.id)
     ]);
     const failed = results.find(result => result && result.error);
@@ -5764,9 +6052,14 @@ async function restartWizard(){
   if (pfill) pfill.style.width = '0%';
   if (pfillL2) { pfillL2.style.width = '0%'; pfillL2.style.opacity = '0'; }
 
-  // Stay on dashboard — rebuild it fresh
-  buildPlan();
-  updateProgress('plan-screen');
+  try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
+  _dashboardShown = false;
+  screenOrder = ['screen-0','screen-1'];
+  currentIndex = 0;
+  currentVideoIndex = 0;
+  const nav = document.getElementById('header-nav');
+  if (nav) nav.style.display = 'none';
+  showScreen('screen-0');
 }
 
 // ── MVO MINI-WIZARD ───────────────────────────────────
@@ -6242,6 +6535,7 @@ function saveProgress(options = {}) {
     videoStatus:   state.videoStatus   || {},
     videos:        state.videos        || {},
     videoAnswersByLevel: state.videoAnswersByLevel || {},
+    journeyMaps:   ensureJourneyMaps(),
     l1VideoStatus: state.l1VideoStatus || null,
     l1Videos:      state.l1Videos      || null,
     topicFreewrite:state.topicFreewrite|| '',
@@ -6293,6 +6587,8 @@ function loadProgress() {
       if (data.videoStatus) state.videoStatus = data.videoStatus;
       if (data.videos)      state.videos      = data.videos;
       if (data.videoAnswersByLevel) state.videoAnswersByLevel = data.videoAnswersByLevel;
+      if (data.journeyMaps) state.journeyMaps = data.journeyMaps;
+      ensureJourneyMaps();
       if (data.mvoQ2)         state.mvoQ2         = data.mvoQ2;
       if (data.mvoQ3)         state.mvoQ3         = data.mvoQ3;
       if (data.mvoQ4)         state.mvoQ4         = data.mvoQ4;
@@ -6339,6 +6635,7 @@ function dismissBanner() {
   // Don't sign out — they may want to keep their account
   localStorage.removeItem(SAVE_KEY);
   Object.keys(state).forEach(k => state[k] = k === 'videos' || k === 'videoStatus' || k === 'videoAnswersByLevel' ? {} : null);
+  state.journeyMaps = {1:[],2:[]};
   state.name = ''; state.minigoalText = ''; state.topicFreewrite = '';
   resetPhase2();
   document.getElementById('returning-banner').classList.remove('visible');

@@ -71,6 +71,15 @@
         lines.push('', 'VIDEO ' + number + ' FINAL SCRIPT (voice and continuity reference; use once, do not repeat it):', String(previous.script).trim());
       }
     });
+    const journeyDirection = String(config.currentJourneyDirection || '').trim();
+    if (journeyDirection) {
+      lines.push(
+        '',
+        'CURRENT VIDEO ' + video + ' JOURNEY DIRECTION (private planning context only):',
+        journeyDirection,
+        'Use this as the intended subject and place in the seven-part journey. Do not quote it, treat it as finished copy, or pull in future journey directions.'
+      );
+    }
     if (video === 1) {
       appendAnswers(lines, 'VIDEO 1 PREFILLED PROMPTS (user may have edited these):', config.currentAnswers);
     } else if (config.currentMode === 'easy') {

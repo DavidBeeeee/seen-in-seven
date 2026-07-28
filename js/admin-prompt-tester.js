@@ -380,6 +380,36 @@ function testerContextKey(user, video, level, mode) {
   return testerBaseContextKey(user, video, level) + ':' + mode;
 }
 
+function databaseJourneyDirection(ob, video, level) {
+  const archive = ob && ob.video_answers && typeof ob.video_answers === 'object' ? ob.video_answers : {};
+  const maps = archive._journey_maps && window.SISJourneyMap
+    ? SISJourneyMap.normalizeMap(archive._journey_maps)
+    : {1:[],2:[]};
+  return String((maps[Number(level) === 2 ? 2 : 1] || [])[Number(video) - 1] || '');
+}
+
+function testJourneyDirection(user, ob, video, level) {
+  const key = testerBaseContextKey(user, video, level);
+  const overrides = promptState.workspace.journeyByContext || {};
+  return Object.prototype.hasOwnProperty.call(overrides, key)
+    ? String(overrides[key] || '')
+    : databaseJourneyDirection(ob, video, level);
+}
+
+function testerJourneyDirectionChanged(value) {
+  const user = selectedUser();
+  if (!user) return;
+  const video = Number(promptEl('test-video').value || 1);
+  const level = Number(promptEl('test-level').value || 1);
+  if (!promptState.workspace.journeyByContext) promptState.workspace.journeyByContext = {};
+  promptState.workspace.journeyByContext[testerBaseContextKey(user, video, level)] = String(value || '');
+  savePromptWorkspace();
+  const ob = selectedOnboarding(user.id);
+  const database = databaseAnswers(user, ob, video, level);
+  const mode = currentPromptMode(user, video, level, database);
+  rebuildUserMessage(user, ob, video, level, mode, answersForContext(user, ob, video, level, mode));
+}
+
 function easyQuestion(video, level) {
   const easyCatalog = PROMPT_QUESTION_CATALOG.easy;
   const questions = Array.isArray(easyCatalog)
@@ -539,6 +569,7 @@ function restoreUserAnswers() {
   const ob = selectedOnboarding(user.id);
   const mode = currentPromptMode(user, video, level, databaseAnswers(user, ob, video, level));
   if (promptState.workspace.answersByContext) delete promptState.workspace.answersByContext[testerContextKey(user, video, level, mode)];
+  if (promptState.workspace.journeyByContext) delete promptState.workspace.journeyByContext[testerBaseContextKey(user, video, level)];
   savePromptWorkspace();
   refreshTestMessage();
 }
@@ -564,6 +595,7 @@ function refreshTestMessage(useStoredMessage) {
     promptEl('question-note').textContent = 'Choose a user, level, and video to load its questions.';
     promptEl('prompt-questions').innerHTML = '';
     promptEl('question-mode-control').hidden = true;
+    promptEl('journey-direction-test').value = '';
     return;
   }
   const video = Number(promptEl('test-video').value || 1);
@@ -572,6 +604,7 @@ function refreshTestMessage(useStoredMessage) {
   const database = databaseAnswers(user, ob, video, level);
   const mode = currentPromptMode(user, video, level, database);
   const answers = answersForContext(user, ob, video, level, mode);
+  promptEl('journey-direction-test').value = testJourneyDirection(user, ob, video, level);
   renderPromptQuestions(user, ob, video, level, mode, answers);
   const contextKey = testerContextKey(user, video, level, mode);
   const storedMessage = useStoredMessage && promptState.workspace.rawMessages && promptState.workspace.rawMessages[contextKey];
@@ -641,7 +674,8 @@ function buildTestUserMessage(user, ob, video, level, mode, answers) {
     previousVideos,
     currentMode:mode,
     currentEasyAnswer:easy ? answers[easy.key] || '' : '',
-    currentAnswers:currentQuestions.map(question => ({label:question.label, value:answers[question.key] || ''}))
+    currentAnswers:currentQuestions.map(question => ({label:question.label, value:answers[question.key] || ''})),
+    currentJourneyDirection:testJourneyDirection(user, ob, video, level)
   });
 }
 
@@ -751,6 +785,7 @@ function currentTesterSnapshot() {
     video,
     level,
     mode,
+    journeyDirection:user ? testJourneyDirection(user, ob, video, level) : '',
     answersText: answerLines.join('\n\n'),
     testCopy: promptEl('user-message-editor').value.trim(),
     output: promptState.showRaw ? promptState.rawOutput : promptState.finalOutput
@@ -766,6 +801,9 @@ async function copyTestAnswers() {
     'Level ' + snapshot.level + ' | Video ' + snapshot.video + ' | ' + (snapshot.mode === 'extended' ? 'Extended' : 'Easy'),
     '',
     snapshot.answersText,
+    '',
+    'Journey direction:',
+    snapshot.journeyDirection || '(blank)',
     '',
     '--- Test Copy ---',
     snapshot.testCopy || '(blank)'
@@ -785,6 +823,9 @@ async function copyTroubleshootingPack() {
     '',
     '--- Answers ---',
     snapshot.answersText,
+    '',
+    '--- Journey Direction ---',
+    snapshot.journeyDirection || '(blank)',
     '',
     '--- Test Copy ---',
     snapshot.testCopy || '(blank)',

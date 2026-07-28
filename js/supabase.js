@@ -490,6 +490,9 @@ async function saveOnboardingToDb() {
     const videoAnswers = typeof captureVideoAnswersByLevel === 'function'
       ? captureVideoAnswersByLevel()
       : (state.videoAnswersByLevel || {});
+    videoAnswers._journey_maps = typeof ensureJourneyMaps === 'function'
+      ? ensureJourneyMaps()
+      : (state.journeyMaps || {1:[],2:[]});
     const richOnboarding = Object.assign({}, baseOnboarding, {
       phase2_context: phase2Context,
       mission_statement: phase2Context && phase2Context.missionStatement ? phase2Context.missionStatement : null,
@@ -701,6 +704,10 @@ async function _restoreFromDatabase() {
       if (onboarding.topic_freewrite) state.topicFreewrite = onboarding.topic_freewrite;
       if (onboarding.video_answers && typeof onboarding.video_answers === 'object') {
         state.videoAnswersByLevel = onboarding.video_answers;
+        if (onboarding.video_answers._journey_maps) {
+          state.journeyMaps = onboarding.video_answers._journey_maps;
+          if (typeof ensureJourneyMaps === 'function') ensureJourneyMaps();
+        }
         const savedAnswers = onboarding.video_answers[String(activeLevel)];
         if (savedAnswers && typeof savedAnswers === 'object') {
           Object.keys(savedAnswers).forEach(key => {
