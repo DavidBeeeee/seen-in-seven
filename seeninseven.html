@@ -599,6 +599,22 @@
   </section>
 </div>
 
+<div class="answer-help-overlay" id="answer-help-overlay" hidden onclick="if(event.target===this) closeAnswerHelp()">
+  <section class="answer-help-modal" role="dialog" aria-modal="true" aria-labelledby="answer-help-title">
+    <div class="answer-help-header">
+      <div>
+        <div class="eyebrow">Use Your Favorite AI</div>
+        <h2 id="answer-help-title">Find a stronger answer.</h2>
+      </div>
+      <button class="settings-close" type="button" onclick="closeAnswerHelp()" aria-label="Close">✕</button>
+    </div>
+    <p id="answer-help-description">Copy this prompt into ChatGPT, Claude, Gemini, or another AI. It will offer three different directions before writing a paste-ready answer.</p>
+    <div class="answer-help-context" id="answer-help-context"></div>
+    <textarea id="answer-help-prompt" class="answer-help-prompt" readonly></textarea>
+    <button class="btn-primary" id="answer-help-copy" type="button" onclick="copyAnswerHelpPrompt(this)">Copy Full Prompt</button>
+  </section>
+</div>
+
 
 
 <!-- ══ MVO Q2 — Script 1 mini-wizard ══ -->
@@ -610,6 +626,9 @@
     <div class="context-toggle mvo-mode-toggle" role="group" aria-label="Script prep depth">
       <button class="context-toggle-btn active" id="mvo-simple-btn" onclick="setMvoMode('simple')">Simple</button>
       <button class="context-toggle-btn" id="mvo-extended-btn" onclick="setMvoMode('extended')">Extended</button>
+    </div>
+    <div class="answer-help-row">
+      <button class="answer-help-trigger" id="mvo-answer-help-btn" type="button" onclick="openCurrentMvoAnswerHelp()">ⓘ Need Help With This Answer?</button>
     </div>
     <div id="mvo2-cards" class="mvo-brief"></div>
     <div class="btn-row">
@@ -922,9 +941,10 @@
 ══════════════════════════════════════ -->
 <script src="/js/script-prompt-engine.js?v=journey-map-1"></script>
 <script src="/js/journey-map.js?v=journey-map-1"></script>
+<script src="/js/answer-help.js?v=answer-help-1"></script>
 <script src="/js/supabase.js?v=journey-map-1"></script>
 <script src="/js/points.js?v=active-lock-1"></script>
-<script src="/js/app.js?v=journey-map-1"></script>
+<script src="/js/app.js?v=answer-help-1"></script>
 
 <!-- ══ DUAL COMPLETE OVERLAY ══ -->
 <div id="dual-complete-overlay">

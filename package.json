@@ -7,6 +7,7 @@
     "check:story-architecture": "node scripts/check-story-architecture.mjs",
     "check:lock-state": "node scripts/check-lock-state.mjs",
     "check:journey-map": "node scripts/check-journey-map.mjs",
-    "test": "npm run check:prompt-style && npm run check:story-architecture && npm run check:lock-state && npm run check:journey-map"
+    "check:answer-help": "node scripts/check-answer-help.mjs",
+    "test": "npm run check:prompt-style && npm run check:story-architecture && npm run check:lock-state && npm run check:journey-map && npm run check:answer-help"
   }
 }

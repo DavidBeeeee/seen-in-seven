@@ -407,6 +407,10 @@ These items are intentionally not part of the current implementation plan:
 
 The onboarding flow now includes a private seven-part Journey Map after the Overview and before Video 1 preparation. It uses one shared set of seven questions per level, keeps planned directions separate from detailed answers, and sends only the active video's direction into generation. Existing users edit either level from Settings. Level-specific resets preserve both the Overview and Journey Maps; Delete Everything returns to onboarding while preserving the Studio account.
 
+### Implemented July 28, 2026: Per-video answer help
+
+Simple and Extended preparation for all fourteen video paths now includes a copied prompt for use in an outside AI. The helper offers three different source directions before writing paste-ready journal answers, uses only the current Journey direction, and treats previous scripts as continuity that should not be recycled. It does not change the production script blueprint or save anything back to the user's account automatically.
+
 After any app change, verify:
 
 - `git status` is understood before editing.

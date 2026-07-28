@@ -1256,6 +1256,137 @@ async function copyJourneyHelpPrompt(button) {
   if (typeof logEvent === 'function') logEvent('journey_help_copied', { level: journeyMapLevel });
 }
 
+function answerHelpOnboardingContext() {
+  const p2 = ensurePhase2();
+  return [
+    journeyOnboardingContext(),
+    p2.messageContext ? 'What I want the right person to understand or feel: ' + p2.messageContext : '',
+    p2.commitmentDeclaration ? 'My commitment: ' + p2.commitmentDeclaration : '',
+    p2.missionStatement ? 'My private mission statement: ' + p2.missionStatement : ''
+  ].filter(Boolean).join('\n');
+}
+
+function answerHelpOverview() {
+  const p2 = ensurePhase2();
+  const values = [state.topicFreewrite, p2.knowledgeContext]
+    .map(value => String(value || '').trim())
+    .filter((value, index, all) => value && all.indexOf(value) === index);
+  return values.join('\n\n');
+}
+
+function mvoAnswerHelpQuestions(level, mode) {
+  const questionNumbers = Number(level) === 1 && mode === 'simple' ? [3] : [2, 3, 4];
+  const questions = questionNumbers.map(qNum => {
+    const data = MVO_DATA['q' + qNum][level];
+    return {
+      label: data.question,
+      hint: getMvoSubtitle(qNum, level, mode),
+      value: mvoAnswerText(qNum, level)
+    };
+  });
+  if (Number(level) === 2 && mode === 'extended') {
+    questions.push({
+      label: 'Anything else you would like to add?',
+      hint: 'Add any detail that would help this first script feel more accurate, specific, or useful.',
+      value: ensurePhase2().firstScriptNotes || ''
+    });
+  }
+  return questions;
+}
+
+function answerHelpQuestions(videoIdx, mode) {
+  const level = state.level || 1;
+  if (Number(videoIdx) === 0) return mvoAnswerHelpQuestions(level, mode);
+  const definition = getVideos()[videoIdx];
+  if (mode === 'simple') {
+    const easy = getEasyPrompt(videoIdx, level);
+    return easy ? [{
+      label: easy.label,
+      hint: easy.hint,
+      value: state.videos[easy.key] || ''
+    }] : [];
+  }
+  return (definition && definition.prompts || []).map(prompt => ({
+    label: prompt.label,
+    hint: prompt.hint,
+    value: state.videos[prompt.key] || ''
+  }));
+}
+
+function answerHelpPreviousScripts(videoIdx) {
+  const scripts = [];
+  for (let index = 0; index < Number(videoIdx); index++) {
+    const raw = state.videos['script_v' + index] || '';
+    if (!raw) continue;
+    scripts.push({
+      video: index + 1,
+      locked: !!state.videos['locked_v' + index],
+      script: finalScriptText(index, raw, state.level || 1)
+    });
+  }
+  return scripts;
+}
+
+function openAnswerHelp(videoIdx, mode) {
+  if (!window.SISAnswerHelp) return;
+  const normalizedMode = mode === 'extended' ? 'extended' : 'simple';
+  const questions = answerHelpQuestions(videoIdx, normalizedMode);
+  const prompt = SISAnswerHelp.buildPrompt({
+    level: state.level || 1,
+    videoIndex: Number(videoIdx),
+    mode: normalizedMode,
+    questions,
+    journeyDirection: journeyDirectionFor(videoIdx),
+    previousScripts: answerHelpPreviousScripts(videoIdx),
+    onboardingContext: answerHelpOnboardingContext(),
+    overview: answerHelpOverview()
+  });
+  const title = document.getElementById('answer-help-title');
+  const context = document.getElementById('answer-help-context');
+  const field = document.getElementById('answer-help-prompt');
+  const overlay = document.getElementById('answer-help-overlay');
+  if (title) title.textContent = 'Find a stronger Video ' + (Number(videoIdx) + 1) + ' answer.';
+  if (context) context.textContent = 'Level ' + (state.level || 1) + ' · Video ' + (Number(videoIdx) + 1) + ' · ' + (normalizedMode === 'extended' ? 'Extended' : 'Simple');
+  if (field) {
+    field.value = prompt;
+    field.scrollTop = 0;
+  }
+  if (overlay) overlay.hidden = false;
+  if (typeof logEvent === 'function') {
+    logEvent('answer_help_opened', {
+      level: state.level || 1,
+      video_number: Number(videoIdx) + 1,
+      prompt_mode: normalizedMode
+    });
+  }
+}
+
+function openCurrentMvoAnswerHelp() {
+  openAnswerHelp(0, ensurePhase2().mvoMode || 'simple');
+}
+
+function closeAnswerHelp() {
+  const overlay = document.getElementById('answer-help-overlay');
+  if (overlay) overlay.hidden = true;
+}
+
+async function copyAnswerHelpPrompt(button) {
+  const field = document.getElementById('answer-help-prompt');
+  if (!field || !window.SISAnswerHelp) return;
+  await SISAnswerHelp.copyText(field.value);
+  if (button) {
+    const old = button.textContent;
+    button.textContent = 'Copied!';
+    setTimeout(() => { button.textContent = old; }, 1600);
+  }
+  if (typeof logEvent === 'function') {
+    logEvent('answer_help_copied', {
+      level: state.level || 1,
+      video_number: currentVideoIndex + 1
+    });
+  }
+}
+
 async function copyCurrentJourney(button) {
   if (!window.SISJourneyMap) return;
   await SISJourneyMap.copyText(SISJourneyMap.formatJourney(journeyMapLevel, journeyAnswersForLevel(journeyMapLevel)));
@@ -2932,7 +3063,10 @@ function _buildPromptsContent(container, v, idx) {
   } else {
     const easyPrompt = getEasyPrompt(idx, state.level || 1);
     const defaultMode = getSavedVideoPromptMode(idx);
-    const extHTML = v.prompts.map(p => `
+    const extHTML = `
+      <div class="answer-help-row">
+        <button class="answer-help-trigger" type="button" onclick="openAnswerHelp(${idx},'extended')">ⓘ Need Help With These Answers?</button>
+      </div>` + v.prompts.map(p => `
       <div class="input-group">
         <label class="input-label">${p.label}</label>
         <span class="input-hint">${p.hint}</span>
@@ -2943,6 +3077,9 @@ function _buildPromptsContent(container, v, idx) {
     if (easyPrompt) {
       const easyAnswerVal = state.videos[easyPrompt.key] || '';
       const easyHTML = `
+        <div class="answer-help-row">
+          <button class="answer-help-trigger" type="button" onclick="openAnswerHelp(${idx},'simple')">ⓘ Need Help With This Answer?</button>
+        </div>
         <div class="input-group">
           <label class="input-label">${easyPrompt.label}</label>
           <span class="input-hint">${easyPrompt.hint}</span>
@@ -6130,12 +6267,17 @@ function renderMvoScreen() {
   const subtitle = document.getElementById('mvo2-subtitle');
   const simpleBtn = document.getElementById('mvo-simple-btn');
   const extendedBtn = document.getElementById('mvo-extended-btn');
+  const helpBtn = document.getElementById('mvo-answer-help-btn');
   const container = document.getElementById('mvo2-cards');
   if (!container) return;
   if (title) title.textContent = level === 2 ? "Let's get your expert script ready." : "Let's get your script ready.";
   if (subtitle) subtitle.textContent = level === 2 ? 'Three questions. Your answers become the foundation of your first script.' : 'Answer what feels relevant. The more you add, the more the script sounds like you.';
   if (simpleBtn) simpleBtn.classList.toggle('active', mode === 'simple');
   if (extendedBtn) extendedBtn.classList.toggle('active', mode === 'extended');
+  if (helpBtn) {
+    const questionCount = level === 1 && mode === 'simple' ? 1 : (level === 2 && mode === 'extended' ? 4 : 3);
+    helpBtn.textContent = questionCount === 1 ? 'ⓘ Need Help With This Answer?' : 'ⓘ Need Help With These Answers?';
+  }
 
   if (level === 1) {
     autoPopulateMvoQ2FromOnboarding();

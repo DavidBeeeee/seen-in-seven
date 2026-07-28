@@ -925,3 +925,15 @@ The following principles govern every word of copy in this app and the broader C
 - Settings can delete Level 1 or Level 2 scripts independently while preserving onboarding, Overview, detailed answers, and Journey Maps. Delete Everything clears both levels of SeenInSeven data, returns to the first onboarding screen, and preserves the Studio account, email, password, and access.
 - The SeenInSeven admin user drawer now displays both Journey Maps. Journey help and completion actions also appear in the existing visit/event trail.
 - `scripts/check-journey-map.mjs` guards the 7+7 question source, first-person wording, onboarding placement, Settings access, current-video prompt inclusion, and future-answer isolation.
+
+## 2026-07-28: Per-video external AI answer help
+
+- Every Video 1 Simple/Extended preparation screen and every Video 2-7 Simple/Extended journal section now has a `Need Help?` action.
+- `js/answer-help.js` owns fourteen plain-language answer-development assignments, one per Level 1 and Level 2 video. It does not duplicate the app questions. `app.js` passes the current runtime questions, hints, and typed values into the helper.
+- The copied prompt is designed for a user's existing ChatGPT, Claude, Gemini, or other AI conversation. It treats earlier chat history as a research archive, quarantines rejected suggestions, and requires three genuinely different source directions before drafting an answer.
+- Previous saved scripts are included as established continuity. Locked scripts are labeled locked; otherwise the latest saved script is used. Earlier raw answers are not included, and future Journey directions or questions are never sent.
+- The helper receives the active Journey direction, curated onboarding context, Overview notes, current questions, current typed answers, and earlier scripts. It does not receive future chapters.
+- The outside AI may infer, combine, or invent plausible details when material is thin. It is instructed to preserve raw or uncomfortable specifics and return paste-ready first-person journal material, not a script, hook, CTA, lesson plan, or sales message.
+- Simple mode with one field returns one 150-250 word journal answer. Multi-field preparation and Extended mode return each exact question with its own separate paste-ready answer.
+- This feature does not write into app fields, modify saved answers, call DeepSeek, or change `api/_lib/blueprints.txt`, the production generation path, script review, Hook Studio, or Open Loop architecture.
+- `scripts/check-answer-help.mjs` guards the fourteen assignments, current-only context, anti-repetition contract, interactive option flow, output formatting, and UI entry points.
