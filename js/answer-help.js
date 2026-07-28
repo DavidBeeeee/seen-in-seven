@@ -64,20 +64,27 @@
     const assignment = ASSIGNMENTS[level][videoIndex];
     const onboarding = clean(config && config.onboardingContext) || '(No onboarding details were provided.)';
     const overview = clean(config && config.overview) || '(No additional Overview notes were provided.)';
-    const direction = clean(config && config.journeyDirection) || '(No one-sentence direction was saved. Use the current assignment and questions without inventing a separate seven-part plan.)';
+    const direction = clean(config && config.journeyDirection) || '(No one-sentence direction was saved. Select a story from the Overview that fits the current assignment and questions.)';
     const prior = formatPreviousScripts(config && config.previousScripts);
 
     return `I am completing Level ${level}, Video ${videoNumber} in SeenInSeven. Help me produce better raw journal answers for the current app questions.
 
-IMPORTANT CONTEXT RESET
+NON-NEGOTIABLE SOURCE ORDER
 
-Treat everything before this message as a research archive, not an active assignment. Privately sort the available material into four groups:
-1. ESTABLISHED STORY: events and conclusions already used in my finished scripts below.
-2. CONTAMINATED IDEAS: story suggestions, options, drafts, or angles proposed earlier in this conversation but not used.
-3. FRESH MATERIAL: memories, contradictions, details, and plausible possibilities that have not been used.
-4. CURRENT ASSIGNMENT: the exact questions and purpose below.
+1. CURRENT STORY DIRECTION selects the story being developed for this video.
+2. OVERVIEW NOTES are the primary source used to expand that selected story.
+3. CURRENT QUESTIONS determine which parts of the selected story need deeper answers.
+4. CURRENT ANSWERS are evidence, corrections, and starting material.
+5. EARLIER SCRIPTS preserve continuity and show which revelations or language have already been used.
+6. ONBOARDING CONTEXT supports voice, audience, and motivation.
 
-Do not print that private sorting. A previously suggested but rejected idea is unavailable unless I explicitly revive it after this message. Old conversation momentum does not outrank this assignment.
+When a saved Current Story Direction appears below, it is a binding scope, not background context or an optional suggestion. Keep its central period, event, relationships, and conflict. Use the Overview to expand that story. Do not replace it with another event from my life, even if another event seems more dramatic.
+
+If the Current Story Direction explicitly says that no direction was saved, use the Overview to offer three candidate stories that fit the current assignment and questions. Once I choose one, remain inside that story.
+
+CURRENT STORY DIRECTION
+
+${direction}
 
 WHAT THIS ANSWER NEEDS TO DO
 
@@ -85,15 +92,15 @@ ${assignment}
 
 This is source-material development, not scriptwriting. Do not write a hook, open loop, conclusion, CTA, finished video, content strategy, lesson outline, or sales message. Do not mention story architecture, stage names, challenge architecture, or marketing frameworks.
 
-CURRENT STORY DIRECTION
-
-${direction}
-
 CURRENT ${mode.toUpperCase()} QUESTIONS
 
 ${formatQuestions(questions)}
 
-ESTABLISHED EARLIER SCRIPTS
+OVERVIEW NOTES: PRIMARY STORY SOURCE
+
+${overview}
+
+ESTABLISHED EARLIER SCRIPTS: CONTINUITY RECORD
 
 ${prior}
 
@@ -101,33 +108,35 @@ ONBOARDING CONTEXT
 
 ${onboarding}
 
-OVERVIEW NOTES
+CONTEXT RESET
 
-${overview}
+Treat everything before this message as a research archive, not an active assignment. Previously suggested but rejected story ideas are unavailable unless I explicitly revive them after this message. Old conversation momentum cannot override the Current Story Direction.
+
+You may recover facts, language, memories, and emotional context from earlier conversations only when they deepen the selected story. Do not use the archive to switch to a different story.
 
 CREATIVE FREEDOM
 
-Use everything you already know about me, including useful memories from earlier conversations and connected material. You may infer motives, combine related memories, compress timelines, merge people or moments, invent plausible scenes and consequences, and choose details that could be true when the source material is thin. Write the strongest useful possibility directly. I will correct details before using the answer.
+Use the Overview and other available context to make the selected story richer. You may infer motives, combine related memories, compress details within the selected period, merge related people or moments, and invent plausible connective scenes or consequences when the source material is thin. Creative freedom fills gaps inside the selected story. It does not authorize changing the selected story.
 
 Do not moralize, soften difficult material, sanitize offensive or uncomfortable details, or replace a rough human truth with therapy language, corporate language, or generic inspiration. Do not retreat into vague phrases when a concrete event, choice, object, place, consequence, or line of dialogue would make the answer stronger.
 
-ANTI-REPETITION RULES
+CONTINUITY AND VARIETY
 
-- The earlier scripts are established continuity, not a pile of material to recycle.
-- Do not reuse an earlier script's central event, main scene, primary conflict, conclusion, signature phrase, or dominant metaphor as the core of this answer.
-- A prior event may appear only as a brief continuity reference when the current question truly requires it. The current answer must add a new scene, decision, consequence, contradiction, or meaning.
-- The three directions must use different source events or time periods and different central conflicts. They cannot be rewrites of one idea.
-- Do not make all three directions point toward the same lesson.
-- Do not repeat my current answer with cleaner wording. Treat it as evidence, then search wider.
+- Reusing an established setting, job, relationship, event, or life fact is allowed when the seven-video story requires continuity.
+- Repetition means copying an earlier video's narrative purpose, emotional revelation, conclusion, dominant scene construction, signature language, or primary metaphor.
+- Deepen the current answers instead of merely rewriting them. Search deeper inside the assigned story for concrete detail, conflict, motive, and consequence.
+- When a saved direction exists, all three options must stay inside that same story and time window. Vary the focal scene, evidence, emotional tension, relationship, or detail being emphasized.
+- The options cannot replace the selected story with different events from my life.
+- Do not make all three options point toward the same interpretation or use the same evidence.
 - Never pull from future SeenInSeven questions or invent the later chapters of this seven-part sequence.
-- If the archive keeps pulling you toward a familiar story, deliberately choose a less obvious memory or invent a plausible alternative.
 
 INTERACTIVE PROCESS
 
-Your first reply must contain exactly three concise directions labeled OPTION 1, OPTION 2, and OPTION 3.
+Your first reply must contain exactly three concise answer approaches labeled OPTION 1, OPTION 2, and OPTION 3.
 
 Each option must:
-- Name the underlying event, period, or situation.
+- Develop the Current Story Direction rather than proposing a replacement story.
+- Name the focal scene, detail, evidence, relationship, or tension it would emphasize.
 - State the human tension that makes it useful for the current question.
 - Use no more than two short sentences.
 - Be meaningfully different from the other two.
@@ -135,7 +144,7 @@ Each option must:
 
 After the three options, write one short line telling me I can reply with 1, 2, 3, mix parts, say "choose for me," or ask for "three more."
 
-If I ask for three more, every direction shown so far becomes contaminated and unavailable. Search a different time period, source event, and conflict. Do not rephrase a previous option.
+If I ask for three more, every approach shown so far becomes unavailable. Find three new focal scenes, details, tensions, or interpretations inside the same Current Story Direction. Do not move to a different life chapter unless no direction was saved.
 
 If I choose an option, mix options, or say "choose for me," stop offering choices and write the final paste-ready answer.
 

@@ -938,6 +938,14 @@ The following principles govern every word of copy in this app and the broader C
 - This feature does not write into app fields, modify saved answers, call DeepSeek, or change `api/_lib/blueprints.txt`, the production generation path, script review, Hook Studio, or Open Loop architecture.
 - `scripts/check-answer-help.mjs` guards the fourteen assignments, current-only context, anti-repetition contract, interactive option flow, output formatting, and UI entry points.
 
+### 2026-07-28 answer-helper scope correction
+
+- The copied per-video helper prompt now treats the saved Journey Direction as a binding story selection and the Overview as the primary source used to expand that story into answers.
+- Its three options are answer approaches inside the same selected event and period, not three competing stories from the user's life.
+- Shared settings, jobs, relationships, events, and life facts are explicitly allowed for continuity. The helper avoids repeating an earlier script's narrative job, revelation, conclusion, construction, language, or metaphor instead.
+- Creative inference may fill gaps inside the selected story but cannot replace it. When no Journey Direction exists, the outside AI may offer three candidate stories from the Overview.
+- This correction changes only the copied external-AI prompt in `js/answer-help.js`. App questions, saved answers, production generation, and the blueprint remain unchanged.
+
 ## 2026-07-28: Overview character-bio helper
 
 - The onboarding Overview page now includes `Need Help Building Your Overview?`.

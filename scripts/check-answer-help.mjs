@@ -56,10 +56,11 @@ const simplePrompt = helper.buildPrompt({
   'LOCKED SCRIPT SENTINEL',
   'ONBOARDING SENTINEL',
   'OVERVIEW SENTINEL',
-  'CONTAMINATED IDEAS',
+  'binding scope',
+  'PRIMARY STORY SOURCE',
   'OPTION 1',
   'three more',
-  'invent plausible scenes',
+  'invent plausible connective scenes',
   '150 to 250 words'
 ].forEach(value => {
   if (!simplePrompt.includes(value)) throw new Error(`Simple helper prompt is missing: ${value}`);
@@ -68,8 +69,17 @@ const simplePrompt = helper.buildPrompt({
 if (simplePrompt.includes('FUTURE DIRECTION SENTINEL')) {
   throw new Error('A future Journey direction leaked into Answer Help.');
 }
-if (!simplePrompt.includes('different source events or time periods and different central conflicts')) {
-  throw new Error('The structural anti-repetition rule is missing.');
+if (!simplePrompt.includes('all three options must stay inside that same story and time window')) {
+  throw new Error('The selected Journey direction is not protected across all three options.');
+}
+if (!simplePrompt.includes('Reusing an established setting, job, relationship, event, or life fact is allowed')) {
+  throw new Error('Continuity facts are still being mistaken for repetition.');
+}
+if (simplePrompt.includes('different source events or time periods') || simplePrompt.includes('Search a different time period')) {
+  throw new Error('The old cross-story variety rule is still present.');
+}
+if (simplePrompt.indexOf('CURRENT DIRECTION SENTINEL') > simplePrompt.indexOf('OVERVIEW SENTINEL')) {
+  throw new Error('The Overview appears before the binding Current Story Direction.');
 }
 if (!simplePrompt.includes('not scriptwriting')) {
   throw new Error('The raw-answer boundary is missing.');
@@ -91,7 +101,7 @@ if (!extendedPrompt.includes('different job, scene, or piece of evidence')) {
   throw new Error('Extended answers are not protected from repeating each other.');
 }
 
-if (!html.includes('id="answer-help-overlay"') || !html.includes('/js/answer-help.js?v=answer-help-1')) {
+if (!html.includes('id="answer-help-overlay"') || !html.includes('/js/answer-help.js?v=answer-help-2')) {
   throw new Error('Answer Help modal or shared script include is missing.');
 }
 if (!html.includes('openCurrentMvoAnswerHelp()')) {
