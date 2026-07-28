@@ -937,3 +937,11 @@ The following principles govern every word of copy in this app and the broader C
 - Simple mode with one field returns one 150-250 word journal answer. Multi-field preparation and Extended mode return each exact question with its own separate paste-ready answer.
 - This feature does not write into app fields, modify saved answers, call DeepSeek, or change `api/_lib/blueprints.txt`, the production generation path, script review, Hook Studio, or Open Loop architecture.
 - `scripts/check-answer-help.mjs` guards the fourteen assignments, current-only context, anti-repetition contract, interactive option flow, output formatting, and UI entry points.
+
+## 2026-07-28: Overview character-bio helper
+
+- The onboarding Overview page now includes `Need Help Building Your Overview?`.
+- The supplied two-step character-bio prompt is stored unchanged in `assets/overview-character-bio-prompt.txt` and loaded only when the helper opens.
+- The copied prompt appends the user's current onboarding context and any existing Overview draft. It asks the outside AI to assess available material, ask one to five useful clarification questions, then produce the final first-person character study after the user answers.
+- The final bio is limited to 11,500 characters so it fits the existing 12,000-character Overview field without being silently truncated.
+- The app never sends the prompt to DeepSeek and never writes the outside AI response into the Overview automatically. The user remains in control of what they paste into the app.

@@ -1327,8 +1327,12 @@ function answerHelpPreviousScripts(videoIdx) {
   return scripts;
 }
 
+let activeAnswerHelpLogContext = null;
+let answerHelpRequestId = 0;
+
 function openAnswerHelp(videoIdx, mode) {
   if (!window.SISAnswerHelp) return;
+  answerHelpRequestId += 1;
   const normalizedMode = mode === 'extended' ? 'extended' : 'simple';
   const questions = answerHelpQuestions(videoIdx, normalizedMode);
   const prompt = SISAnswerHelp.buildPrompt({
@@ -1342,22 +1346,28 @@ function openAnswerHelp(videoIdx, mode) {
     overview: answerHelpOverview()
   });
   const title = document.getElementById('answer-help-title');
+  const description = document.getElementById('answer-help-description');
   const context = document.getElementById('answer-help-context');
   const field = document.getElementById('answer-help-prompt');
+  const copyButton = document.getElementById('answer-help-copy');
   const overlay = document.getElementById('answer-help-overlay');
   if (title) title.textContent = 'Find a stronger Video ' + (Number(videoIdx) + 1) + ' answer.';
+  if (description) description.textContent = 'Copy this prompt into ChatGPT, Claude, Gemini, or another AI. It will offer three different directions before writing a paste-ready answer.';
   if (context) context.textContent = 'Level ' + (state.level || 1) + ' · Video ' + (Number(videoIdx) + 1) + ' · ' + (normalizedMode === 'extended' ? 'Extended' : 'Simple');
   if (field) {
     field.value = prompt;
     field.scrollTop = 0;
   }
+  if (copyButton) copyButton.disabled = false;
   if (overlay) overlay.hidden = false;
+  activeAnswerHelpLogContext = {
+    source: 'video_answers',
+    level: state.level || 1,
+    video_number: Number(videoIdx) + 1,
+    prompt_mode: normalizedMode
+  };
   if (typeof logEvent === 'function') {
-    logEvent('answer_help_opened', {
-      level: state.level || 1,
-      video_number: Number(videoIdx) + 1,
-      prompt_mode: normalizedMode
-    });
+    logEvent('answer_help_opened', activeAnswerHelpLogContext);
   }
 }
 
@@ -1365,7 +1375,66 @@ function openCurrentMvoAnswerHelp() {
   openAnswerHelp(0, ensurePhase2().mvoMode || 'simple');
 }
 
+async function openOverviewAnswerHelp() {
+  const requestId = ++answerHelpRequestId;
+  const title = document.getElementById('answer-help-title');
+  const description = document.getElementById('answer-help-description');
+  const context = document.getElementById('answer-help-context');
+  const field = document.getElementById('answer-help-prompt');
+  const copyButton = document.getElementById('answer-help-copy');
+  const overlay = document.getElementById('answer-help-overlay');
+  if (title) title.textContent = 'Build your full character bio.';
+  if (description) description.textContent = 'Copy this into ChatGPT, Claude, Gemini, or another AI. It will assess what it knows, ask up to five useful questions, then create the full Overview after you answer.';
+  if (context) context.textContent = 'Onboarding · Overview · Full History';
+  if (field) field.value = 'Loading your Overview prompt...';
+  if (copyButton) copyButton.disabled = true;
+  if (overlay) overlay.hidden = false;
+  activeAnswerHelpLogContext = {
+    source: 'overview_character_bio',
+    level: state.level || 1
+  };
+  try {
+    const response = await fetch('/assets/overview-character-bio-prompt.txt?v=overview-help-1');
+    if (!response.ok) throw new Error('Overview prompt could not be loaded.');
+    const basePrompt = String(await response.text()).trim();
+    if (requestId !== answerHelpRequestId) return;
+    const onboarding = answerHelpOnboardingContext();
+    const currentOverview = answerHelpOverview();
+    const appContext = [
+      'CURRENT SEENINSEVEN CONTEXT',
+      '',
+      'Selected level: Level ' + (state.level || 1),
+      onboarding || '(No additional onboarding details were provided.)',
+      '',
+      'CURRENT OVERVIEW DRAFT',
+      '',
+      currentOverview || '(blank)',
+      '',
+      'APP-SPECIFIC FINAL FORMAT',
+      '',
+      'Keep the completed character bio under 11,500 characters so it can be pasted into the SeenInSeven Overview field without being cut off.'
+    ].join('\n');
+    if (field) {
+      field.value = basePrompt + '\n\n' + appContext;
+      field.scrollTop = 0;
+    }
+    if (copyButton) copyButton.disabled = false;
+    if (typeof logEvent === 'function') logEvent('answer_help_opened', activeAnswerHelpLogContext);
+  } catch (error) {
+    if (requestId !== answerHelpRequestId) return;
+    if (field) field.value = 'The Overview prompt could not be loaded. Please close this window and try again.';
+    if (copyButton) copyButton.disabled = true;
+    if (typeof logEvent === 'function') {
+      logEvent('answer_help_failed', {
+        source: 'overview_character_bio',
+        message: String(error && error.message || error || 'Unknown error').slice(0, 180)
+      });
+    }
+  }
+}
+
 function closeAnswerHelp() {
+  answerHelpRequestId += 1;
   const overlay = document.getElementById('answer-help-overlay');
   if (overlay) overlay.hidden = true;
 }
@@ -1380,9 +1449,9 @@ async function copyAnswerHelpPrompt(button) {
     setTimeout(() => { button.textContent = old; }, 1600);
   }
   if (typeof logEvent === 'function') {
-    logEvent('answer_help_copied', {
-      level: state.level || 1,
-      video_number: currentVideoIndex + 1
+    logEvent('answer_help_copied', activeAnswerHelpLogContext || {
+      source: 'unknown',
+      level: state.level || 1
     });
   }
 }

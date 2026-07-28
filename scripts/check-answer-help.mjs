@@ -4,6 +4,7 @@ import vm from 'node:vm';
 const helperSource = fs.readFileSync('js/answer-help.js', 'utf8');
 const appSource = fs.readFileSync('js/app.js', 'utf8');
 const html = fs.readFileSync('seeninseven.html', 'utf8');
+const overviewPrompt = fs.readFileSync('assets/overview-character-bio-prompt.txt', 'utf8');
 
 const context = {
   window: {},
@@ -99,5 +100,17 @@ if (!html.includes('openCurrentMvoAnswerHelp()')) {
 if (!appSource.includes("openAnswerHelp(${idx},'simple')") || !appSource.includes("openAnswerHelp(${idx},'extended')")) {
   throw new Error('Simple or Extended Answer Help entry is missing from Videos 2 through 7.');
 }
+if (!html.includes('openOverviewAnswerHelp()') || !appSource.includes('/assets/overview-character-bio-prompt.txt?v=overview-help-1')) {
+  throw new Error('Overview Answer Help entry or prompt asset is missing.');
+}
+if (!overviewPrompt.includes('REQUIRED RESPONSE PROCESS') || !overviewPrompt.includes('ZERO-CHILL RULE')) {
+  throw new Error('The supplied Overview character-bio prompt is incomplete.');
+}
+if (!appSource.includes('under 11,500 characters')) {
+  throw new Error('The Overview helper does not protect the 12,000-character app field.');
+}
+if (!appSource.includes('requestId !== answerHelpRequestId')) {
+  throw new Error('Overview prompt loading can overwrite a newer Answer Help view.');
+}
 
-console.log('Answer Help checks passed for 14 assignments, context isolation, anti-repetition, interactive choices, and paste-ready output.');
+console.log('Answer Help checks passed for Overview, 14 video assignments, context isolation, anti-repetition, interactive choices, and paste-ready output.');

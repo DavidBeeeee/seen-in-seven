@@ -411,6 +411,8 @@ The onboarding flow now includes a private seven-part Journey Map after the Over
 
 Simple and Extended preparation for all fourteen video paths now includes a copied prompt for use in an outside AI. The helper offers three different source directions before writing paste-ready journal answers, uses only the current Journey direction, and treats previous scripts as continuity that should not be recycled. It does not change the production script blueprint or save anything back to the user's account automatically.
 
+The Overview screen also includes a separate character-bio helper. It uses the supplied assessment-first prompt, appends current onboarding context and the existing Overview draft, and returns a source document the user can review before pasting back into SeenInSeven.
+
 After any app change, verify:
 
 - `git status` is understood before editing.
