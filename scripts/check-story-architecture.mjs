@@ -60,11 +60,22 @@ for (const level of [1, 2]) {
   }
 }
 
-for (const level of [1, 2]) {
-  const videoSix = extractTaggedSection(published.prompt, 'l' + level + '_v6_rules');
-  assert(/Video 5|VIDEO 5/.test(videoSix), 'Level ' + level + ' Video 6 lost its required Video 5 cause.');
-  assert(/optional continuity|relationship is optional|does not have to/.test(videoSix), 'Level ' + level + ' Video 6 still lacks an explicit optional Video 3 relationship.');
-}
+const levelOneVideoSix = extractTaggedSection(published.prompt, 'l1_v6_rules');
+const levelTwoVideoSix = extractTaggedSection(published.prompt, 'l2_v6_rules');
+assert(/Video 5|VIDEO 5/.test(levelOneVideoSix), 'Level 1 Video 6 lost its required Video 5 cause.');
+assert(/optional continuity|relationship is optional|does not have to/.test(levelOneVideoSix), 'Level 1 Video 6 still lacks an explicit optional Video 3 relationship.');
+assert(
+  /No earlier chapter is causally required|no earlier chapter is a required cause/i.test(levelTwoVideoSix),
+  'Level 2 Video 6 does not explicitly permit an independent elixir source.'
+);
+assert(
+  /Video 3, Video 5, another experience, or a broader pattern/i.test(levelTwoVideoSix),
+  'Level 2 Video 6 does not describe all supported elixir sources.'
+);
+assert(
+  !/Video 5 is causally necessary|truth caused by Video 5|must begin with the speaker's own defeat/i.test(levelTwoVideoSix),
+  'Level 2 Video 6 still forces Video 5 to cause the elixir.'
+);
 
 const appSource = readFileSync(new URL('../js/app.js', import.meta.url), 'utf8');
 const adminQuestionsSource = readFileSync(new URL('../js/admin-prompt-questions.js', import.meta.url), 'utf8');
@@ -101,9 +112,10 @@ assert(
   'Admin Prompt Tester does not mirror Level 2 Video 1 production preparation.'
 );
 assert(
-  generationSource.includes("'OPTIONAL VIDEO 3 CONNECTION'") &&
-    generationSource.includes('Video 3 may be related, but that relationship is optional'),
-  'Level 2 Video 6 material routing does not preserve optional Video 3 continuity.'
+  generationSource.includes("'OPTIONAL JOURNEY CONNECTION'") &&
+    generationSource.includes('No earlier chapter is a required cause') &&
+    generationSource.includes('Never force an earlier chapter to cause the elixir'),
+  'Level 2 Video 6 material routing still forces an earlier chapter to cause the elixir.'
 );
 
 const easyPrompts = evaluateExpression(
@@ -140,6 +152,14 @@ assert(
 
 assert(levelOneVideos[5].prompts.length === 4, 'Level 1 Video 6 should ask four journal questions.');
 assert(levelTwoVideos[5].prompts.length === 4, 'Level 2 Video 6 should ask four journal questions.');
+assert(
+  /counterintuitive or contrary to common sense/i.test(levelTwoVideos[5].prompts[0].label),
+  'Level 2 Video 6 does not ask directly for the counterintuitive elixir.'
+);
+assert(
+  /hardest part.*neither connection is required|neither connection is required/i.test(levelTwoVideos[5].note),
+  'Level 2 Video 6 still implies that Video 3 or Video 5 is required.'
+);
 assert(
   levelOneVideos[5].legacyPrompts.some(prompt => prompt.key === 'v5p2') &&
     levelTwoVideos[5].legacyPrompts.some(prompt => prompt.key === 'v5p2'),

@@ -16,7 +16,7 @@ const PROMPT_QUESTION_CATALOG = {
       {"label":"What is one idea you used to accept about your work that you now strongly disagree with? Why did it make sense to you at the time, and what made the old idea stop fitting what you saw?","hint":"Tell it like a journal entry. Include one concrete moment and who still pays the cost of the old idea. You do not need to explain the final lesson.","key":"easyAnswer_v2"},
       {"label":"After that first change in how you saw things, what did you do differently before you knew whether it would work?","hint":"Tell it like a journal entry. What made the old way tempting to return to, what did you choose anyway, and what small but meaningful result made continuing feel possible?","key":"easyAnswer_v3"},
       {"label":"What is the worst failure in this part of your work or life, and what made you wonder whether you or what you were building would ever recover?","hint":"Tell it as one honest journal entry. What happened, what part was your fault, what did you believe was gone for good, and what did you try afterward that still failed? End with what you believed at the lowest point, before the comeback or lesson.","key":"easyAnswer_v4"},
-      {"label":"After the hardest experience, what became clear that you could not have understood before living through it?","hint":"Describe the aftermath evidence that brought it into focus, one observable change you made afterward, and who might need the perspective you earned. It may connect to your first realization, but it does not have to.","key":"easyAnswer_v5"},
+      {"label":"What significant way of living or working do you follow that nearly everyone else considers counterintuitive or contrary to common sense?","hint":"Describe the lived experience or repeated evidence that made you trust it, what you do differently because of it, and who may need that perspective. It may connect to the hardest part or your first realization, but neither connection is required.","key":"easyAnswer_v5"},
       {"label":"Who were you before the two professional realizations and the hardest part of the story, and who are you now in relation to your expertise and the people you want to reach?","hint":"Describe what genuinely changed, what remains unfinished or still needed, what telling the story clarified about your work, and what perspective or mission you want the right viewer to keep following.","key":"easyAnswer_v6"}
     ]
   },
@@ -203,32 +203,32 @@ const PROMPT_QUESTION_CATALOG = {
       ]
     },
     {
-      "title": "What The Hardest Part Taught Me",
-      "note": "Look back at the hardest experience you just described. Focus on what only became clear afterward and what changed because of it. This must grow directly from that experience, but it does not have to connect to your first realization.",
+      "title": "What I Do That Defies Common Sense",
+      "note": "Share the more significant way of living or working that you follow even though most people consider it counterintuitive. Ground it in the experience or repeated evidence that made it real for you. It may connect to the hardest part or your first realization, but neither connection is required.",
       "prompts": [
         {
-          "label": "After the hardest part was over, what did you eventually understand that you could not have understood before living through it?",
-          "hint": "Say it in your own words. It does not need to sound polished. It should come from what happened, rather than from a separate opinion you already held.",
+          "label": "What significant way of living or working do you follow that nearly everyone else considers counterintuitive or contrary to common sense?",
+          "hint": "Say the belief, standard, choice, or practice plainly. It should matter more to your life or work than a clever opinion and should be specific enough that another person could disagree with it.",
           "key": "v5p0",
-          "placeholder": "Describe what only became clear after you lived through the difficult experience."
+          "placeholder": "Describe the counterintuitive truth or practice you genuinely live by."
         },
         {
-          "label": "What happened during the aftermath or rebuilding that made this understanding harder and harder to ignore?",
-          "hint": "Walk us through the evidence. What did you try, notice, lose, rebuild, stop doing, or finally do differently? Give us what happened before giving us a lesson.",
+          "label": "What experience, repeated pattern, or evidence made you trust this even when other people did not?",
+          "hint": "Tell us what happened before explaining the meaning. This may come from the hardest part you just described, another experience, or a pattern you witnessed over time.",
           "key": "v5p1",
-          "placeholder": "Describe the aftermath evidence that brought the deeper understanding into focus."
+          "placeholder": "Describe the lived evidence that made this impossible for you to dismiss."
         },
         {
-          "label": "What did you actually change afterward that another person could see in your decisions or work?",
-          "hint": "Choose a real action, boundary, standard, conversation, habit, or way of responding. Show the effect of the deeper understanding without turning it into a list of advice.",
+          "label": "What do you actually do differently because you believe this?",
+          "hint": "Choose a visible action, boundary, standard, conversation, habit, or decision. Show that this is something you live by rather than an opinion you only say.",
           "key": "v5p3",
-          "placeholder": "Describe one observable change you made afterward."
+          "placeholder": "Describe one observable way this changes how you live or work."
         },
         {
-          "label": "Who do you recognize in the place you were, and what do you wish they could see before repeating what happened to you?",
-          "hint": "Picture one specific person. What are they misreading, repeating, or blaming themselves for? Stay with the useful perspective you earned, not an offer or invitation to work with you.",
+          "label": "Who do you recognize as still following the common-sense approach, and what do you wish they could see?",
+          "hint": "Picture one specific person. What are they misreading, repeating, or blaming themselves for? Stay with the perspective you earned rather than turning it into an offer.",
           "key": "v5p4",
-          "placeholder": "Describe who needs the hard-won perspective and what it could help them recognize."
+          "placeholder": "Describe who needs this perspective and what it could help them recognize."
         }
       ],
       "legacyPrompts": [

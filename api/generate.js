@@ -142,30 +142,30 @@ Requirements:
 
 const L2V6_MATERIAL_ROUTER_SYSTEM = `You prepare source material for Level 2, Video 6 of a seven-video personal story.
 
-This is not script writing. Video 6 is the second professional epiphany and elixir. Sort the supplied material into a causal evidence packet so another writer can show what only became clear because of the Video 5 fall and its aftermath. Video 3 may be related, but that relationship is optional and must never be manufactured.
+This is not script writing. Video 6 is the second professional epiphany and elixir: the speaker's more significant counterintuitive way of living or working, grounded in lived evidence and observable behavior. The source may be the Video 5 fall, the Video 3 realization, another experience, or a repeated pattern. No earlier chapter is a required cause, and no relationship may be manufactured.
 
 Return exactly these nine headings and plain text beneath each:
-VIDEO 5 FALL:
-PRE-FALL UNDERSTANDING:
-AFTERMATH EVIDENCE:
+SOURCE EXPERIENCE OR PATTERN:
+COMMON-SENSE MODEL:
+CONTRADICTING EVIDENCE:
 UNRESOLVED COLLISION:
-OBSERVABLE CHANGE:
-RESERVED PARADIGM SHIFT:
+OBSERVABLE PRACTICE:
+RESERVED COUNTERINTUITIVE ELIXIR:
 VIEWER TRANSFER:
-OPTIONAL VIDEO 3 CONNECTION:
+OPTIONAL JOURNEY CONNECTION:
 VOICE SIGNALS:
 
 Requirements:
 - Treat the headings as non-overlapping evidence ownership. Keep the strongest and most specific expression of each fact once. When a later heading depends on an earlier fact, add only the new relationship or consequence instead of restating the fact, phrase, number, duration, or judgment.
 - Preserve only facts, observations, actions, consequences, and distinctive language supported by the source.
-- VIDEO 5 FALL identifies the defeat and the speaker's owned contribution. The fall must be causally necessary to the later understanding.
-- PRE-FALL UNDERSTANDING states the belief, assumption, strategy, or explanation involved in the ordeal. Derive it from Video 5 and the current answers rather than assuming it came from Video 3.
-- AFTERMATH EVIDENCE contains what happened during failed recovery, rebuilding, or changed conditions before interpretation.
-- UNRESOLVED COLLISION states the exact cognitive dissonance between PRE-FALL UNDERSTANDING and the fall or aftermath evidence without resolving it.
-- OBSERVABLE CHANGE gives one supplied action, boundary, standard, conversation, habit, or decision that changed afterward.
-- RESERVED PARADIGM SHIFT infers one complete hard-won paradigm shift that resolves UNRESOLVED COLLISION, restructures the viewer's understanding, and is simple enough to carry. Reject an unrelated hot take, a repetition of Video 3, a pre-existing philosophy, or generic wisdom that could have been written before the fall.
+- SOURCE EXPERIENCE OR PATTERN identifies the strongest lived source for the elixir. Prefer the current Video 6 answers. Use Video 5, Video 3, or another earlier chapter only when the supplied material naturally connects it.
+- COMMON-SENSE MODEL states the conventional assumption, expected behavior, or ordinary explanation that the speaker's lived practice contradicts.
+- CONTRADICTING EVIDENCE contains the experience, repeated pattern, consequence, or observation that made the common-sense model impossible for this speaker to trust.
+- UNRESOLVED COLLISION states the exact cognitive dissonance between COMMON-SENSE MODEL and CONTRADICTING EVIDENCE without resolving it.
+- OBSERVABLE PRACTICE gives one supplied action, boundary, standard, conversation, habit, or decision that proves the speaker actually lives by the counterintuitive truth.
+- RESERVED COUNTERINTUITIVE ELIXIR infers one complete significant paradigm shift that resolves UNRESOLVED COLLISION, restructures the viewer's understanding, and is simple enough to carry. Reject a shallow hot take, a repetition of Video 3, an unsupported slogan, or a commercial philosophy disguised as truth.
 - VIEWER TRANSFER names one recognizable person and what the earned lens may help them see.
-- OPTIONAL VIDEO 3 CONNECTION contains one brief relationship only when the supplied story genuinely shows that the second epiphany deepens, corrects, or completes the first. Otherwise write "Not supplied." Never force this relationship and never use it as the causal source of Video 6.
+- OPTIONAL JOURNEY CONNECTION contains one brief relationship to Video 3, Video 5, or another earlier chapter only when the supplied story genuinely supports it. Otherwise write "Not supplied." Never force an earlier chapter to cause the elixir.
 - VOICE SIGNALS preserves a few words about the speaker's rhythm, intensity, humor, or distinctive phrasing. Do not copy banned script phrases.
 - Omit pricing structures, service descriptions, current offers, conversion requests, method lists, and unrelated opinions.
 - Do not use the words version, lazy, pay, paid, buy, bought, sell, or sold anywhere in the packet. Restate any necessary fact with natural alternatives such as charged, spent, chose, offered, or form.
@@ -184,9 +184,9 @@ For a Video 3 packet:
 - Never invent a direct conversation, quote, meeting, credential, result, or event.
 
 For a Video 6 packet:
-- Preserve the causal chain from the Video 5 fall through the pre-fall understanding, aftermath evidence, unresolved cognitive dissonance, observable change, and one hard-won reserved paradigm shift.
-- Preserve an optional Video 3 connection only when the source explicitly or naturally supports it. "Not supplied" is correct when the epiphanies are independent.
-- Remove forced Video 3 corrections, unrelated opinions, repeated Video 3 conclusions, pre-existing philosophy, methods, offers, and commercial positioning.
+- Preserve the causal chain from one supported source experience or repeated pattern through the common-sense model, contradicting evidence, unresolved cognitive dissonance, observable practice, and one reserved counterintuitive elixir.
+- Preserve an optional connection to Video 3, Video 5, or another earlier chapter only when the source explicitly or naturally supports it. "Not supplied" is correct when the second epiphany is independent.
+- Remove forced earlier-chapter causality, shallow hot takes, repeated Video 3 conclusions, unsupported slogans, methods, offers, and commercial positioning.
 - Never invent a fact, result, event, or behavioral change.
 
 For both packets:
@@ -456,7 +456,7 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
   const system = isFirst ? L2V3_MATERIAL_ROUTER_SYSTEM : L2V6_MATERIAL_ROUTER_SYSTEM;
   const headings = isFirst
     ? ['OLD ASSUMPTION', 'CONTRADICTING EVIDENCE', 'COGNITIVE DISSONANCE', 'RESERVED PARADIGM SHIFT', 'HUMAN COST', 'VOICE SIGNALS']
-    : ['VIDEO 5 FALL', 'PRE-FALL UNDERSTANDING', 'AFTERMATH EVIDENCE', 'UNRESOLVED COLLISION', 'OBSERVABLE CHANGE', 'RESERVED PARADIGM SHIFT', 'VIEWER TRANSFER', 'OPTIONAL VIDEO 3 CONNECTION', 'VOICE SIGNALS'];
+    : ['SOURCE EXPERIENCE OR PATTERN', 'COMMON-SENSE MODEL', 'CONTRADICTING EVIDENCE', 'UNRESOLVED COLLISION', 'OBSERVABLE PRACTICE', 'RESERVED COUNTERINTUITIVE ELIXIR', 'VIEWER TRANSFER', 'OPTIONAL JOURNEY CONNECTION', 'VOICE SIGNALS'];
   const routed = await callModel(system, epiphanyRouterSource(userContext, number), 0.15, 1200);
   const routedPacket = String(routed || '').trim();
   if (!routedPacket || !hasRouterHeadings(routedPacket, headings)) {
@@ -492,7 +492,7 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
   }
   const draftingConstraints = isFirst
     ? 'FINAL VIDEO 3 WRITING CONSTRAINTS: Privately pair one exact UNANSWERED QUESTION with the RESERVED PARADIGM SHIFT that answers it. The OPEN LOOP is written independently from the completed Meat and reserved Conclusion and creates that exact conceptually unfinished question without implying the answer. It does not explain or continue the Hook. The MEAT carries OLD ASSUMPTION through CONTRADICTING EVIDENCE and ends with COGNITIVE DISSONANCE unresolved. State RESERVED PARADIGM SHIFT for the first time in the CONCLUSION, followed by one HUMAN COST. Supply a provisional HOOK label for formatting; the global Hook Studio will replace its text after the story is settled.'
-    : 'FINAL VIDEO 6 WRITING CONSTRAINTS: Privately pair one exact UNANSWERED QUESTION with the RESERVED PARADIGM SHIFT that answers it. The OPEN LOOP is written independently from the completed Meat and reserved Conclusion and creates the exact unanswered meaning produced by VIDEO 5 FALL and its aftermath without implying its resolution. It does not explain or continue the Hook. The MEAT carries VIDEO 5 FALL and AFTERMATH EVIDENCE through PRE-FALL UNDERSTANDING and UNRESOLVED COLLISION, ending with that cognitive dissonance unresolved. State RESERVED PARADIGM SHIFT for the first time in the CONCLUSION, followed by one new possibility or VIEWER TRANSFER. Use OPTIONAL VIDEO 3 CONNECTION only when it contains a genuine supported relationship; otherwise omit Video 3 completely. Supply a provisional HOOK label for formatting; the global Hook Studio will replace its text after the story is settled.';
+    : 'FINAL VIDEO 6 WRITING CONSTRAINTS: Privately pair one exact UNANSWERED QUESTION with the RESERVED COUNTERINTUITIVE ELIXIR that answers it. The OPEN LOOP is written independently from the completed Meat and reserved Conclusion and creates the exact unanswered meaning produced by SOURCE EXPERIENCE OR PATTERN and CONTRADICTING EVIDENCE without implying its resolution. It does not explain or continue the Hook. The MEAT carries SOURCE EXPERIENCE OR PATTERN through COMMON-SENSE MODEL and CONTRADICTING EVIDENCE into UNRESOLVED COLLISION, ending with that cognitive dissonance unresolved. State RESERVED COUNTERINTUITIVE ELIXIR for the first time in the CONCLUSION, followed by one new possibility or VIEWER TRANSFER. Use OPTIONAL JOURNEY CONNECTION only when it contains a genuine supported relationship; otherwise omit earlier chapters completely. Supply a provisional HOOK label for formatting; the global Hook Studio will replace its text after the story is settled.';
   return [
     'Generate Video ' + number + ' script.',
     '',
@@ -603,7 +603,7 @@ export async function prepareLevelTwoVideoFiveMaterial(userContext) {
         '',
         'The raw answers have already been sorted for this chapter. Use only this packet as story material. Choose one emotional destination from SYMBOLIC DEATH and LOWEST-POINT THOUGHT before drafting. Build one causal descent rather than a list of hardships. Facts about money, clients, offers, services, attention, or public response are evidence only; they cannot become the thesis or lesson.',
         '',
-        'FINAL VIDEO 5 WRITING CONSTRAINTS: Design the CONCLUSION first and reserve the owned lowest-point belief for it. Build the MEAT as one chronological descent through what mattered, the consequential choice, ignored warning or escalation, collapse, and failed recovery. Stop before explaining what any of it eventually meant. Design the OPEN LOOP after the Conclusion and Meat as one independent pressing unfinished meaning, contradiction, cause, or question that the Conclusion will finally close or transform. It exists only to retain attention, does not explain or continue the Hook, and cannot state the speaker\'s mistake, summarize the stakes, or imply the answer. Supply a provisional HOOK label for formatting; the global Hook Studio will replace its text after the story is settled. Reveal the lowest-point belief for the first time in the CONCLUSION and leave the speaker inside the apparent loss with no recovery, diagnosis, authority, reassurance, or silver lining. Continue that exact emotional state into the CTA. Ask the viewer to follow, identify this as Video 5 of the seven-part journey, and explain that Video 6 confronts what the ordeal exposed. Do not say the confusion lifted, something cracked open, recovery began, the answer appeared, or the speaker found a way back.'
+        'FINAL VIDEO 5 WRITING CONSTRAINTS: Design the CONCLUSION first and reserve the owned lowest-point belief for it. Build the MEAT as one chronological descent through what mattered, the consequential choice, ignored warning or escalation, collapse, and failed recovery. Stop before explaining what any of it eventually meant. Design the OPEN LOOP after the Conclusion and Meat as one independent pressing unfinished meaning, contradiction, cause, or question that the Conclusion will finally close or transform. It exists only to retain attention, does not explain or continue the Hook, and cannot state the speaker\'s mistake, summarize the stakes, or imply the answer. Supply a provisional HOOK label for formatting; the global Hook Studio will replace its text after the story is settled. Reveal the lowest-point belief for the first time in the CONCLUSION and leave the speaker inside the apparent loss with no recovery, diagnosis, authority, reassurance, or silver lining. Continue that exact emotional state into the CTA. Ask the viewer to follow, identify this as Video 5 of the seven-part journey, and promise that Video 6 reveals the more significant counterintuitive truth the speaker now carries. Do not claim Video 5 caused that truth unless the supplied story supports the relationship. Do not say the confusion lifted, something cracked open, recovery began, the answer appeared, or the speaker found a way back.'
       ].join('\n');
     }
     malformed = packet;

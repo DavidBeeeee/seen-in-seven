@@ -902,6 +902,14 @@ The following principles govern every word of copy in this app and the broader C
 - Removed three stale local instructions that contradicted the global Hook/Open Loop separation: Level 1 Video 1 could no longer bridge from the Hook, Level 1 Video 2 could no longer require its unexpected detail in the Hook, and Level 1 Video 4 could no longer connect Hook evidence into the Open Loop.
 - Kept the Hook Studio implementation unchanged. Regression coverage now executes its shared final-replacement path at both Level 1 and Level 2 and proves that Open Loop, Meat, Conclusion, and CTA remain unchanged.
 - Restored production/admin parity for Level 2 Video 1. First generation, full regeneration, section regeneration, and Prompt Tester generation now all use the same private material preparation.
-- Added `scripts/check-story-architecture.mjs`. It verifies all 14 focused prompt sections, all four local section-guidance lines, both stage contracts, the optional Video 3 rule, required Video 5 causality, production/test routing parity, exact app/admin question parity, four-question Video 6 interviews, and preservation of legacy `v5p2`.
-- Browser asset queries are `story-audit-1` for the customer app and admin question catalog so refreshed sessions receive the audited questions immediately.
+- Added `scripts/check-story-architecture.mjs`. It verifies all 14 focused prompt sections, all four local section-guidance lines, both stage contracts, level-specific Video 6 source rules, production/test routing parity, exact app/admin question parity, four-question Video 6 interviews, and preservation of legacy `v5p2`.
+- Browser asset queries are `l2v6-independent-1` for the customer app and admin question catalog so refreshed sessions receive the audited questions immediately.
 - Local production-secret testing is intentionally unavailable because Vercel returns `[SENSITIVE]` for the protected DeepSeek key. Do not copy the key into an unprotected local variable. Exercise live model output through the deployed authenticated Prompt Tester instead.
+
+## 2026-07-27 — Level 2 Video 6 source independence
+
+- Level 1 Video 6 remains the elixir earned through the Video 5 fall.
+- Level 2 Video 6 now asks for the speaker's more significant counterintuitive way of living or working. Its source may be Video 5, Video 3, another experience, or a broader repeated pattern; none is required.
+- The app and admin tester use the same four journal questions: the counterintuitive truth, its lived evidence, the speaker's observable practice, and the person who needs the resulting lens.
+- Production generation now routes Level 2 Video 6 through source evidence, the common-sense model, contradicting evidence, unresolved cognitive dissonance, observable practice, and a reserved elixir. Earlier chapters are optional continuity only.
+- The Hook Studio, Open Loop architecture, Level 1 Video 6, and existing saved `v5p2` answers were preserved.
