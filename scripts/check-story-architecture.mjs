@@ -3,6 +3,7 @@ import { runInNewContext } from 'node:vm';
 import {
   buildSystemPrompt,
   extractTaggedSection,
+  hasLevelTwoVideoFourHindsight,
   publishedPrompt,
   stageContract,
   validateBlueprintSource
@@ -152,6 +153,29 @@ assert(
     generationSource.includes('Never force an earlier chapter to cause the elixir'),
   'Level 2 Video 6 material routing still forces an earlier chapter to cause the elixir.'
 );
+
+[
+  'I could not tell whether the signal meant the choice was working.',
+  'I did not know if the message would make me continue or stop.',
+  'The blind spot was still sitting inside the decision I had to make.',
+  'I saw the warning sign and chose to continue anyway.'
+].forEach(example => {
+  assert(
+    !hasLevelTwoVideoFourHindsight(example),
+    'Level 2 Video 4 incorrectly rejects in-the-moment uncertainty: ' + example
+  );
+});
+[
+  'Looking back, the message was the first proof that I was right.',
+  'I would later realize the quiet response mattered more than the public reaction.',
+  'What I could not see until later was why the choice worked.',
+  'At the time, I did not recognize the warning that was already there.'
+].forEach(example => {
+  assert(
+    hasLevelTwoVideoFourHindsight(example),
+    'Level 2 Video 4 failed to detect explicit later hindsight: ' + example
+  );
+});
 
 const easyPrompts = evaluateExpression(
   between(appSource, 'const VIDEO_EASY_PROMPTS = ', ';\n\nfunction getEasyPrompt')

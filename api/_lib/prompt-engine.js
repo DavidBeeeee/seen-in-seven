@@ -449,6 +449,23 @@ function publishedPrompt() {
     return issues;
   }
 
+  function hasLevelTwoVideoFourHindsight(text) {
+    const source = String(text || '');
+    const perception = '(?:notice|see|realize|understand|know|recognize)';
+    const missed = "(?:didn['’]t|did not|couldn['’]t|could not)";
+    const explicitLaterHindsight = new RegExp(
+      [
+        '\\b(?:looking back|in hindsight)\\b',
+        '\\bI\\s+(?:would|did)\\s+(?:later|eventually)\\s+' + perception + '\\b',
+        '\\b(?:only\\s+)?(?:later|eventually|afterward|afterwards)\\s+(?:did\\s+I|I)\\s+' + perception + '\\b',
+        '\\b(?:what\\s+)?I\\s+' + missed + '\\s+' + perception + '\\b[^.!?]{0,80}\\b(?:until|later|eventually|afterward|afterwards)\\b',
+        '\\b(?:at the time|back then|in that moment)\\b[^.!?]{0,80}\\bI\\s+' + missed + '\\s+' + perception + '\\b'
+      ].join('|'),
+      'i'
+    );
+    return explicitLaterHindsight.test(source);
+  }
+
   function validateOutput(text, video, level, userContext = '', styleGuideSource = '') {
     const source = String(text || '');
     const sections = parseSections(text);
@@ -575,8 +592,7 @@ function publishedPrompt() {
             addIssue(section, 'Level 2 Video 4 adds the unsupported precise detail "' + match + '". Keep approximate source details approximate and remove exact counts, durations, amounts, or metrics that are not in the curated evidence.');
           }
         });
-        const futureNarratorDiagnosis = /\bwhat\s+I\s+(?:didn['’]t|did not|couldn['’]t|could not)\s+(?:notice|see|realize|understand|know|recognize)\b|\bI\s+(?:didn['’]t|did not|couldn['’]t|could not)\s+(?:notice|see|realize|understand|know|recognize)\b[^.!?]{0,80}\b(?:yet|then|at the time|back then|in that moment)\b|\bI\s+(?:would|did)\s+(?:later|eventually)\s+(?:notice|see|realize|understand|know|recognize)\b/i;
-        if (section !== 'CTA' && (futureNarratorDiagnosis.test(sectionText) || /\b(?:warning(?:\s+sign)?|red flag|blind spot|signal)\b/i.test(sectionText))) {
+        if (section !== 'CTA' && hasLevelTwoVideoFourHindsight(sectionText)) {
           addIssue(section, 'Level 2 Video 4 uses later hindsight to diagnose the recoverable trial. Keep the HOOK, OPEN LOOP, MEAT, and CONCLUSION inside the uncertainty, choice, and first hope available then. Reserve serious Video 5 foreshadowing for the CTA alone.');
         }
       });
@@ -1489,6 +1505,7 @@ export {
     parseSections,
     findVoiceIssues,
     findLexicalRepetitionIssues,
+    hasLevelTwoVideoFourHindsight,
     validateOutput,
     validationFeedback,
     stageContract,
