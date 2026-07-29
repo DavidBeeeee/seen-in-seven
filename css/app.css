@@ -1591,6 +1591,10 @@ body::after {
   cursor:pointer; transition:all 0.2s;
 }
 .sv-toggle-btn.active { background:rgba(45,212,191,0.15); color:var(--teal); }
+.sv-toggle-btn:disabled {
+  opacity:0.38;
+  cursor:not-allowed;
+}
 .sv-copy-btn {
   background:transparent;
   border:1px solid rgba(255,255,255,0.18);
@@ -1607,10 +1611,19 @@ body::after {
   letter-spacing:0.02em; white-space:nowrap;
 }
 .sv-redo-link:hover { color:var(--cream); }
+.sv-redo-link[aria-disabled="true"] {
+  opacity:0.35;
+  pointer-events:none;
+  cursor:not-allowed;
+}
 .sv-regen-link {
   font-size:11px; color:rgba(126,184,212,0.45); cursor:default;
   letter-spacing:0.03em; font-weight:500;
   border-bottom:1px dashed rgba(126,184,212,0.2);
+}
+.sv-regen-link:disabled {
+  opacity:0.35;
+  cursor:not-allowed;
 }
 .preface-skip-end {
   background:transparent;
@@ -2615,6 +2628,35 @@ body::after {
 }
 .sv-tool-btn:hover { border-color:var(--teal); color:var(--cream); }
 .sv-tool-btn:disabled { opacity:0.35; cursor:not-allowed; }
+
+.sv-locked-notice {
+  width:100%;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:12px;
+  padding:10px 12px;
+  border:1px solid rgba(45,212,191,0.28);
+  border-radius:8px;
+  background:rgba(45,212,191,0.07);
+  color:var(--soft);
+  font-size:13px;
+}
+.sv-locked-notice[hidden] { display:none; }
+.sv-locked-notice button {
+  flex:0 0 auto;
+  border:1px solid var(--teal);
+  border-radius:6px;
+  background:rgba(45,212,191,0.12);
+  color:var(--teal);
+  padding:6px 10px;
+  font:700 12px 'Nunito',sans-serif;
+  cursor:pointer;
+}
+.sv-locked-notice button:hover {
+  background:rgba(45,212,191,0.2);
+  color:var(--cream);
+}
 
 .sv-regeneration-status {
   display:flex;

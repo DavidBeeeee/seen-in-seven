@@ -2411,11 +2411,13 @@ function showRegenModal(sectionKey) {
 
 // Regenerate a single section of a script
 async function regenerateSection(videoIdx, sectionKey, btnEl) {
+  if (!requireUnlockedScript(videoIdx)) return;
   const editKey = 'script_v' + videoIdx;
   const sectionsKey = 'sections_v' + videoIdx;
   // Ask what they'd like to change before doing anything
   const regenFeedback = await showRegenModal(sectionKey);
   if (regenFeedback === null) return; // user dismissed modal
+  if (!requireUnlockedScript(videoIdx)) return;
 
   await flushScriptEditSave(videoIdx);
 
@@ -2442,6 +2444,13 @@ async function regenerateSection(videoIdx, sectionKey, btnEl) {
       }
     );
     if (!newSectionText) throw new Error('Empty response');
+    if (isScriptLocked(videoIdx)) {
+      if (btnEl) {
+        btnEl.textContent = originalText;
+        btnEl.disabled = true;
+      }
+      return;
+    }
 
     // Update sections state
     const updatedSections = Object.assign({}, sections);
@@ -2519,10 +2528,12 @@ function clearFullRegenerationStatus(videoIdx) {
 
 // Regenerate the complete script while preserving the user's answers and prior script version.
 async function regenerateFullScript(videoIdx, btnEl) {
+  if (!requireUnlockedScript(videoIdx)) return;
   const editKey = 'script_v' + videoIdx;
   const sectionsKey = 'sections_v' + videoIdx;
   const regenFeedback = await showRegenModal('full script');
   if (regenFeedback === null) return;
+  if (!requireUnlockedScript(videoIdx)) return;
 
   const originalText = btnEl ? btnEl.textContent : '';
   if (btnEl) {
@@ -2556,6 +2567,14 @@ async function regenerateFullScript(videoIdx, btnEl) {
       }
     );
     if (!script) throw new Error('Empty response');
+    if (isScriptLocked(videoIdx)) {
+      clearFullRegenerationStatus(videoIdx);
+      if (btnEl) {
+        btnEl.textContent = originalText;
+        btnEl.disabled = true;
+      }
+      return;
+    }
     if (String(script).trim() === previousScript) {
       throw new Error('The regeneration returned the unchanged draft, so it was not saved as a new script.');
     }
@@ -3663,6 +3682,7 @@ function _doShowScriptViewInner(idx) {
   // store the edited script (keyed so edits persist per video)
   const editKey = 'script_v' + idx;
   const sectionsKey = 'sections_v' + idx;
+  const scriptIsLocked = isScriptLocked(idx);
 
   // If we have an AI script, try to parse it into sections
   if (state.videos[editKey]) {
@@ -3725,7 +3745,7 @@ function _doShowScriptViewInner(idx) {
         return `<div class="sv-beat" id="sv-section-${safeKey}">` +
           `<div class="sv-beat-label" style="display:flex;justify-content:space-between;align-items:center;">` +
           `<span>${s.label}</span>` +
-          `<button class="sv-regen-link" id="sv-regen-${safeKey}" onclick="regenerateSection(${idx},'${s.key}',this)" style="background:none;border:none;cursor:pointer;color:var(--teal);font-size:13px;padding:2px 6px;">↺ regenerate</button>` +
+          `<button class="sv-regen-link" id="sv-regen-${safeKey}" onclick="regenerateSection(${idx},'${s.key}',this)" ${scriptIsLocked ? 'disabled aria-disabled="true" title="Unlock this script to regenerate a section"' : ''} style="background:none;border:none;cursor:${scriptIsLocked ? 'not-allowed' : 'pointer'};color:var(--teal);font-size:13px;padding:2px 6px;">↺ regenerate</button>` +
           `</div>` +
           beatsHtml +
           `<p class="sv-beat-text" id="sv-section-text-${safeKey}">${text || '<em style="color:var(--muted);font-style:italic;">Section not yet generated</em>'}</p>` +
@@ -3759,7 +3779,13 @@ function _doShowScriptViewInner(idx) {
     const rawScript = state.videos[editKey] || '';
     const cleanScript = finalScriptText(idx, rawScript, state.level || 1);
     editor.value = cleanScript;
+    editor.readOnly = scriptIsLocked;
+    editor.setAttribute('aria-readonly', scriptIsLocked ? 'true' : 'false');
     editor.oninput = () => {
+      if (!requireUnlockedScript(idx)) {
+        editor.value = finalScriptText(idx, state.videos[editKey], state.level || 1);
+        return;
+      }
       state.videos[editKey] = editor.value;
       const reParsed = parseScriptSections(editor.value);
       if (reParsed) state.videos[sectionsKey] = reParsed;
@@ -4040,6 +4066,7 @@ function skipToEnd() {
 }
 
 function confirmStartVideoOver() {
+  if (!requireUnlockedScript(currentVideoIndex)) return;
   // Show a warning before wiping answers and going back to questions
   let overlay = document.getElementById('start-video-over-confirm');
   if (!overlay) {
@@ -4093,6 +4120,7 @@ async function clearVideoDraftForRegeneration(idx) {
 
 async function startVideoOver() {
   const idx = currentVideoIndex;
+  if (!requireUnlockedScript(idx)) return;
   // Push snapshot before wiping so undo can recover
   if (typeof pushUndoSnapshot === 'function') pushUndoSnapshot(idx);
   const videos = getVideos();
@@ -4166,7 +4194,7 @@ async function loadScriptVersions(idx) {
       <div class="version-item">
         <div class="version-header">
           <span class="version-label">Version ${v.version} &middot; ${date}</span>
-          <button class="version-restore" onclick="handleRestoreVersion('${v.id}', ${idx})">Restore →</button>
+          <button class="version-restore" onclick="handleRestoreVersion('${v.id}', ${idx})" ${isScriptLocked(idx) ? 'disabled title="Unlock this script to restore an earlier draft"' : ''}>Restore →</button>
         </div>
         <div class="version-preview">${preview}</div>
       </div>`;
@@ -4174,6 +4202,7 @@ async function loadScriptVersions(idx) {
 }
 
 async function handleRestoreVersion(scriptId, idx) {
+  if (!requireUnlockedScript(idx)) return;
   const content = _versionStore[scriptId];
   if (!content) return;
   const level = state.level || 1;
@@ -4353,6 +4382,7 @@ function pushUndoSnapshot(idx) {
 
 function undoScript() {
   const idx = currentVideoIndex;
+  if (!requireUnlockedScript(idx)) return;
   const u = _getUndoState(idx);
   if (u.pointer <= 0) return;
   u.pointer--;
@@ -4362,6 +4392,7 @@ function undoScript() {
 
 function redoScriptStep() {
   const idx = currentVideoIndex;
+  if (!requireUnlockedScript(idx)) return;
   const u = _getUndoState(idx);
   if (u.pointer >= u.stack.length - 1) return;
   u.pointer++;
@@ -4402,16 +4433,17 @@ function _applyUndoSnapshot(idx, text) {
 
 function _refreshUndoButtons(idx) {
   const u = _getUndoState(idx);
+  const locked = isScriptLocked(idx);
   const undoBtn = document.getElementById('sv-undo');
   const redoBtn = document.getElementById('sv-redo');
   if (undoBtn) {
-    const canUndo = u.pointer > 0;
+    const canUndo = !locked && u.pointer > 0;
     undoBtn.disabled = !canUndo;
     undoBtn.style.opacity = canUndo ? '1' : '0.4';
     undoBtn.style.cursor = canUndo ? 'pointer' : 'not-allowed';
   }
   if (redoBtn) {
-    const canRedo = u.pointer < u.stack.length - 1;
+    const canRedo = !locked && u.pointer < u.stack.length - 1;
     redoBtn.disabled = !canRedo;
     redoBtn.style.opacity = canRedo ? '1' : '0.4';
     redoBtn.style.cursor = canRedo ? 'pointer' : 'not-allowed';
@@ -4468,9 +4500,93 @@ function skipFilmedBtn() {
   if (skipBtn && typeof skipBtn.onclick === 'function') skipBtn.onclick();
 }
 
+function isScriptLocked(idx) {
+  const scriptIdx = Number.isInteger(idx) ? idx : currentVideoIndex;
+  return !!(
+    state.videos &&
+    state.videos['script_v' + scriptIdx] &&
+    state.videos['locked_v' + scriptIdx]
+  );
+}
+
+function requireUnlockedScript(idx) {
+  if (!isScriptLocked(idx)) return true;
+  _updateScriptEditControls(idx);
+  const notice = document.getElementById('sv-locked-notice');
+  if (notice && typeof notice.animate === 'function') {
+    notice.animate(
+      [
+        { transform: 'scale(1)', borderColor: 'rgba(45,212,191,0.28)' },
+        { transform: 'scale(1.01)', borderColor: 'rgba(45,212,191,0.8)' },
+        { transform: 'scale(1)', borderColor: 'rgba(45,212,191,0.28)' }
+      ],
+      { duration: 420, easing: 'ease-out' }
+    );
+  }
+  return false;
+}
+
+function _updateScriptEditControls(idx) {
+  const locked = isScriptLocked(idx);
+  const cleanBtn = document.getElementById('sv-clean-btn');
+  const regenFullBtn = document.getElementById('sv-regen-full');
+  const retryBtn = document.getElementById('sv-regeneration-retry');
+  const deleteLink = document.getElementById('sv-delete-reanswer');
+  const editor = document.getElementById('script-editor');
+  const notice = document.getElementById('sv-locked-notice');
+
+  if (cleanBtn) {
+    cleanBtn.disabled = locked;
+    cleanBtn.setAttribute('aria-disabled', locked ? 'true' : 'false');
+    cleanBtn.title = locked ? 'Unlock this script to edit it' : 'Edit this script';
+  }
+  if (regenFullBtn) {
+    regenFullBtn.disabled = locked;
+    regenFullBtn.setAttribute('aria-disabled', locked ? 'true' : 'false');
+    regenFullBtn.title = locked
+      ? 'Unlock this script to regenerate it'
+      : 'Regenerate the entire script';
+  }
+  if (retryBtn) {
+    retryBtn.disabled = locked;
+    retryBtn.setAttribute('aria-disabled', locked ? 'true' : 'false');
+  }
+  if (deleteLink) {
+    deleteLink.setAttribute('aria-disabled', locked ? 'true' : 'false');
+    deleteLink.title = locked
+      ? 'Unlock this script before deleting and re-answering its questions'
+      : '';
+  }
+  if (editor) {
+    editor.readOnly = locked;
+    editor.setAttribute('aria-readonly', locked ? 'true' : 'false');
+  }
+  if (notice) notice.hidden = !locked;
+
+  document.querySelectorAll('.sv-regen-link').forEach(button => {
+    button.disabled = locked;
+    button.setAttribute('aria-disabled', locked ? 'true' : 'false');
+    button.title = locked ? 'Unlock this script to regenerate a section' : '';
+    button.style.cursor = locked ? 'not-allowed' : 'pointer';
+  });
+
+  if (locked) {
+    const beats = document.getElementById('sv-beats');
+    const clean = document.getElementById('sv-clean');
+    const guidedBtn = document.getElementById('sv-guided-btn');
+    if (beats) beats.style.display = 'block';
+    if (clean) clean.style.display = 'none';
+    if (guidedBtn) guidedBtn.classList.add('active');
+    if (cleanBtn) cleanBtn.classList.remove('active');
+  }
+
+  _refreshUndoButtons(idx);
+}
+
 // ── LOCK IN SCRIPT ────────────────────────────────────
 function lockInScript() {
   const idx = currentVideoIndex;
+  if (typeof setScriptView === 'function') setScriptView('guided');
   state.videos['locked_v' + idx] = true;
   state.videos['ever_locked_v' + idx] = true;
   saveProgress();
@@ -4501,6 +4617,7 @@ function _updateLockUI(idx) {
   const titleEl = document.getElementById('lock-card-title');
   const subEl   = document.getElementById('lock-card-sub');
   const iconEl  = document.querySelector('.filmed-card .filmed-icon');
+  _updateScriptEditControls(idx);
 
   // Restore filmed checkbox state + resize based on lock state
   const checkbox = document.getElementById('filmed-checkbox');
@@ -4532,7 +4649,7 @@ function _updateLockUI(idx) {
     if (lockBtn) {
       lockBtn.className = 'btn-skip';
       lockBtn.style.cssText = 'font-size:13px;color:var(--muted);';
-      lockBtn.textContent = '🔓 Unlock to edit again';
+      lockBtn.textContent = '🔓 Unlock to Edit';
       lockBtn.onclick = () => unlockScript();
     }
     if (titleEl) titleEl.textContent = filmed ? 'This one\'s done.' : 'Script locked. Time to film.';
@@ -4594,7 +4711,7 @@ function _updateLockUI(idx) {
       lockBtn.onclick = () => lockInScript();
     }
     if (titleEl) titleEl.textContent = 'Happy with this script?';
-    if (subEl) subEl.textContent = 'Lock it in when you\'re ready to film. You can always edit it after.';
+    if (subEl) subEl.textContent = 'Lock it in when you\'re ready to film. Unlock it later if you need to make changes.';
     if (iconEl) iconEl.textContent = '🔒';
   }
 }
@@ -4611,12 +4728,14 @@ function unlockScript() {
 
 // ── DELETE & START OVER ───────────────────────────────
 function confirmDeleteAndStartOver() {
+  if (!requireUnlockedScript(currentVideoIndex)) return;
   const el = document.getElementById('delete-start-over-confirm');
   if (el) el.style.display = 'flex';
 }
 
 async function deleteAndStartOver() {
   const idx = currentVideoIndex;
+  if (!requireUnlockedScript(idx)) return;
   const el = document.getElementById('delete-start-over-confirm');
   if (el) el.style.display = 'none';
   if (typeof logEvent === 'function') {
@@ -4730,7 +4849,7 @@ async function openVersionModal(idx) {
         <div style="display:flex;gap:14px;align-items:center;">
           <button class="dbc-link" onclick="copyVersion('${ver.id}', this)">Copy</button>
           <button class="dbc-link" onclick="printVersion('${ver.id}', ${idx})">Print</button>
-          ${!isCurrent ? `<button class="dbc-link primary" onclick="restoreVersion('${ver.id}', ${idx})">Restore</button>` : ''}
+          ${!isCurrent && !isScriptLocked(idx) ? `<button class="dbc-link primary" onclick="restoreVersion('${ver.id}', ${idx})">Restore</button>` : ''}
           ${!isCurrent ? `<button class="dbc-link" style="color:rgba(239,68,68,0.6);" onclick="deleteVersion('${ver.id}', ${idx}, this)">Delete</button>` : ''}
         </div>
       </div>
@@ -4774,6 +4893,7 @@ function printVersion(scriptId, idx) {
 }
 
 async function restoreVersion(scriptId, idx) {
+  if (!requireUnlockedScript(idx)) return;
   await handleRestoreVersion(scriptId, idx);
   closeVersionModal();
   buildPlan();
@@ -6648,6 +6768,8 @@ function setScriptView(view) {
   const gBtn      = document.getElementById('sv-guided-btn');
   const cBtn      = document.getElementById('sv-clean-btn');
   const rationale = document.getElementById('sv-rationale');
+
+  if (view === 'clean' && !requireUnlockedScript(currentVideoIndex)) return;
 
   if (view === 'guided') {
     // Sync: if user edited the textarea, update the structured view before showing it

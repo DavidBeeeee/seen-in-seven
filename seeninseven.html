@@ -749,9 +749,13 @@
           <button id="sv-regen-full" onclick="regenerateFullScript(currentVideoIndex, this)" title="Regenerate the entire script" class="sv-tool-btn">↺ Regenerate Full Script</button>
           <button id="sv-fullscreen" onclick="openFullscreenPreview()" title="Fullscreen preview" class="sv-tool-btn">⛶ Preview</button>
         </div>
+        <div class="sv-locked-notice" id="sv-locked-notice" hidden>
+          <span>This script is locked to protect your final draft.</span>
+          <button type="button" onclick="unlockScript()">Unlock to Edit</button>
+        </div>
         <!-- Row 3: delete link -->
         <div class="sv-toolbar-row">
-          <span class="sv-redo-link danger" onclick="confirmDeleteAndStartOver()">Delete &amp; Re-answer Questions</span>
+          <span class="sv-redo-link danger" id="sv-delete-reanswer" onclick="confirmDeleteAndStartOver()">Delete &amp; Re-answer Questions</span>
         </div>
       </div>
       <div id="sv-regeneration-status" class="sv-regeneration-status" role="status" aria-live="polite" hidden>
@@ -947,7 +951,7 @@
 <script src="/js/answer-help.js?v=answer-help-4"></script>
 <script src="/js/supabase.js?v=journey-map-1"></script>
 <script src="/js/points.js?v=active-lock-1"></script>
-<script src="/js/app.js?v=restart-onboarding-1"></script>
+<script src="/js/app.js?v=active-script-lock-2"></script>
 
 <!-- ══ DUAL COMPLETE OVERLAY ══ -->
 <div id="dual-complete-overlay">
