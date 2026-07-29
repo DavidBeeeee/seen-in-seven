@@ -57,6 +57,13 @@
       'LEVEL: ' + level,
       'VIDEO: ' + video,
       '',
+      'SOURCE OWNERSHIP:',
+      '- The current Journey Direction and current-video answers are the authoritative brief for this video.',
+      '- The Journey Direction controls this chapter and place in the seven-part arc. The current answers control the facts, causes, emotional conflict, and meaning inside that chapter.',
+      '- Previous scripts provide continuity only. Onboarding and background are a supporting archive only.',
+      '- Supporting material may clarify or deepen the same causal thread, but it must never replace it with an older, more dramatic, or more familiar story.',
+      '- If the current answers are sparse, infer within their assigned direction instead of switching to another subject from the archive.',
+      '',
       'ONBOARDING DATA:'
     ];
     (config.onboardingLines || []).forEach(line => lines.push(String(line)));

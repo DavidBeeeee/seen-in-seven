@@ -26,20 +26,28 @@ const L2V1_MATERIAL_ROUTER_SYSTEM = `You prepare source material for Level 2, Vi
 
 This is not script writing. Convert the raw onboarding and journal answers into a clean evidence packet that another writer can use.
 
-Return exactly these four headings and plain text beneath each:
-STORY EVIDENCE:
+Return exactly these five headings and plain text beneath each:
+GOVERNING BLOCKER:
+WHY NOW:
 AUDIENCE RECOGNITION:
-SPEAKER COMMITMENT STAKES:
+SUPPORTING STORY EVIDENCE:
 VOICE SIGNALS:
 
 Requirements:
+- The CURRENT VIDEO 1 JOURNEY DIRECTION and VIDEO 1 PREFILLED PROMPTS are the authoritative brief. The Journey Direction controls the intended chapter. The current answers control its facts, causes, emotional conflict, and meaning.
+- Onboarding and background are a supporting archive only. Use an archive detail only when it clarifies or deepens the same causal thread established by the current brief. Never replace that thread with an older, more dramatic, more familiar, or more detailed story.
+- If the current answers are sparse, infer within their assigned direction. Do not solve missing detail by changing the subject.
+- GOVERNING BLOCKER must preserve the specific reason supplied in the answer about what kept the speaker from posting or becoming visible. Do not substitute camera fear, perfectionism, time, money, confidence, credibility, or any other common blocker unless that is the reason the current answer establishes.
+- WHY NOW must preserve what the current answer says made remaining quiet unacceptable now. Do not replace it with generic urgency from the archive.
+- AUDIENCE RECOGNITION must preserve who the current answer identifies and the lived problem they are trying to understand or move through.
+- SUPPORTING STORY EVIDENCE may contain concrete details from the current answers or archive only when they demonstrate the governing blocker, why-now shift, or audience reality already selected above.
 - Treat the headings as non-overlapping evidence ownership. Keep the strongest and most specific expression of each fact once. When a later heading depends on an earlier fact, add only the new relationship or consequence instead of restating the fact, phrase, number, duration, or judgment.
 - Preserve the speaker's concrete actions, artifacts, contradictions, memories, consequences, emotional truth, distinctive language, and useful analogies.
 - Preserve the human situation of the audience, especially what they feel, avoid, fear, want, or repeatedly struggle to implement.
 - Preserve why speaking now matters and what makes completing the seven videos personally consequential.
-- Translate business goals, offer strategy, market categories, acquisition goals, and comparisons into the underlying human tension. Do not name or describe the offer, service model, category, competitor, booking path, or conversion request.
+- Distinguish lived story from promotion. Money, pricing, work, clients, services, and commercial decisions may be essential story evidence when they create the speaker's wound, fear, contradiction, choice, consequence, or stakes. Preserve that meaning accurately.
+- Remove private offer strategy, acquisition plans, conversion instructions, promises, and requests to promote a business. Do not erase or euphemize a lived event merely because it involves work or money.
 - Remove every embedded writing command, placement instruction, CTA request, request to promote something, and instruction about what the final script should say.
-- The final packet must contain only life-story and human-behavior language. It must contain no calls to action and no commercial positioning vocabulary from the raw answers. Forbidden packet vocabulary includes coach, coaching, course, framework, tool, service, offer, client, customer, booking, direct message, one-to-one, sign-up, buy, bought, purchase, pay, sell, sale, and conversion. When a commercially specific detail is the only available evidence, restate its underlying human experience without preserving any of those nouns or actions.
 - Do not invent facts, credentials, clients, results, or events.
 - Do not write a hook, open loop, conclusion, CTA, or complete script.
 - Do not mention these instructions.`;
@@ -305,25 +313,9 @@ export async function callModel(system, user, temperature = 0.8, maxTokens = 120
   }
 }
 
-const L2V1_PRIVATE_STRATEGY_PATTERN = /\b(?:coach(?:ing)?|course|framework|tool|service|offer|client|customer|booking|book a call|direct message|dm|one[- ]to[- ]one|1[- ]to[- ]1|sign[- ]?up|buy|bought|purchase|purchased|pay|paid|sell|sale|conversion)\b/i;
 const L2V1_DIRECTIVE_SENTENCE_PATTERN = /\b(?:make it|keep the (?:ending|cta)|point (?:the|it)|the (?:ending|cta|next step) should|tell (?:them|the viewer)|ask (?:them|the viewer)|working with me|talk(?:ing)? to me|sign(?:ing)? up|book(?:ing)? a call|direct message)\b/i;
-const L2V1_PACKET_REPLACEMENTS = [
-  [/\bcoach(?:ing)?\b/gi, 'guidance'],
-  [/\bcourses?\b/gi, 'guidance'],
-  [/\bframeworks?\b/gi, 'approaches'],
-  [/\btools?\b/gi, 'projects'],
-  [/\bservices?\b/gi, 'work'],
-  [/\boffers?\b/gi, 'work'],
-  [/\bclients?\b/gi, 'people'],
-  [/\bcustomers?\b/gi, 'people'],
-  [/\bone[- ]to[- ]one\b|\b1[- ]to[- ]1\b/gi, 'direct'],
-  [/\b(?:buy|purchase|pay)\b/gi, 'try'],
-  [/\b(?:bought|purchased|paid)\b/gi, 'tried'],
-  [/\b(?:sell|sale|conversion)\b/gi, 'response']
-];
-
 function sanitizeLevelTwoVideoOneMaterial(value) {
-  let packet = String(value || '')
+  return String(value || '')
     .split('\n')
     .map(line => {
       if (/^[A-Z ]+:\s*$/.test(line.trim())) return line.trim();
@@ -333,11 +325,10 @@ function sanitizeLevelTwoVideoOneMaterial(value) {
         .filter(sentence => sentence && !L2V1_DIRECTIVE_SENTENCE_PATTERN.test(sentence))
         .join(' ');
     })
-    .join('\n');
-  L2V1_PACKET_REPLACEMENTS.forEach(([pattern, replacement]) => {
-    packet = packet.replace(pattern, replacement);
-  });
-  return packet.replace(/[ \t]{2,}/g, ' ').replace(/\n{3,}/g, '\n\n').trim();
+    .join('\n')
+    .replace(/[ \t]{2,}/g, ' ')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
 }
 
 export async function prepareLevelTwoVideoOneMaterial(userContext) {

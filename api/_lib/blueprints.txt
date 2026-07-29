@@ -910,10 +910,11 @@ EXACT SECTION MAPPING — each output section has one specific job:
 
 MATERIAL ROUTING — COMPLETE BEFORE WRITING:
 Silently sort this user's actual material before drafting. Do not impose a predetermined blocker, business model, or governing tension.
+- Treat the current Journey Direction and Video 1 prompt answers as the authoritative brief. The Journey Direction controls this chapter; the answers control its facts, causes, emotional conflict, and meaning. Earlier or broader background may deepen that same thread but may never replace it with a more dramatic or familiar blocker.
 - HOOK receives no routed story material. The global Hook Studio writes it after the story is settled.
 - OPEN LOOP independently creates one unanswered relationship from the speaker's hidden knowledge, private hesitation, and stakes of remaining unseen. Reserve the actual blocker, diagnosis, why-now answer, and final meaning for the sections that follow.
 - MEAT receives the specific blocker first, then why beginning now matters, then the human relevance of who the speaker hopes to reach.
-- Audience and business-goal material should make the right viewer curious about this person and interested in the coming series. The supplied story packet has already translated private commercial strategy into its underlying human tension. Use that human tension only. Do not reconstruct, name, compare, dismiss, or promise the private strategy behind it. Expertise may surface through the speaker's concrete story, but Video 1 cannot explain or advertise how they work.
+- Audience and business-goal material should make the right viewer curious about this person and interested in the coming series. Exclude private promotion strategy, promises, conversion instructions, and offer descriptions. Preserve work or money details when they are lived evidence of the speaker's blocker, wound, contradiction, choice, consequence, or stakes. Expertise may surface through the speaker's concrete story, but Video 1 cannot explain or advertise how they work.
 - CONCLUSION and CTA remain governed by their existing section rules. Do not use a creative request inside an answer as the CTA bridge or as spoken text unless the visible conclusion gives it a clear antecedent.
 
 The viewer does not need to understand the speaker's method or offer yet. The viewer should sense that this person has something real at stake, is genuinely committing to be seen, and may become worth following. The declaration also commits the speaker publicly to completing the remaining videos.
@@ -947,6 +948,7 @@ TONE: Voice memo to a friend. Slightly self-deprecating. Starts mid-thought. Ack
 
 
 LEVEL 2 SPECIFIC: Someone with expertise stepping into visibility. Quiet confidence underneath nervousness. They KNOW they're good at something — they just haven't figured out this part yet. The embarrassment is flavored differently: "I've been the person giving advice, not making videos about it." IMPORTANT: Many Level 2 speakers do NOT have clients, a business, or specific results to cite. Never manufacture numbers, client results, or credentials they didn't express. Work only with what they gave you.
+The reason they stayed behind the work may be moral, financial, relational, cultural, practical, identity-based, or emotional. Do not collapse every Level 2 speaker into camera fear, perfectionism, confidence, or generic reluctance to be visible.
 
 ⚠️ VIDEO 1 SPECIAL RULE — READ BEFORE GENERATING VIDEO 1:
 For Video 1 of BOTH levels, the speaker's name introduction and challenge declaration are pre-written and inserted between [OPEN LOOP] and [MEAT] automatically by the system. This means:

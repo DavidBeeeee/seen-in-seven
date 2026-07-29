@@ -111,6 +111,31 @@ assert(
   promptTestSource.includes('preparedUserMessage = await prepareLevelTwoVideoOneMaterial(userMessage);'),
   'Admin Prompt Tester does not mirror Level 2 Video 1 production preparation.'
 );
+[
+  'The CURRENT VIDEO 1 JOURNEY DIRECTION and VIDEO 1 PREFILLED PROMPTS are the authoritative brief',
+  'Never replace that thread with an older, more dramatic, more familiar, or more detailed story',
+  'Money, pricing, work, clients, services, and commercial decisions may be essential story evidence',
+  'Do not erase or euphemize a lived event merely because it involves work or money'
+].forEach(requirement => {
+  assert(
+    generationSource.includes(requirement),
+    'Level 2 Video 1 source routing is missing: ' + requirement
+  );
+});
+assert(
+  !generationSource.includes('L2V1_PACKET_REPLACEMENTS'),
+  'Level 2 Video 1 still mutates story facts through blanket commercial-word replacements.'
+);
+assert(
+  engineSource.includes('The current Journey Direction and current-video answers are the authoritative brief'),
+  'The shared prompt engine is missing current-video source ownership.'
+);
+assert(
+  appSource.includes('The current Journey Direction and current-video answers are the authoritative brief') ||
+    readFileSync(new URL('../js/script-prompt-engine.js', import.meta.url), 'utf8')
+      .includes('The current Journey Direction and current-video answers are the authoritative brief'),
+  'The browser prompt engine is missing current-video source ownership.'
+);
 assert(
   generationSource.includes("'OPTIONAL JOURNEY CONNECTION'") &&
     generationSource.includes('No earlier chapter is a required cause') &&
