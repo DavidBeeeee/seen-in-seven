@@ -10,7 +10,6 @@ import {
   extractSystemPrompt,
   finalizeScriptHook,
   finalizeScriptOpenLoop,
-  prepareFinalHookCandidates,
   validateBlueprintSource,
   reviewAndRepairScript
 } from './_lib/prompt-engine.js';
@@ -97,23 +96,6 @@ export default async function handler(req, res) {
           provisionalHook: true,
           provisionalOpenLoop: true
         }));
-        const hookCandidatesPromise = measureStage(timings, 'hook-candidates' + stageSuffix, () =>
-          prepareFinalHookCandidates({
-            script:reviewedContent,
-            systemPrompt,
-            userMessage:preparedUserMessage + retryNote,
-            level,
-            video,
-            callModel
-          })
-        ).catch(error => {
-          console.warn('[SeenInSeven test Hook preparation]', JSON.stringify({
-            level,
-            video,
-            message:String(error && error.message || 'Hook preparation failed.')
-          }));
-          return [];
-        });
         const retentionContent = await measureStage(timings, 'open-loop' + stageSuffix, () => finalizeScriptOpenLoop({
           script: reviewedContent,
           systemPrompt,
@@ -122,15 +104,13 @@ export default async function handler(req, res) {
           video,
           callModel
         }));
-        const preparedCandidates = await hookCandidatesPromise;
-        content = await measureStage(timings, 'hook-selection' + stageSuffix, () => finalizeScriptHook({
+        content = await measureStage(timings, 'hook' + stageSuffix, () => finalizeScriptHook({
           script: retentionContent,
           systemPrompt,
           userMessage: preparedUserMessage + retryNote,
           level,
           video,
-          callModel,
-          preparedCandidates
+          callModel
         }));
         break;
       } catch (error) {

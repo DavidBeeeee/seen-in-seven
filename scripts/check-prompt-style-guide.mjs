@@ -12,8 +12,8 @@ import {
   OPEN_LOOP_ARCHITECT_SYSTEM,
   OPEN_LOOP_WRITER_SYSTEM,
   parseSections,
-  prepareFinalHookCandidates,
   publishedPrompt,
+  QUALITY_REVIEW_SYSTEM,
   reviewAndRepairScript,
   validateOutput,
   validateBlueprintSource
@@ -34,11 +34,10 @@ assert(focusedPrompt.includes('VIDEO 5 — THE FALL — THE ORDEAL'), 'Focused p
 assert(!focusedPrompt.includes('VIDEO 4 — THE CHOICE BEFORE PROOF'), 'Focused prompt leaked Video 4 rules.');
 assert(!focusedPrompt.includes('VIDEO 6 — EPIPHANY #2'), 'Focused prompt leaked Video 6 rules.');
 assert(focusedPrompt.includes('Apply the Hook-and-Eye Seamless Rule ONLY inside [MEAT].'), 'Focused prompt lost the Meat-only continuity rule.');
-assert(focusedPrompt.includes('LEXICAL AND CONCEPT ECONOMY:'), 'Focused prompt lost the global lexical-economy rule.');
 assert(
-  focusedPrompt.includes('HOOK remains outside the cross-section lexical and concept budget') &&
-    focusedPrompt.includes('OPEN LOOP may name one precise unanswered anchor'),
-  'Lexical economy does not preserve Hook and Open Loop ownership.'
+  !focusedPrompt.includes('LEXICAL AND CONCEPT ECONOMY:') &&
+    QUALITY_REVIEW_SYSTEM.includes('After story structure and MEAT continuity are secure'),
+  'Lexical repetition pressure was not moved out of initial composition and into post-draft editing.'
 );
 assert(!focusedPrompt.includes('INFORMATION LEDGER'), 'Focused prompt still contains the superseded Information Ledger.');
 assert(
@@ -61,8 +60,7 @@ const sectionGenerationSource = generationSource.slice(
 );
 assert(
   generationSource.indexOf("const retentionContent = await measureStage(timings, 'open-loop'") <
-    generationSource.indexOf("const finalContent = await measureStage(timings, 'hook-selection'") &&
-    generationSource.includes('preparedCandidates'),
+    generationSource.indexOf("const finalContent = await measureStage(timings, 'hook'"),
   'Production generation no longer finalizes the Open Loop before the Hook.'
 );
 assert(
@@ -74,8 +72,7 @@ assert(
 );
 assert(
   promptTestSource.indexOf("const retentionContent = await measureStage(timings, 'open-loop'") <
-    promptTestSource.indexOf("content = await measureStage(timings, 'hook-selection'") &&
-    promptTestSource.includes('preparedCandidates'),
+    promptTestSource.indexOf("content = await measureStage(timings, 'hook'"),
   'Admin Prompt Tester no longer mirrors the production Open Loop and Hook order.'
 );
 
@@ -303,12 +300,16 @@ const wholeRewriteResult = await reviewAndRepairScript({
       });
     }
     if (wholeRewriteCalls.length === 2) return flawedFreshDraft;
-    return validFreshScript;
+    return JSON.stringify({
+      pass:false,
+      issues:[],
+      replacements:{ MEAT:parseSections(validFreshScript).MEAT }
+    });
   }
 });
-assert(wholeRewriteCalls.length === 3, 'Fresh full review did not use one review followed by complete-script correction passes.');
+assert(wholeRewriteCalls.length === 3, 'Fresh full review did not use one review, one complete rewrite, and one mechanical cleanup.');
 assert(wholeRewriteCalls[1].user.includes('DRAFT TO REPLACE COMPLETELY'), 'Whole rewrite lost its complete-replacement instruction.');
-assert(wholeRewriteCalls[2].user.includes('DRAFT TO REPLACE COMPLETELY'), 'Hard validation correction did not remain a complete rewrite.');
+assert(wholeRewriteCalls[2].user.includes('DETERMINISTIC FAILURES'), 'Hard validation correction did not become a mechanical cleanup.');
 assert(!wholeRewriteResult.includes('A section replacement that must not be stitched'), 'Full regeneration stitched in a section replacement.');
 assert(parseSections(wholeRewriteResult).HOOK === 'Hold on.', 'Story review did not preserve the provisional Hook boundary.');
 assert(parseSections(wholeRewriteResult).MEAT === parseSections(validFreshScript).MEAT, 'Full regeneration did not return the complete fresh story rewrite.');
@@ -461,50 +462,6 @@ assert(parseSections(hookStudioResult)['OPEN LOOP'] === parseSections(openLoopSt
 assert(parseSections(hookStudioResult).MEAT === parseSections(openLoopStudioResult).MEAT, 'Hook Studio changed the Meat.');
 assert(parseSections(hookStudioResult).CONCLUSION === parseSections(openLoopStudioResult).CONCLUSION, 'Hook Studio changed the Conclusion.');
 assert(parseSections(hookStudioResult).CTA === parseSections(openLoopStudioResult).CTA, 'Hook Studio changed the CTA.');
-
-const preparedHookCalls = [];
-const preparedHooks = await prepareFinalHookCandidates({
-  script:openLoopStudioResult,
-  systemPrompt:buildSystemPrompt(published.prompt, 1, 2),
-  userMessage:freshRequest,
-  level:1,
-  video:2,
-  callModel:async system => {
-    preparedHookCalls.push(system);
-    return JSON.stringify({
-      candidates:[
-        'Perfection is the most expensive hiding place.',
-        'A camera can turn ten minutes into a hostage negotiation.',
-        'Delete buttons have ended more careers than critics ever could.',
-        'Your camera is getting blamed for a crime it did not commit.',
-        'I trusted the delete button more than I trusted myself.',
-        'The safest recording is the one that ruins your future.'
-      ]
-    });
-  }
-});
-const preparedHookResult = await finalizeScriptHook({
-  script:openLoopStudioResult,
-  systemPrompt:buildSystemPrompt(published.prompt, 1, 2),
-  userMessage:freshRequest,
-  level:1,
-  video:2,
-  preparedCandidates:preparedHooks,
-  callModel:async system => {
-    preparedHookCalls.push(system);
-    assert(system === HOOK_JUDGE_SYSTEM, 'Prepared Hook selection regenerated the candidate slate.');
-    return JSON.stringify({ pass:true, hook:'Perfection is the most expensive hiding place.', reason:'' });
-  }
-});
-assert(
-  preparedHookCalls.filter(system => system === HOOK_STUDIO_SYSTEM).length === 1 &&
-    preparedHookCalls.filter(system => system === HOOK_JUDGE_SYSTEM).length === 1,
-  'Prepared Hook candidates did not bypass duplicate candidate generation.'
-);
-assert(
-  parseSections(preparedHookResult).HOOK === 'Perfection is the most expensive hiding place.',
-  'Prepared Hook candidates were not judged and installed after Open Loop completion.'
-);
 
 const levelTwoHookCalls = [];
 const levelTwoHookResult = await finalizeScriptHook({

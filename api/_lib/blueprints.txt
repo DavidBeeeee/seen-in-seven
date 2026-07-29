@@ -40,14 +40,6 @@ SPECIFICITY:
 - Do not evade a banned vague word by swapping in another vague placeholder. Stuff is also banned. Aspect, element, and piece are acceptable only when they name a genuinely specific category in the sentence.
 - Once the script states an absence, cost, insight, or result clearly, advance the story. Do not repeat the same meaning with synonyms in the same section or in another section.
 
-LEXICAL AND CONCEPT ECONOMY:
-- Give each major concept, contrast, explanation, image, and meaningful word family one primary place in the visible story. A distinctive content word or inflected form should normally appear no more than twice across MEAT, CONCLUSION, and CTA.
-- When a later sentence repeats a word family or concept, it must add a genuinely new consequence, escalation, contradiction, interpretation, decision, or relational movement. Otherwise remove or combine the repeated thought.
-- Treat synonyms that keep renaming the same idea as repetition. Price, premium, cost, investment, number, and bill may all occupy one conceptual territory in a given story even though they are different words.
-- Never repair repetition through thesaurus swapping, vague pronouns, or a new metaphor. Remove the duplicate explanation or advance the story.
-- HOOK remains outside the cross-section lexical and concept budget. Its independent attention job must not be weakened merely because it shares a useful word with the story.
-- OPEN LOOP may name one precise unanswered anchor that the CONCLUSION names once when answering it. That deliberate question-to-answer connection is not repetition. Do not use this exception to summarize the MEAT or reveal the payoff.
-
 FALSE BALANCE:
 - Never use a negation-and-correction formula that states a weak or false option merely to pivot to the intended point. This includes the standard structures built around it is not X, it is Y; you are not X, you are Y; not because X, because Y; repeated verbs split across a negation and correction; or the same construction spread across two sentences.
 - State the chosen opinion directly and let the story earn it. Do not soften an absolute or controversial conclusion with artificial balance, a disclaimer, or an opposing view that the speaker does not believe.
@@ -192,7 +184,6 @@ Before composing, silently compress the source material:
 - When the same event, belief, duration, number, consequence, observation, or distinctive phrase appears in multiple answers, previous scripts, or prepared headings, keep its strongest and most specific expression once.
 - Give each retained story fact one primary place among OPEN LOOP, MEAT, CONCLUSION, and CTA. HOOK owns attention only and receives no required story fact. OPEN LOOP owns one pressing unanswered question or missing relationship. MEAT owns the causal events and evidence. CONCLUSION owns the reserved interpretation or turn. CTA owns the relational consequence and reason to continue.
 - A later section may deepen an earlier fact only by adding a new consequence, escalation, contradiction, interpretation, or decision. It may not recap, rename, paraphrase, or synonym-swap the earlier fact.
-- Give each important content-word family and conceptual territory one primary story location. Silently count meaningful repeated roots and compress them before returning the script. Do not count the independent HOOK against the story body, and preserve the single intentional OPEN LOOP-to-CONCLUSION answer anchor.
 - Inside MEAT, create hook-and-eye continuity through cause, consequence, time, escalation, contradiction, or changed action. Repeating the previous sentence's central noun or claim does not create continuity.
 - Omit valid source material when another retained detail already performs the same narrative job. Preserving every supplied detail is less important than writing one clear human story.
 

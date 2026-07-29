@@ -691,8 +691,8 @@ function publishedPrompt() {
     'For Level 2 Video 7, leave the HOOK to the global Hook Studio with no required present-day action or return beat. Inside the story, use only one full-circle callback and one connected correction, and reject episode-by-episode recap. Keep the unfinished element honest and the continuing mission relational rather than commercial.',
     'Judge meaning, not just formatting. The Hook is an independent attention event outside the journey and chronological story; it does not need to transition into the Open Loop or communicate a story beat. It may use rhetorical exaggeration or provocative framing that is defensible in the speaker\'s voice, but it cannot invent a personal event, credential, measurable result, or quotation, and it cannot perform the Open Loop, Meat, Conclusion, or CTA\'s job. The Open Loop must independently create one concrete unanswered relationship from the completed story and must not explain the Hook or reveal or paraphrase the Conclusion. The Meat must tell the local story in connected spoken logic without repeating the Open Loop or Conclusion. The Conclusion must create an earned turn rather than recap. The CTA must carry a concrete element from that turn through a natural grammatical hinge into the follow request without a full stop, make follow the primary action, use because once for a specific reason, and orient a cold viewer inside the seven-part journey. Conditional bridges are valid only when they name a precise situation, consequence, or emotion from this story; reject generic approval tests.',
     'Treat the conclusion central meaning as reserved. Earlier sections may contain evidence for it but cannot explain, summarize, or paraphrase it. Reject scripts that spend the conclusion repeating a meaning already given away.',
-    'Honor the focused composition rule. Apply sentence-level continuity only inside MEAT. Treat OPEN LOOP as an independent retention device, CONCLUSION and CTA as one closing unit, and HOOK as a final independent attention layer outside story-fact ownership. Every retained story fact has one primary section among OPEN LOOP, MEAT, CONCLUSION, and CTA. If a later story section repeats or paraphrases an earlier fact instead of adding a consequence, escalation, contradiction, interpretation, decision, or relational progression, replace only that later duplicate. Do not force the Hook into this information sequence, mistake necessary subject clarity for repetition, or solve repetition by merely changing repeated nouns.',
-    'Enforce lexical and concept economy across MEAT, CONCLUSION, and CTA. Group inflected forms and synonymous labels by the idea they express. A chain such as price, premium, cost, investment, number, and bill may be one repeated conceptual territory even though every noun differs. Preserve the strongest expression and rewrite later uses by removing the duplicate explanation or advancing the story. Never use thesaurus swapping, vague pronouns, or a new metaphor as a fake repair.',
+    'Honor the focused composition rule. Apply sentence-level continuity only inside MEAT. For every MEAT sentence after the first, identify how it causes, complicates, advances, contrasts with, or responds to the sentence immediately before it. Merely discussing the same topic does not pass. If the relationship is missing, replace the complete MEAT as one spoken performance rather than patching individual sentences. Treat OPEN LOOP as an independent retention device, CONCLUSION and CTA as one closing unit, and HOOK as a final independent attention layer outside story-fact ownership.',
+    'After story structure and MEAT continuity are secure, use the supplied editorial repetition signals to remove repeated meanings across MEAT, CONCLUSION, and CTA. Group inflected forms and synonymous labels by the idea they express, but do not sacrifice grammar or spoken continuity merely to reduce a word count. Never create fragments, remove a necessary subject or connector, substitute a vague noun, or break a hook-and-eye relationship. Repeating a key noun for clarity is preferable to choppy or evasive prose. Remove the duplicate explanation or advance the story instead of using thesaurus swapping.',
     'Keep HOOK outside the cross-section lexical and concept budget so its independent attention function is never weakened to match the story body. Allow OPEN LOOP to name one precise unanswered anchor and CONCLUSION to name that anchor once while answering it. Do not treat that deliberate retention connection as repetition, but reject any additional restatement, evidence summary, or early payoff.',
     'Allow only one governing metaphor family per script and normally no more than two meaningful uses of it. Reject competing image systems such as maps mixed with floors, bridges, mountains, roads, or ladders. Preserve literal details even when they happen to name a physical object.',
     'Epiphany conclusions may be absolute, controversial, and sharply opinionated when the supplied story earns them. Do not add hedges, disclaimers, reminders that the claim is only the speaker\'s opinion, or language that softens conviction merely to sound balanced.',
@@ -711,7 +711,7 @@ function publishedPrompt() {
     'Satisfy every supplied failure literally. Before returning, re-read each replacement and verify the same problem does not remain in a different form.',
     'For false balance, state the chosen point directly. Do not replace one negation-and-correction construction with another.',
     'For banned language, remove every occurrence and use a specific natural alternative. Never replace a vague banned noun with another vague placeholder.',
-    'For lexical repetition, preserve no more than two necessary uses of the named meaningful word family across MEAT, CONCLUSION, and CTA. Remove or advance the repeated thought instead of substituting a synonym. Do not rewrite HOOK merely because it shares a word with the story body, and preserve one necessary OPEN LOOP-to-CONCLUSION answer anchor.',
+    'For lexical repetition, remove or advance the repeated thought instead of substituting a synonym. Preserve complete grammar, necessary subjects and connectors, and every MEAT hook-and-eye relationship. Never create a fragment or choppy sentence merely to reduce a repeated word. Do not rewrite HOOK merely because it shares a word with the story body, and preserve one necessary OPEN LOOP-to-CONCLUSION answer anchor.',
     'Preserve intentional bluntness, profanity, controversy, dark facts, and emotional force while repairing mechanics. Do not sanitize the speaker.',
     'For OPEN LOOP length, keep it between 35 and 45 words and never exceed 50.',
     'For CTA continuity, carry the concrete conclusion bridge through a conjunction, relative clause, or subordinating clause into the follow action without a full stop. Keep the bridge, follow action, exactly one "because," its specific reason, and the seven-part orientation in one connected sentence.',
@@ -1030,61 +1030,45 @@ function publishedPrompt() {
     ].join('\n');
   }
 
-  function validHookCandidates(config, candidates) {
-    const sections = parseSections(config.script);
-    if (!sections) return [];
-    return (candidates || []).filter(hook => {
-      const candidateScript = composeSections({ ...sections, HOOK:hook });
-      const validation = validateOutput(
-        candidateScript,
-        config.video,
-        config.level,
-        config.userMessage,
-        config.systemPrompt
-      );
-      const hookIssues = validation.sectionIssues && validation.sectionIssues.HOOK || [];
-      const repetitionIssues = (validation.issues || []).filter(issue => /repeats a long phrase from HOOK/i.test(issue));
-      return !hookIssues.length && !repetitionIssues.length;
-    });
-  }
-
-  async function prepareFinalHookCandidates(config) {
-    const sections = parseSections(config.script);
-    if (!sections) throw new Error('The script does not have all five labeled sections for final Hook preparation.');
-    const raw = await config.callModel(
-      HOOK_STUDIO_SYSTEM,
-      hookStudioMessage(config, []),
-      0.8
-    );
-    return validHookCandidates(config, parseHookStudioResult(raw));
-  }
-
   async function generateFinalHook(config) {
     const sections = parseSections(config.script);
     if (!sections) throw new Error('The script does not have all five labeled sections for final Hook selection.');
     let failures = [];
-    const preparedCandidates = validHookCandidates(config, config.preparedCandidates);
     for (let attempt = 0; attempt < 2; attempt++) {
-      let candidates = attempt === 0 ? preparedCandidates : [];
-      if (!candidates.length) {
-        const raw = await config.callModel(
-          HOOK_STUDIO_SYSTEM,
-          hookStudioMessage(config, failures),
-          attempt ? 0.55 : 0.8
-        );
-        candidates = validHookCandidates(config, parseHookStudioResult(raw));
-      }
+      const raw = await config.callModel(
+        HOOK_STUDIO_SYSTEM,
+        hookStudioMessage(config, failures),
+        attempt ? 0.55 : 0.8
+      );
+      const candidates = parseHookStudioResult(raw);
       if (!candidates.length) {
         failures = ['The previous response did not return the required JSON candidate slate.'];
         continue;
       }
+      const validCandidates = candidates.filter(hook => {
+        const candidateScript = composeSections({ ...sections, HOOK: hook });
+        const validation = validateOutput(
+          candidateScript,
+          config.video,
+          config.level,
+          config.userMessage,
+          config.systemPrompt
+        );
+        const hookIssues = validation.sectionIssues && validation.sectionIssues.HOOK || [];
+        const repetitionIssues = (validation.issues || []).filter(issue => /repeats a long phrase from HOOK/i.test(issue));
+        return !hookIssues.length && !repetitionIssues.length;
+      });
+      if (!validCandidates.length) {
+        failures = ['Every candidate violated a deterministic style, format, or repetition rule.'];
+        continue;
+      }
       const judgmentRaw = await config.callModel(
         HOOK_JUDGE_SYSTEM,
-        hookJudgeMessage(config, candidates),
+        hookJudgeMessage(config, validCandidates),
         0.05
       );
       const judgment = parseHookJudgeResult(judgmentRaw);
-      if (judgment.pass && candidates.includes(judgment.hook)) return judgment.hook;
+      if (judgment.pass && validCandidates.includes(judgment.hook)) return judgment.hook;
       failures = [judgment.reason || 'The previous line did not function as an immediate attention interrupt.'];
     }
     throw new Error('The final Hook did not pass the Hook Studio checks. Please try regenerating the Hook.');
@@ -1356,7 +1340,16 @@ function publishedPrompt() {
       0.15
     );
     const review = ignoreProvisionalSectionReview(parseQualityReview(reviewRaw), config);
-    if ((!review || review.pass) && initialValidation.valid) return script;
+    if (!review || review.pass) {
+      if (initialValidation.valid) return script;
+      script = await applyFinalMechanicalRepair({ ...config, script });
+      const repairedValidation = ignoreProvisionalSectionValidation(
+        validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt),
+        config
+      );
+      if (repairedValidation.valid) return script;
+      throw new Error('The script response still needs correction: ' + validationFeedback(repairedValidation) + ' Please try again.');
+    }
 
     script = await config.callModel(
       config.systemPrompt,
@@ -1364,22 +1357,8 @@ function publishedPrompt() {
       0.45
     );
     script = provisionalStudioScript(script, config);
-    let finalValidation = ignoreProvisionalSectionValidation(
-      validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt),
-      config
-    );
-    if (finalValidation.valid) return script;
-
-    // A complete rewrite can solve the story issue while accidentally adding a
-    // banned term or malformed label. Correct the entire composition once more
-    // instead of discarding it or stitching a repaired section into place.
-    script = await config.callModel(
-      config.systemPrompt,
-      wholeScriptRewriteMessage(config, script, null, finalValidation),
-      0.25
-    );
-    script = provisionalStudioScript(script, config);
-    finalValidation = ignoreProvisionalSectionValidation(
+    script = await applyFinalMechanicalRepair({ ...config, script });
+    const finalValidation = ignoreProvisionalSectionValidation(
       validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt),
       config
     );
@@ -1391,41 +1370,34 @@ function publishedPrompt() {
     if (config.wholeScriptRewrite) return reviewAndRewriteWholeScript(config);
     let script = provisionalStudioScript(config.script, config);
     let unresolvedSemanticFailure = false;
-    // A replacement can solve the reported issue while introducing a new
-    // mechanical one. The third pass validates and cleans that replacement
-    // before the caller throws away the whole draft.
-    for (let pass = 0; pass < 3; pass++) {
-      const validation = ignoreProvisionalSectionValidation(
-        validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt),
-        config
-      );
-      const reviewRaw = await config.callModel(
-        QUALITY_REVIEW_SYSTEM,
-        buildQualityReviewMessage({
-          level: config.level,
-          video: config.video,
-          systemPrompt: config.systemPrompt,
-          userMessage: config.userMessage,
-          script,
-          validation,
-          precisionPass: pass > 0,
-          provisionalHook: config.provisionalHook,
-          provisionalOpenLoop: config.provisionalOpenLoop
-        }),
-        0.15
-      );
-      const review = ignoreProvisionalSectionReview(parseQualityReview(reviewRaw), config);
-      if (!review) {
-        if (validation.valid && pass > 0) return script;
-        continue;
-      }
-      if (review.pass && validation.valid) return script;
-      if (Object.keys(review.replacements).length) {
-        script = applySectionReplacements(script, review.replacements);
-        unresolvedSemanticFailure = false;
-      } else {
-        unresolvedSemanticFailure = true;
-      }
+    const validation = ignoreProvisionalSectionValidation(
+      validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt),
+      config
+    );
+    const reviewRaw = await config.callModel(
+      QUALITY_REVIEW_SYSTEM,
+      buildQualityReviewMessage({
+        level:config.level,
+        video:config.video,
+        systemPrompt:config.systemPrompt,
+        userMessage:config.userMessage,
+        script,
+        validation,
+        precisionPass:false,
+        provisionalHook:config.provisionalHook,
+        provisionalOpenLoop:config.provisionalOpenLoop
+      }),
+      0.15
+    );
+    const review = ignoreProvisionalSectionReview(parseQualityReview(reviewRaw), config);
+    if (!review) {
+      if (validation.valid) return script;
+    } else if (review.pass && validation.valid) {
+      return script;
+    } else if (Object.keys(review.replacements).length) {
+      script = applySectionReplacements(script, review.replacements);
+    } else if (!review.pass) {
+      unresolvedSemanticFailure = true;
     }
     script = await applyFinalMechanicalRepair({ ...config, script });
     const finalValidation = ignoreProvisionalSectionValidation(
@@ -1445,46 +1417,42 @@ function publishedPrompt() {
     if (!['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA'].includes(section)) throw new Error('Unknown script section.');
     let script = String(config.script || '').trim();
     let unresolvedSemanticFailure = false;
-    for (let pass = 0; pass < 3; pass++) {
-      const fullValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
-      const targetIssues = fullValidation.sectionIssues && fullValidation.sectionIssues[section] || [];
-      const targetAdvisories = fullValidation.sectionAdvisories && fullValidation.sectionAdvisories[section] || [];
-      const targetValidation = {
-        valid:targetIssues.length === 0,
-        sections:fullValidation.sections,
-        missing:fullValidation.missing && fullValidation.missing.includes(section) ? [section] : [],
-        issues:targetIssues,
-        sectionIssues:{ [section]:targetIssues },
-        advisories:targetAdvisories,
-        sectionAdvisories:{ [section]:targetAdvisories },
-        metrics:fullValidation.metrics
-      };
-      const reviewRaw = await config.callModel(
-        QUALITY_REVIEW_SYSTEM,
-        buildQualityReviewMessage({
-          level:config.level,
-          video:config.video,
-          systemPrompt:config.systemPrompt,
-          userMessage:config.userMessage,
-          script,
-          validation:targetValidation,
-          precisionPass:pass > 0,
-          onlySection:section
-        }),
-        0.15
-      );
-      const review = parseQualityReview(reviewRaw);
-      if (!review) {
-        if (targetValidation.valid && pass > 0) return parseSections(script)[section];
-        continue;
-      }
-      if (review.pass && targetValidation.valid) return parseSections(script)[section];
-      if (review.replacements[section]) {
-        script = applySectionReplacements(script, { [section]:review.replacements[section] });
-        unresolvedSemanticFailure = false;
-      } else {
-        unresolvedSemanticFailure = true;
-      }
+    const fullValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
+    const targetIssues = fullValidation.sectionIssues && fullValidation.sectionIssues[section] || [];
+    const targetAdvisories = fullValidation.sectionAdvisories && fullValidation.sectionAdvisories[section] || [];
+    const targetValidation = {
+      valid:targetIssues.length === 0,
+      sections:fullValidation.sections,
+      missing:fullValidation.missing && fullValidation.missing.includes(section) ? [section] : [],
+      issues:targetIssues,
+      sectionIssues:{ [section]:targetIssues },
+      advisories:targetAdvisories,
+      sectionAdvisories:{ [section]:targetAdvisories },
+      metrics:fullValidation.metrics
+    };
+    const reviewRaw = await config.callModel(
+      QUALITY_REVIEW_SYSTEM,
+      buildQualityReviewMessage({
+        level:config.level,
+        video:config.video,
+        systemPrompt:config.systemPrompt,
+        userMessage:config.userMessage,
+        script,
+        validation:targetValidation,
+        precisionPass:false,
+        onlySection:section
+      }),
+      0.15
+    );
+    const review = parseQualityReview(reviewRaw);
+    if (!review) {
+      if (targetValidation.valid) return parseSections(script)[section];
+    } else if (review.pass && targetValidation.valid) {
+      return parseSections(script)[section];
+    } else if (review.replacements[section]) {
+      script = applySectionReplacements(script, { [section]:review.replacements[section] });
+    } else if (!review.pass) {
+      unresolvedSemanticFailure = true;
     }
     script = await applyFinalMechanicalRepair({ ...config, script, onlySection: section });
     const finalValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
@@ -1545,7 +1513,6 @@ export {
     hookStudioMessage,
     parseHookJudgeResult,
     hookJudgeMessage,
-    prepareFinalHookCandidates,
     generateFinalHook,
     finalizeScriptHook,
     stripSectionLabels,

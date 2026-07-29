@@ -5,7 +5,6 @@ import {
   finalizeScriptHook,
   generateFinalOpenLoop,
   generateFinalHook,
-  prepareFinalHookCandidates,
   parseSections,
   publishedPrompt,
   reviewAndRepairScript,
@@ -710,23 +709,6 @@ async function generateScriptCore(input, prompt, timings) {
         provisionalHook: true,
         provisionalOpenLoop: true
       }));
-      const hookCandidatesPromise = measureStage(timings, 'hook-candidates' + stageSuffix, () =>
-        prepareFinalHookCandidates({
-          script:content,
-          systemPrompt,
-          userMessage:userMessage + retryNote,
-          level:input.level,
-          video:input.video,
-          callModel
-        })
-      ).catch(error => {
-        console.warn('[SeenInSeven Hook preparation]', JSON.stringify({
-          level:input.level,
-          video:input.video,
-          message:String(error && error.message || 'Hook preparation failed.')
-        }));
-        return [];
-      });
       const retentionContent = await measureStage(timings, 'open-loop' + stageSuffix, () => finalizeScriptOpenLoop({
         script: content,
         systemPrompt,
@@ -735,15 +717,13 @@ async function generateScriptCore(input, prompt, timings) {
         video: input.video,
         callModel
       }));
-      const preparedCandidates = await hookCandidatesPromise;
-      const finalContent = await measureStage(timings, 'hook-selection' + stageSuffix, () => finalizeScriptHook({
+      const finalContent = await measureStage(timings, 'hook' + stageSuffix, () => finalizeScriptHook({
         script: retentionContent,
         systemPrompt,
         userMessage: userMessage + retryNote,
         level: input.level,
         video: input.video,
-        callModel,
-        preparedCandidates
+        callModel
       }));
       return { content: finalContent, promptVersion: prompt.version, generationAttempts: attempt + 1 };
     } catch (error) {
