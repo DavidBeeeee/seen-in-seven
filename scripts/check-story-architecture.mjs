@@ -131,10 +131,14 @@ assert(
   'The shared prompt engine is missing current-video source ownership.'
 );
 assert(
-  engineSource.includes('async function callHookModel') &&
-    engineSource.includes("!/empty response/i.test") &&
-    (engineSource.match(/await callHookModel\(/g) || []).length === 2,
-  'Hook regeneration does not retry empty Hook Studio and Hook Judge responses.'
+  generationSource.includes('[SeenInSeven model empty]') &&
+    generationSource.includes('if (attempt === 0) continue;') &&
+    generationSource.includes("throw new Error('The AI returned an empty response.')"),
+  'The shared model call does not diagnose and retry empty provider responses.'
+);
+assert(
+  !engineSource.includes('callHookModel'),
+  'Hook generation still has a second empty-response retry layered over the shared retry.'
 );
 assert(
   appSource.includes('The current Journey Direction and current-video answers are the authoritative brief') ||

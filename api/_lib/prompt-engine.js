@@ -871,26 +871,12 @@ function publishedPrompt() {
     ].join('\n');
   }
 
-  async function callHookModel(config, system, message, temperature) {
-    let lastError;
-    for (let attempt = 0; attempt < 2; attempt++) {
-      try {
-        return await config.callModel(system, message, temperature);
-      } catch (error) {
-        lastError = error;
-        if (!/empty response/i.test(String(error && error.message || '')) || attempt === 1) throw error;
-      }
-    }
-    throw lastError;
-  }
-
   async function generateFinalHook(config) {
     const sections = parseSections(config.script);
     if (!sections) throw new Error('The script does not have all five labeled sections for final Hook selection.');
     let failures = [];
     for (let attempt = 0; attempt < 2; attempt++) {
-      const raw = await callHookModel(
-        config,
+      const raw = await config.callModel(
         HOOK_STUDIO_SYSTEM,
         hookStudioMessage(config, failures),
         attempt ? 0.55 : 0.8
@@ -917,8 +903,7 @@ function publishedPrompt() {
         failures = ['Every candidate violated a deterministic style, format, or repetition rule.'];
         continue;
       }
-      const judgmentRaw = await callHookModel(
-        config,
+      const judgmentRaw = await config.callModel(
         HOOK_JUDGE_SYSTEM,
         hookJudgeMessage(config, validCandidates),
         0.05

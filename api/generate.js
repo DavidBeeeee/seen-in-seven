@@ -277,40 +277,55 @@ function validateRequest(body) {
 export async function callModel(system, user, temperature = 0.8, maxTokens = 1200) {
   const apiKey = process.env.DEEPSEEK_API_KEY;
   if (!apiKey) throw new Error('Script generation is not configured.');
-  const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 40000);
-  try {
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + apiKey
-      },
-      body: JSON.stringify({
-        model: 'deepseek-v4-pro',
-        messages: [
-          { role: 'system', content: system },
-          { role: 'user', content: user }
-        ],
-        max_tokens: maxTokens,
-        thinking: { type: 'disabled' },
-        temperature
-      }),
-      signal: controller.signal
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) {
-      throw new Error(data.error && data.error.message ? data.error.message : 'The script service did not respond normally.');
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 40000);
+    try {
+      const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: 'Bearer ' + apiKey
+        },
+        body: JSON.stringify({
+          model: 'deepseek-v4-pro',
+          messages: [
+            { role: 'system', content: system },
+            { role: 'user', content: user }
+          ],
+          max_tokens: maxTokens,
+          thinking: { type: 'disabled' },
+          temperature
+        }),
+        signal: controller.signal
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.error && data.error.message ? data.error.message : 'The script service did not respond normally.');
+      }
+      const choice = data.choices && data.choices[0];
+      const content = choice && choice.message && choice.message.content;
+      if (!content || !String(content).trim()) {
+        console.warn('[SeenInSeven model empty]', JSON.stringify({
+          attempt: attempt + 1,
+          responseId: data.id || null,
+          finishReason: choice && choice.finish_reason || null,
+          choiceCount: Array.isArray(data.choices) ? data.choices.length : 0,
+          promptTokens: data.usage && data.usage.prompt_tokens || null,
+          completionTokens: data.usage && data.usage.completion_tokens || null
+        }));
+        if (attempt === 0) continue;
+        throw new Error('The AI returned an empty response.');
+      }
+      return String(content).trim();
+    } catch (error) {
+      if (error.name === 'AbortError') throw new Error('The request took too long. Please try again.');
+      throw error;
+    } finally {
+      clearTimeout(timeout);
     }
-    const content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-    if (!content || !String(content).trim()) throw new Error('The AI returned an empty response.');
-    return String(content).trim();
-  } catch (error) {
-    if (error.name === 'AbortError') throw new Error('The request took too long. Please try again.');
-    throw error;
-  } finally {
-    clearTimeout(timeout);
   }
+  throw new Error('The AI returned an empty response.');
 }
 
 const L2V1_DIRECTIVE_SENTENCE_PATTERN = /\b(?:make it|keep the (?:ending|cta)|point (?:the|it)|the (?:ending|cta|next step) should|tell (?:them|the viewer)|ask (?:them|the viewer)|working with me|talk(?:ing)? to me|sign(?:ing)? up|book(?:ing)? a call|direct message)\b/i;
