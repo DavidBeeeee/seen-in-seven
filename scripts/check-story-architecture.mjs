@@ -131,6 +131,12 @@ assert(
   'The shared prompt engine is missing current-video source ownership.'
 );
 assert(
+  engineSource.includes('async function callHookModel') &&
+    engineSource.includes("!/empty response/i.test") &&
+    (engineSource.match(/await callHookModel\(/g) || []).length === 2,
+  'Hook regeneration does not retry empty Hook Studio and Hook Judge responses.'
+);
+assert(
   appSource.includes('The current Journey Direction and current-video answers are the authoritative brief') ||
     readFileSync(new URL('../js/script-prompt-engine.js', import.meta.url), 'utf8')
       .includes('The current Journey Direction and current-video answers are the authoritative brief'),
