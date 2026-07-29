@@ -6258,14 +6258,16 @@ async function restartWizard(){
   if (pfill) pfill.style.width = '0%';
   if (pfillL2) { pfillL2.style.width = '0%'; pfillL2.style.opacity = '0'; }
 
-  try { localStorage.removeItem(SAVE_KEY); } catch(e) {}
+  try {
+    localStorage.removeItem(SAVE_KEY);
+    localStorage.removeItem('sis_returned');
+  } catch(e) {}
   _dashboardShown = false;
-  screenOrder = ['screen-0','screen-1'];
-  currentIndex = 0;
+  ensureFullOnboardingOrder();
+  currentIndex = screenOrder.indexOf('screen-1');
   currentVideoIndex = 0;
-  const nav = document.getElementById('header-nav');
-  if (nav) nav.style.display = 'none';
-  showScreen('screen-0');
+  closeSettings();
+  showScreen('screen-1');
 }
 
 // ── MVO MINI-WIZARD ───────────────────────────────────
