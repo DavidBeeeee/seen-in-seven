@@ -623,7 +623,6 @@ function publishedPrompt() {
         }
       }
     }
-    findLexicalRepetitionIssues(sections).forEach(issue => addAdvisory(issue.section, issue.message));
     Object.keys(sections).forEach(section => {
       findVoiceIssues(sections[section], styleGuideSource).forEach(message => addIssue(section, message));
     });
@@ -701,15 +700,13 @@ function publishedPrompt() {
     'For Level 2 Video 1, require curiosity, genuine interest in the coming series, and public commitment from the speaker. Reject explicit commercial positioning, category comparisons, conversion requests, or explanations of how the speaker works. Private strategy is not introductory copy.',
     'For Level 2 Video 2, identification comes before admiration and journal-answer routing is mandatory inside the story. Build the beginning of the MEAT from answer 2, use answer 1 only in the middle of the MEAT as an accidental beginning and quiet clue, and use answer 3 for the lived refusal and unresolved CONCLUSION. Build the OPEN LOOP independently from the unresolved identity pressure after the Meat and Conclusion exist. Leave the HOOK to the global Hook Studio with no required journal answer or story source. Require a recognizable ordinary human life, a familiar identity the speaker could not imagine leaving, and an observable choice, delay, dismissal, or retreat that keeps them there. Reject a hidden-expert origin story; an OPEN LOOP built from payment, clients, recurring demand, business milestones, professional recognition, or epiphany; and any refusal that is only named retrospectively instead of shown through behavior. Enforce a present-day interpretation embargo: reject explanations of what the thread truly meant, why it qualified as expertise, or how it became the speaker\'s current method, service philosophy, business philosophy, mission, offer, or mature authority. If material is in the wrong story section, move its function to the assigned section while preserving useful facts. The conclusion must preserve the unresolved assumption that made the familiar life feel more real.',
     'For Level 2 Video 3, require one professional paradigm shift built through cognitive dissonance rather than a polished thought-leadership lecture. Require one representative scene or coherent pattern where the old assumption stops matching reality. Preserve a naturally supplied person, teaching, conversation, or influence only when it belongs to that evidence; never require, invent, or cast a mentor. The CONCLUSION must resolve the exact Open Loop through a hidden relationship, cause, category error, reversal, or complexity bridge; reject a recommendation about what the industry, price, method, or people should do. Reject multiple reframes, pricing ladders, complete methods, current service descriptions, mature business philosophy, offers, and anything that belongs to the Video 6 elixir or Video 7 return.',
-    'For Level 2 Video 4, require one coherent recoverable-trial sequence: a brief first lens, observable changed action, a recognizable old-world temptation, a choice made while the outcome is unknown, and one supported meaningful result. The recoverability boundary is mandatory: reject completed collapse, apparently permanent loss, failed recovery, worst-day framing, or any event the speaker could not simply try again after; those belong to Video 5. The emotional center must be the speaker\'s uncertainty and choice while the old way appears to be winning, not professional superiority, market analysis, a case study, or proof of a method. Leave the HOOK to the global Hook Studio with no required trial evidence, temptation, metric, reaction, or story beat. Require one exact pressing question in the OPEN LOOP whose reserved answer is FIRST MEANINGFUL RESULT; build that question independently from the completed Meat and reserved Conclusion, never as an explanation or continuation of the Hook. Reject general setup, decision summaries, statements of stakes, vague anticipation, and any early statement or implication of the result. The MEAT must advance through behavior, internal conflict, temptation, and choice rather than restaging the Open Loop question. Reduce Video 3 continuity to one short clause or sentence and reject its polished reframe, metaphor, human-cost argument, or lesson being retaught. The MEAT must stop before the result. The CONCLUSION must answer the exact Open Loop with that result for the first time, then state only what it made possible to the speaker then. Let the result prove only that this one choice mattered; reject claims that it validates the complete philosophy, professional approach, method, or Video 3 reframe. Allow concrete commercial contrasts when they are part of the lived scene and human choice; reject them only when they turn into present-day positioning or a sales argument. WHAT REMAINED OPEN is optional and cannot be manufactured into a warning. Reject universal advice, present-day interpretation, challenge recaps, content-progress reports, second epiphanies, and hindsight diagnoses. The CTA must deliberately drop the emotional temperature after the hopeful Conclusion and seriously foreshadow that Video 5 contains the devastating event that nearly destroyed what had begun to feel possible and that the speaker must own their role. Require the magnitude and responsibility while withholding the event, exact loss, causal choices, recovery, and later truth. Reject CTAs that frame Video 5 as the Video 4 tactic merely stopping, failing, or becoming insufficient, and reject generic commentary about the next challenge, real test, middle of the story, or what happens next. Compare every precise duration, count, amount, reaction, and result against the curated material; reject invented precision or unsupported proof. If the result is absent, preserve the unanswered question rather than inventing an ending.',
+    'For Level 2 Video 4, require one coherent recoverable-trial sequence: a brief first lens, observable changed action, a recognizable old-world temptation, a choice made while the outcome is unknown, and one supported meaningful result. The recoverability boundary is mandatory: reject completed collapse, apparently permanent loss, failed recovery, worst-day framing, or any event the speaker could not simply try again after; those belong to Video 5. The emotional center must be the speaker\'s uncertainty and choice while the old way appears to be winning, not professional superiority, market analysis, a case study, or proof of a method. Leave the HOOK to the global Hook Studio with no required trial evidence, temptation, metric, reaction, or story beat. Require one exact pressing question in the OPEN LOOP whose reserved answer is FIRST MEANINGFUL RESULT; build that question independently from the completed Meat and reserved Conclusion, never as an explanation or continuation of the Hook. Reject general setup, decision summaries, statements of stakes, vague anticipation, and any early statement or implication of the result. The MEAT must advance through behavior, internal conflict, temptation, and choice rather than restaging the Open Loop question. Reduce Video 3 continuity to one short clause or sentence and reject its polished reframe, metaphor, human-cost argument, or lesson being retaught. The MEAT must stop before the result. The CONCLUSION must answer the exact Open Loop with a human-scale result inside the speaker\'s lived sequence for the first time, then state only what it made possible to the speaker then. A concrete response, interaction, opportunity, behavioral change, or internally observable reason to continue may qualify. A market trend, industry argument, technology shift, competitor outcome, or later professional philosophy cannot serve as the payoff even when it appears in the source. If no external result is supplied, allow only the smallest internal or behavioral consequence already supported by the speaker\'s action; never invent audience proof, a named person, quotation, client result, precise amount, metric, credential, or dramatic success. Let the result prove only that this one choice mattered; reject claims that it validates the complete philosophy, professional approach, method, or Video 3 reframe. Allow concrete commercial contrasts when they are part of the lived scene and human choice; reject them only when they turn into present-day positioning or a sales argument. WHAT REMAINED OPEN is optional and cannot be manufactured into a warning. Reject universal advice, present-day interpretation, challenge recaps, content-progress reports, second epiphanies, and hindsight diagnoses. The CTA must deliberately drop the emotional temperature after the hopeful Conclusion and seriously foreshadow that Video 5 contains the devastating event that nearly destroyed what had begun to feel possible and that the speaker must own their role. Require the magnitude and responsibility while withholding the event, exact loss, causal choices, recovery, and later truth. Reject CTAs that frame Video 5 as the Video 4 tactic merely stopping, failing, or becoming insufficient, and reject generic commentary about the next challenge, real test, middle of the story, or what happens next. Compare every precise duration, count, amount, reaction, and result against the curated material; reject invented precision or unsupported proof.',
     'For Level 2 Video 5, enforce only the chapter\'s hard boundaries. Require one real event or gradual collapse that the speaker experienced as an objective loss or symbolic professional death, one precise consequential choice they own, and one attempted recovery that still left something broken. A calling, judgment, identity, confidence, path, or belief in the value of the work may qualify; do not demand bankruptcy, public disgrace, harmed dependents, or one cinematic event. Reject a script only when it has no actual defeat, no owned contribution, no failed way back, or when it reveals recovery, reassurance, a lesson, mature diagnosis, authority, silver lining, or Video 6 truth. Do not fail a script merely because the loss is internal, gradual, commercially specific, morally complicated, unusually phrased, or less dramatic than another person\'s hardship. The HOOK remains a pure pattern interrupt and the OPEN LOOP remains one pressing unfinished meaning; neither receives a mandatory summary or causation format.',
     'For Level 2 Video 6, ground the Epiphany in the strongest source experience or repeated pattern supplied by the current answers. Require an explicit meaning chain: a common-sense model meets contradicting lived evidence; the unresolved collision makes a deeper interpretation necessary; observable practice supports the truth; and the CONCLUSION resolves the exact Open Loop with one complete carryable counterintuitive elixir. Video 5, Video 3, another experience, or a broader pattern may supply the evidence, but none is mandatory. Preserve earlier-video continuity only when the story genuinely supports it. Reject forced causality, a repetition of Video 3, a shallow or unsupported hot take, generic wisdom without lived evidence, a method list, service description, pricing structure, or pitch.',
     'For Level 2 Video 7, leave the HOOK to the global Hook Studio with no required present-day action or return beat. Inside the story, use only one full-circle callback and one connected correction, and reject episode-by-episode recap. Keep the unfinished element honest and the continuing mission relational rather than commercial.',
     'Judge meaning, not just formatting. The Hook is an independent attention event outside the journey and chronological story; it does not need to transition into the Open Loop or communicate a story beat. It may use rhetorical exaggeration or provocative framing that is defensible in the speaker\'s voice, but it cannot invent a personal event, credential, measurable result, or quotation, and it cannot perform the Open Loop, Meat, Conclusion, or CTA\'s job. The Open Loop must independently create one concrete unanswered relationship from the completed story and must not explain the Hook or reveal or paraphrase the Conclusion. The Meat must tell the local story in connected spoken logic without repeating the Open Loop or Conclusion. The Conclusion must create an earned turn rather than recap. The CTA must carry a concrete element from that turn through a natural grammatical hinge into the follow request without a full stop, make follow the primary action, use because once for a specific reason, and orient a cold viewer inside the seven-part journey. Conditional bridges are valid only when they name a precise situation, consequence, or emotion from this story; reject generic approval tests.',
     'Treat the conclusion central meaning as reserved. Earlier sections may contain evidence for it but cannot explain, summarize, or paraphrase it. Reject scripts that spend the conclusion repeating a meaning already given away.',
-    'Honor the focused composition rule. Apply sentence-level continuity only inside MEAT. For every MEAT sentence after the first, identify how it causes, complicates, advances, contrasts with, or responds to the sentence immediately before it. Merely discussing the same topic does not pass. If the relationship is missing, replace the complete MEAT as one spoken performance rather than patching individual sentences. Treat OPEN LOOP as an independent retention device, CONCLUSION and CTA as one closing unit, and HOOK as a final independent attention layer outside story-fact ownership.',
-    'After story structure and MEAT continuity are secure, use the supplied editorial repetition signals to remove repeated meanings across MEAT, CONCLUSION, and CTA. Group inflected forms and synonymous labels by the idea they express, but do not sacrifice grammar or spoken continuity merely to reduce a word count. Never create fragments, remove a necessary subject or connector, substitute a vague noun, or break a hook-and-eye relationship. Repeating a key noun for clarity is preferable to choppy or evasive prose. Remove the duplicate explanation or advance the story instead of using thesaurus swapping.',
-    'Keep HOOK outside the cross-section lexical and concept budget so its independent attention function is never weakened to match the story body. Allow OPEN LOOP to name one precise unanswered anchor and CONCLUSION to name that anchor once while answering it. Do not treat that deliberate retention connection as repetition, but reject any additional restatement, evidence summary, or early payoff.',
+    'Honor the focused composition rule. Apply sentence-level continuity only inside MEAT. Treat OPEN LOOP as an independent retention device, CONCLUSION and CTA as one closing unit, and HOOK as a final independent attention layer outside story-fact ownership. Every retained story fact has one primary section among OPEN LOOP, MEAT, CONCLUSION, and CTA. If a later story section repeats or paraphrases an earlier fact instead of adding a consequence, escalation, contradiction, interpretation, decision, or relational progression, replace only that later duplicate. Do not force the Hook into this information sequence, mistake necessary subject clarity for repetition, or solve repetition by merely changing repeated nouns.',
     'Allow only one governing metaphor family per script and normally no more than two meaningful uses of it. Reject competing image systems such as maps mixed with floors, bridges, mountains, roads, or ladders. Preserve literal details even when they happen to name a physical object.',
     'Epiphany conclusions may be absolute, controversial, and sharply opinionated when the supplied story earns them. Do not add hedges, disclaimers, reminders that the claim is only the speaker\'s opinion, or language that softens conviction merely to sound balanced.',
     'Reject generic motivational language, every form of false balance, vague suspense, progress-report hooks, recap-heavy endings, and stock AI phrasing even when the banned phrase is not an exact textual match.',
@@ -727,7 +724,6 @@ function publishedPrompt() {
     'Satisfy every supplied failure literally. Before returning, re-read each replacement and verify the same problem does not remain in a different form.',
     'For false balance, state the chosen point directly. Do not replace one negation-and-correction construction with another.',
     'For banned language, remove every occurrence and use a specific natural alternative. Never replace a vague banned noun with another vague placeholder.',
-    'For lexical repetition, remove or advance the repeated thought instead of substituting a synonym. Preserve complete grammar, necessary subjects and connectors, and every MEAT hook-and-eye relationship. Never create a fragment or choppy sentence merely to reduce a repeated word. Do not rewrite HOOK merely because it shares a word with the story body, and preserve one necessary OPEN LOOP-to-CONCLUSION answer anchor.',
     'Preserve intentional bluntness, profanity, controversy, dark facts, and emotional force while repairing mechanics. Do not sanitize the speaker.',
     'For OPEN LOOP length, keep it between 35 and 45 words and never exceed 50.',
     'For CTA continuity, carry the concrete conclusion bridge through a conjunction, relative clause, or subordinating clause into the follow action without a full stop. Keep the bridge, follow action, exactly one "because," its specific reason, and the seven-part orientation in one connected sentence.',
@@ -1132,11 +1128,6 @@ function publishedPrompt() {
     lines.push(
       'DETERMINISTIC CHECKS:',
       validationFeedback(validation) || 'No deterministic failures. Perform the semantic story review anyway.',
-      '',
-      'EDITORIAL REPETITION SIGNALS (repair when they reflect repeated meaning; do not force a synonym swap or fail an otherwise natural script):',
-      validation && validation.advisories && validation.advisories.length
-        ? validation.advisories.join(' ')
-        : 'No mechanical repetition signal. Still review conceptual repetition and synonym chains.',
       ''
     );
     if (config.onlySection) {
@@ -1149,6 +1140,9 @@ function publishedPrompt() {
       lines.push('REVIEW SCOPE: The [OPEN LOOP] text is a temporary placeholder. Ignore it completely and review only [HOOK], [MEAT], [CONCLUSION], and [CTA]. A separate Open Loop Studio runs after every story correction is complete.');
     } else {
       lines.push(config.precisionPass ? 'This is a precision re-review after targeted replacements. Repair only what still fails.' : 'Review the complete story once, then return replacements only for failed sections.');
+    }
+    if (config.precisionPass && (config.onlySection || config.provisionalHook || config.provisionalOpenLoop)) {
+      lines.push('This is a precision re-review after targeted replacements. Read the updated complete script and repair only what still fails.');
     }
     return lines.join('\n');
   }
@@ -1356,16 +1350,7 @@ function publishedPrompt() {
       0.15
     );
     const review = ignoreProvisionalSectionReview(parseQualityReview(reviewRaw), config);
-    if (!review || review.pass) {
-      if (initialValidation.valid) return script;
-      script = await applyFinalMechanicalRepair({ ...config, script });
-      const repairedValidation = ignoreProvisionalSectionValidation(
-        validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt),
-        config
-      );
-      if (repairedValidation.valid) return script;
-      throw new Error('The script response still needs correction: ' + validationFeedback(repairedValidation) + ' Please try again.');
-    }
+    if ((!review || review.pass) && initialValidation.valid) return script;
 
     script = await config.callModel(
       config.systemPrompt,
@@ -1373,47 +1358,51 @@ function publishedPrompt() {
       0.45
     );
     script = provisionalStudioScript(script, config);
-    script = await applyFinalMechanicalRepair({ ...config, script });
-    const finalValidation = ignoreProvisionalSectionValidation(
-      validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt),
-      config
-    );
-    if (finalValidation.valid) return script;
-    throw new Error('The script response still needs correction: ' + validationFeedback(finalValidation) + ' Please try again.');
+    return reviewAndRepairScript({
+      ...config,
+      script,
+      wholeScriptRewrite:false
+    });
   }
 
   async function reviewAndRepairScript(config) {
     if (config.wholeScriptRewrite) return reviewAndRewriteWholeScript(config);
     let script = provisionalStudioScript(config.script, config);
     let unresolvedSemanticFailure = false;
-    const validation = ignoreProvisionalSectionValidation(
-      validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt),
-      config
-    );
-    const reviewRaw = await config.callModel(
-      QUALITY_REVIEW_SYSTEM,
-      buildQualityReviewMessage({
-        level:config.level,
-        video:config.video,
-        systemPrompt:config.systemPrompt,
-        userMessage:config.userMessage,
-        script,
-        validation,
-        precisionPass:false,
-        provisionalHook:config.provisionalHook,
-        provisionalOpenLoop:config.provisionalOpenLoop
-      }),
-      0.15
-    );
-    const review = ignoreProvisionalSectionReview(parseQualityReview(reviewRaw), config);
-    if (!review) {
-      if (validation.valid) return script;
-    } else if (review.pass && validation.valid) {
-      return script;
-    } else if (Object.keys(review.replacements).length) {
-      script = applySectionReplacements(script, review.replacements);
-    } else if (!review.pass) {
-      unresolvedSemanticFailure = true;
+    // Re-read each targeted replacement in the complete script. A repair may
+    // solve the reported issue while introducing a new story or voice problem.
+    for (let pass = 0; pass < 3; pass++) {
+      const validation = ignoreProvisionalSectionValidation(
+        validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt),
+        config
+      );
+      const reviewRaw = await config.callModel(
+        QUALITY_REVIEW_SYSTEM,
+        buildQualityReviewMessage({
+          level:config.level,
+          video:config.video,
+          systemPrompt:config.systemPrompt,
+          userMessage:config.userMessage,
+          script,
+          validation,
+          precisionPass:pass > 0,
+          provisionalHook:config.provisionalHook,
+          provisionalOpenLoop:config.provisionalOpenLoop
+        }),
+        0.15
+      );
+      const review = ignoreProvisionalSectionReview(parseQualityReview(reviewRaw), config);
+      if (!review) {
+        if (validation.valid && pass > 0) return script;
+        continue;
+      }
+      if (review.pass && validation.valid) return script;
+      if (Object.keys(review.replacements).length) {
+        script = applySectionReplacements(script, review.replacements);
+        unresolvedSemanticFailure = false;
+      } else {
+        unresolvedSemanticFailure = true;
+      }
     }
     script = await applyFinalMechanicalRepair({ ...config, script });
     const finalValidation = ignoreProvisionalSectionValidation(
@@ -1433,42 +1422,43 @@ function publishedPrompt() {
     if (!['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA'].includes(section)) throw new Error('Unknown script section.');
     let script = String(config.script || '').trim();
     let unresolvedSemanticFailure = false;
-    const fullValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
-    const targetIssues = fullValidation.sectionIssues && fullValidation.sectionIssues[section] || [];
-    const targetAdvisories = fullValidation.sectionAdvisories && fullValidation.sectionAdvisories[section] || [];
-    const targetValidation = {
-      valid:targetIssues.length === 0,
-      sections:fullValidation.sections,
-      missing:fullValidation.missing && fullValidation.missing.includes(section) ? [section] : [],
-      issues:targetIssues,
-      sectionIssues:{ [section]:targetIssues },
-      advisories:targetAdvisories,
-      sectionAdvisories:{ [section]:targetAdvisories },
-      metrics:fullValidation.metrics
-    };
-    const reviewRaw = await config.callModel(
-      QUALITY_REVIEW_SYSTEM,
-      buildQualityReviewMessage({
-        level:config.level,
-        video:config.video,
-        systemPrompt:config.systemPrompt,
-        userMessage:config.userMessage,
-        script,
-        validation:targetValidation,
-        precisionPass:false,
-        onlySection:section
-      }),
-      0.15
-    );
-    const review = parseQualityReview(reviewRaw);
-    if (!review) {
-      if (targetValidation.valid) return parseSections(script)[section];
-    } else if (review.pass && targetValidation.valid) {
-      return parseSections(script)[section];
-    } else if (review.replacements[section]) {
-      script = applySectionReplacements(script, { [section]:review.replacements[section] });
-    } else if (!review.pass) {
-      unresolvedSemanticFailure = true;
+    for (let pass = 0; pass < 3; pass++) {
+      const fullValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
+      const targetIssues = fullValidation.sectionIssues && fullValidation.sectionIssues[section] || [];
+      const targetValidation = {
+        valid:targetIssues.length === 0,
+        sections:fullValidation.sections,
+        missing:fullValidation.missing && fullValidation.missing.includes(section) ? [section] : [],
+        issues:targetIssues,
+        sectionIssues:{ [section]:targetIssues },
+        metrics:fullValidation.metrics
+      };
+      const reviewRaw = await config.callModel(
+        QUALITY_REVIEW_SYSTEM,
+        buildQualityReviewMessage({
+          level:config.level,
+          video:config.video,
+          systemPrompt:config.systemPrompt,
+          userMessage:config.userMessage,
+          script,
+          validation:targetValidation,
+          precisionPass:pass > 0,
+          onlySection:section
+        }),
+        0.15
+      );
+      const review = parseQualityReview(reviewRaw);
+      if (!review) {
+        if (targetValidation.valid && pass > 0) return parseSections(script)[section];
+        continue;
+      }
+      if (review.pass && targetValidation.valid) return parseSections(script)[section];
+      if (review.replacements[section]) {
+        script = applySectionReplacements(script, { [section]:review.replacements[section] });
+        unresolvedSemanticFailure = false;
+      } else {
+        unresolvedSemanticFailure = true;
+      }
     }
     script = await applyFinalMechanicalRepair({ ...config, script, onlySection: section });
     const finalValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);

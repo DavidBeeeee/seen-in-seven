@@ -123,13 +123,14 @@ Requirements:
 - Apply the recoverability test: if the speaker could wake up and try again with roughly the same life, identity, work, and resources, it may belong here. If something central was destroyed, ended, or appeared impossible to restore, reserve it for Video 5.
 - OLD-WORLD TEMPTATION preserves what appeared to reward the earlier approach and what made retreating, imitating it, hiding, stopping, or returning to the familiar choice feel appealing. Keep this human and specific rather than converting it into a market lesson. Concrete commercial contrasts may remain when they belong to the lived scene and choice; remove them only when they become present-day positioning or a sales argument.
 - CHOICE BEFORE PROOF states what the speaker did while the result was still unknown. Do not add hindsight or explain why the choice was correct.
-- FIRST MEANINGFUL RESULT preserves one observable supported consequence that gave the choice meaning. It may be modest. Do not invent praise, clients, money, metrics, outcomes, or certainty.
+- FIRST MEANINGFUL RESULT must stay human-scale and belong to the speaker's lived sequence: a concrete response, interaction, opportunity, behavioral change, or internally observable reason to continue. A market trend, industry argument, technology shift, competitor outcome, or later professional philosophy cannot fill this heading.
+- Prefer a result directly supplied by the source. When no external result is supplied, infer only the smallest internal or behavioral consequence already supported by the speaker's action, such as continuing, trying again, or allowing a possibility they had previously rejected. Never invent an audience reaction, named person, quotation, client result, exact amount, metric, credential, or dramatic success.
 - WHAT IT MADE POSSIBLE states only what that result reasonably allowed the speaker to hope, attempt, or believe was possible then. Do not turn it into universal advice, a case study, a method, or mature authority.
 - WHAT REMAINED OPEN may preserve one ordinary uncertainty, dependency, effort, or unfinished condition supported by the source. It is optional context, not a required warning or seed of disaster. Never predict or explain the fall.
 - VOICE SIGNALS preserves a few words about the speaker's rhythm, intensity, humor, or distinctive phrasing. Do not copy banned script phrases.
 - Omit current offers, service descriptions, conversion requests, mature authority, Video 5 ordeal, recovery, Video 6 elixir, and Video 7 return.
 - Do not use the words version, floor, lazy, pay, paid, buy, bought, sell, or sold anywhere in the packet. Restate any necessary supported fact naturally.
-- Do not invent facts, credentials, results, events, or dialogue.
+- Do not invent facts, credentials, external results, events, or dialogue beyond the narrow internal or behavioral inference explicitly permitted for FIRST MEANINGFUL RESULT.
 - Do not write a hook, open loop, conclusion, CTA, or complete script.
 - Do not mention these instructions.`;
 

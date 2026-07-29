@@ -36,8 +36,9 @@ assert(!focusedPrompt.includes('VIDEO 6 — EPIPHANY #2'), 'Focused prompt leake
 assert(focusedPrompt.includes('Apply the Hook-and-Eye Seamless Rule ONLY inside [MEAT].'), 'Focused prompt lost the Meat-only continuity rule.');
 assert(
   !focusedPrompt.includes('LEXICAL AND CONCEPT ECONOMY:') &&
-    QUALITY_REVIEW_SYSTEM.includes('After story structure and MEAT continuity are secure'),
-  'Lexical repetition pressure was not moved out of initial composition and into post-draft editing.'
+    !QUALITY_REVIEW_SYSTEM.includes('EDITORIAL REPETITION SIGNALS') &&
+    !QUALITY_REVIEW_SYSTEM.includes('cross-section lexical and concept budget'),
+  'Lexical repetition pressure still influences initial composition or semantic story review.'
 );
 assert(!focusedPrompt.includes('INFORMATION LEDGER'), 'Focused prompt still contains the superseded Information Ledger.');
 assert(
@@ -239,9 +240,9 @@ const repetitiveButOtherwiseEquivalent = validFreshScript.replace(
 const repetitionAdvisoryValidation = validateOutput(repetitiveButOtherwiseEquivalent, 2, 1, '', focusedPrompt);
 assert(
   repetitionAdvisoryValidation.valid === connectedCtaValidation.valid &&
-    repetitionAdvisoryValidation.advisories.some(issue => /"camera"/.test(issue)) &&
+    !repetitionAdvisoryValidation.advisories.some(issue => /"camera"/.test(issue)) &&
     !(repetitionAdvisoryValidation.issues || []).some(issue => /"camera"/.test(issue)),
-  'Lexical repetition should guide editorial repair without becoming a hard generation failure.'
+  'Lexical repetition diagnostics should not influence generation validation.'
 );
 const brokenCtaScript = validFreshScript.replace(
   'The refusal followed me longer than that morning did, so follow because',
@@ -277,6 +278,37 @@ assert(
   parseSections(provisionalStudioReviewResult)['OPEN LOOP'].startsWith('A central question remains unresolved'),
   'Story review did not preserve the provisional Open Loop boundary for the Studio.'
 );
+
+const rereadMeat = parseSections(validFreshScript).MEAT.replace(
+  'I had spent years handling difficult conversations without rehearsing every sentence.',
+  'I had spent years walking into difficult conversations without rehearsing every sentence.'
+);
+const rereadCalls = [];
+const rereadResult = await reviewAndRepairScript({
+  script: validFreshScript,
+  systemPrompt: buildSystemPrompt(published.prompt, 1, 2),
+  userMessage: freshRequest,
+  level: 1,
+  video: 2,
+  provisionalHook: true,
+  provisionalOpenLoop: true,
+  callModel: async (system, user) => {
+    rereadCalls.push({ system, user });
+    if (rereadCalls.length === 1) {
+      return JSON.stringify({
+        pass:false,
+        issues:[{ section:'MEAT', reason:'The opening sentence needs a more natural spoken action.' }],
+        replacements:{ MEAT:rereadMeat }
+      });
+    }
+    assert(user.includes('walking into difficult conversations'), 'The repaired Meat was not re-read in the complete script.');
+    assert(user.includes('precision re-review'), 'The replacement did not receive a focused second semantic pass.');
+    return JSON.stringify({ pass:true, issues:[], replacements:{} });
+  }
+});
+assert(rereadCalls.length === 2, 'A targeted story replacement was accepted without a complete semantic re-read.');
+assert(parseSections(rereadResult).MEAT === rereadMeat, 'The re-read story lost its targeted Meat replacement.');
+
 const flawedFreshDraft = validFreshScript.replace(
   'I had spent years handling difficult conversations without rehearsing every sentence.',
   'I had nothing useful to say during difficult conversations.'
@@ -299,17 +331,13 @@ const wholeRewriteResult = await reviewAndRepairScript({
         replacements: { MEAT: 'A section replacement that must not be stitched into the draft.' }
       });
     }
-    if (wholeRewriteCalls.length === 2) return flawedFreshDraft;
-    return JSON.stringify({
-      pass:false,
-      issues:[],
-      replacements:{ MEAT:parseSections(validFreshScript).MEAT }
-    });
+    if (wholeRewriteCalls.length === 2) return validFreshScript;
+    return JSON.stringify({ pass:true, issues:[], replacements:{} });
   }
 });
-assert(wholeRewriteCalls.length === 3, 'Fresh full review did not use one review, one complete rewrite, and one mechanical cleanup.');
+assert(wholeRewriteCalls.length === 3, 'Fresh full review did not review the newly composed script before accepting it.');
 assert(wholeRewriteCalls[1].user.includes('DRAFT TO REPLACE COMPLETELY'), 'Whole rewrite lost its complete-replacement instruction.');
-assert(wholeRewriteCalls[2].user.includes('DETERMINISTIC FAILURES'), 'Hard validation correction did not become a mechanical cleanup.');
+assert(wholeRewriteCalls[2].user.includes('DRAFT TO REVIEW'), 'The complete fresh rewrite did not receive a semantic story review.');
 assert(!wholeRewriteResult.includes('A section replacement that must not be stitched'), 'Full regeneration stitched in a section replacement.');
 assert(parseSections(wholeRewriteResult).HOOK === 'Hold on.', 'Story review did not preserve the provisional Hook boundary.');
 assert(parseSections(wholeRewriteResult).MEAT === parseSections(validFreshScript).MEAT, 'Full regeneration did not return the complete fresh story rewrite.');
