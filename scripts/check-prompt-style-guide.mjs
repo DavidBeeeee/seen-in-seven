@@ -12,6 +12,7 @@ import {
   OPEN_LOOP_ARCHITECT_SYSTEM,
   OPEN_LOOP_WRITER_SYSTEM,
   parseSections,
+  prepareFinalHookCandidates,
   publishedPrompt,
   reviewAndRepairScript,
   validateOutput,
@@ -54,19 +55,27 @@ assert(focusedPrompt.includes('It may pivot abruptly away from the Hook.'), 'Ope
 
 const generationSource = readFileSync(new URL('../api/generate.js', import.meta.url), 'utf8');
 const promptTestSource = readFileSync(new URL('../api/prompt-test.js', import.meta.url), 'utf8');
+const sectionGenerationSource = generationSource.slice(
+  generationSource.indexOf('async function generateSectionCore'),
+  generationSource.indexOf('async function generateSection(', generationSource.indexOf('async function generateSectionCore'))
+);
 assert(
-  generationSource.indexOf('const retentionContent = await finalizeScriptOpenLoop') <
-    generationSource.indexOf('const finalContent = await finalizeScriptHook'),
+  generationSource.indexOf("const retentionContent = await measureStage(timings, 'open-loop'") <
+    generationSource.indexOf("const finalContent = await measureStage(timings, 'hook-selection'") &&
+    generationSource.includes('preparedCandidates'),
   'Production generation no longer finalizes the Open Loop before the Hook.'
 );
 assert(
-  generationSource.includes("if (input.section === 'OPEN LOOP')") &&
-    generationSource.includes('const content = await generateFinalOpenLoop'),
+  sectionGenerationSource.includes("if (input.section === 'OPEN LOOP')") &&
+    sectionGenerationSource.includes("const content = await measureStage(timings, 'open-loop-regeneration'") &&
+    sectionGenerationSource.indexOf("if (input.section === 'OPEN LOOP')") <
+      sectionGenerationSource.indexOf('let preparedContext = input.userContext;'),
   'Single-section Open Loop regeneration bypasses the Open Loop Studio.'
 );
 assert(
-  promptTestSource.indexOf('const retentionContent = await finalizeScriptOpenLoop') <
-    promptTestSource.indexOf('content = await finalizeScriptHook'),
+  promptTestSource.indexOf("const retentionContent = await measureStage(timings, 'open-loop'") <
+    promptTestSource.indexOf("content = await measureStage(timings, 'hook-selection'") &&
+    promptTestSource.includes('preparedCandidates'),
   'Admin Prompt Tester no longer mirrors the production Open Loop and Hook order.'
 );
 
@@ -452,6 +461,50 @@ assert(parseSections(hookStudioResult)['OPEN LOOP'] === parseSections(openLoopSt
 assert(parseSections(hookStudioResult).MEAT === parseSections(openLoopStudioResult).MEAT, 'Hook Studio changed the Meat.');
 assert(parseSections(hookStudioResult).CONCLUSION === parseSections(openLoopStudioResult).CONCLUSION, 'Hook Studio changed the Conclusion.');
 assert(parseSections(hookStudioResult).CTA === parseSections(openLoopStudioResult).CTA, 'Hook Studio changed the CTA.');
+
+const preparedHookCalls = [];
+const preparedHooks = await prepareFinalHookCandidates({
+  script:openLoopStudioResult,
+  systemPrompt:buildSystemPrompt(published.prompt, 1, 2),
+  userMessage:freshRequest,
+  level:1,
+  video:2,
+  callModel:async system => {
+    preparedHookCalls.push(system);
+    return JSON.stringify({
+      candidates:[
+        'Perfection is the most expensive hiding place.',
+        'A camera can turn ten minutes into a hostage negotiation.',
+        'Delete buttons have ended more careers than critics ever could.',
+        'Your camera is getting blamed for a crime it did not commit.',
+        'I trusted the delete button more than I trusted myself.',
+        'The safest recording is the one that ruins your future.'
+      ]
+    });
+  }
+});
+const preparedHookResult = await finalizeScriptHook({
+  script:openLoopStudioResult,
+  systemPrompt:buildSystemPrompt(published.prompt, 1, 2),
+  userMessage:freshRequest,
+  level:1,
+  video:2,
+  preparedCandidates:preparedHooks,
+  callModel:async system => {
+    preparedHookCalls.push(system);
+    assert(system === HOOK_JUDGE_SYSTEM, 'Prepared Hook selection regenerated the candidate slate.');
+    return JSON.stringify({ pass:true, hook:'Perfection is the most expensive hiding place.', reason:'' });
+  }
+});
+assert(
+  preparedHookCalls.filter(system => system === HOOK_STUDIO_SYSTEM).length === 1 &&
+    preparedHookCalls.filter(system => system === HOOK_JUDGE_SYSTEM).length === 1,
+  'Prepared Hook candidates did not bypass duplicate candidate generation.'
+);
+assert(
+  parseSections(preparedHookResult).HOOK === 'Perfection is the most expensive hiding place.',
+  'Prepared Hook candidates were not judged and installed after Open Loop completion.'
+);
 
 const levelTwoHookCalls = [];
 const levelTwoHookResult = await finalizeScriptHook({

@@ -5,6 +5,7 @@ import {
   finalizeScriptHook,
   generateFinalOpenLoop,
   generateFinalHook,
+  prepareFinalHookCandidates,
   parseSections,
   publishedPrompt,
   reviewAndRepairScript,
@@ -19,6 +20,26 @@ import {
 } from './_lib/security.js';
 
 export const config = { maxDuration: 180 };
+
+async function measureStage(timings, name, work) {
+  const started = Date.now();
+  try {
+    return await work();
+  } finally {
+    timings.push({ stage:name, durationMs:Date.now() - started });
+  }
+}
+
+function logGenerationTiming(input, timings, started, status) {
+  console.info('[SeenInSeven timing]', JSON.stringify({
+    mode:input.mode,
+    level:input.level,
+    video:input.video,
+    status,
+    totalMs:Date.now() - started,
+    stages:timings
+  }));
+}
 
 const MODES = new Set(['mission', 'script', 'section', 'full-regeneration']);
 const SECTIONS = new Set(['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA']);
@@ -642,17 +663,25 @@ FEEDBACK FOR THIS REGENERATION: ${input.feedback}
 Regenerate ONLY the [${input.section}] section, applying the feedback above while following the same Video ${input.video}, Level ${input.level} blueprint and all supplied user context. Return only the new section text with no label, no other sections, and no commentary.`;
 }
 
-async function generateScript(input, prompt) {
+async function generateScriptCore(input, prompt, timings) {
   const systemPrompt = buildSystemPrompt(prompt.prompt, input.level, input.video);
   let preparedContext = input.userContext;
   if (input.level === 2 && input.video === 1 && input.mode !== 'section') {
-    preparedContext = await prepareLevelTwoVideoOneMaterial(preparedContext);
+    preparedContext = await measureStage(timings, 'story-preparation', () =>
+      prepareLevelTwoVideoOneMaterial(preparedContext)
+    );
   } else if (input.level === 2 && (input.video === 3 || input.video === 6)) {
-    preparedContext = await prepareLevelTwoEpiphanyMaterial(preparedContext, input.video);
+    preparedContext = await measureStage(timings, 'story-preparation', () =>
+      prepareLevelTwoEpiphanyMaterial(preparedContext, input.video)
+    );
   } else if (input.level === 2 && input.video === 4) {
-    preparedContext = await prepareLevelTwoVideoFourMaterial(preparedContext);
+    preparedContext = await measureStage(timings, 'story-preparation', () =>
+      prepareLevelTwoVideoFourMaterial(preparedContext)
+    );
   } else if (input.level === 2 && input.video === 5) {
-    preparedContext = await prepareLevelTwoVideoFiveMaterial(preparedContext);
+    preparedContext = await measureStage(timings, 'story-preparation', () =>
+      prepareLevelTwoVideoFiveMaterial(preparedContext)
+    );
   }
   const userMessage = regenerationMessage({ ...input, userContext: preparedContext });
   let lastError;
@@ -666,8 +695,11 @@ async function generateScript(input, prompt) {
       ? '\n\nA previous draft did not pass the final story check. Write a genuinely fresh complete script. Follow the five-section format exactly, make the CTA current-video orientation precise, and avoid every banned phrase. Do not explain the rewrite.\n\nEXACT FEEDBACK FROM THE PREVIOUS DRAFT:\n' + String(lastError && lastError.message || '')
       : '';
     try {
-      const draft = await callModel(systemPrompt, userMessage + retryNote, attempt ? 0.45 : 0.8);
-      const content = await reviewAndRepairScript({
+      const stageSuffix = '-' + (attempt + 1);
+      const draft = await measureStage(timings, 'draft' + stageSuffix, () =>
+        callModel(systemPrompt, userMessage + retryNote, attempt ? 0.45 : 0.8)
+      );
+      const content = await measureStage(timings, 'story-review' + stageSuffix, () => reviewAndRepairScript({
         script: draft,
         systemPrompt,
         userMessage: userMessage + retryNote,
@@ -677,23 +709,42 @@ async function generateScript(input, prompt) {
         wholeScriptRewrite: input.mode === 'full-regeneration',
         provisionalHook: true,
         provisionalOpenLoop: true
+      }));
+      const hookCandidatesPromise = measureStage(timings, 'hook-candidates' + stageSuffix, () =>
+        prepareFinalHookCandidates({
+          script:content,
+          systemPrompt,
+          userMessage:userMessage + retryNote,
+          level:input.level,
+          video:input.video,
+          callModel
+        })
+      ).catch(error => {
+        console.warn('[SeenInSeven Hook preparation]', JSON.stringify({
+          level:input.level,
+          video:input.video,
+          message:String(error && error.message || 'Hook preparation failed.')
+        }));
+        return [];
       });
-      const retentionContent = await finalizeScriptOpenLoop({
+      const retentionContent = await measureStage(timings, 'open-loop' + stageSuffix, () => finalizeScriptOpenLoop({
         script: content,
         systemPrompt,
         userMessage: userMessage + retryNote,
         level: input.level,
         video: input.video,
         callModel
-      });
-      const finalContent = await finalizeScriptHook({
+      }));
+      const preparedCandidates = await hookCandidatesPromise;
+      const finalContent = await measureStage(timings, 'hook-selection' + stageSuffix, () => finalizeScriptHook({
         script: retentionContent,
         systemPrompt,
         userMessage: userMessage + retryNote,
         level: input.level,
         video: input.video,
-        callModel
-      });
+        callModel,
+        preparedCandidates
+      }));
       return { content: finalContent, promptVersion: prompt.version, generationAttempts: attempt + 1 };
     } catch (error) {
       lastError = error;
@@ -706,42 +757,67 @@ async function generateScript(input, prompt) {
   throw lastError || new Error('The script needs another pass.');
 }
 
-async function generateSection(input, prompt) {
-  const systemPrompt = buildSystemPrompt(prompt.prompt, input.level, input.video);
-  let preparedContext = input.userContext;
-  if (input.level === 2 && input.video === 1) {
-    preparedContext = await prepareLevelTwoVideoOneMaterial(input.userContext);
-  } else if (input.level === 2 && (input.video === 3 || input.video === 6)) {
-    preparedContext = await prepareLevelTwoEpiphanyMaterial(input.userContext, input.video);
-  } else if (input.level === 2 && input.video === 4) {
-    preparedContext = await prepareLevelTwoVideoFourMaterial(input.userContext);
-  } else if (input.level === 2 && input.video === 5) {
-    preparedContext = await prepareLevelTwoVideoFiveMaterial(input.userContext);
+async function generateScript(input, prompt) {
+  const started = Date.now();
+  const timings = [];
+  let status = 'failed';
+  try {
+    const result = await generateScriptCore(input, prompt, timings);
+    status = 'completed';
+    return result;
+  } finally {
+    logGenerationTiming(input, timings, started, status);
   }
-  const userMessage = sectionMessage({ ...input, userContext: preparedContext });
+}
+
+async function generateSectionCore(input, prompt, timings) {
+  const systemPrompt = buildSystemPrompt(prompt.prompt, input.level, input.video);
+  const directUserMessage = sectionMessage(input);
   if (input.section === 'HOOK') {
-    const content = await generateFinalHook({
-      script: input.existingScript,
+    const content = await measureStage(timings, 'hook-regeneration', () => generateFinalHook({
+      script:input.existingScript,
       systemPrompt,
-      userMessage,
-      level: input.level,
-      video: input.video,
+      userMessage:directUserMessage,
+      level:input.level,
+      video:input.video,
       callModel
-    });
-    return { content, promptVersion: prompt.version };
+    }));
+    return { content, promptVersion:prompt.version };
   }
   if (input.section === 'OPEN LOOP') {
-    const content = await generateFinalOpenLoop({
-      script: input.existingScript,
+    const content = await measureStage(timings, 'open-loop-regeneration', () => generateFinalOpenLoop({
+      script:input.existingScript,
       systemPrompt,
-      userMessage,
-      level: input.level,
-      video: input.video,
+      userMessage:directUserMessage,
+      level:input.level,
+      video:input.video,
       callModel
-    });
-    return { content, promptVersion: prompt.version };
+    }));
+    return { content, promptVersion:prompt.version };
   }
-  const draft = await callModel(systemPrompt, userMessage, 0.8);
+
+  let preparedContext = input.userContext;
+  if (input.level === 2 && input.video === 1) {
+    preparedContext = await measureStage(timings, 'story-preparation', () =>
+      prepareLevelTwoVideoOneMaterial(input.userContext)
+    );
+  } else if (input.level === 2 && (input.video === 3 || input.video === 6)) {
+    preparedContext = await measureStage(timings, 'story-preparation', () =>
+      prepareLevelTwoEpiphanyMaterial(input.userContext, input.video)
+    );
+  } else if (input.level === 2 && input.video === 4) {
+    preparedContext = await measureStage(timings, 'story-preparation', () =>
+      prepareLevelTwoVideoFourMaterial(input.userContext)
+    );
+  } else if (input.level === 2 && input.video === 5) {
+    preparedContext = await measureStage(timings, 'story-preparation', () =>
+      prepareLevelTwoVideoFiveMaterial(input.userContext)
+    );
+  }
+  const userMessage = sectionMessage({ ...input, userContext: preparedContext });
+  const draft = await measureStage(timings, 'section-draft', () =>
+    callModel(systemPrompt, userMessage, 0.8)
+  );
   const parsed = parseSections(draft);
   const replacement = parsed && parsed[input.section]
     ? parsed[input.section]
@@ -750,7 +826,7 @@ async function generateSection(input, prompt) {
   const current = parseSections(input.existingScript);
   if (!current) throw new Error('The current script does not have all five labeled sections.');
   const complete = composeSections({ ...current, [input.section]: replacement });
-  const content = await reviewAndRepairSection({
+  const content = await measureStage(timings, 'section-review', () => reviewAndRepairSection({
     script: complete,
     section: input.section,
     systemPrompt,
@@ -758,8 +834,21 @@ async function generateSection(input, prompt) {
     level: input.level,
     video: input.video,
     callModel
-  });
+  }));
   return { content, promptVersion: prompt.version };
+}
+
+async function generateSection(input, prompt) {
+  const started = Date.now();
+  const timings = [];
+  let status = 'failed';
+  try {
+    const result = await generateSectionCore(input, prompt, timings);
+    status = 'completed';
+    return result;
+  } finally {
+    logGenerationTiming(input, timings, started, status);
+  }
 }
 
 export default async function handler(req, res) {

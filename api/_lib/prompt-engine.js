@@ -1030,48 +1030,64 @@ function publishedPrompt() {
     ].join('\n');
   }
 
+  function validHookCandidates(config, candidates) {
+    const sections = parseSections(config.script);
+    if (!sections) return [];
+    return (candidates || []).filter(hook => {
+      const candidateScript = composeSections({ ...sections, HOOK:hook });
+      const validation = validateOutput(
+        candidateScript,
+        config.video,
+        config.level,
+        config.userMessage,
+        config.systemPrompt
+      );
+      const hookIssues = validation.sectionIssues && validation.sectionIssues.HOOK || [];
+      const repetitionIssues = (validation.issues || []).filter(issue => /repeats a long phrase from HOOK/i.test(issue));
+      return !hookIssues.length && !repetitionIssues.length;
+    });
+  }
+
+  async function prepareFinalHookCandidates(config) {
+    const sections = parseSections(config.script);
+    if (!sections) throw new Error('The script does not have all five labeled sections for final Hook preparation.');
+    const raw = await config.callModel(
+      HOOK_STUDIO_SYSTEM,
+      hookStudioMessage(config, []),
+      0.8
+    );
+    return validHookCandidates(config, parseHookStudioResult(raw));
+  }
+
   async function generateFinalHook(config) {
     const sections = parseSections(config.script);
     if (!sections) throw new Error('The script does not have all five labeled sections for final Hook selection.');
     let failures = [];
+    const preparedCandidates = validHookCandidates(config, config.preparedCandidates);
     for (let attempt = 0; attempt < 2; attempt++) {
-      const raw = await config.callModel(
-        HOOK_STUDIO_SYSTEM,
-        hookStudioMessage(config, failures),
-        attempt ? 0.55 : 0.8
-      );
-      const candidates = parseHookStudioResult(raw);
+      let candidates = attempt === 0 ? preparedCandidates : [];
+      if (!candidates.length) {
+        const raw = await config.callModel(
+          HOOK_STUDIO_SYSTEM,
+          hookStudioMessage(config, failures),
+          attempt ? 0.55 : 0.8
+        );
+        candidates = validHookCandidates(config, parseHookStudioResult(raw));
+      }
       if (!candidates.length) {
         failures = ['The previous response did not return the required JSON candidate slate.'];
         continue;
       }
-      const validCandidates = candidates.filter(hook => {
-        const candidateScript = composeSections({ ...sections, HOOK: hook });
-        const validation = validateOutput(
-          candidateScript,
-          config.video,
-          config.level,
-          config.userMessage,
-          config.systemPrompt
-        );
-        const hookIssues = validation.sectionIssues && validation.sectionIssues.HOOK || [];
-        const repetitionIssues = (validation.issues || []).filter(issue => /repeats a long phrase from HOOK/i.test(issue));
-        return !hookIssues.length && !repetitionIssues.length;
-      });
-      if (!validCandidates.length) {
-        failures = ['Every candidate violated a deterministic style, format, or repetition rule.'];
-        continue;
-      }
       const judgmentRaw = await config.callModel(
         HOOK_JUDGE_SYSTEM,
-        hookJudgeMessage(config, validCandidates),
+        hookJudgeMessage(config, candidates),
         0.05
       );
       const judgment = parseHookJudgeResult(judgmentRaw);
-      if (judgment.pass && validCandidates.includes(judgment.hook)) return judgment.hook;
+      if (judgment.pass && candidates.includes(judgment.hook)) return judgment.hook;
       failures = [judgment.reason || 'The previous line did not function as an immediate attention interrupt.'];
     }
-    throw new Error('The script response still needs correction: the final Hook did not pass the Hook Studio checks. Please try again.');
+    throw new Error('The final Hook did not pass the Hook Studio checks. Please try regenerating the Hook.');
   }
 
   async function finalizeScriptHook(config) {
@@ -1529,6 +1545,7 @@ export {
     hookStudioMessage,
     parseHookJudgeResult,
     hookJudgeMessage,
+    prepareFinalHookCandidates,
     generateFinalHook,
     finalizeScriptHook,
     stripSectionLabels,

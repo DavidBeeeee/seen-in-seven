@@ -10,6 +10,7 @@ import {
   extractSystemPrompt,
   finalizeScriptHook,
   finalizeScriptOpenLoop,
+  prepareFinalHookCandidates,
   validateBlueprintSource,
   reviewAndRepairScript
 } from './_lib/prompt-engine.js';
@@ -17,7 +18,19 @@ import { authenticatedAdmin, consumeQuota, json } from './_lib/security.js';
 
 export const config = { maxDuration: 180 };
 
+async function measureStage(timings, name, work) {
+  const started = Date.now();
+  try {
+    return await work();
+  } finally {
+    timings.push({ stage:name, durationMs:Date.now() - started });
+  }
+}
+
 export default async function handler(req, res) {
+  const requestStarted = Date.now();
+  const timings = [];
+  let status = 'failed';
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed' });
   try {
     const admin = await authenticatedAdmin(req);
@@ -46,13 +59,21 @@ export default async function handler(req, res) {
     const temperature = body.generationMode === 'production' ? 0.8 : 0.25;
     let preparedUserMessage = userMessage;
     if (level === 2 && video === 1) {
-      preparedUserMessage = await prepareLevelTwoVideoOneMaterial(userMessage);
+      preparedUserMessage = await measureStage(timings, 'story-preparation', () =>
+        prepareLevelTwoVideoOneMaterial(userMessage)
+      );
     } else if (level === 2 && (video === 3 || video === 6)) {
-      preparedUserMessage = await prepareLevelTwoEpiphanyMaterial(userMessage, video);
+      preparedUserMessage = await measureStage(timings, 'story-preparation', () =>
+        prepareLevelTwoEpiphanyMaterial(userMessage, video)
+      );
     } else if (level === 2 && video === 4) {
-      preparedUserMessage = await prepareLevelTwoVideoFourMaterial(userMessage);
+      preparedUserMessage = await measureStage(timings, 'story-preparation', () =>
+        prepareLevelTwoVideoFourMaterial(userMessage)
+      );
     } else if (level === 2 && video === 5) {
-      preparedUserMessage = await prepareLevelTwoVideoFiveMaterial(userMessage);
+      preparedUserMessage = await measureStage(timings, 'story-preparation', () =>
+        prepareLevelTwoVideoFiveMaterial(userMessage)
+      );
     }
     let rawContent = '';
     let content = '';
@@ -62,8 +83,11 @@ export default async function handler(req, res) {
         ? '\n\nA previous test draft did not pass the final story check. Write a genuinely fresh complete script that fixes every mechanical issue as well as the story architecture. Keep the OPEN LOOP under 50 words, connect the concrete CTA bridge into the follow action without a full stop, use exactly one "because," include the seven-part orientation, and avoid every banned word. Return only the five labeled sections.\n\nEXACT FEEDBACK FROM THE PREVIOUS DRAFT:\n' + String(lastError && lastError.message || '')
         : '';
       try {
-        rawContent = await callModel(systemPrompt, preparedUserMessage + retryNote, attempt ? 0.45 : temperature);
-        const reviewedContent = await reviewAndRepairScript({
+        const stageSuffix = '-' + (attempt + 1);
+        rawContent = await measureStage(timings, 'draft' + stageSuffix, () =>
+          callModel(systemPrompt, preparedUserMessage + retryNote, attempt ? 0.45 : temperature)
+        );
+        const reviewedContent = await measureStage(timings, 'story-review' + stageSuffix, () => reviewAndRepairScript({
           script: rawContent,
           systemPrompt,
           userMessage: preparedUserMessage + retryNote,
@@ -72,23 +96,42 @@ export default async function handler(req, res) {
           callModel,
           provisionalHook: true,
           provisionalOpenLoop: true
+        }));
+        const hookCandidatesPromise = measureStage(timings, 'hook-candidates' + stageSuffix, () =>
+          prepareFinalHookCandidates({
+            script:reviewedContent,
+            systemPrompt,
+            userMessage:preparedUserMessage + retryNote,
+            level,
+            video,
+            callModel
+          })
+        ).catch(error => {
+          console.warn('[SeenInSeven test Hook preparation]', JSON.stringify({
+            level,
+            video,
+            message:String(error && error.message || 'Hook preparation failed.')
+          }));
+          return [];
         });
-        const retentionContent = await finalizeScriptOpenLoop({
+        const retentionContent = await measureStage(timings, 'open-loop' + stageSuffix, () => finalizeScriptOpenLoop({
           script: reviewedContent,
           systemPrompt,
           userMessage: preparedUserMessage + retryNote,
           level,
           video,
           callModel
-        });
-        content = await finalizeScriptHook({
+        }));
+        const preparedCandidates = await hookCandidatesPromise;
+        content = await measureStage(timings, 'hook-selection' + stageSuffix, () => finalizeScriptHook({
           script: retentionContent,
           systemPrompt,
           userMessage: preparedUserMessage + retryNote,
           level,
           video,
-          callModel
-        });
+          callModel,
+          preparedCandidates
+        }));
         break;
       } catch (error) {
         lastError = error;
@@ -96,8 +139,17 @@ export default async function handler(req, res) {
         if (!canRetry || attempt === 1) throw error;
       }
     }
+    status = 'completed';
     return json(res, 200, { rawContent, content });
   } catch (error) {
     return json(res, 500, { error: error.message || 'Test generation failed.' });
+  } finally {
+    console.info('[SeenInSeven test timing]', JSON.stringify({
+      level:req && req.body && req.body.level,
+      video:req && req.body && req.body.videoNumber,
+      status,
+      totalMs:Date.now() - requestStarted,
+      stages:timings
+    }));
   }
 }

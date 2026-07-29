@@ -104,11 +104,11 @@ const implementationSource = [
 
 assert(
   generationSource.includes("if (input.level === 2 && input.video === 1)") &&
-    generationSource.includes('preparedContext = await prepareLevelTwoVideoOneMaterial(input.userContext);'),
+    generationSource.includes('prepareLevelTwoVideoOneMaterial(input.userContext)'),
   'Production section regeneration does not use Level 2 Video 1 material preparation.'
 );
 assert(
-  promptTestSource.includes('preparedUserMessage = await prepareLevelTwoVideoOneMaterial(userMessage);'),
+  promptTestSource.includes('prepareLevelTwoVideoOneMaterial(userMessage)'),
   'Admin Prompt Tester does not mirror Level 2 Video 1 production preparation.'
 );
 [
