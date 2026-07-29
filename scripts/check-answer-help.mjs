@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 
 const helperSource = fs.readFileSync('js/answer-help.js', 'utf8');
+const journeySource = fs.readFileSync('js/journey-map.js', 'utf8');
 const appSource = fs.readFileSync('js/app.js', 'utf8');
 const html = fs.readFileSync('seeninseven.html', 'utf8');
 const overviewPrompt = fs.readFileSync('assets/overview-character-bio-prompt.txt', 'utf8');
@@ -19,9 +20,12 @@ const context = {
 };
 vm.createContext(context);
 vm.runInContext(helperSource, context);
+vm.runInContext(journeySource, context);
 
 const helper = context.window.SISAnswerHelp;
 if (!helper) throw new Error('Answer Help module did not initialize.');
+const journeyHelper = context.window.SISJourneyMap;
+if (!journeyHelper) throw new Error('Journey Map helper did not initialize.');
 
 for (const level of [1, 2]) {
   if (!Array.isArray(helper.ASSIGNMENTS[level]) || helper.ASSIGNMENTS[level].length !== 7) {
@@ -56,33 +60,75 @@ const simplePrompt = helper.buildPrompt({
   'LOCKED SCRIPT SENTINEL',
   'ONBOARDING SENTINEL',
   'OVERVIEW SENTINEL',
-  'binding scope',
-  'PRIMARY STORY SOURCE',
+  'CURRENT VIDEO JOB',
+  'STORY RULE',
   'OPTION 1',
   'three more',
-  'invent plausible connective scenes',
+  'infer plausible motives',
   '150 to 250 words'
 ].forEach(value => {
   if (!simplePrompt.includes(value)) throw new Error(`Simple helper prompt is missing: ${value}`);
 });
 
-if (simplePrompt.includes('FUTURE DIRECTION SENTINEL')) {
-  throw new Error('A future Journey direction leaked into Answer Help.');
+[
+  'NON-NEGOTIABLE SOURCE ORDER',
+  'PRIMARY STORY SOURCE',
+  'CONTEXT RESET',
+  'research archive, not an active assignment'
+].forEach(value => {
+  if (simplePrompt.includes(value)) throw new Error(`The old bloated helper instruction remains: ${value}`);
+});
+if (!simplePrompt.includes('Develop the same Current Story Direction according to the Current Video Job')) {
+  throw new Error('The three approaches are not bound to the current video job and selected story.');
 }
-if (!simplePrompt.includes('all three options must stay inside that same story and time window')) {
-  throw new Error('The selected Journey direction is not protected across all three options.');
+if (!simplePrompt.includes('Stay inside what the speaker could know during this chapter')) {
+  throw new Error('The helper is missing its future-chapter boundary.');
 }
-if (!simplePrompt.includes('Reusing an established setting, job, relationship, event, or life fact is allowed')) {
-  throw new Error('Continuity facts are still being mistaken for repetition.');
-}
-if (simplePrompt.includes('different source events or time periods') || simplePrompt.includes('Search a different time period')) {
-  throw new Error('The old cross-story variety rule is still present.');
-}
-if (simplePrompt.indexOf('CURRENT DIRECTION SENTINEL') > simplePrompt.indexOf('OVERVIEW SENTINEL')) {
-  throw new Error('The Overview appears before the binding Current Story Direction.');
-}
-if (!simplePrompt.includes('not scriptwriting')) {
+if (!simplePrompt.includes('This is journal-answer development, not scriptwriting')) {
   throw new Error('The raw-answer boundary is missing.');
+}
+if (!simplePrompt.includes('Do not mention SeenInSeven story architecture, stage names')) {
+  throw new Error('Private story architecture can leak into user-facing answer options.');
+}
+
+const onboardingIndex = simplePrompt.indexOf('ONBOARDING SENTINEL');
+const backgroundIndex = simplePrompt.indexOf('OVERVIEW SENTINEL');
+const scriptIndex = simplePrompt.indexOf('LOCKED SCRIPT SENTINEL');
+const directionIndex = simplePrompt.indexOf('CURRENT DIRECTION SENTINEL');
+const questionIndex = simplePrompt.indexOf('CURRENT QUESTION SENTINEL');
+if (!(onboardingIndex < backgroundIndex &&
+      backgroundIndex < scriptIndex &&
+      scriptIndex < directionIndex &&
+      directionIndex < questionIndex)) {
+  throw new Error('Answer Help source material is not ordered as onboarding, background, scripts, direction, then current Q&A.');
+}
+
+const assignmentChecks = {
+  1: [
+    'declaration and emotional starting point',
+    'ordinary life',
+    'first personal Epiphany',
+    'Road of Trials',
+    'genuine ordeal',
+    'larger truth earned through the Video 5 ordeal',
+    'Develop the Return'
+  ],
+  2: [
+    'knowledge, experience, or perspective',
+    'unpolished origin',
+    'first professional Epiphany',
+    'one Road of Trials story',
+    'apparently irreversible collapse',
+    'more significant counterintuitive way',
+    'Develop the Return'
+  ]
+};
+for (const level of [1, 2]) {
+  assignmentChecks[level].forEach((phrase, index) => {
+    if (!helper.ASSIGNMENTS[level][index].includes(phrase)) {
+      throw new Error(`Level ${level} Video ${index + 1} Answer Help job is missing: ${phrase}`);
+    }
+  });
 }
 
 const extendedPrompt = helper.buildPrompt({
@@ -101,8 +147,33 @@ if (!extendedPrompt.includes('different job, scene, or piece of evidence')) {
   throw new Error('Extended answers are not protected from repeating each other.');
 }
 
-if (!html.includes('id="answer-help-overlay"') || !html.includes('/js/answer-help.js?v=answer-help-2')) {
+const journeyPrompt = journeyHelper.buildHelperPrompt(
+  2,
+  'LONG HISTORY SENTINEL',
+  'JOURNEY ONBOARDING SENTINEL'
+);
+[
+  'Use one or two direct sentences',
+  'Contain no more than 60 words',
+  'make sense when copied into a separate conversation by itself',
+  'Do not force every video into the same event-cause-lesson formula',
+  'Make causal relationships explicit when they are necessary',
+  'LONG HISTORY SENTINEL',
+  'JOURNEY ONBOARDING SENTINEL'
+].forEach(value => {
+  if (!journeyPrompt.includes(value)) throw new Error(`Journey helper prompt is missing: ${value}`);
+});
+if (!appSource.includes("${count} / 60 words") ||
+    !appSource.includes("count > 60") ||
+    appSource.includes("${count} / 25 words")) {
+  throw new Error('Journey direction editing does not match the new 60-word guidance.');
+}
+
+if (!html.includes('id="answer-help-overlay"') || !html.includes('/js/answer-help.js?v=answer-help-3')) {
   throw new Error('Answer Help modal or shared script include is missing.');
+}
+if (!html.includes('/js/journey-map.js?v=journey-map-2') || !html.includes('/js/app.js?v=overview-help-2')) {
+  throw new Error('Journey Map or app cache version was not advanced.');
 }
 if (!html.includes('openCurrentMvoAnswerHelp()')) {
   throw new Error('Video 1 Answer Help entry is missing.');

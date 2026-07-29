@@ -946,6 +946,17 @@ The following principles govern every word of copy in this app and the broader C
 - Creative inference may fill gaps inside the selected story but cannot replace it. When no Journey Direction exists, the outside AI may offer three candidate stories from the Overview.
 - This correction changes only the copied external-AI prompt in `js/answer-help.js`. App questions, saved answers, production generation, and the blueprint remain unchanged.
 
+### 2026-07-28 stage-aware answer-helper architecture
+
+- `js/answer-help.js` now uses one concise shared interaction contract plus fourteen distinct Current Video Jobs aligned to the live July architecture: Declaration, Ordinary World and Refusal, first Epiphany, Road of Trials, Fall, second Epiphany or Elixir, and Return for both levels.
+- The copied prompt keeps instructions together at the beginning and places source material at the end in this order: onboarding and long-form background, earlier scripts, Current Story Direction, then current questions and answers.
+- The long-form onboarding Overview remains available as biographical context, but the other six Journey directions are not sent. Earlier scripts preserve completed continuity while the Current Story Direction remains the selected story.
+- The helper can infer plausible details inside a thin story, but cannot substitute a different life chapter, borrow a future revelation, or repeat private stage terminology in its user-facing options and answers.
+- The older source-priority, context-reset, and large negative-rule blocks were removed. A generated Level 2 Video 2 Extended helper prompt is about 600 words before real user material.
+- `js/journey-map.js` now asks outside AIs for self-contained directions that explicitly identify important people, jobs, periods, events, and necessary causal relationships. Directions remain video-specific instead of sharing one fixed formula.
+- Journey directions may use one or two focused sentences and up to 60 words. The Journey Map counter and placeholder match that guidance. Existing saved directions are not rewritten.
+- These changes affect only copied external-AI guidance and Journey Map planning. App questions, saved data, production script generation, `api/_lib/blueprints.txt`, `prompts/blueprints.js`, Hook Studio, Open Loop architecture, and quality control remain unchanged.
+
 ## 2026-07-28: Overview character-bio helper
 
 - The onboarding Overview page now includes `Need Help Building Your Overview?`.

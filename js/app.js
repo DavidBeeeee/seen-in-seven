@@ -1184,10 +1184,10 @@ function renderJourneyMap() {
       <article class="journey-question-card">
         <div class="journey-question-top">
           <span class="journey-step">Video ${index + 1}</span>
-          <span class="journey-word-count${count > 25 ? ' over' : ''}" id="journey-count-${index}">${count} / 25 words</span>
+          <span class="journey-word-count${count > 60 ? ' over' : ''}" id="journey-count-${index}">${count} / 60 words</span>
         </div>
         <label for="journey-answer-${index}">${escapeHTML(question)}</label>
-        <textarea class="journey-answer-input" id="journey-answer-${index}" rows="3" placeholder="One sentence is enough."
+        <textarea class="journey-answer-input" id="journey-answer-${index}" rows="3" placeholder="One or two focused sentences work well."
           oninput="setJourneyMapAnswer(${index}, this.value)">${escapeHTML(value)}</textarea>
         <button class="journey-unsure-btn" type="button" onclick="setJourneyAnswerUnsure(${index})">I'm not sure yet</button>
       </article>`;
@@ -1205,8 +1205,8 @@ function setJourneyMapAnswer(index, value) {
   const count = journeyWordCount(value);
   const label = document.getElementById('journey-count-' + index);
   if (label) {
-    label.textContent = count + ' / 25 words';
-    label.classList.toggle('over', count > 25);
+    label.textContent = count + ' / 60 words';
+    label.classList.toggle('over', count > 60);
   }
   clearTimeout(videoAnswerSaveTimer);
   videoAnswerSaveTimer = setTimeout(saveProgress, 600);

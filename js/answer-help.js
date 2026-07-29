@@ -3,22 +3,22 @@
 
   const ASSIGNMENTS = {
     1: [
-      'Help the user explain why sharing now matters, who they hope reaches it, and the precise human reason they delayed. Gather the emotional starting point without telling their whole backstory or resolving the journey.',
-      'Help the user describe the ordinary life they were living, plus an unexpected detail, interest, contradiction, or obsession that makes them recognizable. Keep them human and inside that earlier life. Do not explain what the detail later became or what it taught them.',
-      'Help the user identify one idea they genuinely thought was true and the lived experience that made it stop fitting. Gather the old assumption, the contradiction, and the first realization without jumping to a complete life philosophy.',
-      'Help the user describe what they tried after the first realization, the friction they met, one small sign of change, and what still felt difficult. This is progress under pressure, not the worst failure and not a final victory.',
-      'Help the user enter the worst connected failure, including what happened, what they did or refused to do, the concrete cost, and the repair attempt that also failed. Stay inside the loss. Do not find the lesson, recovery, or comeback.',
-      'Help the user uncover the larger truth they could only recognize after the failure, the evidence that made it undeniable, and a visible change in how they now live or act. This truth should be deeper than the first realization rather than a restatement of it.',
-      'Help the user compare who they were at the beginning with who they are now, name what remains unresolved, and identify what a similar person might recognize in them. Avoid a perfect transformation, a summary of seven videos, or a disguised offer.'
+      'Develop why sharing now matters, who the speaker hopes will see it, and the specific human reason they delayed. This is the declaration and emotional starting point, not the whole backstory or a transformation that has already happened.',
+      'Develop the recognizable ordinary life the speaker was living, plus an unexpected detail, interest, contradiction, or obsession that makes them interesting rather than impressive. Stay inside that earlier life without explaining what the detail eventually became or taught them.',
+      'Develop the first personal Epiphany: one idea the speaker genuinely thought was true, the lived evidence that stopped fitting it, the emerging new lens, and the human cost of the old one. Keep this first realization bounded rather than turning it into the larger truth reserved for Video 6.',
+      'Develop the Road of Trials after the first realization: what the speaker changed, one recoverable pressure that tested it, the temptation to return to the old way, a limited sign of progress, and what remained difficult. This is not the catastrophic fall or a final victory.',
+      'Develop one genuine ordeal: what was destroyed, ended, lost, or believed impossible to restore; how the speaker\'s choices contributed; what it concretely cost; and what attempted repair also failed. Remain at the lowest point without recovery, meaning, or comeback.',
+      'Develop the larger truth earned through the Video 5 ordeal, the aftermath evidence that made it undeniable, one visible change in how the speaker now lives, and the person they recognize in their former position. It may connect to Video 3, but it must not merely repeat it.',
+      'Develop the Return: who the speaker was before the two realizations, who they are now, what changed observably, what remains unresolved, what telling the story clarified, and what they are carrying forward. Keep the transformation human and unfinished rather than turning it into a pitch.'
     ],
     2: [
-      'Help the user explain what knowledge, experience, or perspective they feel compelled to make visible, who needs it, and the exact reason they have stayed quiet. Create curiosity about the person without turning the answer into credentials, positioning, or a pitch.',
-      'Help the user tell the unpolished origin of their work, the ordinary life around it, and why treating the recurring ability or path as real expertise seemed unreasonable. Keep them inside their earlier perspective. Do not explain the present-day meaning, method, or business philosophy.',
-      'Help the user identify one accepted idea in their field that they now reject and the lived evidence that made the contradiction impossible to ignore. Gather a clear old assumption, a concrete collision with reality, and the new belief. An influence or mentor may appear naturally, but is never required.',
-      'Help the user find one story about acting on their unusual belief before they knew whether it would work. Gather the temptation to return to the familiar choice, the decision made without proof, and one meaningful but limited result. Do not turn this into a major collapse, polished success story, or final method.',
-      'Help the user enter the largest related failure in their business or life, including the apparently irreversible loss, their own choices or avoidance, the concrete cost, and the attempted repair that also failed. Stay at the lowest point without adding meaning, recovery, or the truth they discovered later.',
-      'Help the user uncover a significant counterintuitive way they now live or work, the experience or repeated evidence that made it undeniable, and what they visibly do differently. It may connect to an earlier chapter, the failure, or a completely separate experience. Do not require any connection or repeat the first unusual belief.',
-      'Help the user name what genuinely distinguishes who they are now from who they were and from others in their field, while preserving the unresolved flaws that make them recognizable. Gather an honest continuing direction and relationship with the right people, not a polished authority claim or offer.'
+      'Develop what knowledge, experience, or perspective the speaker feels compelled to make visible, who needs it, and the exact reason they have stayed quiet. Create curiosity about a knowledgeable but still-human person without turning the answer into credentials, positioning, or a pitch.',
+      'Develop the unpolished origin of the speaker\'s work, the ordinary life surrounding it, and why treating the recurring ability or path as legitimate expertise felt unreasonable. Preserve the earlier perspective and practical refusal without explaining its present-day value, method, or business meaning.',
+      'Develop the first professional Epiphany: one accepted idea the speaker once believed, one concrete collision with evidence, the new lens that became impossible to ignore, and the real cost of the old idea. A person or influence may appear naturally, but no mentor is required.',
+      'Develop one Road of Trials story about acting on the first Epiphany before proof existed. Gather the old way that still appeared more rewarding, the recoverable pressure, the choice made under uncertainty, and one meaningful but limited result that created hope rather than professional proof.',
+      'Develop one apparently irreversible collapse related to the speaker\'s larger work or life: what seemed permanently lost, how their choices contributed, the concrete cost, the attempted repair that also failed, and the lowest-point belief. Do not add recovery, diagnosis, or the Video 6 truth.',
+      'Develop the speaker\'s more significant counterintuitive way of living or working, the lived evidence that made it undeniable, what they visibly do differently, and who they recognize as still following the common-sense path. It may arise from any experience and is not required to connect to Videos 3 or 5.',
+      'Develop the Return: how the speaker once related to their expertise, who they are now, what changed observably, what remains unfinished, what telling the story clarified, and why the right person would remain connected. Build earned relationship rather than a polished authority claim or offer.'
     ]
   };
 
@@ -63,88 +63,44 @@
     const questions = Array.isArray(config && config.questions) ? config.questions : [];
     const assignment = ASSIGNMENTS[level][videoIndex];
     const onboarding = clean(config && config.onboardingContext) || '(No onboarding details were provided.)';
-    const overview = clean(config && config.overview) || '(No additional Overview notes were provided.)';
-    const direction = clean(config && config.journeyDirection) || '(No one-sentence direction was saved. Select a story from the Overview that fits the current assignment and questions.)';
+    const background = clean(config && config.overview) || '(No additional long-form background was provided.)';
+    const direction = clean(config && config.journeyDirection) || '(No Current Story Direction was saved.)';
     const prior = formatPreviousScripts(config && config.previousScripts);
 
     return `I am completing Level ${level}, Video ${videoNumber} in SeenInSeven. Help me produce better raw journal answers for the current app questions.
 
-NON-NEGOTIABLE SOURCE ORDER
-
-1. CURRENT STORY DIRECTION selects the story being developed for this video.
-2. OVERVIEW NOTES are the primary source used to expand that selected story.
-3. CURRENT QUESTIONS determine which parts of the selected story need deeper answers.
-4. CURRENT ANSWERS are evidence, corrections, and starting material.
-5. EARLIER SCRIPTS preserve continuity and show which revelations or language have already been used.
-6. ONBOARDING CONTEXT supports voice, audience, and motivation.
-
-When a saved Current Story Direction appears below, it is a binding scope, not background context or an optional suggestion. Keep its central period, event, relationships, and conflict. Use the Overview to expand that story. Do not replace it with another event from my life, even if another event seems more dramatic.
-
-If the Current Story Direction explicitly says that no direction was saved, use the Overview to offer three candidate stories that fit the current assignment and questions. Once I choose one, remain inside that story.
-
-CURRENT STORY DIRECTION
-
-${direction}
-
-WHAT THIS ANSWER NEEDS TO DO
+CURRENT VIDEO JOB
 
 ${assignment}
 
-This is source-material development, not scriptwriting. Do not write a hook, open loop, conclusion, CTA, finished video, content strategy, lesson outline, or sales message. Do not mention story architecture, stage names, challenge architecture, or marketing frameworks.
+STORY RULE
 
-CURRENT ${mode.toUpperCase()} QUESTIONS
+The Current Story Direction selects the story being developed. Use the Current Video Job to decide which parts of that story need deeper answers. Preserve the central period, events, relationships, conflict, and explicit meaning already present in the direction.
 
-${formatQuestions(questions)}
+Use Onboarding Context to resolve references and recover relevant facts. Use Earlier Scripts to preserve continuity and avoid repeating discoveries that have already been made. These sources may deepen the selected story, but they may not replace it with a different memory merely because that memory is more dramatic or easier to explain.
 
-OVERVIEW NOTES: PRIMARY STORY SOURCE
+Stay inside what the speaker could know during this chapter. Do not import a later revelation, failure, recovery, mature interpretation, or another video's emotional job.
 
-${overview}
+When information is thin, infer plausible motives, scenes, reactions, consequences, and connective details inside the selected story. Offer possibilities the user can correct instead of retreating into vague language. Preserve specific, strange, harsh, funny, embarrassing, or uncomfortable material when it makes the answer human.
 
-ESTABLISHED EARLIER SCRIPTS: CONTINUITY RECORD
-
-${prior}
-
-ONBOARDING CONTEXT
-
-${onboarding}
-
-CONTEXT RESET
-
-Treat everything before this message as a research archive, not an active assignment. Previously suggested but rejected story ideas are unavailable unless I explicitly revive them after this message. Old conversation momentum cannot override the Current Story Direction.
-
-You may recover facts, language, memories, and emotional context from earlier conversations only when they deepen the selected story. Do not use the archive to switch to a different story.
-
-CREATIVE FREEDOM
-
-Use the Overview and other available context to make the selected story richer. You may infer motives, combine related memories, compress details within the selected period, merge related people or moments, and invent plausible connective scenes or consequences when the source material is thin. Creative freedom fills gaps inside the selected story. It does not authorize changing the selected story.
-
-Do not moralize, soften difficult material, sanitize offensive or uncomfortable details, or replace a rough human truth with therapy language, corporate language, or generic inspiration. Do not retreat into vague phrases when a concrete event, choice, object, place, consequence, or line of dialogue would make the answer stronger.
-
-CONTINUITY AND VARIETY
-
-- Reusing an established setting, job, relationship, event, or life fact is allowed when the seven-video story requires continuity.
-- Repetition means copying an earlier video's narrative purpose, emotional revelation, conclusion, dominant scene construction, signature language, or primary metaphor.
-- Deepen the current answers instead of merely rewriting them. Search deeper inside the assigned story for concrete detail, conflict, motive, and consequence.
-- When a saved direction exists, all three options must stay inside that same story and time window. Vary the focal scene, evidence, emotional tension, relationship, or detail being emphasized.
-- The options cannot replace the selected story with different events from my life.
-- Do not make all three options point toward the same interpretation or use the same evidence.
-- Never pull from future SeenInSeven questions or invent the later chapters of this seven-part sequence.
+This is journal-answer development, not scriptwriting. Do not write a hook, open loop, conclusion, CTA, finished video, content strategy, or sales message. Do not mention SeenInSeven story architecture, stage names, or the Current Video Job in the options or final answers.
 
 INTERACTIVE PROCESS
 
 Your first reply must contain exactly three concise answer approaches labeled OPTION 1, OPTION 2, and OPTION 3.
 
 Each option must:
-- Develop the Current Story Direction rather than proposing a replacement story.
-- Name the focal scene, detail, evidence, relationship, or tension it would emphasize.
-- State the human tension that makes it useful for the current question.
+- Develop the same Current Story Direction according to the Current Video Job.
+- Emphasize a different scene, detail, relationship, piece of evidence, or emotional tension inside that story.
+- Explain what the approach would help uncover.
+- Preserve the speaker's perspective at this chapter of the journey.
 - Use no more than two short sentences.
 - Be meaningfully different from the other two.
 - Avoid drafting the final answer.
 
 After the three options, write one short line telling me I can reply with 1, 2, 3, mix parts, say "choose for me," or ask for "three more."
 
-If I ask for three more, every approach shown so far becomes unavailable. Find three new focal scenes, details, tensions, or interpretations inside the same Current Story Direction. Do not move to a different life chapter unless no direction was saved.
+If I ask for three more, find three new approaches inside the same Current Story Direction. Do not move to a different life chapter.
 
 If I choose an option, mix options, or say "choose for me," stop offering choices and write the final paste-ready answer.
 
@@ -152,7 +108,33 @@ FINAL OUTPUT CONTRACT
 
 ${finalFormat(mode, questions)}
 
-The final answer must use "I," "me," and "my" as appropriate. Preserve specific, strange, harsh, funny, embarrassing, or unpolished details when they make the answer feel human. Do not explain which details were inferred or invented. Do not append notes, warnings, verification requests, or alternate versions.`.trim();
+The final answer must use "I," "me," and "my" as appropriate. Do not explain which details were inferred or invented. Do not append notes, warnings, verification requests, or alternate versions.
+
+SOURCE MATERIAL
+
+1. ONBOARDING CONTEXT
+
+${onboarding}
+
+LONG-FORM BACKGROUND PROVIDED DURING ONBOARDING
+
+${background}
+
+2. EARLIER SCRIPTS
+
+${prior}
+
+3. CURRENT STORY DIRECTION
+
+${direction}
+
+4. CURRENT ${mode.toUpperCase()} QUESTIONS AND ANSWERS
+
+${formatQuestions(questions)}
+
+FINAL INSTRUCTION
+
+Using the Source Material above, produce exactly three concise approaches that develop the Current Story Direction according to the Current Video Job.`.trim();
   }
 
   function copyText(text) {

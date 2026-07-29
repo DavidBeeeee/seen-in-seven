@@ -78,6 +78,12 @@ You may make strong inferences, connect experiences I have never connected, comb
 
 Create three genuinely different complete answer sets, not three alternatives for each individual question.
 
+Each answer will later become the Current Story Direction for one video. The seven answers should create one coherent journey, but every individual answer must also make sense when copied into a separate conversation by itself.
+
+Use the question to decide what belongs in each direction. Do not force every video into the same event-cause-lesson formula. Name important people, jobs, relationships, periods, choices, and events explicitly instead of relying on compressed references such as "that job," "what happened," or "it" when the reference carries the meaning.
+
+Give each direction enough context to preserve the intended story without explaining a revelation, failure, recovery, or conclusion that belongs to a later video.
+
 THE SEVEN QUESTIONS
 
 ${questions.map((question, index) => `${index + 1}. ${question}`).join('\n\n')}
@@ -86,17 +92,20 @@ ANSWER REQUIREMENTS
 
 Every answer must:
 - Be written in first person using I, me, and my.
-- Be one direct sentence.
-- Contain no more than 25 words.
+- Use one or two direct sentences.
+- Contain no more than 60 words.
 - Answer the question rather than suggest a topic.
 - Use specific beliefs, experiences, choices, consequences, and flaws.
 - Connect with the other six answers as one recognizable journey.
+- Be understandable on its own without the other six answers.
+- Make causal relationships explicit when they are necessary to understand why an event mattered.
 - Sound like a private planning answer rather than polished content.
 
 Do not:
 - Write "I could tell the story of" or suggest what I might discuss.
 - Write hooks, scripts, scenes, metaphors, CTAs, or presentation ideas.
 - Turn every answer into a lesson.
+- Preview the answer to a later question.
 - Make me sound like an authority who always knew the answer.
 - Force a product or service into the conclusion.
 - Choose stories based on how effectively they could attract clients.
@@ -111,6 +120,7 @@ Before presenting each set, silently confirm:
 - Answer 6 introduces a second, more significant truth rather than repeating Answer 3.
 - Answer 7 combines meaningful differentiation with unresolved humanity.
 - The seven answers belong to the same journey rather than merely sharing a topic.
+- Every answer identifies its own subject clearly enough to guide a later AI without requiring the other six answers.
 
 If a set fails these checks, rebuild it before showing it.
 
@@ -118,13 +128,13 @@ OUTPUT FORMAT
 
 ANSWER SET 1: [Short descriptive name]
 
-1. [Direct first-person answer.]
-2. [Direct first-person answer.]
-3. [Direct first-person answer.]
-4. [Direct first-person answer.]
-5. [Direct first-person answer.]
-6. [Direct first-person answer.]
-7. [Direct first-person answer.]
+1. [Self-contained first-person direction.]
+2. [Self-contained first-person direction.]
+3. [Self-contained first-person direction.]
+4. [Self-contained first-person direction.]
+5. [Self-contained first-person direction.]
+6. [Self-contained first-person direction.]
+7. [Self-contained first-person direction.]
 
 Repeat the same format for Answer Sets 2 and 3.
 
