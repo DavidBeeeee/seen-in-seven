@@ -330,13 +330,142 @@ function publishedPrompt() {
     return '';
   }
 
+  const LEXICAL_REPETITION_STOP_WORDS = new Set([
+    'about', 'after', 'again', 'against', 'all', 'also', 'although', 'always', 'am', 'an', 'and', 'any',
+    'are', 'aren', 'arent', 'around', 'as', 'at', 'back', 'be', 'been', 'before', 'being', 'both', 'but', 'by', 'came',
+    'can', 'cannot', 'could', 'couldn', 'couldnt', 'did', 'didn', 'didnt', 'do', 'does', 'doesn', 'doesnt', 'doing', 'done',
+    'down', 'during', 'each', 'either', 'enough', 'even', 'ever', 'every', 'few', 'for', 'from', 'further',
+    'gave', 'get', 'gets', 'getting', 'go', 'goes', 'going', 'gone', 'got', 'had', 'hadn', 'hadnt', 'has', 'hasn', 'hasnt', 'have', 'haven', 'havent', 'having',
+    'he', 'her', 'here', 'hers', 'herself', 'him', 'himself', 'his', 'how', 'i', 'if', 'in', 'into', 'is',
+    'isn', 'isnt', 'it', 'its', 'itself', 'just', 'keep', 'kept', 'know', 'known', 'like', 'made', 'make',
+    'many', 'may', 'me', 'might', 'mine', 'most', 'much', 'must', 'mustn', 'mustnt', 'my', 'myself', 'neither', 'never', 'no',
+    'nor', 'not', 'now', 'of', 'off', 'often', 'on', 'once', 'only', 'or', 'other', 'our', 'ours',
+    'ourselves', 'out', 'over', 'own', 'really', 'said', 'same', 'say', 'says', 'she', 'should', 'shouldn', 'shouldnt', 'since',
+    'so', 'some', 'still', 'such', 'take', 'taken', 'than', 'that', 'the', 'their', 'theirs', 'them',
+    'themselves', 'then', 'there', 'these', 'they', 'this', 'those', 'through', 'to', 'too', 'took',
+    'under', 'until', 'up', 'us', 'used', 'very', 'want', 'wanted', 'was', 'wasn', 'wasnt', 'we', 'well',
+    'went', 'were', 'weren', 'werent', 'what', 'when', 'where', 'whether', 'which', 'while', 'who', 'whom',
+    'whose', 'why', 'will', 'with', 'without', 'would', 'wouldn', 'wouldnt', 'you', 'your', 'yours',
+    'yourself', 'yourselves'
+  ]);
+
+  const LEXICAL_REPETITION_EXEMPT_ROOTS = new Set([
+    'challenge', 'follow', 'part', 'series', 'seven', 'video'
+  ]);
+
+  const LEXICAL_REPETITION_IRREGULAR_ROOTS = {
+    better:'good',
+    best:'good',
+    built:'build',
+    felt:'feel',
+    found:'find',
+    given:'give',
+    knew:'know',
+    left:'leave',
+    paid:'pay',
+    thought:'think',
+    told:'tell',
+    written:'write',
+    wrote:'write'
+  };
+
+  function lexicalRepetitionRoot(value) {
+    let word = String(value || '')
+      .toLowerCase()
+      .replace(/[’‘]/g, "'")
+      .replace(/^'+|'+$/g, '')
+      .replace(/n't$/i, 'nt')
+      .replace(/'(?:s|re|ve|ll|d|m)$/i, '');
+    if (!word || LEXICAL_REPETITION_STOP_WORDS.has(word)) return '';
+    if (LEXICAL_REPETITION_IRREGULAR_ROOTS[word]) word = LEXICAL_REPETITION_IRREGULAR_ROOTS[word];
+    else if (word.length > 5 && /ies$/.test(word)) word = word.slice(0, -3) + 'y';
+    else if (word.length > 5 && /ing$/.test(word)) {
+      let base = word.slice(0, -3);
+      if (/([b-df-hj-np-tv-z])\1$/.test(base)) base = base.slice(0, -1);
+      word = base;
+    } else if (word.length > 4 && /ed$/.test(word)) {
+      let base = word.slice(0, -2);
+      if (/i$/.test(base)) base = base.slice(0, -1) + 'y';
+      else if (/([b-df-hj-np-tv-z])\1$/.test(base)) base = base.slice(0, -1);
+      word = base;
+    } else if (word.length > 5 && /(?:sses|shes|ches|xes|zes)$/.test(word)) word = word.slice(0, -2);
+    else if (word.length > 4 && /s$/.test(word) && !/(?:ss|us|is)$/.test(word)) word = word.slice(0, -1);
+    if (word.length > 4 && /e$/.test(word) && !/ee$/.test(word)) word = word.slice(0, -1);
+    if (word.length < 4 || LEXICAL_REPETITION_STOP_WORDS.has(word) || LEXICAL_REPETITION_EXEMPT_ROOTS.has(word)) return '';
+    return word;
+  }
+
+  function lexicalRootCounts(text) {
+    const counts = new Map();
+    const tokens = String(text || '').match(/[A-Za-z][A-Za-z'’-]*/g) || [];
+    tokens.forEach(token => {
+      const root = lexicalRepetitionRoot(token);
+      if (!root) return;
+      if (!counts.has(root)) counts.set(root, { count:0, forms:new Set() });
+      const entry = counts.get(root);
+      entry.count += 1;
+      entry.forms.add(token.toLowerCase().replace(/[’‘]/g, "'"));
+    });
+    return counts;
+  }
+
+  function findLexicalRepetitionIssues(sections) {
+    const source = sections || {};
+    const issues = [];
+    const internalSections = ['HOOK', 'OPEN LOOP'];
+    internalSections.forEach(section => {
+      lexicalRootCounts(source[section]).forEach((entry, root) => {
+        if (entry.count < 3) return;
+        issues.push({
+          section,
+          root,
+          message:section + ' overuses the meaningful word family "' + root + '" ' + entry.count +
+            ' times (' + [...entry.forms].join(', ') + '). Keep its strongest use and rewrite the repeated thought rather than swapping synonyms.'
+        });
+      });
+    });
+
+    const bodySections = ['MEAT', 'CONCLUSION', 'CTA'];
+    const bySection = Object.fromEntries(bodySections.map(section => [section, lexicalRootCounts(source[section])]));
+    const roots = new Set();
+    bodySections.forEach(section => bySection[section].forEach((entry, root) => roots.add(root)));
+    roots.forEach(root => {
+      const appearances = bodySections
+        .map(section => ({ section, entry:bySection[section].get(root) }))
+        .filter(item => item.entry);
+      const total = appearances.reduce((sum, item) => sum + item.entry.count, 0);
+      const local = appearances.filter(item => item.entry.count >= 3);
+      if (!local.length && total < 3) return;
+      const target = local.length ? local[local.length - 1].section : appearances[appearances.length - 1].section;
+      const forms = [...new Set(appearances.flatMap(item => [...item.entry.forms]))];
+      const locations = appearances.map(item => item.section + ':' + item.entry.count).join(', ');
+      issues.push({
+        section:target,
+        root,
+        message:'The story body overuses the meaningful word family "' + root + '" ' + total + ' times (' +
+          forms.join(', ') + '; ' + locations + '). Preserve at most two necessary uses, then remove or advance the repeated idea. Do not repair it with synonyms.'
+      });
+    });
+    return issues;
+  }
+
   function validateOutput(text, video, level, userContext = '', styleGuideSource = '') {
     const source = String(text || '');
     const sections = parseSections(text);
-    if (!sections) return { valid: false, sections: null, missing: ['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA'], issues: [], sectionIssues: {} };
+    if (!sections) return {
+      valid:false,
+      sections:null,
+      missing:['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA'],
+      issues:[],
+      sectionIssues:{},
+      advisories:[],
+      sectionAdvisories:{}
+    };
     const missing = Object.keys(sections).filter(key => !sections[key] || (source.match(new RegExp('\\[' + key.replace(' ', '\\s+') + '\\]', 'g')) || []).length !== 1);
     const issues = [];
     const sectionIssues = {};
+    const advisories = [];
+    const sectionAdvisories = {};
     function addIssue(section, message) {
       issues.push(message);
       if (section) {
@@ -344,9 +473,17 @@ function publishedPrompt() {
         sectionIssues[section].push(message);
       }
     }
+    function addAdvisory(section, message) {
+      advisories.push(message);
+      if (section) {
+        if (!sectionAdvisories[section]) sectionAdvisories[section] = [];
+        sectionAdvisories[section].push(message);
+      }
+    }
     missing.forEach(section => addIssue(section, section + ' is missing, empty, or repeated.'));
     const openLoop = sections['OPEN LOOP'] || '';
     const openLoopWords = (openLoop.match(/\b[\w’'-]+\b/g) || []).length;
+    if (openLoopWords > 0 && openLoopWords < 25) addIssue('OPEN LOOP', 'OPEN LOOP has ' + openLoopWords + ' words; replace it with 25-50 words.');
     if (openLoopWords > 50) addIssue('OPEN LOOP', 'OPEN LOOP has ' + openLoopWords + ' words; replace it with 35-45 words and never exceed 50.');
     if (/\b(?:I\s+(?:realized|learned|discovered|understood)|it\s+(?:showed|taught|proved)\s+me|the\s+(?:truth|point|lesson)\s+is)\b/i.test(openLoop)) {
       addIssue('OPEN LOOP', 'OPEN LOOP announces the realization or lesson before the MEAT earns it.');
@@ -458,7 +595,7 @@ function publishedPrompt() {
         addIssue('CTA', 'Video 7 CTA invents urgency instead of cementing the relationship with the viewer.');
       }
     }
-    const sectionOrder = ['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA'];
+    const sectionOrder = ['OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA'];
     for (let laterIndex = 1; laterIndex < sectionOrder.length; laterIndex++) {
       const laterSection = sectionOrder[laterIndex];
       for (let earlierIndex = 0; earlierIndex < laterIndex; earlierIndex++) {
@@ -470,10 +607,20 @@ function publishedPrompt() {
         }
       }
     }
+    findLexicalRepetitionIssues(sections).forEach(issue => addAdvisory(issue.section, issue.message));
     Object.keys(sections).forEach(section => {
       findVoiceIssues(sections[section], styleGuideSource).forEach(message => addIssue(section, message));
     });
-    return { valid: missing.length === 0 && issues.length === 0, sections, missing, issues, sectionIssues, metrics: { openLoopWords } };
+    return {
+      valid:missing.length === 0 && issues.length === 0,
+      sections,
+      missing,
+      issues,
+      sectionIssues,
+      advisories,
+      sectionAdvisories,
+      metrics:{ openLoopWords }
+    };
   }
 
   function validationFeedback(validation) {
@@ -545,6 +692,8 @@ function publishedPrompt() {
     'Judge meaning, not just formatting. The Hook is an independent attention event outside the journey and chronological story; it does not need to transition into the Open Loop or communicate a story beat. It may use rhetorical exaggeration or provocative framing that is defensible in the speaker\'s voice, but it cannot invent a personal event, credential, measurable result, or quotation, and it cannot perform the Open Loop, Meat, Conclusion, or CTA\'s job. The Open Loop must independently create one concrete unanswered relationship from the completed story and must not explain the Hook or reveal or paraphrase the Conclusion. The Meat must tell the local story in connected spoken logic without repeating the Open Loop or Conclusion. The Conclusion must create an earned turn rather than recap. The CTA must carry a concrete element from that turn through a natural grammatical hinge into the follow request without a full stop, make follow the primary action, use because once for a specific reason, and orient a cold viewer inside the seven-part journey. Conditional bridges are valid only when they name a precise situation, consequence, or emotion from this story; reject generic approval tests.',
     'Treat the conclusion central meaning as reserved. Earlier sections may contain evidence for it but cannot explain, summarize, or paraphrase it. Reject scripts that spend the conclusion repeating a meaning already given away.',
     'Honor the focused composition rule. Apply sentence-level continuity only inside MEAT. Treat OPEN LOOP as an independent retention device, CONCLUSION and CTA as one closing unit, and HOOK as a final independent attention layer outside story-fact ownership. Every retained story fact has one primary section among OPEN LOOP, MEAT, CONCLUSION, and CTA. If a later story section repeats or paraphrases an earlier fact instead of adding a consequence, escalation, contradiction, interpretation, decision, or relational progression, replace only that later duplicate. Do not force the Hook into this information sequence, mistake necessary subject clarity for repetition, or solve repetition by merely changing repeated nouns.',
+    'Enforce lexical and concept economy across MEAT, CONCLUSION, and CTA. Group inflected forms and synonymous labels by the idea they express. A chain such as price, premium, cost, investment, number, and bill may be one repeated conceptual territory even though every noun differs. Preserve the strongest expression and rewrite later uses by removing the duplicate explanation or advancing the story. Never use thesaurus swapping, vague pronouns, or a new metaphor as a fake repair.',
+    'Keep HOOK outside the cross-section lexical and concept budget so its independent attention function is never weakened to match the story body. Allow OPEN LOOP to name one precise unanswered anchor and CONCLUSION to name that anchor once while answering it. Do not treat that deliberate retention connection as repetition, but reject any additional restatement, evidence summary, or early payoff.',
     'Allow only one governing metaphor family per script and normally no more than two meaningful uses of it. Reject competing image systems such as maps mixed with floors, bridges, mountains, roads, or ladders. Preserve literal details even when they happen to name a physical object.',
     'Epiphany conclusions may be absolute, controversial, and sharply opinionated when the supplied story earns them. Do not add hedges, disclaimers, reminders that the claim is only the speaker\'s opinion, or language that softens conviction merely to sound balanced.',
     'Reject generic motivational language, every form of false balance, vague suspense, progress-report hooks, recap-heavy endings, and stock AI phrasing even when the banned phrase is not an exact textual match.',
@@ -562,6 +711,7 @@ function publishedPrompt() {
     'Satisfy every supplied failure literally. Before returning, re-read each replacement and verify the same problem does not remain in a different form.',
     'For false balance, state the chosen point directly. Do not replace one negation-and-correction construction with another.',
     'For banned language, remove every occurrence and use a specific natural alternative. Never replace a vague banned noun with another vague placeholder.',
+    'For lexical repetition, preserve no more than two necessary uses of the named meaningful word family across MEAT, CONCLUSION, and CTA. Remove or advance the repeated thought instead of substituting a synonym. Do not rewrite HOOK merely because it shares a word with the story body, and preserve one necessary OPEN LOOP-to-CONCLUSION answer anchor.',
     'Preserve intentional bluntness, profanity, controversy, dark facts, and emotional force while repairing mechanics. Do not sanitize the speaker.',
     'For OPEN LOOP length, keep it between 35 and 45 words and never exceed 50.',
     'For CTA continuity, carry the concrete conclusion bridge through a conjunction, relative clause, or subordinating clause into the follow action without a full stop. Keep the bridge, follow action, exactly one "because," its specific reason, and the seven-part orientation in one connected sentence.',
@@ -709,9 +859,7 @@ function publishedPrompt() {
     const repetitionIssues = (validation.issues || []).filter(issue =>
       /repeats a long phrase from OPEN LOOP|OPEN LOOP repeats a long phrase/i.test(issue)
     );
-    const wordCount = (String(openLoop || '').match(/\b[\w’'-]+\b/g) || []).length;
-    const lengthIssue = wordCount < 25 ? ['OPEN LOOP has ' + wordCount + ' words; use 25 to 50.'] : [];
-    return [...lengthIssue, ...sectionIssues, ...repetitionIssues];
+    return [...sectionIssues, ...repetitionIssues];
   }
 
   async function generateFinalOpenLoop(config) {
@@ -756,7 +904,18 @@ function publishedPrompt() {
         issues
       }));
     }
-    if (lastOpenLoop) return lastOpenLoop;
+    if (lastOpenLoop) {
+      const candidateScript = composeSections({ ...sections, 'OPEN LOOP':lastOpenLoop });
+      const repairedScript = await applyFinalMechanicalRepair({
+        ...config,
+        script:candidateScript,
+        onlySection:'OPEN LOOP'
+      });
+      const repairedOpenLoop = String(parseSections(repairedScript) && parseSections(repairedScript)['OPEN LOOP'] || '').trim();
+      const remaining = repairedOpenLoop ? openLoopValidationIssues(config, repairedOpenLoop) : ['OPEN LOOP repair returned no text.'];
+      if (repairedOpenLoop && !remaining.length) return repairedOpenLoop;
+      throw new Error('The Open Loop still needs correction: ' + remaining.join(' ') + ' Please try again.');
+    }
     throw new Error('The Open Loop Writer returned no usable text. Please try again.');
   }
 
@@ -957,6 +1116,11 @@ function publishedPrompt() {
     lines.push(
       'DETERMINISTIC CHECKS:',
       validationFeedback(validation) || 'No deterministic failures. Perform the semantic story review anyway.',
+      '',
+      'EDITORIAL REPETITION SIGNALS (repair when they reflect repeated meaning; do not force a synonym swap or fail an otherwise natural script):',
+      validation && validation.advisories && validation.advisories.length
+        ? validation.advisories.join(' ')
+        : 'No mechanical repetition signal. Still review conceptual repetition and synonym chains.',
       ''
     );
     if (config.onlySection) {
@@ -1059,14 +1223,21 @@ function publishedPrompt() {
     Object.keys(validation.sectionIssues || {}).forEach(section => {
       if (!ignored.has(section)) sectionIssues[section] = validation.sectionIssues[section];
     });
+    const sectionAdvisories = {};
+    Object.keys(validation.sectionAdvisories || {}).forEach(section => {
+      if (!ignored.has(section)) sectionAdvisories[section] = validation.sectionAdvisories[section];
+    });
     const missing = (validation.missing || []).filter(section => !ignored.has(section));
     const issues = Object.values(sectionIssues).flat();
+    const advisories = Object.values(sectionAdvisories).flat();
     return {
       ...validation,
       valid:missing.length === 0 && issues.length === 0,
       missing,
       issues,
-      sectionIssues
+      sectionIssues,
+      advisories,
+      sectionAdvisories
     };
   }
 
@@ -1261,12 +1432,15 @@ function publishedPrompt() {
     for (let pass = 0; pass < 3; pass++) {
       const fullValidation = validateOutput(script, config.video, config.level, config.userMessage, config.systemPrompt);
       const targetIssues = fullValidation.sectionIssues && fullValidation.sectionIssues[section] || [];
+      const targetAdvisories = fullValidation.sectionAdvisories && fullValidation.sectionAdvisories[section] || [];
       const targetValidation = {
         valid:targetIssues.length === 0,
         sections:fullValidation.sections,
         missing:fullValidation.missing && fullValidation.missing.includes(section) ? [section] : [],
         issues:targetIssues,
         sectionIssues:{ [section]:targetIssues },
+        advisories:targetAdvisories,
+        sectionAdvisories:{ [section]:targetAdvisories },
         metrics:fullValidation.metrics
       };
       const reviewRaw = await config.callModel(
@@ -1330,6 +1504,7 @@ export {
     buildUserMessage,
     parseSections,
     findVoiceIssues,
+    findLexicalRepetitionIssues,
     validateOutput,
     validationFeedback,
     stageContract,

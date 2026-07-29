@@ -5,6 +5,7 @@ import {
   extractTaggedSection,
   finalizeScriptHook,
   finalizeScriptOpenLoop,
+  findLexicalRepetitionIssues,
   findVoiceIssues,
   HOOK_JUDGE_SYSTEM,
   HOOK_STUDIO_SYSTEM,
@@ -32,6 +33,12 @@ assert(focusedPrompt.includes('VIDEO 5 — THE FALL — THE ORDEAL'), 'Focused p
 assert(!focusedPrompt.includes('VIDEO 4 — THE CHOICE BEFORE PROOF'), 'Focused prompt leaked Video 4 rules.');
 assert(!focusedPrompt.includes('VIDEO 6 — EPIPHANY #2'), 'Focused prompt leaked Video 6 rules.');
 assert(focusedPrompt.includes('Apply the Hook-and-Eye Seamless Rule ONLY inside [MEAT].'), 'Focused prompt lost the Meat-only continuity rule.');
+assert(focusedPrompt.includes('LEXICAL AND CONCEPT ECONOMY:'), 'Focused prompt lost the global lexical-economy rule.');
+assert(
+  focusedPrompt.includes('HOOK remains outside the cross-section lexical and concept budget') &&
+    focusedPrompt.includes('OPEN LOOP may name one precise unanswered anchor'),
+  'Lexical economy does not preserve Hook and Open Loop ownership.'
+);
 assert(!focusedPrompt.includes('INFORMATION LEDGER'), 'Focused prompt still contains the superseded Information Ledger.');
 assert(
   focusedPrompt.includes('[HOOK] sits outside the Hero\'s Journey and outside the chronological story architecture.'),
@@ -138,6 +145,42 @@ assert(
   'A literal ship was incorrectly blocked.'
 );
 
+const inflectedRepetition = findLexicalRepetitionIssues({
+  HOOK:'A sharp independent interruption uses help once.',
+  'OPEN LOOP':'Why did the help disappear when the work became difficult?',
+  MEAT:'I helped for years. Helping felt natural, so I kept helping after the request had already been answered.',
+  CONCLUSION:'That help protected my comfort.',
+  CTA:'Follow because this seven-video challenge continues with the decision that followed.'
+});
+assert(
+  inflectedRepetition.some(issue => issue.root === 'help' && issue.section === 'MEAT'),
+  'Inflected meaningful repetition across the story body was not detected.'
+);
+
+const protectedRetentionAnchor = findLexicalRepetitionIssues({
+  HOOK:'Price is a costume confidence wears.',
+  'OPEN LOOP':'Why did support disappear at the exact moment I needed support most?',
+  MEAT:'I opened the material, completed the assignment, and waited for a response that never arrived.',
+  CONCLUSION:'Support had been the missing promise.',
+  CTA:'Follow because this is Video 3 of my seven-video challenge and the next chapter tests that realization.'
+});
+assert(
+  !protectedRetentionAnchor.some(issue => issue.root === 'support'),
+  'The intentional Open Loop-to-Conclusion answer anchor was treated as body repetition.'
+);
+
+const structuralWords = findLexicalRepetitionIssues({
+  HOOK:'Watch this.',
+  'OPEN LOOP':'Why did the video matter?',
+  MEAT:'I recorded the video, watched the video, and posted the video.',
+  CONCLUSION:'The video changed the decision.',
+  CTA:'Follow because this is Video 2 of my seven-video challenge and Video 3 continues the series.'
+});
+assert(
+  !structuralWords.some(issue => ['video', 'seven', 'challenge', 'follow', 'series'].includes(issue.root)),
+  'Required series language was incorrectly counted as lexical repetition.'
+);
+
 const malformedSource = published.source.replace('<banned_script_terms>', '');
 assert(validateBlueprintSource(malformedSource).length, 'A malformed style guide passed validation.');
 const coupledHookSource = published.source.replace(
@@ -167,25 +210,36 @@ const validFreshScript = `[HOOK]
 I deleted the recording before breakfast.
 
 [OPEN LOOP]
-The camera exposed a question I couldn't answer yet: why did a ten-minute recording feel heavier than work I had already survived?
+The camera exposed a question I couldn't answer yet: why did a ten-minute recording feel heavier than difficult work I had already survived without hesitation for years?
 
 [MEAT]
 I had spent years handling difficult conversations without rehearsing every sentence. Put a camera in front of me, though, and I checked every word before saying it. I recorded the same opening four times, watched each attempt back, and deleted every file. By breakfast, I had completed the work I feared and erased all evidence that I had tried. The recording took ten minutes. The deleting took the rest of the morning, since each replay gave me another detail to judge. Eventually I closed the camera and returned to the routine that already felt familiar.
 
 [CONCLUSION]
-I could survive being recorded. Letting the recording remain visible was the part I kept refusing.
+I could survive being seen. Leaving the evidence visible was the part I kept refusing.
 
 [CTA]
-The refusal followed me longer than the recording did, so follow because this is Video 2 of my 7 Video Challenge, and the next chapter reveals the belief that kept choosing silence for me.`;
+The refusal followed me longer than that morning did, so follow because this is Video 2 of my 7 Video Challenge, and the next chapter reveals the belief that kept choosing silence for me.`;
 
 const connectedCtaValidation = validateOutput(validFreshScript, 2, 1, '', focusedPrompt);
 assert(
   !(connectedCtaValidation.sectionIssues.CTA || []).some(issue => /bridge|hinge|follow request/i.test(issue)),
   'A grammatically connected CTA bridge was rejected.'
 );
+const repetitiveButOtherwiseEquivalent = validFreshScript.replace(
+  'Eventually I closed the camera',
+  'Eventually I faced the camera, then closed the camera'
+);
+const repetitionAdvisoryValidation = validateOutput(repetitiveButOtherwiseEquivalent, 2, 1, '', focusedPrompt);
+assert(
+  repetitionAdvisoryValidation.valid === connectedCtaValidation.valid &&
+    repetitionAdvisoryValidation.advisories.some(issue => /"camera"/.test(issue)) &&
+    !(repetitionAdvisoryValidation.issues || []).some(issue => /"camera"/.test(issue)),
+  'Lexical repetition should guide editorial repair without becoming a hard generation failure.'
+);
 const brokenCtaScript = validFreshScript.replace(
-  'The refusal followed me longer than the recording did, so follow because',
-  'The refusal followed me longer than the recording did. Follow because'
+  'The refusal followed me longer than that morning did, so follow because',
+  'The refusal followed me longer than that morning did. Follow because'
 );
 const brokenCtaValidation = validateOutput(brokenCtaScript, 2, 1, '', focusedPrompt);
 assert(
@@ -306,7 +360,9 @@ assert(parseSections(openLoopStudioResult).CONCLUSION === parseSections(payoffSc
 assert(parseSections(openLoopStudioResult).CTA === parseSections(payoffScript).CTA, 'Open Loop Studio changed the CTA.');
 
 const imperfectRetentionGap = 'Three likes looked final, while the quiet work still left me wondering whether visible reaction measured its real reach.';
+const repairedRetentionGap = 'Three public likes made the answer look invisible, although that number could not reveal whether the right person had quietly read it. How long could I continue without knowing whether the work had reached beyond the reaction I could see?';
 let imperfectWriterCalls = 0;
+let imperfectRepairCalls = 0;
 const imperfectOpenLoopResult = await finalizeScriptOpenLoop({
   script: payoffScript,
   systemPrompt: buildSystemPrompt(published.prompt, 1, 4),
@@ -328,13 +384,22 @@ const imperfectOpenLoopResult = await finalizeScriptOpenLoop({
       imperfectWriterCalls += 1;
       return imperfectRetentionGap;
     }
+    if (system.includes('final mechanical copy editor')) {
+      imperfectRepairCalls += 1;
+      return JSON.stringify({
+        pass:false,
+        issues:[],
+        replacements:{ 'OPEN LOOP':repairedRetentionGap }
+      });
+    }
     throw new Error('Unexpected imperfect Open Loop test call.');
   }
 });
 assert(imperfectWriterCalls === 2, 'Open Loop Writer did not receive one focused cleanup attempt.');
+assert(imperfectRepairCalls === 1, 'A known-invalid Open Loop did not receive mechanical cleanup.');
 assert(
-  parseSections(imperfectOpenLoopResult)['OPEN LOOP'] === imperfectRetentionGap,
-  'A nonempty Open Loop was discarded after its focused cleanup attempt.'
+  parseSections(imperfectOpenLoopResult)['OPEN LOOP'] === repairedRetentionGap,
+  'Open Loop mechanical cleanup did not replace the known-invalid fallback.'
 );
 
 const hookStudioCalls = [];
