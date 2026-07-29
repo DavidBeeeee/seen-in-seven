@@ -12,7 +12,7 @@
       'Develop the Return: who the speaker was before the two realizations, who they are now, what changed observably, what remains unresolved, what telling the story clarified, and what they are carrying forward. Keep the transformation human and unfinished rather than turning it into a pitch.'
     ],
     2: [
-      'Develop what knowledge, experience, or perspective the speaker feels compelled to make visible, who needs it, and the exact reason they have stayed quiet. Create curiosity about a knowledgeable but still-human person without turning the answer into credentials, positioning, or a pitch.',
+      'Develop what knowledge, experience, or perspective the speaker feels compelled to make visible, who needs it, the exact reason they have stayed quiet, and what made remaining quiet stop feeling acceptable now. Create curiosity about a knowledgeable but still-human person without turning the answer into credentials, positioning, or a pitch.',
       'Develop the unpolished origin of the speaker\'s work, the ordinary life surrounding it, and why treating the recurring ability or path as legitimate expertise felt unreasonable. Preserve the earlier perspective and practical refusal without explaining its present-day value, method, or business meaning.',
       'Develop the first professional Epiphany: one accepted idea the speaker once believed, one concrete collision with evidence, the new lens that became impossible to ignore, and the real cost of the old idea. A person or influence may appear naturally, but no mentor is required.',
       'Develop one Road of Trials story about acting on the first Epiphany before proof existed. Gather the old way that still appeared more rewarding, the recoverable pressure, the choice made under uncertainty, and one meaningful but limited result that created hope rather than professional proof.',
@@ -79,6 +79,8 @@ The Current Story Direction selects the story being developed. Use the Current V
 
 Use Onboarding Context to resolve references and recover relevant facts. Use Earlier Scripts to preserve continuity and avoid repeating discoveries that have already been made. These sources may deepen the selected story, but they may not replace it with a different memory merely because that memory is more dramatic or easier to explain.
 
+Before writing options, privately create a Coverage List containing every distinct claim in the Current Story Direction and every information need in the current questions. Every option must preserve all direction claims and provide a complete route through the entire question set. When a question requires material the direction does not supply, develop a plausible possibility from the available context inside the selected story instead of omitting that part.
+
 Stay inside what the speaker could know during this chapter. Do not import a later revelation, failure, recovery, mature interpretation, or another video's emotional job.
 
 When information is thin, infer plausible motives, scenes, reactions, consequences, and connective details inside the selected story. Offer possibilities the user can correct instead of retreating into vague language. Preserve specific, strange, harsh, funny, embarrassing, or uncomfortable material when it makes the answer human.
@@ -90,11 +92,12 @@ INTERACTIVE PROCESS
 Your first reply must contain exactly three concise answer approaches labeled OPTION 1, OPTION 2, and OPTION 3.
 
 Each option must:
-- Develop the same Current Story Direction according to the Current Video Job.
-- Emphasize a different scene, detail, relationship, piece of evidence, or emotional tension inside that story.
-- Explain what the approach would help uncover.
+- Develop the complete Current Story Direction according to the Current Video Job.
+- Preserve every distinct claim in the direction and account for every current question.
+- Offer a complete answer plan rather than taking ownership of only one piece of the story.
+- Vary the central scene, evidence, interpretation, or emotional emphasis without dividing the required material among the three options.
 - Preserve the speaker's perspective at this chapter of the journey.
-- Use no more than two short sentences.
+- Use one compact paragraph of no more than 100 words.
 - Be meaningfully different from the other two.
 - Avoid drafting the final answer.
 

@@ -95,6 +95,7 @@ Every answer must:
 - Use one or two direct sentences.
 - Contain no more than 60 words.
 - Answer the question rather than suggest a topic.
+- Directly address every part of its question instead of answering one clause and ignoring the others.
 - Use specific beliefs, experiences, choices, consequences, and flaws.
 - Connect with the other six answers as one recognizable journey.
 - Be understandable on its own without the other six answers.
@@ -121,6 +122,7 @@ Before presenting each set, silently confirm:
 - Answer 7 combines meaningful differentiation with unresolved humanity.
 - The seven answers belong to the same journey rather than merely sharing a topic.
 - Every answer identifies its own subject clearly enough to guide a later AI without requiring the other six answers.
+- Every answer covers all parts of its question, including any requested person, reason, resistance, consequence, change, or unresolved flaw.
 
 If a set fails these checks, rebuild it before showing it.
 

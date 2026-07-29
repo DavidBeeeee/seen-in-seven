@@ -62,6 +62,8 @@ const simplePrompt = helper.buildPrompt({
   'OVERVIEW SENTINEL',
   'CURRENT VIDEO JOB',
   'STORY RULE',
+  'Coverage List',
+  'complete route through the entire question set',
   'OPTION 1',
   'three more',
   'infer plausible motives',
@@ -78,8 +80,8 @@ const simplePrompt = helper.buildPrompt({
 ].forEach(value => {
   if (simplePrompt.includes(value)) throw new Error(`The old bloated helper instruction remains: ${value}`);
 });
-if (!simplePrompt.includes('Develop the same Current Story Direction according to the Current Video Job')) {
-  throw new Error('The three approaches are not bound to the current video job and selected story.');
+if (!simplePrompt.includes('Develop the complete Current Story Direction according to the Current Video Job')) {
+  throw new Error('The three approaches are not bound to the complete current video job and selected story.');
 }
 if (!simplePrompt.includes('Stay inside what the speaker could know during this chapter')) {
   throw new Error('The helper is missing its future-chapter boundary.');
@@ -89,6 +91,12 @@ if (!simplePrompt.includes('This is journal-answer development, not scriptwritin
 }
 if (!simplePrompt.includes('Do not mention SeenInSeven story architecture, stage names')) {
   throw new Error('Private story architecture can leak into user-facing answer options.');
+}
+if (!simplePrompt.includes('account for every current question') ||
+    !simplePrompt.includes('without dividing the required material among the three options') ||
+    !simplePrompt.includes('one compact paragraph of no more than 100 words') ||
+    simplePrompt.includes('Use no more than two short sentences')) {
+  throw new Error('Answer Help options can still partition a multi-part story.');
 }
 
 const onboardingIndex = simplePrompt.indexOf('ONBOARDING SENTINEL');
@@ -114,7 +122,7 @@ const assignmentChecks = {
     'Develop the Return'
   ],
   2: [
-    'knowledge, experience, or perspective',
+    'remaining quiet stop feeling acceptable now',
     'unpolished origin',
     'first professional Epiphany',
     'one Road of Trials story',
@@ -155,6 +163,7 @@ const journeyPrompt = journeyHelper.buildHelperPrompt(
 [
   'Use one or two direct sentences',
   'Contain no more than 60 words',
+  'Directly address every part of its question',
   'make sense when copied into a separate conversation by itself',
   'Do not force every video into the same event-cause-lesson formula',
   'Make causal relationships explicit when they are necessary',
@@ -169,10 +178,10 @@ if (!appSource.includes("${count} / 60 words") ||
   throw new Error('Journey direction editing does not match the new 60-word guidance.');
 }
 
-if (!html.includes('id="answer-help-overlay"') || !html.includes('/js/answer-help.js?v=answer-help-3')) {
+if (!html.includes('id="answer-help-overlay"') || !html.includes('/js/answer-help.js?v=answer-help-4')) {
   throw new Error('Answer Help modal or shared script include is missing.');
 }
-if (!html.includes('/js/journey-map.js?v=journey-map-2') || !html.includes('/js/app.js?v=restart-onboarding-1')) {
+if (!html.includes('/js/journey-map.js?v=journey-map-3') || !html.includes('/js/app.js?v=restart-onboarding-1')) {
   throw new Error('Journey Map or app cache version was not advanced.');
 }
 if (!html.includes('openCurrentMvoAnswerHelp()')) {
