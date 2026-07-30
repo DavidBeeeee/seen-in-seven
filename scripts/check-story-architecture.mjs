@@ -87,6 +87,8 @@ for (const level of [1, 2]) {
 
 const levelOneVideoSix = extractTaggedSection(published.prompt, 'l1_v6_rules');
 const levelTwoVideoSix = extractTaggedSection(published.prompt, 'l2_v6_rules');
+const levelOneVideoSeven = extractTaggedSection(published.prompt, 'l1_v7_rules');
+const levelTwoVideoSeven = extractTaggedSection(published.prompt, 'l2_v7_rules');
 assert(/Video 5|VIDEO 5/.test(levelOneVideoSix), 'Level 1 Video 6 lost its required Video 5 cause.');
 assert(/optional continuity|relationship is optional|does not have to/.test(levelOneVideoSix), 'Level 1 Video 6 still lacks an explicit optional Video 3 relationship.');
 assert(
@@ -101,6 +103,16 @@ assert(
   !/Video 5 is causally necessary|truth caused by Video 5|must begin with the speaker's own defeat/i.test(levelTwoVideoSix),
   'Level 2 Video 6 still forces Video 5 to cause the elixir.'
 );
+for (const [level, rules] of [[1, levelOneVideoSeven], [2, levelTwoVideoSeven]]) {
+  [
+    'Tell one present-day scene rather than listing Return ingredients.',
+    'Every sentence must be necessary to this causal chain and lose coherence if moved elsewhere.',
+    'what the present scene proves',
+    'verify whether the speaker succeeds'
+  ].forEach(requirement => {
+    assert(rules.includes(requirement), `Level ${level} Video 7 lost its causal Return requirement: ${requirement}`);
+  });
+}
 
 const appSource = readFileSync(new URL('../js/app.js', import.meta.url), 'utf8');
 const appHtml = readFileSync(new URL('../seeninseven.html', import.meta.url), 'utf8');
@@ -153,6 +165,13 @@ assert(
   engineSource.includes('Reject a chain of movable declarations that merely share a topic') &&
     engineSource.includes('Do not apply this prose-flow test to HOOK or OPEN LOOP'),
   'Story review lost the Meat-only Hook-and-Eye boundary.'
+);
+assert(
+  EPISODE_STAGE_SCHEMAS[7].includes('Choose one present-day return scene, not a thesis') &&
+    EPISODE_STAGE_SCHEMAS[7].includes('removing or reordering a beat breaks the sequence') &&
+    generationSource.includes('VIDEO 7 CAUSAL RETURN CONTRACT') &&
+    engineSource.includes('Reject a thematic essay, list of convictions, retrospective summary, or series of movable Return declarations'),
+  'Video 7 can still reach the writer or reviewer as a checklist instead of one causal Return scene.'
 );
 assert(
   sectionCoreSource.includes('prepareEpisodeArchitectureMaterial(input.userContext, input.level, input.video, input.existingScript)') &&
@@ -479,6 +498,33 @@ assert(
     engineSource.includes('final scripts are the audience canon') &&
     browserEngineSource.includes('final scripts are the audience canon'),
   'Production and browser prompt builders do not share the Video 7 audience-canon rule.'
+);
+const videoSevenArchitectSource = buildEpisodeArchitectSource(
+  [
+    'ONBOARDING DATA:',
+    '- Name: Return Tester',
+    '',
+    'VIDEO 1 FINAL SCRIPT (audience canon; select only what supports the return):',
+    'FIRST CANON SCRIPT SENTINEL',
+    '',
+    'VIDEO 2 FINAL SCRIPT (audience canon; select only what supports the return):',
+    'SECOND CANON SCRIPT SENTINEL',
+    '',
+    'CURRENT VIDEO 7 JOURNEY DIRECTION (private planning context only):',
+    'RETURN DIRECTION SENTINEL',
+    'Use this as the intended subject and place in the seven-part journey.',
+    '',
+    'CURRENT VIDEO 7 PROMPTS:',
+    'Question 1: CURRENT RETURN SENTINEL'
+  ].join('\n'),
+  2,
+  7
+);
+assert(
+  videoSevenArchitectSource.includes('VIDEO 1 FINAL SCRIPT:\nFIRST CANON SCRIPT SENTINEL') &&
+    videoSevenArchitectSource.includes('VIDEO 2 FINAL SCRIPT:\nSECOND CANON SCRIPT SENTINEL') &&
+    !videoSevenArchitectSource.includes('FIRST CANON SCRIPT SENTINEL\n\nVIDEO 2 FINAL SCRIPT (audience canon'),
+  'Video 7 episode preparation cannot read consecutive audience-canon scripts independently.'
 );
 
 console.log('Story architecture checks passed for all 14 video paths and both question catalogs.');

@@ -91,7 +91,7 @@ Choose one ordeal nucleus and one causal descent. Establish what had become real
   6: `STAGE 6, SECOND EPIPHANY OR ELIXIR:
 Choose one evidence-to-elixir journey. Establish one common-sense model, follow one source experience or repeated pattern that refuses to fit it, include one observable practice or decision proving the speaker lives differently, and end with the contradiction unresolved. Reserve one significant counterintuitive truth and one useful new possibility. For Level 1, the truth must be earned through the Video 5 ordeal and aftermath. For Level 2, the source may be Video 5, Video 3, another experience, or a broader pattern; no earlier chapter is required to cause it. Withhold a complete method, commercial philosophy, offer, and final return.`,
   7: `STAGE 7, RETURN:
-Choose one present-day return anchor: a concrete action, decision, conversation, behavior, or way of speaking that the earlier speaker would recognize as changed. Select one earned transformation from the audience's six-chapter canon and clarify it with one specific callback, without requiring every epiphany, trial, or ordeal to appear. Include one unresolved flaw without surrendering the change. Reserve one peer-to-peer gift and one open direction that makes an ongoing relationship feel worthwhile. For Level 1, center human identity. For Level 2, make public ownership of expertise observable without turning it into a pitch. Withhold episode-by-episode recap, another revelation, perfection, an offer, manufactured urgency, and any Video 8 promise.`
+Choose one present-day return scene, not a thesis, professional argument, retrospective summary, or list of beliefs. Begin with one concrete action, decision, conversation, behavior, or way of speaking under recognizable pressure. Let the immediate consequence of that action trigger one specific callback to the earlier speaker; let that contrast explain the changed choice now; let the changed choice produce the next consequence; and let one unresolved flaw complicate that same action without becoming a separate subject. STORY PROGRESSION must remain one causal paragraph in which removing or reordering a beat breaks the sequence. Reserve one peer-to-peer gift and one open direction that grow from what happened in the scene. For Level 1, center human identity. For Level 2, make public ownership of expertise observable through behavior rather than superiority, positioning, market analysis, or a professional manifesto. Withhold episode-by-episode recap, another revelation, perfection, an offer, manufactured urgency, and any Video 8 promise.`
 };
 
 export function episodeArchitectSystem(video) {
@@ -432,12 +432,12 @@ export async function prepareLevelTwoVideoOneMaterial(userContext) {
 
 function extractFinalScript(userContext, video) {
   const source = String(userContext || '');
-  const marker = 'VIDEO ' + Number(video) + ' FINAL SCRIPT (voice and continuity reference; use once, do not repeat it):';
-  const start = source.indexOf(marker);
-  if (start === -1) return '';
-  const contentStart = start + marker.length;
+  const marker = new RegExp('VIDEO ' + Number(video) + ' FINAL SCRIPT(?: \\([^\\n]*\\))?:');
+  const match = marker.exec(source);
+  if (!match) return '';
+  const contentStart = match.index + match[0].length;
   const remainder = source.slice(contentStart);
-  const nextMarker = remainder.search(/\n(?:VIDEO \d+ PROMPTS:|VIDEO \d+ JOURNAL ENTRY \(easy mode\):|CURRENT VIDEO \d+ JOURNEY DIRECTION \(private planning context only\):|CURRENT VIDEO \d+ PROMPTS:|CURRENT VIDEO \d+ JOURNAL ENTRY \(easy mode; use this to infer all story beats\):|CURRENT FULL SCRIPT \(for context only; write a fresh complete script\):)/);
+  const nextMarker = remainder.search(/\n(?:VIDEO \d+ FINAL SCRIPT(?: \([^\n]*\))?:|VIDEO \d+ PROMPTS:|VIDEO \d+ JOURNAL ENTRY \(easy mode\):|CURRENT VIDEO \d+ JOURNEY DIRECTION \(private planning context only\):|CURRENT VIDEO \d+ PROMPTS:|CURRENT VIDEO \d+ JOURNAL ENTRY \(easy mode; use this to infer all story beats\):|CURRENT FULL SCRIPT \(for context only; write a fresh complete script\):)/);
   return remainder.slice(0, nextMarker === -1 ? undefined : nextMarker).trim();
 }
 
@@ -577,6 +577,9 @@ export async function prepareEpisodeArchitectureMaterial(userContext, level, vid
     /^\d+\.\s+Opening declaration \(read-only\):\s*(.+)$/mi
   );
   const declaration = declarationMatch ? declarationMatch[1].trim() : '';
+  const videoSevenComposition = number === 7
+    ? 'VIDEO 7 CAUSAL RETURN CONTRACT: Treat STORY PROGRESSION as one present-day scene. The current action causes the callback, the callback sharpens the changed choice, the changed choice creates a consequence, and the unfinished flaw complicates that same consequence. Do not draft these as adjacent Return ingredients, beliefs, lessons, industry claims, or declarations. If a sentence could move elsewhere in the Meat without breaking this sequence, rewrite or omit it. The peer gift and continuing direction remain reserved for the Conclusion.'
+    : '';
   return [
     'Generate Video ' + number + ' script.',
     '',
@@ -597,7 +600,8 @@ export async function prepareEpisodeArchitectureMaterial(userContext, level, vid
     '',
     'FINAL WRITING CONTRACT: Reserve RESERVED CONCLUSION before drafting. Build MEAT as one seamless story through STORY PROGRESSION, using HUMAN CONTRADICTION as emotional pressure rather than a second topic. Stop at the boundary named by STAGE FIREWALL. Design OPEN LOOP afterward from the exact unfinished relationship the reserved conclusion will transform, without revealing the answer or explaining the Hook. Supply a provisional HOOK only for formatting; the global Hook Studio replaces it after the complete story is settled. Let the active video blueprint control the final section jobs and CTA.',
     '',
-    'MEAT COMPOSITION CONTRACT: ' + MEAT_COMPOSITION_CONTRACT
+    'MEAT COMPOSITION CONTRACT: ' + MEAT_COMPOSITION_CONTRACT,
+    videoSevenComposition ? '\n' + videoSevenComposition : ''
   ].filter(Boolean).join('\n');
 }
 
