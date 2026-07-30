@@ -60,6 +60,7 @@
       'SOURCE OWNERSHIP:',
       '- The current Journey Direction and current-video answers are the authoritative brief for this video.',
       '- The Journey Direction controls this chapter and place in the seven-part arc. The current answers control the facts, causes, emotional conflict, and meaning inside that chapter.',
+      '- The Journey Direction is also the private Viewer Premise Source. Translate it once into natural spoken context near the beginning of MEAT so a cold viewer understands this episode without seeing the Overview.',
       '- Previous scripts provide continuity only. Onboarding and background are a supporting archive only.',
       '- Supporting material may clarify or deepen the same causal thread, but it must never replace it with an older, more dramatic, or more familiar story.',
       '- If the current answers are sparse, infer within their assigned direction instead of switching to another subject from the archive.',
@@ -84,7 +85,7 @@
         '',
         'CURRENT VIDEO ' + video + ' JOURNEY DIRECTION (private planning context only):',
         journeyDirection,
-        'Use this as the intended subject and place in the seven-part journey. Do not quote it, treat it as finished copy, or pull in future journey directions.'
+        'Use this as the intended subject and place in the seven-part journey. Translate its essential premise once near the beginning of MEAT without quoting it, recapping prior videos, or revealing the reserved Conclusion. Do not pull in future journey directions.'
       );
     }
     if (video === 1) {

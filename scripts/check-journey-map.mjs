@@ -44,6 +44,10 @@ const message = engine.buildUserMessage({
 });
 if (!message.includes('CURRENT VIDEO 4 JOURNEY DIRECTION')) throw new Error('Current Journey direction was not included.');
 if (!message.includes('I tested my belief and met resistance.')) throw new Error('Current Journey answer was not included.');
+if (!message.includes('private Viewer Premise Source') ||
+    !message.includes('Translate its essential premise once near the beginning of MEAT')) {
+  throw new Error('Current Journey direction is not assigned to the standalone Meat premise.');
+}
 if (message.includes('VIDEO 5 JOURNEY DIRECTION')) throw new Error('A future Journey direction leaked into the current prompt.');
 
 if (!appSource.includes("'screen-checklist','screen-journey-map','screen-mvo2'")) {

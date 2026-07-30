@@ -3,7 +3,8 @@ import {
   prepareLevelTwoEpiphanyMaterial,
   prepareLevelTwoVideoOneMaterial,
   prepareLevelTwoVideoFourMaterial,
-  prepareLevelTwoVideoFiveMaterial
+  prepareLevelTwoVideoFiveMaterial,
+  preserveViewerPremiseSource
 } from './generate.js';
 import {
   buildSystemPrompt,
@@ -74,6 +75,7 @@ export default async function handler(req, res) {
         prepareLevelTwoVideoFiveMaterial(userMessage)
       );
     }
+    preparedUserMessage = preserveViewerPremiseSource(userMessage, preparedUserMessage, video);
     let rawContent = '';
     let content = '';
     let lastError;

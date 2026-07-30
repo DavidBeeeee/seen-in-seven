@@ -398,6 +398,41 @@ export function extractCurrentVideoBrief(userContext, video) {
   return remainder.slice(0, end === -1 ? undefined : end).trim();
 }
 
+export function extractCurrentJourneyDirection(userContext, video) {
+  const source = String(userContext || '');
+  const number = Number(video);
+  const marker = 'CURRENT VIDEO ' + number + ' JOURNEY DIRECTION (private planning context only):';
+  const start = source.lastIndexOf(marker);
+  if (start === -1) return '';
+  const remainder = source.slice(start + marker.length).trimStart();
+  const instructionEnd = remainder.indexOf('\nUse this as the intended subject and place in the seven-part journey.');
+  const promptEnd = remainder.search(new RegExp(
+    '\\nCURRENT VIDEO ' + number + ' (?:PROMPTS:|JOURNAL ENTRY \\(easy mode; use this to infer all story beats\\):)'
+  ));
+  const ends = [instructionEnd, promptEnd].filter(index => index >= 0);
+  const end = ends.length ? Math.min(...ends) : remainder.length;
+  return remainder.slice(0, end).trim();
+}
+
+export function preserveViewerPremiseSource(originalContext, preparedContext, video) {
+  const prepared = String(preparedContext || '').trim();
+  const directionMarker = 'CURRENT VIDEO ' + Number(video) + ' JOURNEY DIRECTION (private planning context only):';
+  if (!prepared ||
+      prepared.includes('CURRENT VIDEO VIEWER PREMISE SOURCE:') ||
+      prepared.includes(directionMarker)) {
+    return prepared;
+  }
+  const direction = extractCurrentJourneyDirection(originalContext, video);
+  if (!direction) return prepared;
+  return [
+    'CURRENT VIDEO VIEWER PREMISE SOURCE:',
+    direction,
+    'Translate only the starting belief, situation, action, relationship, or conflict needed to orient a cold viewer once near the beginning of MEAT. This is private source material, not finished copy. Do not quote it, assign it to the Hook, recap prior videos, or disclose a realization or result reserved for the Conclusion.',
+    '',
+    prepared
+  ].join('\n');
+}
+
 function extractOnboardingBlock(userContext) {
   const source = String(userContext || '');
   const marker = 'ONBOARDING DATA:';
@@ -621,12 +656,15 @@ FEEDBACK FOR THIS REGENERATION: ${input.feedback}
 
 This is a FRESH FULL REGENERATION. The previous script has been intentionally withheld. Rebuild Video ${input.video}, Level ${input.level} from the original answers, cumulative story context, active blueprint, and feedback. Do not attempt to preserve, reconstruct, or imitate wording from an earlier draft.
 
-Use the same focused composition process as first-time generation. Apply sentence-level Hook-and-Eye only inside [MEAT]. Build [OPEN LOOP] independently after [MEAT] and [CONCLUSION] are settled. Supply a provisional [HOOK] for the required format; the global Hook Studio will replace it after the story is finished. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
+Use the same focused composition process as first-time generation. Apply sentence-level Hook-and-Eye only inside [MEAT]. Rebuild the standalone viewer premise near the beginning of [MEAT] from the current Journey Direction or Viewer Premise Source; do not assume the viewer watched an earlier video. Build [OPEN LOOP] independently after [MEAT] and [CONCLUSION] are settled, while making its unanswered question intelligible before the Meat is heard. Supply a provisional [HOOK] for the required format; the global Hook Studio will replace it after the story is finished. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
   }
   return input.userContext;
 }
 
 function sectionMessage(input) {
+  const sectionInstruction = input.section === 'MEAT'
+    ? '\n\nMEAT REGENERATION REQUIREMENT: Rebuild the standalone viewer premise near the beginning from the current video Journey Direction or Viewer Premise Source. A cold viewer must understand the specific belief, situation, action, relationship, or conflict before the Meat relies on it. Do not quote the Overview, recap prior videos, reveal the reserved Conclusion, or assign this context job to the Hook or Open Loop.'
+    : '';
   return `${input.userContext}
 
 CURRENT FULL SCRIPT (for context):
@@ -634,7 +672,7 @@ ${input.existingScript}
 
 FEEDBACK FOR THIS REGENERATION: ${input.feedback}
 
-Regenerate ONLY the [${input.section}] section, applying the feedback above while following the same Video ${input.video}, Level ${input.level} blueprint and all supplied user context. Return only the new section text with no label, no other sections, and no commentary.`;
+Regenerate ONLY the [${input.section}] section, applying the feedback above while following the same Video ${input.video}, Level ${input.level} blueprint and all supplied user context.${sectionInstruction} Return only the new section text with no label, no other sections, and no commentary.`;
 }
 
 async function generateScriptCore(input, prompt, timings) {
@@ -657,6 +695,7 @@ async function generateScriptCore(input, prompt, timings) {
       prepareLevelTwoVideoFiveMaterial(preparedContext)
     );
   }
+  preparedContext = preserveViewerPremiseSource(input.userContext, preparedContext, input.video);
   const userMessage = regenerationMessage({ ...input, userContext: preparedContext });
   let lastError;
 
@@ -769,6 +808,7 @@ async function generateSectionCore(input, prompt, timings) {
       prepareLevelTwoVideoFiveMaterial(input.userContext)
     );
   }
+  preparedContext = preserveViewerPremiseSource(input.userContext, preparedContext, input.video);
   const userMessage = sectionMessage({ ...input, userContext: preparedContext });
   const draft = await measureStage(timings, 'section-draft', () =>
     callModel(systemPrompt, userMessage, 0.8)

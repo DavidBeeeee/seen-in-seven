@@ -978,3 +978,13 @@ The following principles govern every word of copy in this app and the broader C
 - Distinctive phrases, audience descriptions, governing nouns, comparisons, and decisions receive one job in the packet rather than being restated across sections.
 - The extra L2V4 packet-cleanup model call was removed. A second planning call occurs only when the first response omits required headings, reducing normal generation latency.
 - Hook Studio, Open Loop Studio, CTA architecture, the four L2V4 questions, all other video paths, and the global lexical rejection behavior were not changed.
+
+## 2026-07-29: Standalone viewer premise for all 14 videos
+
+- Every generated video now treats its matching Journey Direction / Overview answer as a private `VIEWER PREMISE SOURCE`. Near the beginning of `MEAT`, the writer translates that source once into natural spoken context so a viewer can understand the episode without seeing the Overview or earlier scripts.
+- The premise establishes only the starting belief, situation, action, relationship, or conflict. It cannot quote the Overview question, recap previous videos, expose private journey terminology, or reveal a realization, result, lowest-point meaning, or final identity reserved for `CONCLUSION`.
+- `OPEN LOOP` remains a Zeigarnik retention device rather than a setup section, but its exact unanswered question must now be intelligible before the Meat is heard. It may supply only the minimum subject orientation needed and cannot rely on an antecedent that exists only in private context or later prose.
+- `HOOK` remains fully protected as an independent pattern interrupt with no premise-writing responsibility.
+- Specialized Level 2 preparation paths now retain the original Viewer Premise Source after curating story material. Standard paths reuse the Journey Direction already present and do not duplicate it.
+- Fresh generation, full-script regeneration, and Meat-only regeneration receive the premise contract. Regenerating Hook, Open Loop, Conclusion, or CTA does not assign them the Meat's premise job.
+- This change adds no output section, model call, deterministic rejection, or target words. The premise replaces vague setup inside the existing Meat allocation.

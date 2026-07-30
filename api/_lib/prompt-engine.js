@@ -113,7 +113,9 @@ function publishedPrompt() {
       'Internally treat it as the Zeigarnik Retention Gap:',
       'Build a Payoff Firewall around every reveal-only person or role, event, action, delivery method, quotation, evidence, result, and distinctive phrase',
       'It may pivot abruptly away from the Hook.',
-      'Apply the Hook-and-Eye Seamless Rule ONLY inside [MEAT].'
+      'Apply the Hook-and-Eye Seamless Rule ONLY inside [MEAT].',
+      'Treat it as the VIEWER PREMISE SOURCE:',
+      '[HOOK] receives no premise-writing responsibility.'
     ];
     protectedRules.forEach(rule => {
       if (!source.includes(rule)) errors.push('Missing protected section architecture: ' + rule);
@@ -184,6 +186,7 @@ function publishedPrompt() {
       'SOURCE OWNERSHIP:',
       '- The current Journey Direction and current-video answers are the authoritative brief for this video.',
       '- The Journey Direction controls this chapter and place in the seven-part arc. The current answers control the facts, causes, emotional conflict, and meaning inside that chapter.',
+      '- The Journey Direction is also the private Viewer Premise Source. Translate it once into natural spoken context near the beginning of MEAT so a cold viewer understands this episode without seeing the Overview.',
       '- Previous scripts provide continuity only. Onboarding and background are a supporting archive only.',
       '- Supporting material may clarify or deepen the same causal thread, but it must never replace it with an older, more dramatic, or more familiar story.',
       '- If the current answers are sparse, infer within their assigned direction instead of switching to another subject from the archive.',
@@ -207,6 +210,16 @@ function publishedPrompt() {
         );
       }
     });
+
+    const journeyDirection = String(config.currentJourneyDirection || '').trim();
+    if (journeyDirection) {
+      lines.push(
+        '',
+        'CURRENT VIDEO ' + video + ' JOURNEY DIRECTION (private planning context only):',
+        journeyDirection,
+        'Use this as the intended subject and place in the seven-part journey. Translate its essential premise once near the beginning of MEAT without quoting it, recapping prior videos, or revealing the reserved Conclusion. Do not pull in future journey directions.'
+      );
+    }
 
     if (video === 1) {
       appendAnswers(lines, 'VIDEO 1 PREFILLED PROMPTS (user may have edited these):', config.currentAnswers);
@@ -749,7 +762,8 @@ function publishedPrompt() {
     'Use only KNOWN BEFORE PAYOFF and setup already present in the MEAT. Stop at the MEAT BOUNDARY.',
     'Do not name, paraphrase, imply, or foreshadow the CONCLUSION ANSWER or any QUARANTINED DETAIL.',
     'Do not ask what the speaker decided when the Meat already shows that decision. Do not summarize the Meat, repeat its opening, create generic suspense, announce cognition, or open the next video.',
-    'Use the minimum setup needed to make the retention question understandable. Do not copy a complete sentence or distinctive phrase from the Meat or Conclusion.',
+    'The viewer hears this before the Meat. Make it independently intelligible by introducing the minimum specific subject or conflict needed to understand the retention question. Never rely on an antecedent that appears only in private context or later Meat.',
+    'Use the minimum setup needed to make the retention question understandable. Do not turn that orientation into a Meat summary, and do not copy a complete sentence or distinctive phrase from the Meat or Conclusion.',
     'The OPEN LOOP is independent from the HOOK and does not need to transition from it.',
     'Follow the supplied visible-script style packet, stage boundary, retention contract, and banned terms.',
     'Return JSON only as {"open_loop":"spoken Open Loop text"}.'
@@ -1316,7 +1330,7 @@ function publishedPrompt() {
       config.provisionalOpenLoop
         ? 'Use [OPEN LOOP] only as a temporary nonempty placeholder. The Open Loop Studio replaces it after the Meat, Conclusion, and CTA pass story review.'
         : '',
-      'Apply sentence-level Hook-and-Eye only inside [MEAT]. Keep [OPEN LOOP] independent from the Hook and do not imitate wording from the draft below.',
+      'Apply sentence-level Hook-and-Eye only inside [MEAT]. Rebuild the standalone viewer premise near the beginning of MEAT from the current Journey Direction or Viewer Premise Source, then advance rather than restating it. Keep [OPEN LOOP] independent from the Hook and do not imitate wording from the draft below.',
       '',
       'ISSUES TO SOLVE IN THE NEW COMPLETE DRAFT:',
       wholeScriptRewriteFeedback(review, validation),
