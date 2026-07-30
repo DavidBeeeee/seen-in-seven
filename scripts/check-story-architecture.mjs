@@ -115,15 +115,16 @@ for (const [level, rules] of [[1, levelOneVideoSeven], [2, levelTwoVideoSeven]])
     'Let a cold viewer understand',
     'without hearing an episode-by-episode recap',
     'FIRST SHIFT from Videos 3-4',
-    'one governing meaning created by the Meat',
-    'share one recognition with the viewer as an equal',
+    'governing meaning created by the Meat',
+    'brief homecoming statement, not another Return',
+    'Carry the relational horizon here',
     'unfinished public test may add supporting tension'
   ].forEach(requirement => {
     assert(rules.includes(requirement), `Level ${level} Video 7 lost its complete Return requirement: ${requirement}`);
   });
 }
 assert(
-  levelTwoVideoSeven.includes('specific perspective or way of working this journey lets the speaker carry'),
+  levelTwoVideoSeven.includes("Make the speaker's professional difference emerge from the selected lived behavior"),
   'Level 2 Video 7 lost the earned professional difference.'
 );
 const appSource = readFileSync(new URL('../js/app.js', import.meta.url), 'utf8');
@@ -137,7 +138,8 @@ const browserEngineSource = readFileSync(new URL('../js/script-prompt-engine.js'
 assert(
   engineSource.includes('actual first realization and trial from Videos 3-4') &&
     browserEngineSource.includes('actual first realization and trial from Videos 3-4') &&
-    engineSource.includes('recognition shared with the viewer as an equal'),
+    engineSource.includes('MEAT owns the complete Return') &&
+    engineSource.includes('CONCLUSION is only a brief homecoming statement'),
   'Production or browser prompt routing lost the source-bound Video 7 return.'
 );
 assert(
@@ -192,11 +194,13 @@ assert(
 assert(
   EPISODE_STAGE_SCHEMAS[7].includes('Bring the six-chapter audience canon home through one governing identity transformation') &&
     EPISODE_STAGE_SCHEMAS[7].includes('actual first realization and trial from Videos 3-4') &&
-    EPISODE_STAGE_SCHEMAS[7].includes('recognition shared with the viewer as an equal') &&
+    EPISODE_STAGE_SCHEMAS[7].includes('MEAT owns the complete Return') &&
+    EPISODE_STAGE_SCHEMAS[7].includes('CONCLUSION is only a brief one-to-three-sentence homecoming statement') &&
+    EPISODE_STAGE_SCHEMAS[7].includes('CTA owns the relational horizon') &&
     generationSource.includes('CURATED VIDEO 7 RETURN:') &&
     generationSource.includes('Build MEAT only from EARLIER SELF, FIRST SHIFT, FALL, and RETURN') &&
     engineSource.includes('require one connected Return organized around a single governing identity transformation') &&
-    engineSource.includes('Return reduced to one new or present-day scene'),
+    engineSource.includes('Return reduced to one present-day scene'),
   'Video 7 can still collapse into a local scene or disconnected recap.'
 );
 assert(
@@ -235,14 +239,16 @@ assert(
   'FIRST SHIFT selects its evidence from Videos 3-4 only',
   'Every anchor is lived evidence',
   'Do not place omitted canon facts inside RESERVED RETURN',
-  'RESERVED RETURN uses 35-65 words',
+  'RESERVED RETURN uses 20-45 words',
   'one governing meaning created by the four anchors',
-  'recognition shared between equals',
+  'governing meaning returns as recognition shared between equals',
   'HONEST REMAINDER AND HORIZON uses 20-45 words',
+  'honest remainder at the end of MEAT',
+  'relational horizon for CTA',
   'unfinished public test may add supporting tension',
   'Make the progression independently understandable to a cold viewer',
   'When the first and second epiphanies came from independent experiences, preserve that independence.',
-  'earned professional difference emerge from the selected evidence'
+  'earned professional difference visible without stating a positioning claim'
 ].forEach(requirement => {
   assert(VIDEO_SEVEN_RETURN_SYSTEM.includes(requirement), 'Video 7 synthesizer is missing: ' + requirement);
 });
@@ -365,8 +371,8 @@ assert(
 assert(
   generationSource.includes('VIDEO 7 MEAT REGENERATION REQUIREMENT: Treat EARLIER SELF, FIRST SHIFT, FALL, and RETURN as the complete evidence budget') &&
     generationSource.includes('Develop those four anchors into complete spoken thoughts') &&
-    generationSource.includes('VIDEO 7 CONCLUSION REGENERATION REQUIREMENT: Preserve the one governing meaning in RESERVED RETURN') &&
-    generationSource.includes('carry one recognition to the viewer as an equal') &&
+    generationSource.includes('VIDEO 7 CONCLUSION REGENERATION REQUIREMENT: Use RESERVED RETURN alone') &&
+    generationSource.includes('Do not replay an anchor event') &&
     generationSource.includes('MEAT REGENERATION REQUIREMENT: Preserve EPISODE NUCLEUS') &&
     generationSource.includes('Rebuild the standalone viewer premise near the beginning of [MEAT]') &&
     generationSource.includes('preserveViewerPremiseSource(input.userContext, preparedContext, input.video)'),
