@@ -30,11 +30,11 @@ assert(
   'A restart performed before authentication can no longer be reconciled later.'
 );
 assert(
-  supabase.includes("if (p.is_locked && state.videos['script_v' + p.video_index])"),
+  supabase.includes("if (p.is_locked && videos['script_v' + p.video_index])"),
   'Database restore no longer requires both an active lock and a current script.'
 );
 assert(
-  supabase.includes("delete state.videos['locked_v' + p.video_index]"),
+  supabase.includes("delete videos['locked_v' + p.video_index]"),
   'Database restore no longer removes stale local locks.'
 );
 assert(

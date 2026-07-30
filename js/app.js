@@ -218,8 +218,12 @@ const state = {
   level:null, videos:{}, videoStatus:{}, videoAnswersByLevel:{}, journeyMaps:{1:[],2:[]},
   mvoQ2:null, mvoQ3:null, mvoQ4:null,
   topicFreewrite: '',
+  l1Videos: null,
   l1VideoStatus: null,
+  l2Videos: null,
+  l2VideoStatus: null,
   videoPosted:{},   // { [videoIndex]: { posted:bool, url:string } } — points
+  videoPostedByLevel:{1:{},2:{}},
   engage:{},        // { sponsor_vubli, sponsor_temu, graduation, call } — points
   phase2: {
     custom:{},
@@ -247,6 +251,63 @@ const state = {
     mvoMode:'simple'
   }
 };
+
+function normalizeJourneyLevel(level) {
+  return Number(level) === 2 ? 2 : 1;
+}
+
+function ensureVideoPostedByLevel() {
+  const current = state.videoPostedByLevel && typeof state.videoPostedByLevel === 'object'
+    ? state.videoPostedByLevel
+    : {};
+  state.videoPostedByLevel = {
+    1: Object.assign({}, current[1] || current['1'] || {}),
+    2: Object.assign({}, current[2] || current['2'] || {})
+  };
+  return state.videoPostedByLevel;
+}
+
+function archiveActiveJourneyLevel(level = state.level) {
+  const number = normalizeJourneyLevel(level);
+  ensureVideoPostedByLevel()[number] = Object.assign({}, state.videoPosted || {});
+  if (number === 1) {
+    state.l1Videos = Object.assign({}, state.videos || {});
+    state.l1VideoStatus = Object.assign({}, state.videoStatus || {});
+  } else {
+    state.l2Videos = Object.assign({}, state.videos || {});
+    state.l2VideoStatus = Object.assign({}, state.videoStatus || {});
+  }
+}
+
+function activateJourneyLevel(level) {
+  const number = normalizeJourneyLevel(level);
+  const archivedVideos = number === 1 ? state.l1Videos : state.l2Videos;
+  const archivedStatus = number === 1 ? state.l1VideoStatus : state.l2VideoStatus;
+  const preservedAnswers = state.videoAnswersByLevel[String(number)] || {};
+  state.videos = Object.assign({}, preservedAnswers, archivedVideos || {});
+  state.videoStatus = Object.assign({}, archivedStatus || {});
+  state.videoPosted = Object.assign({}, ensureVideoPostedByLevel()[number] || {});
+}
+
+function migrateJourneyLevelState() {
+  const activeLevel = normalizeJourneyLevel(state.level);
+  ensureVideoPostedByLevel();
+  const activeArchive = activeLevel === 1 ? state.l1Videos : state.l2Videos;
+  if (!activeArchive || Object.keys(activeArchive).length === 0) {
+    archiveActiveJourneyLevel(activeLevel);
+  } else if (Object.keys(state.videoPostedByLevel[activeLevel] || {}).length === 0) {
+    state.videoPostedByLevel[activeLevel] = Object.assign({}, state.videoPosted || {});
+  }
+}
+
+function journeyHasScripts(videos) {
+  return Object.keys(videos || {}).some(key => key.startsWith('script_v') && videos[key]);
+}
+
+function journeyFilmingComplete(status) {
+  return Array.from({length:7}, (_, index) => status && status[index])
+    .every(value => value === 'filmed' || value === 'skipped');
+}
 
 const ONBOARDING_ORDER = ['screen-0','screen-1','screen-3','screen-content-intent','screen-2a','screen-commit-pain','screen-commit-desire','screen-6','screen-recap','screen-checklist','screen-journey-map','screen-mvo2','screen-7','screen-script','plan-screen'];
 let screenOrder = ['screen-0','screen-1'];
@@ -442,8 +503,12 @@ function goNext() {
     state.mvoQ2 = null; state.mvoQ3 = null; state.mvoQ4 = null;
     state.videos = {};
     state.videoStatus = {};
+    state.videoPosted = {};
+    state.videoPostedByLevel = {1:{},2:{}};
     state.l1VideoStatus = null;
     state.l1Videos = null;
+    state.l2VideoStatus = null;
+    state.l2Videos = null;
     maxProgressPct = 0;
     maxProgressL2Pct = 0;
     resetPhase2();
@@ -538,8 +603,15 @@ async function goToRecap() {
       }
     });
     state.videoStatus = {};
-    state.l1VideoStatus = null;
-    state.l1Videos = null;
+    state.videoPosted = {};
+    if (normalizeJourneyLevel(state.level) === 1) {
+      state.l1VideoStatus = {};
+      state.l1Videos = Object.assign({}, state.videoAnswersByLevel['1'] || {});
+    } else {
+      state.l2VideoStatus = {};
+      state.l2Videos = Object.assign({}, state.videoAnswersByLevel['2'] || {});
+    }
+    ensureVideoPostedByLevel()[normalizeJourneyLevel(state.level)] = {};
   }
   renderCommitmentDeclaration();
   saveProgress();
@@ -1987,17 +2059,17 @@ const INTRO_COPY = {
       triggers: ['Earned Reversal','Discovery Arc','Cognitive Reframe','Aha Transfer','Cost Revelation','Simplicity Signal','Natural Invitation']
     },
     L2: {
-      label: 'Video 6 of 7: What The Hardest Part Taught Me',
-      title: 'Name The Larger Truth You Earned',
-      body: "After owning the failure, show what the aftermath made impossible to ignore. This professional truth must grow from that defeat, change something observable in your work, and give the audience a lens they can use. It may connect to the first realization, but it does not have to.",
-      result: 'Authority',
+      label: 'Video 6 of 7: The Counterintuitive Truth',
+      title: 'Name The Larger Truth You Actually Live',
+      body: "Reveal the significant way you live or work that common sense would reject, then ground it in the experience or repeated evidence that made it impossible for you to dismiss. That source may come from the fall, an earlier realization, or a different part of your life. The audience should leave with an earned lens rather than a slogan or pitch.",
+      result: 'Earned Perspective',
       framework: [
-        {name:'Hook',                    trigger:'Earned Evidence'},
-        {name:'What The Failure Exposed',trigger:'Discovery Arc'},
-        {name:'The Larger Truth',        trigger:'Cognitive Reframe'},
-        {name:'The Useful Lens',         trigger:'Authority Through Value'}
+        {name:'Hook',                  trigger:'Pattern Interrupt'},
+        {name:'Contradicting Evidence',trigger:'Earned Conviction'},
+        {name:'The Larger Truth',      trigger:'Cognitive Reframe'},
+        {name:'Lived Practice',        trigger:'Experiential Authority'}
       ],
-      triggers: ['Earned Evidence','Discovery Arc','Cognitive Reframe','Usable Lens','Stakes and Possibility','Clear Professional Truth','Earned Perspective']
+      triggers: ['Pattern Interrupt','Earned Conviction','Cognitive Reframe','Usable Lens','Observable Practice','Earned Perspective']
     }
   },
   7: {
@@ -2151,18 +2223,17 @@ const LEVEL_2_STORY_BEATS = [
    'The Identity Clue: why that detail may have mattered before you understood it',
    'The Refusal: what kept you from following the thread sooner'],
   // V3 — YOUR FIRST PROFESSIONAL REALIZATION (7-beat structure)
-  ['Pattern Break: a familiar experience seen an unfamiliar way (cognitive friction)',
-   'Discovery Arc: how you arrived at the insight (the journey, not just the conclusion)',
-   'Cognitive Reframe: the old lens cracks; the new one snaps into place',
-   '"Aha" Transfer: the viewer receives a tool they can actually use after this video',
-   'Cost Revelation: what it costs to not see it this way (honest, not fear-based)',
-   'Simplicity Signal: the reframe in one sentence. Screenshot-worthy.',
-   'Authority Anchor: viewer associates you with insight without you claiming it'],
+  ['The Familiar Model: what you believed before the evidence stopped fitting',
+   'The Contradicting Scene: the experience or pattern the old belief could not explain',
+   'Cognitive Dissonance: let both realities sit together before resolving them',
+   'The First Epiphany: the bounded new lens revealed only after the evidence earns it',
+   'The Human Cost: what the old belief quietly causes in a real life'],
   // V4 — THE WORK IN PUBLIC
-  ['Old Pattern vs. New Behavior: one concrete moment where the two collided',
-   'Small Win Proof: the subtle behavioral evidence that something shifted',
-   'Real-Time Transparency: what still feels difficult right now',
-   'Trial Meaning: what this test proves without claiming the journey is complete'],
+  ['The First Lens: one brief reminder of what changed in Video 3',
+   'The Recoverable Trial: where acting on that belief became uncomfortable',
+   'The Temptation: why the familiar approach still looked safer or more successful',
+   'The Uncertain Choice: what you did before knowing how it would turn out',
+   'The Human Result: the limited sign that made continuing feel possible'],
   // V5 — THE HARDEST PART
   ['False Confidence: what you thought the first realization had solved',
    'The Collapse: the moment the failure became impossible to dismiss',
@@ -2170,10 +2241,11 @@ const LEVEL_2_STORY_BEATS = [
    'Apparent Permanent Loss: what seemed destroyed or over for good',
    'Failed Recovery: what you tried, why it failed, and why no way back was visible'],
   // V6 — THE LARGER PROFESSIONAL TRUTH
-  ['The Earlier Understanding: what the hardest part proved was incomplete',
-   'The Aftermath: how the larger truth became impossible to ignore',
-   'The Larger Truth: what you can now carry into the work',
-   'The Useful Lens: what someone else can recognize or do differently'],
+  ['The Common-Sense Model: the rule your experience refuses to support',
+   'The Lived Evidence: one experience or repeated pattern that contradicts it',
+   'Earned Dissonance: why the familiar explanation no longer works',
+   'The Counterintuitive Truth: the larger lens revealed only in the conclusion',
+   'The Observable Practice: how your choices show that you genuinely live it'],
   // V7 — WHAT YOU CARRY FORWARD
   ['Present Proof: one action that shows public ownership now',
    'One Callback: the earlier hesitation this action makes visible',
@@ -2193,20 +2265,21 @@ const VIDEO_STORY_BEATS = {
      'What Made You Question It: the moment or evidence the old idea could not explain',
      'The First Realization: the new lens the audience reaches through your story',
      'Why It Matters: the quiet cost of continuing to think the old way'],
-    ['Expected vs. Actual: what you thought the experience would be and what it has really been',
-     'The Real Detail: one moment or behavior the audience can picture',
-     'What Is Changing: the small shift you are beginning to notice',
-     'What Is Still Hard: the unresolved part and why you are continuing'],
+    ['The First Lens: the realization you began trying to live by',
+     'The Recoverable Trial: the real situation that made the old way tempting again',
+     'The Uncertain Choice: what you did without knowing whether it would work',
+     'The Human Result: the small sign that made continuing feel possible',
+     'What Remains Difficult: the pressure that has not disappeared'],
     ['False Confidence: what you thought the first realization had solved',
      'The Collapse: the moment the failure became impossible to dismiss',
      'Your Responsibility: the choice, avoidance, refusal, or blind spot that caused or worsened it',
      'Apparent Permanent Loss: what seemed destroyed or over for good',
      'Failed Recovery: what you tried, why it failed, and why no way back was visible'],
-    ['The Larger Realization: what the ordeal eventually made clear',
-     'How It Emerged: the moment or evidence that brought it into focus',
-     'The Deeper Meaning: how it changed your understanding of the first realization',
-     'What Changed: the real difference in your identity, choices, or life',
-     'Who Needs It: the person this truth may help see differently'],
+    ['What The Ordeal Exposed: the question or contradiction the fall left behind',
+     'How It Became Clear: the aftermath that made the larger truth visible',
+     'The Larger Realization: the hard-won meaning revealed only in the conclusion',
+     'What Changed: the observable difference in your identity, choices, or life',
+     'Who Needs It: the person this truth may help recognize themselves'],
     ['Present Proof: one action the earlier you would recognize as changed',
      'One Callback: the earlier struggle this action brings into focus',
      'What Remains: the unfinished or familiar part still present',
@@ -2245,7 +2318,7 @@ function populateRecap() {
       ? escapeHTML(name) + ", You're<br>The Expert in the Room."
       : "You're The Expert<br>in the Room.";
     if (nameEl) nameEl.textContent = 'LEVEL 2 - THE AUTHORITY SERIES';
-    if (msgEl) msgEl.innerHTML = 'Your 7 videos position you as the <strong style="color:var(--cream)">go-to person in your space</strong>: your offer, your beliefs, your process, and your point of view. You have something useful to say. Now it gets organized.';
+    if (msgEl) msgEl.innerHTML = 'Your 7 videos make the <strong style="color:var(--cream)">knowledge, experience, or perspective already inside your life</strong> visible through a complete human journey. No business, clients, offer, or polished professional identity is required.';
   }
 
   p2.commitmentDeclaration = p2.commitmentDeclaration || buildCommitmentDeclaration();
@@ -4034,7 +4107,9 @@ function _buildTrackerHTML(videos, context) {
   }).join('');
 
   // If Level 2 and we have L1 status, show L1 row above (grayed out)
-  if (Number(state.level) === 2 && state.l1VideoStatus) {
+  if (Number(state.level) === 2 && (
+    journeyHasScripts(state.l1Videos) || Object.keys(state.l1VideoStatus || {}).length > 0
+  )) {
     const l1Status = state.l1VideoStatus;
     const l1Row = labels.map((label, i) => {
       const st = l1Status[i];
@@ -4067,7 +4142,7 @@ function triggerLevelComplete() {
     document.getElementById('progress-label').innerHTML =
       '<span class="progress-level-label l2">LEVEL 2 COMPLETE 🎉</span>';
     // Both levels complete — show dual-complete celebration overlay
-    if (state.l1VideoStatus) {
+    if (journeyFilmingComplete(state.l1VideoStatus)) {
       setTimeout(() => {
         const overlay = document.getElementById('dual-complete-overlay');
         if (overlay) overlay.classList.add('show');
@@ -4277,17 +4352,14 @@ function runItAgain() {
   captureVideoAnswersByLevel();
   // Level 1 completers graduate to Level 2
   if (Number(state.level) === 1) {
+    archiveActiveJourneyLevel(1);
     state.level = 2;
+    activateJourneyLevel(2);
     // update the badge while we're at it
     const badge = document.getElementById('plan-level-badge');
     if (badge) badge.textContent = '🔥 LEVEL 2 — THE AUTHORITY SERIES';
   }
-  // Save L1 video status + scripts before wiping so dual tracker and plan page can show them
-  state.l1VideoStatus = { ...state.videoStatus };
-  state.l1Videos = { ...state.videos };
-  // Wipe only video answers, keep name/goal/minigoal
-  state.videos = {};
-  state.videoStatus = {};
+  // Keep each level's scripts isolated while retaining shared onboarding context.
   state.mvoQ2 = null;
   state.mvoQ3 = null;
   state.mvoQ4 = null;
@@ -5299,37 +5371,9 @@ async function confirmLevelChange(newLevel) {
   const oldLevel = state.level;
   if (oldLevel === newLevel) return;
   captureVideoAnswersByLevel();
-
-  // Archive scripts properly to avoid scrambling
-  // If switching FROM L1 → L2 and L1 has scripts: stash them in l1Videos
-  // If switching FROM L2 → L1 and l1Videos has scripts: restore them
-  if (oldLevel === 1 && newLevel === 2) {
-    // Stash current L1 scripts before clearing
-    const hasL1Scripts = Object.keys(state.videos || {}).some(k => k.startsWith('script_v'));
-    if (hasL1Scripts) {
-      state.l1Videos = { ...state.videos };
-      state.l1VideoStatus = { ...state.videoStatus };
-    }
-    state.videos = {};
-    state.videoStatus = {};
-  } else if (oldLevel === 2 && newLevel === 1) {
-    // Restore L1 scripts if we have them stashed; otherwise just clear
-    if (state.l1Videos && Object.keys(state.l1Videos).length > 0) {
-      state.videos = { ...state.l1Videos };
-      state.videoStatus = { ...(state.l1VideoStatus || {}) };
-      state.l1Videos = null;
-      state.l1VideoStatus = null;
-    } else {
-      state.videos = {};
-      state.videoStatus = {};
-    }
-  }
-  if (!Object.keys(state.videos || {}).some(key => VIDEO_ANSWER_KEY_PATTERN.test(key))) {
-    state.videos = Object.assign({}, state.videos || {}, state.videoAnswersByLevel[String(newLevel)] || {});
-  }
-
+  archiveActiveJourneyLevel(oldLevel);
   state.level = newLevel;
-  saveProgress();
+  activateJourneyLevel(newLevel);
   if (typeof logEvent === 'function') {
     logEvent('level_switched', {
       from_level: oldLevel || null,
@@ -5338,8 +5382,18 @@ async function confirmLevelChange(newLevel) {
   }
   const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
   if (user && typeof _sb !== 'undefined') {
-    await _sb.from('users').update({ level: newLevel }).eq('id', user.id);
+    try {
+      const { error } = await _sb.from('users').update({ level: newLevel }).eq('id', user.id);
+      if (error) throw error;
+      if (typeof restoreJourneyLevelFromDatabase === 'function') {
+        await restoreJourneyLevelFromDatabase(newLevel);
+      }
+    } catch (error) {
+      console.warn('[SeenInSeven] Level switch database refresh failed; preserving local journey state.', error);
+    }
   }
+  archiveActiveJourneyLevel(newLevel);
+  saveProgress();
   const levelDisplay = document.getElementById('settings-level-display');
   if (levelDisplay) {
     levelDisplay.textContent = newLevel === 1
@@ -5368,14 +5422,16 @@ async function deleteLevelScripts(level) {
   captureVideoAnswersByLevel();
   const preservedAnswers = Object.assign({}, state.videoAnswersByLevel[String(number)] || {});
 
-  if (Number(state.level) === number) {
-    state.videos = preservedAnswers;
-    state.videoStatus = {};
-    state.videoPosted = {};
-  }
+  ensureVideoPostedByLevel()[number] = {};
   if (number === 1) {
-    state.l1Videos = null;
-    state.l1VideoStatus = null;
+    state.l1Videos = preservedAnswers;
+    state.l1VideoStatus = {};
+  } else {
+    state.l2Videos = preservedAnswers;
+    state.l2VideoStatus = {};
+  }
+  if (Number(state.level) === number) {
+    activateJourneyLevel(number);
   }
 
   const user = typeof getCurrentUser === 'function' ? getCurrentUser() : null;
@@ -5843,7 +5899,7 @@ function buildPlan(){
   output.appendChild(grid);
 
   // ── L1 archive (L2 users) ─────────────────────────────
-  if (state.level === 2 && state.l1Videos && Object.keys(state.l1Videos).length > 0) {
+  if (state.level === 2 && journeyHasScripts(state.l1Videos)) {
     const l1label = document.createElement('div');
     l1label.className = 'db-grid-label';
     l1label.innerHTML = '<span class="db-l1-archive-label">✓ Level 1 — Relatable Hero (Archive)</span>';
@@ -5991,7 +6047,9 @@ function buildPlanTracker() {
   }
 
   let html = '';
-  if (state.level === 2 && state.l1VideoStatus) {
+  if (state.level === 2 && (
+    journeyHasScripts(state.l1Videos) || Object.keys(state.l1VideoStatus || {}).length > 0
+  )) {
     const l1Row = labels.map((lbl,i) =>
       makeItem(lbl, state.l1VideoStatus[i], !!state.l1Videos?.['script_v'+i], false, null, true)
     ).join('');
@@ -6269,7 +6327,7 @@ function exportPDF(mode) {
   });
 
   // L1 archive if mode === 'all'
-  if (mode === 'all' && state.l1Videos && Object.keys(state.l1Videos).length > 0) {
+  if (mode === 'all' && journeyHasScripts(state.l1Videos)) {
     html += `<div class="archive-header">Level 1 Scripts — The Relatable Hero</div>`;
     level1Videos.forEach((v, i) => {
       let script = state.l1Videos['script_v'+i] || '';
@@ -6356,8 +6414,11 @@ async function restartWizard(){
   state.videoAnswersByLevel = {};
   state.journeyMaps  = {1:[],2:[]};
   state.videoPosted  = {};  // server rows are deleted below, keep points in parity
+  state.videoPostedByLevel = {1:{},2:{}};
   state.l1Videos     = null;
   state.l1VideoStatus= null;
+  state.l2Videos     = null;
+  state.l2VideoStatus= null;
   state.posted       = null;
   state.blocker      = null;
   state.history      = null;
@@ -6736,16 +6797,16 @@ function compileMvoBeats() {
                                         text: commitText + ' ' + forYouText}
     ];
   } else {
-    const commitL2 = 'My name is '+name+'. Over these next seven videos, I want to share some things in a way you probably have not heard them before. Things that will actually help, whether you have been following me for a while or you just found this today.';
-    const inviteL2 = 'If you have been here for a while, thank you for still being here. If you are brand new, I am so glad you landed on this. Follow along with me for the next six because what comes next is worth your time.';
+    const commitL2 = 'My name is '+name+'. Over these next seven videos, I am sharing the knowledge, experience, and lived perspective I have kept private for too long, even though I still do not feel fully ready.';
+    const inviteL2 = 'If you have been here for a while, thank you for staying. If we have just met, follow along for the next six because I want you to see the full path rather than a polished introduction.';
     return [
       {label:'HOOK',                      desc:'Grabs attention in the first two seconds — gives the viewer a reason to keep watching before you say anything else.',
-                                          text:(q2.village_hook||'If you know something needs to change')+'... I want to talk to you.'},
-      {label:'EXPERTISE',                 desc:'Establishes who you serve and the core problem you solve — signals why you\'re the right expert for this.',
-                                          text:'The people I am here for are '+(q2.village_full||'people ready to take the next step')+'. And the thing most of them are working through right now is this: '+(q3.before_full||'there is a real challenge standing between where they are and where they want to be.')},
-      {label:'THE MARKET GAP',            desc:'Grounds your credibility in lived experience — shows the gap in the market you\'re here to fill.',
-                                          text:q4.crack_full||'I have spent years working through this exact problem.'},
-      {label:'THE SOLUTION DECLARATION',  desc:'Closes the open loop — your commitment and the invitation for the right person to stay.',
+                                          text:'I have kept an important part of what I know out of sight for longer than I want to admit.'},
+      {label:'WHO I HOPE SEES THIS',       desc:'Names the person the speaker hopes will recognize themselves without turning the introduction into a pitch.',
+                                          text:q2.village_full||'I know there is a person who needs to hear the perspective I have kept private.'},
+      {label:'WHY I STAYED QUIET',         desc:'Keeps the hesitation human and unresolved while showing why beginning now matters.',
+                                          text:(q3.before_full||'Speaking openly has felt harder than continuing to wait.')+' '+(q4.crack_full||'Waiting no longer feels neutral.')},
+      {label:'THE PUBLIC COMMITMENT',      desc:'Commits the speaker to the series and gives the viewer a relational reason to stay.',
                                           text: commitL2 + ' ' + inviteL2}
     ];
   }
@@ -6883,6 +6944,7 @@ function copyScript(btn) {
 
 function saveProgress(options = {}) {
   captureVideoAnswersByLevel();
+  if (state.level) archiveActiveJourneyLevel(state.level);
   const data = {
     name:          state.name          || '',
     level:         state.level         || '',
@@ -6899,12 +6961,15 @@ function saveProgress(options = {}) {
     journeyMaps:   ensureJourneyMaps(),
     l1VideoStatus: state.l1VideoStatus || null,
     l1Videos:      state.l1Videos      || null,
+    l2VideoStatus: state.l2VideoStatus || null,
+    l2Videos:      state.l2Videos      || null,
     topicFreewrite:state.topicFreewrite|| '',
     mvoQ2:         state.mvoQ2         || null,
     mvoQ3:         state.mvoQ3         || null,
     mvoQ4:         state.mvoQ4         || null,
     phase2:        ensurePhase2(),
     videoPosted:   state.videoPosted   || {},
+    videoPostedByLevel: ensureVideoPostedByLevel(),
     engage:        state.engage        || {},
     savedAt:       Date.now()
   };
@@ -6957,10 +7022,15 @@ function loadProgress() {
       ensurePhase2();
       if (data.l1VideoStatus) state.l1VideoStatus = data.l1VideoStatus;
       if (data.l1Videos)      state.l1Videos      = data.l1Videos;
+      if (data.l2VideoStatus) state.l2VideoStatus = data.l2VideoStatus;
+      if (data.l2Videos)      state.l2Videos      = data.l2Videos;
       if (data.topicFreewrite)state.topicFreewrite= data.topicFreewrite;
       if (data.videoPosted)   state.videoPosted   = data.videoPosted;
+      if (data.videoPostedByLevel) state.videoPostedByLevel = data.videoPostedByLevel;
       if (data.engage)        state.engage        = data.engage;
       if (data.mvoQ2 && (data.blocker || data.history)) mvoQ2Skipped = true;
+      migrateJourneyLevelState();
+      activateJourneyLevel(state.level);
 
       // If they have a level — go straight to dashboard, no banner needed
       if (data.level && typeof showDashboard === 'function') {

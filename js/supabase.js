@@ -199,38 +199,61 @@ async function _syncPendingAccountProgress(pending) {
 
   _pendingAccountLinkSync = (async () => {
     const snapshot = pending.snapshot;
-    const level = Number(snapshot.level || state.level || 1);
-    const localVideos = snapshot.videos && typeof snapshot.videos === 'object'
-      ? snapshot.videos
-      : {};
+    const activeLevel = Number(snapshot.level || state.level || 1) === 2 ? 2 : 1;
+    const journeys = {
+      1: {
+        videos: snapshot.l1Videos || (activeLevel === 1 ? snapshot.videos : null) || {},
+        status: snapshot.l1VideoStatus || (activeLevel === 1 ? snapshot.videoStatus : null) || {},
+        posted: snapshot.videoPostedByLevel && (snapshot.videoPostedByLevel[1] || snapshot.videoPostedByLevel['1'])
+          || (activeLevel === 1 ? snapshot.videoPosted : null)
+          || {}
+      },
+      2: {
+        videos: snapshot.l2Videos || (activeLevel === 2 ? snapshot.videos : null) || {},
+        status: snapshot.l2VideoStatus || (activeLevel === 2 ? snapshot.videoStatus : null) || {},
+        posted: snapshot.videoPostedByLevel && (snapshot.videoPostedByLevel[2] || snapshot.videoPostedByLevel['2'])
+          || (activeLevel === 2 ? snapshot.videoPosted : null)
+          || {}
+      }
+    };
 
     await saveOnboardingToDb();
 
-    const { data: existingScripts, error: scriptsError } = await _sb
-      .from('scripts')
-      .select('video_number')
-      .eq('user_id', _currentUser.id)
-      .eq('level', level)
-      .eq('is_current', true);
-    if (scriptsError) throw scriptsError;
+    let attachedScripts = 0;
+    for (const level of [1, 2]) {
+      const localVideos = journeys[level].videos;
+      const hasJourneyData = Object.keys(localVideos).some(key => key.startsWith('script_v') && localVideos[key])
+        || Object.keys(journeys[level].status).length > 0
+        || Object.keys(journeys[level].posted).length > 0;
+      if (!hasJourneyData) continue;
 
-    const existingNumbers = new Set((existingScripts || []).map(row => Number(row.video_number)));
-    for (let i = 0; i < 7; i++) {
-      const content = localVideos['script_v' + i];
-      if (content && !existingNumbers.has(i + 1)) {
-        await saveScriptToDb(i + 1, level, content);
-      }
+      const { data: existingScripts, error: scriptsError } = await _sb
+        .from('scripts')
+        .select('video_number')
+        .eq('user_id', _currentUser.id)
+        .eq('level', level)
+        .eq('is_current', true);
+      if (scriptsError) throw scriptsError;
 
-      const status = snapshot.videoStatus && snapshot.videoStatus[i];
-      if (status === 'filmed' || status === 'skipped') {
-        await saveVideoProgressToDb(i, level, status);
-      }
-      if (localVideos['locked_v' + i]) {
-        await saveVideoLockToDb(i, level);
-      }
-      const posted = snapshot.videoPosted && snapshot.videoPosted[i];
-      if (posted && (posted.posted || posted.url)) {
-        await savePostedToDb(i, level, posted.posted, posted.url);
+      const existingNumbers = new Set((existingScripts || []).map(row => Number(row.video_number)));
+      for (let i = 0; i < 7; i++) {
+        const content = localVideos['script_v' + i];
+        if (content && !existingNumbers.has(i + 1)) {
+          await saveScriptToDb(i + 1, level, content);
+          attachedScripts++;
+        }
+
+        const status = journeys[level].status[i];
+        if (status === 'filmed' || status === 'skipped') {
+          await saveVideoProgressToDb(i, level, status);
+        }
+        if (localVideos['locked_v' + i]) {
+          await saveVideoLockToDb(i, level);
+        }
+        const posted = journeys[level].posted[i];
+        if (posted && (posted.posted || posted.url)) {
+          await savePostedToDb(i, level, posted.posted, posted.url);
+        }
       }
     }
 
@@ -238,8 +261,8 @@ async function _syncPendingAccountProgress(pending) {
     if (typeof logEvent === 'function') {
       logEvent('anonymous_progress_attached', {
         source: pending.source || 'save_progress',
-        level: level,
-        scripts: Object.keys(localVideos).filter(key => key.startsWith('script_v') && localVideos[key]).length
+        level: activeLevel,
+        scripts: attachedScripts
       });
     }
   })();
@@ -361,10 +384,24 @@ function _mergeLocalStorage() {
     if (d.videoStatus && Object.keys(state.videoStatus || {}).length === 0) state.videoStatus = d.videoStatus;
     if (d.l1Videos) state.l1Videos = d.l1Videos;
     if (d.l1VideoStatus) state.l1VideoStatus = d.l1VideoStatus;
+    if (d.l2Videos) state.l2Videos = d.l2Videos;
+    if (d.l2VideoStatus) state.l2VideoStatus = d.l2VideoStatus;
+    if (d.videoPostedByLevel) {
+      const currentPosted = state.videoPostedByLevel || {};
+      state.videoPostedByLevel = {
+        1: Object.assign({}, d.videoPostedByLevel[1] || d.videoPostedByLevel['1'] || {}, currentPosted[1] || currentPosted['1'] || {}),
+        2: Object.assign({}, d.videoPostedByLevel[2] || d.videoPostedByLevel['2'] || {}, currentPosted[2] || currentPosted['2'] || {})
+      };
+    }
     // Points state — merge additively, DB-restored entries win
     if (d.videoPosted) {
       state.videoPosted = Object.assign({}, d.videoPosted, state.videoPosted || {});
     }
+    if (typeof migrateJourneyLevelState === 'function') migrateJourneyLevelState();
+    if (typeof archiveActiveJourneyLevel === 'function' && state.level) {
+      archiveActiveJourneyLevel(state.level);
+    }
+    if (typeof activateJourneyLevel === 'function' && state.level) activateJourneyLevel(state.level);
     if (d.engage) {
       state.engage = Object.assign({}, d.engage, state.engage || {});
     }
@@ -657,22 +694,84 @@ async function fetchPointsConfig() {
 const _dbLockedIdx = new Set();
 const _dbPostedIdx = new Set();
 
+function _journeyDbKey(level, videoIndex) {
+  return String(Number(level) === 2 ? 2 : 1) + ':' + String(videoIndex);
+}
+
 async function _syncPointsStateToDb() {
   if (!_currentUser) return;
   const level = state.level || 1;
   try {
     for (let i = 0; i < 7; i++) {
-      if (state.videos && state.videos['locked_v' + i] && !_dbLockedIdx.has(i)) {
+      const dbKey = _journeyDbKey(level, i);
+      if (state.videos && state.videos['locked_v' + i] && !_dbLockedIdx.has(dbKey)) {
         await saveVideoLockToDb(i, level);
-        _dbLockedIdx.add(i);
+        _dbLockedIdx.add(dbKey);
       }
       const p = state.videoPosted && state.videoPosted[i];
-      if (p && (p.posted || p.url) && !_dbPostedIdx.has(i)) {
+      if (p && (p.posted || p.url) && !_dbPostedIdx.has(dbKey)) {
         await savePostedToDb(i, level, p.posted, p.url);
-        _dbPostedIdx.add(i);
+        _dbPostedIdx.add(dbKey);
       }
     }
   } catch(e) {}
+}
+
+async function restoreJourneyLevelFromDatabase(level) {
+  if (!_currentUser) return false;
+  const number = Number(level) === 2 ? 2 : 1;
+  const [{ data: scripts, error: scriptsError }, { data: progress, error: progressError }] = await Promise.all([
+    _sb.from('scripts').select('*').eq('user_id', _currentUser.id).eq('is_current', true).eq('level', number).order('video_number'),
+    _sb.from('video_progress').select('*').eq('user_id', _currentUser.id).eq('level', number)
+  ]);
+  if (scriptsError) throw scriptsError;
+  if (progressError) throw progressError;
+
+  const active = Number(state.level) === number;
+  const archivedVideos = number === 1 ? state.l1Videos : state.l2Videos;
+  const archivedStatus = number === 1 ? state.l1VideoStatus : state.l2VideoStatus;
+  const videos = Object.assign({}, active ? state.videos : archivedVideos || {});
+  const status = Object.assign({}, active ? state.videoStatus : archivedStatus || {});
+  const postedByLevel = typeof ensureVideoPostedByLevel === 'function'
+    ? ensureVideoPostedByLevel()
+    : (state.videoPostedByLevel || {1:{},2:{}});
+  const posted = Object.assign({}, active ? state.videoPosted : postedByLevel[number] || {});
+
+  (scripts || []).forEach(s => {
+    const index = s.video_number - 1;
+    videos['script_v' + index] = s.content;
+    if (s.prompt_version) videos['prompt_version_v' + index] = s.prompt_version;
+  });
+  (progress || []).forEach(p => {
+    const dbKey = _journeyDbKey(number, p.video_index);
+    if (p.status === 'filmed' || p.status === 'skipped') status[p.video_index] = p.status;
+    if (p.locked_at) videos['ever_locked_v' + p.video_index] = true;
+    if (p.is_locked && videos['script_v' + p.video_index]) {
+      videos['locked_v' + p.video_index] = true;
+      _dbLockedIdx.add(dbKey);
+    } else {
+      delete videos['locked_v' + p.video_index];
+    }
+    if (p.posted || p.post_url) {
+      posted[p.video_index] = { posted: !!p.posted, url: p.post_url || '' };
+      _dbPostedIdx.add(dbKey);
+    }
+  });
+
+  if (number === 1) {
+    state.l1Videos = videos;
+    state.l1VideoStatus = status;
+  } else {
+    state.l2Videos = videos;
+    state.l2VideoStatus = status;
+  }
+  postedByLevel[number] = posted;
+  if (active) {
+    state.videos = Object.assign({}, videos);
+    state.videoStatus = Object.assign({}, status);
+    state.videoPosted = Object.assign({}, posted);
+  }
+  return true;
 }
 
 // ── RESTORE STATE FROM DATABASE ───────────────────────
@@ -687,9 +786,7 @@ async function _restoreFromDatabase() {
     if (user.name)    state.name    = user.name;
     if (user.level)   state.level   = Number(user.level);
     if (user.blocker) state.blocker = user.blocker;
-    const activeLevel = user.level || state.level || 1;
-    const { data: scripts } = await _sb.from('scripts').select('*').eq('user_id', _currentUser.id).eq('is_current', true).eq('level', activeLevel).order('video_number');
-    const { data: progress } = await _sb.from('video_progress').select('*').eq('user_id', _currentUser.id).eq('level', activeLevel);
+    const activeLevel = Number(user.level || state.level || 1) === 2 ? 2 : 1;
 
     if (onboarding) {
       if (onboarding.posted)          state.posted         = onboarding.posted;
@@ -725,35 +822,7 @@ async function _restoreFromDatabase() {
       if (Array.isArray(onboarding.commitment_reasons)) state.phase2.commitmentReasons = onboarding.commitment_reasons;
     }
 
-    if (scripts && scripts.length) {
-      scripts.forEach(s => {
-        const index = s.video_number - 1;
-        state.videos['script_v' + index] = s.content;
-        if (s.prompt_version) state.videos['prompt_version_v' + index] = s.prompt_version;
-      });
-    }
-    if (progress && progress.length) {
-      progress.forEach(p => {
-        if (p.status === 'filmed' || p.status === 'skipped') state.videoStatus[p.video_index] = p.status;
-        // Points state: locked + posted live on the same rows. Remember which
-        // indexes the DB already knows so _syncPointsStateToDb only pushes
-        // genuinely local-only state (preserves original timestamps).
-        if (p.locked_at) {
-          state.videos['ever_locked_v' + p.video_index] = true;
-        }
-        if (p.is_locked && state.videos['script_v' + p.video_index]) {
-          state.videos['locked_v' + p.video_index] = true;
-          _dbLockedIdx.add(p.video_index);
-        } else {
-          delete state.videos['locked_v' + p.video_index];
-        }
-        if (p.posted || p.post_url) {
-          if (!state.videoPosted) state.videoPosted = {};
-          state.videoPosted[p.video_index] = { posted: !!p.posted, url: p.post_url || '' };
-          _dbPostedIdx.add(p.video_index);
-        }
-      });
-    }
+    await restoreJourneyLevelFromDatabase(activeLevel);
 
     saveProgress();
     return !!(user.level || user.name);

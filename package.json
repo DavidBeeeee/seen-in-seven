@@ -7,8 +7,9 @@
     "check:story-architecture": "node scripts/check-story-architecture.mjs",
     "check:lock-state": "node scripts/check-lock-state.mjs",
     "check:progress-meter": "node scripts/check-progress-meter.mjs",
+    "check:level-consistency": "node scripts/check-level-consistency.mjs",
     "check:journey-map": "node scripts/check-journey-map.mjs",
     "check:answer-help": "node scripts/check-answer-help.mjs",
-    "test": "npm run check:prompt-style && npm run check:story-architecture && npm run check:lock-state && npm run check:progress-meter && npm run check:journey-map && npm run check:answer-help"
+    "test": "npm run check:prompt-style && npm run check:story-architecture && npm run check:lock-state && npm run check:progress-meter && npm run check:level-consistency && npm run check:journey-map && npm run check:answer-help"
   }
 }

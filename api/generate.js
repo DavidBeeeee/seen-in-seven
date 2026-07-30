@@ -1245,7 +1245,8 @@ async function generateScriptCore(input, prompt, timings) {
     } catch (error) {
       lastError = error;
       const message = String(error && error.message || '');
-      const canRetry = /story review found an issue|script response still needs correction/i.test(message);
+      const canRetry = error && error.recoverableGeneration === true
+        || /story review found an issue|script response still needs correction/i.test(message);
       if (!canRetry || attempt === maxAttempts - 1) throw error;
     }
   }

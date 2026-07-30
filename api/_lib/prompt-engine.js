@@ -23,6 +23,13 @@ function publishedPrompt() {
   };
 }
 
+function recoverableGenerationError(message, code) {
+  const error = new Error(message);
+  error.code = code;
+  error.recoverableGeneration = true;
+  return error;
+}
+
   const SECTION_KEYS = [];
   [1, 2].forEach(level => {
     for (let video = 1; video <= 7; video++) SECTION_KEYS.push('l' + level + '_v' + video + '_rules');
@@ -925,7 +932,10 @@ function publishedPrompt() {
 
   async function generateFinalOpenLoop(config) {
     const sections = parseSections(config.script);
-    if (!sections) throw new Error('The script does not have all five labeled sections for final Open Loop construction.');
+    if (!sections) throw recoverableGenerationError(
+      'The script does not have all five labeled sections for final Open Loop construction.',
+      'OPEN_LOOP_SECTIONS'
+    );
     let contract = null;
     let contractCorrection = '';
     for (let attempt = 0; attempt < 2 && !contract; attempt++) {
@@ -938,7 +948,10 @@ function publishedPrompt() {
       contract = parseOpenLoopContract(raw);
       contractCorrection = 'Return every required contract field in the exact JSON shape. Do not write visible Open Loop prose.';
     }
-    if (!contract) throw new Error('The Open Loop architecture could not be prepared cleanly. Please try again.');
+    if (!contract) throw recoverableGenerationError(
+      'The Open Loop architecture could not be prepared cleanly. Please try again.',
+      'OPEN_LOOP_CONTRACT'
+    );
 
     let correction = '';
     let lastOpenLoop = '';
@@ -975,9 +988,15 @@ function publishedPrompt() {
       const repairedOpenLoop = String(parseSections(repairedScript) && parseSections(repairedScript)['OPEN LOOP'] || '').trim();
       const remaining = repairedOpenLoop ? openLoopValidationIssues(config, repairedOpenLoop) : ['OPEN LOOP repair returned no text.'];
       if (repairedOpenLoop && !remaining.length) return repairedOpenLoop;
-      throw new Error('The Open Loop still needs correction: ' + remaining.join(' ') + ' Please try again.');
+      throw recoverableGenerationError(
+        'The Open Loop still needs correction: ' + remaining.join(' ') + ' Please try again.',
+        'OPEN_LOOP_VALIDATION'
+      );
     }
-    throw new Error('The Open Loop Writer returned no usable text. Please try again.');
+    throw recoverableGenerationError(
+      'The Open Loop Writer returned no usable text. Please try again.',
+      'OPEN_LOOP_EMPTY'
+    );
   }
 
   async function finalizeScriptOpenLoop(config) {
@@ -1095,7 +1114,10 @@ function publishedPrompt() {
 
   async function generateFinalHook(config) {
     const sections = parseSections(config.script);
-    if (!sections) throw new Error('The script does not have all five labeled sections for final Hook selection.');
+    if (!sections) throw recoverableGenerationError(
+      'The script does not have all five labeled sections for final Hook selection.',
+      'HOOK_SECTIONS'
+    );
     let failures = [];
     for (let attempt = 0; attempt < 2; attempt++) {
       const raw = await config.callModel(
@@ -1136,7 +1158,10 @@ function publishedPrompt() {
       if (judgment.pass && validCandidates.includes(judgment.hook)) return judgment.hook;
       failures = [judgment.reason || 'The previous line did not function as an immediate attention interrupt.'];
     }
-    throw new Error('The final Hook did not pass the Hook Studio checks. Please try regenerating the Hook.');
+    throw recoverableGenerationError(
+      'The final Hook did not pass the Hook Studio checks. Please try regenerating the Hook.',
+      'HOOK_VALIDATION'
+    );
   }
 
   async function finalizeScriptHook(config) {
