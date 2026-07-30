@@ -358,6 +358,15 @@ A group member sent me a direct message saying my answer was the first explanati
 That private response gave the quiet work a pulse, so follow because this is Video 4 of my 7 Video Challenge, and the next chapter shows the collapse that nearly ended it.`;
 const cleanRetentionGap = 'Three likes made the work look invisible, although the number could only measure public reaction. I kept returning to the same question: how long could I continue when the evidence I could see kept telling me to stop?';
 const openLoopStudioCalls = [];
+assert(
+  OPEN_LOOP_WRITER_SYSTEM.includes('same first-person voice') &&
+    OPEN_LOOP_WRITER_SYSTEM.includes('Do not stack two separate questions'),
+  'Open Loop Studio can still switch the speaker into third person or create multiple retention gaps.'
+);
+assert(
+  HOOK_STUDIO_SYSTEM.includes('Never copy a complete sentence or an eight-word sequence'),
+  'Hook Studio can still copy its final line directly from the visible story.'
+);
 const openLoopStudioResult = await finalizeScriptOpenLoop({
   script: payoffScript,
   systemPrompt: buildSystemPrompt(published.prompt, 1, 4),
@@ -470,13 +479,19 @@ const hookStudioResult = await finalizeScriptHook({
           'A camera can turn ten minutes into a hostage negotiation.',
           'Delete buttons have ended more careers than critics ever could.',
           'Your camera is getting blamed for a crime it did not commit.',
-          'I trusted the delete button more than I trusted myself.',
+          'I kept answering detailed questions in the same group, even while each response seemed to disappear beneath louder posts.',
           'The safest recording is the one that ruins your future.'
         ]
       });
     }
     if (system === HOOK_JUDGE_SYSTEM) {
       const judgeAttempt = hookStudioCalls.filter(call => call.system === HOOK_JUDGE_SYSTEM).length;
+      if (judgeAttempt === 2) {
+        assert(
+          !user.includes('I kept answering detailed questions in the same group'),
+          'Hook Studio sent a candidate copied verbatim from the Meat to the final judge.'
+        );
+      }
       return judgeAttempt === 1
         ? JSON.stringify({ pass: false, hook: '', reason: 'Every option is chronological scene setup, not an attention interrupt.' })
         : JSON.stringify({ pass: true, hook: 'Perfection is the most expensive hiding place.', reason: '' });

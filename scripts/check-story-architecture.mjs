@@ -108,11 +108,11 @@ assert(
 );
 for (const [level, rules] of [[1, levelOneVideoSeven], [2, levelTwoVideoSeven]]) {
   [
-    'home as one connected transformation.',
+    'home through one governing identity transformation.',
     'Let a cold viewer understand',
     'without hearing an episode-by-episode recap',
     'viewer gift',
-    'verify whether the speaker succeeds'
+    'monitor whether the speaker proves or tests'
   ].forEach(requirement => {
     assert(rules.includes(requirement), `Level ${level} Video 7 lost its complete Return requirement: ${requirement}`);
   });
@@ -175,11 +175,12 @@ assert(
   'Story review lost the Meat-only Hook-and-Eye boundary.'
 );
 assert(
-  EPISODE_STAGE_SCHEMAS[7].includes('Bring the six-chapter audience canon home as one connected transformation') &&
+  EPISODE_STAGE_SCHEMAS[7].includes('Bring the six-chapter audience canon home through one governing identity transformation') &&
+    EPISODE_STAGE_SCHEMAS[7].includes('selecting only the strongest evidence needed to make each movement intelligible') &&
     generationSource.includes('CURATED VIDEO 7 RETURN:') &&
-    generationSource.includes('Build MEAT only from CONNECTED JOURNEY PROGRESSION') &&
-    engineSource.includes('require one connected Return across the audience canon') &&
-    engineSource.includes('cannot reduce the Return to one new or present-day scene'),
+    generationSource.includes('Build MEAT only from the evidence selected inside CONNECTED JOURNEY PROGRESSION') &&
+    engineSource.includes('require one connected Return organized around a single governing identity transformation') &&
+    engineSource.includes('Return reduced to one new or present-day scene'),
   'Video 7 can still collapse into a local scene or disconnected recap.'
 );
 assert(
@@ -207,6 +208,10 @@ assert(
 );
 [
   'Videos 1 through 6 final scripts are the audience canon.',
+  'one governing identity transformation',
+  'each video does not receive its own sentence, example, or equal space',
+  'omit every additional event, number, person, phrase, or metaphor that performs the same narrative job',
+  'This private planning range never limits the length of the visible Meat.',
   'Make the progression independently understandable to a cold viewer',
   'When the first and second epiphanies came from independent experiences, preserve that independence.',
   'specific perspective, practice, or way of seeing that genuinely distinguishes this speaker'
@@ -249,14 +254,15 @@ assert(
     (index ? 'Browser' : 'API') + ' prompt engine is missing the Overview-to-Meat premise contract.'
   );
   assert(
-    source.includes('Bring the earlier identity, decisive shifts, fall, elixir, returned self, and unfinished flaw together as one connected transformation') &&
+    source.includes('Organize the complete journey around one governing identity transformation') &&
+      source.includes('Omit additional events that perform a narrative job already completed') &&
       source.includes('Make the full journey understandable to a cold viewer'),
     (index ? 'Browser' : 'API') + ' prompt engine is missing Video 7 audience-canon synthesis.'
   );
 });
 assert(
-  appHtml.includes('/js/script-prompt-engine.js?v=video7-epic-return-1') &&
-    testerHtml.includes('/js/script-prompt-engine.js?v=video7-epic-return-1'),
+  appHtml.includes('/js/script-prompt-engine.js?v=video7-epic-return-2') &&
+    testerHtml.includes('/js/script-prompt-engine.js?v=video7-epic-return-2'),
   'The live app or admin tester can retain the pre-premise browser prompt engine from cache.'
 );
 assert(
@@ -280,7 +286,8 @@ assert(
   'The dedicated Open Loop Studio still permits private-context shorthand.'
 );
 assert(
-  generationSource.includes('VIDEO 7 MEAT REGENERATION REQUIREMENT: Preserve CONNECTED JOURNEY PROGRESSION') &&
+  generationSource.includes('VIDEO 7 MEAT REGENERATION REQUIREMENT: Preserve every transformation and only the evidence selected inside CONNECTED JOURNEY PROGRESSION') &&
+    generationSource.includes('Expand that causal spine into complete spoken thoughts') &&
     generationSource.includes('VIDEO 7 CONCLUSION REGENERATION REQUIREMENT: Preserve RESERVED RETURN') &&
     generationSource.includes('MEAT REGENERATION REQUIREMENT: Preserve EPISODE NUCLEUS') &&
     generationSource.includes('Rebuild the standalone viewer premise near the beginning of [MEAT]') &&
@@ -528,7 +535,8 @@ assert(videoSevenMessage.includes('FALLBACK ANSWER SENTINEL'), 'Video 7 lost the
 assert(videoSevenMessage.includes('CURRENT RETURN SENTINEL') && videoSevenMessage.includes('RETURN DIRECTION SENTINEL'), 'Video 7 lost its current return evidence or Journey Direction.');
 assert(
   videoSevenMessage.includes('final scripts are the audience canon') &&
-    videoSevenMessage.includes('earlier identity, decisive shifts, fall, elixir, returned self, and unfinished flaw') &&
+    videoSevenMessage.includes('one governing identity transformation') &&
+    videoSevenMessage.includes('Omit additional events that perform a narrative job already completed') &&
     videoSevenMessage.includes('Make the full journey understandable to a cold viewer') &&
     engineSource.includes('final scripts are the audience canon') &&
     browserEngineSource.includes('final scripts are the audience canon') &&

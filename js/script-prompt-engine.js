@@ -58,7 +58,8 @@
           '- The current answers supply present-day evidence, the honest unfinished element, and an optional direction that continues.',
           '- Onboarding and background may clarify the audience or voice, but they cannot introduce another life chapter, lesson, offer, or reason the speaker should be followed.',
           '- If a previous final script exists, ignore its raw journal answers. If it does not exist, use that chapter\'s answers only as a fallback.',
-          '- Bring the earlier identity, decisive shifts, fall, elixir, returned self, and unfinished flaw together as one connected transformation rather than a present-day scene or episode-by-episode recap.',
+          '- Organize the complete journey around one governing identity transformation. Preserve the earlier identity and refusal, first realization and trial, fall, elixir, returned self, and unfinished flaw while selecting only the strongest evidence needed to make those movements intelligible.',
+          '- Omit additional events that perform a narrative job already completed. Several chapters may share one movement; no chapter needs its own sentence or equal space.',
           '- Make the full journey understandable to a cold viewer and recognizable to someone who watched the earlier videos.'
         ]
       : [
