@@ -11,6 +11,7 @@ import {
 } from '../api/_lib/prompt-engine.js';
 import {
   buildEpisodeArchitectSource,
+  buildVideoSevenReturnSource,
   EPISODE_ARCHITECT_HEADINGS,
   EPISODE_ARCHITECT_SYSTEM,
   EPISODE_STAGE_SCHEMAS,
@@ -18,7 +19,9 @@ import {
   episodeContinuityVideos,
   extractCurrentJourneyDirection,
   extractCurrentVideoBrief,
-  preserveViewerPremiseSource
+  preserveViewerPremiseSource,
+  VIDEO_SEVEN_RETURN_HEADINGS,
+  VIDEO_SEVEN_RETURN_SYSTEM
 } from '../api/generate.js';
 
 function assert(condition, message) {
@@ -105,14 +108,19 @@ assert(
 );
 for (const [level, rules] of [[1, levelOneVideoSeven], [2, levelTwoVideoSeven]]) {
   [
-    'Tell one present-day echo of a concrete pressure, situation, or behavior from the audience canon.',
-    'Every sentence must be necessary to this causal chain and lose coherence if moved elsewhere.',
-    'what the echoed pressure and changed response prove',
+    'home as one connected transformation.',
+    'Let a cold viewer understand',
+    'without hearing an episode-by-episode recap',
+    'viewer gift',
     'verify whether the speaker succeeds'
   ].forEach(requirement => {
-    assert(rules.includes(requirement), `Level ${level} Video 7 lost its causal Return requirement: ${requirement}`);
+    assert(rules.includes(requirement), `Level ${level} Video 7 lost its complete Return requirement: ${requirement}`);
   });
 }
+assert(
+  levelTwoVideoSeven.includes('specific perspective or way of working this path lets the speaker carry that others in the field may not'),
+  'Level 2 Video 7 lost the earned professional difference.'
+);
 
 const appSource = readFileSync(new URL('../js/app.js', import.meta.url), 'utf8');
 const appHtml = readFileSync(new URL('../seeninseven.html', import.meta.url), 'utf8');
@@ -167,12 +175,12 @@ assert(
   'Story review lost the Meat-only Hook-and-Eye boundary.'
 );
 assert(
-  EPISODE_STAGE_SCHEMAS[7].includes('First select one concrete pressure, situation, or behavior the audience actually heard') &&
-    EPISODE_STAGE_SCHEMAS[7].includes('removing or reordering a beat breaks the sequence') &&
-    generationSource.includes('VIDEO 7 CAUSAL RETURN CONTRACT') &&
-    engineSource.includes('Reject a new central conflict, public test, dramatic loss, future trial, unresolved external outcome, business experiment, or fresh revelation') &&
-    engineSource.includes('The familiar pressure must make the earlier response visible'),
-  'Video 7 can still reach the writer or reviewer as a checklist instead of one causal Return scene.'
+  EPISODE_STAGE_SCHEMAS[7].includes('Bring the six-chapter audience canon home as one connected transformation') &&
+    generationSource.includes('CURATED VIDEO 7 RETURN:') &&
+    generationSource.includes('Build MEAT only from CONNECTED JOURNEY PROGRESSION') &&
+    engineSource.includes('require one connected Return across the audience canon') &&
+    engineSource.includes('cannot reduce the Return to one new or present-day scene'),
+  'Video 7 can still collapse into a local scene or disconnected recap.'
 );
 assert(
   sectionCoreSource.includes('prepareEpisodeArchitectureMaterial(input.userContext, input.level, input.video, input.existingScript)') &&
@@ -192,6 +200,19 @@ assert(
     'EPISODE NUCLEUS|HUMAN CONTRADICTION|STORY PROGRESSION|RESERVED CONCLUSION|STAGE FIREWALL|VOICE SIGNALS',
   'The shared episode packet headings changed or multiplied.'
 );
+assert(
+  VIDEO_SEVEN_RETURN_HEADINGS.join('|') ===
+    'CONNECTED JOURNEY PROGRESSION|RESERVED RETURN|HONEST REMAINDER AND HORIZON|VOICE SIGNALS',
+  'The dedicated Video 7 return packet changed or became a checklist.'
+);
+[
+  'Videos 1 through 6 final scripts are the audience canon.',
+  'Make the progression independently understandable to a cold viewer',
+  'When the first and second epiphanies came from independent experiences, preserve that independence.',
+  'specific perspective, practice, or way of seeing that genuinely distinguishes this speaker'
+].forEach(requirement => {
+  assert(VIDEO_SEVEN_RETURN_SYSTEM.includes(requirement), 'Video 7 synthesizer is missing: ' + requirement);
+});
 [
   'The current Journey Direction and current-video answers are authoritative.',
   'Do not return a checklist, montage, collection of examples, or several adjacent arguments.'
@@ -227,10 +248,15 @@ assert(
       source.includes('Translate its essential premise once near the beginning of MEAT'),
     (index ? 'Browser' : 'API') + ' prompt engine is missing the Overview-to-Meat premise contract.'
   );
+  assert(
+    source.includes('Bring the earlier identity, decisive shifts, fall, elixir, returned self, and unfinished flaw together as one connected transformation') &&
+      source.includes('Make the full journey understandable to a cold viewer'),
+    (index ? 'Browser' : 'API') + ' prompt engine is missing Video 7 audience-canon synthesis.'
+  );
 });
 assert(
-  appHtml.includes('/js/script-prompt-engine.js?v=video7-return-1') &&
-    testerHtml.includes('/js/script-prompt-engine.js?v=video7-return-1'),
+  appHtml.includes('/js/script-prompt-engine.js?v=video7-epic-return-1') &&
+    testerHtml.includes('/js/script-prompt-engine.js?v=video7-epic-return-1'),
   'The live app or admin tester can retain the pre-premise browser prompt engine from cache.'
 );
 assert(
@@ -254,11 +280,12 @@ assert(
   'The dedicated Open Loop Studio still permits private-context shorthand.'
 );
 assert(
-  generationSource.includes("const sectionInstruction = input.section === 'MEAT'") &&
+  generationSource.includes('VIDEO 7 MEAT REGENERATION REQUIREMENT: Preserve CONNECTED JOURNEY PROGRESSION') &&
+    generationSource.includes('VIDEO 7 CONCLUSION REGENERATION REQUIREMENT: Preserve RESERVED RETURN') &&
     generationSource.includes('MEAT REGENERATION REQUIREMENT: Preserve EPISODE NUCLEUS') &&
     generationSource.includes('Rebuild the standalone viewer premise near the beginning of [MEAT]') &&
     generationSource.includes('preserveViewerPremiseSource(input.userContext, preparedContext, input.video)'),
-  'Full generation or Meat regeneration can lose the standalone viewer premise.'
+  'Full generation or section regeneration can lose its level-specific architecture.'
 );
 assert(
   promptTestSource.includes('preserveViewerPremiseSource(userMessage, preparedUserMessage, video)'),
@@ -385,6 +412,11 @@ assert(
   preserveViewerPremiseSource(alreadyCompleteContext, alreadyCompleteContext, 4) === alreadyCompleteContext,
   'Standard generation duplicates the Viewer Premise Source instead of using the existing Journey Direction.'
 );
+const preparedVideoSevenReturn = 'Generate Video 7 script.\n\nCURATED VIDEO 7 RETURN:\nA complete synthesis.';
+assert(
+  preserveViewerPremiseSource(alreadyCompleteContext, preparedVideoSevenReturn, 7) === preparedVideoSevenReturn,
+  'Video 7 still receives raw Journey Direction after its audience canon has been synthesized.'
+);
 
 [
   'I could not tell whether the signal meant the choice was working.',
@@ -496,14 +528,14 @@ assert(videoSevenMessage.includes('FALLBACK ANSWER SENTINEL'), 'Video 7 lost the
 assert(videoSevenMessage.includes('CURRENT RETURN SENTINEL') && videoSevenMessage.includes('RETURN DIRECTION SENTINEL'), 'Video 7 lost its current return evidence or Journey Direction.');
 assert(
   videoSevenMessage.includes('final scripts are the audience canon') &&
-    videoSevenMessage.includes('which already-heard pressure and earned transformation the Return revisits') &&
-    videoSevenMessage.includes('The present scene must echo that earlier pressure and show a different response') &&
+    videoSevenMessage.includes('earlier identity, decisive shifts, fall, elixir, returned self, and unfinished flaw') &&
+    videoSevenMessage.includes('Make the full journey understandable to a cold viewer') &&
     engineSource.includes('final scripts are the audience canon') &&
     browserEngineSource.includes('final scripts are the audience canon') &&
-    browserEngineSource.includes('The present scene must echo that earlier pressure and show a different response'),
+    browserEngineSource.includes('Make the full journey understandable to a cold viewer'),
   'Production and browser prompt builders do not share the Video 7 audience-canon rule.'
 );
-const videoSevenArchitectSource = buildEpisodeArchitectSource(
+const videoSevenArchitectSource = buildVideoSevenReturnSource(
   [
     'ONBOARDING DATA:',
     '- Name: Return Tester',
@@ -516,19 +548,35 @@ const videoSevenArchitectSource = buildEpisodeArchitectSource(
     '',
     'CURRENT VIDEO 7 JOURNEY DIRECTION (private planning context only):',
     'RETURN DIRECTION SENTINEL',
-    'Use this as the intended subject and place in the seven-part journey.',
+    'Use this to clarify the desired return destination, differentiation, unfinished flaw, or horizon. Do not translate it as a new local premise or let it replace the six final scripts. Do not pull in future journey directions.',
     '',
     'CURRENT VIDEO 7 PROMPTS:',
     'Question 1: CURRENT RETURN SENTINEL'
   ].join('\n'),
   2,
-  7
+  ''
+);
+assert(
+  extractCurrentJourneyDirection(
+    [
+      'CURRENT VIDEO 7 JOURNEY DIRECTION (private planning context only):',
+      'RETURN DIRECTION SENTINEL',
+      'Use this to clarify the desired return destination, differentiation, unfinished flaw, or horizon. Do not translate it as a new local premise or let it replace the six final scripts. Do not pull in future journey directions.',
+      '',
+      'CURRENT VIDEO 7 PROMPTS:',
+      'Question 1: CURRENT RETURN SENTINEL'
+    ].join('\n'),
+    7
+  ) === 'RETURN DIRECTION SENTINEL',
+  'Video 7 Journey Direction extraction includes its private routing instruction.'
 );
 assert(
   videoSevenArchitectSource.includes('VIDEO 1 FINAL SCRIPT:\nFIRST CANON SCRIPT SENTINEL') &&
     videoSevenArchitectSource.includes('VIDEO 2 FINAL SCRIPT:\nSECOND CANON SCRIPT SENTINEL') &&
+    videoSevenArchitectSource.includes('CURRENT RETURN DIRECTION:\nRETURN DIRECTION SENTINEL') &&
+    videoSevenArchitectSource.includes('CURRENT VIDEO 7 ANSWERS:') &&
     !videoSevenArchitectSource.includes('FIRST CANON SCRIPT SENTINEL\n\nVIDEO 2 FINAL SCRIPT (audience canon'),
-  'Video 7 episode preparation cannot read consecutive audience-canon scripts independently.'
+  'Video 7 synthesis cannot independently read the audience canon, return direction, and current answers.'
 );
 
 console.log('Story architecture checks passed for all 14 video paths and both question catalogs.');

@@ -80,7 +80,7 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "What I Learned",
-      "note": "Give us the present-day evidence and the honest unfinished part. The app already knows the journey you told and will bring it home without asking you to summarize it.",
+      "note": "Give us the present-day evidence and the honest unfinished part. The app will connect the journey you already told, extract what you carry back, and bring the full story home without asking you to summarize it.",
       "prompts": [
         {"label":"What do you actually do differently now than the person at the beginning of this story?","hint":"Name one observable choice, behavior, boundary, conversation, habit, or way of showing up. You do not need to recap what taught you.","key":"v6p1","placeholder":"Describe one current action that shows what has genuinely changed."},
         {"label":"What still feels unfinished, and what do you want to keep doing next?","hint":"Be honest about what has not been solved, then name a direction you want to keep exploring, practicing, building, or speaking about. It does not need to be a plan or pitch.","key":"v6p2","placeholder":"Describe the unfinished part and the direction you want to continue."}
@@ -234,7 +234,7 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "What I Carry Forward",
-      "note": "Give us the present-day evidence and the honest unfinished part. The app already knows the expert journey you told and will bring it home without asking you to summarize it or explain why people should follow.",
+      "note": "Give us the present-day evidence and the honest unfinished part. The app will connect the expert journey you already told, reveal what distinguishes your perspective, and bring the full story home without asking you to summarize it or explain why people should follow.",
       "prompts": [
         {
           "label": "What do you actually do differently now than the person at the beginning of this story?",

@@ -54,12 +54,12 @@
     const sourceOwnership = video === 7
       ? [
           '- Videos 1 through 6 final scripts are the audience canon. Build the return from what the viewer actually heard.',
-          '- Use the current Journey Direction only to choose which already-heard pressure and earned transformation the Return revisits. It cannot introduce a new central conflict, test, loss, revelation, or journey.',
-          '- The current answers supply a present-day echo of that familiar pressure, the changed response, the honest residual emotion or temptation, and an optional direction that continues.',
+          '- The current Journey Direction describes the desired destination, differentiation, or unresolved flaw. It cannot replace the audience canon with a new scene, thesis, conflict, test, loss, revelation, or journey.',
+          '- The current answers supply present-day evidence, the honest unfinished element, and an optional direction that continues.',
           '- Onboarding and background may clarify the audience or voice, but they cannot introduce another life chapter, lesson, offer, or reason the speaker should be followed.',
           '- If a previous final script exists, ignore its raw journal answers. If it does not exist, use that chapter\'s answers only as a fallback.',
-          '- Select one concrete callback and one earned transformation. The callback must identify a pressure, situation, or behavior the audience actually heard, not a generic theme such as permission, confidence, visibility, or belonging.',
-          '- The present scene must echo that earlier pressure and show a different response. Do not summarize, reconcile, or mention every earlier chapter.'
+          '- Bring the earlier identity, decisive shifts, fall, elixir, returned self, and unfinished flaw together as one connected transformation rather than a present-day scene or episode-by-episode recap.',
+          '- Make the full journey understandable to a cold viewer and recognizable to someone who watched the earlier videos.'
         ]
       : [
           '- The current Journey Direction and current-video answers are the authoritative brief for this video.',
@@ -112,7 +112,9 @@
         '',
         'CURRENT VIDEO ' + video + ' JOURNEY DIRECTION (private planning context only):',
         journeyDirection,
-        'Use this as the intended subject and place in the seven-part journey. Translate its essential premise once near the beginning of MEAT without quoting it, recapping prior videos, or revealing the reserved Conclusion. Do not pull in future journey directions.'
+        video === 7
+          ? 'Use this to clarify the desired return destination, differentiation, unfinished flaw, or horizon. Do not translate it as a new local premise or let it replace the six final scripts. Do not pull in future journey directions.'
+          : 'Use this as the intended subject and place in the seven-part journey. Translate its essential premise once near the beginning of MEAT without quoting it, recapping prior videos, or revealing the reserved Conclusion. Do not pull in future journey directions.'
       );
     }
     if (video === 1) {

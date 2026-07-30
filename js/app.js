@@ -2003,13 +2003,13 @@ const INTRO_COPY = {
   7: {
     L1: {
       label: 'Video 7 of 7: What I Learned',
-      title: 'Show Who You Are Now',
-      body: "Bring the larger story home through one present-day action the earlier you would recognize as changed. Keep one honest unfinished element visible, then leave the audience with a perspective and direction worth following.",
+      title: 'Bring The Whole Journey Home',
+      body: "The app will connect who you were, what challenged you, what the fall cost, what you eventually carried back, and who you are now. Your current example and unfinished flaw keep the return honest while the full journey gives the audience a reason to stay.",
       result: 'Loyalty',
       framework: [
-        {name:'Hook',               trigger:'Full Circle Loop'},
-        {name:'Present Proof',       trigger:'Observable Change'},
-        {name:'One Callback',       trigger:'Identity Contrast'},
+        {name:'The Earlier Self',    trigger:'Full Circle Recognition'},
+        {name:'The Connected Journey',trigger:'Narrative Satisfaction'},
+        {name:'What You Carry Back',trigger:'Reciprocity'},
         {name:'What Remains',       trigger:'Honest Reflection'},
         {name:'The New Chapter',    trigger:'Unfolding Horizon'}
       ],
@@ -2017,14 +2017,15 @@ const INTRO_COPY = {
     },
     L2: {
       label: 'Video 7 of 7: What I Carry Forward',
-      title: 'Show What You Own Now',
-      body: "Bring the larger expert story home through one present-day action that shows public ownership. Keep one honest unfinished element visible, then let the journey itself earn the viewer's trust and the continuing relationship.",
+      title: 'Return With What Only You Can Carry',
+      body: "The app will connect the ordinary person you were, the beliefs that changed, the trial, the fall, and the larger truth you now carry. Your current proof and unresolved flaw keep the authority human while the full journey shows what makes your perspective worth following.",
       result: 'Loyalty',
       framework: [
-        {name:'Hook',                      trigger:'Full Circle Loop'},
-        {name:'What Changed',              trigger:'New Normal Declaration'},
-        {name:'What Remains',              trigger:'Honest Authority'},
-        {name:'What Continues',            trigger:'Unfolding Horizon'}
+        {name:'The Earlier Expert',         trigger:'Full Circle Recognition'},
+        {name:'The Connected Journey',      trigger:'Narrative Satisfaction'},
+        {name:'Your Earned Difference',     trigger:'Authority Through Experience'},
+        {name:'What Remains',               trigger:'Honest Authority'},
+        {name:'What Continues',             trigger:'Unfolding Horizon'}
       ],
       triggers: ['Full Circle Loop','Narrative Satisfaction','New Normal Declaration','Reciprocity','Bridge to Forever','Authority Affirmation','Unfolding Horizon']
     }
@@ -2822,7 +2823,7 @@ const level1Videos = [
   },
   {
     title:"What I Learned",
-    note:"Give us the present-day evidence and the honest unfinished part. The app already knows the journey you told and will bring it home without asking you to summarize it.",
+    note:"Give us the present-day evidence and the honest unfinished part. The app will connect the journey you already told, extract what you carry back, and bring the full story home without asking you to summarize it.",
     prompts:[
       {label:"What do you actually do differently now than the person at the beginning of this story?",hint:"Name one observable choice, behavior, boundary, conversation, habit, or way of showing up. You do not need to recap what taught you.",key:"v6p1",ph:"Describe one current action that shows what has genuinely changed."},
       {label:"What still feels unfinished, and what do you want to keep doing next?",hint:"Be honest about what has not been solved, then name a direction you want to keep exploring, practicing, building, or speaking about. It does not need to be a plan or pitch.",key:"v6p2",ph:"Describe the unfinished part and the direction you want to continue."}
@@ -2900,7 +2901,7 @@ const level2Videos = [
   },
   {
     title:"What I Carry Forward",
-    note:"Give us the present-day evidence and the honest unfinished part. The app already knows the expert journey you told and will bring it home without asking you to summarize it or explain why people should follow.",
+    note:"Give us the present-day evidence and the honest unfinished part. The app will connect the expert journey you already told, reveal what distinguishes your perspective, and bring the full story home without asking you to summarize it or explain why people should follow.",
     prompts:[
       {label:"What do you actually do differently now than the person at the beginning of this story?",hint:"Name one observable change in how you decide, communicate, practice, teach, create, lead, or allow yourself to be seen. You do not need to recap what taught you.",key:"v6p1",ph:"Describe one current action that shows what has genuinely changed in your work or public voice."},
       {label:"What still feels unfinished, and what do you want to keep doing next?",hint:"Be honest about the skill, support, courage, structure, experience, or tension that remains, then name a direction you want to keep exploring, practicing, building, or speaking about. It does not need to be a plan or pitch.",key:"v6p2",ph:"Describe the unfinished part and the direction you want to continue."}
@@ -3659,7 +3660,7 @@ const VIDEO_RATIONALE = {
     'WHERE WE ARE: Your first realization is meeting real life now. Show the choices you changed, the situations that tested them, the partial wins that built confidence, and the limit you could not see clearly yet.',
     'WHERE WE ARE: This is the lowest point in the larger story you have been telling: the failure or loss that felt capable of ruining your life, identity, future, or reason to continue. Your own choice or blind spot helped cause it, and recovery did not feel guaranteed. Stay inside what you believed then. The next video deals with the way back and what you eventually understood.',
     'WHERE WE ARE: The difficult chapter has finally produced a hard-won realization. Show how the aftermath made it clear and what genuinely changed because of it. It may connect to the first realization, but that relationship is optional.',
-    'WHERE WE ARE: Bring the larger story home through one present-day action, one callback, and one earned change. Keep the unfinished human part visible and let the journey itself supply the gift and reason to stay connected.'
+    'WHERE WE ARE: Bring the complete journey home. Let people understand who you were, what challenged you, what the fall cost, what you carried back, and who you are now. The unfinished human part keeps the return honest while the larger truth becomes a gift to someone who recognizes the earlier struggle.'
   ],
   2: [
     'WHERE WE ARE: You are making the declaration and letting people see the gap between what you know privately and what you have been willing to own publicly. The audience needs quiet confidence, honest hesitation, and a reason to believe you will finish.',
@@ -3668,7 +3669,7 @@ const VIDEO_RATIONALE = {
     'WHERE WE ARE: You are trying to live by the first realization before you know whether it will work. Show why the old way still looked tempting, what you chose while the result was uncertain, and the first meaningful sign that made continuing feel possible. This is a recoverable trial, not the devastating fall.',
     'WHERE WE ARE: This is the one-way door in the larger work, craft, calling, or expertise story. Something real was lost, broken, ended, or seemed impossible to restore. Your own decision or blind spot helped cause it, attempted recovery failed, and you could not see a way back. This is different in kind from the recoverable pressure in the previous video.',
     'WHERE WE ARE: The difficult experience has produced a hard-won professional truth. Show how the aftermath earned it, what changed in your work, and what useful lens another person can carry away. It may connect to the first realization, but that relationship is optional.',
-    'WHERE WE ARE: Bring the larger expert story home through one present-day action that shows public ownership, one callback, and one earned change. Keep the unfinished human part visible and let the journey itself earn the continuing relationship.'
+    'WHERE WE ARE: Bring the complete expert journey home. Let people understand the ordinary person and private knowledge, the realizations and trial, the fall, the larger truth, and the guide who returned. Show what this path uniquely lets you carry while keeping the unfinished human part visible.'
   ]
 };
 

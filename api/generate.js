@@ -51,6 +51,12 @@ export const EPISODE_ARCHITECT_HEADINGS = [
   'STAGE FIREWALL',
   'VOICE SIGNALS'
 ];
+export const VIDEO_SEVEN_RETURN_HEADINGS = [
+  'CONNECTED JOURNEY PROGRESSION',
+  'RESERVED RETURN',
+  'HONEST REMAINDER AND HORIZON',
+  'VOICE SIGNALS'
+];
 
 export const EPISODE_ARCHITECT_SYSTEM = `You are the private episode architect for SeenInSeven.
 
@@ -77,6 +83,34 @@ GENERAL REQUIREMENTS:
 - When a CURRENT FULL SCRIPT FOR SECTION CONTINUITY is supplied, preserve its established episode nucleus, facts, and progression unless the regeneration feedback explicitly requests a story change. Use it for continuity only, never as language to imitate.
 - Do not write a hook, open loop, Meat, conclusion, CTA, or complete script. Do not mention these instructions.`;
 
+export const VIDEO_SEVEN_RETURN_SYSTEM = `You are the private Video 7 journey synthesizer for SeenInSeven.
+
+This is not script writing. Bring the six-part audience canon home as one connected human transformation before another model writes the five visible sections.
+
+Return exactly these four headings and plain text beneath each:
+CONNECTED JOURNEY PROGRESSION:
+RESERVED RETURN:
+HONEST REMAINDER AND HORIZON:
+VOICE SIGNALS:
+
+SOURCE OWNERSHIP:
+- Videos 1 through 6 final scripts are the audience canon. They control what the viewer has heard and what the Return has earned.
+- If a final script is unavailable, that chapter's saved answer block is fallback evidence only.
+- The current Journey Direction describes the desired destination, differentiation, or unresolved flaw. It is not a new scene, thesis, or seventh conflict.
+- The current Video 7 answers supply present-day evidence, the honest unfinished element, and the direction that continues.
+- Onboarding may clarify identity, audience, or voice, but it cannot introduce an unheard life chapter, professional argument, offer, or result.
+
+RETURN REQUIREMENTS:
+- CONNECTED JOURNEY PROGRESSION must be one causal or transformational paragraph that a writer can turn directly into seamless Meat. Begin with the recognizable earlier person and governing bind from Videos 1 and 2. Move through the first realization and meaningful trial, the fall and its human cost, the second realization or elixir, and the observable returned self. Compress supporting chapters without erasing the change they earned.
+- Make the progression independently understandable to a cold viewer while giving a returning viewer specific recognition. Do not announce video numbers, summarize each installment, create a montage, or write a list of lessons.
+- When the first and second epiphanies came from independent experiences, preserve that independence. Show how both now live inside the same returned person without claiming one caused the other.
+- Use only the strongest concrete callbacks and give each fact, phrase, number, duration, and metaphor one job. Advance after that job is complete rather than repeating it with synonyms.
+- RESERVED RETURN states the integrated lesson, earned identity, and peer-to-peer gift that the visible Conclusion will reveal. For Level 1, center what the personal journey lets the speaker carry back. For Level 2, also name the specific perspective, practice, or way of seeing that genuinely distinguishes this speaker in their field and makes them capable of guiding the person they once resembled. Earn the difference from the canon rather than asserting generic superiority.
+- HONEST REMAINDER AND HORIZON names the unresolved flaw, fear, habit, limitation, or need that keeps the speaker human, followed by the real direction that makes an ongoing relationship meaningful. It cannot become a new central conflict, experiment, offer, rescue request, or future episode promise.
+- Telling the story across seven videos may help the speaker notice, connect, or articulate the journey. Do not claim that filming seven videos created years of transformation.
+- VOICE SIGNALS preserves the speaker's actual vocabulary, rhythm, humor, force, roughness, and emotionally charged phrasing without copying full sentences from earlier scripts.
+- Do not write a Hook, Open Loop, Meat, Conclusion, CTA, complete script, episode recap, market manifesto, positioning argument, or sales pitch.`;
+
 export const EPISODE_STAGE_SCHEMAS = {
   1: `STAGE 1, DECLARATION:
 Choose one commitment contradiction. The speaker wants to become visible or reach a particular person, while one specific blocker has made silence, delay, or hiding feel protective. Progress from the exact blocker through what it has postponed or protected, then why remaining quiet became unacceptable now. Reserve a conclusion that reclassifies the blocker without claiming transformation. Withhold the origin story, first epiphany, method, offer, and proof that the challenge succeeds.`,
@@ -91,7 +125,7 @@ Choose one ordeal nucleus and one causal descent. Establish what had become real
   6: `STAGE 6, SECOND EPIPHANY OR ELIXIR:
 Choose one evidence-to-elixir journey. Establish one common-sense model, follow one source experience or repeated pattern that refuses to fit it, include one observable practice or decision proving the speaker lives differently, and end with the contradiction unresolved. Reserve one significant counterintuitive truth and one useful new possibility. For Level 1, the truth must be earned through the Video 5 ordeal and aftermath. For Level 2, the source may be Video 5, Video 3, another experience, or a broader pattern; no earlier chapter is required to cause it. Withhold a complete method, commercial philosophy, offer, and final return.`,
   7: `STAGE 7, RETURN:
-First select one concrete pressure, situation, or behavior the audience actually heard in Videos 1 through 6. Create a present-day echo of that familiar circumstance, not a new conflict, public test, dramatic loss, future trial, unresolved external outcome, thesis, professional argument, retrospective summary, or list of beliefs. Let the familiar pressure trigger one specific callback; let the callback show how the earlier speaker responded; let the present speaker choose differently under the echoed pressure; let that choice produce one human consequence; and let one residual emotion, temptation, fear, or habit remain without controlling the decision. STORY PROGRESSION must remain one causal paragraph in which removing or reordering a beat breaks the sequence. Reserve one already-earned truth as the peer-to-peer gift and one open relational direction. For Level 1, center human identity. For Level 2, make public ownership of expertise observable through behavior while treating the professional subject as evidence inside the human Return, never as superiority, positioning, market analysis, or a manifesto. Withhold episode-by-episode recap, another revelation, perfection, an offer, manufactured urgency, and any Video 8 promise.`
+Bring the six-chapter audience canon home as one connected transformation. Let a cold viewer understand the earlier identity and refusal, first realization and trial, fall and cost, second realization, and returned self without hearing an episode-by-episode recap. Reserve the integrated lesson, earned difference, peer-to-peer gift, honest remainder, and relational horizon. For Level 1, center human identity. For Level 2, make the speaker's earned professional difference and ability to guide visible without turning the Return into superiority, positioning, a market manifesto, or a pitch. Withhold a new trial, revelation, unresolved external experiment, perfection, offer, manufactured urgency, and any Video 8 promise.`
 };
 
 export function episodeArchitectSystem(video) {
@@ -473,17 +507,21 @@ export function extractCurrentJourneyDirection(userContext, video) {
   const start = source.lastIndexOf(marker);
   if (start === -1) return '';
   const remainder = source.slice(start + marker.length).trimStart();
-  const instructionEnd = remainder.indexOf('\nUse this as the intended subject and place in the seven-part journey.');
+  const instructionEnds = [
+    remainder.indexOf('\nUse this as the intended subject and place in the seven-part journey.'),
+    remainder.indexOf('\nUse this to clarify the desired return destination, differentiation, unfinished flaw, or horizon.')
+  ].filter(index => index >= 0);
   const promptEnd = remainder.search(new RegExp(
     '\\nCURRENT VIDEO ' + number + ' (?:PROMPTS:|JOURNAL ENTRY \\(easy mode; use this to infer all story beats\\):)'
   ));
-  const ends = [instructionEnd, promptEnd].filter(index => index >= 0);
+  const ends = [...instructionEnds, promptEnd].filter(index => index >= 0);
   const end = ends.length ? Math.min(...ends) : remainder.length;
   return remainder.slice(0, end).trim();
 }
 
 export function preserveViewerPremiseSource(originalContext, preparedContext, video) {
   const prepared = String(preparedContext || '').trim();
+  if (Number(video) === 7) return prepared;
   const directionMarker = 'CURRENT VIDEO ' + Number(video) + ' JOURNEY DIRECTION (private planning context only):';
   if (!prepared ||
       prepared.includes('CURRENT VIDEO VIEWER PREMISE SOURCE:') ||
@@ -511,6 +549,21 @@ function extractOnboardingBlock(userContext) {
   return remainder.slice(0, end === -1 ? undefined : end).trim();
 }
 
+function extractPreviousChapterFallback(userContext, video) {
+  const source = String(userContext || '');
+  const number = Number(video);
+  const markers = [
+    'VIDEO ' + number + ' PROMPTS:',
+    'VIDEO ' + number + ' JOURNAL ENTRY (easy mode):'
+  ];
+  const starts = markers.map(marker => source.indexOf(marker)).filter(index => index >= 0);
+  if (!starts.length) return '';
+  const start = Math.min(...starts);
+  const remainder = source.slice(start);
+  const end = remainder.search(/\n(?:VIDEO \d+ (?:PROMPTS:|JOURNAL ENTRY \(easy mode\):|FINAL SCRIPT(?: \([^\n]*\))?:)|CURRENT VIDEO \d+ JOURNEY DIRECTION \(private planning context only\):|CURRENT VIDEO \d+ PROMPTS:|CURRENT VIDEO \d+ JOURNAL ENTRY \(easy mode; use this to infer all story beats\):)/);
+  return remainder.slice(0, end === -1 ? undefined : end).trim();
+}
+
 export function buildEpisodeArchitectSource(userContext, level, video, existingScript = '') {
   const source = String(userContext || '');
   const number = Number(video);
@@ -533,8 +586,91 @@ export function buildEpisodeArchitectSource(userContext, level, video, existingS
   ].filter(Boolean).join('\n\n');
 }
 
+export function buildVideoSevenReturnSource(userContext, level, existingScript = '') {
+  const source = String(userContext || '');
+  const canon = [];
+  for (let number = 1; number <= 6; number++) {
+    const script = extractFinalScript(source, number);
+    if (script) {
+      canon.push('VIDEO ' + number + ' FINAL SCRIPT:\n' + script);
+      continue;
+    }
+    const fallback = extractPreviousChapterFallback(source, number);
+    if (fallback) canon.push('VIDEO ' + number + ' FALLBACK ANSWERS:\n' + fallback);
+  }
+  return [
+    'LEVEL: ' + Number(level),
+    'VIDEO: 7',
+    '',
+    extractOnboardingBlock(source),
+    canon.length ? 'AUDIENCE CANON:\n' + canon.join('\n\n') : '',
+    'CURRENT RETURN DIRECTION:\n' + (extractCurrentJourneyDirection(source, 7) || '(not supplied)'),
+    'CURRENT VIDEO 7 ANSWERS:\n' + extractCurrentPromptBlock(source, 7),
+    String(existingScript || '').trim()
+      ? 'CURRENT FULL SCRIPT FOR SECTION CONTINUITY ONLY:\n' + String(existingScript).trim()
+      : ''
+  ].filter(Boolean).join('\n\n');
+}
+
+export async function prepareVideoSevenReturnMaterial(userContext, level, existingScript = '') {
+  const headings = VIDEO_SEVEN_RETURN_HEADINGS;
+  const source = buildVideoSevenReturnSource(userContext, level, existingScript);
+  let malformed = '';
+  let packet = '';
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const request = [
+      source,
+      attempt
+        ? [
+            '',
+            'FORMAT CORRECTION:',
+            'Return every required heading below exactly once and in this order. Do not add, remove, combine, or rename headings.',
+            headings.map(heading => heading + ':').join('\n'),
+            '',
+            'MALFORMED PACKET TO CORRECT:',
+            malformed
+          ].join('\n')
+        : ''
+    ].filter(Boolean).join('\n');
+    const routed = await callModel(
+      VIDEO_SEVEN_RETURN_SYSTEM,
+      request,
+      attempt ? 0.05 : 0.15,
+      1800
+    );
+    const candidate = cleanPacketOutput(routed);
+    if (candidate && hasRouterHeadings(candidate, headings)) {
+      packet = candidate;
+      break;
+    }
+    malformed = candidate;
+  }
+
+  if (!packet) {
+    throw new Error('The final journey could not be synthesized cleanly. Please try again.');
+  }
+
+  return [
+    'Generate Video 7 script.',
+    '',
+    'LEVEL: ' + Number(level),
+    'VIDEO: 7',
+    '',
+    'CURATED VIDEO 7 RETURN:',
+    packet,
+    '',
+    'This synthesis is the controlling story plan. Do not restore raw scripts, rebuild the Return around one current scene, or turn the packet headings into separate spoken paragraphs.',
+    '',
+    'FINAL VIDEO 7 WRITING CONTRACT: Design the Conclusion destination first from RESERVED RETURN together with HONEST REMAINDER AND HORIZON. Build MEAT only from CONNECTED JOURNEY PROGRESSION as one seamless retrospective story that a cold viewer can follow and a returning viewer can recognize. Apply sentence-level Hook-and-Eye throughout MEAT so each sentence arises from the one before it through cause, consequence, time, escalation, contradiction, recognition, or changed action. Stop before stating the reserved integrated lesson or viewer gift. Build OPEN LOOP afterward from the exact missing meaning the Conclusion will reveal, without summarizing the journey or disclosing the answer. Supply a provisional HOOK only for formatting; the global Hook Studio replaces it after the complete story is settled. Let the active Video 7 blueprint control the final relational CTA.'
+  ].join('\n');
+}
+
 export async function prepareEpisodeArchitectureMaterial(userContext, level, video, existingScript = '') {
   const number = Number(video);
+  if (number === 7) {
+    return prepareVideoSevenReturnMaterial(userContext, level, existingScript);
+  }
   const headings = EPISODE_ARCHITECT_HEADINGS;
   const source = buildEpisodeArchitectSource(userContext, level, number, existingScript);
   let malformed = '';
@@ -577,9 +713,6 @@ export async function prepareEpisodeArchitectureMaterial(userContext, level, vid
     /^\d+\.\s+Opening declaration \(read-only\):\s*(.+)$/mi
   );
   const declaration = declarationMatch ? declarationMatch[1].trim() : '';
-  const videoSevenComposition = number === 7
-    ? 'VIDEO 7 CAUSAL RETURN CONTRACT: Treat STORY PROGRESSION as one present-day echo of a concrete pressure, situation, or behavior from the audience canon. The familiar pressure triggers the callback, the callback reveals the earlier response, the present speaker chooses differently, that choice creates a human consequence, and a residual emotion or temptation remains without controlling the decision. Do not create a new trial, loss, revelation, external outcome to monitor, or professional argument. Do not draft these as adjacent Return ingredients, beliefs, lessons, industry claims, or declarations. If a sentence could move elsewhere in the Meat without breaking this sequence, rewrite or omit it. The already-earned peer gift and continuing relational direction remain reserved for the Conclusion.'
-    : '';
   return [
     'Generate Video ' + number + ' script.',
     '',
@@ -600,8 +733,7 @@ export async function prepareEpisodeArchitectureMaterial(userContext, level, vid
     '',
     'FINAL WRITING CONTRACT: Reserve RESERVED CONCLUSION before drafting. Build MEAT as one seamless story through STORY PROGRESSION, using HUMAN CONTRADICTION as emotional pressure rather than a second topic. Stop at the boundary named by STAGE FIREWALL. Design OPEN LOOP afterward from the exact unfinished relationship the reserved conclusion will transform, without revealing the answer or explaining the Hook. Supply a provisional HOOK only for formatting; the global Hook Studio replaces it after the complete story is settled. Let the active video blueprint control the final section jobs and CTA.',
     '',
-    'MEAT COMPOSITION CONTRACT: ' + MEAT_COMPOSITION_CONTRACT,
-    videoSevenComposition ? '\n' + videoSevenComposition : ''
+    'MEAT COMPOSITION CONTRACT: ' + MEAT_COMPOSITION_CONTRACT
   ].filter(Boolean).join('\n');
 }
 
@@ -812,6 +944,15 @@ export async function prepareLevelTwoVideoFiveMaterial(userContext) {
 
 export function regenerationMessage(input) {
   if (input.mode === 'full-regeneration') {
+    if (Number(input.video) === 7) {
+      return `${input.userContext}
+
+FEEDBACK FOR THIS REGENERATION: ${input.feedback}
+
+This is a FRESH FULL REGENERATION. The previous script has been intentionally withheld. Rebuild Video 7, Level ${input.level} from the curated Video 7 Return and active blueprint. Do not restore raw source material, imitate an earlier draft, reduce the journey to one present-day scene, or convert the Return into an episode recap.
+
+Preserve CONNECTED JOURNEY PROGRESSION, RESERVED RETURN, HONEST REMAINDER AND HORIZON, and VOICE SIGNALS while creating completely new visible language. Apply sentence-level Hook-and-Eye only inside [MEAT]. ${MEAT_COMPOSITION_CONTRACT} Build [OPEN LOOP] independently after [MEAT] and [CONCLUSION] are settled. Supply a provisional [HOOK] for the required format; the global Hook Studio will replace it after the story is finished. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
+    }
     return `${input.userContext}
 
 FEEDBACK FOR THIS REGENERATION: ${input.feedback}
@@ -824,7 +965,14 @@ Use the same focused composition process as first-time generation. Preserve EPIS
 }
 
 function sectionMessage(input) {
-  const sectionInstruction = input.section === 'MEAT'
+  const isVideoSeven = Number(input.video) === 7;
+  const sectionInstruction = isVideoSeven && input.section === 'MEAT'
+    ? '\n\nVIDEO 7 MEAT REGENERATION REQUIREMENT: Preserve CONNECTED JOURNEY PROGRESSION from the curated Return and rebuild it as one seamless retrospective journey a cold viewer can understand. Apply the Meat-only Hook-and-Eye contract. Do not reduce the Return to one present-day scene, restore raw source scripts, announce episode numbers, summarize each installment, or reveal RESERVED RETURN early.'
+    : isVideoSeven && input.section === 'CONCLUSION'
+      ? '\n\nVIDEO 7 CONCLUSION REGENERATION REQUIREMENT: Preserve RESERVED RETURN together with HONEST REMAINDER AND HORIZON. Deliver the integrated lesson, earned identity or professional difference, peer-to-peer gift, and open relational direction without adding another revelation, trial, manifesto, pitch, or offer.'
+      : isVideoSeven && input.section === 'CTA'
+        ? '\n\nVIDEO 7 CTA REGENERATION REQUIREMENT: Continue from the completed Return into an ongoing relationship. Acknowledge Video 7 of 7, ask for the follow because this person and perspective are worth staying connected to, and invite late viewers back to Video 1 without implying an eighth installment.'
+    : input.section === 'MEAT'
     ? '\n\nMEAT REGENERATION REQUIREMENT: Preserve EPISODE NUCLEUS, HUMAN CONTRADICTION, STORY PROGRESSION, and STAGE FIREWALL from the curated episode architecture. ' + MEAT_COMPOSITION_CONTRACT + ' Rebuild the standalone viewer premise near the beginning from the current video Journey Direction or Viewer Premise Source. A cold viewer must understand the specific belief, situation, action, relationship, or conflict before the Meat relies on it. Do not restore omitted subplots, quote the Overview, recap prior videos, reveal the reserved Conclusion, or assign this context job to the Hook or Open Loop.'
     : input.section === 'CONCLUSION'
       ? '\n\nCONCLUSION REGENERATION REQUIREMENT: Preserve RESERVED CONCLUSION and STAGE FIREWALL from the curated episode architecture. Create a fresh supported turn without resolving a later chapter or restoring omitted source material.'
