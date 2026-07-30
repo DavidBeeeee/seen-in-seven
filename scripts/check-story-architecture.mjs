@@ -117,6 +117,8 @@ for (const [level, rules] of [[1, levelOneVideoSeven], [2, levelTwoVideoSeven]])
     'FIRST SHIFT from Videos 3-4',
     'governing meaning created by the Meat',
     'brief homecoming statement, not another Return',
+    'Write entirely in I/me/my without you/your language',
+    'reserve direct viewer recognition for the CTA',
     'Carry the relational horizon here',
     'unfinished public test may add supporting tension'
   ].forEach(requirement => {
@@ -196,6 +198,7 @@ assert(
     EPISODE_STAGE_SCHEMAS[7].includes('actual first realization and trial from Videos 3-4') &&
     EPISODE_STAGE_SCHEMAS[7].includes('MEAT owns the complete Return') &&
     EPISODE_STAGE_SCHEMAS[7].includes('CONCLUSION is only a brief one-to-three-sentence homecoming statement') &&
+    EPISODE_STAGE_SCHEMAS[7].includes('written entirely in I/me/my with no second-person you/your language') &&
     EPISODE_STAGE_SCHEMAS[7].includes('CTA owns the relational horizon') &&
     generationSource.includes('CURATED VIDEO 7 RETURN:') &&
     generationSource.includes('Build MEAT only from EARLIER SELF, FIRST SHIFT, FALL, and RETURN') &&
@@ -240,6 +243,7 @@ assert(
   'Every anchor is lived evidence',
   'Do not place omitted canon facts inside RESERVED RETURN',
   'RESERVED RETURN states only the one governing meaning',
+  "speaker's I/me/my perspective",
   'one governing meaning created by the four anchors',
   'governing meaning returns as recognition shared between equals',
   'HONEST REMAINDER AND HORIZON names the unresolved flaw',
@@ -372,6 +376,7 @@ assert(
   generationSource.includes('VIDEO 7 MEAT REGENERATION REQUIREMENT: Treat EARLIER SELF, FIRST SHIFT, FALL, and RETURN as the complete evidence budget') &&
     generationSource.includes('Develop those four anchors into complete spoken thoughts') &&
     generationSource.includes('VIDEO 7 CONCLUSION REGENERATION REQUIREMENT: Use RESERVED RETURN alone') &&
+    generationSource.includes('write entirely in I/me/my without you/your language') &&
     generationSource.includes('Do not replay an anchor event') &&
     generationSource.includes('MEAT REGENERATION REQUIREMENT: Preserve EPISODE NUCLEUS') &&
     generationSource.includes('Rebuild the standalone viewer premise near the beginning of [MEAT]') &&
