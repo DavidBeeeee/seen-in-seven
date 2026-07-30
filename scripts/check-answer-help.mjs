@@ -119,7 +119,7 @@ const assignmentChecks = {
     'Road of Trials',
     'genuine ordeal',
     'larger truth earned through the Video 5 ordeal',
-    'Develop the Return'
+    'present-day evidence the Return still needs'
   ],
   2: [
     'remaining quiet stop feeling acceptable now',
@@ -128,7 +128,7 @@ const assignmentChecks = {
     'one Road of Trials story',
     'apparently irreversible collapse',
     'more significant counterintuitive way',
-    'Develop the Return'
+    'present-day evidence the Return still needs'
   ]
 };
 for (const level of [1, 2]) {
@@ -178,7 +178,7 @@ if (!appSource.includes("${count} / 60 words") ||
   throw new Error('Journey direction editing does not match the new 60-word guidance.');
 }
 
-if (!html.includes('id="answer-help-overlay"') || !html.includes('/js/answer-help.js?v=answer-help-4')) {
+if (!html.includes('id="answer-help-overlay"') || !html.includes('/js/answer-help.js?v=video7-return-1')) {
   throw new Error('Answer Help modal or shared script include is missing.');
 }
 if (!html.includes('/js/journey-map.js?v=journey-map-3') || !/\/js\/app\.js\?v=[^"]+/.test(html)) {

@@ -2,6 +2,7 @@ import { readFileSync } from 'node:fs';
 import { runInNewContext } from 'node:vm';
 import {
   buildSystemPrompt,
+  buildUserMessage,
   extractTaggedSection,
   hasLevelTwoVideoFourHindsight,
   publishedPrompt,
@@ -208,8 +209,8 @@ assert(
   );
 });
 assert(
-  appHtml.includes('/js/script-prompt-engine.js?v=standalone-context-1') &&
-    testerHtml.includes('/js/script-prompt-engine.js?v=standalone-context-1'),
+  appHtml.includes('/js/script-prompt-engine.js?v=video7-return-1') &&
+    testerHtml.includes('/js/script-prompt-engine.js?v=video7-return-1'),
   'The live app or admin tester can retain the pre-premise browser prompt engine from cache.'
 );
 assert(
@@ -434,6 +435,50 @@ assert(
   levelOneVideos[5].legacyPrompts.some(prompt => prompt.key === 'v5p2') &&
     levelTwoVideos[5].legacyPrompts.some(prompt => prompt.key === 'v5p2'),
   'Existing Video 6 answers would be discarded instead of retained as optional legacy context.'
+);
+assert(levelOneVideos[6].prompts.length === 2, 'Level 1 Video 7 should ask two extended journal questions.');
+assert(levelTwoVideos[6].prompts.length === 2, 'Level 2 Video 7 should ask two extended journal questions.');
+assert(
+  levelOneVideos[6].prompts.map(prompt => prompt.key).join('|') === 'v6p1|v6p2' &&
+    levelTwoVideos[6].prompts.map(prompt => prompt.key).join('|') === 'v6p1|v6p2',
+  'Video 7 should preserve the existing present-change and unfinished answer keys.'
+);
+assert(
+  !JSON.stringify([levelOneVideos[6], levelTwoVideos[6]]).includes('What did telling') &&
+    !JSON.stringify([levelOneVideos[6], levelTwoVideos[6]]).includes('why would the right person want to keep following'),
+  'Video 7 still asks the user to synthesize the journey or justify the follow.'
+);
+
+const videoSevenMessage = buildUserMessage({
+  level: 2,
+  video: 7,
+  onboardingLines: ['- Name: Return Tester'],
+  previousVideos: [{
+    video: 1,
+    mode: 'extended',
+    answers: [{ label: 'RAW ANSWER SENTINEL', value: 'DISCARDED DETAIL SENTINEL' }],
+    script: 'FINAL SCRIPT SENTINEL'
+  }, {
+    video: 2,
+    mode: 'easy',
+    easyAnswer: 'FALLBACK ANSWER SENTINEL',
+    answers: [],
+    script: ''
+  }],
+  currentMode: 'extended',
+  currentEasyAnswer: '',
+  currentAnswers: [{ label: 'PRESENT CHANGE', value: 'CURRENT RETURN SENTINEL' }],
+  currentJourneyDirection: 'RETURN DIRECTION SENTINEL'
+});
+assert(videoSevenMessage.includes('FINAL SCRIPT SENTINEL'), 'Video 7 lost a prior final script.');
+assert(!videoSevenMessage.includes('RAW ANSWER SENTINEL') && !videoSevenMessage.includes('DISCARDED DETAIL SENTINEL'), 'Video 7 still receives raw answers behind an existing final script.');
+assert(videoSevenMessage.includes('FALLBACK ANSWER SENTINEL'), 'Video 7 lost the raw-answer fallback for a chapter without a final script.');
+assert(videoSevenMessage.includes('CURRENT RETURN SENTINEL') && videoSevenMessage.includes('RETURN DIRECTION SENTINEL'), 'Video 7 lost its current return evidence or Journey Direction.');
+assert(
+  videoSevenMessage.includes('final scripts are the audience canon') &&
+    engineSource.includes('final scripts are the audience canon') &&
+    browserEngineSource.includes('final scripts are the audience canon'),
+  'Production and browser prompt builders do not share the Video 7 audience-canon rule.'
 );
 
 console.log('Story architecture checks passed for all 14 video paths and both question catalogs.');

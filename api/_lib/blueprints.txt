@@ -875,46 +875,19 @@ Framework: Modified Hero's Journey
 Audience feels: Loyalty + "I want to keep following this person"
 Speaker feels: Ownership + Pride
 
-AUDIENCE JOURNEY:
-Before: "I have watched this person move through something."
-After: "I want to stay in their world because the seven videos opened a larger story."
-Open question: "Where does this person go now?"
-Social impulse: Follow because the story became an ongoing relationship.
+RETURN CONTRACT:
+The audience canon is the six final scripts, not the unused journal archive. Choose one present-day action that proves change, one specific callback that makes the contrast felt, and one earned transformation that explains the difference. Earlier chapters may support that transformation privately, but the spoken script must not mention, summarize, or reconcile each one. Include one honest unfinished element without erasing the change. Give one peer-to-peer gift to the person who recognizes the earlier struggle, then leave one real direction open so the relationship can continue.
 
-THE 7 RESOLUTION BEATS:
-1. Attention Interrupt (Hook) — This sits outside the narrative beats and receives no required story material. The global Hook Studio writes it last from the speaker's full context solely to interrupt attention without performing another section's job.
-2. Full Circle Loop — Reach back to the earlier person and worldview after the hook. Use a specific callback from the previous scripts so the audience feels the larger life story closing.
-3. Narrative Satisfaction — Who the speaker was before both realizations versus who they are now. Honest accounting, not a claim that the seven videos caused the whole change.
-4. New Normal Declaration — Name what is genuinely different in thought, choice, response, or daily life. Keep it specific and grounded.
-5. Honest Remainder — Acknowledge what from the earlier self remains present, useful, complicated, or unfinished. Return does not mean perfection.
-6. Reciprocity (The Lesson / The Gift) — Offer the larger truth earned through both epiphanies and the ordeal. Peer to peer, not teacher to student.
-7. Challenge Reflection — Let the speaker name what telling this story across seven videos helped them notice, connect, or finally put into words. The challenge reveals or articulates the arc; it does not manufacture their entire transformation.
-8. Bridge to Forever — The challenge becomes an ongoing relationship. Not "subscribe" — "this opened something that isn't going to close."
-9. Unfolding Horizon — Ends with an opening, not a conclusion. The story continues. A new chapter is beginning.
+The user supplies only present-day proof, the unfinished element, and an optional direction. Infer the callback, transformation, viewer gift, and reason to remain connected from the audience canon, Journey Direction, and onboarding. Do not ask the speaker to explain what seven videos clarified or why they deserve followers.
 
-TONE: Warm, reflective, the slowest pace of any video. Callbacks to the earlier life story are specific. Identity contrast is the emotional core. The lesson is a gift, not a lecture. Forward look is open-ended and honest. Last line feels like a door opening.
+SECTION JOBS:
+HOOK guidance: Apply the global Hook Studio after all other sections are complete. This video assigns no required return beat, answer, story fact, or journey beat to the Hook. It remains an independent attention interrupt.
+OPEN LOOP guidance: Create one exact unanswered question about what genuinely changed even though part of the old struggle remains. Do not recap the journey or imply the answer.
+MEAT guidance: Use one present-day action as the spine. Add one brief callback, show the earned change through connected cause and consequence, and preserve one unfinished human element. Include one natural premise sentence so a cold viewer understands the larger struggle without hearing a summary.
+CONCLUSION guidance: Reveal the integrated return as a peer-to-peer gift, then open the direction that continues. Do not introduce a new epiphany, another life chapter, a complete method, or perfection.
+CTA guidance: Ask the viewer to follow because the relationship and unfolding perspective are worth continuing. Explicitly acknowledge Video 7 of 7 and invite anyone who arrived late to go back to Video 1. Do not imply Video 8, introduce an offer, or manufacture urgency.
 
-LEVEL 1 SPECIFIC: Full circle across the speaker's larger life story, from who they were before the two realizations to who they are now. The seven-video challenge helps them tell and understand that story, but it must not be credited with causing years of life change. Forward look doesn't need a plan — just a direction.
-
-SECTION MAP FOR VIDEO 7:
-[HOOK] — Independent Attention Interrupt. The global Hook Studio writes this after every story section is settled. No journal answer, story fact, chronological event, or journey beat is assigned here. Its only job is to stop a cold viewer without performing another section's job.
-[OPEN LOOP] — Return gap. Reach back to the earlier self and create the question of what the two realizations and ordeal actually changed. Do not summarize all seven videos.
-[MEAT] — Resolution journey. Earlier self -> present self -> specific changes -> what remains unfinished -> what telling the story across seven videos helped clarify -> larger truth/gift -> what continues after the challenge.
-[CONCLUSION] — Doorway ending. Close the seven-video loop while making the next chapter feel open.
-[CTA] — Continue from that open door into an ongoing relationship. Clearly ask the viewer to follow, acknowledge this is Video 7 of 7, and invite anyone who arrived late to go back to Video 1. Give one specific relational reason to stay connected.
-
-PROMPTS (L1): 1) Who they were before both realizations and how they saw this part of life, 2) Who they are now and what is genuinely different, 3) What from the earlier self remains present or unfinished, 4) What telling the story across seven videos helped them understand or put into words, 5) What they are carrying forward and where the story goes next
-
-THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
-The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
-
-Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so its facts support that destination without announcing it. Design the OPEN LOOP from the unfinished meaning, contradiction, cause, or question the conclusion will transform, then write the independent HOOK last as an independent attention interrupt. Do not smooth these separate section jobs into one prose rhythm.
-
-VIDEO 7, LEVEL 1: Tone = Warm, reflective, looking back and forward (The Lumineers "Sleep on the Floor" — folk, complete but not closed)
-HOOK guidance: Apply the global Hook Studio after all other sections are complete. This video assigns no required journal answer, story fact, chronological event, or journey beat to the Hook. Choose the strongest independent attention move available from the speaker's full context. It may pivot directly into an unrelated Open Loop. Do not perform the Open Loop, Meat, Conclusion, or CTA's job.
-OPEN LOOP guidance: Independently make the viewer need to know what actually changed across the two realizations and ordeal. Begin from the unfinished relationship inside the completed story without explaining or referring back to the Hook. Do not summarize all seven episodes or reveal the final meaning yet.
-CONCLUSION guidance: Complete, reverse, or deepen the larger identity question with the specific truth the speaker earned, acknowledge that some part remains unfinished, and leave the next direction open. Complete this story without implying that the speaker's larger work is finished.
-CTA guidance: Continue from that open doorway into a warm request to follow because the viewer now knows this person well enough to want the relationship to continue. Explicitly identify this as Video 7 of 7 and invite anyone who missed the arc to go back to Video 1. Do not imply there is a Video 8, introduce an offer, or manufacture urgency.
+Tone: warm, specific, human, complete but not closed. The viewer should feel that they watched a real person become capable of carrying this perspective forward and still recognize the unfinished person inside it.
 </l1_v7_rules>
 
 <l2_v1_rules>
@@ -1403,51 +1376,17 @@ Framework: Modified Hero's Journey
 Audience feels: Loyalty + "I want to keep following this person"
 Speaker feels: Ownership + Pride
 
-AUDIENCE JOURNEY:
-Before: "I have watched this expert become more visible."
-After: "Their voice and work belong in public, and I want to know how to stay connected."
-Open question: "What becomes possible now that they are no longer hiding?"
-Social impulse: Follow because the relationship now feels earned.
+RETURN CONTRACT:
+The audience canon is the six final scripts, not the unused journal archive. Choose one present-day action that proves public ownership, one specific callback that makes the contrast felt, and one earned transformation that explains the difference. Earlier chapters may support that transformation privately, but the spoken script must not mention, summarize, or reconcile each one. Include one honest unfinished element without erasing the authority earned. Give one peer-to-peer gift to the person who recognizes the earlier struggle, then leave one real direction open so the relationship can continue.
 
-THE 7 RETURN BEATS:
-1. Attention Interrupt (Hook) — This sits outside the narrative beats and receives no required story material. The global Hook Studio writes it last from the speaker's full context solely to interrupt attention without performing another section's job.
-2. Full-Circle Recognition — Reach back to the private competence and public hesitation from Video 1. Use a specific callback so the audience feels the circle closing without hearing a summary.
-3. One Connected Correction — Join the origin, first professional realization, public test, fall, and second realization into one coherent change in how the speaker sees their work. Do not march through the videos in order or recap each lesson.
-4. Observable Public Ownership — Show what the speaker now does, says, chooses, builds, teaches, or allows people to see that makes the change undeniable. Avoid formulaic before-and-after phrasing.
-5. Honest Remainder — Name what still feels unfinished, difficult, or in need of growth without surrendering the authority already earned or asking the audience for rescue.
-6. Professional Gift — Give the viewer the perspective the speaker can now carry back from the journey. It should help the right person feel seen and give them a reason to trust how this speaker thinks.
-7. Relational Horizon — Close the seven-video arc by making the continuing relationship feel meaningful. The viewer follows because they value this person's humanity, perspective, and unfolding work, not because an offer is waiting.
+The user supplies only present-day proof, the unfinished element, and an optional direction. Infer the callback, transformation, viewer gift, and reason to remain connected from the audience canon, Journey Direction, and onboarding. Do not ask the speaker to explain what seven videos clarified, summarize their professional philosophy, or justify why they deserve followers.
 
-TONE: Warm, reflective, and expansive, with the slowest pace of any video. The emotional core is the distance between private knowledge and public ownership. The connected journey should feel discovered rather than recited. The final movement cements the relationship and leaves the future open.
+SECTION JOBS:
+HOOK guidance: Apply the global Hook Studio after all other sections are complete. This video assigns no required return beat, answer, story fact, or journey beat to the Hook. It remains an independent attention interrupt.
+OPEN LOOP guidance: Create one exact unanswered question about what genuinely changed in the speaker's relationship to their knowledge, voice, work, or visibility even though part of the old struggle remains. Do not recap the journey or imply the answer.
+MEAT guidance: Use one present-day action as the spine. Add one brief callback, show the earned change through connected cause and consequence, and preserve one unfinished human element. Include one natural premise sentence so a cold viewer understands the larger struggle without hearing a summary.
+CONCLUSION guidance: Reveal the integrated return as a useful peer-to-peer perspective, then open the direction that continues. The speaker can guide through earned perspective without becoming a guru. Do not introduce a new epiphany, another life chapter, a complete method, positioning argument, or offer.
+CTA guidance: Ask the viewer to follow because the relationship and unfolding perspective are worth continuing. Explicitly acknowledge Video 7 of 7 and invite anyone who arrived late to go back to Video 1. Do not imply Video 8, introduce an offer, or manufacture urgency.
 
-
-LEVEL 2 SPECIFIC: Full circle from invisible expert to someone who can publicly own a useful perspective. The return bridges personal growth, professional mission, and the audience relationship. The goal is not a pitch or lead capture. The right viewer should feel that this person's way of seeing is worth continuing to follow.
-
-SECTION MAP FOR VIDEO 7:
-[HOOK] — Independent Attention Interrupt. The global Hook Studio writes this after every story section is settled. No journal answer, story fact, chronological event, or journey beat is assigned here. Its only job is to stop a cold viewer without performing another section's job.
-[OPEN LOOP] — Return gap. Reach back to Video 1 and create the question of what actually changed in their visibility, voice, or relationship to their work. Do not summarize all seven videos.
-[MEAT] — Resolution journey. Earlier relationship to expertise and visibility -> the two professional epiphanies and fall as one connected correction -> specific change in work, voice, or decisions -> what remains unfinished or still needed -> what telling the story clarified -> the perspective and mission carried forward.
-[CONCLUSION] — Doorway ending. Close the seven-video loop while making the next chapter feel open and earned.
-[CTA] — Continue from that open door into an ongoing relationship. Clearly ask the viewer to follow, acknowledge this is Video 7 of 7, and invite anyone who arrived late to go back to Video 1. Give one specific relational reason to stay connected; do not turn the close into a pitch.
-
-CRITICAL FOR L2: The speaker names what remains unfinished or what they still need without turning the admission into a funnel setup. The gap keeps them human and makes the continuing relationship believable. It must not erase the authority they earned or become an invitation to rescue them.
-
-JOURNAL ANSWER ROUTING — MANDATORY:
-1. The earlier self supplies one specific full-circle callback, not a recap of Video 1 or Video 2.
-2. The present self supplies proof of change in the MEAT. The HOOK receives no required material from this answer or any other answer.
-3. What remains unfinished supplies the honest remainder near the end.
-4. What telling the story clarified supplies one connected correction, not a summary of seven episodes.
-5. What continues supplies the professional gift, relational horizon, and reason to follow. It must remain a relationship invitation rather than an offer.
-Required path: present-day evidence, one callback, one connected correction across the arc, observable ownership, honest remainder, useful gift, and a relational CTA. Do not march through the seven videos, turn the mission into a sales pitch, or use the CTA to announce a product, service, or next installment.
-
-THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
-The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
-
-Choose the engagement ending first: TWIST, DEBATE, QUESTION, or MIRROR. Design the CONCLUSION destination first, then design the CTA as part of the same closing unit. Reverse-engineer the seamless MEAT so its facts support that destination without announcing it. Design the OPEN LOOP from the unfinished meaning, contradiction, cause, or question the conclusion will transform, then write the independent HOOK last as an independent attention interrupt. Do not smooth these separate section jobs into one prose rhythm.
-
-VIDEO 7, LEVEL 2: Tone = Expansive, horizon-looking, earned clarity (M83 "Outro" — wide, cinematic, victory lap energy)
-HOOK guidance: Apply the global Hook Studio after all other sections are complete. This video assigns no required journal answer, story fact, chronological event, or journey beat to the Hook. Choose the strongest independent attention move available from the speaker's full context. It may pivot directly into an unrelated Open Loop. Do not perform the Open Loop, Meat, Conclusion, or CTA's job.
-OPEN LOOP guidance: Independently make the viewer need to know what actually changed in the speaker's relationship to their voice, work, or audience. Begin from the unfinished relationship inside the completed story without explaining or referring back to the Hook. Do not summarize all seven episodes or reveal the final meaning.
-CONCLUSION guidance: Complete, reverse, or deepen the original visibility question with the specific professional and personal truth the speaker earned across both epiphanies and the fall. Make public ownership visible through a real choice, behavior, or way of speaking while acknowledging what remains unfinished. Close the challenge while opening the relationship, mission, or work that continues after it.
-CTA guidance: Create a warm next relationship, not a pitch. Ask the right person to follow because the seven-video journey has made the speaker's perspective and humanity worth staying connected to. Explicitly identify this as Video 7 of 7 and invite anyone who missed the arc to go back to Video 1. Do not imply there is a Video 8, introduce an offer, or manufacture urgency.
+Tone: warm, specific, human, and quietly authoritative. The viewer should feel that this person's perspective belongs in public, recognize the unfinished human being carrying it, and want to remain in their world.
 </l2_v7_rules>`;

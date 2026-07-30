@@ -181,6 +181,22 @@ function publishedPrompt() {
   function buildUserMessage(config) {
     const level = Number(config.level || 1);
     const video = Number(config.video || 1);
+    const sourceOwnership = video === 7
+      ? [
+          '- Videos 1 through 6 final scripts are the audience canon. Build the return from what the viewer actually heard.',
+          '- The current Journey Direction chooses the intended return, while the current answers supply present-day proof, the honest unfinished element, and the direction that continues.',
+          '- Onboarding and background may clarify the audience or voice, but they cannot introduce another life chapter, lesson, offer, or reason the speaker should be followed.',
+          '- If a previous final script exists, ignore its raw journal answers. If it does not exist, use that chapter\'s answers only as a fallback.',
+          '- Select one earned transformation and one callback. Do not summarize, reconcile, or mention every earlier chapter.'
+        ]
+      : [
+          '- The current Journey Direction and current-video answers are the authoritative brief for this video.',
+          '- The Journey Direction controls this chapter and place in the seven-part arc. The current answers control the facts, causes, emotional conflict, and meaning inside that chapter.',
+          '- The Journey Direction is also the private Viewer Premise Source. Translate it once into natural spoken context near the beginning of MEAT so a cold viewer understands this episode without seeing the Overview.',
+          '- Previous scripts provide continuity only. Onboarding and background are a supporting archive only.',
+          '- Supporting material may clarify or deepen the same causal thread, but it must never replace it with an older, more dramatic, or more familiar story.',
+          '- If the current answers are sparse, infer within their assigned direction instead of switching to another subject from the archive.'
+        ];
     const lines = [
       'Generate Video ' + video + ' script.',
       '',
@@ -188,12 +204,7 @@ function publishedPrompt() {
       'VIDEO: ' + video,
       '',
       'SOURCE OWNERSHIP:',
-      '- The current Journey Direction and current-video answers are the authoritative brief for this video.',
-      '- The Journey Direction controls this chapter and place in the seven-part arc. The current answers control the facts, causes, emotional conflict, and meaning inside that chapter.',
-      '- The Journey Direction is also the private Viewer Premise Source. Translate it once into natural spoken context near the beginning of MEAT so a cold viewer understands this episode without seeing the Overview.',
-      '- Previous scripts provide continuity only. Onboarding and background are a supporting archive only.',
-      '- Supporting material may clarify or deepen the same causal thread, but it must never replace it with an older, more dramatic, or more familiar story.',
-      '- If the current answers are sparse, infer within their assigned direction instead of switching to another subject from the archive.',
+      ...sourceOwnership,
       '',
       'ONBOARDING DATA:'
     ];
@@ -201,17 +212,27 @@ function publishedPrompt() {
 
     (config.previousVideos || []).forEach(previous => {
       const number = Number(previous.video);
-      if (previous.mode === 'easy') {
-        lines.push('', 'VIDEO ' + number + ' JOURNAL ENTRY (easy mode):', String(previous.easyAnswer || '').trim() || '(no answer provided)');
-      } else {
-        appendAnswers(lines, 'VIDEO ' + number + ' PROMPTS:', previous.answers);
+      if (video !== 7) {
+        if (previous.mode === 'easy') {
+          lines.push('', 'VIDEO ' + number + ' JOURNAL ENTRY (easy mode):', String(previous.easyAnswer || '').trim() || '(no answer provided)');
+        } else {
+          appendAnswers(lines, 'VIDEO ' + number + ' PROMPTS:', previous.answers);
+        }
       }
       if (previous.script) {
         lines.push(
           '',
-          'VIDEO ' + number + ' FINAL SCRIPT (voice and continuity reference; use once, do not repeat it):',
+          'VIDEO ' + number + (video === 7
+            ? ' FINAL SCRIPT (audience canon; select only what supports the return):'
+            : ' FINAL SCRIPT (voice and continuity reference; use once, do not repeat it):'),
           String(previous.script).trim()
         );
+      }
+      if (video !== 7 || previous.script) return;
+      if (previous.mode === 'easy') {
+        lines.push('', 'VIDEO ' + number + ' JOURNAL ENTRY (easy mode):', String(previous.easyAnswer || '').trim() || '(no answer provided)');
+      } else {
+        appendAnswers(lines, 'VIDEO ' + number + ' PROMPTS:', previous.answers);
       }
     });
 
@@ -671,7 +692,7 @@ function publishedPrompt() {
     4: 'ROAD OF TRIALS. The first epiphany becomes a real choice before enough proof exists. Show one recoverable trial, the human temptation to retreat, the choice made under uncertainty, and the first meaningful result that makes continuing feel possible. Do not turn the result into a case study or lesson, reduce this to a seven-video progress report, or borrow catastrophic stakes from the fall.',
     5: 'FALL / ORDEAL. Cross a one-way door through a real defeat that leaves something central destroyed, ended, lost, or apparently impossible to restore. The speaker owns how their choices materially contributed and their attempted way back fails. This is different in kind from Video 4, not merely a worse inconvenience. End inside the apparent permanent loss. No recovery, lesson, reassurance, authority, or silver lining.',
     6: 'SECOND EPIPHANY / ELIXIR. Derive one complete hard-won paradigm shift causally from Video 5 and its aftermath. It may deepen, correct, or complete Video 3 when the story naturally supports that relationship, but it may also be an independent second epiphany. It must become useful to the viewer, restructure how they understand the subject, and feel earned by the fall rather than arriving as an unrelated opinion or a repetition of Video 3.',
-    7: 'RETURN. Integrate the complete journey without recapping every episode. Show observable change, let the speaker return as a human guide carrying the elixir, acknowledge what remains unfinished, and cement an ongoing relationship with the viewer.'
+    7: 'RETURN. Use one present-day action, one callback, and one earned transformation from the audience canon to show observable change. Acknowledge one unfinished human element, give the viewer a peer-to-peer gift, and open an ongoing relationship. Do not recap the journey, discover another truth, mention every earlier chapter, explain why the speaker deserves followers, or introduce an offer.'
   };
 
   function stageContract(level, video) {
@@ -693,7 +714,7 @@ function publishedPrompt() {
       return 'SECOND EPIPHANY / ELIXIR. Build the speaker\'s more significant counterintuitive way of living or working through earned conviction. Ground it in one supported source experience or repeated pattern, the common-sense model it contradicts, and one observable practice that proves the speaker lives by the resulting truth. The source may be Video 5, Video 3, another experience, or a broader repeated pattern; no earlier chapter is a required cause. Preserve an earlier-video relationship only when the supplied story naturally supports it. Reject forced causality, a shallow hot take, a repetition of Video 3, an unsupported slogan, a commercial philosophy, or an offer disguised as the elixir.';
     }
     if (Number(video) === 7) {
-      return base + ' LEVEL 2: The speaker may now guide through earned perspective, but the close remains relational rather than commercial.';
+      return base + ' LEVEL 2: Make public ownership of knowledge or perspective observable. The speaker may now guide through earned perspective, but the close remains relational rather than commercial.';
     }
     return base;
   }

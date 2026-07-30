@@ -2004,12 +2004,12 @@ const INTRO_COPY = {
     L1: {
       label: 'Video 7 of 7: What I Learned',
       title: 'Show Who You Are Now',
-      body: "Bring the larger story home. Compare who you were before both realizations with who you are now, name what is still unfinished, and share what telling this story across seven videos helped you finally understand. Close this chapter without pretending the rest of your story is finished.",
+      body: "Bring the larger story home through one present-day action the earlier you would recognize as changed. Keep one honest unfinished element visible, then leave the audience with a perspective and direction worth following.",
       result: 'Loyalty',
       framework: [
         {name:'Hook',               trigger:'Full Circle Loop'},
-        {name:'Who You Were',       trigger:'Identity Contrast'},
-        {name:'Who You Are Now',    trigger:'New Normal Declaration'},
+        {name:'Present Proof',       trigger:'Observable Change'},
+        {name:'One Callback',       trigger:'Identity Contrast'},
         {name:'What Remains',       trigger:'Honest Reflection'},
         {name:'The New Chapter',    trigger:'Unfolding Horizon'}
       ],
@@ -2018,7 +2018,7 @@ const INTRO_COPY = {
     L2: {
       label: 'Video 7 of 7: What I Carry Forward',
       title: 'Show What You Own Now',
-      body: "Bring the larger expert story home. Compare your earlier relationship to your knowledge and visibility with who you are now, acknowledge what remains unfinished, and name what telling this story clarified about your work and the people you understand. The final invitation is relational: give the right viewer a reason to keep following your perspective.",
+      body: "Bring the larger expert story home through one present-day action that shows public ownership. Keep one honest unfinished element visible, then let the journey itself earn the viewer's trust and the continuing relationship.",
       result: 'Loyalty',
       framework: [
         {name:'Hook',                      trigger:'Full Circle Loop'},
@@ -2039,7 +2039,7 @@ const VIDEO_EASY_PROMPTS = {
     { label: 'After your first realization, what did you do differently and what happened when real life tested it?', hint: 'Describe the actions you changed, the situations that challenged you, what began working, what that success made you believe, and what still felt unresolved.', key: 'easyAnswer_v3' },
     { label: 'In the part of your life you have been discussing, what failure, loss, or period was so devastating that you thought it might ruin you or that you might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?', hint: 'Tell us what collapsed, what you believed might be gone forever, and why you could not see a way back. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.', key: 'easyAnswer_v4' },
     { label: 'What larger truth did you discover only because you lived through that difficult experience?', hint: 'Describe what happened afterward that made it clear, what you changed because of it, and who may need the perspective you earned. It does not have to connect to your first realization.', key: 'easyAnswer_v5' },
-    { label: 'Who were you before these realizations, and who are you now?', hint: 'Describe what changed, what remains unfinished, what telling the story helped you understand, and where you go next.', key: 'easyAnswer_v6' }
+    { label: 'What is one way you live or respond differently now, and what are you still working through?', hint: 'Use one current example. You do not need to recap the journey or explain the lesson. Include the direction you want to keep exploring if it feels clear.', key: 'easyAnswer_v6' }
   ],
   2: [
     null,
@@ -2048,7 +2048,7 @@ const VIDEO_EASY_PROMPTS = {
     { label: 'After that first change in how you saw things, what did you do differently before you knew whether it would work?', hint: 'Tell it like a journal entry. What made the old way tempting to return to, what did you choose anyway, and what small but meaningful result made continuing feel possible?', key: 'easyAnswer_v3' },
     { label: 'What is the worst failure in this part of your work or life, and what made you wonder whether you or what you were building would ever recover?', hint: 'Tell it as one honest journal entry. What happened, what part was your fault, what did you believe was gone for good, and what did you try afterward that still failed? End with what you believed at the lowest point, before the comeback or lesson.', key: 'easyAnswer_v4' },
     { label: 'What significant way of living or working do you follow that nearly everyone else considers counterintuitive or contrary to common sense?', hint: 'Describe the lived experience or repeated evidence that made you trust it, what you do differently because of it, and who may need that perspective. It may connect to the hardest part or your first realization, but neither connection is required.', key: 'easyAnswer_v5' },
-    { label: 'Who were you before the two professional realizations and the hardest part of the story, and who are you now in relation to your expertise and the people you want to reach?', hint: 'Describe what genuinely changed, what remains unfinished or still needed, what telling the story clarified about your work, and what perspective or mission you want the right viewer to keep following.', key: 'easyAnswer_v6' }
+    { label: 'What is one way you show up differently in your work or public voice now, and what are you still working through?', hint: 'Use one current example. You do not need to recap the journey, explain the lesson, or tell people why they should follow. Include the direction you want to keep exploring if it feels clear.', key: 'easyAnswer_v6' }
   ]
 };
 
@@ -2174,10 +2174,10 @@ const LEVEL_2_STORY_BEATS = [
    'The Larger Truth: what you can now carry into the work',
    'The Useful Lens: what someone else can recognize or do differently'],
   // V7 — WHAT YOU CARRY FORWARD
-  ['The Return: the concrete difference between the person who started and the person here now',
-   'Full Circle: loop back to where you started, the audience feels the arc close',
-   'What Changed: not performance of growth, but the actual honest accounting',
-   'The Gift: what you can now give the audience because you completed the journey',
+  ['Present Proof: one action that shows public ownership now',
+   'One Callback: the earlier hesitation this action makes visible',
+   'Honest Remainder: what remains difficult without erasing the change',
+   'The Gift: the earned perspective another person can carry',
    'The Next Chapter: the relationship, direction, or work that opens from here'],
 ];
 
@@ -2206,11 +2206,11 @@ const VIDEO_STORY_BEATS = {
      'The Deeper Meaning: how it changed your understanding of the first realization',
      'What Changed: the real difference in your identity, choices, or life',
      'Who Needs It: the person this truth may help see differently'],
-    ['Who You Were: how you saw yourself before both realizations',
-     'Who You Are Now: what is genuinely different',
-     'What Remains: the unfinished or familiar part of the earlier you',
-     'What The Challenge Clarified: what seven videos helped you connect or put into words',
-     'The Next Chapter: what you carry forward and where the story goes next']
+    ['Present Proof: one action the earlier you would recognize as changed',
+     'One Callback: the earlier struggle this action brings into focus',
+     'What Remains: the unfinished or familiar part still present',
+     'The Gift: the earned perspective another person can carry',
+     'The Next Chapter: the direction that opens from here']
   ],
   2: LEVEL_2_STORY_BEATS
 };
@@ -2822,15 +2822,12 @@ const level1Videos = [
   },
   {
     title:"What I Learned",
-    note:"Close the larger life story you have told. Compare who you were before both realizations with who you are now, acknowledge what remains, and connect the seven videos to what comes next.",
+    note:"Give us the present-day evidence and the honest unfinished part. The app already knows the journey you told and will bring it home without asking you to summarize it.",
     prompts:[
-      {label:"Before either of the realizations you have talked about, who were you and how did you see yourself or this part of your life?",hint:"Think about how you thought, chose, or moved through the world before the first truth changed and before the difficult experience that led to the second one.",key:"v6p0",ph:"Describe who you were and how you saw this part of your life before either realization."},
-      {label:"Who are you now, and what is genuinely different in the way you think, choose, respond, or live?",hint:"Point to real differences rather than saying you are a completely different person. What would the earlier version of you notice?",key:"v6p1",ph:"Describe who you are now and what is genuinely different."},
-      {label:"What part of the earlier version of you is still present or still being worked through?",hint:"Growth does not erase a person. What remains complicated, unfinished, useful, or recognizably you?",key:"v6p2",ph:"Describe what remains present or unfinished."},
-      {label:"What did telling this story across seven videos help you notice, understand, or finally put into words about your larger story?",hint:"The videos did not create your entire transformation. What did telling the story help you connect or express?",key:"v6p3",ph:"Describe what telling the story helped you understand or express."},
-      {label:"What are you carrying forward from everything you lived and learned, and where do you want your story to go next?",hint:"You do not need a complete plan. Name the truth, direction, relationship, work, or possibility that now matters enough to continue.",key:"v6p4",ph:"Describe what you are carrying forward and where the story goes next."}
+      {label:"What do you actually do differently now than the person at the beginning of this story?",hint:"Name one observable choice, behavior, boundary, conversation, habit, or way of showing up. You do not need to recap what taught you.",key:"v6p1",ph:"Describe one current action that shows what has genuinely changed."},
+      {label:"What still feels unfinished, and what do you want to keep doing next?",hint:"Be honest about what has not been solved, then name a direction you want to keep exploring, practicing, building, or speaking about. It does not need to be a plan or pitch.",key:"v6p2",ph:"Describe the unfinished part and the direction you want to continue."}
     ],
-    compile:v=>`Who I was before both realizations: ${v.v6p0||'___'}. Who I am now and what is different: ${v.v6p1||'___'}. What remains present or unfinished: ${v.v6p2||'___'}. What telling this story helped me understand: ${v.v6p3||'___'}. What I am carrying forward and what comes next: ${v.v6p4||'___'}.`
+    compile:v=>`What I visibly do differently now: ${v.v6p1||'___'}. What remains unfinished and the direction I want to continue: ${v.v6p2||'___'}.`
   }
 ];
 
@@ -2903,15 +2900,12 @@ const level2Videos = [
   },
   {
     title:"What I Carry Forward",
-    note:"Close the larger expert story, not merely the filming experience. Compare your earlier relationship to your expertise with who you are now, acknowledge what remains unfinished, name what telling the story clarified, and open an ongoing relationship with the people who value your perspective.",
+    note:"Give us the present-day evidence and the honest unfinished part. The app already knows the expert journey you told and will bring it home without asking you to summarize it or explain why people should follow.",
     prompts:[
-      {label:"Before the two professional realizations and the hardest part of the story, how did you see your expertise, your place in the work, and your right to speak about it publicly?",hint:"Return to the person behind Video 1 and the origin in Video 2. What did you believe made knowledge count? What were you waiting to prove, earn, perfect, or receive permission for?",key:"v6p0",ph:"Describe your earlier relationship to your expertise and public voice."},
-      {label:"Who are you now in relation to your expertise and the people you want to reach, and what do you do differently because of what you lived through?",hint:"Make the return observable. Name a real change in how you decide, communicate, practice, teach, create, lead, or allow yourself to be seen.",key:"v6p1",ph:"Describe who you are now and what is genuinely different in your work or public voice."},
-      {label:"What remains unfinished, and what do you still need in order to grow into the work, impact, or public role you now see more clearly?",hint:"Authority does not require pretending you are complete. Name the specific skill, support, courage, structure, experience, or unresolved tension that belongs to the next chapter without asking the audience to rescue you.",key:"v6p2",ph:"Describe what remains unfinished or what you still need."},
-      {label:"What did telling this larger story across seven videos help you understand or finally put into words about your work and the people you understand?",hint:"The videos did not create your expertise or your whole transformation. What connection, pattern, responsibility, audience, or professional truth became clearer when you had to tell the complete story?",key:"v6p3",ph:"Describe what telling the story helped you clarify about your work and audience."},
-      {label:"What perspective, work, or mission are you carrying forward, and why would the right person want to keep following where you take it?",hint:"Name the direction and the relationship, not an offer. What will you keep noticing, questioning, building, practicing, or saying that makes your continuing story worth staying connected to?",key:"v6p4",ph:"Describe what you are carrying forward and why the right viewer should stay."}
+      {label:"What do you actually do differently now than the person at the beginning of this story?",hint:"Name one observable change in how you decide, communicate, practice, teach, create, lead, or allow yourself to be seen. You do not need to recap what taught you.",key:"v6p1",ph:"Describe one current action that shows what has genuinely changed in your work or public voice."},
+      {label:"What still feels unfinished, and what do you want to keep doing next?",hint:"Be honest about the skill, support, courage, structure, experience, or tension that remains, then name a direction you want to keep exploring, practicing, building, or speaking about. It does not need to be a plan or pitch.",key:"v6p2",ph:"Describe the unfinished part and the direction you want to continue."}
     ],
-    compile:v=>`Who I was before both professional realizations and the hardest part of the story: ${v.v6p0||'___'}. Who I am now in relation to my expertise and audience: ${v.v6p1||'___'}. What remains unfinished or still needed: ${v.v6p2||'___'}. What telling the story clarified about my work and audience: ${v.v6p3||'___'}. What I am carrying forward and why the right viewer should stay: ${v.v6p4||'___'}.`
+    compile:v=>`What I visibly do differently now in my work or public voice: ${v.v6p1||'___'}. What remains unfinished and the direction I want to continue: ${v.v6p2||'___'}.`
   }
 ];
 
@@ -3665,7 +3659,7 @@ const VIDEO_RATIONALE = {
     'WHERE WE ARE: Your first realization is meeting real life now. Show the choices you changed, the situations that tested them, the partial wins that built confidence, and the limit you could not see clearly yet.',
     'WHERE WE ARE: This is the lowest point in the larger story you have been telling: the failure or loss that felt capable of ruining your life, identity, future, or reason to continue. Your own choice or blind spot helped cause it, and recovery did not feel guaranteed. Stay inside what you believed then. The next video deals with the way back and what you eventually understood.',
     'WHERE WE ARE: The difficult chapter has finally produced a hard-won realization. Show how the aftermath made it clear and what genuinely changed because of it. It may connect to the first realization, but that relationship is optional.',
-    'WHERE WE ARE: Bring the larger story home by comparing who you were before both realizations with who you are now. The challenge helped you tell and understand that story. It did not create your whole transformation.'
+    'WHERE WE ARE: Bring the larger story home through one present-day action, one callback, and one earned change. Keep the unfinished human part visible and let the journey itself supply the gift and reason to stay connected.'
   ],
   2: [
     'WHERE WE ARE: You are making the declaration and letting people see the gap between what you know privately and what you have been willing to own publicly. The audience needs quiet confidence, honest hesitation, and a reason to believe you will finish.',
@@ -3674,7 +3668,7 @@ const VIDEO_RATIONALE = {
     'WHERE WE ARE: You are trying to live by the first realization before you know whether it will work. Show why the old way still looked tempting, what you chose while the result was uncertain, and the first meaningful sign that made continuing feel possible. This is a recoverable trial, not the devastating fall.',
     'WHERE WE ARE: This is the one-way door in the larger work, craft, calling, or expertise story. Something real was lost, broken, ended, or seemed impossible to restore. Your own decision or blind spot helped cause it, attempted recovery failed, and you could not see a way back. This is different in kind from the recoverable pressure in the previous video.',
     'WHERE WE ARE: The difficult experience has produced a hard-won professional truth. Show how the aftermath earned it, what changed in your work, and what useful lens another person can carry away. It may connect to the first realization, but that relationship is optional.',
-    'WHERE WE ARE: Bring the larger expert story home. Compare your earlier relationship to your knowledge and visibility with who you are now, acknowledge what remains unfinished, and show why your continuing perspective is worth following.'
+    'WHERE WE ARE: Bring the larger expert story home through one present-day action that shows public ownership, one callback, and one earned change. Keep the unfinished human part visible and let the journey itself earn the continuing relationship.'
   ]
 };
 

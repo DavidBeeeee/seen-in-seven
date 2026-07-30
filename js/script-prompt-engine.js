@@ -51,6 +51,22 @@
   function buildUserMessage(config) {
     const level = Number(config.level || 1);
     const video = Number(config.video || 1);
+    const sourceOwnership = video === 7
+      ? [
+          '- Videos 1 through 6 final scripts are the audience canon. Build the return from what the viewer actually heard.',
+          '- The current Journey Direction chooses the intended return, while the current answers supply present-day proof, the honest unfinished element, and the direction that continues.',
+          '- Onboarding and background may clarify the audience or voice, but they cannot introduce another life chapter, lesson, offer, or reason the speaker should be followed.',
+          '- If a previous final script exists, ignore its raw journal answers. If it does not exist, use that chapter\'s answers only as a fallback.',
+          '- Select one earned transformation and one callback. Do not summarize, reconcile, or mention every earlier chapter.'
+        ]
+      : [
+          '- The current Journey Direction and current-video answers are the authoritative brief for this video.',
+          '- The Journey Direction controls this chapter and place in the seven-part arc. The current answers control the facts, causes, emotional conflict, and meaning inside that chapter.',
+          '- The Journey Direction is also the private Viewer Premise Source. Translate it once into natural spoken context near the beginning of MEAT so a cold viewer understands this episode without seeing the Overview.',
+          '- Previous scripts provide continuity only. Onboarding and background are a supporting archive only.',
+          '- Supporting material may clarify or deepen the same causal thread, but it must never replace it with an older, more dramatic, or more familiar story.',
+          '- If the current answers are sparse, infer within their assigned direction instead of switching to another subject from the archive.'
+        ];
     const lines = [
       'Generate Video ' + video + ' script.',
       '',
@@ -58,25 +74,34 @@
       'VIDEO: ' + video,
       '',
       'SOURCE OWNERSHIP:',
-      '- The current Journey Direction and current-video answers are the authoritative brief for this video.',
-      '- The Journey Direction controls this chapter and place in the seven-part arc. The current answers control the facts, causes, emotional conflict, and meaning inside that chapter.',
-      '- The Journey Direction is also the private Viewer Premise Source. Translate it once into natural spoken context near the beginning of MEAT so a cold viewer understands this episode without seeing the Overview.',
-      '- Previous scripts provide continuity only. Onboarding and background are a supporting archive only.',
-      '- Supporting material may clarify or deepen the same causal thread, but it must never replace it with an older, more dramatic, or more familiar story.',
-      '- If the current answers are sparse, infer within their assigned direction instead of switching to another subject from the archive.',
+      ...sourceOwnership,
       '',
       'ONBOARDING DATA:'
     ];
     (config.onboardingLines || []).forEach(line => lines.push(String(line)));
     (config.previousVideos || []).forEach(previous => {
       const number = Number(previous.video);
+      if (video !== 7) {
+        if (previous.mode === 'easy') {
+          lines.push('', 'VIDEO ' + number + ' JOURNAL ENTRY (easy mode):', String(previous.easyAnswer || '').trim() || '(no answer provided)');
+        } else {
+          appendAnswers(lines, 'VIDEO ' + number + ' PROMPTS:', previous.answers);
+        }
+      }
+      if (previous.script) {
+        lines.push(
+          '',
+          'VIDEO ' + number + (video === 7
+            ? ' FINAL SCRIPT (audience canon; select only what supports the return):'
+            : ' FINAL SCRIPT (voice and continuity reference; use once, do not repeat it):'),
+          String(previous.script).trim()
+        );
+      }
+      if (video !== 7 || previous.script) return;
       if (previous.mode === 'easy') {
         lines.push('', 'VIDEO ' + number + ' JOURNAL ENTRY (easy mode):', String(previous.easyAnswer || '').trim() || '(no answer provided)');
       } else {
         appendAnswers(lines, 'VIDEO ' + number + ' PROMPTS:', previous.answers);
-      }
-      if (previous.script) {
-        lines.push('', 'VIDEO ' + number + ' FINAL SCRIPT (voice and continuity reference; use once, do not repeat it):', String(previous.script).trim());
       }
     });
     const journeyDirection = String(config.currentJourneyDirection || '').trim();

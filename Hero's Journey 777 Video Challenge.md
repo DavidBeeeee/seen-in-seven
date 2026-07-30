@@ -44,6 +44,14 @@ Videos 3 and 6 use the same five-section architecture as every other chapter. Th
 - Video 3 creates a complete but bounded first lens. Level 1 Video 6 uses the same engine at greater depth to resolve cognitive dissonance created by the Video 5 fall and its aftermath. Level 2 Video 6 uses it to reveal the speaker's more significant counterintuitive way of living or working. That truth may arise from Video 5, Video 3, another experience, or a repeated pattern, and no earlier chapter may be forced to cause it.
 - A naturally supplied mentor, teacher, conversation, example, or influence may appear as evidence. No mentor is required, manufactured, or treated as a separate subplot.
 
+### Current Video 7 Return Standard
+
+Video 7 relies on the six final scripts as the audience canon. The user supplies only one observable present-day change, one honest unfinished element, and an optional direction that continues. Raw answers from an earlier chapter are fallback material only when no final script exists.
+
+The Return chooses one present-day action as its spine, one specific callback, and one earned transformation. It does not summarize every chapter, require both epiphanies and the ordeal to be mentioned, ask the speaker to explain what seven videos clarified, or ask the speaker to justify why anyone should follow. The journey engine infers the peer-to-peer gift and relational reason to remain connected from the story the audience actually heard.
+
+The Hook remains an independent attention interrupt written last. The Open Loop asks what genuinely changed despite what remains unresolved. The Meat shows the return through connected present-day action and one callback. The Conclusion gives the earned perspective back to the viewer and opens a real direction. The CTA acknowledges Video 7 of 7, asks for the follow because the relationship is worth continuing, and invites late viewers back to Video 1.
+
 ## **VIDEO 1 — STILL IN THE ORDINARY WORLD** *Both levels: "I'm doing this thing and honestly I'm a little embarrassed about it."*
 
 ---

@@ -8,7 +8,7 @@ const PROMPT_QUESTION_CATALOG = {
       {"label":"After your first realization, what did you do differently and what happened when real life tested it?","hint":"Describe the actions you changed, the situations that challenged you, what began working, what that success made you believe, and what still felt unresolved.","key":"easyAnswer_v3"},
       {"label":"In the part of your life you have been discussing, what failure, loss, or period was so devastating that you thought it might ruin you or that you might never recover? What did you do, avoid, refuse to see, or get completely wrong that made it your fault?","hint":"Tell us what collapsed, what you believed might be gone forever, and why you could not see a way back. Include what you tried afterward that still failed. Answer from who you were while it was happening, before you knew what you would eventually learn.","key":"easyAnswer_v4"},
       {"label":"What larger truth did you discover only because you lived through that difficult experience?","hint":"Describe what happened afterward that made it clear, what you changed because of it, and who may need the perspective you earned. It does not have to connect to your first realization.","key":"easyAnswer_v5"},
-      {"label":"Who were you before these realizations, and who are you now?","hint":"Describe what changed, what remains unfinished, what telling the story helped you understand, and where you go next.","key":"easyAnswer_v6"}
+      {"label":"What is one way you live or respond differently now, and what are you still working through?","hint":"Use one current example. You do not need to recap the journey or explain the lesson. Include the direction you want to keep exploring if it feels clear.","key":"easyAnswer_v6"}
     ],
     "l2": [
       null,
@@ -17,7 +17,7 @@ const PROMPT_QUESTION_CATALOG = {
       {"label":"After that first change in how you saw things, what did you do differently before you knew whether it would work?","hint":"Tell it like a journal entry. What made the old way tempting to return to, what did you choose anyway, and what small but meaningful result made continuing feel possible?","key":"easyAnswer_v3"},
       {"label":"What is the worst failure in this part of your work or life, and what made you wonder whether you or what you were building would ever recover?","hint":"Tell it as one honest journal entry. What happened, what part was your fault, what did you believe was gone for good, and what did you try afterward that still failed? End with what you believed at the lowest point, before the comeback or lesson.","key":"easyAnswer_v4"},
       {"label":"What significant way of living or working do you follow that nearly everyone else considers counterintuitive or contrary to common sense?","hint":"Describe the lived experience or repeated evidence that made you trust it, what you do differently because of it, and who may need that perspective. It may connect to the hardest part or your first realization, but neither connection is required.","key":"easyAnswer_v5"},
-      {"label":"Who were you before the two professional realizations and the hardest part of the story, and who are you now in relation to your expertise and the people you want to reach?","hint":"Describe what genuinely changed, what remains unfinished or still needed, what telling the story clarified about your work, and what perspective or mission you want the right viewer to keep following.","key":"easyAnswer_v6"}
+      {"label":"What is one way you show up differently in your work or public voice now, and what are you still working through?","hint":"Use one current example. You do not need to recap the journey, explain the lesson, or tell people why they should follow. Include the direction you want to keep exploring if it feels clear.","key":"easyAnswer_v6"}
     ]
   },
   "l1": [
@@ -80,13 +80,10 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "What I Learned",
-      "note": "Close the larger life story you have told. Compare who you were before both realizations with who you are now, acknowledge what remains, and connect the seven videos to what comes next.",
+      "note": "Give us the present-day evidence and the honest unfinished part. The app already knows the journey you told and will bring it home without asking you to summarize it.",
       "prompts": [
-        {"label":"Before either of the realizations you have talked about, who were you and how did you see yourself or this part of your life?","hint":"Think about how you thought, chose, or moved through the world before the first truth changed and before the difficult experience that led to the second one.","key":"v6p0","placeholder":"Describe who you were and how you saw this part of your life before either realization."},
-        {"label":"Who are you now, and what is genuinely different in the way you think, choose, respond, or live?","hint":"Point to real differences rather than saying you are a completely different person. What would the earlier version of you notice?","key":"v6p1","placeholder":"Describe who you are now and what is genuinely different."},
-        {"label":"What part of the earlier version of you is still present or still being worked through?","hint":"Growth does not erase a person. What remains complicated, unfinished, useful, or recognizably you?","key":"v6p2","placeholder":"Describe what remains present or unfinished."},
-        {"label":"What did telling this story across seven videos help you notice, understand, or finally put into words about your larger story?","hint":"The videos did not create your entire transformation. What did telling the story help you connect or express?","key":"v6p3","placeholder":"Describe what telling the story helped you understand or express."},
-        {"label":"What are you carrying forward from everything you lived and learned, and where do you want your story to go next?","hint":"You do not need a complete plan. Name the truth, direction, relationship, work, or possibility that now matters enough to continue.","key":"v6p4","placeholder":"Describe what you are carrying forward and where the story goes next."}
+        {"label":"What do you actually do differently now than the person at the beginning of this story?","hint":"Name one observable choice, behavior, boundary, conversation, habit, or way of showing up. You do not need to recap what taught you.","key":"v6p1","placeholder":"Describe one current action that shows what has genuinely changed."},
+        {"label":"What still feels unfinished, and what do you want to keep doing next?","hint":"Be honest about what has not been solved, then name a direction you want to keep exploring, practicing, building, or speaking about. It does not need to be a plan or pitch.","key":"v6p2","placeholder":"Describe the unfinished part and the direction you want to continue."}
       ]
     }
   ],
@@ -237,37 +234,19 @@ const PROMPT_QUESTION_CATALOG = {
     },
     {
       "title": "What I Carry Forward",
-      "note": "Close the larger expert story, not merely the filming experience. Compare your earlier relationship to your expertise with who you are now, acknowledge what remains unfinished, name what telling the story clarified, and open an ongoing relationship with the people who value your perspective.",
+      "note": "Give us the present-day evidence and the honest unfinished part. The app already knows the expert journey you told and will bring it home without asking you to summarize it or explain why people should follow.",
       "prompts": [
         {
-          "label": "Before the two professional realizations and the hardest part of the story, how did you see your expertise, your place in the work, and your right to speak about it publicly?",
-          "hint": "Return to the person behind Video 1 and the origin in Video 2. What did you believe made knowledge count? What were you waiting to prove, earn, perfect, or receive permission for?",
-          "key": "v6p0",
-          "placeholder": "Describe your earlier relationship to your expertise and public voice."
-        },
-        {
-          "label": "Who are you now in relation to your expertise and the people you want to reach, and what do you do differently because of what you lived through?",
-          "hint": "Make the return observable. Name a real change in how you decide, communicate, practice, teach, create, lead, or allow yourself to be seen.",
+          "label": "What do you actually do differently now than the person at the beginning of this story?",
+          "hint": "Name one observable change in how you decide, communicate, practice, teach, create, lead, or allow yourself to be seen. You do not need to recap what taught you.",
           "key": "v6p1",
-          "placeholder": "Describe who you are now and what is genuinely different in your work or public voice."
+          "placeholder": "Describe one current action that shows what has genuinely changed in your work or public voice."
         },
         {
-          "label": "What remains unfinished, and what do you still need in order to grow into the work, impact, or public role you now see more clearly?",
-          "hint": "Authority does not require pretending you are complete. Name the specific skill, support, courage, structure, experience, or unresolved tension that belongs to the next chapter without asking the audience to rescue you.",
+          "label": "What still feels unfinished, and what do you want to keep doing next?",
+          "hint": "Be honest about the skill, support, courage, structure, experience, or tension that remains, then name a direction you want to keep exploring, practicing, building, or speaking about. It does not need to be a plan or pitch.",
           "key": "v6p2",
-          "placeholder": "Describe what remains unfinished or what you still need."
-        },
-        {
-          "label": "What did telling this larger story across seven videos help you understand or finally put into words about your work and the people you understand?",
-          "hint": "The videos did not create your expertise or your whole transformation. What connection, pattern, responsibility, audience, or professional truth became clearer when you had to tell the complete story?",
-          "key": "v6p3",
-          "placeholder": "Describe what telling the story helped you clarify about your work and audience."
-        },
-        {
-          "label": "What perspective, work, or mission are you carrying forward, and why would the right person want to keep following where you take it?",
-          "hint": "Name the direction and the relationship, not an offer. What will you keep noticing, questioning, building, practicing, or saying that makes your continuing story worth staying connected to?",
-          "key": "v6p4",
-          "placeholder": "Describe what you are carrying forward and why the right viewer should stay."
+          "placeholder": "Describe the unfinished part and the direction you want to continue."
         }
       ]
     }

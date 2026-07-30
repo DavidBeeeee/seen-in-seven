@@ -9,7 +9,7 @@
       'Develop the Road of Trials after the first realization: what the speaker changed, one recoverable pressure that tested it, the temptation to return to the old way, a limited sign of progress, and what remained difficult. This is not the catastrophic fall or a final victory.',
       'Develop one genuine ordeal: what was destroyed, ended, lost, or believed impossible to restore; how the speaker\'s choices contributed; what it concretely cost; and what attempted repair also failed. Remain at the lowest point without recovery, meaning, or comeback.',
       'Develop the larger truth earned through the Video 5 ordeal, the aftermath evidence that made it undeniable, one visible change in how the speaker now lives, and the person they recognize in their former position. It may connect to Video 3, but it must not merely repeat it.',
-      'Develop the Return: who the speaker was before the two realizations, who they are now, what changed observably, what remains unresolved, what telling the story clarified, and what they are carrying forward. Keep the transformation human and unfinished rather than turning it into a pitch.'
+      'Develop only the present-day evidence the Return still needs: one observable change, one honest unfinished element, and the direction the speaker wants to continue. The app already knows the earlier journey and will create the callback, integrated gift, and relational ending.'
     ],
     2: [
       'Develop what knowledge, experience, or perspective the speaker feels compelled to make visible, who needs it, the exact reason they have stayed quiet, and what made remaining quiet stop feeling acceptable now. Create curiosity about a knowledgeable but still-human person without turning the answer into credentials, positioning, or a pitch.',
@@ -18,7 +18,7 @@
       'Develop one Road of Trials story about acting on the first Epiphany before proof existed. Gather the old way that still appeared more rewarding, the recoverable pressure, the choice made under uncertainty, and one meaningful but limited result that created hope rather than professional proof.',
       'Develop one apparently irreversible collapse related to the speaker\'s larger work or life: what seemed permanently lost, how their choices contributed, the concrete cost, the attempted repair that also failed, and the lowest-point belief. Do not add recovery, diagnosis, or the Video 6 truth.',
       'Develop the speaker\'s more significant counterintuitive way of living or working, the lived evidence that made it undeniable, what they visibly do differently, and who they recognize as still following the common-sense path. It may arise from any experience and is not required to connect to Videos 3 or 5.',
-      'Develop the Return: how the speaker once related to their expertise, who they are now, what changed observably, what remains unfinished, what telling the story clarified, and why the right person would remain connected. Build earned relationship rather than a polished authority claim or offer.'
+      'Develop only the present-day evidence the Return still needs: one observable change in the speaker\'s work or public voice, one honest unfinished element, and the direction they want to continue. The app already knows the earlier journey and will create the callback, integrated gift, and relational ending.'
     ]
   };
 
