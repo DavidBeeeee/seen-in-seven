@@ -645,6 +645,99 @@ function packetWordCount(value) {
   return (String(value || '').match(/\b[\w’'-]+\b/g) || []).length;
 }
 
+function canonicalizePacketLabels(packet, labels) {
+  let source = String(packet || '');
+  labels.forEach(label => {
+    const escaped = label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    source = source.replace(
+      new RegExp('^[ \\t]*(?:#{1,6}[ \\t]*)?(?:\\*\\*|__)?' + escaped + '[ \\t]*:(?:\\*\\*|__)?[ \\t]*', 'gmi'),
+      label + ': '
+    );
+  });
+  return source.trim();
+}
+
+function videoSevenAnchorBody(progression, anchor) {
+  const escapedAnchor = anchor.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const followingLabels = VIDEO_SEVEN_RETURN_ANCHORS
+    .map(label => label.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))
+    .join('|');
+  const match = String(progression || '').match(
+    new RegExp(
+      '(?:^|\\n)\\s*' + escapedAnchor + ':\\s*([\\s\\S]*?)(?=\\n\\s*(?:' + followingLabels + '):|$)',
+      'i'
+    )
+  );
+  return match ? match[1].trim() : '';
+}
+
+function compactPrivatePacketField(value, maximumWords) {
+  const clean = String(value || '').replace(/\s+/g, ' ').trim();
+  if (!clean || packetWordCount(clean) <= maximumWords) return clean;
+
+  const sentences = clean.match(/[^.!?]+[.!?]+(?:["')\]]+)?/g) || [];
+  let complete = '';
+  for (const sentence of sentences) {
+    const candidate = [complete, sentence.trim()].filter(Boolean).join(' ');
+    if (packetWordCount(candidate) > maximumWords) break;
+    complete = candidate;
+  }
+  if (complete && packetWordCount(complete) >= Math.floor(maximumWords / 2)) return complete;
+
+  const words = clean.match(/\S+/g) || [];
+  return words
+    .slice(0, maximumWords)
+    .join(' ')
+    .replace(/[,;:]+$/, '')
+    .replace(/[.!?]*$/, '.');
+}
+
+export function normalizeVideoSevenReturnPacket(packet) {
+  const labels = [...VIDEO_SEVEN_RETURN_HEADINGS, ...VIDEO_SEVEN_RETURN_ANCHORS];
+  const source = canonicalizePacketLabels(cleanPacketOutput(packet), labels);
+  if (!source || !hasRouterHeadings(source, VIDEO_SEVEN_RETURN_HEADINGS)) return '';
+
+  const progression = packetHeadingBody(
+    source,
+    'CONNECTED JOURNEY PROGRESSION',
+    VIDEO_SEVEN_RETURN_HEADINGS
+  );
+  const anchors = VIDEO_SEVEN_RETURN_ANCHORS.map(anchor => ({
+    anchor,
+    body: compactPrivatePacketField(videoSevenAnchorBody(progression, anchor), 35)
+  }));
+  if (anchors.some(entry => !entry.body)) return '';
+
+  const reserved = compactPrivatePacketField(packetHeadingBody(
+    source,
+    'RESERVED RETURN',
+    VIDEO_SEVEN_RETURN_HEADINGS
+  ), 65);
+  const horizon = compactPrivatePacketField(packetHeadingBody(
+    source,
+    'HONEST REMAINDER AND HORIZON',
+    VIDEO_SEVEN_RETURN_HEADINGS
+  ), 45);
+  if (!reserved || !horizon) return '';
+
+  const voiceSignals = String(packetHeadingBody(
+    source,
+    'VOICE SIGNALS',
+    VIDEO_SEVEN_RETURN_HEADINGS
+  ) || '').replace(/\s+/g, ' ').trim();
+
+  return [
+    'CONNECTED JOURNEY PROGRESSION:',
+    ...anchors.map(entry => entry.anchor + ': ' + entry.body),
+    'RESERVED RETURN:',
+    reserved,
+    'HONEST REMAINDER AND HORIZON:',
+    horizon,
+    'VOICE SIGNALS:',
+    voiceSignals
+  ].join('\n');
+}
+
 export function videoSevenReturnPacketIssues(packet) {
   const source = String(packet || '').trim();
   const issues = [];
@@ -734,11 +827,21 @@ export async function prepareVideoSevenReturnMaterial(userContext, level, existi
       1200
     );
     const candidate = cleanPacketOutput(routed);
-    const packetIssues = videoSevenReturnPacketIssues(candidate);
-    if (candidate && hasRouterHeadings(candidate, headings) && !packetIssues.length) {
-      packet = candidate;
+    const normalizedCandidate = normalizeVideoSevenReturnPacket(candidate);
+    const packetIssues = normalizedCandidate
+      ? videoSevenReturnPacketIssues(normalizedCandidate)
+      : videoSevenReturnPacketIssues(canonicalizePacketLabels(
+          candidate,
+          [...VIDEO_SEVEN_RETURN_HEADINGS, ...VIDEO_SEVEN_RETURN_ANCHORS]
+        ));
+    if (normalizedCandidate && hasRouterHeadings(normalizedCandidate, headings) && !packetIssues.length) {
+      packet = normalizedCandidate;
       break;
     }
+    console.warn('[SeenInSeven Video 7 synthesis cleanup]', JSON.stringify({
+      attempt:attempt + 1,
+      issues:packetIssues
+    }));
     malformed = [
       candidate,
       packetIssues.length ? '\nPACKET ISSUES TO CORRECT:\n- ' + packetIssues.join('\n- ') : ''

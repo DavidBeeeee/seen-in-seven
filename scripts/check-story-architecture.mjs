@@ -23,6 +23,7 @@ import {
   VIDEO_SEVEN_RETURN_ANCHORS,
   VIDEO_SEVEN_RETURN_HEADINGS,
   VIDEO_SEVEN_RETURN_SYSTEM,
+  normalizeVideoSevenReturnPacket,
   videoSevenReturnPacketIssues
 } from '../api/generate.js';
 
@@ -255,6 +256,25 @@ assert(
     /FALL must appear exactly once/.test(issue)
   ),
   'A Video 7 packet missing the Fall anchor passed validation.'
+);
+const looselyFormattedVideoSevenPacket = validVideoSevenPacket
+  .replace('CONNECTED JOURNEY PROGRESSION:', '**CONNECTED JOURNEY PROGRESSION:**')
+  .replace(
+    'EARLIER SELF: The speaker learned that being useful invited more demands without greater value, so accepting money for easy-looking work felt morally suspicious and unsafe.',
+    `**EARLIER SELF:**
+The speaker learned that being useful invited more demands without greater value, so accepting money for easy-looking work felt morally suspicious and unsafe while every earlier job, manager, customer, disappointment, private fear, and abandoned plan competed for equal space in the final story.`
+  );
+const normalizedVideoSevenPacket = normalizeVideoSevenReturnPacket(looselyFormattedVideoSevenPacket);
+assert(
+  normalizedVideoSevenPacket &&
+    videoSevenReturnPacketIssues(normalizedVideoSevenPacket).length === 0 &&
+    normalizedVideoSevenPacket.includes('EARLIER SELF:') &&
+    !normalizedVideoSevenPacket.includes('**EARLIER SELF:**'),
+  'Harmless Video 7 packet formatting or excess private evidence still blocks generation.'
+);
+assert(
+  normalizeVideoSevenReturnPacket(validVideoSevenPacket.replace(/^FALL:.*$/m, '')) === '',
+  'Video 7 packet normalization fabricated a missing journey anchor.'
 );
 [
   'The current Journey Direction and current-video answers are authoritative.',
