@@ -1,9 +1,6 @@
 import {
   callModel,
-  prepareLevelTwoEpiphanyMaterial,
-  prepareLevelTwoVideoOneMaterial,
-  prepareLevelTwoVideoFourMaterial,
-  prepareLevelTwoVideoFiveMaterial,
+  prepareEpisodeArchitectureMaterial,
   preserveViewerPremiseSource
 } from './generate.js';
 import {
@@ -57,24 +54,9 @@ export default async function handler(req, res) {
     if (!prompt) return json(res, 400, { error: 'The draft prompt could not be read.' });
     const systemPrompt = buildSystemPrompt(prompt, level, video);
     const temperature = body.generationMode === 'production' ? 0.8 : 0.25;
-    let preparedUserMessage = userMessage;
-    if (level === 2 && video === 1) {
-      preparedUserMessage = await measureStage(timings, 'story-preparation', () =>
-        prepareLevelTwoVideoOneMaterial(userMessage)
-      );
-    } else if (level === 2 && (video === 3 || video === 6)) {
-      preparedUserMessage = await measureStage(timings, 'story-preparation', () =>
-        prepareLevelTwoEpiphanyMaterial(userMessage, video)
-      );
-    } else if (level === 2 && video === 4) {
-      preparedUserMessage = await measureStage(timings, 'story-preparation', () =>
-        prepareLevelTwoVideoFourMaterial(userMessage)
-      );
-    } else if (level === 2 && video === 5) {
-      preparedUserMessage = await measureStage(timings, 'story-preparation', () =>
-        prepareLevelTwoVideoFiveMaterial(userMessage)
-      );
-    }
+    let preparedUserMessage = await measureStage(timings, 'story-preparation', () =>
+      prepareEpisodeArchitectureMaterial(userMessage, level, video)
+    );
     preparedUserMessage = preserveViewerPremiseSource(userMessage, preparedUserMessage, video);
     let rawContent = '';
     let content = '';

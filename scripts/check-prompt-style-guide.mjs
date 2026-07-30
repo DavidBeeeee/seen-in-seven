@@ -68,7 +68,7 @@ assert(
   sectionGenerationSource.includes("if (input.section === 'OPEN LOOP')") &&
     sectionGenerationSource.includes("const content = await measureStage(timings, 'open-loop-regeneration'") &&
     sectionGenerationSource.indexOf("if (input.section === 'OPEN LOOP')") <
-      sectionGenerationSource.indexOf('let preparedContext = input.userContext;'),
+      sectionGenerationSource.indexOf('prepareEpisodeArchitectureMaterial(input.userContext'),
   'Single-section Open Loop regeneration bypasses the Open Loop Studio.'
 );
 assert(

@@ -42,6 +42,73 @@ function logGenerationTiming(input, timings, started, status) {
 
 const MODES = new Set(['mission', 'script', 'section', 'full-regeneration']);
 const SECTIONS = new Set(['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA']);
+export const EPISODE_ARCHITECT_HEADINGS = [
+  'EPISODE NUCLEUS',
+  'HUMAN CONTRADICTION',
+  'STORY PROGRESSION',
+  'RESERVED CONCLUSION',
+  'STAGE FIREWALL',
+  'VOICE SIGNALS'
+];
+
+export const EPISODE_ARCHITECT_SYSTEM = `You are the private episode architect for SeenInSeven.
+
+This is not script writing. Select and organize one governing human story before another model writes the five visible sections. The current Journey Direction and current-video answers are authoritative. Earlier scripts preserve continuity only and must never replace the assigned chapter with an older, more dramatic, or more familiar story.
+
+Return exactly these six headings and plain text beneath each:
+EPISODE NUCLEUS:
+HUMAN CONTRADICTION:
+STORY PROGRESSION:
+RESERVED CONCLUSION:
+STAGE FIREWALL:
+VOICE SIGNALS:
+
+GENERAL REQUIREMENTS:
+- EPISODE NUCLEUS is one private planning sentence that states the single story this episode tells. It is not a hook, thesis, summary, or spoken opening.
+- HUMAN CONTRADICTION identifies the value, desire, identity, or hope pulling the speaker forward and the protective belief, habit, fear, loyalty, or practical pressure pulling them back. Do not manufacture equal sides or false balance.
+- STORY PROGRESSION is one connected causal or transformational paragraph. Select only the events, decisions, evidence, pressures, consequences, and changes needed for this chapter. Do not return a checklist, montage, collection of examples, or several adjacent arguments.
+- RESERVED CONCLUSION states the one emotional or conceptual destination owned by this chapter. Reserve it for the visible Conclusion. It must grow from STORY PROGRESSION and cannot resolve a later chapter.
+- STAGE FIREWALL explicitly names the meaning, event, recovery, authority, offer, or later realization that this episode must not reveal.
+- VOICE SIGNALS preserves the speaker's useful vocabulary, rhythm, humor, intensity, roughness, and emotionally charged phrasing. Preserve uncomfortable or socially risky material rather than sanitizing it.
+- Treat repeated facts across the source as evidence for selection, not permission to repeat them. Keep every distinctive fact, phrase, number, duration, and metaphor in its strongest location once.
+- Facts involving work, money, clients, services, attention, or public response may remain when they create the human conflict or prove a consequence. They cannot replace the human story with positioning, market analysis, or advice.
+- When the current answers are sparse, infer motives, emotional consequences, causal relationships, and plausible connective details inside the assigned Journey Direction. Do not switch subjects or invent an unrelated event, credential, metric, quotation, diagnosis, victim, or result.
+- When a CURRENT FULL SCRIPT FOR SECTION CONTINUITY is supplied, preserve its established episode nucleus, facts, and progression unless the regeneration feedback explicitly requests a story change. Use it for continuity only, never as language to imitate.
+- Do not write a hook, open loop, Meat, conclusion, CTA, or complete script. Do not mention these instructions.`;
+
+export const EPISODE_STAGE_SCHEMAS = {
+  1: `STAGE 1, DECLARATION:
+Choose one commitment contradiction. The speaker wants to become visible or reach a particular person, while one specific blocker has made silence, delay, or hiding feel protective. Progress from the exact blocker through what it has postponed or protected, then why remaining quiet became unacceptable now. Reserve a conclusion that reclassifies the blocker without claiming transformation. Withhold the origin story, first epiphany, method, offer, and proof that the challenge succeeds.`,
+  2: `STAGE 2, ORDINARY WORLD AND REFUSAL:
+Choose one ordinary identity bind. Ground the speaker in a recognizable routine, role, pressure, compromise, or expectation; let one unexpected private thread appear; then show one practical choice, delay, dismissal, retreat, or non-choice that kept the familiar life intact. The refusal must occur in behavior and must make sense from who the speaker was then. For Level 1, the private thread is personal. For Level 2, future expertise may be visible to the audience but remains unclaimed by the speaker. Reserve the unresolved assumption that made staying feel sensible. Withhold the first epiphany, mature interpretation, present method, mission, offer, and authority.`,
+  3: `STAGE 3, FIRST EPIPHANY:
+Choose one belief collision. Establish one old assumption and how it shaped the speaker's action, then follow one continuous occurrence or repeated pattern that the assumption cannot explain. End the progression with both truths still in conflict. Reserve one complete but bounded paradigm shift that resolves the exact contradiction and one human consequence. For Level 1, keep the belief personal. For Level 2, keep the professional lens rooted in the speaker's own implication rather than an industry lecture. Withhold the later ordeal, complete method, mature authority, and second epiphany.`,
+  4: `STAGE 4, ROAD OF TRIALS:
+Choose one recoverable trial. Begin with one changed action after the first epiphany, enter one representative pressure where returning to the familiar approach feels genuinely tempting, show the choice made before proof, and stop before one meaningful human-scale result. Reserve that result and only the immediate possibility it created. For Level 1, do not substitute a challenge progress report for the larger life story. For Level 2, do not convert the result into a case study, market argument, positioning claim, or proof of the complete philosophy. Withhold the coming ordeal, catastrophic loss, later lesson, and second epiphany.`,
+  5: `STAGE 5, FALL OR ORDEAL:
+Choose one ordeal nucleus and one causal descent. Establish what had become real enough to lose, identify the speaker's consequential choice, avoidance, blind spot, or overconfidence, trace the ignored warning or escalation, show the collapse, then show the failed attempt to repair it. A gradual collapse or symbolic death qualifies when the speaker believed their identity, calling, relationship, judgment, future, or work might never recover. Reserve the most painful owned lowest-point belief. Withhold recovery, reassurance, gratitude, authority, silver lining, and the second epiphany.`,
+  6: `STAGE 6, SECOND EPIPHANY OR ELIXIR:
+Choose one evidence-to-elixir journey. Establish one common-sense model, follow one source experience or repeated pattern that refuses to fit it, include one observable practice or decision proving the speaker lives differently, and end with the contradiction unresolved. Reserve one significant counterintuitive truth and one useful new possibility. For Level 1, the truth must be earned through the Video 5 ordeal and aftermath. For Level 2, the source may be Video 5, Video 3, another experience, or a broader pattern; no earlier chapter is required to cause it. Withhold a complete method, commercial philosophy, offer, and final return.`,
+  7: `STAGE 7, RETURN:
+Choose one present-day return anchor: a concrete action, decision, conversation, behavior, or way of speaking that the earlier speaker would recognize as changed. Use one specific callback, then connect the first epiphany, ordeal, and second epiphany only through the single correction they produced in the speaker's life. Include one unresolved flaw without surrendering the earned change. Reserve the integrated gift and the open direction that makes an ongoing relationship feel worthwhile. For Level 1, center human identity. For Level 2, make public ownership of expertise observable without turning it into a pitch. Withhold episode-by-episode recap, perfection, an offer, manufactured urgency, and any Video 8 promise.`
+};
+
+export function episodeArchitectSystem(video) {
+  const schema = EPISODE_STAGE_SCHEMAS[Number(video)];
+  if (!schema) throw new Error('The episode stage is not configured.');
+  return EPISODE_ARCHITECT_SYSTEM + '\n\nACTIVE STAGE SCHEMA:\n' + schema;
+}
+
+export function episodeContinuityVideos(video) {
+  const number = Number(video);
+  if (number <= 1) return [];
+  if (number === 2) return [1];
+  if (number === 3) return [1, 2];
+  if (number === 4) return [2, 3];
+  if (number === 5) return [2, 3, 4];
+  if (number === 6) return [3, 4, 5];
+  return [1, 2, 3, 4, 5, 6];
+}
 const L2V1_MATERIAL_ROUTER_SYSTEM = `You prepare source material for Level 2, Video 1 of a seven-video personal story.
 
 This is not script writing. Convert the raw onboarding and journal answers into a clean evidence packet that another writer can use.
@@ -369,7 +436,7 @@ function extractFinalScript(userContext, video) {
   if (start === -1) return '';
   const contentStart = start + marker.length;
   const remainder = source.slice(contentStart);
-  const nextMarker = remainder.search(/\n(?:VIDEO \d+ PROMPTS:|VIDEO \d+ JOURNAL ENTRY \(easy mode\):|CURRENT VIDEO \d+ PROMPTS:|CURRENT VIDEO \d+ JOURNAL ENTRY \(easy mode; use this to infer all story beats\):|CURRENT FULL SCRIPT \(for context only; write a fresh complete script\):)/);
+  const nextMarker = remainder.search(/\n(?:VIDEO \d+ PROMPTS:|VIDEO \d+ JOURNAL ENTRY \(easy mode\):|CURRENT VIDEO \d+ JOURNEY DIRECTION \(private planning context only\):|CURRENT VIDEO \d+ PROMPTS:|CURRENT VIDEO \d+ JOURNAL ENTRY \(easy mode; use this to infer all story beats\):|CURRENT FULL SCRIPT \(for context only; write a fresh complete script\):)/);
   return remainder.slice(0, nextMarker === -1 ? undefined : nextMarker).trim();
 }
 
@@ -441,6 +508,94 @@ function extractOnboardingBlock(userContext) {
   const remainder = source.slice(start);
   const end = remainder.search(/\n(?:VIDEO \d+ PROMPTS:|VIDEO \d+ JOURNAL ENTRY \(easy mode\):|VIDEO \d+ FINAL SCRIPT)/);
   return remainder.slice(0, end === -1 ? undefined : end).trim();
+}
+
+export function buildEpisodeArchitectSource(userContext, level, video, existingScript = '') {
+  const source = String(userContext || '');
+  const number = Number(video);
+  const continuity = episodeContinuityVideos(number)
+    .map(previousVideo => {
+      const script = extractFinalScript(source, previousVideo);
+      return script ? 'VIDEO ' + previousVideo + ' FINAL SCRIPT:\n' + script : '';
+    })
+    .filter(Boolean);
+  return [
+    'LEVEL: ' + Number(level),
+    'VIDEO: ' + number,
+    '',
+    extractOnboardingBlock(source),
+    continuity.length ? 'PRIOR STORY CONTEXT:\n' + continuity.join('\n\n') : '',
+    'AUTHORITATIVE CURRENT CHAPTER BRIEF:\n' + extractCurrentVideoBrief(source, number),
+    String(existingScript || '').trim()
+      ? 'CURRENT FULL SCRIPT FOR SECTION CONTINUITY:\n' + String(existingScript).trim()
+      : ''
+  ].filter(Boolean).join('\n\n');
+}
+
+export async function prepareEpisodeArchitectureMaterial(userContext, level, video, existingScript = '') {
+  const number = Number(video);
+  const headings = EPISODE_ARCHITECT_HEADINGS;
+  const source = buildEpisodeArchitectSource(userContext, level, number, existingScript);
+  let malformed = '';
+  let packet = '';
+
+  for (let attempt = 0; attempt < 2; attempt++) {
+    const request = [
+      source,
+      attempt
+        ? [
+            '',
+            'FORMAT CORRECTION:',
+            'Return every required heading below exactly once and in this order. Do not add, remove, combine, or rename headings.',
+            headings.map(heading => heading + ':').join('\n'),
+            '',
+            'MALFORMED PACKET TO CORRECT:',
+            malformed
+          ].join('\n')
+        : ''
+    ].filter(Boolean).join('\n');
+    const routed = await callModel(
+      episodeArchitectSystem(number),
+      request,
+      attempt ? 0.05 : 0.15,
+      number === 7 ? 1600 : 1400
+    );
+    const candidate = cleanPacketOutput(routed);
+    if (candidate && hasRouterHeadings(candidate, headings)) {
+      packet = candidate;
+      break;
+    }
+    malformed = candidate;
+  }
+
+  if (!packet) {
+    throw new Error('The episode story material could not be prepared cleanly. Please try again.');
+  }
+
+  const declarationMatch = String(userContext || '').match(
+    /^\d+\.\s+Opening declaration \(read-only\):\s*(.+)$/mi
+  );
+  const declaration = declarationMatch ? declarationMatch[1].trim() : '';
+  return [
+    'Generate Video ' + number + ' script.',
+    '',
+    'LEVEL: ' + Number(level),
+    'VIDEO: ' + number,
+    number === 1
+      ? [
+          '',
+          'OPENING DECLARATION (read-only; visible between OPEN LOOP and MEAT):',
+          declaration || '(use the fixed declaration supplied in the active Video 1 blueprint)'
+        ].join('\n')
+      : '',
+    '',
+    'CURATED EPISODE ARCHITECTURE:',
+    packet,
+    '',
+    'The current chapter has already been selected and organized. Use this packet as the controlling story plan. Do not reconstruct omitted subplots, combine it with a more dramatic archive story, or turn its headings into visible prose.',
+    '',
+    'FINAL WRITING CONTRACT: Reserve RESERVED CONCLUSION before drafting. Build MEAT as one seamless story through STORY PROGRESSION, using HUMAN CONTRADICTION as emotional pressure rather than a second topic. Stop at the boundary named by STAGE FIREWALL. Design OPEN LOOP afterward from the exact unfinished relationship the reserved conclusion will transform, without revealing the answer or explaining the Hook. Supply a provisional HOOK only for formatting; the global Hook Studio replaces it after the complete story is settled. Let the active video blueprint control the final section jobs and CTA.'
+  ].filter(Boolean).join('\n');
 }
 
 function epiphanyRouterSource(userContext, video) {
@@ -654,16 +809,20 @@ export function regenerationMessage(input) {
 
 FEEDBACK FOR THIS REGENERATION: ${input.feedback}
 
-This is a FRESH FULL REGENERATION. The previous script has been intentionally withheld. Rebuild Video ${input.video}, Level ${input.level} from the original answers, cumulative story context, active blueprint, and feedback. Do not attempt to preserve, reconstruct, or imitate wording from an earlier draft.
+This is a FRESH FULL REGENERATION. The previous script has been intentionally withheld. Rebuild Video ${input.video}, Level ${input.level} from the curated episode architecture, active blueprint, and feedback. Do not restore source material omitted by the episode architect, and do not attempt to preserve, reconstruct, or imitate wording from an earlier draft.
 
-Use the same focused composition process as first-time generation. Apply sentence-level Hook-and-Eye only inside [MEAT]. Rebuild the standalone viewer premise near the beginning of [MEAT] from the current Journey Direction or Viewer Premise Source; do not assume the viewer watched an earlier video. Build [OPEN LOOP] independently after [MEAT] and [CONCLUSION] are settled, while making its unanswered question intelligible before the Meat is heard. Supply a provisional [HOOK] for the required format; the global Hook Studio will replace it after the story is finished. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
+Use the same focused composition process as first-time generation. Preserve EPISODE NUCLEUS, HUMAN CONTRADICTION, STORY PROGRESSION, RESERVED CONCLUSION, and STAGE FIREWALL while creating completely new visible language. Apply sentence-level Hook-and-Eye only inside [MEAT]. Rebuild the standalone viewer premise near the beginning of [MEAT] from the current Journey Direction or Viewer Premise Source; do not assume the viewer watched an earlier video. Build [OPEN LOOP] independently after [MEAT] and [CONCLUSION] are settled, while making its unanswered question intelligible before the Meat is heard. Supply a provisional [HOOK] for the required format; the global Hook Studio will replace it after the story is finished. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
   }
   return input.userContext;
 }
 
 function sectionMessage(input) {
   const sectionInstruction = input.section === 'MEAT'
-    ? '\n\nMEAT REGENERATION REQUIREMENT: Rebuild the standalone viewer premise near the beginning from the current video Journey Direction or Viewer Premise Source. A cold viewer must understand the specific belief, situation, action, relationship, or conflict before the Meat relies on it. Do not quote the Overview, recap prior videos, reveal the reserved Conclusion, or assign this context job to the Hook or Open Loop.'
+    ? '\n\nMEAT REGENERATION REQUIREMENT: Preserve EPISODE NUCLEUS, HUMAN CONTRADICTION, STORY PROGRESSION, and STAGE FIREWALL from the curated episode architecture. Rebuild the standalone viewer premise near the beginning from the current video Journey Direction or Viewer Premise Source. A cold viewer must understand the specific belief, situation, action, relationship, or conflict before the Meat relies on it. Do not restore omitted subplots, quote the Overview, recap prior videos, reveal the reserved Conclusion, or assign this context job to the Hook or Open Loop.'
+    : input.section === 'CONCLUSION'
+      ? '\n\nCONCLUSION REGENERATION REQUIREMENT: Preserve RESERVED CONCLUSION and STAGE FIREWALL from the curated episode architecture. Create a fresh supported turn without resolving a later chapter or restoring omitted source material.'
+      : input.section === 'CTA'
+        ? '\n\nCTA REGENERATION REQUIREMENT: Continue the exact emotional state created by RESERVED CONCLUSION while respecting STAGE FIREWALL. Do not introduce an omitted subplot, later revelation, offer, or unrelated reason to follow.'
     : '';
   return `${input.userContext}
 
@@ -677,24 +836,9 @@ Regenerate ONLY the [${input.section}] section, applying the feedback above whil
 
 async function generateScriptCore(input, prompt, timings) {
   const systemPrompt = buildSystemPrompt(prompt.prompt, input.level, input.video);
-  let preparedContext = input.userContext;
-  if (input.level === 2 && input.video === 1 && input.mode !== 'section') {
-    preparedContext = await measureStage(timings, 'story-preparation', () =>
-      prepareLevelTwoVideoOneMaterial(preparedContext)
-    );
-  } else if (input.level === 2 && (input.video === 3 || input.video === 6)) {
-    preparedContext = await measureStage(timings, 'story-preparation', () =>
-      prepareLevelTwoEpiphanyMaterial(preparedContext, input.video)
-    );
-  } else if (input.level === 2 && input.video === 4) {
-    preparedContext = await measureStage(timings, 'story-preparation', () =>
-      prepareLevelTwoVideoFourMaterial(preparedContext)
-    );
-  } else if (input.level === 2 && input.video === 5) {
-    preparedContext = await measureStage(timings, 'story-preparation', () =>
-      prepareLevelTwoVideoFiveMaterial(preparedContext)
-    );
-  }
+  let preparedContext = await measureStage(timings, 'story-preparation', () =>
+    prepareEpisodeArchitectureMaterial(input.userContext, input.level, input.video)
+  );
   preparedContext = preserveViewerPremiseSource(input.userContext, preparedContext, input.video);
   const userMessage = regenerationMessage({ ...input, userContext: preparedContext });
   let lastError;
@@ -790,24 +934,9 @@ async function generateSectionCore(input, prompt, timings) {
     return { content, promptVersion:prompt.version };
   }
 
-  let preparedContext = input.userContext;
-  if (input.level === 2 && input.video === 1) {
-    preparedContext = await measureStage(timings, 'story-preparation', () =>
-      prepareLevelTwoVideoOneMaterial(input.userContext)
-    );
-  } else if (input.level === 2 && (input.video === 3 || input.video === 6)) {
-    preparedContext = await measureStage(timings, 'story-preparation', () =>
-      prepareLevelTwoEpiphanyMaterial(input.userContext, input.video)
-    );
-  } else if (input.level === 2 && input.video === 4) {
-    preparedContext = await measureStage(timings, 'story-preparation', () =>
-      prepareLevelTwoVideoFourMaterial(input.userContext)
-    );
-  } else if (input.level === 2 && input.video === 5) {
-    preparedContext = await measureStage(timings, 'story-preparation', () =>
-      prepareLevelTwoVideoFiveMaterial(input.userContext)
-    );
-  }
+  let preparedContext = await measureStage(timings, 'story-preparation', () =>
+    prepareEpisodeArchitectureMaterial(input.userContext, input.level, input.video, input.existingScript)
+  );
   preparedContext = preserveViewerPremiseSource(input.userContext, preparedContext, input.video);
   const userMessage = sectionMessage({ ...input, userContext: preparedContext });
   const draft = await measureStage(timings, 'section-draft', () =>

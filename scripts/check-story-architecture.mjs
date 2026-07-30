@@ -9,6 +9,12 @@ import {
   validateBlueprintSource
 } from '../api/_lib/prompt-engine.js';
 import {
+  buildEpisodeArchitectSource,
+  EPISODE_ARCHITECT_HEADINGS,
+  EPISODE_ARCHITECT_SYSTEM,
+  EPISODE_STAGE_SCHEMAS,
+  episodeArchitectSystem,
+  episodeContinuityVideos,
   extractCurrentJourneyDirection,
   extractCurrentVideoBrief,
   preserveViewerPremiseSource
@@ -68,6 +74,12 @@ for (const level of [1, 2]) {
         focused.includes('[HOOK] receives no premise-writing responsibility.'),
       tag + ' does not receive the global standalone-video context contract.'
     );
+    assert(
+      focused.includes('<episode_architecture_rule>') &&
+        focused.includes('EPISODE NUCLEUS') &&
+        focused.includes('STAGE FIREWALL'),
+      tag + ' does not receive the shared episode-architecture contract.'
+    );
     assert(stageContract(level, video), 'Missing stage contract for Level ' + level + ', Video ' + video + '.');
   }
 }
@@ -117,30 +129,59 @@ const implementationSource = [
   assert(!pattern.test(implementationSource), 'A forced Video 3 dependency remains: ' + pattern.source);
 });
 
-assert(
-  generationSource.includes("if (input.level === 2 && input.video === 1)") &&
-    generationSource.includes('prepareLevelTwoVideoOneMaterial(input.userContext)'),
-  'Production section regeneration does not use Level 2 Video 1 material preparation.'
+const generationCoreSource = generationSource.slice(
+  generationSource.indexOf('async function generateScriptCore'),
+  generationSource.indexOf('async function generateScript(', generationSource.indexOf('async function generateScriptCore'))
+);
+const sectionCoreSource = generationSource.slice(
+  generationSource.indexOf('async function generateSectionCore'),
+  generationSource.indexOf('async function generateSection(', generationSource.indexOf('async function generateSectionCore'))
 );
 assert(
-  promptTestSource.includes('prepareLevelTwoVideoOneMaterial(userMessage)'),
-  'Admin Prompt Tester does not mirror Level 2 Video 1 production preparation.'
+  generationCoreSource.includes('prepareEpisodeArchitectureMaterial(input.userContext, input.level, input.video)') &&
+    !/prepareLevelTwo(?:VideoOne|Epiphany|VideoFour|VideoFive)Material/.test(generationCoreSource),
+  'Production full generation does not use the shared episode architect exclusively.'
+);
+assert(
+  sectionCoreSource.includes('prepareEpisodeArchitectureMaterial(input.userContext, input.level, input.video, input.existingScript)') &&
+    sectionCoreSource.indexOf("if (input.section === 'HOOK')") <
+      sectionCoreSource.indexOf('prepareEpisodeArchitectureMaterial') &&
+    sectionCoreSource.indexOf("if (input.section === 'OPEN LOOP')") <
+      sectionCoreSource.indexOf('prepareEpisodeArchitectureMaterial'),
+  'Section regeneration lost shared planning or incorrectly routed Hook/Open Loop through it.'
+);
+assert(
+  promptTestSource.includes('prepareEpisodeArchitectureMaterial(userMessage, level, video)') &&
+    !/prepareLevelTwo(?:VideoOne|Epiphany|VideoFour|VideoFive)Material/.test(promptTestSource),
+  'Admin Prompt Tester does not mirror the shared production episode architect.'
+);
+assert(
+  EPISODE_ARCHITECT_HEADINGS.join('|') ===
+    'EPISODE NUCLEUS|HUMAN CONTRADICTION|STORY PROGRESSION|RESERVED CONCLUSION|STAGE FIREWALL|VOICE SIGNALS',
+  'The shared episode packet headings changed or multiplied.'
 );
 [
-  'The CURRENT VIDEO 1 JOURNEY DIRECTION and VIDEO 1 PREFILLED PROMPTS are the authoritative brief',
-  'Never replace that thread with an older, more dramatic, more familiar, or more detailed story',
-  'Money, pricing, work, clients, services, and commercial decisions may be essential story evidence',
-  'Do not erase or euphemize a lived event merely because it involves work or money'
+  'The current Journey Direction and current-video answers are authoritative.',
+  'Do not return a checklist, montage, collection of examples, or several adjacent arguments.'
 ].forEach(requirement => {
-  assert(
-    generationSource.includes(requirement),
-    'Level 2 Video 1 source routing is missing: ' + requirement
-  );
+  assert(EPISODE_ARCHITECT_SYSTEM.includes(requirement), 'Shared episode architect is missing: ' + requirement);
 });
-assert(
-  !generationSource.includes('L2V1_PACKET_REPLACEMENTS'),
-  'Level 2 Video 1 still mutates story facts through blanket commercial-word replacements.'
-);
+for (let video = 1; video <= 7; video++) {
+  const continuity = episodeContinuityVideos(video);
+  const activeSystem = episodeArchitectSystem(video);
+  assert(EPISODE_STAGE_SCHEMAS[video], 'Video ' + video + ' is missing its active stage schema.');
+  assert(
+    activeSystem.includes(EPISODE_STAGE_SCHEMAS[video]) &&
+      Object.entries(EPISODE_STAGE_SCHEMAS)
+        .filter(([number]) => Number(number) !== video)
+        .every(([, schema]) => !activeSystem.includes(schema)),
+    'Video ' + video + ' receives a competing stage schema.'
+  );
+  assert(
+    continuity.every(previous => previous < video),
+    'Video ' + video + ' episode planning includes future story context.'
+  );
+}
 assert(
   engineSource.includes('The current Journey Direction and current-video answers are the authoritative brief'),
   'The shared prompt engine is missing current-video source ownership.'
@@ -182,7 +223,7 @@ assert(
 );
 assert(
   generationSource.includes("const sectionInstruction = input.section === 'MEAT'") &&
-    generationSource.includes('MEAT REGENERATION REQUIREMENT: Rebuild the standalone viewer premise') &&
+    generationSource.includes('MEAT REGENERATION REQUIREMENT: Preserve EPISODE NUCLEUS') &&
     generationSource.includes('Rebuild the standalone viewer premise near the beginning of [MEAT]') &&
     generationSource.includes('preserveViewerPremiseSource(input.userContext, preparedContext, input.video)'),
   'Full generation or Meat regeneration can lose the standalone viewer premise.'
@@ -192,9 +233,8 @@ assert(
   'Admin Prompt Tester does not preserve the standalone premise through specialized preparation.'
 );
 assert(
-  generationSource.includes("'OPTIONAL JOURNEY CONNECTION'") &&
-    generationSource.includes('No earlier chapter is a required cause') &&
-    generationSource.includes('Never force an earlier chapter to cause the elixir'),
+  EPISODE_STAGE_SCHEMAS[6].includes('For Level 1, the truth must be earned through the Video 5 ordeal and aftermath.') &&
+    EPISODE_STAGE_SCHEMAS[6].includes('For Level 2, the source may be Video 5, Video 3, another experience, or a broader pattern; no earlier chapter is required to cause it.'),
   'Level 2 Video 6 material routing still forces an earlier chapter to cause the elixir.'
 );
 
@@ -209,23 +249,6 @@ const levelTwoVideoFour = extractTaggedSection(published.prompt, 'l2_v4_rules');
     'Level 2 Video 4 is missing its human-scale payoff boundary: ' + requirement
   );
 });
-assert(
-  generationSource.includes('AUTHORITATIVE CURRENT VIDEO 4 BRIEF:') &&
-    generationSource.includes("const directionMarker = 'CURRENT VIDEO ' + number + ' JOURNEY DIRECTION (private planning context only):'") &&
-    generationSource.includes('CAUSAL STORY SPINE:') &&
-    generationSource.includes('RESERVED HUMAN RESULT:'),
-  'Level 2 Video 4 material preparation no longer preserves the Journey Direction as one causal story.'
-);
-assert(
-  generationSource.includes('ideal-customer description, mission statement, or later professional philosophy cannot serve as RESERVED HUMAN RESULT') &&
-    generationSource.includes('who the speaker is built to help is context, never a character, event, result, or conclusion'),
-  'Level 2 Video 4 can still substitute audience positioning for its human payoff.'
-);
-assert(
-  !generationSource.includes('L2V4_PACKET_CLEANUP_SYSTEM') &&
-    !generationSource.includes("const headings = ['FIRST LENS', 'CHANGED ACTION', 'RECOVERABLE TRIAL'"),
-  'Level 2 Video 4 still fragments one story through the old nine-heading cleanup pipeline.'
-);
 const focusedVideoFourBrief = extractCurrentVideoBrief(
   [
     'ONBOARDING DATA:',
@@ -267,6 +290,38 @@ const currentDirection = extractCurrentJourneyDirection(
 assert(
   currentDirection === 'I kept an unconventional rate while the visible market rewarded the opposite choice.',
   'The Viewer Premise Source cannot be isolated from the current Overview answer.'
+);
+const architectSource = buildEpisodeArchitectSource(
+  [
+    'ONBOARDING DATA:',
+    '- Name: Test',
+    '',
+    'VIDEO 2 FINAL SCRIPT (voice and continuity reference; use once, do not repeat it):',
+    'The ordinary-world script.',
+    '',
+    'VIDEO 3 FINAL SCRIPT (voice and continuity reference; use once, do not repeat it):',
+    'The first-epiphany script.',
+    '',
+    'CURRENT VIDEO 4 JOURNEY DIRECTION (private planning context only):',
+    currentDirection,
+    'Use this as the intended subject and place in the seven-part journey.',
+    '',
+    'CURRENT VIDEO 4 PROMPTS:',
+    'Question 1: I acted on the belief.'
+  ].join('\n'),
+  2,
+  4,
+  'The current Video 4 script must remain the same episode.'
+);
+assert(
+  architectSource.includes('LEVEL: 2') &&
+    architectSource.includes('VIDEO: 4') &&
+    architectSource.includes('The ordinary-world script.') &&
+    architectSource.includes('The first-epiphany script.') &&
+    architectSource.includes('CURRENT FULL SCRIPT FOR SECTION CONTINUITY:') &&
+    architectSource.includes('The current Video 4 script must remain the same episode.') &&
+    (architectSource.match(new RegExp(currentDirection.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length === 1,
+  'The shared episode architect source loses continuity or duplicates the current Journey Direction inside a prior script.'
 );
 const preservedPremise = preserveViewerPremiseSource(
   [

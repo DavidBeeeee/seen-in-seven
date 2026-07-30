@@ -61,6 +61,8 @@ function publishedPrompt() {
       '</style_guide>',
       '<banned_script_terms>',
       '</banned_script_terms>',
+      '<episode_architecture_rule>',
+      '</episode_architecture_rule>',
       '[HOOK]',
       '[OPEN LOOP]',
       '[MEAT]',
@@ -115,7 +117,9 @@ function publishedPrompt() {
       'It may pivot abruptly away from the Hook.',
       'Apply the Hook-and-Eye Seamless Rule ONLY inside [MEAT].',
       'Treat it as the VIEWER PREMISE SOURCE:',
-      '[HOOK] receives no premise-writing responsibility.'
+      '[HOOK] receives no premise-writing responsibility.',
+      'The private CURATED EPISODE ARCHITECTURE selects one governing story before visible prose composition.',
+      'Every chapter uses the same six-field contract but a different dramatic engine:'
     ];
     protectedRules.forEach(rule => {
       if (!source.includes(rule)) errors.push('Missing protected section architecture: ' + rule);
