@@ -143,6 +143,17 @@ assert(
   'Production full generation does not use the shared episode architect exclusively.'
 );
 assert(
+  generationSource.includes('MEAT COMPOSITION CONTRACT:') &&
+    generationSource.includes('never bolt on connectors merely to imitate continuity') &&
+    generationSource.includes('This contract applies only to MEAT and must not pull the HOOK or OPEN LOOP into the same prose rhythm'),
+  'Production generation lost the Meat-only Hook-and-Eye composition contract.'
+);
+assert(
+  engineSource.includes('Reject a chain of movable declarations that merely share a topic') &&
+    engineSource.includes('Do not apply this prose-flow test to HOOK or OPEN LOOP'),
+  'Story review lost the Meat-only Hook-and-Eye boundary.'
+);
+assert(
   sectionCoreSource.includes('prepareEpisodeArchitectureMaterial(input.userContext, input.level, input.video, input.existingScript)') &&
     sectionCoreSource.indexOf("if (input.section === 'HOOK')") <
       sectionCoreSource.indexOf('prepareEpisodeArchitectureMaterial') &&

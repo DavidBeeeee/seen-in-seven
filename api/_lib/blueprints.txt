@@ -25,6 +25,7 @@ VOICE AND READING LEVEL:
 
 HOOK-AND-EYE FLOW:
 - Apply the Hook-and-Eye Seamless Rule ONLY inside [MEAT]. Every MEAT sentence must have a clear relationship to the sentence before it. If a sentence could move elsewhere without changing the flow, connect it to the surrounding story or rewrite it.
+- A shared topic or correct chronological order is not enough. Each MEAT sentence must arise from the sentence immediately before it through cause, consequence, time, escalation, contradiction, or changed action; never translate planning beats into a row of adjacent declarations.
 - Use natural story logic, relative clauses, and varied subordinating conjunctions such as since, while, although, which, who, and unless when they genuinely clarify the relationship. Do not bolt a connector onto every sentence or create long ornamental sentences merely to satisfy this rule.
 - The HOOK, OPEN LOOP, CONCLUSION, and CTA remain independent writing operations with their own jobs. Never smooth, soften, or weaken one of those sections merely to make it share the MEAT's rhythm.
 - Compose the MEAT as part of the complete visible script pass, as a professional storyteller would. Do not create disconnected beat summaries and stitch them together afterward.

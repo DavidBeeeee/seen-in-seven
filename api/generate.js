@@ -42,6 +42,7 @@ function logGenerationTiming(input, timings, started, status) {
 
 const MODES = new Set(['mission', 'script', 'section', 'full-regeneration']);
 const SECTIONS = new Set(['HOOK', 'OPEN LOOP', 'MEAT', 'CONCLUSION', 'CTA']);
+const MEAT_COMPOSITION_CONTRACT = 'Transform STORY PROGRESSION into sentence-to-sentence movement inside MEAT rather than paraphrasing its planning beats as adjacent declarations. A shared topic or correct chronology does not create Hook-and-Eye flow: each sentence must arise from the sentence immediately before it through cause, consequence, time, escalation, contradiction, or changed action. Vary sentence length naturally, and never bolt on connectors merely to imitate continuity. This contract applies only to MEAT and must not pull the HOOK or OPEN LOOP into the same prose rhythm.';
 export const EPISODE_ARCHITECT_HEADINGS = [
   'EPISODE NUCLEUS',
   'HUMAN CONTRADICTION',
@@ -594,7 +595,9 @@ export async function prepareEpisodeArchitectureMaterial(userContext, level, vid
     '',
     'The current chapter has already been selected and organized. Use this packet as the controlling story plan. Do not reconstruct omitted subplots, combine it with a more dramatic archive story, or turn its headings into visible prose.',
     '',
-    'FINAL WRITING CONTRACT: Reserve RESERVED CONCLUSION before drafting. Build MEAT as one seamless story through STORY PROGRESSION, using HUMAN CONTRADICTION as emotional pressure rather than a second topic. Stop at the boundary named by STAGE FIREWALL. Design OPEN LOOP afterward from the exact unfinished relationship the reserved conclusion will transform, without revealing the answer or explaining the Hook. Supply a provisional HOOK only for formatting; the global Hook Studio replaces it after the complete story is settled. Let the active video blueprint control the final section jobs and CTA.'
+    'FINAL WRITING CONTRACT: Reserve RESERVED CONCLUSION before drafting. Build MEAT as one seamless story through STORY PROGRESSION, using HUMAN CONTRADICTION as emotional pressure rather than a second topic. Stop at the boundary named by STAGE FIREWALL. Design OPEN LOOP afterward from the exact unfinished relationship the reserved conclusion will transform, without revealing the answer or explaining the Hook. Supply a provisional HOOK only for formatting; the global Hook Studio replaces it after the complete story is settled. Let the active video blueprint control the final section jobs and CTA.',
+    '',
+    'MEAT COMPOSITION CONTRACT: ' + MEAT_COMPOSITION_CONTRACT
   ].filter(Boolean).join('\n');
 }
 
@@ -811,14 +814,14 @@ FEEDBACK FOR THIS REGENERATION: ${input.feedback}
 
 This is a FRESH FULL REGENERATION. The previous script has been intentionally withheld. Rebuild Video ${input.video}, Level ${input.level} from the curated episode architecture, active blueprint, and feedback. Do not restore source material omitted by the episode architect, and do not attempt to preserve, reconstruct, or imitate wording from an earlier draft.
 
-Use the same focused composition process as first-time generation. Preserve EPISODE NUCLEUS, HUMAN CONTRADICTION, STORY PROGRESSION, RESERVED CONCLUSION, and STAGE FIREWALL while creating completely new visible language. Apply sentence-level Hook-and-Eye only inside [MEAT]. Rebuild the standalone viewer premise near the beginning of [MEAT] from the current Journey Direction or Viewer Premise Source; do not assume the viewer watched an earlier video. Build [OPEN LOOP] independently after [MEAT] and [CONCLUSION] are settled, while making its unanswered question intelligible before the Meat is heard. Supply a provisional [HOOK] for the required format; the global Hook Studio will replace it after the story is finished. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
+Use the same focused composition process as first-time generation. Preserve EPISODE NUCLEUS, HUMAN CONTRADICTION, STORY PROGRESSION, RESERVED CONCLUSION, and STAGE FIREWALL while creating completely new visible language. Apply sentence-level Hook-and-Eye only inside [MEAT]. ${MEAT_COMPOSITION_CONTRACT} Rebuild the standalone viewer premise near the beginning of [MEAT] from the current Journey Direction or Viewer Premise Source; do not assume the viewer watched an earlier video. Build [OPEN LOOP] independently after [MEAT] and [CONCLUSION] are settled, while making its unanswered question intelligible before the Meat is heard. Supply a provisional [HOOK] for the required format; the global Hook Studio will replace it after the story is finished. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
   }
   return input.userContext;
 }
 
 function sectionMessage(input) {
   const sectionInstruction = input.section === 'MEAT'
-    ? '\n\nMEAT REGENERATION REQUIREMENT: Preserve EPISODE NUCLEUS, HUMAN CONTRADICTION, STORY PROGRESSION, and STAGE FIREWALL from the curated episode architecture. Rebuild the standalone viewer premise near the beginning from the current video Journey Direction or Viewer Premise Source. A cold viewer must understand the specific belief, situation, action, relationship, or conflict before the Meat relies on it. Do not restore omitted subplots, quote the Overview, recap prior videos, reveal the reserved Conclusion, or assign this context job to the Hook or Open Loop.'
+    ? '\n\nMEAT REGENERATION REQUIREMENT: Preserve EPISODE NUCLEUS, HUMAN CONTRADICTION, STORY PROGRESSION, and STAGE FIREWALL from the curated episode architecture. ' + MEAT_COMPOSITION_CONTRACT + ' Rebuild the standalone viewer premise near the beginning from the current video Journey Direction or Viewer Premise Source. A cold viewer must understand the specific belief, situation, action, relationship, or conflict before the Meat relies on it. Do not restore omitted subplots, quote the Overview, recap prior videos, reveal the reserved Conclusion, or assign this context job to the Hook or Open Loop.'
     : input.section === 'CONCLUSION'
       ? '\n\nCONCLUSION REGENERATION REQUIREMENT: Preserve RESERVED CONCLUSION and STAGE FIREWALL from the curated episode architecture. Create a fresh supported turn without resolving a later chapter or restoring omitted source material.'
       : input.section === 'CTA'
