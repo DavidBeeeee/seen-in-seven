@@ -67,9 +67,16 @@ const simplePrompt = helper.buildPrompt({
   'OPTION 1',
   'three more',
   'infer plausible motives',
-  '150 to 250 words'
+  'Use as much space as the story needs',
+  'Do not compress or stretch the answer to meet a word, sentence, or paragraph count'
 ].forEach(value => {
   if (!simplePrompt.includes(value)) throw new Error(`Simple helper prompt is missing: ${value}`);
+});
+[
+  '150 to 250 words',
+  'no more than 100 words'
+].forEach(value => {
+  if (simplePrompt.includes(value)) throw new Error(`Answer Help still contains an artificial length cap: ${value}`);
 });
 
 [
@@ -94,7 +101,7 @@ if (!simplePrompt.includes('Do not mention SeenInSeven story architecture, stage
 }
 if (!simplePrompt.includes('account for every current question') ||
     !simplePrompt.includes('without dividing the required material among the three options') ||
-    !simplePrompt.includes('one compact paragraph of no more than 100 words') ||
+    !simplePrompt.includes('Do not truncate or pad it to meet a fixed length') ||
     simplePrompt.includes('Use no more than two short sentences')) {
   throw new Error('Answer Help options can still partition a multi-part story.');
 }
@@ -154,6 +161,10 @@ if (!extendedPrompt.includes('repeat each current question exactly as written'))
 if (!extendedPrompt.includes('different job, scene, or piece of evidence')) {
   throw new Error('Extended answers are not protected from repeating each other.');
 }
+if (!extendedPrompt.includes('Use as much space as each answer needs') ||
+    !extendedPrompt.includes('Do not compress or stretch an answer to meet a word, sentence, or paragraph count')) {
+  throw new Error('Extended paste-ready answers still risk being compressed by an artificial length target.');
+}
 
 const journeyPrompt = journeyHelper.buildHelperPrompt(
   2,
@@ -178,7 +189,7 @@ if (!appSource.includes("${count} / 60 words") ||
   throw new Error('Journey direction editing does not match the new 60-word guidance.');
 }
 
-if (!html.includes('id="answer-help-overlay"') || !html.includes('/js/answer-help.js?v=video7-return-1')) {
+if (!html.includes('id="answer-help-overlay"') || !html.includes('/js/answer-help.js?v=answer-depth-1')) {
   throw new Error('Answer Help modal or shared script include is missing.');
 }
 if (!html.includes('/js/journey-map.js?v=journey-map-3') || !/\/js\/app\.js\?v=[^"]+/.test(html)) {

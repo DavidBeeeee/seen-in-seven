@@ -50,9 +50,9 @@
   function finalFormat(mode, questions) {
     const count = Array.isArray(questions) ? questions.length : 0;
     if (mode === 'simple' && count === 1) {
-      return `After the user chooses a direction, return only one first-person journal answer of roughly 150 to 250 words. It must answer the current question directly, sound raw and conversational, and be ready to paste into the single Simple answer box. Do not add a heading, explanation, disclaimer, or alternatives.`;
+      return `After the user chooses a direction, return only one complete first-person journal answer. It must answer every part of the current question directly, sound raw and conversational, and be ready to paste into the single Simple answer box. Use as much space as the story needs to preserve specific scenes, causes, consequences, and emotional context. Do not compress or stretch the answer to meet a word, sentence, or paragraph count. Do not add a heading, explanation, disclaimer, or alternatives.`;
     }
-    return `After the user chooses a direction, repeat each current question exactly as written and place one separate first-person answer beneath it. Each answer must be specific, conversational, and ready to paste into its matching box. Give each question a different job, scene, or piece of evidence. Do not repeat the same event or conclusion across the answers. Do not add a preamble, disclaimer, critique, or script.`;
+    return `After the user chooses a direction, repeat each current question exactly as written and place one separate first-person answer beneath it. Each answer must be specific, conversational, fully developed, and ready to paste into its matching box. Use as much space as each answer needs to preserve its scenes, causes, consequences, and emotional context. Do not compress or stretch an answer to meet a word, sentence, or paragraph count. Give each question a different job, scene, or piece of evidence. Do not repeat the same event or conclusion across the answers. Do not add a preamble, disclaimer, critique, or script.`;
   }
 
   function buildPrompt(config) {
@@ -89,7 +89,7 @@ This is journal-answer development, not scriptwriting. Do not write a hook, open
 
 INTERACTIVE PROCESS
 
-Your first reply must contain exactly three concise answer approaches labeled OPTION 1, OPTION 2, and OPTION 3.
+Your first reply must contain exactly three complete answer approaches labeled OPTION 1, OPTION 2, and OPTION 3.
 
 Each option must:
 - Develop the complete Current Story Direction according to the Current Video Job.
@@ -97,7 +97,7 @@ Each option must:
 - Offer a complete answer plan rather than taking ownership of only one piece of the story.
 - Vary the central scene, evidence, interpretation, or emotional emphasis without dividing the required material among the three options.
 - Preserve the speaker's perspective at this chapter of the journey.
-- Use one compact paragraph of no more than 100 words.
+- Use one focused paragraph that preserves the complete causal and emotional logic of the approach. Do not truncate or pad it to meet a fixed length.
 - Be meaningfully different from the other two.
 - Avoid drafting the final answer.
 
@@ -137,7 +137,7 @@ ${formatQuestions(questions)}
 
 FINAL INSTRUCTION
 
-Using the Source Material above, produce exactly three concise approaches that develop the Current Story Direction according to the Current Video Job.`.trim();
+Using the Source Material above, produce exactly three complete approaches that develop the Current Story Direction according to the Current Video Job.`.trim();
   }
 
   function copyText(text) {
