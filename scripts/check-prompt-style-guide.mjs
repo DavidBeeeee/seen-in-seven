@@ -126,10 +126,17 @@ const bannedTerms = extractBannedScriptTerms(focusedPrompt);
   'purchased',
   'anyone',
   'somebody',
-  'most people'
+  'most people',
+  'build the bridge',
+  'bridge between',
+  'bridge from'
 ].forEach(term => {
   assert(bannedTerms.includes(term), 'Canonical list is missing "' + term + '".');
 });
+assert(
+  findVoiceIssues('I can build the bridge between knowledge and action.', focusedPrompt).length,
+  'The bridge cliche passed the canonical style checker.'
+);
 
 [
   'The thing I protected was my reputation.',

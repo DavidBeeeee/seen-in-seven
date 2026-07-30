@@ -114,17 +114,18 @@ for (const [level, rules] of [[1, levelOneVideoSeven], [2, levelTwoVideoSeven]])
     'home through one governing identity transformation.',
     'Let a cold viewer understand',
     'without hearing an episode-by-episode recap',
-    'viewer gift',
-    'monitor whether the speaker proves or tests'
+    'FIRST SHIFT from Videos 3-4',
+    'one governing meaning created by the Meat',
+    'share one recognition with the viewer as an equal',
+    'unfinished public test may add supporting tension'
   ].forEach(requirement => {
     assert(rules.includes(requirement), `Level ${level} Video 7 lost its complete Return requirement: ${requirement}`);
   });
 }
 assert(
-  levelTwoVideoSeven.includes('specific perspective or way of working this path lets the speaker carry that others in the field may not'),
+  levelTwoVideoSeven.includes('specific perspective or way of working this journey lets the speaker carry'),
   'Level 2 Video 7 lost the earned professional difference.'
 );
-
 const appSource = readFileSync(new URL('../js/app.js', import.meta.url), 'utf8');
 const appHtml = readFileSync(new URL('../seeninseven.html', import.meta.url), 'utf8');
 const testerHtml = readFileSync(new URL('../admin-prompt-tester.html', import.meta.url), 'utf8');
@@ -133,6 +134,17 @@ const generationSource = readFileSync(new URL('../api/generate.js', import.meta.
 const promptTestSource = readFileSync(new URL('../api/prompt-test.js', import.meta.url), 'utf8');
 const engineSource = readFileSync(new URL('../api/_lib/prompt-engine.js', import.meta.url), 'utf8');
 const browserEngineSource = readFileSync(new URL('../js/script-prompt-engine.js', import.meta.url), 'utf8');
+assert(
+  engineSource.includes('actual first realization and trial from Videos 3-4') &&
+    browserEngineSource.includes('actual first realization and trial from Videos 3-4') &&
+    engineSource.includes('recognition shared with the viewer as an equal'),
+  'Production or browser prompt routing lost the source-bound Video 7 return.'
+);
+assert(
+  engineSource.includes('An unfinished public test may add supporting tension, but it cannot be the only reason to follow.') &&
+    !engineSource.includes('Reject a CTA that asks the viewer to monitor whether the speaker proves or tests an ideal, model, experiment, or business result.'),
+  'Video 7 CTA review did not preserve relational primacy with optional public tension.'
+);
 
 const implementationSource = [
   published.source,
@@ -179,7 +191,8 @@ assert(
 );
 assert(
   EPISODE_STAGE_SCHEMAS[7].includes('Bring the six-chapter audience canon home through one governing identity transformation') &&
-    EPISODE_STAGE_SCHEMAS[7].includes('selecting only the strongest evidence needed to make each movement intelligible') &&
+    EPISODE_STAGE_SCHEMAS[7].includes('actual first realization and trial from Videos 3-4') &&
+    EPISODE_STAGE_SCHEMAS[7].includes('recognition shared with the viewer as an equal') &&
     generationSource.includes('CURATED VIDEO 7 RETURN:') &&
     generationSource.includes('Build MEAT only from EARLIER SELF, FIRST SHIFT, FALL, and RETURN') &&
     engineSource.includes('require one connected Return organized around a single governing identity transformation') &&
@@ -218,12 +231,18 @@ assert(
   'one governing identity transformation',
   'private evidence budget',
   '18-35 words on each line',
+  'EARLIER SELF selects its evidence from Videos 1-2 only',
+  'FIRST SHIFT selects its evidence from Videos 3-4 only',
+  'Every anchor is lived evidence',
   'Do not place omitted canon facts inside RESERVED RETURN',
   'RESERVED RETURN uses 35-65 words',
+  'one governing meaning created by the four anchors',
+  'recognition shared between equals',
   'HONEST REMAINDER AND HORIZON uses 20-45 words',
+  'unfinished public test may add supporting tension',
   'Make the progression independently understandable to a cold viewer',
   'When the first and second epiphanies came from independent experiences, preserve that independence.',
-  'specific perspective, practice, or way of seeing that genuinely distinguishes this speaker'
+  'earned professional difference emerge from the selected evidence'
 ].forEach(requirement => {
   assert(VIDEO_SEVEN_RETURN_SYSTEM.includes(requirement), 'Video 7 synthesizer is missing: ' + requirement);
 });
@@ -346,7 +365,8 @@ assert(
 assert(
   generationSource.includes('VIDEO 7 MEAT REGENERATION REQUIREMENT: Treat EARLIER SELF, FIRST SHIFT, FALL, and RETURN as the complete evidence budget') &&
     generationSource.includes('Develop those four anchors into complete spoken thoughts') &&
-    generationSource.includes('VIDEO 7 CONCLUSION REGENERATION REQUIREMENT: Preserve RESERVED RETURN') &&
+    generationSource.includes('VIDEO 7 CONCLUSION REGENERATION REQUIREMENT: Preserve the one governing meaning in RESERVED RETURN') &&
+    generationSource.includes('carry one recognition to the viewer as an equal') &&
     generationSource.includes('MEAT REGENERATION REQUIREMENT: Preserve EPISODE NUCLEUS') &&
     generationSource.includes('Rebuild the standalone viewer premise near the beginning of [MEAT]') &&
     generationSource.includes('preserveViewerPremiseSource(input.userContext, preparedContext, input.video)'),
