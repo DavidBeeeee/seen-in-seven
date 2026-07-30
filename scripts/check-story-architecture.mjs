@@ -105,9 +105,9 @@ assert(
 );
 for (const [level, rules] of [[1, levelOneVideoSeven], [2, levelTwoVideoSeven]]) {
   [
-    'Tell one present-day scene rather than listing Return ingredients.',
+    'Tell one present-day echo of a concrete pressure, situation, or behavior from the audience canon.',
     'Every sentence must be necessary to this causal chain and lose coherence if moved elsewhere.',
-    'what the present scene proves',
+    'what the echoed pressure and changed response prove',
     'verify whether the speaker succeeds'
   ].forEach(requirement => {
     assert(rules.includes(requirement), `Level ${level} Video 7 lost its causal Return requirement: ${requirement}`);
@@ -167,10 +167,11 @@ assert(
   'Story review lost the Meat-only Hook-and-Eye boundary.'
 );
 assert(
-  EPISODE_STAGE_SCHEMAS[7].includes('Choose one present-day return scene, not a thesis') &&
+  EPISODE_STAGE_SCHEMAS[7].includes('First select one concrete pressure, situation, or behavior the audience actually heard') &&
     EPISODE_STAGE_SCHEMAS[7].includes('removing or reordering a beat breaks the sequence') &&
     generationSource.includes('VIDEO 7 CAUSAL RETURN CONTRACT') &&
-    engineSource.includes('Reject a thematic essay, list of convictions, retrospective summary, or series of movable Return declarations'),
+    engineSource.includes('Reject a new central conflict, public test, dramatic loss, future trial, unresolved external outcome, business experiment, or fresh revelation') &&
+    engineSource.includes('The familiar pressure must make the earlier response visible'),
   'Video 7 can still reach the writer or reviewer as a checklist instead of one causal Return scene.'
 );
 assert(
@@ -495,8 +496,11 @@ assert(videoSevenMessage.includes('FALLBACK ANSWER SENTINEL'), 'Video 7 lost the
 assert(videoSevenMessage.includes('CURRENT RETURN SENTINEL') && videoSevenMessage.includes('RETURN DIRECTION SENTINEL'), 'Video 7 lost its current return evidence or Journey Direction.');
 assert(
   videoSevenMessage.includes('final scripts are the audience canon') &&
+    videoSevenMessage.includes('which already-heard pressure and earned transformation the Return revisits') &&
+    videoSevenMessage.includes('The present scene must echo that earlier pressure and show a different response') &&
     engineSource.includes('final scripts are the audience canon') &&
-    browserEngineSource.includes('final scripts are the audience canon'),
+    browserEngineSource.includes('final scripts are the audience canon') &&
+    browserEngineSource.includes('The present scene must echo that earlier pressure and show a different response'),
   'Production and browser prompt builders do not share the Video 7 audience-canon rule.'
 );
 const videoSevenArchitectSource = buildEpisodeArchitectSource(
