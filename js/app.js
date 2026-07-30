@@ -3267,6 +3267,17 @@ function _buildPromptsContent(container, v, idx) {
 // ── PHASE B: GENERATED SCRIPT ─────────────────────────
 
 // ── LOADING MESSAGE BANK ──────────────────────────────
+const SCRIPT_LOADING_PROCESS_LABELS = [
+  { at: 0, text: 'Reading your answers...' },
+  { at: 7000, text: 'Finding the story beneath them...' },
+  { at: 16000, text: 'Mapping the emotional turn...' },
+  { at: 28000, text: 'Writing the heart of the script...' },
+  { at: 43000, text: 'Building the curiosity gap...' },
+  { at: 59000, text: 'Auditioning scroll-stopping hooks...' },
+  { at: 77000, text: 'Checking voice and continuity...' },
+  { at: 100000, text: 'Giving the final lines one more pass...' }
+];
+
 const LOADING_MESSAGES_BANK = [
   "I used to think the people who posted every day were just more confident than me.",
   "Turns out they weren't. They just had something to say before they hit record.",
@@ -3373,7 +3384,14 @@ function startLoadingAnimation() {
   stopLoadingAnimation();
   const ids = ['sl-ep1','sl-ep2','sl-ep3','sl-ep4','sl-ep5'];
   const epiphanyWrap = document.getElementById('script-loading-epiphany');
+  const loadingLabel = document.getElementById('script-loading-label');
   if (epiphanyWrap) epiphanyWrap.style.display = '';
+
+  SCRIPT_LOADING_PROCESS_LABELS.forEach(stage => {
+    loadingAnimationTimers.push(setTimeout(() => {
+      if (loadingLabel) loadingLabel.textContent = stage.text;
+    }, stage.at));
+  });
 
   function showCycle() {
     const bank = [...LOADING_MESSAGES_BANK];
