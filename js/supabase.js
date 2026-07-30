@@ -330,7 +330,7 @@ function _mergeLocalStorage() {
     const lsRaw = localStorage.getItem('bwb_challenge_v1');
     if (!lsRaw) return;
     const d = JSON.parse(lsRaw);
-    if (d.level   && !state.level)   state.level   = d.level;
+    if (d.level   && !state.level)   state.level   = Number(d.level);
     if (d.name    && !state.name)    state.name    = d.name;
     if (d.posted  && !state.posted)  state.posted  = d.posted;
     if (d.blocker && !state.blocker) state.blocker = d.blocker;
@@ -685,7 +685,7 @@ async function _restoreFromDatabase() {
 
     const { data: onboarding } = await _sb.from('onboarding').select('*').eq('user_id', _currentUser.id).maybeSingle();
     if (user.name)    state.name    = user.name;
-    if (user.level)   state.level   = user.level;
+    if (user.level)   state.level   = Number(user.level);
     if (user.blocker) state.blocker = user.blocker;
     const activeLevel = user.level || state.level || 1;
     const { data: scripts } = await _sb.from('scripts').select('*').eq('user_id', _currentUser.id).eq('is_current', true).eq('level', activeLevel).order('video_number');

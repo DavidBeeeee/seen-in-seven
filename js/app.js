@@ -790,6 +790,17 @@ function advancePastAuth() {
   window.scrollTo(0, 0);
 }
 
+function journeyProgressVideoCount(videoStatus = state.videoStatus, videos = state.videos) {
+  let count = 0;
+  for (let index = 0; index < 7; index++) {
+    const status = videoStatus && videoStatus[index];
+    const hasFinishedStatus = status === 'filmed' || status === 'skipped';
+    const hasScript = !!(videos && videos['script_v' + index]);
+    if (hasFinishedStatus || hasScript) count++;
+  }
+  return count;
+}
+
 function updateProgress(id) {
   const wrap = document.getElementById('progress-bar-wrap');
 
@@ -807,9 +818,11 @@ function updateProgress(id) {
   // Hide Dashboard button when already on dashboard
   if (dashBtn) dashBtn.style.display = onDashboard ? 'none' : '';
 
-  if (wrap.classList.contains('progress-l1-complete') || wrap.classList.contains('progress-l2-complete')) return;
+  const activeLevel = Number(state.level) === 2 ? 2 : 1;
+  if ((activeLevel === 1 && wrap.classList.contains('progress-l1-complete')) ||
+      (activeLevel === 2 && wrap.classList.contains('progress-l2-complete'))) return;
 
-  const videosDone = Object.keys(state.videoStatus).length;
+  const videosDone = journeyProgressVideoCount();
   const fill   = document.getElementById('progress-fill');
   const fillL2 = document.getElementById('progress-fill-l2');
 
@@ -818,7 +831,7 @@ function updateProgress(id) {
                    : id === 'screen-7' ? 3.5
                    : id === 'screen-script' ? 6 : 0;
 
-  if (state.level === 2) {
+  if (activeLevel === 2) {
     fill.style.width = '100%';
     let pct2;
     if (videosDone === 0) {
@@ -836,7 +849,7 @@ function updateProgress(id) {
     maxProgressL2Pct = Math.max(maxProgressL2Pct, pct2);
     fillL2.style.width = maxProgressL2Pct + '%';
     fillL2.style.opacity = maxProgressL2Pct > 0 ? '1' : '0';
-  } else if (state.level === 1 && videosDone > 0) {
+  } else if (videosDone > 0) {
     const pct1 = Math.min((videosDone / 7) * 100 + phaseBonus, 100);
     maxProgressPct = Math.max(maxProgressPct, pct1);
     fill.style.width = maxProgressPct + '%';
@@ -2902,7 +2915,7 @@ const level2Videos = [
   }
 ];
 
-function getVideos(){ return state.level===1 ? level1Videos : level2Videos; }
+function getVideos(){ return Number(state.level) === 2 ? level2Videos : level1Videos; }
 
 // ── VIDEO JOURNAL — TWO PHASE ─────────────────────────
 // Phase A: prompts screen (screen-7)
@@ -4021,12 +4034,12 @@ function _buildTrackerHTML(videos, context) {
     } else {
       cls = 'vt-locked'; status = '–';
     }
-    const l2Class = state.level === 2 ? ' vt-l2-item' : '';
+    const l2Class = Number(state.level) === 2 ? ' vt-l2-item' : '';
     return `<div class="vt-item${l2Class} ${cls}"><div class="vt-label">${label}</div><div class="vt-status">${status}</div></div>`;
   }).join('');
 
   // If Level 2 and we have L1 status, show L1 row above (grayed out)
-  if (state.level === 2 && state.l1VideoStatus) {
+  if (Number(state.level) === 2 && state.l1VideoStatus) {
     const l1Status = state.l1VideoStatus;
     const l1Row = labels.map((label, i) => {
       const st = l1Status[i];
@@ -4049,7 +4062,7 @@ function triggerLevelComplete() {
   const wrap   = document.getElementById('progress-bar-wrap');
   const fill   = document.getElementById('progress-fill');
   const fillL2 = document.getElementById('progress-fill-l2');
-  if (state.level === 2) {
+  if (Number(state.level) === 2) {
     fill.style.width   = '100%';
     fillL2.style.width = '100%';
     fillL2.style.opacity = '1';
@@ -4268,7 +4281,7 @@ function markFilmedFromPlan(idx) {
 function runItAgain() {
   captureVideoAnswersByLevel();
   // Level 1 completers graduate to Level 2
-  if (state.level === 1) {
+  if (Number(state.level) === 1) {
     state.level = 2;
     // update the badge while we're at it
     const badge = document.getElementById('plan-level-badge');
@@ -6929,7 +6942,7 @@ function loadProgress() {
     if (data.name || data.level) {
       // Restore state
       if (data.name)        state.name        = data.name;
-      if (data.level)       state.level       = data.level;
+      if (data.level)       state.level       = Number(data.level);
       if (data.posted)      state.posted      = data.posted;
       if (data.history)     state.history     = data.history;
       if (data.blocker)     state.blocker     = data.blocker;
