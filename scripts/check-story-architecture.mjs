@@ -20,8 +20,10 @@ import {
   extractCurrentJourneyDirection,
   extractCurrentVideoBrief,
   preserveViewerPremiseSource,
+  VIDEO_SEVEN_RETURN_ANCHORS,
   VIDEO_SEVEN_RETURN_HEADINGS,
-  VIDEO_SEVEN_RETURN_SYSTEM
+  VIDEO_SEVEN_RETURN_SYSTEM,
+  videoSevenReturnPacketIssues
 } from '../api/generate.js';
 
 function assert(condition, message) {
@@ -178,7 +180,7 @@ assert(
   EPISODE_STAGE_SCHEMAS[7].includes('Bring the six-chapter audience canon home through one governing identity transformation') &&
     EPISODE_STAGE_SCHEMAS[7].includes('selecting only the strongest evidence needed to make each movement intelligible') &&
     generationSource.includes('CURATED VIDEO 7 RETURN:') &&
-    generationSource.includes('Build MEAT only from the evidence selected inside CONNECTED JOURNEY PROGRESSION') &&
+    generationSource.includes('Build MEAT only from EARLIER SELF, FIRST SHIFT, FALL, and RETURN') &&
     engineSource.includes('require one connected Return organized around a single governing identity transformation') &&
     engineSource.includes('Return reduced to one new or present-day scene'),
   'Video 7 can still collapse into a local scene or disconnected recap.'
@@ -206,18 +208,54 @@ assert(
     'CONNECTED JOURNEY PROGRESSION|RESERVED RETURN|HONEST REMAINDER AND HORIZON|VOICE SIGNALS',
   'The dedicated Video 7 return packet changed or became a checklist.'
 );
+assert(
+  VIDEO_SEVEN_RETURN_ANCHORS.join('|') === 'EARLIER SELF|FIRST SHIFT|FALL|RETURN',
+  'The dedicated Video 7 evidence budget lost or multiplied a journey anchor.'
+);
 [
   'Videos 1 through 6 final scripts are the audience canon.',
   'one governing identity transformation',
-  'each video does not receive its own sentence, example, or equal space',
-  'omit every additional event, number, person, phrase, or metaphor that performs the same narrative job',
-  'This private planning range never limits the length of the visible Meat.',
+  'private evidence budget',
+  '18-35 words on each line',
+  'Do not place omitted canon facts inside RESERVED RETURN',
+  'RESERVED RETURN uses 35-65 words',
+  'HONEST REMAINDER AND HORIZON uses 20-45 words',
   'Make the progression independently understandable to a cold viewer',
   'When the first and second epiphanies came from independent experiences, preserve that independence.',
   'specific perspective, practice, or way of seeing that genuinely distinguishes this speaker'
 ].forEach(requirement => {
   assert(VIDEO_SEVEN_RETURN_SYSTEM.includes(requirement), 'Video 7 synthesizer is missing: ' + requirement);
 });
+const validVideoSevenPacket = `CONNECTED JOURNEY PROGRESSION:
+EARLIER SELF: The speaker learned that being useful invited more demands without greater value, so accepting money for easy-looking work felt morally suspicious and unsafe.
+FIRST SHIFT: An expensive program delivered recycled information without support, forcing the speaker to question whether price represented depth and test a deliberately different approach.
+FALL: Years of generous work without a direct invitation left the audience shrinking, until usefulness itself began to feel like evidence that the speaker could not survive.
+RETURN: Recognizing hesitation as the repeated opponent now makes the speaker act before certainty, while preserving a human limit around the effort another person must choose.
+RESERVED RETURN:
+The completed journey reveals that implementation matters more than information and that earned proximity makes the speaker capable of guiding a person still trapped in hesitation. The gift is a clearer distinction between carrying confusion beside someone and pretending to carry the final choice for them.
+HONEST REMAINDER AND HORIZON:
+The speaker still hesitates before being visible, yet continuing publicly offers the viewer an honest relationship with a guide who remains inside the work.
+VOICE SIGNALS:
+Direct, conversational, blunt, and self-aware.`;
+assert(
+  videoSevenReturnPacketIssues(validVideoSevenPacket).length === 0,
+  'A valid four-anchor Video 7 evidence packet was rejected.'
+);
+assert(
+  videoSevenReturnPacketIssues(
+    validVideoSevenPacket.replace(
+      'The speaker learned that being useful invited more demands without greater value, so accepting money for easy-looking work felt morally suspicious and unsafe.',
+      'The speaker learned that being useful invited more demands without greater value, so accepting money for easy-looking work felt morally suspicious and unsafe while every earlier job, manager, coworker, customer, schedule, paycheck, promise, argument, disappointment, abandoned project, and private fear also competed for equal space inside the final story.'
+    )
+  ).some(issue => /EARLIER SELF must not exceed 35 words/.test(issue)),
+  'An overloaded journey anchor passed the private evidence-budget validator.'
+);
+assert(
+  videoSevenReturnPacketIssues(validVideoSevenPacket.replace(/^FALL:.*$/m, '')).some(issue =>
+    /FALL must appear exactly once/.test(issue)
+  ),
+  'A Video 7 packet missing the Fall anchor passed validation.'
+);
 [
   'The current Journey Direction and current-video answers are authoritative.',
   'Do not return a checklist, montage, collection of examples, or several adjacent arguments.'
@@ -286,8 +324,8 @@ assert(
   'The dedicated Open Loop Studio still permits private-context shorthand.'
 );
 assert(
-  generationSource.includes('VIDEO 7 MEAT REGENERATION REQUIREMENT: Preserve every transformation and only the evidence selected inside CONNECTED JOURNEY PROGRESSION') &&
-    generationSource.includes('Expand that causal spine into complete spoken thoughts') &&
+  generationSource.includes('VIDEO 7 MEAT REGENERATION REQUIREMENT: Treat EARLIER SELF, FIRST SHIFT, FALL, and RETURN as the complete evidence budget') &&
+    generationSource.includes('Develop those four anchors into complete spoken thoughts') &&
     generationSource.includes('VIDEO 7 CONCLUSION REGENERATION REQUIREMENT: Preserve RESERVED RETURN') &&
     generationSource.includes('MEAT REGENERATION REQUIREMENT: Preserve EPISODE NUCLEUS') &&
     generationSource.includes('Rebuild the standalone viewer premise near the beginning of [MEAT]') &&

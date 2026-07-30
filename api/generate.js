@@ -57,6 +57,12 @@ export const VIDEO_SEVEN_RETURN_HEADINGS = [
   'HONEST REMAINDER AND HORIZON',
   'VOICE SIGNALS'
 ];
+export const VIDEO_SEVEN_RETURN_ANCHORS = [
+  'EARLIER SELF',
+  'FIRST SHIFT',
+  'FALL',
+  'RETURN'
+];
 
 export const EPISODE_ARCHITECT_SYSTEM = `You are the private episode architect for SeenInSeven.
 
@@ -89,6 +95,10 @@ This is not script writing. Bring the six-part audience canon home as one connec
 
 Return exactly these four headings and plain text beneath each:
 CONNECTED JOURNEY PROGRESSION:
+EARLIER SELF: one selected anchor
+FIRST SHIFT: one selected anchor
+FALL: one selected anchor
+RETURN: one selected anchor
 RESERVED RETURN:
 HONEST REMAINDER AND HORIZON:
 VOICE SIGNALS:
@@ -101,13 +111,17 @@ SOURCE OWNERSHIP:
 - Onboarding may clarify identity, audience, or voice, but it cannot introduce an unheard life chapter, professional argument, offer, or result.
 
 RETURN REQUIREMENTS:
-- CONNECTED JOURNEY PROGRESSION must first identify one governing identity transformation, then express it through four connected movements: the earlier person and refusal; the first realization and meaningful trial; the fall and its human cost; and the elixir expressed through the returned person's observable behavior. Every journey function must remain intelligible, but each video does not receive its own sentence, example, or equal space.
-- Select the strongest concrete callback for each movement and omit every additional event, number, person, phrase, or metaphor that performs the same narrative job. Give each retained detail one job and advance after that job is complete. A compact repeated pattern may function as one callback when the canon genuinely depends on that pattern.
-- Each selected movement must cause, contrast with, complicate, or reinterpret the next. Write one private connected paragraph of roughly 180-260 words so the visible writer receives a complete story spine rather than a compressed script, checklist, montage, or archive summary. This private planning range never limits the length of the visible Meat.
+- CONNECTED JOURNEY PROGRESSION is a private evidence budget, not visible prose. Return exactly the four labeled anchor lines shown above, in that order, with 18-35 words on each line.
+- EARLIER SELF holds the strongest concrete detail that makes the earlier identity and refusal understandable.
+- FIRST SHIFT holds the strongest detail that combines the first realization with the meaningful trial it produced.
+- FALL holds the strongest detail that makes the defeat, owned contribution, and human cost real.
+- RETURN holds the strongest detail that joins the elixir to observable present behavior. When the elixir came from an independent experience, preserve that independence and connect it through the returned identity rather than false causality.
+- The four anchors must share one governing identity transformation. Each must cause, contrast with, complicate, or reinterpret the next, while still working as a complete journey for a cold viewer.
+- Omit every additional event, number, person, phrase, comparison, or metaphor that performs a job already owned by an anchor. Do not place omitted canon facts inside RESERVED RETURN, HONEST REMAINDER AND HORIZON, or VOICE SIGNALS.
 - Make the progression independently understandable to a cold viewer while giving a returning viewer specific recognition. Do not announce video numbers, summarize each installment, create a montage, or write a list of lessons.
 - When the first and second epiphanies came from independent experiences, preserve that independence. Show how both now live inside the same returned person without claiming one caused the other.
-- RESERVED RETURN states the integrated lesson, earned identity, and peer-to-peer gift that the visible Conclusion will reveal. For Level 1, center what the personal journey lets the speaker carry back. For Level 2, also name the specific perspective, practice, or way of seeing that genuinely distinguishes this speaker in their field and makes them capable of guiding the person they once resembled. Earn the difference from the canon rather than asserting generic superiority.
-- HONEST REMAINDER AND HORIZON names the unresolved flaw, fear, habit, limitation, or need that keeps the speaker human, followed by the real direction that makes an ongoing relationship meaningful. The relational horizon must make the viewer want to remain connected to this person and perspective, not monitor whether the speaker proves an ideal, model, experiment, or business result. It cannot become a new central conflict, offer, rescue request, or future episode promise.
+- RESERVED RETURN uses 35-65 words to state the integrated lesson, earned identity, and peer-to-peer gift that the visible Conclusion will reveal. For Level 1, center what the personal journey lets the speaker carry back. For Level 2, also name the specific perspective, practice, or way of seeing that genuinely distinguishes this speaker in their field and makes them capable of guiding the person they once resembled. Earn the difference from the selected anchors rather than asserting generic superiority.
+- HONEST REMAINDER AND HORIZON uses 20-45 words to name the unresolved flaw, fear, habit, limitation, or need that keeps the speaker human, followed by the real direction that makes an ongoing relationship meaningful. The relational horizon must make the viewer want to remain connected to this person and perspective, not monitor whether the speaker proves an ideal, model, experiment, or business result. It cannot become a new central conflict, offer, rescue request, or future episode promise.
 - Telling the story across seven videos may help the speaker notice, connect, or articulate the journey. Do not claim that filming seven videos created years of transformation.
 - VOICE SIGNALS preserves the speaker's actual vocabulary, rhythm, humor, force, roughness, and emotionally charged phrasing without copying full sentences from earlier scripts.
 - Do not write a Hook, Open Loop, Meat, Conclusion, CTA, complete script, episode recap, market manifesto, positioning argument, or sales pitch.`;
@@ -613,6 +627,79 @@ export function buildVideoSevenReturnSource(userContext, level, existingScript =
   ].filter(Boolean).join('\n\n');
 }
 
+function packetHeadingBody(packet, heading, headings) {
+  const source = String(packet || '');
+  const marker = heading + ':';
+  const start = source.indexOf(marker);
+  if (start === -1) return '';
+  const bodyStart = start + marker.length;
+  const laterStarts = headings
+    .filter(candidate => candidate !== heading)
+    .map(candidate => source.indexOf(candidate + ':', bodyStart))
+    .filter(index => index >= 0);
+  const end = laterStarts.length ? Math.min(...laterStarts) : source.length;
+  return source.slice(bodyStart, end).trim();
+}
+
+function packetWordCount(value) {
+  return (String(value || '').match(/\b[\w’'-]+\b/g) || []).length;
+}
+
+export function videoSevenReturnPacketIssues(packet) {
+  const source = String(packet || '').trim();
+  const issues = [];
+  if (!source) return ['The packet is empty.'];
+  if (!hasRouterHeadings(source, VIDEO_SEVEN_RETURN_HEADINGS)) {
+    issues.push('One or more required top-level headings are missing.');
+    return issues;
+  }
+
+  const progression = packetHeadingBody(
+    source,
+    'CONNECTED JOURNEY PROGRESSION',
+    VIDEO_SEVEN_RETURN_HEADINGS
+  );
+  let totalAnchorWords = 0;
+  VIDEO_SEVEN_RETURN_ANCHORS.forEach(anchor => {
+    const matches = [...progression.matchAll(new RegExp('^' + anchor + ':\\s*(.+)$', 'gmi'))];
+    if (matches.length !== 1) {
+      issues.push(anchor + ' must appear exactly once as one labeled line.');
+      return;
+    }
+    const words = packetWordCount(matches[0][1]);
+    totalAnchorWords += words;
+    if (words > 35) {
+      issues.push(anchor + ' must not exceed 35 words; it currently contains ' + words + '.');
+    }
+  });
+  if (totalAnchorWords > 140) {
+    issues.push('The four journey anchors exceed the 140-word private evidence budget.');
+  }
+
+  const reservedWords = packetWordCount(packetHeadingBody(
+    source,
+    'RESERVED RETURN',
+    VIDEO_SEVEN_RETURN_HEADINGS
+  ));
+  if (!reservedWords) {
+    issues.push('RESERVED RETURN cannot be empty.');
+  } else if (reservedWords > 65) {
+    issues.push('RESERVED RETURN must not exceed 65 words; it currently contains ' + reservedWords + '.');
+  }
+
+  const horizonWords = packetWordCount(packetHeadingBody(
+    source,
+    'HONEST REMAINDER AND HORIZON',
+    VIDEO_SEVEN_RETURN_HEADINGS
+  ));
+  if (!horizonWords) {
+    issues.push('HONEST REMAINDER AND HORIZON cannot be empty.');
+  } else if (horizonWords > 45) {
+    issues.push('HONEST REMAINDER AND HORIZON must not exceed 45 words; it currently contains ' + horizonWords + '.');
+  }
+  return issues;
+}
+
 export async function prepareVideoSevenReturnMaterial(userContext, level, existingScript = '') {
   const headings = VIDEO_SEVEN_RETURN_HEADINGS;
   const source = buildVideoSevenReturnSource(userContext, level, existingScript);
@@ -626,8 +713,14 @@ export async function prepareVideoSevenReturnMaterial(userContext, level, existi
         ? [
             '',
             'FORMAT CORRECTION:',
-            'Return every required heading below exactly once and in this order. Do not add, remove, combine, or rename headings.',
-            headings.map(heading => heading + ':').join('\n'),
+            'Return this exact private packet shape. Keep every anchor on one line and obey each supplied word budget.',
+            [
+              'CONNECTED JOURNEY PROGRESSION:',
+              ...VIDEO_SEVEN_RETURN_ANCHORS.map(anchor => anchor + ':'),
+              'RESERVED RETURN:',
+              'HONEST REMAINDER AND HORIZON:',
+              'VOICE SIGNALS:'
+            ].join('\n'),
             '',
             'MALFORMED PACKET TO CORRECT:',
             malformed
@@ -638,14 +731,18 @@ export async function prepareVideoSevenReturnMaterial(userContext, level, existi
       VIDEO_SEVEN_RETURN_SYSTEM,
       request,
       attempt ? 0.05 : 0.15,
-      1800
+      1200
     );
     const candidate = cleanPacketOutput(routed);
-    if (candidate && hasRouterHeadings(candidate, headings)) {
+    const packetIssues = videoSevenReturnPacketIssues(candidate);
+    if (candidate && hasRouterHeadings(candidate, headings) && !packetIssues.length) {
       packet = candidate;
       break;
     }
-    malformed = candidate;
+    malformed = [
+      candidate,
+      packetIssues.length ? '\nPACKET ISSUES TO CORRECT:\n- ' + packetIssues.join('\n- ') : ''
+    ].filter(Boolean).join('\n');
   }
 
   if (!packet) {
@@ -661,9 +758,9 @@ export async function prepareVideoSevenReturnMaterial(userContext, level, existi
     'CURATED VIDEO 7 RETURN:',
     packet,
     '',
-    'This synthesis is the controlling story plan. Do not restore raw scripts, rebuild the Return around one current scene, or turn the packet headings into separate spoken paragraphs.',
+    'This synthesis is the controlling story plan and complete evidence budget. Use every transformation represented by the four anchor lines, but no canon event omitted from those anchors. Do not restore raw scripts, rebuild the Return around one current scene, or turn the packet headings and anchor labels into separate spoken paragraphs.',
     '',
-    'FINAL VIDEO 7 WRITING CONTRACT: Design the Conclusion destination first from RESERVED RETURN together with HONEST REMAINDER AND HORIZON. Build MEAT only from the evidence selected inside CONNECTED JOURNEY PROGRESSION; never restore omitted canon merely to mention another chapter or example. Expand that selected spine into natural, complete spoken thoughts rather than compressing it further. Apply sentence-level Hook-and-Eye throughout MEAT so each sentence arises from the one before it through cause, consequence, time, escalation, contradiction, recognition, or changed action. Stop before stating the reserved integrated lesson or viewer gift. Build OPEN LOOP afterward from the exact missing meaning the Conclusion will reveal, without summarizing the journey or disclosing the answer. Supply a provisional HOOK only for formatting; the global Hook Studio replaces it after the complete story is settled. Let the active Video 7 blueprint control the final relational CTA.'
+    'FINAL VIDEO 7 WRITING CONTRACT: Design the Conclusion destination first from RESERVED RETURN together with HONEST REMAINDER AND HORIZON. Build MEAT only from EARLIER SELF, FIRST SHIFT, FALL, and RETURN; never restore omitted canon merely to mention another chapter or example. Develop those four anchors into natural, complete spoken thoughts while staying inside the global 240-360 word pacing range for the complete visible script. Apply sentence-level Hook-and-Eye throughout MEAT so each sentence arises from the one before it through cause, consequence, time, escalation, contradiction, recognition, or changed action. Stop before stating the reserved integrated lesson or viewer gift. Build OPEN LOOP afterward from the exact missing meaning the Conclusion will reveal, without summarizing the journey or disclosing the answer. Supply a provisional HOOK only for formatting; the global Hook Studio replaces it after the complete story is settled. Let the active Video 7 blueprint control the final relational CTA.'
   ].join('\n');
 }
 
@@ -952,7 +1049,7 @@ FEEDBACK FOR THIS REGENERATION: ${input.feedback}
 
 This is a FRESH FULL REGENERATION. The previous script has been intentionally withheld. Rebuild Video 7, Level ${input.level} from the curated Video 7 Return and active blueprint. Do not restore raw source material, imitate an earlier draft, reduce the journey to one present-day scene, or convert the Return into an episode recap.
 
-Preserve CONNECTED JOURNEY PROGRESSION, RESERVED RETURN, HONEST REMAINDER AND HORIZON, and VOICE SIGNALS while creating completely new visible language. Use only the evidence selected by the curated progression, then expand it into complete spoken thoughts without restoring omitted canon or compressing the prose. Apply sentence-level Hook-and-Eye only inside [MEAT]. ${MEAT_COMPOSITION_CONTRACT} Build [OPEN LOOP] independently after [MEAT] and [CONCLUSION] are settled. Supply a provisional [HOOK] for the required format; the global Hook Studio will replace it after the story is finished. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
+Preserve CONNECTED JOURNEY PROGRESSION, RESERVED RETURN, HONEST REMAINDER AND HORIZON, and VOICE SIGNALS while creating completely new visible language. Treat EARLIER SELF, FIRST SHIFT, FALL, and RETURN as the complete evidence budget. Develop those anchors into complete spoken thoughts without restoring omitted canon or compressing the prose, and keep the complete visible script inside the global 240-360 word pacing range by removing redundant evidence rather than shortening thoughts. Apply sentence-level Hook-and-Eye only inside [MEAT]. ${MEAT_COMPOSITION_CONTRACT} Build [OPEN LOOP] independently after [MEAT] and [CONCLUSION] are settled. Supply a provisional [HOOK] for the required format; the global Hook Studio will replace it after the story is finished. Return exactly [HOOK], [OPEN LOOP], [MEAT], [CONCLUSION], and [CTA] with no commentary.`;
     }
     return `${input.userContext}
 
@@ -968,7 +1065,7 @@ Use the same focused composition process as first-time generation. Preserve EPIS
 function sectionMessage(input) {
   const isVideoSeven = Number(input.video) === 7;
   const sectionInstruction = isVideoSeven && input.section === 'MEAT'
-    ? '\n\nVIDEO 7 MEAT REGENERATION REQUIREMENT: Preserve every transformation and only the evidence selected inside CONNECTED JOURNEY PROGRESSION. Expand that causal spine into complete spoken thoughts with the Meat-only Hook-and-Eye contract. Do not compress connective logic, restore omitted canon, reduce the Return to one present-day scene, announce episode numbers, summarize each installment, or reveal RESERVED RETURN early.'
+    ? '\n\nVIDEO 7 MEAT REGENERATION REQUIREMENT: Treat EARLIER SELF, FIRST SHIFT, FALL, and RETURN as the complete evidence budget. Develop those four anchors into complete spoken thoughts with the Meat-only Hook-and-Eye contract. Preserve every transformation while removing redundant evidence, and do not compress connective logic, restore omitted canon, reduce the Return to one present-day scene, announce episode numbers, summarize each installment, or reveal RESERVED RETURN early.'
     : isVideoSeven && input.section === 'CONCLUSION'
       ? '\n\nVIDEO 7 CONCLUSION REGENERATION REQUIREMENT: Preserve RESERVED RETURN together with HONEST REMAINDER AND HORIZON. Deliver the integrated lesson, earned identity or professional difference, peer-to-peer gift, and open relational direction without adding another revelation, trial, manifesto, pitch, or offer.'
       : isVideoSeven && input.section === 'CTA'
