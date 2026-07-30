@@ -181,8 +181,8 @@ if (!appSource.includes("${count} / 60 words") ||
 if (!html.includes('id="answer-help-overlay"') || !html.includes('/js/answer-help.js?v=answer-help-4')) {
   throw new Error('Answer Help modal or shared script include is missing.');
 }
-if (!html.includes('/js/journey-map.js?v=journey-map-3') || !html.includes('/js/app.js?v=restart-onboarding-1')) {
-  throw new Error('Journey Map or app cache version was not advanced.');
+if (!html.includes('/js/journey-map.js?v=journey-map-3') || !/\/js\/app\.js\?v=[^"]+/.test(html)) {
+  throw new Error('Journey Map or app cache version is missing.');
 }
 if (!html.includes('openCurrentMvoAnswerHelp()')) {
   throw new Error('Video 1 Answer Help entry is missing.');

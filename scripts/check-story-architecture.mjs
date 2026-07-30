@@ -8,6 +8,7 @@ import {
   stageContract,
   validateBlueprintSource
 } from '../api/_lib/prompt-engine.js';
+import { extractCurrentVideoBrief } from '../api/generate.js';
 
 function assert(condition, message) {
   if (!condition) throw new Error(message);
@@ -157,7 +158,8 @@ assert(
 const levelTwoVideoFour = extractTaggedSection(published.prompt, 'l2_v4_rules');
 [
   'A market trend, industry argument, technology shift, competitor outcome, or later professional philosophy cannot serve as the result.',
-  'infer only the smallest internal or behavioral consequence already supported by the speaker\'s action'
+  'An ideal-audience description is context, not a character, event, result, or conclusion.',
+  'infer one plausible, non-quantified occurrence that follows directly from the current action and choice'
 ].forEach(requirement => {
   assert(
     levelTwoVideoFour.includes(requirement),
@@ -165,9 +167,48 @@ const levelTwoVideoFour = extractTaggedSection(published.prompt, 'l2_v4_rules');
   );
 });
 assert(
-  generationSource.includes('A market trend, industry argument, technology shift, competitor outcome, or later professional philosophy cannot fill this heading.') &&
-    generationSource.includes('infer only the smallest internal or behavioral consequence already supported by the speaker\'s action'),
-  'Level 2 Video 4 material preparation can still substitute a market thesis for its human payoff.'
+  generationSource.includes('AUTHORITATIVE CURRENT VIDEO 4 BRIEF:') &&
+    generationSource.includes("const directionMarker = 'CURRENT VIDEO ' + number + ' JOURNEY DIRECTION (private planning context only):'") &&
+    generationSource.includes('CAUSAL STORY SPINE:') &&
+    generationSource.includes('RESERVED HUMAN RESULT:'),
+  'Level 2 Video 4 material preparation no longer preserves the Journey Direction as one causal story.'
+);
+assert(
+  generationSource.includes('ideal-customer description, mission statement, or later professional philosophy cannot serve as RESERVED HUMAN RESULT') &&
+    generationSource.includes('who the speaker is built to help is context, never a character, event, result, or conclusion'),
+  'Level 2 Video 4 can still substitute audience positioning for its human payoff.'
+);
+assert(
+  !generationSource.includes('L2V4_PACKET_CLEANUP_SYSTEM') &&
+    !generationSource.includes("const headings = ['FIRST LENS', 'CHANGED ACTION', 'RECOVERABLE TRIAL'"),
+  'Level 2 Video 4 still fragments one story through the old nine-heading cleanup pipeline.'
+);
+const focusedVideoFourBrief = extractCurrentVideoBrief(
+  [
+    'ONBOARDING DATA:',
+    '- Background: supporting archive only',
+    '',
+    'CURRENT VIDEO 4 JOURNEY DIRECTION (private planning context only):',
+    'Keep the rate accessible while the old approach appears to be winning.',
+    'Use this as the intended subject and place in the seven-part journey.',
+    '',
+    'CURRENT VIDEO 4 PROMPTS:',
+    'Question 1: I changed the rate.',
+    'Question 2: A more expensive approach won the visible opportunity.',
+    'Question 3: I kept my choice while I was uncertain.',
+    'Question 4: A human-scale response made continuing possible.',
+    '',
+    'CURRENT FULL SCRIPT (for context only; write a fresh complete script):',
+    'This stale draft must not enter preparation.'
+  ].join('\n'),
+  4
+);
+assert(
+  focusedVideoFourBrief.startsWith('CURRENT VIDEO 4 JOURNEY DIRECTION') &&
+    focusedVideoFourBrief.includes('CURRENT VIDEO 4 PROMPTS:') &&
+    !focusedVideoFourBrief.includes('supporting archive only') &&
+    !focusedVideoFourBrief.includes('stale draft'),
+  'Level 2 Video 4 preparation still drops its Journey Direction or includes unrelated context.'
 );
 
 [

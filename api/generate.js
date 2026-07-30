@@ -101,36 +101,30 @@ Requirements:
 
 const L2V4_MATERIAL_ROUTER_SYSTEM = `You prepare source material for Level 2, Video 4 of a seven-video personal story.
 
-This is not script writing. Video 4 is a recoverable trial, not the fall. It shows the speaker acting on the first professional realization before enough proof exists, facing a human temptation to retreat, and receiving the first meaningful sign that continuing may be worthwhile. Sort the supplied material into one focused story sequence.
+This is not script writing. Video 4 is a recoverable trial, not the fall. Preserve the current Video 4 Journey Direction and current answers as one chronological human story about acting on the first realization before enough proof exists.
 
-Return exactly these nine headings and plain text beneath each:
+Return exactly these five headings and plain text beneath each:
 FIRST LENS:
-CHANGED ACTION:
-RECOVERABLE TRIAL:
-OLD-WORLD TEMPTATION:
-CHOICE BEFORE PROOF:
-FIRST MEANINGFUL RESULT:
-WHAT IT MADE POSSIBLE:
-WHAT REMAINED OPEN:
+CAUSAL STORY SPINE:
+RESERVED HUMAN RESULT:
+IMMEDIATE POSSIBILITY:
 VOICE SIGNALS:
 
 Requirements:
-- Treat the headings as non-overlapping evidence ownership. Keep the strongest and most specific expression of each fact once. When a later heading depends on an earlier fact, add only the new relationship or consequence instead of restating the fact, phrase, number, duration, or judgment.
-- Preserve only facts, actions, pressures, consequences, and distinctive language supported by the supplied Video 2 and Video 3 scripts and current Video 4 answers.
+- Treat the current Video 4 Journey Direction and current answers as the authoritative assignment. Previous scripts provide continuity only and cannot replace the assigned subject with a more familiar story.
+- Keep the complete causal relationship intact. Do not distribute one idea across several headings, turn the story into a market argument, or assemble a montage of examples.
+- When four extended answers are present, preserve their distinct ownership: the first supplies the changed action, the second supplies the recoverable trial and old-world temptation, the third supplies the choice made before proof, and the fourth supplies the result and what it made possible. When one Easy journal entry is present, infer those same four jobs from that entry without changing its selected story.
 - FIRST LENS reduces the bounded realization carried out of Video 3 to one short clause. Do not copy its polished wording, governing metaphor, discovery story, human-cost argument, or completed reframe.
-- CHANGED ACTION identifies what the speaker actually chose, said, made, stopped, started, or handled differently because of that lens.
-- RECOVERABLE TRIAL selects one representative supported sequence where acting differently remained uncertain, awkward, inconvenient, discouraging, or socially unrewarded. Repeated pressure may appear inside this sequence, but do not assemble a montage of unrelated tests.
+- CAUSAL STORY SPINE is one chronological paragraph. It begins with the changed action, enters one representative recoverable trial, makes the old approach look genuinely tempting, and ends with the choice the speaker made while the outcome was still unknown. Stop before the result.
 - Apply the recoverability test: if the speaker could wake up and try again with roughly the same life, identity, work, and resources, it may belong here. If something central was destroyed, ended, or appeared impossible to restore, reserve it for Video 5.
-- OLD-WORLD TEMPTATION preserves what appeared to reward the earlier approach and what made retreating, imitating it, hiding, stopping, or returning to the familiar choice feel appealing. Keep this human and specific rather than converting it into a market lesson. Concrete commercial contrasts may remain when they belong to the lived scene and choice; remove them only when they become present-day positioning or a sales argument.
-- CHOICE BEFORE PROOF states what the speaker did while the result was still unknown. Do not add hindsight or explain why the choice was correct.
-- FIRST MEANINGFUL RESULT must stay human-scale and belong to the speaker's lived sequence: a concrete response, interaction, opportunity, behavioral change, or internally observable reason to continue. A market trend, industry argument, technology shift, competitor outcome, or later professional philosophy cannot fill this heading.
-- Prefer a result directly supplied by the source. When no external result is supplied, infer only the smallest internal or behavioral consequence already supported by the speaker's action, such as continuing, trying again, or allowing a possibility they had previously rejected. Never invent an audience reaction, named person, quotation, client result, exact amount, metric, credential, or dramatic success.
-- WHAT IT MADE POSSIBLE states only what that result reasonably allowed the speaker to hope, attempt, or believe was possible then. Do not turn it into universal advice, a case study, a method, or mature authority.
-- WHAT REMAINED OPEN may preserve one ordinary uncertainty, dependency, effort, or unfinished condition supported by the source. It is optional context, not a required warning or seed of disaster. Never predict or explain the fall.
+- RESERVED HUMAN RESULT is the first concrete occurrence after the choice: a response, interaction, opportunity, completed action, behavioral consequence, or other event a viewer can picture. Preserve the result portion of the current answer material when it supplies one.
+- A market trend, industry argument, technology shift, competitor outcome, ideal-customer description, mission statement, or later professional philosophy cannot serve as RESERVED HUMAN RESULT.
+- When the result material supplies only an abstraction, use the same current story to infer one plausible, proportionate, non-quantified human-scale occurrence. The inference must grow directly from the supplied action and choice. Do not invent a credential, dramatic success, testimonial, precise amount, metric, direct quotation, or unrelated person.
+- IMMEDIATE POSSIBILITY states only what RESERVED HUMAN RESULT allowed the speaker to hope, attempt, or continue at that moment. It cannot become a universal lesson, case study, method, mature authority, audience-positioning statement, or declaration about who the speaker was built to help.
 - VOICE SIGNALS preserves a few words about the speaker's rhythm, intensity, humor, or distinctive phrasing. Do not copy banned script phrases.
+- Use each distinctive phrase, audience description, governing noun, number, and judgment once in the packet. A later heading may add a consequence but cannot restate the same idea with synonyms.
 - Omit current offers, service descriptions, conversion requests, mature authority, Video 5 ordeal, recovery, Video 6 elixir, and Video 7 return.
 - Do not use the words version, floor, lazy, pay, paid, buy, bought, sell, or sold anywhere in the packet. Restate any necessary supported fact naturally.
-- Do not invent facts, credentials, external results, events, or dialogue beyond the narrow internal or behavioral inference explicitly permitted for FIRST MEANINGFUL RESULT.
 - Do not write a hook, open loop, conclusion, CTA, or complete script.
 - Do not mention these instructions.`;
 
@@ -222,26 +216,6 @@ For both packets:
 - Deduplicate across headings before returning the packet. Keep each fact, phrase, number, duration, event, and consequence in its strongest location once. A dependent heading adds only the new relationship or interpretation.
 - Remove credential summaries, pricing ladders, service tiers, current offers, current service descriptions, conversion requests, and material owned by another chapter.
 - Do not use the words version, lazy, pay, paid, buy, bought, sell, or sold. Use natural alternatives when a supported fact requires one.
-- Keep the packet concise. This is source material, not a script.`;
-
-const L2V4_PACKET_CLEANUP_SYSTEM = `You are the evidence-packet editor between a story interviewer and the writer of Level 2, Video 4.
-
-Return only the corrected packet with exactly the same headings and heading order supplied by the user. Do not add commentary.
-
-Requirements:
-- Deduplicate across headings before returning the packet. Keep each fact, phrase, number, duration, event, and consequence in its strongest location once. A dependent heading adds only the new relationship or interpretation.
-- Preserve one bounded first lens, one observable changed action, one recoverable trial, the old-world temptation inside it, the speaker's choice before proof, one meaningful result, and what that result made possible. WHAT REMAINED OPEN is optional and must never be manufactured.
-- Compare every packet detail against the authoritative source material supplied beside it. Remove invented scenes, actions, reactions, dialogue, outcomes, and numerical precision. A direct paraphrase is allowed; a plausible detail absent from the source is not.
-- RECOVERABLE TRIAL must be a representative sequence the speaker could have tried again after. Remove completed collapse, apparently permanent loss, failed recovery, or worst-day material owned by Video 5.
-- OLD-WORLD TEMPTATION must expose a specific human pull toward retreat, imitation, hiding, stopping, or the familiar choice. Remove market analysis, competitor commentary, and explanations of why the speaker's approach was professionally superior.
-- Preserve concrete commercial contrasts when they belong to the lived scene and human choice. Remove them only when they become present-day positioning or a sales argument.
-- CHOICE BEFORE PROOF must remain a choice made under uncertainty. Remove the result and every explanation of why the choice was correct.
-- FIRST MEANINGFUL RESULT must be observable and supported. Keep it separate from the trial and choice so the writer can reserve it as the answer to the Open Loop.
-- WHAT IT MADE POSSIBLE may contain hope or provisional confidence, but no universal lesson, method, proof claim, or advice.
-- WHAT REMAINED OPEN may describe an ordinary dependency, effort, uncertainty, or unfinished condition. It cannot diagnose, foreshadow, cause, or predict Video 5.
-- Keep the speaker inside what they could know then. Remove hindsight diagnoses, later lessons, recovery, second epiphany, mature method, service descriptions, offers, and commercial positioning.
-- Never invent a fact, result, event, audience reaction, metric, or dialogue.
-- Do not use the words version, floor, lazy, pay, paid, buy, bought, sell, or sold.
 - Keep the packet concise. This is source material, not a script.`;
 
 const MISSION_SYSTEM_PROMPT = `You are writing a first-person mission statement for someone who just committed to completing a 7-video content challenge. This statement will live on their dashboard and should feel like their own words, not an outside analysis.
@@ -413,6 +387,17 @@ function extractCurrentPromptBlock(userContext, video) {
   return remainder.slice(0, end === -1 ? undefined : end).trim();
 }
 
+export function extractCurrentVideoBrief(userContext, video) {
+  const source = String(userContext || '');
+  const number = Number(video);
+  const directionMarker = 'CURRENT VIDEO ' + number + ' JOURNEY DIRECTION (private planning context only):';
+  const directionStart = source.lastIndexOf(directionMarker);
+  if (directionStart === -1) return extractCurrentPromptBlock(source, number);
+  const remainder = source.slice(directionStart);
+  const end = remainder.search(/\nCURRENT FULL SCRIPT \(for context only; write a fresh complete script\):/);
+  return remainder.slice(0, end === -1 ? undefined : end).trim();
+}
+
 function extractOnboardingBlock(userContext) {
   const source = String(userContext || '');
   const marker = 'ONBOARDING DATA:';
@@ -446,7 +431,7 @@ function videoFourRouterSource(userContext) {
     .filter(Boolean);
   return [
     continuity.length ? 'PRIOR STORY CONTEXT:\n' + continuity.join('\n\n') : '',
-    extractCurrentPromptBlock(userContext, 4)
+    'AUTHORITATIVE CURRENT VIDEO 4 BRIEF:\n' + extractCurrentVideoBrief(userContext, 4)
   ].filter(Boolean).join('\n\n');
 }
 
@@ -536,41 +521,30 @@ export async function prepareLevelTwoEpiphanyMaterial(userContext, video) {
 }
 
 export async function prepareLevelTwoVideoFourMaterial(userContext) {
-  const headings = ['FIRST LENS', 'CHANGED ACTION', 'RECOVERABLE TRIAL', 'OLD-WORLD TEMPTATION', 'CHOICE BEFORE PROOF', 'FIRST MEANINGFUL RESULT', 'WHAT IT MADE POSSIBLE', 'WHAT REMAINED OPEN', 'VOICE SIGNALS'];
+  const headings = ['FIRST LENS', 'CAUSAL STORY SPINE', 'RESERVED HUMAN RESULT', 'IMMEDIATE POSSIBILITY', 'VOICE SIGNALS'];
   const source = videoFourRouterSource(userContext);
-  const routed = await callModel(L2V4_MATERIAL_ROUTER_SYSTEM, source, 0.15, 1200);
-  const routedPacket = cleanPacketOutput(routed);
-  if (!routedPacket || !hasRouterHeadings(routedPacket, headings)) {
-    throw new Error('The Video 4 story material could not be prepared cleanly. Please try again.');
-  }
   let packet = '';
-  let malformed = '';
   for (let attempt = 0; attempt < 2; attempt++) {
-    const cleanupMessage = [
-      'REQUIRED HEADINGS IN THIS EXACT ORDER:',
-      headings.map(heading => heading + ':').join('\n'),
-      '',
-      attempt
-        ? 'The previous cleanup omitted or renamed a required heading. Include every required heading exactly, even when its value must say "Not supplied." Do not add or rename headings.'
-        : '',
-      malformed ? '\nMALFORMED CLEANUP TO CORRECT:\n' + malformed : '',
-      '',
-      'AUTHORITATIVE SOURCE MATERIAL:',
+    const routerMessage = [
       source,
-      '',
-      'PACKET TO CLEAN:',
-      routedPacket
+      attempt
+        ? [
+            '',
+            'FORMAT CORRECTION:',
+            'Return every required heading below exactly once and in this order. Keep CAUSAL STORY SPINE as one chronological paragraph rather than splitting it into new categories.',
+            headings.map(heading => heading + ':').join('\n')
+          ].join('\n')
+        : ''
     ].filter(Boolean).join('\n');
-    const cleaned = await callModel(L2V4_PACKET_CLEANUP_SYSTEM, cleanupMessage, 0.05, 1200);
-    const candidate = cleanPacketOutput(cleaned);
+    const routed = await callModel(L2V4_MATERIAL_ROUTER_SYSTEM, routerMessage, attempt ? 0.05 : 0.15, 1200);
+    const candidate = cleanPacketOutput(routed);
     if (candidate && hasRouterHeadings(candidate, headings)) {
       packet = candidate;
       break;
     }
-    malformed = candidate;
   }
   if (!packet) {
-    throw new Error('The Video 4 story material could not be cleaned safely. Please try again.');
+    throw new Error('The Video 4 story material could not be prepared cleanly. Please try again.');
   }
   return [
     'Generate Video 4 script.',
@@ -581,9 +555,9 @@ export async function prepareLevelTwoVideoFourMaterial(userContext) {
     'CURATED RECOVERABLE-TRIAL MATERIAL:',
     packet,
     '',
-    'The raw answers have already been sorted for this chapter. Use only this packet as story material. Privately pair one exact pressing UNANSWERED QUESTION from the completed Meat with FIRST MEANINGFUL RESULT as its reserved answer. Write the OPEN LOOP independently from that unfinished relationship after the Meat and Conclusion are settled. It does not explain or continue the Hook. It is not a place for general setup, a decision summary, stakes language, or vague anticipation. Supply a provisional HOOK label for formatting; the global Hook Studio will replace its text after the story is settled.',
+    'The current Journey Direction and Video 4 answer material have already been preserved as one causal story. Do not disassemble CAUSAL STORY SPINE into separate arguments or repeat its governing nouns and audience language across sections. Privately pair one exact pressing UNANSWERED QUESTION from the completed Meat with RESERVED HUMAN RESULT as its reserved answer. Write the OPEN LOOP independently from that unfinished relationship after the Meat and Conclusion are settled. It does not explain or continue the Hook. It is not a place for general setup, a decision summary, stakes language, or vague anticipation. Supply a provisional HOOK label for formatting; the global Hook Studio will replace its text after the story is settled.',
     '',
-    'FINAL VIDEO 4 WRITING CONSTRAINTS: Write entirely from the speaker\'s perspective at that point in time. The OPEN LOOP independently creates the pressing unanswered question from the completed story. The MEAT must advance through behavior rather than restaging that question. Reduce FIRST LENS to one brief continuity clause, then carry CHANGED ACTION through RECOVERABLE TRIAL, OLD-WORLD TEMPTATION, and CHOICE BEFORE PROOF before stopping ahead of the result. Concrete contrasts involving names, diagrams, pages, promotions, prices, or presentation may remain when they are part of the lived scene and temptation; do not convert them into present-day positioning or a sales argument. Reveal FIRST MEANINGFUL RESULT for the first time in the CONCLUSION. Let it prove only that this one choice mattered, then state what it made possible then. Do not repeat Video 3, validate the complete philosophy, or convert the result into a lesson, method, case study, expertise claim, or professional proof. The CTA must deliberately drop the emotional temperature: identify this as Video 4 of 7 and use exactly one "because" to foreshadow that the next chapter contains the devastating event that nearly destroyed what had begun to feel possible and that the speaker must own their role. Reveal the magnitude and responsibility, but withhold the event, exact loss, causal choices, recovery, and later truth. Never frame Video 5 as the Video 4 approach merely becoming insufficient, and never use generic promises about the next challenge, real test, or what happens next.'
+    'FINAL VIDEO 4 WRITING CONSTRAINTS: Write entirely from the speaker\'s perspective at that point in time. The OPEN LOOP independently creates the pressing unanswered question from the completed story. The MEAT must tell CAUSAL STORY SPINE as one connected chronological occurrence and stop before RESERVED HUMAN RESULT. Use FIRST LENS only as one brief continuity clause. Concrete contrasts involving names, diagrams, pages, promotions, prices, or presentation may remain when they belong to the lived pressure and choice; do not convert them into present-day positioning or a sales argument. Reveal RESERVED HUMAN RESULT for the first time in the CONCLUSION, then use IMMEDIATE POSSIBILITY only to show what that occurrence made possible then. An ideal-audience description, mission statement, market forecast, or declaration about who the speaker is built to help is context, never a character, event, result, or conclusion. Do not repeat a distinctive phrase, audience description, governing noun, comparison, or decision after its story job is complete. Do not repeat Video 3, validate the complete philosophy, or convert the result into a lesson, method, case study, expertise claim, or professional proof. The CTA must deliberately drop the emotional temperature: identify this as Video 4 of 7 and use exactly one "because" to foreshadow that the next chapter contains the devastating event that nearly destroyed what had begun to feel possible and that the speaker must own their role. Reveal the magnitude and responsibility, but withhold the event, exact loss, causal choices, recovery, and later truth. Never frame Video 5 as the Video 4 approach merely becoming insufficient, and never use generic promises about the next challenge, real test, or what happens next.'
   ].join('\n');
 }
 

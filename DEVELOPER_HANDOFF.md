@@ -967,3 +967,14 @@ The following principles govern every word of copy in this app and the broader C
 - The copied prompt appends the user's current onboarding context and any existing Overview draft. It asks the outside AI to assess available material, ask one to five useful clarification questions, then produce the final first-person character study after the user answers.
 - The final bio is limited to 11,500 characters so it fits the existing 12,000-character Overview field without being silently truncated.
 - The app never sends the prompt to DeepSeek and never writes the outside AI response into the Overview automatically. The user remains in control of what they paste into the app.
+
+## 2026-07-29: Level 2 Video 4 causal-story preparation
+
+- A live L2V4 draft exposed two preparation defects: the specialized router discarded the saved Current Video 4 Journey Direction before planning, and its nine independent evidence headings encouraged one thin idea to be repeated as disconnected marketing language.
+- L2V4 preparation now preserves the Journey Direction together with the current Extended answers or Easy journal entry as the authoritative brief. Videos 2 and 3 remain continuity references only.
+- The former router-plus-cleanup pipeline was replaced by one normally single-call planner with five outputs: `FIRST LENS`, one chronological `CAUSAL STORY SPINE`, `RESERVED HUMAN RESULT`, `IMMEDIATE POSSIBILITY`, and `VOICE SIGNALS`.
+- The four L2V4 answers retain distinct ownership inside that spine: changed action, recoverable trial and temptation, choice before proof, then the result and immediate possibility. The writer receives the spine as one sequence and must stop the Meat before the reserved result.
+- An ideal-audience description, mission, market change, or statement about whom the speaker is built to help cannot substitute for an event or conclusion. When the fourth answer remains abstract, the planner may infer one plausible, proportionate, non-quantified human occurrence rooted in the current action and choice.
+- Distinctive phrases, audience descriptions, governing nouns, comparisons, and decisions receive one job in the packet rather than being restated across sections.
+- The extra L2V4 packet-cleanup model call was removed. A second planning call occurs only when the first response omits required headings, reducing normal generation latency.
+- Hook Studio, Open Loop Studio, CTA architecture, the four L2V4 questions, all other video paths, and the global lexical rejection behavior were not changed.

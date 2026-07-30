@@ -1190,9 +1190,9 @@ JOURNAL ANSWER ROUTING — MANDATORY:
 1. What the speaker tried supplies the changed action.
 2. What appeared to reward the old way supplies the recoverable trial and human temptation.
 3. What the speaker did while uncertain supplies the choice before proof.
-4. What happened supplies the reserved Conclusion answer. It cannot appear earlier. If the answer supplies no external result, infer only the smallest internal or behavioral consequence already supported by the speaker's action. Never manufacture an audience reaction, named person, quotation, client result, exact amount, metric, credential, or dramatic success.
+4. What happened supplies the reserved Conclusion answer. It cannot appear earlier. Preserve a concrete result from this answer whenever one exists. If the answer supplies only an abstraction, market change, mission, or ideal-audience description, infer one plausible, proportionate, non-quantified human occurrence that grows directly from the supplied action and choice. Never invent a credential, dramatic success, testimonial, precise amount, metric, direct quotation, or unrelated person.
 5. What the result made possible supplies quiet hope or provisional confidence. Any remaining uncertainty is optional and must be supported rather than manufactured.
-Required path: a changed action, one recoverable trial, an old-world temptation, a choice made before proof, then a supported meaningful result revealed in the Conclusion. Source answers are evidence, not story architecture. Do not import the user's present-day method, offer, later ordeal, recovery, elixir, or mature interpretation.
+Required path: preserve these four answers as one causal sequence rather than disassembling them into separate arguments: a changed action, one recoverable trial, an old-world temptation, a choice made before proof, then a meaningful human result revealed in the Conclusion. An ideal-audience description is context, not a character, event, result, or conclusion. Do not import the user's present-day method, offer, later ordeal, recovery, elixir, or mature interpretation.
 
 THE FIX GUIDE — USE THESE AS STRUCTURAL SHAPES, NOT COPYABLE LINES:
 The hook, open loop, conclusion, and CTA guidance below defines the kind of move each section should make for this video/level combination. Do not copy the exact wording unless the speaker's own answers naturally demand it. Build a fresh hook, open loop, conclusion, and CTA from the speaker's actual material while preserving the section job and emotional move. Never borrow a move from a different video/level combination.
@@ -1214,10 +1214,10 @@ VIDEO 4 FINAL CHECK:
 - The Hook interrupts attention. The Open Loop creates one exact pressing question. The Meat withholds its answer. The Conclusion answers it with the first meaningful result.
 - The Meat advances from the Open Loop's unanswered relationship instead of restaging its external comparison, metric, reaction, or question. The Hook remains outside this information sequence.
 - Video 3 receives no more than one brief continuity sentence and is not retaught.
-- The result is supported, proportionate, and framed as possibility rather than proof, advice, a method, or a case study.
+- The result is supplied or grounded through a proportionate inference from the current story, and it is framed as possibility rather than proof, advice, a method, or a case study.
 - Concrete commercial contrasts remain part of the lived scene rather than becoming present-day positioning or a sales argument.
 - Approximate source details remain approximate. Do not invent exact durations, counts, money, reactions, or results to make a trial sound more concrete.
-- If the source does not supply an external meaningful result, infer only the smallest internal or behavioral consequence already supported by the action. Do not invent audience proof, a named person, quotation, client result, exact amount, metric, credential, or dramatic success, and never substitute a market or technology shift for the personal payoff.
+- If the source supplies no human-scale result, infer one plausible, non-quantified occurrence that follows directly from the current action and choice. Never substitute audience positioning, a market or technology shift, professional philosophy, credential, dramatic success, testimonial, exact amount, metric, direct quotation, or unrelated person for the personal payoff.
 - The CTA deliberately foreshadows the catastrophic scale and speaker responsibility of Video 5 while withholding the event, cause, loss, recovery, and later truth.
 - The fall, recovery, second epiphany, and mature guide identity remain reserved for later videos.
 </l2_v4_rules>
