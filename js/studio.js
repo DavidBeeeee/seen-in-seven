@@ -141,7 +141,7 @@ function renderStudio() {
   const signedIn = Boolean(studioSession && studioSession.user);
   const email = signedIn ? studioSession.user.email : '';
   const localProgress = hasLocalSeenInSevenProgress();
-  const seenInSevenUnlocked = hasStudioAccess('seeninseven') || localProgress;
+  const seenInSevenUnlocked = true;
   const boardroomUnlocked = hasStudioAccess('boardroom');
 
   el('sign-in-button').hidden = signedIn;
@@ -163,7 +163,7 @@ function renderStudio() {
     el('welcome-copy').textContent = 'Sign in once, then return to everything you are building with Colorado Mastermind.';
   }
 
-  renderAppAccess('seeninseven', seenInSevenUnlocked, 'Included in your Studio beta access.');
+  renderAppAccess('seeninseven', seenInSevenUnlocked, 'SeenInSeven beta access is open.');
   renderAppAccess('boardroom', boardroomUnlocked, 'Your private advisor team is ready.');
   const accessName = ACCESS_APP_NAMES[accessNoticeApp];
   el('access-notice').hidden = !accessName || !signedIn;
