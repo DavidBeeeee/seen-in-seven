@@ -93,6 +93,21 @@
 .app-ready-row { display: flex; align-items: center; gap: 8px; margin: 2px 0 8px; color: var(--studio-soft); font-size: 12px; }
 .app-ready-row svg { width: 15px; color: var(--studio-green); }
 
+.catalog-visibility-form { margin: 0 0 18px; padding-top: 16px; border-top: 1px solid var(--studio-border); }
+.catalog-visibility-form fieldset { margin: 0; padding: 0; border: 0; }
+.catalog-visibility-form legend { margin-bottom: 9px; color: var(--studio-soft); font-size: 11px; font-weight: 900; }
+.catalog-visibility-options { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border: 1px solid var(--studio-border); }
+.catalog-visibility-options label { min-width: 0; cursor: pointer; }
+.catalog-visibility-options input { position: absolute; opacity: 0; pointer-events: none; }
+.catalog-visibility-options span { min-height: 34px; display: grid; place-items: center; padding: 5px 7px; border-right: 1px solid var(--studio-border); color: var(--studio-muted); font-size: 10px; font-weight: 900; text-align: center; }
+.catalog-visibility-options label:last-child span { border-right: 0; }
+.catalog-visibility-options input:checked + span { background: color-mix(in srgb, var(--studio-teal) 15%, transparent); color: var(--studio-text); }
+.catalog-visibility-options input:focus-visible + span { outline: 2px solid var(--studio-teal); outline-offset: -2px; }
+.catalog-visibility-status { min-height: 34px; margin: 9px 0 10px; color: var(--studio-muted); font-size: 10px; line-height: 1.45; }
+.catalog-visibility-save { min-height: 34px; padding: 0 10px; font-size: 10px; }
+.catalog-visibility-save svg { width: 14px; }
+.catalog-visibility-form .enrollment-message { min-height: 16px; margin: 7px 0 0; font-size: 10px; }
+
 .customer-heading { margin-bottom: 12px; }
 .load-time, .table-count { color: var(--studio-muted); font-size: 11px; }
 .commerce-summary { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 12px; }

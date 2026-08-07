@@ -6,6 +6,7 @@ const studioSb = supabase.createClient(STUDIO_SUPABASE_URL, STUDIO_SUPABASE_KEY)
 let studioSession = null;
 let studioProfile = null;
 let studioAccess = [];
+let studioCatalogMode = 'automatic';
 let authMode = 'magic';
 const ACCESS_APP_NAMES = { seeninseven: 'SeenInSeven', boardroom: 'AI Boardroom', eee: 'EEE Membership' };
 const accessNoticeApp = new URLSearchParams(window.location.search).get('access');
@@ -109,6 +110,33 @@ async function loadStudioAccess(profile) {
   return (data || []).filter(item => !item.expires_at || new Date(item.expires_at).getTime() > Date.now());
 }
 
+async function loadStudioCatalogMode() {
+  const { data, error } = await studioSb
+    .from('studio_catalog_settings')
+    .select('catalog_mode')
+    .eq('app_key', 'eee')
+    .maybeSingle();
+
+  if (!error && data && ['automatic', 'visible', 'hidden'].includes(data.catalog_mode)) {
+    studioCatalogMode = data.catalog_mode;
+  }
+  return studioCatalogMode;
+}
+
+function isEeeCartOpen() {
+  return Boolean(
+    window.SevenSevenSevenLaunch &&
+    window.SevenSevenSevenLaunch.launchState().cart === 'open'
+  );
+}
+
+function shouldShowEeeCard(unlocked) {
+  if (unlocked) return true;
+  if (studioCatalogMode === 'visible') return true;
+  if (studioCatalogMode === 'hidden') return false;
+  return isEeeCartOpen();
+}
+
 function hasStudioAccess(appKey) {
   return studioAccess.some(item => item.app_key === appKey);
 }
@@ -130,6 +158,8 @@ async function hydrateStudio(session) {
   studioProfile = null;
   studioAccess = [];
 
+  await loadStudioCatalogMode();
+
   if (session && session.user) {
     studioProfile = await ensureStudioProfile(session.user);
     if (studioProfile) studioAccess = await loadStudioAccess(studioProfile);
@@ -144,6 +174,7 @@ function renderStudio() {
   const seenInSevenUnlocked = true;
   const boardroomUnlocked = hasStudioAccess('boardroom');
   const eeeUnlocked = hasStudioAccess('eee');
+  const eeeCardVisible = shouldShowEeeCard(eeeUnlocked);
 
   el('sign-in-button').hidden = signedIn;
   el('account-button').hidden = !signedIn;
@@ -152,6 +183,8 @@ function renderStudio() {
   el('admin-nav-item').hidden = !isAdmin;
   el('admin-menu-item').hidden = !isAdmin;
   el('eee-menu-item').hidden = !eeeUnlocked;
+  el('eee-card').hidden = !eeeCardVisible;
+  el('studio-app-count').textContent = (eeeCardVisible ? 3 : 2) + ' apps';
 
   if (signedIn) {
     el('account-email').textContent = email;
@@ -167,7 +200,12 @@ function renderStudio() {
 
   renderAppAccess('seeninseven', seenInSevenUnlocked, 'SeenInSeven beta access is open.');
   renderAppAccess('boardroom', boardroomUnlocked, 'Your private advisor team is ready.');
-  renderAppAccess('eee', eeeUnlocked, 'All five EEE components are ready in one workspace.', 'Sign in with the email connected to your EEE membership.');
+  renderAppAccess(
+    'eee',
+    eeeUnlocked,
+    'All five EEE components are ready in one workspace.',
+    eeeCardVisible ? 'Founders enrollment is open. Explore the complete EEE membership.' : 'Sign in with the email connected to your EEE membership.'
+  );
   const accessName = ACCESS_APP_NAMES[accessNoticeApp];
   el('access-notice').hidden = !accessName || !signedIn;
   if (accessName && signedIn) {
@@ -322,3 +360,9 @@ if (ACCESS_APP_NAMES[accessNoticeApp] && window.history && window.history.replac
 
 refreshIcons();
 renderStudio();
+
+window.setInterval(renderStudio, 60 * 1000);
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState !== 'visible') return;
+  loadStudioCatalogMode().then(renderStudio).catch(() => {});
+});

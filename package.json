@@ -10,6 +10,7 @@
     "check:level-consistency": "node scripts/check-level-consistency.mjs",
     "check:journey-map": "node scripts/check-journey-map.mjs",
     "check:answer-help": "node scripts/check-answer-help.mjs",
-    "test": "npm run check:prompt-style && npm run check:story-architecture && npm run check:lock-state && npm run check:progress-meter && npm run check:level-consistency && npm run check:journey-map && npm run check:answer-help"
+    "check:studio-catalog": "node scripts/check-studio-catalog-visibility.mjs",
+    "test": "npm run check:prompt-style && npm run check:story-architecture && npm run check:lock-state && npm run check:progress-meter && npm run check:level-consistency && npm run check:journey-map && npm run check:answer-help && npm run check:studio-catalog"
   }
 }

@@ -12,7 +12,7 @@ const APP_CATALOG = [
 
 const adminEl = id => document.getElementById(id);
 let studioAdminSession = null;
-let studioAdminState = { users: [], entitlements: [], grants: [], webhooks: [], scripts: [], progress: [], logs: [], boardroom: [], rows: [], errors: {} };
+let studioAdminState = { users: [], entitlements: [], grants: [], webhooks: [], scripts: [], progress: [], logs: [], boardroom: [], catalog: [], rows: [], errors: {} };
 
 function refreshAdminIcons() {
   if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
@@ -153,6 +153,15 @@ async function rpcSafe(name, rpcName) {
   }
 }
 
+async function tableSafe(name, tableName, columns) {
+  try {
+    const { data, error } = await adminSb.from(tableName).select(columns);
+    return { name, data: data || [], error: error ? error.message : null };
+  } catch (error) {
+    return { name, data: [], error: error.message || String(error) };
+  }
+}
+
 async function loadStudioAdmin() {
   const button = adminEl('refresh-button');
   button.classList.add('loading');
@@ -165,7 +174,8 @@ async function loadStudioAdmin() {
     rpcSafe('scripts', 'admin_get_scripts'),
     rpcSafe('progress', 'admin_get_progress'),
     rpcSafe('logs', 'admin_get_logs'),
-    rpcSafe('boardroom', 'admin_get_boardroom_activity')
+    rpcSafe('boardroom', 'admin_get_boardroom_activity'),
+    tableSafe('catalog', 'studio_catalog_settings', 'app_key,catalog_mode,updated_at')
   ]);
   const loaded = Object.fromEntries(results.map(result => [result.name, result]));
   studioAdminState.users = loaded.users.data;
@@ -176,6 +186,7 @@ async function loadStudioAdmin() {
   studioAdminState.progress = loaded.progress.data;
   studioAdminState.logs = loaded.logs.data;
   studioAdminState.boardroom = loaded.boardroom.data;
+  studioAdminState.catalog = loaded.catalog.data;
   studioAdminState.errors = Object.fromEntries(results.filter(result => result.error).map(result => [result.name, result.error]));
   studioAdminState.rows = buildCustomerRows();
   renderStudioAdmin();
@@ -221,9 +232,62 @@ function renderStudioAdmin() {
   renderNotice();
   renderMetrics();
   renderAppSummary();
+  renderEeeVisibility();
   renderCommerce();
   renderCustomers();
   refreshAdminIcons();
+}
+
+function currentEeeCatalogMode() {
+  const setting = studioAdminState.catalog.find(item => item.app_key === 'eee');
+  return setting && ['automatic', 'visible', 'hidden'].includes(setting.catalog_mode)
+    ? setting.catalog_mode
+    : 'automatic';
+}
+
+function adminEeeCartOpen() {
+  return Boolean(
+    window.SevenSevenSevenLaunch &&
+    window.SevenSevenSevenLaunch.launchState().cart === 'open'
+  );
+}
+
+function renderEeeVisibility() {
+  const mode = currentEeeCatalogMode();
+  adminEl('eee-visibility-' + mode).checked = true;
+  const status = mode === 'visible'
+    ? 'Non-members can currently see the EEE card in Studio.'
+    : mode === 'hidden'
+      ? 'Only members can currently see the EEE card in Studio.'
+      : adminEeeCartOpen()
+        ? 'Automatic mode is active. The cart is open, so non-members can see the EEE card.'
+        : 'Automatic mode is active. The card will appear to non-members when the founders cart opens.';
+  adminEl('eee-visibility-status').textContent = status;
+}
+
+async function saveEeeVisibility(event) {
+  event.preventDefault();
+  const selected = document.querySelector('input[name="eee-visibility"]:checked');
+  const mode = selected ? selected.value : 'automatic';
+  const button = adminEl('eee-visibility-submit');
+  const message = adminEl('eee-visibility-message');
+  button.disabled = true;
+  button.querySelector('span').textContent = 'Saving...';
+  message.textContent = '';
+  message.className = 'enrollment-message';
+  try {
+    const { error } = await adminSb.rpc('admin_set_studio_catalog_visibility', { target_mode: mode });
+    if (error) throw error;
+    message.textContent = 'EEE Studio visibility updated.';
+    message.className = 'enrollment-message success';
+    await loadStudioAdmin();
+  } catch (error) {
+    message.textContent = 'Visibility was not changed. Please refresh and try again.';
+    message.className = 'enrollment-message error';
+  } finally {
+    button.disabled = false;
+    button.querySelector('span').textContent = 'Save visibility';
+  }
 }
 
 function renderNotice() {
@@ -526,6 +590,7 @@ adminSb.auth.onAuthStateChange((event, session) => {
 
 adminEl('admin-auth-form').addEventListener('submit', sendAdminLink);
 adminEl('enrollment-form').addEventListener('submit', enrollCustomer);
+adminEl('eee-visibility-form').addEventListener('submit', saveEeeVisibility);
 adminEl('theme-button').addEventListener('click', toggleAdminTheme);
 adminEl('refresh-button').addEventListener('click', loadStudioAdmin);
 adminEl('customer-search').addEventListener('input', renderCustomers);

@@ -195,6 +195,19 @@
                 <div><strong id="eee-active-grants">-</strong><span>active grants</span></div>
                 <div><strong id="eee-canceled">-</strong><span>cancellations</span></div>
               </div>
+              <form class="catalog-visibility-form" id="eee-visibility-form">
+                <fieldset>
+                  <legend>Studio card visibility</legend>
+                  <div class="catalog-visibility-options">
+                    <label><input id="eee-visibility-automatic" type="radio" name="eee-visibility" value="automatic" checked><span>Automatic</span></label>
+                    <label><input id="eee-visibility-visible" type="radio" name="eee-visibility" value="visible"><span>Always show</span></label>
+                    <label><input id="eee-visibility-hidden" type="radio" name="eee-visibility" value="hidden"><span>Members only</span></label>
+                  </div>
+                </fieldset>
+                <p class="catalog-visibility-status" id="eee-visibility-status">Loading visibility...</p>
+                <button class="secondary-button catalog-visibility-save" id="eee-visibility-submit" type="submit"><i data-lucide="eye"></i><span>Save visibility</span></button>
+                <p class="enrollment-message" id="eee-visibility-message" role="status" aria-live="polite"></p>
+              </form>
               <a class="secondary-button app-admin-button" href="/eee">
                 <span>Open EEE home</span>
                 <i data-lucide="arrow-right"></i>
@@ -284,6 +297,7 @@
     </div>
   </div>
 
-  <script src="/js/admin-studio.js?v=studio-access-v1"></script>
+  <script src="/js/777-launch-cycle.js?v=2026-09"></script>
+  <script src="/js/admin-studio.js?v=studio-access-v2"></script>
 </body>
 </html>
