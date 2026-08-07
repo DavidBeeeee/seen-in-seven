@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>StorySculpt | EEE Membership</title>
+  <meta name="description" content="Turn a raw idea into a talking-head script through the StorySculpt interview.">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
+  <link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <main class="eee-gate" id="eee-access-gate"><section class="eee-gate-box"><span class="studio-mark">EEE</span><h1 id="eee-gate-title">Checking your membership.</h1><p id="eee-gate-copy">Your Studio access will be ready in a moment.</p><a class="primary-button" id="eee-gate-button" href="/"><span>Return to Studio</span><i data-lucide="arrow-right"></i></a></section></main>
+  <div id="eee-app" hidden>
+    <header class="studio-header eee-header"><a class="studio-brand" href="/eee"><span class="studio-mark">EEE</span><span><strong>StorySculpt</strong><small>The 5E Script Builder</small></span></a><div class="header-actions"><a class="secondary-button" href="/eee"><i data-lucide="arrow-left"></i><span>EEE Home</span></a><button class="icon-button" data-eee-theme type="button" title="Change color theme" aria-label="Change color theme"><i data-lucide="sun" class="theme-sun-icon"></i><i data-lucide="moon" class="theme-moon-icon"></i></button><div class="eee-account"><span class="account-avatar" id="eee-account-avatar">E</span><span class="eee-account-email" id="eee-account-email"></span></div></div></header>
+    <main class="eee-workspace story-workspace">
+      <aside class="eee-rail story-projects">
+        <div class="story-rail-head"><h2>Saved projects</h2><button class="icon-button" id="new-project-button" type="button" title="New project" aria-label="Create a new StorySculpt project"><i data-lucide="plus"></i></button></div>
+        <div class="eee-rail-list" id="story-project-list"></div>
+      </aside>
+      <section class="eee-work-main">
+        <div class="eee-work-head"><div><p class="eyebrow">StorySculpt</p><h1 id="story-page-title">Choose the kind of script you want to build.</h1><p id="story-page-copy">The interview asks for one useful decision at a time and keeps the raw details intact.</p></div><button class="secondary-button" id="delete-project-button" type="button" hidden><i data-lucide="trash-2"></i><span>Delete</span></button></div>
+
+        <section class="story-mode-grid" id="story-mode-grid">
+          <button class="story-mode" type="button" data-mode="bold"><span class="story-mode-icon"><i data-lucide="zap"></i></span><strong>Bold</strong><small>A sharp opinion or hot take</small></button>
+          <button class="story-mode" type="button" data-mode="mini"><span class="story-mode-icon"><i data-lucide="presentation"></i></span><strong>Mini</strong><small>A compact lesson with a story</small></button>
+          <button class="story-mode" type="button" data-mode="rant"><span class="story-mode-icon"><i data-lucide="flame"></i></span><strong>Rant</strong><small>A raw thought with emotional force</small></button>
+        </section>
+
+        <section id="story-editor" hidden>
+          <div class="eee-panel story-project-meta">
+            <div class="eee-form-grid"><label>Project title<input id="story-title" maxlength="160"></label><label>Format<select id="story-mode" disabled><option value="bold">Bold</option><option value="mini">Mini</option><option value="rant">Rant</option></select></label></div>
+            <label>Background StorySculpt should remember<textarea id="story-context" placeholder="Names, context, voice notes, facts, or details you do not want lost."></textarea></label>
+            <p class="eee-message" id="story-save-status"></p>
+          </div>
+
+          <div class="story-conversation" id="story-conversation" aria-live="polite"></div>
+          <form class="story-composer" id="story-composer">
+            <label for="story-answer">Your answer</label>
+            <textarea id="story-answer" rows="5" placeholder="Write it the way you would say it. Rough is useful." required></textarea>
+            <div class="story-composer-actions"><span id="story-generation-status">Your project saves as you go.</span><button class="primary-button" id="story-send" type="submit"><span>Continue</span><i data-lucide="arrow-up"></i></button></div>
+          </form>
+
+          <section class="story-output" id="story-output" hidden>
+            <div class="story-output-head"><div><p class="eyebrow">Finished Draft</p><h2>Your script</h2></div><button class="secondary-button" id="copy-story-output" type="button"><i data-lucide="copy"></i><span>Copy</span></button></div>
+            <div class="story-output-copy" id="story-output-copy"></div>
+          </section>
+        </section>
+      </section>
+    </main>
+  </div>
+  <script src="/js/eee-common.js?v=eee-launch-v1"></script><script src="/js/storysculpt.js?v=eee-launch-v1"></script>
+</body>
+</html>

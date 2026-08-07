@@ -6,12 +6,13 @@ const adminSb = supabase.createClient(ADMIN_SUPABASE_URL, ADMIN_SUPABASE_KEY);
 
 const APP_CATALOG = [
   { key: 'seeninseven', name: 'SeenInSeven', connected: true, adminPath: '/admin/seeninseven' },
-  { key: 'boardroom', name: 'AI Boardroom', connected: true, adminPath: '/admin/boardroom' }
+  { key: 'boardroom', name: 'AI Boardroom', connected: true, adminPath: '/admin/boardroom' },
+  { key: 'eee', name: 'EEE Membership', connected: true, adminPath: '/eee' }
 ];
 
 const adminEl = id => document.getElementById(id);
 let studioAdminSession = null;
-let studioAdminState = { users: [], entitlements: [], scripts: [], progress: [], logs: [], boardroom: [], rows: [], errors: {} };
+let studioAdminState = { users: [], entitlements: [], grants: [], webhooks: [], scripts: [], progress: [], logs: [], boardroom: [], rows: [], errors: {} };
 
 function refreshAdminIcons() {
   if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
@@ -40,6 +41,14 @@ function formatDate(value) {
   const date = new Date(value);
   if (!Number.isFinite(date.getTime())) return 'No activity yet';
   return date.toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+}
+
+function maskEmail(value) {
+  const email = String(value || '');
+  const parts = email.split('@');
+  if (parts.length !== 2) return email || 'Unknown customer';
+  const local = parts[0];
+  return (local.length <= 2 ? local.charAt(0) + '*' : local.slice(0, 2) + '*'.repeat(Math.min(5, local.length - 2))) + '@' + parts[1];
 }
 
 function uniqueVideoCount(rows, field) {
@@ -151,6 +160,8 @@ async function loadStudioAdmin() {
   const results = await Promise.all([
     rpcSafe('users', 'admin_get_users'),
     rpcSafe('entitlements', 'admin_get_studio_entitlements'),
+    rpcSafe('grants', 'admin_get_studio_access_grants'),
+    rpcSafe('webhooks', 'admin_get_systeme_webhook_events'),
     rpcSafe('scripts', 'admin_get_scripts'),
     rpcSafe('progress', 'admin_get_progress'),
     rpcSafe('logs', 'admin_get_logs'),
@@ -159,6 +170,8 @@ async function loadStudioAdmin() {
   const loaded = Object.fromEntries(results.map(result => [result.name, result]));
   studioAdminState.users = loaded.users.data;
   studioAdminState.entitlements = loaded.entitlements.data;
+  studioAdminState.grants = loaded.grants.data;
+  studioAdminState.webhooks = loaded.webhooks.data;
   studioAdminState.scripts = loaded.scripts.data;
   studioAdminState.progress = loaded.progress.data;
   studioAdminState.logs = loaded.logs.data;
@@ -198,6 +211,7 @@ function buildCustomerRows() {
       lastActive: user.last_active || (logs[0] && logs[0].created_at) || user.created_at,
       seenInSevenAccess: activeAccess.some(item => item.app_key === 'seeninseven'),
       boardroomAccess: activeAccess.some(item => item.app_key === 'boardroom'),
+      eeeAccess: activeAccess.some(item => item.app_key === 'eee'),
       boardroom: boardroom[0] || null
     };
   }).sort((a, b) => dateMs(b.lastActive) - dateMs(a.lastActive));
@@ -207,6 +221,7 @@ function renderStudioAdmin() {
   renderNotice();
   renderMetrics();
   renderAppSummary();
+  renderCommerce();
   renderCustomers();
   refreshAdminIcons();
 }
@@ -243,6 +258,43 @@ function renderAppSummary() {
   adminEl('boardroom-users').textContent = boardroomRows.length;
   adminEl('boardroom-sessions').textContent = studioAdminState.boardroom.reduce((sum, row) => sum + Number(row.conversations || 0), 0);
   adminEl('boardroom-cards').textContent = studioAdminState.boardroom.reduce((sum, row) => sum + Number(row.active_cards || 0), 0);
+  const eeeRows = studioAdminState.rows.filter(row => row.eeeAccess);
+  const eeeGrants = studioAdminState.grants.filter(item => item.app_key === 'eee' && item.status === 'active');
+  const canceled = studioAdminState.webhooks.filter(item => String(item.event_type || '').toLowerCase().includes('canceled') && item.status === 'processed');
+  adminEl('eee-users').textContent = eeeRows.length;
+  adminEl('eee-active-grants').textContent = eeeGrants.length;
+  adminEl('eee-canceled').textContent = canceled.length;
+}
+
+function renderCommerce() {
+  const rows = studioAdminState.webhooks.slice().sort((a, b) => dateMs(b.received_at) - dateMs(a.received_at));
+  const processed = rows.filter(row => row.status === 'processed').length;
+  const duplicates = rows.reduce((sum, row) => sum + Math.max(0, Number(row.delivery_count || 1) - 1), 0);
+  const failed = rows.filter(row => row.status === 'failed').length;
+  adminEl('commerce-processed').textContent = processed;
+  adminEl('commerce-duplicates').textContent = duplicates;
+  adminEl('commerce-failed').textContent = failed;
+  adminEl('commerce-count').textContent = rows.length + ' recent event' + (rows.length === 1 ? '' : 's');
+
+  const tbody = adminEl('commerce-rows');
+  if (!rows.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="table-loading">No Systeme purchase events have arrived yet.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = rows.slice(0, 100).map(row => {
+    const payload = row.payload || {};
+    const statusClass = row.status === 'failed' ? ' webhook-failed' : row.status === 'processed' ? ' webhook-processed' : '';
+    const product = row.product_key || row.price_plan_id || 'Unmapped price plan';
+    return '<tr>' +
+      '<td><span class="webhook-status' + statusClass + '">' + escapeHtml(row.status || 'received') + '</span></td>' +
+      '<td>' + escapeHtml(row.event_type || 'Unknown event') + (Number(row.delivery_count || 1) > 1 ? '<small class="event-attempts">' + Number(row.delivery_count) + ' deliveries</small>' : '') + '</td>' +
+      '<td>' + escapeHtml(maskEmail(row.customer_email)) + '</td>' +
+      '<td>' + escapeHtml(product) + '</td>' +
+      '<td>' + escapeHtml(formatDate(row.received_at)) + '</td>' +
+      '<td><code class="message-id">' + escapeHtml(String(row.message_id || '').slice(0, 12)) + '</code></td>' +
+      '</tr>';
+  }).join('');
 }
 
 function filteredCustomerRows() {
@@ -255,6 +307,7 @@ function filteredCustomerRows() {
     if (filter === 'none' && row.activeAccess.length > 0) return false;
     if (filter === 'seeninseven' && !row.seenInSevenAccess) return false;
     if (filter === 'boardroom' && !row.boardroomAccess) return false;
+    if (filter === 'eee' && !row.eeeAccess) return false;
     return true;
   });
 }
@@ -281,12 +334,15 @@ function renderCustomers() {
     const boardroomButton = row.boardroomAccess
       ? '<button class="revoke" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'boardroom\',false)">Remove Boardroom</button>'
       : '<button onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'boardroom\',true)">Grant Boardroom</button>';
+    const eeeButton = row.eeeAccess
+      ? '<button class="revoke" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'eee\',false)">Remove EEE</button>'
+      : '<button onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'eee\',true)">Grant EEE</button>';
     return '<tr>' +
       '<td><div class="customer-name">' + escapeHtml(name) + (row.user.is_admin ? '<span class="customer-role">Admin</span>' : '') + '</div><div class="customer-email">' + escapeHtml(row.user.email || 'No email') + '</div></td>' +
       '<td><div class="access-badges">' + badges + '</div></td>' +
       '<td><div class="progress-mini"><div class="progress-mini-bar"><div class="progress-mini-fill" style="width:' + progressPercent + '%"></div></div><span>' + row.filmedCount + '/7 filmed · ' + row.scriptCount + '/7 scripts</span></div></td>' +
       '<td>' + escapeHtml(formatDate(row.lastActive)) + '</td>' +
-      '<td><div class="access-control">' + sisButton + boardroomButton + '</div></td>' +
+      '<td><div class="access-control">' + sisButton + boardroomButton + eeeButton + '</div></td>' +
       '<td><button class="icon-button row-detail-button" type="button" title="View customer" aria-label="View ' + safeAttr(name) + '" onclick="openCustomer(\'' + safeAttr(row.user.id) + '\')"><i data-lucide="chevron-right"></i></button></td>' +
       '</tr>';
   }).join('');
@@ -397,13 +453,19 @@ function openCustomer(userId) {
   adminEl('drawer-title').textContent = name;
   const sisAccess = row.seenInSevenAccess;
   const boardroomAccess = row.boardroomAccess;
+  const eeeAccess = row.eeeAccess;
   const boardroom = row.boardroom || {};
+  const activeGrants = studioAdminState.grants.filter(grant => grant.user_id === row.user.id && grant.status === 'active');
+  const grantSummary = activeGrants.length
+    ? activeGrants.map(grant => '<span class="access-badge active">' + escapeHtml(grant.app_key + ' · ' + grant.source_kind) + '</span>').join('')
+    : '<span class="access-badge">No active grants</span>';
   adminEl('drawer-content').innerHTML =
     '<div class="drawer-profile"><h3>' + escapeHtml(name) + '</h3><p>' + escapeHtml(row.user.email || 'No email') + '</p></div>' +
     '<section class="drawer-section"><h4>Studio summary</h4>' +
       drawerKv('Joined', formatDate(row.user.created_at)) +
       drawerKv('Last active', formatDate(row.lastActive)) +
       drawerKv('Apps available', String(row.activeAccess.length)) +
+      '<div class="drawer-grants">' + grantSummary + '</div>' +
     '</section>' +
     '<section class="drawer-section"><h4>App access</h4>' +
       '<article class="drawer-app"><div class="drawer-app-head"><strong>SeenInSeven</strong><span class="access-badge' + (sisAccess ? ' active' : '') + '">' + (sisAccess ? 'Active' : 'No access') + '</span></div>' +
@@ -421,6 +483,14 @@ function openCustomer(userId) {
           ? '<button class="secondary-button" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'boardroom\',false)">Remove access</button>'
           : '<button class="secondary-button" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'boardroom\',true)">Grant access</button>') +
         '<a class="secondary-button" href="/admin/boardroom">Open app admin</a>' +
+      '</div></article>' +
+      '<article class="drawer-app"><div class="drawer-app-head"><strong>EEE Membership</strong><span class="access-badge' + (eeeAccess ? ' active' : '') + '">' + (eeeAccess ? 'Active' : 'No access') + '</span></div>' +
+      '<p>StorySculpt, Next Step Navigator, Solution Vault, AI Boardroom, and Certainty Sessions from one Studio home.</p>' +
+      '<div class="drawer-actions">' +
+        (eeeAccess
+          ? '<button class="secondary-button" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'eee\',false)">Remove access</button>'
+          : '<button class="secondary-button" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'eee\',true)">Grant access</button>') +
+        '<a class="secondary-button" href="/eee">Open EEE home</a>' +
       '</div></article>' +
     '</section>';
   adminEl('drawer-backdrop').hidden = false;

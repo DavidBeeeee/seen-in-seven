@@ -6,3 +6,7 @@ page2 MVO old.rtfd
 *.pdf
 *.rtfd
 DEAR_FUTURE_CLAUDE.md
+node_modules
+funnel-pages/backups
+launch/decks
+launch/create-decks.mjs

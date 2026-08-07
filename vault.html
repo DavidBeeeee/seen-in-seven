@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Solution Vault | EEE Membership</title><meta name="description" content="Search the Colorado Mastermind meetup speaker library.">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
+  <link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/vault.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <main class="eee-gate" id="eee-access-gate"><section class="eee-gate-box"><span class="studio-mark">EEE</span><h1 id="eee-gate-title">Checking your membership.</h1><p id="eee-gate-copy">Your Studio access will be ready in a moment.</p><a class="primary-button" id="eee-gate-button" href="/"><span>Return to Studio</span><i data-lucide="arrow-right"></i></a></section></main>
+  <div id="eee-app" hidden>
+    <header class="studio-header eee-header"><a class="studio-brand" href="/eee"><span class="studio-mark">EEE</span><span><strong>Solution Vault</strong><small>Meetup speaker library</small></span></a><div class="header-actions"><a class="secondary-button" href="/eee"><i data-lucide="arrow-left"></i><span>EEE Home</span></a><button class="icon-button" data-eee-theme type="button" title="Change color theme" aria-label="Change color theme"><i data-lucide="sun" class="theme-sun-icon"></i><i data-lucide="moon" class="theme-moon-icon"></i></button><div class="eee-account"><span class="account-avatar" id="eee-account-avatar">E</span><span class="eee-account-email" id="eee-account-email"></span></div></div></header>
+    <main class="vault-main">
+      <section class="eee-page-head"><div><p class="eyebrow">Solution Vault</p><h1>Find the person who already explained the problem in front of you.</h1><p>Search the Colorado Mastermind speaker archive by subject, speaker, or the words you would use to describe the roadblock.</p></div><span class="eee-member-chip"><i data-lucide="library"></i><span id="vault-count">Loading</span></span></section>
+      <div class="vault-toolbar"><label><i data-lucide="search"></i><input id="vault-search" type="search" placeholder="Search speakers, topics, and descriptions"></label><select id="vault-topic"><option value="">All topics</option></select></div>
+      <section class="vault-admin eee-panel" id="vault-admin" hidden>
+        <div class="vault-admin-head"><div><p class="eyebrow">Administrator</p><h2>Add a speaker recording</h2></div><button class="secondary-button" id="vault-admin-toggle" type="button"><i data-lucide="plus"></i><span>Add recording</span></button></div>
+        <form id="vault-admin-form" hidden>
+          <div class="eee-form-grid"><label>Title<input id="vault-title" required></label><label>Speaker<input id="vault-speaker"></label><label>Topic<input id="vault-item-topic"></label><label>Recording URL<input id="vault-url" type="url" required></label></div>
+          <label>Description<textarea id="vault-description"></textarea></label>
+          <label>Thumbnail URL<input id="vault-thumbnail" type="url"></label>
+          <div class="eee-actions"><button class="primary-button" type="submit"><span>Save recording</span><i data-lucide="save"></i></button></div><p class="eee-message" id="vault-admin-message"></p>
+        </form>
+      </section>
+      <section class="vault-grid" id="vault-grid"></section>
+      <section class="vault-empty" id="vault-empty" hidden><i data-lucide="library"></i><h2>The speaker library is being moved into Studio.</h2><p>The search and progress system are ready. Recordings will appear here as the existing archive is imported.</p></section>
+    </main>
+  </div>
+  <script src="/js/eee-common.js?v=eee-launch-v1"></script><script src="/js/vault.js?v=eee-launch-v1"></script>
+</body>
+</html>

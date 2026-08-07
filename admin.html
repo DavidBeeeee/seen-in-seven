@@ -84,6 +84,10 @@
             <i data-lucide="users"></i>
             <span>Customers</span>
           </a>
+          <a class="nav-item" href="#commerce">
+            <i data-lucide="receipt-text"></i>
+            <span>Purchases</span>
+          </a>
           <p class="sidebar-label app-label">App Admin</p>
           <a class="nav-item" href="/admin/seeninseven">
             <i data-lucide="video"></i>
@@ -92,6 +96,10 @@
           <a class="nav-item" href="/admin/boardroom">
             <i data-lucide="messages-square"></i>
             <span>AI Boardroom</span>
+          </a>
+          <a class="nav-item" href="/eee">
+            <i data-lucide="sparkles"></i>
+            <span>EEE home</span>
           </a>
         </nav>
         <a class="nav-item studio-return" href="/">
@@ -130,7 +138,7 @@
           </article>
           <article class="admin-metric">
             <span class="metric-icon"><i data-lucide="blocks"></i></span>
-            <div><strong id="metric-apps">2</strong><span>Connected apps</span><small>Studio access controls</small></div>
+            <div><strong id="metric-apps">3</strong><span>Connected apps</span><small>Studio access controls</small></div>
           </article>
         </section>
 
@@ -174,6 +182,42 @@
                 <i data-lucide="arrow-right"></i>
               </a>
             </article>
+
+            <article class="admin-app-card">
+              <div class="admin-app-top">
+                <span class="app-admin-icon"><i data-lucide="sparkles"></i></span>
+                <span class="status-chip status-live">Connected</span>
+              </div>
+              <h3>EEE Membership</h3>
+              <p>The complete EEE workspace, including StorySculpt, Next Step Navigator, Solution Vault, AI Boardroom, and Certainty Sessions.</p>
+              <div class="app-stat-row">
+                <div><strong id="eee-users">-</strong><span>members</span></div>
+                <div><strong id="eee-active-grants">-</strong><span>active grants</span></div>
+                <div><strong id="eee-canceled">-</strong><span>cancellations</span></div>
+              </div>
+              <a class="secondary-button app-admin-button" href="/eee">
+                <span>Open EEE home</span>
+                <i data-lucide="arrow-right"></i>
+              </a>
+            </article>
+          </div>
+        </section>
+
+        <section class="admin-section" id="commerce" aria-labelledby="commerce-title">
+          <div class="admin-section-head customer-heading">
+            <div><p class="eyebrow">Commerce</p><h2 id="commerce-title">Systeme purchase activity</h2></div>
+            <span class="load-time" id="commerce-count">Loading events</span>
+          </div>
+          <div class="commerce-summary" aria-label="Webhook summary">
+            <div><strong id="commerce-processed">-</strong><span>processed</span></div>
+            <div><strong id="commerce-duplicates">-</strong><span>duplicates</span></div>
+            <div><strong id="commerce-failed">-</strong><span>need attention</span></div>
+          </div>
+          <div class="customer-table-wrap">
+            <table class="customer-table commerce-table">
+              <thead><tr><th>Status</th><th>Event</th><th>Customer</th><th>Product</th><th>Received</th><th>Message ID</th></tr></thead>
+              <tbody id="commerce-rows"><tr><td colspan="6" class="table-loading">Loading purchase activity...</td></tr></tbody>
+            </table>
           </div>
         </section>
 
@@ -190,7 +234,7 @@
             <div class="enrollment-fields">
               <label>Name<input id="enrollment-name" type="text" maxlength="120" placeholder="Their name"></label>
               <label>Email <span aria-hidden="true">*</span><input id="enrollment-email" type="email" maxlength="320" autocomplete="email" required placeholder="person@example.com"></label>
-              <fieldset><legend>Give access to</legend><label><input id="enrollment-seeninseven" type="checkbox" checked> SeenInSeven</label><label><input id="enrollment-boardroom" type="checkbox"> AI Boardroom</label></fieldset>
+              <fieldset><legend>Give access to</legend><label><input id="enrollment-seeninseven" type="checkbox" checked> SeenInSeven</label><label><input id="enrollment-boardroom" type="checkbox"> AI Boardroom</label><label><input id="enrollment-eee" type="checkbox"> EEE Membership</label></fieldset>
               <button class="secondary-button" id="enrollment-submit" type="submit"><i data-lucide="user-plus"></i><span>Enroll person</span></button>
             </div>
             <p class="enrollment-message" id="enrollment-message" role="status" aria-live="polite"></p>
@@ -206,6 +250,7 @@
               <option value="none">No app access</option>
               <option value="seeninseven">SeenInSeven access</option>
               <option value="boardroom">AI Boardroom access</option>
+              <option value="eee">EEE Membership access</option>
             </select>
           </div>
 

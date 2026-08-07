@@ -1,0 +1,125 @@
+{"kind":"deck","id":"pr/vdovln","name":"Deck"}
+{"kind":"layout","layoutId":"a6878d56-3baa-4c66-9dfe-7112129de8bd","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"efa541ed-7326-4afe-b70a-50df6bcfa85c","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/6t7kwc","slide":1,"title":"777 CHALLENGE","textShapes":5}
+{"kind":"shape","id":"sh/onyd8v6p","slide":1,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/3mpczqp4","slide":1,"text":"777 CHALLENGE","textPreview":"777 CHALLENGE","textChars":13,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/2lwv6loj","slide":1,"text":"1 / 9","textPreview":"1 / 9","textChars":5,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/dc7e5076","slide":1,"text":"Seven videos. One story worth finishing.","textPreview":"Seven videos. One story worth finishing.","textChars":40,"textLines":1,"bbox":[62,112,1050,168]}
+{"kind":"shape","id":"sh/crydcf6l","slide":1,"bbox":[62,304,92,8]}
+{"kind":"textbox","id":"sh/bqpw3apg","slide":1,"text":"Live Kickoff | September 7, 2026 | 11:00 AM Mountain Time","textPreview":"Live Kickoff | September 7, 2026 | 11:00 AM Mountain Time","textChars":57,"textLines":1,"bbox":[62,340,950,112]}
+{"kind":"textbox","id":"sh/qpgva5ov","slide":1,"text":"Today we stop preparing to begin.","textPreview":"Today we stop preparing to begin.","textChars":33,"textLines":1,"bbox":[62,560,930,58]}
+{"kind":"notes","id":"nt/6t7kwc","slide":1,"text":""}
+{"kind":"slide","id":"sl/oq8s8x","slide":2,"title":"THE ROOM","textShapes":12}
+{"kind":"shape","id":"sh/hgf29sru","slide":2,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/ud4jexs3","slide":2,"text":"THE ROOM","textPreview":"THE ROOM","textChars":8,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/vedk729o","slide":2,"text":"2 / 9","textPreview":"2 / 9","textChars":5,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/4j61k7q5","slide":2,"text":"This is not a performance test.","textPreview":"This is not a performance test.","textChars":31,"textLines":1,"bbox":[62,112,1040,90]}
+{"kind":"textbox","id":"sh/5kf2dcrq","slide":2,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[62,220,70,36]}
+{"kind":"textbox","id":"sh/ihojix8z","slide":2,"text":"Stay specific","textPreview":"Stay specific","textChars":13,"textLines":1,"bbox":[62,276,350,74]}
+{"kind":"textbox","id":"sh/jixkb29k","slide":2,"text":"A real moment beats a polished summary.","textPreview":"A real moment beats a polished summary.","textChars":39,"textLines":1,"bbox":[62,362,350,130]}
+{"kind":"textbox","id":"sh/s7q1orqh","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[454,220,70,36]}
+{"kind":"textbox","id":"sh/t8z2hcrm","slide":2,"text":"Stay unfinished","textPreview":"Stay unfinished","textChars":15,"textLines":1,"bbox":[454,276,350,74]}
+{"kind":"textbox","id":"sh/t83yhgbq","slide":2,"text":"The story can still be happening while you tell it.","textPreview":"The story can still be happening while you tell it.","textChars":51,"textLines":1,"bbox":[454,362,350,130]}
+{"kind":"textbox","id":"sh/s7uh8bu5","slide":2,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[846,220,70,36]}
+{"kind":"textbox","id":"sh/76lgf6tk","slide":2,"text":"Keep moving","textPreview":"Keep moving","textChars":11,"textLines":1,"bbox":[846,276,350,74]}
+{"kind":"textbox","id":"sh/65cz6lcz","slide":2,"text":"A posted chapter is more useful than a perfect draft.","textPreview":"A posted chapter is more useful than a perfect draft.","textChars":53,"textLines":1,"bbox":[846,362,350,130]}
+{"kind":"notes","id":"nt/oq8s8x","slide":2,"text":""}
+{"kind":"slide","id":"sl/w99svq","slide":3,"title":"THE SEVEN DAYS","textShapes":18}
+{"kind":"shape","id":"sh/50v6dwfe","slide":3,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/idkni1gn","slide":3,"text":"THE SEVEN DAYS","textPreview":"THE SEVEN DAYS","textChars":14,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/jytobmx8","slide":3,"text":"3 / 9","textPreview":"3 / 9","textChars":5,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/s3mpobep","slide":3,"text":"The arc we are building","textPreview":"The arc we are building","textChars":23,"textLines":1,"bbox":[62,92,720,70]}
+{"kind":"shape","id":"sh/d4v6hgfa","slide":3,"bbox":[62,236,124,124]}
+{"kind":"textbox","id":"sh/q147m1wj","slide":3,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[74,250,28,26]}
+{"kind":"textbox","id":"sh/r2dof6x4","slide":3,"text":"Begin","textPreview":"Begin","textChars":5,"textLines":1,"bbox":[72,290,104,62]}
+{"kind":"shape","id":"sh/8725c7yl","slide":3,"bbox":[228,236,124,124]}
+{"kind":"textbox","id":"sh/98b65cf6","slide":3,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[240,250,28,26]}
+{"kind":"textbox","id":"sh/94b2dw3e","slide":3,"text":"Ordinary world","textPreview":"Ordinary world","textChars":14,"textLines":1,"bbox":[238,290,104,62]}
+{"kind":"shape","id":"sh/8321kr2t","slide":3,"bbox":[394,236,124,124]}
+{"kind":"textbox","id":"sh/n29kb6l8","slide":3,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[406,250,28,26]}
+{"kind":"textbox","id":"sh/mh0ji1k3","slide":3,"text":"First realization","textPreview":"First realization","textChars":17,"textLines":1,"bbox":[404,290,104,62]}
+{"kind":"shape","id":"sh/x8b2hg3q","slide":3,"bbox":[560,236,124,124]}
+{"kind":"textbox","id":"sh/w721ob25","slide":3,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[572,250,28,26]}
+{"kind":"textbox","id":"sh/v6tkf6lk","slide":3,"text":"Road of trials","textPreview":"Road of trials","textChars":14,"textLines":1,"bbox":[570,290,104,62]}
+{"kind":"shape","id":"sh/a5kjm1kz","slide":3,"bbox":[726,236,124,124]}
+{"kind":"textbox","id":"sh/5cv2lg3m","slide":3,"text":"5","textPreview":"5","textChars":1,"textLines":1,"bbox":[738,250,28,26]}
+{"kind":"textbox","id":"sh/kbm1sb21","slide":3,"text":"The fall","textPreview":"The fall","textChars":8,"textLines":1,"bbox":[736,290,104,62]}
+{"kind":"shape","id":"sh/4fulozad","slide":3,"bbox":[892,236,124,124]}
+{"kind":"textbox","id":"sh/pg3mh4ry","slide":3,"text":"6","textPreview":"6","textChars":1,"textLines":1,"bbox":[904,250,28,26]}
+{"kind":"textbox","id":"sh/2ds3mps7","slide":3,"text":"The elixir","textPreview":"The elixir","textChars":10,"textLines":1,"bbox":[902,290,104,62]}
+{"kind":"shape","id":"sh/3e14fu9s","slide":3,"bbox":[1058,236,124,124]}
+{"kind":"textbox","id":"sh/cjulsza9","slide":3,"text":"7","textPreview":"7","textChars":1,"textLines":1,"bbox":[1070,250,28,26]}
+{"kind":"textbox","id":"sh/d43ml4ru","slide":3,"text":"Return home","textPreview":"Return home","textChars":11,"textLines":1,"bbox":[1068,290,104,62]}
+{"kind":"textbox","id":"sh/qhc3q9sj","slide":3,"text":"Each video carries one job. Together they create the journey.","textPreview":"Each video carries one job. Together they create the journey.","textChars":61,"textLines":1,"bbox":[62,430,950,60]}
+{"kind":"notes","id":"nt/w99svq","slide":3,"text":""}
+{"kind":"slide","id":"sl/wctagu","slide":4,"title":"COMMUNITY","textShapes":5}
+{"kind":"shape","id":"sh/9kvitk7i","slide":4,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/mhkji58r","slide":4,"text":"COMMUNITY","textPreview":"COMMUNITY","textChars":9,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/nit0rapc","slide":4,"text":"4 / 9","textPreview":"4 / 9","textChars":5,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/wnm1ofq9","slide":4,"text":"Do the challenge beside people who are also doing it.","textPreview":"Do the challenge beside people who are also doing it.","textChars":53,"textLines":1,"bbox":[62,112,1050,168]}
+{"kind":"shape","id":"sh/xov2xk7e","slide":4,"bbox":[62,304,92,8]}
+{"kind":"textbox","id":"sh/al4jm583","slide":4,"text":"Join the community, post the imperfect chapter, and respond to the human being before you respond to the algorithm.","textPreview":"Join the community, post the imperfect chapter, and respond to the human being before you respond to the algorithm.","textChars":115,"textLines":1,"bbox":[62,340,950,112]}
+{"kind":"textbox","id":"sh/bmdkvapo","slide":4,"text":"The community link belongs in the live chat and follow-up email.","textPreview":"The community link belongs in the live chat and follow-up email.","textChars":64,"textLines":1,"bbox":[62,548,960,42]}
+{"kind":"notes","id":"nt/wctagu","slide":4,"text":""}
+{"kind":"slide","id":"sl/w7nxrp","slide":5,"title":"SEENINSEVEN","textShapes":6}
+{"kind":"shape","id":"sh/kja9wfup","slide":5,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/jy183ad4","slide":5,"text":"SEENINSEVEN","textPreview":"SEENINSEVEN","textChars":11,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/ixsru5cj","slide":5,"text":"5 / 9","textPreview":"5 / 9","textChars":5,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/xwzq10vy","slide":5,"text":"Build the story. Keep your voice.","textPreview":"Build the story. Keep your voice.","textChars":33,"textLines":1,"bbox":[62,92,660,80]}
+{"kind":"textbox","id":"sh/wvqpsvud","slide":5,"text":"SeenInSeven turns rough answers into one connected seven-video journey without asking you to understand story architecture first.","textPreview":"SeenInSeven turns rough answers into one connected seven-video journey without asking you to understand story architecture first.","textChars":129,"textLines":1,"bbox":[62,196,500,150]}
+{"kind":"textbox","id":"sh/at87q5cn","slide":5,"text":"LIVE DEMO","textPreview":"LIVE DEMO","textChars":9,"textLines":1,"bbox":[62,488,180,28]}
+{"kind":"textbox","id":"sh/hs3qd4v2","slide":5,"text":"Overview → questions → script → lock","textPreview":"Overview → questions → script → lock","textChars":36,"textLines":1,"bbox":[62,530,620,60]}
+{"kind":"image","id":"im/a1wfa5oz","slide":5,"name":"","geometry":"roundRect","alt":"SeenInSeven Studio interface","bbox":[628,106,590,370]}
+{"kind":"notes","id":"nt/w7nxrp","slide":5,"text":""}
+{"kind":"slide","id":"sl/zypmyx","slide":6,"title":"VIDEO 1","textShapes":12}
+{"kind":"shape","id":"sh/v2pofm5c","slide":6,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/g3yp8rmx","slide":6,"text":"VIDEO 1","textPreview":"VIDEO 1","textChars":7,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/h47qhwni","slide":6,"text":"6 / 9","textPreview":"6 / 9","textChars":5,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/i5g7a143","slide":6,"text":"Why now?","textPreview":"Why now?","textChars":8,"textLines":1,"bbox":[62,104,560,72]}
+{"kind":"textbox","id":"sh/36p8j65o","slide":6,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[62,216,70,36]}
+{"kind":"textbox","id":"sh/47ypcbmt","slide":6,"text":"What must be visible?","textPreview":"What must be visible?","textChars":21,"textLines":1,"bbox":[62,272,350,74]}
+{"kind":"textbox","id":"sh/58rq5gne","slide":6,"text":"Name the knowledge, story, or experience you can no longer keep private.","textPreview":"Name the knowledge, story, or experience you can no longer keep private.","textChars":72,"textLines":1,"bbox":[62,358,350,130]}
+{"kind":"textbox","id":"sh/y9w7yx4j","slide":6,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[454,216,70,36]}
+{"kind":"textbox","id":"sh/ja5o7254","slide":6,"text":"Who needs it?","textPreview":"Who needs it?","textChars":13,"textLines":1,"bbox":[454,272,350,74]}
+{"kind":"textbox","id":"sh/v69ozi1o","slide":6,"text":"Picture one person who would recognize their own stalled chapter.","textPreview":"Picture one person who would recognize their own stalled chapter.","textChars":65,"textLines":1,"bbox":[454,358,350,130]}
+{"kind":"textbox","id":"sh/u507qdk3","slide":6,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[846,216,70,36]}
+{"kind":"textbox","id":"sh/h8b618je","slide":6,"text":"Why today?","textPreview":"Why today?","textChars":10,"textLines":1,"bbox":[846,272,350,74]}
+{"kind":"textbox","id":"sh/w72psn2t","slide":6,"text":"Name what changed, closed, arrived, or became too expensive to postpone.","textPreview":"Name what changed, closed, arrived, or became too expensive to postpone.","textChars":72,"textLines":1,"bbox":[846,358,350,130]}
+{"kind":"notes","id":"nt/zypmyx","slide":6,"text":""}
+{"kind":"slide","id":"sl/zrga4d","slide":7,"title":"RECORD","textShapes":11}
+{"kind":"shape","id":"sh/294j2hw3","slide":7,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/pcf2dwfu","slide":7,"text":"RECORD","textPreview":"RECORD","textChars":6,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/obml4re9","slide":7,"text":"7 / 9","textPreview":"7 / 9","textChars":5,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/bexkf6xk","slide":7,"text":"The first recording is allowed to feel like the first recording.","textPreview":"The first recording is allowed to feel like the first recording.","textChars":64,"textLines":1,"bbox":[62,104,1060,116]}
+{"kind":"shape","id":"sh/ado361wz","slide":7,"bbox":[62,282,42,42]}
+{"kind":"textbox","id":"sh/x0f2hwfq","slide":7,"text":"1","textPreview":"1","textChars":1,"textLines":1,"bbox":[76,289,20,24]}
+{"kind":"textbox","id":"sh/cf6l8re5","slide":7,"text":"Read it once","textPreview":"Read it once","textChars":12,"textLines":1,"bbox":[128,284,870,42]}
+{"kind":"shape","id":"sh/z2xkj6xw","slide":7,"bbox":[62,354,42,42]}
+{"kind":"textbox","id":"sh/y1o3a1wb","slide":7,"text":"2","textPreview":"2","textChars":1,"textLines":1,"bbox":[76,361,20,24]}
+{"kind":"textbox","id":"sh/0fqx4vet","slide":7,"text":"Record one full take","textPreview":"Record one full take","textChars":20,"textLines":1,"bbox":[128,356,870,42]}
+{"kind":"shape","id":"sh/1gzyd0fe","slide":7,"bbox":[62,426,42,42]}
+{"kind":"textbox","id":"sh/ed8f25w3","slide":7,"text":"3","textPreview":"3","textChars":1,"textLines":1,"bbox":[76,433,20,24]}
+{"kind":"textbox","id":"sh/zehgbaxo","slide":7,"text":"Choose the take with life in it","textPreview":"Choose the take with life in it","textChars":31,"textLines":1,"bbox":[128,428,870,42]}
+{"kind":"shape","id":"sh/o3qh8fe5","slide":7,"bbox":[62,498,42,42]}
+{"kind":"textbox","id":"sh/94jyhkfq","slide":7,"text":"4","textPreview":"4","textChars":1,"textLines":1,"bbox":[76,505,20,24]}
+{"kind":"textbox","id":"sh/m18z65wz","slide":7,"text":"Post before editing becomes hiding","textPreview":"Post before editing becomes hiding","textChars":34,"textLines":1,"bbox":[128,500,870,42]}
+{"kind":"notes","id":"nt/zrga4d","slide":7,"text":""}
+{"kind":"slide","id":"sl/lvyd3j","slide":8,"title":"POST","textShapes":5}
+{"kind":"shape","id":"sh/8rqlkzq1","slide":8,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/7qh4re9g","slide":8,"text":"POST","textPreview":"POST","textChars":4,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/mp83i9sv","slide":8,"text":"8 / 9","textPreview":"8 / 9","textChars":5,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/hgjmxori","slide":8,"text":"Publication completes Day 1.","textPreview":"Publication completes Day 1.","textChars":28,"textLines":1,"bbox":[62,112,1050,168]}
+{"kind":"shape","id":"sh/gfalojqx","slide":8,"bbox":[62,304,92,8]}
+{"kind":"textbox","id":"sh/vuh4ve9c","slide":8,"text":"Use a plain caption, include Video 1 of 7, and let the next chapter create the reason to return.","textPreview":"Use a plain caption, include Video 1 of 7, and let the next chapter create the reason to return.","textChars":96,"textLines":1,"bbox":[62,340,950,112]}
+{"kind":"textbox","id":"sh/ut83m98r","slide":8,"text":"Do not apologize for the rough edge that proves you actually began.","textPreview":"Do not apologize for the rough edge that proves you actually began.","textChars":67,"textLines":1,"bbox":[62,532,1050,62]}
+{"kind":"notes","id":"nt/lvyd3j","slide":8,"text":""}
+{"kind":"slide","id":"sl/3iw512","slide":9,"title":"Q&A","textShapes":5}
+{"kind":"shape","id":"sh/vml876d8","slide":9,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/gnupgrut","slide":9,"text":"Q&A","textPreview":"Q&A","textChars":3,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/h83q9wve","slide":9,"text":"9 / 9","textPreview":"9 / 9","textChars":5,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/6hs7ahcr","slide":9,"text":"What is still between you and record?","textPreview":"What is still between you and record?","textChars":37,"textLines":1,"bbox":[62,118,1050,110]}
+{"kind":"textbox","id":"sh/7il83mdw","slide":9,"text":"Ask the practical question. Name the emotional one too.","textPreview":"Ask the practical question. Name the emotional one too.","textChars":55,"textLines":1,"bbox":[62,270,900,64]}
+{"kind":"shape","id":"sh/8jupcruh","slide":9,"bbox":[62,430,480,96]}
+{"kind":"textbox","id":"sh/tk3q5wv2","slide":9,"text":"Then make Video 1.","textPreview":"Then make Video 1.","textChars":18,"textLines":1,"bbox":[94,455,400,42]}
+{"kind":"notes","id":"nt/3iw512","slide":9,"text":""}

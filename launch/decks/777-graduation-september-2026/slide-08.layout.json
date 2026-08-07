@@ -1,0 +1,678 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/wdt037",
+    "id": "wdt037",
+    "slide": 8,
+    "layoutId": "8fa0d63e-e3c0-42ca-b5e4-7904fdd0a822",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "f18da261-4b19-4d60-9d37-feb4c52d9d66",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#F7F5F0",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "+mn-lt"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "8fa0d63e-e3c0-42ca-b5e4-7904fdd0a822",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "f18da261-4b19-4d60-9d37-feb4c52d9d66",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "f18da261-4b19-4d60-9d37-feb4c52d9d66",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/lg7alw3u",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        10
+      ],
+      "geometry": "rect",
+      "fillColor": "#F45B4F",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ydwba1k3",
+      "id": "2",
+      "bbox": [
+        62,
+        36,
+        640,
+        24
+      ],
+      "geometry": "rect",
+      "text": "FOUNDERS",
+      "textPreview": "FOUNDERS",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "+mn-lt",
+        "color": "#686662",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "FOUNDERS"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "FOUNDERS",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "color": "#686662",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "FOUNDERS",
+              "fontSize": 13,
+              "color": "#686662",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ze5sj6lo",
+      "id": "3",
+      "bbox": [
+        1120,
+        36,
+        100,
+        24
+      ],
+      "geometry": "rect",
+      "text": "8 / 10",
+      "textPreview": "8 / 10",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "+mn-lt",
+        "color": "#686662",
+        "bold": true,
+        "alignment": "right",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "8 / 10"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "8 / 10",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "color": "#686662",
+            "bold": true,
+            "alignment": "right"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "8 / 10",
+              "fontSize": 13,
+              "color": "#686662",
+              "bold": true,
+              "alignment": "right"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/cbet8r2x",
+      "id": "4",
+      "bbox": [
+        62,
+        118,
+        540,
+        100
+      ],
+      "geometry": "rect",
+      "text": "$77 / month",
+      "textPreview": "$77 / month",
+      "resolvedFontSize": 64,
+      "resolvedTextStyle": {
+        "fontSize": 64,
+        "typeface": "+mn-lt",
+        "color": "#F45B4F",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "$77 / month"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "$77 / month",
+          "resolvedTextStyle": {
+            "fontSize": 64,
+            "color": "#F45B4F",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "$77 / month",
+              "fontSize": 64,
+              "color": "#F45B4F",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/xcnahw3i",
+      "id": "5",
+      "bbox": [
+        62,
+        240,
+        520,
+        54
+      ],
+      "geometry": "rect",
+      "text": "Founders invitation",
+      "textPreview": "Founders invitation",
+      "resolvedFontSize": 31,
+      "resolvedTextStyle": {
+        "fontSize": 31,
+        "typeface": "+mn-lt",
+        "color": "#121212",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Founders invitation"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Founders invitation",
+          "resolvedTextStyle": {
+            "fontSize": 31,
+            "color": "#121212",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Founders invitation",
+              "fontSize": 31,
+              "color": "#121212",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/a9wb6hk7",
+      "id": "6",
+      "bbox": [
+        62,
+        308,
+        520,
+        44
+      ],
+      "geometry": "rect",
+      "text": "Open September 15-19",
+      "textPreview": "Open September 15-19",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "fontSize": 24,
+        "typeface": "+mn-lt",
+        "color": "#686662",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Open September 15-19"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Open September 15-19",
+          "resolvedTextStyle": {
+            "fontSize": 24,
+            "color": "#686662"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Open September 15-19",
+              "fontSize": 24,
+              "color": "#686662"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/ba5sfmlc",
+      "id": "7",
+      "bbox": [
+        700,
+        110,
+        470,
+        360
+      ],
+      "geometry": "roundRect",
+      "fillColor": "#FFFFFF",
+      "lineColor": "#D9D5CC",
+      "lineWidth": 1
+    },
+    {
+      "order": 8,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/onut4721",
+      "id": "8",
+      "bbox": [
+        738,
+        144,
+        370,
+        34
+      ],
+      "geometry": "rect",
+      "text": "Included",
+      "textPreview": "Included",
+      "resolvedFontSize": 20,
+      "resolvedTextStyle": {
+        "fontSize": 20,
+        "typeface": "+mn-lt",
+        "color": "#15847A",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Included"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Included",
+          "resolvedTextStyle": {
+            "fontSize": 20,
+            "color": "#15847A",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Included",
+              "fontSize": 20,
+              "color": "#15847A",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 9,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/po3adc3m",
+      "id": "9",
+      "bbox": [
+        738,
+        202,
+        380,
+        230
+      ],
+      "geometry": "rect",
+      "text": "StorySculpt\nNext Step Navigator\nSolution Vault\nAI Boardroom\nCertainty Sessions",
+      "textPreview": "StorySculpt | Next Step Navigator | Solution Vault | AI Boardroom | Certainty Sessions",
+      "resolvedFontSize": 25,
+      "resolvedTextStyle": {
+        "fontSize": 25,
+        "typeface": "+mn-lt",
+        "color": "#121212",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 5,
+        "lines": [
+          {
+            "index": 1,
+            "text": "StorySculpt"
+          },
+          {
+            "index": 2,
+            "text": "Next Step Navigator"
+          },
+          {
+            "index": 3,
+            "text": "Solution Vault"
+          },
+          {
+            "index": 4,
+            "text": "AI Boardroom"
+          },
+          {
+            "index": 5,
+            "text": "Certainty Sessions"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "StorySculpt",
+          "resolvedTextStyle": {
+            "fontSize": 25,
+            "color": "#121212",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "StorySculpt",
+              "fontSize": 25,
+              "color": "#121212",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 2,
+          "text": "Next Step Navigator",
+          "resolvedTextStyle": {
+            "fontSize": 25,
+            "color": "#121212",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Next Step Navigator",
+              "fontSize": 25,
+              "color": "#121212",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 3,
+          "text": "Solution Vault",
+          "resolvedTextStyle": {
+            "fontSize": 25,
+            "color": "#121212",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Solution Vault",
+              "fontSize": 25,
+              "color": "#121212",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 4,
+          "text": "AI Boardroom",
+          "resolvedTextStyle": {
+            "fontSize": 25,
+            "color": "#121212",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "AI Boardroom",
+              "fontSize": 25,
+              "color": "#121212",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        },
+        {
+          "index": 5,
+          "text": "Certainty Sessions",
+          "resolvedTextStyle": {
+            "fontSize": 25,
+            "color": "#121212",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Certainty Sessions",
+              "fontSize": 25,
+              "color": "#121212",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 10,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/tojudw7i",
+      "id": "10",
+      "bbox": [
+        62,
+        500,
+        1080,
+        80
+      ],
+      "geometry": "rect",
+      "text": "The founders period repeats monthly until it is permanently retired. Standard membership then becomes $127/month.",
+      "textPreview": "The founders period repeats monthly until it is permanently retired. Standard membership then becomes $127/month.",
+      "resolvedFontSize": 22,
+      "resolvedTextStyle": {
+        "fontSize": 22,
+        "typeface": "+mn-lt",
+        "color": "#686662",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "The founders period repeats monthly until it is permanently retired. Standard membership then becomes"
+          },
+          {
+            "index": 2,
+            "text": "$127/month."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "The founders period repeats monthly until it is permanently retired. Standard membership then becomes $127/month.",
+          "resolvedTextStyle": {
+            "fontSize": 22,
+            "color": "#686662"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "The founders period repeats monthly until it is permanently retired. Standard membership then becomes $127/month.",
+              "fontSize": 22,
+              "color": "#686662"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

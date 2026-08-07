@@ -1,0 +1,25 @@
+<!--
+  EEE founders checkout window guard.
+  Keep this block on the native Systeme checkout page so the payment form remains
+  unavailable outside the September 15-19, 2026 founders window.
+-->
+<script>
+  (() => {
+    const isLiveCheckout =
+      window.location.hostname === "content.coloradomastermind.com" &&
+      window.location.pathname.replace(/\/+$/, "") === "/yeseee";
+
+    if (!isLiveCheckout) return;
+
+    const opensAt = Date.parse("2026-09-15T17:00:00Z");
+    const closesAt = Date.parse("2026-09-20T06:00:00Z");
+    const now = Date.now();
+
+    if (now < opensAt || now >= closesAt) {
+      document.documentElement.style.visibility = "hidden";
+      window.location.replace(
+        "https://content.coloradomastermind.com/yeees?checkout=closed"
+      );
+    }
+  })();
+</script>

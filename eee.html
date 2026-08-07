@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EEE Membership | Colorado Mastermind Studio</title>
+  <meta name="description" content="Your EEE tools, resources, and next actions in Colorado Mastermind Studio.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
+  <link rel="stylesheet" href="/css/studio.css">
+  <link rel="stylesheet" href="/css/eee.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+</head>
+<body>
+  <main class="eee-gate" id="eee-access-gate">
+    <section class="eee-gate-box">
+      <span class="studio-mark">EEE</span>
+      <h1 id="eee-gate-title">Checking your membership.</h1>
+      <p id="eee-gate-copy">Your Studio access will be ready in a moment.</p>
+      <a class="primary-button" id="eee-gate-button" href="/"><span>Return to Studio</span><i data-lucide="arrow-right"></i></a>
+    </section>
+  </main>
+
+  <div id="eee-app" hidden>
+    <header class="studio-header eee-header">
+      <a class="studio-brand" href="/eee"><span class="studio-mark">EEE</span><span><strong>The Exscalator</strong><small>Colorado Mastermind Studio</small></span></a>
+      <div class="header-actions">
+        <a class="secondary-button" href="/"><i data-lucide="layout-grid"></i><span>My Studio</span></a>
+        <button class="icon-button" data-eee-theme type="button" title="Change color theme" aria-label="Change color theme"><i data-lucide="sun" class="theme-sun-icon"></i><i data-lucide="moon" class="theme-moon-icon"></i></button>
+        <div class="eee-account"><span class="account-avatar" id="eee-account-avatar">E</span><span class="eee-account-email" id="eee-account-email"></span></div>
+      </div>
+    </header>
+
+    <div class="studio-layout eee-layout">
+      <aside class="studio-sidebar eee-sidebar">
+        <nav>
+          <a class="nav-item active" href="/eee"><i data-lucide="layout-dashboard"></i><span>EEE Home</span></a>
+          <a class="nav-item" href="/storysculpt"><i data-lucide="clapperboard"></i><span>StorySculpt</span></a>
+          <a class="nav-item" href="/navigator"><i data-lucide="route"></i><span>Next Step Navigator</span></a>
+          <a class="nav-item" href="/vault"><i data-lucide="library"></i><span>Solution Vault</span></a>
+          <a class="nav-item" href="/boardroom"><i data-lucide="messages-square"></i><span>AI Boardroom</span></a>
+          <a class="nav-item" href="https://calendly.com/davidbee" target="_blank" rel="noopener"><i data-lucide="calendar-check"></i><span>Certainty Session</span></a>
+        </nav>
+        <div class="eee-sidebar-bottom"><button class="nav-item" data-eee-sign-out type="button"><i data-lucide="log-out"></i><span>Sign out</span></button></div>
+      </aside>
+
+      <main class="eee-main">
+        <section class="eee-page-head">
+          <div><p class="eyebrow">Your EEE Workspace</p><h1>Know the next move, then build it with support.</h1><p>Every tool here has one job: move the work from your head into the world without leaving you alone in the difficult middle.</p></div>
+          <span class="eee-member-chip"><i data-lucide="badge-check"></i>Membership active</span>
+        </section>
+
+        <section class="eee-next">
+          <article class="eee-next-primary">
+            <span class="eee-next-icon"><i data-lucide="route"></i></span>
+            <div><p class="eyebrow">Continue Here</p><h2 id="eee-next-title">Find the next move.</h2><p id="eee-next-copy">Open the Navigator and reduce the work to one clear action.</p></div>
+            <a class="primary-button" href="/navigator"><span>Open Navigator</span><i data-lucide="arrow-right"></i></a>
+          </article>
+          <article class="eee-next-call">
+            <div><p class="eyebrow">Human Support</p><h3>Bring the roadblock to David.</h3><p>Book direct implementation time when the work needs another human beside it.</p></div>
+            <a class="secondary-button" href="https://calendly.com/davidbee" target="_blank" rel="noopener"><i data-lucide="calendar-check"></i><span>Book a Certainty Session</span></a>
+          </article>
+        </section>
+
+        <section>
+          <div class="eee-section-head"><div><p class="eyebrow">Your Tools</p><h2>Five ways to keep moving</h2></div><span>One account, one workspace</span></div>
+          <div class="eee-tool-grid">
+            <article class="eee-tool"><div class="eee-tool-media"><img src="/assets/eee/storysculpt.png" alt="StorySculpt script workspace"></div><div class="eee-tool-copy"><h3>StorySculpt</h3><p>Turn a raw thought into a video script through the established 5E interview process.</p><a class="secondary-button" href="/storysculpt"><span>Open StorySculpt</span><i data-lucide="arrow-right"></i></a></div></article>
+            <article class="eee-tool"><div class="eee-tool-media"><img src="/assets/eee/navigator.png" alt="Next Step Navigator business map"></div><div class="eee-tool-copy"><h3>Next Step Navigator</h3><p>Choose one objective, expose the real blocker, and leave with the next action already defined.</p><a class="secondary-button" href="/navigator"><span>Open Navigator</span><i data-lucide="arrow-right"></i></a></div></article>
+            <article class="eee-tool"><div class="eee-tool-media"><img src="/assets/eee/vault.png" alt="Solution Vault speaker library"></div><div class="eee-tool-copy"><h3>Solution Vault</h3><p>Search the meetup speaker library by topic, speaker, or the problem in front of you.</p><a class="secondary-button" href="/vault"><span>Browse the Vault</span><i data-lucide="arrow-right"></i></a></div></article>
+            <article class="eee-tool"><div class="eee-tool-media"><img src="/assets/eee/boardroom.png" alt="AI Boardroom advisor workbench"></div><div class="eee-tool-copy"><h3>AI Boardroom</h3><p>Pressure-test a real decision with six focused advisors and turn the discussion into action.</p><a class="secondary-button" href="/boardroom"><span>Open AI Boardroom</span><i data-lucide="arrow-right"></i></a></div></article>
+            <article class="eee-tool"><div class="eee-tool-media"><img src="/assets/eee/certainty.png" alt="Certainty Session with David Bee"></div><div class="eee-tool-copy"><h3>Certainty Sessions</h3><p>Bring the unfinished work to a one-on-one session and stay with it until the roadblock clears.</p><a class="secondary-button" href="https://calendly.com/davidbee" target="_blank" rel="noopener"><span>Choose a time</span><i data-lucide="external-link"></i></a></div></article>
+          </div>
+        </section>
+      </main>
+    </div>
+  </div>
+  <script src="/js/eee-common.js?v=eee-launch-v1"></script>
+  <script src="/js/eee.js?v=eee-launch-v1"></script>
+</body>
+</html>

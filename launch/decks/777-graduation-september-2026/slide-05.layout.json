@@ -1,0 +1,432 @@
+{
+  "schema": "openai.presentation.layout/v4",
+  "unit": "px",
+  "slide": {
+    "aid": "sl/p0mv7x",
+    "id": "p0mv7x",
+    "slide": 5,
+    "layoutId": "8fa0d63e-e3c0-42ca-b5e4-7904fdd0a822",
+    "layoutName": "Title Slide",
+    "layoutType": "title",
+    "masterLayoutId": "f18da261-4b19-4d60-9d37-feb4c52d9d66",
+    "masterLayoutName": "Master",
+    "backgroundColor": "#F7F5F0",
+    "frame": {
+      "left": 0,
+      "top": 0,
+      "width": 1280,
+      "height": 720
+    }
+  },
+  "theme": {
+    "colorSchemeName": "ChatGPT",
+    "colors": {
+      "accent1": "#156082",
+      "accent2": "#E97132",
+      "accent3": "#196B24",
+      "accent4": "#0F9ED5",
+      "accent5": "#A02B93",
+      "accent6": "#4EA72E",
+      "bg1": "#FFFFFF",
+      "bg2": "#000000",
+      "tx1": "#1F1F1F",
+      "tx2": "#FFFFFF",
+      "dk1": "#000000",
+      "lt1": "#FFFFFF",
+      "dk2": "#0E2841",
+      "lt2": "#E8E8E8",
+      "hlink": "#467886",
+      "folHlink": "#96607D"
+    },
+    "typefaces": [
+      "+mn-lt"
+    ]
+  },
+  "inheritedLayers": [
+    {
+      "scope": "layout",
+      "id": "8fa0d63e-e3c0-42ca-b5e4-7904fdd0a822",
+      "name": "Title Slide",
+      "type": "title",
+      "parentLayoutId": "f18da261-4b19-4d60-9d37-feb4c52d9d66",
+      "elements": []
+    },
+    {
+      "scope": "master",
+      "id": "f18da261-4b19-4d60-9d37-feb4c52d9d66",
+      "name": "Master",
+      "type": "master",
+      "elements": []
+    }
+  ],
+  "elements": [
+    {
+      "order": 1,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/qxof6xwz",
+      "id": "1",
+      "bbox": [
+        0,
+        0,
+        1280,
+        10
+      ],
+      "geometry": "rect",
+      "fillColor": "#15847A",
+      "lineWidth": 0
+    },
+    {
+      "order": 2,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/d0fehsfa",
+      "id": "2",
+      "bbox": [
+        62,
+        36,
+        640,
+        24
+      ],
+      "geometry": "rect",
+      "text": "EEE",
+      "textPreview": "EEE",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "+mn-lt",
+        "color": "#686662",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "EEE"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "EEE",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "color": "#686662",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "EEE",
+              "fontSize": 13,
+              "color": "#686662",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 3,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/sz6x8nep",
+      "id": "3",
+      "bbox": [
+        1120,
+        36,
+        100,
+        24
+      ],
+      "geometry": "rect",
+      "text": "5 / 10",
+      "textPreview": "5 / 10",
+      "resolvedFontSize": 13,
+      "resolvedTextStyle": {
+        "fontSize": 13,
+        "typeface": "+mn-lt",
+        "color": "#686662",
+        "bold": true,
+        "alignment": "right",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 1,
+        "lines": [
+          {
+            "index": 1,
+            "text": "5 / 10"
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "5 / 10",
+          "resolvedTextStyle": {
+            "fontSize": 13,
+            "color": "#686662",
+            "bold": true,
+            "alignment": "right"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "5 / 10",
+              "fontSize": 13,
+              "color": "#686662",
+              "bold": true,
+              "alignment": "right"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 4,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/3adwbix8",
+      "id": "4",
+      "bbox": [
+        62,
+        88,
+        570,
+        112
+      ],
+      "geometry": "rect",
+      "text": "One Studio for the work after clarity.",
+      "textPreview": "One Studio for the work after clarity.",
+      "resolvedFontSize": 42,
+      "resolvedTextStyle": {
+        "fontSize": 42,
+        "typeface": "+mn-lt",
+        "color": "#121212",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "One Studio for the work"
+          },
+          {
+            "index": 2,
+            "text": "after clarity."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "One Studio for the work after clarity.",
+          "resolvedTextStyle": {
+            "fontSize": 42,
+            "color": "#121212",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "One Studio for the work after clarity.",
+              "fontSize": 42,
+              "color": "#121212",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 5,
+      "kind": "image",
+      "scope": "slide",
+      "aid": "im/vit4nydw",
+      "id": "5",
+      "bbox": [
+        700,
+        120,
+        460,
+        460
+      ],
+      "geometry": "roundRect",
+      "alt": "EEE Studio home",
+      "contentType": "image/png",
+      "imageFit": "cover",
+      "imageMask": {
+        "geometry": "roundRect",
+        "adjustmentList": [
+          {
+            "name": "adj",
+            "formula": "val 1304"
+          }
+        ]
+      },
+      "asset": {
+        "assetId": "2bf4fe21-215c-4b65-8100-6237bfbc9110",
+        "contentType": "image/png",
+        "byteLength": 708479
+      }
+    },
+    {
+      "order": 6,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/5cfedsfe",
+      "id": "6",
+      "bbox": [
+        62,
+        214,
+        530,
+        150
+      ],
+      "geometry": "rect",
+      "text": "EEE keeps the message, decision, examples, advisors, and direct support in the same operating space.",
+      "textPreview": "EEE keeps the message, decision, examples, advisors, and direct support in the same operating space.",
+      "resolvedFontSize": 24,
+      "resolvedTextStyle": {
+        "fontSize": 24,
+        "typeface": "+mn-lt",
+        "color": "#686662",
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 3,
+        "lines": [
+          {
+            "index": 1,
+            "text": "EEE keeps the message, decision, examples,"
+          },
+          {
+            "index": 2,
+            "text": "advisors, and direct support in the same"
+          },
+          {
+            "index": 3,
+            "text": "operating space."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "EEE keeps the message, decision, examples, advisors, and direct support in the same operating space.",
+          "resolvedTextStyle": {
+            "fontSize": 24,
+            "color": "#686662"
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "EEE keeps the message, decision, examples, advisors, and direct support in the same operating space.",
+              "fontSize": 24,
+              "color": "#686662"
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    },
+    {
+      "order": 7,
+      "kind": "shape",
+      "scope": "slide",
+      "aid": "sh/4bmx4net",
+      "id": "7",
+      "bbox": [
+        62,
+        438,
+        560,
+        60
+      ],
+      "geometry": "rect",
+      "text": "Not another login. Not another library to finish.",
+      "textPreview": "Not another login. Not another library to finish.",
+      "resolvedFontSize": 28,
+      "resolvedTextStyle": {
+        "fontSize": 28,
+        "typeface": "+mn-lt",
+        "color": "#F45B4F",
+        "bold": true,
+        "alignment": "left",
+        "insets": {
+          "top": 4.8,
+          "right": 9.6,
+          "bottom": 4.8,
+          "left": 9.6
+        }
+      },
+      "textLayout": {
+        "lineCount": 2,
+        "lines": [
+          {
+            "index": 1,
+            "text": "Not another login. Not another library to"
+          },
+          {
+            "index": 2,
+            "text": "finish."
+          }
+        ]
+      },
+      "paragraphs": [
+        {
+          "index": 1,
+          "text": "Not another login. Not another library to finish.",
+          "resolvedTextStyle": {
+            "fontSize": 28,
+            "color": "#F45B4F",
+            "bold": true
+          },
+          "runs": [
+            {
+              "index": 1,
+              "text": "Not another login. Not another library to finish.",
+              "fontSize": 28,
+              "color": "#F45B4F",
+              "bold": true
+            }
+          ],
+          "marginLeft": 0
+        }
+      ],
+      "lineWidth": 0
+    }
+  ],
+  "composeRuns": []
+}

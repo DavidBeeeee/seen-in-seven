@@ -1,0 +1,32 @@
+<!-- Systeme custom-code source: place this above the native registration form. -->
+<link href="https://fonts.googleapis.com/css2?family=Lora:wght@600;700&family=Nunito:wght@400;600;700;800&family=Oswald:wght@600;700&display=swap" rel="stylesheet">
+<style>
+.g777{--ink:#0d2828;--teal:#32b8b8;--gold:#c8a84b;--paper:#f8fafa;--line:#cfe3e3;font-family:'Nunito',sans-serif;color:var(--ink);background:var(--paper);padding:clamp(34px,7vw,76px) 20px}.g777 *{box-sizing:border-box}.g777-inner{max-width:900px;margin:auto}.g777-kicker{font:700 12px/1 'Oswald',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:#267d7d}.g777 h1{font:700 clamp(38px,7vw,72px)/1.04 'Lora',serif;max-width:850px;margin:16px 0}.g777-lede{font-size:clamp(18px,2.5vw,22px);line-height:1.65;max-width:760px;color:#355858}.g777-meta{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line);border-bottom:1px solid var(--line);margin:36px 0}.g777-meta div{padding:20px 18px;border-right:1px solid var(--line)}.g777-meta div:last-child{border:0}.g777-meta span{display:block;font:700 11px/1 'Oswald',sans-serif;letter-spacing:.12em;text-transform:uppercase;color:#5b7777;margin-bottom:8px}.g777-meta strong{font-size:17px}.g777-grid{display:grid;grid-template-columns:1.15fr .85fr;gap:36px}.g777-panel{border-left:4px solid var(--gold);padding-left:24px}.g777-panel h2,.g777-closed h2{font:700 28px/1.2 'Lora',serif;margin:0 0 14px}.g777-panel ol{padding-left:22px;line-height:1.8}.g777-note{background:var(--ink);color:white;padding:24px;border-radius:8px}.g777-note h2{font:700 22px/1.25 'Lora',serif;margin:0 0 10px}.g777-note p{line-height:1.65;color:#bfe5e5;margin:0}.g777-state{margin-top:32px}.g777-button{display:inline-flex;background:var(--teal);color:var(--ink)!important;font:700 14px/1 'Oswald',sans-serif;letter-spacing:.08em;text-transform:uppercase;padding:16px 24px;border-radius:6px;text-decoration:none}.g777-replay{width:100%;aspect-ratio:16/9;border:0;background:#071616}.g777 [hidden]{display:none!important}.g777-closed{border-top:1px solid var(--line);padding-top:24px}.g777-form-note{max-width:900px;margin:0 auto;padding:0 20px 38px;font:600 14px/1.6 'Nunito',sans-serif;color:#496767;text-align:center}@media(max-width:700px){.g777-meta,.g777-grid{grid-template-columns:1fr}.g777-meta div{border-right:0;border-bottom:1px solid var(--line)}.g777-meta div:last-child{border-bottom:0}}
+</style>
+<section class="g777" id="graduation-event">
+  <div class="g777-inner">
+    <p class="g777-kicker">777 Challenge · Graduation</p>
+    <h1>Seven videos later, the next problem finally becomes visible.</h1>
+    <p class="g777-lede">This is not a victory lap followed by another pile of information. We will celebrate what changed, identify the work that visibility creates next, and demonstrate the support system built for carrying it forward.</p>
+    <div class="g777-meta"><div><span>Date</span><strong>September 15, 2026</strong></div><div><span>Time</span><strong>11:00 AM Mountain</strong></div><div><span>Cost</span><strong>Free registration</strong></div></div>
+    <div class="g777-grid">
+      <div class="g777-panel"><h2>Inside the live training</h2><ol><li>Celebrate the completed seven-video journey.</li><li>Name the business problem that appears after visibility.</li><li>See the EEE operating system in plain language.</li><li>Watch StorySculpt, Navigator, the Vault, Boardroom, and Certainty Sessions work together.</li><li>Decide whether the $77 founders invitation belongs in your next chapter.</li><li>Stay for Q&amp;A.</li></ol></div>
+      <aside class="g777-note"><h2>Come home with the whole story.</h2><p>Bring the seven videos, the unfinished work they exposed, and the question you now know how to ask. The room is built around what happens after the challenge.</p></aside>
+    </div>
+    <div class="g777-state" data-launch-show="graduation:live" hidden><a class="g777-button" data-launch-href="graduationRoom">Join Graduation live</a></div>
+    <div class="g777-state" data-launch-show="graduation:replay" hidden><div data-event-replay="graduation"><p>The Graduation replay is being prepared. Your replay email will arrive as soon as it is ready.</p></div><p><a class="g777-button" data-launch-href="eeeDetails">Continue to EEE</a></p></div>
+    <div class="g777-state g777-closed" data-launch-show="graduation:closed" hidden><h2>This Graduation room has closed.</h2><p>The replay and founders checkout are no longer available for this cycle. The next challenge begins on the 7th.</p></div>
+  </div>
+</section>
+<p class="g777-form-note" data-launch-show="graduation:registration">Register below to receive the private Zoom link, confirmation, and reminders 24 hours and one hour before the live training.</p>
+<script src="https://studio.coloradomastermind.com/js/777-launch-cycle.js"></script>
+<script>
+function g777Render(event){
+  var state=event.detail;var form=document.querySelector('form input[type="email"]');var formSection=form&&form.closest('section, [data-page-element], .row, form');
+  if(formSection&&state.graduation!=='registration')formSection.style.display='none';
+  var replay=document.querySelector('[data-event-replay="graduation"]');var url=state.cycle.routes.graduationReplay;
+  if(replay&&state.graduation==='replay'&&url)replay.innerHTML='<iframe class="g777-replay" src="'+url+'" title="777 Graduation replay" allowfullscreen></iframe>';
+}
+document.addEventListener('sevensevenseven:state',g777Render);
+if(window.SevenSevenSevenLaunch)g777Render({detail:window.SevenSevenSevenLaunch.apply(document)});
+</script>

@@ -1,6 +1,14 @@
 {
   "rewrites": [
     { "source": "/studio", "destination": "/index.html" },
+    { "source": "/eee", "destination": "/eee.html" },
+    { "source": "/eee/", "destination": "/eee.html" },
+    { "source": "/storysculpt", "destination": "/storysculpt.html" },
+    { "source": "/storysculpt/", "destination": "/storysculpt.html" },
+    { "source": "/navigator", "destination": "/navigator.html" },
+    { "source": "/navigator/", "destination": "/navigator.html" },
+    { "source": "/vault", "destination": "/vault.html" },
+    { "source": "/vault/", "destination": "/vault.html" },
     { "source": "/admin", "destination": "/admin.html" },
     { "source": "/admin/", "destination": "/admin.html" },
     { "source": "/admin/seeninseven", "destination": "/admin-seeninseven.html" },

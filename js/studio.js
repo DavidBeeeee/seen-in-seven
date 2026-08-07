@@ -7,7 +7,7 @@ let studioSession = null;
 let studioProfile = null;
 let studioAccess = [];
 let authMode = 'magic';
-const ACCESS_APP_NAMES = { seeninseven: 'SeenInSeven', boardroom: 'AI Boardroom' };
+const ACCESS_APP_NAMES = { seeninseven: 'SeenInSeven', boardroom: 'AI Boardroom', eee: 'EEE Membership' };
 const accessNoticeApp = new URLSearchParams(window.location.search).get('access');
 
 const el = id => document.getElementById(id);
@@ -113,16 +113,16 @@ function hasStudioAccess(appKey) {
   return studioAccess.some(item => item.app_key === appKey);
 }
 
-function renderAppAccess(appKey, unlocked, betaCopy) {
+function renderAppAccess(appKey, unlocked, betaCopy, lockedCopy) {
   el(appKey + '-locked-cover').hidden = unlocked;
   el(appKey + '-open-button').hidden = !unlocked;
   el(appKey + '-request-button').hidden = unlocked;
-  el(appKey + '-access-label').textContent = unlocked ? 'Beta access' : 'Early access';
+  el(appKey + '-access-label').textContent = unlocked ? (appKey === 'eee' ? 'Membership active' : 'Beta access') : (appKey === 'eee' ? 'Membership' : 'Early access');
   el(appKey + '-access-label').classList.toggle('unlocked', unlocked);
   el(appKey + '-status').classList.toggle('unlocked', unlocked);
   el(appKey + '-status').innerHTML = unlocked
     ? '<i data-lucide="badge-check"></i><span>' + betaCopy + '</span>'
-    : '<i data-lucide="clock-3"></i><span>Coming soon. Message David Bee for early access.</span>';
+    : '<i data-lucide="lock"></i><span>' + (lockedCopy || 'Coming soon. Message David Bee for early access.') + '</span>';
 }
 
 async function hydrateStudio(session) {
@@ -143,6 +143,7 @@ function renderStudio() {
   const localProgress = hasLocalSeenInSevenProgress();
   const seenInSevenUnlocked = true;
   const boardroomUnlocked = hasStudioAccess('boardroom');
+  const eeeUnlocked = hasStudioAccess('eee');
 
   el('sign-in-button').hidden = signedIn;
   el('account-button').hidden = !signedIn;
@@ -150,6 +151,7 @@ function renderStudio() {
   const isAdmin = Boolean(signedIn && studioProfile && studioProfile.is_admin === true);
   el('admin-nav-item').hidden = !isAdmin;
   el('admin-menu-item').hidden = !isAdmin;
+  el('eee-menu-item').hidden = !eeeUnlocked;
 
   if (signedIn) {
     el('account-email').textContent = email;
@@ -165,6 +167,7 @@ function renderStudio() {
 
   renderAppAccess('seeninseven', seenInSevenUnlocked, 'SeenInSeven beta access is open.');
   renderAppAccess('boardroom', boardroomUnlocked, 'Your private advisor team is ready.');
+  renderAppAccess('eee', eeeUnlocked, 'All five EEE components are ready in one workspace.', 'Sign in with the email connected to your EEE membership.');
   const accessName = ACCESS_APP_NAMES[accessNoticeApp];
   el('access-notice').hidden = !accessName || !signedIn;
   if (accessName && signedIn) {

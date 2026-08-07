@@ -1,0 +1,144 @@
+{"kind":"deck","id":"pr/t4bg6p","name":"Deck"}
+{"kind":"layout","layoutId":"f18da261-4b19-4d60-9d37-feb4c52d9d66","name":"Master","type":"master"}
+{"kind":"layout","layoutId":"8fa0d63e-e3c0-42ca-b5e4-7904fdd0a822","name":"Title Slide","type":"title"}
+{"kind":"slide","id":"sl/4lib8g","slide":1,"title":"777 GRADUATION","textShapes":5}
+{"kind":"shape","id":"sh/43a9kzqx","slide":1,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/3i1sbu9c","slide":1,"text":"777 GRADUATION","textPreview":"777 GRADUATION","textChars":14,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/2hsri98r","slide":1,"text":"1 / 10","textPreview":"1 / 10","textChars":6,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/hgja94r6","slide":1,"text":"You brought the story home.","textPreview":"You brought the story home.","textChars":27,"textLines":1,"bbox":[62,112,1050,168]}
+{"kind":"shape","id":"sh/gfq9gza1","slide":1,"bbox":[62,304,92,8]}
+{"kind":"textbox","id":"sh/fehs7u9g","slide":1,"text":"Graduation | September 15, 2026 | 11:00 AM Mountain Time","textPreview":"Graduation | September 15, 2026 | 11:00 AM Mountain Time","textChars":56,"textLines":1,"bbox":[62,340,950,112]}
+{"kind":"textbox","id":"sh/ud8repsv","slide":1,"text":"Now the completed arc gets to change what happens next.","textPreview":"Now the completed arc gets to change what happens next.","textChars":55,"textLines":1,"bbox":[62,552,1030,58]}
+{"kind":"notes","id":"nt/4lib8g","slide":1,"text":""}
+{"kind":"slide","id":"sl/j1je8i","slide":2,"title":"CELEBRATE","textShapes":12}
+{"kind":"shape","id":"sh/nudkret8","slide":2,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/ofmlkjut","slide":2,"text":"CELEBRATE","textPreview":"CELEBRATE","textChars":9,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/9gv2tobe","slide":2,"text":"2 / 10","textPreview":"2 / 10","textChars":6,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/epk3e9cb","slide":2,"text":"Seven public acts of becoming","textPreview":"Seven public acts of becoming","textChars":29,"textLines":1,"bbox":[62,104,940,82]}
+{"kind":"textbox","id":"sh/fqtknetw","slide":2,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[62,236,70,36]}
+{"kind":"textbox","id":"sh/0rmlgzuh","slide":2,"text":"You began","textPreview":"You began","textChars":9,"textLines":1,"bbox":[62,292,350,74]}
+{"kind":"textbox","id":"sh/1sv2p4b2","slide":2,"text":"The first chapter broke the private stalemate.","textPreview":"The first chapter broke the private stalemate.","textChars":46,"textLines":1,"bbox":[62,378,350,130]}
+{"kind":"textbox","id":"sh/ylo3qtcv","slide":2,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[454,236,70,36]}
+{"kind":"textbox","id":"sh/jmxkzytg","slide":2,"text":"You stayed","textPreview":"You stayed","textChars":10,"textLines":1,"bbox":[454,292,350,74]}
+{"kind":"textbox","id":"sh/7ulcvqpo","slide":2,"text":"The middle carried doubt, resistance, and the fall.","textPreview":"The middle carried doubt, resistance, and the fall.","textChars":51,"textLines":1,"bbox":[454,378,350,130]}
+{"kind":"textbox","id":"sh/6tcb2l83","slide":2,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[846,236,70,36]}
+{"kind":"textbox","id":"sh/tg3ux07u","slide":2,"text":"You returned","textPreview":"You returned","textChars":12,"textLines":1,"bbox":[846,292,350,74]}
+{"kind":"textbox","id":"sh/sfud4vq9","slide":2,"text":"The final chapter named what is true now without pretending the work is finished.","textPreview":"The final chapter named what is true now without pretending the work is finished.","textChars":81,"textLines":1,"bbox":[846,378,350,130]}
+{"kind":"notes","id":"nt/j1je8i","slide":2,"text":""}
+{"kind":"slide","id":"sl/eozbiy","slide":3,"title":"THE COMPLETED ARC","textShapes":11}
+{"kind":"shape","id":"sh/sryds769","slide":3,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/rqpwz25o","slide":3,"text":"THE COMPLETED ARC","textPreview":"THE COMPLETED ARC","textChars":17,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/qpgvqxo3","slide":3,"text":"3 / 10","textPreview":"3 / 10","textChars":6,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/5o7exsni","slide":3,"text":"One journey. Seven distinct jobs.","textPreview":"One journey. Seven distinct jobs.","textChars":33,"textLines":1,"bbox":[62,92,900,70]}
+{"kind":"shape","id":"sh/4nydon6x","slide":3,"bbox":[62,230,124,124]}
+{"kind":"textbox","id":"sh/32pwv25c","slide":3,"text":"Commit","textPreview":"Commit","textChars":6,"textLines":1,"bbox":[72,270,104,52]}
+{"kind":"shape","id":"sh/i1gvmxor","slide":3,"bbox":[228,230,124,124]}
+{"kind":"textbox","id":"sh/pkbe9wnm","slide":3,"text":"Belong","textPreview":"Belong","textChars":6,"textLines":1,"bbox":[238,270,104,52]}
+{"kind":"shape","id":"sh/ojix0r6h","slide":3,"bbox":[394,230,124,124]}
+{"kind":"textbox","id":"sh/ix03i18j","slide":3,"text":"Question","textPreview":"Question","textChars":8,"textLines":1,"bbox":[404,270,104,52]}
+{"kind":"shape","id":"sh/jy94r694","slide":3,"bbox":[560,230,124,124]}
+{"kind":"textbox","id":"sh/kz2lkbqp","slide":3,"text":"Test","textPreview":"Test","textChars":4,"textLines":1,"bbox":[570,270,104,52]}
+{"kind":"shape","id":"sh/50bmtgru","slide":3,"bbox":[726,230,124,124]}
+{"kind":"textbox","id":"sh/at03eh87","slide":3,"text":"Fall","textPreview":"Fall","textChars":4,"textLines":1,"bbox":[736,270,104,52]}
+{"kind":"shape","id":"sh/vu94nm9s","slide":3,"bbox":[892,230,124,124]}
+{"kind":"textbox","id":"sh/wvilgrqd","slide":3,"text":"Discover","textPreview":"Discover","textChars":8,"textLines":1,"bbox":[902,270,104,52]}
+{"kind":"shape","id":"sh/xwrmpwry","slide":3,"bbox":[1058,230,124,124]}
+{"kind":"textbox","id":"sh/upk3ql8r","slide":3,"text":"Return","textPreview":"Return","textChars":6,"textLines":1,"bbox":[1068,270,104,52]}
+{"kind":"textbox","id":"sh/fqd4zqpc","slide":3,"text":"The final video did not erase the unresolved flaw. It made the speaker trustworthy enough to keep following.","textPreview":"The final video did not erase the unresolved flaw. It made the speaker trustworthy enough to keep following.","textChars":108,"textLines":1,"bbox":[62,430,1080,90]}
+{"kind":"notes","id":"nt/eozbiy","slide":3,"text":""}
+{"kind":"slide","id":"sl/156ix5","slide":4,"title":"THE NEXT PROBLEM","textShapes":12}
+{"kind":"shape","id":"sh/2pcridc3","slide":4,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/ps3adsvu","slide":4,"text":"THE NEXT PROBLEM","textPreview":"THE NEXT PROBLEM","textChars":16,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/oru9knu9","slide":4,"text":"4 / 10","textPreview":"4 / 10","textChars":6,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/bulsf2d0","slide":4,"text":"Visibility reveals the next bottleneck.","textPreview":"Visibility reveals the next bottleneck.","textChars":39,"textLines":1,"bbox":[62,104,1040,82]}
+{"kind":"textbox","id":"sh/atcbmxcf","slide":4,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[62,230,70,36]}
+{"kind":"textbox","id":"sh/xw3ahcvq","slide":4,"text":"What matters?","textPreview":"What matters?","textChars":13,"textLines":1,"bbox":[62,286,350,74]}
+{"kind":"textbox","id":"sh/cvuto7u5","slide":4,"text":"Choose the real decision instead of collecting more options.","textPreview":"Choose the real decision instead of collecting more options.","textChars":60,"textLines":1,"bbox":[62,372,350,130]}
+{"kind":"textbox","id":"sh/zy5sj2dw","slide":4,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[454,230,70,36]}
+{"kind":"textbox","id":"sh/yxwbqxcb","slide":4,"text":"How do I say it?","textPreview":"How do I say it?","textChars":16,"textLines":1,"bbox":[454,286,350,74]}
+{"kind":"textbox","id":"sh/8jupsfyt","slide":4,"text":"Shape a message without sanding away the point of view.","textPreview":"Shape a message without sanding away the point of view.","textChars":55,"textLines":1,"bbox":[454,372,350,130]}
+{"kind":"textbox","id":"sh/9k3q1kfe","slide":4,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[846,230,70,36]}
+{"kind":"textbox","id":"sh/mhc7q5g3","slide":4,"text":"How does it finish?","textPreview":"How does it finish?","textChars":19,"textLines":1,"bbox":[846,286,350,74]}
+{"kind":"textbox","id":"sh/nilozah8","slide":4,"text":"Stay with implementation until the work exists outside your head.","textPreview":"Stay with implementation until the work exists outside your head.","textChars":65,"textLines":1,"bbox":[846,372,350,130]}
+{"kind":"notes","id":"nt/156ix5","slide":4,"text":""}
+{"kind":"slide","id":"sl/p0mv7x","slide":5,"title":"EEE","textShapes":5}
+{"kind":"shape","id":"sh/qxof6xwz","slide":5,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/d0fehsfa","slide":5,"text":"EEE","textPreview":"EEE","textChars":3,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/sz6x8nep","slide":5,"text":"5 / 10","textPreview":"5 / 10","textChars":6,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/3adwbix8","slide":5,"text":"One Studio for the work after clarity.","textPreview":"One Studio for the work after clarity.","textChars":38,"textLines":1,"bbox":[62,88,570,112]}
+{"kind":"textbox","id":"sh/5cfedsfe","slide":5,"text":"EEE keeps the message, decision, examples, advisors, and direct support in the same operating space.","textPreview":"EEE keeps the message, decision, examples, advisors, and direct support in the same operating space.","textChars":100,"textLines":1,"bbox":[62,214,530,150]}
+{"kind":"textbox","id":"sh/4bmx4net","slide":5,"text":"Not another login. Not another library to finish.","textPreview":"Not another login. Not another library to finish.","textChars":49,"textLines":1,"bbox":[62,438,560,60]}
+{"kind":"image","id":"im/vit4nydw","slide":5,"name":"","geometry":"roundRect","alt":"EEE Studio home","bbox":[700,120,460,460]}
+{"kind":"notes","id":"nt/p0mv7x","slide":5,"text":""}
+{"kind":"slide","id":"sl/tbm7hi","slide":6,"title":"THE FIVE PARTS","textShapes":13}
+{"kind":"shape","id":"sh/5oj6pszi","slide":6,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/i1s7ud0r","slide":6,"text":"THE FIVE PARTS","textPreview":"THE FIVE PARTS","textChars":14,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/j21onihc","slide":6,"text":"6 / 10","textPreview":"6 / 10","textChars":6,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/wzaps3i1","slide":6,"text":"Five different jobs. One shared identity.","textPreview":"Five different jobs. One shared identity.","textChars":41,"textLines":1,"bbox":[62,82,1000,66]}
+{"kind":"shape","id":"sh/h0j6l8z6","slide":6,"bbox":[62,190,8,58]}
+{"kind":"textbox","id":"sh/ux87qd0v","slide":6,"text":"StorySculpt","textPreview":"StorySculpt","textChars":11,"textLines":1,"bbox":[92,190,300,35]}
+{"kind":"textbox","id":"sh/vy1ojihg","slide":6,"text":"Shape the message","textPreview":"Shape the message","textChars":17,"textLines":1,"bbox":[420,192,650,34]}
+{"kind":"shape","id":"sh/gvup47i5","slide":6,"bbox":[62,276,8,58]}
+{"kind":"textbox","id":"sh/1w3qxczq","slide":6,"text":"Navigator","textPreview":"Navigator","textChars":9,"textLines":1,"bbox":[92,276,300,35]}
+{"kind":"textbox","id":"sh/50ryxwre","slide":6,"text":"Choose the next action","textPreview":"Choose the next action","textChars":22,"textLines":1,"bbox":[420,278,650,34]}
+{"kind":"shape","id":"sh/4zih4rat","slide":6,"bbox":[62,362,8,58]}
+{"kind":"textbox","id":"sh/jy9gvm9o","slide":6,"text":"Solution Vault","textPreview":"Solution Vault","textChars":14,"textLines":1,"bbox":[92,362,300,35]}
+{"kind":"textbox","id":"sh/ix0z2hs3","slide":6,"text":"Learn from working examples","textPreview":"Learn from working examples","textChars":27,"textLines":1,"bbox":[420,364,650,34]}
+{"kind":"shape","id":"sh/hwrytcri","slide":6,"bbox":[62,448,8,58]}
+{"kind":"textbox","id":"sh/wvyh0rax","slide":6,"text":"AI Boardroom","textPreview":"AI Boardroom","textChars":12,"textLines":1,"bbox":[92,448,300,35]}
+{"kind":"textbox","id":"sh/vupgrm9c","slide":6,"text":"Pressure-test the decision","textPreview":"Pressure-test the decision","textChars":26,"textLines":1,"bbox":[420,450,650,34]}
+{"kind":"shape","id":"sh/utgzyhsr","slide":6,"bbox":[62,534,8,58]}
+{"kind":"textbox","id":"sh/1sbi5grm","slide":6,"text":"Certainty Sessions","textPreview":"Certainty Sessions","textChars":18,"textLines":1,"bbox":[92,534,300,35]}
+{"kind":"textbox","id":"sh/0r2hcba1","slide":6,"text":"Work directly with David","textPreview":"Work directly with David","textChars":24,"textLines":1,"bbox":[420,536,650,34]}
+{"kind":"notes","id":"nt/tbm7hi","slide":6,"text":""}
+{"kind":"slide","id":"sl/d9dd2q","slide":7,"title":"LIVE DEMONSTRATION","textShapes":12}
+{"kind":"shape","id":"sh/gnilknah","slide":7,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/fm9kr2tw","slide":7,"text":"LIVE DEMONSTRATION","textPreview":"LIVE DEMONSTRATION","textChars":18,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/el03ixsr","slide":7,"text":"7 / 10","textPreview":"7 / 10","textChars":6,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/tk72psb6","slide":7,"text":"Watch one stuck project move.","textPreview":"Watch one stuck project move.","textChars":29,"textLines":1,"bbox":[62,90,760,72]}
+{"kind":"textbox","id":"sh/szylgnal","slide":7,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[62,228,70,36]}
+{"kind":"textbox","id":"sh/rypknit0","slide":7,"text":"Name the constraint","textPreview":"Name the constraint","textChars":19,"textLines":1,"bbox":[62,284,350,74]}
+{"kind":"textbox","id":"sh/6xg3edsf","slide":7,"text":"Navigator reduces the field to one action.","textPreview":"Navigator reduces the field to one action.","textChars":42,"textLines":1,"bbox":[62,370,350,130]}
+{"kind":"textbox","id":"sh/dgbm1cra","slide":7,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[454,228,70,36]}
+{"kind":"textbox","id":"sh/cf2ls7ap","slide":7,"text":"Shape the message","textPreview":"Shape the message","textChars":17,"textLines":1,"bbox":[454,284,350,74]}
+{"kind":"textbox","id":"sh/y9wfa58f","slide":7,"text":"StorySculpt interviews for the raw material before it writes.","textPreview":"StorySculpt interviews for the raw material before it writes.","textChars":61,"textLines":1,"bbox":[454,370,350,130]}
+{"kind":"textbox","id":"sh/ja5g3a9k","slide":7,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[846,228,70,36]}
+{"kind":"textbox","id":"sh/kbyxcfq5","slide":7,"text":"Finish the work","textPreview":"Finish the work","textChars":15,"textLines":1,"bbox":[846,284,350,74]}
+{"kind":"textbox","id":"sh/lc7y5krq","slide":7,"text":"A Certainty Session stays with the actual obstacle.","textPreview":"A Certainty Session stays with the actual obstacle.","textChars":51,"textLines":1,"bbox":[846,370,350,130]}
+{"kind":"notes","id":"nt/d9dd2q","slide":7,"text":""}
+{"kind":"slide","id":"sl/wdt037","slide":8,"title":"FOUNDERS","textShapes":8}
+{"kind":"shape","id":"sh/lg7alw3u","slide":8,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/ydwba1k3","slide":8,"text":"FOUNDERS","textPreview":"FOUNDERS","textChars":8,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/ze5sj6lo","slide":8,"text":"8 / 10","textPreview":"8 / 10","textChars":6,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/cbet8r2x","slide":8,"text":"$77 / month","textPreview":"$77 / month","textChars":11,"textLines":1,"bbox":[62,118,540,100]}
+{"kind":"textbox","id":"sh/xcnahw3i","slide":8,"text":"Founders invitation","textPreview":"Founders invitation","textChars":19,"textLines":1,"bbox":[62,240,520,54]}
+{"kind":"textbox","id":"sh/a9wb6hk7","slide":8,"text":"Open September 15-19","textPreview":"Open September 15-19","textChars":20,"textLines":1,"bbox":[62,308,520,44]}
+{"kind":"shape","id":"sh/ba5sfmlc","slide":8,"bbox":[700,110,470,360]}
+{"kind":"textbox","id":"sh/onut4721","slide":8,"text":"Included","textPreview":"Included","textChars":8,"textLines":1,"bbox":[738,144,370,34]}
+{"kind":"textbox","id":"sh/po3adc3m","slide":8,"text":"StorySculpt\nNext Step Navigator\nSolution Vault\nAI Boardroom\nCertainty Sessions","textPreview":"StorySculpt | Next Step Navigator | Solution Vault | AI Boardroom | Certainty Sessions","textChars":78,"textLines":5,"bbox":[738,202,380,230]}
+{"kind":"textbox","id":"sh/tojudw7i","slide":8,"text":"The founders period repeats monthly until it is permanently retired. Standard membership then becomes $127/month.","textPreview":"The founders period repeats monthly until it is permanently retired. Standard membership then becomes $127/month.","textChars":113,"textLines":1,"bbox":[62,500,1080,80]}
+{"kind":"notes","id":"nt/wdt037","slide":8,"text":""}
+{"kind":"slide","id":"sl/2hbpz5","slide":9,"title":"THE DECISION","textShapes":12}
+{"kind":"shape","id":"sh/5w7atgre","slide":9,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/itwri18n","slide":9,"text":"THE DECISION","textPreview":"THE DECISION","textChars":12,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/ju5sr698","slide":9,"text":"9 / 10","textPreview":"9 / 10","textChars":6,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/wre9grqh","slide":9,"text":"Join for movement, not more information.","textPreview":"Join for movement, not more information.","textChars":40,"textLines":1,"bbox":[62,108,1060,94]}
+{"kind":"textbox","id":"sh/hsnapwr2","slide":9,"text":"01","textPreview":"01","textChars":2,"textLines":1,"bbox":[62,244,70,36]}
+{"kind":"textbox","id":"sh/upwre1sr","slide":9,"text":"The work is real","textPreview":"The work is real","textChars":16,"textLines":1,"bbox":[62,300,350,74]}
+{"kind":"textbox","id":"sh/vq58nm9w","slide":9,"text":"There is a current project, message, decision, or obstacle.","textPreview":"There is a current project, message, decision, or obstacle.","textChars":59,"textLines":1,"bbox":[62,386,350,130]}
+{"kind":"textbox","id":"sh/gni9svq1","slide":9,"text":"02","textPreview":"02","textChars":2,"textLines":1,"bbox":[454,244,70,36]}
+{"kind":"textbox","id":"sh/1ora10r6","slide":9,"text":"Context matters","textPreview":"Context matters","textChars":15,"textLines":1,"bbox":[454,300,350,74]}
+{"kind":"textbox","id":"sh/lkfylw7e","slide":9,"text":"Generic advice keeps missing the actual starting point.","textPreview":"Generic advice keeps missing the actual starting point.","textChars":55,"textLines":1,"bbox":[454,386,350,130]}
+{"kind":"textbox","id":"sh/0j6xsr6t","slide":9,"text":"03","textPreview":"03","textChars":2,"textLines":1,"bbox":[846,244,70,36]}
+{"kind":"textbox","id":"sh/zixgjmpo","slide":9,"text":"Finishing matters","textPreview":"Finishing matters","textChars":17,"textLines":1,"bbox":[846,300,350,74]}
+{"kind":"textbox","id":"sh/yhofqho3","slide":9,"text":"The result must exist outside the conversation.","textPreview":"The result must exist outside the conversation.","textChars":47,"textLines":1,"bbox":[846,386,350,130]}
+{"kind":"notes","id":"nt/2hbpz5","slide":9,"text":""}
+{"kind":"slide","id":"sl/2oa4yy","slide":10,"title":"Q&A","textShapes":5}
+{"kind":"shape","id":"sh/il0fe1gr","slide":10,"bbox":[0,0,1280,10]}
+{"kind":"textbox","id":"sh/58by9gz2","slide":10,"text":"Q&A","textPreview":"Q&A","textChars":3,"textLines":1,"bbox":[62,36,640,24]}
+{"kind":"textbox","id":"sh/472xgbyx","slide":10,"text":"10 / 10","textPreview":"10 / 10","textChars":7,"textLines":1,"bbox":[1120,36,100,24]}
+{"kind":"textbox","id":"sh/vi9w36h0","slide":10,"text":"What does the next chapter need?","textPreview":"What does the next chapter need?","textChars":32,"textLines":1,"bbox":[62,116,1020,100]}
+{"kind":"textbox","id":"sh/uh0fa1gf","slide":10,"text":"Ask about the work, the membership, or the obstacle that appeared when the seven-video story ended.","textPreview":"Ask about the work, the membership, or the obstacle that appeared when the seven-video story ended.","textChars":99,"textLines":1,"bbox":[62,262,960,88]}
+{"kind":"shape","id":"sh/hkre5wz6","slide":10,"bbox":[62,448,580,96]}
+{"kind":"textbox","id":"sh/wjixcbyl","slide":10,"text":"Founders closes September 19.","textPreview":"Founders closes September 19.","textChars":29,"textLines":1,"bbox":[92,474,520,42]}
+{"kind":"notes","id":"nt/2oa4yy","slide":10,"text":""}
