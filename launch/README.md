@@ -1,6 +1,14 @@
 # 777 September 2026 Launch
 
-This directory is the operating source for the September 7, 2026 cycle. Systeme remains the public funnel, registration, checkout, and email platform. Colorado Mastermind Studio remains the authenticated product home.
+## Operations Documents
+
+- [Systeme email and participation handoff](777-email-automation-handoff.md)
+- [777 email copy guide](email-style-guide.md)
+- [Email drafts](email-copy.md)
+- [Operator checklist](operator-checklist.md)
+- [Rehearsal checklist](rehearsal-checklist.md)
+
+This directory is the operating source for the September 7, 2026 cycle. Systeme remains the public funnel, checkout, event-page, and email platform. Colorado Mastermind Studio remains the authenticated product home.
 
 ## Canonical Dates
 
@@ -20,10 +28,10 @@ The browser-side cycle controller is [`js/777-launch-cycle.js`](../js/777-launch
 ## Public Routes
 
 - Challenge opt-in: `https://content.coloradomastermind.com/777`
-- Kickoff registration: `https://content.coloradomastermind.com/kickoff`
-- Kickoff confirmation: `https://content.coloradomastermind.com/kickoff-confirmed`
-- Graduation registration: `https://content.coloradomastermind.com/graduation`
-- Graduation confirmation: `https://content.coloradomastermind.com/graduation-confirmed`
+- Kickoff page: `https://content.coloradomastermind.com/kickoff`
+- Kickoff follow-up page: `https://content.coloradomastermind.com/kickoff-confirmed`
+- Graduation page: `https://content.coloradomastermind.com/graduation`
+- Graduation follow-up page: `https://content.coloradomastermind.com/graduation-confirmed`
 - SeenInSeven Studio: `https://studio.coloradomastermind.com/seeninseven`
 - EEE Studio: `https://studio.coloradomastermind.com/eee`
 - Certainty Sessions: `https://calendly.com/davidbee`
