@@ -14,9 +14,16 @@ Ordering is by risk to the September 7 launch, not by effort.
 
 Everything is built: HMAC verification, price-plan routing, duplicate-safe message IDs, source-aware revocation, pre-enrollment, profile claim on first sign-in, admin webhook history. `systeme_webhook_events` holds **one** row, and every line of `launch/rehearsal-checklist.md` is unchecked.
 
-Minimum before September 7:
+**Update, August 9, 2026, from a real rehearsal purchase on `hq@ancientcosmic.com`:** the money and grant side works. `systeme_webhook_events` shows one `SALE_NEW` row, `status: processed`, `delivery_count: 1`. `studio_entitlements` shows an active `seeninseven` row, `access_source: systeme`, granted the same second the webhook was received. So the paid flag did fire, that half is confirmed working.
 
-- [ ] Real $7 purchase on a fresh email, carried through to SeenInSeven access in Studio
+What did not carry through: signing in afterward. The Studio sign-in screen calls `check_email_exists`, which returns `has_level`, true only if the email already has a saved script/level record. It has nothing to do with `studio_entitlements`. A brand-new paying customer has an entitlement but no level record yet, so sign-in returns "No saved challenge found for that email yet. Start the challenge first, then we can save your progress" (`js/app.js`, around line 681), which is the message David hit. The thank-you page (`funnel-pages/sis-page6-block1-thankyou.html`) tells the buyer "your login link has been sent," but nothing in the purchase or webhook path actually creates that first level record or sends a magic link at checkout. Two systems, purchase and challenge progress, that were never wired together.
+
+Fix is either: send a real magic link and pre-seed a level record the moment the webhook grants the entitlement, or change the sign-in check to look at `studio_entitlements` instead of `has_level`. First one matches the thank-you page copy without rewriting it.
+
+**Third disconnected signal, same update:** the admin dashboard's "Paid" column (`admin-seeninseven.html`) reads `users.is_paid`, a plain boolean nothing in the webhook path ever writes. The only way it becomes true is an admin clicking "Set Paid," which calls `admin_set_paid`. Confirmed `is_paid: false` on the `hq@ancientcosmic.com` row despite the active entitlement, which is why the dashboard told David the purchase hadn't registered. Three separate "did they pay" signals exist in this system (`studio_entitlements`, `users.is_paid`, `has_level`) and the webhook only ever updates the first. Whichever fix gets picked for the sign-in gate should also make `users.is_paid` true at the same moment, or the dashboard should stop reading it and read `studio_entitlements` directly instead.
+
+- [x] Real $7 purchase on a fresh email. Confirmed August 9, 2026: webhook processed, entitlement granted
+- [ ] Same purchase carried through to actual SeenInSeven sign-in. Blocked on the `has_level` vs. entitlement mismatch above
 - [ ] Retry the same webhook message, confirm no second grant and no duplicate profile
 - [ ] Refund that fresh buyer, confirm only the matching Systeme grant disappears
 - [ ] Refund against an existing beta account, confirm the beta grant survives
@@ -43,7 +50,7 @@ Minimum before September 7:
 
 From the running notes, and worth treating as launch-blocking since it sits on the money page:
 
-- [ ] Buttons scroll to a dead spot instead of the opt-in form
+- [ ] Buttons scroll to a dead spot instead of the opt-in form. **Likely cause, needs confirming on the live published page:** the button hrefs point at Systeme's auto-generated section IDs, like `#section-91ec91a8` on the 777 landing block and `#form-input-aa036ba5` on the SeenInSeven block. Systeme regenerates those IDs when a page is re-saved in its visual builder, so a button saved before the last edit can point at an ID that moved or no longer exists. Source files checked in `funnel-pages/777-challenge-page1-block1-optin-above-form.html` and `funnel-pages/sis-page1-block1-main-body.html`, but the true fix has to happen on the live Systeme page since that is what actually serves traffic
 - [ ] "Free to start, no credit card needed" is wrong here. That copy belongs to the app trial page. This page collects $7, and the framing is $297+ of value for $7. Note: every page and document currently saying $311 needs the same correction
 - [ ] Remove the comment-to-client formula offer for now
 - [ ] Update thank-you page step two to match the automated access behavior
