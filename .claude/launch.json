@@ -3,8 +3,8 @@
   "configurations": [
     {
       "name": "Static File Server",
-      "runtimeExecutable": "python3",
-      "runtimeArgs": [".claude/serve.py"],
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["serve", ".", "-l", "3000", "--no-clipboard"],
       "port": 3000
     }
   ]

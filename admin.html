@@ -178,6 +178,20 @@
             <div><p class="eyebrow">Customers</p><h2 id="customers-title">People and app access</h2></div>
             <span class="load-time" id="last-loaded">Not loaded</span>
           </div>
+          <form class="enrollment-form" id="enrollment-form">
+            <div class="enrollment-form-head">
+              <div><h3>Enroll someone</h3><p>Add their name and email, choose their apps, and optionally send their sign-in link now.</p></div>
+              <span class="status-chip status-live">Manual enrolment</span>
+            </div>
+            <div class="enrollment-fields">
+              <label>Name<input id="enrollment-name" type="text" maxlength="120" placeholder="Their name"></label>
+              <label>Email <span aria-hidden="true">*</span><input id="enrollment-email" type="email" maxlength="320" autocomplete="email" required placeholder="person@example.com"></label>
+              <fieldset><legend>Give access to</legend><label><input id="enrollment-seeninseven" type="checkbox" checked> SeenInSeven</label><label><input id="enrollment-boardroom" type="checkbox"> AI Boardroom</label></fieldset>
+              <label class="send-enrollment-link"><input id="enrollment-send-link" type="checkbox" checked> Send their sign-in link now</label>
+              <button class="secondary-button" id="enrollment-submit" type="submit"><i data-lucide="user-plus"></i><span>Enroll person</span></button>
+            </div>
+            <p class="enrollment-message" id="enrollment-message" role="status" aria-live="polite"></p>
+          </form>
           <div class="customer-toolbar">
             <label class="search-field">
               <i data-lucide="search"></i>

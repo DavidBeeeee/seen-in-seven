@@ -94,6 +94,22 @@
 
 .customer-heading { margin-bottom: 12px; }
 .load-time, .table-count { color: var(--studio-muted); font-size: 11px; }
+.enrollment-form { margin: 0 0 14px; padding: 16px; border: 1px solid var(--studio-border); background: var(--studio-surface); }
+.enrollment-form-head { display: flex; align-items: start; justify-content: space-between; gap: 16px; margin-bottom: 14px; }
+.enrollment-form h3 { margin: 0; color: var(--studio-text); font-size: 15px; }
+.enrollment-form-head p { margin: 4px 0 0; color: var(--studio-muted); font-size: 12px; line-height: 1.45; }
+.enrollment-fields { display: grid; grid-template-columns: minmax(140px, 1fr) minmax(200px, 1.5fr) minmax(220px, 1.2fr) auto auto; gap: 10px; align-items: end; }
+.enrollment-fields > label, .enrollment-fields fieldset { min-width: 0; color: var(--studio-soft); font-size: 11px; font-weight: 800; }
+.enrollment-fields input[type="text"], .enrollment-fields input[type="email"] { display: block; width: 100%; height: 38px; margin-top: 5px; padding: 0 10px; border: 1px solid var(--studio-border); background: var(--studio-bg); color: var(--studio-text); outline: 0; }
+.enrollment-fields input[type="text"]:focus, .enrollment-fields input[type="email"]:focus { border-color: var(--studio-teal); }
+.enrollment-fields fieldset { display: flex; flex-wrap: wrap; gap: 7px 12px; min-height: 38px; margin: 0; padding: 0; border: 0; }
+.enrollment-fields legend { width: 100%; margin-bottom: 4px; }
+.enrollment-fields fieldset label, .send-enrollment-link { color: var(--studio-muted); font-weight: 700; white-space: nowrap; }
+.send-enrollment-link { display: flex; align-items: center; gap: 6px; min-height: 38px; }
+.enrollment-fields .secondary-button { min-height: 38px; white-space: nowrap; }
+.enrollment-message { min-height: 0; margin: 10px 0 0; color: var(--studio-muted); font-size: 12px; }
+.enrollment-message.success { color: var(--studio-green); }
+.enrollment-message.error { color: var(--studio-danger); }
 .customer-toolbar { display: flex; gap: 10px; margin-bottom: 12px; }
 .search-field { min-width: 260px; flex: 1; height: 42px; display: flex; align-items: center; gap: 9px; padding: 0 12px; border: 1px solid var(--studio-border); background: var(--studio-surface); }
 .search-field svg { width: 17px; color: var(--studio-muted); }
@@ -146,6 +162,7 @@
 @media (max-width: 1080px) {
   .metric-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .admin-app-grid { grid-template-columns: 1fr; }
+  .enrollment-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
 
 @media (max-width: 780px) {
@@ -158,6 +175,12 @@
   .metric-icon { width: 32px; height: 32px; }
   .customer-toolbar { flex-direction: column; }
   .search-field, .customer-toolbar select { width: 100%; min-width: 0; height: 42px; }
+  .enrollment-form-head, .enrollment-fields { display: block; }
+  .enrollment-form-head .status-chip { display: inline-flex; margin-top: 10px; }
+  .enrollment-fields > label, .enrollment-fields fieldset, .enrollment-fields .secondary-button { display: block; width: 100%; margin-top: 10px; }
+  .enrollment-fields fieldset { min-height: auto; }
+  .enrollment-fields fieldset label { display: inline-flex; margin: 4px 10px 0 0; }
+  .send-enrollment-link { display: flex !important; }
 }
 
 @media (max-width: 480px) {

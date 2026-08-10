@@ -75,6 +75,12 @@ function setAuthMessage(message, type) {
   adminEl('auth-message').className = 'admin-auth-message' + (type ? ' ' + type : '');
 }
 
+function setEnrollmentMessage(message, type) {
+  const element = adminEl('enrollment-message');
+  element.textContent = message || '';
+  element.className = 'enrollment-message' + (type ? ' ' + type : '');
+}
+
 async function sendAdminLink(event) {
   event.preventDefault();
   const email = adminEl('admin-email').value.trim().toLowerCase();
@@ -316,6 +322,55 @@ async function setAppAccess(event, userId, appKey, enabled) {
   }
 }
 
+async function enrollCustomer(event) {
+  event.preventDefault();
+  const email = adminEl('enrollment-email').value.trim().toLowerCase();
+  const name = adminEl('enrollment-name').value.trim();
+  const appKeys = APP_CATALOG.filter(app => adminEl('enrollment-' + app.key).checked).map(app => app.key);
+  const sendLink = adminEl('enrollment-send-link').checked;
+  const button = adminEl('enrollment-submit');
+
+  if (!email) {
+    setEnrollmentMessage('Enter an email address first.', 'error');
+    return;
+  }
+  if (!appKeys.length) {
+    setEnrollmentMessage('Choose at least one app to enrol this person in.', 'error');
+    return;
+  }
+
+  button.disabled = true;
+  button.querySelector('span').textContent = 'Enrolling...';
+  setEnrollmentMessage('');
+  try {
+    const { error } = await adminSb.rpc('admin_enroll_studio_customer', {
+      target_email: email,
+      target_name: name || null,
+      target_app_keys: appKeys
+    });
+    if (error) throw error;
+
+    let message = 'Access is ready for ' + email + '.';
+    if (sendLink) {
+      const { error: linkError } = await adminSb.auth.signInWithOtp({
+        email,
+        options: { emailRedirectTo: window.location.origin + '/', shouldCreateUser: true }
+      });
+      if (linkError) message += ' The enrolment was saved, but the sign-in link could not be sent.';
+      else message += ' Their sign-in link is on its way.';
+    }
+    setEnrollmentMessage(message, 'success');
+    adminEl('enrollment-form').reset();
+    adminEl('enrollment-seeninseven').checked = true;
+    await loadStudioAdmin();
+  } catch (error) {
+    setEnrollmentMessage(error && error.message ? error.message : 'This person could not be enrolled. Please try again.', 'error');
+  } finally {
+    button.disabled = false;
+    button.querySelector('span').textContent = 'Enroll person';
+  }
+}
+
 function drawerKv(label, value) {
   return '<div class="drawer-kv"><span>' + escapeHtml(label) + '</span><span>' + escapeHtml(value) + '</span></div>';
 }
@@ -385,6 +440,7 @@ adminSb.auth.onAuthStateChange((event, session) => {
 });
 
 adminEl('admin-auth-form').addEventListener('submit', sendAdminLink);
+adminEl('enrollment-form').addEventListener('submit', enrollCustomer);
 adminEl('theme-button').addEventListener('click', toggleAdminTheme);
 adminEl('refresh-button').addEventListener('click', loadStudioAdmin);
 adminEl('customer-search').addEventListener('input', renderCustomers);

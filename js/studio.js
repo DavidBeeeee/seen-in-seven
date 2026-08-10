@@ -63,6 +63,9 @@ function setAuthMessage(message, type) {
 }
 
 async function ensureStudioProfile(user) {
+  const { data: claimed, error: claimError } = await studioSb.rpc('claim_studio_profile');
+  if (!claimError && claimed) return claimed;
+
   const { data: existing, error: selectError } = await studioSb
     .from('users')
     .select('*')
