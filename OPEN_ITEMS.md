@@ -10,20 +10,20 @@ Ordering is by risk to the September 7 launch, not by effort.
 
 ## Tier 1: Blocks the launch
 
-### 1.1 The purchase path has never met a real transaction
+### 1.1 Finish the purchase-path rehearsal
 
-Everything is built: HMAC verification, price-plan routing, duplicate-safe message IDs, source-aware revocation, pre-enrollment, profile claim on first sign-in, admin webhook history. `systeme_webhook_events` holds **one** row, and every line of `launch/rehearsal-checklist.md` is unchecked.
+The HMAC verification, price-plan routing, duplicate-safe message IDs, source-aware revocation, pre-enrollment, profile claim, and admin history are built. One real $7 purchase now exists; the remaining rehearsal steps are login click-through, retry, and refund behavior.
 
 **Update, August 9, 2026, from a real rehearsal purchase on `hq@ancientcosmic.com`:** the money and grant side works. `systeme_webhook_events` shows one `SALE_NEW` row, `status: processed`, `delivery_count: 1`. `studio_entitlements` shows an active `seeninseven` row, `access_source: systeme`, granted the same second the webhook was received. So the paid flag did fire, that half is confirmed working.
 
-What did not carry through: signing in afterward. The Studio sign-in screen calls `check_email_exists`, which returns `has_level`, true only if the email already has a saved script/level record. It has nothing to do with `studio_entitlements`. A brand-new paying customer has an entitlement but no level record yet, so sign-in returns "No saved challenge found for that email yet. Start the challenge first, then we can save your progress" (`js/app.js`, around line 681), which is the message David hit. The thank-you page (`funnel-pages/sis-page6-block1-thankyou.html`) tells the buyer "your login link has been sent," but nothing in the purchase or webhook path actually creates that first level record or sends a magic link at checkout. Two systems, purchase and challenge progress, that were never wired together.
+**Repair applied August 9:** `check_email_exists` now returns active SeenInSeven entitlement status, and the sign-in flow accepts either saved challenge progress or an active entitlement before sending the magic link. The live RPC returns `has_access: true` for the rehearsal buyer. The thank-you source now accurately tells buyers to request the secure link with their purchase email. One manual click-through remains before the rehearsal line can be closed.
 
 Fix is either: send a real magic link and pre-seed a level record the moment the webhook grants the entitlement, or change the sign-in check to look at `studio_entitlements` instead of `has_level`. First one matches the thank-you page copy without rewriting it.
 
-**Third disconnected signal, same update:** the admin dashboard's "Paid" column (`admin-seeninseven.html`) reads `users.is_paid`, a plain boolean nothing in the webhook path ever writes. The only way it becomes true is an admin clicking "Set Paid," which calls `admin_set_paid`. Confirmed `is_paid: false` on the `hq@ancientcosmic.com` row despite the active entitlement, which is why the dashboard told David the purchase hadn't registered. Three separate "did they pay" signals exist in this system (`studio_entitlements`, `users.is_paid`, `has_level`) and the webhook only ever updates the first. Whichever fix gets picked for the sign-in gate should also make `users.is_paid` true at the same moment, or the dashboard should stop reading it and read `studio_entitlements` directly instead.
+**Admin repair applied August 9:** the SeenInSeven admin now treats an active `systeme` SeenInSeven entitlement as payment truth while retaining the legacy manual paid flag for older records. Beta and admin-granted access are not mislabeled as purchases.
 
 - [x] Real $7 purchase on a fresh email. Confirmed August 9, 2026: webhook processed, entitlement granted
-- [ ] Same purchase carried through to actual SeenInSeven sign-in. Blocked on the `has_level` vs. entitlement mismatch above
+- [ ] Same purchase carried through to actual SeenInSeven sign-in. Code and live RPC repaired; one manual magic-link click-through remains
 - [ ] Retry the same webhook message, confirm no second grant and no duplicate profile
 - [ ] Refund that fresh buyer, confirm only the matching Systeme grant disappears
 - [ ] Refund against an existing beta account, confirm the beta grant survives
@@ -50,10 +50,10 @@ Fix is either: send a real magic link and pre-seed a level record the moment the
 
 From the running notes, and worth treating as launch-blocking since it sits on the money page:
 
-- [ ] Buttons scroll to a dead spot instead of the opt-in form. **Likely cause, needs confirming on the live published page:** the button hrefs point at Systeme's auto-generated section IDs, like `#section-91ec91a8` on the 777 landing block and `#form-input-aa036ba5` on the SeenInSeven block. Systeme regenerates those IDs when a page is re-saved in its visual builder, so a button saved before the last edit can point at an ID that moved or no longer exists. Source files checked in `funnel-pages/777-challenge-page1-block1-optin-above-form.html` and `funnel-pages/sis-page1-block1-main-body.html`, but the true fix has to happen on the live Systeme page since that is what actually serves traffic
+- [x] Replace generated-ID CTA targeting in both repository funnel blocks with runtime email-form discovery. Live Systeme blocks still need republishing and confirmation
 - [ ] "Free to start, no credit card needed" is wrong here. That copy belongs to the app trial page. This page collects $7, and the framing is $297+ of value for $7. Note: every page and document currently saying $311 needs the same correction
-- [ ] Remove the comment-to-client formula offer for now
-- [ ] Update thank-you page step two to match the automated access behavior
+- [x] Remove the comment-to-client formula offer from repository source. Live Systeme block still needs republishing
+- [x] Update thank-you page step two to match the automated access behavior in repository source. Live Systeme block still needs republishing
 - [ ] Confirm no public page links to OnlineCourseHost
 
 ---
@@ -62,8 +62,8 @@ From the running notes, and worth treating as launch-blocking since it sits on t
 
 - [ ] Enable leaked-password protection in the Supabase Auth dashboard. **Confirmed still off as of August 8.** One toggle, no code
 - [ ] Rotate the two admin test-account passwords
-- [ ] Review the six tables with RLS on and zero policies: `api_usage`, `preauth_events`, `studio_access_grants`, `systeme_product_routes`, `systeme_webhook_config`, `systeme_webhook_events`. Deny-by-default so not a leak, though the Systeme tables hold routing and a secret hash and deserve an intentional decision
-- [ ] Confirm nothing still points at the paused `Boardroom V2` Supabase project
+- [x] Review the six tables with RLS on and zero policies. Added explicit deny-direct-access policies; revoked the unnecessary inherited direct grants on `preauth_events`; server-side RPCs remain the access path
+- [x] Confirm current application source does not point at the paused `Boardroom V2` Supabase project. All active clients use the healthy SeenInSeven project
 
 ---
 
@@ -75,20 +75,20 @@ The visual redesign covered how the app feels. The flow-by-flow walkthrough did 
 
 ### 3.2 SeenInSeven app fixes (from the running notes)
 
-- [ ] After all seven videos, the bottom box still says "film it" while the top box already links to filming. Change the bottom box to offer the Level 1 to Level 2 switch, with a congratulations moment for finishing a level
-- [ ] Temu affiliate link no longer appears
+- [x] After all seven videos, the dashboard offers the Level 1 to Level 2 switch with a completion message
+- [x] Temu affiliate visibility restored after three filmed videos
 - [ ] One-click copy for the L1 and L2 question sets and the onboarding prompt
-- [ ] Regenerate modal: the placeholder gets typed in as a real answer and is the wrong color. Gray out the screen or reuse the loading screen while regenerating
-- [ ] Delete-and-start-over should return to onboarding question 1, or ask first
+- [x] Regeneration uses an empty textarea, explicit improve action, working state, retry state, and preserves the prior draft on failure
+- [x] Delete-and-start-over asks before clearing the current video's script and answers; full onboarding restart remains a separate Settings action
 - [ ] Add a transition sentence between the declaration and the introduction. Currently a harsh jump. Possibly a second API call before final output
 - [ ] Level 2 needs a name. Level 1 is "The Relatable Hero," Level 2 is still "The ?? Authority"
-- [ ] Add "land / landed" and "ship / shipped" to the app's banned word list
-- [ ] Friendlier returning-user message: "Welcome Back! We recognize you've already started your SeenInSeven scripts, check your email for a magic link back to your dashboard"
-- [ ] On the "what do you want to talk about" onboarding question, extended question 3 subtitle should be a strong ready-to-paste AI prompt, up to 12k characters
+- [x] Add metaphorical land/landed and ship/shipped to the app's banned-word checks, preserving literal uses
+- [x] Friendlier returning-user message with a paid-buyer variant
+- [x] Extended topic context accepts and persists up to 12,000 characters and has paste-ready Answer Help
 
 ### 3.3 Phase 2 leftovers
 
-- [ ] Free-text "say it in my own words" option on the content-intent grid, saving to state, flowing into generation, and rendering in admin wherever preset labels appear
+- [x] Free-text "say it in my own words" option on the content-intent grid, saving to state, choosing the personal or expertise route, flowing into generation, and rendering in admin
 - [ ] Commit-moment redesign. **Waiting on David.** Three questions need answers first: what the ideal commitment moment looks and feels and says, whether the mission statement stays editable afterward, and whether it appears anywhere outside the dashboard
 
 ### 3.4 Points tuning

@@ -88,14 +88,14 @@ Product names, prices, and page copy change every cycle. Immutable price plan ID
 
 ## Phase Status Summary
 
-| Phase | Status as of August 8, 2026 |
+| Phase | Status as of August 9, 2026 |
 |---|---|
 | 1. Admin Command Center | Complete |
-| 2. Onboarding Update | Mostly complete, two items open |
+| 2. Onboarding Update | Mostly complete, commit-moment decision open |
 | 3. Full UX Audit | Visual pass done, formal walkthrough outstanding |
 | 4. Gamification | Built, numbers unproven |
 | 5. Script Output Update | Underway through the Prompt Tester |
-| 6. Paid Access and Checkout Bridge | Built, not yet validated with a real purchase |
+| 6. Paid Access and Checkout Bridge | Real purchase and grant validated; repaired login awaits manual click-through |
 | 7. Email and Follow-Up | Deferred. Systeme carries the launch |
 | 8. Studio Foundation | Live |
 
@@ -121,11 +121,11 @@ Delivered:
 - A seven-part **Journey Map** after the Overview and before Video 1 preparation. One shared question set per level. Planned directions stay separate from detailed answers, and only the active video's direction enters generation. Existing users can edit either level from Settings. Level-specific resets preserve the Overview and both Journey Maps. Delete Everything returns to onboarding while preserving the Studio account.
 - **Per-video answer help** for all fourteen video paths. A copied prompt for an outside AI that offers three source directions before writing paste-ready journal answers, uses only the current Journey direction, and treats previous scripts as continuity rather than material to recycle. It changes no production blueprint and saves nothing back automatically.
 - Mission statement, commitment declaration, and commitment reasons persisted on the onboarding row.
+- Free-text content-intent route that saves the user's exact words, lets them choose a personal-story or expertise direction, flows into generation, and renders in admin.
 
 **Still open:**
 
-1. **Free-text fallback on the content-intent grid.** Most choice screens now have a way through, but the content-intent grid still has none. A user who does not see themselves in the options picks the closest wrong answer or feels unseen. The typed answer needs to save to state, flow into generation the same way a preset does, and render in the admin panel wherever preset labels currently appear.
-2. **Commit-moment redesign.** The current commit sequence still reads more like a form than a declaration. This is waiting on David Bee to describe the experience he wants. Three questions need answers before any code:
+1. **Commit-moment redesign.** The current commit sequence still reads more like a form than a declaration. This is waiting on David Bee to describe the experience he wants. Three questions need answers before any code:
    - What does the ideal commitment moment look, feel, and say?
    - Should the mission statement be editable after the fact?
    - Should it appear anywhere outside the dashboard, such as the script view or a completion screen?
@@ -191,7 +191,7 @@ Known areas of interest, unchanged:
 
 ## Phase 6: Paid Access And Checkout Bridge
 
-**Built. Not yet validated with a real purchase.**
+**Built. A real purchase has validated the payment and grant path; the repaired login path awaits one final manual click-through.**
 
 What exists:
 
@@ -207,7 +207,7 @@ What exists:
 
 **What is not done:**
 
-The current webhook-event count belongs in WorkerBee's `state/OBSERVED.md`, not in this roadmap. No verified delivery is currently on record, and every line of `launch/rehearsal-checklist.md` is unchecked. The plumbing has not met a real transaction. Before September 7, run a genuine $7 purchase with a fresh email through to Studio access, confirm a retry creates no second grant, and confirm a refund leaves an existing beta grant intact.
+The August 9 rehearsal confirmed a genuine $7 sale, one processed webhook delivery, pre-enrollment, and an active `systeme` SeenInSeven entitlement. It also exposed and led to repair of the fresh-buyer login gate and the admin's legacy payment display. Finish the same buyer's magic-link click-through, then confirm a retry creates no second grant and a refund leaves an existing beta grant intact.
 
 The humane-access principle still holds. A real buyer must never get locked out over an email mismatch or magic-link confusion. Manual admin enrollment exists precisely for that.
 
@@ -283,11 +283,11 @@ For documentation-only work:
 
 Ordered for the thirty days before September 7, 2026.
 
-1. **Run the rehearsal checklist**, starting with a real $7 purchase on a fresh email, carried through webhook, entitlement, magic-link entry, and SeenInSeven access. Then a retry, then a refund against a beta account. This is the single highest-risk untested path and everything downstream of the launch depends on it.
+1. **Finish the rehearsal checklist.** Complete the repaired fresh buyer's magic-link entry, then test an identical webhook retry and source-aware refunds for both the fresh buyer and an existing beta account.
 2. **Supply the missing URLs.** Kickoff and Graduation Zoom rooms and replays in `js/777-launch-cycle.js`, the confirmation pages, the email drafts, and both decks. Plus `ENGAGE_LINKS` in `js/app.js`, which is holding two finished features hidden.
 3. **Security housekeeping.** Enable leaked-password protection in the Supabase Auth dashboard, which is a toggle rather than a code change, and rotate the two admin test-account passwords.
 4. **Run the actual Phase 3 audit** across the flows listed above, both levels, both themes, mobile and desktop.
-5. **Finish Phase 2**, meaning the content-intent free-text option and whatever David decides about the commit moment.
+5. **Finish Phase 2's commit moment** after David supplies the three product decisions. The content-intent free-text route is complete.
 6. **Tune `points_config`** once the September cohort produces real behavior.
 
 Do not skip ahead of this list without David Bee explicitly changing the priority.

@@ -274,11 +274,11 @@ Full detail lives in `SEENINSEVEN_ROADMAP.md`. Short version:
 | Phase | Status |
 |---|---|
 | 1. Admin Command Center | Complete |
-| 2. Onboarding Update | Mostly complete. Remaining: free-text option on the content-intent grid, plus the commit-moment redesign, which is still waiting on David's direction |
+| 2. Onboarding Update | Mostly complete. Free-text content intent is built; the commit-moment redesign is still waiting on David's direction |
 | 3. Full UX Audit | Visual half done. The flow-by-flow walkthrough has not been formally run |
 | 4. Gamification | Built. Point values and thresholds are starting numbers awaiting real-behavior tuning |
 | 5. Script Output Update | Partially underway through the Prompt Tester. No blueprint rewrite without an explicit brief |
-| 6. Paid Access and Checkout Bridge | **Built.** Systeme webhook, price-plan routing, source-aware revocation, admin webhook history. Not yet validated with a real purchase |
+| 6. Paid Access and Checkout Bridge | **Built.** Real $7 payment and entitlement validated August 9; fresh-buyer login bridge repaired; manual link click-through, retry, and refund tests remain |
 | 7. Email and Follow-Up | Systeme handles the launch sequence. No in-app lifecycle email exists |
 | 8. Studio Foundation | Live. Studio is the root, SeenInSeven is intact at `/seeninseven`, Boardroom connected, EEE component apps present |
 

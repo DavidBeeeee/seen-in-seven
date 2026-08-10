@@ -630,7 +630,7 @@
     </div>
 
     <div class="sis-btn-wrap">
-      <a href="#form-input-aa036ba5" class="sis-btn">Start Building Your Brand &rarr;</a>
+      <a href="#sis-checkout" class="sis-btn sis-scroll-btn">Start Building Your Brand &rarr;</a>
       <span class="sis-btn-sub">Instant access &nbsp;·&nbsp; 30-day guarantee &nbsp;·&nbsp; No recurring fees</span>
     </div>
   </div>
@@ -850,14 +850,6 @@
         </div>
         <span class="sis-value-price">$197</span>
       </div>
-      <div class="sis-value-item" style="border-color:var(--teal-vivid);background:var(--teal-frost);">
-        <span class="sis-value-num" style="color:var(--teal-mid);">+</span>
-        <div>
-          <p class="sis-value-label">Bonus: Comment-to-Client Formula + GPT</p>
-          <p class="sis-value-desc">How to turn a comment section into a client conversation, with a custom GPT trained on the methodology. Your audience is already talking. This teaches you how to listen to the parts that matter.</p>
-        </div>
-        <span class="sis-value-price" style="color:var(--teal-mid);">$67</span>
-      </div>
     </div>
 
     <div class="sis-value-total">
@@ -866,7 +858,7 @@
     </div>
 
     <div class="sis-btn-wrap">
-      <a href="#form-input-aa036ba5" class="sis-btn">Get Instant Access &rarr;</a>
+      <a href="#sis-checkout" class="sis-btn sis-scroll-btn">Get Instant Access &rarr;</a>
       <span class="sis-btn-sub">One-time payment &nbsp;·&nbsp; Lifetime access &nbsp;·&nbsp; 30-day guarantee</span>
     </div>
   </div>
@@ -969,7 +961,7 @@
     <p class="sis-body" style="color:var(--teal-pale);text-align:center;max-width:520px;margin:0 auto 32px;">Your content is waiting. Your audience is too. The only thing left is to answer three questions and let the AI do what it was built to do.</p>
 
     <div class="sis-btn-wrap" style="align-items:center;">
-      <a href="#form-input-aa036ba5" class="sis-btn" style="font-size:15px;padding:20px 52px;">Start Building Your Brand &rarr;</a>
+      <a href="#sis-checkout" class="sis-btn sis-scroll-btn" style="font-size:15px;padding:20px 52px;">Start Building Your Brand &rarr;</a>
       <span class="sis-btn-sub" style="text-align:center;">$297 &nbsp;·&nbsp; One-time &nbsp;·&nbsp; Lifetime access &nbsp;·&nbsp; 30-day guarantee</span>
     </div>
   </div>
@@ -977,3 +969,18 @@
 
 </div><!-- end .sis-page -->
 
+<script>
+(function(){
+  document.querySelectorAll('.sis-scroll-btn').forEach(function(btn){
+    btn.addEventListener('click', function(e){
+      var input = document.querySelector('input[type="email"], input[name="email"]');
+      var target = input && (input.closest('form') || input);
+      if (target) {
+        e.preventDefault();
+        target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        window.setTimeout(function(){ input.focus(); }, 450);
+      }
+    });
+  });
+})();
+</script>

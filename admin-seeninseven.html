@@ -788,10 +788,18 @@ function renderUserRows(rows) {
       '<td>' + (r.recentErrors.length ? badge(r.recentErrors.length + ' recent', 'red') : '<span class="muted">0</span>') + '</td>' +
       '<td>' + badge(supportLabel(r.notes.support_status), supportTone(r.notes.support_status)) + '</td>' +
       '<td>' + (r.preauth ? '<span class="muted">-</span>' : studioAccessControl(r)) + '</td>' +
-      '<td>' + (r.preauth ? '<span class="muted">-</span>' : (r.user.is_paid ? badge('Paid','green') : '<button class="toggle-paid" onclick="togglePaid(event,\'' + safeAttr(r.user.id) + '\')">Set Paid</button>')) + '</td>' +
+      '<td>' + (r.preauth ? '<span class="muted">-</span>' : (isSeenInSevenPaid(r) ? badge('Paid','green') : '<button class="toggle-paid" onclick="togglePaid(event,\'' + safeAttr(r.user.id) + '\')">Set Paid</button>')) + '</td>' +
     '</tr>';
   }).join('');
   updateBulkBar(rows);
+}
+
+function isSeenInSevenPaid(r) {
+  if (!r || r.preauth) return false;
+  if (r.user && r.user.is_paid === true) return true;
+  const access = r.studioAccess;
+  if (!access || access.status !== 'active' || access.access_source !== 'systeme') return false;
+  return !access.expires_at || dateMs(access.expires_at) > Date.now();
 }
 
 function toggleRowSelection(userId, checked) {
@@ -872,7 +880,7 @@ function renderProfile(r) {
     (r.preauth ? kv('Email entered', h(r.user.email || '-')) : '') +
     kv('Level', h(levelLabel(r.user.level))) +
     kv('Studio access', r.preauth ? badge('Not verified','') : studioAccessControl(r)) +
-    kv('Paid flag', r.preauth ? badge('Not verified','') : (r.user.is_paid ? badge('Paid','green') : badge('Not paid',''))) +
+    kv('Paid access', r.preauth ? badge('Not verified','') : (isSeenInSevenPaid(r) ? badge('Paid','green') : badge('Not paid',''))) +
     kv('Last active', h(lastActiveText(r))) +
     kv('Next action', h(nextAction(r)));
 }
@@ -1340,7 +1348,7 @@ function exportRows(rows) {
     '- Latest event: ' + latestEventLabel(r),
     '- Errors: ' + r.errorLogs.length + ' total, ' + r.recentErrors.length + ' in 24hr',
     '- Support: ' + supportLabel(r.notes.support_status) + ', priority ' + (r.notes.priority || 'normal'),
-    '- Paid flag: ' + (r.preauth ? 'unverified' : (!!r.user.is_paid)),
+    '- Paid access: ' + (r.preauth ? 'unverified' : isSeenInSevenPaid(r)),
     '- Pre-auth session: ' + (r.anonSessionId || '-'),
     '- Next action: ' + nextAction(r)
   ].join('\n'));

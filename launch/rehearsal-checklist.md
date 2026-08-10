@@ -4,7 +4,7 @@ Record a tester, timestamp, and evidence link for each line.
 
 ## Purchase And Access
 
-- [ ] Fresh `$7` purchase creates one webhook event and one SeenInSeven purchase grant.
+- [x] Fresh `$7` purchase creates one webhook event and one SeenInSeven purchase grant. Verified August 9, 2026
 - [ ] Retrying the same webhook message creates no additional grant or profile.
 - [ ] Existing beta user keeps access after a `$7` purchase refund.
 - [ ] Refunded fresh buyer loses only the matching Systeme grant.

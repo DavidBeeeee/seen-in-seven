@@ -650,9 +650,10 @@ async function handleEmailSubmit() {
     const { data: emailCheck } = await _sb
       .rpc('check_email_exists', { lookup_email: email });
 
-    if (emailCheck && emailCheck.has_level) {
-      // Existing user — send magic link and show inline confirmation
-      sendMagicLink(email).catch(() => {});
+    if (emailCheck && (emailCheck.has_level || emailCheck.has_access)) {
+      // Existing participant or entitled buyer — send magic link and show inline confirmation.
+      // Paid buyers can legitimately have access before they have chosen a challenge level.
+      await sendMagicLink(email);
       if (typeof logEvent === 'function') logEvent('magic_link_requested', {source: 'returning_user', email: email});
       if (checkEl) checkEl.style.display = 'none';
       if (btn) { btn.textContent = 'Continue →'; btn.disabled = false; }
@@ -665,7 +666,7 @@ async function handleEmailSubmit() {
           msg.style.cssText = 'margin-top:16px;padding:16px 18px;background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:12px;line-height:1.7;';
           msg.innerHTML = `
             <div style="font-size:17px;font-weight:700;color:var(--cream);margin-bottom:6px;">Welcome back! 👋</div>
-            <div style="font-size:14px;color:var(--muted);">We recognize you. You've already started your SeenInSeven scripts. Check your inbox for a magic link to get straight back to your dashboard.</div>
+            <div style="font-size:14px;color:var(--muted);">We recognize you${emailCheck.has_level ? ". You've already started your SeenInSeven scripts" : ' and your SeenInSeven access is active'}. Check your inbox for a magic link to continue.</div>
             <div style="margin-top:12px;font-size:13px;color:var(--muted);">Wrong email? <button onclick="document.querySelector('.email-sent-msg').remove();document.getElementById('auth-email-input').value='';document.getElementById('auth-email-input').focus();" style="background:none;border:none;color:var(--teal);cursor:pointer;font-size:13px;text-decoration:underline;padding:0;font-family:inherit;">Try a different one →</button></div>`;
           const btnRow = emailScreen.querySelector('.btn-row');
           if (btnRow) btnRow.after(msg);
@@ -689,7 +690,16 @@ async function handleEmailSubmit() {
     if (typeof logEvent === 'function') logEvent('magic_link_requested', {source: 'new_user', email: email});
 
   } catch(e) {
-    // If check fails, continue anyway
+    if (authScreenMode === 'signin') {
+      if (checkEl) checkEl.style.display = 'none';
+      if (btn) { btn.textContent = 'Send Sign-In Link →'; btn.disabled = false; }
+      if (errEl) {
+        errEl.textContent = e && e.message ? e.message : 'We could not send the sign-in link. Please try again.';
+        errEl.style.display = 'block';
+      }
+      return;
+    }
+    // A save-progress check may fail transiently without blocking local onboarding.
   }
 
   if (checkEl) checkEl.style.display = 'none';
@@ -1056,7 +1066,7 @@ const COMMITMENT_REASONS = [
 
 function determineLevel() {
   const p2 = ensurePhase2();
-  state.level = p2.contentIntent === 'teach' ? 2 : 1;
+  state.level = ['teach', 'custom_teach'].includes(p2.contentIntent) ? 2 : 1;
 }
 
 function renderContentIntentGrid() {
@@ -1071,6 +1081,20 @@ function renderContentIntentGrid() {
     c.innerHTML = '<span class="card-emoji">' + o.e + '</span><div class="card-title">' + escapeHTML(o.t) + '</div><div class="card-sub">' + escapeHTML(o.s) + '</div>';
     grid.appendChild(c);
   });
+
+  const custom = document.createElement('div');
+  custom.className = 'choice-custom';
+  custom.id = 'content-intent-custom-wrap';
+  custom.style.gridColumn = '1 / -1';
+  custom.innerHTML =
+    '<div class="choice-custom-title">Want to say it in your own words?</div>' +
+    '<div class="choice-custom-copy">Write what you want these videos to communicate, then choose the direction that fits best.</div>' +
+    '<textarea class="text-input" rows="3" maxlength="1000" placeholder="I want these videos to show..." oninput="setCustomAnswer(\'contentIntent\', this.value)">' + escapeHTML(p2.custom.contentIntent || '') + '</textarea>' +
+    '<div class="btn-row">' +
+      '<button class="btn-secondary" onclick="useCustomContentIntent(\'custom_person\')">My story and perspective</button>' +
+      '<button class="btn-secondary" onclick="useCustomContentIntent(\'custom_teach\')">My expertise and teaching</button>' +
+    '</div>';
+  grid.appendChild(custom);
 }
 
 // Shared renderer for static autoAdvance choice-card screens (screen-2a,
@@ -1098,6 +1122,23 @@ function selectContentIntent(option, el) {
   if (el) el.classList.add('selecting');
   saveProgress();
   setTimeout(goNext, 300);
+}
+
+function useCustomContentIntent(route) {
+  const p2 = ensurePhase2();
+  const text = String(p2.custom.contentIntent || '').trim();
+  if (!text) {
+    const input = document.querySelector('#content-intent-custom-wrap textarea');
+    if (input) {
+      input.placeholder = 'Add a sentence first, then choose a direction.';
+      input.focus();
+    }
+    return;
+  }
+  p2.contentIntent = route === 'custom_teach' ? 'custom_teach' : 'custom_person';
+  p2.contentIntentTitle = text;
+  saveProgress();
+  goNext();
 }
 
 function renderChoiceCustom(key, title, copy, buttonText) {

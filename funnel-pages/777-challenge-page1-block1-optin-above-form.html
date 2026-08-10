@@ -823,7 +823,7 @@
       <span class="p777-pill">Scripts already written for you</span>
     </div>
     <div style="text-align:center !important;">
-      <a href="#section-91ec91a8" class="p777-btn p777-scroll-btn">
+      <a href="#p777-signup" class="p777-btn p777-scroll-btn">
         Enter Your Email to Get Started →
       </a>
     </div>
@@ -954,7 +954,7 @@
       Starting with a friend isn't just more fun. It's the difference between someone who finishes and someone who almost did.
     </div>
     <div style="text-align:center !important;margin-top:8px;">
-      <a href="#section-91ec91a8" class="p777-btn p777-scroll-btn">
+      <a href="#p777-signup" class="p777-btn p777-scroll-btn">
         Sign Us Both Up →
       </a>
       <span class="p777-btn-sub">Or copy the message below and send it yourself.</span>
@@ -1048,7 +1048,7 @@
       <span class="p777-total-label" style="margin-top:16px;">Your investment today</span>
       <span class="p777-total-price">$7</span>
       <span class="p777-total-sub">One time &nbsp;·&nbsp; No subscription &nbsp;·&nbsp; No recurring fees</span>
-      <a href="#section-91ec91a8" class="p777-btn p777-scroll-btn" style="margin-top:12px;">
+      <a href="#p777-signup" class="p777-btn p777-scroll-btn" style="margin-top:12px;">
         I'm Ready — Join the Challenge →
       </a>
       <span class="p777-btn-sub">$7 one-time &nbsp;·&nbsp; No subscription &nbsp;·&nbsp; No recurring fees</span>
@@ -1086,7 +1086,7 @@
       If you read that first list and felt seen, stop waiting. The people who need to find you are out there right now. <strong>They just can't find you yet.</strong>
     </div>
     <div style="text-align:center !important;margin-top:36px;">
-      <a href="#section-91ec91a8" class="p777-btn p777-scroll-btn">
+      <a href="#p777-signup" class="p777-btn p777-scroll-btn">
         That's me. I'm in. →
       </a>
     </div>
@@ -1106,7 +1106,7 @@
         </h2>
         <p style="font-size:17px !important;color:rgba(240,248,248,0.65) !important;max-width:480px;margin:16px auto 36px;line-height:1.7;text-align:center !important;">Seven videos. A group doing it with you. Scripts already written. The only thing left is pressing record.</p>
         <div style="text-align:center !important;">
-          <a href="#section-91ec91a8" class="p777-btn p777-scroll-btn">
+          <a href="#p777-signup" class="p777-btn p777-scroll-btn">
             Count Me In →
           </a>
         </div>
@@ -1120,10 +1120,12 @@
 (function(){
   document.querySelectorAll('.p777-scroll-btn').forEach(function(btn){
     btn.addEventListener('click', function(e){
-      var target = document.getElementById('section-91ec91a8');
+      var input = document.querySelector('input[type="email"], input[name="email"]');
+      var target = input && (input.closest('form') || input);
       if (target) {
         e.preventDefault();
         target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        window.setTimeout(function(){ input.focus(); }, 450);
       }
     });
   });

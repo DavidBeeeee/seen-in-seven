@@ -17,7 +17,7 @@
 - [ ] Confirm the Kickoff confirmation page reveals the Zoom room only after registration.
 - [ ] Open the `$7` 777 checkout.
 - [ ] Keep the `$77` EEE checkout closed.
-- [ ] Run a real `$7` purchase with a fresh email.
+- [x] Run a real `$7` purchase with a fresh email. Verified August 9, 2026
 - [ ] Confirm purchase email, Studio pre-enrollment, magic-link entry, and SeenInSeven access.
 - [ ] Confirm a public visitor cannot reach paid Studio tools.
 
