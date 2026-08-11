@@ -15,6 +15,7 @@
     "check:content-intent": "node scripts/check-content-intent-custom.mjs",
     "check:funnel-source": "node scripts/check-funnel-source.mjs",
     "check:security-boundaries": "node scripts/check-security-boundaries.mjs",
-    "test": "npm run check:prompt-style && npm run check:story-architecture && npm run check:lock-state && npm run check:progress-meter && npm run check:level-consistency && npm run check:journey-map && npm run check:answer-help && npm run check:studio-catalog && npm run check:purchase-access && npm run check:content-intent && npm run check:funnel-source && npm run check:security-boundaries"
+    "check:workerbee-studio": "node scripts/check-workerbee-studio.mjs",
+    "test": "npm run check:prompt-style && npm run check:story-architecture && npm run check:lock-state && npm run check:progress-meter && npm run check:level-consistency && npm run check:journey-map && npm run check:answer-help && npm run check:studio-catalog && npm run check:purchase-access && npm run check:content-intent && npm run check:funnel-source && npm run check:security-boundaries && npm run check:workerbee-studio"
   }
 }

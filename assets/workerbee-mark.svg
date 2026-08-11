@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title">
+  <title id="title">WorkerBee</title>
+  <rect width="512" height="512" rx="96" fill="#111716"/>
+  <path d="M146 167h220v54H146zm0 124h220v54H146z" fill="#d2b35b"/>
+  <path d="M122 114h268v284H122z" fill="none" stroke="#45c5c5" stroke-width="28"/>
+  <circle cx="196" cy="256" r="24" fill="#f8fafa"/>
+  <circle cx="316" cy="256" r="24" fill="#f8fafa"/>
+</svg>

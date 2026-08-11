@@ -97,7 +97,7 @@ Product names, prices, and page copy change every cycle. Immutable price plan ID
 | 5. Script Output Update | Underway through the Prompt Tester |
 | 6. Paid Access and Checkout Bridge | Real purchase and grant validated; repaired login awaits manual click-through |
 | 7. Email and Follow-Up | Deferred. Systeme carries the launch |
-| 8. Studio Foundation | Live |
+| 8. Studio Foundation | Live; David-only WorkerBee workspace approved and in Preview development |
 
 ---
 
@@ -235,7 +235,7 @@ Studio is the root dashboard. SeenInSeven is intact at `/seeninseven`. Shared lo
 
 The component apps are at very different maturity levels. `solution_vault_items` holds thirteen rows, `storysculpt_projects` holds one, and `navigator_states` holds none. Treat StorySculpt and Navigator as early rather than finished, and see the open-items list for David's specific direction on each.
 
-Still deliberately absent: cross-app user history, a unified activity feed, additional apps beyond those listed, and any architecture rewrite. SeenInSeven keeps its vanilla structure, auth, saved work, prompts, points, screen system, and admin tools.
+Still deliberately absent for customers: cross-app user history, a unified activity feed, additional customer apps beyond those listed, and any architecture rewrite. David explicitly approved one private exception on August 10, 2026: `/dashboard` and `/todo` form his David-only WorkerBee operating workspace inside the existing Studio stack. It does not create customer-facing activity history and does not alter SeenInSeven's vanilla structure, auth, saved work, prompts, points, screen system, or admin tools.
 
 ---
 
@@ -244,7 +244,7 @@ Still deliberately absent: cross-app user history, a unified activity feed, addi
 - No community bridge implementation.
 - No in-app lifecycle email.
 - No streak mechanics, badges beyond the gem system, or community posting flows until David defines them.
-- No additional Studio apps beyond the five already routed.
+- No additional customer-facing Studio apps beyond the five already routed. The approved David-only WorkerBee workspace is the sole current exception.
 - No cross-app user history or unified activity feed.
 - No framework migration.
 - No broad state-management rewrite.

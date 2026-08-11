@@ -1,6 +1,10 @@
 {
   "rewrites": [
     { "source": "/studio", "destination": "/index.html" },
+    { "source": "/dashboard", "destination": "/dashboard.html" },
+    { "source": "/dashboard/", "destination": "/dashboard.html" },
+    { "source": "/todo", "destination": "/todo.html" },
+    { "source": "/todo/", "destination": "/todo.html" },
     { "source": "/eee", "destination": "/eee.html" },
     { "source": "/eee/", "destination": "/eee.html" },
     { "source": "/storysculpt", "destination": "/storysculpt.html" },

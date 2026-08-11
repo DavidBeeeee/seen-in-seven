@@ -1,0 +1,369 @@
+const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+const surface = document.body.dataset.workerbeeSurface;
+const el = id => document.getElementById(id);
+let session = null;
+let state = { sections: [], tasks: [], updates: [], journal: [], readState: null };
+let toastTimer = null;
+
+function icons() {
+  if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
+}
+
+function showToast(message, error = false) {
+  const node = el('toast');
+  node.textContent = message;
+  node.className = 'toast' + (error ? ' error' : '');
+  node.hidden = false;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { node.hidden = true; }, 3200);
+}
+
+function showOnly(name) {
+  for (const id of ['auth-card', 'loading', 'error-card', 'dashboard-app', 'todo-app']) {
+    const node = el(id);
+    if (node) node.hidden = id !== name;
+  }
+  if (el('sign-out')) el('sign-out').hidden = !session;
+}
+
+async function api(action, payload) {
+  if (!session) throw new Error('Please sign in again.');
+  const options = { headers: { Authorization: `Bearer ${session.access_token}` } };
+  if (action) {
+    options.method = 'POST';
+    options.headers['Content-Type'] = 'application/json';
+    options.body = JSON.stringify({ action, payload });
+  }
+  const response = await fetch('/api/workerbee', options);
+  const result = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(result.error || 'WorkerBee could not save that change.');
+  return action ? result.result : result;
+}
+
+async function activate(nextSession) {
+  session = nextSession;
+  if (!session) {
+    showOnly('auth-card');
+    return;
+  }
+  showOnly('loading');
+  try {
+    state = await api();
+    if (surface === 'todo') renderTodo(); else renderDashboard();
+    showOnly(surface === 'todo' ? 'todo-app' : 'dashboard-app');
+    await api('mark_viewed', { surface }).catch(() => null);
+    icons();
+  } catch (error) {
+    el('error-message').textContent = error.message;
+    showOnly('error-card');
+  }
+}
+
+function empty(message) {
+  const p = document.createElement('p');
+  p.className = 'empty-state';
+  p.textContent = message;
+  return p;
+}
+
+function updateCard(item, withActions = false) {
+  const card = document.createElement('article');
+  card.className = 'update-card';
+  const title = document.createElement('h3');
+  title.textContent = item.title;
+  card.append(title);
+  if (item.body) {
+    const body = document.createElement('p');
+    body.textContent = item.body;
+    card.append(body);
+  }
+  const meta = document.createElement('div');
+  meta.className = 'update-meta';
+  meta.textContent = [item.status, item.due_at ? new Date(item.due_at).toLocaleString() : '', item.action_id || ''].filter(Boolean).join(' · ');
+  card.append(meta);
+  if (withActions && item.status === 'active') {
+    const actions = document.createElement('div');
+    actions.className = 'update-actions';
+    for (const [label, status] of [['Acknowledge', 'acknowledged'], ['Approve', 'approved'], ['Defer', 'deferred'], ['Reject', 'rejected']]) {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.textContent = label;
+      button.addEventListener('click', async () => {
+        button.disabled = true;
+        try {
+          const updated = await api('update_update', { id: item.id, status });
+          Object.assign(item, updated);
+          renderDashboard();
+          showToast(`${label} recorded.`);
+        } catch (error) { showToast(error.message, true); }
+      });
+      actions.append(button);
+    }
+    card.append(actions);
+  }
+  return card;
+}
+
+function fillUpdates(id, items, message, actions = false) {
+  const root = el(id);
+  root.replaceChildren();
+  if (!items.length) root.append(empty(message));
+  else items.forEach(item => root.append(updateCard(item, actions)));
+}
+
+function renderDashboard() {
+  const active = state.updates.filter(item => !['rejected', 'completed'].includes(item.status));
+  const outcomes = active.filter(item => item.kind === 'outcome').slice(0, 3);
+  const needs = active.filter(item => item.kind === 'needs_david');
+  const lastViewed = state.readState && state.readState.last_dashboard_viewed_at;
+  const completed = state.updates.filter(item => item.kind === 'completed' && (!lastViewed || item.updated_at > lastViewed)).slice(0, 8);
+  const commitments = active.filter(item => ['commitment', 'blocker'].includes(item.kind)).slice(0, 10);
+  fillUpdates('outcomes-list', outcomes, 'Today’s outcomes will appear after the next WorkerBee synchronization.');
+  fillUpdates('needs-list', needs, 'Nothing is waiting for a decision right now.', true);
+  fillUpdates('completed-list', completed, 'No new completed work since your last visit.');
+  fillUpdates('commitments-list', commitments, 'No dated commitment or blocker is currently published.');
+  el('needs-count').textContent = String(needs.length);
+  el('dashboard-freshness').textContent = state.generatedAt ? `Current as of ${new Date(state.generatedAt).toLocaleString()}.` : 'Current state loaded.';
+  renderJournal();
+  icons();
+}
+
+function renderJournal() {
+  const root = el('journal-list');
+  root.replaceChildren();
+  if (!state.journal.length) {
+    root.append(empty('The Journal is ready. I will write only when something real surfaces.'));
+    return;
+  }
+  for (const entry of state.journal.slice(0, 20)) {
+    const article = document.createElement('article');
+    article.className = 'journal-entry';
+    const header = document.createElement('header');
+    const left = document.createElement('div');
+    const type = document.createElement('div');
+    type.className = 'journal-type';
+    type.textContent = entry.category;
+    const title = document.createElement('h3');
+    title.textContent = entry.title;
+    left.append(type, title);
+    const time = document.createElement('time');
+    time.textContent = new Date(`${entry.entry_date}T12:00:00`).toLocaleDateString();
+    header.append(left, time);
+    const body = document.createElement('p');
+    body.textContent = entry.body;
+    article.append(header, body);
+    root.append(article);
+  }
+}
+
+function sortByOrder(items) {
+  return [...items].sort((a, b) => a.sort_order - b.sort_order || a.created_at.localeCompare(b.created_at));
+}
+
+async function replaceFromServer() {
+  state = await api();
+  if (surface === 'todo') renderTodo(); else renderDashboard();
+}
+
+function iconButton(name, label, handler) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.title = label;
+  button.setAttribute('aria-label', label);
+  const icon = document.createElement('i');
+  icon.dataset.lucide = name;
+  button.append(icon);
+  button.addEventListener('click', handler);
+  return button;
+}
+
+function renderTodo() {
+  const root = el('todo-sections');
+  root.replaceChildren();
+  const sections = sortByOrder(state.sections);
+  if (!sections.length) root.append(empty('Add your first heading, then start writing tasks underneath it.'));
+  sections.forEach((section, sectionIndex) => {
+    const article = document.createElement('section');
+    article.className = 'todo-section';
+    const headingRow = document.createElement('div');
+    headingRow.className = 'section-title-row';
+    const heading = document.createElement('input');
+    heading.className = 'section-title';
+    heading.value = section.title;
+    heading.setAttribute('aria-label', 'Heading title');
+    heading.addEventListener('change', async () => {
+      const value = heading.value.trim();
+      if (!value || value === section.title) { heading.value = section.title; return; }
+      try { Object.assign(section, await api('update_section', { id: section.id, title: value })); showToast('Heading saved.'); }
+      catch (error) { heading.value = section.title; showToast(error.message, true); }
+    });
+    const controls = document.createElement('div');
+    controls.className = 'section-controls';
+    controls.append(
+      iconButton('arrow-up', 'Move heading up', () => moveSection(sectionIndex, -1)),
+      iconButton('arrow-down', 'Move heading down', () => moveSection(sectionIndex, 1)),
+      iconButton('archive', 'Archive heading', () => archiveSection(section))
+    );
+    headingRow.append(heading, controls);
+
+    const list = document.createElement('div');
+    list.className = 'task-list';
+    const tasks = sortByOrder(state.tasks.filter(task => task.section_id === section.id));
+    tasks.forEach((task, taskIndex) => list.append(taskRow(task, tasks, taskIndex)));
+    const add = document.createElement('form');
+    add.className = 'task-add';
+    const plus = document.createElement('span');
+    plus.textContent = '+';
+    const input = document.createElement('input');
+    input.placeholder = 'Add a task';
+    input.setAttribute('aria-label', `Add a task under ${section.title}`);
+    add.append(plus, input);
+    add.addEventListener('submit', async event => {
+      event.preventDefault();
+      const title = input.value.trim();
+      if (!title) return;
+      input.disabled = true;
+      try {
+        const created = await api('create_task', { section_id: section.id, title, sort_order: tasks.length * 100 });
+        state.tasks.push(created);
+        input.value = '';
+        renderTodo();
+        const next = root.querySelector(`[data-section-id="${section.id}"] .task-add input`);
+        if (next) next.focus();
+      } catch (error) { showToast(error.message, true); input.disabled = false; }
+    });
+    article.dataset.sectionId = section.id;
+    article.append(headingRow, list, add);
+    root.append(article);
+  });
+  icons();
+}
+
+function taskRow(task, siblingTasks, index) {
+  const row = document.createElement('div');
+  row.className = 'task-row' + (task.status === 'done' ? ' done' : '');
+  const checkbox = document.createElement('input');
+  checkbox.type = 'checkbox';
+  checkbox.className = 'task-check';
+  checkbox.checked = task.status === 'done';
+  checkbox.setAttribute('aria-label', `Complete ${task.title}`);
+  checkbox.addEventListener('change', async () => {
+    try {
+      Object.assign(task, await api('update_task', { id: task.id, status: checkbox.checked ? 'done' : 'active' }));
+      renderTodo();
+    } catch (error) { checkbox.checked = !checkbox.checked; showToast(error.message, true); }
+  });
+  const title = document.createElement('input');
+  title.className = 'task-title';
+  title.value = task.title;
+  title.setAttribute('aria-label', 'Task title');
+  title.addEventListener('change', async () => {
+    const value = title.value.trim();
+    if (!value || value === task.title) { title.value = task.title; return; }
+    try { Object.assign(task, await api('update_task', { id: task.id, title: value })); }
+    catch (error) { title.value = task.title; showToast(error.message, true); }
+  });
+  const controls = document.createElement('div');
+  controls.className = 'task-controls';
+  controls.append(
+    iconButton('arrow-up', 'Move task up', () => moveTask(siblingTasks, index, -1)),
+    iconButton('arrow-down', 'Move task down', () => moveTask(siblingTasks, index, 1)),
+    iconButton('trash-2', 'Delete task', async () => {
+      try { await api('delete_task', { id: task.id }); state.tasks = state.tasks.filter(item => item.id !== task.id); renderTodo(); showToast('Task removed. It remains recoverable in history.'); }
+      catch (error) { showToast(error.message, true); }
+    })
+  );
+  row.append(checkbox, title, controls);
+  return row;
+}
+
+async function moveSection(index, direction) {
+  const sections = sortByOrder(state.sections);
+  const target = index + direction;
+  if (target < 0 || target >= sections.length) return;
+  const first = sections[index];
+  const second = sections[target];
+  const firstOrder = first.sort_order;
+  try {
+    await Promise.all([
+      api('update_section', { id: first.id, sort_order: second.sort_order }),
+      api('update_section', { id: second.id, sort_order: firstOrder })
+    ]);
+    await replaceFromServer();
+  } catch (error) { showToast(error.message, true); }
+}
+
+async function moveTask(tasks, index, direction) {
+  const target = index + direction;
+  if (target < 0 || target >= tasks.length) return;
+  const first = tasks[index];
+  const second = tasks[target];
+  const firstOrder = first.sort_order;
+  try {
+    await Promise.all([
+      api('update_task', { id: first.id, sort_order: second.sort_order }),
+      api('update_task', { id: second.id, sort_order: firstOrder })
+    ]);
+    await replaceFromServer();
+  } catch (error) { showToast(error.message, true); }
+}
+
+async function archiveSection(section) {
+  if (!window.confirm(`Archive “${section.title}” and hide its tasks?`)) return;
+  try { await api('update_section', { id: section.id, archived_at: new Date().toISOString() }); state.sections = state.sections.filter(item => item.id !== section.id); renderTodo(); showToast('Heading archived.'); }
+  catch (error) { showToast(error.message, true); }
+}
+
+function bindEvents() {
+  el('auth-form').addEventListener('submit', async event => {
+    event.preventDefault();
+    const email = el('auth-email').value.trim().toLowerCase();
+    const button = event.submitter;
+    button.disabled = true;
+    try {
+      const { error } = await sb.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + window.location.pathname, shouldCreateUser: false } });
+      if (error) throw error;
+      el('auth-message').textContent = 'Your sign-in link is on its way.';
+      el('auth-message').className = 'form-message';
+    } catch (error) {
+      el('auth-message').textContent = 'I could not send that link. Please try again.';
+      el('auth-message').className = 'form-message error';
+    } finally { button.disabled = false; }
+  });
+  el('sign-out').addEventListener('click', () => sb.auth.signOut());
+  if (surface === 'todo') {
+    el('add-section').addEventListener('click', async () => {
+      const title = window.prompt('New heading');
+      if (!title || !title.trim()) return;
+      try { state.sections.push(await api('create_section', { title, sort_order: state.sections.length * 100 })); renderTodo(); }
+      catch (error) { showToast(error.message, true); }
+    });
+  } else {
+    el('new-journal-button').addEventListener('click', () => { el('journal-form').hidden = false; el('journal-title').focus(); });
+    el('cancel-journal').addEventListener('click', () => { el('journal-form').reset(); el('journal-form').hidden = true; });
+    el('journal-form').addEventListener('submit', async event => {
+      event.preventDefault();
+      const button = event.submitter;
+      button.disabled = true;
+      try {
+        const created = await api('create_journal', { category: el('journal-category').value, title: el('journal-title').value, body: el('journal-body').value });
+        state.journal.unshift(created);
+        event.currentTarget.reset();
+        event.currentTarget.hidden = true;
+        renderJournal();
+        showToast('Journal entry saved.');
+      } catch (error) { showToast(error.message, true); }
+      finally { button.disabled = false; }
+    });
+  }
+}
+
+bindEvents();
+icons();
+sb.auth.onAuthStateChange((_event, nextSession) => {
+  setTimeout(() => activate(nextSession), 0);
+});
+const { data } = await sb.auth.getSession();
+await activate(data.session);

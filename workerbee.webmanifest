@@ -1,0 +1,12 @@
+{
+  "name": "WorkerBee Todo",
+  "short_name": "Todo",
+  "start_url": "/todo",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#111716",
+  "theme_color": "#111716",
+  "icons": [
+    { "src": "/assets/workerbee-mark.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+  ]
+}

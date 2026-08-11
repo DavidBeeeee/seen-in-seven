@@ -33,6 +33,8 @@ Systeme.io remains the public funnel, checkout, and email platform. Studio never
 | `/admin` | Studio-wide customer directory and app access |
 | `/admin/seeninseven` | Detailed SeenInSeven progress, scripts, errors, support |
 | `/admin/seeninseven/prompt-tester` | Admin-only prompt experiment workspace |
+| `/dashboard` | David-only WorkerBee operating dashboard and Journal |
+| `/todo` | David-only mobile headings and checkbox lists |
 | `/admin.html` | Legacy direct link, still resolves to Studio admin |
 | `/api/generate` | SeenInSeven script generation |
 | `/api/systeme-webhook` | Systeme purchase and cancellation receiver |
@@ -54,6 +56,8 @@ admin.html               Studio-wide customer and app-access admin
 admin-seeninseven.html   Detailed SeenInSeven app admin
 admin-boardroom.html     Boardroom activity admin
 admin-prompt-tester.html Admin-only prompt experiment workspace
+dashboard.html          David-only WorkerBee operating dashboard and Journal
+todo.html               David-only document-like task editor
 
 js/app.js                    SeenInSeven application logic (largest file in the project)
 js/supabase.js               Supabase client, auth, DB read/write, event logging
@@ -69,12 +73,14 @@ js/admin-seeninseven*        SeenInSeven admin
 js/admin-boardroom.js        Boardroom admin
 js/admin-prompt-tester.js    Prompt tester: read-only test assembly, drafts, confirm, undo
 js/admin-prompt-questions.js Prompt tester question set
+js/workerbee.js               WorkerBee auth, Todo, Dashboard, and Journal client
 
 css/app.css              Dark mode (default theme), all structural + dark styles
 css/light.css            Light mode overrides only
 css/studio.css           Studio dashboard styles, both themes
 css/admin-studio.css     Studio admin layout and responsive styles
 css/admin-prompt-tester.css, css/admin-boardroom.css
+css/workerbee.css        WorkerBee Dashboard and mobile Todo styles
 
 prompts/blueprints.js    AI system prompts. DO NOT MODIFY without explicit instruction.
 api/generate.js          DeepSeek proxy for script generation
@@ -83,6 +89,7 @@ api/prompt-blueprint.js  Admin-verified GitHub publisher, restricted to prompts/
 api/prompt-test.js       Prompt tester generation endpoint
 api/guest-config.js, api/guest-verify.js   Guest / pre-auth access
 api/_lib/prompt-engine.js, api/_lib/blueprints.txt, api/_lib/security.js
+api/workerbee.js         David-admin or server-secret gateway to narrow WorkerBee RPCs
 
 launch/                  September 2026 cycle operating source (README, checklists, email copy, decks)
 funnel-pages/            Canonical custom-code blocks pasted into Systeme pages
@@ -216,6 +223,10 @@ Project: `SeenInSeven` (`zdtkwpzdwnzzmdwrvmka`). The separate `Boardroom V2` pro
 | `systeme_webhook_events` | every received message, for duplicate safety and admin recovery |
 | `systeme_webhook_config` | singleton, holds the signing secret hash |
 | `api_usage` | per-subject and per-IP quota accounting |
+
+**David-only WorkerBee**
+
+`workerbee_sections`, `workerbee_tasks`, `workerbee_updates`, `workerbee_journal`, `workerbee_read_state`, `workerbee_change_history`, and `workerbee_config` are private operational records. Browser roles have no direct table privileges. `/api/workerbee` verifies David through the existing admin boundary or a server-only bridge secret, then calls only `workerbee_bootstrap()` or `workerbee_mutate()`.
 
 **EEE component apps**
 

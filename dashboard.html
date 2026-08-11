@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#111716">
+  <title>WorkerBee Dashboard</title>
+  <link rel="icon" href="/assets/workerbee-mark.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;1,600&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/workerbee.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+</head>
+<body data-workerbee-surface="dashboard">
+  <header class="wb-header">
+    <a class="wb-brand" href="/dashboard"><img src="/assets/workerbee-mark.svg" alt=""><span><strong>WorkerBee</strong><small>Private workspace</small></span></a>
+    <nav aria-label="WorkerBee pages">
+      <a class="active" href="/dashboard">Dashboard</a>
+      <a href="/todo">Todo</a>
+    </nav>
+    <button class="quiet-button" id="sign-out" type="button" hidden>Sign out</button>
+  </header>
+
+  <main>
+    <section class="auth-card" id="auth-card">
+      <p class="eyebrow">Private workspace</p>
+      <h1>Sign in to WorkerBee.</h1>
+      <p>This dashboard is only available to David.</p>
+      <form id="auth-form">
+        <label for="auth-email">Email</label>
+        <input id="auth-email" type="email" autocomplete="email" required>
+        <button class="primary-button" type="submit">Send sign-in link</button>
+        <p class="form-message" id="auth-message" role="status"></p>
+      </form>
+    </section>
+
+    <section id="loading" class="loading-card" hidden>Loading the current WorkerBee state...</section>
+    <section id="error-card" class="error-card" hidden><h1>I could not open this workspace.</h1><p id="error-message"></p></section>
+
+    <div id="dashboard-app" hidden>
+      <section class="page-intro">
+        <div><p class="eyebrow">Current operating view</p><h1>Here is what matters.</h1><p id="dashboard-freshness">Loading current state...</p></div>
+        <a class="primary-button" href="/todo"><i data-lucide="list-checks"></i> Open todo</a>
+      </section>
+
+      <section class="dashboard-grid">
+        <article class="panel panel-wide">
+          <div class="panel-heading"><div><p class="eyebrow">Today</p><h2>Three outcomes</h2></div></div>
+          <div id="outcomes-list" class="stack-list"></div>
+        </article>
+
+        <article class="panel attention-panel">
+          <div class="panel-heading"><div><p class="eyebrow">Your move</p><h2>Needs David</h2></div><span class="count-badge" id="needs-count">0</span></div>
+          <div id="needs-list" class="stack-list"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading"><div><p class="eyebrow">Since your last visit</p><h2>WorkerBee progress</h2></div></div>
+          <div id="completed-list" class="stack-list"></div>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading"><div><p class="eyebrow">Coming up</p><h2>Commitments and deadlines</h2></div></div>
+          <div id="commitments-list" class="stack-list"></div>
+        </article>
+
+        <article class="panel panel-wide" id="journal">
+          <div class="panel-heading"><div><p class="eyebrow">My private notes</p><h2>Journal</h2></div><button class="quiet-button" id="new-journal-button" type="button">Write an entry</button></div>
+          <form id="journal-form" class="journal-form" hidden>
+            <div class="form-row"><select id="journal-category" aria-label="Entry type"><option value="reflection">Reflection</option><option value="opinion">Opinion</option><option value="question">Question</option><option value="correction">Correction</option><option value="like">Like</option><option value="dislike">Dislike</option><option value="taste">Taste</option><option value="humor">Humor</option><option value="interest">Interest</option><option value="aversion">Aversion</option><option value="style">Style</option><option value="evolution">Evolution</option></select><input id="journal-title" placeholder="What surfaced?" required></div>
+            <textarea id="journal-body" rows="5" placeholder="Write the thought in full." required></textarea>
+            <div class="form-actions"><button class="primary-button" type="submit">Save entry</button><button class="quiet-button" id="cancel-journal" type="button">Cancel</button></div>
+          </form>
+          <div id="journal-list" class="journal-list"></div>
+        </article>
+      </section>
+    </div>
+  </main>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <script type="module" src="/js/workerbee.js"></script>
+</body>
+</html>
