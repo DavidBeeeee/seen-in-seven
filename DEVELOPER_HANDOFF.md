@@ -18,6 +18,10 @@ Before planning or implementing roadmap work, read `SEENINSEVEN_ROADMAP.md`.
 
 This handoff remains the source of truth for architecture, stack, debugging history, and current implementation shape. Its older roadmap notes are partially superseded by `SEENINSEVEN_ROADMAP.md`, especially around admin priorities, test-user timing, delayed email nudges, delayed paid access, removed posted-vs-filmed work, and the placeholder-only gamification phase.
 
+## August 11, 2026: WorkerBee Dashboard hides archived completion history
+
+The private `/dashboard` completed-work filter now requires both `kind === 'completed'` and `status === 'completed'`. Previously, a record archived as `deferred` still appeared because the browser filtered only by kind. This is deliberately limited to David's private WorkerBee workspace and does not touch SeenInSeven customer flows, authentication, prompts, access, or data. WorkerBee's portable projection applies the same rule.
+
 ---
 
 ## July 18, 2026 implementation record: Studio, AI Boardroom, and Prompt Tester

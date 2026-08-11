@@ -210,7 +210,7 @@ function renderDashboard() {
   const outcomes = currentOutcomes();
   const needs = active.filter(item => item.kind === 'needs_david');
   const lastViewed = state.readState && state.readState.last_dashboard_viewed_at;
-  const completed = state.updates.filter(item => item.kind === 'completed' && (!lastViewed || item.updated_at > lastViewed)).slice(0, 8);
+  const completed = state.updates.filter(item => item.kind === 'completed' && item.status === 'completed' && (!lastViewed || item.updated_at > lastViewed)).slice(0, 8);
   const commitments = active.filter(item => ['commitment', 'blocker'].includes(item.kind)).slice(0, 10);
   const diagnostics = active.filter(item => item.kind === 'diagnostic').slice(0, 10);
   fillUpdates('outcomes-list', outcomes, 'Today’s outcomes will appear after the next WorkerBee synchronization.', 'outcome');
