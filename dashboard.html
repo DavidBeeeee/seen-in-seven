@@ -7,16 +7,13 @@
   <meta name="theme-color" content="#111716">
   <title>WorkerBee Dashboard</title>
   <link rel="icon" href="/assets/workerbee-mark.svg">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;1,600&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/css/workerbee.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body data-workerbee-surface="dashboard">
   <header class="wb-header">
-    <a class="wb-brand" href="/dashboard"><img src="/assets/workerbee-mark.svg" alt=""><span><strong>WorkerBee</strong><small>Private workspace</small></span></a>
+    <a class="wb-brand" href="/dashboard"><img src="/assets/workerbee-mark.svg" alt=""><span><small>Colorado Mastermind Studio</small><strong>WorkerBee Command Center</strong></span></a>
     <nav aria-label="WorkerBee pages">
       <a class="active" href="/dashboard">Dashboard</a>
       <a href="/todo">Todo</a>
@@ -43,7 +40,6 @@
     <div id="dashboard-app" hidden>
       <section class="page-intro">
         <div><p class="eyebrow">Current operating view</p><h1>Here is what matters.</h1><p id="dashboard-freshness">Loading current state...</p></div>
-        <a class="primary-button" href="/todo"><i data-lucide="list-checks"></i> Open todo</a>
       </section>
 
       <section class="dashboard-grid">
