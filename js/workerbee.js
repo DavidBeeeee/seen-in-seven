@@ -115,7 +115,10 @@ function fillUpdates(id, items, message, actions = false) {
 
 function renderDashboard() {
   const active = state.updates.filter(item => !['rejected', 'completed'].includes(item.status));
-  const outcomes = active.filter(item => item.kind === 'outcome').slice(0, 3);
+  const outcomes = active
+    .filter(item => item.kind === 'outcome')
+    .sort((a, b) => Number(a.metadata && a.metadata.rank || 99) - Number(b.metadata && b.metadata.rank || 99))
+    .slice(0, 3);
   const needs = active.filter(item => item.kind === 'needs_david');
   const lastViewed = state.readState && state.readState.last_dashboard_viewed_at;
   const completed = state.updates.filter(item => item.kind === 'completed' && (!lastViewed || item.updated_at > lastViewed)).slice(0, 8);
