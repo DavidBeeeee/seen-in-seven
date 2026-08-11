@@ -94,7 +94,7 @@ function updateCard(item, actionMode = null) {
   }
   const meta = document.createElement('div');
   meta.className = 'update-meta';
-  meta.textContent = [item.status, item.due_at ? new Date(item.due_at).toLocaleString() : '', item.action_id || ''].filter(Boolean).join(' · ');
+  meta.textContent = [item.metadata && item.metadata.category, item.status, item.due_at ? new Date(item.due_at).toLocaleString() : '', item.action_id || ''].filter(Boolean).join(' · ');
   card.append(meta);
   if (actionMode === 'decision' && item.status === 'active') {
     const actions = document.createElement('div');
@@ -214,10 +214,10 @@ function renderDashboard() {
   const commitments = active.filter(item => ['commitment', 'blocker'].includes(item.kind)).slice(0, 10);
   const diagnostics = active.filter(item => item.kind === 'diagnostic').slice(0, 10);
   fillUpdates('outcomes-list', outcomes, 'Today’s outcomes will appear after the next WorkerBee synchronization.', 'outcome');
-  fillUpdates('needs-list', needs, 'Nothing is waiting for a decision right now.', 'decision');
+  fillUpdates('needs-list', needs, 'No explicit decision is recorded right now. Ongoing initiatives and improvement work still remain visible elsewhere on this page.', 'decision');
   fillUpdates('completed-list', completed, 'No new completed work since your last visit.');
   fillUpdates('commitments-list', commitments, 'No dated commitment or blocker is currently published.');
-  fillUpdates('diagnostics-list', diagnostics, 'No open diagnostics. WorkerBee’s own systems are clean.');
+  fillUpdates('diagnostics-list', diagnostics, 'No active defect, friction, streamlining opportunity, or expansion candidate is currently recorded.');
   el('needs-count').textContent = String(needs.length);
   el('dashboard-freshness').textContent = state.generatedAt ? `Current as of ${new Date(state.generatedAt).toLocaleString()}.` : 'Current state loaded.';
   renderClients();

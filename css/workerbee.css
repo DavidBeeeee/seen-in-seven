@@ -42,7 +42,7 @@ a { color: inherit; text-decoration: none; }
   color: var(--soft); cursor: pointer; font-weight: 700;
 }
 .wb-header nav a.active { border-color: rgba(50, 184, 184, .45); background: rgba(50, 184, 184, .12); color: var(--teal-light); }
-.wb-header > .quiet-button { justify-self: end; }
+.header-actions { justify-self: end; display: flex; align-items: center; gap: 6px; }
 .quiet-button:hover, .icon-action:hover, .wb-header nav a:hover { border-color: var(--teal); color: var(--text); }
 .primary-button { border-color: var(--teal); background: var(--teal); color: #062121; font-weight: 800; }
 .primary-button svg, .quiet-button svg { width: 15px; }
@@ -158,12 +158,15 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 
 @media (max-width: 720px) {
   .wb-header { min-height: 58px; grid-template-columns: 1fr auto; padding: 7px 12px; }
+  .wb-header nav { grid-column: 1 / -1; grid-row: 2; justify-self: stretch; }
+  .header-actions { grid-column: 2; grid-row: 1; }
   .wb-brand img { width: 31px; height: 31px; }
   .wb-brand small { font-size: 8px; }
   .wb-brand strong { font-size: 14px; }
   .wb-header nav a { min-height: 32px; padding: 0 9px; font-size: 12px; }
   .wb-header nav { gap: 3px; }
-  .wb-header > .quiet-button { display: none; }
+  .header-actions { gap: 3px; }
+  .header-actions .quiet-button { min-height: 32px; padding: 0 8px; font-size: 11px; }
   main { padding: 15px 12px calc(64px + env(safe-area-inset-bottom)); }
   h1 { font-size: 23px; }
   .page-intro { margin-bottom: 11px; }

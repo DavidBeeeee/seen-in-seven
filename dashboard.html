@@ -15,11 +15,10 @@
   <header class="wb-header">
     <a class="wb-brand" href="/dashboard"><img src="/assets/workerbee-mark.svg" alt=""><span><small>Colorado Mastermind Studio</small><strong>WorkerBee Command Center</strong></span></a>
     <nav aria-label="WorkerBee pages">
-      <a href="/">Studio</a>
       <a class="active" href="/dashboard">Dashboard</a>
       <a href="/todo">Todo</a>
     </nav>
-    <button class="quiet-button" id="sign-out" type="button" hidden>Sign out</button>
+    <div class="header-actions"><a class="quiet-button" href="/">Studio</a><button class="quiet-button" id="sign-out" type="button" hidden>Sign out</button></div>
   </header>
 
   <main>
@@ -80,7 +79,7 @@
         </article>
 
         <article class="panel module-panel" id="diagnostics-panel">
-          <div class="panel-heading"><div><p class="eyebrow">WorkerBee internal</p><h2>System diagnostics</h2></div></div>
+          <div class="panel-heading"><div><p class="eyebrow">WorkerBee internal</p><h2>System diagnostics &amp; evolution</h2></div></div>
           <div id="diagnostics-list" class="stack-list"></div>
         </article>
 
