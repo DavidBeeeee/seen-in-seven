@@ -5,6 +5,7 @@ const read = path => fs.readFileSync(new URL('../' + path, import.meta.url), 'ut
 const migration = read('supabase_migrations/2026-08-10-add-private-workerbee-studio.sql');
 const privateApiMigration = read('supabase_migrations/2026-08-10-add-workerbee-private-api.sql');
 const operatingMigration = read('supabase_migrations/2026-08-10-add-workerbee-operating-modules.sql');
+const diagnosticMigration = read('supabase_migrations/2026-08-11-allow-workerbee-diagnostic-updates.sql');
 const api = read('api/workerbee.js');
 const client = read('js/workerbee.js');
 const dashboard = read('dashboard.html');
@@ -39,6 +40,8 @@ assert.match(dashboard, /Events and launches/, 'The compact launch module must l
 assert.match(dashboard, /App freshness/, 'The compact product module must live on /dashboard.');
 assert.match(client, /reorder_outcomes/, 'Daily outcomes must be directly reorderable.');
 assert.match(client, /setOutcomeStatus/, 'Daily outcomes must support direct status changes.');
+assert.match(dashboard, /id="diagnostics-panel"/, 'WorkerBee diagnostics must stay separate from business work.');
+assert.match(diagnosticMigration, /'diagnostic'/, 'The repository must preserve the live diagnostic update kind.');
 assert.match(privateApiMigration, /workerbee_authorized/, 'The private API must check the admin session or bridge secret.');
 assert.match(privateApiMigration, /extensions\.digest\(coalesce\(p_server_secret/, 'The bridge secret must be compared by digest.');
 assert.match(privateApiMigration, /revoke all on function public\.workerbee_bootstrap\(text\) from public/, 'The read function must not retain PUBLIC execution.');

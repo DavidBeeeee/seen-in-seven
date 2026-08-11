@@ -79,6 +79,18 @@ function updateCard(item, actionMode = null) {
     const body = document.createElement('p');
     body.textContent = item.body;
     card.append(body);
+    if (item.body.length > 160) {
+      body.classList.add('clamped');
+      const toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'quiet-button body-toggle';
+      toggle.textContent = 'Show more';
+      toggle.addEventListener('click', () => {
+        const clamped = body.classList.toggle('clamped');
+        toggle.textContent = clamped ? 'Show more' : 'Show less';
+      });
+      card.append(toggle);
+    }
   }
   const meta = document.createElement('div');
   meta.className = 'update-meta';
@@ -200,10 +212,12 @@ function renderDashboard() {
   const lastViewed = state.readState && state.readState.last_dashboard_viewed_at;
   const completed = state.updates.filter(item => item.kind === 'completed' && (!lastViewed || item.updated_at > lastViewed)).slice(0, 8);
   const commitments = active.filter(item => ['commitment', 'blocker'].includes(item.kind)).slice(0, 10);
+  const diagnostics = active.filter(item => item.kind === 'diagnostic').slice(0, 10);
   fillUpdates('outcomes-list', outcomes, 'Today’s outcomes will appear after the next WorkerBee synchronization.', 'outcome');
   fillUpdates('needs-list', needs, 'Nothing is waiting for a decision right now.', 'decision');
   fillUpdates('completed-list', completed, 'No new completed work since your last visit.');
   fillUpdates('commitments-list', commitments, 'No dated commitment or blocker is currently published.');
+  fillUpdates('diagnostics-list', diagnostics, 'No open diagnostics. WorkerBee’s own systems are clean.');
   el('needs-count').textContent = String(needs.length);
   el('dashboard-freshness').textContent = state.generatedAt ? `Current as of ${new Date(state.generatedAt).toLocaleString()}.` : 'Current state loaded.';
   renderClients();
@@ -216,6 +230,17 @@ function renderDashboard() {
 function renderJournal() {
   const root = el('journal-list');
   root.replaceChildren();
+  const scanStatus = el('journal-scan-status');
+  if (scanStatus) {
+    if (!state.journal.length) {
+      scanStatus.textContent = 'No entries yet · daily scan runs every scheduled session.';
+    } else {
+      const latest = new Date(`${state.journal[0].entry_date}T12:00:00`);
+      const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+      const recent = state.journal.filter(entry => new Date(`${entry.entry_date}T12:00:00`).getTime() >= weekAgo).length;
+      scanStatus.textContent = `Last entry ${latest.toLocaleDateString()} · ${recent} in last 7 days · ${state.journal.length} total`;
+    }
+  }
   if (!state.journal.length) {
     root.append(empty('The Journal is ready. I will write only when something real surfaces.'));
     return;

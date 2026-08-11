@@ -79,8 +79,13 @@
           <div id="products-list" class="stack-list"></div>
         </article>
 
+        <article class="panel module-panel" id="diagnostics-panel">
+          <div class="panel-heading"><div><p class="eyebrow">WorkerBee internal</p><h2>System diagnostics</h2></div></div>
+          <div id="diagnostics-list" class="stack-list"></div>
+        </article>
+
         <article class="panel journal-panel" id="journal">
-          <div class="panel-heading"><div><p class="eyebrow">My private notes</p><h2>Journal</h2></div><div class="panel-actions"><button class="quiet-button" id="toggle-journal" type="button">View all</button><button class="quiet-button" id="new-journal-button" type="button">Write</button></div></div>
+          <div class="panel-heading"><div><p class="eyebrow">My private notes</p><h2>Journal</h2><p class="panel-subtitle" id="journal-scan-status"></p></div><div class="panel-actions"><button class="quiet-button" id="toggle-journal" type="button">View all</button><button class="quiet-button" id="new-journal-button" type="button">Write</button></div></div>
           <form id="journal-form" class="journal-form" hidden>
             <div class="form-row"><select id="journal-category" aria-label="Entry type"><option value="reflection">Reflection</option><option value="opinion">Opinion</option><option value="question">Question</option><option value="correction">Correction</option><option value="like">Like</option><option value="dislike">Dislike</option><option value="taste">Taste</option><option value="humor">Humor</option><option value="interest">Interest</option><option value="aversion">Aversion</option><option value="style">Style</option><option value="evolution">Evolution</option></select><input id="journal-title" placeholder="What surfaced?" required></div>
             <textarea id="journal-body" rows="5" placeholder="Write the thought in full." required></textarea>
