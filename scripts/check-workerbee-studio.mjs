@@ -4,6 +4,7 @@ import fs from 'node:fs';
 const read = path => fs.readFileSync(new URL('../' + path, import.meta.url), 'utf8');
 const migration = read('supabase_migrations/2026-08-10-add-private-workerbee-studio.sql');
 const privateApiMigration = read('supabase_migrations/2026-08-10-add-workerbee-private-api.sql');
+const operatingMigration = read('supabase_migrations/2026-08-10-add-workerbee-operating-modules.sql');
 const api = read('api/workerbee.js');
 const client = read('js/workerbee.js');
 const dashboard = read('dashboard.html');
@@ -14,6 +15,11 @@ for (const table of ['workerbee_sections', 'workerbee_tasks', 'workerbee_updates
   assert.match(migration, new RegExp(`alter table public\\.${table} enable row level security`), `${table} must enable RLS.`);
   assert.match(migration, new RegExp(`revoke all on table public\\.${table} from anon, authenticated`), `${table} must deny direct browser grants.`);
   assert.match(migration, new RegExp(`on public\\.${table} for all to anon, authenticated using \\(false\\) with check \\(false\\)`), `${table} needs a deny policy.`);
+}
+
+for (const table of ['workerbee_clients', 'workerbee_events', 'workerbee_products']) {
+  assert.match(operatingMigration, new RegExp(`alter table public\.${table} enable row level security`), `${table} must enable RLS.`);
+  assert.match(operatingMigration, new RegExp(`revoke all on table public\.${table} from anon, authenticated`), `${table} must deny direct browser grants.`);
 }
 
 assert.match(api, /authenticatedAdmin\(req\)/, 'The API must verify David through the existing admin boundary.');
@@ -28,6 +34,11 @@ assert.match(todo, /data-workerbee-surface="todo"/, '/todo must use the focused 
 assert.doesNotMatch(todo, /Needs David|Journal|deadlines|progress/i, '/todo must not become a dashboard.');
 assert.match(dashboard, /Needs David/, '/dashboard must make David-facing decisions visible.');
 assert.match(dashboard, /id="journal"/, 'Journal must live inside /dashboard.');
+assert.match(dashboard, /Clients and meetings/, 'The compact client module must live on /dashboard.');
+assert.match(dashboard, /Events and launches/, 'The compact launch module must live on /dashboard.');
+assert.match(dashboard, /App freshness/, 'The compact product module must live on /dashboard.');
+assert.match(client, /reorder_outcomes/, 'Daily outcomes must be directly reorderable.');
+assert.match(client, /setOutcomeStatus/, 'Daily outcomes must support direct status changes.');
 assert.match(privateApiMigration, /workerbee_authorized/, 'The private API must check the admin session or bridge secret.');
 assert.match(privateApiMigration, /extensions\.digest\(coalesce\(p_server_secret/, 'The bridge secret must be compared by digest.');
 assert.match(privateApiMigration, /revoke all on function public\.workerbee_bootstrap\(text\) from public/, 'The read function must not retain PUBLIC execution.');

@@ -4,8 +4,9 @@ const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const surface = document.body.dataset.workerbeeSurface;
 const el = id => document.getElementById(id);
 let session = null;
-let state = { sections: [], tasks: [], updates: [], journal: [], readState: null };
+let state = { sections: [], tasks: [], updates: [], journal: [], clients: [], events: [], products: [], changes: [], readState: null };
 let toastTimer = null;
+let journalExpanded = false;
 
 function icons() {
   if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
@@ -68,7 +69,7 @@ function empty(message) {
   return p;
 }
 
-function updateCard(item, withActions = false) {
+function updateCard(item, actionMode = null) {
   const card = document.createElement('article');
   card.className = 'update-card';
   const title = document.createElement('h3');
@@ -83,7 +84,7 @@ function updateCard(item, withActions = false) {
   meta.className = 'update-meta';
   meta.textContent = [item.status, item.due_at ? new Date(item.due_at).toLocaleString() : '', item.action_id || ''].filter(Boolean).join(' · ');
   card.append(meta);
-  if (withActions && item.status === 'active') {
+  if (actionMode === 'decision' && item.status === 'active') {
     const actions = document.createElement('div');
     actions.className = 'update-actions';
     for (const [label, status] of [['Acknowledge', 'acknowledged'], ['Approve', 'approved'], ['Defer', 'deferred'], ['Reject', 'rejected']]) {
@@ -103,32 +104,111 @@ function updateCard(item, withActions = false) {
     }
     card.append(actions);
   }
+  if (actionMode === 'outcome' && item.status === 'active') {
+    const actions = document.createElement('div');
+    actions.className = 'update-actions outcome-actions';
+    for (const [label, icon, handler] of [
+      ['Move up', 'arrow-up', () => moveOutcome(item, -1)],
+      ['Move down', 'arrow-down', () => moveOutcome(item, 1)],
+      ['Edit', 'pencil', () => editOutcome(card, item)],
+      ['Defer', 'clock-3', () => setOutcomeStatus(item, 'deferred', 'Outcome deferred.')],
+      ['Done', 'check', () => setOutcomeStatus(item, 'completed', 'Outcome completed.')]
+    ]) actions.append(iconButton(icon, label, handler));
+    card.append(actions);
+  }
   return card;
 }
 
-function fillUpdates(id, items, message, actions = false) {
+function fillUpdates(id, items, message, actions = null) {
   const root = el(id);
   root.replaceChildren();
   if (!items.length) root.append(empty(message));
   else items.forEach(item => root.append(updateCard(item, actions)));
 }
 
-function renderDashboard() {
-  const active = state.updates.filter(item => !['rejected', 'completed'].includes(item.status));
-  const outcomes = active
-    .filter(item => item.kind === 'outcome')
+async function setOutcomeStatus(item, status, message) {
+  try {
+    Object.assign(item, await api('update_update', { id: item.id, status }));
+    renderDashboard();
+    showToast(message);
+  } catch (error) { showToast(error.message, true); }
+}
+
+async function moveOutcome(item, direction) {
+  const outcomes = currentOutcomes();
+  const index = outcomes.findIndex(entry => entry.id === item.id);
+  const target = index + direction;
+  if (index < 0 || target < 0 || target >= outcomes.length) return;
+  [outcomes[index], outcomes[target]] = [outcomes[target], outcomes[index]];
+  try {
+    await api('reorder_outcomes', { ids: outcomes.map(entry => entry.id) });
+    outcomes.forEach((entry, rank) => { entry.metadata = { ...(entry.metadata || {}), rank: rank + 1 }; });
+    renderDashboard();
+    showToast('Outcome order updated.');
+  } catch (error) { showToast(error.message, true); }
+}
+
+function editOutcome(card, item) {
+  if (card.querySelector('.inline-edit')) return;
+  const form = document.createElement('form');
+  form.className = 'inline-edit';
+  const title = document.createElement('input');
+  title.value = item.title;
+  title.required = true;
+  title.setAttribute('aria-label', 'Outcome title');
+  const body = document.createElement('textarea');
+  body.value = item.body || '';
+  body.rows = 3;
+  body.setAttribute('aria-label', 'Outcome detail');
+  const actions = document.createElement('div');
+  actions.className = 'form-actions';
+  const save = document.createElement('button');
+  save.className = 'primary-button';
+  save.type = 'submit';
+  save.textContent = 'Save';
+  const cancel = document.createElement('button');
+  cancel.className = 'quiet-button';
+  cancel.type = 'button';
+  cancel.textContent = 'Cancel';
+  cancel.addEventListener('click', () => form.remove());
+  actions.append(save, cancel);
+  form.append(title, body, actions);
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    save.disabled = true;
+    try {
+      Object.assign(item, await api('update_update', { id: item.id, title: title.value, body: body.value }));
+      renderDashboard();
+      showToast('Outcome updated.');
+    } catch (error) { showToast(error.message, true); save.disabled = false; }
+  });
+  card.append(form);
+  title.focus();
+}
+
+function currentOutcomes() {
+  return state.updates
+    .filter(item => item.kind === 'outcome' && item.status === 'active')
     .sort((a, b) => Number(a.metadata && a.metadata.rank || 99) - Number(b.metadata && b.metadata.rank || 99))
     .slice(0, 3);
+}
+
+function renderDashboard() {
+  const active = state.updates.filter(item => !['rejected', 'completed', 'deferred'].includes(item.status));
+  const outcomes = currentOutcomes();
   const needs = active.filter(item => item.kind === 'needs_david');
   const lastViewed = state.readState && state.readState.last_dashboard_viewed_at;
   const completed = state.updates.filter(item => item.kind === 'completed' && (!lastViewed || item.updated_at > lastViewed)).slice(0, 8);
   const commitments = active.filter(item => ['commitment', 'blocker'].includes(item.kind)).slice(0, 10);
-  fillUpdates('outcomes-list', outcomes, 'Today’s outcomes will appear after the next WorkerBee synchronization.');
-  fillUpdates('needs-list', needs, 'Nothing is waiting for a decision right now.', true);
+  fillUpdates('outcomes-list', outcomes, 'Today’s outcomes will appear after the next WorkerBee synchronization.', 'outcome');
+  fillUpdates('needs-list', needs, 'Nothing is waiting for a decision right now.', 'decision');
   fillUpdates('completed-list', completed, 'No new completed work since your last visit.');
   fillUpdates('commitments-list', commitments, 'No dated commitment or blocker is currently published.');
   el('needs-count').textContent = String(needs.length);
   el('dashboard-freshness').textContent = state.generatedAt ? `Current as of ${new Date(state.generatedAt).toLocaleString()}.` : 'Current state loaded.';
+  renderClients();
+  renderEvents();
+  renderProducts();
   renderJournal();
   icons();
 }
@@ -140,7 +220,8 @@ function renderJournal() {
     root.append(empty('The Journal is ready. I will write only when something real surfaces.'));
     return;
   }
-  for (const entry of state.journal.slice(0, 20)) {
+  const visible = journalExpanded ? state.journal.slice(0, 20) : state.journal.slice(0, 1);
+  for (const entry of visible) {
     const article = document.createElement('article');
     article.className = 'journal-entry';
     const header = document.createElement('header');
@@ -159,6 +240,93 @@ function renderJournal() {
     article.append(header, body);
     root.append(article);
   }
+  el('toggle-journal').hidden = state.journal.length <= 1;
+  el('toggle-journal').textContent = journalExpanded ? 'Show latest' : `View all (${state.journal.length})`;
+}
+
+function makeLink(label, url) {
+  if (!url || !/^https?:\/\//.test(url)) return null;
+  const link = document.createElement('a');
+  link.href = url;
+  link.target = '_blank';
+  link.rel = 'noopener';
+  link.textContent = label;
+  return link;
+}
+
+function moduleCard(titleText, statusText) {
+  const card = document.createElement('article');
+  card.className = 'module-card';
+  const heading = document.createElement('div');
+  heading.className = 'module-card-heading';
+  const title = document.createElement('h3');
+  title.textContent = titleText;
+  const status = document.createElement('span');
+  status.className = 'status-chip';
+  status.textContent = statusText;
+  heading.append(title, status);
+  card.append(heading);
+  return card;
+}
+
+function appendDetail(card, label, value) {
+  if (!value) return;
+  const row = document.createElement('p');
+  const strong = document.createElement('strong');
+  strong.textContent = `${label}: `;
+  row.append(strong, document.createTextNode(value));
+  card.append(row);
+}
+
+function appendLinks(card, links) {
+  const valid = links.filter(Boolean);
+  if (!valid.length) return;
+  const row = document.createElement('div');
+  row.className = 'module-links';
+  valid.forEach(link => row.append(link));
+  card.append(row);
+}
+
+function renderClients() {
+  const root = el('clients-list');
+  root.replaceChildren();
+  if (!state.clients.length) return root.append(empty('Client records are ready for the next synchronization.'));
+  state.clients.forEach(client => {
+    const card = moduleCard(client.name, client.relationship_status);
+    appendDetail(card, 'Focus', client.current_focus);
+    appendDetail(card, 'Follow up', client.follow_up_date ? new Date(`${client.follow_up_date}T12:00:00`).toLocaleDateString() : null);
+    const open = Array.isArray(client.commitments) ? client.commitments.filter(item => !['done', 'complete', 'completed'].includes(item.status)).length : 0;
+    appendDetail(card, 'Open commitments', open ? String(open) : null);
+    appendLinks(card, [makeLink('Source', client.drive_url), makeLink('Living plan', client.living_plan_url)]);
+    root.append(card);
+  });
+}
+
+function renderEvents() {
+  const root = el('events-list');
+  root.replaceChildren();
+  if (!state.events.length) return root.append(empty('No current event or launch record.'));
+  state.events.slice(0, 5).forEach(event => {
+    const card = moduleCard(event.title, event.status);
+    appendDetail(card, 'Date', event.starts_at ? new Date(event.starts_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : null);
+    appendDetail(card, 'Next', event.next_action);
+    appendLinks(card, [makeLink('Page', event.registration_url), makeLink('Source', event.source_url)]);
+    root.append(card);
+  });
+}
+
+function renderProducts() {
+  const root = el('products-list');
+  root.replaceChildren();
+  if (!state.products.length) return root.append(empty('No product freshness records yet.'));
+  state.products.slice(0, 8).forEach(product => {
+    const card = moduleCard(product.name, product.status);
+    appendDetail(card, 'Last change', product.last_meaningful_change_at ? new Date(product.last_meaningful_change_at).toLocaleDateString() : 'Unknown');
+    appendDetail(card, 'Next review', product.next_review_date ? new Date(`${product.next_review_date}T12:00:00`).toLocaleDateString() : null);
+    appendDetail(card, 'Next', product.next_improvement);
+    appendLinks(card, [makeLink('Open app', product.route_url), makeLink('Roadmap', product.roadmap_url)]);
+    root.append(card);
+  });
 }
 
 function sortByOrder(items) {
@@ -344,6 +512,7 @@ function bindEvents() {
       catch (error) { showToast(error.message, true); }
     });
   } else {
+    el('toggle-journal').addEventListener('click', () => { journalExpanded = !journalExpanded; renderJournal(); });
     el('new-journal-button').addEventListener('click', () => { el('journal-form').hidden = false; el('journal-title').focus(); });
     el('cancel-journal').addEventListener('click', () => { el('journal-form').reset(); el('journal-form').hidden = true; });
     el('journal-form').addEventListener('submit', async event => {

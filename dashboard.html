@@ -15,6 +15,7 @@
   <header class="wb-header">
     <a class="wb-brand" href="/dashboard"><img src="/assets/workerbee-mark.svg" alt=""><span><small>Colorado Mastermind Studio</small><strong>WorkerBee Command Center</strong></span></a>
     <nav aria-label="WorkerBee pages">
+      <a href="/">Studio</a>
       <a class="active" href="/dashboard">Dashboard</a>
       <a href="/todo">Todo</a>
     </nav>
@@ -63,8 +64,23 @@
           <div id="commitments-list" class="stack-list"></div>
         </article>
 
-        <article class="panel panel-wide" id="journal">
-          <div class="panel-heading"><div><p class="eyebrow">My private notes</p><h2>Journal</h2></div><button class="quiet-button" id="new-journal-button" type="button">Write an entry</button></div>
+        <article class="panel module-panel panel-wide">
+          <div class="panel-heading"><div><p class="eyebrow">Phase 6</p><h2>Clients and meetings</h2></div></div>
+          <div id="clients-list" class="module-grid clients-grid"></div>
+        </article>
+
+        <article class="panel module-panel">
+          <div class="panel-heading"><div><p class="eyebrow">Phase 7</p><h2>Events and launches</h2></div></div>
+          <div id="events-list" class="stack-list"></div>
+        </article>
+
+        <article class="panel module-panel">
+          <div class="panel-heading"><div><p class="eyebrow">Phase 8</p><h2>App freshness</h2></div></div>
+          <div id="products-list" class="stack-list"></div>
+        </article>
+
+        <article class="panel journal-panel" id="journal">
+          <div class="panel-heading"><div><p class="eyebrow">My private notes</p><h2>Journal</h2></div><div class="panel-actions"><button class="quiet-button" id="toggle-journal" type="button">View all</button><button class="quiet-button" id="new-journal-button" type="button">Write</button></div></div>
           <form id="journal-form" class="journal-form" hidden>
             <div class="form-row"><select id="journal-category" aria-label="Entry type"><option value="reflection">Reflection</option><option value="opinion">Opinion</option><option value="question">Question</option><option value="correction">Correction</option><option value="like">Like</option><option value="dislike">Dislike</option><option value="taste">Taste</option><option value="humor">Humor</option><option value="interest">Interest</option><option value="aversion">Aversion</option><option value="style">Style</option><option value="evolution">Evolution</option></select><input id="journal-title" placeholder="What surfaced?" required></div>
             <textarea id="journal-body" rows="5" placeholder="Write the thought in full." required></textarea>

@@ -58,12 +58,20 @@ function cleanUrl(value) {
 
 const ACTIONS = new Set([
   'create_section', 'update_section', 'create_task', 'update_task', 'delete_task', 'restore_task',
-  'create_update', 'update_update', 'create_journal', 'update_journal', 'mark_viewed'
+  'create_update', 'update_update', 'create_journal', 'update_journal', 'mark_viewed',
+  'reorder_outcomes', 'upsert_client', 'upsert_event', 'upsert_product'
 ]);
 const TASK_FIELDS = new Set(['id', 'title', 'section_id', 'sort_order', 'status', 'owner', 'due_date', 'follow_up_date', 'work_area', 'source_url']);
 const UPDATE_FIELDS = new Set(['id', 'kind', 'title', 'body', 'status', 'action_id', 'due_at', 'metadata']);
 const JOURNAL_FIELDS = new Set(['id', 'entry_date', 'category', 'title', 'body', 'fingerprint', 'status', 'evidence', 'reopening_condition', 'metadata']);
 const SECTION_FIELDS = new Set(['id', 'title', 'sort_order', 'archived_at']);
+const OPERATING_FIELDS = new Set([
+  'ids', 'stable_key', 'name', 'family', 'relationship_status', 'current_focus', 'next_meeting_at',
+  'follow_up_date', 'nearest_deadline', 'transcript_status', 'commitments', 'drive_url', 'client_thread_url',
+  'living_plan_url', 'event_type', 'status', 'starts_at', 'ends_at', 'current_milestone', 'next_action',
+  'registration_url', 'meeting_url', 'source_url', 'priority', 'current_objective', 'last_meaningful_change_at',
+  'next_review_date', 'next_improvement', 'important_risk', 'route_url', 'repository_url', 'roadmap_url', 'metadata'
+]);
 
 function pick(input, fields) {
   return Object.fromEntries(Object.entries(input || {}).filter(([key]) => fields.has(key)));
@@ -71,7 +79,8 @@ function pick(input, fields) {
 
 function sanitize(action, input) {
   let payload;
-  if (action.includes('section')) payload = pick(input, SECTION_FIELDS);
+  if (action === 'reorder_outcomes' || action.startsWith('upsert_')) payload = pick(input, OPERATING_FIELDS);
+  else if (action.includes('section')) payload = pick(input, SECTION_FIELDS);
   else if (action.includes('task')) payload = pick(input, TASK_FIELDS);
   else if (action.includes('journal')) payload = pick(input, JOURNAL_FIELDS);
   else if (action.includes('update')) payload = pick(input, UPDATE_FIELDS);
@@ -88,6 +97,13 @@ function sanitize(action, input) {
   if ('source_url' in payload) payload.source_url = cleanUrl(payload.source_url);
   if ('sort_order' in payload) payload.sort_order = Number(payload.sort_order) || 0;
   if ('metadata' in payload && (!payload.metadata || typeof payload.metadata !== 'object' || Array.isArray(payload.metadata))) payload.metadata = {};
+  if (action === 'reorder_outcomes') {
+    if (!Array.isArray(payload.ids) || payload.ids.length > 3 || payload.ids.some(id => typeof id !== 'string')) throw new Error('A valid outcome order is required.');
+  }
+  if (action.startsWith('upsert_')) {
+    payload.stable_key = cleanText(payload.stable_key, 120, true);
+    if ('name' in payload) payload.name = cleanText(payload.name, 160, true);
+  }
   return payload;
 }
 
@@ -104,7 +120,8 @@ export default async function handler(req, res) {
     const action = String(body.action || '');
     if (!ACTIONS.has(action)) return json(res, 400, { error: 'Unknown WorkerBee action.' });
     const payload = sanitize(action, body.payload || {});
-    const result = await rpc('workerbee_mutate', { p_action: action, p_payload: payload, p_server_secret: auth.serverSecret }, auth.token);
+    const operatingAction = action === 'reorder_outcomes' || action.startsWith('upsert_');
+    const result = await rpc(operatingAction ? 'workerbee_operating_mutate' : 'workerbee_mutate', { p_action: action, p_payload: payload, p_server_secret: auth.serverSecret }, auth.token);
     return json(res, 200, { result });
   } catch (error) {
     console.error('WorkerBee API error:', error);
