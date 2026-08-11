@@ -206,7 +206,7 @@ function currentOutcomes() {
 }
 
 function renderDashboard() {
-  const active = state.updates.filter(item => !['rejected', 'completed', 'deferred'].includes(item.status));
+  const active = state.updates.filter(item => !['rejected', 'completed', 'deferred', 'approved', 'acknowledged'].includes(item.status));
   const outcomes = currentOutcomes();
   const needs = active.filter(item => item.kind === 'needs_david');
   const lastViewed = state.readState && state.readState.last_dashboard_viewed_at;
