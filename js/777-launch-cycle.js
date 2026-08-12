@@ -2,14 +2,18 @@
   'use strict';
 
   const cycle = Object.freeze({
+    enabled: false,
+    status: 'deferred-private-validation',
+    groupTarget: 'October 2026, provisional and proof-gated',
+    proofGate: Object.freeze({ completedRuns: 10, partnershipEnrollments: 5 }),
     timezone: 'America/Denver',
-    challengeStart: '2026-09-07T06:00:00Z',
-    kickoffStarts: '2026-09-07T17:00:00Z',
-    kickoffEnds: '2026-09-07T19:00:00Z',
-    kickoffReplayCloses: '2026-09-15T06:00:00Z',
-    graduationStarts: '2026-09-15T17:00:00Z',
-    graduationEnds: '2026-09-15T19:00:00Z',
-    cartCloses: '2026-09-20T06:00:00Z',
+    challengeStart: null,
+    kickoffStarts: null,
+    kickoffEnds: null,
+    kickoffReplayCloses: null,
+    graduationStarts: null,
+    graduationEnds: null,
+    cartCloses: null,
     routes: Object.freeze({
       kickoffRegistration: 'https://content.coloradomastermind.com/kickoff',
       kickoffRoom: '',
@@ -33,6 +37,7 @@
 
   function launchState(input) {
     const now = input instanceof Date ? input : new Date(input || Date.now());
+    if (!cycle.enabled) return { now, kickoff: 'closed', graduation: 'closed', cart: 'closed', day: 0, cycle };
     const time = now.getTime();
     const kickoff = eventState(time, Date.parse(cycle.kickoffStarts), Date.parse(cycle.kickoffEnds), Date.parse(cycle.kickoffReplayCloses));
     const graduation = eventState(time, Date.parse(cycle.graduationStarts), Date.parse(cycle.graduationEnds), Date.parse(cycle.cartCloses));

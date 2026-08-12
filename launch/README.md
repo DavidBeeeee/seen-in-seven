@@ -1,4 +1,6 @@
-# 777 September 2026 Launch
+# 777 Group Launch Reference
+
+> **Deferred August 12, 2026.** The September 7 to 19 cycle is not current operations. Do not schedule, send, publish, or regenerate these group assets. The active program is the [private Tiny Challenge validation](private-tiny-challenge/README.md). A group cycle requires 10 completed private runs and 5 partnership enrollments. October is provisional.
 
 ## Operations Documents
 
@@ -8,9 +10,9 @@
 - [Operator checklist](operator-checklist.md)
 - [Rehearsal checklist](rehearsal-checklist.md)
 
-This directory is the operating source for the September 7, 2026 cycle. Systeme remains the public funnel, checkout, event-page, and email platform. Colorado Mastermind Studio remains the authenticated product home.
+The dated material below is preserved as source material for a future group cycle. Systeme remains the public funnel, checkout, event-page, and email platform. Colorado Mastermind Studio remains the authenticated product home.
 
-## Canonical Dates
+## Archived September Dates
 
 All launch states use `America/Denver`.
 

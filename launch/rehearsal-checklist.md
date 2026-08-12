@@ -1,5 +1,7 @@
 # 777 Launch Rehearsal
 
+> **Archived reference.** Do not rehearse the September group cycle. Private Tiny Challenge validation is the active program, and new group dates require both proof gates.
+
 Record a tester, timestamp, and evidence link for each line.
 
 ## Purchase And Access

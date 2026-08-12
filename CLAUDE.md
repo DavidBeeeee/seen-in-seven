@@ -1,6 +1,6 @@
 # SeenInSeven / Colorado Mastermind Studio: Claude Code Brief
 
-**Last verified: August 8, 2026.** If you are reading this more than a cycle later, verify the launch dates in `js/777-launch-cycle.js` and the Systeme price plan IDs before trusting Section "Launch Cycle" below.
+**Last verified: August 12, 2026.** The September group launch is deferred. The active program is `launch/private-tiny-challenge/`, and `js/777-launch-cycle.js` must remain fail-closed until both proof gates are met and a new group cycle is approved.
 
 ## What This Is
 
@@ -91,7 +91,8 @@ api/guest-config.js, api/guest-verify.js   Guest / pre-auth access
 api/_lib/prompt-engine.js, api/_lib/blueprints.txt, api/_lib/security.js
 api/workerbee.js         David-admin or server-secret gateway to narrow WorkerBee RPCs
 
-launch/                  September 2026 cycle operating source (README, checklists, email copy, decks)
+launch/private-tiny-challenge/   Active private validation playbook, templates, and ledger
+launch/                  Archived September group source plus future group-launch references
 funnel-pages/            Canonical custom-code blocks pasted into Systeme pages
 funnel-pages/backups/2026-08-06-live/   Untouched pre-launch backup of the live Systeme blocks
 scripts/                 Node check scripts (journey map, lock state, level consistency, style guide, story architecture)
@@ -171,7 +172,9 @@ Do not introduce React, Vue, build steps, bundlers, or major abstractions. This 
 
 ---
 
-## Launch Cycle (September 2026)
+## Launch Cycle (Deferred During Private Validation)
+
+The September dates below are historical reference only. Do not activate them. Run at least 10 complete private Tiny Challenges and enroll at least 5 participants in the $250/month partnership before planning the group conversion. October is provisional.
 
 All times America/Denver. Source of truth for operations is `launch/`, and the browser config is `js/777-launch-cycle.js`.
 
@@ -191,7 +194,7 @@ All times America/Denver. Source of truth for operations is `launch/`, and the b
 | 777 Challenge, $7 | `3122070` | `seeninseven` |
 | EEE Founders, $77/month | `3134754` | `eee` + `boardroom` |
 
-**Known blanks as of August 8, 2026:** `kickoffRoom`, `kickoffReplay`, `graduationRoom`, and `graduationReplay` in `js/777-launch-cycle.js` are all empty strings, and `ENGAGE_LINKS` in `js/app.js` is empty. The Zoom meetings do not exist yet. Do not invent URLs.
+**Current runtime rule:** `js/777-launch-cycle.js` has `enabled: false` and null dates. Group states and the EEE cart fail closed. The old room and replay blanks remain intentionally unresolved until a new group cycle is approved. Do not invent URLs.
 
 ---
 

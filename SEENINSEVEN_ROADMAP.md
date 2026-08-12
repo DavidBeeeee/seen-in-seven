@@ -4,7 +4,9 @@
 **Owner:** David Bee
 **Status:** Source of truth for roadmap direction
 **Created:** June 2026
-**Last revised:** August 8, 2026
+**Last revised:** August 12, 2026
+
+> **Current direction:** The September group launch is explicitly deferred. The active path is the one-person-at-a-time [Private Tiny Challenge](launch/private-tiny-challenge/README.md). October is provisional and the group version remains blocked until 10 private runs are complete and 5 participants enroll in the $250/month partnership.
 
 ---
 
@@ -19,7 +21,7 @@ This exists so future Codex sessions, Claude sessions, GitHub Desktop work, and 
 The July version of this document was accurate when written and is no longer. Three things moved:
 
 1. **Phase 6 got built.** Systeme purchase routing, webhook verification, and source-aware revocation are live. The July text listing "No Systeme.io webhook right now" under Do Not Build Yet was correct at the time and is now wrong. It has been removed.
-2. **The launch moved to September 7 through 19, 2026.** A `launch/` directory now holds the operating source for the cycle.
+2. **The September 7 through 19 group launch was built, then explicitly deferred on August 12.** Its assets remain preserved in `launch/` as reference material while `launch/private-tiny-challenge/` holds the active validation system.
 3. **The EEE component apps now exist as routes.** `/eee`, `/storysculpt`, `/navigator`, `/vault` exist inside Studio.
 
 None of this changes the sequencing rule. It changes which items are already behind us.
@@ -138,7 +140,7 @@ Delivered:
 
 **Visual half done. The formal walkthrough has not been run.**
 
-A full visual language is now in production: aurora atmosphere, glass card surfaces, gradient typography, jewel primary actions, motion identity, dark and light themes. That addresses how the app feels. It was not accompanied by the systematic flow-by-flow pass below, which remains outstanding and is worth doing before the first real cohort arrives on September 7.
+A full visual language is now in production: aurora atmosphere, glass card surfaces, gradient typography, jewel primary actions, motion identity, dark and light themes. That addresses how the app feels. It was not accompanied by the systematic flow-by-flow pass below, which remains outstanding and is worth doing before a future group cohort is approved.
 
 ### Audit Scope
 
@@ -166,7 +168,7 @@ This is a refinement pass, not a feature sprint.
 
 **Still open:**
 
-- Point values and milestone thresholds are starting numbers. With eleven users and fourteen video-progress rows on record, there is not yet enough real behavior to tune against. Adjust `points_config` in Supabase once the September cohort is active. No redeploy needed.
+- Point values and milestone thresholds are starting numbers. With eleven users and fourteen video-progress rows on record, there is not yet enough real behavior to tune against. Adjust `points_config` in Supabase once a proven group cohort is active. No redeploy needed.
 - The Graduation Event and 1-1 cards are complete but hidden, waiting on `ENGAGE_LINKS` in `js/app.js`.
 - No streak mechanics, no badges beyond the gem system, no community posting flow. These remain undefined and should not be invented.
 
@@ -217,9 +219,9 @@ The humane-access principle still holds. A real buyer must never get locked out 
 
 **Deferred, deliberately.**
 
-Systeme carries the September launch sequence. Approved copy and audience rules live in `launch/email-copy.md`, with a hard rule that prospect emails never carry Studio access instructions.
+Systeme will carry a future group launch sequence. The September copy in `launch/email-copy.md` is archived source material, with a hard rule that prospect emails never carry Studio access instructions.
 
-No in-app lifecycle email exists and none should be added until the September cycle has run, the flow-by-flow audit is done, and script quality satisfies David. Supabase built-in email is not the long-term system. When this phase opens, pick a real provider such as Postmark or Resend.
+No in-app lifecycle email exists and none should be added until private validation produces enough evidence, the flow-by-flow audit is done, and script quality satisfies David. Supabase built-in email is not the long-term system. When this phase opens, pick a real provider such as Postmark or Resend.
 
 Later touchpoints worth considering: first script generated, several days stuck, all seven complete.
 
@@ -281,13 +283,12 @@ For documentation-only work:
 
 ## Current Immediate Next Step
 
-Ordered for the thirty days before September 7, 2026.
+Ordered for the active private validation phase.
 
-1. **Finish the rehearsal checklist.** Complete the repaired fresh buyer's magic-link entry, then test an identical webhook retry and source-aware refunds for both the fresh buyer and an existing beta account.
-2. **Supply the missing URLs.** Kickoff and Graduation Zoom rooms and replays in `js/777-launch-cycle.js`, the confirmation pages, the email drafts, and both decks. Plus `ENGAGE_LINKS` in `js/app.js`, which is holding two finished features hidden.
-3. **Security housekeeping.** Enable leaked-password protection in the Supabase Auth dashboard, which is a toggle rather than a code change, and rotate the two admin test-account passwords.
-4. **Run the actual Phase 3 audit** across the flows listed above, both levels, both themes, mobile and desktop.
-5. **Finish Phase 2's commit moment** after David supplies the three product decisions. The content-intent free-text route is complete.
-6. **Tune `points_config`** once the September cohort produces real behavior.
+1. **Invite and complete Run 1.** Use the private intake, commitment, playbook, notes, Graduation record, and scorecard.
+2. **Protect the evidence.** Complete every run record and change only one major variable at a time.
+3. **Log app friction without inventing a feature sprint.** Fix only repeated or blocking problems before the proof gate.
+4. **Reach both gates.** Ten completed private runs and five $250/month partnership enrollments are required before group conversion.
+5. **Then rebuild the group cycle** from proven language, objections, belief shifts, demonstration friction, and offer results. Do not merely reactivate the September assets.
 
 Do not skip ahead of this list without David Bee explicitly changing the priority.

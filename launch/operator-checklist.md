@@ -1,5 +1,7 @@
 # 777 Launch Operator Checklist
 
+> **Archived reference.** The September group cycle is deferred during private Tiny Challenge validation. Do not execute this checklist until a new group cycle is approved after the 10-run and 5-enrollment proof gates.
+
 ## Once Per Cycle
 
 - [ ] Set the next cycle dates in `js/777-launch-cycle.js` using Mountain Time.

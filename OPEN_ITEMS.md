@@ -4,11 +4,25 @@
 
 Nothing here has been acted on. This is a single list to replace hunting across five documents.
 
-Ordering is by risk to the September 7 launch, not by effort.
+> **Status changed August 12, 2026.** The September group launch is deferred. Sections below remain historical product and launch debt, but they do not drive current priority. The active validation work lives in `launch/private-tiny-challenge/`.
+
+Ordering now begins with proof for the private Tiny Challenge. Group-only items remain parked until both gates are met.
 
 ---
 
-## Tier 1: Blocks the launch
+## Tier 1: Private validation
+
+- [x] Build the facilitator playbook, intake, commitment, session-note, Graduation, scorecard, and structured ledger.
+- [x] Make the September browser cycle and EEE checkout source fail closed.
+- [ ] David selects and invites the first qualified private participant.
+- [ ] Complete Run 1 with one approved script on Day One and a complete scorecard at Graduation.
+- [ ] Complete 10 private runs.
+- [ ] Enroll 5 participants in the private partnership.
+- [ ] Convert the proven experience into a new group cycle only after both gates are met.
+
+## Parked group-launch work
+
+The items below were previously Tier 1 for September. Preserve them, but do not execute them as current work.
 
 ### 1.1 Finish the purchase-path rehearsal
 

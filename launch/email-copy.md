@@ -1,5 +1,7 @@
 # 777 September 2026 Email Copy
 
+> **Archived source copy. Do not schedule or send.** The September group cycle is deferred while the private Tiny Challenge is validated. Future group copy should be rebuilt from proven participant language after 10 completed runs and 5 partnership enrollments.
+
 Use `{first_name}` where available. Keep purchaser access instructions out of prospect-only sends. Zoom links stay as `{{KICKOFF_ZOOM_URL}}` and `{{GRADUATION_ZOOM_URL}}` until the meetings exist.
 
 ## Purchase Confirmation: 777 Buyers

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "program": "777 Private Tiny Challenge",
+  "status": "private_validation",
+  "groupTarget": "October 2026, provisional and proof-gated",
+  "gate": {
+    "completedRunsRequired": 10,
+    "partnershipEnrollmentsRequired": 5
+  },
+  "currentExperiment": {
+    "variable": "baseline",
+    "description": "Run the approved four-session experience before changing a major variable."
+  },
+  "runs": []
+}

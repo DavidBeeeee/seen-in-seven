@@ -292,3 +292,5 @@ async function exportDeck(deck, name) {
 
 await exportDeck(await makeKickoff(), '777-kickoff-september-2026');
 await exportDeck(await makeGraduation(), '777-graduation-september-2026');
+// ARCHIVED SEPTEMBER SOURCE: do not generate current event decks from this file.
+// Build a new dated source after private validation meets both proof gates.

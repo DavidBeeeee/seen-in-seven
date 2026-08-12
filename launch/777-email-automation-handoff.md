@@ -1,5 +1,7 @@
 # 777 Systeme Email And Participation Handoff
 
+> **September reference only.** Do not activate, schedule, or interpret this as the current campaign. The active path is private Tiny Challenge validation; a future group cycle must be rebuilt after the proof gates.
+
 Last updated: August 7, 2026
 
 ## Purpose
