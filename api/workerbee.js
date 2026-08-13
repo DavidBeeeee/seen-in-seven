@@ -120,25 +120,27 @@ function compactChatGPTState(result) {
   return {
     generatedAt: result.generatedAt,
     readState: result.readState,
-    tasks: (result.tasks || []).filter(item => !item.deleted_at).slice(0, 20).map(item => pick(item, TASK_FIELDS)),
+    tasks: (result.tasks || []).filter(item => !item.deleted_at).slice(0, 12).map(item => pick(item, new Set([
+      'id', 'title', 'status', 'owner', 'due_date', 'follow_up_date', 'work_area'
+    ]))),
     clients: (result.clients || []).filter(item => !item.archived_at).slice(0, 12).map(item => pick(item, new Set([
       'id', 'name', 'relationship_status', 'current_focus', 'next_meeting_at', 'follow_up_date',
-      'nearest_deadline', 'transcript_status', 'commitments', 'drive_url', 'living_plan_url'
+      'nearest_deadline', 'transcript_status'
     ]))),
     events: (result.events || []).filter(item => !item.archived_at).slice(0, 12).map(item => pick(item, new Set([
       'id', 'title', 'event_type', 'status', 'starts_at', 'ends_at', 'current_milestone', 'next_action'
     ]))),
     products: (result.products || []).filter(item => !item.archived_at).slice(0, 12).map(item => pick(item, new Set([
       'id', 'name', 'family', 'status', 'priority', 'current_objective', 'next_improvement',
-      'important_risk', 'next_review_date', 'last_meaningful_change_at'
+      'important_risk', 'next_review_date'
     ]))),
-    updates: (result.updates || []).slice(0, 16).map(item => ({
+    updates: (result.updates || []).slice(0, 8).map(item => ({
       id: item.id, kind: item.kind, title: item.title, status: item.status, due_at: item.due_at,
-      body: excerpt(item.body, 800), metadata: item.metadata
+      body: excerpt(item.body, 260)
     })),
-    journal: (result.journal || []).slice(0, 6).map(item => ({
+    journal: (result.journal || []).slice(0, 3).map(item => ({
       id: item.id, entry_date: item.entry_date, category: item.category, title: item.title,
-      status: item.status, body: excerpt(item.body, 700), evidence: excerpt(item.evidence, 300)
+      status: item.status, body: excerpt(item.body, 220), evidence: excerpt(item.evidence, 160)
     }))
   };
 }
