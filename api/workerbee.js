@@ -23,7 +23,7 @@ async function authorize(req) {
     return { serverSecret: internalSecret, token: SUPABASE_ANON_KEY };
   }
   if (internalSecret && internalSecret.length >= 32 && chatgptSecret && chatgptSecret.length >= 32 && safeEqual(supplied, chatgptSecret)) {
-    return { serverSecret: internalSecret, token: SUPABASE_ANON_KEY };
+    return { serverSecret: internalSecret, token: SUPABASE_ANON_KEY, compact: true };
   }
   const admin = await authenticatedAdmin(req);
   return admin ? { serverSecret: null, token: bearerToken(req) } : null;
@@ -111,6 +111,38 @@ function sanitize(action, input) {
   return payload;
 }
 
+function excerpt(value, max = 900) {
+  const text = String(value || '').trim();
+  return text.length > max ? `${text.slice(0, max - 1)}…` : text;
+}
+
+function compactChatGPTState(result) {
+  return {
+    generatedAt: result.generatedAt,
+    readState: result.readState,
+    tasks: (result.tasks || []).filter(item => !item.deleted_at).slice(0, 20).map(item => pick(item, TASK_FIELDS)),
+    clients: (result.clients || []).filter(item => !item.archived_at).slice(0, 12).map(item => pick(item, new Set([
+      'id', 'name', 'relationship_status', 'current_focus', 'next_meeting_at', 'follow_up_date',
+      'nearest_deadline', 'transcript_status', 'commitments', 'drive_url', 'living_plan_url'
+    ]))),
+    events: (result.events || []).filter(item => !item.archived_at).slice(0, 12).map(item => pick(item, new Set([
+      'id', 'title', 'event_type', 'status', 'starts_at', 'ends_at', 'current_milestone', 'next_action'
+    ]))),
+    products: (result.products || []).filter(item => !item.archived_at).slice(0, 12).map(item => pick(item, new Set([
+      'id', 'name', 'family', 'status', 'priority', 'current_objective', 'next_improvement',
+      'important_risk', 'next_review_date', 'last_meaningful_change_at'
+    ]))),
+    updates: (result.updates || []).slice(0, 16).map(item => ({
+      id: item.id, kind: item.kind, title: item.title, status: item.status, due_at: item.due_at,
+      body: excerpt(item.body, 800), metadata: item.metadata
+    })),
+    journal: (result.journal || []).slice(0, 6).map(item => ({
+      id: item.id, entry_date: item.entry_date, category: item.category, title: item.title,
+      status: item.status, body: excerpt(item.body, 700), evidence: excerpt(item.evidence, 300)
+    }))
+  };
+}
+
 export default async function handler(req, res) {
   if (!['GET', 'POST'].includes(req.method)) return json(res, 405, { error: 'Method not allowed.' });
   const auth = await authorize(req);
@@ -118,7 +150,7 @@ export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
       const result = await rpc('workerbee_bootstrap', { p_server_secret: auth.serverSecret }, auth.token);
-      return json(res, 200, result);
+      return json(res, 200, auth.compact ? compactChatGPTState(result) : result);
     }
     const body = req.body && typeof req.body === 'object' ? req.body : {};
     const action = String(body.action || '');
