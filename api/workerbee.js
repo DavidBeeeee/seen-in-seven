@@ -17,9 +17,13 @@ function bearerToken(req) {
 
 async function authorize(req) {
   const supplied = String(req.headers['x-workerbee-secret'] || '');
-  const expected = process.env.WORKERBEE_STUDIO_SECRET;
-  if (expected && expected.length >= 32 && safeEqual(supplied, expected)) {
-    return { serverSecret: supplied, token: SUPABASE_ANON_KEY };
+  const internalSecret = process.env.WORKERBEE_STUDIO_SECRET;
+  const chatgptSecret = process.env.WORKERBEE_CHATGPT_SECRET;
+  if (internalSecret && internalSecret.length >= 32 && safeEqual(supplied, internalSecret)) {
+    return { serverSecret: internalSecret, token: SUPABASE_ANON_KEY };
+  }
+  if (internalSecret && internalSecret.length >= 32 && chatgptSecret && chatgptSecret.length >= 32 && safeEqual(supplied, chatgptSecret)) {
+    return { serverSecret: internalSecret, token: SUPABASE_ANON_KEY };
   }
   const admin = await authenticatedAdmin(req);
   return admin ? { serverSecret: null, token: bearerToken(req) } : null;
