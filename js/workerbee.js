@@ -205,6 +205,112 @@ function currentOutcomes() {
     .slice(0, 3);
 }
 
+function statusLabel(status) {
+  return String(status || 'unknown').replaceAll('_', ' ');
+}
+
+function healthUpdate() {
+  return state.updates.find(item => item.metadata && item.metadata.source === 'runtime-health-gate');
+}
+
+function gradeUpdate() {
+  return state.updates.find(item => item.metadata && item.metadata.source === 'evolution-grade');
+}
+
+function renderHealth() {
+  const update = healthUpdate();
+  const root = el('health-lights');
+  root.replaceChildren();
+  const overall = el('health-overall');
+  const checked = el('health-last-checked');
+  if (!update || !update.metadata || !update.metadata.components) {
+    overall.textContent = 'Health not yet verified';
+    checked.textContent = 'Unknown';
+    root.append(empty('The next WorkerBee pulse will publish a component-level health check.'));
+    return;
+  }
+  const status = String(update.metadata.health_status || 'unknown').toUpperCase();
+  overall.textContent = `Overall: ${status}`;
+  checked.textContent = update.updated_at ? `Checked ${new Date(update.updated_at).toLocaleString()}` : status;
+  Object.entries(update.metadata.components).forEach(([name, component]) => {
+    const item = document.createElement('div');
+    item.className = `health-light ${String(component.status || 'unknown').toLowerCase()}`;
+    const lamp = document.createElement('span');
+    lamp.className = 'health-lamp';
+    lamp.setAttribute('aria-hidden', 'true');
+    const copy = document.createElement('div');
+    const label = document.createElement('strong');
+    label.textContent = name.replace(/([A-Z])/g, ' $1').replace(/^./, char => char.toUpperCase());
+    const detail = document.createElement('small');
+    detail.textContent = component.summary || statusLabel(component.status);
+    copy.append(label, detail);
+    item.append(lamp, copy);
+    root.append(item);
+  });
+}
+
+function renderGrade() {
+  const record = gradeUpdate();
+  const mark = el('grade-current');
+  const summary = el('grade-summary');
+  const controls = el('grade-controls');
+  summary.replaceChildren();
+  controls.replaceChildren();
+  if (!record || !record.metadata) {
+    mark.textContent = '—';
+    summary.append(empty('The first evidence score has not been published yet.'));
+    return;
+  }
+  const metadata = record.metadata;
+  const evidence = metadata.evidence_grade || '—';
+  const david = metadata.david_grade || null;
+  mark.textContent = david || evidence;
+  mark.className = `grade-mark grade-${String(david || evidence).toLowerCase()}`;
+  const lines = [
+    ['Evidence grade', evidence],
+    ['Current standing', david || evidence],
+    ['Next repair', metadata.next_repair || record.body || 'No repair recorded.']
+  ];
+  if (david) lines.splice(1, 0, ['David’s assessment', david]);
+  lines.forEach(([label, value]) => appendDetail(summary, label, value));
+  if (metadata.david_note) appendDetail(summary, 'Why', metadata.david_note);
+  const form = document.createElement('form');
+  form.className = 'grade-form';
+  const select = document.createElement('select');
+  select.setAttribute('aria-label', 'Set David’s assessment of WorkerBee');
+  ['A', 'B', 'C', 'D', 'F'].forEach(grade => {
+    const option = document.createElement('option');
+    option.value = grade;
+    option.textContent = `Set my grade to ${grade}`;
+    option.selected = grade === (david || evidence);
+    select.append(option);
+  });
+  const note = document.createElement('input');
+  note.required = true;
+  note.maxLength = 500;
+  note.placeholder = 'Why this grade?';
+  note.value = metadata.david_note || '';
+  const save = document.createElement('button');
+  save.type = 'submit';
+  save.className = 'quiet-button';
+  save.textContent = 'Record your assessment';
+  form.append(select, note, save);
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    save.disabled = true;
+    try {
+      const updated = await api('update_update', {
+        id: record.id,
+        metadata: { ...metadata, david_grade: select.value, david_note: note.value.trim(), david_assessed_at: new Date().toISOString(), grade_source: 'david-assessment' }
+      });
+      Object.assign(record, updated);
+      renderGrade();
+      showToast('Your assessment is recorded and will sync back to WorkerBee.');
+    } catch (error) { showToast(error.message, true); save.disabled = false; }
+  });
+  controls.append(form);
+}
+
 function renderDashboard() {
   const active = state.updates.filter(item => !['rejected', 'completed', 'deferred', 'approved', 'acknowledged'].includes(item.status));
   const outcomes = currentOutcomes();
@@ -220,6 +326,8 @@ function renderDashboard() {
   fillUpdates('diagnostics-list', diagnostics, 'No active defect, friction, streamlining opportunity, or expansion candidate is currently recorded.');
   el('needs-count').textContent = String(needs.length);
   el('dashboard-freshness').textContent = state.generatedAt ? `Current as of ${new Date(state.generatedAt).toLocaleString()}.` : 'Current state loaded.';
+  renderHealth();
+  renderGrade();
   renderClients();
   renderEvents();
   renderProducts();
@@ -317,8 +425,11 @@ function renderClients() {
   root.replaceChildren();
   if (!state.clients.length) return root.append(empty('Client records are ready for the next synchronization.'));
   state.clients.forEach(client => {
-    const card = moduleCard(client.name, client.relationship_status);
+    const card = moduleCard(client.name, client.transcript_status || client.relationship_status);
+    card.classList.add(`client-${String(client.transcript_status || 'unknown').toLowerCase()}`);
     appendDetail(card, 'Focus', client.current_focus);
+    appendDetail(card, 'Transcript', client.metadata && client.metadata.latestTranscript);
+    appendDetail(card, 'Next check', client.metadata && client.metadata.nextCheck);
     appendDetail(card, 'Follow up', client.follow_up_date ? new Date(`${client.follow_up_date}T12:00:00`).toLocaleDateString() : null);
     const open = Array.isArray(client.commitments) ? client.commitments.filter(item => !['done', 'complete', 'completed'].includes(item.status)).length : 0;
     appendDetail(card, 'Open commitments', open ? String(open) : null);

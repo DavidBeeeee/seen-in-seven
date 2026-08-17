@@ -42,6 +42,18 @@
         <div><p class="eyebrow">Current operating view</p><h1>Here is what matters.</h1><p id="dashboard-freshness">Loading current state...</p></div>
       </section>
 
+      <section class="command-strip" aria-label="WorkerBee operating health and grade">
+        <article class="panel health-panel">
+          <div class="panel-heading"><div><p class="eyebrow">Live operating health</p><h2 id="health-overall">Checking health</h2></div><span class="status-chip" id="health-last-checked"></span></div>
+          <div class="health-lights" id="health-lights"></div>
+        </article>
+        <article class="panel grade-panel">
+          <div class="panel-heading"><div><p class="eyebrow">Evolution review</p><h2>How I’m operating</h2></div><span class="grade-mark" id="grade-current">—</span></div>
+          <div id="grade-summary" class="grade-summary"></div>
+          <div id="grade-controls"></div>
+        </article>
+      </section>
+
       <section class="dashboard-grid">
         <article class="panel panel-wide">
           <div class="panel-heading"><div><p class="eyebrow">Today</p><h2>Three outcomes</h2></div></div>
