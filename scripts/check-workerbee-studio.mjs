@@ -25,6 +25,8 @@ for (const table of ['workerbee_clients', 'workerbee_events', 'workerbee_product
 
 assert.match(api, /authenticatedAdmin\(req\)/, 'The API must verify David through the existing admin boundary.');
 assert.match(api, /WORKERBEE_STUDIO_SECRET/, 'The provider-neutral bridge must use a server-only secret.');
+assert.match(api, /WORKERBEE_CHATGPT_SECRET/, 'The private ChatGPT Action must use a dedicated secret rather than sharing the internal Studio secret.');
+assert.match(api, /serverSecret: internalSecret/, 'The dedicated ChatGPT Action secret must never be forwarded to the database authorizer.');
 assert.match(api, /workerbee_bootstrap/, 'Reads must use the narrow WorkerBee database function.');
 assert.match(api, /workerbee_mutate/, 'Writes must use the narrow WorkerBee database function.');
 assert.doesNotMatch(api, /SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY/, 'The WorkerBee API must not require a database master key.');
