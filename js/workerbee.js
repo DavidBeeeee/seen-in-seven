@@ -217,6 +217,76 @@ function gradeUpdate() {
   return state.updates.find(item => item.metadata && item.metadata.source === 'evolution-grade');
 }
 
+function dailyReportUpdate() {
+  return state.updates
+    .filter(item => item.kind === 'summary' && item.status === 'active' && item.metadata && item.metadata.source === 'daily-report')
+    .sort((a, b) => String(b.metadata.report_date || '').localeCompare(String(a.metadata.report_date || '')))[0] || null;
+}
+
+function renderReportPeriod(label, period) {
+  const card = document.createElement('article');
+  card.className = 'report-period';
+  const header = document.createElement('header');
+  const title = document.createElement('h3');
+  title.textContent = label;
+  const status = document.createElement('span');
+  status.className = 'status-chip';
+  status.textContent = statusLabel(period && period.status);
+  header.append(title, status);
+  card.append(header);
+  if (period && period.summary) {
+    const summary = document.createElement('p');
+    summary.textContent = period.summary;
+    card.append(summary);
+  }
+  const items = period && Array.isArray(period.completed) ? period.completed : [];
+  if (items.length) {
+    const list = document.createElement('ul');
+    items.forEach(item => {
+      const row = document.createElement('li');
+      if (item.title) {
+        const strong = document.createElement('strong');
+        strong.textContent = item.title;
+        row.append(strong, document.createTextNode(` ${item.result}`));
+      } else {
+        row.textContent = item.result;
+      }
+      list.append(row);
+    });
+    card.append(list);
+  }
+  (period && period.unknowns || []).forEach(item => {
+    const unknown = document.createElement('p');
+    unknown.className = 'report-unknown';
+    unknown.textContent = `Unknown: ${item}`;
+    card.append(unknown);
+  });
+  if (period && period.next && period.next.length) {
+    const next = document.createElement('p');
+    next.className = 'report-next';
+    next.textContent = `Next: ${period.next.join(' · ')}`;
+    card.append(next);
+  }
+  return card;
+}
+
+function renderDailyReport() {
+  const root = el('daily-report');
+  const date = el('daily-report-date');
+  root.replaceChildren();
+  const record = dailyReportUpdate();
+  if (!record || !record.metadata) {
+    date.textContent = 'Not published';
+    root.append(empty('Today’s morning and afternoon results have not been published yet. A scheduled cycle is incomplete until this report appears.'));
+    return;
+  }
+  date.textContent = record.metadata.report_date || 'Today';
+  const grid = document.createElement('div');
+  grid.className = 'daily-report-grid';
+  grid.append(renderReportPeriod('Morning', record.metadata.morning), renderReportPeriod('Afternoon', record.metadata.afternoon));
+  root.append(grid);
+}
+
 function renderHealth() {
   const update = healthUpdate();
   const root = el('health-lights');
@@ -328,6 +398,7 @@ function renderDashboard() {
   el('dashboard-freshness').textContent = state.generatedAt ? `Current as of ${new Date(state.generatedAt).toLocaleString()}.` : 'Current state loaded.';
   renderHealth();
   renderGrade();
+  renderDailyReport();
   renderClients();
   renderEvents();
   renderProducts();
