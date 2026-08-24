@@ -69,6 +69,52 @@ function empty(message) {
   return p;
 }
 
+function validDate(value, dateOnly = false) {
+  if (!value) return null;
+  const date = new Date(dateOnly ? `${value}T12:00:00` : value);
+  return Number.isNaN(date.getTime()) ? null : date;
+}
+
+function formatDateTime(value) {
+  const date = validDate(value);
+  return date ? date.toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : '';
+}
+
+function formatDate(value) {
+  const date = validDate(value, /^\d{4}-\d{2}-\d{2}$/.test(String(value)));
+  return date ? date.toLocaleDateString([], { dateStyle: 'medium' }) : '';
+}
+
+function appendMetaText(root, text, className = '') {
+  if (!text) return;
+  const node = document.createElement('span');
+  if (className) node.className = className;
+  node.textContent = text;
+  root.append(node);
+}
+
+function appendMetaTime(root, label, value, { dateOnly = false, className = '' } = {}) {
+  const formatted = dateOnly ? formatDate(value) : formatDateTime(value);
+  if (!formatted) return;
+  const time = document.createElement('time');
+  if (className) time.className = className;
+  time.dateTime = value;
+  time.textContent = `${label} ${formatted}`;
+  root.append(time);
+}
+
+function appendRecordTimestamp(card, value, label = 'Record updated') {
+  const formatted = formatDateTime(value);
+  if (!formatted) return;
+  const row = document.createElement('p');
+  row.className = 'record-timestamp';
+  const time = document.createElement('time');
+  time.dateTime = value;
+  time.textContent = `${label} ${formatted}`;
+  row.append(time);
+  card.append(row);
+}
+
 function updateCard(item, actionMode = null) {
   const card = document.createElement('article');
   card.className = 'update-card';
@@ -94,7 +140,11 @@ function updateCard(item, actionMode = null) {
   }
   const meta = document.createElement('div');
   meta.className = 'update-meta';
-  meta.textContent = [item.metadata && item.metadata.category, item.status, item.due_at ? new Date(item.due_at).toLocaleString() : '', item.action_id || ''].filter(Boolean).join(' · ');
+  appendMetaText(meta, item.metadata && item.metadata.category);
+  appendMetaText(meta, statusLabel(item.status));
+  appendMetaTime(meta, 'Due', item.due_at, { className: 'due-time' });
+  appendMetaText(meta, item.action_id || '');
+  appendMetaTime(meta, item.updated_at ? 'Updated' : 'Added', item.updated_at || item.created_at);
   card.append(meta);
   if (actionMode === 'decision' && item.status === 'active') {
     const actions = document.createElement('div');
@@ -280,7 +330,9 @@ function renderDailyReport() {
     root.append(empty('Today’s morning and afternoon results have not been published yet. A scheduled cycle is incomplete until this report appears.'));
     return;
   }
-  date.textContent = record.metadata.report_date || 'Today';
+  const reportDate = formatDate(record.metadata.report_date) || 'Today';
+  const reportUpdated = formatDateTime(record.updated_at || record.metadata.updated_at);
+  date.textContent = reportUpdated ? `${reportDate} · updated ${reportUpdated}` : reportDate;
   const grid = document.createElement('div');
   grid.className = 'daily-report-grid';
   grid.append(renderReportPeriod('Morning', record.metadata.morning), renderReportPeriod('Afternoon', record.metadata.afternoon));
@@ -301,7 +353,7 @@ function renderHealth() {
   }
   const status = String(update.metadata.health_status || 'unknown').toUpperCase();
   overall.textContent = `Overall: ${status}`;
-  checked.textContent = update.updated_at ? `Checked ${new Date(update.updated_at).toLocaleString()}` : status;
+  checked.textContent = update.updated_at ? `Checked ${formatDateTime(update.updated_at)}` : status;
   Object.entries(update.metadata.components).forEach(([name, component]) => {
     const item = document.createElement('div');
     item.className = `health-light ${String(component.status || 'unknown').toLowerCase()}`;
@@ -344,6 +396,8 @@ function renderGrade() {
   if (david) lines.splice(1, 0, ['David’s assessment', david]);
   lines.forEach(([label, value]) => appendDetail(summary, label, value));
   if (metadata.david_note) appendDetail(summary, 'Why', metadata.david_note);
+  if (metadata.david_assessed_at) appendDetail(summary, 'David assessed', formatDateTime(metadata.david_assessed_at));
+  appendDetail(summary, 'Record updated', formatDateTime(record.updated_at));
   const form = document.createElement('form');
   form.className = 'grade-form';
   const select = document.createElement('select');
@@ -395,7 +449,7 @@ function renderDashboard() {
   fillUpdates('commitments-list', commitments, 'No dated commitment or blocker is currently published.');
   fillUpdates('diagnostics-list', diagnostics, 'No active defect, friction, streamlining opportunity, or expansion candidate is currently recorded.');
   el('needs-count').textContent = String(needs.length);
-  el('dashboard-freshness').textContent = state.generatedAt ? `Current as of ${new Date(state.generatedAt).toLocaleString()}.` : 'Current state loaded.';
+  el('dashboard-freshness').textContent = state.generatedAt ? `Dashboard synced ${formatDateTime(state.generatedAt)}.` : 'Current state loaded.';
   renderHealth();
   renderGrade();
   renderDailyReport();
@@ -417,7 +471,7 @@ function renderJournal() {
       const latest = new Date(`${state.journal[0].entry_date}T12:00:00`);
       const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
       const recent = state.journal.filter(entry => new Date(`${entry.entry_date}T12:00:00`).getTime() >= weekAgo).length;
-      scanStatus.textContent = `Last entry ${latest.toLocaleDateString()} · ${recent} in last 7 days · ${state.journal.length} total`;
+      scanStatus.textContent = `Last entry ${latest.toLocaleDateString([], { dateStyle: 'medium' })} · ${recent} in last 7 days · ${state.journal.length} total`;
     }
   }
   if (!state.journal.length) {
@@ -437,11 +491,13 @@ function renderJournal() {
     title.textContent = entry.title;
     left.append(type, title);
     const time = document.createElement('time');
-    time.textContent = new Date(`${entry.entry_date}T12:00:00`).toLocaleDateString();
+    time.dateTime = entry.entry_date;
+    time.textContent = formatDate(entry.entry_date);
     header.append(left, time);
     const body = document.createElement('p');
     body.textContent = entry.body;
     article.append(header, body);
+    appendRecordTimestamp(article, entry.updated_at, 'Entry updated');
     root.append(article);
   }
   el('toggle-journal').hidden = state.journal.length <= 1;
@@ -500,11 +556,15 @@ function renderClients() {
     card.classList.add(`client-${String(client.transcript_status || 'unknown').toLowerCase()}`);
     appendDetail(card, 'Focus', client.current_focus);
     appendDetail(card, 'Transcript', client.metadata && client.metadata.latestTranscript);
+    appendDetail(card, 'Latest session', formatDate(client.metadata && client.metadata.latestSessionAt));
     appendDetail(card, 'Next check', client.metadata && client.metadata.nextCheck);
-    appendDetail(card, 'Follow up', client.follow_up_date ? new Date(`${client.follow_up_date}T12:00:00`).toLocaleDateString() : null);
+    appendDetail(card, 'Next meeting', formatDateTime(client.next_meeting_at));
+    appendDetail(card, 'Follow up', formatDate(client.follow_up_date));
+    appendDetail(card, 'Nearest deadline', formatDate(client.nearest_deadline));
     const open = Array.isArray(client.commitments) ? client.commitments.filter(item => !['done', 'complete', 'completed'].includes(item.status)).length : 0;
     appendDetail(card, 'Open commitments', open ? String(open) : null);
     appendLinks(card, [makeLink('Source', client.drive_url), makeLink('Living plan', client.living_plan_url)]);
+    appendRecordTimestamp(card, client.updated_at);
     root.append(card);
   });
 }
@@ -515,9 +575,11 @@ function renderEvents() {
   if (!state.events.length) return root.append(empty('No current event or launch record.'));
   state.events.slice(0, 5).forEach(event => {
     const card = moduleCard(event.title, event.status);
-    appendDetail(card, 'Date', event.starts_at ? new Date(event.starts_at).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) : null);
+    appendDetail(card, 'Starts', formatDateTime(event.starts_at));
+    appendDetail(card, 'Ends', formatDateTime(event.ends_at));
     appendDetail(card, 'Next', event.next_action);
     appendLinks(card, [makeLink('Page', event.registration_url), makeLink('Source', event.source_url)]);
+    appendRecordTimestamp(card, event.updated_at);
     root.append(card);
   });
 }
@@ -528,10 +590,11 @@ function renderProducts() {
   if (!state.products.length) return root.append(empty('No product freshness records yet.'));
   state.products.slice(0, 8).forEach(product => {
     const card = moduleCard(product.name, product.status);
-    appendDetail(card, 'Last change', product.last_meaningful_change_at ? new Date(product.last_meaningful_change_at).toLocaleDateString() : 'Unknown');
-    appendDetail(card, 'Next review', product.next_review_date ? new Date(`${product.next_review_date}T12:00:00`).toLocaleDateString() : null);
+    appendDetail(card, 'Last change', formatDateTime(product.last_meaningful_change_at) || 'Unknown');
+    appendDetail(card, 'Next review', formatDate(product.next_review_date));
     appendDetail(card, 'Next', product.next_improvement);
     appendLinks(card, [makeLink('Open app', product.route_url), makeLink('Roadmap', product.roadmap_url)]);
+    appendRecordTimestamp(card, product.updated_at);
     root.append(card);
   });
 }

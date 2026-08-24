@@ -43,8 +43,12 @@ assert.match(dashboard, /App freshness/, 'The compact product module must live o
 assert.match(client, /reorder_outcomes/, 'Daily outcomes must be directly reorderable.');
 assert.match(client, /setOutcomeStatus/, 'Daily outcomes must support direct status changes.');
 assert.match(dashboard, /id="diagnostics-panel"/, 'WorkerBee diagnostics must stay separate from business work.');
+assert.ok(dashboard.indexOf('id="diagnostics-panel"') < dashboard.indexOf('aria-label="WorkerBee operating health and grade"'), 'Health and grade must sit below the primary business dashboard.');
 assert.match(dashboard, /id="daily-report"/, 'The dashboard must expose a durable same-day morning and afternoon report.');
 assert.match(client, /source === 'daily-report'/, 'The dashboard must render the canonical daily report independently of last-visit filtering.');
+assert.match(client, /function formatDateTime/, 'Dashboard records must share one explicit date and time formatter.');
+assert.match(client, /Latest session/, 'Client cards must show when the latest session happened.');
+assert.match(client, /Record updated/, 'Dashboard modules must expose when their source record last changed.');
 assert.match(diagnosticMigration, /'diagnostic'/, 'The repository must preserve the live diagnostic update kind.');
 assert.match(privateApiMigration, /workerbee_authorized/, 'The private API must check the admin session or bridge secret.');
 assert.match(privateApiMigration, /extensions\.digest\(coalesce\(p_server_secret/, 'The bridge secret must be compared by digest.');
