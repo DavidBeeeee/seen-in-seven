@@ -282,7 +282,16 @@ function renderReportPeriod(label, period) {
   const status = document.createElement('span');
   status.className = 'status-chip';
   status.textContent = statusLabel(period && period.status);
-  header.append(title, status);
+  const periodMeta = document.createElement('div');
+  periodMeta.className = 'report-period-meta';
+  periodMeta.append(status);
+  if (period && period.updatedAt) {
+    const updated = document.createElement('time');
+    updated.dateTime = period.updatedAt;
+    updated.textContent = `Updated ${formatDateTime(period.updatedAt)}`;
+    periodMeta.append(updated);
+  }
+  header.append(title, periodMeta);
   card.append(header);
   if (period && period.summary) {
     const summary = document.createElement('p');
@@ -327,15 +336,19 @@ function renderDailyReport() {
   const record = dailyReportUpdate();
   if (!record || !record.metadata) {
     date.textContent = 'Not published';
-    root.append(empty('Today’s morning and afternoon results have not been published yet. A scheduled cycle is incomplete until this report appears.'));
+    root.append(empty('Today’s scheduled WorkerBee results have not been published yet. A cycle is incomplete until its own report appears.'));
     return;
   }
   const reportDate = formatDate(record.metadata.report_date) || 'Today';
-  const reportUpdated = formatDateTime(record.updated_at || record.metadata.updated_at);
-  date.textContent = reportUpdated ? `${reportDate} · updated ${reportUpdated}` : reportDate;
+  date.textContent = reportDate;
   const grid = document.createElement('div');
   grid.className = 'daily-report-grid';
-  grid.append(renderReportPeriod('Morning', record.metadata.morning), renderReportPeriod('Afternoon', record.metadata.afternoon));
+  grid.append(
+    renderReportPeriod('Morning', record.metadata.morning),
+    renderReportPeriod('Afternoon', record.metadata.afternoon),
+    renderReportPeriod('Moltbook', record.metadata.moltbook),
+    renderReportPeriod('Late night', record.metadata.late_night)
+  );
   root.append(grid);
 }
 
