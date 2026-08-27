@@ -576,6 +576,10 @@ function renderClients() {
     appendDetail(card, 'Nearest deadline', formatDate(client.nearest_deadline));
     const open = Array.isArray(client.commitments) ? client.commitments.filter(item => !['done', 'complete', 'completed'].includes(item.status)).length : 0;
     appendDetail(card, 'Open commitments', open ? String(open) : null);
+    const overdue = Array.isArray(client.commitments)
+      ? client.commitments.filter(item => item.overdue && item.followUpQuestion)
+      : [];
+    overdue.forEach(item => appendDetail(card, 'Overdue — ready to send', item.followUpQuestion));
     appendLinks(card, [makeLink('Source', client.drive_url), makeLink('Living plan', client.living_plan_url)]);
     appendRecordTimestamp(card, client.updated_at);
     root.append(card);
