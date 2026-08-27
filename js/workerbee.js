@@ -267,10 +267,24 @@ function gradeUpdate() {
   return state.updates.find(item => item.metadata && item.metadata.source === 'evolution-grade');
 }
 
-function dailyReportUpdate() {
+function dailyReportUpdates() {
   return state.updates
     .filter(item => item.kind === 'summary' && item.status === 'active' && item.metadata && item.metadata.source === 'daily-report')
-    .sort((a, b) => String(b.metadata.report_date || '').localeCompare(String(a.metadata.report_date || '')))[0] || null;
+    .sort((a, b) => String(b.metadata.report_date || '').localeCompare(String(a.metadata.report_date || '')))
+    .slice(0, 2);
+}
+
+function localDateKey(date) {
+  return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
+}
+
+function reportDayLabel(reportDate) {
+  const today = new Date();
+  const yesterday = new Date(today);
+  yesterday.setDate(today.getDate() - 1);
+  if (reportDate === localDateKey(today)) return 'Today';
+  if (reportDate === localDateKey(yesterday)) return 'Yesterday';
+  return formatDate(reportDate) || 'Report';
 }
 
 function renderReportPeriod(label, period) {
@@ -333,23 +347,36 @@ function renderDailyReport() {
   const root = el('daily-report');
   const date = el('daily-report-date');
   root.replaceChildren();
-  const record = dailyReportUpdate();
-  if (!record || !record.metadata) {
+  const records = dailyReportUpdates();
+  if (!records.length) {
     date.textContent = 'Not published';
     root.append(empty('Today’s scheduled WorkerBee results have not been published yet. A cycle is incomplete until its own report appears.'));
     return;
   }
-  const reportDate = formatDate(record.metadata.report_date) || 'Today';
-  date.textContent = reportDate;
-  const grid = document.createElement('div');
-  grid.className = 'daily-report-grid';
-  grid.append(
-    renderReportPeriod('Morning', record.metadata.morning),
-    renderReportPeriod('Afternoon', record.metadata.afternoon),
-    renderReportPeriod('Moltbook', record.metadata.moltbook),
-    renderReportPeriod('Late night', record.metadata.late_night)
-  );
-  root.append(grid);
+  date.textContent = records.length > 1 ? 'Today + Yesterday' : reportDayLabel(records[0].metadata.report_date);
+  records.forEach(record => {
+    const reportDate = record.metadata.report_date;
+    const day = document.createElement('section');
+    day.className = 'daily-report-day';
+    const heading = document.createElement('div');
+    heading.className = 'daily-report-day-heading';
+    const label = document.createElement('h3');
+    label.textContent = reportDayLabel(reportDate);
+    const stamp = document.createElement('time');
+    stamp.dateTime = reportDate;
+    stamp.textContent = formatDate(reportDate);
+    heading.append(label, stamp);
+    const grid = document.createElement('div');
+    grid.className = 'daily-report-grid';
+    grid.append(
+      renderReportPeriod('Morning', record.metadata.morning),
+      renderReportPeriod('Afternoon', record.metadata.afternoon),
+      renderReportPeriod('Moltbook', record.metadata.moltbook),
+      renderReportPeriod('Late night', record.metadata.late_night)
+    );
+    day.append(heading, grid);
+    root.append(day);
+  });
 }
 
 function renderHealth() {

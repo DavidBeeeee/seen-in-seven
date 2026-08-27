@@ -46,8 +46,11 @@ assert.match(dashboard, /id="diagnostics-panel"/, 'WorkerBee diagnostics must st
 assert.ok(dashboard.indexOf('id="diagnostics-panel"') < dashboard.indexOf('aria-label="WorkerBee operating health and grade"'), 'Health and grade must sit below the primary business dashboard.');
 assert.match(dashboard, /id="daily-report"/, 'The dashboard must expose a durable same-day morning and afternoon report.');
 assert.match(client, /source === 'daily-report'/, 'The dashboard must render the canonical daily report independently of last-visit filtering.');
-assert.match(dashboard, /Four-cycle operating report/, 'The Dashboard must expose all four scheduled WorkerBee cycles.');
+assert.match(dashboard, /Four-cycle operating reports/, 'The Dashboard must expose both retained four-cycle WorkerBee reports.');
+assert.match(dashboard, /Today \+ Yesterday/, 'The retained report window must be unmistakably labeled.');
 assert.match(client, /period\.updatedAt/, 'Each Daily Report cycle must render its own timestamp.');
+assert.match(client, /function dailyReportUpdates[\s\S]*slice\(0, 2\)/, 'The Dashboard must render both Today and Yesterday rather than only the newest report.');
+assert.match(client, /reportDayLabel[\s\S]*Yesterday/, 'The prior report must be labeled Yesterday rather than looking current.');
 assert.match(client, /renderReportPeriod\('Moltbook'/, 'The Moltbook fieldwork slot must render independently.');
 assert.match(client, /renderReportPeriod\('Late night'/, 'The Late Night build slot must render independently.');
 assert.match(client, /function formatDateTime/, 'Dashboard records must share one explicit date and time formatter.');
