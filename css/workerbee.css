@@ -220,6 +220,13 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .todo-category[open] > summary::before { transform: rotate(90deg); }
 .todo-category .category-count { margin-left: auto; padding: 1px 9px; border-radius: 999px; background: var(--ember-soft); color: var(--ember); font-size: 12px; font-weight: 800; }
 .todo-category > div { padding-left: 4px; }
+/* The horizon is read, not worked. Its categories are quieter than the ones
+   in Next and the quadrants, because shouting at somebody about a ten-year
+   ambition every time they open the page is how the bottom section becomes
+   the part that gets scrolled past. */
+[data-quadrant="horizon"] .todo-category > summary { color: var(--muted); font-size: 13px; font-weight: 700; }
+[data-quadrant="horizon"] .todo-category > summary:hover { background: var(--line-soft); }
+[data-quadrant="horizon"] .todo-category .category-count { background: var(--line-soft); color: var(--muted); }
 .queue-task-project { display: block; font-size: 11px; opacity: .6; font-style: normal; }
 .waiting-on { opacity: .75; font-style: italic; }
 .needs-from { opacity: .95; font-weight: 700; }
