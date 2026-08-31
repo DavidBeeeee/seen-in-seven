@@ -11,6 +11,11 @@
   --teal: #32b8b8;
   --teal-light: #68c8c8;
   --gold: #c8a84b;
+  /* Categories. Warm enough to separate a heading from the teal field at a
+     glance, and distinct from --gold, which already means grade, and from
+     --danger, which already means something is wrong. */
+  --ember: #e2893f;
+  --ember-soft: rgba(226, 137, 63, 0.13);
   --green: #4ade80;
   --danger: #ef4444;
   color-scheme: dark;
@@ -204,8 +209,17 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .priority-badge { flex: 0 0 auto; min-width: 22px; padding: 1px 6px; border-radius: 999px; font-size: 11px; font-weight: 800; text-align: center; background: var(--line-soft); color: var(--ink-soft); }
 .priority-badge[data-band="today"] { background: var(--accent, #d9f27c); color: #101712; }
 .priority-badge[data-band="horizon"] { background: transparent; border: 1px solid var(--line); }
-.todo-theme { margin: 14px 0 2px; font-size: 11px; font-weight: 800; letter-spacing: .07em; text-transform: uppercase; opacity: .55; }
-.todo-theme:first-child { margin-top: 4px; }
+/* Categories are collapsible so a section can be hidden to focus on another,
+   and the collapsed state is remembered per category. */
+.todo-category { margin: 16px 0 4px; border-top: 1px solid var(--line-soft); }
+.todo-category:first-of-type { margin-top: 6px; border-top: 0; }
+.todo-category > summary { display: flex; align-items: center; gap: 9px; cursor: pointer; list-style: none; padding: 10px 10px 10px 4px; border-radius: 9px; color: var(--ember); font-size: 15px; font-weight: 800; letter-spacing: -.01em; }
+.todo-category > summary::-webkit-details-marker { display: none; }
+.todo-category > summary:hover { background: var(--ember-soft); }
+.todo-category > summary::before { content: "▸"; font-size: 12px; opacity: .8; transition: transform .12s ease; }
+.todo-category[open] > summary::before { transform: rotate(90deg); }
+.todo-category .category-count { margin-left: auto; padding: 1px 9px; border-radius: 999px; background: var(--ember-soft); color: var(--ember); font-size: 12px; font-weight: 800; }
+.todo-category > div { padding-left: 4px; }
 .queue-task-project { display: block; font-size: 11px; opacity: .6; font-style: normal; }
 .waiting-on { opacity: .75; font-style: italic; }
 .needs-from { opacity: .95; font-weight: 700; }

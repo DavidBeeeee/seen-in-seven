@@ -696,6 +696,39 @@ function iconButton(name, label, handler) {
 
 let todoFilter = '';
 
+// Collapsed categories are remembered, so hiding one to focus on another
+// survives a reload. Wrapped because a browser with site data blocked throws
+// on access rather than returning nothing.
+const COLLAPSE_KEY = 'wb-todo-collapsed';
+function collapsedSet() {
+  try { return new Set(JSON.parse(localStorage.getItem(COLLAPSE_KEY) || '[]')); } catch { return new Set(); }
+}
+function rememberCollapse(name, collapsed) {
+  try {
+    const set = collapsedSet();
+    if (collapsed) set.add(name); else set.delete(name);
+    localStorage.setItem(COLLAPSE_KEY, JSON.stringify([...set]));
+  } catch { /* a viewer with storage blocked simply does not get the memory */ }
+}
+
+// One category block: a big, collapsible, ember heading with its count.
+function categoryBlock(name, count) {
+  const details = document.createElement('details');
+  details.className = 'todo-category';
+  details.open = !collapsedSet().has(name);
+  const summary = document.createElement('summary');
+  const label = document.createElement('span');
+  label.textContent = name;
+  const chip = document.createElement('span');
+  chip.className = 'category-count';
+  chip.textContent = count;
+  summary.append(label, chip);
+  const body = document.createElement('div');
+  details.append(summary, body);
+  details.addEventListener('toggle', () => rememberCollapse(name, !details.open));
+  return { details, body };
+}
+
 // Search, so an ID shared in conversation can be found on the page. Matches
 // the identifier, the title, the detail and the category, because half the
 // time the thing being looked for is remembered by its words rather than its
@@ -1018,11 +1051,9 @@ function queueTodoProject(project) {
   });
   if (rows.length > 6 && themes.size > 1) {
     for (const [theme, items] of themes) {
-      const heading = document.createElement('h3');
-      heading.className = 'todo-theme';
-      heading.textContent = theme;
-      body.append(heading);
-      items.forEach(item => body.append(queueTaskRow(item)));
+      const block = categoryBlock(theme, items.length);
+      items.forEach(item => block.body.append(queueTaskRow(item)));
+      body.append(block.details);
     }
   } else {
     rows.forEach(item => body.append(queueTaskRow(item)));
@@ -1057,11 +1088,9 @@ function flatPanel({ id, title, note, items, emptyText }) {
   }
   if (groups.size <= 1) { items.forEach(item => panel.append(queueTaskRow(item, { showProject: true }))); return panel; }
   for (const [name, rows] of groups) {
-    const heading = document.createElement('h3');
-    heading.className = 'todo-theme';
-    heading.textContent = `${name} (${rows.length})`;
-    panel.append(heading);
-    rows.forEach(item => panel.append(queueTaskRow(item)));
+    const { details, body } = categoryBlock(name, rows.length);
+    rows.forEach(item => body.append(queueTaskRow(item)));
+    panel.append(details);
   }
   return panel;
 }
