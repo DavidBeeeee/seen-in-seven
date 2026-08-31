@@ -9,11 +9,15 @@ let toastTimer = null;
 let journalExpanded = false;
 let todoOwner = 'workerbee';
 
+// There is no parked work. David abolished it on 2026-08-31 and this caption
+// went on saying otherwise, because the quadrant copy lives in two places and
+// only the repository copy was corrected. Q4 is not a shelf: it is real work
+// the enterprise would survive without, kept visible so it stays a decision.
 const TODO_QUADRANTS = {
   Q1: { title: 'Urgent and important', note: 'Doing now.' },
   Q2: { title: 'Important, not urgent', note: 'The real work. Protect this from the noise.' },
-  Q3: { title: 'Urgent, not important', note: 'Deadlines that do not move the business.' },
-  Q4: { title: 'Neither', note: 'Parked on purpose, still visible.' }
+  Q3: { title: 'Urgent, not important', note: 'Real chores and deadlines that do not move the business. A thin Q3 is a good sign.' },
+  Q4: { title: 'Neither', note: 'Real work the enterprise would survive without. Nothing here is parked, and each item says why it ranks low.' }
 };
 
 function icons() {
@@ -922,7 +926,26 @@ function byPriority(a, b) {
 
 function queueTodoProject(project) {
   const { details, body } = projectShell(project.title, project.items.length);
-  project.items.sort(byPriority).forEach(item => body.append(queueTaskRow(item)));
+  const rows = project.items.sort(byPriority);
+  // Grouped by theme once the project is big enough that the fold is a wall
+  // rather than a summary. Below that, headings cost more than they explain.
+  const themes = new Map();
+  rows.forEach(item => {
+    const theme = item.metadata?.theme || 'Other';
+    if (!themes.has(theme)) themes.set(theme, []);
+    themes.get(theme).push(item);
+  });
+  if (rows.length > 6 && themes.size > 1) {
+    for (const [theme, items] of themes) {
+      const heading = document.createElement('h3');
+      heading.className = 'todo-theme';
+      heading.textContent = theme;
+      body.append(heading);
+      items.forEach(item => body.append(queueTaskRow(item)));
+    }
+  } else {
+    rows.forEach(item => body.append(queueTaskRow(item)));
+  }
   return details;
 }
 
