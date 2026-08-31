@@ -33,9 +33,23 @@
       <p class="analytics-note" id="analytics-note"></p>
       <div class="analytics-grid" id="analytics-cards"></div>
       <section class="card analytics-trend">
-        <h2>Board over time</h2>
-        <p class="analytics-sub">Open items per side, and how much of the work landed unattended. One point per day, starting the day the snapshot began.</p>
+        <div class="trend-head">
+          <div>
+            <h2>Delivered over time</h2>
+            <p class="analytics-sub" id="chart-note"></p>
+          </div>
+          <div class="period-tabs" role="tablist" aria-label="Time period">
+            <button class="period-tab" type="button" data-period="day" role="tab">Day</button>
+            <button class="period-tab active" type="button" data-period="week" role="tab" aria-selected="true">Week</button>
+            <button class="period-tab" type="button" data-period="month" role="tab">Month</button>
+          </div>
+        </div>
         <div id="analytics-chart"></div>
+      </section>
+      <section class="card analytics-trend">
+        <h2>Board over time</h2>
+        <p class="analytics-sub">Open items per side. This one starts the day the snapshot began, because the board's shape cannot be reconstructed backwards.</p>
+        <div id="analytics-shape"></div>
       </section>
       <section class="card analytics-trend">
         <h2>Demerits</h2>

@@ -764,14 +764,33 @@ function renderTodo() {
 
   // The score, computed here rather than published as a number. A point is an
   // item WorkerBee filed, finished, where finishing left an artifact naming it.
-  const scored = state.updates.filter(item => item.kind === 'commitment' && item.metadata?.filed_by === 'workerbee');
-  const points = scored.filter(item => item.metadata?.item_status === 'completed' && ['commit', 'log', 'outcome'].includes(item.metadata?.last_moved_kind));
+  // Scoped to the tab being looked at. The runtime had a side filter and this
+  // did not, so the figure never moved when the tab did: it was always the
+  // WorkerBee number wearing whichever label was on screen.
+  //
+  // Weighted the same way the Board weighs it, or the two surfaces would show
+  // different totals for the same work, which is exactly the drift the shared
+  // publish exists to prevent.
+  const weightOfItem = item => {
+    if (item.metadata?.important === false) return 1;
+    const priority = Number(item.metadata?.priority);
+    if (!Number.isFinite(priority)) return 1;
+    return priority <= 2 ? 3 : priority <= 4 ? 2 : 1;
+  };
+  const sideItems = state.updates.filter(item => item.kind === 'commitment'
+    && (item.metadata?.owner === 'david' ? 'david' : 'workerbee') === todoOwner);
+  const delivered = sideItems.filter(item => item.metadata?.item_status === 'completed'
+    && ['commit', 'log', 'outcome'].includes(item.metadata?.last_moved_kind));
+  const weight = delivered.reduce((total, item) => total + weightOfItem(item), 0);
+  const openHere = sideItems.filter(item => item.metadata?.item_status !== 'completed').length;
   const scoreEl = el('todo-score');
   if (scoreEl) {
-    scoreEl.textContent = scored.length
-      ? `${points.length} point${points.length === 1 ? '' : 's'} · ${scored.length} filed · ${scored.filter(i => i.metadata?.item_status !== 'completed').length} open`
-      : 'No items filed yet.';
-    scoreEl.title = 'A point is an item WorkerBee put on this board and then finished, where finishing left a commit, a log entry or a recorded outcome naming it.';
+    scoreEl.textContent = delivered.length || openHere
+      ? `${weight} delivered · ${delivered.length} done · ${openHere} open`
+      : 'Nothing tracked on this side yet.';
+    scoreEl.title = todoOwner === 'david'
+      ? 'Weighted delivery on David\u2019s side. It reads low because the board only started describing his work on 31 August.'
+      : 'Weighted delivery on WorkerBee\u2019s side. Urgent work counts for more, and finishing only counts when it left a commit, a log entry or a recorded outcome naming it.';
   }
 
   const mine = queueItems.filter(item => (item.metadata?.owner === 'david' ? 'david' : 'workerbee') === todoOwner).filter(matchesFilter);
@@ -1111,6 +1130,11 @@ function flatPanel({ id, title, note, items, emptyText }) {
 // point is a decoration, and saying so is better than drawing it.
 // ---------------------------------------------------------------------------
 
+// Day, week or month. Week is the default: a day is noisy enough that one
+// quiet afternoon reads as a collapse, and a month is too coarse to notice
+// anything while it is still worth reacting to.
+let analyticsPeriod = 'week';
+
 function metricSnapshots() {
   return state.updates
     .filter(item => item.kind === 'diagnostic' && item.metadata?.source === 'metrics' && item.metadata?.snapshot)
@@ -1188,10 +1212,33 @@ function renderAnalytics() {
     statCard('Stalled past 21 days', latest.workerbee.stalledOver21 + latest.david.stalledOver21, `Oldest untouched item is ${Math.max(latest.workerbee.oldestStillDays, latest.david.oldestStillDays)} days still.`)
   );
 
-  const recent = snapshots.slice(-21);
-  const max = Math.max(1, ...recent.map(s => s.workerbee.open + s.david.open));
-  for (const snapshot of recent) {
-    chart.append(barRow(snapshot.date, snapshot.workerbee.open + snapshot.david.open, max));
+  // Delivery, at the chosen granularity. This series has real history behind
+  // it, because every completion carries an evidence date, so it reaches back
+  // before the snapshots started.
+  const series = latest.score[analyticsPeriod === 'day' ? 'byDay' : analyticsPeriod === 'week' ? 'byWeek' : 'byMonth'] || {};
+  const keys = Object.keys(series).sort().slice(analyticsPeriod === 'day' ? -21 : analyticsPeriod === 'week' ? -12 : -12);
+  const chartNote = el('chart-note');
+  if (chartNote) {
+    chartNote.textContent = keys.length
+      ? `Weighted delivery per ${analyticsPeriod}, with the unattended share shown beneath each bar. ${keys.length} ${analyticsPeriod}${keys.length === 1 ? '' : 's'} of history.`
+      : 'Nothing delivered yet at this granularity.';
+  }
+  const deliveredMax = Math.max(1, ...keys.map(key => series[key].delivered));
+  for (const key of keys) {
+    const bucket = series[key];
+    chart.append(barRow(key, bucket.delivered, deliveredMax));
+    if (bucket.unattended) chart.append(barRow('unattended', bucket.unattended, deliveredMax, 'cool'));
+  }
+
+  // Board shape, which only exists from the day snapshots began.
+  const shape = el('analytics-shape');
+  if (shape) {
+    shape.replaceChildren();
+    const recent = snapshots.slice(-21);
+    const max = Math.max(1, ...recent.map(s => s.workerbee.open + s.david.open));
+    for (const snapshot of recent) {
+      shape.append(barRow(snapshot.date, snapshot.workerbee.open + snapshot.david.open, max));
+    }
   }
 
   const demerits = (latest.score.demerits || []);
@@ -1202,6 +1249,20 @@ function renderAnalytics() {
     demeritsBox.append(clean);
   }
   icons();
+}
+
+function bindPeriodTabs() {
+  document.querySelectorAll('[data-period]').forEach(button => {
+    button.addEventListener('click', () => {
+      analyticsPeriod = button.dataset.period;
+      document.querySelectorAll('[data-period]').forEach(other => {
+        const active = other.dataset.period === analyticsPeriod;
+        other.classList.toggle('active', active);
+        other.setAttribute('aria-selected', String(active));
+      });
+      renderAnalytics();
+    });
+  });
 }
 
 function bindTodoSearch() {
@@ -1324,6 +1385,7 @@ bindTodoSearch();
       catch (error) { showToast(error.message, true); }
     });
   } else if (surface === 'analytics') {
+    bindPeriodTabs();
     // Read-only surface. It binds nothing beyond the shared auth form above,
     // and it must not reach for Todo or Journal controls that are not on the
     // page: doing so threw before the auth listener was ever attached, which
