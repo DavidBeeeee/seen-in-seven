@@ -32,8 +32,15 @@
     <section id="error-card" class="error-card" hidden><h1>I could not open your todo.</h1><p id="error-message"></p></section>
 
     <div id="todo-app" hidden>
-      <section class="todo-intro"><div><p class="eyebrow">Your lists</p><h1>What needs doing?</h1></div><button class="quiet-button" id="add-section" type="button"><i data-lucide="plus"></i> Add heading</button></section>
-      <div id="todo-sections" class="todo-document"></div>
+      <section class="todo-intro">
+        <div><p class="eyebrow">The whole board</p><h1>What needs doing?</h1><p>Everything stays visible. Projects fold shut so the list can grow without becoming a wall.</p></div>
+        <button class="quiet-button" id="add-section" type="button"><i data-lucide="plus"></i> Add heading</button>
+      </section>
+      <div class="todo-owner-tabs" role="tablist" aria-label="Task owner">
+        <button class="todo-owner-tab active" type="button" data-todo-owner="workerbee" role="tab" aria-selected="true">WorkerBee <span id="workerbee-task-count">0</span></button>
+        <button class="todo-owner-tab" type="button" data-todo-owner="david" role="tab" aria-selected="false">DavidBee <span id="david-task-count">0</span></button>
+      </div>
+      <div id="todo-board" class="todo-board"></div>
     </div>
   </main>
   <div class="toast" id="toast" role="status" hidden></div>

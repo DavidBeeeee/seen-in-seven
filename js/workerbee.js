@@ -7,6 +7,14 @@ let session = null;
 let state = { sections: [], tasks: [], updates: [], journal: [], clients: [], events: [], products: [], changes: [], readState: null };
 let toastTimer = null;
 let journalExpanded = false;
+let todoOwner = 'workerbee';
+
+const TODO_QUADRANTS = {
+  Q1: { title: 'Urgent and important', note: 'Doing now.' },
+  Q2: { title: 'Important, not urgent', note: 'The real work. Protect this from the noise.' },
+  Q3: { title: 'Urgent, not important', note: 'Deadlines that do not move the business.' },
+  Q4: { title: 'Neither', note: 'Parked on purpose, still visible.' }
+};
 
 function icons() {
   if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
@@ -683,65 +691,177 @@ function iconButton(name, label, handler) {
 }
 
 function renderTodo() {
-  const root = el('todo-sections');
+  const root = el('todo-board');
   root.replaceChildren();
   const sections = sortByOrder(state.sections);
-  if (!sections.length) root.append(empty('Add your first heading, then start writing tasks underneath it.'));
-  sections.forEach((section, sectionIndex) => {
-    const article = document.createElement('section');
-    article.className = 'todo-section';
-    const headingRow = document.createElement('div');
-    headingRow.className = 'section-title-row';
-    const heading = document.createElement('input');
-    heading.className = 'section-title';
-    heading.value = section.title;
-    heading.setAttribute('aria-label', 'Heading title');
-    heading.addEventListener('change', async () => {
-      const value = heading.value.trim();
-      if (!value || value === section.title) { heading.value = section.title; return; }
-      try { Object.assign(section, await api('update_section', { id: section.id, title: value })); showToast('Heading saved.'); }
-      catch (error) { heading.value = section.title; showToast(error.message, true); }
-    });
-    const controls = document.createElement('div');
-    controls.className = 'section-controls';
-    controls.append(
-      iconButton('arrow-up', 'Move heading up', () => moveSection(sectionIndex, -1)),
-      iconButton('arrow-down', 'Move heading down', () => moveSection(sectionIndex, 1)),
-      iconButton('archive', 'Archive heading', () => archiveSection(section))
-    );
-    headingRow.append(heading, controls);
-
-    const list = document.createElement('div');
-    list.className = 'task-list';
-    const tasks = sortByOrder(state.tasks.filter(task => task.section_id === section.id));
-    tasks.forEach((task, taskIndex) => list.append(taskRow(task, tasks, taskIndex)));
-    const add = document.createElement('form');
-    add.className = 'task-add';
-    const plus = document.createElement('span');
-    plus.textContent = '+';
-    const input = document.createElement('input');
-    input.placeholder = 'Add a task';
-    input.setAttribute('aria-label', `Add a task under ${section.title}`);
-    add.append(plus, input);
-    add.addEventListener('submit', async event => {
-      event.preventDefault();
-      const title = input.value.trim();
-      if (!title) return;
-      input.disabled = true;
-      try {
-        const created = await api('create_task', { section_id: section.id, title, sort_order: tasks.length * 100 });
-        state.tasks.push(created);
-        input.value = '';
-        renderTodo();
-        const next = root.querySelector(`[data-section-id="${section.id}"] .task-add input`);
-        if (next) next.focus();
-      } catch (error) { showToast(error.message, true); input.disabled = false; }
-    });
-    article.dataset.sectionId = section.id;
-    article.append(headingRow, list, add);
-    root.append(article);
+  const openTasks = state.tasks.filter(task => task.status !== 'done');
+  const queueItems = state.updates.filter(item => item.kind === 'commitment' && item.status === 'active' && item.metadata?.source === 'execution-queue');
+  const counts = {
+    workerbee: queueItems.filter(item => (item.metadata?.owner || 'workerbee') !== 'david').length + openTasks.filter(task => task.owner === 'workerbee').length,
+    david: openTasks.filter(task => task.owner !== 'workerbee').length + queueItems.filter(item => item.metadata?.owner === 'david').length
+  };
+  el('workerbee-task-count').textContent = counts.workerbee;
+  el('david-task-count').textContent = counts.david;
+  document.querySelectorAll('[data-todo-owner]').forEach(button => {
+    const active = button.dataset.todoOwner === todoOwner;
+    button.classList.toggle('active', active);
+    button.setAttribute('aria-selected', String(active));
   });
+
+  for (const [quadrant, copy] of Object.entries(TODO_QUADRANTS)) {
+    const panel = document.createElement('section');
+    panel.className = 'todo-quadrant';
+    panel.dataset.quadrant = quadrant;
+    const heading = document.createElement('header');
+    heading.className = 'todo-quadrant-heading';
+    const words = document.createElement('div');
+    const title = document.createElement('h2');
+    title.textContent = copy.title;
+    const note = document.createElement('p');
+    note.textContent = copy.note;
+    const label = document.createElement('span');
+    label.className = 'quadrant-label';
+    label.textContent = quadrant;
+    words.append(title, note);
+    heading.append(words, label);
+    panel.append(heading);
+
+    const editableProjects = sections.map((section, sectionIndex) => ({
+      section,
+      sectionIndex,
+      tasks: sortByOrder(openTasks.filter(task => task.section_id === section.id && (task.owner === 'workerbee' ? 'workerbee' : 'david') === todoOwner))
+    })).filter(project => (project.tasks.length ? taskProjectQuadrant(project.tasks) === quadrant : (todoOwner === 'david' && quadrant === 'Q2')));
+    const queueProjects = groupQueueProjects(queueItems.filter(item => (item.metadata?.owner === 'david' ? 'david' : 'workerbee') === todoOwner && queueQuadrant(item) === quadrant));
+
+    editableProjects.forEach(project => panel.append(editableTodoProject(project)));
+    queueProjects.forEach(project => panel.append(queueTodoProject(project)));
+    if (!editableProjects.length && !queueProjects.length) panel.append(empty('Nothing here.'));
+    root.append(panel);
+  }
   icons();
+}
+
+function dueSoon(task) {
+  const raw = task.due_date || task.follow_up_date;
+  if (!raw) return false;
+  const when = validDate(raw, true);
+  if (!when) return false;
+  return when.getTime() <= Date.now() + (3 * 86400000);
+}
+
+function taskProjectQuadrant(tasks) {
+  if (tasks.some(task => task.status === 'active' && dueSoon(task))) return 'Q1';
+  if (tasks.some(task => task.status === 'active')) return 'Q2';
+  if (tasks.some(task => task.status === 'waiting' && dueSoon(task))) return 'Q3';
+  return 'Q4';
+}
+
+function queueQuadrant(item) {
+  const status = item.metadata?.queue_status;
+  const activeInitiative = item.metadata?.initiative_status === 'active';
+  const urgent = ['executing', 'ready', 'capability-repair'].includes(status);
+  if (activeInitiative && urgent) return 'Q1';
+  if (activeInitiative) return 'Q2';
+  if (urgent) return 'Q3';
+  return 'Q4';
+}
+
+function groupQueueProjects(items) {
+  const groups = new Map();
+  items.forEach(item => {
+    const id = item.metadata?.initiative_id || 'unassigned';
+    if (!groups.has(id)) groups.set(id, { title: item.metadata?.initiative_title || 'Unassigned WorkerBee work', items: [] });
+    groups.get(id).items.push(item);
+  });
+  return [...groups.values()];
+}
+
+function projectShell(title, count) {
+  const details = document.createElement('details');
+  details.className = 'todo-project';
+  const summary = document.createElement('summary');
+  const name = document.createElement('span');
+  name.textContent = title;
+  const badge = document.createElement('span');
+  badge.className = 'project-count';
+  badge.textContent = `${count} open`;
+  summary.append(name, badge);
+  const body = document.createElement('div');
+  body.className = 'todo-project-body';
+  details.append(summary, body);
+  return { details, body };
+}
+
+function editableTodoProject({ section, sectionIndex, tasks }) {
+  const { details, body } = projectShell(section.title, tasks.length);
+  const headingRow = document.createElement('div');
+  headingRow.className = 'section-title-row';
+  const heading = document.createElement('input');
+  heading.className = 'section-title';
+  heading.value = section.title;
+  heading.setAttribute('aria-label', 'Heading title');
+  heading.addEventListener('change', async () => {
+    const value = heading.value.trim();
+    if (!value || value === section.title) { heading.value = section.title; return; }
+    try { Object.assign(section, await api('update_section', { id: section.id, title: value })); showToast('Heading saved.'); renderTodo(); }
+    catch (error) { heading.value = section.title; showToast(error.message, true); }
+  });
+  const controls = document.createElement('div');
+  controls.className = 'section-controls';
+  controls.append(
+    iconButton('arrow-up', 'Move heading up', () => moveSection(sectionIndex, -1)),
+    iconButton('arrow-down', 'Move heading down', () => moveSection(sectionIndex, 1)),
+    iconButton('archive', 'Archive heading', () => archiveSection(section))
+  );
+  headingRow.append(heading, controls);
+  const list = document.createElement('div');
+  list.className = 'task-list';
+  tasks.forEach((task, index) => list.append(taskRow(task, tasks, index)));
+  const add = document.createElement('form');
+  add.className = 'task-add';
+  const plus = document.createElement('span');
+  plus.textContent = '+';
+  const input = document.createElement('input');
+  input.placeholder = 'Add a task';
+  input.setAttribute('aria-label', `Add a task under ${section.title}`);
+  add.append(plus, input);
+  add.addEventListener('submit', async event => {
+    event.preventDefault();
+    const value = input.value.trim();
+    if (!value) return;
+    input.disabled = true;
+    try {
+      const created = await api('create_task', { section_id: section.id, title: value, owner: todoOwner, sort_order: tasks.length * 100 });
+      state.tasks.push(created);
+      renderTodo();
+    } catch (error) { showToast(error.message, true); input.disabled = false; }
+  });
+  body.append(headingRow, list, add);
+  return details;
+}
+
+function queueTodoProject(project) {
+  const { details, body } = projectShell(project.title, project.items.length);
+  project.items.sort((a, b) => Number(a.metadata?.priority || 99) - Number(b.metadata?.priority || 99)).forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'queue-task';
+    const title = document.createElement('strong');
+    title.textContent = item.title;
+    const next = document.createElement('small');
+    next.textContent = item.body || item.metadata?.intended_result || '';
+    row.append(title, next);
+    body.append(row);
+  });
+  return details;
+}
+
+function bindTodoOwnerTabs() {
+  document.querySelectorAll('[data-todo-owner]').forEach(button => {
+    button.addEventListener('click', () => {
+      todoOwner = button.dataset.todoOwner;
+      renderTodo();
+    });
+  });
 }
 
 function taskRow(task, siblingTasks, index) {
@@ -837,6 +957,7 @@ function bindEvents() {
   });
   el('sign-out').addEventListener('click', () => sb.auth.signOut());
   if (surface === 'todo') {
+    bindTodoOwnerTabs();
     el('add-section').addEventListener('click', async () => {
       const title = window.prompt('New heading');
       if (!title || !title.trim()) return;
