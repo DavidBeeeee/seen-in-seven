@@ -108,6 +108,10 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .report-period li strong { color: var(--text); }
 .report-period .report-next { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--line-soft); color: var(--teal-light); font-weight: 700; }
 .report-period .report-unknown { margin-top: 8px; color: var(--gold); }
+.report-public-actions { display: grid; gap: 6px; margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--line-soft); }
+.report-public-actions > strong { color: var(--text); font-size: 11px; }
+.report-public-actions a { display: flex; align-items: center; min-height: 34px; padding: 7px 9px; border: 1px solid rgba(50, 184, 184, .35); border-radius: 7px; background: rgba(50, 184, 184, .08); color: var(--teal-light); font-size: 11px; font-weight: 800; line-height: 1.35; text-decoration: none; }
+.report-public-actions a:hover, .report-public-actions a:focus-visible { border-color: var(--teal); background: rgba(50, 184, 184, .16); color: var(--text); outline: none; }
 .attention-panel { border-color: rgba(200, 168, 75, .42); }
 .panel-heading { display: flex; align-items: start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
 .count-badge { min-width: 25px; height: 25px; display: grid; place-items: center; border: 1px solid rgba(200, 168, 75, .42); border-radius: 999px; color: var(--gold); font-size: 11px; font-weight: 800; }

@@ -340,6 +340,24 @@ function renderReportPeriod(label, period) {
     next.textContent = `Next: ${period.next.join(' · ')}`;
     card.append(next);
   }
+  const publicActions = period && Array.isArray(period.publicActions) ? period.publicActions : [];
+  if (publicActions.length) {
+    const actions = document.createElement('div');
+    actions.className = 'report-public-actions';
+    const actionsLabel = document.createElement('strong');
+    actionsLabel.textContent = 'Public activity';
+    actions.append(actionsLabel);
+    publicActions.forEach(item => {
+      const link = document.createElement('a');
+      link.href = item.url;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = `${String(item.platform || 'Public').toUpperCase()}: ${item.label || item.action || 'View activity'}`;
+      link.setAttribute('aria-label', `Open ${item.platform || 'public'} ${item.action || 'activity'} in a new tab`);
+      actions.append(link);
+    });
+    card.append(actions);
+  }
   return card;
 }
 

@@ -53,6 +53,9 @@ assert.match(client, /function dailyReportUpdates[\s\S]*slice\(0, 2\)/, 'The Das
 assert.match(client, /reportDayLabel[\s\S]*Yesterday/, 'The prior report must be labeled Yesterday rather than looking current.');
 assert.match(client, /renderReportPeriod\('Moltbook'/, 'The Moltbook fieldwork slot must render independently.');
 assert.match(client, /renderReportPeriod\('Late night'/, 'The Late Night build slot must render independently.');
+assert.match(client, /Array\.isArray\(period\.publicActions\)/, 'Daily report periods must render their structured public actions.');
+assert.match(client, /link\.href = item\.url/, 'Public actions must link to their canonical recorded URL.');
+assert.match(client, /noopener noreferrer/, 'Public action links must open without sharing opener access.');
 assert.match(client, /function formatDateTime/, 'Dashboard records must share one explicit date and time formatter.');
 assert.match(client, /Latest session/, 'Client cards must show when the latest session happened.');
 assert.match(client, /Record updated/, 'Dashboard modules must expose when their source record last changed.');
