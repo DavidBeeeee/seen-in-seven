@@ -716,17 +716,47 @@ function rememberCollapse(name, collapsed) {
 }
 
 // One category block: a big, collapsible, ember heading with its count.
-function categoryBlock(name, count) {
+function categoryBlock(name, count, { section = null, sectionIndex = -1 } = {}) {
   const details = document.createElement('details');
   details.className = 'todo-category';
   details.open = !collapsedSet().has(name);
   const summary = document.createElement('summary');
-  const label = document.createElement('span');
-  label.textContent = name;
+  let label;
+  if (section) {
+    // Editable in place. A text input inside a summary would otherwise toggle
+    // the disclosure on every click and on every space typed, so both are
+    // stopped here rather than by the user's patience.
+    label = document.createElement('input');
+    label.className = 'category-title';
+    label.value = name;
+    label.setAttribute('aria-label', 'Heading title');
+    label.addEventListener('click', event => event.preventDefault());
+    label.addEventListener('keydown', event => { if (event.key === ' ') event.stopPropagation(); });
+    label.addEventListener('change', async () => {
+      const value = label.value.trim();
+      if (!value || value === section.title) { label.value = section.title; return; }
+      try { Object.assign(section, await api('update_section', { id: section.id, title: value })); showToast('Heading saved.'); renderTodo(); }
+      catch (error) { label.value = section.title; showToast(error.message, true); }
+    });
+  } else {
+    label = document.createElement('span');
+    label.textContent = name;
+  }
   const chip = document.createElement('span');
   chip.className = 'category-count';
   chip.textContent = count;
   summary.append(label, chip);
+  if (section) {
+    const controls = document.createElement('span');
+    controls.className = 'section-controls';
+    controls.append(
+      iconButton('arrow-up', 'Move heading up', () => moveSection(sectionIndex, -1)),
+      iconButton('arrow-down', 'Move heading down', () => moveSection(sectionIndex, 1)),
+      iconButton('archive', 'Archive heading', () => archiveSection(section))
+    );
+    controls.addEventListener('click', event => event.preventDefault());
+    summary.append(controls);
+  }
   const body = document.createElement('div');
   details.append(summary, body);
   details.addEventListener('toggle', () => rememberCollapse(name, !details.open));
@@ -994,7 +1024,7 @@ function editableTodoProject({ section, sectionIndex, tasks }) {
 // The editable innards of one section: the renamable heading, its controls,
 // the task rows, and the add box. Returned without a shell so the caller
 // decides whether it sits inside a project fold or a category block.
-function editableSectionBody({ section, sectionIndex, tasks }) {
+function editableSectionBody({ section, sectionIndex, tasks, withHeading = true }) {
   const wrap = document.createElement('div');
   const headingRow = document.createElement('div');
   headingRow.className = 'section-title-row';
@@ -1038,7 +1068,8 @@ function editableSectionBody({ section, sectionIndex, tasks }) {
       renderTodo();
     } catch (error) { showToast(error.message, true); input.disabled = false; }
   });
-  wrap.append(headingRow, list, add);
+  if (withHeading) wrap.append(headingRow);
+  wrap.append(list, add);
   return wrap;
 }
 
@@ -1148,13 +1179,13 @@ function flatPanel({ id, title, note, items, emptyText, taskProjects = [], secti
   // His own headings first, because they are the vocabulary he wrote.
   for (const project of taskProjects) {
     const total = project.tasks.length + (project.children ?? []).reduce((sum, child) => sum + child.tasks.length, 0);
-    const { details, body } = categoryBlock(project.section.title, total);
-    body.append(editableSectionBody({ section: project.section, sectionIndex: sections.indexOf(project.section), tasks: project.tasks }));
+    const { details, body } = categoryBlock(project.section.title, total, { section: project.section, sectionIndex: sections.indexOf(project.section) });
+    body.append(editableSectionBody({ section: project.section, sectionIndex: sections.indexOf(project.section), tasks: project.tasks, withHeading: false }));
     for (const child of project.children ?? []) {
       const heading = document.createElement('h4');
       heading.className = 'todo-subtopic';
       heading.textContent = child.section.title;
-      body.append(heading, editableSectionBody({ section: child.section, sectionIndex: sections.indexOf(child.section), tasks: child.tasks }));
+      body.append(heading, editableSectionBody({ section: child.section, sectionIndex: sections.indexOf(child.section), tasks: child.tasks, withHeading: false }));
     }
     panel.append(details);
   }
