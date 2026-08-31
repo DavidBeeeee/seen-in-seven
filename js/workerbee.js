@@ -820,11 +820,31 @@ function renderTodo() {
   }
   root.append(inboxPanel);
 
+  // David's own tasks belong in Next too, under his own headings.
+  //
+  // They were reaching neither: Next was built only from commitments, so his
+  // side showed my roadmap themes while his six real tasks sat in Q2 under
+  // headings he never chose. His sections are his categories, and inventing a
+  // taxonomy over the top of them was the wrong answer to a question he had
+  // already answered by writing the headings himself.
+  //
+  // His tasks carry no priority, and none is invented for them here. They are
+  // marked unranked and they sort to the front, because an unranked task is a
+  // question waiting to be answered rather than a low one.
+  const editableForNext = todoOwner === 'david'
+    ? sections
+        .filter(section => !/^inbox$/i.test(section.title || ''))
+        .map(section => ({ section, tasks: sortByOrder(openTasks.filter(task => task.section_id === section.id)).filter(task => matchesFilter({ title: task.title, body: task.notes })) }))
+        .filter(project => project.tasks.length)
+    : [];
+
   root.append(flatPanel({
     id: 'today',
     title: 'Next',
     note: 'Priority 4 and under and not blocked. It does not have to be done today, but it should be done as soon as possible. It sits in front of the quadrants on purpose: clearing this is how the urgent and important work becomes reachable.',
     items: mine.filter(isNext),
+    taskProjects: editableForNext,
+    sections,
     emptyText: 'Nothing actionable at this priority, which either means the board is clear or everything urgent is blocked. Check Q1 before believing the first one.'
   }));
 
@@ -851,7 +871,12 @@ function renderTodo() {
       sectionIndex,
       tasks: sortByOrder(openTasks.filter(task => task.section_id === section.id && (task.owner === 'workerbee' ? 'workerbee' : 'david') === todoOwner))
     })).filter(project => !/^inbox$/i.test(project.section.title || ''))
-      .filter(project => (project.tasks.length ? taskProjectQuadrant(project.tasks) === quadrant : (todoOwner === 'david' && quadrant === 'Q2')));
+      // Empty sections used to be forced into Q2 for David, which is why every
+      // heading he owned appeared there whether or not it held anything.
+      .filter(project => project.tasks.length)
+      // And anything now shown in Next is not repeated below it.
+      .filter(project => !editableForNext.some(entry => entry.section.id === project.section.id))
+      .filter(project => taskProjectQuadrant(project.tasks) === quadrant);
     const queueProjects = groupQueueProjects(mine.filter(item => !isNext(item) && !isLongTerm(item) && queueQuadrant(item) === quadrant));
 
     editableProjects.forEach(project => panel.append(editableTodoProject(project)));
@@ -1086,7 +1111,7 @@ function queueTodoProject(project) {
 
 // A flat strip rather than folded projects. Today and the horizon are both
 // read straight through, so hiding them behind a disclosure would defeat them.
-function flatPanel({ id, title, note, items, emptyText }) {
+function flatPanel({ id, title, note, items, emptyText, taskProjects = [], sections = [] }) {
   const panel = document.createElement('section');
   panel.className = 'todo-quadrant';
   panel.dataset.quadrant = id;
@@ -1100,7 +1125,17 @@ function flatPanel({ id, title, note, items, emptyText }) {
   words.append(name, sub);
   heading.append(words);
   panel.append(heading);
-  if (!items.length) { panel.append(empty(emptyText)); return panel; }
+  // His own headings first, because they are the vocabulary he wrote.
+  for (const project of taskProjects) {
+    const { details, body } = categoryBlock(project.section.title, project.tasks.length);
+    const inner = editableTodoProject({ section: project.section, sectionIndex: sections.indexOf(project.section), tasks: project.tasks });
+    body.append(inner);
+    // The project shell inside is redundant when the category already names
+    // it, so it opens by default and carries the editing controls only.
+    inner.open = true;
+    panel.append(details);
+  }
+  if (!items.length) { if (!taskProjects.length) panel.append(empty(emptyText)); return panel; }
   // Grouped by category. Thirty-one items in a flat list is the wall this
   // board exists to prevent, and Next is meant to be comprehensive.
   const groups = new Map();
@@ -1291,6 +1326,16 @@ function taskRow(task, siblingTasks, index) {
   checkbox.className = 'task-check';
   checkbox.checked = task.status === 'done';
   checkbox.setAttribute('aria-label', `Complete ${task.title}`);
+  // Unranked, and said so rather than hidden. David's tasks carry no priority
+  // yet, and inventing one for them would be exactly the silent default the
+  // audit flagged: everything landing at five without anybody deciding. The
+  // dash is the visible version of the gap, and it is the next piece of work
+  // on his side.
+  const rank = document.createElement('span');
+  rank.className = 'priority-badge unranked';
+  rank.textContent = '\u2013';
+  rank.title = 'Not ranked yet. Priorities come to this side next.';
+  row.append(rank);
   checkbox.addEventListener('change', async () => {
     try {
       Object.assign(task, await api('update_task', { id: task.id, status: checkbox.checked ? 'done' : 'active' }));
