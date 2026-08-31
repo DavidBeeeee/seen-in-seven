@@ -1323,6 +1323,11 @@ bindTodoSearch();
       try { state.sections.push(await api('create_section', { title, sort_order: state.sections.length * 100 })); renderTodo(); }
       catch (error) { showToast(error.message, true); }
     });
+  } else if (surface === 'analytics') {
+    // Read-only surface. It binds nothing beyond the shared auth form above,
+    // and it must not reach for Todo or Journal controls that are not on the
+    // page: doing so threw before the auth listener was ever attached, which
+    // is why this page could not be signed into at all.
   } else {
     el('toggle-journal').addEventListener('click', () => { journalExpanded = !journalExpanded; renderJournal(); });
     el('new-journal-button').addEventListener('click', () => { el('journal-form').hidden = false; el('journal-title').focus(); });

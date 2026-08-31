@@ -28,7 +28,7 @@
       <form id="auth-form"><label for="auth-email">Email</label><input id="auth-email" type="email" autocomplete="email" required><button class="primary-button" type="submit">Send sign-in link</button><p class="form-message" id="auth-message" role="status"></p></form>
     </section>
     <section id="loading" class="loading-card" hidden>Loading the numbers...</section>
-    <section id="error-card" class="error-card" hidden></section>
+    <section id="error-card" class="error-card" hidden><span id="error-message"></span></section>
     <div id="analytics-app" hidden>
       <p class="analytics-note" id="analytics-note"></p>
       <div class="analytics-grid" id="analytics-cards"></div>
@@ -45,6 +45,6 @@
     </div>
   </main>
   <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
-  <script src="/js/workerbee.js"></script>
+  <script type="module" src="/js/workerbee.js"></script>
 </body>
 </html>
