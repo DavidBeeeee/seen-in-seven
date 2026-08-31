@@ -789,12 +789,17 @@ function isLongTerm(item) {
   return priorityOf(item) >= LONG_TERM_MIN && !isToday(item);
 }
 
+// The quadrant is the pair of axes: priority says when, importance says
+// whether the enterprise would survive its absence. Reading importance off
+// the initiative's status made it always true once no initiative was parked,
+// which emptied Q3 and Q4 without anyone being told.
+const URGENT_AT_OR_UNDER = 4;
+
 function queueQuadrant(item) {
-  const status = item.metadata?.queue_status || item.metadata?.roadmap_status;
-  const activeInitiative = item.metadata?.initiative_status === 'active';
-  const urgent = ['executing', 'ready', 'capability-repair'].includes(status);
-  if (activeInitiative && urgent) return 'Q1';
-  if (activeInitiative) return 'Q2';
+  const urgent = priorityOf(item) <= URGENT_AT_OR_UNDER;
+  const important = item.metadata?.important !== false;
+  if (important && urgent) return 'Q1';
+  if (important) return 'Q2';
   if (urgent) return 'Q3';
   return 'Q4';
 }
@@ -896,6 +901,12 @@ function queueTaskRow(item, { showProject = false } = {}) {
   const next = document.createElement('small');
   next.textContent = item.body || item.metadata?.intended_result || '';
   row.append(next);
+  if (item.metadata?.not_important_because) {
+    const why = document.createElement('small');
+    why.className = 'waiting-on';
+    why.textContent = `Not important: ${item.metadata.not_important_because}`;
+    row.append(why);
+  }
   if (item.metadata?.blocked_by) {
     const waiting = document.createElement('small');
     waiting.className = 'waiting-on';

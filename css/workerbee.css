@@ -204,6 +204,15 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .waiting-on { opacity: .75; font-style: italic; }
 [data-quadrant="today"] .todo-quadrant-heading h2, [data-quadrant="horizon"] .todo-quadrant-heading h2 { letter-spacing: -.01em; }
 [data-quadrant="today"] { border-color: var(--accent, #d9f27c); }
+/* Today spans the full top row and the horizon spans the full bottom one, so
+   the four quadrants sit between them as an actual box rather than being
+   pushed out of order by two panels competing for grid cells. */
+[data-quadrant="today"], [data-quadrant="horizon"] { grid-column: 1 / -1; }
+/* The horizon is a read-through list of fifteen lines, so it columnises
+   instead of running down the page. */
+[data-quadrant="horizon"] .queue-task { break-inside: avoid; }
+@media (min-width: 720px) { [data-quadrant="horizon"] { column-count: 2; column-gap: 22px; } [data-quadrant="horizon"] .todo-quadrant-heading { column-span: all; } }
+@media (min-width: 1180px) { [data-quadrant="horizon"] { column-count: 3; } }
 .queue-task strong { color: var(--text); font-size: 12px; }
 .queue-task small { margin-top: 3px; color: var(--muted); font-size: 10px; }
 .todo-document { display: grid; gap: 12px; }
