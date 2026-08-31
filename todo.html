@@ -40,6 +40,10 @@
         <button class="todo-owner-tab active" type="button" data-todo-owner="workerbee" role="tab" aria-selected="true">WorkerBee <span id="workerbee-task-count">0</span></button>
         <button class="todo-owner-tab" type="button" data-todo-owner="david" role="tab" aria-selected="false">DavidBee <span id="david-task-count">0</span></button>
       </div>
+      <div class="todo-toolbar">
+        <input id="todo-search" class="todo-search" type="search" placeholder="Search by ID, title or category, e.g. WBR-072" autocomplete="off" aria-label="Search the board">
+        <span class="todo-score" id="todo-score" title="A point is an item WorkerBee put on this board and then finished."></span>
+      </div>
       <div id="todo-board" class="todo-board"></div>
     </div>
   </main>
