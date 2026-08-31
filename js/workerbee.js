@@ -14,7 +14,7 @@ let todoOwner = 'workerbee';
 // only the repository copy was corrected. Q4 is not a shelf: it is real work
 // the enterprise would survive without, kept visible so it stays a decision.
 const TODO_QUADRANTS = {
-  Q1: { title: 'Urgent and important', note: 'Doing now.' },
+  Q1: { title: 'Urgent and important', note: 'Queued behind Next.' },
   Q2: { title: 'Important, not urgent', note: 'The real work. Protect this from the noise.' },
   Q3: { title: 'Urgent, not important', note: 'Real chores and deadlines that do not move the business. A thin Q3 is a good sign.' },
   Q4: { title: 'Neither', note: 'Real work the enterprise would survive without. Nothing here is parked, and each item says why it ranks low.' }
@@ -715,10 +715,10 @@ function renderTodo() {
   const mine = queueItems.filter(item => (item.metadata?.owner === 'david' ? 'david' : 'workerbee') === todoOwner);
   root.append(flatPanel({
     id: 'today',
-    title: 'Today',
-    note: 'Priority 2 and under, plus anything pinned. What is actually being worked now.',
-    items: mine.filter(isToday),
-    emptyText: 'Nothing at daily priority. Pull something up rather than inventing work.'
+    title: 'Next',
+    note: 'Priority 4 and under and not blocked. It does not have to be done today, but it should be done as soon as possible. It sits in front of the quadrants on purpose: clearing this is how the urgent and important work becomes reachable.',
+    items: mine.filter(isNext),
+    emptyText: 'Nothing actionable at this priority, which either means the board is clear or everything urgent is blocked. Check Q1 before believing the first one.'
   }));
 
   for (const [quadrant, copy] of Object.entries(TODO_QUADRANTS)) {
@@ -744,7 +744,7 @@ function renderTodo() {
       sectionIndex,
       tasks: sortByOrder(openTasks.filter(task => task.section_id === section.id && (task.owner === 'workerbee' ? 'workerbee' : 'david') === todoOwner))
     })).filter(project => (project.tasks.length ? taskProjectQuadrant(project.tasks) === quadrant : (todoOwner === 'david' && quadrant === 'Q2')));
-    const queueProjects = groupQueueProjects(mine.filter(item => !isToday(item) && !isLongTerm(item) && queueQuadrant(item) === quadrant));
+    const queueProjects = groupQueueProjects(mine.filter(item => !isNext(item) && !isLongTerm(item) && queueQuadrant(item) === quadrant));
 
     editableProjects.forEach(project => panel.append(editableTodoProject(project)));
     queueProjects.forEach(project => panel.append(queueTodoProject(project)));
@@ -782,23 +782,30 @@ function priorityOf(item) {
   return Number.isFinite(value) ? value : 5;
 }
 
-const DAILY_MAX = 2;
+// Next, not Today. This is the comprehensive board rather than the quick
+// dashboard, so the band has no cap: everything urgent and actionable is in
+// it. It sits in front of Q1 deliberately, which is where the pressure comes
+// from, and blocked work is never in it because something waiting on a
+// dependency cannot be done as soon as possible.
+const NEXT_MAX = 4;
 const LONG_TERM_MIN = 8;
+// Wider than NEXT_MAX on purpose. When the two matched, Next swallowed Q1 and
+// both Q1 and Q3 rendered empty.
+const URGENT_AT_OR_UNDER = 6;
 
-function isToday(item) {
-  return item.metadata?.pinned_today === true || priorityOf(item) <= DAILY_MAX;
+function isNext(item) {
+  if (item.metadata?.pinned_today === true) return true;
+  return priorityOf(item) <= NEXT_MAX && item.metadata?.roadmap_status !== 'blocked' && item.metadata?.queue_status !== 'blocked';
 }
 
 function isLongTerm(item) {
-  return priorityOf(item) >= LONG_TERM_MIN && !isToday(item);
+  return priorityOf(item) >= LONG_TERM_MIN && !isNext(item);
 }
 
 // The quadrant is the pair of axes: priority says when, importance says
 // whether the enterprise would survive its absence. Reading importance off
 // the initiative's status made it always true once no initiative was parked,
 // which emptied Q3 and Q4 without anyone being told.
-const URGENT_AT_OR_UNDER = 4;
-
 function queueQuadrant(item) {
   const urgent = priorityOf(item) <= URGENT_AT_OR_UNDER;
   const important = item.metadata?.important !== false;
@@ -889,7 +896,7 @@ function queueTaskRow(item, { showProject = false } = {}) {
   head.className = 'queue-task-head';
   const badge = document.createElement('span');
   badge.className = 'priority-badge';
-  badge.dataset.band = isToday(item) ? 'today' : isLongTerm(item) ? 'horizon' : 'board';
+  badge.dataset.band = isNext(item) ? 'today' : isLongTerm(item) ? 'horizon' : 'board';
   badge.textContent = priorityOf(item);
   badge.title = 'Weight of urgency on what to do next. 1 is today, 10 means something else has to finish first.';
   const title = document.createElement('strong');
