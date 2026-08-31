@@ -208,7 +208,6 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .queue-task-head strong { flex: 1; min-width: 0; }
 .priority-badge { flex: 0 0 auto; min-width: 22px; padding: 1px 6px; border-radius: 999px; font-size: 11px; font-weight: 800; text-align: center; background: var(--line-soft); color: var(--ink-soft); }
 .todo-subtopic { margin: 12px 0 2px; font-size: 12px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--soft); opacity: .8; }
-.priority-badge.unranked { background: transparent; border: 1px dashed var(--line); color: var(--muted); }
 .priority-badge[data-band="today"] { background: var(--accent, #d9f27c); color: #101712; }
 .priority-badge[data-band="horizon"] { background: transparent; border: 1px solid var(--line); }
 /* Categories are collapsible so a section can be hidden to focus on another,

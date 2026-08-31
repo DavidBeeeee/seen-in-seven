@@ -850,7 +850,9 @@ function renderTodo() {
   root.append(flatPanel({
     id: 'today',
     title: 'Next',
-    note: 'Priority 4 and under and not blocked. It does not have to be done today, but it should be done as soon as possible. It sits in front of the quadrants on purpose: clearing this is how the urgent and important work becomes reachable.',
+    note: todoOwner === 'david'
+      ? 'Your headings, with their subtopics. These are not ranked yet, so they are not banded by number the way the WorkerBee side is: ranking this side is the next piece of work.'
+      : 'Priority 4 and under and not blocked. It does not have to be done today, but it should be done as soon as possible. It sits in front of the quadrants on purpose: clearing this is how the urgent and important work becomes reachable.',
     items: mine.filter(isNext),
     taskProjects: editableForNext,
     sections,
@@ -1360,16 +1362,11 @@ function taskRow(task, siblingTasks, index) {
   checkbox.className = 'task-check';
   checkbox.checked = task.status === 'done';
   checkbox.setAttribute('aria-label', `Complete ${task.title}`);
-  // Unranked, and said so rather than hidden. David's tasks carry no priority
-  // yet, and inventing one for them would be exactly the silent default the
-  // audit flagged: everything landing at five without anybody deciding. The
-  // dash is the visible version of the gap, and it is the next piece of work
-  // on his side.
-  const rank = document.createElement('span');
-  rank.className = 'priority-badge unranked';
-  rank.textContent = '\u2013';
-  rank.title = 'Not ranked yet. Priorities come to this side next.';
-  row.append(rank);
+  // No rank badge here. One was added and it broke every task row: .task-row
+  // is a three column grid of checkbox, title and controls, and appending a
+  // fourth child shifted all three one column across. The unranked state is
+  // worth saying once, in the panel note, rather than repeated on every line
+  // where it is noise as well as a layout bug.
   checkbox.addEventListener('change', async () => {
     try {
       Object.assign(task, await api('update_task', { id: task.id, status: checkbox.checked ? 'done' : 'active' }));
