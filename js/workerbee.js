@@ -831,11 +831,20 @@ function renderTodo() {
   // His tasks carry no priority, and none is invented for them here. They are
   // marked unranked and they sort to the front, because an unranked task is a
   // question waiting to be answered rather than a low one.
+  const tasksIn = section => sortByOrder(openTasks.filter(task => task.section_id === section.id))
+    .filter(task => matchesFilter({ title: task.title, body: task.notes }));
   const editableForNext = todoOwner === 'david'
     ? sections
-        .filter(section => !/^inbox$/i.test(section.title || ''))
-        .map(section => ({ section, tasks: sortByOrder(openTasks.filter(task => task.section_id === section.id)).filter(task => matchesFilter({ title: task.title, body: task.notes })) }))
-        .filter(project => project.tasks.length)
+        .filter(section => !section.parent_id && !/^inbox$/i.test(section.title || ''))
+        .map(section => ({
+          section,
+          tasks: tasksIn(section),
+          children: sections.filter(child => child.parent_id === section.id).map(child => ({ section: child, tasks: tasksIn(child) })),
+        }))
+        // Empty categories stay. They are the structure of his side, and
+        // hiding them made his own headings vanish, which he noticed within
+        // minutes. A category with nothing in it is information.
+        .filter(project => project.tasks.length || (project.children ?? []).some(child => child.tasks.length) || !todoFilter)
     : [];
 
   root.append(flatPanel({
@@ -976,6 +985,15 @@ function projectShell(title, count) {
 
 function editableTodoProject({ section, sectionIndex, tasks }) {
   const { details, body } = projectShell(section.title, tasks.length);
+  body.append(editableSectionBody({ section, sectionIndex, tasks }));
+  return details;
+}
+
+// The editable innards of one section: the renamable heading, its controls,
+// the task rows, and the add box. Returned without a shell so the caller
+// decides whether it sits inside a project fold or a category block.
+function editableSectionBody({ section, sectionIndex, tasks }) {
+  const wrap = document.createElement('div');
   const headingRow = document.createElement('div');
   headingRow.className = 'section-title-row';
   const heading = document.createElement('input');
@@ -1018,8 +1036,8 @@ function editableTodoProject({ section, sectionIndex, tasks }) {
       renderTodo();
     } catch (error) { showToast(error.message, true); input.disabled = false; }
   });
-  body.append(headingRow, list, add);
-  return details;
+  wrap.append(headingRow, list, add);
+  return wrap;
 }
 
 function queueTaskRow(item, { showProject = false } = {}) {
@@ -1127,12 +1145,15 @@ function flatPanel({ id, title, note, items, emptyText, taskProjects = [], secti
   panel.append(heading);
   // His own headings first, because they are the vocabulary he wrote.
   for (const project of taskProjects) {
-    const { details, body } = categoryBlock(project.section.title, project.tasks.length);
-    const inner = editableTodoProject({ section: project.section, sectionIndex: sections.indexOf(project.section), tasks: project.tasks });
-    body.append(inner);
-    // The project shell inside is redundant when the category already names
-    // it, so it opens by default and carries the editing controls only.
-    inner.open = true;
+    const total = project.tasks.length + (project.children ?? []).reduce((sum, child) => sum + child.tasks.length, 0);
+    const { details, body } = categoryBlock(project.section.title, total);
+    body.append(editableSectionBody({ section: project.section, sectionIndex: sections.indexOf(project.section), tasks: project.tasks }));
+    for (const child of project.children ?? []) {
+      const heading = document.createElement('h4');
+      heading.className = 'todo-subtopic';
+      heading.textContent = child.section.title;
+      body.append(heading, editableSectionBody({ section: child.section, sectionIndex: sections.indexOf(child.section), tasks: child.tasks }));
+    }
     panel.append(details);
   }
   if (!items.length) { if (!taskProjects.length) panel.append(empty(emptyText)); return panel; }
@@ -1140,14 +1161,27 @@ function flatPanel({ id, title, note, items, emptyText, taskProjects = [], secti
   // board exists to prevent, and Next is meant to be comprehensive.
   const groups = new Map();
   for (const item of items.sort(byPriority)) {
-    const name = item.metadata?.theme || item.metadata?.initiative_title || 'Unassigned';
-    if (!groups.has(name)) groups.set(name, []);
-    groups.get(name).push(item);
+    const name = item.metadata?.category || 'WorkerBee Evolution';
+    if (!groups.has(name)) groups.set(name, new Map());
+    const sub = item.metadata?.subtopic || '';
+    const inner = groups.get(name);
+    if (!inner.has(sub)) inner.set(sub, []);
+    inner.get(sub).push(item);
   }
-  if (groups.size <= 1) { items.forEach(item => panel.append(queueTaskRow(item, { showProject: true }))); return panel; }
-  for (const [name, rows] of groups) {
-    const { details, body } = categoryBlock(name, rows.length);
-    rows.forEach(item => body.append(queueTaskRow(item)));
+  for (const [name, subtopics] of groups) {
+    const total = [...subtopics.values()].reduce((sum, rows) => sum + rows.length, 0);
+    const { details, body } = categoryBlock(name, total);
+    // Ungrouped items sit directly under the category; named subtopics get a
+    // quiet second-level heading. Two levels, and no deeper.
+    for (const [sub, rows] of [...subtopics.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
+      if (sub) {
+        const heading = document.createElement('h4');
+        heading.className = 'todo-subtopic';
+        heading.textContent = sub;
+        body.append(heading);
+      }
+      rows.forEach(item => body.append(queueTaskRow(item)));
+    }
     panel.append(details);
   }
   return panel;
