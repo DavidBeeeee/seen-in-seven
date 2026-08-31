@@ -917,6 +917,16 @@ function queueTaskRow(item, { showProject = false } = {}) {
     moved.textContent = `Last moved ${days === 0 ? 'today' : `${days}d ago`} · ${kind}${item.metadata.last_moved_ref ? ` ${item.metadata.last_moved_ref}` : ''}`;
     row.append(moved);
   }
+  // What the other person owes on this item. Shown, never blocking: the item
+  // stays owned and advances as far as it can without them.
+  const owes = item.metadata?.needs_from_david ? ['Needs from David', item.metadata.needs_from_david]
+    : item.metadata?.needs_from_workerbee ? ['Needs from WorkerBee', item.metadata.needs_from_workerbee] : null;
+  if (owes) {
+    const line = document.createElement('small');
+    line.className = 'needs-from';
+    line.textContent = `${owes[0]}: ${owes[1]}`;
+    row.append(line);
+  }
   if (item.metadata?.not_important_because) {
     const why = document.createElement('small');
     why.className = 'waiting-on';
