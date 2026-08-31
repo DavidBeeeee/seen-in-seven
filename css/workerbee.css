@@ -192,6 +192,18 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .queue-task { padding: 9px 5px; border-top: 1px solid var(--line-soft); }
 .queue-task:first-child { border-top: 0; }
 .queue-task strong, .queue-task small { display: block; }
+/* Priority, 2026-08-31. The number is weight of urgency on what to do next:
+   1 is today, 10 means something else has to finish first. The band colours
+   are the only thing carrying that meaning at a glance on a phone. */
+.queue-task-head { display: flex; gap: 8px; align-items: baseline; }
+.queue-task-head strong { flex: 1; min-width: 0; }
+.priority-badge { flex: 0 0 auto; min-width: 22px; padding: 1px 6px; border-radius: 999px; font-size: 11px; font-weight: 800; text-align: center; background: var(--line-soft); color: var(--ink-soft); }
+.priority-badge[data-band="today"] { background: var(--accent, #d9f27c); color: #101712; }
+.priority-badge[data-band="horizon"] { background: transparent; border: 1px solid var(--line); }
+.queue-task-project { display: block; font-size: 11px; opacity: .6; font-style: normal; }
+.waiting-on { opacity: .75; font-style: italic; }
+[data-quadrant="today"] .todo-quadrant-heading h2, [data-quadrant="horizon"] .todo-quadrant-heading h2 { letter-spacing: -.01em; }
+[data-quadrant="today"] { border-color: var(--accent, #d9f27c); }
 .queue-task strong { color: var(--text); font-size: 12px; }
 .queue-task small { margin-top: 3px; color: var(--muted); font-size: 10px; }
 .todo-document { display: grid; gap: 12px; }

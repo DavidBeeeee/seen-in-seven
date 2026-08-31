@@ -695,7 +695,7 @@ function renderTodo() {
   root.replaceChildren();
   const sections = sortByOrder(state.sections);
   const openTasks = state.tasks.filter(task => task.status !== 'done');
-  const queueItems = state.updates.filter(item => item.kind === 'commitment' && item.status === 'active' && item.metadata?.source === 'execution-queue');
+  const queueItems = state.updates.filter(item => item.kind === 'commitment' && item.status === 'active' && ['execution-queue', 'roadmap'].includes(item.metadata?.source));
   const counts = {
     workerbee: queueItems.filter(item => (item.metadata?.owner || 'workerbee') !== 'david').length + openTasks.filter(task => task.owner === 'workerbee').length,
     david: openTasks.filter(task => task.owner !== 'workerbee').length + queueItems.filter(item => item.metadata?.owner === 'david').length
@@ -707,6 +707,15 @@ function renderTodo() {
     button.classList.toggle('active', active);
     button.setAttribute('aria-selected', String(active));
   });
+
+  const mine = queueItems.filter(item => (item.metadata?.owner === 'david' ? 'david' : 'workerbee') === todoOwner);
+  root.append(flatPanel({
+    id: 'today',
+    title: 'Today',
+    note: 'Priority 2 and under, plus anything pinned. What is actually being worked now.',
+    items: mine.filter(isToday),
+    emptyText: 'Nothing at daily priority. Pull something up rather than inventing work.'
+  }));
 
   for (const [quadrant, copy] of Object.entries(TODO_QUADRANTS)) {
     const panel = document.createElement('section');
@@ -731,13 +740,21 @@ function renderTodo() {
       sectionIndex,
       tasks: sortByOrder(openTasks.filter(task => task.section_id === section.id && (task.owner === 'workerbee' ? 'workerbee' : 'david') === todoOwner))
     })).filter(project => (project.tasks.length ? taskProjectQuadrant(project.tasks) === quadrant : (todoOwner === 'david' && quadrant === 'Q2')));
-    const queueProjects = groupQueueProjects(queueItems.filter(item => (item.metadata?.owner === 'david' ? 'david' : 'workerbee') === todoOwner && queueQuadrant(item) === quadrant));
+    const queueProjects = groupQueueProjects(mine.filter(item => !isToday(item) && !isLongTerm(item) && queueQuadrant(item) === quadrant));
 
     editableProjects.forEach(project => panel.append(editableTodoProject(project)));
     queueProjects.forEach(project => panel.append(queueTodoProject(project)));
     if (!editableProjects.length && !queueProjects.length) panel.append(empty('Nothing here.'));
     root.append(panel);
   }
+
+  root.append(flatPanel({
+    id: 'horizon',
+    title: 'Long term',
+    note: 'Priority 8 and over. Where this is all going. A high number is not unimportant, it means something else has to finish first.',
+    items: mine.filter(isLongTerm),
+    emptyText: 'Nothing recorded, which would mean the long-form plans were never extracted.'
+  }));
   icons();
 }
 
@@ -756,8 +773,24 @@ function taskProjectQuadrant(tasks) {
   return 'Q4';
 }
 
+function priorityOf(item) {
+  const value = Number(item.metadata?.priority);
+  return Number.isFinite(value) ? value : 5;
+}
+
+const DAILY_MAX = 2;
+const LONG_TERM_MIN = 8;
+
+function isToday(item) {
+  return item.metadata?.pinned_today === true || priorityOf(item) <= DAILY_MAX;
+}
+
+function isLongTerm(item) {
+  return priorityOf(item) >= LONG_TERM_MIN && !isToday(item);
+}
+
 function queueQuadrant(item) {
-  const status = item.metadata?.queue_status;
+  const status = item.metadata?.queue_status || item.metadata?.roadmap_status;
   const activeInitiative = item.metadata?.initiative_status === 'active';
   const urgent = ['executing', 'ready', 'capability-repair'].includes(status);
   if (activeInitiative && urgent) return 'Q1';
@@ -840,19 +873,67 @@ function editableTodoProject({ section, sectionIndex, tasks }) {
   return details;
 }
 
+function queueTaskRow(item, { showProject = false } = {}) {
+  const row = document.createElement('div');
+  row.className = 'queue-task';
+  const head = document.createElement('div');
+  head.className = 'queue-task-head';
+  const badge = document.createElement('span');
+  badge.className = 'priority-badge';
+  badge.dataset.band = isToday(item) ? 'today' : isLongTerm(item) ? 'horizon' : 'board';
+  badge.textContent = priorityOf(item);
+  badge.title = 'Weight of urgency on what to do next. 1 is today, 10 means something else has to finish first.';
+  const title = document.createElement('strong');
+  title.textContent = item.title;
+  head.append(badge, title);
+  row.append(head);
+  if (showProject && item.metadata?.initiative_title) {
+    const project = document.createElement('em');
+    project.className = 'queue-task-project';
+    project.textContent = item.metadata.initiative_title;
+    row.append(project);
+  }
+  const next = document.createElement('small');
+  next.textContent = item.body || item.metadata?.intended_result || '';
+  row.append(next);
+  if (item.metadata?.blocked_by) {
+    const waiting = document.createElement('small');
+    waiting.className = 'waiting-on';
+    waiting.textContent = `Waiting on: ${item.metadata.blocked_by}`;
+    row.append(waiting);
+  }
+  return row;
+}
+
+function byPriority(a, b) {
+  return priorityOf(a) - priorityOf(b);
+}
+
 function queueTodoProject(project) {
   const { details, body } = projectShell(project.title, project.items.length);
-  project.items.sort((a, b) => Number(a.metadata?.priority || 99) - Number(b.metadata?.priority || 99)).forEach(item => {
-    const row = document.createElement('div');
-    row.className = 'queue-task';
-    const title = document.createElement('strong');
-    title.textContent = item.title;
-    const next = document.createElement('small');
-    next.textContent = item.body || item.metadata?.intended_result || '';
-    row.append(title, next);
-    body.append(row);
-  });
+  project.items.sort(byPriority).forEach(item => body.append(queueTaskRow(item)));
   return details;
+}
+
+// A flat strip rather than folded projects. Today and the horizon are both
+// read straight through, so hiding them behind a disclosure would defeat them.
+function flatPanel({ id, title, note, items, emptyText }) {
+  const panel = document.createElement('section');
+  panel.className = 'todo-quadrant';
+  panel.dataset.quadrant = id;
+  const heading = document.createElement('header');
+  heading.className = 'todo-quadrant-heading';
+  const words = document.createElement('div');
+  const name = document.createElement('h2');
+  name.textContent = title;
+  const sub = document.createElement('p');
+  sub.textContent = note;
+  words.append(name, sub);
+  heading.append(words);
+  panel.append(heading);
+  if (!items.length) panel.append(empty(emptyText));
+  else items.sort(byPriority).forEach(item => panel.append(queueTaskRow(item, { showProject: true })));
+  return panel;
 }
 
 function bindTodoOwnerTabs() {
