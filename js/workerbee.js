@@ -905,6 +905,18 @@ function queueTaskRow(item, { showProject = false } = {}) {
   const next = document.createElement('small');
   next.textContent = item.body || item.metadata?.intended_result || '';
   row.append(next);
+  // When it last actually moved, derived from commits, logs and recorded
+  // outcomes rather than from a field anything could refresh. "Created" means
+  // written down and not acted on since, which is a real answer.
+  const movedAt = item.metadata?.last_moved_at;
+  if (movedAt) {
+    const days = Math.max(0, Math.floor((Date.now() - Date.parse(movedAt)) / 86400000));
+    const moved = document.createElement('small');
+    moved.className = 'last-moved' + (days > 21 ? ' stale' : '');
+    const kind = item.metadata.last_moved_kind === 'created' ? 'written down' : item.metadata.last_moved_kind;
+    moved.textContent = `Last moved ${days === 0 ? 'today' : `${days}d ago`} · ${kind}${item.metadata.last_moved_ref ? ` ${item.metadata.last_moved_ref}` : ''}`;
+    row.append(moved);
+  }
   if (item.metadata?.not_important_because) {
     const why = document.createElement('small');
     why.className = 'waiting-on';
