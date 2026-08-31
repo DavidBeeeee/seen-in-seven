@@ -34,7 +34,7 @@ function showToast(message, error = false) {
 }
 
 function showOnly(name) {
-  for (const id of ['auth-card', 'loading', 'error-card', 'dashboard-app', 'todo-app']) {
+  for (const id of ['auth-card', 'loading', 'error-card', 'dashboard-app', 'todo-app', 'analytics-app']) {
     const node = el(id);
     if (node) node.hidden = id !== name;
   }
@@ -64,8 +64,10 @@ async function activate(nextSession) {
   showOnly('loading');
   try {
     state = await api();
-    if (surface === 'todo') renderTodo(); else renderDashboard();
-    showOnly(surface === 'todo' ? 'todo-app' : 'dashboard-app');
+    if (surface === 'analytics') renderAnalytics();
+    else if (surface === 'todo') renderTodo();
+    else renderDashboard();
+    showOnly(surface === 'analytics' ? 'analytics-app' : surface === 'todo' ? 'todo-app' : 'dashboard-app');
     await api('mark_viewed', { surface }).catch(() => null);
     icons();
   } catch (error) {
@@ -679,7 +681,9 @@ function sortByOrder(items) {
 
 async function replaceFromServer() {
   state = await api();
-  if (surface === 'todo') renderTodo(); else renderDashboard();
+  if (surface === 'analytics') renderAnalytics();
+  else if (surface === 'todo') renderTodo();
+  else renderDashboard();
 }
 
 function iconButton(name, label, handler) {
@@ -1093,6 +1097,111 @@ function flatPanel({ id, title, note, items, emptyText }) {
     panel.append(details);
   }
   return panel;
+}
+
+// ---------------------------------------------------------------------------
+// Analytics.
+//
+// David: an analytics tab "that automatically tracks these numbers as it
+// happens". It reads the daily snapshots published as diagnostics rather than
+// recomputing anything, so this page and the Board can never disagree about
+// what the numbers are.
+//
+// It is honest about how little history exists. A trend drawn through one
+// point is a decoration, and saying so is better than drawing it.
+// ---------------------------------------------------------------------------
+
+function metricSnapshots() {
+  return state.updates
+    .filter(item => item.kind === 'diagnostic' && item.metadata?.source === 'metrics' && item.metadata?.snapshot)
+    .map(item => item.metadata.snapshot)
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+}
+
+function statCard(label, value, note) {
+  const card = document.createElement('div');
+  card.className = 'card analytics-card';
+  const heading = document.createElement('small');
+  heading.textContent = label;
+  const figure = document.createElement('strong');
+  figure.textContent = value;
+  card.append(heading, figure);
+  if (note) {
+    const sub = document.createElement('p');
+    sub.textContent = note;
+    card.append(sub);
+  }
+  return card;
+}
+
+// A bar per day, drawn with divs. A charting library for a handful of numbers
+// is a dependency to maintain and a page that breaks when it changes.
+function barRow(label, value, max, tone) {
+  const row = document.createElement('div');
+  row.className = 'bar-row';
+  const name = document.createElement('span');
+  name.className = 'bar-label';
+  name.textContent = label;
+  const track = document.createElement('span');
+  track.className = 'bar-track';
+  const fill = document.createElement('span');
+  fill.className = `bar-fill${tone ? ` ${tone}` : ''}`;
+  fill.style.width = `${max ? Math.max(2, Math.round((value / max) * 100)) : 0}%`;
+  track.append(fill);
+  const number = document.createElement('span');
+  number.className = 'bar-value';
+  number.textContent = value;
+  row.append(name, track, number);
+  return row;
+}
+
+function renderAnalytics() {
+  const snapshots = metricSnapshots();
+  const note = el('analytics-note');
+  const cards = el('analytics-cards');
+  const chart = el('analytics-chart');
+  const demeritsBox = el('analytics-demerits');
+  if (!cards) return;
+  cards.replaceChildren();
+  chart.replaceChildren();
+  demeritsBox.replaceChildren();
+
+  if (!snapshots.length) {
+    note.textContent = 'No snapshots yet. They are written whenever the board is published, so this fills in on its own.';
+    return;
+  }
+
+  const latest = snapshots[snapshots.length - 1];
+  const month = latest.score.thisMonth || { delivered: 0, unattended: 0 };
+  const share = month.delivered ? Math.round((month.unattended / month.delivered) * 100) : 0;
+
+  note.textContent = snapshots.length === 1
+    ? `One snapshot so far, from ${latest.date}. Trends need days to become real, so this page is a starting line rather than a picture.`
+    : `${snapshots.length} daily snapshots, ${snapshots[0].date} to ${latest.date}.`;
+
+  cards.append(
+    statCard('Delivered this month', month.delivered, 'Weighted by the ranking, so urgent work counts for more.'),
+    statCard('Unattended share', `${share}%`, 'Completed inside a scheduled run rather than with David in the room. The number that measures growth.'),
+    statCard('Open, WorkerBee', latest.workerbee.open, `${latest.workerbee.next} in Next, ${latest.workerbee.blocked} blocked.`),
+    statCard('Open, David', latest.david.open, `${latest.david.next} in Next, ${latest.david.needsOther} needing something from me.`),
+    statCard('Inbox', latest.workerbee.inbox + latest.david.inbox, 'Captured and not yet routed. Empty is the target.'),
+    statCard('Stalled past 21 days', latest.workerbee.stalledOver21 + latest.david.stalledOver21, `Oldest untouched item is ${Math.max(latest.workerbee.oldestStillDays, latest.david.oldestStillDays)} days still.`)
+  );
+
+  const recent = snapshots.slice(-21);
+  const max = Math.max(1, ...recent.map(s => s.workerbee.open + s.david.open));
+  for (const snapshot of recent) {
+    chart.append(barRow(snapshot.date, snapshot.workerbee.open + snapshot.david.open, max));
+  }
+
+  const demerits = (latest.score.demerits || []);
+  if (!demerits.length) {
+    const clean = document.createElement('p');
+    clean.className = 'analytics-sub';
+    clean.textContent = latest.score.penalty ? `${latest.score.penalty} points lost to demerits.` : 'None recorded.';
+    demeritsBox.append(clean);
+  }
+  icons();
 }
 
 function bindTodoSearch() {

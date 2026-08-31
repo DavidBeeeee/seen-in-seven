@@ -1,29 +1,112 @@
 {
   "rewrites": [
-    { "source": "/studio", "destination": "/index.html" },
-    { "source": "/dashboard", "destination": "/dashboard.html" },
-    { "source": "/dashboard/", "destination": "/dashboard.html" },
-    { "source": "/todo", "destination": "/todo.html" },
-    { "source": "/todo/", "destination": "/todo.html" },
-    { "source": "/eee", "destination": "/eee.html" },
-    { "source": "/eee/", "destination": "/eee.html" },
-    { "source": "/storysculpt", "destination": "/storysculpt.html" },
-    { "source": "/storysculpt/", "destination": "/storysculpt.html" },
-    { "source": "/navigator", "destination": "/navigator.html" },
-    { "source": "/navigator/", "destination": "/navigator.html" },
-    { "source": "/vault", "destination": "/vault.html" },
-    { "source": "/vault/", "destination": "/vault.html" },
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/admin/", "destination": "/admin.html" },
-    { "source": "/admin/seeninseven", "destination": "/admin-seeninseven.html" },
-    { "source": "/admin/seeninseven/", "destination": "/admin-seeninseven.html" },
-    { "source": "/admin/seeninseven/prompt-tester", "destination": "/admin-prompt-tester.html" },
-    { "source": "/admin/seeninseven/prompt-tester/", "destination": "/admin-prompt-tester.html" },
-    { "source": "/admin/boardroom", "destination": "/admin-boardroom.html" },
-    { "source": "/admin/boardroom/", "destination": "/admin-boardroom.html" },
-    { "source": "/boardroom", "destination": "https://boardroom2.vercel.app/boardroom" },
-    { "source": "/boardroom/:path*", "destination": "https://boardroom2.vercel.app/boardroom/:path*" },
-    { "source": "/seeninseven", "destination": "/seeninseven.html" },
-    { "source": "/seeninseven/", "destination": "/seeninseven.html" }
+    {
+      "source": "/studio",
+      "destination": "/index.html"
+    },
+    {
+      "source": "/dashboard",
+      "destination": "/dashboard.html"
+    },
+    {
+      "source": "/dashboard/",
+      "destination": "/dashboard.html"
+    },
+    {
+      "source": "/analytics",
+      "destination": "/analytics.html"
+    },
+    {
+      "source": "/analytics/",
+      "destination": "/analytics.html"
+    },
+    {
+      "source": "/todo",
+      "destination": "/todo.html"
+    },
+    {
+      "source": "/todo/",
+      "destination": "/todo.html"
+    },
+    {
+      "source": "/eee",
+      "destination": "/eee.html"
+    },
+    {
+      "source": "/eee/",
+      "destination": "/eee.html"
+    },
+    {
+      "source": "/storysculpt",
+      "destination": "/storysculpt.html"
+    },
+    {
+      "source": "/storysculpt/",
+      "destination": "/storysculpt.html"
+    },
+    {
+      "source": "/navigator",
+      "destination": "/navigator.html"
+    },
+    {
+      "source": "/navigator/",
+      "destination": "/navigator.html"
+    },
+    {
+      "source": "/vault",
+      "destination": "/vault.html"
+    },
+    {
+      "source": "/vault/",
+      "destination": "/vault.html"
+    },
+    {
+      "source": "/admin",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/admin/",
+      "destination": "/admin.html"
+    },
+    {
+      "source": "/admin/seeninseven",
+      "destination": "/admin-seeninseven.html"
+    },
+    {
+      "source": "/admin/seeninseven/",
+      "destination": "/admin-seeninseven.html"
+    },
+    {
+      "source": "/admin/seeninseven/prompt-tester",
+      "destination": "/admin-prompt-tester.html"
+    },
+    {
+      "source": "/admin/seeninseven/prompt-tester/",
+      "destination": "/admin-prompt-tester.html"
+    },
+    {
+      "source": "/admin/boardroom",
+      "destination": "/admin-boardroom.html"
+    },
+    {
+      "source": "/admin/boardroom/",
+      "destination": "/admin-boardroom.html"
+    },
+    {
+      "source": "/boardroom",
+      "destination": "https://boardroom2.vercel.app/boardroom"
+    },
+    {
+      "source": "/boardroom/:path*",
+      "destination": "https://boardroom2.vercel.app/boardroom/:path*"
+    },
+    {
+      "source": "/seeninseven",
+      "destination": "/seeninseven.html"
+    },
+    {
+      "source": "/seeninseven/",
+      "destination": "/seeninseven.html"
+    }
   ]
 }

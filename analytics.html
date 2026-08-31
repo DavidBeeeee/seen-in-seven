@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#111716">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Analytics">
+  <title>WorkerBee Analytics</title>
+  <link rel="manifest" href="/workerbee.webmanifest">
+  <link rel="apple-touch-icon" href="/assets/workerbee-mark.svg">
+  <link rel="icon" href="/assets/workerbee-mark.svg">
+  <link rel="stylesheet" href="/css/workerbee.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+</head>
+<body data-workerbee-surface="analytics">
+  <header class="wb-header todo-header">
+    <a class="wb-brand" href="/analytics"><img src="/assets/workerbee-mark.svg" alt=""><span><small>WorkerBee</small><strong>Analytics</strong></span></a>
+    <nav aria-label="WorkerBee pages"><a href="/dashboard">Dashboard</a><a href="/todo">Todo</a><a class="active" href="/analytics">Analytics</a></nav>
+    <div class="header-actions"><a class="quiet-button" href="/">Studio</a><button class="quiet-button" id="sign-out" type="button" hidden>Sign out</button></div>
+  </header>
+  <main class="todo-main">
+    <section class="auth-card" id="auth-card">
+      <p class="eyebrow">Private</p><h1>Sign in to see the numbers.</h1><p>Progress, efficiency, and who carried what.</p>
+      <form id="auth-form"><label for="auth-email">Email</label><input id="auth-email" type="email" autocomplete="email" required><button class="primary-button" type="submit">Send sign-in link</button><p class="form-message" id="auth-message" role="status"></p></form>
+    </section>
+    <section id="loading" class="loading-card" hidden>Loading the numbers...</section>
+    <section id="error-card" class="error-card" hidden></section>
+    <div id="analytics-app" hidden>
+      <p class="analytics-note" id="analytics-note"></p>
+      <div class="analytics-grid" id="analytics-cards"></div>
+      <section class="card analytics-trend">
+        <h2>Board over time</h2>
+        <p class="analytics-sub">Open items per side, and how much of the work landed unattended. One point per day, starting the day the snapshot began.</p>
+        <div id="analytics-chart"></div>
+      </section>
+      <section class="card analytics-trend">
+        <h2>Demerits</h2>
+        <p class="analytics-sub">The half that cannot be derived. Recorded honestly or the rest of it means nothing.</p>
+        <div id="analytics-demerits"></div>
+      </section>
+    </div>
+  </main>
+  <div class="toast-stack" id="toast-stack" aria-live="polite"></div>
+  <script src="/js/workerbee.js"></script>
+</body>
+</html>
