@@ -1343,12 +1343,51 @@ function renderAnalytics() {
     }
   }
 
+  // The demerits themselves, newest first.
+  //
+  // This section had only an empty-state branch: when there were none it said
+  // "None recorded", and when there were any it rendered nothing at all, so
+  // the heading sat above blank space. David, 2026-09-01: "nothing is there
+  // underneath that for me". The half that cannot be derived was the half the
+  // page could not show.
   const demerits = (latest.score.demerits || []);
   if (!demerits.length) {
     const clean = document.createElement('p');
     clean.className = 'analytics-sub';
-    clean.textContent = latest.score.penalty ? `${latest.score.penalty} points lost to demerits.` : 'None recorded.';
+    clean.textContent = 'None recorded.';
     demeritsBox.append(clean);
+  } else {
+    const summary = document.createElement('p');
+    summary.className = 'analytics-sub';
+    const weight = latest.score.penalty || demerits.reduce((total, entry) => total + (entry.weight || 1), 0);
+    summary.textContent = `${demerits.length} recorded, ${weight} point${weight === 1 ? '' : 's'} lost.`;
+    demeritsBox.append(summary);
+
+    const list = document.createElement('ul');
+    list.className = 'demerit-list';
+    for (const entry of demerits.slice().reverse()) {
+      const row = document.createElement('li');
+      row.className = 'demerit-row';
+
+      const head = document.createElement('div');
+      head.className = 'demerit-head';
+      const when = document.createElement('span');
+      when.className = 'demerit-date';
+      when.textContent = entry.at || 'undated';
+      const cost = document.createElement('span');
+      cost.className = 'demerit-weight';
+      const points = entry.weight || 1;
+      cost.textContent = `-${points}`;
+      head.append(when, cost);
+
+      const reason = document.createElement('p');
+      reason.className = 'demerit-reason';
+      reason.textContent = entry.reason || 'No reason recorded, which is itself the failure.';
+
+      row.append(head, reason);
+      list.append(row);
+    }
+    demeritsBox.append(list);
   }
   icons();
 }
