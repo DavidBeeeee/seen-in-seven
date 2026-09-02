@@ -328,13 +328,24 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .analytics-trend { margin-bottom: 18px; padding: 20px; }
 .analytics-trend h2 { margin: 0 0 4px; font-size: 17px; }
 .analytics-sub { margin: 0 0 14px; color: var(--muted); font-size: 13px; }
-.bar-row { display: flex; align-items: center; gap: 10px; padding: 3px 0; }
-.bar-label { flex: 0 0 84px; color: var(--muted); font-size: 12px; font-variant-numeric: tabular-nums; }
-.bar-track { flex: 1; height: 11px; border-radius: 999px; background: var(--line-soft); overflow: hidden; }
-.bar-fill { display: block; height: 100%; border-radius: 999px; background: var(--ember); }
+/* Columns, not rows. Time runs along the bottom, so the shape of a trend is
+   the first thing read rather than something reconstructed from a stack. */
+.bar-chart { display: flex; align-items: flex-end; gap: 8px; overflow-x: auto; padding: 6px 2px 0; }
+.bar-col { display: flex; flex-direction: column; align-items: center; gap: 6px; flex: 1 1 0; min-width: 30px; }
+.bar-stack { display: flex; align-items: flex-end; justify-content: center; gap: 3px; height: 132px; width: 100%; }
+.bar-track { display: flex; align-items: flex-end; width: 13px; height: 100%; border-radius: 4px; background: var(--line-soft); overflow: hidden; }
+.bar-fill { display: block; width: 100%; border-radius: 3px 3px 0 0; background: var(--ember); }
 .bar-fill.cool { background: var(--teal); }
-.bar-value { flex: 0 0 40px; text-align: right; font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; }
-@media (max-width: 560px) { .bar-label { flex-basis: 68px; font-size: 11px; } }
+.bar-value { font-size: 12px; font-weight: 800; font-variant-numeric: tabular-nums; line-height: 1; }
+.bar-label { color: var(--muted); font-size: 11px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+@media (prefers-reduced-motion: no-preference) { .bar-fill { transition: height .25s ease; } }
+@media (max-width: 560px) {
+  .bar-chart { gap: 6px; }
+  .bar-col { min-width: 26px; }
+  .bar-stack { height: 104px; }
+  .bar-track { width: 11px; }
+  .bar-label { font-size: 10px; }
+}
 
 /* Day, week, month. */
 .trend-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 14px; flex-wrap: wrap; }
@@ -342,7 +353,7 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .period-tab { padding: 6px 14px; border: 0; border-radius: 999px; background: transparent; color: var(--muted); font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
 .period-tab:hover { color: var(--text); }
 .period-tab.active { background: var(--ember-soft); color: var(--ember); }
-.bar-row .bar-label { text-transform: none; }
+.bar-chart .bar-label { text-transform: none; }
 
 /* Demerits. The half that cannot be derived, and until 2026-09-01 the half the
    page silently refused to render: the section had an empty state and no list. */

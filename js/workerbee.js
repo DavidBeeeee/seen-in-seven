@@ -1260,25 +1260,58 @@ function statCard(label, value, note) {
   return card;
 }
 
-// A bar per day, drawn with divs. A charting library for a handful of numbers
-// is a dependency to maintain and a page that breaks when it changes.
-function barRow(label, value, max, tone) {
-  const row = document.createElement('div');
-  row.className = 'bar-row';
+// A column per day, drawn with divs. A charting library for a handful of
+// numbers is a dependency to maintain and a page that breaks when it changes.
+//
+// Vertical rather than horizontal, David 2026-09-01. It is not only taste:
+// twenty-one days as stacked rows is a column of bars you read downwards,
+// where time runs down the page and the shape of a trend is the one thing a
+// reader cannot see. Standing them up puts time along the bottom where it
+// belongs, and the rise and fall becomes the thing you notice first.
+function shortLabel(label) {
+  const date = /^(\d{4})-(\d{2})-(\d{2})$/.exec(label);
+  if (date) return `${date[2]}/${date[3]}`;
+  const week = /^(\d{4})-W(\d{1,2})$/.exec(label);
+  if (week) return `W${week[2]}`;
+  const month = /^(\d{4})-(\d{2})$/.exec(label);
+  if (month) return month[2];
+  return label;
+}
+
+// One column, carrying one or two bars. `bars` is [{value, tone}] so a bucket
+// that has an unattended count stands its two numbers side by side under one
+// label rather than as two separate rows the reader has to pair up by eye.
+function barColumn(label, bars, max) {
+  const column = document.createElement('div');
+  column.className = 'bar-col';
+
+  const value = document.createElement('span');
+  value.className = 'bar-value';
+  value.textContent = bars[0].value;
+  if (bars.length > 1) value.title = `${bars[0].value} delivered, ${bars[1].value} unattended`;
+
+  const stack = document.createElement('span');
+  stack.className = 'bar-stack';
+  for (const bar of bars) {
+    const track = document.createElement('span');
+    track.className = 'bar-track';
+    const fill = document.createElement('span');
+    fill.className = `bar-fill${bar.tone ? ` ${bar.tone}` : ''}`;
+    // A zero stays flat. A small non-zero keeps a visible sliver, because a
+    // bar that rounds to nothing reads as no work rather than a little.
+    fill.style.height = max && bar.value ? `${Math.max(3, Math.round((bar.value / max) * 100))}%` : '0%';
+    fill.title = `${label}: ${bar.value}`;
+    track.append(fill);
+    stack.append(track);
+  }
+
   const name = document.createElement('span');
   name.className = 'bar-label';
-  name.textContent = label;
-  const track = document.createElement('span');
-  track.className = 'bar-track';
-  const fill = document.createElement('span');
-  fill.className = `bar-fill${tone ? ` ${tone}` : ''}`;
-  fill.style.width = `${max ? Math.max(2, Math.round((value / max) * 100)) : 0}%`;
-  track.append(fill);
-  const number = document.createElement('span');
-  number.className = 'bar-value';
-  number.textContent = value;
-  row.append(name, track, number);
-  return row;
+  name.textContent = shortLabel(label);
+  name.title = label;
+
+  column.append(value, stack, name);
+  return column;
 }
 
 function renderAnalytics() {
@@ -1322,24 +1355,27 @@ function renderAnalytics() {
   const chartNote = el('chart-note');
   if (chartNote) {
     chartNote.textContent = keys.length
-      ? `Weighted delivery per ${analyticsPeriod}, with the unattended share shown beneath each bar. ${keys.length} ${analyticsPeriod}${keys.length === 1 ? '' : 's'} of history.`
+      ? `Weighted delivery per ${analyticsPeriod}, with the unattended share as the second bar in each column. ${keys.length} ${analyticsPeriod}${keys.length === 1 ? '' : 's'} of history.`
       : 'Nothing delivered yet at this granularity.';
   }
   const deliveredMax = Math.max(1, ...keys.map(key => series[key].delivered));
+  chart.classList.add('bar-chart');
   for (const key of keys) {
     const bucket = series[key];
-    chart.append(barRow(key, bucket.delivered, deliveredMax));
-    if (bucket.unattended) chart.append(barRow('unattended', bucket.unattended, deliveredMax, 'cool'));
+    const bars = [{ value: bucket.delivered }];
+    if (bucket.unattended) bars.push({ value: bucket.unattended, tone: 'cool' });
+    chart.append(barColumn(key, bars, deliveredMax));
   }
 
   // Board shape, which only exists from the day snapshots began.
   const shape = el('analytics-shape');
   if (shape) {
     shape.replaceChildren();
+    shape.classList.add('bar-chart');
     const recent = snapshots.slice(-21);
     const max = Math.max(1, ...recent.map(s => s.workerbee.open + s.david.open));
     for (const snapshot of recent) {
-      shape.append(barRow(snapshot.date, snapshot.workerbee.open + snapshot.david.open, max));
+      shape.append(barColumn(snapshot.date, [{ value: snapshot.workerbee.open + snapshot.david.open }], max));
     }
   }
 
