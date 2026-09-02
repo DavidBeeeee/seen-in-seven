@@ -129,6 +129,55 @@ function appendRecordTimestamp(card, value, label = 'Record updated') {
   card.append(row);
 }
 
+// Bodies arrive as plain text and used to be written with textContent, so a
+// URL in a card was unclickable and, past 160 characters, folded away behind
+// "Show more" as well. Anything that reads as a link becomes one; everything
+// else stays text, because a card body is data from the publisher and must
+// never be injected as markup.
+const URL_PATTERN = /https?:\/\/[^\s<>()\[\]]+/g;
+const MARKDOWN_LINK = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+
+function firstUrl(source) {
+  if (!source) return null;
+  if (typeof source === 'object') return source.url || source.link || null;
+  const found = String(source).match(URL_PATTERN);
+  return found ? found[0] : null;
+}
+
+function anchor(href, text) {
+  const link = document.createElement('a');
+  link.href = href;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.textContent = text;
+  return link;
+}
+
+function writeBodyText(host, text) {
+  // Markdown links first, so [label](url) reads as its label rather than
+  // printing both halves at the reader.
+  let rest = String(text);
+  const parts = [];
+  let last = 0;
+  for (const match of rest.matchAll(MARKDOWN_LINK)) {
+    parts.push({ text: rest.slice(last, match.index) });
+    parts.push({ href: match[2], text: match[1] });
+    last = match.index + match[0].length;
+  }
+  parts.push({ text: rest.slice(last) });
+
+  for (const part of parts) {
+    if (part.href) { host.append(anchor(part.href, part.text)); continue; }
+    let cursor = 0;
+    for (const found of part.text.matchAll(URL_PATTERN)) {
+      if (found.index > cursor) host.append(document.createTextNode(part.text.slice(cursor, found.index)));
+      host.append(anchor(found[0], found[0]));
+      cursor = found.index + found[0].length;
+    }
+    if (cursor < part.text.length) host.append(document.createTextNode(part.text.slice(cursor)));
+  }
+}
+
 function updateCard(item, actionMode = null) {
   const card = document.createElement('article');
   card.className = 'update-card';
@@ -137,8 +186,22 @@ function updateCard(item, actionMode = null) {
   card.append(title);
   if (item.body) {
     const body = document.createElement('p');
-    body.textContent = item.body;
+    writeBodyText(body, item.body);
     card.append(body);
+    // A card whose whole point is a destination should not hide it behind
+    // "Show more". David, 2026-09-01: "where is the link to the Two hundred in
+    // the dashboard???" It was there, as dead text, inside a clamped
+    // paragraph. A link the card carries now sits under it as a button.
+    const primary = firstUrl(item.metadata) || firstUrl(item.body);
+    if (primary) {
+      const open = document.createElement('a');
+      open.className = 'card-open-link';
+      open.href = primary;
+      open.target = '_blank';
+      open.rel = 'noopener noreferrer';
+      open.textContent = 'Open';
+      card.append(open);
+    }
     if (item.body.length > 160) {
       body.classList.add('clamped');
       const toggle = document.createElement('button');
