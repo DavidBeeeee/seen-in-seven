@@ -1278,31 +1278,45 @@ function shortLabel(label) {
   return label;
 }
 
-// One column, carrying one or two bars. `bars` is [{value, tone}] so a bucket
-// that has an unattended count stands its two numbers side by side under one
-// label rather than as two separate rows the reader has to pair up by eye.
+// One column. `bars` is [{value, tone}]: the first is the column's height,
+// and a second is drawn as a segment inside it rather than beside it, because
+// the unattended count is a SUBSET of what was delivered, not a rival to it.
+// Two skinny bars side by side said otherwise and read as a comparison.
+//
+// The value label sits directly on the bar and rises with it. Floating every
+// number at the top of the plot detached them from what they measured, which
+// is most of why the first version looked like scaffolding rather than a
+// chart. There is no track behind the bar either: an empty grey column per
+// day is louder than the data drawn inside it.
+const PLOT_HEIGHT = 132;
+const BAR_MAX = 108;
+
 function barColumn(label, bars, max) {
   const column = document.createElement('div');
   column.className = 'bar-col';
 
+  const plot = document.createElement('span');
+  plot.className = 'bar-plot';
+
   const value = document.createElement('span');
   value.className = 'bar-value';
   value.textContent = bars[0].value;
-  if (bars.length > 1) value.title = `${bars[0].value} delivered, ${bars[1].value} unattended`;
 
-  const stack = document.createElement('span');
-  stack.className = 'bar-stack';
-  for (const bar of bars) {
-    const track = document.createElement('span');
-    track.className = 'bar-track';
-    const fill = document.createElement('span');
-    fill.className = `bar-fill${bar.tone ? ` ${bar.tone}` : ''}`;
-    // A zero stays flat. A small non-zero keeps a visible sliver, because a
-    // bar that rounds to nothing reads as no work rather than a little.
-    fill.style.height = max && bar.value ? `${Math.max(3, Math.round((bar.value / max) * 100))}%` : '0%';
-    fill.title = `${label}: ${bar.value}`;
-    track.append(fill);
-    stack.append(track);
+  const bar = document.createElement('span');
+  bar.className = 'bar-fill';
+  // A zero is flat and says so. A small non-zero keeps three pixels, because
+  // a bar that rounds away reads as no work rather than a little.
+  const height = max && bars[0].value ? Math.max(3, Math.round((bars[0].value / max) * BAR_MAX)) : 0;
+  bar.style.height = `${height}px`;
+  bar.title = `${label}: ${bars[0].value}`;
+
+  if (bars[1] && bars[1].value && bars[0].value) {
+    const part = document.createElement('span');
+    part.className = `bar-part${bars[1].tone ? ` ${bars[1].tone}` : ''}`;
+    part.style.height = `${Math.min(100, Math.round((bars[1].value / bars[0].value) * 100))}%`;
+    part.title = `${label}: ${bars[1].value} of ${bars[0].value} unattended`;
+    bar.append(part);
+    value.title = `${bars[0].value} delivered, ${bars[1].value} of them unattended`;
   }
 
   const name = document.createElement('span');
@@ -1310,7 +1324,8 @@ function barColumn(label, bars, max) {
   name.textContent = shortLabel(label);
   name.title = label;
 
-  column.append(value, stack, name);
+  plot.append(value, bar);
+  column.append(plot, name);
   return column;
 }
 
