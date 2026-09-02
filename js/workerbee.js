@@ -1433,7 +1433,7 @@ function renderAnalytics() {
   const chartNote = el('chart-note');
   if (chartNote) {
     chartNote.textContent = keys.length
-      ? `Weighted delivery per ${analyticsPeriod}, with the unattended share as the second bar in each column. ${keys.length} ${analyticsPeriod}${keys.length === 1 ? '' : 's'} of history.`
+      ? `Weighted delivery per ${analyticsPeriod}, with the unattended share shaded inside each bar. ${keys.length} ${analyticsPeriod}${keys.length === 1 ? '' : 's'} of history.`
       : 'Nothing delivered yet at this granularity.';
   }
   const deliveredMax = Math.max(1, ...keys.map(key => series[key].delivered));
