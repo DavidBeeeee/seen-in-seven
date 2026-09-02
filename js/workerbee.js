@@ -1156,9 +1156,24 @@ function queueTaskRow(item, { showProject = false } = {}) {
     project.textContent = item.metadata.initiative_title;
     row.append(project);
   }
+  // Board detail carries links too. WBR-146 names the two hundred questions
+  // and prints the URL of the list they live on; written with textContent
+  // that was a string of characters to copy by hand. David, 2026-09-01:
+  // "I thought it was going to be on the Todo task". It was. It just was not
+  // clickable, which on a surface you work from is the same as absent.
   const next = document.createElement('small');
-  next.textContent = item.body || item.metadata?.intended_result || '';
+  writeBodyText(next, item.body || item.metadata?.intended_result || '');
   row.append(next);
+  const itemUrl = firstUrl(item.metadata) || firstUrl(item.body);
+  if (itemUrl) {
+    const open = document.createElement('a');
+    open.className = 'card-open-link queue-task-open';
+    open.href = itemUrl;
+    open.target = '_blank';
+    open.rel = 'noopener noreferrer';
+    open.textContent = 'Open';
+    row.append(open);
+  }
   // When it last actually moved, derived from commits, logs and recorded
   // outcomes rather than from a field anything could refresh. "Created" means
   // written down and not acted on since, which is a real answer.
