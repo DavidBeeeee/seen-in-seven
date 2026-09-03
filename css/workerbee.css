@@ -378,3 +378,13 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 
 .queue-task-open { margin-top: 6px; padding: 4px 12px; font-size: 12px; }
 .queue-task small a { color: var(--teal-light); }
+
+/* The done control on a published row, and the identifier beside it.
+   Added 2026-09-03: every roadmap, queue and commitment row was plain text,
+   so the only checkable thing on the page was a task David had typed himself. */
+.queue-task-done { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 2px; padding: 0; border: 1.5px solid var(--line); border-radius: 5px; background: transparent; cursor: pointer; }
+.queue-task-done:hover { border-color: var(--accent, #d9f27c); background: rgba(217, 242, 124, .12); }
+.queue-task-done:disabled { opacity: .4; cursor: default; }
+.queue-task-done-state { opacity: .5; }
+.queue-task-done-state strong { text-decoration: line-through; }
+.queue-task-ref { flex: 0 0 auto; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; letter-spacing: .04em; padding: 1px 5px; border-radius: 4px; background: var(--line-soft); color: var(--ink-soft); }

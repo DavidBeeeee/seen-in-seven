@@ -981,11 +981,46 @@ function renderTodo() {
       // And anything now shown in Next is not repeated below it.
       .filter(project => !editableForNext.some(entry => entry.section.id === project.section.id))
       .filter(project => taskProjectQuadrant(project.tasks) === quadrant);
-    const queueProjects = groupQueueProjects(mine.filter(item => !isNext(item) && !isLongTerm(item) && queueQuadrant(item) === quadrant));
+    // Grouped by his category rather than by my initiative. The quadrants were
+    // the last place project names still acted as headings, which is exactly
+    // what he corrected on 2026-08-31: they are titles of work inside a
+    // category. The initiative still shows, on the item, where it belongs.
+    const quadrantItems = mine.filter(item => !isNext(item) && !isLongTerm(item) && !isStanding(item) && queueQuadrant(item) === quadrant);
+    const blocks = mergedBlocks({ items: quadrantItems, taskProjects: editableProjects, sections });
 
-    editableProjects.forEach(project => panel.append(editableTodoProject(project)));
-    queueProjects.forEach(project => panel.append(queueTodoProject(project)));
-    if (!editableProjects.length && !queueProjects.length) panel.append(empty('Nothing here.'));
+    if (!blocks.length) panel.append(empty('Nothing here.'));
+    blocks.forEach(block => panel.append(block));
+    root.append(panel);
+  }
+
+  // Standing, above the horizon and outside the quadrants. Practices with a
+  // review date instead of a checkbox.
+  const standingItems = mine.filter(isStanding).sort((a, b) => (reviewDueAt(a) ?? 0) - (reviewDueAt(b) ?? 0));
+  if (standingItems.length) {
+    const panel = document.createElement('section');
+    panel.className = 'todo-quadrant';
+    panel.dataset.quadrant = 'standing';
+    const heading = document.createElement('header');
+    heading.className = 'todo-quadrant-heading';
+    const words = document.createElement('div');
+    const title = document.createElement('h2');
+    title.textContent = 'Standing';
+    const note = document.createElement('p');
+    note.textContent = 'Practices, not tasks. These have no finish line on purpose, so they are read on a cadence instead of checked off. An overdue review appears in Next by itself.';
+    words.append(title, note);
+    heading.append(words);
+    panel.append(heading);
+    standingItems.forEach(item => {
+      const row = queueTaskRow(item, { showProject: true });
+      const when = reviewDueAt(item);
+      const line = document.createElement('small');
+      line.className = reviewOverdue(item) ? 'last-moved stale' : 'last-moved';
+      line.textContent = when === null
+        ? 'No review cadence recorded, so nothing will bring this back.'
+        : `Every ${item.metadata.review_every} days · next ${new Date(when).toISOString().slice(0, 10)}${reviewOverdue(item) ? ' · due now' : ''}`;
+      row.append(line);
+      panel.append(row);
+    });
     root.append(panel);
   }
 
@@ -1030,12 +1065,41 @@ const LONG_TERM_MIN = 8;
 // both Q1 and Q3 rendered empty.
 const URGENT_AT_OR_UNDER = 6;
 
+// A practice is not a task, and the page kept treating it as one.
+//
+// David, 2026-09-02: "some of your goals can never be checked off, they don't
+// exactly have an end criteria. like use ward myself continuously, and while
+// that's a good thing to be doing, it's never going to fall off our todo list
+// lol." The Board learned that the next day and this page did not, so
+// WBR-090 and WBR-146 stayed pinned to the top of Next at priority 1 while
+// the markdown Board had already moved them out. Two boards, one fix applied.
+function isStanding(item) {
+  return item.metadata?.roadmap_status === 'standing';
+}
+
+// Reviewed on a cadence instead of finished. An overdue review is the one
+// thing that pulls a practice back into Next, because a practice nobody reads
+// is a parked initiative wearing a better word.
+function reviewDueAt(item) {
+  const every = Number(item.metadata?.review_every);
+  const last = Date.parse(item.metadata?.last_reviewed ?? '');
+  if (!Number.isFinite(every) || every <= 0 || !Number.isFinite(last)) return null;
+  return last + every * 86400000;
+}
+
+function reviewOverdue(item) {
+  const due = reviewDueAt(item);
+  return due === null ? true : due <= Date.now();
+}
+
 function isNext(item) {
+  if (isStanding(item)) return reviewOverdue(item);
   if (item.metadata?.pinned_today === true) return true;
   return priorityOf(item) <= NEXT_MAX && item.metadata?.roadmap_status !== 'blocked' && item.metadata?.queue_status !== 'blocked';
 }
 
 function isLongTerm(item) {
+  if (isStanding(item)) return false;
   return priorityOf(item) >= LONG_TERM_MIN && !isNext(item);
 }
 
@@ -1050,16 +1114,6 @@ function queueQuadrant(item) {
   if (important) return 'Q2';
   if (urgent) return 'Q3';
   return 'Q4';
-}
-
-function groupQueueProjects(items) {
-  const groups = new Map();
-  items.forEach(item => {
-    const id = item.metadata?.initiative_id || 'unassigned';
-    if (!groups.has(id)) groups.set(id, { title: item.metadata?.initiative_title || 'Unassigned WorkerBee work', items: [] });
-    groups.get(id).items.push(item);
-  });
-  return [...groups.values()];
 }
 
 function projectShell(title, count) {
@@ -1146,10 +1200,57 @@ function queueTaskRow(item, { showProject = false } = {}) {
   badge.dataset.band = isNext(item) ? 'today' : isLongTerm(item) ? 'horizon' : 'board';
   badge.textContent = priorityOf(item);
   badge.title = 'Weight of urgency on what to do next. 1 is today, 10 means something else has to finish first.';
+
+  // Done, from here. David, 2026-09-03: "I also can't check off my own items
+  // on the list." He could not, and it was not an oversight he could work
+  // around: every row published from the roadmap, the queue or his commitments
+  // was plain text, and the only checkable thing on the page was a task he had
+  // typed himself.
+  //
+  // A standing practice gets no box, because it has no finish line. That is
+  // the whole reason it is standing.
+  if (!isStanding(item)) {
+    const done = document.createElement('button');
+    done.type = 'button';
+    done.className = 'queue-task-done';
+    done.setAttribute('aria-label', `Mark done: ${item.title}`);
+    done.title = 'Mark this done';
+    done.textContent = '';
+    done.addEventListener('click', async () => {
+      done.disabled = true;
+      try {
+        await api('update_update', { id: item.id, status: 'completed' });
+        // Marked here and reconciled into WorkerBee's own files on its next
+        // pass. Without that pull-back the next publish would read the source
+        // still saying active and quietly undo this, which is worse than no
+        // button at all.
+        row.classList.add('queue-task-done-state');
+        showToast('Marked done. WorkerBee picks it up on its next pass.');
+        state.updates = state.updates.map(row2 => row2.id === item.id ? { ...row2, status: 'completed' } : row2);
+        renderTodo();
+      } catch (error) {
+        done.disabled = false;
+        showToast(error.message, true);
+      }
+    });
+    head.append(done);
+  }
+
   const title = document.createElement('strong');
   title.textContent = item.title;
   head.append(badge, title);
   row.append(head);
+
+  // The identifier, so a thing named in conversation can be found on the page
+  // and a thing found on the page can be named back. His commitments carry a
+  // DBR; mine carry WBR or WBQ.
+  const ref = item.metadata?.dbr_id || item.metadata?.roadmap_item_id || item.metadata?.queue_item_id;
+  if (ref) {
+    const tag = document.createElement('span');
+    tag.className = 'queue-task-ref';
+    tag.textContent = ref;
+    head.append(tag);
+  }
   if (showProject && item.metadata?.initiative_title) {
     const project = document.createElement('em');
     project.className = 'queue-task-project';
@@ -1215,31 +1316,87 @@ function byPriority(a, b) {
   return priorityOf(a) - priorityOf(b);
 }
 
-function queueTodoProject(project) {
-  const { details, body } = projectShell(project.title, project.items.length);
-  const rows = project.items.sort(byPriority);
-  // Grouped by theme once the project is big enough that the fold is a wall
-  // rather than a summary. Below that, headings cost more than they explain.
-  const themes = new Map();
-  rows.forEach(item => {
-    const theme = item.metadata?.theme || 'Other';
-    if (!themes.has(theme)) themes.set(theme, []);
-    themes.get(theme).push(item);
-  });
-  if (rows.length > 6 && themes.size > 1) {
-    for (const [theme, items] of themes) {
-      const block = categoryBlock(theme, items.length);
-      items.forEach(item => block.body.append(queueTaskRow(item)));
-      body.append(block.details);
-    }
-  } else {
-    rows.forEach(item => body.append(queueTaskRow(item)));
-  }
-  return details;
-}
-
 // A flat strip rather than folded projects. Today and the horizon are both
 // read straight through, so hiding them behind a disclosure would defeat them.
+// One block per heading, his headings, everywhere.
+//
+// David, 2026-08-11: "I thought your plan was to route those items for me into
+// their respective categories." And again on 2026-08-31, recorded in
+// categories.mjs: his headings win, mine map into them, and project names are
+// titles of work inside a category rather than categories of their own.
+//
+// This page did neither. It drew his headings, then drew my published items in
+// separate blocks grouped by category, and because the category names were
+// built to mirror his heading names, the same words appeared twice in one
+// panel. On 2026-09-03 his Next held nine blocks where six belonged:
+// WorkerBee Evolution, Clients and Coaching and Launches and Events each
+// rendered once as his and once as mine. He called it doubled, which it was.
+//
+// So the merge happens here, once, and both the flat panels and the quadrants
+// use it. A heading holds his tasks and my items together. A category with no
+// heading of his still gets a block, because losing work is worse than an
+// unfamiliar title. An empty heading of his stays, because he noticed within
+// minutes the last time they vanished.
+function mergedBlocks({ items, taskProjects = [], sections = [], keepEmpty = false }) {
+  const byCategory = new Map();
+  for (const item of items.slice().sort(byPriority)) {
+    const name = item.metadata?.category || 'WorkerBee Evolution';
+    if (!byCategory.has(name)) byCategory.set(name, []);
+    byCategory.get(name).push(item);
+  }
+
+  const blocks = [];
+  const claimed = new Set();
+
+  for (const project of taskProjects) {
+    const name = project.section.title;
+    claimed.add(name);
+    const mine = byCategory.get(name) ?? [];
+    const taskCount = project.tasks.length + (project.children ?? []).reduce((sum, child) => sum + child.tasks.length, 0);
+    if (!keepEmpty && !taskCount && !mine.length) continue;
+    const { details, body } = categoryBlock(name, taskCount + mine.length, { section: project.section, sectionIndex: sections.indexOf(project.section) });
+    body.append(editableSectionBody({ section: project.section, sectionIndex: sections.indexOf(project.section), tasks: project.tasks, withHeading: false }));
+    for (const child of project.children ?? []) {
+      const heading = document.createElement('h4');
+      heading.className = 'todo-subtopic';
+      heading.textContent = child.section.title;
+      body.append(heading, editableSectionBody({ section: child.section, sectionIndex: sections.indexOf(child.section), tasks: child.tasks, withHeading: false }));
+    }
+    appendBySubtopic(body, mine);
+    blocks.push(details);
+  }
+
+  // Anything of mine whose category he has no heading for. Should be nothing,
+  // since the categories were built from his headings, and it renders rather
+  // than disappears if that ever stops being true.
+  for (const [name, rows] of byCategory) {
+    if (claimed.has(name)) continue;
+    const { details, body } = categoryBlock(name, rows.length);
+    appendBySubtopic(body, rows);
+    blocks.push(details);
+  }
+  return blocks;
+}
+
+// Named subtopics get a quiet second-level heading. Two levels, and no deeper.
+function appendBySubtopic(body, rows) {
+  const subtopics = new Map();
+  for (const row of rows) {
+    const sub = row.metadata?.subtopic || '';
+    if (!subtopics.has(sub)) subtopics.set(sub, []);
+    subtopics.get(sub).push(row);
+  }
+  for (const [sub, group] of [...subtopics.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
+    if (sub) {
+      const heading = document.createElement('h4');
+      heading.className = 'todo-subtopic';
+      heading.textContent = sub;
+      body.append(heading);
+    }
+    group.forEach(item => body.append(queueTaskRow(item)));
+  }
+}
+
 function flatPanel({ id, title, note, items, emptyText, taskProjects = [], sections = [] }) {
   const panel = document.createElement('section');
   panel.className = 'todo-quadrant';
@@ -1254,47 +1411,11 @@ function flatPanel({ id, title, note, items, emptyText, taskProjects = [], secti
   words.append(name, sub);
   heading.append(words);
   panel.append(heading);
-  // His own headings first, because they are the vocabulary he wrote.
-  for (const project of taskProjects) {
-    const total = project.tasks.length + (project.children ?? []).reduce((sum, child) => sum + child.tasks.length, 0);
-    const { details, body } = categoryBlock(project.section.title, total, { section: project.section, sectionIndex: sections.indexOf(project.section) });
-    body.append(editableSectionBody({ section: project.section, sectionIndex: sections.indexOf(project.section), tasks: project.tasks, withHeading: false }));
-    for (const child of project.children ?? []) {
-      const heading = document.createElement('h4');
-      heading.className = 'todo-subtopic';
-      heading.textContent = child.section.title;
-      body.append(heading, editableSectionBody({ section: child.section, sectionIndex: sections.indexOf(child.section), tasks: child.tasks, withHeading: false }));
-    }
-    panel.append(details);
-  }
-  if (!items.length) { if (!taskProjects.length) panel.append(empty(emptyText)); return panel; }
-  // Grouped by category. Thirty-one items in a flat list is the wall this
-  // board exists to prevent, and Next is meant to be comprehensive.
-  const groups = new Map();
-  for (const item of items.sort(byPriority)) {
-    const name = item.metadata?.category || 'WorkerBee Evolution';
-    if (!groups.has(name)) groups.set(name, new Map());
-    const sub = item.metadata?.subtopic || '';
-    const inner = groups.get(name);
-    if (!inner.has(sub)) inner.set(sub, []);
-    inner.get(sub).push(item);
-  }
-  for (const [name, subtopics] of groups) {
-    const total = [...subtopics.values()].reduce((sum, rows) => sum + rows.length, 0);
-    const { details, body } = categoryBlock(name, total);
-    // Ungrouped items sit directly under the category; named subtopics get a
-    // quiet second-level heading. Two levels, and no deeper.
-    for (const [sub, rows] of [...subtopics.entries()].sort((a, b) => a[0].localeCompare(b[0]))) {
-      if (sub) {
-        const heading = document.createElement('h4');
-        heading.className = 'todo-subtopic';
-        heading.textContent = sub;
-        body.append(heading);
-      }
-      rows.forEach(item => body.append(queueTaskRow(item)));
-    }
-    panel.append(details);
-  }
+  // Empty headings of his survive in the flat panels: they are the structure
+  // of his side, and hiding them made his own vocabulary vanish.
+  const blocks = mergedBlocks({ items, taskProjects, sections, keepEmpty: true });
+  if (!blocks.length) { panel.append(empty(emptyText)); return panel; }
+  blocks.forEach(block => panel.append(block));
   return panel;
 }
 
