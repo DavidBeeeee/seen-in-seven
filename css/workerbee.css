@@ -376,6 +376,18 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .card-open-link:hover { background: var(--ember-soft); }
 .update-card p a { color: var(--teal-light); }
 
+/* Project Artifacts. The card is the link, so the whole row is the hit target
+   and the Open pill is an affordance rather than the only way in. Gold marks
+   the project and the action, matching how gold already reads elsewhere on
+   this page as the colour that means "this is the thing to look at". */
+.artifact-card { display: grid; gap: 6px; }
+.artifact-card:hover, .artifact-card:focus-visible { border-color: rgba(200, 168, 75, .42); background: rgba(200, 168, 75, .05); }
+.artifact-project { color: var(--gold); font: 800 10px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .14em; text-transform: uppercase; }
+.artifact-title { color: var(--text); font-size: 13px; font-weight: 700; }
+.artifact-card p { margin: 0; }
+.artifact-open { justify-self: start; margin-top: 3px; padding: 3px 11px; border: 1px solid rgba(200, 168, 75, .42); border-radius: 999px; color: var(--gold); font-size: 11px; font-weight: 800; }
+.artifact-card:hover .artifact-open { background: rgba(200, 168, 75, .12); }
+
 .queue-task-open { margin-top: 6px; padding: 4px 12px; font-size: 12px; }
 .queue-task small a { color: var(--teal-light); }
 
