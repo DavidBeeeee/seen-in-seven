@@ -9,6 +9,8 @@ const diagnosticMigration = read('supabase_migrations/2026-08-11-allow-workerbee
 const api = read('api/workerbee.js');
 const client = read('js/workerbee.js');
 const dashboard = read('dashboard.html');
+const wardQuestions = read('ward-questions.html');
+const wardQuestionsClient = read('js/ward-questions.js');
 const todo = read('todo.html');
 const vercel = JSON.parse(read('vercel.json'));
 
@@ -48,6 +50,11 @@ assert.match(dashboard, /id="daily-report"/, 'The dashboard must expose a durabl
 assert.match(client, /source === 'daily-report'/, 'The dashboard must render the canonical daily report independently of last-visit filtering.');
 assert.match(dashboard, /Four-cycle operating reports/, 'The Dashboard must expose both retained four-cycle WorkerBee reports.');
 assert.match(dashboard, /Today \+ Yesterday/, 'The retained report window must be unmistakably labeled.');
+assert.match(dashboard, /href="\/ward-questions"/, 'The Ward launch gate must open the Studio-owned current artifact, not a provider-owned stale copy.');
+assert.match(client, /ward_artifact/, 'The Dashboard card must render the score published with WBR-146.');
+assert.match(wardQuestions, /Ward's Three Hundred/, 'The current Ward artifact must have its own authenticated Studio page.');
+assert.match(wardQuestionsClient, /roadmap_item_id==='WBR-146'/, 'The Ward artifact must read the canonical WBR-146 projection.');
+assert.doesNotMatch(wardQuestionsClient, /WORKERBEE_STUDIO_SECRET|SERVICE_ROLE/, 'The Ward artifact must not contain a server credential.');
 assert.match(client, /period\.updatedAt/, 'Each Daily Report cycle must render its own timestamp.');
 assert.match(client, /function dailyReportUpdates[\s\S]*slice\(0, 2\)/, 'The Dashboard must render both Today and Yesterday rather than only the newest report.');
 assert.match(client, /reportDayLabel[\s\S]*Yesterday/, 'The prior report must be labeled Yesterday rather than looking current.');
@@ -67,6 +74,7 @@ assert.match(privateApiMigration, /revoke all on function public\.workerbee_muta
 
 const rewriteMap = Object.fromEntries(vercel.rewrites.map(item => [item.source, item.destination]));
 assert.equal(rewriteMap['/dashboard'], '/dashboard.html');
+assert.equal(rewriteMap['/ward-questions'], '/ward-questions.html');
 assert.equal(rewriteMap['/todo'], '/todo.html');
 
 console.log('WorkerBee Studio boundaries, routes, private data rules, and focused Todo contract passed.');

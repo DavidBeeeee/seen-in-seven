@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#111716">
+  <title>Ward's Three Hundred</title>
+  <link rel="icon" href="/assets/workerbee-mark.svg">
+  <link rel="stylesheet" href="/css/workerbee.css">
+  <link rel="stylesheet" href="/css/ward-questions.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body>
+  <header class="wb-header">
+    <a class="wb-brand" href="/dashboard"><img src="/assets/workerbee-mark.svg" alt=""><span><small>Ward · pre-launch gate</small><strong>The Three Hundred</strong></span></a>
+    <nav aria-label="WorkerBee pages"><a href="/dashboard">Dashboard</a><a href="/todo">Todo</a><a href="/analytics">Analytics</a></nav>
+    <div class="header-actions"><a class="quiet-button" href="/dashboard">Back to Dashboard</a></div>
+  </header>
+  <main class="ward-main">
+    <section class="loading-card" id="ward-loading">Loading the current score from WorkerBee...</section>
+    <section class="error-card" id="ward-error" hidden><h1>I could not open the current score.</h1><p id="ward-error-message"></p><a class="primary-button" href="/dashboard">Return to Dashboard</a></section>
+    <div id="ward-app" hidden>
+      <section class="ward-intro">
+        <p class="eyebrow">Ward · launch gate</p>
+        <h1>Ward's Three Hundred</h1>
+        <p>Three hundred questions Ward has to pass before it goes in front of a real user. This is the live score published from the canonical WorkerBee record, not a separate Claude artifact.</p>
+        <p class="ward-stamp" id="ward-stamp"></p>
+      </section>
+      <section class="ward-verdict" aria-label="Current score">
+        <p class="ward-verdict-line" id="ward-verdict"></p>
+        <div class="ward-meter" id="ward-meter"><span class="pass"></span><span class="part"></span><span class="fail"></span></div>
+        <div class="ward-tally"><div><strong id="ward-pass">0</strong><span>Pass</span></div><div><strong id="ward-part">0</strong><span>Partly</span></div><div><strong id="ward-fail">0</strong><span>Fail</span></div></div>
+      </section>
+      <div class="ward-controls">
+        <div class="ward-tabs" role="group" aria-label="Question list"><button type="button" data-list="stranger" aria-pressed="true">Stranger</button><button type="button" data-list="developer" aria-pressed="false">Developer</button><button type="button" data-list="ux" aria-pressed="false">UX system</button></div>
+        <label><input type="checkbox" id="ward-only-open"> Only what does not pass</label>
+      </div>
+      <section id="ward-list"></section>
+    </div>
+  </main>
+  <script type="module" src="/js/ward-questions.js"></script>
+</body>
+</html>

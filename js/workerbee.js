@@ -585,6 +585,18 @@ function renderDashboard() {
   fillUpdates('diagnostics-list', diagnostics, 'No active defect, friction, streamlining opportunity, or expansion candidate is currently recorded.');
   el('needs-count').textContent = String(needs.length);
   el('dashboard-freshness').textContent = state.generatedAt ? `Dashboard synced ${formatDateTime(state.generatedAt)}.` : 'Current state loaded.';
+  const wardGate = state.updates.find(item => item.metadata?.roadmap_item_id === 'WBR-146');
+  const wardArtifact = wardGate?.metadata?.ward_artifact;
+  const wardSummary = el('ward-artifact-summary');
+  if (wardSummary) {
+    if (wardArtifact?.score) {
+      const { PASS = 0, PART = 0, FAIL = 0 } = wardArtifact.score;
+      const stamp = wardArtifact.rescoredAt ? ` Last scored ${formatDateTime(wardArtifact.rescoredAt)}.` : '';
+      wardSummary.textContent = `${PASS} pass. ${PART + FAIL} still need work.${stamp}`;
+    } else {
+      wardSummary.textContent = 'The current score has not reached Studio yet.';
+    }
+  }
   renderHealth();
   renderGrade();
   renderDailyReport();

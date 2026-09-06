@@ -13,6 +13,14 @@
       "destination": "/dashboard.html"
     },
     {
+      "source": "/ward-questions",
+      "destination": "/ward-questions.html"
+    },
+    {
+      "source": "/ward-questions/",
+      "destination": "/ward-questions.html"
+    },
+    {
       "source": "/analytics",
       "destination": "/analytics.html"
     },
