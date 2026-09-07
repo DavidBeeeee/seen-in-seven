@@ -31,8 +31,8 @@
 
 **Partnership decision:** enrolled / declined / follow-up
 **Exact partnership objection:**
-**EEE result:** enrolled / declined / follow-up / not eligible
-**Exact EEE objection:**
+**Momentum Hub result:** enrolled / declined / follow-up / not eligible
+**Exact Momentum Hub objection:**
 **Referrals received:**
 **Testimonial permission and approved wording:**
 

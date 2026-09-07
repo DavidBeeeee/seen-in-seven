@@ -8,9 +8,9 @@ const admin = read('admin.html');
 const adminJs = read('js/admin-studio.js');
 const migration = read('supabase_migrations/2026-08-07-add-studio-catalog-visibility.sql');
 
-assert.match(index, /id="eee-card" hidden/, 'EEE must begin hidden to prevent a non-member flash.');
+assert.match(index, /id="eee-card" hidden/, 'Momentum Hub must begin hidden to prevent a non-member flash.');
 assert.ok(index.indexOf('/js/777-launch-cycle.js') < index.indexOf('/js/studio.js'), 'Launch timing must load before Studio visibility.');
-assert.match(studio, /if \(unlocked\) return true;/, 'Members must always see EEE.');
+assert.match(studio, /if \(unlocked\) return true;/, 'Members must always see Momentum Hub.');
 assert.match(studio, /studioCatalogMode === 'visible'/, 'Always-show override is missing.');
 assert.match(studio, /studioCatalogMode === 'hidden'/, 'Members-only override is missing.');
 assert.match(studio, /return isEeeCartOpen\(\);/, 'Automatic cart-window visibility is missing.');

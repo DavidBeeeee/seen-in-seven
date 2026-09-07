@@ -30,7 +30,7 @@
 **Follow-up date:**
 **Exact objection or deciding factor:**
 
-## EEE downsell
+## Momentum Hub downsell
 
 Complete only after the partnership was declined.
 

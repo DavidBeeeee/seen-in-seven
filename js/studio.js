@@ -8,7 +8,7 @@ let studioProfile = null;
 let studioAccess = [];
 let studioCatalogMode = 'automatic';
 let authMode = 'magic';
-const ACCESS_APP_NAMES = { seeninseven: 'SeenInSeven', boardroom: 'AI Boardroom', eee: 'EEE Membership' };
+const ACCESS_APP_NAMES = { seeninseven: 'SeenInSeven', boardroom: 'AI Boardroom', eee: 'Momentum Hub Membership' };
 const accessNoticeApp = new URLSearchParams(window.location.search).get('access');
 
 const el = id => document.getElementById(id);
@@ -205,8 +205,8 @@ function renderStudio() {
   renderAppAccess(
     'eee',
     eeeUnlocked,
-    'All five EEE components are ready in one workspace.',
-    eeeCardVisible ? 'Founders enrollment is open. Explore the complete EEE membership.' : 'Sign in with the email connected to your EEE membership.'
+    'All five Momentum Hub components are ready in one workspace.',
+    eeeCardVisible ? 'Founders enrollment is open. Explore the complete Momentum Hub membership.' : 'Sign in with the email connected to your Momentum Hub membership.'
   );
   const accessName = ACCESS_APP_NAMES[accessNoticeApp];
   el('access-notice').hidden = !accessName || !signedIn;

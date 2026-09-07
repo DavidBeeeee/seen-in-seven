@@ -21,7 +21,7 @@ If ten runs produce fewer than five enrollments, review exact objections, revise
 2. Day One diagnostic, belief shifts, SeenInSeven demonstration, and one approved script.
 3. Two private working sessions that aim for three total scripts.
 4. One optional recovery session only when a real blocker prevents the promised result.
-5. Graduation, referrals, permission-based partnership offer, and EEE downsell only after the partnership is declined.
+5. Graduation, referrals, permission-based partnership offer, and Momentum Hub downsell only after the partnership is declined.
 
 Recording and publishing earn recognition, but neither is required to continue. Participation is free during validation. Consent is required before recording, transcribing, quoting, or using results.
 

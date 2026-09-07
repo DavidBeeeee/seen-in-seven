@@ -127,7 +127,7 @@ async function callStorySculpt(input) {
 export default async function handler(req, res) {
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed.' });
   const user = await authenticatedUser(req);
-  if (!user || !(await hasEeeAccess(req))) return json(res, 403, { error: 'An active EEE membership is required.' });
+  if (!user || !(await hasEeeAccess(req))) return json(res, 403, { error: 'An active Momentum Hub membership is required.' });
 
   try {
     const input = validateBody(req.body);

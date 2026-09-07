@@ -99,7 +99,7 @@ Give a clear yes, no, or dated decision-follow-up path.
 
 ### 4. Downsell
 
-Only after the partnership is declined, offer EEE at $77/month as the lower-commitment continuation. Never lead with EEE and never offer both at once.
+Only after the partnership is declined, offer Momentum Hub at $77/month as the lower-commitment continuation. Never lead with Momentum Hub and never offer both at once.
 
 ### 5. Close and learn
 

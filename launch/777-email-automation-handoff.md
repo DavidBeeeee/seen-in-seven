@@ -56,8 +56,8 @@ Kickoff and Graduation remain public pages in separate funnel containers. They n
 | `777 - Checkout Started` | `2122024` | Recognized checkout visitor who has not completed the tracked purchase. |
 | `777 - 2026-09 Participant` | `2122031` | Known contact visited September Day 1. |
 | `777 - 2026-09 Day 7` | `2122026` | Known contact visited September Day 7. |
-| `EEE - Purchase` | `2122029` | Existing EEE purchase state; outside this implementation. |
-| `EEE - Canceled` | `2122030` | Existing EEE cancellation state; outside this implementation. |
+| `Momentum Hub - Purchase` | `2122029` | Existing Momentum Hub purchase state; outside this implementation. |
+| `Momentum Hub - Canceled` | `2122030` | Existing Momentum Hub cancellation state; outside this implementation. |
 
 The account rejected new tags because the current plan limit has been reached. To preserve the approved model without upgrading, two obsolete event-registration tags were repurposed:
 

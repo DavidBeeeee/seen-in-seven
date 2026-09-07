@@ -218,10 +218,10 @@ async function makeGraduation() {
     { title: 'How does it finish?', body: 'Stay with implementation until the work exists outside your head.', color: C.teal }
   ], 230);
 
-  s = baseSlide(deck, 'EEE', 5, total, C.teal);
+  s = baseSlide(deck, 'Momentum Hub', 5, total, C.teal);
   textbox(s, 'One Studio for the work after clarity.', 62, 88, 570, 112, { fontSize: 42, bold: true });
-  await addScreenshot(s, join(ROOT, 'assets/eee/eee-home.png'), 'EEE Studio home', 700, 120, 460, 460);
-  textbox(s, 'EEE keeps the message, decision, examples, advisors, and direct support in the same operating space.', 62, 214, 530, 150, { fontSize: 24, color: C.muted });
+  await addScreenshot(s, join(ROOT, 'assets/eee/eee-home.png'), 'Momentum Hub Studio home', 700, 120, 460, 460);
+  textbox(s, 'The Momentum Hub keeps the message, decision, examples, advisors, and direct support in the same operating space.', 62, 214, 530, 150, { fontSize: 24, color: C.muted });
   textbox(s, 'Not another login. Not another library to finish.', 62, 438, 560, 60, { fontSize: 28, bold: true, color: C.coral });
 
   s = baseSlide(deck, 'The five parts', 6, total, C.yellow);

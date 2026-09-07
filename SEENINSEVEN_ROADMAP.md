@@ -22,7 +22,7 @@ The July version of this document was accurate when written and is no longer. Th
 
 1. **Phase 6 got built.** Systeme purchase routing, webhook verification, and source-aware revocation are live. The July text listing "No Systeme.io webhook right now" under Do Not Build Yet was correct at the time and is now wrong. It has been removed.
 2. **The September 7 through 19 group launch was built, then explicitly deferred on August 12.** Its assets remain preserved in `launch/` as reference material while `launch/private-tiny-challenge/` holds the active validation system.
-3. **The EEE component apps now exist as routes.** `/eee`, `/storysculpt`, `/navigator`, `/vault` exist inside Studio.
+3. **The Momentum Hub component apps now exist as routes.** `/eee`, `/storysculpt`, `/navigator`, `/vault` exist inside Studio.
 
 None of this changes the sequencing rule. It changes which items are already behind us.
 
@@ -201,7 +201,7 @@ What exists:
 - Every message ID is recorded, making retries duplicate-safe.
 - Access is granted by immutable price plan ID through the `systeme_product_routes` table:
   - `3122070`, 777 Challenge $7, grants `seeninseven`
-  - `3134754`, EEE Founders $77/month, grants `eee` and `boardroom`
+  - `3134754`, Momentum Hub Founders $77/month, grants `eee` and `boardroom`
 - Refunds and cancellations revoke only grants created by the matching purchase.
 - Buyers are pre-enrolled in Studio and claim their profile on first sign-in, so purchase and login can happen in either order.
 - Studio Admin shows webhook history with processing status for recovery.
@@ -233,7 +233,7 @@ Later touchpoints worth considering: first script generated, several days stuck,
 
 **Live.**
 
-Studio is the root dashboard. SeenInSeven is intact at `/seeninseven`. Shared login, per-app entitlements, Studio-wide admin at `/admin`, and app-specific admin areas all work. Boardroom is connected and grantable. The EEE component apps exist as routes: `/eee`, `/storysculpt`, `/navigator`, `/vault`.
+Studio is the root dashboard. SeenInSeven is intact at `/seeninseven`. Shared login, per-app entitlements, Studio-wide admin at `/admin`, and app-specific admin areas all work. Boardroom is connected and grantable. The Momentum Hub component apps exist as routes: `/eee`, `/storysculpt`, `/navigator`, `/vault`.
 
 The component apps are at very different maturity levels. `solution_vault_items` holds thirteen rows, `storysculpt_projects` holds one, and `navigator_states` holds none. Treat StorySculpt and Navigator as early rather than finished, and see the open-items list for David's specific direction on each.
 

@@ -275,7 +275,7 @@ Production verification covered:
 
 - Systeme.io webhook automation for Studio entitlements.
 - Paid-access enforcement outside the current beta period.
-- Additional EEE apps inside Studio.
+- Additional Momentum Hub apps inside Studio.
 - Cross-app progress reporting beyond the current Studio summaries.
 - Custom Boardroom advisor creation, removal, and personality editing.
 - General-purpose ongoing prompt controls after David finishes the intensive blueprint iteration phase.
@@ -292,7 +292,7 @@ SeenInSeven is the free app reward for joining the 777 Challenge — a group vid
 
 The challenge is the product. The app is the bonus. Every design, copy, and UX decision should reinforce that users are part of a community of content creators who are using this to connect with an audience and ultimately earn life-changing income, just as others are doing all around the world — not using an AI tool in isolation. The app interviews the user, finds their voice, and produces fully customized scripts for all 7 videos faster and easier than they could possibly expect. The scripts are built on a proprietary Hero's Journey framework that cannot be replicated.
 
-The current business model: $7 gets access to the community challenge, with this ($300+) app as a free bonus. The upsell at completion is the Exit Escalator Engine (EEE) at $77/month founding rate, which teaches the full 5E framework for ongoing content creation and business building.
+The current business model: $7 gets access to the community challenge, with this ($300+) app as a free bonus. The upsell at completion is the Momentum Hub (Momentum Hub) at $77/month founding rate, which teaches the full 5E framework for ongoing content creation and business building.
 
 ---
 
@@ -599,14 +599,14 @@ Studio app access currently works and can be granted or revoked manually by an a
 The Facebook group (`facebook.com/groups/coloradobiz`) is a core part of the product, not a footnote. Three moments in the app need a prominent, emotional bridge to the community: after first script generated, after each video filmed, and after all 7 completed. Currently there is only a small card at the bottom of the dashboard.
 
 **3. Graduation Event bridge**
-When all 7 videos are filmed, the completion screen needs to explicitly name the Graduation Event, build anticipation, and provide a register link. Currently it just says "Level Complete" and links cold to the EEE page.
+When all 7 videos are filmed, the completion screen needs to explicitly name the Graduation Event, build anticipation, and provide a register link. Currently it just says "Level Complete" and links cold to the Momentum Hub page.
 
 **4. Email touchpoints**
 Transactional emails for: first script generated (save your progress), 3-day nudge if stuck, completion congratulations, Graduation Event reminder. Requires a transactional email provider — Supabase's built-in mailer is rate-limited and unreliable for this. Postmark or Resend are recommended.
 
 **Studio expansion after the current apps:**
 
-The superapp foundation is built. Future priorities are connecting Systeme.io to entitlements, adding EEE tools to the existing Studio catalog and shared session, and expanding cross-app progress reporting. Every future app should plug into the existing identity, entitlement, hub, and master-admin model instead of creating another login or customer-facing deployment.
+The superapp foundation is built. Future priorities are connecting Systeme.io to entitlements, adding Momentum Hub tools to the existing Studio catalog and shared session, and expanding cross-app progress reporting. Every future app should plug into the existing identity, entitlement, hub, and master-admin model instead of creating another login or customer-facing deployment.
 
 ---
 
@@ -722,7 +722,7 @@ Should return an empty array. If it doesn't, find and close the unclosed tag.
 | Vercel project ID | prj_z0cydoxLzaTOusdNd7kpkDyMdFou |
 | Challenge landing | content.coloradomastermind.com/777challenge |
 | Free trial | content.coloradomastermind.com/7videos |
-| EEE membership | content.coloradomastermind.com/yeees |
+| Momentum Hub membership | content.coloradomastermind.com/yeees |
 | Facebook group | facebook.com/groups/coloradobiz |
 | Calendly | calendly.com/davidbee |
 | David email | email@davidbee.me / contact@davidbee.me |
@@ -992,3 +992,18 @@ The following principles govern every word of copy in this app and the broader C
 - Specialized Level 2 preparation paths now retain the original Viewer Premise Source after curating story material. Standard paths reuse the Journey Direction already present and do not duplicate it.
 - Fresh generation, full-script regeneration, and Meat-only regeneration receive the premise contract. Regenerating Hook, Open Loop, Conclusion, or CTA does not assign them the Meat's premise job.
 - This change adds no output section, model call, deterministic rejection, or target words. The premise replaces vague setup inside the existing Meat allocation.
+
+
+## Naming: The Momentum Hub (formerly EEE)
+
+The $77/month membership was called **the Exit Escalator Engine**, nicknamed **the Exscalator**, and shorted to **EEE** everywhere. As of September 2026 the customer-facing name is **The Momentum Hub**. The short mark in the Studio logo and access gate is **HUB**.
+
+All visible copy has been renamed. The plumbing was deliberately left alone, so when you see `eee` in the code it is correct and should not be "fixed":
+
+- Route and files: `/eee`, `eee.html`, `css/eee.css`, `js/eee.js`, `js/eee-common.js`, `assets/eee/`
+- CSS class prefix: `eee-`
+- Supabase app key: `'eee'` in access grants, and `hasEeeAccess()` in the API
+- Systeme.io URL slugs: `/yeees`, `/yeseee`, `/eeeaccess`
+- Applied migrations under `supabase_migrations/` keep their original text, since rewriting a file that already ran changes nothing in the database. The `workstream` display labels still read `EEE` in the live table and need a new migration to update.
+
+---

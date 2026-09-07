@@ -6,7 +6,7 @@
 
 - [ ] Set the next cycle dates in `js/777-launch-cycle.js` using Mountain Time.
 - [ ] Update the public page dates, email dates, and both presentation title slides.
-- [ ] Confirm the `$7` 777 price plan and `$77/month` EEE founders plan IDs have not changed.
+- [ ] Confirm the `$7` 777 price plan and `$77/month` Momentum Hub founders plan IDs have not changed.
 - [ ] Confirm the Systeme webhook still subscribes to `New sale` and `Sale canceled`.
 - [ ] Confirm the webhook signing secret matches Vercel `SYSTEME_WEBHOOK_SECRET`.
 - [ ] Confirm Kickoff and Graduation Zoom room URLs.
@@ -18,7 +18,7 @@
 - [ ] Publish the Kickoff registration state at `/kickoff`.
 - [ ] Confirm the Kickoff confirmation page reveals the Zoom room only after registration.
 - [ ] Open the `$7` 777 checkout.
-- [ ] Keep the `$77` EEE checkout closed.
+- [ ] Keep the `$77` Momentum Hub checkout closed.
 - [x] Run a real `$7` purchase with a fresh email. Verified August 9, 2026
 - [ ] Confirm purchase email, Studio pre-enrollment, magic-link entry, and SeenInSeven access.
 - [ ] Confirm a public visitor cannot reach paid Studio tools.
@@ -42,10 +42,10 @@
 
 ## September 15 Graduation
 
-- [ ] Open the `$77/month` EEE founders checkout before the live invitation.
+- [ ] Open the `$77/month` Momentum Hub founders checkout before the live invitation.
 - [ ] Confirm `/yeees` shows the open-cart state.
 - [ ] Open Zoom by 10:45 AM Mountain Time.
-- [ ] Deliver the Graduation deck and demonstrate all five EEE components.
+- [ ] Deliver the Graduation deck and demonstrate all five Momentum Hub components.
 - [ ] Tag verified attendees `777 - Graduation Attended`.
 - [ ] Record the live session.
 - [ ] Replace Graduation registration with the replay state.
@@ -64,7 +64,7 @@
 - [ ] Confirm `/yeees` shows the closed state.
 - [ ] Remove expired purchase buttons from public pages.
 - [ ] Hide the Graduation replay.
-- [ ] Confirm existing EEE members retain access.
+- [ ] Confirm existing Momentum Hub members retain access.
 - [ ] Export purchase, cancellation, and webhook status for the cycle archive.
 
 ## Recovery

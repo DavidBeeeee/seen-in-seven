@@ -21,9 +21,9 @@ All launch states use `America/Denver`.
 | September 7, 11:00 AM | Kickoff and Video 1 |
 | September 8-13 | Videos 2-7 |
 | September 14 | Catch-up and Graduation reminder |
-| September 15, 11:00 AM | Graduation and EEE founders cart open |
+| September 15, 11:00 AM | Graduation and Momentum Hub founders cart open |
 | September 16-18 | Replay, FAQ, and decision support |
-| September 19, 11:59 PM | EEE founders cart close |
+| September 19, 11:59 PM | Momentum Hub founders cart close |
 
 The browser-side cycle controller is [`js/777-launch-cycle.js`](../js/777-launch-cycle.js). Update its configuration once per monthly cycle. It controls page-state visibility but never grants access.
 
@@ -35,7 +35,7 @@ The browser-side cycle controller is [`js/777-launch-cycle.js`](../js/777-launch
 - Graduation page: `https://content.coloradomastermind.com/graduation`
 - Graduation follow-up page: `https://content.coloradomastermind.com/graduation-confirmed`
 - SeenInSeven Studio: `https://studio.coloradomastermind.com/seeninseven`
-- EEE Studio: `https://studio.coloradomastermind.com/eee`
+- Momentum Hub Studio: `https://studio.coloradomastermind.com/eee`
 - Certainty Sessions: `https://calendly.com/davidbee`
 
 ## Product Routes
@@ -45,7 +45,7 @@ Systeme purchase access is granted only by immutable price-plan ID.
 | Product | Price plan | Studio access |
 | --- | ---: | --- |
 | 777 Challenge | `3122070` | SeenInSeven |
-| EEE Founders | `3134754` | EEE and AI Boardroom |
+| Momentum Hub Founders | `3134754` | Momentum Hub and AI Boardroom |
 
 The webhook endpoint is `POST https://studio.coloradomastermind.com/api/systeme-webhook`. It verifies Systeme's HMAC signature against the raw request, records every message ID, and calls the source-aware Supabase access layer. Refunds and cancellations can revoke only grants created by the matching purchase.
 
@@ -56,8 +56,8 @@ The webhook endpoint is `POST https://studio.coloradomastermind.com/api/systeme-
 - `777 - Kickoff Registered`
 - `777 - Graduation Registered`
 - `777 - Graduation Attended`
-- `EEE - Purchase`
-- `EEE - Canceled`
+- `Momentum Hub - Purchase`
+- `Momentum Hub - Canceled`
 - `777 - 2026-09 Participant`
 
 ## Source Ownership

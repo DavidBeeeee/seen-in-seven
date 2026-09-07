@@ -19,13 +19,27 @@ Systeme.io remains the public funnel, checkout, and email platform. Studio never
 
 ---
 
+## Naming: The Momentum Hub (formerly EEE)
+
+The $77/month membership was called **the Exit Escalator Engine**, nicknamed **the Exscalator**, and shorted to **EEE** everywhere. As of September 2026 the customer-facing name is **The Momentum Hub**. The short mark in the Studio logo and access gate is **HUB**.
+
+All visible copy has been renamed. The plumbing was deliberately left alone, so when you see `eee` in the code it is correct and should not be "fixed":
+
+- Route and files: `/eee`, `eee.html`, `css/eee.css`, `js/eee.js`, `js/eee-common.js`, `assets/eee/`
+- CSS class prefix: `eee-`
+- Supabase app key: `'eee'` in access grants, and `hasEeeAccess()` in the API
+- Systeme.io URL slugs: `/yeees`, `/yeseee`, `/eeeaccess`
+- Applied migrations under `supabase_migrations/` keep their original text, since rewriting a file that already ran changes nothing in the database. The `workstream` display labels still read `EEE` in the live table and need a new migration to update.
+
+---
+
 ## Routes
 
 | Route | What it is |
 |---|---|
 | `/` | Studio dashboard and login |
 | `/seeninseven` | SeenInSeven app |
-| `/eee` | Exit Escalator Engine home |
+| `/eee` | Momentum Hub home |
 | `/storysculpt` | StorySculpt AI (5E script app) |
 | `/navigator` | Next Step Navigator |
 | `/vault` | Solution Vault |
@@ -48,7 +62,7 @@ The other 1-1 property, `yes.davidbee.me`, is a **separate Vercel project** (`bu
 ```
 index.html               Studio dashboard and login
 seeninseven.html         SeenInSeven single-page app (all challenge screens live here)
-eee.html                 EEE home
+eee.html                 Momentum Hub home
 storysculpt.html         StorySculpt AI
 navigator.html           Next Step Navigator
 vault.html               Solution Vault
@@ -67,7 +81,7 @@ js/journey-map.js            Seven-part Journey Map screens
 js/answer-help.js            Per-video "copy this prompt to your own AI" helper
 js/script-prompt-engine.js   Assembles the per-video generation payload
 js/777-launch-cycle.js       Launch-state controller (see Launch Cycle below)
-js/eee.js, navigator.js, storysculpt.js, vault.js   EEE component apps
+js/eee.js, navigator.js, storysculpt.js, vault.js   Momentum Hub component apps
 js/admin-studio.js           Studio admin auth, summaries, customer directory, access controls
 js/admin-seeninseven*        SeenInSeven admin
 js/admin-boardroom.js        Boardroom admin
@@ -183,18 +197,18 @@ All times America/Denver. Source of truth for operations is `launch/`, and the b
 | Sep 7, 11:00 AM | Kickoff and Video 1 |
 | Sep 8 to 13 | Videos 2 through 7 |
 | Sep 14 | Catch-up and Graduation reminder |
-| Sep 15, 11:00 AM | Graduation, EEE founders cart opens |
+| Sep 15, 11:00 AM | Graduation, Momentum Hub founders cart opens |
 | Sep 16 to 18 | Replay, FAQ, decision support |
-| Sep 19, 11:59 PM | EEE founders cart closes |
+| Sep 19, 11:59 PM | Momentum Hub founders cart closes |
 
 **Product routing:**
 
 | Product | Price plan | Grants |
 |---|---:|---|
 | 777 Challenge, $7 | `3122070` | `seeninseven` |
-| EEE Founders, $77/month | `3134754` | `eee` + `boardroom` |
+| Momentum Hub Founders, $77/month | `3134754` | `eee` + `boardroom` |
 
-**Current runtime rule:** `js/777-launch-cycle.js` has `enabled: false` and null dates. Group states and the EEE cart fail closed. The old room and replay blanks remain intentionally unresolved until a new group cycle is approved. Do not invent URLs.
+**Current runtime rule:** `js/777-launch-cycle.js` has `enabled: false` and null dates. Group states and the Momentum Hub cart fail closed. The old room and replay blanks remain intentionally unresolved until a new group cycle is approved. Do not invent URLs.
 
 ---
 
@@ -231,7 +245,7 @@ Project: `SeenInSeven` (`zdtkwpzdwnzzmdwrvmka`). The separate `Boardroom V2` pro
 
 `workerbee_sections`, `workerbee_tasks`, `workerbee_updates`, `workerbee_journal`, `workerbee_read_state`, `workerbee_change_history`, and `workerbee_config` are private operational records. Browser roles have no direct table privileges. `/api/workerbee` verifies David through the existing admin boundary or a server-only bridge secret, then calls only `workerbee_bootstrap()` or `workerbee_mutate()`.
 
-**EEE component apps**
+**Momentum Hub component apps**
 
 `storysculpt_projects`, `navigator_states`, `solution_vault_items`, `solution_vault_progress`
 
@@ -294,7 +308,7 @@ Full detail lives in `SEENINSEVEN_ROADMAP.md`. Short version:
 | 5. Script Output Update | Partially underway through the Prompt Tester. No blueprint rewrite without an explicit brief |
 | 6. Paid Access and Checkout Bridge | **Built.** Real $7 payment and entitlement validated August 9; fresh-buyer login bridge repaired; manual link click-through, retry, and refund tests remain |
 | 7. Email and Follow-Up | Systeme handles the launch sequence. No in-app lifecycle email exists |
-| 8. Studio Foundation | Live. Studio is the root, SeenInSeven is intact at `/seeninseven`, Boardroom connected, EEE component apps present |
+| 8. Studio Foundation | Live. Studio is the root, SeenInSeven is intact at `/seeninseven`, Boardroom connected, Momentum Hub component apps present |
 
 **Do not** add cross-app history, new Studio apps, or in-app lifecycle email without explicit direction.
 

@@ -10,8 +10,8 @@ Record a tester, timestamp, and evidence link for each line.
 - [ ] Retrying the same webhook message creates no additional grant or profile.
 - [ ] Existing beta user keeps access after a `$7` purchase refund.
 - [ ] Refunded fresh buyer loses only the matching Systeme grant.
-- [ ] Fresh `$77/month` buyer sees EEE Home, StorySculpt, Navigator, Solution Vault, AI Boardroom, and Certainty Sessions.
-- [ ] EEE cancellation removes EEE and Boardroom grants from that purchase while preserving SeenInSeven and independent grants.
+- [ ] Fresh `$77/month` buyer sees Momentum Hub Home, StorySculpt, Navigator, Solution Vault, AI Boardroom, and Certainty Sessions.
+- [ ] Momentum Hub cancellation removes Momentum Hub and Boardroom grants from that purchase while preserving SeenInSeven and independent grants.
 - [ ] Magic link and existing password both enter the same Studio profile.
 
 ## Public Funnel

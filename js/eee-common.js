@@ -38,12 +38,12 @@ function eeeShowGate(kind) {
   const copy = eeeElement('eee-gate-copy');
   const button = eeeElement('eee-gate-button');
   if (kind === 'sign-in') {
-    title.textContent = 'Sign in to enter EEE.';
+    title.textContent = 'Sign in to enter Momentum Hub.';
     copy.textContent = 'Use the Studio email connected to your membership.';
     button.textContent = 'Go to Studio sign in';
     button.href = '/?access=eee';
   } else {
-    title.textContent = 'EEE membership is not active on this account.';
+    title.textContent = 'Momentum Hub membership is not active on this account.';
     copy.textContent = 'Your other Studio access remains unchanged.';
     button.textContent = 'Return to My Studio';
     button.href = '/';

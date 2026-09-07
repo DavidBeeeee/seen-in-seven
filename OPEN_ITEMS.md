@@ -13,7 +13,7 @@ Ordering now begins with proof for the private Tiny Challenge. Group-only items 
 ## Tier 1: Private validation
 
 - [x] Build the facilitator playbook, intake, commitment, session-note, Graduation, scorecard, and structured ledger.
-- [x] Make the September browser cycle and EEE checkout source fail closed.
+- [x] Make the September browser cycle and Momentum Hub checkout source fail closed.
 - [ ] David selects and invites the first qualified private participant.
 - [ ] Complete Run 1 with one approved script on Day One and a complete scorecard at Graduation.
 - [ ] Complete 10 private runs.
@@ -171,7 +171,7 @@ The visual redesign covered how the app feels. The flow-by-flow walkthrough did 
 
 Handled in this pass, listed so the trail is clear:
 
-- `CLAUDE.md` rewritten to cover Studio, the EEE apps, the Systeme webhook, the launch cycle controller, and the current schema
+- `CLAUDE.md` rewritten to cover Studio, the Momentum Hub apps, the Systeme webhook, the launch cycle controller, and the current schema
 - `SEENINSEVEN_ROADMAP.md` corrected. Phase 6 marked built, the stale "no Systeme webhook" entry removed from Do Not Build Yet, September context added
 - Master Business Document raised to V4 with the September cycle replacing the retired April one, plus Studio routes and price plan routing
 - Project memory rewritten

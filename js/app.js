@@ -5994,7 +5994,7 @@ function buildPlan(){
     document.getElementById('mission-title').textContent = l2Done ? 'YOU JUST PROVED YOUR VOICE WORKS.' : 'KEEP BUILDING.';
     document.getElementById('mission-cta').innerHTML = l2Done ? `
       <strong style="color:var(--cream)">Now let's build the business you deserve.</strong><br><br>
-      The Exscalator Engine gives you unlimited unique scripts, a daily entrepreneurial roadmap, and live support — forever.<br><br>
+      The Momentum Hub gives you unlimited unique scripts, a daily entrepreneurial roadmap, and live support — forever.<br><br>
       <a href="https://content.coloradomastermind.com/yeees" target="_blank"
         style="display:inline-block;background:var(--green);color:#0f172a;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:0.1em;padding:13px 34px;border-radius:8px;text-decoration:none;margin-top:8px;">
         Continue →

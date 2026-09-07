@@ -7,7 +7,7 @@ const adminSb = supabase.createClient(ADMIN_SUPABASE_URL, ADMIN_SUPABASE_KEY);
 const APP_CATALOG = [
   { key: 'seeninseven', name: 'SeenInSeven', connected: true, adminPath: '/admin/seeninseven' },
   { key: 'boardroom', name: 'AI Boardroom', connected: true, adminPath: '/admin/boardroom' },
-  { key: 'eee', name: 'EEE Membership', connected: true, adminPath: '/eee' }
+  { key: 'eee', name: 'Momentum Hub Membership', connected: true, adminPath: '/eee' }
 ];
 
 const adminEl = id => document.getElementById(id);
@@ -256,11 +256,11 @@ function renderEeeVisibility() {
   const mode = currentEeeCatalogMode();
   adminEl('eee-visibility-' + mode).checked = true;
   const status = mode === 'visible'
-    ? 'Non-members can currently see the EEE card in Studio.'
+    ? 'Non-members can currently see the Momentum Hub card in Studio.'
     : mode === 'hidden'
-      ? 'Only members can currently see the EEE card in Studio.'
+      ? 'Only members can currently see the Momentum Hub card in Studio.'
       : adminEeeCartOpen()
-        ? 'Automatic mode is active. The cart is open, so non-members can see the EEE card.'
+        ? 'Automatic mode is active. The cart is open, so non-members can see the Momentum Hub card.'
         : 'Automatic mode is active. The card will appear to non-members when the founders cart opens.';
   adminEl('eee-visibility-status').textContent = status;
 }
@@ -278,7 +278,7 @@ async function saveEeeVisibility(event) {
   try {
     const { error } = await adminSb.rpc('admin_set_studio_catalog_visibility', { target_mode: mode });
     if (error) throw error;
-    message.textContent = 'EEE Studio visibility updated.';
+    message.textContent = 'Momentum Hub Studio visibility updated.';
     message.className = 'enrollment-message success';
     await loadStudioAdmin();
   } catch (error) {
@@ -399,8 +399,8 @@ function renderCustomers() {
       ? '<button class="revoke" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'boardroom\',false)">Remove Boardroom</button>'
       : '<button onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'boardroom\',true)">Grant Boardroom</button>';
     const eeeButton = row.eeeAccess
-      ? '<button class="revoke" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'eee\',false)">Remove EEE</button>'
-      : '<button onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'eee\',true)">Grant EEE</button>';
+      ? '<button class="revoke" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'eee\',false)">Remove Momentum Hub</button>'
+      : '<button onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'eee\',true)">Grant Momentum Hub</button>';
     return '<tr>' +
       '<td><div class="customer-name">' + escapeHtml(name) + (row.user.is_admin ? '<span class="customer-role">Admin</span>' : '') + '</div><div class="customer-email">' + escapeHtml(row.user.email || 'No email') + '</div></td>' +
       '<td><div class="access-badges">' + badges + '</div></td>' +
@@ -548,13 +548,13 @@ function openCustomer(userId) {
           : '<button class="secondary-button" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'boardroom\',true)">Grant access</button>') +
         '<a class="secondary-button" href="/admin/boardroom">Open app admin</a>' +
       '</div></article>' +
-      '<article class="drawer-app"><div class="drawer-app-head"><strong>EEE Membership</strong><span class="access-badge' + (eeeAccess ? ' active' : '') + '">' + (eeeAccess ? 'Active' : 'No access') + '</span></div>' +
+      '<article class="drawer-app"><div class="drawer-app-head"><strong>Momentum Hub Membership</strong><span class="access-badge' + (eeeAccess ? ' active' : '') + '">' + (eeeAccess ? 'Active' : 'No access') + '</span></div>' +
       '<p>StorySculpt, Next Step Navigator, Solution Vault, AI Boardroom, and Certainty Sessions from one Studio home.</p>' +
       '<div class="drawer-actions">' +
         (eeeAccess
           ? '<button class="secondary-button" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'eee\',false)">Remove access</button>'
           : '<button class="secondary-button" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'eee\',true)">Grant access</button>') +
-        '<a class="secondary-button" href="/eee">Open EEE home</a>' +
+        '<a class="secondary-button" href="/eee">Open Momentum Hub home</a>' +
       '</div></article>' +
     '</section>';
   adminEl('drawer-backdrop').hidden = false;

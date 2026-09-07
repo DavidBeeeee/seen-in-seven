@@ -92,7 +92,7 @@ Graduation begins September 15 at 11:00 AM Mountain Time.
 
 Join Zoom: `{{GRADUATION_ZOOM_URL}}`
 
-We will celebrate the completed journey, identify the next business problem, demonstrate the complete EEE system, and answer questions about the `$77/month` founders invitation.
+We will celebrate the completed journey, identify the next business problem, demonstrate the complete Momentum Hub system, and answer questions about the `$77/month` founders invitation.
 
 ## Graduation Reminder: 24 Hours
 
@@ -112,13 +112,13 @@ Join the room at 11:00 AM Mountain Time:
 
 `{{GRADUATION_ZOOM_URL}}`
 
-## September 15: EEE Founders Invitation
+## September 15: Momentum Hub Founders Invitation
 
 **Subject:** The seven videos revealed the next problem
 
 Finishing a story creates clarity, but clarity still needs somewhere to go.
 
-EEE brings the five parts of that next stage into one Studio: StorySculpt, Next Step Navigator, Solution Vault, AI Boardroom, and Certainty Sessions. The founders invitation is `$77/month` through September 19.
+Momentum Hub brings the five parts of that next stage into one Studio: StorySculpt, Next Step Navigator, Solution Vault, AI Boardroom, and Certainty Sessions. The founders invitation is `$77/month` through September 19.
 
 `https://content.coloradomastermind.com/yeees`
 
@@ -130,7 +130,7 @@ The Graduation replay is available here through September 19:
 
 `https://content.coloradomastermind.com/graduation`
 
-EEE is not another library to finish. It is the operating space for deciding what matters, shaping the message, implementing the next move, learning from working examples, and getting direct support when the work stops moving.
+Momentum Hub is not another library to finish. It is the operating space for deciding what matters, shaping the message, implementing the next move, learning from working examples, and getting direct support when the work stops moving.
 
 Founders details: `https://content.coloradomastermind.com/yeees`
 
@@ -138,7 +138,7 @@ Founders details: `https://content.coloradomastermind.com/yeees`
 
 **Subject:** Decide from the obstacle you actually have
 
-Do not join EEE for more information. Join when the work needs a place to move from unclear to finished.
+Do not join Momentum Hub for more information. Join when the work needs a place to move from unclear to finished.
 
 The five components solve different parts of that movement, while the shared Studio keeps the context together. Review the complete system here:
 
@@ -148,7 +148,7 @@ The five components solve different parts of that movement, while the shared Stu
 
 **Subject:** The founders invitation closes tomorrow
 
-The `$77/month` EEE founders invitation closes tomorrow at 11:59 PM Mountain Time.
+The `$77/month` Momentum Hub founders invitation closes tomorrow at 11:59 PM Mountain Time.
 
 `https://content.coloradomastermind.com/yeees`
 
@@ -156,7 +156,7 @@ The next decision is not whether more knowledge would be useful. It is whether t
 
 ## September 19: Final Day
 
-**Subject:** EEE founders closes tonight
+**Subject:** Momentum Hub founders closes tonight
 
 The September founders cart closes tonight at 11:59 PM Mountain Time.
 
@@ -164,20 +164,20 @@ The September founders cart closes tonight at 11:59 PM Mountain Time.
 
 After the window closes, the checkout and Graduation replay leave the public page. Current founders keep their access and rate while their membership remains active.
 
-## EEE Purchase Confirmation
+## Momentum Hub Purchase Confirmation
 
-**Subject:** Welcome to EEE
+**Subject:** Welcome to Momentum Hub
 
-Your EEE Studio is ready:
+Your Momentum Hub Studio is ready:
 
 `https://studio.coloradomastermind.com/eee`
 
-Use the email from checkout. Your membership includes StorySculpt, Next Step Navigator, Solution Vault, AI Boardroom, and Certainty Sessions. Start on EEE Home, which will show the clearest next action for each component.
+Use the email from checkout. Your membership includes StorySculpt, Next Step Navigator, Solution Vault, AI Boardroom, and Certainty Sessions. Start on Momentum Hub Home, which will show the clearest next action for each component.
 
-## EEE Cancellation
+## Momentum Hub Cancellation
 
-**Subject:** Your EEE membership has ended
+**Subject:** Your Momentum Hub membership has ended
 
-Your EEE membership access has ended. Independent SeenInSeven, beta, or manually granted access remains attached to your Studio profile.
+Your Momentum Hub membership access has ended. Independent SeenInSeven, beta, or manually granted access remains attached to your Studio profile.
 
 If the cancellation was accidental, reply to this email so the purchase record can be checked before another transaction is created.
