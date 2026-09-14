@@ -13,6 +13,17 @@ const dashboard = read('dashboard.html');
 const todo = read('todo.html');
 const analytics = read('analytics.html');
 const vercel = JSON.parse(read('vercel.json'));
+const momentumHubImages = [
+  '1.jpg', '2.jpg', '3.jpg', '4.jpg', '5.jpg',
+  '6.jpg', '7.jpg', '8.jpg', '9.jpg', '10.jpg',
+  'boardroom-perspectives.jpg', 'certainty-app.jpg',
+  'certainty-session.jpg', 'creator-economy.jpg', 'david-portrait.jpg',
+  'decision-branches.jpg', 'expertise-paths.jpg', 'first-week.jpg',
+  'hero-momentum.jpg', 'hub-home.jpg', 'it-works.jpg',
+  'jenny-evening.jpg', 'momentum-month.jpg', 'navigator-output.jpg',
+  'session-calendar.jpg', 'storysculpt-flow.jpg', 'value-stack.jpg',
+  'waiting-cost.jpg', 'who-its-for.jpg',
+];
 
 for (const table of ['workerbee_sections', 'workerbee_tasks', 'workerbee_updates', 'workerbee_journal', 'workerbee_read_state', 'workerbee_change_history']) {
   assert.match(migration, new RegExp(`alter table public\\.${table} enable row level security`), `${table} must enable RLS.`);
@@ -85,5 +96,14 @@ assert.equal(rewriteMap['/todo'], '/todo.html');
 assert.equal(rewriteMap['/analytics'], '/analytics.html');
 assert.match(client, /surface === 'analytics'\) renderAnalytics/, 'The shared client must hydrate the Analytics surface.');
 assert.match(client, /function metricSnapshots/, 'Analytics must read the published metrics snapshots.');
+
+// These are public media dependencies for the Momentum Hub sales-page source.
+// They existed only on a divergent branch and every production URL returned
+// 404 on 2026-09-14. A page-reference check cannot catch a missing binary, so
+// require the complete uploaded library and verify that every file is a JPEG.
+for (const image of momentumHubImages) {
+  const bytes = fs.readFileSync(new URL(`../assets/eee/${image}`, import.meta.url));
+  assert.deepEqual([...bytes.subarray(0, 3)], [0xff, 0xd8, 0xff], `${image} must remain a valid JPEG asset.`);
+}
 
 console.log('WorkerBee Studio boundaries, routes, private data rules, and focused Todo contract passed.');
