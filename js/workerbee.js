@@ -1,3 +1,5 @@
+import { dashboardPanels, isNewSince } from '/js/panels.mjs';
+
 const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
@@ -508,39 +510,27 @@ function renderGrade() {
 }
 
 function renderDashboard() {
-  const active = state.updates.filter(item => !['rejected', 'completed', 'deferred', 'approved', 'acknowledged'].includes(item.status));
+  // Every panel's contents come from js/panels.mjs, which WorkerBee's own gate
+  // reads back from this deployed file. One definition, checked where it runs.
+  const panels = dashboardPanels(state);
+  const { needs, completed, commitments, diagnostics } = panels;
   const outcomes = currentOutcomes();
-  // WBR-333. Both of these read a `kind` nothing has ever written.
-  //
-  // The schema allows six kinds and the publisher writes four: outcome,
-  // commitment, diagnostic, summary. Every roadmap item and every queue item
-  // goes up as `commitment`, and closing one sets its status rather than
-  // changing its kind. So `kind === 'completed'` matched nothing, ever, and
-  // "Since your last visit" has said "No new completed work" on every day
-  // since this board existed, including the nights that closed five items.
-  // `needs_david` is the same story with the same cause.
-  //
-  // Fixed on the page rather than by publishing a second row per item, since
-  // a duplicate card for every close is what the aged-out-lookup guard in
-  // workerbee-studio.mjs already exists to clean up after. What David is owed
-  // here is what moved, and what moved is already on the board.
-  // Board work owned by David. Transcript commitments are excluded because
-  // they have their own panel below, and counting them twice turns "Your move"
-  // into a second copy of "Commitments and deadlines".
-  const needs = active.filter(item => item.kind === 'needs_david'
-    || (item.metadata && item.metadata.owner === 'david' && item.metadata.source !== 'commitment'));
   const lastViewed = state.readState && state.readState.last_dashboard_viewed_at;
-  const completed = state.updates
-    .filter(item => item.status === 'completed' && (!lastViewed || item.updated_at > lastViewed))
-    .sort((a, b) => String(b.updated_at).localeCompare(String(a.updated_at)))
-    .slice(0, 8);
-  const commitments = active.filter(item => ['commitment', 'blocker'].includes(item.kind)).slice(0, 10);
-  const diagnostics = active.filter(item => item.kind === 'diagnostic').slice(0, 10);
-  fillUpdates('outcomes-list', outcomes, 'Today’s outcomes will appear after the next WorkerBee synchronization.', 'outcome');
+  fillUpdates('outcomes-list', outcomes, 'Today\u2019s outcomes will appear after the next WorkerBee synchronization.', 'outcome');
   fillUpdates('needs-list', needs, 'No explicit decision is recorded right now. Ongoing initiatives and improvement work still remain visible elsewhere on this page.', 'decision');
-  fillUpdates('completed-list', completed, 'No new completed work since your last visit.');
+  fillUpdates('completed-list', completed, 'Nothing has been recorded as finished in the last fortnight.');
   fillUpdates('commitments-list', commitments, 'No dated commitment or blocker is currently published.');
   fillUpdates('diagnostics-list', diagnostics, 'No active defect, friction, streamlining opportunity, or expansion candidate is currently recorded.');
+  // New since the last visit is an emphasis on work that is shown either way,
+  // never the condition for showing it. WBR-336: any load moves that marker,
+  // including a run's, so nothing a person needs may hang off it.
+  const list = el('completed-list');
+  if (list) {
+    [...list.children].forEach((node, index) => {
+      const item = completed[index];
+      node.classList.toggle('is-new', Boolean(item && isNewSince(item, lastViewed)));
+    });
+  }
   el('needs-count').textContent = String(needs.length);
   el('dashboard-freshness').textContent = state.generatedAt ? `Dashboard synced ${formatDateTime(state.generatedAt)}.` : 'Current state loaded.';
   renderHealth();

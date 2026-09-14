@@ -171,6 +171,16 @@ export default async function handler(req, res) {
     const body = req.body && typeof req.body === 'object' ? req.body : {};
     const action = String(body.action || '');
     if (!ACTIONS.has(action)) return json(res, 400, { error: 'Unknown WorkerBee action.' });
+    // WBR-336. `mark_viewed` records that David has seen the board, and the
+    // Dashboard's "new since your last visit" marker is computed from it. A
+    // caller holding the server secret is a run, not David, so letting it
+    // through means a run that opens the page to check it also spends the
+    // window it is checking. That is how the empty progress panel stayed
+    // invisible to me and not to him. Refuse, rather than attribute a machine's
+    // read to a person.
+    if (action === 'mark_viewed' && auth.serverSecret) {
+      return json(res, 200, { result: { skipped: 'mark_viewed is David\u2019s, not a run\u2019s.' } });
+    }
     const payload = sanitize(action, body.payload || {});
     const operatingAction = action === 'reorder_outcomes' || action.startsWith('upsert_');
     const result = await rpc(operatingAction ? 'workerbee_operating_mutate' : 'workerbee_mutate', { p_action: action, p_payload: payload, p_server_secret: auth.serverSecret }, auth.token);

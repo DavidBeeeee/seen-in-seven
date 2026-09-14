@@ -282,3 +282,9 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 }
 
 @media (prefers-reduced-motion: reduce) { * { scroll-behavior: auto !important; transition: none !important; } }
+
+/* WBR-337. New since the last visit is a mark on work that is shown either
+   way. It is never the reason a row exists, because the marker that decides it
+   moves every time anybody opens the page. */
+.stack-list > .is-new { border-left: 2px solid var(--teal); padding-left: 9px; }
+.stack-list > .is-new::after { content: 'new'; margin-left: 6px; color: var(--teal); font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
