@@ -3,6 +3,8 @@
     { "source": "/studio", "destination": "/index.html" },
     { "source": "/dashboard", "destination": "/dashboard.html" },
     { "source": "/dashboard/", "destination": "/dashboard.html" },
+    { "source": "/analytics", "destination": "/analytics.html" },
+    { "source": "/analytics/", "destination": "/analytics.html" },
     { "source": "/todo", "destination": "/todo.html" },
     { "source": "/todo/", "destination": "/todo.html" },
     { "source": "/eee", "destination": "/eee.html" },

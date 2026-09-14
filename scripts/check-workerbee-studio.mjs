@@ -11,6 +11,7 @@ const api = read('api/workerbee.js');
 const client = read('js/workerbee.js');
 const dashboard = read('dashboard.html');
 const todo = read('todo.html');
+const analytics = read('analytics.html');
 const vercel = JSON.parse(read('vercel.json'));
 
 for (const table of ['workerbee_sections', 'workerbee_tasks', 'workerbee_updates', 'workerbee_journal', 'workerbee_read_state', 'workerbee_change_history']) {
@@ -36,6 +37,10 @@ assert.doesNotMatch(client, /SERVICE_ROLE|SUPABASE_SECRET|WORKERBEE_STUDIO_SECRE
 assert.match(client, /onAuthStateChange[\s\S]*setTimeout\(\(\) => activate/, 'Auth hydration must leave the Supabase callback before database work.');
 assert.doesNotMatch(client, /\.innerHTML\s*=/, 'WorkerBee client rendering must not inject untrusted HTML.');
 assert.match(todo, /data-workerbee-surface="todo"/, '/todo must use the focused todo surface.');
+assert.match(analytics, /data-workerbee-surface="analytics"/, '/analytics must remain a first-class WorkerBee surface.');
+assert.match(analytics, /id="analytics-chart"/, '/analytics must retain its delivery chart.');
+assert.match(analytics, /id="analytics-demerits"/, '/analytics must retain the demerit ledger.');
+for (const page of [dashboard, todo, analytics]) assert.match(page, /href="\/analytics"/, 'Every WorkerBee surface must link to Analytics.');
 assert.doesNotMatch(todo, /Needs David|Journal|deadlines|progress/i, '/todo must not become a dashboard.');
 assert.match(dashboard, /Needs David/, '/dashboard must make David-facing decisions visible.');
 assert.match(dashboard, /id="journal"/, 'Journal must live inside /dashboard.');
@@ -77,5 +82,8 @@ assert.match(itemNotesMigration, /where n\.update_id = u\.id/, 'Bootstrap must r
 const rewriteMap = Object.fromEntries(vercel.rewrites.map(item => [item.source, item.destination]));
 assert.equal(rewriteMap['/dashboard'], '/dashboard.html');
 assert.equal(rewriteMap['/todo'], '/todo.html');
+assert.equal(rewriteMap['/analytics'], '/analytics.html');
+assert.match(client, /surface === 'analytics'\) renderAnalytics/, 'The shared client must hydrate the Analytics surface.');
+assert.match(client, /function metricSnapshots/, 'Analytics must read the published metrics snapshots.');
 
 console.log('WorkerBee Studio boundaries, routes, private data rules, and focused Todo contract passed.');

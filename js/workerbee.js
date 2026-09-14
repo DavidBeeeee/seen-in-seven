@@ -10,6 +10,7 @@ let state = { sections: [], tasks: [], updates: [], journal: [], clients: [], ev
 let toastTimer = null;
 let journalExpanded = false;
 let todoOwner = 'workerbee';
+let analyticsPeriod = 'week';
 // The instruction thread, WBR-321. A render rebuilds the whole board, so the
 // box David is typing in and the project he opened have to be remembered here
 // or every save throws away the place he was working.
@@ -38,7 +39,7 @@ function showToast(message, error = false) {
 }
 
 function showOnly(name) {
-  for (const id of ['auth-card', 'loading', 'error-card', 'dashboard-app', 'todo-app']) {
+  for (const id of ['auth-card', 'loading', 'error-card', 'dashboard-app', 'todo-app', 'analytics-app']) {
     const node = el(id);
     if (node) node.hidden = id !== name;
   }
@@ -68,8 +69,10 @@ async function activate(nextSession) {
   showOnly('loading');
   try {
     state = await api();
-    if (surface === 'todo') renderTodo(); else renderDashboard();
-    showOnly(surface === 'todo' ? 'todo-app' : 'dashboard-app');
+    if (surface === 'analytics') renderAnalytics();
+    else if (surface === 'todo') renderTodo();
+    else renderDashboard();
+    showOnly(surface === 'analytics' ? 'analytics-app' : surface === 'todo' ? 'todo-app' : 'dashboard-app');
     await api('mark_viewed', { surface }).catch(() => null);
     icons();
   } catch (error) {
@@ -692,7 +695,164 @@ function sortByOrder(items) {
 
 async function replaceFromServer() {
   state = await api();
-  if (surface === 'todo') renderTodo(); else renderDashboard();
+  if (surface === 'analytics') renderAnalytics();
+  else if (surface === 'todo') renderTodo();
+  else renderDashboard();
+}
+
+function metricSnapshots() {
+  return state.updates
+    .filter(item => item.kind === 'diagnostic' && item.metadata?.source === 'metrics' && item.metadata?.snapshot)
+    .map(item => item.metadata.snapshot)
+    .sort((a, b) => String(a.date).localeCompare(String(b.date)));
+}
+
+function statCard(label, value, note) {
+  const card = document.createElement('div');
+  card.className = 'card analytics-card';
+  const heading = document.createElement('small');
+  heading.textContent = label;
+  const figure = document.createElement('strong');
+  figure.textContent = value;
+  card.append(heading, figure);
+  if (note) {
+    const sub = document.createElement('p');
+    sub.textContent = note;
+    card.append(sub);
+  }
+  return card;
+}
+
+function shortAnalyticsLabel(label) {
+  const date = /^(\d{4})-(\d{2})-(\d{2})$/.exec(label);
+  if (date) return `${date[2]}/${date[3]}`;
+  const week = /^(\d{4})-W(\d{1,2})$/.exec(label);
+  if (week) return `W${week[2]}`;
+  const month = /^(\d{4})-(\d{2})$/.exec(label);
+  return month ? month[2] : label;
+}
+
+function barColumn(label, total, max, subset = 0) {
+  const column = document.createElement('div');
+  column.className = 'bar-col';
+  const plot = document.createElement('span');
+  plot.className = 'bar-plot';
+  const value = document.createElement('span');
+  value.className = 'bar-value';
+  value.textContent = total;
+  const bar = document.createElement('span');
+  bar.className = 'bar-fill';
+  const height = max && total ? Math.max(3, Math.round((total / max) * 108)) : 0;
+  bar.style.height = `${height}px`;
+  bar.title = `${label}: ${total}`;
+  if (subset && total) {
+    const part = document.createElement('span');
+    part.className = 'bar-part';
+    part.style.height = `${Math.min(100, Math.round((subset / total) * 100))}%`;
+    part.title = `${label}: ${subset} of ${total} unattended`;
+    bar.append(part);
+    value.title = `${total} delivered, ${subset} unattended`;
+  }
+  const name = document.createElement('span');
+  name.className = 'bar-label';
+  name.textContent = shortAnalyticsLabel(label);
+  name.title = label;
+  plot.append(value, bar);
+  column.append(plot, name);
+  return column;
+}
+
+function renderAnalytics() {
+  const snapshots = metricSnapshots();
+  const note = el('analytics-note');
+  const cards = el('analytics-cards');
+  const chart = el('analytics-chart');
+  const shape = el('analytics-shape');
+  const demeritsBox = el('analytics-demerits');
+  if (!cards || !chart || !shape || !demeritsBox) return;
+  cards.replaceChildren();
+  chart.replaceChildren();
+  shape.replaceChildren();
+  demeritsBox.replaceChildren();
+  chart.className = 'bar-chart';
+  shape.className = 'bar-chart';
+
+  if (!snapshots.length) {
+    note.textContent = 'No snapshots yet. They are written whenever the Board is published, so this fills in on its own.';
+    return;
+  }
+
+  const latest = snapshots[snapshots.length - 1];
+  const month = latest.score?.thisMonth || { delivered: 0, unattended: 0 };
+  const workerbee = latest.workerbee || {};
+  const david = latest.david || {};
+  const share = month.delivered ? Math.round(((month.unattended || 0) / month.delivered) * 100) : 0;
+  note.textContent = `${snapshots.length} daily snapshot${snapshots.length === 1 ? '' : 's'}, ${snapshots[0].date} to ${latest.date}.`;
+  cards.append(
+    statCard('Delivered this month', month.delivered || 0, 'Weighted by ranking, so urgent work counts for more.'),
+    statCard('Unattended share', `${share}%`, 'Completed inside a scheduled run rather than with David in the room.'),
+    statCard('Open, WorkerBee', workerbee.open || 0, `${workerbee.next || 0} next, ${workerbee.blocked || 0} blocked.`),
+    statCard('Open, David', david.open || 0, `${david.next || 0} next, ${david.needsOther || 0} needing something from me.`),
+    statCard('Inbox', (workerbee.inbox || 0) + (david.inbox || 0), 'Captured and not yet routed. Empty is the target.'),
+    statCard('Stalled past 21 days', (workerbee.stalledOver21 || 0) + (david.stalledOver21 || 0), `Oldest untouched item is ${Math.max(workerbee.oldestStillDays || 0, david.oldestStillDays || 0)} days still.`)
+  );
+
+  const score = latest.score || {};
+  const series = score[analyticsPeriod === 'day' ? 'byDay' : analyticsPeriod === 'week' ? 'byWeek' : 'byMonth'] || {};
+  const keys = Object.keys(series).sort().slice(analyticsPeriod === 'day' ? -21 : -12);
+  const chartNote = el('chart-note');
+  chartNote.textContent = keys.length
+    ? `Weighted delivery per ${analyticsPeriod}, with unattended work shaded inside each bar. ${keys.length} ${analyticsPeriod}${keys.length === 1 ? '' : 's'} of history.`
+    : 'Nothing delivered yet at this granularity.';
+  const deliveredMax = Math.max(1, ...keys.map(key => series[key].delivered || 0));
+  keys.forEach(key => chart.append(barColumn(key, series[key].delivered || 0, deliveredMax, series[key].unattended || 0)));
+
+  const recent = snapshots.slice(-21);
+  const boardMax = Math.max(1, ...recent.map(snapshot => (snapshot.workerbee?.open || 0) + (snapshot.david?.open || 0)));
+  recent.forEach(snapshot => shape.append(barColumn(snapshot.date, (snapshot.workerbee?.open || 0) + (snapshot.david?.open || 0), boardMax)));
+
+  const demerits = score.demerits || [];
+  if (!demerits.length) return demeritsBox.append(empty('None recorded.'));
+  const summary = document.createElement('p');
+  summary.className = 'analytics-sub';
+  const penalty = score.penalty || demerits.reduce((total, entry) => total + (entry.weight || 1), 0);
+  summary.textContent = `${demerits.length} recorded, ${penalty} point${penalty === 1 ? '' : 's'} lost.`;
+  const list = document.createElement('ul');
+  list.className = 'demerit-list';
+  demerits.slice().reverse().forEach(entry => {
+    const row = document.createElement('li');
+    row.className = 'demerit-row';
+    const head = document.createElement('div');
+    head.className = 'demerit-head';
+    const when = document.createElement('span');
+    when.className = 'demerit-date';
+    when.textContent = entry.at || 'Undated';
+    const cost = document.createElement('span');
+    cost.className = 'demerit-weight';
+    cost.textContent = `-${entry.weight || 1}`;
+    head.append(when, cost);
+    const reason = document.createElement('p');
+    reason.className = 'demerit-reason';
+    reason.textContent = entry.reason || 'No reason recorded.';
+    row.append(head, reason);
+    list.append(row);
+  });
+  demeritsBox.append(summary, list);
+  icons();
+}
+
+function bindPeriodTabs() {
+  document.querySelectorAll('[data-period]').forEach(button => {
+    button.addEventListener('click', () => {
+      analyticsPeriod = button.dataset.period;
+      document.querySelectorAll('[data-period]').forEach(other => {
+        const active = other.dataset.period === analyticsPeriod;
+        other.classList.toggle('active', active);
+        other.setAttribute('aria-selected', String(active));
+      });
+      renderAnalytics();
+    });
+  });
 }
 
 function iconButton(name, label, handler) {
@@ -1135,6 +1295,8 @@ function bindEvents() {
       try { state.sections.push(await api('create_section', { title, sort_order: state.sections.length * 100 })); renderTodo(); }
       catch (error) { showToast(error.message, true); }
     });
+  } else if (surface === 'analytics') {
+    bindPeriodTabs();
   } else {
     el('toggle-journal').addEventListener('click', () => { journalExpanded = !journalExpanded; renderJournal(); });
     el('new-journal-button').addEventListener('click', () => { el('journal-form').hidden = false; el('journal-title').focus(); });
