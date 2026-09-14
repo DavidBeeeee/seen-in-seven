@@ -510,9 +510,30 @@ function renderGrade() {
 function renderDashboard() {
   const active = state.updates.filter(item => !['rejected', 'completed', 'deferred', 'approved', 'acknowledged'].includes(item.status));
   const outcomes = currentOutcomes();
-  const needs = active.filter(item => item.kind === 'needs_david');
+  // WBR-333. Both of these read a `kind` nothing has ever written.
+  //
+  // The schema allows six kinds and the publisher writes four: outcome,
+  // commitment, diagnostic, summary. Every roadmap item and every queue item
+  // goes up as `commitment`, and closing one sets its status rather than
+  // changing its kind. So `kind === 'completed'` matched nothing, ever, and
+  // "Since your last visit" has said "No new completed work" on every day
+  // since this board existed, including the nights that closed five items.
+  // `needs_david` is the same story with the same cause.
+  //
+  // Fixed on the page rather than by publishing a second row per item, since
+  // a duplicate card for every close is what the aged-out-lookup guard in
+  // workerbee-studio.mjs already exists to clean up after. What David is owed
+  // here is what moved, and what moved is already on the board.
+  // Board work owned by David. Transcript commitments are excluded because
+  // they have their own panel below, and counting them twice turns "Your move"
+  // into a second copy of "Commitments and deadlines".
+  const needs = active.filter(item => item.kind === 'needs_david'
+    || (item.metadata && item.metadata.owner === 'david' && item.metadata.source !== 'commitment'));
   const lastViewed = state.readState && state.readState.last_dashboard_viewed_at;
-  const completed = state.updates.filter(item => item.kind === 'completed' && item.status === 'completed' && (!lastViewed || item.updated_at > lastViewed)).slice(0, 8);
+  const completed = state.updates
+    .filter(item => item.status === 'completed' && (!lastViewed || item.updated_at > lastViewed))
+    .sort((a, b) => String(b.updated_at).localeCompare(String(a.updated_at)))
+    .slice(0, 8);
   const commitments = active.filter(item => ['commitment', 'blocker'].includes(item.kind)).slice(0, 10);
   const diagnostics = active.filter(item => item.kind === 'diagnostic').slice(0, 10);
   fillUpdates('outcomes-list', outcomes, 'Today’s outcomes will appear after the next WorkerBee synchronization.', 'outcome');

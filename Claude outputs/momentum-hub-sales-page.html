@@ -1,0 +1,935 @@
+<!-- Systeme custom-code source for /yeees. The Momentum Hub sales page. Native checkout remains on /yeseee. -->
+<link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&display=swap" rel="stylesheet">
+<style>
+.eee-offer{
+--ink:#0D2828;--ink-soft:#2A4848;--ink-muted:#527070;
+--teal-deep:#0D2828;--teal-mid:#1E5C5C;--teal-bright:#2A9090;--teal-vivid:#32B8B8;
+--teal-soft:#68C8C8;--teal-pale:#A8DEDE;--teal-mist:#D8F0F0;--teal-frost:#EEF9F9;
+--silver:#B8C8CC;--silver-light:#D8E4E8;--silver-pale:#EEF2F4;--cream:#F8FAFA;
+--gold:#C8A84B;--gold-light:#E8C86C;--gold-pale:#F5E8C0;
+font-family:'Nunito',sans-serif;color:var(--ink);background:var(--cream);
+-webkit-font-smoothing:antialiased;
+}
+.eee-offer *{box-sizing:border-box}
+.eee-offer img{max-width:100%;display:block}
+
+/* bands */
+.eee-band{padding:clamp(56px,8vw,104px) 22px}
+.eee-inner{max-width:920px;margin:0 auto}
+.eee-inner.wide{max-width:1080px}
+.eee-frost{background:var(--teal-frost)}
+.eee-pale{background:var(--silver-pale)}
+.eee-dark{background:var(--teal-deep);color:#fff}
+.eee-dark p{color:var(--teal-pale)}
+.eee-dark h2,.eee-dark h3{color:#fff}
+
+/* eyebrow */
+.eee-eyebrow{font:600 12px/1.4 'Oswald',sans-serif;letter-spacing:.28em;text-transform:uppercase;color:var(--teal-bright);margin:0 0 18px;position:relative;padding-top:16px}
+.eee-eyebrow:before{content:'';position:absolute;top:0;left:0;width:40px;height:2px;background:var(--teal-vivid)}
+.eee-dark .eee-eyebrow{color:var(--teal-soft)}
+.eee-dark .eee-eyebrow:before{background:var(--teal-vivid)}
+.eee-gold .eee-eyebrow{color:var(--gold-light)}
+.eee-gold .eee-eyebrow:before{background:var(--gold)}
+
+/* headings */
+.eee-offer h1{font:700 clamp(34px,5.4vw,60px)/1.1 'Lora',serif;margin:0 0 26px;letter-spacing:-.01em}
+.eee-offer h2{font:700 clamp(29px,4.2vw,44px)/1.16 'Lora',serif;margin:0 0 26px;letter-spacing:-.01em}
+.eee-offer h3{font:700 clamp(22px,2.6vw,30px)/1.22 'Lora',serif;margin:38px 0 16px}
+.eee-offer h4{font:700 20px/1.3 'Lora',serif;margin:26px 0 10px}
+.eee-em{font-style:italic;color:var(--teal-bright)}
+.eee-dark .eee-em{color:var(--teal-vivid)}
+.eee-gold .eee-em{color:var(--gold-light)}
+
+/* body */
+.eee-offer p{font:400 19px/1.8 'Nunito',sans-serif;color:var(--ink-soft);margin:0 0 22px}
+.eee-offer p strong{font-weight:700;color:var(--ink)}
+.eee-lede{font-size:21px;line-height:1.8;color:var(--ink)}
+.eee-dark .eee-lede{color:#fff}
+.eee-muted{color:var(--ink-muted);font-size:17px;line-height:1.75}
+
+/* beat lines: short standalone statements */
+.eee-beat{font:700 clamp(22px,3vw,30px)/1.35 'Lora',serif;color:var(--teal-mid);margin:34px 0;font-style:italic}
+.eee-dark .eee-beat{color:var(--teal-soft)}
+.eee-beats{margin:32px 0;padding-left:20px;border-left:3px solid var(--teal-vivid)}
+.eee-beats p{font:700 20px/1.65 'Nunito',sans-serif;color:var(--teal-mid);margin:0 0 8px}
+.eee-dark .eee-beats p{color:var(--teal-soft)}
+.eee-beats p:last-child{margin-bottom:0}
+
+/* pull quote */
+.eee-pull{margin:34px 0;padding:22px 24px;background:var(--teal-frost);border-left:3px solid var(--teal-vivid);border-radius:0 6px 6px 0}
+.eee-pull p{font:400 21px/1.6 'Permanent Marker',cursive;color:var(--teal-mid);margin:0 0 12px}
+.eee-pull span{font:600 11px/1 'Oswald',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-muted)}
+.eee-dark .eee-pull{background:rgba(50,184,184,.07)}
+.eee-dark .eee-pull p{color:var(--teal-soft)}
+.eee-dark .eee-pull span{color:var(--teal-pale)}
+
+/* ask / answer contrast */
+.eee-swap{margin:30px 0;display:grid;gap:14px}
+.eee-swap div{padding:18px 22px;border-radius:8px}
+.eee-swap .from{background:var(--silver-pale);border-left:3px solid var(--silver)}
+.eee-swap .to{background:var(--teal-frost);border-left:3px solid var(--teal-vivid)}
+.eee-swap p{margin:0;font:700 20px/1.55 'Nunito',sans-serif}
+.eee-swap .from p{color:var(--ink-muted)}
+.eee-swap .to p{color:var(--teal-mid)}
+.eee-swap-label{font:600 12px/1.4 'Oswald',sans-serif;letter-spacing:.18em;text-transform:uppercase;display:block;margin-bottom:8px;color:var(--ink-muted)}
+
+/* hero */
+.eee-hero{background:var(--teal-deep);color:#fff;position:relative;overflow:hidden;padding:clamp(60px,8vw,104px) 22px}
+.eee-hero .eee-inner{position:relative;z-index:2;max-width:1100px;display:grid;grid-template-columns:1.2fr .8fr;gap:clamp(30px,4vw,56px);align-items:center}
+.eee-hero-art{margin:0}
+.eee-hero-art img{width:100%;border-radius:14px;box-shadow:0 20px 48px rgba(0,0,0,.34)}
+@media(max-width:900px){.eee-hero .eee-inner{grid-template-columns:1fr}.eee-hero-art{order:-1;max-width:440px}}
+.eee-hero h1{color:#fff}
+.eee-hero p{color:var(--teal-pale)}
+.eee-hero .eee-lede{color:#fff}
+
+/* buttons */
+.eee-button{display:inline-block;font:700 15px/1 'Oswald',sans-serif;letter-spacing:.09em;text-transform:uppercase;background:var(--teal-vivid);color:var(--teal-deep);padding:19px 40px;border-radius:6px;text-decoration:none;transition:transform .15s ease,box-shadow .15s ease}
+.eee-button:hover{transform:translateY(-1px);box-shadow:0 8px 20px rgba(13,40,40,.18)}
+.eee-button.gold{background:var(--gold);color:var(--teal-deep)}
+.eee-button.ghost{background:transparent;color:var(--teal-vivid);border:2px solid var(--teal-vivid)}
+.eee-cta{margin:38px 0 0}
+.eee-cta-note{font:600 16px/1.5 'Oswald',sans-serif;letter-spacing:.06em;margin:16px 0 0!important;color:var(--ink-muted)}
+.eee-dark .eee-cta-note{color:var(--teal-pale)}
+.eee-cta-sub{font-size:16px!important;line-height:1.7!important;margin:10px 0 0!important;color:var(--ink-muted)}
+.eee-dark .eee-cta-sub{color:var(--teal-pale);opacity:.85}
+
+/* sticky bar */
+.eee-sticky{position:fixed;left:0;right:0;bottom:0;z-index:99;background:var(--teal-deep);padding:12px 20px;display:none;align-items:center;justify-content:space-between;gap:16px;box-shadow:0 -4px 18px rgba(13,40,40,.22)}
+.eee-sticky.on{display:flex}
+.eee-sticky span{font:600 14px/1.3 'Oswald',sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#fff}
+.eee-sticky .eee-button{padding:14px 26px;font-size:14px}
+@media(max-width:640px){.eee-sticky.on{display:none}}
+
+/* image / evidence slots */
+.eee-shot{margin:32px auto;max-width:400px}
+.eee-shot.lg{max-width:620px}
+.eee-shot img{width:100%;height:auto;border-radius:10px;border:1px solid var(--silver-light);background:#fff}
+.eee-shot a{display:block}
+.eee-shot.lg figcaption:after{content:" \00b7 Tap to enlarge";color:var(--teal-bright);letter-spacing:.1em}
+.eee-shot .zoom{display:inline-block;margin-left:10px;color:var(--teal-bright);letter-spacing:.12em}
+.eee-dark .eee-shot img{background:rgba(255,255,255,.04);border-color:rgba(168,222,222,.22)}
+.eee-dark .eee-shot.lg figcaption:after{content:" \00b7 Tap to enlarge";color:var(--teal-bright);letter-spacing:.1em}
+.eee-shot .zoom{color:var(--teal-soft)}
+.eee-shot figcaption{text-align:center;font:600 12px/1.5 'Oswald',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-muted);margin-top:10px}
+.eee-dark .eee-shot figcaption{color:var(--teal-pale)}
+.eee-shots{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px;margin:34px auto;max-width:900px;justify-content:center}
+.eee-shots figure{max-width:340px;width:100%;margin-inline:auto}
+.eee-shots figure{margin:0}
+.eee-shots img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;border:1px solid var(--silver-light)}
+.eee-shots figcaption{font:600 12px/1.5 'Oswald',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--ink-muted);margin-top:10px}
+
+/* cards */
+.eee-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin:36px 0}
+.eee-card{background:var(--teal-frost);border-radius:10px;padding:26px 24px}
+.eee-card h4{font:600 12px/1.4 'Oswald',sans-serif;letter-spacing:.16em;text-transform:uppercase;color:var(--teal-bright);margin:0 0 12px}
+.eee-card p{font-size:17px;line-height:1.75;margin:0}
+
+/* value stack */
+.eee-stack{margin:38px 0;border-top:1px solid rgba(168,222,222,.25)}
+.eee-stack-item{padding:28px 0;border-bottom:1px solid rgba(168,222,222,.25)}
+.eee-stack-item h4{font:600 12px/1.4 'Oswald',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--teal-soft);margin:0 0 12px}
+.eee-stack-item.is-gold h4{color:var(--gold-light)}
+.eee-stack-item p{margin:0 0 14px;font-size:18px;line-height:1.78}
+.eee-value{font:700 24px/1 'Oswald',sans-serif;color:var(--teal-vivid);letter-spacing:.02em}
+.eee-value.gold{color:var(--gold-light)}
+.eee-value small{display:block;font:600 12px/1.5 'Oswald',sans-serif;letter-spacing:.16em;color:var(--teal-pale);margin-top:7px;text-transform:uppercase}
+.eee-total{text-align:center;padding:34px 0}
+.eee-total .n{font:700 clamp(48px,9vw,82px)/1 'Oswald',sans-serif;color:var(--gold)}
+.eee-total .l{font:600 12px/1.5 'Oswald',sans-serif;letter-spacing:.22em;text-transform:uppercase;color:var(--teal-pale);margin-top:12px}
+.eee-priceline{text-align:center;margin:30px 0}
+.eee-priceline .was{font:600 24px/1 'Oswald',sans-serif;color:var(--teal-pale);text-decoration:line-through;opacity:.75}
+.eee-priceline .now{font:700 clamp(46px,8vw,72px)/1 'Oswald',sans-serif;color:var(--gold);display:block;margin:8px 0 0}
+.eee-priceline .per{font:600 14px/1 'Oswald',sans-serif;letter-spacing:.2em;text-transform:uppercase;color:var(--teal-pale);display:block;margin-top:10px}
+
+/* fit list */
+.eee-fit{background:var(--teal-frost);border-radius:10px;padding:30px 28px;margin:32px 0}
+.eee-fit p{margin:0 0 16px}
+.eee-fit p:last-child{margin-bottom:0}
+
+/* monthly countdown */
+.mh-timer{background:var(--teal-deep);border-radius:12px;padding:30px 26px;margin:34px 0;text-align:center}
+.mh-timer-label{font:600 12px/1.5 'Oswald',sans-serif;letter-spacing:.24em;text-transform:uppercase;color:var(--gold-light);margin:0 0 20px!important}
+.mh-clock{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
+.mh-unit{min-width:88px;background:rgba(255,255,255,.05);border:1px solid rgba(200,168,75,.28);border-radius:10px;padding:16px 10px}
+.mh-unit b{display:block;font:700 40px/1 'Oswald',sans-serif;color:var(--gold);font-variant-numeric:tabular-nums}
+.mh-unit span{display:block;font:600 12px/1.4 'Oswald',sans-serif;letter-spacing:.18em;text-transform:uppercase;color:var(--teal-pale);margin-top:9px}
+.mh-timer-note{font-size:17px!important;line-height:1.7!important;color:var(--teal-pale)!important;margin:20px 0 0!important}
+@media(max-width:560px){.mh-unit{min-width:70px;padding:13px 8px}.mh-unit b{font-size:32px}}
+
+/* window / gold card */
+.eee-window{background:#fff;border-left:4px solid var(--gold);border-radius:0 10px 10px 0;padding:32px 30px;margin:34px 0;box-shadow:0 2px 14px rgba(13,40,40,.06)}
+.eee-window p:last-child{margin-bottom:0}
+
+/* faq */
+.eee-faq{margin:34px 0;border-top:1px solid var(--silver-light)}
+.eee-faq details{border-bottom:1px solid var(--silver-light)}
+.eee-faq summary{font:700 21px/1.5 'Lora',serif;color:var(--ink);padding:22px 40px 22px 0;cursor:pointer;position:relative;list-style:none}
+.eee-faq summary::-webkit-details-marker{display:none}
+.eee-faq summary:after{content:'+';position:absolute;right:6px;top:20px;font:400 28px/1 'Nunito',sans-serif;color:var(--teal-vivid)}
+.eee-faq details[open] summary:after{content:'\2013'}
+.eee-faq .a{padding:0 0 24px}
+.eee-faq .a p{margin:0 0 14px;font-size:18px;line-height:1.8}
+.eee-faq .a p:last-child{margin-bottom:0}
+
+.eee-state-note{font-size:16px!important;color:var(--ink-muted)!important;margin-top:14px!important}
+.eee-dark .eee-state-note{color:var(--teal-pale)!important}
+
+/* dark-band text overrides. These must stay AFTER the body rules above,
+   since .eee-offer p and .eee-dark p have equal specificity and source order decides. */
+.eee-offer .eee-dark p{color:var(--teal-pale)}
+.eee-offer .eee-dark .eee-lede{color:#fff}
+.eee-offer .eee-dark h2,.eee-offer .eee-dark h3,.eee-offer .eee-dark h4{color:#fff}
+.eee-offer .eee-dark p strong{color:#fff}
+.eee-offer .eee-dark .eee-stack-item p{color:var(--teal-pale)}
+.eee-offer .eee-dark .eee-muted{color:var(--teal-pale);opacity:.85}
+
+@media(max-width:900px){.eee-shot{max-width:300px}.eee-shot.lg{max-width:420px}}
+@media(max-width:820px){
+  .eee-cards,.eee-shots{grid-template-columns:1fr}
+  .eee-hero:after{display:none}
+  .eee-offer p{font-size:18px}
+  .eee-band{padding:52px 20px}
+  .eee-lede{font-size:19px}
+  .eee-beats p{font-size:19px}
+  .eee-faq summary{font-size:19px}
+}
+</style>
+
+<main class="eee-offer">
+
+<!-- ============ 1. HERO ============ -->
+<section class="eee-hero">
+  <div class="eee-inner">
+   <div class="eee-hero-copy">
+    <p class="eee-eyebrow">For people building something that matters to them</p>
+    <h1>You already know what you want to build. You just keep running into <span class="eee-em">parts nobody ever taught you how to do.</span></h1>
+    <p class="eee-lede">You can see where you want this to go, and you may already know exactly who you want to help. The frustrating part is how often one simple idea turns into five unfamiliar decisions, three new tools, and another evening spent figuring out how to move forward instead of actually moving.</p>
+    <p>Momentum Hub gives those moments somewhere to go, whether you are trying to shape what you want to say, decide what deserves your attention next, work through a choice you keep circling, or open the actual page, account, or settings with someone who can help you get past the part that stopped you.</p>
+    <p>You also get one unlimited private Certainty Session with David Bee every week, so an unfamiliar problem no longer has to become the reason the whole idea gets put away until you find another night to work on it.</p>
+    <div class="eee-cta">
+      <div data-launch-show="cart:open" hidden>
+        <a class="eee-button" data-launch-href="eeeCheckout">Join the Momentum Hub</a>
+        <p class="eee-cta-note">$250/month &middot; Cancel anytime</p>
+        <p class="eee-cta-sub">Your membership also activates 12 months of StorySculpt, Next Step Navigator, and Boardroom access.</p>
+      </div>
+      <div data-launch-show="cart:closed">
+        <a class="eee-button ghost" href="#what-you-get">See what is inside</a>
+        <p class="eee-state-note">Enrollment is closed at the moment. Weekly Certainty Sessions have a real capacity limit.</p>
+      </div>
+    </div>
+   </div>
+   <figure class="eee-hero-art"><img src="https://studio.coloradomastermind.com/assets/eee/hero-momentum.jpg" alt="Someone looking toward the business they want to build, with the unfamiliar steps laid out along the path"></figure>
+  </div>
+</section>
+
+<!-- ============ 2. THIS IS WORTH FIGURING OUT ============ -->
+<section class="eee-band">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">A business can begin much closer to home than you think</p>
+    <h2>A real business can start with <span class="eee-em">what you already know.</span></h2>
+    <p>Someone who has spent years helping people through hard conversations can turn that experience into a service. Someone who knows how to fix problems in homes, organize complicated projects, teach a craft, understand an industry, improve a process, make people feel better, or explain a subject clearly can become the person others look for when they need that help.</p>
+    <p>Content has made those connections easier to create since a useful idea no longer has to stay inside a private conversation. It can reach someone across town or across the country who has been searching for exactly that perspective, which means a business can begin with something much more ordinary than fame, a giant audience, or a brilliant invention nobody has seen before.</p>
+
+    <figure class="eee-shot"><img src="https://studio.coloradomastermind.com/assets/eee/expertise-paths.jpg" alt="People with different kinds of expertise reaching the people who need what they know"><figcaption>A counselor, a tradesperson, an artist, a teacher. Same path.</figcaption></figure>
+    <p class="eee-beat">It can begin with being useful.</p>
+    <p>A few hundred people who understand why your work matters can be more valuable than a giant audience that barely knows your name. One useful video can begin a conversation, which can lead someone to explore your work, understand how you can help, and decide they want to continue that relationship.</p>
+    <p>That path may eventually lead to a client, member, customer, referral, collaboration, or an introduction to the next person who needs you.</p>
+    <p>There are thousands of ways that path can develop, which is part of what makes the opportunity so exciting. It is also part of what makes building it harder than it appears from the outside.</p>
+    <p><strong>The opportunity is already here.</strong> The difficult part is getting from what you know to a business that works without getting buried under every unfamiliar decision in between.</p>
+  </div>
+</section>
+
+<!-- ============ 3. HOW TWO HOURS DISAPPEAR ============ -->
+<section class="eee-band eee-frost">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">It usually starts with one simple job</p>
+    <h2>Jenny finally gets two quiet hours to work on the business she keeps saying she is <span class="eee-em">going to make real.</span></h2>
+    <p class="eee-muted">Jenny is a composite of the patterns I see when people are trying to turn expertise into a business. She has real experience, a clear idea of who she wants to help, and enough motivation to sit down after an already full day and give the business another two hours.</p>
+
+<figure class="eee-shot"><img src="https://studio.coloradomastermind.com/assets/eee/jenny-evening.jpg" alt="One unfinished task on the laptop while the next questions multiply into pages, forms, email, booking and tutorials"><figcaption>Two quiet hours, one simple job</figcaption></figure>
+
+    <p>Tonight, she has one job: give someone who likes her content an easy way to take the next step.</p>
+    <p>That sounds simple until she realizes she needs a page, and the page needs somewhere to collect information. Now she is comparing website tools, wondering whether email belongs in the setup, reading about booking pages, and asking AI which approach makes sense for a business at her stage.</p>
+    <p>The answers are useful, which creates another decision. One option is less expensive, another looks easier, while a third seems like the better long-term choice. A tutorial recommends a completely different setup, so Jenny opens another tab to understand why.</p>
+    <p>At 8:45, she genuinely feels like she has been working hard, since she has.</p>
+    <p>Then she looks at what she actually finished.</p>
+    <p class="eee-beat">The page is still barely started.</p>
+    <p>By 9:15, Jenny knows far more than she knew at 7:00, yet the original job is still sitting in front of her. She closes the laptop with that awful little feeling that she somehow wasted the evening, even though almost every choice she made was completely reasonable.</p>
+    <p>That is what makes this pattern so difficult to notice. Each question followed naturally from the question before it, which means two hours of genuine effort can disappear before you realize you stopped building and started researching how to build.</p>
+    <div class="eee-beats">
+      <p>Two hours of work.</p>
+      <p>A dozen reasonable decisions.</p>
+      <p>One unfinished page.</p>
+    </div>
+    <p>If you have ever closed your laptop knowing more than you did when you opened it, while somehow feeling no closer to the business you pictured, you already know how that evening feels.</p>
+  </div>
+</section>
+
+<!-- ============ 4. MORE INFORMATION ============ -->
+<section class="eee-band">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">This is where momentum gets lost</p>
+    <h2>The internet made almost every answer easier to find, while making it much harder to know <span class="eee-em">which answer belongs to you.</span></h2>
+    <p>You can learn how to create a page, send an email, take a payment, record a video, schedule an appointment, or connect almost any piece of software without leaving your kitchen table. AI has made that access even faster, since you can describe a problem and receive several reasonable answers before you would have finished searching for the first tutorial.</p>
+    <p>The difficulty appears when those answers point in different directions.</p>
+    <p>A tool can explain how to create a large digital resource without knowing whether your business has any reason to create one yet. A video can show you the perfect website setup for someone whose business looks completely different from yours. AI can give you five intelligent options, although it cannot automatically know which tradeoff matters most to the life and business you are actually creating.</p>
+    <div class="eee-beats">
+      <p>More tools created more choices.</p>
+      <p>More choices created more decisions.</p>
+      <p>More decisions created more places to stop.</p>
+    </div>
+    <figure class="eee-shot"><img src="https://studio.coloradomastermind.com/assets/eee/decision-branches.jpg" alt="One simple goal splitting into dozens of competing options before being reorganized into a single clear route"><figcaption>One goal. Forty branches. One route that actually works.</figcaption></figure>
+
+    <p>The challenge has shifted from finding enough information to knowing what deserves your attention, what can wait, and when another hour of research is less useful than making a decision and continuing the work.</p>
+    <p>Once you see the problem that way, the goal changes. You no longer have to imagine reaching a future point where every skill is mastered and every answer is obvious before the business can move. You can handle unfamiliar problems as they reach you, which means the business can continue growing while you continue learning.</p>
+    <p class="eee-beat">You do not have to know how to do every part of your business before you can build it. You need somewhere useful to take the next problem when it appears.</p>
+  </div>
+</section>
+
+<!-- ============ 5. MEET THE MOMENTUM HUB ============ -->
+<section class="eee-band eee-dark">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">One place for the problem in front of you</p>
+    <h2>Momentum Hub was built for the part that happens <span class="eee-em">after you know what you want.</span></h2>
+    <p class="eee-lede">You do not enter Momentum Hub and receive a lesson schedule telling you what your business is supposed to need this week. The work already sitting in front of you determines where you begin.</p>
+    <p>Maybe the idea in your head refuses to become a video that sounds like you. Maybe people are finally responding and you cannot tell what belongs next. Maybe two directions both make sense, so the decision has been circling for days. Maybe you already made the decision and some technical connection has decided it would rather ruin your afternoon.</p>
+    <p>Each of those problems requires a different kind of help, which is why Momentum Hub was built as one place instead of another pile of information.</p>
+
+<p>You bring in the work that is currently stalled, then the Hub helps you move it forward.</p>
+    <p class="eee-beat">The business decides what happens next.</p>
+    <figure class="eee-shot lg"><a href="https://studio.coloradomastermind.com/assets/eee/hub-home.jpg" target="_blank" rel="noopener"><img src="https://studio.coloradomastermind.com/assets/eee/hub-home.jpg" alt="The Momentum Hub home screen showing StorySculpt, Next Step Navigator, Boardroom and Certainty Sessions"></a><figcaption>Inside the Hub <span class="zoom">Tap to enlarge</span></figcaption></figure>
+
+    <p>Once one obstacle is cleared, you usually get far enough to meet the next one, which is where Momentum Hub really starts to make sense.</p>
+  </div>
+</section>
+
+<!-- ============ 6. STORYSCULPT ============ -->
+<section class="eee-band">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">First, people have to hear what you know</p>
+    <h2>Having a valuable idea and knowing how to shape it for a camera <span class="eee-em">are different skills.</span></h2>
+    <p>You may already have years of stories, opinions, lessons, conversations, mistakes, frustrations, and experiences that would make perfect sense if someone were sitting across from you.</p>
+    <p>Maybe you have already proven to yourself that you can make videos, only to discover the next question waiting behind that accomplishment:</p>
+    <p class="eee-beat">How do I keep coming up with good ones every week?</p>
+    <p>The camera turns on, and a story that sounded natural in your head suddenly starts too early. You explain the background for four minutes before reaching the part that matters. The opening keeps changing. You try to sound more polished, which somehow makes the words sound less like you.</p>
+    <p><strong>The raw material was there the entire time. What was missing was shape.</strong></p>
+    <p>StorySculpt starts with one thought you already care about, then helps you find the strongest part of it, organize what belongs, remove what is getting in the way, and turn your own words into a complete script you can actually record.</p>
+    <p>You can bring in a story, lesson, opinion, frustration, realization, experience, or half-formed idea that you would normally explain easily in conversation. StorySculpt asks the questions that uncover why it matters, then uses the same internal content thinking David Bee uses to give the idea a clear beginning, progression, and conclusion without asking you to study the structure first.</p>
+    <p class="eee-beat">The idea should sound as clear on camera as it did when you first understood it.</p>
+
+
+    <figure class="eee-shot lg"><a href="https://studio.coloradomastermind.com/assets/eee/storysculpt-flow.jpg" target="_blank" rel="noopener"><img src="https://studio.coloradomastermind.com/assets/eee/storysculpt-flow.jpg" alt="StorySculpt taking a raw messy thought through its questions and out as a finished script"></a><figcaption>Raw idea, then the questions, then the script <span class="zoom">Tap to enlarge</span></figcaption></figure>
+    <p class="eee-muted">Read the raw thought on the left, then read the finished script on the right. That comparison is the proof.</p>
+
+    <p>Once content becomes easier to shape, people can finally respond to what you know, which brings the next question into view.</p>
+    <p class="eee-beat">Where do I send them next?</p>
+  </div>
+</section>
+
+<!-- ============ 7. NEXT STEP NAVIGATOR ============ -->
+<section class="eee-band eee-frost">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">Know what belongs next before you start comparing tools</p>
+    <h2>The next move should come <span class="eee-em">before the next piece of software.</span></h2>
+    <p>Someone watches your video and asks how they can work with you.</p>
+    <p><strong>Great.</strong></p>
+    <p><strong>Now what?</strong></p>
+    <p>A website sounds useful. Email sounds important. Booking might make sense. You could create a simple resource, set up a checkout page, start a community, create a larger service, or spend the next three hours comparing platforms that promise to handle all of it.</p>
+    <p>Any one of those directions could be right, although the answer depends on what already exists and what you are trying to make happen next.</p>
+    <p><strong>Next Step Navigator starts there.</strong></p>
+    <p>It looks at the pieces you already have, identifies what is missing or weak, and helps you decide what deserves your attention before you commit time to work your business may not need yet.</p>
+    <p>Once the direction is clear, Navigator can help you choose the software that fits the job, explain why David Bee would use it, and walk you through the steps required to put the pieces together.</p>
+
+    <div class="eee-swap">
+      <div class="from"><span class="eee-swap-label">The question you were asking</span><p>&ldquo;Which platform should I use?&rdquo;</p></div>
+      <div class="to"><span class="eee-swap-label">The question that comes first</span><p>&ldquo;What does my business actually need next?&rdquo;</p></div>
+    </div>
+
+    <p>Only then does software enter the conversation.</p>
+    <p>Imagine you are convinced you need a large ten-part resource since someone asked whether you have more material. Navigator looks at the business you already have and recognizes that interested people do not even have a simple next step yet, so spending the next month creating a massive resource would solve a problem you have not reached.</p>
+    <p>A smaller next move may serve the business much better.</p>
+    <p>That is a very different kind of answer from a search result comparing twelve platforms.</p>
+
+    <figure class="eee-shot lg"><a href="https://studio.coloradomastermind.com/assets/eee/navigator-output.jpg" target="_blank" rel="noopener"><img src="https://studio.coloradomastermind.com/assets/eee/navigator-output.jpg" alt="Next Step Navigator showing what exists, what is missing, the recommended next move, why it matters, the suggested tool and the implementation steps"></a><figcaption>What you have, what is missing, what to do next, and why <span class="zoom">Tap to enlarge</span></figcaption></figure>
+
+    <p>Once you know what belongs next, the path becomes much clearer, although clarity creates a new problem when two or three directions still make perfect sense.</p>
+  </div>
+</section>
+
+<!-- ============ 8. BOARDROOM ============ -->
+<section class="eee-band">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">When more than one answer makes sense</p>
+    <h2>Some decisions stay difficult precisely <span class="eee-em">because the options are good.</span></h2>
+    <p>A weak idea eventually exposes itself if you examine it long enough. The harder decisions are the ones where every option has a reasonable argument behind it, since another list of pros and cons can leave you staring at the same choice with slightly more information and no more certainty.</p>
+    <div class="eee-beats">
+      <p>Maybe you are deciding between two names.</p>
+      <p>Maybe two audiences both seem viable.</p>
+      <p>Maybe one direction is simpler while another has more upside.</p>
+    </div>
+    <p>Maybe you can see a legitimate argument for each choice, which is exactly why asking AI, &ldquo;Which one do you think is best?&rdquo; produces an answer that feels strangely unsatisfying.</p>
+    <p><strong>Boardroom is built for those moments.</strong></p>
+    <p>You bring in the decision you are circling, then several strategic perspectives examine it from different directions. One may challenge the amount of work involved, another may question whether the choice fits the business you want to create, while another may notice an assumption you stopped questioning because it felt obvious.</p>
+    <p class="eee-beat">They are allowed to disagree, and that disagreement is useful.</p>
+    <figure class="eee-shot lg"><a href="https://studio.coloradomastermind.com/assets/eee/boardroom-perspectives.jpg" target="_blank" rel="noopener"><img src="https://studio.coloradomastermind.com/assets/eee/boardroom-perspectives.jpg" alt="Five strategic perspectives reaching different conclusions about the same decision before the final synthesis"></a><figcaption>Five perspectives. Three conclusions. One synthesis. <span class="zoom">Tap to enlarge</span></figcaption></figure>
+
+    <p>David Bee originally built Boardroom for his own decisions after realizing that an AI assistant politely agreeing with every idea did not create enough friction to improve the decision. He wanted an environment where a choice could survive an argument before time, money, and energy were committed to it.</p>
+    <p>Boardroom became that environment, and it is still the decision app David Bee uses himself.</p>
+    <p><strong>It is also not available separately.</strong></p>
+    <p>There is no public annual license and no artificial dollar amount attached to it. David Bee built Boardroom for his own work, and Momentum Hub members get twelve months inside it as a bonus.</p>
+    <p class="eee-beat">Its standalone value is PRICELESS.</p>
+    <p>That is not because every decision will magically create a financial return. It is because the value of one better decision can be impossible to measure in advance.</p>
+    <p>Choosing a better direction before spending three months on the wrong one matters. Catching an assumption before committing real time to it matters. Recognizing that an appealing choice does not fit the business or life you are trying to create matters.</p>
+    <div class="eee-beats">
+      <p>Sometimes the value is the opportunity you pursue.</p>
+      <p>Sometimes the value is the mistake you never have to make.</p>
+    </div>
+
+    <p>You still make the final call, although the decision has now been challenged from directions you may not have considered alone.</p>
+    <p>Once that choice is made, you can finally start putting it into the world, which is usually when a completely different problem appears:</p>
+    <p class="eee-beat">You know exactly what you are trying to do, and the stupid part still will not work.</p>
+  </div>
+</section>
+
+<!-- ============ 9. CERTAINTY SESSIONS ============ -->
+<section class="eee-band eee-dark eee-gold">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">Sometimes the fastest way forward is another person looking at the same screen</p>
+    <h2>There will still be days when you know exactly what you are trying to do, and <span class="eee-em">it simply will not cooperate.</span></h2>
+    <p class="eee-lede">You can make the decision, choose the right tool, follow the instructions, and still end up staring at a setting that looks correct while the result is completely wrong.</p>
+    <p>At that point, another tutorial can easily take longer than opening the actual account with someone who can see what you are seeing.</p>
+    <p><strong style="color:#E8C86C">That is what Certainty Sessions are for.</strong></p>
+    <p>Every week, you get one private working session with David Bee where we open the real problem and work on it together.</p>
+    <div class="eee-beats">
+      <p>If the page is broken, we open the page.</p>
+      <p>If the script feels wrong, we read the script.</p>
+      <p>If the booking connection is failing, we go into the settings.</p>
+      <p>If the decision still does not feel settled, we work through the decision.</p>
+      <p>If neither of us knows the answer immediately, we keep digging until we understand enough to make progress.</p>
+    </div>
+    <p>The session is unlimited, which means the work does not automatically stop because an arbitrary hour passed. Some problems resolve quickly, while others require more patience, so the purpose is to stay with the work until the obstacle is solved or you are meaningfully unstuck and know how to continue.</p>
+    <p>This is not a motivational conversation followed by homework.</p>
+    <p class="eee-beat">We work on the actual work.</p>
+
+<figure class="eee-shot lg"><a href="https://studio.coloradomastermind.com/assets/eee/certainty-app.jpg" target="_blank" rel="noopener"><img src="https://studio.coloradomastermind.com/assets/eee/certainty-app.jpg" alt="The Certainty Sessions screen inside Momentum Hub showing your next session, common topics and recent wins"></a><figcaption>We work on the actual work</figcaption></figure>
+
+    <p>You are still building your own business, although that no longer requires every unfamiliar problem to become a solo research project.</p>
+    <p class="eee-beat">Sometimes progress looks like knowing the answer. Sometimes it looks like knowing who to call when you do not.</p>
+  </div>
+</section>
+
+<!-- ============ 10. WHAT MOMENTUM ACTUALLY FEELS LIKE ============ -->
+<section class="eee-band">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">The relief comes from losing fewer weeks to ordinary problems</p>
+    <h2>Your business can keep changing without sending you back to <span class="eee-em">the beginning every time it does.</span></h2>
+    <p>The value of having all four kinds of support in one place becomes clearer after you imagine a normal month.</p>
+    <p>You might spend Monday shaping an idea into a video, then find yourself on Thursday trying to decide where that attention should go. The following week brings a completely different decision, and three days later a technical connection stops behaving the way the instructions say it should.</p>
+    <p>None of those obstacles means the business is failing.</p>
+    <p class="eee-beat">They are what building looks like.</p>
+
+<figure class="eee-shot"><img src="https://studio.coloradomastermind.com/assets/eee/momentum-month.jpg" alt="Four different obstacles across a normal month, each leading back to the same place"><figcaption>The problem changes. The place you bring it does not.</figcaption></figure>
+
+    <p>The exhausting part begins when every obstacle forces you to start a new search for help, decide what kind of help you require, learn a new tool, find another expert, compare another set of opinions, and explain the entire context from the beginning.</p>
+    <p>Momentum Hub changes that experience because the problem can change while the place you bring it stays familiar.</p>
+    <p>That means an unfamiliar question can remain one question instead of opening into another week of research.</p>
+    <p>It also changes the emotional weight of getting stuck. A broken connection feels very different when you know there is already a Certainty Session available. A difficult decision feels smaller when you know where to pressure-test it. A blank recording screen has less power when you already have a place to shape the thought behind it.</p>
+    <div class="eee-beats">
+      <p>Momentum is not constant productivity.</p>
+      <p>Momentum is knowing how you get moving again.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 11. THE OPPORTUNITY ============ -->
+<section class="eee-band eee-frost">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">The space around individual expertise is becoming much more professional</p>
+    <h2>The creator economy has already grown far beyond people trying to <span class="eee-em">become internet famous.</span></h2>
+    <p>The loudest examples can make this entire space look like a game built around millions of followers, sponsorship deals, and people filming every moment of their lives, yet individual expertise is creating businesses in much quieter ways every day.</p>
+    <p>A therapist can become known for explaining one specific problem clearly. A designer can teach how they think and attract better-fit clients. A local contractor can answer questions homeowners are already searching for. A consultant can share ideas they normally explain privately and give the right person a reason to start a conversation.</p>
+    <p>That possibility was the emotional point earlier on this page. The numbers now show how established the larger shift has become.</p>
+
+
+    <figure class="eee-shot lg"><a href="https://studio.coloradomastermind.com/assets/eee/creator-economy.jpg" target="_blank" rel="noopener"><img src="https://studio.coloradomastermind.com/assets/eee/creator-economy.jpg" alt="The creator economy by the numbers, shown with everyday experts rather than celebrity creators"></a><figcaption>A real opportunity for real people</figcaption></figure>
+    <div class="eee-cards">
+      <div class="eee-card">
+        <h4>U.S. creator advertising</h4>
+        <p>IAB expects it to reach about <strong>$44 billion in 2026</strong>, after creator advertising more than doubled between 2021 and 2024.</p>
+      </div>
+      <div class="eee-card">
+        <h4>The broader picture</h4>
+        <p>Goldman Sachs Research has estimated the wider creator economy could approach <strong>$480 billion by 2027</strong>.</p>
+      </div>
+      <div class="eee-card">
+        <h4>What that means</h4>
+        <p>Major companies are now building dedicated teams, tools, measurement, and strategy around individual voices.</p>
+      </div>
+    </div>
+
+    <p>Those numbers do not promise that posting videos automatically creates a business, nor do they require you to become a full-time creator.</p>
+    <p>They show that attention around individual people, expertise, and trusted voices has become economically significant enough that major companies are now building dedicated teams, tools, measurement, and strategy around it.</p>
+    <p>That matters because the opportunity is growing at the same time the environment around it is becoming more polished and competitive.</p>
+    <p>There is still an unusually direct path between knowing something useful and reaching another person who values it.</p>
+    <p>There is simply less reason to assume that path will become easier by waiting another few years to begin using it.</p>
+    <div class="eee-beats">
+      <p>You do not need millions of strangers.</p>
+      <p>You need the right people to understand why your work matters.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 12. WHY DAVID BEE IS STILL IN THE ROOM ============ -->
+<section class="eee-band">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">Software can handle a lot. I don't want it handling everything.</p>
+    <h2>I built Momentum Hub around the way I already help people when we're sitting together <span class="eee-em">trying to get work finished.</span></h2>
+
+<figure class="eee-shot"><img src="https://studio.coloradomastermind.com/assets/eee/david-portrait.jpg" alt="David Bee working through several different kinds of problem alongside a member"><figcaption>One session, whatever the problem turns out to be</figcaption></figure>
+
+    <p>For years, I have watched smart people come into Colorado Mastermind, private conversations, and working sessions with questions they had already spent hours trying to answer.</p>
+    <p>They rarely arrived because they refused to work. In many cases, they had already watched the videos, read the instructions, asked AI, tried the settings, and collected enough information to explain the basics to another person.</p>
+    <p class="eee-beat">They still had an unfinished problem.</p>
+    <p>That changed the way I think about helping someone.</p>
+    <p>If you are stuck on a page, I would rather open the page with you than spend an hour explaining websites in general. If you cannot decide what belongs next, I want to look at what you already built before adding another task. If the technical setup is broken, I would rather investigate the setup with you than hand you another article and wish you luck.</p>
+    <p>I also have an unusually high tolerance for staying with frustrating problems. &#128517;</p>
+    <p>If we need to rewrite the copy, we can rewrite it. If we need to compare tools, we can compare them. If we need to open the software, change the settings, rethink the plan, search for an answer, or admit that the first approach was wrong and try another one, that is all part of getting the work finished.</p>
+    <p>That range matters because your business does not politely separate itself into neat categories. A messaging question can become a page problem. A page problem can become a software problem. A software decision can expose a bigger question about what you are actually trying to create.</p>
+    <p>Momentum Hub lets software handle the work software does incredibly well, while keeping a real person available for the moments that require judgment, context, patience, or another set of eyes.</p>
+
+    <div class="eee-pull">
+      <p>&ldquo;A business partner who keeps none of your profits.&rdquo;</p>
+      <span>&mdash; David Bee</span>
+    </div>
+
+    <p>I sometimes describe the role that way, which is much closer to how I want the relationship to feel. The business stays yours, the decisions stay yours, and I am there to help when the next unfamiliar piece tries to turn into a three-week detour.</p>
+    <p>I do not want you dependent on me for every decision.</p>
+    <p class="eee-beat">I want you to know that when a problem is standing between you and work that matters to you, you have somewhere to bring it.</p>
+  </div>
+</section>
+
+<!-- ============ 13. WAITING DOESN'T MAKE THE PATH SIMPLER ============ -->
+<section class="eee-band eee-frost">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">There is a cost to learning everything through trial and error</p>
+    <h2>The idea you keep planning to start is entering a more competitive world <span class="eee-em">while you wait.</span></h2>
+    <p>The first delay can sound completely responsible.</p>
+    <div class="eee-pull">
+      <p>&ldquo;I want to understand this a little better before I put it out.&rdquo;</p>
+    </div>
+    <p>So you research, which introduces another question and gives you another reason to wait. The website becomes 80 percent finished. The service exists in a notebook. Three videos sit in drafts. You have accounts with software you no longer remember choosing, and enough open decisions that sitting down to work begins to feel heavier than it did when you started.</p>
+    <p>A few months later, the original excitement has changed.</p>
+    <div class="eee-beats">
+      <p>The idea that once felt possible starts feeling complicated.</p>
+      <p>After enough unfinished attempts, it can even begin to feel unrealistic.</p>
+    </div>
+    <p>That is how trial and error becomes dangerous. The individual mistakes are rarely catastrophic, yet the accumulation can convince you that the business itself is the problem when the real damage came from losing momentum again and again.</p>
+    <p>The environment around you is changing at the same time.</p>
+    <p>The tools are getting better. Large companies are becoming more sophisticated about creator-led attention. Production quality is becoming easier to access. AI is reducing the time required to create polished work, which means the volume of polished work competing for attention is unlikely to shrink.</p>
+    <p>The opportunity is still unusually open to an individual person with useful expertise, although there is no reason to expect the environment to become less competitive while the technology and businesses around it mature.</p>
+    <p>That makes waiting expensive in two directions.</p>
+    <div class="eee-beats">
+      <p>Externally, the space keeps developing.</p>
+      <p>Internally, every unfinished attempt creates another opportunity to become discouraged enough to stop trying.</p>
+    </div>
+    <p>Quitting rarely begins with a dramatic decision. More often, it begins with:</p>
+    <div class="eee-pull">
+      <p>&ldquo;I'll come back to this later.&rdquo;</p>
+    </div>
+    <p>Then later becomes next week, next week becomes next month, and eventually the idea starts getting introduced with the word &ldquo;someday.&rdquo;</p>
+    <p>I cannot promise that every choice you make inside Momentum Hub will be perfect, and I would be suspicious of anyone making that promise.</p>
+    <p>I can help make sure a question you cannot answer today has a better place to go than the pile of reasons you have not started yet.</p>
+
+    <figure class="eee-shot"><img src="https://studio.coloradomastermind.com/assets/eee/waiting-cost.jpg" alt="The same person buried under unfinished decisions, then moving again once someone helps"></figure>
+    <p class="eee-beat">Later has a way of becoming a very long time.</p>
+  </div>
+</section>
+
+<!-- ============ 14. YOUR FIRST WEEK ============ -->
+<section class="eee-band">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">You do not start with lesson one</p>
+    <h2>Start with the part that is <span class="eee-em">already slowing you down.</span></h2>
+    <p>When you join Momentum Hub, you do not spend the first week learning a new process before you are allowed to get help.</p>
+    <p><strong>You bring in the obstacle that already exists.</strong></p>
+
+<figure class="eee-shot"><img src="https://studio.coloradomastermind.com/assets/eee/first-week.jpg" alt="Four possible starting points inside Momentum Hub depending on what is currently stalled"><figcaption>Four doors. Whichever one matches your week.</figcaption></figure>
+
+    <p>Maybe Tuesday starts with a video idea you have been carrying around for three days, so you bring the thought into StorySculpt and finally get it ready to record.</p>
+    <p>Maybe the content is already moving and the real question is what interested people should see next, so Navigator looks at the business you already have and helps identify the missing piece before you spend another evening comparing tools.</p>
+    <p>Maybe you have been carrying the same decision for two weeks, which means Boardroom is the better first stop.</p>
+    <p>Or maybe there is already a page sitting at 90 percent because one connection refuses to work, in which case the most useful first move may be putting that page on the screen during your Certainty Session with David Bee.</p>
+    <p>Your first week does not have to look like anybody else's because the Hub starts with the business you already have and the problem already standing in front of it.</p>
+    <div class="eee-beats">
+      <p>Bring the obstacle.</p>
+      <p>Start there.</p>
+      <p>Keep moving.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 15. FITS BEST WHEN ============ -->
+<section class="eee-band eee-pale">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">Momentum Hub fits best when</p>
+    <h2>Built for someone who already knows there is work <span class="eee-em">they care about doing.</span></h2>
+    <p>Momentum Hub was built for someone who already knows there is work they care about doing, even if the business around that work is still early.</p>
+    <p>You may have expertise from a career, a service you want to offer, an audience beginning to form, an idea you have been circling for years, or several pieces already built without a clear sense of what connects them.</p>
+    <p>You probably enjoy learning, although learning has also become one of the ways progress gets delayed. You can usually figure out a technical problem eventually, yet &ldquo;eventually&rdquo; keeps taking more evenings than you wanted to give it.</p>
+    <p>You also want involvement rather than distant advice. When you bring a problem to David Bee, you want someone willing to look at the real work, understand the context, and stay in the conversation long enough to help you move it.</p>
+
+
+    <figure class="eee-shot"><img src="https://studio.coloradomastermind.com/assets/eee/who-its-for.jpg" alt="People with very different kinds of expertise, each at a different stage of building"></figure>
+    <div class="eee-fit">
+      <p><strong>Momentum Hub will feel less useful</strong> if your preference is to hand the entire business to another company and disappear until the work is finished. The Hub is collaborative by design, which means we may build, troubleshoot, write, decide, and configure together while you remain connected to the business being created.</p>
+      <p>It also assumes the goal is creating real value for real people. If your only interest is immediate income without developing useful work underneath it, this probably will not feel like the right place.</p>
+    </div>
+
+    <p>For everyone else, the question is simpler:</p>
+    <p class="eee-beat">Do you have work you want to make real, and are the unfamiliar parts taking longer than they deserve?</p>
+  </div>
+</section>
+
+<!-- ============ 16. WHAT YOU GET ============ -->
+<section class="eee-band eee-dark eee-gold" id="what-you-get">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">Your first $250 activates a full year of the apps</p>
+    <h2>The annual licenses alone are worth $576 before Boardroom or a single Certainty Session <span class="eee-em">is counted.</span></h2>
+    <p class="eee-lede">This is an important distinction because the app access is not tied to how many months you remain a Momentum Hub member.</p>
+    <p>When you join, your 12-month licenses begin. If you later cancel your monthly Momentum Hub membership, your StorySculpt, Next Step Navigator, and Boardroom access still continues for the rest of those 12 months.</p>
+
+    <div class="eee-stack">
+
+      <div class="eee-stack-item">
+        <h4>12 months of StorySculpt</h4>
+        <p>Bring in the thought, story, lesson, opinion, or experience you want to share, then use StorySculpt to shape it into a complete script that still sounds like you.</p>
+        <p class="eee-value">$348<small>Annual license value</small></p>
+      </div>
+
+      <div class="eee-stack-item">
+        <h4>12 months of Next Step Navigator</h4>
+        <p>Look at what your business already has, identify what belongs next, choose the right tools for that job, and get practical guidance for putting the next piece in place.</p>
+        <p class="eee-value">$228<small>Annual license value</small></p>
+      </div>
+
+      <div class="eee-total">
+        <div class="n">$576</div>
+        <div class="l">Two real annual licenses, before anything else</div>
+      </div>
+
+      <div class="eee-stack-item is-gold">
+        <h4>Bonus &middot; 12 months of Boardroom</h4>
+        <p>Boardroom is the private decision app David Bee built for his own work and still uses himself. It is not available separately, and there is no public annual license to compare because access is not offered outside Momentum Hub.</p>
+        <p>The return from one better decision is also impossible to calculate in advance. Avoiding three months in the wrong direction, catching an assumption before committing resources, or recognizing a better opportunity can change far more than the value of an ordinary software subscription.</p>
+        <p class="eee-value gold">PRICELESS<small>Not available separately &middot; Full 12 months included</small></p>
+      </div>
+
+      <div class="eee-stack-item is-gold">
+        <h4>One unlimited private Certainty Session with David Bee every week</h4>
+        <p>As long as your Momentum Hub membership remains active, you get one private working session with David Bee every week. Bring the real page, account, settings, script, decision, connection, or unfinished work and work through the actual obstacle together until it is solved or you know how to continue.</p>
+        <p class="eee-value gold">$800<small>Comparable private access, per month</small></p>
+      </div>
+
+    </div>
+
+    <p>The two public annual licenses alone represent <strong style="color:#fff">$576</strong> in real value. If you stayed in Momentum Hub for a full year, comparable private access with David Bee would represent another <strong style="color:#fff">$9,600</strong>, bringing the quantifiable annual comparison to <strong style="color:#fff">$10,176</strong> before assigning a single dollar to Boardroom.</p>
+
+
+    <figure class="eee-shot lg"><a href="https://studio.coloradomastermind.com/assets/eee/value-stack.jpg" target="_blank" rel="noopener"><img src="https://studio.coloradomastermind.com/assets/eee/value-stack.jpg" alt="StorySculpt, Next Step Navigator, Boardroom and Certainty Sessions together as one membership at $250 a month"></a><figcaption>Everything in one place</figcaption></figure>
+    <div class="eee-priceline">
+      <div class="was">$848 a month</div>
+      <span class="now">$250</span>
+      <span class="per">Per month</span>
+    </div>
+    <p class="eee-muted" style="text-align:center;margin-top:-8px">That $10,176 comparison works out to $848 a month. Momentum Hub is $250.</p>
+
+    <div class="eee-beats">
+      <p>Your first $250 activates all three apps for the full 12 months.</p>
+      <p>Your weekly Certainty Sessions continue for as long as your membership remains active.</p>
+      <p>If you cancel later, you keep StorySculpt, Next Step Navigator, and Boardroom for the remainder of your 12-month licenses.</p>
+    </div>
+
+    <div class="eee-cta">
+      <div data-launch-show="cart:open" hidden>
+        <a class="eee-button gold" data-launch-href="eeeCheckout">Join the Momentum Hub</a>
+        <p class="eee-cta-note">$250/month &middot; Cancel anytime</p>
+      </div>
+      <div data-launch-show="cart:closed">
+        <p class="eee-state-note">Enrollment is closed at the moment. Weekly Certainty Sessions have a real capacity limit.</p>
+        <a class="eee-button ghost" href="https://content.coloradomastermind.com/777">See what is opening next</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 17. ENROLLMENT WINDOW ============ -->
+<section class="eee-band">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">Private access creates a real limit</p>
+    <h2>Momentum Hub closes to new members on <span class="eee-em"><span class="mh-date">the 17th</span>.</span></h2>
+    <p>The reason is straightforward: Certainty Sessions require actual calendar space with David Bee.</p>
+    <p>StorySculpt can support another member without losing an afternoon. Navigator can help another member without moving an appointment. Boardroom can examine another decision without asking David Bee to create another hour in the week.</p>
+    <p class="eee-beat">Certainty Sessions cannot.</p>
+
+    <div class="mh-timer">
+      <p class="mh-timer-label" id="mh-label">Enrollment closes in</p>
+      <div class="mh-clock">
+        <div class="mh-unit"><b id="mh-d">00</b><span>Days</span></div>
+        <div class="mh-unit"><b id="mh-h">00</b><span>Hours</span></div>
+        <div class="mh-unit"><b id="mh-m">00</b><span>Minutes</span></div>
+        <div class="mh-unit"><b id="mh-s">00</b><span>Seconds</span></div>
+      </div>
+      <p class="mh-timer-note" id="mh-note"></p>
+    </div>
+
+
+    <figure class="eee-shot"><img src="https://studio.coloradomastermind.com/assets/eee/session-calendar.jpg" alt="A week of Certainty Session slots mostly booked, with a couple still open"><figcaption>Every seat is an hour on a real calendar</figcaption></figure>
+    <div class="eee-window">
+      <p>Every new member creates another weekly place on David Bee's calendar, and the Hub only works the way it is intended to work while those sessions remain genuinely available.</p>
+      <p>So enrollment closes on <strong><span class="mh-date">the 17th</span></strong>, and it stays closed while the available private-session capacity is being used.</p>
+      <p>This is not a deadline added to make the page more exciting. It is the practical limit created by including a real person every week.</p>
+    </div>
+
+    <p>If Momentum Hub fits what you are building, you can join while that space is available.</p>
+
+    <div class="eee-cta">
+      <div data-launch-show="cart:open" hidden>
+        <a class="eee-button" data-launch-href="eeeCheckout">Join the Momentum Hub</a>
+        <p class="eee-cta-note">$250/month &middot; Cancel anytime</p>
+        <p class="eee-cta-sub">The 12-month app licenses remain yours for the full year even if you later cancel the monthly membership.</p>
+      </div>
+      <div data-launch-show="cart:closed">
+        <p class="eee-state-note">The current enrollment window is closed while the available private-session capacity is in use.</p>
+        <a class="eee-button ghost" href="https://content.coloradomastermind.com/777">See what is opening next</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 18. QUESTIONS ============ -->
+<section class="eee-band eee-frost">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">Questions you may still have</p>
+    <h2>The things worth asking <span class="eee-em">before you join.</span></h2>
+
+    <div class="eee-faq">
+
+      <details>
+        <summary>What if my business is still really early?</summary>
+        <div class="a"><p>Early is fine. Momentum Hub does not assume you already have a polished website, a large audience, or every piece connected. It works best when there is a real direction you care about and you are ready to begin working on the pieces that turn that direction into a functioning business.</p></div>
+      </details>
+
+      <details>
+        <summary>What if I already have a website and several tools?</summary>
+        <div class="a"><p>Then we start with what already exists. Next Step Navigator is designed to look at the current pieces before recommending another one, and Certainty Sessions can work inside the tools you are already using whenever that makes more sense than changing them.</p></div>
+      </details>
+
+      <details>
+        <summary>What if I do not know which part of Momentum Hub I should use first?</summary>
+        <div class="a"><p>Bring the problem as you understand it. You do not have to diagnose the category before you ask for help, since figuring out what kind of problem you are actually dealing with can be part of the work.</p></div>
+      </details>
+
+      <details>
+        <summary>What does &ldquo;unlimited Certainty Session&rdquo; mean?</summary>
+        <div class="a"><p>You receive one private working session with David Bee each week. The session does not automatically end because a preset hour expires. We stay with the work until the obstacle is solved or you are meaningfully unstuck and know how to continue.</p></div>
+      </details>
+
+      <details>
+        <summary>Will David Bee actually work on the business with me?</summary>
+        <div class="a"><p>Yes. Certainty Sessions are working sessions, which means we can open the page, edit the copy, troubleshoot software, compare options, review the setup, make decisions, and work through implementation together. Momentum Hub is collaborative rather than a service where the entire business is handed away.</p></div>
+      </details>
+
+      <details>
+        <summary>Do I have to create content?</summary>
+        <div class="a"><p>Content is one of the easiest ways for people to discover your expertise, which is why StorySculpt is included, although the larger purpose of Momentum Hub is helping you build the business around what you know. Your current obstacle may have very little to do with recording a video that week.</p></div>
+      </details>
+
+      <details>
+        <summary>What if I am uncomfortable with technology?</summary>
+        <div class="a"><p>You do not have to become a technical person before you begin. Navigator can help make tool choices clearer, and Certainty Sessions give us a place to open the actual software together when written instructions stop being useful.</p></div>
+      </details>
+
+      <details>
+        <summary>What happens to the apps if I cancel?</summary>
+        <div class="a">
+          <p>Your monthly Momentum Hub membership controls your weekly Certainty Sessions, but your app licenses are different.</p>
+          <p>When you join, StorySculpt, Next Step Navigator, and Boardroom are activated for 12 full months.</p>
+          <p>If you cancel Momentum Hub before those 12 months are over, your app access continues until the annual licenses expire.</p>
+        </div>
+      </details>
+
+      <details>
+        <summary>Can I cancel the monthly membership?</summary>
+        <div class="a"><p>Yes. Momentum Hub is $250/month, and you can cancel the monthly membership.</p></div>
+      </details>
+
+      <details>
+        <summary>What if my first obstacle looks completely different from the examples on this page?</summary>
+        <div class="a">
+          <p>Good. Your business is allowed to be specific.</p>
+          <p>Bring the actual obstacle. That is what the Hub was built around.</p>
+        </div>
+      </details>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 19. SOMEDAY IS EXPENSIVE ============ -->
+<section class="eee-band eee-dark">
+  <div class="eee-inner">
+    <p class="eee-eyebrow">You are allowed to start before you know everything</p>
+    <h2>The part you do not know yet does not deserve <span class="eee-em">another year of your life.</span></h2>
+    <p class="eee-lede">There will always be another skill you have not learned. There will always be software you have never opened, decisions you have never made, and business problems that only become visible after you grow far enough to meet them.</p>
+    <p>Waiting until all of that feels familiar creates a finish line that keeps moving every time you approach it.</p>
+    <p>Meanwhile, the work you care about stays where it was.</p>
+    <div class="eee-beats">
+      <p>The service remains an idea.</p>
+      <p>The page remains almost finished.</p>
+      <p>The videos remain in your head.</p>
+    </div>
+    <p>And the sentence &ldquo;I really want to do this someday&rdquo; becomes easier to say each time another month passes.</p>
+    <p>That would already be frustrating if the opportunity itself were standing still, but it is not. Individual expertise has more ways to reach an audience than it has ever had before, while the businesses, technology, and competition around that opportunity continue becoming more sophisticated.</p>
+    <div class="eee-beats">
+      <p>You do not need to become the loudest creator in the room.</p>
+      <p>You do not need every future problem solved before you begin.</p>
+      <p>You need enough movement for the right people to find you, understand what you can do for them, and have somewhere useful to go next.</p>
+    </div>
+    <p>Momentum Hub cannot remove every difficult decision from building a business, and I would not want it to. Some of those decisions are where you become better at the work.</p>
+    <p>What it can do is give the next unfamiliar problem somewhere to go before that problem becomes another reason to stop.</p>
+    <div class="eee-beats">
+      <p>You already have knowledge.</p>
+      <p>You already have experience.</p>
+      <p>You already have a reason this matters to you.</p>
+    </div>
+    <p>You can learn the next part when you reach it, and when you reach a part you cannot figure out alone, you no longer have to disappear into seventeen tabs until the idea feels impossible again.</p>
+
+    <figure class="eee-shot"><img src="https://studio.coloradomastermind.com/assets/eee/it-works.jpg" alt="The page is live, the camera is ready, the connection works, and the work is finally real"><figcaption>The work becoming real</figcaption></figure>
+    <p class="eee-beat">Someday does not have to be the plan.</p>
+    <p>Start with the business you have today. Bring the next obstacle when it appears. Keep moving from there.</p>
+
+    <div class="eee-cta">
+      <div data-launch-show="cart:open" hidden>
+        <a class="eee-button gold" data-launch-href="eeeCheckout">Join the Momentum Hub</a>
+        <p class="eee-cta-note">$250/month &middot; Cancel anytime</p>
+        <p class="eee-cta-sub">Your first $250 activates 12 months of StorySculpt, Next Step Navigator, and Boardroom access. Enrollment closes <span class="mh-date">the 17th</span> because weekly Certainty Sessions have a real capacity limit.</p>
+      </div>
+      <div data-launch-show="cart:closed">
+        <p class="eee-state-note">Enrollment is closed at the moment. Weekly Certainty Sessions have a real capacity limit.</p>
+        <a class="eee-button ghost" href="https://content.coloradomastermind.com/777">See what is opening next</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FOOTER ============ -->
+<section class="eee-band eee-pale" style="padding-top:34px;padding-bottom:34px">
+  <div class="eee-inner">
+    <p class="eee-muted" style="margin:0;text-align:center">Colorado Mastermind &middot; coloradomastermind.com &middot; David Bee &middot; 303-596-0511 &middot; email@davidbee.me</p>
+  </div>
+</section>
+
+<!-- ============ STICKY BAR ============ -->
+<div class="eee-sticky" id="eee-sticky" data-launch-show="cart:open" hidden>
+  <span>The Momentum Hub &middot; $250/mo</span>
+  <a class="eee-button" data-launch-href="eeeCheckout">Join Now</a>
+</div>
+
+</main>
+
+<script>
+/* ============================================================
+   MONTHLY ENROLLMENT CYCLE
+   Edit these four values and nothing else.
+   openDay  : day of the month enrollment opens (starts 00:00)
+   closeDay : day of the month enrollment closes (ends 23:59:59)
+   tz       : the timezone the deadline is measured in, so it is the
+              same moment for every visitor no matter where they are
+   driveCartState : true lets this timer show/hide the checkout blocks.
+              Set to false if js/777-launch-cycle.js is controlling them.
+   ============================================================ */
+var MH_CYCLE = { openDay: 13, closeDay: 17, tz: 'America/New_York', driveCartState: true };
+
+(function(){
+  function zoned(y,mo,d,H,M,S){
+    var want = Date.UTC(y,mo-1,d,H,M,S), guess = want;
+    for (var i=0;i<3;i++){
+      var f = new Intl.DateTimeFormat('en-US',{timeZone:MH_CYCLE.tz,year:'numeric',month:'2-digit',
+        day:'2-digit',hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false}).formatToParts(new Date(guess));
+      var o={}; f.forEach(function(p){o[p.type]=p.value;});
+      guess += want - Date.UTC(+o.year,+o.month-1,+o.day,(+o.hour)%24,+o.minute,+o.second);
+    }
+    return guess;
+  }
+  function nowParts(){
+    var f=new Intl.DateTimeFormat('en-US',{timeZone:MH_CYCLE.tz,year:'numeric',month:'2-digit',day:'2-digit'})
+      .formatToParts(new Date()); var o={}; f.forEach(function(p){o[p.type]=p.value;});
+    return {y:+o.year,m:+o.month};
+  }
+  function window_(){
+    var n=nowParts(), t=Date.now();
+    var open=zoned(n.y,n.m,MH_CYCLE.openDay,0,0,0);
+    var close=zoned(n.y,n.m,MH_CYCLE.closeDay,23,59,59);
+    if(t<=close) return {isOpen:t>=open, open:open, close:close};
+    var ny=n.m===12?n.y+1:n.y, nm=n.m===12?1:n.m+1;
+    return {isOpen:false, open:zoned(ny,nm,MH_CYCLE.openDay,0,0,0), close:zoned(ny,nm,MH_CYCLE.closeDay,23,59,59)};
+  }
+  function fmt(ms){
+    return new Intl.DateTimeFormat('en-US',{timeZone:MH_CYCLE.tz,month:'long',day:'numeric'}).format(new Date(ms));
+  }
+  function pad(n){ return (n<10?'0':'')+n; }
+
+  var w=window_();
+  document.querySelectorAll('.mh-date').forEach(function(el){ el.textContent = fmt(w.close); });
+
+  if (MH_CYCLE.driveCartState){
+    document.querySelectorAll('[data-launch-show="cart:open"]').forEach(function(el){
+      if(w.isOpen) el.removeAttribute('hidden'); else el.setAttribute('hidden','');
+    });
+    document.querySelectorAll('[data-launch-show="cart:closed"]').forEach(function(el){
+      if(w.isOpen) el.setAttribute('hidden',''); else el.removeAttribute('hidden');
+    });
+  }
+
+  var lbl=document.getElementById('mh-label'), note=document.getElementById('mh-note');
+  var D=document.getElementById('mh-d'), H=document.getElementById('mh-h'),
+      M=document.getElementById('mh-m'), S=document.getElementById('mh-s');
+  function tick(){
+    var st=window_();
+    if(st.isOpen!==w.isOpen){ location.reload(); return; }
+    var target = st.isOpen ? st.close : st.open;
+    var left = Math.max(0, target - Date.now());
+    var sec=Math.floor(left/1000);
+    if(D){ D.textContent=pad(Math.floor(sec/86400)); H.textContent=pad(Math.floor(sec/3600)%24);
+           M.textContent=pad(Math.floor(sec/60)%60); S.textContent=pad(sec%60); }
+    if(lbl) lbl.textContent = st.isOpen ? 'Enrollment closes in' : 'Enrollment opens again in';
+    if(note) note.textContent = st.isOpen
+      ? 'Doors close ' + fmt(st.close) + ' at midnight.'
+      : 'The next window opens ' + fmt(st.open) + ' and runs through ' + fmt(st.close) + '.';
+  }
+  tick(); setInterval(tick,1000);
+})();
+
+(function(){
+  // Any image that has not been created yet hides its figure instead of showing a broken icon.
+  // Drop the file into assets/eee/ with the same name and it appears with no code change.
+  document.querySelectorAll('.eee-offer img').forEach(function(img){
+    function hide(){ var f = img.closest('figure') || img.parentElement; if(f) f.style.display='none'; }
+    img.addEventListener('error', hide);
+    if (img.complete && img.naturalWidth === 0) hide();
+  });
+
+  var bar = document.getElementById('eee-sticky');
+  var hero = document.querySelector('.eee-hero');
+  if(!bar || !hero) return;
+  function check(){
+    var passed = (hero.getBoundingClientRect().bottom < 0);
+    if(passed && !bar.hasAttribute('hidden')){ bar.classList.add('on'); }
+    else { bar.classList.remove('on'); }
+  }
+  window.addEventListener('scroll', check, {passive:true});
+  window.addEventListener('resize', check, {passive:true});
+  check();
+})();
+</script>

@@ -1,0 +1,19 @@
+<!--
+  Momentum Hub founders checkout fail-closed guard.
+  The group cycle is deferred during private validation. Replace this unconditional
+  redirect only after a newly approved group cycle has exact dates.
+-->
+<script>
+  (() => {
+    const isLiveCheckout =
+      window.location.hostname === "content.coloradomastermind.com" &&
+      window.location.pathname.replace(/\/+$/, "") === "/yeseee";
+
+    if (!isLiveCheckout) return;
+
+    document.documentElement.style.visibility = "hidden";
+    window.location.replace(
+      "https://content.coloradomastermind.com/yeees?checkout=closed"
+    );
+  })();
+</script>
