@@ -8,6 +8,12 @@ let state = { sections: [], tasks: [], updates: [], journal: [], clients: [], ev
 let toastTimer = null;
 let journalExpanded = false;
 let todoOwner = 'workerbee';
+// The instruction thread, WBR-321. A render rebuilds the whole board, so the
+// box David is typing in and the project he opened have to be remembered here
+// or every save throws away the place he was working.
+const openNoteComposers = new Set();
+const noteDrafts = new Map();
+const openProjects = new Set();
 
 const TODO_QUADRANTS = {
   Q1: { title: 'Urgent and important', note: 'Doing now.' },
@@ -776,9 +782,15 @@ function groupQueueProjects(items) {
   return [...groups.values()];
 }
 
-function projectShell(title, count) {
+function projectShell(title, count, key) {
   const details = document.createElement('details');
   details.className = 'todo-project';
+  if (key) {
+    details.open = openProjects.has(key);
+    details.addEventListener('toggle', () => {
+      if (details.open) openProjects.add(key); else openProjects.delete(key);
+    });
+  }
   const summary = document.createElement('summary');
   const name = document.createElement('span');
   name.textContent = title;
@@ -793,7 +805,7 @@ function projectShell(title, count) {
 }
 
 function editableTodoProject({ section, sectionIndex, tasks }) {
-  const { details, body } = projectShell(section.title, tasks.length);
+  const { details, body } = projectShell(section.title, tasks.length, `section:${section.id}`);
   const headingRow = document.createElement('div');
   headingRow.className = 'section-title-row';
   const heading = document.createElement('input');
@@ -841,7 +853,7 @@ function editableTodoProject({ section, sectionIndex, tasks }) {
 }
 
 function queueTodoProject(project) {
-  const { details, body } = projectShell(project.title, project.items.length);
+  const { details, body } = projectShell(project.title, project.items.length, `queue:${project.title}`);
   project.items.sort((a, b) => Number(a.metadata?.priority || 99) - Number(b.metadata?.priority || 99)).forEach(item => {
     const row = document.createElement('div');
     row.className = 'queue-task';
@@ -862,6 +874,124 @@ function bindTodoOwnerTabs() {
       renderTodo();
     });
   });
+}
+
+// WBR-321. David asked for this on the 12th, in a note he had to write as a
+// task because there was nowhere else to put it: instructions under each todo,
+// through the same + he already uses to add one, so he can tell a run what he
+// wants between sessions. The store and the route shipped on the 13th. This is
+// the half he can touch.
+function taskThread(task) {
+  const thread = document.createElement('div');
+  thread.className = 'task-thread';
+  const notes = (task.notes || []).slice().sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
+  notes.forEach(note => {
+    const entry = document.createElement('article');
+    entry.className = 'task-note' + (note.author === 'workerbee' ? ' from-workerbee' : '');
+    const meta = document.createElement('p');
+    meta.className = 'task-note-meta';
+    const who = document.createElement('strong');
+    who.textContent = note.author === 'workerbee' ? 'WorkerBee' : 'David';
+    const when = document.createElement('time');
+    when.dateTime = note.created_at;
+    when.textContent = formatDateTime(note.created_at);
+    meta.append(who, when);
+    if (note.author === 'david' && !note.acknowledged_at) {
+      const waiting = document.createElement('span');
+      waiting.className = 'task-note-waiting';
+      waiting.textContent = 'Not answered yet';
+      meta.append(waiting);
+    }
+    const body = document.createElement('p');
+    body.className = 'task-note-body';
+    body.textContent = note.body;
+    entry.append(meta, body);
+    thread.append(entry);
+  });
+  thread.append(noteComposer(task, notes.length));
+  return thread;
+}
+
+function noteComposer(task, threadLength) {
+  const wrap = document.createElement('div');
+  wrap.className = 'task-note-add';
+  const open = openNoteComposers.has(task.id);
+  const plus = document.createElement('button');
+  plus.type = 'button';
+  plus.className = 'task-note-plus';
+  plus.textContent = '+';
+  plus.title = 'Write an instruction under this task';
+  plus.setAttribute('aria-label', `Write an instruction under ${task.title}`);
+  plus.setAttribute('aria-expanded', String(open));
+  const label = document.createElement('button');
+  label.type = 'button';
+  label.className = 'task-note-label';
+  label.textContent = open ? 'Writing an instruction' : threadLength ? 'Add to this thread' : 'Add an instruction';
+  const form = document.createElement('form');
+  form.className = 'task-note-form';
+  form.hidden = !open;
+  const box = document.createElement('textarea');
+  box.className = 'task-note-box';
+  box.rows = 3;
+  box.maxLength = 4000;
+  box.placeholder = 'What should I know, or do, about this one?';
+  box.setAttribute('aria-label', `Instruction for ${task.title}`);
+  box.value = noteDrafts.get(task.id) || '';
+  box.addEventListener('input', () => noteDrafts.set(task.id, box.value));
+  const actions = document.createElement('div');
+  actions.className = 'task-note-actions';
+  const save = document.createElement('button');
+  save.className = 'primary-button small';
+  save.type = 'submit';
+  save.textContent = 'Save instruction';
+  const cancel = document.createElement('button');
+  cancel.className = 'quiet-button small';
+  cancel.type = 'button';
+  cancel.textContent = 'Cancel';
+  actions.append(save, cancel);
+  form.append(box, actions);
+
+  const toggle = () => {
+    const nowOpen = !openNoteComposers.has(task.id);
+    if (nowOpen) openNoteComposers.add(task.id); else { openNoteComposers.delete(task.id); noteDrafts.delete(task.id); }
+    renderTodo();
+    if (nowOpen) {
+      const reopened = document.querySelector(`[data-note-task="${task.id}"] .task-note-box`);
+      if (reopened) reopened.focus();
+    }
+  };
+  plus.addEventListener('click', toggle);
+  label.addEventListener('click', toggle);
+  cancel.addEventListener('click', toggle);
+
+  // Cmd or Ctrl with Return saves, because a textarea swallows a plain Return
+  // and the instruction is often more than one line.
+  box.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) { event.preventDefault(); form.requestSubmit(); }
+  });
+
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const value = box.value.trim();
+    if (!value) { box.focus(); return; }
+    save.disabled = true;
+    box.disabled = true;
+    try {
+      const created = await api('create_task_note', { task_id: task.id, body: value });
+      task.notes = [...(task.notes || []), created];
+      openNoteComposers.delete(task.id);
+      noteDrafts.delete(task.id);
+      renderTodo();
+      showToast('Instruction saved. The next run reads it before it starts.');
+    } catch (error) {
+      save.disabled = false;
+      box.disabled = false;
+      showToast(error.message, true);
+    }
+  });
+
+  wrap.append(plus, label, form);
+  return wrap;
 }
 
 function taskRow(task, siblingTasks, index) {
@@ -899,7 +1029,11 @@ function taskRow(task, siblingTasks, index) {
     })
   );
   row.append(checkbox, title, controls);
-  return row;
+  const item = document.createElement('div');
+  item.className = 'task-item';
+  item.dataset.noteTask = task.id;
+  item.append(row, taskThread(task));
+  return item;
 }
 
 async function moveSection(index, direction) {
