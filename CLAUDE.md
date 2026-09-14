@@ -1,6 +1,23 @@
 # SeenInSeven / Colorado Mastermind Studio: Claude Code Brief
 
-**Last verified: August 12, 2026.** The September group launch is deferred. The active program is `launch/private-tiny-challenge/`, and `js/777-launch-cycle.js` must remain fail-closed until both proof gates are met and a new group cycle is approved.
+**Last verified: September 14, 2026.** The September group launch is deferred. The active program is `launch/private-tiny-challenge/`, and `js/777-launch-cycle.js` must remain fail-closed until both proof gates are met and a new group cycle is approved.
+
+## Entry reality check
+
+This file describes the product; it does not prove the current checkout or the
+live site. Before searching, editing, or claiming that something exists or is
+missing:
+
+1. Confirm this repository by `git remote get-url origin`.
+2. Read `git branch --show-current`, `git rev-parse HEAD`, and the relevant
+   remote branch. Never reuse a branch name from Claude memory or settings.
+3. For a live-page claim, fetch the live route in the same investigation. Local
+   `funnel-pages/` files are historical implementation copies, not evidence of
+   what Systeme currently serves.
+4. Before concluding that a feature never existed, inspect Git history and
+   relevant branches. Analytics disappeared from production on 2026-09-14
+   because it lived on a divergent branch while the current branch looked
+   internally complete.
 
 ## What This Is
 
@@ -35,6 +52,7 @@ Systeme.io remains the public funnel, checkout, and email platform. Studio never
 | `/admin/seeninseven/prompt-tester` | Admin-only prompt experiment workspace |
 | `/dashboard` | David-only WorkerBee operating dashboard and Journal |
 | `/todo` | David-only mobile headings and checkbox lists |
+| `/analytics` | David-only WorkerBee delivery, Board-history, and demerit analytics |
 | `/admin.html` | Legacy direct link, still resolves to Studio admin |
 | `/api/generate` | SeenInSeven script generation |
 | `/api/systeme-webhook` | Systeme purchase and cancellation receiver |
@@ -58,6 +76,7 @@ admin-boardroom.html     Boardroom activity admin
 admin-prompt-tester.html Admin-only prompt experiment workspace
 dashboard.html          David-only WorkerBee operating dashboard and Journal
 todo.html               David-only document-like task editor
+analytics.html          David-only WorkerBee analytics and demerit history
 
 js/app.js                    SeenInSeven application logic (largest file in the project)
 js/supabase.js               Supabase client, auth, DB read/write, event logging
@@ -82,7 +101,6 @@ css/admin-studio.css     Studio admin layout and responsive styles
 css/admin-prompt-tester.css, css/admin-boardroom.css
 css/workerbee.css        WorkerBee Dashboard and mobile Todo styles
 
-prompts/blueprints.js    AI system prompts. DO NOT MODIFY without explicit instruction.
 api/generate.js          DeepSeek proxy for script generation
 api/systeme-webhook.js   Systeme purchase and cancellation receiver
 api/prompt-blueprint.js  Admin-verified GitHub publisher, restricted to prompts/blueprints.js
@@ -93,7 +111,7 @@ api/workerbee.js         David-admin or server-secret gateway to narrow WorkerBe
 
 launch/private-tiny-challenge/   Active private validation playbook, templates, and ledger
 launch/                  Archived September group source plus future group-launch references
-funnel-pages/            Canonical custom-code blocks pasted into Systeme pages
+funnel-pages/            Historical custom-code copies; fetch Systeme before treating one as current
 funnel-pages/backups/2026-08-06-live/   Untouched pre-launch backup of the live Systeme blocks
 scripts/                 Node check scripts (journey map, lock state, level consistency, style guide, story architecture)
 supabase_migrations/     Dated .sql files, one per applied change
