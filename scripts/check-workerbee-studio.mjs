@@ -6,6 +6,7 @@ const migration = read('supabase_migrations/2026-08-10-add-private-workerbee-stu
 const privateApiMigration = read('supabase_migrations/2026-08-10-add-workerbee-private-api.sql');
 const operatingMigration = read('supabase_migrations/2026-08-10-add-workerbee-operating-modules.sql');
 const diagnosticMigration = read('supabase_migrations/2026-08-11-allow-workerbee-diagnostic-updates.sql');
+const itemNotesMigration = read('supabase_migrations/2026-09-14-generalize-workerbee-item-notes.sql');
 const api = read('api/workerbee.js');
 const client = read('js/workerbee.js');
 const dashboard = read('dashboard.html');
@@ -29,6 +30,7 @@ assert.match(api, /WORKERBEE_CHATGPT_SECRET/, 'The private ChatGPT Action must u
 assert.match(api, /serverSecret: internalSecret/, 'The dedicated ChatGPT Action secret must never be forwarded to the database authorizer.');
 assert.match(api, /workerbee_bootstrap/, 'Reads must use the narrow WorkerBee database function.');
 assert.match(api, /workerbee_mutate/, 'Writes must use the narrow WorkerBee database function.');
+assert.match(api, /workerbee_note_mutate/, 'Notes on either ToDo item type must use the narrow note function.');
 assert.doesNotMatch(api, /SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY/, 'The WorkerBee API must not require a database master key.');
 assert.doesNotMatch(client, /SERVICE_ROLE|SUPABASE_SECRET|WORKERBEE_STUDIO_SECRET/, 'No server credential may enter browser code.');
 assert.match(client, /onAuthStateChange[\s\S]*setTimeout\(\(\) => activate/, 'Auth hydration must leave the Supabase callback before database work.');
@@ -42,6 +44,8 @@ assert.match(dashboard, /Events and launches/, 'The compact launch module must l
 assert.match(dashboard, /App freshness/, 'The compact product module must live on /dashboard.');
 assert.match(client, /reorder_outcomes/, 'Daily outcomes must be directly reorderable.');
 assert.match(client, /setOutcomeStatus/, 'Daily outcomes must support direct status changes.');
+assert.match(client, /itemThread\(item, \{ update_id: item\.id \}\)/, 'Published Board cards must expose the same instruction thread as editable tasks.');
+assert.match(client, /itemThread\(task, \{ task_id: task\.id \}\)/, 'Editable tasks must retain their instruction thread.');
 assert.match(dashboard, /id="diagnostics-panel"/, 'WorkerBee diagnostics must stay separate from business work.');
 assert.ok(dashboard.indexOf('id="diagnostics-panel"') < dashboard.indexOf('aria-label="WorkerBee operating health and grade"'), 'Health and grade must sit below the primary business dashboard.');
 assert.match(dashboard, /id="daily-report"/, 'The dashboard must expose a durable same-day morning and afternoon report.');
@@ -64,6 +68,11 @@ assert.match(privateApiMigration, /workerbee_authorized/, 'The private API must 
 assert.match(privateApiMigration, /extensions\.digest\(coalesce\(p_server_secret/, 'The bridge secret must be compared by digest.');
 assert.match(privateApiMigration, /revoke all on function public\.workerbee_bootstrap\(text\) from public/, 'The read function must not retain PUBLIC execution.');
 assert.match(privateApiMigration, /revoke all on function public\.workerbee_mutate\(text, jsonb, text\) from public/, 'The write function must not retain PUBLIC execution.');
+assert.match(itemNotesMigration, /num_nonnulls\(task_id, update_id\) = 1/, 'Every note must belong to exactly one ToDo item.');
+assert.match(itemNotesMigration, /alter table public\.workerbee_task_notes enable row level security/, 'Generalized notes must retain RLS.');
+assert.match(itemNotesMigration, /revoke all on table public\.workerbee_task_notes from anon, authenticated/, 'Generalized notes must retain denied direct access.');
+assert.match(itemNotesMigration, /revoke all on function public\.workerbee_note_mutate\(text, jsonb, text\) from public, anon, authenticated/, 'The note function must not retain PUBLIC execution.');
+assert.match(itemNotesMigration, /where n\.update_id = u\.id/, 'Bootstrap must return Board-item notes with their item.');
 
 const rewriteMap = Object.fromEntries(vercel.rewrites.map(item => [item.source, item.destination]));
 assert.equal(rewriteMap['/dashboard'], '/dashboard.html');

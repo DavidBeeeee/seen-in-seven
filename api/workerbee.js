@@ -62,7 +62,7 @@ function cleanUrl(value) {
 
 const ACTIONS = new Set([
   'create_section', 'update_section', 'create_task', 'update_task', 'delete_task', 'restore_task',
-  'create_task_note', 'acknowledge_task_note',
+  'create_item_note', 'create_task_note', 'acknowledge_task_note',
   'create_update', 'update_update', 'create_journal', 'update_journal', 'mark_viewed',
   'reorder_outcomes', 'upsert_client', 'upsert_event', 'upsert_product'
 ]);
@@ -70,7 +70,7 @@ const TASK_FIELDS = new Set(['id', 'title', 'section_id', 'sort_order', 'status'
 // A note carries nothing but the task it belongs to and the words. `author` is
 // derived inside workerbee_mutate from the call itself, never from the payload,
 // so a note cannot claim to be David's because a caller said so.
-const TASK_NOTE_FIELDS = new Set(['id', 'task_id', 'body']);
+const ITEM_NOTE_FIELDS = new Set(['id', 'task_id', 'update_id', 'body']);
 const UPDATE_FIELDS = new Set(['id', 'kind', 'title', 'body', 'status', 'action_id', 'due_at', 'metadata']);
 const JOURNAL_FIELDS = new Set(['id', 'entry_date', 'category', 'title', 'body', 'fingerprint', 'status', 'evidence', 'reopening_condition', 'metadata']);
 const SECTION_FIELDS = new Set(['id', 'title', 'sort_order', 'archived_at']);
@@ -90,7 +90,7 @@ function sanitize(action, input) {
   let payload;
   if (action === 'reorder_outcomes' || action.startsWith('upsert_')) payload = pick(input, OPERATING_FIELDS);
   else if (action.includes('section')) payload = pick(input, SECTION_FIELDS);
-  else if (action.includes('task_note')) payload = pick(input, TASK_NOTE_FIELDS);
+  else if (action.includes('item_note') || action.includes('task_note')) payload = pick(input, ITEM_NOTE_FIELDS);
   else if (action.includes('task')) payload = pick(input, TASK_FIELDS);
   else if (action.includes('journal')) payload = pick(input, JOURNAL_FIELDS);
   else if (action.includes('update')) payload = pick(input, UPDATE_FIELDS);
@@ -100,9 +100,10 @@ function sanitize(action, input) {
     const max = action.includes('section') ? 120 : action.includes('task') ? 500 : 300;
     payload.title = cleanText(payload.title, max, true);
   }
-  if (action === 'create_task_note') {
+  if (action === 'create_item_note' || action === 'create_task_note') {
     payload.task_id = cleanText(payload.task_id, 64);
-    if (!payload.task_id) throw new Error('A note has to belong to a task.');
+    payload.update_id = cleanText(payload.update_id, 64);
+    if (Boolean(payload.task_id) === Boolean(payload.update_id)) throw new Error('A note has to belong to exactly one ToDo item.');
     payload.body = cleanText(payload.body, 4000);
     if (!payload.body) throw new Error('A note needs something written in it.');
   }
@@ -183,7 +184,9 @@ export default async function handler(req, res) {
     }
     const payload = sanitize(action, body.payload || {});
     const operatingAction = action === 'reorder_outcomes' || action.startsWith('upsert_');
-    const result = await rpc(operatingAction ? 'workerbee_operating_mutate' : 'workerbee_mutate', { p_action: action, p_payload: payload, p_server_secret: auth.serverSecret }, auth.token);
+    const noteAction = action.includes('item_note') || action.includes('task_note');
+    const mutation = noteAction ? 'workerbee_note_mutate' : operatingAction ? 'workerbee_operating_mutate' : 'workerbee_mutate';
+    const result = await rpc(mutation, { p_action: action, p_payload: payload, p_server_secret: auth.serverSecret }, auth.token);
     return json(res, 200, { result });
   } catch (error) {
     console.error('WorkerBee API error:', error);

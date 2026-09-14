@@ -891,7 +891,7 @@ function queueTodoProject(project) {
     title.textContent = item.title;
     const next = document.createElement('small');
     next.textContent = item.body || item.metadata?.intended_result || '';
-    row.append(title, next);
+    row.append(title, next, itemThread(item, { update_id: item.id }));
     body.append(row);
   });
   return details;
@@ -911,10 +911,14 @@ function bindTodoOwnerTabs() {
 // through the same + he already uses to add one, so he can tell a run what he
 // wants between sessions. The store and the route shipped on the 13th. This is
 // the half he can touch.
-function taskThread(task) {
+function noteTargetKey(target) {
+  return target.task_id ? `task:${target.task_id}` : `update:${target.update_id}`;
+}
+
+function itemThread(item, target) {
   const thread = document.createElement('div');
   thread.className = 'task-thread';
-  const notes = (task.notes || []).slice().sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
+  const notes = (item.notes || []).slice().sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
   notes.forEach(note => {
     const entry = document.createElement('article');
     entry.className = 'task-note' + (note.author === 'workerbee' ? ' from-workerbee' : '');
@@ -938,20 +942,22 @@ function taskThread(task) {
     entry.append(meta, body);
     thread.append(entry);
   });
-  thread.append(noteComposer(task, notes.length));
+  thread.append(noteComposer(item, target, notes.length));
   return thread;
 }
 
-function noteComposer(task, threadLength) {
+function noteComposer(item, target, threadLength) {
   const wrap = document.createElement('div');
   wrap.className = 'task-note-add';
-  const open = openNoteComposers.has(task.id);
+  const key = noteTargetKey(target);
+  wrap.dataset.noteTarget = key;
+  const open = openNoteComposers.has(key);
   const plus = document.createElement('button');
   plus.type = 'button';
   plus.className = 'task-note-plus';
   plus.textContent = '+';
   plus.title = 'Write an instruction under this task';
-  plus.setAttribute('aria-label', `Write an instruction under ${task.title}`);
+  plus.setAttribute('aria-label', `Write an instruction under ${item.title}`);
   plus.setAttribute('aria-expanded', String(open));
   const label = document.createElement('button');
   label.type = 'button';
@@ -965,9 +971,9 @@ function noteComposer(task, threadLength) {
   box.rows = 3;
   box.maxLength = 4000;
   box.placeholder = 'What should I know, or do, about this one?';
-  box.setAttribute('aria-label', `Instruction for ${task.title}`);
-  box.value = noteDrafts.get(task.id) || '';
-  box.addEventListener('input', () => noteDrafts.set(task.id, box.value));
+  box.setAttribute('aria-label', `Instruction for ${item.title}`);
+  box.value = noteDrafts.get(key) || '';
+  box.addEventListener('input', () => noteDrafts.set(key, box.value));
   const actions = document.createElement('div');
   actions.className = 'task-note-actions';
   const save = document.createElement('button');
@@ -982,11 +988,12 @@ function noteComposer(task, threadLength) {
   form.append(box, actions);
 
   const toggle = () => {
-    const nowOpen = !openNoteComposers.has(task.id);
-    if (nowOpen) openNoteComposers.add(task.id); else { openNoteComposers.delete(task.id); noteDrafts.delete(task.id); }
+    const nowOpen = !openNoteComposers.has(key);
+    if (nowOpen) openNoteComposers.add(key); else { openNoteComposers.delete(key); noteDrafts.delete(key); }
     renderTodo();
     if (nowOpen) {
-      const reopened = document.querySelector(`[data-note-task="${task.id}"] .task-note-box`);
+      const reopened = [...document.querySelectorAll('[data-note-target]')]
+        .find(node => node.dataset.noteTarget === key)?.querySelector('.task-note-box');
       if (reopened) reopened.focus();
     }
   };
@@ -1007,10 +1014,10 @@ function noteComposer(task, threadLength) {
     save.disabled = true;
     box.disabled = true;
     try {
-      const created = await api('create_task_note', { task_id: task.id, body: value });
-      task.notes = [...(task.notes || []), created];
-      openNoteComposers.delete(task.id);
-      noteDrafts.delete(task.id);
+      const created = await api('create_item_note', { ...target, body: value });
+      item.notes = [...(item.notes || []), created];
+      openNoteComposers.delete(key);
+      noteDrafts.delete(key);
       renderTodo();
       showToast('Instruction saved. The next run reads it before it starts.');
     } catch (error) {
@@ -1062,7 +1069,7 @@ function taskRow(task, siblingTasks, index) {
   const item = document.createElement('div');
   item.className = 'task-item';
   item.dataset.noteTask = task.id;
-  item.append(row, taskThread(task));
+  item.append(row, itemThread(task, { task_id: task.id }));
   return item;
 }
 

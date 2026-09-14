@@ -194,6 +194,7 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .queue-task strong, .queue-task small { display: block; }
 .queue-task strong { color: var(--text); font-size: 12px; }
 .queue-task small { margin-top: 3px; color: var(--muted); font-size: 10px; }
+.queue-task .task-thread { margin-top: 7px; padding-left: 0; }
 .todo-document { display: grid; gap: 12px; }
 .todo-section { padding: 15px 16px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
 .section-title-row { display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 10px; margin-bottom: 5px; }
