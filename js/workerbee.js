@@ -1,4 +1,4 @@
-import { dashboardPanels, isNewSince } from '/js/panels.mjs';
+import { dashboardPanels, isNewSince, boardCards } from '/js/panels.mjs';
 
 const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
@@ -712,7 +712,14 @@ function renderTodo() {
   root.replaceChildren();
   const sections = sortByOrder(state.sections);
   const openTasks = state.tasks.filter(task => task.status !== 'done');
-  const queueItems = state.updates.filter(item => item.kind === 'commitment' && item.status === 'active' && item.metadata?.source === 'execution-queue');
+  // WBR-338. This page is titled "the whole board" and promises "everything
+  // stays visible", and until now it showed only execution-queue cards: 11 of
+  // them, while 192 active roadmap items sat published to the same table and
+  // rendered on no page at all. They were written and orphaned. David opened
+  // the board, counted what he could see against the ~200 he knew were open,
+  // and got almost none of them. The whole board means the whole board, so
+  // roadmap items are here too, grouped by initiative the same way.
+  const queueItems = boardCards(state);
   const counts = {
     workerbee: queueItems.filter(item => (item.metadata?.owner || 'workerbee') !== 'david').length + openTasks.filter(task => task.owner === 'workerbee').length,
     david: openTasks.filter(task => task.owner !== 'workerbee').length + queueItems.filter(item => item.metadata?.owner === 'david').length
@@ -748,7 +755,7 @@ function renderTodo() {
       sectionIndex,
       tasks: sortByOrder(openTasks.filter(task => task.section_id === section.id && (task.owner === 'workerbee' ? 'workerbee' : 'david') === todoOwner))
     })).filter(project => (project.tasks.length ? taskProjectQuadrant(project.tasks) === quadrant : (todoOwner === 'david' && quadrant === 'Q2')));
-    const queueProjects = groupQueueProjects(queueItems.filter(item => (item.metadata?.owner === 'david' ? 'david' : 'workerbee') === todoOwner && queueQuadrant(item) === quadrant));
+    const queueProjects = groupQueueProjects(queueItems.filter(item => (item.metadata?.owner === 'david' ? 'david' : 'workerbee') === todoOwner && boardQuadrant(item) === quadrant));
 
     editableProjects.forEach(project => panel.append(editableTodoProject(project)));
     queueProjects.forEach(project => panel.append(queueTodoProject(project)));
@@ -780,6 +787,18 @@ function queueQuadrant(item) {
   if (activeInitiative && urgent) return 'Q1';
   if (activeInitiative) return 'Q2';
   if (urgent) return 'Q3';
+  return 'Q4';
+}
+
+// A roadmap card carries no queue_status; its urgency is its priority. One and
+// its blockers are the urgent work, two is the real work, three and below park
+// on purpose but stay visible. An execution-queue card keeps its own logic.
+function boardQuadrant(item) {
+  if (item.metadata?.source === 'execution-queue') return queueQuadrant(item);
+  const priority = Number(item.metadata?.priority);
+  const blocked = Boolean(item.metadata?.blocked_by);
+  if (priority <= 1) return blocked ? 'Q3' : 'Q1';
+  if (priority === 2) return 'Q2';
   return 'Q4';
 }
 

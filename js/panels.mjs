@@ -67,7 +67,18 @@ export function dashboardPanels(state, now = Date.now()) {
 // empty one would mean. `check-board-visible.mjs` fetches this file and the
 // payload from production and fails on any of them, so the next time one goes
 // dark a gate goes red rather than David opening the page and finding it.
+// The whole board: every active roadmap and execution-queue card. This is what
+// the /todo page renders, exported here so the page and the gate that checks it
+// read one definition and cannot drift (WBR-337's rule, WBR-338's near miss).
+export function boardCards(state) {
+  return (state.updates || []).filter((item) => item.kind === 'commitment'
+    && item.status === 'active'
+    && ['execution-queue', 'roadmap'].includes((item.metadata || {}).source));
+}
+
 export const MUST_NOT_BE_EMPTY = [
+  ['boardCards', 'the whole-board todo page would render nothing, though the Board holds active roadmap and queue items'],
+
   ['completed', 'no work has been recorded as finished in the last fortnight, on a board that closes items most nights'],
   ['commitments', 'no dated commitment or blocker is published, though the commitment record holds active rows'],
   ['diagnostics', 'no defect or friction is published, though the Board holds open diagnostics'],
