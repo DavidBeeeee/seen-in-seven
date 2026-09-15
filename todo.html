@@ -36,6 +36,17 @@
         <div><p class="eyebrow">The whole board</p><h1>What needs doing?</h1><p>Everything stays visible. Projects fold shut so the list can grow without becoming a wall.</p></div>
         <button class="quiet-button" id="add-section" type="button"><i data-lucide="plus"></i> Add heading</button>
       </section>
+      <!-- WBR-351. David, 2026-09-15: "my search is gone from the TODO list so I
+           can't see what wbr-214 is". It was built on 31 August and it has never
+           been on this branch: main was rebuilt forward from before it, and the
+           commit that added it still sits on workerbee/seen-in-seven with thirty
+           two others. Rebuilt here against the quadrants and the capture strip
+           that shipped since, rather than merged, because the page around it is
+           not the page it was written for. -->
+      <div class="todo-toolbar">
+        <input id="todo-search" class="todo-search" type="search" placeholder="Search by id, title or detail, e.g. WBR-214" autocomplete="off" aria-label="Search the board">
+        <span class="todo-search-count" id="todo-search-count" role="status"></span>
+      </div>
       <div class="todo-owner-tabs" role="tablist" aria-label="Task owner">
         <button class="todo-owner-tab active" type="button" data-todo-owner="workerbee" role="tab" aria-selected="true">WorkerBee <span id="workerbee-task-count">0</span></button>
         <button class="todo-owner-tab" type="button" data-todo-owner="david" role="tab" aria-selected="false">DavidBee <span id="david-task-count">0</span></button>

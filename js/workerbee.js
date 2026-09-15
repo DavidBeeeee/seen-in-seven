@@ -10,6 +10,7 @@ let state = { sections: [], tasks: [], updates: [], journal: [], clients: [], ev
 let toastTimer = null;
 let journalExpanded = false;
 let todoOwner = 'workerbee';
+let todoFilter = '';
 let analyticsPeriod = 'week';
 // The instruction thread, WBR-321. A render rebuilds the whole board, so the
 // box David is typing in and the project he opened have to be remembered here
@@ -1171,6 +1172,37 @@ function bindCaptureForms() {
   });
 }
 
+// WBR-351. Search, so an identifier handed over in conversation can be found on
+// the page. David: "my search is gone from the TODO list so I can't see what
+// wbr-214 is."
+//
+// It matches the id, the title, the detail and the project, because half the
+// time the thing being looked for is remembered by its words rather than its
+// number. That was the rule when this was first built on 31 August and it is
+// still the right one; what changed is the page underneath, so the matcher now
+// has to answer for three kinds of row rather than one: Board cards, the tasks
+// under David's own headings, and the unrouted captures in the strip.
+//
+// Searching deliberately looks past the owner tab and past the quadrants. An id
+// he has been handed is an id he wants found, and making him guess which of six
+// containers it sits in before the page will admit it exists is the problem
+// rather than the feature.
+function matchesTodoFilter(fields) {
+  if (!todoFilter) return true;
+  return fields.filter(Boolean).join(' ').toLowerCase().includes(todoFilter);
+}
+
+function boardCardMatches(item) {
+  const meta = item.metadata || {};
+  return matchesTodoFilter([item.title, item.body, meta.roadmap_item_id, meta.queue_item_id,
+    meta.theme, meta.initiative_title, meta.work_area]);
+}
+
+function taskMatches(task) {
+  const section = state.sections.find(entry => entry.id === task.section_id);
+  return matchesTodoFilter([task.title, task.work_area, task.owner, section && section.title]);
+}
+
 function renderTodo() {
   const root = el('todo-board');
   root.replaceChildren();
@@ -1179,7 +1211,7 @@ function renderTodo() {
   // on the owner tabs is still right: they are open work, and a tab that says 4
   // while 6 things are waiting is the kind of quiet undercount this page exists
   // to stop.
-  const openTasks = state.tasks.filter(task => task.status !== 'done' && !isUnrouted(task));
+  const openTasks = state.tasks.filter(task => task.status !== 'done' && !isUnrouted(task)).filter(taskMatches);
   // WBR-338. This page is titled "the whole board" and promises "everything
   // stays visible", and until now it showed only execution-queue cards: 11 of
   // them, while 192 active roadmap items sat published to the same table and
@@ -1187,8 +1219,8 @@ function renderTodo() {
   // the board, counted what he could see against the ~200 he knew were open,
   // and got almost none of them. The whole board means the whole board, so
   // roadmap items are here too, grouped by initiative the same way.
-  const queueItems = boardCards(state);
-  const captures = state.tasks.filter(isUnrouted);
+  const queueItems = boardCards(state).filter(boardCardMatches);
+  const captures = state.tasks.filter(isUnrouted).filter(taskMatches);
   const counts = {
     workerbee: queueItems.filter(item => (item.metadata?.owner || 'workerbee') !== 'david').length
       + openTasks.filter(task => task.owner === 'workerbee').length
@@ -1247,7 +1279,25 @@ function renderTodo() {
     root.append(panel);
   }
   renderCaptures();
+  renderTodoSearchCount(counts);
   icons();
+}
+
+// A search that finds nothing on this tab and four things on the other one has
+// to say so, or the page reads as "it does not exist" when the honest answer is
+// "it is one click away". This is the same failure shape as a panel that filters
+// on something the reader cannot see.
+function renderTodoSearchCount(counts) {
+  const node = el('todo-search-count');
+  if (!node) return;
+  if (!todoFilter) { node.textContent = ''; return; }
+  const here = counts[todoOwner];
+  const other = todoOwner === 'workerbee' ? 'david' : 'workerbee';
+  const elsewhere = counts[other];
+  const otherLabel = other === 'david' ? 'DavidBee' : 'WorkerBee';
+  if (!here && !elsewhere) { node.textContent = 'Nothing matches that.'; return; }
+  const mine = `${here} match${here === 1 ? '' : 'es'} here`;
+  node.textContent = elsewhere ? `${mine}, ${elsewhere} under ${otherLabel}.` : `${mine}.`;
 }
 
 function dueSoon(task) {
@@ -1380,6 +1430,15 @@ function queueTodoProject(project) {
     body.append(row);
   });
   return details;
+}
+
+function bindTodoSearch() {
+  const box = el('todo-search');
+  if (!box) return;
+  box.addEventListener('input', () => {
+    todoFilter = box.value.trim().toLowerCase();
+    renderTodo();
+  });
 }
 
 function bindTodoOwnerTabs() {
@@ -1614,6 +1673,7 @@ function bindEvents() {
   el('sign-out').addEventListener('click', () => sb.auth.signOut());
   if (surface === 'todo') {
     bindTodoOwnerTabs();
+    bindTodoSearch();
     bindCaptureForms();
     el('add-section').addEventListener('click', async () => {
       const title = window.prompt('New heading');
