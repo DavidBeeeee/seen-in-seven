@@ -1,4 +1,4 @@
-import { dashboardPanels, isNewSince, boardCards } from '/js/panels.mjs';
+import { dashboardPanels, isNewSince, boardCards, completedAt } from '/js/panels.mjs';
 
 const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
@@ -838,7 +838,135 @@ function renderAnalytics() {
     list.append(row);
   });
   demeritsBox.append(summary, list);
+  renderDone();
   icons();
+}
+
+// WBR-348. Everything that got moved off the list, in the same ninety-day window
+// the payload now returns. Four sources, because "done" is spread across four
+// tables and showing one of them would be the same undercount WBR-338 found on
+// the Todo page: a number that looks complete and is a fraction.
+const DONE_WINDOW_DAYS = 90;
+const DONE_SOURCE_LABELS = {
+  roadmap: 'Board',
+  'execution-queue': 'Execution queue',
+  commitment: 'Commitment',
+  task: 'Todo page'
+};
+
+export function doneItems(state, now = Date.now()) {
+  const floor = new Date(now - DONE_WINDOW_DAYS * 86400000).toISOString();
+  const fromUpdates = (state.updates || [])
+    .filter(item => item.status === 'completed')
+    .map(item => ({
+      id: item.id,
+      title: item.title,
+      detail: item.body || '',
+      // The same `completed_at` panels.mjs settled on in WBR-335: when the work
+      // finished, not when the publisher last touched the row.
+      at: completedAt(item),
+      source: (item.metadata || {}).source === 'roadmap' ? 'roadmap'
+        : (item.metadata || {}).source === 'execution-queue' ? 'execution-queue'
+        : 'commitment',
+      owner: (item.metadata || {}).owner === 'david' ? 'david' : 'workerbee',
+      ref: (item.metadata || {}).roadmap_item_id || null
+    }));
+  const fromTasks = (state.tasks || [])
+    .filter(task => task.status === 'done' && !task.deleted_at)
+    .map(task => ({
+      id: task.id,
+      title: task.title,
+      detail: '',
+      at: task.completed_at || task.updated_at || null,
+      source: 'task',
+      owner: task.owner === 'workerbee' ? 'workerbee' : 'david',
+      ref: null
+    }));
+  return [...fromUpdates, ...fromTasks]
+    .filter(entry => entry.at && String(entry.at) >= floor)
+    .sort((a, b) => String(b.at).localeCompare(String(a.at)));
+}
+
+function dayHeading(iso) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return 'Date not recorded';
+  return date.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
+}
+
+function renderDone() {
+  const list = el('done-list');
+  if (!list) return;
+  const note = el('done-note');
+  const all = doneItems(state);
+  const search = (el('done-search')?.value || '').trim().toLowerCase();
+  const owner = el('done-owner')?.value || 'all';
+  const source = el('done-source')?.value || 'all';
+  const shown = all.filter(entry => (owner === 'all' || entry.owner === owner)
+    && (source === 'all' || entry.source === source)
+    && (!search || `${entry.title} ${entry.detail}`.toLowerCase().includes(search)));
+
+  if (note) {
+    note.textContent = shown.length === all.length
+      ? `${all.length} finished in the last ${DONE_WINDOW_DAYS} days. Anything older than that is in the daily log, not here.`
+      : `${shown.length} of ${all.length} finished in the last ${DONE_WINDOW_DAYS} days.`;
+  }
+
+  list.replaceChildren();
+  if (!shown.length) {
+    list.append(empty(all.length ? 'Nothing matches that.' : 'Nothing has been recorded as finished in this window.'));
+    return;
+  }
+
+  let currentDay = null;
+  let group = null;
+  shown.forEach(entry => {
+    const day = String(entry.at).slice(0, 10);
+    if (day !== currentDay) {
+      currentDay = day;
+      const header = document.createElement('h3');
+      header.className = 'done-day';
+      header.textContent = dayHeading(entry.at);
+      const count = document.createElement('span');
+      count.textContent = `${shown.filter(other => String(other.at).slice(0, 10) === day).length}`;
+      header.append(count);
+      group = document.createElement('div');
+      group.className = 'done-group';
+      list.append(header, group);
+    }
+    group.append(doneRow(entry));
+  });
+}
+
+function doneRow(entry) {
+  const row = document.createElement('details');
+  row.className = 'done-item';
+  const summary = document.createElement('summary');
+  const title = document.createElement('span');
+  title.className = 'done-title';
+  title.textContent = entry.title;
+  const tags = document.createElement('span');
+  tags.className = 'done-tags';
+  const who = document.createElement('em');
+  who.className = `done-owner ${entry.owner}`;
+  who.textContent = entry.owner === 'david' ? 'DavidBee' : 'WorkerBee';
+  const where = document.createElement('em');
+  where.className = 'done-source';
+  where.textContent = entry.ref ? `${DONE_SOURCE_LABELS[entry.source]} · ${entry.ref}` : DONE_SOURCE_LABELS[entry.source];
+  tags.append(who, where);
+  summary.append(title, tags);
+  const body = document.createElement('div');
+  body.className = 'done-detail';
+  body.textContent = entry.detail || 'No result was written down for this one.';
+  row.append(summary, body);
+  return row;
+}
+
+function bindDoneFilters() {
+  ['done-search', 'done-owner', 'done-source'].forEach(id => {
+    const node = el(id);
+    if (!node) return;
+    node.addEventListener(node.tagName === 'SELECT' ? 'change' : 'input', renderDone);
+  });
 }
 
 function bindPeriodTabs() {
@@ -867,11 +995,173 @@ function iconButton(name, label, handler) {
   return button;
 }
 
+// WBR-347. A capture is a task nobody has given a quadrant yet: `routed_at` is
+// null. It sits above the quadrants rather than inside one, because guessing a
+// quadrant for it would make the Board look decided when it is not, which is
+// WBR-115's lesson one table over.
+//
+// David's rule, 2026-09-15: nothing is ever deferred and nothing is ever
+// blocked. There may just be other things ahead of it. So routing a capture has
+// exactly two outputs, a quadrant and an answer about position, and the answer
+// comes back on the item's own note thread where he wrote it.
+const CAPTURE_SECTION_TITLE = 'Inbox';
+
+function captureSection() {
+  return sortByOrder(state.sections).find(section => section.title === CAPTURE_SECTION_TITLE)
+    || sortByOrder(state.sections)[0]
+    || null;
+}
+
+export function isUnrouted(task) {
+  return task.status !== 'done' && !task.deleted_at && !task.routed_at;
+}
+
+// The quadrant a single task belongs to. An explicit pair wins; with neither
+// set the task keeps the quadrant its project has always derived, so nothing
+// that existed before this feature moves.
+function taskQuadrant(task, projectTasks) {
+  if (typeof task.urgent === 'boolean' && typeof task.important === 'boolean') {
+    if (task.urgent) return task.important ? 'Q1' : 'Q3';
+    return task.important ? 'Q2' : 'Q4';
+  }
+  return taskProjectQuadrant(projectTasks);
+}
+
+function renderCaptures() {
+  const list = el('capture-list');
+  if (!list) return;
+  list.replaceChildren();
+  const captures = state.tasks.filter(isUnrouted)
+    .sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
+  const count = el('capture-count');
+  if (count) count.textContent = captures.length;
+  const strip = document.querySelector('.capture-strip');
+  if (strip) strip.classList.toggle('has-captures', captures.length > 0);
+  if (!captures.length) {
+    list.append(empty('Nothing waiting. Everything written here has been given a quadrant.'));
+    return;
+  }
+  captures.forEach(task => list.append(captureRow(task)));
+}
+
+function captureRow(task) {
+  const item = document.createElement('div');
+  item.className = 'capture-item';
+  item.dataset.noteTask = task.id;
+
+  const row = document.createElement('div');
+  row.className = 'capture-row';
+
+  const owner = document.createElement('span');
+  owner.className = 'capture-owner';
+  owner.textContent = task.owner === 'workerbee' ? 'WorkerBee' : 'DavidBee';
+
+  const title = document.createElement('input');
+  title.className = 'task-title';
+  title.value = task.title;
+  title.setAttribute('aria-label', 'Captured item');
+  title.addEventListener('change', async () => {
+    const value = title.value.trim();
+    if (!value || value === task.title) { title.value = task.title; return; }
+    try { Object.assign(task, await api('update_task', { id: task.id, title: value })); }
+    catch (error) { title.value = task.title; showToast(error.message, true); }
+  });
+
+  const remove = iconButton('trash-2', 'Delete this capture', async () => {
+    try {
+      await api('delete_task', { id: task.id });
+      state.tasks = state.tasks.filter(entry => entry.id !== task.id);
+      renderTodo();
+      showToast('Capture removed. It remains recoverable in history.');
+    } catch (error) { showToast(error.message, true); }
+  });
+  const controls = document.createElement('div');
+  controls.className = 'task-controls';
+  controls.append(remove);
+
+  row.append(owner, title, controls);
+
+  // Four buttons rather than two toggles, because the quadrant is the thing
+  // being chosen and naming it is clearer than asking two questions whose
+  // answers he then has to combine in his head.
+  const picker = document.createElement('div');
+  picker.className = 'capture-picker';
+  const prompt = document.createElement('span');
+  prompt.className = 'capture-prompt';
+  prompt.textContent = 'Where does it go?';
+  picker.append(prompt);
+  for (const [quadrant, copy] of Object.entries(TODO_QUADRANTS)) {
+    const button = document.createElement('button');
+    button.type = 'button';
+    button.className = 'capture-quadrant';
+    button.dataset.quadrant = quadrant;
+    button.title = copy.title;
+    const mark = document.createElement('strong');
+    mark.textContent = quadrant;
+    const words = document.createElement('small');
+    words.textContent = copy.title;
+    button.append(mark, words);
+    button.addEventListener('click', async () => {
+      const urgent = quadrant === 'Q1' || quadrant === 'Q3';
+      const important = quadrant === 'Q1' || quadrant === 'Q2';
+      picker.querySelectorAll('button').forEach(other => { other.disabled = true; });
+      try {
+        Object.assign(task, await api('update_task', { id: task.id, urgent, important }));
+        renderTodo();
+        showToast(`Routed to ${copy.title.toLowerCase()}.`);
+      } catch (error) {
+        picker.querySelectorAll('button').forEach(other => { other.disabled = false; });
+        showToast(error.message, true);
+      }
+    });
+    picker.append(button);
+  }
+
+  item.append(row, picker, itemThread(task, { task_id: task.id }));
+  return item;
+}
+
+function bindCaptureForms() {
+  document.querySelectorAll('[data-capture-owner]').forEach(form => {
+    const input = form.querySelector('input');
+    form.addEventListener('submit', async event => {
+      event.preventDefault();
+      const value = input.value.trim();
+      if (!value) return;
+      const section = captureSection();
+      if (!section) { showToast('There is no heading to capture into yet. Add one first.', true); return; }
+      input.disabled = true;
+      try {
+        const created = await api('create_task', {
+          section_id: section.id,
+          title: value,
+          owner: form.dataset.captureOwner,
+          sort_order: state.tasks.length * 100,
+          // Sending both flags explicitly as null is what asks for an unrouted
+          // item. Leaving them out, which is what the per-heading input does,
+          // creates an ordinary task that keeps its project's quadrant.
+          urgent: null,
+          important: null
+        });
+        state.tasks.push(created);
+        input.value = '';
+        renderTodo();
+        showToast('Written down. It waits above the quadrants until it has one.');
+      } catch (error) { showToast(error.message, true); }
+      finally { input.disabled = false; input.focus(); }
+    });
+  });
+}
+
 function renderTodo() {
   const root = el('todo-board');
   root.replaceChildren();
   const sections = sortByOrder(state.sections);
-  const openTasks = state.tasks.filter(task => task.status !== 'done');
+  // Unrouted captures live in the strip above, not in a quadrant. Counting them
+  // on the owner tabs is still right: they are open work, and a tab that says 4
+  // while 6 things are waiting is the kind of quiet undercount this page exists
+  // to stop.
+  const openTasks = state.tasks.filter(task => task.status !== 'done' && !isUnrouted(task));
   // WBR-338. This page is titled "the whole board" and promises "everything
   // stays visible", and until now it showed only execution-queue cards: 11 of
   // them, while 192 active roadmap items sat published to the same table and
@@ -880,9 +1170,14 @@ function renderTodo() {
   // and got almost none of them. The whole board means the whole board, so
   // roadmap items are here too, grouped by initiative the same way.
   const queueItems = boardCards(state);
+  const captures = state.tasks.filter(isUnrouted);
   const counts = {
-    workerbee: queueItems.filter(item => (item.metadata?.owner || 'workerbee') !== 'david').length + openTasks.filter(task => task.owner === 'workerbee').length,
-    david: openTasks.filter(task => task.owner !== 'workerbee').length + queueItems.filter(item => item.metadata?.owner === 'david').length
+    workerbee: queueItems.filter(item => (item.metadata?.owner || 'workerbee') !== 'david').length
+      + openTasks.filter(task => task.owner === 'workerbee').length
+      + captures.filter(task => task.owner === 'workerbee').length,
+    david: openTasks.filter(task => task.owner !== 'workerbee').length
+      + queueItems.filter(item => item.metadata?.owner === 'david').length
+      + captures.filter(task => task.owner !== 'workerbee').length
   };
   el('workerbee-task-count').textContent = counts.workerbee;
   el('david-task-count').textContent = counts.david;
@@ -910,11 +1205,22 @@ function renderTodo() {
     heading.append(words, label);
     panel.append(heading);
 
-    const editableProjects = sections.map((section, sectionIndex) => ({
-      section,
-      sectionIndex,
-      tasks: sortByOrder(openTasks.filter(task => task.section_id === section.id && (task.owner === 'workerbee' ? 'workerbee' : 'david') === todoOwner))
-    })).filter(project => (project.tasks.length ? taskProjectQuadrant(project.tasks) === quadrant : (todoOwner === 'david' && quadrant === 'Q2')));
+    // A section can now appear in more than one quadrant, showing only the
+    // tasks that belong there. Before WBR-347 a whole heading took one quadrant
+    // derived from its busiest task, so routing a single captured item would
+    // have dragged everything under the same heading with it.
+    const editableProjects = sections.map((section, sectionIndex) => {
+      const sectionTasks = sortByOrder(openTasks.filter(task => task.section_id === section.id
+        && (task.owner === 'workerbee' ? 'workerbee' : 'david') === todoOwner));
+      return {
+        section,
+        sectionIndex,
+        sectionTasks,
+        tasks: sectionTasks.filter(task => taskQuadrant(task, sectionTasks) === quadrant)
+      };
+    }).filter(project => (project.sectionTasks.length
+      ? project.tasks.length > 0
+      : (todoOwner === 'david' && quadrant === 'Q2')));
     const queueProjects = groupQueueProjects(queueItems.filter(item => (item.metadata?.owner === 'david' ? 'david' : 'workerbee') === todoOwner && boardQuadrant(item) === quadrant));
 
     editableProjects.forEach(project => panel.append(editableTodoProject(project)));
@@ -922,6 +1228,7 @@ function renderTodo() {
     if (!editableProjects.length && !queueProjects.length) panel.append(empty('Nothing here.'));
     root.append(panel);
   }
+  renderCaptures();
   icons();
 }
 
@@ -1289,6 +1596,7 @@ function bindEvents() {
   el('sign-out').addEventListener('click', () => sb.auth.signOut());
   if (surface === 'todo') {
     bindTodoOwnerTabs();
+    bindCaptureForms();
     el('add-section').addEventListener('click', async () => {
       const title = window.prompt('New heading');
       if (!title || !title.trim()) return;
@@ -1297,6 +1605,7 @@ function bindEvents() {
     });
   } else if (surface === 'analytics') {
     bindPeriodTabs();
+    bindDoneFilters();
   } else {
     el('toggle-journal').addEventListener('click', () => { journalExpanded = !journalExpanded; renderJournal(); });
     el('new-journal-button').addEventListener('click', () => { el('journal-form').hidden = false; el('journal-title').focus(); });

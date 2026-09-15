@@ -48,6 +48,21 @@
         <p class="analytics-sub">Open items per side. This begins when daily snapshots began because the Board's earlier shape cannot be reconstructed honestly.</p>
         <div id="analytics-shape"></div>
       </section>
+      <!-- WBR-348. David asked for this on 2026-09-15: somewhere to browse what
+           got moved off the list, rather than reading a number that says 233 and
+           taking it on faith. -->
+      <section class="card analytics-trend done-browser">
+        <div class="trend-head">
+          <div><h2>What got done</h2><p class="analytics-sub" id="done-note"></p></div>
+          <div class="done-filters">
+            <input id="done-search" type="search" autocomplete="off" placeholder="Search what got done" aria-label="Search finished work">
+            <select id="done-owner" aria-label="Whose work"><option value="all">Both sides</option><option value="workerbee">WorkerBee</option><option value="david">DavidBee</option></select>
+            <select id="done-source" aria-label="Where it came from"><option value="all">Everything</option><option value="roadmap">Board</option><option value="execution-queue">Execution queue</option><option value="commitment">Commitments</option><option value="task">Todo page</option></select>
+          </div>
+        </div>
+        <div id="done-list" class="done-list"></div>
+      </section>
+
       <section class="card analytics-trend">
         <h2>Demerits</h2>
         <p class="analytics-sub">The part that cannot be derived. Recorded honestly or the rest of the score means nothing.</p>

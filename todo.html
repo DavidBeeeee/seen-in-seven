@@ -40,6 +40,28 @@
         <button class="todo-owner-tab active" type="button" data-todo-owner="workerbee" role="tab" aria-selected="true">WorkerBee <span id="workerbee-task-count">0</span></button>
         <button class="todo-owner-tab" type="button" data-todo-owner="david" role="tab" aria-selected="false">DavidBee <span id="david-task-count">0</span></button>
       </div>
+      <!-- WBR-347. David asked for this on 2026-09-15: a place to enter a new
+           todo above the quadrants, one input each, so a thought can be put down
+           without first deciding which heading it belongs under. What lands here
+           is unrouted, and staying unrouted is the thing the morning is
+           answerable for. -->
+      <section class="capture-strip" aria-labelledby="capture-heading">
+        <div class="capture-head">
+          <div><p class="eyebrow">New</p><h2 id="capture-heading">Put it down here.</h2><p class="capture-sub">Anything typed here waits above the quadrants until it is given one. Nothing is deferred and nothing is blocked; it either goes on a day's work order or something is ahead of it, and whichever it is comes back to you on the item.</p></div>
+          <span class="count-badge" id="capture-count">0</span>
+        </div>
+        <div class="capture-forms">
+          <form class="capture-form" data-capture-owner="workerbee">
+            <label for="capture-workerbee">For WorkerBee</label>
+            <div class="capture-field"><input id="capture-workerbee" autocomplete="off" placeholder="Something for me to do"><button class="primary-button" type="submit">Add</button></div>
+          </form>
+          <form class="capture-form" data-capture-owner="david">
+            <label for="capture-david">For DavidBee</label>
+            <div class="capture-field"><input id="capture-david" autocomplete="off" placeholder="Something for you to do"><button class="primary-button" type="submit">Add</button></div>
+          </form>
+        </div>
+        <div id="capture-list" class="capture-list"></div>
+      </section>
       <div id="todo-board" class="todo-board"></div>
     </div>
   </main>

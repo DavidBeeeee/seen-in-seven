@@ -327,3 +327,63 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
    moves every time anybody opens the page. */
 .stack-list > .is-new { border-left: 2px solid var(--teal); padding-left: 9px; }
 .stack-list > .is-new::after { content: 'new'; margin-left: 6px; color: var(--teal); font-size: 10px; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; }
+
+/* WBR-347. The capture strip: what has been written down and not yet given a
+   quadrant. It sits above the quadrants because that is where the waiting is
+   visible, and it stays quiet when it is empty. */
+.capture-strip { margin-bottom: 14px; padding: 14px 14px 11px; border: 1px solid var(--line); border-radius: 12px; background: var(--surface); }
+.capture-strip.has-captures { border-color: rgba(200, 168, 75, .45); }
+.capture-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 11px; }
+.capture-head h2 { margin: 0; font-size: 17px; }
+.capture-sub { max-width: 62ch; margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+.capture-forms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.capture-form label { display: block; margin-bottom: 4px; color: var(--teal-light); font: 800 10px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; text-transform: uppercase; }
+.capture-field { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
+.capture-field input { min-height: 38px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg-deep); color: var(--text); outline: 0; }
+.capture-field input:focus { border-color: var(--teal); }
+.capture-field input::placeholder { color: var(--muted); }
+.capture-field .primary-button { min-height: 38px; padding: 0 14px; }
+.capture-list { margin-top: 12px; display: grid; gap: 9px; }
+.capture-list:empty { margin-top: 0; }
+.capture-item { padding: 10px 11px; border: 1px solid var(--line-soft); border-radius: 9px; background: var(--surface-2); }
+.capture-row { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: 8px; }
+.capture-owner { padding: 3px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--soft); font: 800 10px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; }
+.capture-picker { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin-top: 9px; }
+.capture-prompt { margin-right: 3px; color: var(--muted); font-size: 12px; }
+.capture-quadrant { display: flex; align-items: baseline; gap: 6px; min-height: 32px; padding: 0 10px; border: 1px solid var(--line); border-radius: 8px; background: transparent; color: var(--soft); cursor: pointer; }
+.capture-quadrant strong { font: 800 11px/1 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--teal-light); }
+.capture-quadrant small { color: var(--muted); font-size: 11px; }
+.capture-quadrant:hover:not(:disabled) { border-color: rgba(50, 184, 184, .55); background: rgba(50, 184, 184, .12); }
+.capture-quadrant:disabled { opacity: .45; cursor: default; }
+
+/* WBR-348. Browsing what got moved off the list. */
+.done-filters { display: flex; flex-wrap: wrap; gap: 7px; }
+.done-filters input, .done-filters select { min-height: 34px; padding: 0 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg-deep); color: var(--text); outline: 0; }
+.done-filters input { min-width: 190px; }
+.done-filters input:focus, .done-filters select:focus { border-color: var(--teal); }
+.done-list { display: grid; gap: 4px; margin-top: 12px; max-height: 620px; overflow-y: auto; }
+.done-day { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 12px 0 4px; padding: 5px 2px; background: var(--surface); color: var(--teal-light); font: 800 11px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .06em; text-transform: uppercase; }
+.done-day:first-child { margin-top: 0; }
+.done-day span { color: var(--muted); }
+.done-group { display: grid; gap: 4px; }
+.done-item { border: 1px solid var(--line-soft); border-radius: 8px; background: var(--surface-2); }
+.done-item summary { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px; padding: 9px 11px; cursor: pointer; list-style: none; }
+.done-item summary::-webkit-details-marker { display: none; }
+.done-item[open] { border-color: var(--line); }
+.done-title { flex: 1 1 260px; min-width: 0; font-weight: 700; }
+.done-tags { display: flex; gap: 6px; flex-wrap: wrap; }
+.done-tags em { padding: 2px 8px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); font: 700 10px/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; font-style: normal; white-space: nowrap; }
+.done-tags .done-owner.workerbee { border-color: rgba(50, 184, 184, .4); color: var(--teal-light); }
+.done-tags .done-owner.david { border-color: rgba(200, 168, 75, .42); color: var(--gold); }
+.done-detail { padding: 0 11px 11px; color: var(--soft); font-size: 12.5px; white-space: pre-wrap; }
+
+@media (max-width: 720px) {
+  .capture-forms { grid-template-columns: 1fr; }
+  .capture-strip { padding: 12px 11px 10px; }
+  .capture-head { flex-direction: column; gap: 8px; }
+  .capture-sub { font-size: 11.5px; }
+  .capture-quadrant small { display: none; }
+  .capture-quadrant { min-width: 46px; justify-content: center; }
+  .done-filters input { min-width: 0; flex: 1 1 100%; }
+  .done-list { max-height: none; }
+}
