@@ -895,6 +895,16 @@ export function doneItems(state, now = Date.now()) {
     });
 }
 
+// The heading and the grouping key have to come from the same calendar, and
+// until they did the page showed two "Wednesday, September 9" headings: the key
+// was the UTC date in the timestamp and the heading was the reader's local one,
+// so anything closed in the evening Denver time split its day in half.
+function localDayKey(iso) {
+  const date = new Date(iso);
+  if (Number.isNaN(date.getTime())) return 'undated';
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
+}
+
 function dayHeading(iso) {
   const date = new Date(iso);
   if (Number.isNaN(date.getTime())) return 'Date not recorded';
@@ -928,14 +938,14 @@ function renderDone() {
   let currentDay = null;
   let group = null;
   shown.forEach(entry => {
-    const day = entry.at ? String(entry.at).slice(0, 10) : 'undated';
+    const day = entry.at ? localDayKey(entry.at) : 'undated';
     if (day !== currentDay) {
       currentDay = day;
       const header = document.createElement('h3');
       header.className = 'done-day';
       header.textContent = entry.at ? dayHeading(entry.at) : 'Date not recorded';
       const count = document.createElement('span');
-      count.textContent = `${shown.filter(other => (other.at ? String(other.at).slice(0, 10) : 'undated') === day).length}`;
+      count.textContent = `${shown.filter(other => (other.at ? localDayKey(other.at) : 'undated') === day).length}`;
       header.append(count);
       group = document.createElement('div');
       group.className = 'done-group';
