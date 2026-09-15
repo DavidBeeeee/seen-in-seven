@@ -360,6 +360,15 @@ function renderReportPeriod(label, period) {
     next.textContent = `Next: ${period.next.join(' · ')}`;
     card.append(next);
   }
+  // WBR-355. The morning is the lane that writes the day's orders, so the
+  // button that opens them in plain words belongs on the morning card. This is
+  // the half David actually asked for: he can read tonight's plan before
+  // tonight runs it, in English, instead of decoding Board ids at the point
+  // where correcting it is still cheap.
+  if (label === 'Morning') {
+    const walkthroughs = todaysWalkthroughs();
+    if (walkthroughs.length) card.append(walkthroughButton(walkthroughs));
+  }
   const publicActions = period && Array.isArray(period.publicActions) ? period.publicActions : [];
   if (publicActions.length) {
     const actions = document.createElement('div');
@@ -379,6 +388,64 @@ function renderReportPeriod(label, period) {
     card.append(actions);
   }
   return card;
+}
+
+// The orders the morning wrote for today, as they were published beside the
+// plan. `walkthrough_current` is the generator's own answer to whether the
+// prose still matches the assignment: an order amended after its walkthrough
+// was written says so on the page rather than reading as current, which is the
+// failure the whole mechanism exists to make visible.
+export function todaysWalkthroughs() {
+  return (state.updates || [])
+    .filter(item => item.kind === 'outcome'
+      && (item.metadata || {}).source === 'morning-work-order'
+      && (item.metadata || {}).walkthrough)
+    .sort((a, b) => Number(a.metadata.rank || 99) - Number(b.metadata.rank || 99))
+    .map(item => ({
+      lane: item.metadata.lane || '',
+      revision: item.metadata.walkthrough_revision,
+      current: item.metadata.walkthrough_current !== false,
+      markdown: item.metadata.walkthrough
+    }));
+}
+
+function walkthroughButton(walkthroughs) {
+  const wrap = document.createElement('div');
+  wrap.className = 'report-walkthrough';
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'quiet-button walkthrough-button';
+  const stale = walkthroughs.filter(entry => !entry.current).length;
+  button.textContent = walkthroughs.length === 1
+    ? "Read today's plan in plain words"
+    : `Read today's ${walkthroughs.length} plans in plain words`;
+  const panel = document.createElement('div');
+  panel.className = 'walkthrough-panel';
+  panel.hidden = true;
+  button.setAttribute('aria-expanded', 'false');
+  button.addEventListener('click', () => {
+    const open = panel.hidden;
+    if (open && !panel.childElementCount) {
+      walkthroughs.forEach(entry => {
+        if (!entry.current) {
+          const warning = document.createElement('p');
+          warning.className = 'walkthrough-stale';
+          warning.textContent = `This ${entry.lane} plan was written against an earlier version of the order and the order has changed since. Treat it as out of date.`;
+          panel.append(warning);
+        }
+        panel.append(walkthroughBlock(entry.markdown));
+      });
+    }
+    panel.hidden = !open;
+    button.setAttribute('aria-expanded', String(open));
+  });
+  if (stale) {
+    const flag = document.createElement('span');
+    flag.className = 'walkthrough-stale-chip';
+    flag.textContent = `${stale} out of date`;
+    wrap.append(button, flag, panel);
+  } else wrap.append(button, panel);
+  return wrap;
 }
 
 function renderDailyReport() {
@@ -812,12 +879,36 @@ function renderAnalytics() {
   const boardMax = Math.max(1, ...recent.map(snapshot => (snapshot.workerbee?.open || 0) + (snapshot.david?.open || 0)));
   recent.forEach(snapshot => shape.append(barColumn(snapshot.date, (snapshot.workerbee?.open || 0) + (snapshot.david?.open || 0), boardMax)));
 
-  const demerits = score.demerits || [];
-  if (!demerits.length) return demeritsBox.append(empty('None recorded.'));
-  const summary = document.createElement('p');
-  summary.className = 'analytics-sub';
-  const penalty = score.penalty || demerits.reduce((total, entry) => total + (entry.weight || 1), 0);
-  summary.textContent = `${demerits.length} recorded, ${penalty} point${penalty === 1 ? '' : 's'} lost.`;
+  renderDemerits(score);
+  renderDone();
+  renderOrders();
+  icons();
+}
+
+// WBR-356. Pulled out of renderAnalytics, where it ended in an early return on
+// an empty demerit list. That return skipped everything after it, so on a board
+// with nothing recorded against it the Done browser below never rendered at all
+// and the page read as broken for the opposite of a bad reason.
+function renderDemerits(score) {
+  const demeritsBox = el('analytics-demerits');
+  if (!demeritsBox) return;
+  demeritsBox.replaceChildren();
+  const all = score.demerits || [];
+  const search = (el('demerits-search')?.value || '').trim().toLowerCase();
+  const demerits = search
+    ? all.filter(entry => `${entry.reason || ''} ${entry.at || ''}`.toLowerCase().includes(search))
+    : all;
+  const note = el('demerits-note');
+  const penalty = score.penalty || all.reduce((total, entry) => total + (entry.weight || 1), 0);
+  if (note) {
+    note.textContent = !all.length
+      ? 'None recorded.'
+      : demerits.length === all.length
+        ? `${all.length} recorded, ${penalty} point${penalty === 1 ? '' : 's'} lost.`
+        : `${demerits.length} of ${all.length} recorded.`;
+  }
+  if (!all.length) return demeritsBox.append(empty('None recorded.'));
+  if (!demerits.length) return demeritsBox.append(empty('Nothing matches that.'));
   const list = document.createElement('ul');
   list.className = 'demerit-list';
   demerits.slice().reverse().forEach(entry => {
@@ -838,9 +929,7 @@ function renderAnalytics() {
     row.append(head, reason);
     list.append(row);
   });
-  demeritsBox.append(summary, list);
-  renderDone();
-  icons();
+  demeritsBox.append(list);
 }
 
 // WBR-348. Everything that got moved off the list, in the same ninety-day window
@@ -956,6 +1045,138 @@ function renderDone() {
   });
 }
 
+// WBR-356. The past work orders, and the row opens its walkthrough rather than
+// its assignment text. David asked for the walkthrough precisely because the
+// assignment is written in Board ids and funnel step numbers, so showing him the
+// assignment in the history would rebuild the problem one surface over.
+//
+// An order with no walkthrough says so plainly instead of falling back to the
+// assignment. Everything before tonight is in that state, and a blank is more
+// honest than a wall of identifiers presented as if it were the thing he asked
+// for.
+export function orderHistoryItems(state) {
+  return (state.updates || [])
+    .filter(item => item.kind === 'outcome' && (item.metadata || {}).source === 'work-order-history')
+    .map(item => {
+      const meta = item.metadata || {};
+      return {
+        id: item.id,
+        title: item.title,
+        date: meta.date || null,
+        lane: meta.lane || '',
+        orderId: meta.work_order_id || '',
+        orderStatus: meta.order_status || item.status,
+        boardIds: Array.isArray(meta.board_ids) ? meta.board_ids : [],
+        amendments: Number(meta.amendments || 0),
+        doneWhen: meta.done_when || '',
+        walkthrough: meta.walkthrough || null
+      };
+    })
+    .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || a.lane.localeCompare(b.lane));
+}
+
+function renderOrders() {
+  const list = el('orders-list');
+  if (!list) return;
+  const all = orderHistoryItems(state);
+  const search = (el('orders-search')?.value || '').trim().toLowerCase();
+  const shown = search
+    ? all.filter(entry => `${entry.title} ${entry.orderId} ${entry.lane} ${entry.date} ${entry.boardIds.join(' ')} ${entry.doneWhen} ${entry.walkthrough || ''}`.toLowerCase().includes(search))
+    : all;
+  const note = el('orders-note');
+  if (note) {
+    note.textContent = !all.length
+      ? 'No past work order has been published yet.'
+      : shown.length === all.length
+        ? `${all.length} past order${all.length === 1 ? '' : 's'}. Each one opens the plain walkthrough it was run from.`
+        : `${shown.length} of ${all.length} past orders.`;
+  }
+  list.replaceChildren();
+  if (!shown.length) return list.append(empty(all.length ? 'Nothing matches that.' : 'No past work order has been published yet.'));
+  shown.forEach(entry => list.append(orderRow(entry)));
+}
+
+function orderRow(entry) {
+  const row = document.createElement('details');
+  row.className = 'done-item order-item';
+  const summary = document.createElement('summary');
+  const title = document.createElement('span');
+  title.className = 'done-title';
+  title.textContent = entry.title;
+  const tags = document.createElement('span');
+  tags.className = 'done-tags';
+  const when = document.createElement('em');
+  when.className = 'done-source';
+  when.textContent = entry.date ? `${formatDate(entry.date)} · ${entry.lane}` : entry.lane;
+  const state_ = document.createElement('em');
+  state_.className = `done-owner ${entry.orderStatus === 'completed' ? 'workerbee' : 'david'}`;
+  state_.textContent = entry.orderStatus === 'completed' ? 'Closed' : 'Never closed';
+  tags.append(state_, when);
+  summary.append(title, tags);
+  const body = document.createElement('div');
+  body.className = 'done-detail order-detail';
+  if (entry.walkthrough) {
+    body.append(walkthroughBlock(entry.walkthrough));
+  } else {
+    const missing = document.createElement('p');
+    missing.className = 'analytics-sub';
+    missing.textContent = entry.amendments
+      ? `No plain walkthrough was written for this one. It was amended ${entry.amendments} time${entry.amendments === 1 ? '' : 's'} and ran from the assignment alone.`
+      : 'No plain walkthrough was written for this one. It predates them.';
+    body.append(missing);
+  }
+  row.append(summary, body);
+  return row;
+}
+
+// The walkthrough arrives as the markdown the generator wrote, and it is
+// rendered rather than dumped: headings, bold step titles, list items and
+// paragraphs. Deliberately not a markdown library, because the generator is the
+// only thing that writes this and it emits four shapes.
+export function walkthroughBlock(markdown) {
+  const box = document.createElement('div');
+  box.className = 'walkthrough';
+  for (const block of String(markdown).split(/\n{2,}/).map(part => part.trim()).filter(Boolean)) {
+    if (block.startsWith('---')) continue;
+    if (block.startsWith('### ')) {
+      const heading = document.createElement('h4');
+      heading.textContent = block.slice(4);
+      box.append(heading);
+    } else if (block.startsWith('## ')) {
+      const heading = document.createElement('h3');
+      heading.textContent = block.slice(3);
+      box.append(heading);
+    } else if (block.startsWith('- ')) {
+      const list = document.createElement('ul');
+      for (const line of block.split('\n')) {
+        if (!line.trim().startsWith('- ')) continue;
+        const entry = document.createElement('li');
+        entry.textContent = line.trim().slice(2);
+        list.append(entry);
+      }
+      box.append(list);
+    } else {
+      const paragraph = document.createElement('p');
+      // **bold** is the only inline mark the generator emits, and it marks the
+      // step title and the "what you get" label.
+      for (const [index, part] of block.split(/\*\*/).entries()) {
+        if (!part) continue;
+        if (index % 2) {
+          const strong = document.createElement('strong');
+          strong.textContent = part;
+          paragraph.append(strong);
+        } else paragraph.append(document.createTextNode(part));
+      }
+      if (block.startsWith('_') && block.endsWith('_')) {
+        paragraph.className = 'walkthrough-stamp';
+        paragraph.replaceChildren(document.createTextNode(block.replace(/^_|_$/g, '')));
+      }
+      box.append(paragraph);
+    }
+  }
+  return box;
+}
+
 function doneRow(entry) {
   const row = document.createElement('details');
   row.className = 'done-item';
@@ -985,6 +1206,46 @@ function bindDoneFilters() {
     const node = el(id);
     if (!node) return;
     node.addEventListener(node.tagName === 'SELECT' ? 'change' : 'input', renderDone);
+  });
+  const orders = el('orders-search');
+  if (orders) orders.addEventListener('input', renderOrders);
+  const demerits = el('demerits-search');
+  if (demerits) demerits.addEventListener('input', () => {
+    const snapshots = metricSnapshots();
+    renderDemerits((snapshots[snapshots.length - 1] || {}).score || {});
+  });
+}
+
+// WBR-356. Each history opens and shuts on its own and remembers nothing across
+// loads, which is deliberate: a panel that reopens itself because it was open
+// last week is how the page stops being one screen tall again without anybody
+// changing anything.
+//
+// Typing in a panel's search opens it, because a search whose results are
+// hidden behind a collapsed toggle is worse than no search.
+function bindHistoryPanels() {
+  document.querySelectorAll('[data-panel-toggle]').forEach(button => {
+    const body = el(`${button.dataset.panelToggle}-body`);
+    if (!body) return;
+    button.addEventListener('click', () => {
+      const open = body.hidden;
+      body.hidden = !open;
+      button.setAttribute('aria-expanded', String(open));
+      button.closest('.history-panel')?.classList.toggle('open', open);
+      if (open) icons();
+    });
+  });
+  ['done', 'orders', 'demerits'].forEach(name => {
+    const search = el(`${name}-search`);
+    const body = el(`${name}-body`);
+    const button = document.querySelector(`[data-panel-toggle="${name}"]`);
+    if (!search || !body || !button) return;
+    search.addEventListener('input', () => {
+      if (!search.value.trim() || !body.hidden) return;
+      body.hidden = false;
+      button.setAttribute('aria-expanded', 'true');
+      button.closest('.history-panel')?.classList.add('open');
+    });
   });
 }
 
@@ -1684,6 +1945,7 @@ function bindEvents() {
   } else if (surface === 'analytics') {
     bindPeriodTabs();
     bindDoneFilters();
+    bindHistoryPanels();
   } else {
     el('toggle-journal').addEventListener('click', () => { journalExpanded = !journalExpanded; renderJournal(); });
     el('new-journal-button').addEventListener('click', () => { el('journal-form').hidden = false; el('journal-title').focus(); });

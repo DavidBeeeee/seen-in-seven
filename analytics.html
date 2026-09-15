@@ -48,25 +48,52 @@
         <p class="analytics-sub">Open items per side. This begins when daily snapshots began because the Board's earlier shape cannot be reconstructed honestly.</p>
         <div id="analytics-shape"></div>
       </section>
-      <!-- WBR-348. David asked for this on 2026-09-15: somewhere to browse what
-           got moved off the list, rather than reading a number that says 233 and
-           taking it on faith. -->
-      <section class="card analytics-trend done-browser">
-        <div class="trend-head">
-          <div><h2>What got done</h2><p class="analytics-sub" id="done-note"></p></div>
+      <!-- WBR-356. Three histories, three toggles, three scrolling windows.
+           David: the page has to stay one screen tall and each record has to
+           browse on its own. They start shut, because a page that opens with
+           three hundred rows already unrolled is the wall this is fixing.
+
+           The Done search shipped in WBR-348 and he said to leave it alone, so
+           it is unchanged and the other two copy it rather than the reverse. -->
+      <section class="card analytics-trend history-panel" data-panel="done">
+        <button class="history-toggle" type="button" data-panel-toggle="done" aria-expanded="false" aria-controls="done-body">
+          <span class="history-toggle-words"><span class="history-toggle-title">What got done</span><span class="analytics-sub" id="done-note"></span></span>
+          <i data-lucide="chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="history-body" id="done-body" hidden>
           <div class="done-filters">
             <input id="done-search" type="search" autocomplete="off" placeholder="Search what got done" aria-label="Search finished work">
             <select id="done-owner" aria-label="Whose work"><option value="all">Both sides</option><option value="workerbee">WorkerBee</option><option value="david">DavidBee</option></select>
             <select id="done-source" aria-label="Where it came from"><option value="all">Everything</option><option value="roadmap">Board</option><option value="execution-queue">Execution queue</option><option value="commitment">Commitments</option><option value="task">Todo page</option></select>
           </div>
+          <div id="done-list" class="done-list history-scroll"></div>
         </div>
-        <div id="done-list" class="done-list"></div>
       </section>
 
-      <section class="card analytics-trend">
-        <h2>Demerits</h2>
-        <p class="analytics-sub">The part that cannot be derived. Recorded honestly or the rest of the score means nothing.</p>
-        <div id="analytics-demerits"></div>
+      <section class="card analytics-trend history-panel" data-panel="orders">
+        <button class="history-toggle" type="button" data-panel-toggle="orders" aria-expanded="false" aria-controls="orders-body">
+          <span class="history-toggle-words"><span class="history-toggle-title">Past work orders</span><span class="analytics-sub" id="orders-note"></span></span>
+          <i data-lucide="chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="history-body" id="orders-body" hidden>
+          <div class="done-filters">
+            <input id="orders-search" type="search" autocomplete="off" placeholder="Search past work orders" aria-label="Search past work orders">
+          </div>
+          <div id="orders-list" class="done-list history-scroll"></div>
+        </div>
+      </section>
+
+      <section class="card analytics-trend history-panel" data-panel="demerits">
+        <button class="history-toggle" type="button" data-panel-toggle="demerits" aria-expanded="false" aria-controls="demerits-body">
+          <span class="history-toggle-words"><span class="history-toggle-title">Demerits</span><span class="analytics-sub" id="demerits-note">The part that cannot be derived. Recorded honestly or the rest of the score means nothing.</span></span>
+          <i data-lucide="chevron-down" aria-hidden="true"></i>
+        </button>
+        <div class="history-body" id="demerits-body" hidden>
+          <div class="done-filters">
+            <input id="demerits-search" type="search" autocomplete="off" placeholder="Search demerits" aria-label="Search demerits">
+          </div>
+          <div id="analytics-demerits" class="history-scroll"></div>
+        </div>
       </section>
     </div>
   </main>

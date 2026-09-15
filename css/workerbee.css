@@ -362,11 +362,39 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .capture-quadrant:disabled { opacity: .45; cursor: default; }
 
 /* WBR-348. Browsing what got moved off the list. */
+/* WBR-355. The walkthrough button on the morning card, and the panel it opens. */
+.report-walkthrough { display: grid; gap: 8px; margin-top: 10px; }
+.walkthrough-button { justify-self: start; }
+.walkthrough-stale-chip { justify-self: start; padding: 2px 8px; border-radius: 999px; background: var(--ember); color: var(--bg-deep); font-size: 11px; font-weight: 800; }
+.walkthrough-panel { display: grid; gap: 14px; max-height: 60vh; overflow-y: auto; padding: 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--bg-deep); }
+.walkthrough-stale { margin: 0; color: var(--ember); font-size: 12.5px; font-weight: 700; }
+
+/* WBR-356. Three histories, each shut by default with its own scrolling
+   window, so the page is one screen tall at rest and each record browses
+   without moving the other two. */
+.history-panel { padding-block: 0; }
+.history-toggle { display: flex; width: 100%; align-items: center; justify-content: space-between; gap: 12px; padding: 16px 0; border: 0; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; }
+.history-toggle-words { display: grid; gap: 3px; min-width: 0; }
+.history-toggle-title { font-size: 17px; font-weight: 800; letter-spacing: -0.01em; }
+.history-toggle .analytics-sub { margin: 0; }
+.history-toggle i { flex: 0 0 auto; transition: transform .18s ease; }
+.history-panel.open .history-toggle i { transform: rotate(180deg); }
+.history-toggle:focus-visible { outline: 2px solid var(--teal); outline-offset: 3px; border-radius: 8px; }
+.history-body { padding-bottom: 16px; }
+.history-scroll { max-height: 440px; overflow-y: auto; }
+.order-item .done-tags { white-space: nowrap; }
+.order-detail { padding-top: 4px; }
+.walkthrough { display: grid; gap: 9px; }
+.walkthrough h3 { margin: 0; font-size: 15px; font-weight: 800; }
+.walkthrough h4 { margin: 6px 0 0; font-size: 13px; font-weight: 800; color: var(--muted); text-transform: uppercase; letter-spacing: .04em; }
+.walkthrough p { margin: 0; line-height: 1.55; }
+.walkthrough ul { margin: 0; padding-left: 18px; display: grid; gap: 5px; }
+.walkthrough-stamp { color: var(--muted); font-size: 12px; font-style: italic; }
 .done-filters { display: flex; flex-wrap: wrap; gap: 7px; }
 .done-filters input, .done-filters select { min-height: 34px; padding: 0 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg-deep); color: var(--text); outline: 0; }
 .done-filters input { min-width: 190px; }
 .done-filters input:focus, .done-filters select:focus { border-color: var(--teal); }
-.done-list { display: grid; gap: 4px; margin-top: 12px; max-height: 620px; overflow-y: auto; }
+.done-list { display: grid; gap: 4px; margin-top: 12px; }
 .done-day { position: sticky; top: 0; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 12px 0 4px; padding: 5px 2px; background: var(--surface); color: var(--teal-light); font: 800 11px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .06em; text-transform: uppercase; }
 .done-day:first-child { margin-top: 0; }
 .done-day span { color: var(--muted); }
@@ -390,5 +418,5 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
   .capture-quadrant small { display: none; }
   .capture-quadrant { min-width: 46px; justify-content: center; }
   .done-filters input { min-width: 0; flex: 1 1 100%; }
-  .done-list { max-height: none; }
+  .history-scroll { max-height: 60vh; }
 }
