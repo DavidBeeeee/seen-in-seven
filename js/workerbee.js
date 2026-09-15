@@ -882,9 +882,17 @@ export function doneItems(state, now = Date.now()) {
       owner: task.owner === 'workerbee' ? 'workerbee' : 'david',
       ref: null
     }));
+  // An item with no completion date is kept and labelled rather than dropped.
+  // Dropping it is how a browser reads as complete while being a fraction,
+  // which is the whole reason this window was widened. They sort last.
   return [...fromUpdates, ...fromTasks]
-    .filter(entry => entry.at && String(entry.at) >= floor)
-    .sort((a, b) => String(b.at).localeCompare(String(a.at)));
+    .filter(entry => !entry.at || String(entry.at) >= floor)
+    .sort((a, b) => {
+      if (!a.at && !b.at) return a.title.localeCompare(b.title);
+      if (!a.at) return 1;
+      if (!b.at) return -1;
+      return String(b.at).localeCompare(String(a.at));
+    });
 }
 
 function dayHeading(iso) {
@@ -920,14 +928,14 @@ function renderDone() {
   let currentDay = null;
   let group = null;
   shown.forEach(entry => {
-    const day = String(entry.at).slice(0, 10);
+    const day = entry.at ? String(entry.at).slice(0, 10) : 'undated';
     if (day !== currentDay) {
       currentDay = day;
       const header = document.createElement('h3');
       header.className = 'done-day';
-      header.textContent = dayHeading(entry.at);
+      header.textContent = entry.at ? dayHeading(entry.at) : 'Date not recorded';
       const count = document.createElement('span');
-      count.textContent = `${shown.filter(other => String(other.at).slice(0, 10) === day).length}`;
+      count.textContent = `${shown.filter(other => (other.at ? String(other.at).slice(0, 10) : 'undated') === day).length}`;
       header.append(count);
       group = document.createElement('div');
       group.className = 'done-group';
