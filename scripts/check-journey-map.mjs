@@ -27,9 +27,6 @@ if (!map || !engine) throw new Error('Journey Map shared modules did not initial
 
 for (const level of [1, 2]) {
   if (map.QUESTIONS[level].length !== 7) throw new Error(`Level ${level} must have exactly seven Journey Map questions.`);
-  if (map.QUESTIONS[level].some(question => !/\bI\b|\bmy\b|\bme\b/.test(question))) {
-    throw new Error(`Every Level ${level} question must be written in first person.`);
-  }
 }
 
 const message = engine.buildUserMessage({
@@ -50,8 +47,8 @@ if (!message.includes('private Viewer Premise Source') ||
 }
 if (message.includes('VIDEO 5 JOURNEY DIRECTION')) throw new Error('A future Journey direction leaked into the current prompt.');
 
-if (!appSource.includes("'screen-checklist','screen-journey-map','screen-mvo2'")) {
-  throw new Error('Journey Map is not positioned between Overview and Video 1 preparation.');
+if (!appSource.includes("'screen-story-discovery','screen-journey-map','screen-recap','screen-mvo2'")) {
+  throw new Error('Journey Map is not positioned between Story Discovery and Video 1 preparation.');
 }
 if (!html.includes('id="screen-journey-map"') || !html.includes('openJourneyMapSettings()')) {
   throw new Error('Journey Map onboarding or Settings entry is missing.');

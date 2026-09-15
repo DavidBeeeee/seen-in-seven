@@ -172,12 +172,9 @@ const journeyPrompt = journeyHelper.buildHelperPrompt(
   'JOURNEY ONBOARDING SENTINEL'
 );
 [
-  'Use one or two direct sentences',
-  'Contain no more than 60 words',
-  'Directly address every part of its question',
-  'make sense when copied into a separate conversation by itself',
-  'Do not force every video into the same event-cause-lesson formula',
-  'Make causal relationships explicit when they are necessary',
+  'Here are three things you could talk about. Which one feels right?',
+  'Do not write the full seven-part map yet',
+  'Keep my language patterns, vocabulary, rhythm, bluntness, humor, and emotional temperature',
   'LONG HISTORY SENTINEL',
   'JOURNEY ONBOARDING SENTINEL'
 ].forEach(value => {
@@ -192,26 +189,17 @@ if (!appSource.includes("${count} / 60 words") ||
 if (!html.includes('id="answer-help-overlay"') || !html.includes('/js/answer-help.js?v=video7-epic-return-1')) {
   throw new Error('Answer Help modal or shared script include is missing.');
 }
-if (!html.includes('/js/journey-map.js?v=journey-map-3') || !/\/js\/app\.js\?v=[^"]+/.test(html)) {
+if (!html.includes('/js/journey-map.js?v=story-discovery-1') || !/\/js\/app\.js\?v=[^"]+/.test(html)) {
   throw new Error('Journey Map or app cache version is missing.');
 }
-if (!html.includes('openCurrentMvoAnswerHelp()')) {
-  throw new Error('Video 1 Answer Help entry is missing.');
+if (!html.includes('id="video-one-note"') || !appSource.includes('function renderVideoOneBridge()')) {
+  throw new Error('Video 1 bridge entry is missing.');
 }
 if (!appSource.includes("openAnswerHelp(${idx},'simple')") || !appSource.includes("openAnswerHelp(${idx},'extended')")) {
   throw new Error('Simple or Extended Answer Help entry is missing from Videos 2 through 7.');
 }
-if (!html.includes('openOverviewAnswerHelp()') || !appSource.includes('/assets/overview-character-bio-prompt.txt?v=overview-help-1')) {
-  throw new Error('Overview Answer Help entry or prompt asset is missing.');
-}
-if (!overviewPrompt.includes('REQUIRED RESPONSE PROCESS') || !overviewPrompt.includes('ZERO-CHILL RULE')) {
-  throw new Error('The supplied Overview character-bio prompt is incomplete.');
-}
-if (!appSource.includes('under 11,500 characters')) {
-  throw new Error('The Overview helper does not protect the 12,000-character app field.');
-}
-if (!appSource.includes('requestId !== answerHelpRequestId')) {
-  throw new Error('Overview prompt loading can overwrite a newer Answer Help view.');
+if (!html.includes('id="screen-story-discovery"') || !appSource.includes('function importJourneyMap()')) {
+  throw new Error('Story Discovery or map import is missing.');
 }
 
-console.log('Answer Help checks passed for Overview, 14 video assignments, context isolation, anti-repetition, interactive choices, and paste-ready output.');
+console.log('Answer Help checks passed for Story Discovery, 14 video assignments, context isolation, anti-repetition, interactive choices, and paste-ready output.');

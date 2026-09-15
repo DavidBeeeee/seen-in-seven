@@ -312,7 +312,7 @@
       </h1>
       <p class="welcome-tagline"><em>Build your entire brand in just 7 videos.</em></p>
       <div class="btn-row welcome-actions">
-        <button class="btn-primary" onclick="goNext()">Let's Do This</button>
+        <button class="btn-primary" onclick="goNext()">Get Started</button>
         <button class="btn-secondary" onclick="showSignInScreen()">Sign In</button>
       </div>
     </div>
@@ -325,39 +325,39 @@
   </div>
 </div>
 
-<!-- ══ S1 POSTED? ══ -->
+<!-- ══ S1 STORY DIRECTION ══ -->
 <div class="screen" id="screen-1">
-  <div class="q1-progress">Question 1: Finding Your Level</div>
-  <h2 class="screen-title">Have you ever posted a <span class="accent">short-form video</span> online?</h2>
-  <p class="screen-sub">TikTok, Reels, Shorts... anything counts. Even if you deleted it the next day.</p>
+  <div class="q1-progress">Question 1: Finding Your Direction</div>
+  <h2 class="screen-title">What feels most true about what you want to <span class="accent">make visible?</span></h2>
+  <p class="screen-sub">There is no wrong answer. This simply helps us find the right kind of seven-video story for you.</p>
   <div class="choice-grid">
-    <div class="choice-card" onclick="autoAdvance(this,'posted','no')">
-      <span class="card-emoji">🫣</span>
-      <div class="card-title">No, never.</div>
-      <div class="card-sub">Haven't started yet, or recorded once and never put it out.</div>
+    <div class="choice-card" onclick="selectStoryDirection(this,'story')">
+      <span class="card-emoji">🙋</span>
+      <div class="card-title">I want to share my story.</div>
+      <div class="card-sub">I have lived through something that might help another person feel seen.</div>
     </div>
-    <div class="choice-card" onclick="autoAdvance(this,'posted','few')">
-      <span class="card-emoji">📱</span>
-      <div class="card-title">Yes, a few times.</div>
-      <div class="card-sub">Enough to know it wasn't going to stick on its own.</div>
+    <div class="choice-card" onclick="selectStoryDirection(this,'expertise')">
+      <span class="card-emoji">🎯</span>
+      <div class="card-title">I want to share what I know.</div>
+      <div class="card-sub">Experience has taught me something useful that more people should understand.</div>
     </div>
-    <div class="choice-card" onclick="autoAdvance(this,'posted','felloff')">
-      <span class="card-emoji">🔄</span>
-      <div class="card-title">Yes, but I fell off.</div>
-      <div class="card-sub">Life happened, or nerves happened. It stopped mattering, until now.</div>
+    <div class="choice-card" onclick="selectStoryDirection(this,'chapter')">
+      <span class="card-emoji">🛤️</span>
+      <div class="card-title">I am living a chapter right now.</div>
+      <div class="card-sub">I want to document something real as it is happening.</div>
     </div>
-    <div class="choice-card" onclick="autoAdvance(this,'posted','consistent')">
-      <span class="card-emoji">🔥</span>
-      <div class="card-title">Yes, consistently before.</div>
-      <div class="card-sub">You know what posting feels like. You just want this time to be different.</div>
+    <div class="choice-card" onclick="selectStoryDirection(this,'voice')">
+      <span class="card-emoji">🧭</span>
+      <div class="card-title">I want to find my voice as I go.</div>
+      <div class="card-sub">I know I have something in me. I want help bringing it into focus.</div>
     </div>
   </div>
   <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
-<!-- ══ S2a BLOCKER ══ -->
+<!-- ══ S3 THE FRICTION ══ -->
 <div class="screen" id="screen-2a">
-  <div class="q1-progress">Question 4: Your Friction Point</div>
+  <div class="q1-progress">Question 3: What Has Been Hard</div>
   <h2 class="screen-title">What's the main thing holding you back from <span class="accent">posting regularly?</span></h2>
   <p class="screen-sub">Pick the closest answer, or scroll down and use your own words if none of these quite fit.</p>
   <div class="choice-grid" id="blocker-choice-grid"></div>
@@ -375,16 +375,21 @@
   <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
-<!-- ══ S3 BUSINESS? ══ -->
+<!-- ══ S2 POSTING EXPERIENCE ══ -->
 <div class="screen" id="screen-3">
-  <div class="q1-progress">Question 2: Finding Your Level</div>
-  <h2 class="screen-title">What are you <span class="accent">building toward</span> right now?</h2>
-  <p class="screen-sub">This shapes everything about what your videos should say and who they're for.</p>
-  <div class="choice-grid" id="business-choice-grid"></div>
+  <div class="q1-progress">Question 2: Your Starting Point</div>
+  <h2 class="screen-title">Have you ever posted a <span class="accent">short-form video</span> online?</h2>
+  <p class="screen-sub">TikTok, Reels, Shorts... anything counts. Even if you deleted it the next day.</p>
+  <div class="choice-grid">
+    <div class="choice-card" onclick="autoAdvance(this,'posted','no')"><span class="card-emoji">🫣</span><div class="card-title">No, never.</div><div class="card-sub">I have not put myself out there yet.</div></div>
+    <div class="choice-card" onclick="autoAdvance(this,'posted','few')"><span class="card-emoji">📱</span><div class="card-title">Yes, a few times.</div><div class="card-sub">I tried it, but it did not become a habit.</div></div>
+    <div class="choice-card" onclick="autoAdvance(this,'posted','felloff')"><span class="card-emoji">🔄</span><div class="card-title">Yes, but I fell off.</div><div class="card-sub">Life happened, or nerves happened.</div></div>
+    <div class="choice-card" onclick="autoAdvance(this,'posted','consistent')"><span class="card-emoji">🔥</span><div class="card-title">Yes, consistently before.</div><div class="card-sub">I know what posting feels like. I want this time to be different.</div></div>
+  </div>
   <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
-<!-- ══ Q3 CONTENT INTENT ══ -->
+<!-- ══ LEGACY CONTENT INTENT ══ -->
 <div class="screen" id="screen-content-intent">
   <div class="q1-progress">Question 3: Finding Your Level</div>
   <h2 class="screen-title">What do you most want these videos to say <span class="accent">about you?</span></h2>
@@ -401,14 +406,36 @@
     <label class="input-label">What's your first name?</label>
     <input type="text" class="text-input" id="user-name" placeholder="So we can personalize your scripts" autocomplete="given-name" oninput="setUserName(this.value)">
   </div>
+  <div class="input-group" id="commit-email-group">
+    <label class="input-label">Your email</label>
+    <input type="email" class="text-input" id="commit-email" placeholder="you@example.com" autocomplete="email">
+  </div>
+  <div class="input-group" id="commit-password-group">
+    <label class="input-label">Create a password</label>
+    <input type="password" class="text-input" id="commit-password" placeholder="At least 6 characters" autocomplete="new-password">
+    <span class="input-hint">This lets you return without waiting for an email. You can also use a magic link whenever you want.</span>
+  </div>
+  <div id="commit-account-message" class="input-hint" style="display:none;"></div>
   <div class="commit-wrap" id="commitment-declaration-wrap" style="display:none;">
     <div class="commit-text" id="commitment-declaration-text"></div>
     <div class="commit-reasons" id="commitment-reasons"></div>
   </div>
   <div class="btn-row">
-    <button class="btn-primary" id="commitment-submit-btn" onclick="goToRecapWithNameCheck()">I'm ready. Let's do this.</button>
+    <button class="btn-primary" id="commitment-submit-btn" onclick="completeCommitmentAccount()">I'm Ready To Tell This Story</button>
     <button class="btn-back" onclick="goBack()">Back</button>
   </div>
+</div>
+
+<!-- ══ STORY DISCOVERY ══ -->
+<div class="screen" id="screen-story-discovery">
+  <div class="eyebrow">Story Discovery</div>
+  <h2 class="screen-title">Let’s find the story that is already <span class="accent">inside your experience.</span></h2>
+  <p class="screen-sub">You do not need to know your whole story yet. Choose the way you want to uncover it.</p>
+  <div class="choice-grid">
+    <div class="choice-card" onclick="chooseStoryDiscovery(this,'ai')"><span class="card-emoji">✨</span><div class="card-title">Help me uncover it with AI.</div><div class="card-sub">Use a guided conversation with your favorite AI to pull out the strongest story.</div></div>
+    <div class="choice-card" onclick="chooseStoryDiscovery(this,'self')"><span class="card-emoji">🗣️</span><div class="card-title">I want to find it myself.</div><div class="card-sub">Move through the seven parts one at a time in your own words.</div></div>
+  </div>
+  <div class="btn-row"><button class="btn-back" onclick="goBack()">Back</button></div>
 </div>
 
 <!-- ══ S-EMAIL CAPTURE ══ -->
@@ -460,7 +487,7 @@
 
 <!-- ══ COMMITMENT DESIRE ══ -->
 <div class="screen" id="screen-commit-desire">
-  <div class="q1-progress">Question 6: Your Vision</div>
+  <div class="q1-progress">Question 4: What You Want This To Change</div>
   <h2 class="screen-title">What would you love for these <span class="accent">7 videos</span> to do for you?</h2>
   <p class="screen-sub">Not the strategy answer that just 'sounds' good. The thing in your life you'd finally have if this actually worked the way you hoped it would.</p>
   <div class="choice-grid" id="commit-desire-grid"></div>
@@ -567,9 +594,9 @@
   <div class="journey-map-shell">
     <div class="journey-map-head">
       <div>
-        <div class="eyebrow">Your Story Direction</div>
-        <h2 class="screen-title">See your complete <span class="accent">seven-part journey.</span></h2>
-        <p class="screen-sub">Answer each in one sentence. These are private directions for the story, not finished scripts. You will add the real details before each video.</p>
+        <div class="eyebrow">Your Story Discovery</div>
+        <h2 class="screen-title" id="journey-map-title">Build your <span class="accent">seven-part story.</span></h2>
+        <p class="screen-sub" id="journey-map-subtitle">These are private directions for the story, not finished scripts. Start with Video 1. You can discover the rest as you go.</p>
       </div>
       <button class="journey-help-btn" type="button" onclick="openJourneyHelp()">ⓘ Need Help?</button>
     </div>
@@ -581,7 +608,7 @@
     <div class="journey-question-list" id="journey-question-list"></div>
     <div class="journey-map-actions">
       <button class="btn-secondary" type="button" onclick="copyCurrentJourney(this)">Copy My Journey</button>
-      <button class="btn-primary" id="journey-confirm-btn" type="button" onclick="completeJourneyMap()">This Feels Like My Story →</button>
+      <button class="btn-primary" id="journey-confirm-btn" type="button" onclick="completeJourneyMap()">Continue To Video 1 →</button>
       <button class="btn-back" id="journey-back-btn" type="button" onclick="backFromJourneyMap()">Back</button>
     </div>
   </div>
@@ -620,20 +647,13 @@
 
 
 
-<!-- ══ MVO Q2 — Script 1 mini-wizard ══ -->
+<!-- ══ VIDEO 1 BRIDGE ══ -->
 <div class="screen" id="screen-mvo2">
   <div class="journal-card mvo-brief-card">
-    <div class="q1-progress" id="mvo2-label">Getting Your Script Ready</div>
-    <h2 class="screen-title" id="mvo2-question">Let's get your script ready.</h2>
-    <p class="screen-sub" id="mvo2-subtitle">Answer what feels relevant. The more you add, the more the script sounds like you.</p>
-    <div class="context-toggle mvo-mode-toggle" role="group" aria-label="Script prep depth">
-      <button class="context-toggle-btn active" id="mvo-simple-btn" onclick="setMvoMode('simple')">Simple</button>
-      <button class="context-toggle-btn" id="mvo-extended-btn" onclick="setMvoMode('extended')">Extended</button>
-    </div>
-    <div class="answer-help-row">
-      <button class="answer-help-trigger" id="mvo-answer-help-btn" type="button" onclick="openCurrentMvoAnswerHelp()">ⓘ Need Help With This Answer?</button>
-    </div>
-    <div id="mvo2-cards" class="mvo-brief"></div>
+    <div class="q1-progress">Video 1: Your Opening</div>
+    <h2 class="screen-title">This first video is where people meet <span class="accent">the real you.</span></h2>
+    <p class="screen-sub">We will use the story you just uncovered, what has been hard, and what you are moving toward to organize a first video that feels like you wrote it on a very clear day.</p>
+    <div class="input-group"><label class="input-label">Anything else you want to add before we build Video 1? <span style="opacity:.7;">Optional</span></label><textarea class="text-input" id="video-one-note" rows="4" maxlength="1200" placeholder="A detail, feeling, memory, phrase, or anything you want this first video to carry." oninput="setMvoFirstScriptNotes(this.value)"></textarea></div>
     <div class="btn-row">
       <button class="btn-primary" onclick="completeMvoBrief()">Build My First Script</button>
       <button class="script-def-back" onclick="goBack()">← Back</button>
@@ -946,12 +966,12 @@
 <!-- ══════════════════════════════════════
      JAVASCRIPT
 ══════════════════════════════════════ -->
-<script src="/js/script-prompt-engine.js?v=video7-epic-return-2"></script>
-<script src="/js/journey-map.js?v=journey-map-3"></script>
+<script src="/js/script-prompt-engine.js?v=story-discovery-1"></script>
+<script src="/js/journey-map.js?v=story-discovery-1"></script>
 <script src="/js/answer-help.js?v=video7-epic-return-1"></script>
-<script src="/js/supabase.js?v=journey-map-1"></script>
+<script src="/js/supabase.js?v=story-discovery-1"></script>
 <script src="/js/points.js?v=active-lock-1"></script>
-<script src="/js/app.js?v=video7-epic-return-1"></script>
+<script src="/js/app.js?v=story-discovery-1"></script>
 
 <!-- ══ DUAL COMPLETE OVERLAY ══ -->
 <div id="dual-complete-overlay">

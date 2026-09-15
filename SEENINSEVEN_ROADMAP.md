@@ -93,7 +93,7 @@ Product names, prices, and page copy change every cycle. Immutable price plan ID
 | Phase | Status as of August 9, 2026 |
 |---|---|
 | 1. Admin Command Center | Complete |
-| 2. Onboarding Update | Mostly complete, commit-moment decision open |
+| 2. Onboarding Update | Story Discovery redesign in progress |
 | 3. Full UX Audit | Visual pass done, formal walkthrough outstanding |
 | 4. Gamification | Built, numbers unproven |
 | 5. Script Output Update | Underway through the Prompt Tester |
@@ -115,24 +115,23 @@ Manual controls available: grant or revoke app access, enroll a Studio customer 
 
 ## Phase 2: Onboarding Update
 
-**Mostly complete.**
+**Story Discovery redesign in progress.**
 
 Delivered:
 
-- Overview screen with a character-bio helper that uses the assessment-first prompt, appends current onboarding context and the existing draft, and returns a source document the user reviews before pasting back.
-- A seven-part **Journey Map** after the Overview and before Video 1 preparation. One shared question set per level. Planned directions stay separate from detailed answers, and only the active video's direction enters generation. Existing users can edit either level from Settings. Level-specific resets preserve the Overview and both Journey Maps. Delete Everything returns to onboarding while preserving the Studio account.
+- Two short routing questions, a pain question, and a purpose question establish Level 1 or Level 2 before the commitment moment.
+- Password creation is the default new-account path at commitment. Magic link remains a fallback. Users can continue locally when email confirmation is pending.
+- Story Discovery replaces the required Overview/bio-dump. Users may use an outside AI to uncover three possible story seeds and paste an imported seven-part map, or discover the map directly in SeenInSeven. Only the direction for the current video is required before that video generates.
+- Planned directions stay separate from detailed answers, and only the active video's direction enters generation. Existing users can edit either level from Settings. Delete Everything returns to onboarding while preserving the Studio account.
 - **Per-video answer help** for all fourteen video paths. A copied prompt for an outside AI that offers three source directions before writing paste-ready journal answers, uses only the current Journey direction, and treats previous scripts as continuity rather than material to recycle. It changes no production blueprint and saves nothing back automatically.
 - Mission statement, commitment declaration, and commitment reasons persisted on the onboarding row.
 - Free-text content-intent route that saves the user's exact words, lets them choose a personal-story or expertise direction, flows into generation, and renders in admin.
 
 **Still open:**
 
-1. **Commit-moment redesign.** The current commit sequence still reads more like a form than a declaration. This is waiting on David Bee to describe the experience he wants. Three questions need answers before any code:
-   - What does the ideal commitment moment look, feel, and say?
-   - Should the mission statement be editable after the fact?
-   - Should it appear anywhere outside the dashboard, such as the script view or a completion screen?
+1. **Story Discovery walkthrough.** Run the whole new journey on mobile and desktop before treating this redesign as complete.
 
-**Deferred within Phase 2:** the knowledge base / context document paste-in. Still worth building, still text-only when it happens, still capped around 2,000 characters, still routed through `buildAPIUserMessage()` rather than through the blueprint.
+**Deferred within Phase 2:** a separate optional knowledge/context document tool. Do not make it part of initial onboarding. When revived, it remains text-only and routes through `buildAPIUserMessage()` rather than the blueprint.
 
 ---
 

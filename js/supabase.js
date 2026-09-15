@@ -483,6 +483,28 @@ async function signInWithPassword(email, password) {
   }
 }
 
+// New participants create a normal password account at the commitment moment.
+// Email confirmation can be enabled in Supabase, so callers must support a
+// successful signup with no active session and keep local progress available.
+async function signUpWithPassword(email, password, accountLinkSource) {
+  if (accountLinkSource) _markPendingAccountLink(email, accountLinkSource);
+  const { data, error } = await _sb.auth.signUp({
+    email,
+    password,
+    options: { emailRedirectTo: window.location.origin + window.location.pathname }
+  });
+  if (error) {
+    if (accountLinkSource) _clearPendingAccountLink();
+    const msg = String(error.message || '').toLowerCase();
+    if (msg.includes('already registered') || msg.includes('already exists')) {
+      throw new Error('That email already has an account. Sign in with your password or use a magic link instead.');
+    }
+    if (msg.includes('password')) throw new Error('Choose a password with at least 6 characters.');
+    throw new Error('We could not create your account just now. Please try again.');
+  }
+  return data;
+}
+
 async function setUserPassword(newPassword) {
   const { error } = await _sb.auth.updateUser({ password: newPassword });
   if (error) throw error;

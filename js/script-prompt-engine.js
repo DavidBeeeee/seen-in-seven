@@ -32,6 +32,8 @@
       ['Blocker in their own words', values.customBlocker],
       ['Business stage', values.businessStage],
       ['Content intent', values.contentIntent],
+      ['Story direction selected', values.storyDirection],
+      ['Story discovery path', values.storyDiscoveryMode],
       ['Context mode', values.contextMode],
       ['Audience context', values.audienceContext],
       ['Desired audience reaction', values.messageContext],

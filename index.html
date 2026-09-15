@@ -200,19 +200,19 @@
       <p class="auth-intro">Use the same email you use with Colorado Mastermind.</p>
 
       <div class="auth-tabs" role="tablist" aria-label="Sign in method">
-        <button class="auth-tab active" id="magic-tab" type="button" role="tab">Magic link</button>
-        <button class="auth-tab" id="password-tab" type="button" role="tab">Password</button>
+        <button class="auth-tab" id="magic-tab" type="button" role="tab">Magic link</button>
+        <button class="auth-tab active" id="password-tab" type="button" role="tab">Password</button>
       </div>
 
       <form id="auth-form">
         <label for="auth-email">Email address</label>
         <input id="auth-email" type="email" autocomplete="email" placeholder="you@example.com" required>
-        <div id="password-field" hidden>
+        <div id="password-field">
           <label for="auth-password">Password</label>
-          <input id="auth-password" type="password" autocomplete="current-password" placeholder="Your password">
+          <input id="auth-password" type="password" autocomplete="current-password" placeholder="Your password" required>
         </div>
         <button class="primary-button auth-submit" id="auth-submit" type="submit">
-          <span>Send my sign-in link</span>
+          <span>Sign in</span>
           <i data-lucide="arrow-right"></i>
         </button>
         <p class="auth-message" id="auth-message" role="status"></p>
@@ -272,6 +272,6 @@
   </div>
 
   <script src="/js/777-launch-cycle.js?v=2026-09"></script>
-  <script src="/js/studio.js?v=studio-access-v2"></script>
+  <script src="/js/studio.js?v=password-default-1"></script>
 </body>
 </html>

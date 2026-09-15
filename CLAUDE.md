@@ -315,7 +315,7 @@ Full detail lives in `SEENINSEVEN_ROADMAP.md`. Short version:
 | Phase | Status |
 |---|---|
 | 1. Admin Command Center | Complete |
-| 2. Onboarding Update | Mostly complete. Free-text content intent is built; the commit-moment redesign is still waiting on David's direction |
+| 2. Onboarding Update | Story Discovery redesign in progress |
 | 3. Full UX Audit | Visual half done. The flow-by-flow walkthrough has not been formally run |
 | 4. Gamification | Built. Point values and thresholds are starting numbers awaiting real-behavior tuning |
 | 5. Script Output Update | Partially underway through the Prompt Tester. No blueprint rewrite without an explicit brief |

@@ -7,7 +7,7 @@ let studioSession = null;
 let studioProfile = null;
 let studioAccess = [];
 let studioCatalogMode = 'automatic';
-let authMode = 'magic';
+let authMode = 'password';
 const ACCESS_APP_NAMES = { seeninseven: 'SeenInSeven', boardroom: 'AI Boardroom', eee: 'EEE Membership' };
 const accessNoticeApp = new URLSearchParams(window.location.search).get('access');
 

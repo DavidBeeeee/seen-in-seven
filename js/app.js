@@ -248,7 +248,11 @@ const state = {
     commitmentDeclaration:'',
     missionStatement:'',
     missionGeneratedAt:'',
-    mvoMode:'simple'
+    mvoMode:'simple',
+    storyDirection:'',
+    storyDiscoveryMode:'',
+    storyMapImportedAt:'',
+    firstVideoNote:''
   }
 };
 
@@ -309,7 +313,7 @@ function journeyFilmingComplete(status) {
     .every(value => value === 'filmed' || value === 'skipped');
 }
 
-const ONBOARDING_ORDER = ['screen-0','screen-1','screen-3','screen-content-intent','screen-2a','screen-commit-pain','screen-commit-desire','screen-6','screen-recap','screen-checklist','screen-journey-map','screen-mvo2','screen-7','screen-script','plan-screen'];
+const ONBOARDING_ORDER = ['screen-0','screen-1','screen-3','screen-2a','screen-commit-desire','screen-6','screen-story-discovery','screen-journey-map','screen-recap','screen-mvo2','screen-script','plan-screen'];
 let screenOrder = ['screen-0','screen-1'];
 let currentIndex = 0;
 let currentVideoIndex = 0;
@@ -323,6 +327,7 @@ let maxProgressL2Pct = 0;  // L2 green bar — never decreases
 let journeyMapMode = 'onboarding';
 let journeyMapLevel = 1;
 let journeyMapReturnVideo = null;
+let journeyOnboardingIndex = 0;
 
 const SAVE_KEY = 'bwb_challenge_v1';
 let authScreenMode = 'signin';
@@ -389,7 +394,11 @@ function resetPhase2() {
     commitmentDeclaration:'',
     missionStatement:'',
     missionGeneratedAt:'',
-    mvoMode:'simple'
+    mvoMode:'simple',
+    storyDirection:'',
+    storyDiscoveryMode:'',
+    storyMapImportedAt:'',
+    firstVideoNote:''
   };
   return state.phase2;
 }
@@ -418,7 +427,11 @@ function ensurePhase2() {
     commitmentDeclaration:'',
     missionStatement:'',
     missionGeneratedAt:'',
-    mvoMode:'simple'
+    mvoMode:'simple',
+    storyDirection:'',
+    storyDiscoveryMode:'',
+    storyMapImportedAt:'',
+    firstVideoNote:''
   }, state.phase2 || {});
   state.phase2.custom = Object.assign({}, state.phase2.custom || {});
   state.phase2.commitmentReasons = Array.isArray(state.phase2.commitmentReasons) ? state.phase2.commitmentReasons : [];
@@ -501,54 +514,46 @@ function goNext() {
     state.blocker = null; state.history = null; state.goal = null;
     state.minigoal = null; state.minigoalText = ''; state.business = null;
     state.mvoQ2 = null; state.mvoQ3 = null; state.mvoQ4 = null;
-    state.videos = {};
-    state.videoStatus = {};
-    state.videoPosted = {};
-    state.videoPostedByLevel = {1:{},2:{}};
-    state.l1VideoStatus = null;
-    state.l1Videos = null;
-    state.l2VideoStatus = null;
-    state.l2Videos = null;
+    const signedIn = typeof getCurrentUser === 'function' && !!getCurrentUser();
+    if (!signedIn) {
+      state.videos = {};
+      state.videoStatus = {};
+      state.videoPosted = {};
+      state.videoPostedByLevel = {1:{},2:{}};
+      state.l1VideoStatus = null;
+      state.l1Videos = null;
+      state.l2VideoStatus = null;
+      state.l2Videos = null;
+    }
+    state.journeyMaps = {1:[],2:[]};
     maxProgressPct = 0;
     maxProgressL2Pct = 0;
+    const storyDirection = ensurePhase2().storyDirection;
     resetPhase2();
-  }
-
-  if (cur === 'screen-content-intent') {
-    determineLevel();
+    ensurePhase2().storyDirection = storyDirection;
+    state.level = storyDirection === 'expertise' ? 2 : 1;
   }
 
   currentIndex++;
   if (currentIndex >= screenOrder.length) currentIndex = screenOrder.length-1;
   let nextId = screenOrder[currentIndex];
 
-  if (nextId === 'screen-checklist') {
-    // Populate freewrite textarea from state (safe - no template literal in HTML)
-    renderTalkContext();
-  }
   if (nextId === 'screen-journey-map') {
     journeyMapMode = 'onboarding';
     journeyMapLevel = Number(state.level || 1);
     journeyMapReturnVideo = null;
+    journeyOnboardingIndex = 0;
     renderJourneyMap();
   }
-  if (cur === 'screen-checklist' && state.topicFreewrite && typeof logEvent === 'function') {
-    logEvent('topic_freewrite_saved', {
-      level: state.level || null,
-      length: state.topicFreewrite.length
-    });
-  }
-  if (nextId === 'screen-3') renderChoiceGrid(BUSINESS_OPTIONS, 'business', 'business-choice-grid');
+  if (nextId === 'screen-3') {}
   else if (nextId === 'screen-2a') renderChoiceGrid(BLOCKER_OPTIONS, 'blocker', 'blocker-choice-grid');
-  else if (nextId === 'screen-content-intent') renderContentIntentGrid();
-  else if (nextId === 'screen-commit-pain') renderCommitmentCards('pain');
   else if (nextId === 'screen-commit-desire') renderCommitmentCards('desire');
   else if (nextId === 'screen-6') renderCommitmentDeclaration();
   else if (nextId === 'screen-recap') {
     populateRecap();
     setTimeout(maybeShowSaveProgressOverlay, 450);
   }
-  else if (nextId === 'screen-mvo2') renderMvoScreen(2);
+  else if (nextId === 'screen-mvo2') renderVideoOneBridge();
   else if (nextId === 'screen-7') {
     currentVideoIndex = 0;
     buildVideoDots('video-dots');
@@ -563,15 +568,11 @@ function goBack() {
   if (currentIndex > 0) {
     currentIndex--;
     const prevId = screenOrder[currentIndex];
-    if (prevId === 'screen-checklist') renderTalkContext();
-    else if (prevId === 'screen-journey-map') renderJourneyMap();
-    else if (prevId === 'screen-3') renderChoiceGrid(BUSINESS_OPTIONS, 'business', 'business-choice-grid');
+    if (prevId === 'screen-journey-map') renderJourneyMap();
     else if (prevId === 'screen-2a') renderChoiceGrid(BLOCKER_OPTIONS, 'blocker', 'blocker-choice-grid');
-    else if (prevId === 'screen-content-intent') renderContentIntentGrid();
-    else if (prevId === 'screen-commit-pain') renderCommitmentCards('pain');
     else if (prevId === 'screen-commit-desire') renderCommitmentCards('desire');
     else if (prevId === 'screen-6') renderCommitmentDeclaration();
-    else if (prevId === 'screen-mvo2') renderMvoScreen(2);
+    else if (prevId === 'screen-mvo2') renderVideoOneBridge();
     showScreen(prevId, 'back');
   }
 }
@@ -590,6 +591,58 @@ async function goToRecapWithNameCheck() {
     return;
   }
   await goToRecap();
+}
+
+async function completeCommitmentAccount() {
+  const nameInput = document.getElementById('user-name');
+  const emailInput = document.getElementById('commit-email');
+  const passwordInput = document.getElementById('commit-password');
+  const message = document.getElementById('commit-account-message');
+  const button = document.getElementById('commitment-submit-btn');
+  const name = String(nameInput && nameInput.value || '').trim();
+  if (!name) {
+    if (nameInput) { nameInput.focus(); nameInput.placeholder = 'Your first name helps make this feel like yours.'; }
+    return;
+  }
+  setUserName(name);
+  const session = typeof getCurrentSession === 'function' ? await getCurrentSession() : null;
+  if (session && session.user) {
+    await goToRecap();
+    return;
+  }
+  const email = String(emailInput && emailInput.value || '').trim().toLowerCase();
+  const password = String(passwordInput && passwordInput.value || '');
+  if (!email || !email.includes('@')) {
+    if (emailInput) emailInput.focus();
+    if (message) { message.textContent = 'Add the email you want to use when you come back.'; message.style.display = ''; }
+    return;
+  }
+  if (password.length < 6) {
+    if (passwordInput) passwordInput.focus();
+    if (message) { message.textContent = 'Your password needs at least 6 characters.'; message.style.display = ''; }
+    return;
+  }
+  if (button) { button.disabled = true; button.textContent = 'Setting Up Your Account...'; }
+  if (message) message.style.display = 'none';
+  try {
+    const check = await _sb.rpc('check_email_exists', { lookup_email: email });
+    if (check.data && (check.data.has_level || check.data.has_access)) {
+      throw new Error('That email already has an account. Use Sign In at the top, then return here if you still want to redo your answers.');
+    }
+    const signup = await signUpWithPassword(email, password, 'onboarding_password');
+    if (typeof logEvent === 'function') logEvent('password_signup_started', { source: 'commitment', email });
+    if (signup && signup.session) {
+      await new Promise(resolve => setTimeout(resolve, 0));
+    } else if (message) {
+      message.textContent = 'Your account is set up. Keep going now. We will remind you to confirm your email later so your work stays connected to this account.';
+      message.style.display = '';
+    }
+    await goToRecap();
+  } catch (error) {
+    if (message) { message.textContent = error && error.message ? error.message : 'We could not create your account just now.'; message.style.display = ''; }
+  } finally {
+    if (button) { button.disabled = false; button.textContent = 'I’m Ready To Tell This Story'; }
+  }
 }
 
 async function goToRecap() {
@@ -722,9 +775,15 @@ function showSignInScreen() {
   authScreenMode = 'signin';
   screenOrder = ['screen-0','screen-email'];
   currentIndex = 1;
-  resetEmailScreenCopy('Welcome <span class="accent">back.</span>', 'Enter your email and we will send a magic link to your dashboard.', 'Send Sign-In Link →');
+  resetEmailScreenCopy('Welcome <span class="accent">back.</span>', 'Sign in with your password, or use a magic link if you prefer.', 'Sign In →');
   const toggle = document.getElementById('auth-password-toggle');
-  if (toggle) toggle.style.display = '';
+  if (toggle) { toggle.style.display = ''; toggle.textContent = 'Use a magic link instead →'; }
+  const pwWrap = document.getElementById('auth-password-wrap');
+  const hint = document.getElementById('auth-email-hint');
+  const btn = document.getElementById('auth-send-btn');
+  if (pwWrap) pwWrap.style.display = 'block';
+  if (hint) hint.style.display = 'none';
+  if (btn) btn.onclick = handlePasswordSignIn;
   showScreen('screen-email');
 }
 
@@ -749,7 +808,7 @@ function resetEmailScreenCopy(titleHtml, subText, buttonText) {
   if (btn) { btn.textContent = buttonText; btn.disabled = false; btn.onclick = handleEmailSubmit; }
   if (err) err.style.display = 'none';
   if (msg) msg.remove();
-  // Reset password mode back to magic-link mode
+  // Reset to magic-link mode. Returning sign-in explicitly switches to password.
   const pwWrap = document.getElementById('auth-password-wrap');
   const pwInput = document.getElementById('auth-password-input');
   const hint = document.getElementById('auth-email-hint');
@@ -953,12 +1012,39 @@ function autoAdvance(el, key, value) {
   _autoAdvanceLock = true;
   el.classList.add('selecting');
   state[key] = value;
+  if (key === 'blocker') {
+    const p2 = ensurePhase2();
+    p2.commitmentPain = value;
+    p2.commitmentPainTitle = blockerLabels[value] || value;
+    p2.commitmentPainText = blockerFullText[value] || blockerLabels[value] || value;
+    p2.commitmentPainType = 'card';
+  }
   saveProgress();
   setTimeout(() => {
     el.classList.remove('selecting');
     goNext();
     _autoAdvanceLock = false;
   }, 300);
+}
+
+function selectStoryDirection(el, direction) {
+  const p2 = ensurePhase2();
+  p2.storyDirection = direction;
+  p2.contentIntent = direction === 'expertise' ? 'teach' : 'person';
+  p2.contentIntentTitle = direction;
+  state.level = direction === 'expertise' ? 2 : 1;
+  if (el) el.classList.add('selecting');
+  saveProgress();
+  setTimeout(goNext, 300);
+}
+
+function chooseStoryDiscovery(el, mode) {
+  const p2 = ensurePhase2();
+  p2.storyDiscoveryMode = mode === 'ai' ? 'ai' : 'self';
+  if (el) el.classList.add('selecting');
+  saveProgress();
+  if (typeof logEvent === 'function') logEvent('story_discovery_selected', { level: state.level || 1, mode: p2.storyDiscoveryMode });
+  setTimeout(goNext, 300);
 }
 
 function selectCardAnswer(el, key, value) {
@@ -1173,6 +1259,12 @@ function useCustomRouteAnswer(key, fallbackValue) {
     if (fill) fill.textContent = text.toLowerCase();
   } else {
     state[key] = fallbackValue;
+    if (key === 'blocker') {
+      p2.commitmentPain = 'custom';
+      p2.commitmentPainTitle = text;
+      p2.commitmentPainText = text;
+      p2.commitmentPainType = 'custom';
+    }
   }
   saveProgress();
   goNext();
@@ -1285,10 +1377,13 @@ function renderJourneyMap() {
   const level = Number(journeyMapLevel) === 2 ? 2 : 1;
   const questions = SISJourneyMap.QUESTIONS[level];
   const answers = journeyAnswersForLevel(level);
+  const p2 = ensurePhase2();
   const list = document.getElementById('journey-question-list');
   const tabs = document.getElementById('journey-level-tabs');
   const note = document.getElementById('journey-map-note');
   const confirm = document.getElementById('journey-confirm-btn');
+  const title = document.getElementById('journey-map-title');
+  const subtitle = document.getElementById('journey-map-subtitle');
   if (!list) return;
 
   if (tabs) tabs.style.display = journeyMapMode === 'settings' ? 'flex' : 'none';
@@ -1296,14 +1391,33 @@ function renderJourneyMap() {
     const tab = document.getElementById('journey-level-' + number);
     if (tab) tab.classList.toggle('active', number === level);
   });
-  if (note) {
-    note.textContent = journeyMapMode === 'onboarding'
-      ? 'You are mapping Level ' + level + '. You can build or edit the other level later in Settings.'
-      : 'Editing Level ' + level + '. Saved changes guide future scripts and intentional regenerations only.';
+  if (journeyMapMode === 'onboarding' && p2.storyDiscoveryMode === 'ai') {
+    if (title) title.innerHTML = 'Let your favorite AI help find the <span class="accent">right story.</span>';
+    if (subtitle) subtitle.textContent = 'It will ask only what it needs, offer three possible story seeds, then create a seven-part map you can paste back here.';
+    if (note) note.textContent = 'Your AI can only use what you share in the conversation. Nothing from your accounts or files is accessed automatically.';
+    if (confirm) confirm.style.display = 'none';
+    list.innerHTML = '<article class="journey-question-card">' +
+      '<div class="journey-question-top"><span class="journey-step">Use your favorite AI</span></div>' +
+      '<p class="screen-sub" style="margin:10px 0 18px;">Copy the guide, finish the conversation in ChatGPT, Claude, Gemini, or another AI, then paste the finished seven-part map below.</p>' +
+      '<button class="btn-secondary" type="button" onclick="openJourneyHelp()">Open Story Discovery Guide</button>' +
+      '<label for="journey-import" style="margin-top:24px;display:block;">Paste your finished seven-part map</label>' +
+      '<textarea class="journey-answer-input" id="journey-import" rows="10" placeholder="1. ...\n\n2. ...\n\n3. ...\n\nPaste all seven numbered answers here."></textarea>' +
+      '<button class="btn-primary" style="margin-top:14px;" type="button" onclick="importJourneyMap()">Bring In My Story Map →</button>' +
+      '</article>';
+    return;
   }
-  if (confirm) confirm.textContent = journeyMapMode === 'onboarding' ? 'This Feels Like My Story →' : 'Save My Journey →';
+  if (title) title.innerHTML = journeyMapMode === 'onboarding' ? 'Build your <span class="accent">seven-part story.</span>' : 'Edit your <span class="accent">seven-part story.</span>';
+  if (subtitle) subtitle.textContent = journeyMapMode === 'onboarding'
+    ? 'Start with the part behind Video 1. You can discover the rest as you go.'
+    : 'These private directions guide future scripts. They are not finished scripts.';
+  if (note) note.textContent = journeyMapMode === 'onboarding'
+    ? 'Part ' + (journeyOnboardingIndex + 1) + ' of 7. Only Video 1 is needed before your first script.'
+    : 'Editing Level ' + level + '. Saved changes guide future scripts and intentional regenerations only.';
+  if (confirm) { confirm.style.display = ''; confirm.textContent = journeyMapMode === 'onboarding' ? (journeyOnboardingIndex === 0 ? 'Continue To Video 1 →' : 'Save This Part →') : 'Save My Journey →'; }
 
-  list.innerHTML = questions.map((question, index) => {
+  const visibleIndexes = journeyMapMode === 'onboarding' ? [journeyOnboardingIndex] : questions.map((_, index) => index);
+  list.innerHTML = visibleIndexes.map(index => {
+    const question = questions[index];
     const value = answers[index] || '';
     const count = journeyWordCount(value);
     return `
@@ -1323,6 +1437,24 @@ function renderJourneyMap() {
       card.style.display = index === Number(journeyMapReturnVideo) ? '' : 'none';
     });
   }
+}
+
+function importJourneyMap() {
+  const field = document.getElementById('journey-import');
+  const parsed = window.SISJourneyMap && SISJourneyMap.parseImportedMap(field && field.value);
+  if (!parsed || parsed.length !== 7) {
+    if (field) { field.focus(); field.placeholder = 'Please paste all seven numbered answers, one through seven.'; }
+    return;
+  }
+  const answers = journeyAnswersForLevel(journeyMapLevel);
+  parsed.forEach((answer, index) => { answers[index] = answer; });
+  const p2 = ensurePhase2();
+  p2.storyMapImportedAt = new Date().toISOString();
+  saveProgress();
+  if (typeof logEvent === 'function') logEvent('story_map_imported', { level: journeyMapLevel, parts: parsed.length });
+  journeyOnboardingIndex = 0;
+  p2.storyDiscoveryMode = 'imported';
+  renderJourneyMap();
 }
 
 function setJourneyMapAnswer(index, value) {
@@ -1595,7 +1727,7 @@ async function copyCurrentJourney(button) {
 function completeJourneyMap() {
   const answers = journeyAnswersForLevel(journeyMapLevel);
   const missing = journeyMapMode === 'onboarding'
-    ? answers.findIndex(answer => !String(answer || '').trim())
+    ? (!String(answers[journeyOnboardingIndex] || '').trim() ? journeyOnboardingIndex : -1)
     : journeyMapMode === 'video' && journeyMapReturnVideo != null && !String(answers[journeyMapReturnVideo] || '').trim()
       ? Number(journeyMapReturnVideo)
       : -1;
@@ -1614,6 +1746,7 @@ function completeJourneyMap() {
     answered: answers.filter(answer => SISJourneyMap.isUsableAnswer(answer)).length
   });
   if (journeyMapMode === 'onboarding') {
+    if (typeof logEvent === 'function') logEvent('story_map_part_saved', { level: journeyMapLevel, part: journeyOnboardingIndex + 1 });
     goNext();
     return;
   }
@@ -1782,6 +1915,7 @@ function toggleCommitmentReasonByIndex(index) {
 
 function renderCommitmentDeclaration() {
   const p2 = ensurePhase2();
+  const authenticated = typeof getCurrentUser === 'function' && !!getCurrentUser();
   const input = document.getElementById('user-name');
   if (input && input.value !== (state.name || '')) input.value = state.name || '';
   const title = document.getElementById('commit-title');
@@ -1794,6 +1928,12 @@ function renderCommitmentDeclaration() {
   const text = document.getElementById('commitment-declaration-text');
   const reasons = document.getElementById('commitment-reasons');
   if (wrap) wrap.style.display = state.name ? 'block' : 'none';
+  const emailGroup = document.getElementById('commit-email-group');
+  const passwordGroup = document.getElementById('commit-password-group');
+  const emailInput = document.getElementById('commit-email');
+  if (emailGroup) emailGroup.style.display = authenticated ? 'none' : '';
+  if (passwordGroup) passwordGroup.style.display = authenticated ? 'none' : '';
+  if (emailInput && authenticated && !emailInput.value) emailInput.value = getCurrentUser().email || '';
   p2.commitmentDeclaration = buildCommitmentDeclaration();
   if (text) text.textContent = p2.commitmentDeclaration;
   if (reasons) {
@@ -2781,19 +2921,14 @@ function videoOneDeclaration(level) {
 }
 
 function videoOnePromptAnswers(level) {
-  const sv = state.videos;
-  const q2 = state.mvoQ2 || {};
-  const q3 = state.mvoQ3 || {};
-  const q4 = state.mvoQ4 || {};
-  const isL2 = Number(level) === 2;
   const p2 = ensurePhase2();
   const answers = [
     { label:'Opening declaration (read-only)', value:videoOneDeclaration(level) },
-    { label:"What's been stopping you from posting until now", value:sv.v0p1 || (isL2 ? q3.before_full : q2.before_full) || '' },
-    { label:"Why you're doing this challenge right now", value:sv.v0p2 || (isL2 ? q4.crack_full : q3.catalyst_full) || p2.commitmentDeclaration || '' }
+    { label:'The story direction behind this video', value:journeyDirectionFor(0, level) },
+    { label:"What has been making this hard", value:p2.commitmentPainText || phase2ValueText('pain', p2.commitmentPain, p2.commitmentPainCustom) || state.blocker || '' },
+    { label:"What you are moving toward", value:p2.commitmentDesireText || phase2ValueText('desire', p2.commitmentDesire, p2.commitmentDesireCustom) || p2.commitmentDeclaration || '' }
   ];
-  if (isL2) answers.push({ label:"Who you're here to reach", value:sv.v0p3 || q2.village_full || '' });
-  answers.push({ label:'Anything else they want to add', value:sv.v0p4 || p2.firstScriptNotes || '' });
+  answers.push({ label:'Anything else they want to add', value:p2.firstVideoNote || p2.firstScriptNotes || '' });
   return answers;
 }
 
@@ -2825,6 +2960,8 @@ function buildAPIUserMessage(videoIdx) {
     customBlocker: custom.blocker || '',
     businessStage: state.business ? (businessLabels[state.business] || state.business) : '',
     contentIntent: p2.contentIntentTitle || p2.contentIntent || '',
+    storyDirection: p2.storyDirection || '',
+    storyDiscoveryMode: p2.storyDiscoveryMode || '',
     contextMode: p2.contentMode === 'extended' ? 'Extended' : 'Simple',
     audienceContext: p2.audienceContext || '',
     messageContext: p2.messageContext || '',
@@ -3342,7 +3479,11 @@ function _buildPromptsContent(container, v, idx) {
   genBtn.className = 'btn-primary';
   genBtn.style.fontSize = '20px';
   genBtn.textContent = v.prebuilt ? '✨ Edit & Personalize This Script' : '✨ Generate My Script';
-  genBtn.onclick = () => { window._SIS_log && _SIS_log('genBtn:click', {idx}); showScriptView(idx); };
+  genBtn.onclick = () => {
+    window._SIS_log && _SIS_log('genBtn:click', {idx});
+    if (!journeyDirectionFor(idx)) return editJourneyDirection(idx);
+    showScriptView(idx);
+  };
   btnWrap.appendChild(genBtn);
 
   const skipGenBtn = document.createElement('button');
@@ -6619,7 +6760,7 @@ function setMvoMode(mode) {
 // Callers that also need window.scrollTo(0,0) still call it themselves right after —
 // this helper only replaces the 3-line render/show/index pattern, not scroll behavior.
 function goToMvoScreen() {
-  renderMvoScreen();
+  renderVideoOneBridge();
   showScreen('screen-mvo2');
   currentIndex = screenOrder.indexOf('screen-mvo2');
 }
@@ -6684,7 +6825,13 @@ function setMvoFreewrite(qNum, level, value) {
 function setMvoFirstScriptNotes(value) {
   const p2 = ensurePhase2();
   p2.firstScriptNotes = String(value || '').slice(0, 1200);
+  p2.firstVideoNote = p2.firstScriptNotes;
   saveProgress();
+}
+
+function renderVideoOneBridge() {
+  const note = document.getElementById('video-one-note');
+  if (note) note.value = ensurePhase2().firstVideoNote || ensurePhase2().firstScriptNotes || '';
 }
 
 function mvoAnswerText(qNum, level) {
@@ -6728,17 +6875,12 @@ function getMvoPlaceholder(qNum, level, mode) {
 
 function completeMvoBrief() {
   const level = state.level || 1;
-  if (level === 1) {
-    autoPopulateMvoQ2FromOnboarding();
-    if (!state.mvoQ4 || !mvoAnswerText(4, 1)) {
-      const topic = state.topicFreewrite || ensurePhase2().knowledgeContext || '';
-      if (topic) setMvoFreewrite(4, 1, topic);
-    }
-  }
+  const note = document.getElementById('video-one-note');
+  if (note) setMvoFirstScriptNotes(note.value);
   if (typeof logEvent === 'function') {
-    logEvent('mvo_completed', {
+    logEvent('video_one_bridge_completed', {
       level: level,
-      source: ensurePhase2().mvoMode || 'simple'
+      has_note: !!String(ensurePhase2().firstVideoNote || '').trim()
     });
   }
   currentVideoIndex = 0;
@@ -6795,6 +6937,7 @@ function renderVideoIntro(videoNum) {
 }
 
 function readyForVideo(idx) {
+  if (!journeyDirectionFor(idx)) return editJourneyDirection(idx);
   showScreen('screen-7');
   currentIndex = screenOrder.indexOf('screen-7');
   renderVideoPrompts(idx);

@@ -3,22 +3,22 @@
 
   const QUESTIONS = {
     1: [
-      'Why do I want to start sharing my story now, who do I hope sees it, and what has kept me from starting sooner?',
-      'What did my everyday life look like before this, and what unexpected detail from that time would help someone understand me?',
-      'What is one thing I used to think was true that is not, and what happened that made me finally question it?',
-      'After that realization, what did I try, what small sign showed I might be changing, and what still felt difficult?',
+      'What have I overcome, who am I now, and what transformation led me here?',
+      'Before those events, what did my life look like and what did I have in common with someone who has not had this transformation yet?',
+      'Before the main event, what did I incorrectly believe, and what do people still believe that I now know is not true?',
+      'Once that belief changed, what did I do differently and what new thing opened up in my life?',
       'What is the absolute worst thing that has happened to me that connects to this story, how was it my fault, and what did it cost me?',
       'After everything that failure forced me to face, what bigger truth did I discover that changed how I live or what I do?',
       'Looking back at who I was before all this, who am I now, what am I still struggling with, and what do I hope someone like me recognizes in themselves?'
     ],
     2: [
-      'What knowledge, experience, or perspective do I feel compelled to make visible now, who needs it, and what has kept me from speaking openly about it?',
-      'How did I actually get into this work, what relatively boring and ordinary life was I living before, and why did treating this path as real expertise seem unreasonable?',
-      'What is one thing I believe that most other people in my industry do not, and what experience made that belief impossible for me to ignore?',
-      'Because I believe something others do not, what story shows how acting on that belief created struggle, resistance, doubt, or personal consequences?',
+      'What needs to be said from my experience, and who needs to hear it?',
+      'Where did this work or perspective actually start for me?',
+      'What do I see differently from most people in my field, and what taught me that?',
+      'What is the problem with people in my field who still believe this? What is it costing them, and what was it costing me?',
       'What is the absolute biggest failure I have experienced in my business or life that relates to this subject, how did my choices contribute, and what did it cost?',
-      'I have already identified one belief that separates me from others, but what even more significant way of living or working do I follow that nearly everyone considers counterintuitive or contrary to common sense?',
-      'After considering the previous six answers, what genuinely makes who I am now different from who I used to be and from others in my industry, and what unresolved flaws make me relatable to the people I want to help or support?'
+      'What was the biggest lesson I learned from my biggest failure? What is the number one thing I would share to help others avoid that mistake?',
+      'What makes me different, what human struggle am I still working through, and what am I working toward in the future?'
     ]
   };
 
@@ -60,6 +60,41 @@
       String(overview || '').trim(),
       String(onboardingContext || '').trim()
     ].filter(Boolean).join('\n\n');
+    return `You are helping me find the real story behind a connected seven-video series. This is private story discovery, not marketing copy.
+
+Use only what I share in this conversation. Do not claim access to private accounts, files, notes, or chat history that I have not given you here.
+
+First, review my context. Ask only the questions you genuinely need, with a maximum of five questions total.
+
+Then say: "Here are three things you could talk about. Which one feels right?"
+
+Give me three distinct core story seeds, each with:
+- a short name
+- the transformation or tension at its center
+- why it could carry seven connected videos
+- a sentence in language close to the way I speak
+
+Do not write the full seven-part map yet. Let me choose one, combine them, or explain what feels wrong. Once I choose, ask up to three selection-specific questions only if necessary.
+
+After I answer, create the finished map in exactly this format so I can paste it into SeenInSeven:
+
+1. [one or two first-person sentences]
+2. [one or two first-person sentences]
+3. [one or two first-person sentences]
+4. [one or two first-person sentences]
+5. [one or two first-person sentences]
+6. [one or two first-person sentences]
+7. [one or two first-person sentences]
+
+Keep my language patterns, vocabulary, rhythm, bluntness, humor, and emotional temperature. Make strong connections when warranted, but never invent concrete facts. Do not turn this into generic coaching, a sales pitch, a polished script, or a motivational speech.
+
+LEVEL ${number} MAP QUESTIONS
+
+${questions.map((question, index) => `${index + 1}. ${question}`).join('\n\n')}
+
+${sourceContext ? `MY CURRENT CONTEXT\n\n${sourceContext}` : 'MY CURRENT CONTEXT\n\nI have not added much context yet. Start by asking what you need.'}`.trim();
+
+    /* Legacy helper prompt retained below as historical reference.
     return `Using everything you already know about me, create three possible seven-part Hero's Journeys from my life.
 
 Review all available context first, including our chat history, connected files, notes, previous writing, personal experiences, business history, failures, relationships, contradictions, and unusual memories. Do not ask me to repeat information you can already access.
@@ -150,7 +185,16 @@ Weakest connection:
 - Set 3: [One short sentence.]
 Sales-pitch warning: [Identify any set that feels promotional, or write "None."]
 
-${sourceContext ? `CONTEXT I HAVE ALREADY PROVIDED TO SEENINSEVEN\n\n${sourceContext}` : ''}`.trim();
+${sourceContext ? `CONTEXT I HAVE ALREADY PROVIDED TO SEENINSEVEN\n\n${sourceContext}` : ''}`.trim(); */
+  }
+
+  function parseImportedMap(value) {
+    const text = String(value || '').trim();
+    if (!text) return null;
+    const matches = Array.from(text.matchAll(/(?:^|\n)\s*([1-7])\s*[.)\-:]\s*([\s\S]*?)(?=\n\s*[1-7]\s*[.)\-:]|$)/g));
+    if (matches.length !== 7) return null;
+    const answers = matches.map(match => String(match[2] || '').trim().replace(/\s+/g, ' ').slice(0, 600));
+    return answers.every(Boolean) ? answers : null;
   }
 
   function formatJourney(level, answers) {
@@ -166,6 +210,7 @@ ${sourceContext ? `CONTEXT I HAVE ALREADY PROVIDED TO SEENINSEVEN\n\n${sourceCon
     normalizeMap,
     isUsableAnswer,
     buildHelperPrompt,
+    parseImportedMap,
     formatJourney,
     copyText
   };

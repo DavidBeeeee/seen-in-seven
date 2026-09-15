@@ -980,6 +980,9 @@ function renderAnswers(ob, row) {
     answerRow('Mini goal text', ob.mini_goal_text),
     answerRow('Content intent', p2.contentIntentTitle || p2.contentIntent),
     answerRow('Content intent raw', p2.contentIntent),
+    answerRow('Story direction', p2.storyDirection),
+    answerRow('Story discovery path', p2.storyDiscoveryMode),
+    answerRow('Story map imported', p2.storyMapImportedAt),
     answerRow('Main blocker', commitmentText('blocker', row && row.user ? row.user.blocker : ob.blocker, p2.custom && p2.custom.blocker)),
     answerRow('Blocker custom', p2.custom && p2.custom.blocker),
     answerRow('All custom answers', customAnswers),
@@ -1000,6 +1003,7 @@ function renderAnswers(ob, row) {
     answerRow('Audience context', p2.audienceContext),
     answerRow('Message context', p2.messageContext),
     answerRow('First script notes', p2.firstScriptNotes),
+    answerRow('Video 1 final note', p2.firstVideoNote),
     answerRow('Script 1 mode', p2.mvoMode),
     answerRow('MVO Q1 / stopped', valueText(ob.mvo_q2)),
     answerRow('MVO Q2 / why now', valueText(ob.mvo_q3)),
@@ -1034,7 +1038,11 @@ function getPhase2Context(ob) {
     commitmentDeclaration:'',
     missionStatement:'',
     missionGeneratedAt:'',
-    mvoMode:''
+    mvoMode:'',
+    storyDirection:'',
+    storyDiscoveryMode:'',
+    storyMapImportedAt:'',
+    firstVideoNote:''
   }, p2, { custom: Object.assign({}, p2.custom || {}) });
 }
 
