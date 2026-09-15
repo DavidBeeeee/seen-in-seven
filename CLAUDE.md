@@ -193,6 +193,14 @@ Do not introduce React, Vue, build steps, bundlers, or major abstractions. This 
 
 ## Launch Cycle (Deferred During Private Validation)
 
+**The target shape, stated 2026-09-15 and load-bearing for any copy you write.** The 777 Challenge **recurs every month, starting on the 7th, fully automated**. It is not evergreen, and the distinction decides how copy is written. David, in his own words: "it's recurring each month on the 7th, but it is going to be fully automated... not exactly evergreen. so yes some times and dates can be repeated. we're just not stating the month."
+
+So in anything a customer reads: a day of the month is correct, a clock time is correct, a weekday is correct, "tomorrow" and "today" are correct because a cohort is genuinely synchronised, and a recurring live room is correct because Kickoff and Graduation happen every cycle. **Naming the month is the only thing that breaks on repeat.** Do not rewrite a dated line to be relative to the buyer's own day; that is what an evergreen drip needs and this is not one.
+
+The offer ladder, because it has been inverted once and this file already forbids it further down: the **777 Challenge at $7 is the product and the front door**, SeenInSeven is the bonus inside it and its $297 page is only the standalone retail shelf for the app, **The Momentum Hub at $250/month is the offer that comes off the back of the challenge**, and Unlimited One-on-One at $250/month lives at `yes.davidbee.me` with a deliberately parked Systeme plan. The Momentum Hub page showing enrollment closed is correct, because the challenge is not publicly live yet.
+
+The fuller record, including every state that is intentionally switched off right now, lives at `state/VOCABULARY.md` in `DavidBeeeee/WorkerBee`. Read it before filing a live reading as a defect: an unexpected state is often a chosen one.
+
 The September dates below are historical reference only. Do not activate them. Run at least 10 complete private Tiny Challenges and enroll at least 5 participants in the $250/month partnership before planning the group conversion. October is provisional.
 
 All times America/Denver. Source of truth for operations is `launch/`, and the browser config is `js/777-launch-cycle.js`.
