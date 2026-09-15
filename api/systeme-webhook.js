@@ -76,103 +76,6 @@ async function callSupabaseRpc(name, args, env) {
   return body;
 }
 
-export function describeSystemeTagWrite(action) {
-  if (!action || action.configured !== true) {
-    return {
-      status: 'skipped',
-      reason: action?.reason || 'tag_not_configured'
-    };
-  }
-
-  const tagId = Number(action.tag_id);
-  const contactId = Number(action.contact_id);
-  const contactEmail = String(action.contact_email || '').trim().toLowerCase();
-  if (!Number.isInteger(tagId) || tagId < 1 || (!contactEmail && (!Number.isInteger(contactId) || contactId < 1))) {
-    throw new Error('Systeme tag action is missing a valid contact identity or tag ID.');
-  }
-
-  return {
-    status: 'ready',
-    contactId: Number.isInteger(contactId) && contactId > 0 ? contactId : null,
-    contactEmail: contactEmail || null,
-    tagId,
-    event: String(action.event || ''),
-    productKey: String(action.product_key || '')
-  };
-}
-
-export async function applySystemeTag(action, options = {}) {
-  const write = describeSystemeTagWrite(action);
-  if (write.status !== 'ready') return write;
-  if (options.dryRun === true) return { ...write, status: 'dry_run' };
-
-  const apiKey = String(options.apiKey || '').trim();
-  if (!apiKey) throw new Error('SYSTEME_API_KEY is not configured.');
-
-  const fetchImpl = options.fetchImpl || fetch;
-  let contactId = write.contactId;
-  if (!contactId) {
-    const lookup = await fetchImpl(`https://api.systeme.io/api/contacts?email=${encodeURIComponent(write.contactEmail)}&limit=10`, {
-      headers: { 'X-API-Key': apiKey }
-    });
-    if (!lookup.ok) throw new Error(`Systeme contact lookup failed with HTTP ${lookup.status}.`);
-    const body = await lookup.json();
-    const exact = (body.items || []).filter(item => String(item.email || '').trim().toLowerCase() === write.contactEmail);
-    if (exact.length !== 1 || !Number.isInteger(Number(exact[0].id))) {
-      throw new Error(`Systeme contact lookup returned ${exact.length} exact matches.`);
-    }
-    contactId = Number(exact[0].id);
-  }
-
-  const response = await fetchImpl(`https://api.systeme.io/api/contacts/${contactId}/tags`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'X-API-Key': apiKey
-    },
-    body: JSON.stringify({ tagId: write.tagId })
-  });
-
-  if (!response.ok) {
-    const detail = (await response.text()).trim();
-    throw new Error(`Systeme tag write failed with HTTP ${response.status}${detail ? `: ${detail}` : '.'}`);
-  }
-
-  return { ...write, contactId, status: 'applied', httpStatus: response.status };
-}
-
-async function deliverSystemeTag(messageId, secret, env, options = {}) {
-  const action = await callSupabaseRpc('prepare_systeme_contact_tag', {
-    p_secret: secret,
-    p_message_id: messageId
-  }, env);
-
-  if (action?.duplicate === true) {
-    return { status: 'already_applied', event: action.event || null, productKey: action.product_key || null };
-  }
-
-  let outcome;
-  try {
-    outcome = await applySystemeTag(action, options);
-  } catch (error) {
-    await callSupabaseRpc('record_systeme_contact_tag_outcome', {
-      p_secret: secret,
-      p_message_id: messageId,
-      p_status: 'failed',
-      p_detail: { error: error.message }
-    }, env);
-    throw error;
-  }
-
-  await callSupabaseRpc('record_systeme_contact_tag_outcome', {
-    p_secret: secret,
-    p_message_id: messageId,
-    p_status: outcome.status,
-    p_detail: outcome
-  }, env);
-  return outcome;
-}
-
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
@@ -181,8 +84,7 @@ export default async function handler(req, res) {
 
   const env = {
     secret: process.env.SYSTEME_WEBHOOK_SECRET,
-    url: process.env.SUPABASE_URL || 'https://zdtkwpzdwnzzmdwrvmka.supabase.co',
-    systemeApiKey: process.env.SYSTEME_API_KEY
+    url: process.env.SUPABASE_URL || 'https://zdtkwpzdwnzzmdwrvmka.supabase.co'
   };
   if (!env.secret) {
     return sendJson(res, 503, { error: 'Webhook processing is not configured.' });
@@ -215,11 +117,7 @@ export default async function handler(req, res) {
       p_payload: payload
     }, env);
 
-    const systemeTag = await deliverSystemeTag(messageId, env.secret, env, {
-      apiKey: env.systemeApiKey
-    });
-
-    return sendJson(res, 200, { ok: true, result, systemeTag });
+    return sendJson(res, 200, { ok: true, result });
   } catch (error) {
     console.error('Systeme webhook failed:', error);
     return sendJson(res, 500, { error: 'Webhook processing failed.' });
