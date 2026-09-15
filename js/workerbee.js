@@ -995,8 +995,41 @@ function localDayKey(iso) {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 }
 
-function dayHeading(iso) {
-  const date = new Date(iso);
+// ST-96a3c053. David: "Anything that happens before the morning run should show
+// up as yesterdays work on the dash board, I notice that you move it forward
+// when we work past midnight."
+//
+// WBR-348 fixed the wrong line. It moved the boundary off the timestamp's UTC
+// date and onto the reader's local midnight, which was right about the calendar
+// and wrong about the day: his day does not end at midnight, it ends when the
+// next morning run starts. Work finished at two in the morning is the end of
+// the night before, and it was jumping onto a day that had not begun.
+//
+// So a finished item belongs to the day whose morning lane started most
+// recently before it. The boundaries are published rather than guessed, because
+// when a morning actually ran is a fact about the run record and not something
+// a page can derive.
+export function operatingBoundaries(state) {
+  const row = (state.updates || []).find(item => item.kind === 'diagnostic'
+    && (item.metadata || {}).source === 'lane-boundaries');
+  const list = row && Array.isArray(row.metadata.boundaries) ? row.metadata.boundaries : [];
+  return list.slice().sort((a, b) => String(a.startedAt).localeCompare(String(b.startedAt)));
+}
+
+export function operatingDayKey(iso, boundaries) {
+  if (!iso) return 'undated';
+  const at = String(iso);
+  let key = null;
+  for (const boundary of boundaries || []) {
+    if (boundary.startedAt <= at) key = boundary.date; else break;
+  }
+  // Before the first recorded morning there is no boundary to apply, so the
+  // reader's own calendar day is the honest answer rather than a guess.
+  return key || localDayKey(iso);
+}
+
+function dayHeading(key) {
+  const date = new Date(`${key}T12:00:00`);
   if (Number.isNaN(date.getTime())) return 'Date not recorded';
   return date.toLocaleDateString(undefined, { weekday: 'long', month: 'long', day: 'numeric' });
 }
@@ -1025,17 +1058,18 @@ function renderDone() {
     return;
   }
 
+  const boundaries = operatingBoundaries(state);
   let currentDay = null;
   let group = null;
   shown.forEach(entry => {
-    const day = entry.at ? localDayKey(entry.at) : 'undated';
+    const day = entry.at ? operatingDayKey(entry.at, boundaries) : 'undated';
     if (day !== currentDay) {
       currentDay = day;
       const header = document.createElement('h3');
       header.className = 'done-day';
-      header.textContent = entry.at ? dayHeading(entry.at) : 'Date not recorded';
+      header.textContent = day === 'undated' ? 'Date not recorded' : dayHeading(day);
       const count = document.createElement('span');
-      count.textContent = `${shown.filter(other => (other.at ? localDayKey(other.at) : 'undated') === day).length}`;
+      count.textContent = `${shown.filter(other => (other.at ? operatingDayKey(other.at, boundaries) : 'undated') === day).length}`;
       header.append(count);
       group = document.createElement('div');
       group.className = 'done-group';
@@ -1055,8 +1089,15 @@ function renderDone() {
 // honest than a wall of identifiers presented as if it were the thing he asked
 // for.
 export function orderHistoryItems(state) {
+  // Both sources, unioned at read time rather than written twice. Today's
+  // orders are published beside the plan because the Dashboard needs them
+  // there; the history rows are everything before today. Publishing today into
+  // both would mean two rows per order and a duplicate the moment the morning
+  // reran, so the page joins them instead.
   return (state.updates || [])
-    .filter(item => item.kind === 'outcome' && (item.metadata || {}).source === 'work-order-history')
+    .filter(item => item.kind === 'outcome'
+      && ['work-order-history', 'morning-work-order'].includes((item.metadata || {}).source)
+      && (item.metadata || {}).work_order_id)
     .map(item => {
       const meta = item.metadata || {};
       return {
@@ -1069,7 +1110,8 @@ export function orderHistoryItems(state) {
         boardIds: Array.isArray(meta.board_ids) ? meta.board_ids : [],
         amendments: Number(meta.amendments || 0),
         doneWhen: meta.done_when || '',
-        walkthrough: meta.walkthrough || null
+        walkthrough: meta.walkthrough || null,
+        today: meta.source === 'morning-work-order'
       };
     })
     .sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')) || a.lane.localeCompare(b.lane));
@@ -1088,8 +1130,8 @@ function renderOrders() {
     note.textContent = !all.length
       ? 'No past work order has been published yet.'
       : shown.length === all.length
-        ? `${all.length} past order${all.length === 1 ? '' : 's'}. Each one opens the plain walkthrough it was run from.`
-        : `${shown.length} of ${all.length} past orders.`;
+        ? `${all.length} order${all.length === 1 ? '' : 's'} on record, ${all.filter(entry => entry.walkthrough).length} with a plain walkthrough. A row opens the walkthrough it was run from.`
+        : `${shown.length} of ${all.length} orders.`;
   }
   list.replaceChildren();
   if (!shown.length) return list.append(empty(all.length ? 'Nothing matches that.' : 'No past work order has been published yet.'));
@@ -1110,7 +1152,10 @@ function orderRow(entry) {
   when.textContent = entry.date ? `${formatDate(entry.date)} · ${entry.lane}` : entry.lane;
   const state_ = document.createElement('em');
   state_.className = `done-owner ${entry.orderStatus === 'completed' ? 'workerbee' : 'david'}`;
-  state_.textContent = entry.orderStatus === 'completed' ? 'Closed' : 'Never closed';
+  // "Never closed" is the right words for a past order that was left open and
+  // the wrong words for today's, which is open because it is still running.
+  state_.textContent = entry.orderStatus === 'completed' ? 'Closed'
+    : entry.today ? 'Running today' : 'Never closed';
   tags.append(state_, when);
   summary.append(title, tags);
   const body = document.createElement('div');
