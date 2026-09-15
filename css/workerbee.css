@@ -170,6 +170,11 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .todo-intro { display: flex; align-items: end; justify-content: space-between; gap: 18px; margin-bottom: 14px; }
 .todo-intro h1 { margin-bottom: 0; }
 .todo-intro p:last-child { max-width: 720px; margin: 5px 0 0; color: var(--muted); font-size: 12px; }
+/* WBR-351. Standing runs the full width under the quadrants: it is a different
+   kind of thing, not a fifth quadrant. */
+.standing-panel { grid-column: 1 / -1; border-style: dashed; }
+.standing-panel .quadrant-label { font-variant-numeric: tabular-nums; }
+
 /* WBR-351. The search box, rebuilt from the 31 August original. */
 .todo-toolbar { display: flex; gap: 10px; align-items: center; margin: 0 0 12px; }
 .todo-search { flex: 1; min-width: 0; padding: 9px 12px; border: 1px solid var(--line); border-radius: 999px; background: var(--surface); color: inherit; font: inherit; }

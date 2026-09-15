@@ -1094,10 +1094,16 @@ export function orderHistoryItems(state) {
   // there; the history rows are everything before today. Publishing today into
   // both would mean two rows per order and a duplicate the moment the morning
   // reran, so the page joins them instead.
+  //
+  // Only the *active* plan row counts as today's. When a morning publishes a new
+  // plan it defers the rows it replaces rather than deleting them, so yesterday's
+  // plan row survives beside the history row written for the same order. Taking
+  // every plan row showed one order twice; taking only the live one leaves the
+  // history row as the single record of every closed day.
   return (state.updates || [])
-    .filter(item => item.kind === 'outcome'
-      && ['work-order-history', 'morning-work-order'].includes((item.metadata || {}).source)
-      && (item.metadata || {}).work_order_id)
+    .filter(item => item.kind === 'outcome' && (item.metadata || {}).work_order_id
+      && (item.metadata.source === 'work-order-history'
+        || (item.metadata.source === 'morning-work-order' && item.status === 'active')))
     .map(item => {
       const meta = item.metadata || {};
       return {
@@ -1498,6 +1504,43 @@ function matchesTodoFilter(fields) {
   return fields.filter(Boolean).join(' ').toLowerCase().includes(todoFilter);
 }
 
+// WBR-351. David: "we had separated tasks that don't have completion dates, and
+// I think we actually did a really big change that helped us organize the items
+// that did have a timeline."
+//
+// The change was real and it is not on this branch. Standing items are
+// practices rather than tasks: they have no finish line on purpose, so they are
+// read on a cadence instead of checked off. They were given their own panel on
+// 31 August and kept out of the quadrants, because a thing that can never be
+// completed sitting in "urgent and important" makes the quadrant meaningless
+// for everything beside it. Main was rebuilt without that, so thirteen of them
+// have been sitting in his quadrants ever since.
+function isStanding(item) {
+  return (item.metadata || {}).roadmap_status === 'standing';
+}
+
+// A practice comes back when its review is due, which is the only thing keeping
+// the panel from becoming a shelf. With no cadence recorded nothing would ever
+// bring it back, so it counts as overdue and says so on the row.
+function reviewDueAt(item) {
+  const every = Number((item.metadata || {}).review_every);
+  const last = Date.parse((item.metadata || {}).last_reviewed || '');
+  if (!Number.isFinite(every) || every <= 0 || !Number.isFinite(last)) return null;
+  return last + every * 86400000;
+}
+
+function reviewOverdue(item) {
+  const due = reviewDueAt(item);
+  return due === null ? true : due <= Date.now();
+}
+
+// A closed or dropped item is not open work and does not belong on a page
+// titled "what needs doing". Eleven of them were rendering as live rows, which
+// is also why the counters on this page have never agreed with each other.
+function isDeadBoardItem(item) {
+  return ['closed', 'dropped', 'cancelled', 'done', 'completed'].includes((item.metadata || {}).roadmap_status);
+}
+
 function boardCardMatches(item) {
   const meta = item.metadata || {};
   return matchesTodoFilter([item.title, item.body, meta.roadmap_item_id, meta.queue_item_id,
@@ -1525,14 +1568,25 @@ function renderTodo() {
   // the board, counted what he could see against the ~200 he knew were open,
   // and got almost none of them. The whole board means the whole board, so
   // roadmap items are here too, grouped by initiative the same way.
-  const queueItems = boardCards(state).filter(boardCardMatches);
+  const liveBoard = boardCards(state).filter(item => !isDeadBoardItem(item));
+  const standingItems = liveBoard.filter(isStanding)
+    .filter(boardCardMatches)
+    .filter(item => (item.metadata?.owner === 'david' ? 'david' : 'workerbee') === todoOwner)
+    .sort((a, b) => (reviewDueAt(a) ?? 0) - (reviewDueAt(b) ?? 0));
+  const queueItems = liveBoard.filter(item => !isStanding(item)).filter(boardCardMatches);
   const captures = state.tasks.filter(isUnrouted).filter(taskMatches);
+  // Standing items are counted here even though they sit outside the quadrants.
+  // They are open work; a tab that says 38 while 51 things are on the page is
+  // the quiet undercount this board exists to stop.
+  const standingAll = liveBoard.filter(isStanding).filter(boardCardMatches);
   const counts = {
     workerbee: queueItems.filter(item => (item.metadata?.owner || 'workerbee') !== 'david').length
+      + standingAll.filter(item => (item.metadata?.owner || 'workerbee') !== 'david').length
       + openTasks.filter(task => task.owner === 'workerbee').length
       + captures.filter(task => task.owner === 'workerbee').length,
     david: openTasks.filter(task => task.owner !== 'workerbee').length
       + queueItems.filter(item => item.metadata?.owner === 'david').length
+      + standingAll.filter(item => item.metadata?.owner === 'david').length
       + captures.filter(task => task.owner !== 'workerbee').length
   };
   el('workerbee-task-count').textContent = counts.workerbee;
@@ -1584,9 +1638,49 @@ function renderTodo() {
     if (!editableProjects.length && !queueProjects.length) panel.append(empty('Nothing here.'));
     root.append(panel);
   }
+  if (standingItems.length) root.append(standingPanel(standingItems));
   renderCaptures();
   renderTodoSearchCount(counts);
   icons();
+}
+
+// WBR-351. Practices, with a review cadence instead of a checkbox, below the
+// quadrants rather than inside one. No done control, because the thing that
+// makes an item standing is that it has no finish line.
+function standingPanel(items) {
+  const panel = document.createElement('section');
+  panel.className = 'todo-quadrant standing-panel';
+  panel.dataset.quadrant = 'standing';
+  const heading = document.createElement('header');
+  heading.className = 'todo-quadrant-heading';
+  const words = document.createElement('div');
+  const title = document.createElement('h2');
+  title.textContent = 'Standing';
+  const note = document.createElement('p');
+  note.textContent = 'Practices, not tasks. These have no finish line on purpose, so they are read on a cadence rather than checked off. They are counted on the tab above but kept out of the quadrants, because something that can never be finished sitting in "urgent and important" makes the quadrant meaningless for everything beside it.';
+  words.append(title, note);
+  const label = document.createElement('span');
+  label.className = 'quadrant-label';
+  label.textContent = String(items.length);
+  heading.append(words, label);
+  panel.append(heading);
+  items.forEach(item => {
+    const row = document.createElement('div');
+    row.className = 'queue-task';
+    const name = document.createElement('strong');
+    name.textContent = item.title;
+    const detail = document.createElement('small');
+    detail.textContent = item.body || item.metadata?.intended_result || '';
+    const when = reviewDueAt(item);
+    const cadence = document.createElement('small');
+    cadence.className = reviewOverdue(item) ? 'last-moved stale' : 'last-moved';
+    cadence.textContent = when === null
+      ? 'No review cadence recorded, so nothing will bring this back on its own.'
+      : `Every ${item.metadata.review_every} days · next ${new Date(when).toISOString().slice(0, 10)}${reviewOverdue(item) ? ' · due now' : ''}`;
+    row.append(name, detail, cadence, itemThread(item, { update_id: item.id }));
+    panel.append(row);
+  });
+  return panel;
 }
 
 // A search that finds nothing on this tab and four things on the other one has
