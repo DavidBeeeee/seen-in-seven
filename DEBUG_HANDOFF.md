@@ -56,10 +56,9 @@ Paste ALL output. This tells us definitively:
 - If multiple active screens → showScreen left screen-0 active too
 
 ## Architecture summary
-Static site on Vercel. Three JS files load in order at bottom of index.html:
-1. `prompts/blueprints.js` — the AI system prompt + Hero's Journey blueprints (CORE IP, DO NOT TOUCH)
-2. `js/supabase.js` — auth + DB layer (Supabase)
-3. `js/app.js` — ~3450 lines, all app logic + global mutable state
+Static site on Vercel. The SeenInSeven app is `seeninseven.html`, which loads its JS at the bottom of the file in this order: `js/script-prompt-engine.js`, `js/journey-map.js`, `js/answer-help.js`, `js/supabase.js` (auth + DB layer), `js/points.js`, then `js/app.js` (all app logic + global mutable state).
+
+The prompt IP is not one of them. `api/_lib/blueprints.txt` holds the AI system prompt and the Hero's Journey blueprints and `api/_lib/prompt-engine.js` assembles it; both are server-side only and are never sent to the browser (CORE IP, DO NOT TOUCH).
 
 `api/generate.js` — Vercel serverless function proxying DeepSeek API for scripts.
 
@@ -112,7 +111,7 @@ localStorage.setItem('bwb_challenge_v1', JSON.stringify({
 - Colors: Teal Deep #0D2828, Teal Vivid #32B8B8, Gold #C8A84B.
 - Fonts: Lora (headlines), Nunito (body), Oswald (labels), Permanent Marker, Space Mono.
 - The challenge is the product; SeenInSeven is the bonus.
-- `prompts/blueprints.js` is core IP — never modify the SYSTEM_PROMPT or blueprints.
+- `api/_lib/blueprints.txt` and `api/_lib/prompt-engine.js` are core IP — never modify the SYSTEM_PROMPT or blueprints.
 
 ## Diagnostics mode
 Add `?debug=1` to any URL → live on-screen trace panel (right side, 340px).

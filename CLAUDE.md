@@ -103,7 +103,7 @@ css/workerbee.css        WorkerBee Dashboard and mobile Todo styles
 
 api/generate.js          DeepSeek proxy for script generation
 api/systeme-webhook.js   Systeme purchase and cancellation receiver
-api/prompt-blueprint.js  Admin-verified GitHub publisher, restricted to prompts/blueprints.js
+api/prompt-blueprint.js  Admin-verified GitHub publisher, restricted to api/_lib/blueprints.txt
 api/prompt-test.js       Prompt tester generation endpoint
 api/guest-config.js, api/guest-verify.js   Guest / pre-auth access
 api/_lib/prompt-engine.js, api/_lib/blueprints.txt, api/_lib/security.js
@@ -112,6 +112,7 @@ api/workerbee.js         David-admin or server-secret gateway to narrow WorkerBe
 launch/private-tiny-challenge/   Active private validation playbook, templates, and ledger
 launch/                  Archived September group source plus future group-launch references
 funnel-pages/            Historical custom-code copies; fetch Systeme before treating one as current
+funnel-pages/README.md   The 2026-09-15 reconciliation: which files drifted, by how much, WBR-343
 funnel-pages/backups/2026-08-06-live/   Untouched pre-launch backup of the live Systeme blocks
 scripts/                 Node check scripts (journey map, lock state, level consistency, style guide, story architecture)
 supabase_migrations/     Dated .sql files, one per applied change
@@ -123,7 +124,7 @@ supabase_migrations/     Dated .sql files, one per applied change
 
 ### Do Not Touch
 
-- **`prompts/blueprints.js`** holds the proprietary Hero's Journey script logic. Never modify it without explicit instruction from David Bee. The only sanctioned write path is `api/prompt-blueprint.js`, driven by the admin Prompt Tester.
+- **`api/_lib/blueprints.txt`** holds the proprietary Hero's Journey blueprint source, and `api/_lib/prompt-engine.js` is the logic that assembles it. Never modify either without explicit instruction from David Bee. The only sanctioned write path to the blueprint is `api/prompt-blueprint.js`, driven by the admin Prompt Tester.
 - **Screen DOM structure.** All `.screen` elements in `seeninseven.html` must remain direct children of `<body>`. If a screen renders blank, check structure before changing JS. Verify with:
   `[...document.querySelectorAll('.screen')].filter(s => s.parentElement !== document.body).map(s => s.id)`
   An unclosed `</div>` once cost a full day of debugging. See `DEAR_FUTURE_CLAUDE.md`.
@@ -162,7 +163,7 @@ Routing lives in the `systeme_product_routes` table, not in code, so a plan ID c
 
 ### Prompt Tester Publishing Rule
 
-`/admin/seeninseven/prompt-tester` may test the complete blueprint against copies of real admin data, but test generations must never write to user records or the `scripts` table. Publishing happens only through `api/prompt-blueprint.js`, which verifies the Supabase user and the `is_admin()` result, validates the full source shape, and is hardcoded to `prompts/blueprints.js` on `main`. It requires a fine-grained `GITHUB_PROMPT_TOKEN` Vercel variable with Contents read/write on only `DavidBeeeee/seen-in-seven`. Do not swap in a broad personal token. Undo must create a reversal commit and stay available only when the latest blueprint commit came from the Prompt Tester.
+`/admin/seeninseven/prompt-tester` may test the complete blueprint against copies of real admin data, but test generations must never write to user records or the `scripts` table. Publishing happens only through `api/prompt-blueprint.js`, which verifies the Supabase user and the `is_admin()` result, validates the full source shape, and is hardcoded to `api/_lib/blueprints.txt` on `main`. It requires a fine-grained `GITHUB_PROMPT_TOKEN` Vercel variable with Contents read/write on only `DavidBeeeee/seen-in-seven`. Do not swap in a broad personal token. Undo must create a reversal commit and stay available only when the latest blueprint commit came from the Prompt Tester.
 
 ### Points System Rule (load-bearing)
 
@@ -332,7 +333,7 @@ Full detail lives in `SEENINSEVEN_ROADMAP.md`. Short version:
 ## Verification Checklist (after any code change)
 
 - All `.screen` elements are still direct children of `<body>`
-- `prompts/blueprints.js` unchanged unless explicitly requested
+- `api/_lib/blueprints.txt` and `api/_lib/prompt-engine.js` unchanged unless explicitly requested
 - Dashboard restore works for both localStorage and magic link
 - Studio admin and SeenInSeven admin both still load data
 - Mobile layout still readable

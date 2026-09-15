@@ -51,7 +51,7 @@ The app is a working vanilla HTML/CSS/JS product on Supabase, DeepSeek, and Verc
 
 ### Protect The Core IP
 
-`prompts/blueprints.js` holds the AI system prompt and proprietary Hero's Journey logic. Do not modify it without explicit instruction. The admin Prompt Tester plus `api/prompt-blueprint.js` is the only sanctioned write path, and it must keep its verification, validation, and undo behavior intact.
+`api/_lib/blueprints.txt` holds the AI system prompt and the proprietary Hero's Journey blueprint source, and `api/_lib/prompt-engine.js` assembles it. Do not modify either without explicit instruction. The admin Prompt Tester plus `api/prompt-blueprint.js` is the only sanctioned write path, and it must keep its verification, validation, and undo behavior intact.
 
 ### Preserve The Supabase Auth Rule
 
@@ -178,7 +178,7 @@ This is a refinement pass, not a feature sprint.
 
 **Underway, through a controlled tool rather than direct edits.**
 
-The admin Prompt Tester now allows testing the complete blueprint against copies of real admin data, editing drafts, confirming, publishing through a verified GitHub path restricted to `prompts/blueprints.js`, and undoing via a reversal commit. `scripts/check-prompt-style-guide.mjs` and `scripts/check-story-architecture.mjs` provide automated checks on output shape and story architecture.
+The admin Prompt Tester now allows testing the complete blueprint against copies of real admin data, editing drafts, confirming, publishing through a verified GitHub path restricted to `api/_lib/blueprints.txt`, and undoing via a reversal commit. `scripts/check-prompt-style-guide.mjs` and `scripts/check-story-architecture.mjs` provide automated checks on output shape and story architecture.
 
 That infrastructure exists so blueprint changes can be tested and reversed. It does not authorize open-ended rewrites. Blueprint work still requires an explicit brief from David Bee.
 
@@ -250,7 +250,7 @@ Still deliberately absent for customers: cross-app user history, a unified activ
 - No cross-app user history or unified activity feed.
 - No framework migration.
 - No broad state-management rewrite.
-- No changes to `prompts/blueprints.js` outside the Prompt Tester and an explicit brief.
+- No changes to `api/_lib/blueprints.txt` or `api/_lib/prompt-engine.js` outside the Prompt Tester and an explicit brief.
 - No new gamification rules bolted onto the generation pipeline. Points read what users already typed and must not touch `buildAPIUserMessage()`.
 
 **Removed from this list in the August 2026 revision:** paid gating and the Systeme webhook, both of which are now built. See Phase 6.
@@ -262,7 +262,7 @@ Still deliberately absent for customers: cross-app user history, a unified activ
 After any app change:
 
 - `git status` understood before editing.
-- `prompts/blueprints.js` unchanged unless explicitly requested.
+- `api/_lib/blueprints.txt` and `api/_lib/prompt-engine.js` unchanged unless explicitly requested.
 - All `.screen` elements remain direct children of `body`.
 - Dashboard restore works.
 - Magic-link and password auth both still work.

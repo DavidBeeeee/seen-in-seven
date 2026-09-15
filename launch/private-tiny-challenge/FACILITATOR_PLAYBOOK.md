@@ -107,4 +107,4 @@ Capture the exact objection to each declined offer. Confirm testimonial and quot
 
 ## Improvement rule
 
-Change one major variable per run. App friction is evidence, not an automatic feature request. Fix an app issue before the next run only when it blocks completion or repeats across participants. Do not modify `prompts/blueprints.js` or begin a major app build from a single reaction.
+Change one major variable per run. App friction is evidence, not an automatic feature request. Fix an app issue before the next run only when it blocks completion or repeats across participants. Do not modify `api/_lib/blueprints.txt` or begin a major app build from a single reaction.
