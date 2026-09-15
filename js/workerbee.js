@@ -1686,6 +1686,74 @@ function matchesTodoFilter(fields) {
   return fields.filter(Boolean).join(' ').toLowerCase().includes(todoFilter);
 }
 
+// WBR-364. Ported from workerbee/seen-in-seven, which main was rebuilt without.
+// These are the shapes a Board row needs in order to say anything beyond its
+// own title, and every one of them has data waiting in the payload today.
+const URL_PATTERN = /https?:\/\/[^\s<>()\[\]]+/g;
+const MARKDOWN_LINK = /\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g;
+const NEXT_MAX = 4;
+const LONG_TERM_MIN = 8;
+
+function anchor(href, text) {
+  const link = document.createElement('a');
+  link.href = href;
+  link.target = '_blank';
+  link.rel = 'noopener noreferrer';
+  link.textContent = text;
+  return link;
+}
+
+function firstUrl(source) {
+  if (!source) return null;
+  if (typeof source === 'object') return source.url || source.link || null;
+  const found = String(source).match(URL_PATTERN);
+  return found ? found[0] : null;
+}
+
+// A link in a Board item is a link. David, 2026-09-01, about the item naming
+// the three hundred questions: "I thought it was going to be on the Todo task."
+// It was. It just was not clickable, which on a surface you work from is the
+// same as absent.
+function writeBodyText(host, text) {
+  const rest = String(text);
+  const parts = [];
+  let last = 0;
+  for (const match of rest.matchAll(MARKDOWN_LINK)) {
+    parts.push({ text: rest.slice(last, match.index) });
+    parts.push({ href: match[2], text: match[1] });
+    last = match.index + match[0].length;
+  }
+  parts.push({ text: rest.slice(last) });
+  for (const part of parts) {
+    if (part.href) { host.append(anchor(part.href, part.text)); continue; }
+    let cursor = 0;
+    for (const found of part.text.matchAll(URL_PATTERN)) {
+      if (found.index > cursor) host.append(document.createTextNode(part.text.slice(cursor, found.index)));
+      host.append(anchor(found[0], found[0]));
+      cursor = found.index + found[0].length;
+    }
+    if (cursor < part.text.length) host.append(document.createTextNode(part.text.slice(cursor)));
+  }
+}
+
+function priorityOf(item) {
+  const value = Number((item.metadata || {}).priority);
+  return Number.isFinite(value) ? value : 5;
+}
+
+function isNext(item) {
+  if (isStanding(item)) return reviewOverdue(item);
+  if ((item.metadata || {}).pinned_today === true) return true;
+  return priorityOf(item) <= NEXT_MAX
+    && (item.metadata || {}).roadmap_status !== 'blocked'
+    && (item.metadata || {}).queue_status !== 'blocked';
+}
+
+function isLongTerm(item) {
+  if (isStanding(item)) return false;
+  return priorityOf(item) >= LONG_TERM_MIN && !isNext(item);
+}
+
 // WBR-351. David: "we had separated tasks that don't have completion dates, and
 // I think we actually did a really big change that helped us organize the items
 // that did have a timeline."
@@ -1846,20 +1914,19 @@ function standingPanel(items) {
   label.textContent = String(items.length);
   heading.append(words, label);
   panel.append(heading);
+  // WBR-364. The same row as everything else on the board, so a practice gains
+  // the identifier and the context every other item just got, with its review
+  // cadence inserted where a done control would be. It deliberately has no done
+  // control, which boardRow already knows.
   items.forEach(item => {
-    const row = document.createElement('div');
-    row.className = 'queue-task';
-    const name = document.createElement('strong');
-    name.textContent = item.title;
-    const detail = document.createElement('small');
-    detail.textContent = item.body || item.metadata?.intended_result || '';
+    const row = boardRow(item);
     const when = reviewDueAt(item);
     const cadence = document.createElement('small');
     cadence.className = reviewOverdue(item) ? 'last-moved stale' : 'last-moved';
     cadence.textContent = when === null
       ? 'No review cadence recorded, so nothing will bring this back on its own.'
       : `Every ${item.metadata.review_every} days · next ${new Date(when).toISOString().slice(0, 10)}${reviewOverdue(item) ? ' · due now' : ''}`;
-    row.append(name, detail, cadence, itemThread(item, { update_id: item.id }));
+    row.insertBefore(cadence, row.querySelector('.task-thread'));
     panel.append(row);
   });
   return panel;
@@ -2001,17 +2068,132 @@ function editableTodoProject({ section, sectionIndex, tasks }) {
 
 function queueTodoProject(project) {
   const { details, body } = projectShell(project.title, project.items.length, `queue:${project.title}`);
-  project.items.sort((a, b) => Number(a.metadata?.priority || 99) - Number(b.metadata?.priority || 99)).forEach(item => {
-    const row = document.createElement('div');
-    row.className = 'queue-task';
-    const title = document.createElement('strong');
-    title.textContent = item.title;
-    const next = document.createElement('small');
-    next.textContent = item.body || item.metadata?.intended_result || '';
-    row.append(title, next, itemThread(item, { update_id: item.id }));
-    body.append(row);
-  });
+  project.items.sort((a, b) => priorityOf(a) - priorityOf(b)).forEach(item => body.append(boardRow(item)));
   return details;
+}
+
+// WBR-364. Everything a Board row can say, which until now was its title and a
+// line of body text.
+//
+// All of this existed on workerbee/seen-in-seven and main was rebuilt without
+// it, while the publisher kept sending the data. Every field read here has been
+// arriving in the payload the whole time and landing on the floor: the
+// identifier, the priority, when the item last actually moved, what the other
+// person owes on it, what it is blocked by, and why something was judged not
+// important.
+//
+// Two of these David asked for by name and then watched disappear.
+// 2026-09-03: "I also can't check off my own items on the list." He could not,
+// because every published row was plain text and the only checkable thing on
+// the page was a task he had typed himself. And the identifier on the row is
+// the other half of the search shipped last night: search lets him find an id
+// he was handed, this lets him read back the id of a thing he is looking at.
+//
+// Main's note thread stays. That is the one part of this row main had and the
+// branch did not, and it is the reason this is a port rather than a merge.
+function boardRow(item) {
+  const row = document.createElement('div');
+  row.className = 'queue-task';
+
+  const head = document.createElement('div');
+  head.className = 'queue-task-head';
+
+  // A standing practice gets no done control, because it has no finish line.
+  // That is the whole reason it is standing.
+  if (!isStanding(item)) {
+    const done = document.createElement('button');
+    done.type = 'button';
+    done.className = 'queue-task-done';
+    done.setAttribute('aria-label', `Mark done: ${item.title}`);
+    done.title = 'Mark this done';
+    done.addEventListener('click', async () => {
+      done.disabled = true;
+      try {
+        await api('update_update', { id: item.id, status: 'completed' });
+        // Marked here and reconciled into WorkerBee's own files on its next
+        // pass. Without that pull-back the next publish would read the source
+        // still saying active and quietly undo this, which is worse than no
+        // button at all.
+        showToast('Marked done. WorkerBee picks it up on its next pass.');
+        state.updates = state.updates.map(entry => (entry.id === item.id ? { ...entry, status: 'completed' } : entry));
+        renderTodo();
+      } catch (error) {
+        done.disabled = false;
+        showToast(error.message, true);
+      }
+    });
+    head.append(done);
+  }
+
+  const badge = document.createElement('span');
+  badge.className = 'priority-badge';
+  badge.dataset.band = isNext(item) ? 'next' : isLongTerm(item) ? 'horizon' : 'board';
+  badge.textContent = priorityOf(item);
+  badge.title = 'Weight of urgency on what to do next. 1 is this week, 8 and over means something else has to finish first.';
+
+  const title = document.createElement('strong');
+  title.textContent = item.title;
+  head.append(badge, title);
+
+  const meta = item.metadata || {};
+  const ref = meta.dbr_id || meta.roadmap_item_id || meta.queue_item_id;
+  if (ref) {
+    const tag = document.createElement('span');
+    tag.className = 'queue-task-ref';
+    tag.textContent = ref;
+    head.append(tag);
+  }
+  row.append(head);
+
+  const detail = document.createElement('small');
+  writeBodyText(detail, item.body || meta.intended_result || '');
+  row.append(detail);
+
+  const itemUrl = firstUrl(meta.source_url) || firstUrl(item.body);
+  if (itemUrl) {
+    const open = anchor(itemUrl, 'Open');
+    open.className = 'card-open-link queue-task-open';
+    row.append(open);
+  }
+
+  // When it last actually moved, derived from commits, logs and recorded
+  // outcomes rather than from a field anything could refresh. "Written down"
+  // means exactly that and nothing since, which is a real answer rather than a
+  // blank.
+  if (meta.last_moved_at) {
+    const days = Math.max(0, Math.floor((Date.now() - Date.parse(meta.last_moved_at)) / 86400000));
+    const moved = document.createElement('small');
+    moved.className = `last-moved${days > 21 ? ' stale' : ''}`;
+    const kind = meta.last_moved_kind === 'created' ? 'written down' : meta.last_moved_kind;
+    moved.textContent = `Last moved ${days === 0 ? 'today' : `${days}d ago`} · ${kind}${meta.last_moved_ref ? ` ${meta.last_moved_ref}` : ''}`;
+    row.append(moved);
+  }
+
+  // What the other person owes on this item. Shown, never blocking: the item
+  // stays owned and advances as far as it can without them.
+  const owes = meta.needs_from_david ? ['Needs from David', meta.needs_from_david]
+    : meta.needs_from_workerbee ? ['Needs from WorkerBee', meta.needs_from_workerbee] : null;
+  if (owes) {
+    const line = document.createElement('small');
+    line.className = 'needs-from';
+    line.textContent = `${owes[0]}: ${owes[1]}`;
+    row.append(line);
+  }
+  if (meta.not_important_because) {
+    const why = document.createElement('small');
+    why.className = 'waiting-on';
+    why.textContent = `Not important: ${meta.not_important_because}`;
+    row.append(why);
+  }
+  if (meta.blocked_by) {
+    const waiting = document.createElement('small');
+    waiting.className = 'waiting-on';
+    waiting.textContent = `Waiting on: ${meta.blocked_by}`;
+    row.append(waiting);
+  }
+
+  row.append(itemThread(item, { update_id: item.id }));
+  return row;
 }
 
 function bindTodoSearch() {

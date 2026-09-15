@@ -215,7 +215,31 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .todo-project[open] summary { border-bottom: 1px solid var(--line-soft); color: var(--text); }
 .project-count { flex: none; color: var(--muted); font: 800 9px/1.4 ui-monospace, SFMono-Regular, Menlo, monospace; }
 .todo-project-body { padding: 0 9px 8px; }
+/* WBR-364. The Board row's own furniture, ported from the branch main was
+   rebuilt without. Deliberately NOT copied verbatim: the original painted with
+   --ink-soft and --accent, and neither has ever been defined on either branch,
+   so the badge and the reference tag were losing their text colour there too.
+   An undefined custom property drops the declaration silently, which is exactly
+   what made the Analytics bars invisible for weeks. Mapped onto the palette this
+   page actually has. */
 .queue-task { padding: 9px 5px; border-top: 1px solid var(--line-soft); }
+.queue-task-head { display: flex; gap: 8px; align-items: baseline; }
+.queue-task-head strong { flex: 1; min-width: 0; }
+.priority-badge { flex: 0 0 auto; min-width: 22px; padding: 1px 6px; border-radius: 999px; background: var(--line-soft); color: var(--muted); font-size: 11px; font-weight: 800; font-variant-numeric: tabular-nums; text-align: center; }
+.priority-badge[data-band="next"] { background: var(--teal); color: var(--bg-deep); }
+.priority-badge[data-band="horizon"] { background: transparent; border: 1px solid var(--line); }
+.queue-task-ref { flex: 0 0 auto; padding: 1px 5px; border-radius: 4px; background: var(--line-soft); color: var(--soft); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; letter-spacing: .04em; }
+.queue-task-done { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 2px; padding: 0; border: 1.5px solid var(--line); border-radius: 5px; background: transparent; cursor: pointer; }
+.queue-task-done:hover { border-color: var(--teal); background: rgba(50, 184, 184, .14); }
+.queue-task-done:disabled { opacity: .4; cursor: default; }
+.last-moved { opacity: .55; font-size: 11px; }
+.last-moved.stale { opacity: 1; color: var(--ember); }
+.needs-from { opacity: .95; font-weight: 700; }
+.waiting-on { opacity: .75; font-style: italic; }
+.card-open-link { display: inline-block; margin-top: 8px; padding: 6px 14px; border: 1px solid var(--ember); border-radius: 999px; color: var(--ember); font-size: 13px; font-weight: 700; }
+.card-open-link:hover { background: var(--ember-soft); }
+.queue-task-open { margin-top: 6px; padding: 4px 12px; font-size: 12px; }
+.queue-task small a { color: var(--teal-light); text-decoration: underline; }
 .queue-task:first-child { border-top: 0; }
 .queue-task strong, .queue-task small { display: block; }
 .queue-task strong { color: var(--text); font-size: 12px; }

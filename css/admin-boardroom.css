@@ -5,7 +5,7 @@
 .boardroom-workspace { color: var(--studio-soft); font-weight: 800; }
 .boardroom-empty { color: var(--studio-muted); font-size: 12px; }
 .boardroom-access-button { min-width: 96px; }
-.profile-status { display: inline-flex; border: 1px solid var(--studio-line); padding: 4px 7px; color: var(--studio-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; }
+.profile-status { display: inline-flex; border: 1px solid var(--studio-border); padding: 4px 7px; color: var(--studio-muted); font-size: 11px; font-weight: 800; text-transform: uppercase; }
 .profile-status.complete { border-color: rgba(45, 180, 163, 0.35); color: var(--studio-soft); }
 .profile-name { display: block; margin-top: 5px; color: var(--studio-muted); font-size: 11px; }
 @media (max-width: 1260px) { .boardroom-metrics { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
