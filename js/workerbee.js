@@ -1818,7 +1818,20 @@ function renderTodo() {
   // the board, counted what he could see against the ~200 he knew were open,
   // and got almost none of them. The whole board means the whole board, so
   // roadmap items are here too, grouped by initiative the same way.
-  const liveBoard = boardCards(state).filter(item => !isDeadBoardItem(item));
+  // WBR-366. A closed or dropped item is not open work and stays off the board,
+  // but a search goes and gets it anyway.
+  //
+  // The dead-item filter shipped last night and broke the exact thing the search
+  // was built for. David's complaint was "I can't see what wbr-214 is"; WBR-214
+  // is dropped, so the filter hid it and his own search answered "nothing
+  // matches that" about the one identifier he had asked about by name.
+  //
+  // Search already looks past the owner tab and past the quadrants, on the
+  // principle that an id he has been handed is an id he wants found. A dropped
+  // item is one more container to have to guess, so it looks past that too, and
+  // the row says what happened to it rather than appearing as live work.
+  const searching = Boolean(todoFilter);
+  const liveBoard = boardCards(state).filter(item => searching || !isDeadBoardItem(item));
   const standingItems = liveBoard.filter(isStanding)
     .filter(boardCardMatches)
     .filter(item => (item.metadata?.owner === 'david' ? 'david' : 'workerbee') === todoOwner)
@@ -2100,7 +2113,7 @@ function boardRow(item) {
 
   // A standing practice gets no done control, because it has no finish line.
   // That is the whole reason it is standing.
-  if (!isStanding(item)) {
+  if (!isStanding(item) && !isDeadBoardItem(item)) {
     const done = document.createElement('button');
     done.type = 'button';
     done.className = 'queue-task-done';
@@ -2136,6 +2149,13 @@ function boardRow(item) {
   head.append(badge, title);
 
   const meta = item.metadata || {};
+  if (isDeadBoardItem(item)) {
+    row.classList.add('queue-task-dead');
+    const gone = document.createElement('span');
+    gone.className = 'queue-task-dead-tag';
+    gone.textContent = String(meta.roadmap_status || 'closed');
+    head.append(gone);
+  }
   const ref = meta.dbr_id || meta.roadmap_item_id || meta.queue_item_id;
   if (ref) {
     const tag = document.createElement('span');

@@ -229,6 +229,9 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .priority-badge[data-band="next"] { background: var(--teal); color: var(--bg-deep); }
 .priority-badge[data-band="horizon"] { background: transparent; border: 1px solid var(--line); }
 .queue-task-ref { flex: 0 0 auto; padding: 1px 5px; border-radius: 4px; background: var(--line-soft); color: var(--soft); font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 10px; letter-spacing: .04em; }
+.queue-task-dead { opacity: .62; }
+.queue-task-dead .queue-task-head strong { text-decoration: line-through; }
+.queue-task-dead-tag { flex: 0 0 auto; padding: 1px 6px; border-radius: 999px; background: var(--line-soft); color: var(--ember); font-size: 10px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; }
 .queue-task-done { flex: 0 0 auto; width: 18px; height: 18px; margin-top: 2px; padding: 0; border: 1.5px solid var(--line); border-radius: 5px; background: transparent; cursor: pointer; }
 .queue-task-done:hover { border-color: var(--teal); background: rgba(50, 184, 184, .14); }
 .queue-task-done:disabled { opacity: .4; cursor: default; }
