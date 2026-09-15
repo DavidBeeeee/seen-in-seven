@@ -11,6 +11,10 @@ let toastTimer = null;
 let journalExpanded = false;
 let todoOwner = 'workerbee';
 let todoFilter = '';
+// WBR-359. Writing a revision re-renders the Dashboard, so whether the
+// walkthrough panel is open has to outlive the render or the act of opening the
+// composer would shut the thing being revised.
+let walkthroughOpen = false;
 let analyticsPeriod = 'week';
 // The instruction thread, WBR-321. A render rebuilds the whole board, so the
 // box David is typing in and the project he opened have to be remembered here
@@ -402,10 +406,15 @@ export function todaysWalkthroughs() {
       && (item.metadata || {}).walkthrough)
     .sort((a, b) => Number(a.metadata.rank || 99) - Number(b.metadata.rank || 99))
     .map(item => ({
+      item,
       lane: item.metadata.lane || '',
       revision: item.metadata.walkthrough_revision,
       current: item.metadata.walkthrough_current !== false,
-      markdown: item.metadata.walkthrough
+      markdown: item.metadata.walkthrough,
+      // WBR-359. Revisions David has written against this order that no lane
+      // has answered. Surfaced on the button so he can see at a glance that
+      // something is still owed him without opening the panel.
+      unanswered: (item.notes || []).filter(note => note.author === 'david' && !note.acknowledged_at).length
     }));
 }
 
@@ -421,30 +430,42 @@ function walkthroughButton(walkthroughs) {
     : `Read today's ${walkthroughs.length} plans in plain words`;
   const panel = document.createElement('div');
   panel.className = 'walkthrough-panel';
-  panel.hidden = true;
-  button.setAttribute('aria-expanded', 'false');
+  const fill = () => {
+    panel.replaceChildren();
+    walkthroughs.forEach(entry => {
+      if (!entry.current) {
+        const warning = document.createElement('p');
+        warning.className = 'walkthrough-stale';
+        warning.textContent = `This ${entry.lane} plan was written against an earlier version of the order and the order has changed since. Treat it as out of date.`;
+        panel.append(warning);
+      }
+      panel.append(walkthroughBlock(entry.markdown, { item: entry.item }));
+    });
+  };
+  panel.hidden = !walkthroughOpen;
+  if (walkthroughOpen) fill();
+  button.setAttribute('aria-expanded', String(walkthroughOpen));
   button.addEventListener('click', () => {
-    const open = panel.hidden;
-    if (open && !panel.childElementCount) {
-      walkthroughs.forEach(entry => {
-        if (!entry.current) {
-          const warning = document.createElement('p');
-          warning.className = 'walkthrough-stale';
-          warning.textContent = `This ${entry.lane} plan was written against an earlier version of the order and the order has changed since. Treat it as out of date.`;
-          panel.append(warning);
-        }
-        panel.append(walkthroughBlock(entry.markdown));
-      });
-    }
-    panel.hidden = !open;
-    button.setAttribute('aria-expanded', String(open));
+    walkthroughOpen = !walkthroughOpen;
+    if (walkthroughOpen) fill();
+    panel.hidden = !walkthroughOpen;
+    button.setAttribute('aria-expanded', String(walkthroughOpen));
   });
+  wrap.append(button);
   if (stale) {
     const flag = document.createElement('span');
     flag.className = 'walkthrough-stale-chip';
     flag.textContent = `${stale} out of date`;
-    wrap.append(button, flag, panel);
-  } else wrap.append(button, panel);
+    wrap.append(flag);
+  }
+  const waiting = walkthroughs.reduce((total, entry) => total + (entry.unanswered || 0), 0);
+  if (waiting) {
+    const flag = document.createElement('span');
+    flag.className = 'walkthrough-waiting-chip';
+    flag.textContent = `${waiting} revision${waiting === 1 ? '' : 's'} not answered yet`;
+    wrap.append(flag);
+  }
+  wrap.append(panel);
   return wrap;
 }
 
@@ -1184,9 +1205,170 @@ function orderRow(entry) {
 // rendered rather than dumped: headings, bold step titles, list items and
 // paragraphs. Deliberately not a markdown library, because the generator is the
 // only thing that writes this and it emits four shapes.
-export function walkthroughBlock(markdown) {
+// WBR-359. A revision is a note on the published work order, tagged with the
+// step it belongs to. It reuses the note thread that already works on the Todo
+// page rather than inventing a second channel, which is what David asked for
+// and is also the only reason this reaches a lane at all: resume already reports
+// every unanswered note on an update, so a revision written at nine is in front
+// of the eleven o'clock lane without anybody carrying it.
+//
+// The step is carried as a prefix in the note body rather than in a column,
+// because a note has no metadata field and adding one would be a migration for
+// something a convention settles. `stepTag` and `parseStepTag` are the two ends
+// of it and they are the only places that know the format.
+//
+// A revision deliberately does not edit the assignment. It lands beside the
+// order as something to reconcile, so the amendment history stays readable and
+// the lane has to answer rather than silently absorb it.
+export function stepTag(step) {
+  return `[Step ${step}]`;
+}
+
+export function parseStepTag(body) {
+  const match = /^\[Step (\d+)\]\s*/.exec(String(body || ''));
+  return match ? { step: Number(match[1]), body: String(body).slice(match[0].length) } : { step: null, body: String(body || '') };
+}
+
+function stepRevisions(item, step) {
+  const wrap = document.createElement('div');
+  wrap.className = 'step-revisions';
+  const mine = (item.notes || [])
+    .map(note => ({ note, parsed: parseStepTag(note.body) }))
+    .filter(entry => entry.parsed.step === step.step)
+    .sort((a, b) => String(a.note.created_at).localeCompare(String(b.note.created_at)));
+  mine.forEach(({ note, parsed }) => {
+    const entry = document.createElement('article');
+    entry.className = 'task-note' + (note.author === 'workerbee' ? ' from-workerbee' : '');
+    const meta = document.createElement('p');
+    meta.className = 'task-note-meta';
+    const who = document.createElement('strong');
+    who.textContent = note.author === 'workerbee' ? 'WorkerBee' : 'David';
+    const when = document.createElement('time');
+    when.dateTime = note.created_at;
+    when.textContent = formatDateTime(note.created_at);
+    meta.append(who, when);
+    if (note.author === 'david' && !note.acknowledged_at) {
+      const waiting = document.createElement('span');
+      waiting.className = 'task-note-waiting';
+      waiting.textContent = 'The lane has not answered this yet';
+      meta.append(waiting);
+    }
+    const body = document.createElement('p');
+    body.className = 'task-note-body';
+    body.textContent = parsed.body;
+    entry.append(meta, body);
+    wrap.append(entry);
+  });
+  wrap.append(stepComposer(item, step, mine.length));
+  return wrap;
+}
+
+function stepComposer(item, step, threadLength) {
+  const key = `step:${item.id}:${step.step}`;
+  const wrap = document.createElement('div');
+  wrap.className = 'task-note-add';
+  wrap.dataset.noteTarget = key;
+  const open = openNoteComposers.has(key);
+  const label = document.createElement('button');
+  label.type = 'button';
+  label.className = 'task-note-label';
+  label.textContent = open ? 'Writing against this step'
+    : threadLength ? 'Add to this step' : 'Change this step';
+  label.setAttribute('aria-expanded', String(open));
+  const form = document.createElement('form');
+  form.className = 'task-note-form';
+  form.hidden = !open;
+  const box = document.createElement('textarea');
+  box.className = 'task-note-box';
+  box.rows = 3;
+  box.maxLength = 3900;
+  box.placeholder = `What should change about "${step.title}"?`;
+  box.setAttribute('aria-label', `Revision for step ${step.step}`);
+  box.value = noteDrafts.get(key) || '';
+  box.addEventListener('input', () => noteDrafts.set(key, box.value));
+  const actions = document.createElement('div');
+  actions.className = 'task-note-actions';
+  const save = document.createElement('button');
+  save.className = 'primary-button small';
+  save.type = 'submit';
+  save.textContent = 'Save revision';
+  const cancel = document.createElement('button');
+  cancel.className = 'quiet-button small';
+  cancel.type = 'button';
+  cancel.textContent = 'Cancel';
+  actions.append(save, cancel);
+  form.append(box, actions);
+
+  const toggle = () => {
+    if (openNoteComposers.has(key)) { openNoteComposers.delete(key); noteDrafts.delete(key); }
+    else openNoteComposers.add(key);
+    renderDashboard();
+    if (openNoteComposers.has(key)) {
+      [...document.querySelectorAll('[data-note-target]')]
+        .find(node => node.dataset.noteTarget === key)?.querySelector('.task-note-box')?.focus();
+    }
+  };
+  label.addEventListener('click', toggle);
+  cancel.addEventListener('click', toggle);
+  box.addEventListener('keydown', event => {
+    if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) { event.preventDefault(); form.requestSubmit(); }
+  });
+  form.addEventListener('submit', async event => {
+    event.preventDefault();
+    const value = box.value.trim();
+    if (!value) { box.focus(); return; }
+    save.disabled = true;
+    box.disabled = true;
+    try {
+      const created = await api('create_item_note', { update_id: item.id, body: `${stepTag(step.step)} ${value}` });
+      item.notes = [...(item.notes || []), created];
+      openNoteComposers.delete(key);
+      noteDrafts.delete(key);
+      renderDashboard();
+      showToast('Revision saved. The lane that runs this order has to answer it before it starts.');
+    } catch (error) {
+      save.disabled = false;
+      box.disabled = false;
+      showToast(error.message, true);
+    }
+  });
+  wrap.append(label, form);
+  return wrap;
+}
+
+// WBR-359. The blocks of a walkthrough, split at each step so a revision can be
+// written against one step rather than against the whole plan. David: every
+// useful correction he made on 2026-09-15 was about one specific step, and all
+// three of them reached the lane only because they were hand-carried into an
+// amendment.
+export function walkthroughSteps(markdown) {
+  const blocks = String(markdown).split(/\n{2,}/).map(part => part.trim()).filter(Boolean);
+  const steps = [];
+  let current = { step: 0, title: null, blocks: [] };
+  for (const block of blocks) {
+    const heading = /^\*\*Step (\d+)\. (.+?)\*\*$/.exec(block);
+    if (heading) {
+      steps.push(current);
+      current = { step: Number(heading[1]), title: heading[2], blocks: [block] };
+    } else current.blocks.push(block);
+  }
+  steps.push(current);
+  return steps.filter(entry => entry.blocks.length);
+}
+
+export function walkthroughBlock(markdown, options = {}) {
   const box = document.createElement('div');
   box.className = 'walkthrough';
+  if (options.item) {
+    for (const step of walkthroughSteps(markdown)) {
+      const section = document.createElement('section');
+      section.className = 'walkthrough-step';
+      section.append(walkthroughBlock(step.blocks.join('\n\n')));
+      if (step.step) section.append(stepRevisions(options.item, step));
+      box.append(section);
+    }
+    return box;
+  }
   for (const block of String(markdown).split(/\n{2,}/).map(part => part.trim()).filter(Boolean)) {
     if (block.startsWith('---')) continue;
     if (block.startsWith('### ')) {
