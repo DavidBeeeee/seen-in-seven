@@ -14,7 +14,7 @@
 
 This exists so future Codex sessions, Claude sessions, GitHub Desktop work, and human developers stop reinterpreting project direction from older handoff notes.
 
-`DEVELOPER_HANDOFF.md` remains the reference for architecture history and debugging lore. `CLAUDE.md` is the current working brief for anyone touching code. **This file is the source of truth for what should be built next, what should wait, and what should not be resurrected until David Bee reopens it.**
+`777_CHALLENGE_MASTER_OVERVIEW.md` is the source of truth for the current 777 business experience, funnel, offer ladder, cadence, tags, validation state, and unresolved decisions. `DEVELOPER_HANDOFF.md` remains the reference for architecture history and debugging lore. `CLAUDE.md` is the current working brief for anyone touching code. **This file is the source of truth for what should be built next, what should wait, and what should not be resurrected until David Bee reopens it.**
 
 ### What Changed In The August 8, 2026 Revision
 

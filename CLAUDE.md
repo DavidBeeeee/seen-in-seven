@@ -4,6 +4,8 @@
 
 ## Entry reality check
 
+Before any 777 Challenge planning, funnel, offer, email, tag, schedule, or participant-experience work, read `777_CHALLENGE_MASTER_OVERVIEW.md`. That file owns the current business and program truth. This brief owns the product's technical working context.
+
 This file describes the product; it does not prove the current checkout or the
 live site. Before searching, editing, or claiming that something exists or is
 missing:
