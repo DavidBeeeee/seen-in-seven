@@ -11,6 +11,22 @@
   --teal: #32b8b8;
   --teal-light: #68c8c8;
   --gold: #c8a84b;
+  /* WBR-351. David: "the bars on the graph on the analytics page are still
+     missing." They were never missing. Five rules on this branch paint with
+     --ember and nothing on this branch has ever defined it, so every bar was
+     drawn at the right width and the right height and filled with nothing. The
+     variable was added on 31 August in the same divergence that took his search
+     and his standing panel; main was rebuilt without the palette entry and kept
+     every rule that depends on it.
+
+     This is the failure mode of an undefined custom property and it is worth
+     naming: it does not throw, it does not warn, and it does not fall back. The
+     declaration is simply dropped, so a bar keeps its box and loses its colour
+     and the page looks like it has no data rather than like it is broken. I
+     measured the bar heights earlier tonight, saw real numbers, and told him the
+     chart was fine. Geometry is not paint. */
+  --ember: #e2893f;
+  --ember-soft: rgba(226, 137, 63, 0.13);
   --green: #4ade80;
   --danger: #ef4444;
   color-scheme: dark;
