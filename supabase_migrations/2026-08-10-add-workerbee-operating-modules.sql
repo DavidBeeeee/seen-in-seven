@@ -83,23 +83,18 @@ create policy workerbee_events_deny_direct_access on public.workerbee_events for
 drop policy if exists workerbee_products_deny_direct_access on public.workerbee_products;
 create policy workerbee_products_deny_direct_access on public.workerbee_products for all to anon, authenticated using (false) with check (false);
 
-insert into public.workerbee_clients (stable_key, name, relationship_status, current_focus, follow_up_date, transcript_status, commitments, drive_url, client_thread_url, living_plan_url, metadata)
-values
-  ('scott', 'Scott', 'active', 'Details have not yet been reconciled into WorkerBee.', null, 'unknown', '[]'::jsonb, null, null, null, '{"source":"David declared active client on 2026-08-10"}'::jsonb),
-  ('magdalena-dubaj', 'Magda', 'active', 'Recover control of the GetSpace account and domain before choosing the smallest email-capture page.', null, 'current', '[{"id":"CL-20260810-001","owner":"Magda","title":"Recover or confirm GetSpace/domain access.","status":"active"},{"id":"CL-20260810-002","owner":"Magda","title":"Choose the smallest email-capture landing page using the existing e-book.","status":"blocked"}]'::jsonb, 'https://drive.google.com/file/d/1MKkZ7bKWmdQW3ddbRMXqzF_QA3-UVOzR/view', 'state/CLIENT_THREADS/Magdalena_Dubaj.md', 'https://docs.google.com/document/d/12-u2_7joZ5uzm6in3ScpBiLLQNLwn4mXt6lO34QSMx4/edit', '{"source":"state/CLIENT_THREADS/Magdalena_Dubaj.md","nextCheck":"Before next coaching session; exact date unconfirmed."}'::jsonb),
-  ('naya', 'Naya', 'occasional', 'Choose one specific Tiny Challenge problem and test David''s seven-day framework at the next session.', '2026-08-17', 'current', '[{"id":"CL-20260810-003","owner":"Naya","title":"Choose one specific problem for her Tiny Challenge.","status":"active"},{"id":"CL-20260810-004","owner":"David","title":"Finish the seven-day framework and run Naya through it.","status":"active"}]'::jsonb, 'https://drive.google.com/file/d/1xwCUXXR7SifL9dTj4UQ4g2ZP53V-whsb/view', 'state/CLIENT_THREADS/Naya.md', 'https://docs.google.com/document/d/1yt4FVXYz2YvzT5yIsek1MJHL8GEv6rt394Ph-qEvA-E/edit', '{"source":"state/CLIENT_THREADS/Naya.md","relationship":"skill swap"}'::jsonb)
-on conflict (stable_key) do update set
-  name = excluded.name,
-  relationship_status = excluded.relationship_status,
-  current_focus = excluded.current_focus,
-  follow_up_date = excluded.follow_up_date,
-  transcript_status = excluded.transcript_status,
-  commitments = excluded.commitments,
-  drive_url = excluded.drive_url,
-  client_thread_url = excluded.client_thread_url,
-  living_plan_url = excluded.living_plan_url,
-  metadata = excluded.metadata,
-  updated_at = now();
+-- WBR-344, 2026-09-15. The three real client rows that used to be seeded here
+-- were removed. This repository is public, and the block carried three named
+-- clients with their relationship status, current focus, open commitments and
+-- direct links to their private Drive files and Living Plan documents.
+--
+-- Client records are not seed data. They live in WorkerBee's private state
+-- (state/CLIENTS.json and state/CLIENT_THREADS/) and reach this table through
+-- workerbee_operating_mutate('upsert_client', ...), which is server-secret
+-- gated. The rows already in Supabase are unaffected by this edit; the table's
+-- deny-all policy above is what keeps them from anon and authenticated readers.
+--
+-- Do not seed a person into a migration. Migrations are schema.
 
 insert into public.workerbee_events (stable_key, title, event_type, status, starts_at, ends_at, current_milestone, next_action, registration_url, source_url, metadata)
 values
