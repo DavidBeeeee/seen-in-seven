@@ -627,12 +627,23 @@ function renderDashboard() {
   el('needs-count').textContent = String(needs.length);
   // WBR-350. The open count on the page he opens first, from the same
   // function as the Todo tabs, the analytics card and the audit.
-  const boardBands = openWorkBands(boardCards(state));
+  //
+  // The headline figure is the Board alone, because that is the number David
+  // asks about and the number the audit prints. Getting every surface onto one
+  // selector was not enough by itself: this card first shipped counting the
+  // Board and the execution queue together and read 159 against the audit's
+  // 148 with both using the identical rule, because the scopes differed rather
+  // than the filters. A number that does not say what it counts is the bug.
+  const cards = boardCards(state);
+  const boardBands = openWorkBands(cards.filter(item => (item.metadata || {}).source === 'roadmap'));
+  const queueBands = openWorkBands(cards.filter(item => (item.metadata || {}).source === 'execution-queue'));
   const boardCount = el('board-count');
   if (boardCount) {
     boardCount.hidden = false;
     el('board-count-figure').textContent = String(boardBands.open);
-    el('board-count-label').textContent = bandLabel(boardBands).replace(/^\d+ open: /, '');
+    el('board-count-label').textContent =
+      `open on the Board: ${boardBands.active} to do, ${boardBands.blocked} waiting on something, ${boardBands.standing} standing. `
+      + `${queueBands.open} more in the execution queue.`;
   }
   el('dashboard-freshness').textContent = state.generatedAt ? `Dashboard synced ${formatDateTime(state.generatedAt)}.` : 'Current state loaded.';
   renderHealth();
@@ -1895,7 +1906,16 @@ function renderTodo() {
     if (bands[side]) button.title = bandLabel(bands[side]);
   });
   const legend = el('todo-count-legend');
-  if (legend) legend.textContent = bandLabel(bands[todoOwner] || bands.workerbee);
+  if (legend) {
+    const side = bands[todoOwner] ? todoOwner : 'workerbee';
+    const who = side === 'david' ? 'DavidBee' : 'WorkerBee';
+    // The scope, not just the bands. The tab said 23 while other surfaces said
+    // 48, 14 and 27, and the reason none of them matched is that all four were
+    // answering different questions. This one counts one person's side of
+    // everything, which is a wider question than the Board figure on the
+    // Dashboard, and now it says so.
+    legend.textContent = `${who}: ${bandLabel(bands[side])} Board, execution queue, loose tasks and unrouted captures on this side.`;
+  }
 
   for (const [quadrant, copy] of Object.entries(TODO_QUADRANTS)) {
     const panel = document.createElement('section');
