@@ -36,17 +36,17 @@ as a `WORKERBEE RECONCILIATION` comment at its head.
 | `777-graduation-registration.html` | none identified | not compared | UNVERIFIED |
 | `777-kickoff-registration.html` | /kickoff | 0.0% (0/23) | **STALE** |
 | `777-page2-mvo-wizard.html` | none identified | not compared | UNVERIFIED |
-| `777-soap-opera-sequence.html` | none identified | not compared | UNVERIFIED |
-| `app-page1-block1-main-body.html` | none identified | not compared | UNVERIFIED |
-| `app-page1-block2-faq-close.html` | none identified | not compared | UNVERIFIED |
-| `app-page3-block1-order-above-form.html` | none identified | not compared | UNVERIFIED |
-| `app-page3-block2-order-below-form.html` | none identified | not compared | UNVERIFIED |
-| `app-page4-block1-upsell-above-buttons.html` | none identified | not compared | UNVERIFIED |
-| `app-page4-block2-upsell-below-buttons.html` | none identified | not compared | UNVERIFIED |
-| `app-page5-block1-downsell-above-embed.html` | none identified | not compared | UNVERIFIED |
-| `app-page5-block2-downsell-send-off.html` | none identified | not compared | UNVERIFIED |
-| `app-page6-block1-thankyou-delivery.html` | none identified | not compared | UNVERIFIED |
-| `app-page6-block2-thankyou-close.html` | none identified | not compared | UNVERIFIED |
+| `archive-no-served-page/777-soap-opera-sequence.html` | none identified | not compared | **ARCHIVED** |
+| `archive-no-served-page/app-page1-block1-main-body.html` | none identified | not compared | **ARCHIVED** |
+| `archive-no-served-page/app-page1-block2-faq-close.html` | none identified | not compared | **ARCHIVED** |
+| `archive-no-served-page/app-page3-block1-order-above-form.html` | none identified | not compared | **ARCHIVED** |
+| `archive-no-served-page/app-page3-block2-order-below-form.html` | none identified | not compared | **ARCHIVED** |
+| `archive-no-served-page/app-page4-block1-upsell-above-buttons.html` | none identified | not compared | **ARCHIVED** |
+| `archive-no-served-page/app-page4-block2-upsell-below-buttons.html` | none identified | not compared | **ARCHIVED** |
+| `archive-no-served-page/app-page5-block1-downsell-above-embed.html` | none identified | not compared | **ARCHIVED** |
+| `archive-no-served-page/app-page5-block2-downsell-send-off.html` | none identified | not compared | **ARCHIVED** |
+| `archive-no-served-page/app-page6-block1-thankyou-delivery.html` | none identified | not compared | **ARCHIVED** |
+| `archive-no-served-page/app-page6-block2-thankyou-close.html` | none identified | not compared | **ARCHIVED** |
 | `eee-checkout-window-guard.html` | none identified | not compared | UNVERIFIED |
 | `eee-sales-page.html` | /yeees | 0.0% (0/52) | **STALE** |
 | `eee-thankyou.html` | none identified | not compared | UNVERIFIED |
@@ -72,9 +72,32 @@ as a `WORKERBEE RECONCILIATION` comment at its head.
 - Twenty-six files have no identifiable served page, including the whole `app-page*`
   set and the `sis-page3` through `sis-page6` blocks. They may belong to funnels
   that are switched off. They were not compared and are marked UNVERIFIED rather
-  than current.
+  than current. Eleven of them were moved to `archive-no-served-page/` on
+  2026-09-16; see below.
 
 `backups/2026-08-06-live/` is a deliberate pre-launch snapshot and is left alone.
+
+## The archive inside the archive, 2026-09-16
+
+MT-135, MT-136, MT-047. Reconciling this directory and labelling it honestly was
+the first half. Nothing had actually moved, so eleven files that match no served
+page still sat in the same listing as the files that do, which is how somebody
+edits the wrong copy and believes they fixed a live page.
+
+Those eleven are now in **`archive-no-served-page/`**: the ten `app-page*`
+blocks, both `app-page6` thank-you blocks among them, and
+`777-soap-opera-sequence.html`. Their rows above carry the archive path.
+
+Nothing was deleted. They were moved, and `git log --follow` still reaches their
+history. They are marked ARCHIVED rather than STALE because they were never
+compared: no served page could be identified for any of them, and they may
+belong to funnels that are switched off. An archived file is one nobody has
+shown is current, which is a weaker claim than stale and a good enough reason to
+keep it out of the way.
+
+The `sis-page3` through `sis-page6` blocks are also UNVERIFIED and were left
+where they are, because the `sis-` set still has live members in the same
+family and splitting it would make the table harder to read rather than easier.
 
 ## The standing rule
 

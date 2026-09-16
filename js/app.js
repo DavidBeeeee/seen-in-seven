@@ -335,9 +335,19 @@ let authScreenMode = 'signin';
 // ── ENGAGEMENT LINKS ──────────────────────────────────
 // David Bee: paste the real URLs here when ready. While a URL is empty,
 // its dashboard card stays hidden — nothing broken shows to users.
+//
+// MT-159, WBR-208. Both of these were empty from the day the cards were built,
+// so both cards had never rendered to anybody. Half of it is answered now:
+// David put the Midweek Momentum Meeting live on /777meeting on 2026-09-15 and
+// it points here. Verified on 2026-09-16 as a live Calendly booking page,
+// "15-60 Minute Strategy Session - David Bee", HTTP 200.
+//
+// `graduation` stays empty on purpose. No graduation URL exists yet, and the
+// rule above is the right one: a card pointing at nothing is worse than no
+// card. It fills in when there is a real page to fill it with, and not before.
 const ENGAGE_LINKS = {
   graduation: '',   // Graduation Event page/replay URL
-  schedule: ''      // 1-1 call scheduling URL
+  schedule: 'https://calendly.com/davidbee/free'      // 1-1 call scheduling URL
 };
 
 // ── THEME ─────────────────────────────────────────────

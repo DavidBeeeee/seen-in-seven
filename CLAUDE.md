@@ -25,7 +25,64 @@ missing:
 
 Colorado Mastermind Studio is the authenticated product home for David Bee's paid offers. It lives at `studio.coloradomastermind.com` and hosts several apps behind one login.
 
-SeenInSeven is the first and most complete app inside it. Users answer onboarding questions, the app generates seven personalized video scripts through the DeepSeek API, and users film, post, and track progress. SeenInSeven is the bonus that makes the 777 Challenge easier to finish. The challenge is the product.
+SeenInSeven is the first and most complete app inside it. Users answer onboarding questions, the app generates personalized video scripts through the DeepSeek API, and users film, post, and track progress. SeenInSeven is the bonus that makes the 777 Challenge easier to finish. The challenge is the product.
+
+### The two levels and the fourteen-video architecture
+
+MT-138. This brief said "seven scripts" everywhere and never mentioned that the
+product has two levels. It has had two since the July 25 architecture override,
+and on 2026-09-15 one of the two live participants was generating at Level 2,
+so a developer reading this file would have been wrong about the product in
+front of them.
+
+SeenInSeven does not write seven scripts. It writes seven at each of two
+levels, **fourteen in all**, and the two levels are different products wearing
+one interface. Onboarding establishes which level a user is on before the
+commitment moment, through two short routing questions, a pain question and a
+purpose question.
+
+**Level 1.** For someone who has never posted, or barely has, and may not have
+a business at all. The work is finding their voice, getting comfortable on
+camera, and discovering they are worth listening to. The audience is anyone who
+relates to their humanity. The scripts are personal, vulnerable and real. This
+is the level the 777 Challenge sells.
+
+**Level 2.** For someone with knowledge, skills or experience who is stepping
+into visibility. Level 2 users range from "I have expertise and I am thinking
+about building something" to "I have an established practice", and the scripts
+have to work across that whole spectrum: never assume clients, an offer, or
+revenue. Assume knowledge and passion. The audience is anyone who could benefit
+from what this person knows.
+
+Both levels run the same seven-chapter spine, and the level changes what each
+chapter has to accomplish:
+
+1. **Declaration.** The speaker commits before feeling ready.
+2. **Ordinary World and Refusal.** An ordinary person in a familiar life, and why leaving that identity felt unreasonable. Level 2 must not turn this into a hidden-expert origin story; identification comes before admiration.
+3. **First Epiphany and Threshold.** One evidence thread makes the old understanding impossible to keep.
+4. **Road of Trials.** The epiphany becomes a real choice before enough proof exists. Level 2 centers one recoverable trial and the temptation to retreat.
+5. **Fall or Ordeal.** A real defeat through a one-way door, with the speaker owning their part in it. No recovery and no lesson yet.
+6. **Second Epiphany or Elixir.** Level 1 finds the truth earned through the fall. Level 2 reveals the speaker's counterintuitive way of working, grounded in lived evidence.
+7. **Return.** The speaker integrates the journey and becomes capable of guiding someone who recognizes the earlier struggle. Level 2 also makes the earned professional difference clear.
+
+Level 1 finishes by inviting the person into Level 2. Whether Level 2 is
+visible to a first-time buyer in launch copy is an open decision and is not
+made here.
+
+**The live source for generation is `api/_lib/blueprints.txt`, assembled by
+`api/_lib/prompt-engine.js`.** Neither is in a `prompts/` directory, whatever
+any older document says.
+
+**The two levels are named differently in two places and nobody has picked
+one.** WBR-206. `api/_lib/blueprints.txt`, which is what actually generates,
+calls them `LEVEL 1 - THE RELATABLE HERO SERIES` and `LEVEL 2 - THE RELUCTANT
+EXPERT SERIES`. The July 25 architecture override in
+`Hero's Journey 777 Video Challenge.md` calls them THE PERSON SERIES and THE
+EXPERT SERIES, and the business document says Level 2 has no name yet. Do not
+reconcile these by editing the generator: it is live, two participants are
+mid-challenge inside it, and the name is David's decision. Use the blueprint
+names when you mean what the product does today, and say which source you are
+quoting.
 
 Systeme.io remains the public funnel, checkout, and email platform. Studio never sells; it only delivers.
 
@@ -185,7 +242,13 @@ Update this file once per monthly cycle, along with the public page dates, email
 
 ### Engagement Links Rule
 
-`ENGAGE_LINKS` near the top of `js/app.js` holds the Graduation Event and 1-1 scheduling URLs. Both are empty by default and their dashboard cards stay hidden until real URLs are pasted in. Never render a placeholder link.
+`ENGAGE_LINKS` near the top of `js/app.js` holds the Graduation Event and 1-1 scheduling URLs. An empty URL keeps its dashboard card hidden. Never render a placeholder link.
+
+MT-159, WBR-208. `schedule` is filled as of 2026-09-16 with
+`https://calendly.com/davidbee/free`, the Midweek Momentum Meeting David put
+live on `/777meeting`, so the 1-1 card now renders. `graduation` is still empty
+because no graduation page exists, and its card is correctly still hidden. That
+is the rule working, not a gap to close.
 
 ### No Frameworks
 

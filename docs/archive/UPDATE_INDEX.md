@@ -1,3 +1,9 @@
+> **ARCHIVED 2026-09-16, MT-138.** This file is from March 2026. It describes a
+> six-page TRIAL funnel under a page-naming scheme this repository no longer
+> uses, and nothing in it has been reconciled against a page a customer
+> currently reads. It is kept as history. Do not use it to decide what is live;
+> fetch the page instead.
+
 # 777 Challenge TRIAL Funnel - Update Index
 
 **Last Updated:** March 10, 2026  

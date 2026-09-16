@@ -1,4 +1,5 @@
 import { dashboardPanels, isNewSince, boardCards, completedAt } from '/js/panels.mjs';
+import { isClosedWork, isStandingWork, isBlockedWork, openWorkBands, bandLabel } from '/js/open-work.mjs';
 
 const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
@@ -624,6 +625,15 @@ function renderDashboard() {
     });
   }
   el('needs-count').textContent = String(needs.length);
+  // WBR-350. The open count on the page he opens first, from the same
+  // function as the Todo tabs, the analytics card and the audit.
+  const boardBands = openWorkBands(boardCards(state));
+  const boardCount = el('board-count');
+  if (boardCount) {
+    boardCount.hidden = false;
+    el('board-count-figure').textContent = String(boardBands.open);
+    el('board-count-label').textContent = bandLabel(boardBands).replace(/^\d+ open: /, '');
+  }
   el('dashboard-freshness').textContent = state.generatedAt ? `Dashboard synced ${formatDateTime(state.generatedAt)}.` : 'Current state loaded.';
   renderHealth();
   renderGrade();
@@ -875,13 +885,21 @@ function renderAnalytics() {
   const month = latest.score?.thisMonth || { delivered: 0, unattended: 0 };
   const workerbee = latest.workerbee || {};
   const david = latest.david || {};
+  const board = latest.board || {};
   const share = month.delivered ? Math.round(((month.unattended || 0) / month.delivered) * 100) : 0;
   note.textContent = `${snapshots.length} daily snapshot${snapshots.length === 1 ? '' : 's'}, ${snapshots[0].date} to ${latest.date}.`;
   cards.append(
     statCard('Delivered this month', month.delivered || 0, 'Weighted by ranking, so urgent work counts for more.'),
     statCard('Unattended share', `${share}%`, 'Completed inside a scheduled run rather than with David in the room.'),
-    statCard('Open, WorkerBee', workerbee.open || 0, `${workerbee.next || 0} next, ${workerbee.blocked || 0} blocked.`),
-    statCard('Open, David', david.open || 0, `${david.next || 0} next, ${david.needsOther || 0} needing something from me.`),
+    // WBR-350. The Board on its own, first, because it is the number David
+    // asks about and the number the audit prints. Everything under it says
+    // what it counts: these two cards mix the Board with the execution queue,
+    // which is why they could never match the audit even before the filters
+    // were unified.
+    statCard('Open on the Board', board.open ?? 0,
+      `${board.active ?? 0} to do, ${board.blocked ?? 0} waiting on something, ${board.standing ?? 0} standing. Board only, the same count the audit prints.`),
+    statCard('Open, WorkerBee', workerbee.open || 0, `${workerbee.next || 0} next, ${workerbee.blocked || 0} blocked. Board and execution queue.`),
+    statCard('Open, David', david.open || 0, `${david.next || 0} next, ${david.needsOther || 0} needing something from me. Board and execution queue.`),
     statCard('Inbox', (workerbee.inbox || 0) + (david.inbox || 0), 'Captured and not yet routed. Empty is the target.'),
     statCard('Stalled past 21 days', (workerbee.stalledOver21 || 0) + (david.stalledOver21 || 0), `Oldest untouched item is ${Math.max(workerbee.oldestStillDays || 0, david.oldestStillDays || 0)} days still.`)
   );
@@ -1766,7 +1784,7 @@ function isLongTerm(item) {
 // for everything beside it. Main was rebuilt without that, so thirteen of them
 // have been sitting in his quadrants ever since.
 function isStanding(item) {
-  return (item.metadata || {}).roadmap_status === 'standing';
+  return isStandingWork(item);
 }
 
 // A practice comes back when its review is due, which is the only thing keeping
@@ -1787,8 +1805,13 @@ function reviewOverdue(item) {
 // A closed or dropped item is not open work and does not belong on a page
 // titled "what needs doing". Eleven of them were rendering as live rows, which
 // is also why the counters on this page have never agreed with each other.
+//
+// WBR-350. The status list used to be written out here, which made this the
+// fourth place in two repositories holding its own opinion of what open means.
+// It comes from js/open-work.mjs now and so does every other count on this
+// page.
 function isDeadBoardItem(item) {
-  return ['closed', 'dropped', 'cancelled', 'done', 'completed'].includes((item.metadata || {}).roadmap_status);
+  return isClosedWork(item);
 }
 
 function boardCardMatches(item) {
@@ -1842,23 +1865,37 @@ function renderTodo() {
   // They are open work; a tab that says 38 while 51 things are on the page is
   // the quiet undercount this board exists to stop.
   const standingAll = liveBoard.filter(isStanding).filter(boardCardMatches);
-  const counts = {
-    workerbee: queueItems.filter(item => (item.metadata?.owner || 'workerbee') !== 'david').length
-      + standingAll.filter(item => (item.metadata?.owner || 'workerbee') !== 'david').length
-      + openTasks.filter(task => task.owner === 'workerbee').length
-      + captures.filter(task => task.owner === 'workerbee').length,
-    david: openTasks.filter(task => task.owner !== 'workerbee').length
-      + queueItems.filter(item => item.metadata?.owner === 'david').length
-      + standingAll.filter(item => item.metadata?.owner === 'david').length
-      + captures.filter(task => task.owner !== 'workerbee').length
+  // WBR-350. One function, one rule, and the bands said out loud.
+  //
+  // These two numbers used to be sums assembled inline, and the tab showed the
+  // sum with nothing saying what went into it. David's side read 23 while the
+  // audit said 48, the analytics card said 14 and the board metrics said 27,
+  // and no surface admitted which question it was answering. The count is the
+  // same shape as before, because standing and blocked items are open work and
+  // dropping them out of the tab is the undercount this page exists to stop.
+  // What is new is that the composition is now visible instead of inferred.
+  const ownerSide = item => ((item.metadata?.owner || 'workerbee') === 'david' ? 'david' : 'workerbee');
+  const sideOfTask = task => (task.owner === 'workerbee' ? 'workerbee' : 'david');
+  const bandsFor = side => {
+    const board = [...queueItems, ...standingAll].filter(item => ownerSide(item) === side);
+    const tasks = [...openTasks, ...captures].filter(task => sideOfTask(task) === side);
+    const bands = openWorkBands(board);
+    // Loose tasks and unrouted captures have no roadmap status. They are always
+    // open work with a finish line, so they land in the active band.
+    return { ...bands, open: bands.open + tasks.length, active: bands.active + tasks.length, total: bands.total + tasks.length };
   };
-  el('workerbee-task-count').textContent = counts.workerbee;
-  el('david-task-count').textContent = counts.david;
+  const bands = { workerbee: bandsFor('workerbee'), david: bandsFor('david') };
+  el('workerbee-task-count').textContent = bands.workerbee.open;
+  el('david-task-count').textContent = bands.david.open;
   document.querySelectorAll('[data-todo-owner]').forEach(button => {
-    const active = button.dataset.todoOwner === todoOwner;
+    const side = button.dataset.todoOwner;
+    const active = side === todoOwner;
     button.classList.toggle('active', active);
     button.setAttribute('aria-selected', String(active));
+    if (bands[side]) button.title = bandLabel(bands[side]);
   });
+  const legend = el('todo-count-legend');
+  if (legend) legend.textContent = bandLabel(bands[todoOwner] || bands.workerbee);
 
   for (const [quadrant, copy] of Object.entries(TODO_QUADRANTS)) {
     const panel = document.createElement('section');

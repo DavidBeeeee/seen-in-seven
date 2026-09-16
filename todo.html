@@ -51,6 +51,11 @@
         <button class="todo-owner-tab active" type="button" data-todo-owner="workerbee" role="tab" aria-selected="true">WorkerBee <span id="workerbee-task-count">0</span></button>
         <button class="todo-owner-tab" type="button" data-todo-owner="david" role="tab" aria-selected="false">DavidBee <span id="david-task-count">0</span></button>
       </div>
+      <!-- WBR-350. The number on the tab used to stand on its own, and David's
+           said 23 while three other surfaces said 48, 14 and 27. A count with
+           no sentence under it is a number somebody has to guess the meaning
+           of, so the bands it is made of are written out here. -->
+      <p class="todo-count-legend" id="todo-count-legend" role="status"></p>
       <!-- WBR-347. David asked for this on 2026-09-15: a place to enter a new
            todo above the quadrants, one input each, so a thought can be put down
            without first deciding which heading it belongs under. What lands here

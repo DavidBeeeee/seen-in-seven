@@ -34,6 +34,50 @@ SeenInSeven is the bonus and delivery tool for the 777 Challenge. The 777 Challe
 
 Colorado Mastermind Studio is the authenticated home for everything paid. Systeme.io stays the public funnel, registration, checkout, and email platform. Studio never sells. Systeme never delivers the app experience.
 
+### The two levels and the fourteen-video architecture
+
+MT-140. This roadmap mentioned Level 2 exactly once, in passing, inside a Phase
+2 bullet about routing questions, while a live participant was generating at
+Level 2 on 2026-09-15. A roadmap that does not say the product has two levels
+cannot be used to plan the product.
+
+SeenInSeven writes seven scripts at each of two levels, **fourteen in all**.
+The two levels are different products wearing one interface, and onboarding
+establishes which one a user is on before the commitment moment.
+
+**Level 1.** Someone who has never posted, or barely has, and may not have a
+business at all. The work is finding their voice and discovering they are worth
+listening to. The audience is anyone who relates to their humanity. This is the
+level the 777 Challenge sells.
+
+**Level 2.** Someone with knowledge, skills or experience stepping into
+visibility. They range from "I have expertise and I am thinking about building
+something" to "I have an established practice", and the scripts must work
+across that whole spectrum: never assume clients, an offer, or revenue. Assume
+knowledge and passion. The audience is anyone who could benefit from what this
+person knows.
+
+Both levels run the same seven-chapter spine, and the level changes what each
+chapter has to accomplish: Declaration, Ordinary World and Refusal, First
+Epiphany and Threshold, Road of Trials, Fall or Ordeal, Second Epiphany or
+Elixir, Return. Level 1 finishes by inviting the person into Level 2.
+
+Three roadmap consequences, which is why this belongs here rather than only in
+the developer brief:
+
+- **Every "seven" in a plan is a question.** Anything scoped per-video is
+  fourteen paths, not seven. Phase 2's answer help already is; check the rest
+  before scoping.
+- **Whether Level 2 is visible to a first-time buyer in launch copy is an open
+  decision** and is not made here. The 777 sales page currently says seven
+  videos and never mentions a second level.
+- **Level 2 has no agreed name.** WBR-206. `api/_lib/blueprints.txt`, the live
+  generation source assembled by `api/_lib/prompt-engine.js`, calls the two
+  series THE RELATABLE HERO SERIES and THE RELUCTANT EXPERT SERIES. The July 25
+  architecture override calls them THE PERSON SERIES and THE EXPERT SERIES. The
+  business document says Level 2 is unnamed. Do not settle this by editing the
+  generator; it is live and it is David's call.
+
 The current operating assumptions:
 
 - Access to a paid app comes from an entitlement, not from possession of a link.

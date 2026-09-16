@@ -356,7 +356,8 @@ Located in `funnel-pages/`. These are the custom HTML blocks that get pasted int
 - `Hero's Journey 777 Video Challenge.md` — framework reference
 - `social-launch-kit.md` — social content
 - `funnel-audit-brunson.md` — funnel analysis
-- `LANDING_PAGES_INVENTORY.md` and `LANDING_PAGES_EDITS_SUMMARY.md` — landing page tracking
+- `LANDING_PAGES_EDITS_SUMMARY.md` — landing page tracking
+- `docs/archive/LANDING_PAGES_INVENTORY.md` and `docs/archive/UPDATE_INDEX.md` — archived on 2026-09-16, MT-138. Both are from March 2026 and describe a six-page TRIAL funnel under a naming scheme this repository abandoned. Kept as history, not as a reference.
 - `DEAR_FUTURE_CLAUDE.md` — debugging history (read this)
 - `DEVELOPER_HANDOFF.md` — this file
 
