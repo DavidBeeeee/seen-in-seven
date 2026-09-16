@@ -331,8 +331,8 @@ _sb.auth.onAuthStateChange((event, session) => {
           window._SIS_log && _SIS_log('auth:after-restore', {level: state.level, name: state.name});
           if (typeof logEvent === 'function') logEvent('auth_completed', {level: state.level});
           if (typeof _dashboardShown !== 'undefined') _dashboardShown = false;
-          if (state.level && typeof showDashboard === 'function') {
-            showDashboard();
+          if (state.level && typeof resumeSavedWorkflow === 'function') {
+            resumeSavedWorkflow();
           } else {
             window._SIS_log && _SIS_log('auth:no-dashboard', {level: state.level});
             if (typeof showScreen === 'function') showScreen('screen-0');
@@ -940,14 +940,8 @@ async function initAuth() {
       _syncPointsStateToDb();
       fetchPointsConfig();
 
-      if (state.level && typeof showDashboard === 'function') {
-        if (typeof _dashboardShown !== 'undefined' && _dashboardShown) {
-          // Already shown by loadProgress — just refresh
-          try { buildPlan(); } catch(e) {}
-        } else {
-          showDashboard();
-        }
-        return 'dashboard';
+      if (state.level && typeof resumeSavedWorkflow === 'function') {
+        return resumeSavedWorkflow();
       } else if (_currentUser) {
         _updateReturningBanner();
       }

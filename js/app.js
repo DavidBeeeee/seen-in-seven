@@ -252,7 +252,9 @@ const state = {
     storyDirection:'',
     storyDiscoveryMode:'',
     storyMapImportedAt:'',
-    firstVideoNote:''
+    firstVideoNote:'',
+    skippedJourneyParts:[],
+    resume:null
   }
 };
 
@@ -313,7 +315,7 @@ function journeyFilmingComplete(status) {
     .every(value => value === 'filmed' || value === 'skipped');
 }
 
-const ONBOARDING_ORDER = ['screen-0','screen-1','screen-3','screen-2a','screen-commit-desire','screen-6','screen-story-discovery','screen-journey-map','screen-recap','screen-mvo2','screen-script','plan-screen'];
+const ONBOARDING_ORDER = ['screen-0','screen-1','screen-3','screen-2a','screen-commit-desire','screen-6','screen-recap','screen-story-discovery','screen-journey-map','screen-journey-review','screen-mvo2','screen-script','plan-screen'];
 let screenOrder = ['screen-0','screen-1'];
 let currentIndex = 0;
 let currentVideoIndex = 0;
@@ -408,7 +410,9 @@ function resetPhase2() {
     storyDirection:'',
     storyDiscoveryMode:'',
     storyMapImportedAt:'',
-    firstVideoNote:''
+    firstVideoNote:'',
+    skippedJourneyParts:[],
+    resume:null
   };
   return state.phase2;
 }
@@ -445,6 +449,7 @@ function ensurePhase2() {
   }, state.phase2 || {});
   state.phase2.custom = Object.assign({}, state.phase2.custom || {});
   state.phase2.commitmentReasons = Array.isArray(state.phase2.commitmentReasons) ? state.phase2.commitmentReasons : [];
+  state.phase2.skippedJourneyParts = Array.isArray(state.phase2.skippedJourneyParts) ? state.phase2.skippedJourneyParts : [];
   return state.phase2;
 }
 
@@ -474,6 +479,39 @@ async function trackSession() {
 // ── SCREEN NAVIGATION ─────────────────────────────────
 let _screenAnimTimers = [];
 let scriptEditSaveTimer = null;
+let suppressResumeTracking = false;
+
+function updateAppBackButton(screenId) {
+  const button = document.getElementById('app-back-button');
+  if (!button) return;
+  const hiddenScreens = ['screen-0', 'plan-screen', 'screen-script-loading'];
+  button.classList.toggle('visible', !hiddenScreens.includes(screenId));
+}
+
+function rememberResumeState(screenId) {
+  if (suppressResumeTracking || !screenId || screenId === 'screen-script-loading') return;
+  const p2 = ensurePhase2();
+  p2.resume = {
+    screenId,
+    currentIndex,
+    journeyPart: journeyOnboardingIndex,
+    videoIndex: currentVideoIndex,
+    journeyMode: journeyMapMode,
+    journeyLevel: journeyMapLevel,
+    updatedAt: new Date().toISOString()
+  };
+  saveProgress();
+}
+
+function appBack() {
+  const active = document.querySelector('.screen.active');
+  const id = active && active.id;
+  if (id === 'screen-journey-map') return backFromJourneyMap();
+  if (id === 'screen-video-intro') return backFromVideoIntro();
+  if (id === 'screen-7') return goBackToPrompts();
+  if (id === 'screen-script') return goBackToPrompts();
+  goBack();
+}
 
 function showScreen(id, direction='forward') {
   const next = document.getElementById(id);
@@ -500,6 +538,8 @@ function showScreen(id, direction='forward') {
   _screenAnimTimers.push(t);
 
   updateProgress(id);
+  updateAppBackButton(id);
+  rememberResumeState(id);
   // Force scroll to top — setTimeout(0) ensures it fires after layout settles on iOS
   setTimeout(() => {
     window.scrollTo(0, 0);
@@ -563,6 +603,7 @@ function goNext() {
     populateRecap();
     setTimeout(maybeShowSaveProgressOverlay, 450);
   }
+  else if (nextId === 'screen-journey-review') renderJourneyReview();
   else if (nextId === 'screen-mvo2') renderVideoOneBridge();
   else if (nextId === 'screen-7') {
     currentVideoIndex = 0;
@@ -582,6 +623,8 @@ function goBack() {
     else if (prevId === 'screen-2a') renderChoiceGrid(BLOCKER_OPTIONS, 'blocker', 'blocker-choice-grid');
     else if (prevId === 'screen-commit-desire') renderCommitmentCards('desire');
     else if (prevId === 'screen-6') renderCommitmentDeclaration();
+    else if (prevId === 'screen-recap') populateRecap();
+    else if (prevId === 'screen-journey-review') renderJourneyReview();
     else if (prevId === 'screen-mvo2') renderVideoOneBridge();
     showScreen(prevId, 'back');
   }
@@ -1373,8 +1416,12 @@ function journeyOnboardingContext() {
   const p2 = ensurePhase2();
   return [
     state.name ? 'My name: ' + state.name : '',
+    state.posted ? 'My posting experience: ' + state.posted : '',
+    state.history ? 'My past content experience: ' + state.history : '',
     state.business ? 'My current work or business stage: ' + (businessLabels[state.business] || state.business) : '',
     state.blocker ? 'What has been getting in my way: ' + (blockerLabels[state.blocker] || state.blocker) : '',
+    state.goal ? 'What I want from this experience: ' + state.goal : '',
+    state.minigoalText ? 'My immediate goal in my own words: ' + state.minigoalText : '',
     p2.contentIntentTitle ? 'What I want these videos to do: ' + p2.contentIntentTitle : '',
     p2.commitmentPainText ? 'What I want to move away from: ' + p2.commitmentPainText : '',
     p2.commitmentDesireText ? 'What I want to move toward: ' + p2.commitmentDesireText : '',
@@ -1402,30 +1449,34 @@ function renderJourneyMap() {
     if (tab) tab.classList.toggle('active', number === level);
   });
   if (journeyMapMode === 'onboarding' && p2.storyDiscoveryMode === 'ai') {
-    if (title) title.innerHTML = 'Let your favorite AI help find the <span class="accent">right story.</span>';
-    if (subtitle) subtitle.textContent = 'It will ask only what it needs, offer three possible story seeds, then create a seven-part map you can paste back here.';
-    if (note) note.textContent = 'Your AI can only use what you share in the conversation. Nothing from your accounts or files is accessed automatically.';
+    if (title) title.innerHTML = 'Use AI to help find <span class="accent">your story.</span>';
+    if (subtitle) subtitle.textContent = 'Copy the guide, talk it through with the AI you already use, then paste the finished seven-part answer here.';
+    if (note) note.textContent = 'The AI only knows what you share in that conversation. You can change every answer before we use it.';
     if (confirm) confirm.style.display = 'none';
-    list.innerHTML = '<article class="journey-question-card">' +
-      '<div class="journey-question-top"><span class="journey-step">Use your favorite AI</span></div>' +
-      '<p class="screen-sub" style="margin:10px 0 18px;">Copy the guide, finish the conversation in ChatGPT, Claude, Gemini, or another AI, then paste the finished seven-part map below.</p>' +
-      '<button class="btn-secondary" type="button" onclick="openJourneyHelp()">Open Story Discovery Guide</button>' +
+    list.innerHTML = '<section class="journey-ai-workflow">' +
+      '<div class="journey-question-top"><span class="journey-step">Step 1</span></div>' +
+      '<h3>Copy your Story Discovery guide.</h3><p>It includes the answers you already gave us, so you do not have to start over.</p>' +
+      '<button class="btn-secondary" type="button" onclick="openJourneyHelp()">Open And Copy My Guide</button>' +
+      '<div class="journey-question-top" style="margin-top:24px;"><span class="journey-step">Step 2</span></div>' +
+      '<h3>Use it with your favorite AI.</h3><p>Let it ask a few questions. Pick the story that feels most true to you.</p>' +
+      '<div class="journey-question-top" style="margin-top:24px;"><span class="journey-step">Step 3</span></div>' +
+      '<h3>Paste the seven numbered answers below.</h3>' +
       '<label for="journey-import" style="margin-top:24px;display:block;">Paste your finished seven-part map</label>' +
       '<textarea class="journey-answer-input" id="journey-import" rows="10" placeholder="1. ...\n\n2. ...\n\n3. ...\n\nPaste all seven numbered answers here."></textarea>' +
-      '<button class="btn-primary" style="margin-top:14px;" type="button" onclick="importJourneyMap()">Bring In My Story Map →</button>' +
-      '</article>';
+      '<button class="btn-primary" style="margin-top:14px;" type="button" onclick="importJourneyMap()">Review My Story →</button>' +
+      '</section>';
     return;
   }
   if (title) title.innerHTML = journeyMapMode === 'onboarding' ? 'Build your <span class="accent">seven-part story.</span>' : 'Edit your <span class="accent">seven-part story.</span>';
   if (subtitle) subtitle.textContent = journeyMapMode === 'onboarding'
-    ? 'Start with the part behind Video 1. You can discover the rest as you go.'
+    ? 'We will ask one small question at a time. Short, imperfect answers are welcome.'
     : 'These private directions guide future scripts. They are not finished scripts.';
   if (note) note.textContent = journeyMapMode === 'onboarding'
-    ? 'Part ' + (journeyOnboardingIndex + 1) + ' of 7. Only Video 1 is needed before your first script.'
+    ? (p2.storyDiscoveryMode === 'imported' ? 'Review the story your AI helped you find. Change anything that does not feel true.' : 'Finding Your Hero’s Journey • Part ' + (journeyOnboardingIndex + 1) + ' of 7 • About ' + Math.max(2, (7 - journeyOnboardingIndex) * 2) + ' minutes left')
     : 'Editing Level ' + level + '. Saved changes guide future scripts and intentional regenerations only.';
-  if (confirm) { confirm.style.display = ''; confirm.textContent = journeyMapMode === 'onboarding' ? (journeyOnboardingIndex === 0 ? 'Continue To Video 1 →' : 'Save This Part →') : 'Save My Journey →'; }
+  if (confirm) { confirm.style.display = ''; confirm.textContent = journeyMapMode === 'onboarding' ? (p2.storyDiscoveryMode === 'imported' ? 'This Feels Right →' : (journeyOnboardingIndex < 6 ? 'Save And Continue →' : 'Finish My Story →')) : 'Save My Journey →'; }
 
-  const visibleIndexes = journeyMapMode === 'onboarding' ? [journeyOnboardingIndex] : questions.map((_, index) => index);
+  const visibleIndexes = journeyMapMode === 'onboarding' && p2.storyDiscoveryMode !== 'imported' ? [journeyOnboardingIndex] : questions.map((_, index) => index);
   list.innerHTML = visibleIndexes.map(index => {
     const question = questions[index];
     const value = answers[index] || '';
@@ -1433,13 +1484,17 @@ function renderJourneyMap() {
     return `
       <article class="journey-question-card">
         <div class="journey-question-top">
-          <span class="journey-step">Video ${index + 1}</span>
+          <span class="journey-step">Part ${index + 1} of Your Story</span>
           <span class="journey-word-count${count > 60 ? ' over' : ''}" id="journey-count-${index}">${count} / 60 words</span>
         </div>
         <label for="journey-answer-${index}">${escapeHTML(question)}</label>
+        <p class="journey-question-explainer">${escapeHTML((SISJourneyMap.EXPLANATIONS[level] || [])[index] || '')}</p>
         <textarea class="journey-answer-input" id="journey-answer-${index}" rows="3" placeholder="One or two focused sentences work well."
           oninput="setJourneyMapAnswer(${index}, this.value)">${escapeHTML(value)}</textarea>
-        <button class="journey-unsure-btn" type="button" onclick="setJourneyAnswerUnsure(${index})">I'm not sure yet</button>
+        <div class="journey-question-actions">
+          <button class="journey-ai-btn" type="button" onclick="openJourneyPartHelp(${index})">Use My AI To Help</button>
+          ${journeyMapMode === 'onboarding' && p2.storyDiscoveryMode !== 'imported' ? '<button class="journey-unsure-btn" type="button" onclick="skipJourneyPart()">Skip For Now</button>' : ''}
+        </div>
       </article>`;
   }).join('');
   if (journeyMapMode === 'video' && journeyMapReturnVideo != null) {
@@ -1447,6 +1502,49 @@ function renderJourneyMap() {
       card.style.display = index === Number(journeyMapReturnVideo) ? '' : 'none';
     });
   }
+}
+
+const JOURNEY_REVIEW_LABELS = [
+  'The Story You Want To Tell',
+  'Where You Started',
+  'What You Used To Believe',
+  'The Turning Point',
+  'The Hardest Part',
+  'The Truth You Found',
+  'Who You Are Now'
+];
+
+function renderJourneyReview() {
+  const answers = journeyAnswersForLevel(state.level || 1);
+  const skipped = ensurePhase2().skippedJourneyParts || [];
+  const list = document.getElementById('journey-review-list');
+  if (!list) return;
+  list.innerHTML = JOURNEY_REVIEW_LABELS.map((label, index) => {
+    const value = answers[index] || '';
+    const unfinished = !value && skipped.includes(index);
+    return `<section class="journey-review-item${unfinished ? ' unfinished' : ''}">
+      <div class="journey-review-heading"><span>${index + 1}</span><strong>${escapeHTML(label)}</strong></div>
+      ${unfinished ? '<p>We’ll help fill this in later.</p>' : ''}
+      <textarea class="journey-answer-input" rows="3" placeholder="You can leave this unfinished for now."
+        oninput="setJourneyMapAnswer(${index}, this.value)">${escapeHTML(value)}</textarea>
+    </section>`;
+  }).join('');
+}
+
+function backToJourneyInterview() {
+  journeyMapMode = 'onboarding';
+  journeyMapLevel = Number(state.level || 1);
+  journeyMapReturnVideo = null;
+  if (ensurePhase2().storyDiscoveryMode !== 'imported') journeyOnboardingIndex = 6;
+  currentIndex = screenOrder.indexOf('screen-journey-map');
+  renderJourneyMap();
+  showScreen('screen-journey-map', 'back');
+}
+
+function finishJourneyReview() {
+  saveProgress();
+  currentIndex = screenOrder.indexOf('screen-journey-review');
+  goNext();
 }
 
 function importJourneyMap() {
@@ -1465,6 +1563,26 @@ function importJourneyMap() {
   journeyOnboardingIndex = 0;
   p2.storyDiscoveryMode = 'imported';
   renderJourneyMap();
+}
+
+function openJourneyPartHelp(index) {
+  if (!window.SISJourneyMap) return;
+  const answers = journeyAnswersForLevel(journeyMapLevel);
+  const prompt = SISJourneyMap.buildPartHelperPrompt(
+    journeyMapLevel,
+    index,
+    answerHelpOnboardingContext(),
+    answers.slice(0, index)
+  );
+  const title = document.getElementById('journey-help-title');
+  const description = document.getElementById('journey-help-description');
+  const field = document.getElementById('journey-help-prompt');
+  const overlay = document.getElementById('journey-help-overlay');
+  if (title) title.textContent = 'Get help with Part ' + (Number(index) + 1) + '.';
+  if (description) description.textContent = 'Copy this into the AI you already use. It will ask at most two short questions, then give you one answer to paste here.';
+  if (field) field.value = prompt;
+  if (overlay) overlay.hidden = false;
+  if (typeof logEvent === 'function') logEvent('journey_part_help_opened', { level: journeyMapLevel, part: Number(index) + 1 });
 }
 
 function setJourneyMapAnswer(index, value) {
@@ -1488,6 +1606,23 @@ function setJourneyAnswerUnsure(index) {
   }
 }
 
+function skipJourneyPart() {
+  const p2 = ensurePhase2();
+  if (!Array.isArray(p2.skippedJourneyParts)) p2.skippedJourneyParts = [];
+  if (!p2.skippedJourneyParts.includes(journeyOnboardingIndex)) p2.skippedJourneyParts.push(journeyOnboardingIndex);
+  journeyAnswersForLevel(journeyMapLevel)[journeyOnboardingIndex] = '';
+  if (typeof logEvent === 'function') logEvent('story_map_part_skipped', { level: journeyMapLevel, part: journeyOnboardingIndex + 1 });
+  if (journeyOnboardingIndex < 6) {
+    journeyOnboardingIndex += 1;
+    saveProgress();
+    renderJourneyMap();
+    window.scrollTo(0, 0);
+  } else {
+    saveProgress();
+    goNext();
+  }
+}
+
 function selectJourneyMapLevel(level) {
   journeyMapLevel = Number(level) === 2 ? 2 : 1;
   renderJourneyMap();
@@ -1501,8 +1636,12 @@ function openJourneyHelp() {
     journeyOnboardingContext()
   );
   const field = document.getElementById('journey-help-prompt');
+  const title = document.getElementById('journey-help-title');
+  const description = document.getElementById('journey-help-description');
   const overlay = document.getElementById('journey-help-overlay');
   if (field) field.value = prompt;
+  if (title) title.textContent = 'Find your full seven-part story.';
+  if (description) description.textContent = 'Copy this into the AI you already use. It will offer three story ideas, help you choose, then give you seven numbered answers to paste back here.';
   if (overlay) overlay.hidden = false;
   if (typeof logEvent === 'function') logEvent('journey_help_opened', { level: journeyMapLevel });
 }
@@ -1736,7 +1875,9 @@ async function copyCurrentJourney(button) {
 
 function completeJourneyMap() {
   const answers = journeyAnswersForLevel(journeyMapLevel);
-  const missing = journeyMapMode === 'onboarding'
+  const p2 = ensurePhase2();
+  const reviewingImport = journeyMapMode === 'onboarding' && p2.storyDiscoveryMode === 'imported';
+  const missing = journeyMapMode === 'onboarding' && !reviewingImport
     ? (!String(answers[journeyOnboardingIndex] || '').trim() ? journeyOnboardingIndex : -1)
     : journeyMapMode === 'video' && journeyMapReturnVideo != null && !String(answers[journeyMapReturnVideo] || '').trim()
       ? Number(journeyMapReturnVideo)
@@ -1756,8 +1897,19 @@ function completeJourneyMap() {
     answered: answers.filter(answer => SISJourneyMap.isUsableAnswer(answer)).length
   });
   if (journeyMapMode === 'onboarding') {
+    if (reviewingImport) {
+      goNext();
+      return;
+    }
     if (typeof logEvent === 'function') logEvent('story_map_part_saved', { level: journeyMapLevel, part: journeyOnboardingIndex + 1 });
-    goNext();
+    if (journeyOnboardingIndex < 6) {
+      journeyOnboardingIndex += 1;
+      saveProgress();
+      renderJourneyMap();
+      window.scrollTo(0, 0);
+    } else {
+      goNext();
+    }
     return;
   }
   if (journeyMapReturnVideo != null) {
@@ -1773,6 +1925,12 @@ function completeJourneyMap() {
 
 function backFromJourneyMap() {
   if (journeyMapMode === 'onboarding') {
+    if (ensurePhase2().storyDiscoveryMode !== 'imported' && journeyOnboardingIndex > 0) {
+      journeyOnboardingIndex -= 1;
+      saveProgress();
+      renderJourneyMap();
+      return;
+    }
     goBack();
     return;
   }
@@ -2295,6 +2453,26 @@ const INTRO_COPY = {
   }
 };
 
+const SIMPLE_VIDEO_INTROS = [
+  'This first video tells people who you are and why you are starting. You do not have to sound confident. You only have to sound honest.',
+  'This video helps people meet the person behind the story. Share what life was like before things began to change.',
+  'This video shares something you used to believe and the moment it stopped feeling true.',
+  'This video shows what you tried after your thinking changed. Tell us what happened in real life, even if it was not perfect.',
+  'This video tells the hardest part of the story. Share only what feels safe, and keep the focus on what truly happened.',
+  'This video shares the bigger lesson you earned from the hard part. Explain it the way you would explain it to one person who needs it.',
+  'This final video brings the journey to today. Show who you are now, what is still unfinished, and where you are going next.'
+];
+
+const VIDEO_ORIENTATION = [
+  { making:'A short introduction that tells people who you are and why you are starting.', share:'Be honest about what brought you here, what made posting hard, and why you are choosing to begin now.', next:'We will organize those thoughts into your opening script. You can change every word before filming.' },
+  { making:'The beginning of your story, before the change happened.', share:'Show what everyday life looked like then and one detail that helps someone recognize the earlier version of you.', next:'We will turn that background into a clear story that helps viewers feel connected to you.' },
+  { making:'The moment an old belief stopped making sense.', share:'Tell us what you used to believe, why it seemed true, and what happened that made you question it.', next:'We will shape the experience into a script that lets the viewer discover the new belief with you.' },
+  { making:'The part where you tried something different in real life.', share:'Describe what you changed, what tested you, and the first sign that you might be moving in the right direction.', next:'We will organize the action and result without pretending everything was solved yet.' },
+  { making:'The hardest chapter in the larger story.', share:'Share what happened, what it cost, and the part you played. You decide how personal to be, and you can skip this for now.', next:'We will handle the story carefully and stop before the recovery or lesson.' },
+  { making:'The bigger truth you earned from the difficult experience.', share:'Explain what became clear afterward and how it changed the way you live, work, or see the world.', next:'We will turn that lesson into something useful without making it sound like a lecture.' },
+  { making:'The ending of this chapter and the beginning of the next one.', share:'Show who you are now, what is still unfinished, and what you are moving toward.', next:'We will connect the full journey and give viewers a natural reason to stay with you.' }
+];
+
 const VIDEO_EASY_PROMPTS = {
   1: [
     null,
@@ -2322,7 +2500,7 @@ function getEasyPrompt(videoIdx, level) {
 }
 
 const videoPromptMode = {};
-const VIDEO_ANSWER_KEY_PATTERN = /^(?:v[0-6]p\d+|v0decl|easyAnswer_v[1-6])$/;
+const VIDEO_ANSWER_KEY_PATTERN = /^(?:v[0-6]p\d+|v0decl|easyAnswer_v[1-6]|videoExtra_v[0-6])$/;
 let videoAnswerSaveTimer = null;
 
 function collectCurrentVideoAnswers() {
@@ -2506,10 +2684,10 @@ function populateRecap() {
   } else {
     if (emojiEl) emojiEl.textContent = '🔥';
     if (headingEl) headingEl.innerHTML = name !== 'You'
-      ? escapeHTML(name) + ", You're<br>The Expert in the Room."
-      : "You're The Expert<br>in the Room.";
+      ? escapeHTML(name) + ", You're<br>The Hero of This Story."
+      : "You're The Hero<br>of This Story.";
     if (nameEl) nameEl.textContent = 'LEVEL 2 - THE AUTHORITY SERIES';
-    if (msgEl) msgEl.innerHTML = 'Your 7 videos make the <strong style="color:var(--cream)">knowledge, experience, or perspective already inside your life</strong> visible through a complete human journey. No business, clients, offer, or polished professional identity is required.';
+    if (msgEl) msgEl.innerHTML = 'Your Hero’s Journey follows the <strong style="color:var(--cream)">experience that made your knowledge and perspective worth hearing</strong>. Your expertise matters because a real person had to live through something to earn it.';
   }
 
   p2.commitmentDeclaration = p2.commitmentDeclaration || buildCommitmentDeclaration();
@@ -2995,7 +3173,7 @@ function buildAPIUserMessage(videoIdx) {
     previousVideos.push({
       video: index + 1,
       mode,
-      easyAnswer: easy ? state.videos[easy.key] || '' : '',
+      easyAnswer: state.videos['videoExtra_v' + index] || (easy ? state.videos[easy.key] || '' : ''),
       answers: index === 0 ? videoOnePromptAnswers(level) : extendedPromptAnswers(definition),
       script: rawScript ? SISPromptEngine.canonicalScript(rawScript, index + 1, declaration) : ''
     });
@@ -3010,7 +3188,7 @@ function buildAPIUserMessage(videoIdx) {
     onboardingLines,
     previousVideos,
     currentMode,
-    currentEasyAnswer: currentEasy ? state.videos[currentEasy.key] || '' : '',
+    currentEasyAnswer: state.videos['videoExtra_v' + videoIdx] || (currentEasy ? state.videos[currentEasy.key] || '' : ''),
     currentAnswers: videoIdx === 0 ? videoOnePromptAnswers(level) : extendedPromptAnswers(currentDefinition),
     currentJourneyDirection: journeyDirectionFor(videoIdx, level)
   });
@@ -3418,43 +3596,26 @@ function _buildPromptsContent(container, v, idx) {
         <div class="script-text">"${prebuiltScript}"</div>
       </div>`;
   } else {
-    const easyPrompt = getEasyPrompt(idx, state.level || 1);
-    const defaultMode = getSavedVideoPromptMode(idx);
     const extHTML = `
-      <div class="answer-help-row">
-        <button class="answer-help-trigger" type="button" onclick="openAnswerHelp(${idx},'extended')">ⓘ Need Help With These Answers?</button>
-      </div>` + v.prompts.map(p => `
+      <details class="simple-details">
+        <summary>Help Me Make This More Specific</summary>
+        <p class="input-hint">These questions are optional. Use them only when you want to give the script more detail.</p>
+        <div class="answer-help-row">
+          <button class="answer-help-trigger" type="button" onclick="openAnswerHelp(${idx},'extended')">Use My AI To Help</button>
+        </div>` + v.prompts.map(p => `
       <div class="input-group">
         <label class="input-label">${p.label}</label>
         <span class="input-hint">${p.hint}</span>
         <textarea class="text-input" rows="2" placeholder="${p.ph}"
           oninput="setVideoAnswer('${p.key}', this.value)">${state.videos[p.key] || ''}</textarea>
-      </div>`).join('');
-
-    if (easyPrompt) {
-      const easyAnswerVal = state.videos[easyPrompt.key] || '';
-      const easyHTML = `
-        <div class="answer-help-row">
-          <button class="answer-help-trigger" type="button" onclick="openAnswerHelp(${idx},'simple')">ⓘ Need Help With This Answer?</button>
-        </div>
-        <div class="input-group">
-          <label class="input-label">${easyPrompt.label}</label>
-          <span class="input-hint">${easyPrompt.hint}</span>
-          <textarea class="text-input" rows="4" placeholder="Write whatever comes naturally. You can always add more later."
-            oninput="setVideoAnswer('${easyPrompt.key}', this.value)">${easyAnswerVal}</textarea>
-        </div>`;
-
-      promptsHTML = `
-        <div class="prompt-mode-toggle" style="display:flex;gap:8px;margin-bottom:18px;align-items:center;">
-          <span style="font-size:13px;color:var(--muted);margin-right:4px;">Prompt style:</span>
-          <button id="prompt-easy-btn-${idx}" class="sv-toggle-btn ${defaultMode==='easy'?'active':''}" onclick="setVideoPromptMode(${idx},'easy')" style="font-size:13px;padding:5px 14px;">Easy</button>
-          <button id="prompt-ext-btn-${idx}" class="sv-toggle-btn ${defaultMode==='extended'?'active':''}" onclick="setVideoPromptMode(${idx},'extended')" style="font-size:13px;padding:5px 14px;">Extended</button>
-        </div>
-        <div id="prompt-easy-section-${idx}" style="display:${defaultMode==='easy'?'':'none'};">${easyHTML}</div>
-        <div id="prompt-ext-section-${idx}" style="display:${defaultMode==='extended'?'':'none'};">${extHTML}</div>`;
-    } else {
-      promptsHTML = extHTML;
-    }
+      </div>`).join('') + '</details>';
+    promptsHTML = `
+      <div class="input-group">
+        <label class="input-label">Anything else you want this video to include? <span style="opacity:.7;">Optional</span></label>
+        <span class="input-hint">Add a detail, example, feeling, or exact phrase. Leave this blank if your story answer already says enough.</span>
+        <textarea class="text-input" rows="4" placeholder="Add anything else here."
+          oninput="setVideoAnswer('videoExtra_v${idx}', this.value)">${escapeHTML(state.videos['videoExtra_v' + idx] || '')}</textarea>
+      </div>${extHTML}`;
   }
 
   const journeyDirection = journeyDirectionFor(idx);
@@ -3462,10 +3623,10 @@ function _buildPromptsContent(container, v, idx) {
     <section class="journey-direction-card">
       <div class="journey-direction-top">
         <div>
-          <div class="journey-direction-label">Your direction for Video ${idx + 1}</div>
-          <div class="journey-direction-copy">${journeyDirection ? escapeHTML(journeyDirection) : '<em>No direction saved yet. You can add one without changing these detailed answers.</em>'}</div>
+          <div class="journey-direction-label">The story part we are using</div>
+          <div class="journey-direction-copy">${journeyDirection ? escapeHTML(journeyDirection) : '<em>You skipped this part earlier. Add it now, use AI to help, or continue and we will use what you already shared.</em>'}</div>
         </div>
-        <button type="button" onclick="editJourneyDirection(${idx})">Edit</button>
+        <button type="button" onclick="editJourneyDirection(${idx})">${journeyDirection ? 'Edit' : 'Answer Now'}</button>
       </div>
     </section>`;
 
@@ -3491,7 +3652,6 @@ function _buildPromptsContent(container, v, idx) {
   genBtn.textContent = v.prebuilt ? '✨ Edit & Personalize This Script' : '✨ Generate My Script';
   genBtn.onclick = () => {
     window._SIS_log && _SIS_log('genBtn:click', {idx});
-    if (!journeyDirectionFor(idx)) return editJourneyDirection(idx);
     showScriptView(idx);
   };
   btnWrap.appendChild(genBtn);
@@ -4093,7 +4253,7 @@ function _doShowScriptViewInner(idx) {
   // Default to guided view; scroll to top first
   window._SIS_log && _SIS_log('dsv:beats-rendered', {beatsLen: (document.getElementById('sv-beats')||{}).innerHTML ? document.getElementById('sv-beats').innerHTML.length : 0});
   window.scrollTo(0, 0);
-  setScriptView('guided');
+  setScriptView('clean');
   // Update lock state UI and undo/redo buttons
   if (typeof _updateLockUI === 'function') _updateLockUI(idx);
   if (typeof _refreshUndoButtons === 'function') _refreshUndoButtons(idx);
@@ -6544,7 +6704,7 @@ function exportPDF(mode) {
 }
 
 // ── SHOW DASHBOARD DIRECTLY (authenticated returning users) ───
-function showDashboard() {
+function showDashboard(options = {}) {
   window._SIS_log && _SIS_log('showDashboard:start', { level: state.level, name: state.name });
   _dashboardShown = true;
   if (typeof logEvent === 'function') {
@@ -6569,6 +6729,8 @@ function showDashboard() {
   if (_planEl) _planEl.classList.add('active');
 
   currentIndex = screenOrder.indexOf('plan-screen');
+  updateAppBackButton('plan-screen');
+  if (options.remember !== false) rememberResumeState('plan-screen');
   window.scrollTo(0, 0);
   window._SIS_log && _SIS_log('showDashboard:done', 'plan-screen activated synchronously');
 
@@ -6936,20 +7098,29 @@ function renderVideoIntro(videoNum) {
   const badgeEl  = document.getElementById('vi-result-badge');
   const fwEl     = document.getElementById('vi-framework');
   const trigEl   = document.getElementById('vi-triggers');
+  const makingEl = document.getElementById('vi-making');
+  const shareEl  = document.getElementById('vi-share');
+  const nextEl   = document.getElementById('vi-next');
   const btn      = document.getElementById('vi-ready-btn');
   if (labelEl)  labelEl.textContent  = data.label;
   if (titleEl)  titleEl.textContent  = data.title;
-  if (bodyEl)   bodyEl.textContent   = data.body;
+  if (bodyEl)   bodyEl.textContent   = SIMPLE_VIDEO_INTROS[videoNum - 1] || data.body;
   if (badgeEl)  badgeEl.innerHTML    = renderResultBadgeHTML(data.result);
   if (fwEl)     fwEl.innerHTML       = renderFrameworkHTML(data.framework);
   if (trigEl)   trigEl.innerHTML     = renderTriggersHTML(data.triggers);
+  const orientation = VIDEO_ORIENTATION[videoNum - 1] || {};
+  if (makingEl) makingEl.textContent = orientation.making || '';
+  if (shareEl) shareEl.textContent = orientation.share || '';
+  if (nextEl) nextEl.textContent = orientation.next || '';
+  const details = document.getElementById('vi-more-details');
+  if (details) details.open = false;
   if (btn)      btn.onclick = () => readyForVideo(videoNum - 1);
 }
 
 function readyForVideo(idx) {
-  if (!journeyDirectionFor(idx)) return editJourneyDirection(idx);
-  showScreen('screen-7');
+  currentVideoIndex = idx;
   currentIndex = screenOrder.indexOf('screen-7');
+  showScreen('screen-7');
   renderVideoPrompts(idx);
   window.scrollTo(0, 0);
 }
@@ -7139,6 +7310,15 @@ function copyScript(btn) {
 function saveProgress(options = {}) {
   captureVideoAnswersByLevel();
   if (state.level) archiveActiveJourneyLevel(state.level);
+  const phase2 = ensurePhase2();
+  if (phase2.resume) {
+    phase2.resume.currentIndex = currentIndex;
+    phase2.resume.journeyPart = journeyOnboardingIndex;
+    phase2.resume.videoIndex = currentVideoIndex;
+    phase2.resume.journeyMode = journeyMapMode;
+    phase2.resume.journeyLevel = journeyMapLevel;
+    phase2.resume.updatedAt = new Date().toISOString();
+  }
   const data = {
     name:          state.name          || '',
     level:         state.level         || '',
@@ -7161,7 +7341,7 @@ function saveProgress(options = {}) {
     mvoQ2:         state.mvoQ2         || null,
     mvoQ3:         state.mvoQ3         || null,
     mvoQ4:         state.mvoQ4         || null,
-    phase2:        ensurePhase2(),
+    phase2,
     videoPosted:   state.videoPosted   || {},
     videoPostedByLevel: ensureVideoPostedByLevel(),
     engage:        state.engage        || {},
@@ -7226,9 +7406,9 @@ function loadProgress() {
       migrateJourneyLevelState();
       activateJourneyLevel(state.level);
 
-      // If they have a level — go straight to dashboard, no banner needed
-      if (data.level && typeof showDashboard === 'function') {
-        showDashboard();
+      // Continue from the exact place they left instead of interrupting the flow.
+      if (data.level && typeof resumeSavedWorkflow === 'function') {
+        resumeSavedWorkflow();
         return;
       }
 
@@ -7241,6 +7421,60 @@ function loadProgress() {
       }
     }
   } catch(e) {}
+}
+
+function resumeSavedWorkflow() {
+  ensureFullOnboardingOrder();
+  const resume = ensurePhase2().resume;
+  if (!resume || !resume.screenId || resume.screenId === 'screen-script-loading') {
+    showDashboard({remember:false});
+    return 'dashboard';
+  }
+
+  suppressResumeTracking = true;
+  try {
+    currentVideoIndex = Math.max(0, Math.min(6, Number(resume.videoIndex) || 0));
+    journeyOnboardingIndex = Math.max(0, Math.min(6, Number(resume.journeyPart) || 0));
+    journeyMapMode = resume.journeyMode || 'onboarding';
+    journeyMapLevel = Number(resume.journeyLevel || state.level || 1) === 2 ? 2 : 1;
+    currentIndex = screenOrder.indexOf(resume.screenId);
+    if (currentIndex < 0) currentIndex = 0;
+
+    if (resume.screenId === 'plan-screen') {
+      showDashboard({remember:false});
+    } else if (resume.screenId === 'screen-journey-map') {
+      renderJourneyMap();
+      showScreen('screen-journey-map');
+    } else if (resume.screenId === 'screen-journey-review') {
+      renderJourneyReview();
+      showScreen('screen-journey-review');
+    } else if (resume.screenId === 'screen-mvo2') {
+      renderVideoOneBridge();
+      showScreen('screen-mvo2');
+    } else if (resume.screenId === 'screen-video-intro') {
+      renderVideoIntro(currentVideoIndex + 1);
+      showScreen('screen-video-intro');
+    } else if (resume.screenId === 'screen-7') {
+      showScreen('screen-7');
+      renderVideoPrompts(currentVideoIndex);
+    } else if (resume.screenId === 'screen-script') {
+      if (state.videos && state.videos['script_v' + currentVideoIndex]) _doShowScriptView(currentVideoIndex);
+      else {
+        showScreen('screen-7');
+        renderVideoPrompts(currentVideoIndex);
+      }
+    } else {
+      if (resume.screenId === 'screen-2a') renderChoiceGrid(BLOCKER_OPTIONS, 'blocker', 'blocker-choice-grid');
+      if (resume.screenId === 'screen-commit-desire') renderCommitmentCards('desire');
+      if (resume.screenId === 'screen-6') renderCommitmentDeclaration();
+      if (resume.screenId === 'screen-recap') populateRecap();
+      showScreen(resume.screenId);
+    }
+  } finally {
+    suppressResumeTracking = false;
+  }
+  updateAppBackButton((document.querySelector('.screen.active') || {}).id || resume.screenId);
+  return resume.screenId === 'plan-screen' ? 'dashboard' : 'resumed';
 }
 
 function continueSession() {
@@ -7338,7 +7572,7 @@ function launchConfetti() {
 
   // If dashboard was shown, don't reveal screen-0 (it's already hidden behind plan-screen).
   // Only restore visibility when staying on the onboarding flow.
-  if (initResult !== 'dashboard') {
+  if (initResult !== 'dashboard' && initResult !== 'resumed') {
     if (s0) s0.style.visibility = '';
   }
 
@@ -7354,7 +7588,7 @@ function launchConfetti() {
       window.history.replaceState(null, '', '/');
       loadProgress();
     }
-  } else if (initResult !== 'dashboard') {
+  } else if (initResult !== 'dashboard' && initResult !== 'resumed') {
     if (hasMagicToken) {
       // Magic link — show a loading state while onAuthStateChange processes the token
       s0.classList.add('active');

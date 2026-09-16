@@ -27,6 +27,27 @@
     2: 'Each set should reveal an unusually compelling human journey through my expertise, unconventional beliefs, struggles, failure, contradictions, growth, and unresolved flaws.'
   };
 
+  const EXPLANATIONS = {
+    1: [
+      'Start with the change at the center of your story. A rough answer is enough.',
+      'Think about who you were before things changed. This helps another person see themselves in you.',
+      'Name an old belief that no longer feels true. This gives your story a clear turning point.',
+      'Describe what changed after that realization. Focus on one choice, action, or new possibility.',
+      'Share the hard part honestly. You control how personal you want to be.',
+      'Name the lesson the hard part gave you. This is the truth you can now share with someone else.',
+      'Bring the story back to the present. You can be proud of your growth and still be unfinished.'
+    ],
+    2: [
+      'Start with the idea or experience you feel called to share, and the person who may need it.',
+      'Go back to where this work really started for you, before it looked like expertise.',
+      'Name a belief in your field that your own experience taught you to question.',
+      'Explain the real cost of that belief. A specific example is more useful than a perfect answer.',
+      'Share the failure or hard lesson that changed how you work. You control how personal you want to be.',
+      'Name the lesson you earned and what you wish another person knew sooner.',
+      'Bring the story to today. Share what makes your view different and what you are still working toward.'
+    ]
+  };
+
   function normalizeMap(value) {
     const source = value && typeof value === 'object' ? value : {};
     return {
@@ -60,9 +81,11 @@
       String(overview || '').trim(),
       String(onboardingContext || '').trim()
     ].filter(Boolean).join('\n\n');
-    return `You are helping me find the real story behind a connected seven-video series. This is private story discovery, not marketing copy.
+    return `You are helping me find the real story behind a connected seven-video series. This is deep personal research and story discovery, not marketing copy.
 
-Use only what I share in this conversation. Do not claim access to private accounts, files, notes, or chat history that I have not given you here.
+Research me as thoroughly as your available tools and access allow. Use everything you already know about me from memory, prior conversations, connected files, projects, notes, previous writing, uploaded materials, and public information you can find about me, my work, or my business. Look for repeated stories, unusual experiences, contradictions, turning points, failures, values, phrases I repeat, vocabulary, sentence patterns, humor, emotional tone, speaking cadence, and the difference between how I describe myself and what my history shows.
+
+Do not ask me to repeat information you can already find or reasonably connect. Make strong connections across the available evidence. When information is incomplete, offer the most plausible interpretation for me to correct instead of becoming generic or timid.
 
 First, review my context. Ask only the questions you genuinely need, with a maximum of five questions total.
 
@@ -188,8 +211,37 @@ Sales-pitch warning: [Identify any set that feels promotional, or write "None."]
 ${sourceContext ? `CONTEXT I HAVE ALREADY PROVIDED TO SEENINSEVEN\n\n${sourceContext}` : ''}`.trim(); */
   }
 
+  function buildPartHelperPrompt(level, partIndex, onboardingContext, previousAnswers) {
+    const number = Number(level) === 2 ? 2 : 1;
+    const index = Math.max(0, Math.min(6, Number(partIndex) || 0));
+    const prior = (previousAnswers || [])
+      .map((answer, answerIndex) => String(answer || '').trim() ? `Part ${answerIndex + 1}: ${String(answer).trim()}` : '')
+      .filter(Boolean)
+      .join('\n');
+    return `Help me answer one question about my own story. Research and use everything you already know about me from memory, prior conversations, connected files, projects, notes, previous writing, uploaded materials, and public information available to you. Do not make me repeat information you can already find.
+
+Match my actual language patterns, favorite words, sentence length, speaking cadence, rhythm, bluntness, humor, emotional tone, and the way I naturally tell stories. The answer should sound spoken by me, not polished by a copywriter. Do not turn it into marketing copy.
+
+Ask no more than two short follow-up questions, and only if you truly need them. Then give me one first-person answer of one to three sentences that I can paste into SeenInSeven. Keep it natural, specific, and easy to say out loud.
+
+CURRENT QUESTION
+Part ${index + 1}: ${QUESTIONS[number][index]}
+
+WHAT THIS QUESTION IS LOOKING FOR
+${EXPLANATIONS[number][index]}
+
+WHAT I HAVE ALREADY SHARED
+${String(onboardingContext || '').trim() || 'I have not shared much yet.'}
+${prior ? `\nEARLIER PARTS OF MY STORY\n${prior}` : ''}`.trim();
+  }
+
   function parseImportedMap(value) {
-    const text = String(value || '').trim();
+    const text = String(value || '')
+      .replace(/\r/g, '')
+      .replace(/^\s*#{1,6}\s*/gm, '')
+      .replace(/^\s*\*\*\s*([1-7])\s*[.)\-:]?\s*\*\*\s*/gm, '$1. ')
+      .replace(/^\s*(?:part|step|answer|chapter)\s+([1-7])\s*[.)\-:]\s*/gim, '$1. ')
+      .trim();
     if (!text) return null;
     const matches = Array.from(text.matchAll(/(?:^|\n)\s*([1-7])\s*[.)\-:]\s*([\s\S]*?)(?=\n\s*[1-7]\s*[.)\-:]|$)/g));
     if (matches.length !== 7) return null;
@@ -207,9 +259,11 @@ ${sourceContext ? `CONTEXT I HAVE ALREADY PROVIDED TO SEENINSEVEN\n\n${sourceCon
 
   global.SISJourneyMap = {
     QUESTIONS,
+    EXPLANATIONS,
     normalizeMap,
     isUsableAnswer,
     buildHelperPrompt,
+    buildPartHelperPrompt,
     parseImportedMap,
     formatJourney,
     copyText
