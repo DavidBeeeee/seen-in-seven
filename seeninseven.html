@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
-<link rel="stylesheet" href="/css/app.css?v=simplicity-1">
+<link rel="stylesheet" href="/css/app.css?v=hero-journey-2">
 <link rel="stylesheet" href="/css/light.css">
 
 <!-- ── GLOBAL ERROR BOUNDARY ── -->
@@ -508,41 +508,41 @@
   <div id="recap-mini-mission" class="recap-mini-mission"></div>
 
   <h3 class="recap-guidelines-heading">
-    Here's how the challenge works.
+    Here’s what we’re going to do together.
   </h3>
   <div class="guideline-list">
     <div class="guideline-item">
       <div class="guideline-num">1</div>
       <div>
-        <div class="guideline-title">7 videos. Your timeline.</div>
-        <div class="guideline-desc">You don't have to post all 7 in 7 days. Some people move fast, some take a few weeks, some take a few months. Speed literally doesn't matter, but commitment does. What matters is that you finish in order. Each video builds on the last.</div>
+        <div class="guideline-title">First, we’ll find your Hero’s Journey.</div>
+        <div class="guideline-desc">You are the hero. We’ll ask seven small questions to find where you started, what changed, what challenged you, what you learned, and who you are becoming.</div>
       </div>
     </div>
     <div class="guideline-item">
       <div class="guideline-num">2</div>
       <div>
-        <div class="guideline-title">Fill in the prompts. Film the script.</div>
-        <div class="guideline-desc">Every video has a set of prompts. Your answers become your script. You don't need to memorize it. Just read it off your phone or use it as a guide.</div>
+        <div class="guideline-title">You can answer yourself or use your AI.</div>
+        <div class="guideline-desc">Talk, type, or let the AI you already use help uncover the story. Short and imperfect answers are enough. You can skip anything and come back later.</div>
       </div>
     </div>
     <div class="guideline-item">
       <div class="guideline-num">3</div>
       <div>
-        <div class="guideline-title">Done is better than perfect.</div>
-        <div class="guideline-desc">Your first video doesn't have to be good. It just has to exist. You'll be amazed how much better Video 7 is than Video 1. That growth is the whole point.</div>
+        <div class="guideline-title">Then we’ll turn it into seven connected videos.</div>
+        <div class="guideline-desc">Each video tells one clear part of the larger story. Before every script, we’ll explain what you are making, what to share, and what happens next.</div>
       </div>
     </div>
     <div class="guideline-item">
       <div class="guideline-num">4</div>
       <div>
-        <div class="guideline-title">The camera doesn't need a perfect you.</div>
-        <div class="guideline-desc">It needs the real you. Every video you film, messy, unpolished, uncertain, is proof that you showed up. That's the whole challenge.</div>
+        <div class="guideline-title">Your words stay at the center.</div>
+        <div class="guideline-desc">We organize your thoughts into scripts that are easier to say out loud. You can edit every word before you film. The goal is not to sound like AI. The goal is to sound like you on a very clear day.</div>
       </div>
     </div>
   </div>
 
   <div class="btn-row">
-    <button class="btn-primary" onclick="goNext()">Got It. Let's Get Prepped</button>
+    <button class="btn-primary" onclick="goNext()">Find My Hero’s Journey</button>
     <button class="btn-back" onclick="goBack()">Back</button>
   </div>
 </div>
@@ -608,9 +608,22 @@
     <div class="journey-map-note" id="journey-map-note"></div>
     <div class="journey-question-list" id="journey-question-list"></div>
     <div class="journey-map-actions">
-      <button class="btn-secondary" type="button" onclick="copyCurrentJourney(this)">Copy My Journey</button>
       <button class="btn-primary" id="journey-confirm-btn" type="button" onclick="completeJourneyMap()">Continue To Video 1 →</button>
       <button class="btn-back" id="journey-back-btn" type="button" onclick="backFromJourneyMap()">Back</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HERO'S JOURNEY REVIEW ══ -->
+<div class="screen" id="screen-journey-review">
+  <div class="journey-review-shell">
+    <div class="eyebrow">Your Hero’s Journey</div>
+    <h2 class="screen-title">This is the story we <span class="accent">found together.</span></h2>
+    <p class="screen-sub">This is a starting point, not a permanent version of your life story. Read through it, change anything that does not feel true, and leave unfinished parts for later.</p>
+    <div class="journey-review-list" id="journey-review-list"></div>
+    <div class="btn-row">
+      <button class="btn-primary" onclick="finishJourneyReview()">Turn This Into My Video Series</button>
+      <button class="btn-back" onclick="backToJourneyInterview()">Back To My Answers</button>
     </div>
   </div>
 </div>
@@ -667,6 +680,11 @@
   <div class="q1-progress" id="vi-label">Video 1 of 7</div>
   <h2 class="screen-title" id="vi-title"></h2>
   <p class="vi-body" id="vi-body"></p>
+  <div class="video-orientation">
+    <div class="video-orientation-item"><strong>What you’re making</strong><span id="vi-making"></span></div>
+    <div class="video-orientation-item"><strong>What to share</strong><span id="vi-share"></span></div>
+    <div class="video-orientation-item"><strong>What happens next</strong><span id="vi-next"></span></div>
+  </div>
   <details class="simple-details" id="vi-more-details">
     <summary>Why this video works</summary>
     <div id="vi-result-badge"></div>
@@ -766,18 +784,15 @@
           </div>
           <button class="sv-copy-btn" id="sv-copy-btn" onclick="copyScript(this)">📋 Copy</button>
         </div>
-        <details class="script-tool-details">
-          <summary>More editing tools</summary>
-          <div class="sv-toolbar-row">
-            <button id="sv-undo" onclick="undoScript()" disabled title="Undo (Ctrl/Cmd+Z)" class="sv-tool-btn">↶ Undo</button>
-            <button id="sv-redo" onclick="redoScriptStep()" disabled title="Redo (Ctrl/Cmd+Shift+Z)" class="sv-tool-btn">↷ Redo</button>
-            <button id="sv-regen-full" onclick="regenerateFullScript(currentVideoIndex, this)" title="Make a new version" class="sv-tool-btn">↺ Make A New Version</button>
-            <button id="sv-fullscreen" onclick="openFullscreenPreview()" title="Open a larger view" class="sv-tool-btn">⛶ Larger View</button>
-          </div>
-          <div class="sv-toolbar-row">
-            <span class="sv-redo-link danger" id="sv-delete-reanswer" onclick="confirmDeleteAndStartOver()">Delete &amp; Answer Again</span>
-          </div>
-        </details>
+        <div class="sv-toolbar-row sv-secondary-tools">
+          <button id="sv-undo" onclick="undoScript()" disabled title="Undo (Ctrl/Cmd+Z)" class="sv-tool-btn">↶ Undo</button>
+          <button id="sv-redo" onclick="redoScriptStep()" disabled title="Redo (Ctrl/Cmd+Shift+Z)" class="sv-tool-btn">↷ Redo</button>
+          <button id="sv-regen-full" onclick="regenerateFullScript(currentVideoIndex, this)" title="Make a new version" class="sv-tool-btn">↺ Make A New Version</button>
+          <button id="sv-fullscreen" onclick="openFullscreenPreview()" title="Open a larger view" class="sv-tool-btn">⛶ Larger View</button>
+        </div>
+        <div class="sv-toolbar-row sv-secondary-tools">
+          <span class="sv-redo-link danger" id="sv-delete-reanswer" onclick="confirmDeleteAndStartOver()">Delete &amp; Answer Again</span>
+        </div>
         <div class="sv-locked-notice" id="sv-locked-notice" hidden>
           <span>This script is locked to protect your final draft.</span>
           <button type="button" onclick="unlockScript()">Unlock to Edit</button>
@@ -790,7 +805,7 @@
       <div id="sv-beats" class="sv-beats-view"></div>
       <div id="sv-clean" style="display:none;">
         <textarea class="script-editor" id="script-editor" rows="8" placeholder="Your script will appear here..."></textarea>
-        <p class="sv-hint">Edit freely. Your changes save automatically. Open More editing tools if you need Undo.</p>
+        <p class="sv-hint">Edit freely. Your changes save automatically. Use Undo if you make a mistake.</p>
       </div>
       <!-- Saved indicator — bottom right of card -->
       <div id="saved-indicator" style="text-align:right;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--green);opacity:0;transition:opacity 0.3s ease;text-transform:uppercase;padding:6px 0 0;">✓ Saved</div>
@@ -972,11 +987,11 @@
      JAVASCRIPT
 ══════════════════════════════════════ -->
 <script src="/js/script-prompt-engine.js?v=story-discovery-1"></script>
-<script src="/js/journey-map.js?v=simplicity-1"></script>
-<script src="/js/answer-help.js?v=video7-epic-return-1"></script>
+<script src="/js/journey-map.js?v=hero-journey-2"></script>
+<script src="/js/answer-help.js?v=hero-journey-2"></script>
 <script src="/js/supabase.js?v=simplicity-1"></script>
 <script src="/js/points.js?v=active-lock-1"></script>
-<script src="/js/app.js?v=simplicity-1"></script>
+<script src="/js/app.js?v=hero-journey-2"></script>
 
 <!-- ══ DUAL COMPLETE OVERLAY ══ -->
 <div id="dual-complete-overlay">

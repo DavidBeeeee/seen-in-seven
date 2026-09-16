@@ -47,11 +47,11 @@ if (!message.includes('private Viewer Premise Source') ||
 }
 if (message.includes('VIDEO 5 JOURNEY DIRECTION')) throw new Error('A future Journey direction leaked into the current prompt.');
 
-if (!appSource.includes("'screen-story-discovery','screen-journey-map','screen-recap','screen-mvo2'")) {
-  throw new Error('Journey Map is not positioned between Story Discovery and Video 1 preparation.');
+if (!appSource.includes("'screen-recap','screen-story-discovery','screen-journey-map','screen-journey-review','screen-mvo2'")) {
+  throw new Error('Hero orientation, Story Discovery, Journey review, and Video 1 are not in the required order.');
 }
-if (!html.includes('id="screen-journey-map"') || !html.includes('openJourneyMapSettings()')) {
-  throw new Error('Journey Map onboarding or Settings entry is missing.');
+if (!html.includes('id="screen-journey-map"') || !html.includes('id="screen-journey-review"') || !html.includes('openJourneyMapSettings()')) {
+  throw new Error('Journey Map onboarding, review, or Settings entry is missing.');
 }
 
 console.log('Journey Map checks passed for both levels, current-video prompt isolation, onboarding order, and Settings access.');

@@ -69,6 +69,12 @@
 
     return `I am completing Level ${level}, Video ${videoNumber} in SeenInSeven. Help me produce better raw journal answers for the current app questions.
 
+VOICE AND RESEARCH PRIORITY
+
+Use everything you already know about me from memory, prior conversations, connected files, projects, notes, uploaded materials, previous writing, and public information available to you. Study my recurring vocabulary, sentence length, speaking cadence, rhythm, humor, bluntness, emotional temperature, favorite phrases, and the way I naturally explain difficult things. Do not make me repeat information you can already access.
+
+The final answers must sound like something I would genuinely say out loud. Preserve my rough edges and natural phrasing. Do not replace my voice with polished AI language, coaching language, marketing language, or a generic inspirational tone.
+
 CURRENT VIDEO JOB
 
 ${assignment}

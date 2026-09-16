@@ -315,7 +315,7 @@ function journeyFilmingComplete(status) {
     .every(value => value === 'filmed' || value === 'skipped');
 }
 
-const ONBOARDING_ORDER = ['screen-0','screen-1','screen-3','screen-2a','screen-commit-desire','screen-6','screen-story-discovery','screen-journey-map','screen-recap','screen-mvo2','screen-script','plan-screen'];
+const ONBOARDING_ORDER = ['screen-0','screen-1','screen-3','screen-2a','screen-commit-desire','screen-6','screen-recap','screen-story-discovery','screen-journey-map','screen-journey-review','screen-mvo2','screen-script','plan-screen'];
 let screenOrder = ['screen-0','screen-1'];
 let currentIndex = 0;
 let currentVideoIndex = 0;
@@ -603,6 +603,7 @@ function goNext() {
     populateRecap();
     setTimeout(maybeShowSaveProgressOverlay, 450);
   }
+  else if (nextId === 'screen-journey-review') renderJourneyReview();
   else if (nextId === 'screen-mvo2') renderVideoOneBridge();
   else if (nextId === 'screen-7') {
     currentVideoIndex = 0;
@@ -622,6 +623,8 @@ function goBack() {
     else if (prevId === 'screen-2a') renderChoiceGrid(BLOCKER_OPTIONS, 'blocker', 'blocker-choice-grid');
     else if (prevId === 'screen-commit-desire') renderCommitmentCards('desire');
     else if (prevId === 'screen-6') renderCommitmentDeclaration();
+    else if (prevId === 'screen-recap') populateRecap();
+    else if (prevId === 'screen-journey-review') renderJourneyReview();
     else if (prevId === 'screen-mvo2') renderVideoOneBridge();
     showScreen(prevId, 'back');
   }
@@ -1469,7 +1472,7 @@ function renderJourneyMap() {
     ? 'We will ask one small question at a time. Short, imperfect answers are welcome.'
     : 'These private directions guide future scripts. They are not finished scripts.';
   if (note) note.textContent = journeyMapMode === 'onboarding'
-    ? (p2.storyDiscoveryMode === 'imported' ? 'Review the story your AI helped you find. Change anything that does not feel true.' : 'Part ' + (journeyOnboardingIndex + 1) + ' of 7. Your answer can be one or two sentences.')
+    ? (p2.storyDiscoveryMode === 'imported' ? 'Review the story your AI helped you find. Change anything that does not feel true.' : 'Finding Your Hero’s Journey • Part ' + (journeyOnboardingIndex + 1) + ' of 7 • About ' + Math.max(2, (7 - journeyOnboardingIndex) * 2) + ' minutes left')
     : 'Editing Level ' + level + '. Saved changes guide future scripts and intentional regenerations only.';
   if (confirm) { confirm.style.display = ''; confirm.textContent = journeyMapMode === 'onboarding' ? (p2.storyDiscoveryMode === 'imported' ? 'This Feels Right →' : (journeyOnboardingIndex < 6 ? 'Save And Continue →' : 'Finish My Story →')) : 'Save My Journey →'; }
 
@@ -1499,6 +1502,49 @@ function renderJourneyMap() {
       card.style.display = index === Number(journeyMapReturnVideo) ? '' : 'none';
     });
   }
+}
+
+const JOURNEY_REVIEW_LABELS = [
+  'The Story You Want To Tell',
+  'Where You Started',
+  'What You Used To Believe',
+  'The Turning Point',
+  'The Hardest Part',
+  'The Truth You Found',
+  'Who You Are Now'
+];
+
+function renderJourneyReview() {
+  const answers = journeyAnswersForLevel(state.level || 1);
+  const skipped = ensurePhase2().skippedJourneyParts || [];
+  const list = document.getElementById('journey-review-list');
+  if (!list) return;
+  list.innerHTML = JOURNEY_REVIEW_LABELS.map((label, index) => {
+    const value = answers[index] || '';
+    const unfinished = !value && skipped.includes(index);
+    return `<section class="journey-review-item${unfinished ? ' unfinished' : ''}">
+      <div class="journey-review-heading"><span>${index + 1}</span><strong>${escapeHTML(label)}</strong></div>
+      ${unfinished ? '<p>We’ll help fill this in later.</p>' : ''}
+      <textarea class="journey-answer-input" rows="3" placeholder="You can leave this unfinished for now."
+        oninput="setJourneyMapAnswer(${index}, this.value)">${escapeHTML(value)}</textarea>
+    </section>`;
+  }).join('');
+}
+
+function backToJourneyInterview() {
+  journeyMapMode = 'onboarding';
+  journeyMapLevel = Number(state.level || 1);
+  journeyMapReturnVideo = null;
+  if (ensurePhase2().storyDiscoveryMode !== 'imported') journeyOnboardingIndex = 6;
+  currentIndex = screenOrder.indexOf('screen-journey-map');
+  renderJourneyMap();
+  showScreen('screen-journey-map', 'back');
+}
+
+function finishJourneyReview() {
+  saveProgress();
+  currentIndex = screenOrder.indexOf('screen-journey-review');
+  goNext();
 }
 
 function importJourneyMap() {
@@ -2417,6 +2463,16 @@ const SIMPLE_VIDEO_INTROS = [
   'This final video brings the journey to today. Show who you are now, what is still unfinished, and where you are going next.'
 ];
 
+const VIDEO_ORIENTATION = [
+  { making:'A short introduction that tells people who you are and why you are starting.', share:'Be honest about what brought you here, what made posting hard, and why you are choosing to begin now.', next:'We will organize those thoughts into your opening script. You can change every word before filming.' },
+  { making:'The beginning of your story, before the change happened.', share:'Show what everyday life looked like then and one detail that helps someone recognize the earlier version of you.', next:'We will turn that background into a clear story that helps viewers feel connected to you.' },
+  { making:'The moment an old belief stopped making sense.', share:'Tell us what you used to believe, why it seemed true, and what happened that made you question it.', next:'We will shape the experience into a script that lets the viewer discover the new belief with you.' },
+  { making:'The part where you tried something different in real life.', share:'Describe what you changed, what tested you, and the first sign that you might be moving in the right direction.', next:'We will organize the action and result without pretending everything was solved yet.' },
+  { making:'The hardest chapter in the larger story.', share:'Share what happened, what it cost, and the part you played. You decide how personal to be, and you can skip this for now.', next:'We will handle the story carefully and stop before the recovery or lesson.' },
+  { making:'The bigger truth you earned from the difficult experience.', share:'Explain what became clear afterward and how it changed the way you live, work, or see the world.', next:'We will turn that lesson into something useful without making it sound like a lecture.' },
+  { making:'The ending of this chapter and the beginning of the next one.', share:'Show who you are now, what is still unfinished, and what you are moving toward.', next:'We will connect the full journey and give viewers a natural reason to stay with you.' }
+];
+
 const VIDEO_EASY_PROMPTS = {
   1: [
     null,
@@ -2628,10 +2684,10 @@ function populateRecap() {
   } else {
     if (emojiEl) emojiEl.textContent = '🔥';
     if (headingEl) headingEl.innerHTML = name !== 'You'
-      ? escapeHTML(name) + ", You're<br>The Expert in the Room."
-      : "You're The Expert<br>in the Room.";
+      ? escapeHTML(name) + ", You're<br>The Hero of This Story."
+      : "You're The Hero<br>of This Story.";
     if (nameEl) nameEl.textContent = 'LEVEL 2 - THE AUTHORITY SERIES';
-    if (msgEl) msgEl.innerHTML = 'Your 7 videos make the <strong style="color:var(--cream)">knowledge, experience, or perspective already inside your life</strong> visible through a complete human journey. No business, clients, offer, or polished professional identity is required.';
+    if (msgEl) msgEl.innerHTML = 'Your Hero’s Journey follows the <strong style="color:var(--cream)">experience that made your knowledge and perspective worth hearing</strong>. Your expertise matters because a real person had to live through something to earn it.';
   }
 
   p2.commitmentDeclaration = p2.commitmentDeclaration || buildCommitmentDeclaration();
@@ -7042,6 +7098,9 @@ function renderVideoIntro(videoNum) {
   const badgeEl  = document.getElementById('vi-result-badge');
   const fwEl     = document.getElementById('vi-framework');
   const trigEl   = document.getElementById('vi-triggers');
+  const makingEl = document.getElementById('vi-making');
+  const shareEl  = document.getElementById('vi-share');
+  const nextEl   = document.getElementById('vi-next');
   const btn      = document.getElementById('vi-ready-btn');
   if (labelEl)  labelEl.textContent  = data.label;
   if (titleEl)  titleEl.textContent  = data.title;
@@ -7049,6 +7108,10 @@ function renderVideoIntro(videoNum) {
   if (badgeEl)  badgeEl.innerHTML    = renderResultBadgeHTML(data.result);
   if (fwEl)     fwEl.innerHTML       = renderFrameworkHTML(data.framework);
   if (trigEl)   trigEl.innerHTML     = renderTriggersHTML(data.triggers);
+  const orientation = VIDEO_ORIENTATION[videoNum - 1] || {};
+  if (makingEl) makingEl.textContent = orientation.making || '';
+  if (shareEl) shareEl.textContent = orientation.share || '';
+  if (nextEl) nextEl.textContent = orientation.next || '';
   const details = document.getElementById('vi-more-details');
   if (details) details.open = false;
   if (btn)      btn.onclick = () => readyForVideo(videoNum - 1);
@@ -7382,6 +7445,9 @@ function resumeSavedWorkflow() {
     } else if (resume.screenId === 'screen-journey-map') {
       renderJourneyMap();
       showScreen('screen-journey-map');
+    } else if (resume.screenId === 'screen-journey-review') {
+      renderJourneyReview();
+      showScreen('screen-journey-review');
     } else if (resume.screenId === 'screen-mvo2') {
       renderVideoOneBridge();
       showScreen('screen-mvo2');

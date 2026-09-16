@@ -161,6 +161,15 @@ body.light-mode .recap-hero-heading { color: var(--cream); }
 body.light-mode .recap-level-name   { color: var(--teal); }
 body.light-mode .recap-level-message { color: var(--soft); }
 body.light-mode .recap-guidelines-heading { color: var(--cream); }
+body.light-mode .app-back-button {
+  color:#0f3f3f;
+  background:rgba(255,255,255,.96);
+  border-color:rgba(26,138,138,.55);
+  box-shadow:0 0 0 3px rgba(26,138,138,.08), 0 5px 18px rgba(26,74,74,.14);
+}
+body.light-mode .journey-question-explainer,
+body.light-mode .video-orientation-item span { color:var(--soft); }
+body.light-mode .journey-review-item { background:#fff; border-color:rgba(26,138,138,.18); }
 body.light-mode .recap-value  { color: var(--cream); }
 body.light-mode .recap-label  { color: var(--muted); }
 body.light-mode .recap-row    { border-bottom-color: rgba(26,138,138,0.12); }

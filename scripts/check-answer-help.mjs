@@ -186,7 +186,7 @@ if (!appSource.includes("${count} / 60 words") ||
   throw new Error('Journey direction editing does not match the new 60-word guidance.');
 }
 
-if (!html.includes('id="answer-help-overlay"') || !html.includes('/js/answer-help.js?v=video7-epic-return-1')) {
+if (!html.includes('id="answer-help-overlay"') || !/\/js\/answer-help\.js\?v=[^"]+/.test(html)) {
   throw new Error('Answer Help modal or shared script include is missing.');
 }
 if (!/\/js\/journey-map\.js\?v=[^"]+/.test(html) || !/\/js\/app\.js\?v=[^"]+/.test(html)) {

@@ -2132,7 +2132,7 @@ body::after {
 /* ── SEVEN-PART JOURNEY MAP ─────────────────────────── */
 .journey-map-shell { width:min(860px,100%); margin:0 auto; }
 .app-back-button {
-  position:fixed; z-index:9900; top:82px; right:22px; display:none;
+  position:fixed; z-index:9900; top:82px; left:22px; display:none;
   border:1px solid rgba(45,212,191,.7); border-radius:999px;
   padding:9px 15px; color:var(--cream); background:rgba(6,31,31,.94);
   box-shadow:0 0 0 3px rgba(45,212,191,.1), 0 0 22px rgba(45,212,191,.24);
@@ -2182,16 +2182,16 @@ body::after {
 .journey-question-card > .voice-input-wrap { width:100%; min-width:0; }
 .journey-question-top { display:flex; justify-content:space-between; gap:12px; align-items:center; }
 .journey-step { color:var(--teal); font:700 10px 'Space Mono',monospace; letter-spacing:.12em; text-transform:uppercase; }
-.journey-question-card > label { color:var(--cream); font-size:14px; line-height:1.5; font-weight:700; }
+.journey-question-card > label { color:var(--cream); font-size:24px; line-height:1.35; font-weight:800; }
 .journey-question-card > textarea {
   width:100%; min-height:70px; resize:vertical; box-sizing:border-box;
   background:rgba(3,18,18,0.46); border:1px solid var(--border);
   border-radius:8px; color:var(--cream); padding:11px 12px;
-  font:15px/1.55 'Nunito',sans-serif;
+  font:18px/1.6 'Nunito',sans-serif;
 }
 .journey-question-card > textarea:focus { outline:none; border-color:var(--teal); }
 .journey-question-card > .journey-unsure-btn { justify-self:start; }
-.journey-question-explainer { grid-column:1 / -1; color:var(--muted); font-size:14px; line-height:1.55; margin:0; }
+.journey-question-explainer { grid-column:1 / -1; color:var(--soft); font-size:17px; line-height:1.65; margin:0; }
 .journey-question-actions { grid-column:1 / -1; display:flex; align-items:center; flex-wrap:wrap; gap:12px; }
 .journey-ai-btn { border:1px solid rgba(45,212,191,.35); border-radius:7px; background:rgba(45,212,191,.09); color:var(--teal); padding:8px 11px; font-weight:800; cursor:pointer; }
 .journey-ai-workflow {
@@ -2213,7 +2213,7 @@ body::after {
   width:100%; min-height:70px; resize:vertical; box-sizing:border-box;
   background:rgba(3,18,18,0.46); border:1px solid var(--border);
   border-radius:8px; color:var(--cream); padding:11px 12px;
-  font:15px/1.55 'Nunito',sans-serif;
+  font:18px/1.6 'Nunito',sans-serif;
 }
 .journey-answer-input:focus { outline:none; border-color:var(--teal); }
 .journey-question-footer {
@@ -2232,9 +2232,26 @@ body::after {
 .journey-map-actions .btn-primary,
 .journey-map-actions .btn-secondary { width:auto; }
 @media (max-width:700px) {
-  .app-back-button { top:70px; right:10px; padding:7px 11px; font-size:12px; }
+  .app-back-button { position:absolute; top:70px; left:10px; padding:7px 11px; font-size:12px; box-shadow:none; }
   .journey-map-head { display:block; }
   .journey-help-btn { margin-top:12px; }
+}
+.journey-review-shell { width:min(860px,100%); margin:0 auto; }
+.journey-review-list { display:grid; gap:14px; margin:24px 0; }
+.journey-review-item { padding:18px; border:1px solid var(--border); border-radius:8px; background:var(--card); }
+.journey-review-item.unfinished { border-style:dashed; }
+.journey-review-item.unfinished > p { color:var(--muted); margin:8px 0 12px; }
+.journey-review-heading { display:flex; align-items:center; gap:10px; color:var(--cream); font-size:18px; margin-bottom:10px; }
+.journey-review-heading span { width:28px; height:28px; display:grid; place-items:center; border-radius:50%; background:rgba(45,212,191,.12); color:var(--teal); font-weight:900; }
+.video-orientation { display:grid; gap:10px; margin:22px 0; }
+.video-orientation-item { display:grid; grid-template-columns:minmax(150px,190px) 1fr; gap:16px; padding:14px 16px; border-bottom:1px solid var(--border); }
+.video-orientation-item strong { color:var(--cream); }
+.video-orientation-item span { color:var(--soft); line-height:1.55; }
+.sv-secondary-tools { opacity:.82; }
+@media (max-width:600px) {
+  .journey-question-card > label { font-size:21px; }
+  .journey-question-explainer { font-size:16px; }
+  .video-orientation-item { grid-template-columns:1fr; gap:4px; }
 }
 .journey-help-overlay {
   position:fixed; inset:0; z-index:10150; display:flex;
