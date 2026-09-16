@@ -189,14 +189,16 @@ if (!appSource.includes("${count} / 60 words") ||
 if (!html.includes('id="answer-help-overlay"') || !html.includes('/js/answer-help.js?v=video7-epic-return-1')) {
   throw new Error('Answer Help modal or shared script include is missing.');
 }
-if (!html.includes('/js/journey-map.js?v=story-discovery-1') || !/\/js\/app\.js\?v=[^"]+/.test(html)) {
+if (!/\/js\/journey-map\.js\?v=[^"]+/.test(html) || !/\/js\/app\.js\?v=[^"]+/.test(html)) {
   throw new Error('Journey Map or app cache version is missing.');
 }
 if (!html.includes('id="video-one-note"') || !appSource.includes('function renderVideoOneBridge()')) {
   throw new Error('Video 1 bridge entry is missing.');
 }
-if (!appSource.includes("openAnswerHelp(${idx},'simple')") || !appSource.includes("openAnswerHelp(${idx},'extended')")) {
-  throw new Error('Simple or Extended Answer Help entry is missing from Videos 2 through 7.');
+if (!appSource.includes('Anything else you want this video to include?') ||
+    !appSource.includes('Help Me Make This More Specific') ||
+    !appSource.includes("openAnswerHelp(${idx},'extended')")) {
+  throw new Error('The simple-first video detail flow or optional Answer Help entry is missing.');
 }
 if (!html.includes('id="screen-story-discovery"') || !appSource.includes('function importJourneyMap()')) {
   throw new Error('Story Discovery or map import is missing.');

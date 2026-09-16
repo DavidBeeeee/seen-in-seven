@@ -2131,6 +2131,23 @@ body::after {
 
 /* ── SEVEN-PART JOURNEY MAP ─────────────────────────── */
 .journey-map-shell { width:min(860px,100%); margin:0 auto; }
+.app-back-button {
+  position:fixed; z-index:9900; top:82px; right:22px; display:none;
+  border:1px solid rgba(45,212,191,.7); border-radius:999px;
+  padding:9px 15px; color:var(--cream); background:rgba(6,31,31,.94);
+  box-shadow:0 0 0 3px rgba(45,212,191,.1), 0 0 22px rgba(45,212,191,.24);
+  font:800 13px 'Nunito',sans-serif; cursor:pointer;
+}
+.app-back-button.visible { display:inline-flex; }
+.app-back-button:hover { border-color:var(--teal); transform:translateY(-1px); }
+.simple-details, .script-tool-details {
+  margin:16px 0; border:1px solid var(--border); border-radius:8px;
+  background:rgba(255,255,255,.025); padding:12px 14px;
+}
+.simple-details summary, .script-tool-details summary {
+  color:var(--teal); font-weight:800; cursor:pointer;
+}
+.script-tool-details .sv-toolbar-row { margin-top:12px; }
 .journey-map-head {
   display:flex; justify-content:space-between; align-items:flex-start;
   gap:24px; margin-bottom:20px;
@@ -2174,6 +2191,14 @@ body::after {
 }
 .journey-question-card > textarea:focus { outline:none; border-color:var(--teal); }
 .journey-question-card > .journey-unsure-btn { justify-self:start; }
+.journey-question-explainer { grid-column:1 / -1; color:var(--muted); font-size:14px; line-height:1.55; margin:0; }
+.journey-question-actions { grid-column:1 / -1; display:flex; align-items:center; flex-wrap:wrap; gap:12px; }
+.journey-ai-btn { border:1px solid rgba(45,212,191,.35); border-radius:7px; background:rgba(45,212,191,.09); color:var(--teal); padding:8px 11px; font-weight:800; cursor:pointer; }
+.journey-ai-workflow {
+  padding:20px; border:1px solid var(--border); border-radius:8px; background:var(--card);
+}
+.journey-ai-workflow h3 { color:var(--cream); font-size:18px; margin:7px 0; }
+.journey-ai-workflow p { color:var(--muted); line-height:1.55; margin:0 0 12px; }
 .journey-question-num {
   width:34px; height:34px; display:grid; place-items:center;
   border-radius:50%; background:rgba(45,212,191,0.11);
@@ -2206,6 +2231,11 @@ body::after {
 }
 .journey-map-actions .btn-primary,
 .journey-map-actions .btn-secondary { width:auto; }
+@media (max-width:700px) {
+  .app-back-button { top:70px; right:10px; padding:7px 11px; font-size:12px; }
+  .journey-map-head { display:block; }
+  .journey-help-btn { margin-top:12px; }
+}
 .journey-help-overlay {
   position:fixed; inset:0; z-index:10150; display:flex;
   align-items:center; justify-content:center; padding:20px;

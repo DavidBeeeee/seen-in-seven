@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
-<link rel="stylesheet" href="/css/app.css">
+<link rel="stylesheet" href="/css/app.css?v=simplicity-1">
 <link rel="stylesheet" href="/css/light.css">
 
 <!-- ── GLOBAL ERROR BOUNDARY ── -->
@@ -212,6 +212,7 @@
   </div>
 </div>
 <canvas id="confetti-canvas"></canvas>
+<button class="app-back-button" id="app-back-button" type="button" onclick="appBack()" aria-label="Go back">← Back</button>
 
 <!-- ══ SETTINGS PANEL (global — works on any screen) ══ -->
 <div id="settings-panel" class="settings-panel">
@@ -596,7 +597,7 @@
       <div>
         <div class="eyebrow">Your Story Discovery</div>
         <h2 class="screen-title" id="journey-map-title">Build your <span class="accent">seven-part story.</span></h2>
-        <p class="screen-sub" id="journey-map-subtitle">These are private directions for the story, not finished scripts. Start with Video 1. You can discover the rest as you go.</p>
+        <p class="screen-sub" id="journey-map-subtitle">We will help you find seven small pieces of one connected story. You do not need to know the whole story before you begin.</p>
       </div>
       <button class="journey-help-btn" type="button" onclick="openJourneyHelp()">ⓘ Need Help?</button>
     </div>
@@ -619,11 +620,11 @@
     <div class="journey-help-header">
       <div>
         <div class="eyebrow">Use Your Favorite AI</div>
-        <h2 id="journey-help-title">Get three possible journeys.</h2>
+        <h2 id="journey-help-title">Get help finding your words.</h2>
       </div>
       <button class="settings-close" type="button" onclick="closeJourneyHelp()" aria-label="Close">✕</button>
     </div>
-    <p>Copy this prompt into ChatGPT, Claude, Gemini, or another AI. Choose the answer set that feels strongest, then paste its seven answers into the matching boxes one at a time.</p>
+    <p id="journey-help-description">Copy this prompt into ChatGPT, Claude, Gemini, or another AI. It will help you find one answer you can paste back here.</p>
     <textarea id="journey-help-prompt" class="journey-help-prompt" readonly></textarea>
     <button class="btn-primary" id="journey-help-copy" type="button" onclick="copyJourneyHelpPrompt(this)">Copy Full Prompt</button>
   </section>
@@ -663,12 +664,15 @@
 
 <div class="screen" id="screen-video-intro">
   <div class="video-progress" id="vi-dots"></div>
-  <div id="vi-result-badge"></div>
   <div class="q1-progress" id="vi-label">Video 1 of 7</div>
   <h2 class="screen-title" id="vi-title"></h2>
   <p class="vi-body" id="vi-body"></p>
-  <div id="vi-framework"></div>
-  <div id="vi-triggers"></div>
+  <details class="simple-details" id="vi-more-details">
+    <summary>Why this video works</summary>
+    <div id="vi-result-badge"></div>
+    <div id="vi-framework"></div>
+    <div id="vi-triggers"></div>
+  </details>
   <div class="v1-tracker" id="tracker-slot-vi"></div>
   <div class="btn-row" style="margin-top:1.5rem;">
     <button class="btn-primary" id="vi-ready-btn" onclick="readyForVideo(0)">I'm Ready →</button>
@@ -748,7 +752,7 @@
         <div class="video-badge" id="sv-badge">VIDEO 1</div>
         <div class="sv-title" id="sv-title">I'm Doing This</div>
       </div>
-      <p class="sv-instruction" id="sv-instruction">We used your words, feelings, and thoughts, then organized them into your own personalized video. Edit any word until it sounds exactly like you, then film it.</p>
+      <p class="sv-instruction" id="sv-instruction">This is your story, organized into a video you can say out loud. Read it once, change anything that does not sound like you, then copy it when you are ready.</p>
       <!-- Psychological rationale (shown above structured view) -->
       <div id="sv-rationale" style="display:none;margin-bottom:16px;padding:12px 16px;background:rgba(45,212,191,0.06);border-radius:10px;border:1px solid rgba(45,212,191,0.15);">
         <p style="font-size:13px;color:var(--muted);margin:0;line-height:1.6;" id="sv-rationale-text"></p>
@@ -757,25 +761,26 @@
         <!-- Row 1: toggle + copy -->
         <div class="sv-toolbar-row sv-toolbar-top">
           <div class="sv-view-toggle">
-            <button class="sv-toggle-btn active" id="sv-guided-btn" onclick="setScriptView('guided')">Structured</button>
-            <button class="sv-toggle-btn" id="sv-clean-btn" onclick="setScriptView('clean')">Edit</button>
+            <button class="sv-toggle-btn" id="sv-guided-btn" onclick="setScriptView('guided')">Why It Works</button>
+            <button class="sv-toggle-btn active" id="sv-clean-btn" onclick="setScriptView('clean')">My Script</button>
           </div>
           <button class="sv-copy-btn" id="sv-copy-btn" onclick="copyScript(this)">📋 Copy</button>
         </div>
-        <!-- Row 2: undo, redo, preview -->
-        <div class="sv-toolbar-row">
-          <button id="sv-undo" onclick="undoScript()" disabled title="Undo (Ctrl/Cmd+Z)" class="sv-tool-btn">↶ Undo</button>
-          <button id="sv-redo" onclick="redoScriptStep()" disabled title="Redo (Ctrl/Cmd+Shift+Z)" class="sv-tool-btn">↷ Redo</button>
-          <button id="sv-regen-full" onclick="regenerateFullScript(currentVideoIndex, this)" title="Regenerate the entire script" class="sv-tool-btn">↺ Regenerate Full Script</button>
-          <button id="sv-fullscreen" onclick="openFullscreenPreview()" title="Fullscreen preview" class="sv-tool-btn">⛶ Preview</button>
-        </div>
+        <details class="script-tool-details">
+          <summary>More editing tools</summary>
+          <div class="sv-toolbar-row">
+            <button id="sv-undo" onclick="undoScript()" disabled title="Undo (Ctrl/Cmd+Z)" class="sv-tool-btn">↶ Undo</button>
+            <button id="sv-redo" onclick="redoScriptStep()" disabled title="Redo (Ctrl/Cmd+Shift+Z)" class="sv-tool-btn">↷ Redo</button>
+            <button id="sv-regen-full" onclick="regenerateFullScript(currentVideoIndex, this)" title="Make a new version" class="sv-tool-btn">↺ Make A New Version</button>
+            <button id="sv-fullscreen" onclick="openFullscreenPreview()" title="Open a larger view" class="sv-tool-btn">⛶ Larger View</button>
+          </div>
+          <div class="sv-toolbar-row">
+            <span class="sv-redo-link danger" id="sv-delete-reanswer" onclick="confirmDeleteAndStartOver()">Delete &amp; Answer Again</span>
+          </div>
+        </details>
         <div class="sv-locked-notice" id="sv-locked-notice" hidden>
           <span>This script is locked to protect your final draft.</span>
           <button type="button" onclick="unlockScript()">Unlock to Edit</button>
-        </div>
-        <!-- Row 3: delete link -->
-        <div class="sv-toolbar-row">
-          <span class="sv-redo-link danger" id="sv-delete-reanswer" onclick="confirmDeleteAndStartOver()">Delete &amp; Re-answer Questions</span>
         </div>
       </div>
       <div id="sv-regeneration-status" class="sv-regeneration-status" role="status" aria-live="polite" hidden>
@@ -785,7 +790,7 @@
       <div id="sv-beats" class="sv-beats-view"></div>
       <div id="sv-clean" style="display:none;">
         <textarea class="script-editor" id="script-editor" rows="8" placeholder="Your script will appear here..."></textarea>
-        <p class="sv-hint">✏️ Edit freely. Changes save automatically — tap <em>Undo</em> to fix any mistake.</p>
+        <p class="sv-hint">Edit freely. Your changes save automatically. Open More editing tools if you need Undo.</p>
       </div>
       <!-- Saved indicator — bottom right of card -->
       <div id="saved-indicator" style="text-align:right;font-family:'Space Mono',monospace;font-size:10px;letter-spacing:0.1em;color:var(--green);opacity:0;transition:opacity 0.3s ease;text-transform:uppercase;padding:6px 0 0;">✓ Saved</div>
@@ -967,11 +972,11 @@
      JAVASCRIPT
 ══════════════════════════════════════ -->
 <script src="/js/script-prompt-engine.js?v=story-discovery-1"></script>
-<script src="/js/journey-map.js?v=story-discovery-1"></script>
+<script src="/js/journey-map.js?v=simplicity-1"></script>
 <script src="/js/answer-help.js?v=video7-epic-return-1"></script>
-<script src="/js/supabase.js?v=story-discovery-1"></script>
+<script src="/js/supabase.js?v=simplicity-1"></script>
 <script src="/js/points.js?v=active-lock-1"></script>
-<script src="/js/app.js?v=story-discovery-1"></script>
+<script src="/js/app.js?v=simplicity-1"></script>
 
 <!-- ══ DUAL COMPLETE OVERLAY ══ -->
 <div id="dual-complete-overlay">
