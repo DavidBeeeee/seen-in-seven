@@ -130,6 +130,11 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .report-period li strong { color: var(--text); }
 .report-period .report-next { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--line-soft); color: var(--teal-light); font-weight: 700; }
 .report-period .report-unknown { margin-top: 8px; color: var(--gold); }
+.report-period ol.report-passes { display: grid; gap: 4px; margin: 9px 0 0; padding: 8px 0 0 18px; border-top: 1px solid var(--line-soft); color: var(--muted); font-size: 11px; }
+.report-period ol.report-passes li.is-latest { color: var(--soft); }
+.report-period ol.report-passes li.is-latest > strong { color: var(--teal-light); }
+.report-period ol.report-passes time { color: var(--muted); font: 9px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace; }
+.report-period ol.report-passes .report-pass-summary { color: var(--muted); }
 .report-public-actions { display: grid; gap: 6px; margin-top: 10px; padding-top: 9px; border-top: 1px solid var(--line-soft); }
 .report-public-actions > strong { color: var(--text); font-size: 11px; }
 .report-public-actions a { display: flex; align-items: center; min-height: 34px; padding: 7px 9px; border: 1px solid rgba(50, 184, 184, .35); border-radius: 7px; background: rgba(50, 184, 184, .08); color: var(--teal-light); font-size: 11px; font-weight: 800; line-height: 1.35; text-decoration: none; }

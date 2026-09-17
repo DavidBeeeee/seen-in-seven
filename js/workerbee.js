@@ -337,6 +337,35 @@ function renderReportPeriod(label, period) {
     summary.textContent = period.summary;
     card.append(summary);
   }
+  // A period that ran more than once shows every pass separately: a manual
+  // extra Morning must never look like it replaced the scheduled one. The
+  // latest pass is emphasized because it is also the headline above.
+  const passes = period && Array.isArray(period.passes) ? period.passes : [];
+  if (passes.length > 1) {
+    const passList = document.createElement('ol');
+    passList.className = 'report-passes';
+    passes.forEach((pass, index) => {
+      const row = document.createElement('li');
+      if (index === passes.length - 1) row.className = 'is-latest';
+      const letter = document.createElement('strong');
+      letter.textContent = `Pass ${pass.pass || '?'}`;
+      row.append(letter, document.createTextNode(` · ${pass.kind || 'scheduled'} · ${statusLabel(pass.status)}`));
+      if (pass.updatedAt) {
+        const when = document.createElement('time');
+        when.dateTime = pass.updatedAt;
+        when.textContent = ` · ${formatDateTime(pass.updatedAt)}`;
+        row.append(when);
+      }
+      if (pass.summary) {
+        const passSummary = document.createElement('span');
+        passSummary.className = 'report-pass-summary';
+        passSummary.textContent = ` — ${pass.summary}`;
+        row.append(passSummary);
+      }
+      passList.append(row);
+    });
+    card.append(passList);
+  }
   const items = period && Array.isArray(period.completed) ? period.completed : [];
   if (items.length) {
     const list = document.createElement('ul');
