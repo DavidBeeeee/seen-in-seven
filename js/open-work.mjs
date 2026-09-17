@@ -42,10 +42,20 @@ export function isBlockedWork(item) {
   return statusOf(item) === 'blocked';
 }
 
-// The bands, which is the part the order asked for. Standing and blocked stay
-// inside `open` because they are open work and hiding them is the undercount
-// this board exists to stop, but they are named separately so the total is
-// never an opaque number somebody has to guess the composition of.
+// Intentionally inactive with a named reopening condition. Added 2026-09-17
+// when the WBR-371 baseline reset abolished the blocked state: nothing is
+// ever blocked, so work that cannot advance now is held with its condition
+// written down. Held stays open and visible — hidden is how it becomes
+// never — but it is not "to do", because a thing waiting on its condition
+// cannot be done as soon as possible by definition.
+export function isHeldWork(item) {
+  return statusOf(item) === 'held';
+}
+
+// The bands, which is the part the order asked for. Standing, blocked and
+// held stay inside `open` because they are open work and hiding them is the
+// undercount this board exists to stop, but they are named separately so the
+// total is never an opaque number somebody has to guess the composition of.
 //
 // `active` is what is left: work with a finish line that nothing is holding up.
 export function openWorkBands(items) {
@@ -53,11 +63,13 @@ export function openWorkBands(items) {
   const open = all.filter(isOpenWork);
   const standing = open.filter(isStandingWork).length;
   const blocked = open.filter(isBlockedWork).length;
+  const held = open.filter(isHeldWork).length;
   return {
     open: open.length,
-    active: open.length - standing - blocked,
+    active: open.length - standing - blocked - held,
     standing,
     blocked,
+    held,
     closed: all.length - open.length,
     total: all.length,
   };
@@ -69,6 +81,7 @@ export function openWorkBands(items) {
 export function bandLabel(bands) {
   const parts = [`${bands.active} to do`];
   if (bands.blocked) parts.push(`${bands.blocked} waiting on something`);
+  if (bands.held) parts.push(`${bands.held} held`);
   if (bands.standing) parts.push(`${bands.standing} standing`);
   return `${bands.open} open: ${parts.join(', ')}.`;
 }

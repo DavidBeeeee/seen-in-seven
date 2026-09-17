@@ -1,5 +1,5 @@
 import { dashboardPanels, isNewSince, boardCards, completedAt } from '/js/panels.mjs';
-import { isClosedWork, isStandingWork, isBlockedWork, openWorkBands, bandLabel } from '/js/open-work.mjs';
+import { isClosedWork, isStandingWork, isBlockedWork, isHeldWork, openWorkBands, bandLabel } from '/js/open-work.mjs';
 
 const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
@@ -1870,12 +1870,20 @@ function renderTodo() {
     .filter(boardCardMatches)
     .filter(item => (item.metadata?.owner === 'david' ? 'david' : 'workerbee') === todoOwner)
     .sort((a, b) => (reviewDueAt(a) ?? 0) - (reviewDueAt(b) ?? 0));
-  const queueItems = liveBoard.filter(item => !isStanding(item)).filter(boardCardMatches);
+  // Held work gets the same treatment as standing: visible with its reopening
+  // condition, counted on the tab, and kept out of the quadrants, because a
+  // thing waiting on its condition is not "to do" however it is prioritized.
+  const heldItems = liveBoard.filter(isHeldWork)
+    .filter(boardCardMatches)
+    .filter(item => (item.metadata?.owner === 'david' ? 'david' : 'workerbee') === todoOwner)
+    .sort((a, b) => Number(a.metadata?.priority ?? 9) - Number(b.metadata?.priority ?? 9));
+  const queueItems = liveBoard.filter(item => !isStanding(item) && !isHeldWork(item)).filter(boardCardMatches);
   const captures = state.tasks.filter(isUnrouted).filter(taskMatches);
   // Standing items are counted here even though they sit outside the quadrants.
   // They are open work; a tab that says 38 while 51 things are on the page is
   // the quiet undercount this board exists to stop.
   const standingAll = liveBoard.filter(isStanding).filter(boardCardMatches);
+  const heldAll = liveBoard.filter(isHeldWork).filter(boardCardMatches);
   // WBR-350. One function, one rule, and the bands said out loud.
   //
   // These two numbers used to be sums assembled inline, and the tab showed the
@@ -1888,7 +1896,7 @@ function renderTodo() {
   const ownerSide = item => ((item.metadata?.owner || 'workerbee') === 'david' ? 'david' : 'workerbee');
   const sideOfTask = task => (task.owner === 'workerbee' ? 'workerbee' : 'david');
   const bandsFor = side => {
-    const board = [...queueItems, ...standingAll].filter(item => ownerSide(item) === side);
+    const board = [...queueItems, ...standingAll, ...heldAll].filter(item => ownerSide(item) === side);
     const tasks = [...openTasks, ...captures].filter(task => sideOfTask(task) === side);
     const bands = openWorkBands(board);
     // Loose tasks and unrouted captures have no roadmap status. They are always
@@ -1896,6 +1904,17 @@ function renderTodo() {
     return { ...bands, open: bands.open + tasks.length, active: bands.active + tasks.length, total: bands.total + tasks.length };
   };
   const bands = { workerbee: bandsFor('workerbee'), david: bandsFor('david') };
+  // The search cross-tab counts. WBR-350 replaced the old inline definition
+  // with bandsFor and left renderTodoSearchCount reading a name that no longer
+  // existed, so the whole page failed with "counts is not defined" and showed
+  // the error card instead of the board. Derived from the same filtered sets
+  // as everything above, so a side with zero matches is 0, never undefined.
+  const counts = {
+    workerbee: [...queueItems, ...standingAll, ...heldAll].filter(item => ownerSide(item) === 'workerbee').length
+      + [...openTasks, ...captures].filter(task => sideOfTask(task) === 'workerbee').length,
+    david: [...queueItems, ...standingAll, ...heldAll].filter(item => ownerSide(item) === 'david').length
+      + [...openTasks, ...captures].filter(task => sideOfTask(task) === 'david').length,
+  };
   el('workerbee-task-count').textContent = bands.workerbee.open;
   el('david-task-count').textContent = bands.david.open;
   document.querySelectorAll('[data-todo-owner]').forEach(button => {
@@ -1959,6 +1978,7 @@ function renderTodo() {
     root.append(panel);
   }
   if (standingItems.length) root.append(standingPanel(standingItems));
+  if (heldItems.length) root.append(heldPanel(heldItems));
   renderCaptures();
   renderTodoSearchCount(counts);
   icons();
@@ -1997,6 +2017,40 @@ function standingPanel(items) {
       ? 'No review cadence recorded, so nothing will bring this back on its own.'
       : `Every ${item.metadata.review_every} days · next ${new Date(when).toISOString().slice(0, 10)}${reviewOverdue(item) ? ' · due now' : ''}`;
     row.insertBefore(cadence, row.querySelector('.task-thread'));
+    panel.append(row);
+  });
+  return panel;
+}
+
+// Held work, with the reopening condition on the row instead of a checkbox.
+// Nothing is ever blocked: a held item is deliberately inactive until its
+// named condition is true, and the condition is the whole reason it is not
+// in a quadrant competing with work that can actually start.
+function heldPanel(items) {
+  const panel = document.createElement('section');
+  panel.className = 'todo-quadrant standing-panel';
+  panel.dataset.quadrant = 'held';
+  const heading = document.createElement('header');
+  heading.className = 'todo-quadrant-heading';
+  const words = document.createElement('div');
+  const title = document.createElement('h2');
+  title.textContent = 'Held';
+  const note = document.createElement('p');
+  note.textContent = 'Deliberately inactive, each with the condition that reopens it written on the row. Held is not a junk drawer and it is not blocked: the moment its condition is true, the item comes back. They are counted on the tab above but kept out of the quadrants, because work waiting on its condition is not to-do however it is prioritized.';
+  words.append(title, note);
+  const label = document.createElement('span');
+  label.className = 'quadrant-label';
+  label.textContent = String(items.length);
+  heading.append(words, label);
+  panel.append(heading);
+  items.forEach(item => {
+    const row = boardRow(item);
+    const condition = document.createElement('small');
+    condition.className = 'last-moved';
+    condition.textContent = item.metadata?.reopening_condition
+      ? `Reopens when: ${item.metadata.reopening_condition}`
+      : 'No reopening condition recorded — that is a defect, because an unconditioned hold is parking.';
+    row.insertBefore(condition, row.querySelector('.task-thread'));
     panel.append(row);
   });
   return panel;
@@ -2169,8 +2223,9 @@ function boardRow(item) {
   head.className = 'queue-task-head';
 
   // A standing practice gets no done control, because it has no finish line.
-  // That is the whole reason it is standing.
-  if (!isStanding(item) && !isDeadBoardItem(item)) {
+  // That is the whole reason it is standing. A held item gets none either:
+  // its reopening condition, not a checkbox, is what brings it back.
+  if (!isStanding(item) && !isHeldWork(item) && !isDeadBoardItem(item)) {
     const done = document.createElement('button');
     done.type = 'button';
     done.className = 'queue-task-done';
