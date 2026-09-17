@@ -88,6 +88,7 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .board-count { flex: 0 0 auto; display: grid; justify-items: end; gap: 2px; text-align: right; }
 .board-count-figure { font: 800 26px/1 ui-monospace, SFMono-Regular, Menlo, monospace; color: var(--teal-light); }
 .board-count-label { max-width: 24ch; color: var(--muted); font-size: 11px; font-weight: 600; }
+.board-count-sub { max-width: 28ch; color: var(--muted); font-size: 11px; opacity: 0.8; }
 @media (max-width: 640px) { .page-intro { flex-direction: column; align-items: start; } .board-count { justify-items: start; text-align: left; } }
 .command-strip { grid-column: 1 / -1; display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(320px, .65fr); gap: 12px; }
 .health-lights { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 7px; }

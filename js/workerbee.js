@@ -1,5 +1,5 @@
 import { dashboardPanels, isNewSince, boardCards, completedAt } from '/js/panels.mjs';
-import { isClosedWork, isStandingWork, isBlockedWork, isHeldWork, openWorkBands, bandLabel } from '/js/open-work.mjs';
+import { isClosedWork, isStandingWork, isBlockedWork, isHeldWork, openWorkBands, bandLabel, bandPrimary, bandSupporting } from '/js/open-work.mjs';
 
 const SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
@@ -625,7 +625,7 @@ function renderDashboard() {
     });
   }
   el('needs-count').textContent = String(needs.length);
-  // WBR-350. The open count on the page he opens first, from the same
+  // WBR-350. The workload count on the page he opens first, from the same
   // function as the Todo tabs, the analytics card and the audit.
   //
   // The headline figure is the Board alone, because that is the number David
@@ -634,16 +634,26 @@ function renderDashboard() {
   // Board and the execution queue together and read 159 against the audit's
   // 148 with both using the identical rule, because the scopes differed rather
   // than the filters. A number that does not say what it counts is the bug.
+  //
+  // The final correction, 2026-09-17: the headline is the actionable work, not
+  // every tracked item. Held and standing stay visible as the supporting line,
+  // the execution queue is named separately, and the full tracked total lives
+  // on the tooltip. Held work must not inflate the main workload number.
   const cards = boardCards(state);
   const boardBands = openWorkBands(cards.filter(item => (item.metadata || {}).source === 'roadmap'));
   const queueBands = openWorkBands(cards.filter(item => (item.metadata || {}).source === 'execution-queue'));
   const boardCount = el('board-count');
   if (boardCount) {
     boardCount.hidden = false;
-    el('board-count-figure').textContent = String(boardBands.open);
-    el('board-count-label').textContent =
-      `open on the Board: ${boardBands.active} to do, ${boardBands.blocked} waiting on something, ${boardBands.standing} standing. `
-      + `${queueBands.open} more in the execution queue.`;
+    const figure = el('board-count-figure');
+    figure.textContent = String(boardBands.active ?? 0);
+    figure.title = `${boardBands.open ?? 0} tracked in all.`;
+    el('board-count-label').textContent = 'active Todo items on the Board.';
+    const sub = el('board-count-sub');
+    if (sub) {
+      sub.textContent =
+        `${boardBands.held ?? 0} held · ${boardBands.standing ?? 0} standing · ${queueBands.open ?? 0} in the execution queue.`;
+    }
   }
   el('dashboard-freshness').textContent = state.generatedAt ? `Dashboard synced ${formatDateTime(state.generatedAt)}.` : 'Current state loaded.';
   renderHealth();
@@ -907,10 +917,17 @@ function renderAnalytics() {
     // what it counts: these two cards mix the Board with the execution queue,
     // which is why they could never match the audit even before the filters
     // were unified.
-    statCard('Open on the Board', board.open ?? 0,
-      `${board.active ?? 0} to do, ${board.blocked ?? 0} waiting on something, ${board.standing ?? 0} standing. Board only, the same count the audit prints.`),
-    statCard('Open, WorkerBee', workerbee.open || 0, `${workerbee.next || 0} next, ${workerbee.blocked || 0} blocked. Board and execution queue.`),
-    statCard('Open, David', david.open || 0, `${david.next || 0} next, ${david.needsOther || 0} needing something from me. Board and execution queue.`),
+    //
+    // The final correction, 2026-09-17: the figure is the actionable work, not
+    // the full tracked total. Held and standing are the supporting line, the
+    // tracked total is named as supporting information, and nothing is called
+    // "waiting on something" — the blocked state was abolished.
+    statCard('Active on the Board', board.active ?? 0,
+      `${board.held ?? 0} held · ${board.standing ?? 0} standing · ${board.open ?? 0} tracked in all. Board only, the same count the audit prints.`),
+    statCard('Active, WorkerBee', workerbee.active ?? 0,
+      `${workerbee.held ?? 0} held · ${workerbee.standing ?? 0} standing · ${workerbee.open ?? 0} tracked. ${workerbee.next || 0} next. Board and execution queue.`),
+    statCard('Active, David', david.active ?? 0,
+      `${david.held ?? 0} held · ${david.standing ?? 0} standing · ${david.open ?? 0} tracked. ${david.needsOther || 0} needing something from me. Board and execution queue.`),
     statCard('Inbox', (workerbee.inbox || 0) + (david.inbox || 0), 'Captured and not yet routed. Empty is the target.'),
     statCard('Stalled past 21 days', (workerbee.stalledOver21 || 0) + (david.stalledOver21 || 0), `Oldest untouched item is ${Math.max(workerbee.oldestStillDays || 0, david.oldestStillDays || 0)} days still.`)
   );
@@ -925,9 +942,14 @@ function renderAnalytics() {
   const deliveredMax = Math.max(1, ...keys.map(key => series[key].delivered || 0));
   keys.forEach(key => chart.append(barColumn(key, series[key].delivered || 0, deliveredMax, series[key].unattended || 0)));
 
+  // The shape chart follows the same rule as the cards: the height of a day is
+  // the work that could have been acted on, not every tracked item. Snapshots
+  // have carried `active` alongside `open` since WBR-350, so the history stays
+  // continuous.
   const recent = snapshots.slice(-21);
-  const boardMax = Math.max(1, ...recent.map(snapshot => (snapshot.workerbee?.open || 0) + (snapshot.david?.open || 0)));
-  recent.forEach(snapshot => shape.append(barColumn(snapshot.date, (snapshot.workerbee?.open || 0) + (snapshot.david?.open || 0), boardMax)));
+  const activeFor = snapshot => (snapshot.workerbee?.active || 0) + (snapshot.david?.active || 0);
+  const boardMax = Math.max(1, ...recent.map(activeFor));
+  recent.forEach(snapshot => shape.append(barColumn(snapshot.date, activeFor(snapshot), boardMax)));
 
   renderDemerits(score);
   renderDone();
@@ -1915,8 +1937,13 @@ function renderTodo() {
     david: [...queueItems, ...standingAll, ...heldAll].filter(item => ownerSide(item) === 'david').length
       + [...openTasks, ...captures].filter(task => sideOfTask(task) === 'david').length,
   };
-  el('workerbee-task-count').textContent = bands.workerbee.open;
-  el('david-task-count').textContent = bands.david.open;
+  // The final WBR-350 correction, 2026-09-17: the tab headlines the work that
+  // can be acted on now, not every tracked item. Held and standing move to the
+  // supporting line, and the full tracked total survives on the tooltip and in
+  // the legend, so nothing disappears — the number just stops claiming that
+  // held work is today's workload.
+  el('workerbee-task-count').textContent = String(bands.workerbee.active ?? 0);
+  el('david-task-count').textContent = String(bands.david.active ?? 0);
   document.querySelectorAll('[data-todo-owner]').forEach(button => {
     const side = button.dataset.todoOwner;
     const active = side === todoOwner;
@@ -1933,7 +1960,10 @@ function renderTodo() {
     // answering different questions. This one counts one person's side of
     // everything, which is a wider question than the Board figure on the
     // Dashboard, and now it says so.
-    legend.textContent = `${who}: ${bandLabel(bands[side])} Board, execution queue, loose tasks and unrouted captures on this side.`;
+    const current = bands[side];
+    const supporting = bandSupporting(current);
+    legend.textContent = `${who}: ${bandPrimary(current)}${supporting ? ` · ${supporting}` : ''}. `
+      + `${current.open ?? 0} tracked in all — Board, execution queue, loose tasks and unrouted captures on this side.`;
   }
 
   for (const [quadrant, copy] of Object.entries(TODO_QUADRANTS)) {
@@ -1997,7 +2027,7 @@ function standingPanel(items) {
   const title = document.createElement('h2');
   title.textContent = 'Standing';
   const note = document.createElement('p');
-  note.textContent = 'Practices, not tasks. These have no finish line on purpose, so they are read on a cadence rather than checked off. They are counted on the tab above but kept out of the quadrants, because something that can never be finished sitting in "urgent and important" makes the quadrant meaningless for everything beside it.';
+  note.textContent = 'Practices, not tasks. These have no finish line on purpose, so they are read on a cadence rather than checked off. They are counted in the tracked total and the supporting line but not in the to-do-now number, and they stay out of the quadrants, because something that can never be finished sitting in "urgent and important" makes the quadrant meaningless for everything beside it.';
   words.append(title, note);
   const label = document.createElement('span');
   label.className = 'quadrant-label';
@@ -2036,7 +2066,7 @@ function heldPanel(items) {
   const title = document.createElement('h2');
   title.textContent = 'Held';
   const note = document.createElement('p');
-  note.textContent = 'Deliberately inactive, each with the condition that reopens it written on the row. Held is not a junk drawer and it is not blocked: the moment its condition is true, the item comes back. They are counted on the tab above but kept out of the quadrants, because work waiting on its condition is not to-do however it is prioritized.';
+  note.textContent = 'Deliberately inactive, each with the condition that reopens it written on the row. Held is not a junk drawer and it is not blocked: the moment its condition is true, the item comes back. Held work is counted in the tracked total on the tab tooltip and in the supporting line, but not in the to-do-now number, because work waiting on its condition is not to-do however it is prioritized.';
   words.append(title, note);
   const label = document.createElement('span');
   label.className = 'quadrant-label';

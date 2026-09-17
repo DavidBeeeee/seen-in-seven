@@ -41,14 +41,17 @@
     <div id="dashboard-app" hidden>
       <section class="page-intro">
         <div><p class="eyebrow">Current operating view</p><h1>Here is what matters.</h1><p id="dashboard-freshness">Loading current state...</p></div>
-        <!-- WBR-350. The open count, on the page David actually opens, saying
-             what it counts. Four surfaces used to answer this question with
-             four numbers and none of them said which question they were
+        <!-- WBR-350. The workload count, on the page David actually opens,
+             saying what it counts. Four surfaces used to answer this question
+             with four numbers and none of them said which question they were
              answering. This one comes from js/open-work.mjs, the same rule the
-             audit and the analytics snapshot use. -->
+             audit and the analytics snapshot use. The headline is the work
+             that can be acted on now; held, standing and the execution queue
+             are the supporting line underneath. -->
         <div class="board-count" id="board-count" hidden>
           <span class="board-count-figure" id="board-count-figure">0</span>
           <span class="board-count-label" id="board-count-label"></span>
+          <span class="board-count-sub" id="board-count-sub"></span>
         </div>
       </section>
 

@@ -19,7 +19,13 @@
 // A surface that writes its own filter is the bug this exists to make obvious.
 
 // Finished in the only sense that matters: nobody is going to do them.
-export const CLOSED_STATUSES = ['completed', 'closed', 'dropped', 'cancelled', 'done'];
+// `merged` joined the list on 2026-09-17 (the final WBR-350 count-presentation
+// correction): a merged item was absorbed into its surviving item, so the work
+// is done by definition and counting it as open double-counts it against the
+// item that carries it now. The execution queue keeps `merged` as its canonical
+// terminal status, which is why the queue read 11 open while every one of its
+// items was finished.
+export const CLOSED_STATUSES = ['completed', 'closed', 'dropped', 'cancelled', 'done', 'merged'];
 
 const statusOf = (item) => String((item?.metadata || {}).roadmap_status ?? item?.status ?? '');
 
@@ -37,7 +43,9 @@ export function isStandingWork(item) {
   return statusOf(item) === 'standing';
 }
 
-// Waiting on something or someone. Still open work, still David's to see.
+// Abolished in the WBR-371 reset: nothing is ever blocked. The status stays in
+// the band math so a stray legacy row cannot inflate `active`, but no surface
+// names it "waiting on something" any more.
 export function isBlockedWork(item) {
   return statusOf(item) === 'blocked';
 }
@@ -78,10 +86,33 @@ export function openWorkBands(items) {
 // What a tab that shows a number owes the person reading it: the sentence that
 // says which question the number answers. David's tab said 23 against 48, 14
 // and 27 elsewhere and nothing on the page said what any of them counted.
-export function bandLabel(bands) {
-  const parts = [`${bands.active} to do`];
-  if (bands.blocked) parts.push(`${bands.blocked} waiting on something`);
+//
+// The final WBR-350 correction, 2026-09-17: the primary number is the work
+// that can be acted on now, not every tracked item. Held and standing work
+// stays visible as supporting detail, the full tracked total is supporting
+// information only, and nothing is ever "waiting on something" — the blocked
+// state was abolished in the WBR-371 reset, so blocked is not named here at
+// all. A zero band displays as 0 wherever it is shown, never undefined.
+
+// The headline figure: work with a finish line that nothing is holding up.
+export function bandPrimary(bands) {
+  return `${bands.active ?? 0} to do now`;
+}
+
+// The supporting line: tracked work that is not actionable today. Zero bands
+// are left out of the sentence, because "0 held" is noise next to real work;
+// where a surface must show a band it shows the 0 explicitly.
+export function bandSupporting(bands) {
+  const parts = [];
   if (bands.held) parts.push(`${bands.held} held`);
   if (bands.standing) parts.push(`${bands.standing} standing`);
-  return `${bands.open} open: ${parts.join(', ')}.`;
+  return parts.join(' · ');
+}
+
+// The full composition, for tooltips and anywhere the tracked total belongs.
+export function bandLabel(bands) {
+  const parts = [`${bands.active ?? 0} to do now`];
+  parts.push(`${bands.held ?? 0} held`);
+  parts.push(`${bands.standing ?? 0} standing`);
+  return `${parts.join(' · ')} · ${bands.open ?? 0} tracked in all.`;
 }
