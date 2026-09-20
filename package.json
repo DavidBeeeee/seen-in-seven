@@ -3,6 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "ensure:momentum-hub-test-member": "node scripts/ensure-momentum-hub-test-account.mjs",
     "check:prompt-style": "node scripts/check-prompt-style-guide.mjs",
     "check:story-architecture": "node scripts/check-story-architecture.mjs",
     "check:lock-state": "node scripts/check-lock-state.mjs",
