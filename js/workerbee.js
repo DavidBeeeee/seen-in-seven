@@ -2664,6 +2664,8 @@ function bindEvents() {
     bindPeriodTabs();
     bindDoneFilters();
     bindHistoryPanels();
+  } else if (surface === 'momentum300') {
+    bindMomentum300Filters();
   } else {
     el('toggle-journal').addEventListener('click', () => { journalExpanded = !journalExpanded; renderJournal(); });
     el('new-journal-button').addEventListener('click', () => { el('journal-form').hidden = false; el('journal-title').focus(); });
@@ -2858,7 +2860,7 @@ function renderMomentum300() {
   }
 }
 
-if (surface === 'momentum300') {
+function bindMomentum300Filters() {
   const search = el('m300-search');
   const verdict = el('m300-verdict');
   const list = el('m300-list');
