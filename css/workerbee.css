@@ -481,3 +481,55 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
   .done-filters input { min-width: 0; flex: 1 1 100%; }
   .history-scroll { max-height: 60vh; }
 }
+
+/* ── MOMENTUM HUB THREE HUNDRED ──────────────────────
+   WBR-373. The results page David asked for three times. Verdict colors reuse
+   the palette that already exists rather than introducing a fourth green:
+   --green for PASS, --gold for PART, --danger for FAIL, --ember for the rows
+   still waiting on a live look, and the muted line for another app's day.
+   Every variable here is one check-css-variables.mjs can find, which is the
+   whole reason that gate exists. */
+.m300-section {
+  margin: 26px 0 8px;
+  font-size: 13px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--soft);
+  border-bottom: 1px solid var(--line-soft);
+  padding-bottom: 6px;
+}
+.m300-section:first-child { margin-top: 6px; }
+.m300-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: start;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--line-soft);
+}
+.m300-number {
+  font-variant-numeric: tabular-nums;
+  color: var(--muted);
+  font-size: 13px;
+  padding-top: 2px;
+}
+.m300-words { min-width: 0; }
+.m300-question { margin: 0; color: var(--text); font-size: 14px; line-height: 1.45; }
+.m300-note { margin: 4px 0 0; color: var(--muted); font-size: 13px; line-height: 1.5; }
+.m300-chip {
+  align-self: start;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  border: 1px solid var(--line);
+  white-space: nowrap;
+}
+.m300-pass { color: var(--green); border-color: var(--green); }
+.m300-part { color: var(--gold); border-color: var(--gold); }
+.m300-fail { color: var(--danger); border-color: var(--danger); }
+.m300-live { color: var(--ember); border-color: var(--ember); }
+.m300-na { color: var(--muted); }
+
+@media (max-width: 640px) {
+  .m300-row { grid-template-columns: 28px minmax(0, 1fr); }
+  .m300-chip { grid-column: 2; justify-self: start; margin-top: 4px; }
+}

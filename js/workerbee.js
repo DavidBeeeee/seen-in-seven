@@ -45,7 +45,7 @@ function showToast(message, error = false) {
 }
 
 function showOnly(name) {
-  for (const id of ['auth-card', 'loading', 'error-card', 'dashboard-app', 'todo-app', 'analytics-app']) {
+  for (const id of ['auth-card', 'loading', 'error-card', 'dashboard-app', 'todo-app', 'analytics-app', 'momentum300-app']) {
     const node = el(id);
     if (node) node.hidden = id !== name;
   }
@@ -77,8 +77,9 @@ async function activate(nextSession) {
     state = await api();
     if (surface === 'analytics') renderAnalytics();
     else if (surface === 'todo') renderTodo();
+    else if (surface === 'momentum300') renderMomentum300();
     else renderDashboard();
-    showOnly(surface === 'analytics' ? 'analytics-app' : surface === 'todo' ? 'todo-app' : 'dashboard-app');
+    showOnly(surface === 'analytics' ? 'analytics-app' : surface === 'todo' ? 'todo-app' : surface === 'momentum300' ? 'momentum300-app' : 'dashboard-app');
     await api('mark_viewed', { surface }).catch(() => null);
     icons();
   } catch (error) {
@@ -845,6 +846,7 @@ function sortByOrder(items) {
 async function replaceFromServer() {
   state = await api();
   if (surface === 'analytics') renderAnalytics();
+  else if (surface === 'momentum300') renderMomentum300();
   else if (surface === 'todo') renderTodo();
   else renderDashboard();
 }
@@ -972,13 +974,35 @@ function renderAnalytics() {
   keys.forEach(key => chart.append(barColumn(key, series[key].delivered || 0, deliveredMax, series[key].unattended || 0)));
 
   // The shape chart follows the same rule as the cards: the height of a day is
-  // the work that could have been acted on, not every tracked item. Snapshots
-  // have carried `active` alongside `open` since WBR-350, so the history stays
-  // continuous.
-  const recent = snapshots.slice(-21);
+  // the work that could have been acted on, not every tracked item.
+  //
+  // WBR-380. The comment that used to sit here said snapshots "have carried
+  // `active` alongside `open` since WBR-350, so the history stays continuous",
+  // and drew every day with `|| 0`. Snapshots written before WBR-350 carry no
+  // `active` at all, so the chart opened with fifteen bars reading zero for
+  // 08/31 to 09/14 and then jumped to 110. Those zeros were not quiet days,
+  // they were days with no reading, and the caption underneath claimed the
+  // chart began where the snapshots began. A missing measurement drawn as a
+  // real zero is the one thing a chart must never do.
+  //
+  // So a day is plotted only when it actually carries the number. `|| 0` is
+  // gone on purpose: absent and zero are different answers.
+  const hasActive = snapshot => Number.isFinite(snapshot.workerbee?.active) || Number.isFinite(snapshot.david?.active);
   const activeFor = snapshot => (snapshot.workerbee?.active || 0) + (snapshot.david?.active || 0);
-  const boardMax = Math.max(1, ...recent.map(activeFor));
-  recent.forEach(snapshot => shape.append(barColumn(snapshot.date, activeFor(snapshot), boardMax)));
+  const measured = snapshots.filter(hasActive).slice(-21);
+  const shapeNote = shape.previousElementSibling;
+  if (!measured.length) {
+    shape.append(empty('No day yet carries a Board reading. This fills in as snapshots are written.'));
+  } else {
+    const boardMax = Math.max(1, ...measured.map(activeFor));
+    measured.forEach(snapshot => shape.append(barColumn(snapshot.date, activeFor(snapshot), boardMax)));
+  }
+  if (shapeNote && shapeNote.classList.contains('analytics-sub')) {
+    const skipped = snapshots.length - snapshots.filter(hasActive).length;
+    shapeNote.textContent = 'Active items per side, the work that could be acted on that day rather than every tracked item. '
+      + (measured.length ? `${measured.length} day${measured.length === 1 ? '' : 's'} carry this reading` : 'No day carries this reading yet')
+      + (skipped ? `; ${skipped} earlier snapshot${skipped === 1 ? '' : 's'} predate it and are left out rather than drawn as zero.` : '.');
+  }
 
   renderDemerits(score);
   renderDone();
@@ -2668,3 +2692,177 @@ sb.auth.onAuthStateChange((_event, nextSession) => {
 });
 const { data } = await sb.auth.getSession();
 await activate(data.session);
+
+// ── MOMENTUM HUB THREE HUNDRED ────────────────────────
+// WBR-373. David asked three times to read these results from the Dashboard
+// rather than from a Claude artifact. The payload side has existed for a
+// while; what was missing every time was this, a page. `ward_artifact` has
+// been published since 2026-09-05 under a comment claiming the Studio page
+// renders it, and no renderer was ever written, so the Ward three hundred is
+// still only readable as an artifact too. That is the same shape as the stale
+// Dashboard bug: publishing is not showing.
+//
+// The rows arrive on WBR-373's own Board row, in the same authenticated
+// payload as everything else here, so there is no second fetch path to keep
+// in step and nothing to go stale on its own.
+
+let m300App = null;
+let m300Verdict = 'all';
+let m300List = 'all';
+let m300Search = '';
+
+function momentumArtifact() {
+  const row = state.updates.find(item => item.metadata && item.metadata.momentum_hub_artifact);
+  return row ? row.metadata.momentum_hub_artifact : null;
+}
+
+function m300Chip(verdict) {
+  const chip = document.createElement('span');
+  chip.className = 'count-badge m300-chip m300-' + String(verdict).replace('/', '').toLowerCase();
+  chip.textContent = verdict;
+  return chip;
+}
+
+function renderMomentum300() {
+  const note = el('m300-note');
+  const tabs = el('m300-apps');
+  const cards = el('m300-cards');
+  const rowsBox = el('m300-rows');
+  const count = el('m300-count');
+  if (!note || !tabs || !cards || !rowsBox || !count) return;
+
+  const artifact = momentumArtifact();
+  tabs.replaceChildren();
+  cards.replaceChildren();
+  rowsBox.replaceChildren();
+
+  if (!artifact) {
+    note.textContent = 'The Momentum Hub score has not been published yet. It rides on WBR-373 and appears here the next time the Board is published.';
+    count.textContent = '';
+    return;
+  }
+
+  const scored = artifact.scored || {};
+  const scoredKeys = Object.keys(scored);
+  const appsMeta = new Map((artifact.apps || []).map(app => [app.key, app]));
+  if (!scoredKeys.length) {
+    note.textContent = 'No app has been scored against the three hundred yet. ' + (artifact.cadence || '');
+    count.textContent = '';
+    return;
+  }
+  if (!m300App || !scored[m300App]) m300App = scoredKeys[0];
+
+  const meta = appsMeta.get(m300App) || {};
+  note.textContent = [
+    (meta.name || m300App) + ' scored against ' + (artifact.scoredAgainst || 'the product'),
+    meta.scoredOn ? 'on ' + meta.scoredOn : null,
+    artifact.cadence ? '· ' + artifact.cadence : null,
+  ].filter(Boolean).join(' ');
+
+  // App switcher. Apps that exist but have no scoring yet are shown and
+  // disabled rather than hidden, because "not scored yet" is a fact about the
+  // rotation David should be able to see without opening a file.
+  for (const app of (artifact.apps || [])) {
+    const tab = document.createElement('button');
+    tab.type = 'button';
+    tab.className = 'period-tab' + (app.key === m300App ? ' active' : '');
+    tab.textContent = app.name || app.key;
+    tab.setAttribute('role', 'tab');
+    tab.setAttribute('aria-selected', String(app.key === m300App));
+    if (!scored[app.key]) {
+      tab.disabled = true;
+      tab.title = app.note || 'Not scored yet.';
+    } else {
+      tab.addEventListener('click', () => { m300App = app.key; renderMomentum300(); icons(); });
+    }
+    tabs.append(tab);
+  }
+
+  const rows = scored[m300App].rows || [];
+  const tally = scored[m300App].tally || {};
+
+  for (const verdict of ['PASS', 'PART', 'FAIL', 'LIVE', 'N/A']) {
+    if (!tally[verdict]) continue;
+    const card = document.createElement('div');
+    card.className = 'analytics-card';
+    const label = document.createElement('p');
+    label.className = 'analytics-card-label';
+    label.textContent = verdict;
+    const figure = document.createElement('p');
+    figure.className = 'analytics-card-figure';
+    figure.textContent = String(tally[verdict]);
+    const sub = document.createElement('p');
+    sub.className = 'analytics-card-sub';
+    sub.textContent = ({
+      PASS: 'The product does this.',
+      PART: 'Half of it.',
+      FAIL: 'It does not.',
+      LIVE: 'Needs a live look that has not happened.',
+      'N/A': "Belongs to another app's day.",
+    })[verdict] || '';
+    card.append(label, figure, sub);
+    cards.append(card);
+  }
+
+  const needle = m300Search.trim().toLowerCase();
+  const visible = rows.filter(row =>
+    (m300Verdict === 'all' || row.verdict === m300Verdict)
+    && (m300List === 'all' || row.list === m300List)
+    && (!needle || (row.question + ' ' + (row.note || '')).toLowerCase().includes(needle)));
+
+  count.textContent = visible.length === rows.length
+    ? `All ${rows.length} questions.`
+    : `${visible.length} of ${rows.length} questions.`;
+
+  const listLabels = new Map((artifact.lists || []).map(list => [list.id, list]));
+  let lastKey = null;
+  for (const row of visible) {
+    const key = row.list + '|' + (row.section || '');
+    if (key !== lastKey) {
+      lastKey = key;
+      const head = document.createElement('h3');
+      head.className = 'm300-section';
+      const list = listLabels.get(row.list);
+      head.textContent = (list ? list.label : row.list) + ' · ' + (row.section || 'Unsectioned');
+      rowsBox.append(head);
+    }
+    const line = document.createElement('div');
+    line.className = 'm300-row';
+
+    const number = document.createElement('span');
+    number.className = 'm300-number';
+    number.textContent = String(row.number);
+
+    const words = document.createElement('div');
+    words.className = 'm300-words';
+    const question = document.createElement('p');
+    question.className = 'm300-question';
+    question.textContent = row.question;
+    words.append(question);
+    if (row.note) {
+      const noteLine = document.createElement('p');
+      noteLine.className = 'm300-note';
+      noteLine.textContent = row.note;
+      words.append(noteLine);
+    }
+
+    line.append(number, words, m300Chip(row.verdict));
+    rowsBox.append(line);
+  }
+
+  if (!visible.length) {
+    const none = document.createElement('p');
+    none.className = 'analytics-sub';
+    none.textContent = 'Nothing matches that filter.';
+    rowsBox.append(none);
+  }
+}
+
+if (surface === 'momentum300') {
+  const search = el('m300-search');
+  const verdict = el('m300-verdict');
+  const list = el('m300-list');
+  if (search) search.addEventListener('input', () => { m300Search = search.value; renderMomentum300(); icons(); });
+  if (verdict) verdict.addEventListener('change', () => { m300Verdict = verdict.value; renderMomentum300(); icons(); });
+  if (list) list.addEventListener('change', () => { m300List = list.value; renderMomentum300(); icons(); });
+}

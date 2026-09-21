@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#111716">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Momentum 300">
+  <title>Momentum Hub Three Hundred</title>
+  <link rel="manifest" href="/workerbee.webmanifest">
+  <link rel="apple-touch-icon" href="/assets/workerbee-mark.svg">
+  <link rel="icon" href="/assets/workerbee-mark.svg">
+  <link rel="stylesheet" href="/css/workerbee.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+</head>
+<body data-workerbee-surface="momentum300">
+  <header class="wb-header todo-header">
+    <a class="wb-brand" href="/momentum300"><img src="/assets/workerbee-mark.svg" alt=""><span><small>WorkerBee</small><strong>Momentum 300</strong></span></a>
+    <nav aria-label="WorkerBee pages"><a href="/dashboard">Dashboard</a><a href="/todo">Todo</a><a href="/analytics">Analytics</a><a class="active" href="/momentum300">Momentum 300</a></nav>
+    <div class="header-actions"><a class="quiet-button" href="/">Studio</a><button class="quiet-button" id="sign-out" type="button" hidden>Sign out</button></div>
+  </header>
+  <main class="todo-main">
+    <section class="auth-card" id="auth-card">
+      <p class="eyebrow">Private</p><h1>Sign in to read the three hundred.</h1><p>Every question, every verdict, one app-day at a time.</p>
+      <form id="auth-form"><label for="auth-email">Email</label><input id="auth-email" type="email" autocomplete="email" required><button class="primary-button" type="submit">Send sign-in link</button><p class="form-message" id="auth-message" role="status"></p></form>
+    </section>
+    <section id="loading" class="loading-card" hidden>Loading the three hundred...</section>
+    <section id="error-card" class="error-card" hidden><h1>I could not open the Momentum 300.</h1><p id="error-message"></p></section>
+
+    <div id="momentum300-app" hidden>
+      <p class="analytics-note" id="m300-note"></p>
+
+      <div class="period-tabs" id="m300-apps" role="tablist" aria-label="Momentum Hub app"></div>
+
+      <div class="analytics-grid" id="m300-cards"></div>
+
+      <section class="card analytics-trend">
+        <div class="done-filters">
+          <input id="m300-search" type="search" autocomplete="off" placeholder="Search the three hundred" aria-label="Search questions and notes">
+          <select id="m300-verdict" aria-label="Verdict">
+            <option value="all">Every verdict</option>
+            <option value="PASS">PASS</option>
+            <option value="PART">PART</option>
+            <option value="FAIL">FAIL</option>
+            <option value="LIVE">LIVE</option>
+            <option value="N/A">N/A</option>
+          </select>
+          <select id="m300-list" aria-label="Which hundred">
+            <option value="all">All three hundred</option>
+            <option value="buyer">Buyer</option>
+            <option value="engineer">Engineer</option>
+            <option value="member">Member experience</option>
+          </select>
+        </div>
+        <p class="analytics-sub" id="m300-count"></p>
+        <div id="m300-rows"></div>
+      </section>
+    </div>
+  </main>
+  <div class="toast" id="toast" role="status" hidden></div>
+  <script type="module" src="/js/workerbee.js"></script>
+</body>
+</html>
