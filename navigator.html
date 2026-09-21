@@ -1,38 +1,2663 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Next Step Navigator | EEE Membership</title><meta name="description" content="Reduce a complicated project to one useful next action.">
-  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
-  <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
-  <link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/navigator.css">
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next Step Navigator | The Momentum Hub</title>
+    <meta name="description" content="Audit the business you have, identify the missing piece that matters most, and follow one focused implementation path at a time.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Space+Mono:wght@400;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="/css/studio.css">
+    <link rel="stylesheet" href="/css/eee.css">
+    <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+    <style>
+        :root {
+            --bg: #0b0f1a;
+            --card: #151c2c;
+            --card2: #1e293b;
+            --border: #2e4460;
+            --cream: #f0f9ff;
+            --soft: #bae6fd;
+            --muted: #64748b;
+            --teal: #2dd4bf;
+            --cyan: #67e8f9;
+            --amber: #f59e0b;
+            --green: #4ade80;
+            --glow: rgba(45, 212, 191, 0.4);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            color: var(--cream);
+            font-family: 'DM Sans', sans-serif;
+            margin: 0;
+            padding: 0;
+            overflow-x: hidden;
+        }
+
+        #app {
+            min-height: 100vh;
+            padding: 40px 20px;
+            position: relative;
+        }
+
+        #app::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 10% 10%, rgba(45, 212, 191, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 90%, rgba(103, 232, 249, 0.08) 0%, transparent 40%);
+            pointer-events: none;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* --- Screens --- */
+        .screen {
+            display: none;
+            width: 100%;
+        }
+
+        .screen.active {
+            display: block;
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- Components --- */
+        .wizard-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 24px;
+            padding: 48px;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            margin-bottom: 24px;
+        }
+
+        .tagline {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+            color: var(--teal);
+            margin-bottom: 12px;
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: 'Bebas Neue', sans-serif;
+            margin: 0 0 24px;
+            letter-spacing: 0.02em;
+            line-height: 1;
+        }
+
+        h1 {
+            font-size: clamp(48px, 10vw, 72px);
+            text-shadow: 0 0 30px rgba(45, 212, 191, 0.2);
+        }
+
+        h2 {
+            font-size: 36px;
+            color: var(--cream);
+        }
+
+        .desc {
+            font-size: 18px;
+            color: var(--muted);
+            line-height: 1.6;
+            margin-bottom: 32px;
+        }
+
+        .audit-progress-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+            margin-bottom: 24px;
+            overflow: hidden;
+        }
+
+        .audit-progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--teal), var(--cyan));
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .toggle-switch-group {
+            display: inline-flex;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 8px;
+            border: 1px solid var(--border);
+            overflow: hidden;
+            margin-top: 8px;
+        }
+
+        .toggle-switch-btn {
+            padding: 6px 12px;
+            font-size: 10px;
+            font-family: 'Space Mono', monospace;
+            background: transparent;
+            color: var(--muted);
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-switch-btn.active {
+            background: var(--teal);
+            color: #000;
+            font-weight: bold;
+        }
+
+        .bubble-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            margin-bottom: 32px;
+        }
+
+        .bubble {
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 24px;
+            cursor: pointer;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .bubble:hover {
+            border-color: var(--teal);
+            background: rgba(45, 212, 191, 0.08);
+            transform: translateX(6px);
+        }
+
+        .bubble-label {
+            font-weight: 600;
+            font-size: 16px;
+            color: var(--soft);
+        }
+
+        .bubble-depth {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            padding: 4px 10px;
+            border-radius: 6px;
+            background: rgba(0, 0, 0, 0.3);
+            color: var(--muted);
+            border: 1px solid var(--border);
+        }
+
+        .btn-primary {
+            display: block;
+            width: 100%;
+            background: linear-gradient(135deg, var(--teal), var(--cyan));
+            color: #0b0f1a;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 26px;
+            letter-spacing: 0.1em;
+            border: none;
+            border-radius: 14px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            text-transform: uppercase;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px rgba(45, 212, 191, 0.4);
+        }
+
+        .btn-secondary {
+            display: block;
+            width: 100%;
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            letter-spacing: 0.05em;
+            border-radius: 14px;
+            padding: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+            text-transform: uppercase;
+            margin-top: 12px;
+            text-decoration: none;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--soft);
+            color: var(--soft);
+        }
+
+        .btn-back {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            margin-bottom: 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-back:hover {
+            color: var(--soft);
+        }
+
+        /* --- Roadmap UI --- */
+        .priority-section {
+            margin-bottom: 40px;
+            padding: 30px;
+            background: rgba(245, 158, 11, 0.05);
+            border: 1px solid var(--amber);
+            border-radius: 20px;
+            position: relative;
+        }
+
+        .priority-badge {
+            position: absolute;
+            top: -12px;
+            left: 24px;
+            background: var(--amber);
+            color: #000;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 4px 12px;
+            border-radius: 4px;
+            animation: pulse-glow 2s infinite ease-in-out;
+        }
+
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                opacity: 1;
+                filter: drop-shadow(0 0 0px var(--amber));
+            }
+
+            50% {
+                opacity: 0.8;
+                filter: drop-shadow(0 0 10px var(--amber));
+            }
+        }
+
+        .matrix-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .system-row {
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px 24px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            position: relative;
+        }
+
+        .system-row:hover {
+            border-color: var(--cyan);
+            background: rgba(103, 232, 249, 0.05);
+            transform: translateX(6px);
+        }
+
+        .new-badge {
+            position: absolute;
+            top: 10px;
+            right: 40px;
+            background: var(--cyan);
+            color: #000;
+            font-size: 9px;
+            font-weight: bold;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: 'Space Mono';
+        }
+
+        .system-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .row-name {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            color: var(--cream);
+        }
+
+        .row-desc {
+            font-size: 12px;
+            color: var(--muted);
+            line-height: 1.4;
+            max-width: 90%;
+        }
+
+        .row-arrow {
+            color: var(--cyan);
+            font-weight: bold;
+        }
+
+        /* --- Deep Dive --- */
+        .dive-section {
+            margin-bottom: 32px;
+        }
+
+        .dive-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--cyan);
+            margin-bottom: 12px;
+            display: block;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+        }
+
+        .action-item {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 12px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.03);
+            border-radius: 12px;
+            align-items: flex-start;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .action-item.done {
+            background: rgba(74, 222, 128, 0.05);
+        }
+
+        .action-check {
+            width: 22px;
+            height: 22px;
+            border: 2px solid var(--border);
+            border-radius: 6px;
+            flex-shrink: 0;
+            margin-top: 2px;
+            position: relative;
+        }
+
+        .action-item.done .action-check {
+            background: var(--teal);
+            border-color: var(--teal);
+        }
+
+        .action-item.done .action-check::after {
+            content: '✓';
+            position: absolute;
+            left: 4px;
+            top: -2px;
+            color: #000;
+            font-weight: bold;
+        }
+
+        .action-text {
+            font-size: 15px;
+            color: var(--soft);
+            line-height: 1.5;
+        }
+
+        .action-item.done .action-text {
+            text-decoration: line-through;
+            opacity: 0.5;
+        }
+
+        .tech-pill {
+            display: inline-block;
+            background: var(--card2);
+            border: 1px solid var(--border);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            margin-right: 8px;
+            margin-bottom: 8px;
+            color: var(--muted);
+        }
+
+        /* --- Help Button --- */
+        .btn-help {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            background: rgba(103, 232, 249, 0.05);
+            border: 1px solid rgba(103, 232, 249, 0.3);
+            color: var(--cyan);
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            padding: 12px 24px;
+            border-radius: 50px;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+            margin-top: 24px;
+            width: 100%;
+        }
+
+        .btn-help:hover {
+            background: rgba(103, 232, 249, 0.1);
+            border-color: var(--cyan);
+        }
+
+        /* --- Funnel Map --- */
+        .map-container {
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 40px 10px;
+            margin-bottom: 32px;
+            position: relative;
+            overflow-x: auto;
+        }
+
+        .node text {
+            font-family: 'Space Mono', monospace;
+            font-size: 7px;
+            fill: var(--muted);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            pointer-events: none;
+        }
+
+        .path-line {
+            fill: none;
+            stroke: var(--border);
+            stroke-width: 2;
+            stroke-linecap: round;
+        }
+
+        .path-active {
+            fill: none;
+            stroke: var(--teal);
+            stroke-width: 2.5;
+            stroke-dasharray: 1000;
+            stroke-dashoffset: 1000;
+            animation: drawLine 2s forwards;
+        }
+
+        @keyframes drawLine {
+            to {
+                stroke-dashoffset: 0;
+            }
+        }
+
+        .node-circle {
+            transition: all 0.4s;
+            fill: var(--bg);
+            stroke: var(--border);
+            cursor: pointer;
+        }
+
+        .node.completed .node-circle {
+            fill: var(--teal);
+            stroke: var(--teal);
+            filter: drop-shadow(0 0 8px var(--teal));
+        }
+
+        .node.gap .node-circle {
+            fill: var(--amber);
+            stroke: var(--amber);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                filter: drop-shadow(0 0 0px var(--amber));
+            }
+
+            50% {
+                filter: drop-shadow(0 0 15px var(--amber));
+            }
+        }
+
+        /* --- Diagnosis Sandwich --- */
+        .sandwich-box {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .sandwich-part {
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .sandwich-part:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .sandwich-part::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+        }
+
+        .part-positive::before {
+            background: var(--teal);
+            box-shadow: 0 0 15px var(--teal);
+        }
+
+        .part-positive {
+            border-left-color: var(--teal);
+            background: linear-gradient(135deg, rgba(45, 212, 191, 0.05) 0%, var(--card2) 100%);
+        }
+
+        .part-constructive::before {
+            background: var(--amber);
+            box-shadow: 0 0 15px var(--amber);
+        }
+
+        .part-constructive {
+            border-left-color: var(--amber);
+            background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, var(--card2) 100%);
+        }
+
+        .part-verdict::before {
+            background: var(--cyan);
+            box-shadow: 0 0 15px var(--cyan);
+        }
+
+        .part-verdict {
+            border-left-color: var(--cyan);
+            background: linear-gradient(135deg, rgba(103, 232, 249, 0.05) 0%, var(--card2) 100%);
+        }
+
+        .sandwich-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .title-pos {
+            color: var(--teal);
+        }
+
+        .title-pos::before {
+            content: '✓';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: rgba(45, 212, 191, 0.2);
+            border-radius: 50%;
+            font-size: 14px;
+        }
+
+        .title-con {
+            color: var(--amber);
+        }
+
+        .title-con::before {
+            content: '⚡';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: rgba(245, 158, 11, 0.2);
+            border-radius: 50%;
+            font-size: 14px;
+            font-style: normal;
+        }
+
+        .title-verdict {
+            color: var(--cyan);
+        }
+
+        .title-verdict::before {
+            content: '🚀';
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background: rgba(103, 232, 249, 0.2);
+            border-radius: 50%;
+            font-size: 14px;
+        }
+
+        .sandwich-body {
+            font-size: 16px;
+            color: var(--soft);
+            line-height: 1.6;
+            margin: 0;
+        }
+
+        .output-card {
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 32px;
+            margin-bottom: 24px;
+        }
+
+        pre {
+            white-space: pre-wrap;
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--soft);
+            background: rgba(0, 0, 0, 0.4);
+            padding: 24px;
+            border-radius: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            font-size: 10px;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-family: 'Space Mono';
+        }
+
+        .input-text {
+            width: 100%;
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 20px;
+            color: var(--cream);
+            font-family: inherit;
+            font-size: 18px;
+            outline: none;
+            margin-bottom: 20px;
+            transition: all 0.2s;
+        }
+
+        .input-text:focus {
+            border-color: var(--teal);
+        }
+
+        #tooltip {
+            position: fixed;
+            background: var(--card2);
+            border: 1px solid var(--teal);
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 12px;
+            color: var(--cream);
+            pointer-events: none;
+            z-index: 1000;
+            display: none;
+            max-width: 200px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 3px;
+            margin-bottom: 48px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--teal), var(--cyan));
+            width: 0%;
+            transition: width 0.4s ease;
+        }
+
+        /* --- Celebration --- */
+        #celebration {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2000;
+            display: none;
+            text-align: center;
+        }
+
+        .celeb-box {
+            background: var(--teal);
+            color: #000;
+            padding: 30px 60px;
+            border-radius: 20px;
+            font-family: 'Bebas Neue';
+            font-size: 40px;
+            box-shadow: 0 0 50px var(--teal);
+            animation: popUp 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67);
+        }
+
+        @keyframes popUp {
+            0% {
+                transform: scale(0);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeOutUp {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateY(-40px) scale(0.9);
+            }
+        }
+
+        .fade-out-up {
+            animation: fadeOutUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            animation-delay: 0.7s;
+        }
+
+        /* --- Visual Map --- */
+        .visual-map-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            padding: 24px;
+            background: rgba(0, 0, 0, 0.2);
+            border-radius: 16px;
+            border: 1px dashed var(--border);
+        }
+
+        .map-block {
+            background: var(--card2);
+            border: 1px solid var(--border);
+            padding: 12px 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 18px;
+            color: var(--cream);
+            transition: all 0.3s;
+        }
+
+        .map-block.active {
+            border-color: var(--teal);
+            background: rgba(45, 212, 191, 0.1);
+            box-shadow: 0 0 15px rgba(45, 212, 191, 0.2);
+        }
+
+        .map-arrow {
+            color: var(--muted);
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+        }
+
+        /* --- Earnings Toggle --- */
+        .earnings-section {
+            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.1) 100%);
+            border: 1px solid rgba(16, 185, 129, 0.2);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 32px;
+            text-align: center;
+        }
+
+        .earnings-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            color: #10b981;
+            margin-bottom: 16px;
+        }
+
+        .toggle-group {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+        }
+
+        .toggle-btn {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .toggle-btn.active {
+            background: #10b981;
+            color: #000;
+            border-color: #10b981;
+            font-weight: bold;
+        }
+
+        .earnings-amount {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 56px;
+            color: var(--cream);
+            line-height: 1;
+            margin-bottom: 8px;
+            text-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
+        }
+
+        .earnings-subtext {
+            font-size: 14px;
+            color: var(--soft);
+        }
+
+        /* --- Story Board --- */
+        .story-board {
+            background: var(--card2);
+            border-left: 4px solid var(--cyan);
+            padding: 24px;
+            border-radius: 0 16px 16px 0;
+            margin-bottom: 40px;
+            font-size: 16px;
+            line-height: 1.6;
+            color: var(--cream);
+        }
+
+        .story-highlight {
+            color: var(--teal);
+            font-weight: bold;
+            font-style: italic;
+        }
+
+        /* --- Asset Profile Grid Updates --- */
+        .asset-btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        .btn-upgrade {
+            flex: 1;
+            background: rgba(45, 212, 191, 0.1);
+            border: 1px solid rgba(45, 212, 191, 0.3);
+            color: var(--teal);
+            padding: 8px;
+            border-radius: 8px;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-align: center;
+        }
+
+        .btn-upgrade:hover {
+            background: var(--teal);
+            color: #000;
+        }
+
+        .locked-msg {
+            border: 1px solid var(--amber);
+            background: rgba(245, 158, 11, 0.05);
+            color: var(--amber);
+            font-size: 12px;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: auto;
+        }
+
+        .locked-msg:hover {
+            background: var(--amber);
+            color: #000;
+        }
+
+        .reset-audit-wrap {
+            text-align: center;
+            margin-top: 60px;
+            padding-top: 24px;
+            border-top: 1px dashed var(--border);
+        }
+
+        .btn-tiny-reset {
+            background: transparent;
+            border: none;
+            color: var(--muted);
+            font-size: 11px;
+            text-decoration: underline;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .btn-tiny-reset:hover {
+            color: var(--amber);
+        }
+
+        @keyframes slideInUp {
+            0% {
+                opacity: 0;
+                transform: translateY(40px) scale(0.9);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .slide-in-up {
+            animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        /* --- Drawer / Tasks --- */
+        #todo-drawer {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            max-width: 100vw;
+            height: 100vh;
+            background: var(--card);
+            border-left: 1px solid var(--border);
+            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
+            z-index: 3000;
+            transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            display: flex;
+            flex-direction: column;
+        }
+
+        #todo-drawer.open {
+            right: 0;
+        }
+
+        .drawer-header {
+            padding: 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .drawer-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 28px;
+            margin: 0;
+            color: var(--cream);
+        }
+
+        .close-drawer {
+            background: none;
+            border: none;
+            color: var(--muted);
+            cursor: pointer;
+            font-size: 24px;
+        }
+
+        .drawer-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .drawer-footer {
+            padding: 24px;
+            border-top: 1px solid var(--border);
+        }
+
+        .floating-todo-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: var(--teal);
+            color: #000;
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 20px;
+            padding: 12px 24px;
+            border-radius: 30px;
+            border: none;
+            cursor: pointer;
+            z-index: 2900;
+            box-shadow: 0 10px 20px rgba(45, 212, 191, 0.3);
+            transition: transform 0.2s;
+            display: none;
+        }
+
+        .floating-todo-btn:hover {
+            transform: translateY(-3px);
+        }
+
+        .task-card {
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 12px;
+        }
+
+        .task-card-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--cyan);
+            text-transform: uppercase;
+        }
+
+        .task-card-title {
+            font-size: 15px;
+            color: var(--cream);
+            line-height: 1.4;
+            font-weight: 500;
+        }
+
+        .task-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+        }
+
+        .task-btn {
+            background: transparent;
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: 'Space Mono', monospace;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .task-btn:hover {
+            border-color: var(--teal);
+            color: var(--teal);
+        }
+
+        .task-btn.done-btn:hover {
+            background: rgba(45, 212, 191, 0.1);
+        }
+
+        .task-btn.remove-btn:hover {
+            border-color: var(--amber);
+            color: var(--amber);
+            background: rgba(245, 158, 11, 0.1);
+        }
+
+        .add-todo-btn {
+            background: rgba(103, 232, 249, 0.1);
+            border: 1px solid rgba(103, 232, 249, 0.3);
+            color: var(--cyan);
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: 'Space Mono';
+            cursor: pointer;
+            transition: all 0.2s;
+            height: fit-content;
+            margin-top: 3px;
+        }
+
+        .add-todo-btn:hover {
+            background: var(--cyan);
+            color: #000;
+        }
+
+        /* --- Calculator --- */
+        .calculator-box {
+            background: linear-gradient(135deg, rgba(45, 212, 191, 0.05) 0%, rgba(103, 232, 249, 0.05) 100%);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            margin-top: 24px;
+            margin-bottom: 32px;
+        }
+
+        .calc-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 24px;
+            color: var(--teal);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .calc-input-group {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .calc-input-wrapper {
+            flex: 1;
+        }
+
+        .calc-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 11px;
+            color: var(--muted);
+            margin-bottom: 8px;
+            display: block;
+            text-transform: uppercase;
+        }
+
+        .calc-input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 12px;
+            color: var(--cream);
+            font-size: 16px;
+            outline: none;
+            transition: border-color 0.2s;
+            font-family: 'Space Mono', monospace;
+        }
+
+        .calc-input:focus {
+            border-color: var(--teal);
+        }
+
+        .calc-result {
+            background: var(--card2);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid rgba(45, 212, 191, 0.2);
+        }
+
+        .calc-big-number {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 48px;
+            color: var(--cream);
+            line-height: 1;
+            margin: 8px 0;
+            text-shadow: 0 0 20px rgba(45, 212, 191, 0.2);
+        }
+
+        .calc-subtext {
+            font-size: 14px;
+            color: var(--soft);
+            line-height: 1.5;
+        }
+
+        /* --- Asset Profile Grid --- */
+        .asset-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 32px;
+        }
+
+        .asset-card {
+            background: var(--card2);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .asset-card:hover {
+            border-color: var(--cyan);
+            background: rgba(103, 232, 249, 0.02);
+        }
+
+        .asset-card.locked {
+            opacity: 0.6;
+            border-style: dashed;
+        }
+
+        .asset-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 16px;
+        }
+
+        .asset-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            border: 1px solid var(--border);
+        }
+
+        .asset-level {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--teal);
+            background: rgba(45, 212, 191, 0.1);
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .asset-title {
+            font-family: 'Bebas Neue', sans-serif;
+            font-size: 22px;
+            color: var(--cream);
+            margin-bottom: 8px;
+        }
+
+        .asset-desc {
+            font-size: 13px;
+            color: var(--muted);
+            line-height: 1.4;
+            margin-bottom: 20px;
+            flex: 1;
+        }
+
+        .asset-input-group {
+            margin-bottom: 12px;
+        }
+
+        .asset-field-label {
+            font-family: 'Space Mono', monospace;
+            font-size: 10px;
+            color: var(--soft);
+            text-transform: uppercase;
+            margin-bottom: 6px;
+            display: block;
+        }
+
+        .asset-input-field {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            color: var(--cream);
+            font-size: 14px;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+
+        .asset-input-field:focus {
+            border-color: var(--teal);
+        }
+    </style>
 </head>
+
 <body>
-  <main class="eee-gate" id="eee-access-gate"><section class="eee-gate-box"><span class="studio-mark">EEE</span><h1 id="eee-gate-title">Checking your membership.</h1><p id="eee-gate-copy">Your Studio access will be ready in a moment.</p><a class="primary-button" id="eee-gate-button" href="/"><span>Return to Studio</span><i data-lucide="arrow-right"></i></a></section></main>
-  <div id="eee-app" hidden>
-    <header class="studio-header eee-header"><a class="studio-brand" href="/eee"><span class="studio-mark">EEE</span><span><strong>Next Step Navigator</strong><small>Your business on a map</small></span></a><div class="header-actions"><a class="secondary-button" href="/eee"><i data-lucide="arrow-left"></i><span>EEE Home</span></a><button class="icon-button" data-eee-theme type="button" title="Change color theme" aria-label="Change color theme"><i data-lucide="sun" class="theme-sun-icon"></i><i data-lucide="moon" class="theme-moon-icon"></i></button><div class="eee-account"><span class="account-avatar" id="eee-account-avatar">E</span><span class="eee-account-email" id="eee-account-email"></span></div></div></header>
-    <main class="navigator-main">
-      <section class="eee-page-head"><div><p class="eyebrow">Next Step Navigator</p><h1>One useful move beats another afternoon spent rearranging the plan.</h1><p>Describe where the work stands now. The Navigator will reduce it to one action that fits the time you actually have.</p></div><span class="eee-member-chip"><i data-lucide="save"></i>Saved to Studio</span></section>
-      <div class="navigator-grid">
-        <form class="eee-panel navigator-form" id="navigator-form">
-          <label>What are you trying to make true?<textarea id="navigator-objective" required placeholder="Launch the page, choose the offer, finish the video, repair the system..."></textarea></label>
-          <label>What is already complete, decided, or working?<textarea id="navigator-reality" required placeholder="Give the current reality, not the full history."></textarea></label>
-          <label>What is stopping the next move right now?<textarea id="navigator-blocker" required placeholder="Name the decision, missing information, fear, dependency, or technical roadblock."></textarea></label>
-          <div class="eee-form-grid"><label>Time available<select id="navigator-time" required><option value="15 minutes">15 minutes</option><option value="30 minutes">30 minutes</option><option value="1 hour" selected>1 hour</option><option value="3 hours">3 hours</option><option value="one workday">One workday</option></select></label><label>Real deadline, if there is one<input id="navigator-deadline" type="date"></label></div>
-          <div class="eee-actions"><button class="primary-button" id="navigator-submit" type="submit"><span>Choose my next move</span><i data-lucide="route"></i></button><button class="secondary-button" id="navigator-clear" type="button"><i data-lucide="rotate-ccw"></i><span>Start fresh</span></button></div>
-          <p class="eee-message" id="navigator-message"></p>
-        </form>
-        <section class="navigator-result" id="navigator-result" hidden>
-          <p class="eyebrow">Your Next Move</p><h2 id="navigator-action"></h2>
-          <div class="navigator-result-row"><span>Start here</span><p id="navigator-start"></p></div>
-          <div class="navigator-result-row"><span>Done when</span><p id="navigator-done"></p></div>
-          <div class="navigator-result-row"><span>Why now</span><p id="navigator-why"></p></div>
-          <div class="eee-actions"><button class="primary-button" id="navigator-complete" type="button"><i data-lucide="check"></i><span>Mark complete</span></button><button class="secondary-button" id="navigator-copy" type="button"><i data-lucide="copy"></i><span>Copy next move</span></button></div>
+    <main class="eee-gate" id="eee-access-gate">
+        <section class="eee-gate-box">
+            <span class="studio-mark">MH</span>
+            <h1 id="eee-gate-title">Checking your membership.</h1>
+            <p id="eee-gate-copy">Your Momentum Hub access will be ready in a moment.</p>
+            <a class="primary-button" id="eee-gate-button" href="/"><span>Return to Studio</span></a>
         </section>
-      </div>
     </main>
-  </div>
-  <script src="/js/eee-common.js?v=eee-launch-v1"></script><script src="/js/navigator.js?v=eee-launch-v1"></script>
+    <div class="app-container" id="eee-app" hidden>
+        <!-- HEADER -->
+        <header class="header">
+            <a class="logo" href="/eee" style="text-decoration:none;color:inherit">NEXT STEP <strong>NAVIGATOR</strong></a>
+            <div class="nav-links">
+                <a href="/eee">Momentum Hub</a>
+                <a href="#" onclick="showRoadmap()">Roadmap</a>
+                <a href="#" onclick="showScreen('screen-assets')">Profile</a>
+                <span id="eee-account-email" style="font-size:11px;color:var(--muted)"></span>
+            </div>
+        </header>
+
+        <!-- WIZARD -->
+        <div class="screen active" id="screen-wizard">
+            <div class="wizard-card">
+                <div class="tagline">The Momentum Hub</div>
+                <h1>Next Step Navigator</h1>
+                <p class="desc">Identify your business bottlenecks using the Bee Formula hierarchy. We build
+                    infrastructure first and traffic last.</p>
+
+                <div id="resume-container" style="display:none; margin-bottom:24px;">
+                    <button class="btn-primary" style="margin-bottom:12px;" onclick="resumeAudit()">RESUME SAVED
+                        PLAN</button>
+                    <button class="btn-secondary" onclick="resetApp()">START FRESH AUDIT</button>
+                </div>
+
+                <div id="start-inputs">
+                    <input type="text" id="user-name" class="input-text" placeholder="First Name..."
+                        onkeydown="if(event.key==='Enter')startDiagnostic()">
+                    <input type="text" id="user-niche" class="input-text"
+                        placeholder="Your Passion or Topic (e.g. Health Coaching)..."
+                        onkeydown="if(event.key==='Enter')startDiagnostic()">
+
+                    <div style="display:flex; gap:12px; margin-top:20px;">
+                        <button class="btn-primary" onclick="startDiagnostic()" style="font-size: 20px;">START
+                            AUDIT</button>
+                    </div>
+                    <button class="btn-secondary" onclick="startFromScratch()"
+                        style="margin-top:24px; font-size: 14px; text-transform:none; border:none;">I'm starting
+                        from scratch! Just tell me what to do first. &rarr;</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- QUESTIONS -->
+        <div class="screen" id="screen-questions">
+            <button class="btn-back" onclick="goBack()">
+                < Back</button>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress"></div>
+                    </div>
+                    <div class="wizard-card">
+                        <div class="tagline" id="q-category">Audit Step</div>
+                        <h2 id="q-text">Loading...</h2>
+                        <p id="q-hint" style="font-size: 13px; color: var(--muted); margin-bottom: 24px;"></p>
+                        <div class="bubble-grid" id="bubble-container"></div>
+                    </div>
+        </div>
+
+        <!-- AUDIT -->
+        <div class="screen" id="screen-audit">
+            <div class="wizard-card">
+                <div class="tagline">Phase 1: Diagnosis</div>
+                <div class="audit-progress-container">
+                    <div class="audit-progress-fill" id="audit-progress"></div>
+                </div>
+                <h2 id="q-category">Traffic Source</h2>
+                <div class="desc" id="q-text">How are you currently meeting new people?</div>
+                <div class="bubble-grid" id="q-options"></div>
+            </div>
+        </div>
+        <!-- RESULTS -->
+        <div class="screen" id="screen-results">
+            <div class="wizard-card">
+                <div class="tagline">Audit Analysis</div>
+                <h2>The Bee Formula Roadmap</h2>
+                <div class="map-container" id="funnel-map"></div>
+                <div class="sandwich-box" id="diagnosis-sandwich"></div>
+                <button class="btn-primary" onclick="showRoadmap()">CHOOSE MY FOCUS</button>
+            </div>
+        </div>
+
+        <!-- ROADMAP -->
+        <div class="screen" id="screen-roadmap">
+            <div class="wizard-card">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; border-bottom: 1px dashed var(--border); padding-bottom: 12px;">
+                    <div class="tagline" style="margin-bottom:0;">Your Bee Formula Roadmap</div>
+                    <div style="display:flex; gap: 8px;">
+                        <button class="btn-secondary"
+                            style="margin:0; width:auto; padding: 6px 12px; font-size:14px; color:var(--muted); border-color:var(--border);"
+                            onclick="emailPlan()">📧 EMAIL MY PLAN</button>
+                    </div>
+                </div>
+                <h2>THE FLIGHT PLAN</h2>
+                <div
+                    style="font-size: 16px; color: var(--soft); line-height: 1.6; margin-bottom: 32px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border-left: 3px solid var(--teal);">
+                    Welcome to your custom implementation plan! Based on your answers, we've organized exactly what you
+                    need to build next.
+                    <br><br>
+                    <strong>How to use this page:</strong> Click on your #1 Priority to open a step-by-step checklist.
+                    Focus <em>only</em> on completing that single goal. Building a reliable business is about setting
+                    up one solid piece of infrastructure at a time, not doing everything at once. Once it's built, we
+                    will automatically celebrate your progress and hand you your next objective!
+                </div>
+                <div id="priority-roadmap"></div>
+                <div class="matrix-list" id="matrix-list"></div>
+
+                <button class="btn-primary"
+                    style="margin-top:40px; background:linear-gradient(135deg, #a855f7, #ec4899); border:none; box-shadow:0 8px 20px rgba(168,85,247,0.4); text-transform:uppercase; letter-spacing:0.1em; font-size: 24px; padding: 24px;"
+                    onclick="showScreen('screen-assets')">VIEW MY BUSINESS PROFILE →</button>
+            </div>
+        </div>
+
+        <!-- DEEP DIVE -->
+        <div class="screen" id="screen-deep-dive">
+            <div class="wizard-card" id="deep-dive-content"></div>
+        </div>
+
+        <!-- ASSETS / PROFILE -->
+        <div class="screen" id="screen-assets">
+            <div class="wizard-card" style="max-width: 1000px; padding: 40px;">
+                <div class="tagline">Your Living Business Map</div>
+                <h2 style="text-align: center; margin-bottom: 32px;">The Foundation</h2>
+
+                <!-- 1. Visual Map -->
+                <div class="visual-map-container" id="visual-map"></div>
+
+                <!-- 2. Earnings Calculator -->
+                <div class="earnings-section" id="earnings-calc"></div>
+
+                <!-- 3. Customer Journey Story -->
+                <div class="story-board" id="customer-journey"></div>
+
+                <div
+                    style="display:flex; justify-content:center; gap: 12px; margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 40px;">
+                    <button class="btn-secondary" style="margin:0; width:auto; padding: 8px 16px;"
+                        onclick="showRoadmap()">&larr; BACK TO ROADMAP</button>
+                    <button class="btn-primary"
+                        style="margin:0; width:auto; padding: 8px 16px; background:linear-gradient(135deg, #10b981, #059669);"
+                        onclick="emailPlan()">📧 EMAIL PROFILE & PLAN</button>
+                </div>
+
+                <!-- 4. Input Grid -->
+                <h3
+                    style="font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--cream); margin-bottom: 16px;">
+                    System Components</h3>
+                <p style="color: var(--muted); font-size: 14px; margin-bottom: 24px;">Enter your URLs and details
+                    below.
+                    Hit 'Enter' to save. Upgrade components to unlock the next level of revenue.</p>
+                <div class="asset-grid" id="profile-grid"></div>
+
+                <!-- 5. Reset -->
+                <div class="reset-audit-wrap">
+                    <button class="btn-tiny-reset"
+                        onclick="if(confirm('Warning: This will delete your entire business profile, tasks, and roadmap progress. Are you sure?')) resetApp()">⚠️
+                        Start Entirely New Audit (Danger)</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+
+    <!-- Drawer / To-Do List -->
+    <div id="todo-drawer">
+        <div class="drawer-header">
+            <h2 class="drawer-title">Daily Wins</h2>
+            <button class="close-drawer" onclick="toggleTodoDrawer()">&times;</button>
+        </div>
+        <div class="drawer-body" id="todo-list">
+            <!-- Tasks inject here -->
+        </div>
+    </div>
+    <button class="floating-todo-btn" id="floating-todo" onclick="toggleTodoDrawer()">📋 MY TASKS (0)</button>
+
+    <div id="celebration">
+        <div class="celeb-box">LEVEL UP!</div>
+    </div>
+    <div id="tooltip"></div>
+
+    <script>
+        const STORAGE_KEY = 'bees_ai_v33_persistence';
+
+        // TASK LEVELS: The 11 Strategic Milestones
+        const TASK_DATA = {
+            storefront: [
+                {
+                    level: 1, title: 'Set Up Your Social Media Profile Link', goal: 'Give people one place to click and learn about you.', why: 'Before you can sell anything, people need to know who you are and what you do. A simple link page is like your digital business card.', tech: ['Linktree', 'Beacons'], steps: ['Pick your top 3 most important links (e.g., your free guide, your main offer, your contact info).', 'Upload a clear, friendly photo of yourself.', 'Make one link specifically for collecting email addresses.'],
+                    example: 'Example for [NICHE]: 1. "Book a Free 15-Minute Chat" (Top link)\n2. "Download My Free Advice PDF" (Middle link)\n3. "Follow My Daily Tips on Instagram" (Bottom link)',
+                    prompt: 'Act as an expert in the [NICHE] space. I need help creating a simple, highly effective "Link in Bio" page (like a Linktree). Please give me exactly 3 button ideas. Button 1 should lead to speaking with me. Button 2 should offer a free, helpful resource in exchange for their email. Button 3 should link to my best social media content. Keep the text short and catchy.'
+                },
+                {
+                    level: 2, title: 'Create a Simple One-Page Website', goal: 'Have a dedicated, professional home base online.', why: 'A real website looks more professional than a simple link page, builds trust faster, and helps keep visitors focused on one specific action you want to take.', tech: ['Carrd', 'Wix', 'Framer'], steps: ['Pick a simple "Landing Page" template that is easy to read.', 'Write a big, clear headline that states exactly how you help people get from where they are to where they want to be.', 'Add a simple form where people can type their email address to get something valuable from you.'],
+                    example: 'Headline Example: "I Help [Target Audience] Go From [Current Problem] To [Dream Result] Without [Thing They Hate Doing]."',
+                    prompt: 'Act as a website copywriter specializing in the [NICHE] space. Please write the text for a simple, one-page website. I need: 1. A catchy main headline that promises a specific result. 2. A shorter sub-headline that explains how I do it. 3. Three short bullet points listing the biggest benefits of my approach. 4. A clear "Call to Action" telling them exactly what button to click next.'
+                },
+                {
+                    level: 3, title: 'Build an Automated Sales Path', goal: 'Turn visitors into buyers automatically.', why: 'When you have a proper system, people can discover you, get your free info, and buy from you while you sleep.', tech: ['Systeme.io', 'Clickfunnels', 'GHL'], steps: ['Map out exactly what a person clicks on from the moment they find you until they pay you.', 'Write your very first automatic email that sends immediately after someone signs up.', 'Create a "Thank You" page they see right after giving their email, and offer them the next step.'],
+                    example: 'The Path: Someone clicks your post -> They go to a page offering a free guide -> They give their email -> They are taken to a Thank You page offering a $27 mini-training -> They get an automatic welcome email.',
+                    prompt: 'Act as an online business strategist in the [NICHE] space. Outline a simple 3-step automated path (a "funnel") for my new customers. Tell me exactly what the goal, headline, and button text should be for: 1. The page where I offer my free guide. 2. The page they see right after signing up. 3. The final checkout page where I offer my main service.'
+                }
+            ],
+            mvo: [
+                {
+                    level: 1, title: 'Create a Small Paid Offer', goal: 'Prove that people will actually pay for your help.', why: 'Getting paid $50 proves your idea works better than giving away free advice. It builds your confidence and filters out people who only want free things.', tech: ['Stripe', 'Gumroad'], steps: ['Pick a very small, specific problem your audience faces that you can solve for around $30 to $100.', 'Set up a simple payment link online.', 'Reach out to 10 people you know who have this problem and offer it to them.'],
+                    example: 'Offer Idea: Instead of selling a massive 3-month coaching program, offer a "1-Hour Live Audit and Personalized Action Plan" for $47.',
+                    prompt: 'Act as an expert product creator in the [NICHE] space. Give me 3 ideas for a very small, beginner-friendly paid offer priced between $30 and $90. Each idea must solve exactly ONE specific, painful problem incredibly fast. I want to help them get a quick win, not teach them everything I know.'
+                },
+                {
+                    level: 2, title: 'Build a Dedicated Mini Course / Ebook', goal: 'Have a standalone product that solves a specific problem.', why: 'A mini-course or ebook allows you to serve more people at once and provides a clear, valuable step for those not ready for your main program.', tech: ['Teachable', 'Gumroad', 'Payhip'], steps: ['Outline a single, specific problem your audience has and how your mini-course/ebook solves it.', 'Create 3-5 short video lessons or written modules.', 'Design a simple sales page that highlights the transformation your product offers.'],
+                    example: 'Mini-Course Idea: "The 7-Day [NICHE] Kickstart" - A short video series teaching the fundamentals to get immediate results.',
+                    prompt: 'Act as an expert course creator in the [NICHE] space. Outline a 3-module mini-course or ebook that solves a very specific problem. Give me a catchy title, a 2-sentence description for each module, and a clear call to action for the end of the product.'
+                }
+            ],
+            signature: [
+                {
+                    level: 2, title: 'Design Your Main Premium Program', goal: 'Build the main thing you want to be known for.', why: 'This is the core offering that actually supports your business full-time. It’s where you deliver the best, most complete results for your clients.', tech: ['Skool', 'Kajabi'], steps: ['Write down exactly what happens during a 4-week process working with you.', 'Decide if you want to teach this to a group or one-on-one.', 'Find 3 people to test the program at a discounted price to get their feedback.'],
+                    example: 'Main Program Idea: "The 8-Week Blueprint" - This includes a weekly group coaching call with me, a step-by-step video guide they can watch anytime, and a private chat group for daily questions.',
+                    prompt: 'Act as an expert program designer in the [NICHE] space. Help me outline a high-end, premium program. Break it down into 4 clear steps or phases. Tell me exactly what big result I am promising them, and list 3 things I should include in the program (like weekly calls, a video library, or a private community).'
+                }
+            ],
+            leadmagnet: [
+                {
+                    level: 1, title: 'Create a Free 1-Page Checklist', goal: 'Give people a fast, easy "win" in exchange for their email.', why: 'A checklist is the fastest way to prove to a stranger that you know what you are talking about, and it helps you collect their email address to talk to them later.', tech: ['Canva', 'Google Docs'], steps: ['Think of one specific problem your audience has that takes 5 minutes to solve.', 'Write down 5 bullet points telling them exactly how to solve it.', 'Save it as a simple PDF document so they can download it.'],
+                    example: 'Checklist Idea: "The 5-Point Morning Routine Checklist for Busy Parents"',
+                    prompt: 'Act as an expert marketer in the [NICHE] space. Give me 3 highly specific, super-actionable ideas for a 1-page free checklist I can give away. For the best idea out of the 3, write out the actual 5 bullet points I should put on the PDF to help the reader get an immediate, quick result.'
+                },
+                {
+                    level: 2, title: 'Write a Detailed Free Guide', goal: 'Establish yourself as a true expert in your field.', why: 'While a checklist is fast, a longer guide shows people you really understand their deeper problems and have a real method to fix them.', tech: ['Canva', 'Notion'], steps: ['Write an outline breaking your method into 3 to 5 main parts.', 'Write about 800 to 1,200 words total sharing your best advice.', 'Make a nice-looking title cover so it feels professional.'],
+                    example: 'Guide Idea: "The Ultimate Guide to Getting Your First Client: A 3-Step Framework for Beginners"',
+                    prompt: 'Act as a professional content creator in the [NICHE] space. Please outline a 5-part "Ultimate Guide" that I can give away for free. I want this guide to make me look like a trusted expert. Give me a catchy Title, Subtitle, and a 2-sentence summary of exactly what I should teach in each of the 5 sections.'
+                },
+                {
+                    level: 3, title: 'Host a Free Live Training Session', goal: 'Teach to an audience live, then offer them your paid help.', why: 'Talking to a group of people at once on video builds a massive amount of trust fast, making it much easier to ask them to buy your premium program at the end.', tech: ['Zoom', 'YouTube Live'], steps: ['Plan a short 15-minute presentation where you teach your best concepts.', 'Create a sign-up link where people must enter their email to get the meeting link.', 'Write down exactly what you will say at the end to transition from teaching for free to inviting them to buy.'],
+                    example: 'Presentation Plan: First 10 mins: Talk about why the old way doesn\'t work. Next 20 mins: Teach your new and better way. Final 10 mins: Invite them to join your main paid program if they want your help doing it.',
+                    prompt: 'Act as an expert presentation coach for the [NICHE] space. Outline a 30-minute free live training script for me. Please include: 1. A really exciting promise for the start. 2. Three common myths I should bust or "secrets" I should teach. 3. The exact words I should say at the end to smoothly move from teaching for free to offering my paid services.'
+                }
+            ],
+            emails: [
+                {
+                    level: 1, title: 'Write a Simple Follow-Up Message', goal: 'Personally connect with people who show interest.', why: 'A direct, personal message builds a strong real-world connection with a potential customer, much faster than a generic post to everyone.', tech: ['Instagram DMs', 'Facebook Messenger'], steps: ['Write a friendly, normal opening line.', 'Ask a simple question to figure out what problem they are struggling with right now.', 'End by politely asking if they want to hop on a quick call or check out your free guide.'],
+                    example: 'Message Idea: "Hey [Name], saw you grabbed my free checklist! Thanks for checking it out. Just curious, what\'s the biggest thing you\'re struggling with right now regarding your goals?"',
+                    prompt: 'Act as an expert, friendly community manager in the [NICHE] space. Write 3 different, very conversational follow-up messages I can send to people privately. The goal is just to start a friendly conversation, figure out their current problem, and gently offer a free 15-minute advice call without sounding salesy or pushy at all.'
+                },
+                {
+                    level: 2, title: 'Set Up an Automatic Welcome Email', goal: 'Say "hello" immediately automatically.', why: 'When someone asks for your free guide or joins your list, reaching out to them right exactly in that moment is critical for keeping their attention.', tech: ['Systeme.io', 'Mailchimp', 'MailerLite'], steps: ['Set up a rule in your software that says "When someone gives me their email, send this message right now".', 'Write a friendly "Value First" greeting.', 'Make sure the promised free guide is attached or linked clearly.'],
+                    example: 'Welcome Email Structure: 1. Give them the free thing you promised right away. 2. Tell a super short, relatable 2-sentence story about yourself. 3. Teach them one tiny helpful thing they can do today.',
+                    prompt: 'Act as an expert copywriter in the [NICHE] space. Write the perfect "Welcome Email" for someone who just joined my email list. First, give them their free download. Next, build a quick, friendly connection using a short story. Finally, give them a tiny call to action (like asking them to reply to the email and tell me their biggest struggle with this topic).'
+                },
+                {
+                    level: 3, title: 'Build a Multi-Day Email Sequence', goal: 'Warm people up to buy from you automatically over time.', why: 'Most people don\'t buy on the first day. Sending a planned series of emails educates them on why they need your help so that buying feels like the logical next step.', tech: ['ConvertKit', 'ActiveCampaign'], steps: ['Plan a 5-day journey where they learn something new each day.', 'Write emails that talk about their pain, explain the logic of fixing it, and show proof that your way works.', 'Make sure to explicitly offer them your paid service in every second email.'],
+                    example: '5-Day Plan: Day 1: Welcome & Give the Freebie. Day 2: Tell the story of how you discovered your method. Day 3: Explain the hidden benefit of your approach. Day 4: Share a story of a client you helped. Day 5: Urgency - why they need to sign up for your paid program now.',
+                    prompt: 'Act as an expert email campaign manager in the [NICHE] space. Outline a 5-day automated email series for my new subscribers. For each of the 5 days, give me the exact Subject Line and tell me what the core message of that email should be, leading up to them paying for my main service.'
+                }
+            ],
+            groupcall: [
+                {
+                    level: 1, title: 'Write a 1-on-1 Discovery Call Script', goal: 'Know exactly what to say to turn conversations into clients.', why: 'Getting on a video call is the fastest way to sign premium clients, but you need a plan so you aren\'t just chatting aimlessly.', tech: ['Calendly', 'Zoom'], steps: ['Create a free booking link on a site like Calendly.', 'Write a simple 15-minute script asking them about their goals and challenges.', 'Always ask what they are struggling with before they get on the call so you are prepared.'],
+                    example: 'Call Plan: 5 mins: Ask "Where are you now?" (Find the pain). 5 mins: Ask "Where do you want to be?" (Find the goal). 5 mins: Say "Here is the gap between those two things, and here is how my program helps you cross it. Want to join?"',
+                    prompt: 'Act as an expert sales coach. Write a friendly, 15-minute discovery call script made specifically for the [NICHE] space. I need the 3 most important questions I should ask the person to figure out what they are really struggling with emotionally, and tell me exactly what words to say when it is time to tell them the price of my service.'
+                },
+                {
+                    level: 2, title: 'Start a Free Online Group', goal: 'Gather all your interested fans in one place you own.', why: 'A free community builds long-term loyalty. When people hang out with you regularly, they are much more likely to eventually buy your paid programs.', tech: ['Facebook Groups', 'Skool'], steps: ['Decide on a "Big Promise" that explains why someone should join the group.', 'Pick a platform (Facebook is easy for beginners).', 'Write and pin 3 valuable posts so it doesn\'t look empty when new people arrive.'],
+                    example: 'Group Promise: "The Daily Fitness Motivation Hub: Learn how to stay fit without completely giving up the foods you love."\nWelcome post: A quick video welcoming them and a post pointing them to where to start.',
+                    prompt: 'Act as an expert community manager for the [NICHE] space. Help me design a Free Community concept. I need: 1. A catchy name for the group. 2. A "Big Promise" description covering exactly what they get out of being in it. 3. Three simple ideas for weekly recurring posts (like "Win Wednesday") to keep people commenting and engaged.'
+                }
+            ],
+            traffic: [
+                {
+                    level: 1, title: 'Post a 7-Day Short Video Challenge', goal: 'Start showing up consistently in your niche.', why: 'Posting 7 videos back to back forces the social media algorithms to figure out who to show your videos to, helping the right people find you.', tech: ['TikTok', 'Instagram Reels'], steps: ['Write 7 short, catchy scripts focusing on one main point each.', 'Post one video per day for an entire week.', 'End every single video by telling them exactly what to do next (like "Click my bio" or "Follow for part 2").'],
+                    example: 'Video Idea: "Stop doing [Common Mistake] if you want to achieve [Big Goal]. Do this instead." -> Briefly explain -> End with "Comment INFO and I\'ll send you my free detailed guide."',
+                    prompt: 'Act as a viral social media manager. Write 7 short video scripts (for TikTok or Instagram Reels) just for the [NICHE] space. I want every script to follow this exact format: 1. A catchy hook line to stop them from scrolling (first 3 seconds). 2. The main helpful tip or story (15 seconds). 3. A strong, clear command telling them exactly what to do next (last 5 seconds).'
+                },
+                {
+                    level: 2, title: 'Use the 5-Category Content System', goal: 'Vary your posts so people see you as a complete expert.', why: 'If you only post educational tips, it gets boring. Mixing it up with your story, answering questions, and showing proof keeps people highly engaged long-term.', tech: ['CapCut', 'Canva'], steps: ['Categorize your posts into Education, Emotion, Entertainment, Engagement, and Endorsements.', 'Film a batch of 10 to 12 videos all on the same day to save time.', 'Look at the numbers later to see which style people liked best.'],
+                    example: 'The Categories: Educational (How-to videos), Entertaining (Funny trends), Emotional (Telling your own struggles), Engaging (Asking questions/polls), Endorsing (Sharing wins from people you helped).',
+                    prompt: 'Act as an expert Content Director. Map out a simple 2-week social media posting plan for me in the [NICHE] space. I want you to balance the content using 5 categories: Educational, Entertaining, Emotional, Engaging, and Endorsing. Just tell me the topic and what kind of post I should make for all 10 posts.'
+                }
+            ],
+            highticket: [
+                {
+                    level: 2, title: 'Design a Premium "Done-For-You" Package', goal: 'Offer incredibly high-level, fast support for a premium price.', why: 'There is always a small percentage of people who do not want to do the work themselves and are willing to pay a high price for you to do it for them or hold their hand closely.', tech: ['Zoom', 'Direct Access'], steps: ['Write down exactly what you would do if someone paid you $2,000+ for VIP, one-on-one help.', 'Figure out how you can deliver results for them much faster than a normal course.', 'Make them fill out an application before you let them buy, to ensure they are a good fit.'],
+                    example: 'VIP Idea: Instead of selling a "Do It Yourself" training course, offer a "We Build It For You" package. You do the tedious work, check their progress personally, and give them direct access to text you anytime for 90 days.',
+                    prompt: 'Act as an expert business coach. I want to offer a very premium, high-priced ($2,000+) VIP package for people in the [NICHE] space. Tell me exactly what I should include in this package to make it worth the money. Focus heavily on doing things FOR them or helping them get the result incredibly fast.'
+                }
+            ],
+            aiaas: [
+                {
+                    level: 2, title: 'Automate Repetitive Tasks', goal: 'Remove yourself as the bottleneck using software.', why: 'Automating the boring stuff lets you handle more clients and make more money without working longer hours.', tech: ['ChatGPT', 'Zapier', 'Make.com'], steps: ['Write down 3 boring things you do manually over and over (like sending emails or moving data).', 'Use a service like Zapier to connect the tools so they talk to each other automatically.', 'Use AI to draft standard responses or summarize information for you.'],
+                    example: 'Automation Idea: Connect your calendar (Calendly) to Zapier. Now, whenever someone books a call, their info goes into your main spreadsheet, they automatically get a personalized prep email, and it sends you a notification on your phone—all without you lifting a finger.',
+                    prompt: 'Act as an expert Automation Engineer. Imagine a growing, busy business in the [NICHE] space. Point out 3 common, annoying operational tasks they probably do over and over again by hand. For each of the 3 tasks, explain to me step-by-step how I can use a tool like Zapier or Make.com to make it happen completely automatically.'
+                }
+            ]
+        };
+
+        const QUESTIONS = [
+            { id: 'storefront', category: 'Online Presence', text: 'Where do people find you online?', hint: 'Where do you send people to learn about you?', desc: 'Website or bio link setup.', options: [{ label: 'Nowhere', depth: 0, retail: 'No address' }, { label: 'A simple bio link (Linktree)', depth: 1, retail: 'Basic profile' }, { label: 'A full 1-page website', depth: 2, retail: 'Real address' }, { label: 'A multi-step sales website', depth: 3, retail: 'Pro store' }], required: 2 },
+            { id: 'mvo', category: 'Paid Experience', text: 'Do you have a small paid offer?', hint: 'Something inexpensive that solves a single problem quickly.', desc: 'Your tiny product.', options: [{ label: 'No small offer yet', depth: 0, retail: 'Only big items' }, { label: 'Yes, a small paid guide or call', depth: 1, retail: 'Small wins' }, { label: 'Yes, a dedicated mini-course/ebook', depth: 2, retail: 'Standalone product' }], required: 1 },
+            { id: 'signature', category: 'Core Service', text: 'Do you have a main premium program?', hint: 'The main thing you want to be known for selling.', desc: 'Primary core focus.', options: [{ label: 'Nothing yet', depth: 0, retail: 'Empty store' }, { label: 'Yes, a clear main program', depth: 2, retail: 'Main product' }], required: 2 },
+            { id: 'leadmagnet', category: 'Free Value', text: 'Do you have a free "giveaway"?', hint: 'Something you trade in exchange for their email address.', desc: 'Free helpful resource.', options: [{ label: 'Nothing', depth: 0, retail: 'No sample' }, { label: 'A 1-page checklist', depth: 1, retail: 'Fast summary' }, { label: 'A detailed free guide', depth: 2, retail: 'Deep dive' }, { label: 'A free live video training', depth: 3, retail: 'Live class' }], required: 2 },
+            { id: 'emails', category: 'Follow-Up', text: 'How do you talk to people after they sign up?', hint: 'What happens immediately after they give you their email?', desc: 'Email responses.', options: [{ label: 'Nothing right now', depth: 0, retail: 'Ignored' }, { label: 'I message them manually', depth: 1, retail: 'Hand written' }, { label: '1 automated welcome email', depth: 2, retail: 'Quick nod' }, { label: 'A full automated email series', depth: 3, retail: 'Tour guide' }], required: 2 },
+            { id: 'groupcall', category: 'Community', text: 'Where do your biggest fans hang out?', hint: 'How do you connect with them directly?', desc: 'Audience connection point.', options: [{ label: 'Nowhere', depth: 0, retail: 'Just browsing' }, { label: '1-on-1 video calls', depth: 1, retail: 'Direct chats' }, { label: 'A free online community group', depth: 2, retail: 'Clubhouse' }], required: 1 },
+            { id: 'traffic', category: 'Social Media', text: 'How often do you post on social media?', hint: 'How are new strangers discovering you?', desc: 'Social posting plan.', options: [{ label: 'Rarely or never', depth: 0, retail: 'Invisible' }, { label: 'Sometimes, when I feel like it', depth: 1, retail: 'Quiet street' }, { label: 'Very regularly with a planned strategy', depth: 2, retail: 'Busy billboards' }], required: 2 },
+            { id: 'highticket', category: 'VIP Support', text: 'Do you offer a highly premium, expensive option?', hint: 'A top-tier service where you do the difficult work for them.', desc: 'Premium white-glove tier.', options: [{ label: 'Nothing like that', depth: 0, retail: 'No VIP' }, { label: 'Yes, a high-priced VIP package', depth: 2, retail: 'Elite tier' }], required: 1 },
+            { id: 'aiaas', category: 'Systems & AI', text: 'Do you use AI or automation to save time?', hint: 'Are you doing everything manually?', desc: 'Automation and AI.', options: [{ label: 'Everything is manual', depth: 0, retail: 'Manual labor' }, { label: 'I use some basic automations', depth: 1, retail: 'Basic tools' }, { label: 'I have AI agents and full automation', depth: 2, retail: 'Automated workflow' }], required: 2 }
+        ];
+
+        // THE PRIORITY CHAIN: Explicit Order defined by the user
+        const PRIORITY_SEQUENCE = [
+            { id: 'storefront', min: 2, label: 'Website Setup' },
+            { id: 'mvo', min: 1, label: 'Small Paid Sample' },
+            { id: 'signature', min: 2, label: 'Main Premium Program' },
+            { id: 'leadmagnet', min: 1, label: 'Free Giveaway' },
+            { id: 'emails', min: 2, label: 'Welcome Email' },
+            { id: 'groupcall', min: 2, label: 'Free Group' },
+            { id: 'traffic', min: 1, label: 'Social 7-Day Plan' },
+            { id: 'storefront', min: 3, label: 'Sales Website' },
+            { id: 'mvo', min: 2, label: 'Dedicated Mini Course / Ebook' },
+            { id: 'traffic', min: 2, label: 'Content Strategy' },
+            { id: 'highticket', min: 2, label: 'VIP Package' },
+            { id: 'aiaas', min: 2, label: 'Task Automation' }
+        ];
+
+        let userProfile = { name: '', niche: '', answers: {}, progress: {}, viewedTasks: [], todos: [], assets: {} };
+        let currentQIndex = 0;
+        let criticalStepId = '';
+        let criticalTargetLevel = 0;
+
+        const tooltip = document.getElementById('tooltip');
+
+        function loadData() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (raw) { userProfile = JSON.parse(raw); document.getElementById('resume-container').style.display = 'block'; document.getElementById('start-inputs').style.display = 'none'; }
+        }
+
+        function resumeAudit() {
+            if (Object.keys(userProfile.answers).length === QUESTIONS.length) processResults();
+            else { currentQIndex = Object.keys(userProfile.answers).length; showScreen('screen-questions'); renderQuestion(); }
+        }
+
+        function startFromScratch() {
+            const n = document.getElementById('user-name').value;
+            const nc = document.getElementById('user-niche').value;
+            if (!n || !nc) return alert("Please tell us your name and passion/topic first!");
+            userProfile.name = n; userProfile.niche = nc;
+
+            // Auto-fill answers as absolute beginner
+            QUESTIONS.forEach(q => {
+                userProfile.answers[q.id] = q.options.find(o => o.depth === 0) || q.options[0];
+            });
+            saveData();
+            processResults();
+        }
+
+        function startDiagnostic() {
+            const n = document.getElementById('user-name').value;
+            const nc = document.getElementById('user-niche').value;
+            if (!n || !nc) return alert("Enter name and niche.");
+            userProfile.name = n; userProfile.niche = nc;
+            saveData(); showScreen('screen-questions'); renderQuestion();
+        }
+
+        function renderQuestion() {
+            const q = QUESTIONS[currentQIndex];
+            document.getElementById('q-category').textContent = q.category;
+            document.getElementById('q-text').textContent = q.text;
+            document.getElementById('q-hint').textContent = q.hint;
+            const c = document.getElementById('bubble-container');
+            c.innerHTML = '';
+            q.options.forEach((opt) => {
+                const b = document.createElement('div'); b.className = 'bubble';
+                b.innerHTML = `<div class="bubble-label">${opt.label}</div><div class="bubble-depth">Lvl ${opt.depth}</div>`;
+                b.onclick = () => { userProfile.answers[q.id] = opt; saveData(); if (++currentQIndex < QUESTIONS.length) renderQuestion(); else processResults(); };
+                c.appendChild(b);
+            });
+            document.getElementById('progress').style.width = `${(currentQIndex / QUESTIONS.length) * 100}%`;
+        }
+
+        // --- Audit Screen ---
+        let currentQuestion = 0; // Assuming this is for screen-audit
+
+        function renderAudit() {
+            const q = QUESTIONS[currentQuestion];
+            document.getElementById('q-category').textContent = q.category;
+            document.getElementById('q-text').textContent = q.text;
+
+            const progressFill = document.getElementById('audit-progress');
+            const percentage = (currentQuestion / QUESTIONS.length) * 100;
+            progressFill.style.width = `${percentage}%`;
+
+            const grid = document.getElementById('q-options');
+            grid.innerHTML = '';
+
+            q.options.forEach((opt, idx) => {
+                const btn = document.createElement('div');
+                btn.className = 'bubble';
+                btn.innerHTML = `
+                    <span class="bubble-label">${opt.label}</span>
+                    <span class="bubble-depth">Level ${opt.depth}</span>
+                `;
+                btn.onclick = () => answerQuestion(idx);
+                grid.appendChild(btn);
+            });
+        }
+
+        function goBack() { if (currentQIndex > 0) { currentQIndex--; renderQuestion(); } else { location.reload(); } }
+
+        function processResults() {
+            showScreen('screen-results');
+            updatePriority();
+            renderMap(); renderSandwich(); renderProfile();
+        }
+
+        function updatePriority() {
+            let firstGap = null;
+            for (let step of PRIORITY_SEQUENCE) {
+                const current = userProfile.answers[step.id]?.depth || 0;
+                if (current < step.min) { firstGap = step; break; }
+            }
+            if (firstGap) {
+                criticalStepId = firstGap.id;
+                criticalTargetLevel = firstGap.min;
+            } else {
+                criticalStepId = 'aiaas';
+                criticalTargetLevel = 2;
+            }
+        }
+
+        function renderMap() {
+            const nodes = [{ id: 'traffic', x: 40, y: 50, label: 'Traffic' }, { id: 'leadmagnet', x: 90, y: 50, label: 'Magnet' }, { id: 'storefront', x: 140, y: 50, label: 'Landing' }, { id: 'emails', x: 190, y: 50, label: 'Emails' }, { id: 'groupcall', x: 240, y: 50, label: 'Lobby' }, { id: 'mvo', x: 290, y: 50, label: 'Sample' }, { id: 'signature', x: 340, y: 50, label: 'Core' }, { id: 'highticket', x: 390, y: 50, label: 'Premium' }, { id: 'aiaas', x: 440, y: 50, label: 'AI' }];
+            let svg = `<svg viewBox="0 0 480 100" style="overflow:visible;">`;
+            let pathD = `M ${nodes[0].x} ${nodes[0].y}`;
+            for (let i = 1; i < nodes.length; i++) pathD += ` C ${nodes[i - 1].x + 25} ${nodes[i - 1].y}, ${nodes[i - 1].x + 25} ${nodes[i].y}, ${nodes[i].x} ${nodes[i].y}`;
+            svg += `<path d="${pathD}" class="path-line" /><path d="${pathD}" class="path-active" />`;
+            nodes.forEach(n => {
+                const qRef = QUESTIONS.find(qi => qi.id === n.id);
+                const currentLevel = userProfile.answers[n.id]?.depth || 0;
+                const status = n.id === criticalStepId ? 'gap' : (currentLevel > 0 ? 'completed' : 'locked');
+                let levelColor = 'var(--muted)';
+                if (status === 'completed') levelColor = 'var(--teal)';
+                else if (status === 'gap') levelColor = 'var(--amber)';
+
+                svg += `<g class="node ${status}" onmouseover="showTooltip(event, '${qRef?.desc || 'Process Component'}')" onmouseout="hideTooltip()">
+                <circle cx="${n.x}" cy="${n.y}" r="7" class="node-circle" stroke-width="2.5" />
+                <text x="${n.x}" y="${n.y + 18}" text-anchor="middle">${n.label}</text>
+                <text x="${n.x}" y="${n.y + 26}" text-anchor="middle" style="fill: ${levelColor}; font-size: 6px;">LVL ${currentLevel}</text>
+            </g>`;
+            });
+            document.getElementById('funnel-map').innerHTML = svg + `</svg>`;
+        }
+
+        function renderSandwich() {
+            const box = document.getElementById('diagnosis-sandwich');
+            let positive = [];
+            let bottleneck = null;
+            let score = 0;
+
+            QUESTIONS.forEach(q => {
+                const depth = userProfile.answers[q.id]?.depth || 0;
+                if (depth >= q.required) {
+                    positive.push(q.category);
+                }
+
+                // Allow CRM (depth == 0) to be the bottleneck if its required dependencies are roughly met, or if it's naturally next
+                if (q.id === criticalStepId || (!bottleneck && depth < q.required)) {
+                    bottleneck = q;
+                }
+                score += depth;
+            });
+
+            // Fallback if everything is maxed
+            if (!bottleneck) bottleneck = QUESTIONS[QUESTIONS.length - 1];
+
+            const isScratch = score === 0;
+
+            box.innerHTML = `
+                <div class="sandwich-part part-positive">
+                    <div class="sandwich-title title-pos">Current Strengths</div>
+                    <p class="sandwich-body">${positive.length > 0 ? positive.join(', ') + ' are working great.' : 'You are starting with a clean slate.'}</p>
+                </div>
+                <div class="sandwich-part part-constructive">
+                    <div class="sandwich-title title-con">${isScratch ? 'First Mission' : 'Area of Focus'}</div>
+                    <p class="sandwich-body">${bottleneck ? bottleneck.category + ' requires attention to scale.' : 'Everything looks stable.'}</p>
+                </div>
+                <div class="sandwich-part part-verdict">
+                    <div class="sandwich-title title-verdict">The Gameplan</div>
+                    <p class="sandwich-body">Build ${bottleneck ? bottleneck.category : 'the basics'}, then level up surrounding systems.</p>
+                </div>
+            `;
+        }
+
+        function toggleTodoDrawer() {
+            document.getElementById('todo-drawer').classList.toggle('open');
+        }
+
+        function addTodo(compId, stepIndex, stepText) {
+            const id = `${compId}_${stepIndex}_${Date.now()}`;
+            const qRef = QUESTIONS.find(q => q.id === compId);
+            const task = (TASK_DATA[compId] || []).find(t => t.level === (userProfile.answers[compId]?.depth || 0) + 1 || t.level === criticalTargetLevel); // Find the relevant task
+            userProfile.todos.push({ id, compId, level: task.level, category: qRef?.category || 'Task', text: stepText });
+            saveData();
+            renderTodos();
+            toggleTodoDrawer();
+        }
+
+        function removeTodo(id) {
+            userProfile.todos = userProfile.todos.filter(t => t.id !== id);
+            saveData();
+            renderTodos();
+        }
+
+        function renderTodos() {
+            const list = document.getElementById('todo-list');
+            const btn = document.getElementById('floating-todo');
+            list.innerHTML = '';
+
+            if (userProfile.todos.length === 0) {
+                list.innerHTML = '<div style="color:var(--muted); text-align:center; margin-top:40px; font-size:14px;">Your to-do list is empty.<br>Add tasks from the roadmap instructions to track them here!</div>';
+                btn.style.display = 'none';
+            } else {
+                userProfile.todos.forEach(t => {
+                    const card = document.createElement('div'); card.className = 'task-card';
+                    card.innerHTML = `
+                    <div class="task-card-header"><span>${t.category} - Level ${t.level}</span></div>
+                    <div class="task-card-title">${t.text}</div>
+                    <div class="task-actions">
+                        <button class="task-btn done-btn" onclick="removeTodo('${t.id}')">✓ Check Off</button>
+                        <button class="task-btn remove-btn" onclick="window.drawerJumpToTask('${t.compId}', ${t.level}); toggleTodoDrawer()">→ GO TO TASK</button>
+                    </div>
+                `;
+                    list.appendChild(card);
+                });
+                btn.style.display = 'block';
+                btn.textContent = `📋 MY TASKS (${userProfile.todos.length})`;
+            }
+        }
+
+        function emailPlan() {
+            const task = (TASK_DATA[criticalStepId] || []).find(t => t.level === criticalTargetLevel);
+            let body = `Hello ${userProfile.name},\n\nHere is your custom Bee Formula Business Plan:\n\n`;
+            body += `--- CURRENT PRIORITY FOCUS ---\n`;
+            if (task) {
+                body += `${task.title}\nWhy: ${task.why}\n\n`;
+            }
+
+            if (userProfile.todos.length > 0) {
+                body += `--- MY SAVED DAILY WINS ---\n`;
+                userProfile.todos.forEach((t, i) => {
+                    body += `${i + 1}. [ ] ${t.text} (${t.category})\n`;
+                });
+                body += `\n`;
+            }
+
+            body += `--- MY ASSETS ---\n`;
+            QUESTIONS.forEach(q => {
+                const level = userProfile.answers[q.id]?.depth || 0;
+                if (level > 0) {
+                    body += `${q.category}: LEVEL ${level} - ${userProfile.answers[q.id].label}\n`;
+                    let assetList = userProfile.assets[q.id];
+                    if (assetList) {
+                        if (!Array.isArray(assetList)) assetList = [assetList];
+                        assetList.forEach((assetItem, itemIndex) => {
+                            body += `   Item ${itemIndex + 1}:\n`;
+                            Object.entries(assetItem).forEach(([k, v]) => {
+                                body += `     - ${k}: ${v}\n`;
+                            });
+                        });
+                    }
+                } else {
+                    body += `${q.category}: Not Started\n`;
+                }
+            });
+
+            const encodedBody = encodeURIComponent(body);
+            window.location.href = `mailto:?subject=My BeeAI Business Plan&body=${encodedBody}`;
+        }
+
+        function showRoadmap() {
+            showScreen('screen-roadmap');
+            updatePriority();
+            renderRoadmapContent(false);
+            renderTodos();
+        }
+
+        function renderRoadmapContent(animateNew = false) {
+            const priArea = document.getElementById('priority-roadmap');
+            const listArea = document.getElementById('matrix-list');
+            priArea.innerHTML = ''; listArea.innerHTML = '';
+
+            // Priority One Logic
+            const task = (TASK_DATA[criticalStepId] || []).find(t => t.level === criticalTargetLevel);
+            if (task) {
+                const currentLabel = userProfile.answers[criticalStepId]?.label || "Nothing";
+                const taskKey = `${criticalStepId}_${criticalTargetLevel}`;
+                const isNew = !userProfile.viewedTasks.includes(taskKey);
+                priArea.innerHTML = `
+                <div class="priority-section ${animateNew ? 'slide-in-up' : ''}">
+                    <div class="priority-badge">Priority One</div>
+                    <div class="system-row" style="border-color:var(--amber); background:rgba(245, 158, 11, 0.1);" onclick="openDeepDive('${criticalStepId}', ${criticalTargetLevel})">
+                        <div class="system-info">
+                            <div class="row-name">${task.title} ${isNew ? '<span class="new-badge">NEW</span>' : ''}</div>
+                            <div class="row-desc">You have <strong>${currentLabel}</strong>. The next step is <strong>${task.title}</strong> because ${task.why}</div>
+                        </div>
+                        <div class="row-arrow">→</div>
+                    </div>
+                </div>
+            `;
+            }
+
+            // Other Tasks Logic
+            Object.keys(TASK_DATA).forEach(compId => {
+                if (compId === criticalStepId) return;
+                const currentDepth = userProfile.answers[compId]?.depth || 0;
+                const nextTask = (TASK_DATA[compId] || []).find(t => t.level > currentDepth);
+                if (nextTask) {
+                    const taskKey = `${compId}_${nextTask.level}`;
+                    const isNew = !userProfile.viewedTasks.includes(taskKey);
+                    const row = document.createElement('div'); row.className = 'system-row';
+                    if (animateNew) {
+                        row.style.animation = `slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards ${Math.random() * 0.2 + 0.2}s`;
+                        row.style.opacity = '0';
+                    }
+                    row.innerHTML = `<div class="system-info"><div class="row-name">${nextTask.title} ${isNew ? '<span class="new-badge">NEW</span>' : ''}</div><div class="row-desc">You have ${userProfile.answers[compId]?.label || 'Nothing'}. Next: ${nextTask.title}.</div></div><div class="row-arrow">→</div>`;
+                    row.onclick = () => openDeepDive(compId, nextTask.level);
+                    listArea.appendChild(row);
+                }
+            });
+        }
+
+        function animatePriorityShift(oldStepId, oldTargetLevel) {
+            showScreen('screen-roadmap');
+            const priArea = document.getElementById('priority-roadmap');
+            const listArea = document.getElementById('matrix-list');
+            priArea.innerHTML = ''; listArea.innerHTML = '';
+
+            const oldTask = (TASK_DATA[oldStepId] || []).find(t => t.level === oldTargetLevel);
+            if (oldTask) {
+                priArea.innerHTML = `
+                <div class="priority-section fade-out-up" style="border-color:var(--teal); background:rgba(45, 212, 191, 0.1);">
+                    <div class="priority-badge" style="background:var(--teal); color:#000;">COMPLETED!</div>
+                    <div class="system-row" style="border-color:var(--teal); background:rgba(45, 212, 191, 0.05);">
+                        <div class="system-info">
+                            <div class="row-name" style="text-decoration: line-through; opacity: 0.7;">${oldTask.title}</div>
+                            <div class="row-desc" style="color:var(--teal);">Goal Achieved. Focus Shifting...</div>
+                        </div>
+                        <div class="row-arrow" style="color:var(--teal);">✓</div>
+                    </div>
+                </div>
+            `;
+            }
+
+            setTimeout(() => {
+                updatePriority();
+                renderRoadmapContent(true);
+            }, 1500);
+        }
+
+        function openDeepDive(compId, level) {
+            const task = (TASK_DATA[compId] || []).find(t => t.level === level);
+            if (!task) return showRoadmap();
+            const taskKey = `${compId}_${level}`;
+            if (!userProfile.progress[taskKey]) userProfile.progress[taskKey] = task.steps.map(() => false);
+            if (!userProfile.viewedTasks.includes(taskKey)) userProfile.viewedTasks.push(taskKey);
+            saveData();
+
+            showScreen('screen-deep-dive');
+            const content = document.getElementById('deep-dive-content');
+            const isComplete = userProfile.progress[taskKey].every(v => v === true);
+
+            const qRef = QUESTIONS.find(qi => qi.id === compId);
+
+            // Pre-build gemini link
+            const promptText = (task.prompt || '').replaceAll('[NICHE]', userProfile.niche);
+            const encodedPrompt = encodeURIComponent(promptText);
+
+            // The 100 True Fans Calculator
+            let calcHTML = '';
+            if (['mvo', 'signature', 'highticket'].includes(compId)) {
+                const defaultPrice = compId === 'mvo' ? 47 : (compId === 'signature' ? 997 : 3000);
+                calcHTML = `
+            <div class="calculator-box">
+                <div class="calc-title">✨ The "100 True Fans" Predictor</div>
+                <p style="font-size:14px; color:var(--soft); margin-bottom:20px; line-height:1.5;">You do not need a million followers to make a full-time living. Enter a monthly goal and the price of your offer below to see the math play out.</p>
+                <div class="calc-input-group">
+                    <div class="calc-input-wrapper">
+                        <span class="calc-label">My Offer Price ($)</span>
+                        <input type="number" id="calc-price" class="calc-input" value="${defaultPrice}" oninput="updateCalculator()">
+                    </div>
+                    <div class="calc-input-wrapper">
+                        <span class="calc-label">Monthly Goal ($)</span>
+                        <input type="number" id="calc-goal" class="calc-input" value="5000" oninput="updateCalculator()">
+                    </div>
+                </div>
+                <div class="calc-result">
+                    <div id="calc-big-num" class="calc-big-number">--</div>
+                    <div id="calc-sub-text" class="calc-subtext">sales needed per month</div>
+                    <div style="font-family:'Space Mono'; font-size:11px; color:var(--cyan); margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);" id="calc-internet-text">That is barely anybody on the internet!</div>
+                </div>
+            </div>`;
+            }
+
+            content.innerHTML = `
+            <div class="btn-back" onclick="showRoadmap()">< Back</div>
+
+            <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 32px; display:flex; align-items:center; gap: 16px;">
+                <div style="width:40px; height:40px; border-radius:50%; background:rgba(45, 212, 191, 0.1); display:flex; align-items:center; justify-content:center; border: 1px solid var(--teal); flex-shrink:0;">
+                    <div style="width:16px; height:16px; border-radius:50%; background:var(--teal); box-shadow:0 0 20px var(--teal);"></div>
+                </div>
+                <div>
+                    <div style="font-family:'Space Mono', monospace; font-size:10px; color:var(--muted); text-transform:uppercase;">You Are Here</div>
+                    <div style="font-size:16px; color:var(--cream); font-weight:bold;">${qRef ? qRef.category : 'Focus Area'}</div>
+                </div>
+            </div>
+
+            <div class="tagline">Implementation Guide</div>
+            <h2>${task.title}</h2>
+            ${isComplete ? '<div style="background:var(--teal); color:#000; padding:10px; border-radius:8px; margin-bottom:20px; font-weight:700; text-align:center;">GOAL COMPLETED!</div>' : ''}
+
+            ${calcHTML}
+            ${renderDeepDiveTrafficCalc()}
+
+            <div class="dive-section"><span class="dive-label">Why are we doing this?</span><p>${task.goal} ${task.why}</p></div>
+            <div class="dive-section"><span class="dive-label">Recommended Tech</span>${(task.tech || []).map(t => `<span class="tech-pill">${t}</span>`).join('')}</div>
+
+            <div class="dive-section"><span class="dive-label">Your Step-By-Step Instructions</span>
+                <div class="action-list">
+                    ${(task.steps || []).map((s, i) => {
+                const escapedText = s.replace(/'/g, "\\'");
+                return `
+                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px; gap:16px; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 16px;">
+                            <div class="action-item ${userProfile.progress[taskKey][i] ? 'done' : ''}" onclick="toggleCheck('${taskKey}', ${i}, this)" style="background:transparent; padding:0; margin:0; flex:1; align-items:flex-start;">
+                                <div class="action-check"></div><div class="action-text">${s}</div>
+                            </div>
+                            <button class="add-todo-btn" onclick="addTodo('${compId}', ${i}, '${escapedText}')">+ Track Task</button>
+                        </div>
+                    `}).join('')}
+                </div>
+            </div>
+
+            ${task.example ? `
+            <div class="dive-section" style="background: rgba(45, 212, 191, 0.05); border-left: 3px solid var(--teal); padding: 16px; border-radius: 0 8px 8px 0; margin-bottom: 32px;">
+                <span class="dive-label" style="color: var(--teal); margin-bottom: 8px;">Example for ${userProfile.niche || 'You'}</span>
+                <div style="font-size: 14px; color: var(--cream); line-height: 1.6; white-space: pre-wrap;">${task.example}</div>
+            </div>
+            ` : ''}
+
+            <div class="dive-section">
+                <span class="dive-label">Let AI Do The Heavy Lifting</span>
+                <p style="font-size: 14px; color: var(--muted); margin-bottom: 16px;">We wrote the perfect set of instructions. Click the button below to have Google Gemini write this for you, or copy the prompt manually.</p>
+                <div class="output-card" style="margin-bottom: 20px;"><pre id="prompt-task">${promptText}</pre><button class="copy-btn" onclick="copyText('prompt-task')">COPY PROMPT</button></div>
+
+                <div style="display:flex; justify-content: center; margin-bottom: 20px;">
+                    <button onclick="openGemini('${encodedPrompt}')" class="btn-primary" style="width:auto; padding: 12px 24px; background:linear-gradient(135deg, #4285F4, #9B72CB); box-shadow: 0 0 15px rgba(155, 114, 203, 0.2); font-size: 14px; display:inline-flex; align-items:center; justify-content:center; gap:8px;">
+                        ✨ GENERATE WITH GEMINI
+                    </button>
+                </div>
+            </div>
+            <button class="btn-secondary" onclick="showRoadmap()" style="margin-bottom: 30px;">Return to Roadmap</button>
+        `;
+
+            if (calcHTML) setTimeout(updateCalculator, 100);
+            if (document.getElementById('calc-views')) setTimeout(updateDeepDiveCalc, 100);
+            renderTodos();
+        }
+
+        function updateCalculator() {
+            const price = parseFloat(document.getElementById('calc-price').value) || 0;
+            const goal = parseFloat(document.getElementById('calc-goal').value) || 0;
+            const numEl = document.getElementById('calc-big-num');
+            const textEl = document.getElementById('calc-sub-text');
+            const internetEl = document.getElementById('calc-internet-text');
+
+            if (price <= 0) { numEl.textContent = '--'; return; }
+
+            const needed = Math.ceil(goal / price);
+            const weekly = Math.ceil(needed / 4.3);
+
+            numEl.textContent = needed.toLocaleString();
+            textEl.textContent = `sales needed per month (only ${weekly} a week!)`;
+
+            const percentageOfNet = ((needed / 4700000000) * 100).toFixed(8);
+            internetEl.innerHTML = `That is exactly <strong>${percentageOfNet}%</strong> of the internet.<br>You do not need to go viral to hit your goal.`;
+        }
+
+        function openGemini(encodedPrompt) {
+            // First copy to clipboard as a fallback
+            const promptText = decodeURIComponent(encodedPrompt);
+            navigator.clipboard.writeText(promptText).then(() => {
+                // Then open Gemini and attempt pre-fill
+                window.open('https://gemini.google.com/app', '_blank');
+            });
+        }
+
+        function toggleCheck(key, index, el) {
+            userProfile.progress[key][index] = !userProfile.progress[key][index];
+            el.classList.toggle('done'); saveData();
+            if (userProfile.progress[key].every(v => v === true)) {
+                triggerCelebration();
+                const parts = key.split('_'); const compId = parts[0]; const level = parseInt(parts[1]);
+                const qRef = QUESTIONS.find(q => q.id === compId);
+                if (qRef && (!userProfile.answers[compId] || userProfile.answers[compId].depth < level)) {
+                    const oldStep = criticalStepId;
+                    const oldTarget = criticalTargetLevel;
+
+                    const optRef = qRef.options.find(o => o.depth === level);
+                    if (optRef) {
+                        userProfile.answers[compId] = optRef;
+                        saveData();
+                    }
+
+                    setTimeout(() => animatePriorityShift(oldStep, oldTarget), 1500);
+                }
+            }
+        }
+
+        function triggerCelebration() { const c = document.getElementById('celebration'); c.style.display = 'block'; setTimeout(() => { c.style.display = 'none'; }, 2000); }
+        function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(userProfile)); }
+        function showScreen(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            if (id === 'screen-audit') renderAudit(); // Added for the new screen
+            if (id === 'screen-assets') renderProfile();
+            window.scrollTo(0, 0);
+        } function copyText(id) { const el = document.getElementById(id); if (!el) return; navigator.clipboard.writeText(el.textContent).then(() => { const b = event.target; b.innerText = "COPIED"; setTimeout(() => b.innerText = "COPY", 2000); }); }
+        function showTooltip(e, text) { if (window.innerWidth < 768) return; tooltip.textContent = text; tooltip.style.display = 'block'; tooltip.style.left = (e.pageX + 10) + 'px'; tooltip.style.top = (e.pageY + 10) + 'px'; }
+        function hideTooltip() { tooltip.style.display = 'none'; }
+        function resetApp() { localStorage.removeItem(STORAGE_KEY); location.reload(); }
+        function upgradeAsset(compId) {
+            const qRef = QUESTIONS.find(q => q.id === compId);
+            if (!qRef) return;
+
+            const currentLevel = userProfile.answers[compId]?.depth || 0;
+            const maxLevel = qRef.options.length - 1; // Max depth is options.length - 1 (since depth starts at 0)
+
+            if (currentLevel < maxLevel) {
+                // Find the task for the next level
+                criticalStepId = compId;
+                criticalTargetLevel = currentLevel + 1;
+                openDeepDive(compId, criticalTargetLevel);
+            }
+        }
+
+        window.drawerJumpToTask = (moduleId, level) => {
+            openDeepDive(moduleId, level);
+        };
+
+        window.addAssetItem = (compId) => {
+            if (!userProfile.assets[compId]) userProfile.assets[compId] = [{}];
+            else if (!Array.isArray(userProfile.assets[compId])) userProfile.assets[compId] = [userProfile.assets[compId]];
+            userProfile.assets[compId].push({});
+            saveData();
+            renderProfile();
+        };
+
+        window.removeAssetItem = (compId, index) => {
+            if (Array.isArray(userProfile.assets[compId])) {
+                userProfile.assets[compId].splice(index, 1);
+                if (userProfile.assets[compId].length === 0) userProfile.assets[compId].push({});
+            }
+            saveData();
+            renderProfile();
+        };
+
+        window.saveAsset = (compId, index, field, value) => {
+            if (!userProfile.assets[compId]) userProfile.assets[compId] = [{}];
+            if (!Array.isArray(userProfile.assets[compId])) userProfile.assets[compId] = [userProfile.assets[compId]];
+            if (!userProfile.assets[compId][index]) userProfile.assets[compId][index] = {};
+
+            userProfile.assets[compId][index][field] = value;
+            saveData();
+        };
+
+        window.setRecurringToggle = (compId, index, isRecur) => {
+            window.saveAsset(compId, index, 'isRecurring', isRecur);
+            renderProfile();
+        };
+
+        function renderProfile() {
+            renderVisualMap();
+            renderEarningsCalc();
+            renderCustomerJourney();
+
+            const grid = document.getElementById('profile-grid');
+            grid.innerHTML = '';
+
+            QUESTIONS.forEach(q => {
+                const level = userProfile.answers[q.id]?.depth || 0;
+                const isLocked = level === 0;
+                const maxLevel = q.options.length - 1;
+
+                const card = document.createElement('div');
+                card.className = `asset-card ${isLocked ? 'locked' : ''}`;
+
+                let icon = '📦';
+                if (q.id === 'storefront') icon = '🌍';
+                if (q.id === 'emails') icon = '✉️';
+                if (q.id === 'leadmagnet') icon = '🎁';
+                if (q.id === 'groupcall') icon = '🤝';
+                if (q.id === 'traffic') icon = '📱';
+                if (q.id === 'mvo' || q.id === 'signature' || q.id === 'highticket') icon = '💳';
+
+                let bodyHTML = '';
+                let btnHTML = '';
+
+                if (isLocked) {
+                    btnHTML = `<div class="locked-msg" onclick="upgradeAsset('${q.id}')">Not Setup. Click to Build.</div>`;
+                } else {
+                    let assetList = userProfile.assets[q.id];
+                    if (!assetList) assetList = [{}];
+                    if (!Array.isArray(assetList)) assetList = [assetList];
+
+                    assetList.forEach((assetItem, index) => {
+                        let fieldsHTML = '';
+                        const onEnterStr = `onkeypress="if(event.key === 'Enter') { this.blur(); window.saveAsset('${q.id}', ${index}, this.name, this.value); renderCustomerJourney(); renderEarningsCalc(); }"`;
+                        const onChangeStr = `onchange="window.saveAsset('${q.id}', ${index}, this.name, this.value); renderCustomerJourney(); renderEarningsCalc();"`;
+
+                        const isRecur = assetItem.isRecurring === true;
+
+                        if (['storefront', 'leadmagnet', 'groupcall', 'traffic'].includes(q.id)) {
+                            fieldsHTML = `
+                            <div class="asset-input-group">
+                                <label class="asset-field-label">Live URL / Link</label>
+                                <input type="text" name="url" class="asset-input-field" placeholder="https://..." value="${assetItem.url || ''}" ${onChangeStr} ${onEnterStr}>
+                            </div>
+                            <div class="asset-input-group">
+                                <label class="asset-field-label">Platform Used</label>
+                                <input type="text" name="platform" class="asset-input-field" placeholder="e.g. Canva, System.io" value="${assetItem.platform || ''}" ${onChangeStr} ${onEnterStr}>
+                            </div>
+                        `;
+                        } else if (['mvo', 'signature', 'highticket'].includes(q.id)) {
+                            fieldsHTML = `
+                            <div class="asset-input-group">
+                                <label class="asset-field-label">Offer Name</label>
+                                <input type="text" name="name" class="asset-input-field" placeholder="Name of your offer" value="${assetItem.name || ''}" ${onChangeStr} ${onEnterStr}>
+                            </div>
+                            <div class="asset-input-group" style="display:flex; gap:12px; flex-wrap:wrap;">
+                                <div style="flex:1; min-width: 100px;">
+                                    <label class="asset-field-label">Price ($)</label>
+                                    <input type="number" name="price" class="asset-input-field" placeholder="0" value="${assetItem.price || ''}" ${onChangeStr} ${onEnterStr}>
+                                    <div class="toggle-switch-group">
+                                        <button class="toggle-switch-btn ${!isRecur ? 'active' : ''}" onclick="window.setRecurringToggle('${q.id}', ${index}, false)">1x</button>
+                                        <button class="toggle-switch-btn ${isRecur ? 'active' : ''}" onclick="window.setRecurringToggle('${q.id}', ${index}, true)">/mo</button>
+                                    </div>
+                                </div>
+                                <div style="flex:2; min-width: 200px;">
+                                    <label class="asset-field-label">Checkout Link</label>
+                                    <input type="text" name="url" class="asset-input-field" placeholder="https://stripe..." value="${assetItem.url || ''}" ${onChangeStr} ${onEnterStr}>
+                                </div>
+                            </div>
+                        `;
+                        } else {
+                            fieldsHTML = `
+                            <div class="asset-input-group">
+                                <label class="asset-field-label">Tool Used</label>
+                                <input type="text" name="tool" class="asset-input-field" placeholder="e.g. Mailchimp, Zapier" value="${assetItem.tool || ''}" ${onChangeStr} ${onEnterStr}>
+                            </div>
+                            <div class="asset-input-group">
+                                <label class="asset-field-label">Notes</label>
+                                <input type="text" name="notes" class="asset-input-field" placeholder="Short description" value="${assetItem.notes || ''}" ${onChangeStr} ${onEnterStr}>
+                            </div>
+                        `;
+                        }
+
+                        bodyHTML += `
+                        <div style="${index > 0 ? 'border-top:1px dashed var(--border); padding-top:16px; margin-top:16px;' : ''} position: relative;">
+                            ${index > 0 ? `<button onclick="window.removeAssetItem('${q.id}', ${index})" style="position:absolute; top:12px; right:0; background:none; border:none; color:var(--amber); font-size:10px; cursor:pointer;" tabindex="-1">&times; REMOVE</button>` : ''}
+                            ${fieldsHTML}
+                        </div>
+                    `;
+                    });
+
+                    bodyHTML += `<button onclick="window.addAssetItem('${q.id}')" style="background:transparent; border:1px dashed rgba(255,255,255,0.2); color:var(--cyan); padding:8px; width:100%; border-radius:8px; font-family:'Space Mono'; font-size:11px; cursor:pointer; margin: 16px 0;">+ ADD ANOTHER</button>`;
+
+                    if (level < maxLevel) {
+                        btnHTML = `<div class="asset-btn-group"><button class="btn-upgrade" onclick="upgradeAsset('${q.id}')">↑ UPGRADE (LVL ${level + 1})</button></div>`;
+                    } else {
+                        btnHTML = `<div class="asset-btn-group"><div style="flex:1; text-align:center; padding:8px; font-size:10px; color:var(--teal); font-family:'Space Mono'; border:1px solid rgba(45,212,191,0.2); border-radius:8px;">★ MAX LEVEL</div></div>`;
+                    }
+                }
+
+                card.innerHTML = `
+                <div class="asset-header">
+                    <div class="asset-icon">${icon}</div>
+                    <div class="asset-level">LVL ${level}</div>
+                </div>
+                <div class="asset-title">${q.category}</div>
+                <div class="asset-desc">${userProfile.answers[q.id]?.label || 'Needs to be built'}</div>
+                <div class="asset-fields">
+                    ${bodyHTML}
+                    ${btnHTML}
+                </div>
+            `;
+                grid.appendChild(card);
+            });
+        }
+
+        function renderVisualMap() {
+            const container = document.getElementById('visual-map');
+            const mapOrder = ['traffic', 'storefront', 'leadmagnet', 'emails', 'groupcall', 'mvo', 'signature', 'highticket', 'aiaas'];
+
+            let html = '';
+            mapOrder.forEach((id, index) => {
+                const level = userProfile.answers[id]?.depth || 0;
+                const qRef = QUESTIONS.find(q => q.id === id);
+
+                if (level > 0) {
+                    if (html !== '') html += `<div class="map-arrow">→</div>`;
+                    html += `<div class="map-block active">${qRef.category}</div>`;
+                } else {
+                    if (html !== '') html += `<div class="map-arrow" style="opacity:0.3;">→</div>`;
+                    html += `<div class="map-block" style="opacity:0.3; border-style:dashed;">${qRef.category}</div>`;
+                }
+            });
+            container.innerHTML = html;
+        }
+
+        let currentCustomerToggle = 10;
+        function renderEarningsCalc() {
+            const container = document.getElementById('earnings-calc');
+
+            const getPrices = (id) => {
+                let a = userProfile.assets[id];
+                if (!a) return [];
+                if (!Array.isArray(a)) a = [a];
+                return a.map(item => ({ price: parseFloat(item.price) || 0, isRecurring: item.isRecurring === true }));
+            };
+
+            if (!container.querySelector('.earnings-title')) {
+                container.innerHTML = `
+                <div class="earnings-title">Annual Revenue Simulator</div>
+                <div class="toggle-group">
+                    <button id="toggle-1" class="toggle-btn" onclick="applyFunnelMath(1)">1 Lead/mo</button>
+                    <button id="toggle-10" class="toggle-btn" onclick="applyFunnelMath(10)">10 Leads/mo</button>
+                    <button id="toggle-100" class="toggle-btn" onclick="applyFunnelMath(100)">100 Leads/mo</button>
+                    <button id="toggle-1000" class="toggle-btn" onclick="applyFunnelMath(1000)">1000 Leads/mo</button>
+                </div>
+
+                <div style="display:flex; justify-content:center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
+                    ${userProfile.answers['mvo']?.depth > 0 ? `
+                    <div style="background: rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px 16px;">
+                        <label style="display:block; font-family:'Space Mono'; font-size:10px; color:var(--muted); margin-bottom:4px;">MVO Customrs/mo</label>
+                        <input type="number" id="calc-cust-mvo" value="0" style="width:80px; background:transparent; border:none; border-bottom:1px solid var(--teal); color:var(--cyan); font-size:18px; text-align:center; font-family:'Bebas Neue';" oninput="updateEarningsTotal()">
+                    </div>` : ''}
+
+                    ${userProfile.answers['signature']?.depth > 0 ? `
+                    <div style="background: rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px 16px;">
+                        <label style="display:block; font-family:'Space Mono'; font-size:10px; color:var(--muted); margin-bottom:4px;">Signature Clients/mo</label>
+                        <input type="number" id="calc-cust-sig" value="0" style="width:80px; background:transparent; border:none; border-bottom:1px solid var(--teal); color:var(--cyan); font-size:18px; text-align:center; font-family:'Bebas Neue';" oninput="updateEarningsTotal()">
+                    </div>` : ''}
+
+                    ${userProfile.answers['highticket']?.depth > 0 ? `
+                    <div style="background: rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px 16px;">
+                        <label style="display:block; font-family:'Space Mono'; font-size:10px; color:var(--muted); margin-bottom:4px;">VIP Clients/mo</label>
+                        <input type="number" id="calc-cust-ht" value="0" style="width:80px; background:transparent; border:none; border-bottom:1px solid var(--teal); color:var(--cyan); font-size:18px; text-align:center; font-family:'Bebas Neue';" oninput="updateEarningsTotal()">
+                    </div>` : ''}
+                </div>
+
+                <div class="earnings-amount" id="yearly-earnings">$0</div>
+                <div class="earnings-subtext" style="margin-bottom:16px;">Estimated yearly income based on your entered offer prices. Edit the customer counts above to project your revenue.</div>
+            `;
+            }
+
+            window.applyFunnelMath = (leads) => {
+                document.querySelectorAll('.toggle-btn').forEach(btn => btn.classList.remove('active'));
+                const toggleBtn = document.getElementById(`toggle-${leads}`);
+                if (toggleBtn) toggleBtn.classList.add('active');
+
+                const mvoEl = document.getElementById('calc-cust-mvo');
+                const sigEl = document.getElementById('calc-cust-sig');
+                const htEl = document.getElementById('calc-cust-ht');
+
+                if (mvoEl) mvoEl.value = leads;
+                if (sigEl) sigEl.value = Math.floor(leads * 0.3);
+                if (htEl) htEl.value = Math.floor(leads * 0.05);
+
+                updateEarningsTotal();
+            };
+
+            window.updateEarningsTotal = () => {
+                const mvoCust = parseInt(document.getElementById('calc-cust-mvo')?.value || 0);
+                const sigCust = parseInt(document.getElementById('calc-cust-sig')?.value || 0);
+                const htCust = parseInt(document.getElementById('calc-cust-ht')?.value || 0);
+
+                const mvoOffers = getPrices('mvo');
+                const sigOffers = getPrices('signature');
+                const htOffers = getPrices('highticket');
+
+                let totalMonthly = 0;
+
+                mvoOffers.forEach(offer => {
+                    totalMonthly += offer.price * mvoCust * (offer.isRecurring ? 1 : 0); // Recurring
+                    totalMonthly += offer.price * mvoCust * (offer.isRecurring ? 0 : 1); // One-time
+                });
+                sigOffers.forEach(offer => {
+                    totalMonthly += offer.price * sigCust * (offer.isRecurring ? 1 : 0);
+                    totalMonthly += offer.price * sigCust * (offer.isRecurring ? 0 : 1);
+                });
+                htOffers.forEach(offer => {
+                    totalMonthly += offer.price * htCust * (offer.isRecurring ? 1 : 0);
+                    totalMonthly += offer.price * htCust * (offer.isRecurring ? 0 : 1);
+                });
+
+                const totalYearly = totalMonthly * 12;
+
+                document.getElementById('yearly-earnings').textContent = `$${totalYearly.toLocaleString()}`;
+            };
+
+            // Init math if inputs are empty
+            const mvoNode = document.getElementById('calc-cust-mvo');
+            const sigNode = document.getElementById('calc-cust-sig');
+            if ((!mvoNode || mvoNode.value === "0") && (!sigNode || sigNode.value === "0")) {
+                applyFunnelMath(10);
+            } else {
+                updateEarningsTotal();
+            }
+        }
+
+        function renderDeepDiveTrafficCalc() {
+            let html = `
+                <div style="background:var(--card2); border:1px solid var(--border); border-radius:16px; padding:24px; margin-top:32px;">
+                    <div class="tagline">Funnel Reality Check</div>
+                    <h3 style="margin-bottom: 16px;">Traffic to Sales Calculator</h3>
+                    <p style="color:var(--muted); font-size:14px; margin-bottom:24px;">How much attention does it really take to make a sale? Enter or edit any number below to see the standard 10% industry-average conversion trickle up and down your funnel.</p>
+
+                    <div style="margin-bottom: 24px;">
+                        <label style="display:block; font-family:'Space Mono'; font-size:12px; color:var(--teal); margin-bottom:8px; text-transform:uppercase;">Monthly Social Media Views:</label>
+                        <input type="number" id="calc-views" class="input-text" placeholder="e.g. 100000" style="margin-bottom:0;" oninput="updateDeepDiveCalc('views')">
+                    </div>
+
+                    <div id="calc-results-block" style="display:flex; flex-direction:column; gap:12px;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed var(--border); padding-bottom:8px;">
+                            <span style="color:var(--soft);">👀 Profile Visitors (10%)</span>
+                            <input type="number" id="calc-visitors" value="0" style="background:transparent; border:none; text-align:right; font-family:'Bebas Neue'; font-size:24px; color:var(--cream); width:150px;" oninput="updateDeepDiveCalc('visitors')">
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed var(--border); padding-bottom:8px;">
+                            <span style="color:var(--soft);">🔗 Link Clicks (10%)</span>
+                            <input type="number" id="calc-clicks" value="0" style="background:transparent; border:none; text-align:right; font-family:'Bebas Neue'; font-size:24px; color:var(--cream); width:150px;" oninput="updateDeepDiveCalc('clicks')">
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed var(--border); padding-bottom:8px;">
+                            <span style="color:var(--soft);">📧 Leads / Opt-ins (10%)</span>
+                            <input type="number" id="calc-leads" value="0" style="background:transparent; border:none; text-align:right; font-family:'Bebas Neue'; font-size:24px; color:var(--cream); width:150px;" oninput="updateDeepDiveCalc('leads')">
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed var(--border); padding-bottom:8px;">
+                            <span style="color:var(--soft);">🤝 High-Intent Calls (10%)</span>
+                            <input type="number" id="calc-calls" value="0" style="background:transparent; border:none; text-align:right; font-family:'Bebas Neue'; font-size:24px; color:var(--cyan); width:150px;" oninput="updateDeepDiveCalc('calls')">
+                        </div>
+                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(45,212,191,0.1); padding:16px; border-radius:8px;">
+                            <span style="color:var(--teal); font-weight:bold;">💳 Final Sales (10%)</span>
+                            <input type="number" id="calc-sales" value="0" style="background:transparent; border:none; text-align:right; font-family:'Bebas Neue'; font-size:32px; color:var(--teal); width:150px;" oninput="updateDeepDiveCalc('sales')">
+                        </div>
+                    </div>
+                </div>
+            `;
+            return html;
+        }
+
+        window.updateDeepDiveCalc = (source = 'views') => {
+            const getVal = id => parseInt(document.getElementById(id)?.value) || 0;
+            const setVal = (id, val) => { const el = document.getElementById(id); if (el) el.value = val; };
+
+            let views, visitors, clicks, leads, calls, sales;
+
+            if (source === 'sales') {
+                sales = getVal('calc-sales');
+                calls = sales * 10;
+                leads = calls * 10;
+                clicks = leads * 10;
+                visitors = clicks * 10;
+                views = visitors * 10;
+            } else if (source === 'calls') {
+                calls = getVal('calc-calls');
+                sales = Math.floor(calls * 0.1);
+                leads = calls * 10;
+                clicks = leads * 10;
+                visitors = clicks * 10;
+                views = visitors * 10;
+            } else if (source === 'leads') {
+                leads = getVal('calc-leads');
+                calls = Math.floor(leads * 0.1);
+                sales = Math.floor(calls * 0.1);
+                clicks = leads * 10;
+                visitors = clicks * 10;
+                views = visitors * 10;
+            } else if (source === 'clicks') {
+                clicks = getVal('calc-clicks');
+                leads = Math.floor(clicks * 0.1);
+                calls = Math.floor(leads * 0.1);
+                sales = Math.floor(calls * 0.1);
+                visitors = clicks * 10;
+                views = visitors * 10;
+            } else if (source === 'visitors') {
+                visitors = getVal('calc-visitors');
+                clicks = Math.floor(visitors * 0.1);
+                leads = Math.floor(clicks * 0.1);
+                calls = Math.floor(leads * 0.1);
+                sales = Math.floor(calls * 0.1);
+                views = visitors * 10;
+            } else {
+                views = getVal('calc-views');
+                visitors = Math.floor(views * 0.1);
+                clicks = Math.floor(visitors * 0.1);
+                leads = Math.floor(clicks * 0.1);
+                calls = Math.floor(leads * 0.1);
+                sales = Math.floor(calls * 0.1);
+            }
+
+            if (source !== 'views') setVal('calc-views', views);
+            if (source !== 'visitors') setVal('calc-visitors', visitors);
+            if (source !== 'clicks') setVal('calc-clicks', clicks);
+            if (source !== 'leads') setVal('calc-leads', leads);
+            if (source !== 'calls') setVal('calc-calls', calls);
+            if (source !== 'sales') setVal('calc-sales', sales);
+        };
+
+        function renderCustomerJourney() {
+            const board = document.getElementById('customer-journey');
+
+            const hasAsset = (id) => userProfile.answers[id]?.depth > 0;
+            const getValue = (id, fallback) => {
+                if (!hasAsset(id)) return fallback;
+                let a = userProfile.assets[id];
+                if (!a) return fallback;
+                if (Array.isArray(a)) a = a[0];
+                if (!a) return fallback;
+                return a.name || a.platform || a.url || fallback;
+            };
+
+            let story = [];
+            story.push("When a person discovers your content online, they are going to be highly interested.");
+
+            if (hasAsset('storefront')) {
+                let text = `They will naturally click your link and go to <span class="story-highlight">${getValue('storefront', 'your website')}</span>`;
+                if (hasAsset('leadmagnet')) {
+                    text += `, where they will get <span class="story-highlight">${getValue('leadmagnet', 'your free giveaway')}</span> and eagerly join your mailing list.`;
+                } else {
+                    text += `.`;
+                }
+                story.push(text);
+            } else if (hasAsset('leadmagnet')) {
+                story.push(`They will find <span class="story-highlight">${getValue('leadmagnet', 'your free giveaway')}</span> and jump onto your mailing list.`);
+            }
+
+            if (hasAsset('emails')) {
+                const isManual = userProfile.answers['emails']?.depth === 1; // Level 1 is manual outreach
+
+                if (hasAsset('groupcall')) {
+                    if (isManual) {
+                        story.push(`Because you handle communications personally, you'll message them manually to build trust and invite them into <span class="story-highlight">${getValue('groupcall', 'your community')}</span>.`);
+                    } else {
+                        story.push(`When they receive your automated welcome email, they will build trust and accept an invitation into <span class="story-highlight">${getValue('groupcall', 'your community')}</span>.`);
+                    }
+                } else {
+                    if (isManual) {
+                        story.push(`You'll reach out to them via direct message and build a powerful, human connection with your brand.`);
+                    } else {
+                        story.push(`Through your automated welcome email sequence, they will build a powerful connection with your brand.`);
+                    }
+                }
+            } else if (hasAsset('groupcall')) {
+                story.push(`Over time, they'll find their way to <span class="story-highlight">${getValue('groupcall', 'your community/calls')}</span>.`);
+            } else if (!hasAsset('storefront') && !hasAsset('leadmagnet') && !hasAsset('emails')) {
+                story.push(`Right now, without an automated system, you'll have to rely on talking to people in person one at a time to build interest.`);
+            }
+
+            if (hasAsset('signature')) {
+                story.push(`With trust established, you'll be able to confidently invite them into <span class="story-highlight">${getValue('signature', 'your Signature Program')}</span>.`);
+                if (hasAsset('mvo')) {
+                    story.push(`And even if they aren't ready for the main program, they'll still have a quick win option: buying <span class="story-highlight">${getValue('mvo', 'your Small Paid Offer')}</span> today.`);
+                }
+            } else if (hasAsset('mvo')) {
+                story.push(`You will then be able to offer them <span class="story-highlight">${getValue('mvo', 'your Small Paid Offer')}</span>.`);
+            }
+
+            if (hasAsset('highticket')) {
+                story.push(`Finally, after experiencing incredible success with your core methods, they will happily graduate to <span class="story-highlight">${getValue('highticket', 'your VIP Package')}</span> and refer all their friends—getting you even more clients!`);
+            }
+
+            board.innerHTML = `
+            <div style="font-family: 'Space Mono', monospace; font-size: 12px; color: var(--cyan); margin-bottom: 12px; text-transform: uppercase;">The Customer Journey</div>
+            ${story.join(" ")}
+        `;
+        }
+        window.onload = loadData;
+    </script>
+    <script src="/js/eee-common.js?v=momentum-hub-v2"></script>
+    <script>
+        EEEStudio.initialize(context => {
+            const email = document.getElementById('eee-account-email');
+            if (email) email.textContent = context.session.user.email || '';
+            if (window.lucide) window.lucide.createIcons();
+        });
+    </script>
 </body>
+
 </html>
