@@ -80,6 +80,7 @@ INTERACTION CONTRACT:
 - When ready, return the finished title and continuous script prefixed with exactly FINAL SCRIPT:. Do not add an explanation after it.
 - For every intermediate response, prefix the response with exactly NEXT QUESTION:.
 - Write for the member's voice and facts. Source documents teach structure, not David Bee's biography or personal voice.
+- Never use an em dash. Not in questions, not in options, not in the finished script. Use a comma, a full stop, or a rewritten sentence instead. This applies to every format, not only /rant.
 
 ESTABLISHED STORYSCULPT INSTRUCTIONS:
 ${CORE_INSTRUCTIONS}
