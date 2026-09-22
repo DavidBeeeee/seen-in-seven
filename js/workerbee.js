@@ -431,10 +431,21 @@ function renderReportPeriod(label, period) {
 // was written says so on the page rather than reading as current, which is the
 // failure the whole mechanism exists to make visible.
 export function todaysWalkthroughs() {
-  return (state.updates || [])
+  const orders = (state.updates || [])
     .filter(item => item.kind === 'outcome'
       && (item.metadata || {}).source === 'morning-work-order'
-      && (item.metadata || {}).walkthrough)
+      && (item.metadata || {}).walkthrough);
+  // ST-873773fb. Only the current day's work orders belong here. A retired plan
+  // row keeps its `source: morning-work-order` and its walkthrough after the
+  // next morning defers it, so filtering on source alone stacked every past
+  // day's orders onto this list ("17 from yesterday"). The current day is the
+  // latest published order date; anything older is history, not today's plan.
+  const today = orders.reduce((latest, item) => {
+    const date = (item.metadata || {}).date || '';
+    return date > latest ? date : latest;
+  }, '');
+  return orders
+    .filter(item => ((item.metadata || {}).date || '') === today)
     .sort((a, b) => Number(a.metadata.rank || 99) - Number(b.metadata.rank || 99))
     .map(item => ({
       item,
