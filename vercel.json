@@ -69,6 +69,14 @@
       "destination": "/vault.html"
     },
     {
+      "source": "/certainty",
+      "destination": "/certainty.html"
+    },
+    {
+      "source": "/certainty/",
+      "destination": "/certainty.html"
+    },
+    {
       "source": "/admin",
       "destination": "/admin.html"
     },

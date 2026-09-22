@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certainty Sessions | The Momentum Hub</title>
+  <meta name="description" content="Book your private weekly working session with David Bee. Pick a time, choose Zoom or phone, and make real progress on whatever you are stuck on.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
+  <link rel="stylesheet" href="/css/studio.css">
+  <link rel="stylesheet" href="/css/eee.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <style>
+    .cs-wrap { display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
+    .cs-wrap > * { min-width: 0; }
+    .cs-hero {
+      display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: 20px; align-items: stretch;
+    }
+    .cs-hero > *, .cs-support > * { min-width: 0; }
+    @media (max-width: 900px) { .cs-hero { grid-template-columns: minmax(0, 1fr); } }
+
+    .cs-card {
+      background: var(--studio-surface); border: 1px solid var(--studio-border);
+      border-radius: 20px; padding: 26px; position: relative;
+    }
+    .cs-card h2 { font-family: 'Oswald', sans-serif; font-size: 1.4rem; margin: 0 0 4px; letter-spacing: .2px; }
+    .cs-eyebrow { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: .16em; font-size: .72rem; color: var(--studio-teal); font-weight: 600; }
+
+    /* Next session */
+    .cs-next-when { display: flex; align-items: center; gap: 16px; margin: 14px 0 6px; }
+    .cs-next-cal {
+      width: 58px; height: 58px; border-radius: 16px; flex: none; display: grid; place-items: center;
+      background: color-mix(in srgb, var(--studio-teal) 16%, transparent); color: var(--studio-teal);
+    }
+    .cs-next-cal i { width: 28px; height: 28px; }
+    .cs-next-day { font-family: 'Oswald', sans-serif; font-size: 1.5rem; line-height: 1.1; }
+    .cs-next-time { color: var(--studio-soft); font-weight: 700; }
+    .cs-next-meta { display: inline-flex; align-items: center; gap: 7px; font-size: .82rem; color: var(--studio-muted); margin-top: 2px; }
+    .cs-next-meta i { width: 15px; height: 15px; }
+    .cs-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; }
+    .cs-actions .primary-button, .cs-actions .secondary-button { flex: 1 1 auto; justify-content: center; }
+    .cs-cal-note {
+      display: inline-flex; align-items: center; gap: 8px; margin-top: 16px; font-size: .78rem;
+      color: var(--studio-muted); background: var(--studio-surface-2); border: 1px solid var(--studio-border);
+      border-radius: 999px; padding: 6px 12px;
+    }
+    .cs-cal-note i { width: 14px; height: 14px; }
+
+    /* Personal panel (David) */
+    .cs-david { display: grid; gap: 12px; align-content: start; }
+    .cs-david-mark {
+      width: 46px; height: 46px; border-radius: 50%; display: grid; place-items: center; flex: none;
+      background: color-mix(in srgb, var(--studio-gold) 20%, transparent); color: var(--studio-gold); font-weight: 800;
+      font-family: 'Oswald', sans-serif; font-size: 1.1rem;
+    }
+    .cs-david p { color: var(--studio-soft); margin: 0; line-height: 1.5; }
+    .cs-sig { font-family: 'Oswald', sans-serif; color: var(--studio-teal); font-weight: 600; letter-spacing: .04em; }
+
+    /* Booking */
+    .cs-book { display: none; }
+    .cs-book.open { display: block; }
+    .cs-step-label { font-weight: 800; margin: 18px 0 10px; display: flex; align-items: center; gap: 9px; }
+    .cs-step-num {
+      width: 22px; height: 22px; border-radius: 50%; background: var(--studio-teal); color: #05201f;
+      display: grid; place-items: center; font-size: .72rem; font-weight: 800; flex: none;
+    }
+    .cs-days { display: flex; gap: 9px; overflow-x: auto; padding-bottom: 6px; -webkit-overflow-scrolling: touch; }
+    .cs-day {
+      flex: none; min-width: 66px; text-align: center; padding: 10px 8px; border-radius: 14px; cursor: pointer;
+      background: var(--studio-surface-2); border: 1px solid var(--studio-border); color: var(--studio-text);
+      transition: transform .08s ease, border-color .12s ease;
+    }
+    .cs-day:hover { border-color: var(--studio-teal); }
+    .cs-day.sel { background: var(--studio-teal); color: #05201f; border-color: var(--studio-teal); }
+    .cs-day .cs-day-dow { font-size: .68rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; opacity: .85; }
+    .cs-day .cs-day-num { font-family: 'Oswald', sans-serif; font-size: 1.35rem; line-height: 1.1; }
+    .cs-day .cs-day-mon { font-size: .68rem; opacity: .8; }
+
+    .cs-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 9px; }
+    .cs-time {
+      padding: 11px 8px; border-radius: 12px; cursor: pointer; text-align: center; font-weight: 700; font-size: .9rem;
+      background: var(--studio-surface-2); border: 1px solid var(--studio-border); color: var(--studio-text);
+    }
+    .cs-time:hover:not(:disabled) { border-color: var(--studio-teal); }
+    .cs-time.sel { background: var(--studio-teal); color: #05201f; border-color: var(--studio-teal); }
+    .cs-time:disabled { opacity: .32; cursor: not-allowed; text-decoration: line-through; }
+    .cs-times-empty { color: var(--studio-muted); font-size: .88rem; padding: 8px 0; }
+
+    .cs-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .cs-mode {
+      display: flex; align-items: center; gap: 11px; padding: 14px; border-radius: 14px; cursor: pointer;
+      background: var(--studio-surface-2); border: 1px solid var(--studio-border);
+    }
+    .cs-mode:hover { border-color: var(--studio-teal); }
+    .cs-mode.sel { border-color: var(--studio-teal); box-shadow: 0 0 0 1px var(--studio-teal) inset; }
+    .cs-mode i { width: 20px; height: 20px; color: var(--studio-teal); flex: none; }
+    .cs-mode strong { display: block; font-size: .92rem; }
+    .cs-mode span { font-size: .74rem; color: var(--studio-muted); }
+    .cs-field { margin-top: 12px; }
+    .cs-field label { display: block; font-size: .8rem; color: var(--studio-soft); font-weight: 700; margin-bottom: 6px; }
+    .cs-input, .cs-textarea {
+      width: 100%; background: var(--studio-surface-2); border: 1px solid var(--studio-border); border-radius: 12px;
+      color: var(--studio-text); padding: 12px 14px; font: inherit; font-size: .92rem;
+    }
+    .cs-textarea { resize: vertical; min-height: 62px; }
+    .cs-input:focus, .cs-textarea:focus { outline: none; border-color: var(--studio-teal); }
+    .cs-confirm { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
+    .cs-confirm .primary-button { flex: 1 1 auto; justify-content: center; font-size: 1rem; }
+    .cs-msg { margin-top: 14px; padding: 11px 14px; border-radius: 12px; font-size: .86rem; display: none; }
+    .cs-msg.show { display: block; }
+    .cs-msg.err { background: color-mix(in srgb, var(--studio-danger) 15%, transparent); color: var(--studio-danger); border: 1px solid color-mix(in srgb, var(--studio-danger) 40%, transparent); }
+    .cs-msg.ok { background: color-mix(in srgb, var(--studio-green) 15%, transparent); color: var(--studio-green); border: 1px solid color-mix(in srgb, var(--studio-green) 40%, transparent); }
+
+    .cs-support { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+    @media (max-width: 760px) { .cs-support { grid-template-columns: 1fr; } }
+    .cs-list { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 10px; }
+    .cs-list li { display: flex; align-items: flex-start; gap: 10px; color: var(--studio-soft); font-size: .92rem; }
+    .cs-list li i { width: 17px; height: 17px; color: var(--studio-teal); flex: none; margin-top: 2px; }
+    .cs-steps { counter-reset: step; display: grid; gap: 12px; margin-top: 12px; }
+    .cs-steps div { display: flex; align-items: flex-start; gap: 11px; color: var(--studio-soft); font-size: .92rem; }
+    .cs-steps div::before {
+      counter-increment: step; content: counter(step); flex: none; width: 24px; height: 24px; border-radius: 50%;
+      background: color-mix(in srgb, var(--studio-teal) 16%, transparent); color: var(--studio-teal);
+      display: grid; place-items: center; font-weight: 800; font-size: .78rem;
+    }
+    .cs-skeleton { height: 120px; border-radius: 20px; background: linear-gradient(90deg, var(--studio-surface) 25%, var(--studio-surface-2) 50%, var(--studio-surface) 75%); background-size: 200% 100%; animation: cs-shimmer 1.3s infinite; }
+    @keyframes cs-shimmer { to { background-position: -200% 0; } }
+    .cs-hide { display: none !important; }
+
+    /* Keep the shared Hub header from overflowing on a phone: drop the
+       secondary labels rather than push the page wide. */
+    html, body { max-width: 100%; overflow-x: hidden; }
+    @media (max-width: 620px) {
+      .studio-header.eee-header { flex-wrap: wrap; gap: 10px; padding-left: 16px; padding-right: 16px; }
+      .studio-header.eee-header .studio-brand small { display: none; }
+      .studio-header.eee-header .eee-account-email { display: none; }
+      .studio-header.eee-header .header-actions { margin-left: auto; gap: 8px; }
+      .studio-header.eee-header .header-actions .secondary-button span { display: none; }
+      .eee-page-head h1 { font-size: 1.5rem; }
+    }
+  </style>
+</head>
+<body>
+  <main class="eee-gate" id="eee-access-gate">
+    <section class="eee-gate-box">
+      <span class="studio-mark">MH</span>
+      <h1 id="eee-gate-title">Checking your membership.</h1>
+      <p id="eee-gate-copy">Your Certainty Sessions access will be ready in a moment.</p>
+      <a class="primary-button" id="eee-gate-button" href="/"><span>Return to Studio</span><i data-lucide="arrow-right"></i></a>
+    </section>
+  </main>
+
+  <div id="eee-app" hidden>
+    <header class="studio-header eee-header">
+      <a class="studio-brand" href="/eee"><span class="studio-mark">MH</span><span><strong>The Momentum Hub</strong><small>Colorado Mastermind Studio</small></span></a>
+      <div class="header-actions">
+        <a class="secondary-button" href="/"><i data-lucide="layout-grid"></i><span>My Studio</span></a>
+        <button class="icon-button" data-eee-theme type="button" title="Change color theme" aria-label="Change color theme"><i data-lucide="sun" class="theme-sun-icon"></i><i data-lucide="moon" class="theme-moon-icon"></i></button>
+        <div class="eee-account"><span class="account-avatar" id="eee-account-avatar">E</span><span class="eee-account-email" id="eee-account-email"></span></div>
+      </div>
+    </header>
+
+    <div class="studio-layout eee-layout">
+      <aside class="studio-sidebar eee-sidebar">
+        <nav>
+          <a class="nav-item" href="/eee"><i data-lucide="layout-dashboard"></i><span>Home</span></a>
+          <a class="nav-item" href="/storysculpt"><i data-lucide="clapperboard"></i><span>StorySculpt</span></a>
+          <a class="nav-item" href="/navigator"><i data-lucide="route"></i><span>Next Step Navigator</span></a>
+          <a class="nav-item" href="/vault"><i data-lucide="library"></i><span>Solution Vault</span></a>
+          <a class="nav-item" href="/boardroom"><i data-lucide="messages-square"></i><span>AI Boardroom</span></a>
+          <a class="nav-item active" href="/certainty"><i data-lucide="calendar-check"></i><span>Certainty Sessions</span></a>
+        </nav>
+        <div class="eee-sidebar-bottom"><button class="nav-item" data-eee-sign-out type="button"><i data-lucide="log-out"></i><span>Sign out</span></button></div>
+      </aside>
+
+      <main class="eee-main">
+        <section class="eee-page-head">
+          <div>
+            <p class="eyebrow">Certainty Sessions</p>
+            <h1>One private working session with David, every week.</h1>
+            <p>Pick a time, bring whatever you are stuck on, and stay with it until it clears. Two hours, one-on-one, on Zoom or by phone.</p>
+          </div>
+          <span class="eee-member-chip"><i data-lucide="badge-check"></i>Membership active</span>
+        </section>
+
+        <div class="cs-wrap">
+          <div id="cs-state-skeleton" class="cs-skeleton"></div>
+
+          <section class="cs-hero cs-hide" id="cs-hero">
+            <!-- Left: next session OR book prompt -->
+            <article class="cs-card" id="cs-primary"><!-- filled by JS --></article>
+
+            <!-- Right: David personal panel -->
+            <article class="cs-card cs-david">
+              <div style="display:flex;align-items:center;gap:12px">
+                <span class="cs-david-mark">DB</span>
+                <div><strong style="font-family:'Oswald',sans-serif;font-size:1.05rem">Bring your real stuff.</strong></div>
+              </div>
+              <p>We open it up, work through it together, and make real progress on whatever you are stuck on. No prep deck, no polish. Just the thing that is actually in your way.</p>
+              <p class="cs-sig">David Bee</p>
+            </article>
+          </section>
+
+          <!-- Booking panel -->
+          <section class="cs-card cs-book" id="cs-book">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+              <div><p class="cs-eyebrow">Book a session</p><h2 id="cs-book-title">Choose your time</h2></div>
+              <button class="secondary-button" type="button" id="cs-book-close"><i data-lucide="x"></i><span>Close</span></button>
+            </div>
+
+            <div class="cs-step-label"><span class="cs-step-num">1</span>Pick a day</div>
+            <div class="cs-days" id="cs-days"></div>
+
+            <div class="cs-step-label"><span class="cs-step-num">2</span>Pick a time <span style="font-weight:600;color:var(--studio-muted);font-size:.8rem">(2 hours, Eastern time)</span></div>
+            <div class="cs-times" id="cs-times"></div>
+
+            <div class="cs-step-label"><span class="cs-step-num">3</span>How do you want to meet?</div>
+            <div class="cs-modes">
+              <label class="cs-mode sel" data-mode="zoom"><i data-lucide="video"></i><div><strong>Zoom</strong><span>Join from anywhere</span></div></label>
+              <label class="cs-mode" data-mode="phone"><i data-lucide="phone"></i><div><strong>Phone</strong><span>David calls you</span></div></label>
+            </div>
+            <div class="cs-field cs-hide" id="cs-phone-field">
+              <label for="cs-phone">Your phone number</label>
+              <input class="cs-input" id="cs-phone" type="tel" inputmode="tel" placeholder="(555) 123-4567" autocomplete="tel">
+            </div>
+            <div class="cs-field">
+              <label for="cs-topic">What are you bringing? <span style="font-weight:400;color:var(--studio-muted)">(optional)</span></label>
+              <input class="cs-input" id="cs-topic" type="text" maxlength="200" placeholder="e.g. Fixing my email automation">
+            </div>
+
+            <div class="cs-confirm">
+              <button class="primary-button" type="button" id="cs-confirm"><span id="cs-confirm-text">Confirm session</span><i data-lucide="check"></i></button>
+            </div>
+            <div class="cs-msg" id="cs-msg"></div>
+          </section>
+
+          <!-- Supporting content -->
+          <section class="cs-support">
+            <article class="cs-card">
+              <p class="cs-eyebrow">Common session topics</p>
+              <ul class="cs-list">
+                <li><i data-lucide="wrench"></i>Fixing a tech issue that is blocking you</li>
+                <li><i data-lucide="git-branch-plus"></i>Setting up a funnel or an offer</li>
+                <li><i data-lucide="pen-line"></i>Improving your content</li>
+                <li><i data-lucide="compass"></i>Clarifying your next step</li>
+                <li><i data-lucide="bar-chart-3"></i>Looking at your numbers together</li>
+                <li><i data-lucide="sparkles"></i>Anything else on your plate</li>
+              </ul>
+            </article>
+            <article class="cs-card">
+              <p class="cs-eyebrow">How it works</p>
+              <div class="cs-steps">
+                <div>Book your weekly session at a time that works for you.</div>
+                <div>Bring the real thing you are working on or stuck on.</div>
+                <div>We make progress on it together, live, in the session.</div>
+              </div>
+              <p style="margin-top:16px;color:var(--studio-muted);font-size:.82rem"><i data-lucide="info" style="width:14px;height:14px;vertical-align:-2px"></i> One session per week is included with your membership.</p>
+            </article>
+          </section>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script src="/js/eee-common.js?v=momentum-hub-v2"></script>
+  <script>
+    (function () {
+      var accessToken = null;
+      var state = null;
+      var pick = { date: null, hour: null, mode: 'zoom' };
+
+      var el = function (id) { return document.getElementById(id); };
+      var icons = function () { if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } }); };
+
+      function api(action, body) {
+        return fetch('/api/certainty', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + accessToken },
+          body: JSON.stringify(Object.assign({ action: action }, body || {}))
+        }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); });
+      }
+
+      // Eastern-time helpers. We show and send ET wall-clock; the database
+      // resolves it to a real instant (and handles daylight saving).
+      function etParts(d) {
+        var f = new Intl.DateTimeFormat('en-US', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hour12: false });
+        var o = {};
+        f.formatToParts(d).forEach(function (p) { if (p.type !== 'literal') o[p.type] = p.value; });
+        if (o.hour === '24') o.hour = '00';
+        return o;
+      }
+      function pad(n) { return (n < 10 ? '0' : '') + n; }
+      function hourLabel(h) {
+        var suffix = h < 12 ? 'AM' : 'PM';
+        var hh = h % 12; if (hh === 0) hh = 12;
+        return hh + ':00 ' + suffix;
+      }
+      // A list of the next 14 ET calendar days, as {iso, dow, num, mon}.
+      function upcomingDays() {
+        var now = etParts(new Date());
+        var anchor = new Date(Date.UTC(Number(now.year), Number(now.month) - 1, Number(now.day), 12, 0, 0));
+        var days = [];
+        for (var i = 0; i < 14; i++) {
+          var d = new Date(anchor.getTime() + i * 86400000);
+          days.push({
+            iso: d.getUTCFullYear() + '-' + pad(d.getUTCMonth() + 1) + '-' + pad(d.getUTCDate()),
+            dow: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][d.getUTCDay()],
+            num: d.getUTCDate(),
+            mon: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][d.getUTCMonth()]
+          });
+        }
+        return days;
+      }
+      function takenSet() {
+        var s = {};
+        (state && state.taken || []).forEach(function (t) { s[t.date + ':' + t.hour] = true; });
+        return s;
+      }
+
+      function renderPrimary() {
+        var host = el('cs-primary');
+        if (state && state.upcoming) {
+          var u = state.upcoming, j = u.join || {};
+          var joinRow = j.mode === 'zoom'
+            ? '<a class="primary-button" href="' + (j.joinUrl || '#') + '" target="_blank" rel="noopener"' + (j.joinUrl ? '' : ' aria-disabled="true"') + '><i data-lucide="video"></i><span>Join on Zoom</span></a>'
+            : '<span class="primary-button" style="cursor:default"><i data-lucide="phone"></i><span>David calls ' + (j.phone || 'you') + '</span></span>';
+          host.innerHTML =
+            '<p class="cs-eyebrow">Your next session</p>' +
+            '<div class="cs-next-when">' +
+              '<span class="cs-next-cal"><i data-lucide="calendar-days"></i></span>' +
+              '<div><div class="cs-next-day">' + u.label_day + '</div>' +
+              '<div class="cs-next-time">' + u.label_start + ' &ndash; ' + u.label_end + ' ET</div>' +
+              '<div class="cs-next-meta"><i data-lucide="' + (j.mode === 'zoom' ? 'video' : 'phone') + '"></i>' + (j.mode === 'zoom' ? 'On Zoom' : 'By phone') + (u.topic ? ' &middot; ' + escapeHtml(u.topic) : '') + '</div></div>' +
+            '</div>' +
+            '<div class="cs-actions">' + joinRow +
+              '<button class="secondary-button" type="button" id="cs-reschedule"><i data-lucide="calendar-clock"></i><span>Reschedule</span></button>' +
+              '<button class="secondary-button" type="button" id="cs-addcal"><i data-lucide="calendar-plus"></i><span>Add to my calendar</span></button>' +
+              '<button class="secondary-button" type="button" id="cs-cancel"><i data-lucide="x"></i><span>Cancel</span></button>' +
+            '</div>' +
+            calNote(u.calendar_status);
+          el('cs-reschedule').onclick = function () { reschedule(u.id); };
+          el('cs-cancel').onclick = function () { cancelSession(u.id); };
+          el('cs-addcal').onclick = function () { downloadIcs(u); };
+        } else {
+          host.innerHTML =
+            '<p class="cs-eyebrow">This week</p>' +
+            '<h2>You have not booked this week yet.</h2>' +
+            '<p style="color:var(--studio-soft);margin:8px 0 0">Your session is included. Grab a time while it is open and bring whatever you are stuck on.</p>' +
+            '<div class="cs-actions"><button class="primary-button" type="button" id="cs-open-book"><i data-lucide="calendar-plus"></i><span>Book my session</span></button></div>';
+          el('cs-open-book').onclick = openBooking;
+        }
+        icons();
+      }
+
+      function calNote(status) {
+        if (status === 'created') return '<div class="cs-cal-note"><i data-lucide="check-circle-2"></i>Added to David\'s calendar. He will see you there.</div>';
+        return '<div class="cs-cal-note"><i data-lucide="clock"></i>Your spot is held. David is confirmed for this time.</div>';
+      }
+
+      function openBooking() {
+        pick = { date: null, hour: null, mode: 'zoom' };
+        el('cs-book').classList.add('open');
+        el('cs-book-title').textContent = 'Choose your time';
+        renderDays();
+        renderTimes();
+        setMode('zoom');
+        el('cs-phone').value = '';
+        el('cs-topic').value = '';
+        showMsg('', null);
+        el('cs-book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      function renderDays() {
+        var host = el('cs-days');
+        host.innerHTML = '';
+        upcomingDays().forEach(function (d) {
+          var b = document.createElement('button');
+          b.className = 'cs-day' + (pick.date === d.iso ? ' sel' : '');
+          b.type = 'button';
+          b.innerHTML = '<div class="cs-day-dow">' + d.dow + '</div><div class="cs-day-num">' + d.num + '</div><div class="cs-day-mon">' + d.mon + '</div>';
+          b.onclick = function () { pick.date = d.iso; pick.hour = null; renderDays(); renderTimes(); };
+          host.appendChild(b);
+        });
+      }
+
+      function renderTimes() {
+        var host = el('cs-times');
+        host.innerHTML = '';
+        if (!pick.date) { host.innerHTML = '<p class="cs-times-empty">Pick a day to see open times.</p>'; return; }
+        var now = etParts(new Date());
+        var isToday = pick.date === (now.year + '-' + now.month + '-' + now.day);
+        var curHour = Number(now.hour);
+        var taken = takenSet();
+        var any = false;
+        for (var h = 10; h <= 22; h++) {
+          var b = document.createElement('button');
+          b.type = 'button';
+          b.className = 'cs-time' + (pick.hour === h ? ' sel' : '');
+          b.textContent = hourLabel(h);
+          var isTaken = taken[pick.date + ':' + h];
+          var isPast = isToday && h <= curHour;
+          if (isTaken || isPast) { b.disabled = true; if (isTaken) b.title = 'Already booked'; }
+          else { any = true; b.onclick = (function (hh) { return function () { pick.hour = hh; renderTimes(); }; })(h); }
+          host.appendChild(b);
+        }
+        if (!any) { host.innerHTML = '<p class="cs-times-empty">No open times left that day. Try another.</p>'; }
+      }
+
+      function setMode(mode) {
+        pick.mode = mode;
+        document.querySelectorAll('.cs-mode').forEach(function (m) { m.classList.toggle('sel', m.getAttribute('data-mode') === mode); });
+        el('cs-phone-field').classList.toggle('cs-hide', mode !== 'phone');
+      }
+
+      function showMsg(text, kind) {
+        var m = el('cs-msg');
+        m.textContent = text || '';
+        m.className = 'cs-msg' + (text ? ' show ' + kind : '');
+      }
+
+      function confirmBooking() {
+        if (!pick.date || !pick.hour) { showMsg('Pick a day and a time first.', 'err'); return; }
+        if (pick.mode === 'phone' && el('cs-phone').value.trim().length < 7) { showMsg('Add the number for David to call.', 'err'); return; }
+        var btn = el('cs-confirm');
+        btn.disabled = true;
+        el('cs-confirm-text').textContent = 'Booking...';
+        api('book', {
+          date: pick.date, hour: pick.hour, mode: pick.mode,
+          phone: pick.mode === 'phone' ? el('cs-phone').value.trim() : null,
+          topic: el('cs-topic').value.trim() || null
+        }).then(function (r) {
+          btn.disabled = false;
+          el('cs-confirm-text').textContent = 'Confirm session';
+          if (!r.ok) { showMsg((r.data && r.data.error) || 'That did not go through. Try another time.', 'err'); refresh(); return; }
+          el('cs-book').classList.remove('open');
+          refresh();
+        }).catch(function () {
+          btn.disabled = false;
+          el('cs-confirm-text').textContent = 'Confirm session';
+          showMsg('Something interrupted the booking. Try again.', 'err');
+        });
+      }
+
+      function cancelSession(id) {
+        if (!window.confirm('Cancel this session? The time opens back up for you or someone else.')) return;
+        api('cancel', { id: id }).then(function () { refresh(); });
+      }
+
+      function reschedule(id) {
+        if (!window.confirm('Reschedule? This cancels the current time so you can pick a new one.')) return;
+        api('cancel', { id: id }).then(function () { refresh().then(openBooking); });
+      }
+
+      function escapeHtml(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+
+      // A .ics for the member's own calendar. Independent of David's calendar,
+      // works today, and carries the join detail they can already see.
+      function downloadIcs(u) {
+        var dt = function (iso) { return new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, ''); };
+        var j = u.join || {};
+        var loc = j.mode === 'zoom' ? (j.joinUrl || 'Zoom') : 'Phone call from David';
+        var body = [
+          'BEGIN:VCALENDAR', 'VERSION:2.0', 'PRODID:-//Momentum Hub//Certainty Sessions//EN', 'BEGIN:VEVENT',
+          'UID:' + u.id + '@momentumhub', 'DTSTAMP:' + dt(new Date().toISOString()),
+          'DTSTART:' + dt(u.starts_at), 'DTEND:' + dt(u.ends_at),
+          'SUMMARY:Certainty Session with David Bee', 'LOCATION:' + loc,
+          'DESCRIPTION:' + (u.topic ? 'Bringing: ' + u.topic : 'Your weekly working session with David.'),
+          'END:VEVENT', 'END:VCALENDAR'
+        ].join('\r\n');
+        var blob = new Blob([body], { type: 'text/calendar' });
+        var a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'certainty-session.ics';
+        a.click();
+        URL.revokeObjectURL(a.href);
+      }
+
+      function refresh() {
+        return api('state').then(function (r) {
+          state = r.ok ? r.data : { upcoming: null, taken: [] };
+          el('cs-state-skeleton').classList.add('cs-hide');
+          el('cs-hero').classList.remove('cs-hide');
+          renderPrimary();
+          if (el('cs-book').classList.contains('open')) { renderDays(); renderTimes(); }
+        });
+      }
+
+      // Wire the static controls once.
+      document.addEventListener('click', function (e) {
+        var mode = e.target.closest('.cs-mode');
+        if (mode) { setMode(mode.getAttribute('data-mode')); }
+      });
+      el('cs-book-close').onclick = function () { el('cs-book').classList.remove('open'); };
+      el('cs-confirm').onclick = confirmBooking;
+
+      window.EEEStudio.initialize(function (ctx) {
+        accessToken = ctx.session.access_token;
+        return refresh();
+      }).catch(function () {
+        el('cs-state-skeleton').classList.add('cs-hide');
+      });
+    })();
+  </script>
+</body>
+</html>
