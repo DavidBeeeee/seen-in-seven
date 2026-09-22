@@ -2800,7 +2800,7 @@ function renderMomentum300() {
       PART: 'Half of it.',
       FAIL: 'It does not.',
       LIVE: 'Needs a live look that has not happened.',
-      'N/A': "Belongs to another app's day.",
+      'N/A': 'The capability genuinely does not exist.',
     })[verdict] || '';
     card.append(label, figure, sub);
     cards.append(card);
