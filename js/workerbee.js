@@ -1751,7 +1751,7 @@ function captureRow(task) {
 
 function bindCaptureForms() {
   document.querySelectorAll('[data-capture-owner]').forEach(form => {
-    const input = form.querySelector('input');
+    const input = form.querySelector('textarea');
     form.addEventListener('submit', async event => {
       event.preventDefault();
       const value = input.value.trim();

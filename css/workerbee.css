@@ -405,9 +405,9 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .capture-forms { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
 .capture-form label { display: block; margin-bottom: 4px; color: var(--teal-light); font: 800 10px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; text-transform: uppercase; }
 .capture-field { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 6px; }
-.capture-field input { min-height: 38px; padding: 4px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg-deep); color: var(--text); outline: 0; }
-.capture-field input:focus { border-color: var(--teal); }
-.capture-field input::placeholder { color: var(--muted); }
+.capture-field textarea { width: 100%; min-height: 82px; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg-deep); color: var(--text); outline: 0; resize: vertical; line-height: 1.45; }
+.capture-field textarea:focus { border-color: var(--teal); }
+.capture-field textarea::placeholder { color: var(--muted); }
 .capture-field .primary-button { min-height: 38px; padding: 0 14px; }
 .capture-list { margin-top: 12px; display: grid; gap: 9px; }
 .capture-list:empty { margin-top: 0; }
