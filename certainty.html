@@ -72,9 +72,11 @@
       flex: none; min-width: 66px; text-align: center; padding: 10px 8px; border-radius: 14px; cursor: pointer;
       background: var(--studio-surface-2); border: 1px solid var(--studio-border); color: var(--studio-text);
       transition: transform .08s ease, border-color .12s ease;
+      position: relative;
     }
     .cs-day:hover { border-color: var(--studio-teal); }
     .cs-day.sel { background: var(--studio-teal); color: #05201f; border-color: var(--studio-teal); }
+    .cs-day.sel::after, .cs-time.sel::after { content: ' ✓'; font-weight: 900; }
     .cs-day .cs-day-dow { font-size: .68rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; opacity: .85; }
     .cs-day .cs-day-num { font-family: 'Oswald', sans-serif; font-size: 1.35rem; line-height: 1.1; }
     .cs-day .cs-day-mon { font-size: .68rem; opacity: .8; }
@@ -93,6 +95,7 @@
     .cs-mode {
       display: flex; align-items: center; gap: 11px; padding: 14px; border-radius: 14px; cursor: pointer;
       background: var(--studio-surface-2); border: 1px solid var(--studio-border);
+      color: var(--studio-text); text-align: left; font: inherit;
     }
     .cs-mode:hover { border-color: var(--studio-teal); }
     .cs-mode.sel { border-color: var(--studio-teal); box-shadow: 0 0 0 1px var(--studio-teal) inset; }
@@ -106,7 +109,13 @@
       color: var(--studio-text); padding: 12px 14px; font: inherit; font-size: .92rem;
     }
     .cs-textarea { resize: vertical; min-height: 62px; }
-    .cs-input:focus, .cs-textarea:focus { outline: none; border-color: var(--studio-teal); }
+    .cs-input:focus, .cs-textarea:focus { border-color: var(--studio-teal); }
+    .cs-day:focus-visible, .cs-time:focus-visible, .cs-mode:focus-visible,
+    .cs-input:focus-visible, .cs-textarea:focus-visible, .cs-confirm button:focus-visible,
+    .cs-support a:focus-visible {
+      outline: 3px solid var(--studio-gold); outline-offset: 3px;
+    }
+    .cs-privacy { margin: 10px 0 0; color: var(--studio-muted); font-size: .8rem; line-height: 1.45; }
     .cs-confirm { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
     .cs-confirm .primary-button { flex: 1 1 auto; justify-content: center; font-size: 1rem; }
     .cs-msg { margin-top: 14px; padding: 11px 14px; border-radius: 12px; font-size: .86rem; display: none; }
@@ -218,13 +227,14 @@
             <div class="cs-times" id="cs-times"></div>
 
             <div class="cs-step-label"><span class="cs-step-num">3</span>How do you want to meet?</div>
-            <div class="cs-modes">
-              <label class="cs-mode sel" data-mode="zoom"><i data-lucide="video"></i><div><strong>Zoom</strong><span>Join from anywhere</span></div></label>
-              <label class="cs-mode" data-mode="phone"><i data-lucide="phone"></i><div><strong>Phone</strong><span>David calls you</span></div></label>
+            <div class="cs-modes" role="radiogroup" aria-label="How you want to meet">
+              <button class="cs-mode sel" type="button" data-mode="zoom" role="radio" aria-checked="true"><i data-lucide="video"></i><span><strong>Zoom</strong><span>Join from anywhere</span></span></button>
+              <button class="cs-mode" type="button" data-mode="phone" role="radio" aria-checked="false"><i data-lucide="phone"></i><span><strong>Phone</strong><span>David calls you</span></span></button>
             </div>
             <div class="cs-field cs-hide" id="cs-phone-field">
               <label for="cs-phone">Your phone number</label>
               <input class="cs-input" id="cs-phone" type="tel" inputmode="tel" placeholder="(555) 123-4567" autocomplete="tel">
+              <p class="cs-privacy">Used only so David can call you for this session.</p>
             </div>
             <div class="cs-field">
               <label for="cs-topic">What are you bringing? <span style="font-weight:400;color:var(--studio-muted)">(optional)</span></label>
@@ -234,7 +244,7 @@
             <div class="cs-confirm">
               <button class="primary-button" type="button" id="cs-confirm"><span id="cs-confirm-text">Confirm session</span><i data-lucide="check"></i></button>
             </div>
-            <div class="cs-msg" id="cs-msg"></div>
+            <div class="cs-msg" id="cs-msg" role="status" aria-live="polite" aria-atomic="true"></div>
           </section>
 
           <!-- Supporting content -->
@@ -258,6 +268,7 @@
                 <div>We make progress on it together, live, in the session.</div>
               </div>
               <p style="margin-top:16px;color:var(--studio-muted);font-size:.82rem"><i data-lucide="info" style="width:14px;height:14px;vertical-align:-2px"></i> One session per week is included with your membership.</p>
+              <p class="cs-privacy"><strong>Private by default:</strong> your booking details are saved to your Studio account and are not visible to other members. Need help? Email <a href="mailto:email@davidbee.me?subject=Certainty%20Sessions%20support">email@davidbee.me</a>.</p>
             </article>
           </section>
         </div>
@@ -380,6 +391,8 @@
           var b = document.createElement('button');
           b.className = 'cs-day' + (pick.date === d.iso ? ' sel' : '');
           b.type = 'button';
+          b.setAttribute('aria-pressed', pick.date === d.iso ? 'true' : 'false');
+          b.setAttribute('aria-label', d.dow + ', ' + d.mon + ' ' + d.num + (pick.date === d.iso ? ', selected' : ''));
           b.innerHTML = '<div class="cs-day-dow">' + d.dow + '</div><div class="cs-day-num">' + d.num + '</div><div class="cs-day-mon">' + d.mon + '</div>';
           b.onclick = function () { pick.date = d.iso; pick.hour = null; renderDays(); renderTimes(); };
           host.appendChild(b);
@@ -400,6 +413,8 @@
           b.type = 'button';
           b.className = 'cs-time' + (pick.hour === h ? ' sel' : '');
           b.textContent = hourLabel(h);
+          b.setAttribute('aria-pressed', pick.hour === h ? 'true' : 'false');
+          b.setAttribute('aria-label', hourLabel(h) + (pick.hour === h ? ', selected' : ''));
           var isTaken = taken[pick.date + ':' + h];
           var isPast = isToday && h <= curHour;
           if (isTaken || isPast) { b.disabled = true; if (isTaken) b.title = 'Already booked'; }
@@ -411,7 +426,11 @@
 
       function setMode(mode) {
         pick.mode = mode;
-        document.querySelectorAll('.cs-mode').forEach(function (m) { m.classList.toggle('sel', m.getAttribute('data-mode') === mode); });
+        document.querySelectorAll('.cs-mode').forEach(function (m) {
+          var selected = m.getAttribute('data-mode') === mode;
+          m.classList.toggle('sel', selected);
+          m.setAttribute('aria-checked', selected ? 'true' : 'false');
+        });
         el('cs-phone-field').classList.toggle('cs-hide', mode !== 'phone');
       }
 
@@ -419,6 +438,7 @@
         var m = el('cs-msg');
         m.textContent = text || '';
         m.className = 'cs-msg' + (text ? ' show ' + kind : '');
+        m.setAttribute('role', kind === 'err' ? 'alert' : 'status');
       }
 
       function confirmBooking() {
@@ -492,6 +512,13 @@
       document.addEventListener('click', function (e) {
         var mode = e.target.closest('.cs-mode');
         if (mode) { setMode(mode.getAttribute('data-mode')); }
+      });
+      document.querySelector('.cs-modes').addEventListener('keydown', function (e) {
+        if (e.key !== 'ArrowLeft' && e.key !== 'ArrowRight') return;
+        e.preventDefault();
+        var next = pick.mode === 'zoom' ? 'phone' : 'zoom';
+        setMode(next);
+        document.querySelector('.cs-mode[data-mode="' + next + '"]').focus();
       });
       el('cs-book-close').onclick = function () { el('cs-book').classList.remove('open'); };
       el('cs-confirm').onclick = confirmBooking;
