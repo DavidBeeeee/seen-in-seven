@@ -19,6 +19,7 @@
     "check:workerbee-studio": "node scripts/check-workerbee-studio.mjs",
     "check:navigator-import": "node scripts/check-navigator-import.mjs",
     "check:storysculpt-trust": "node scripts/check-storysculpt-trust.mjs",
-    "test": "npm run check:prompt-style && npm run check:story-architecture && npm run check:lock-state && npm run check:progress-meter && npm run check:level-consistency && npm run check:journey-map && npm run check:answer-help && npm run check:studio-catalog && npm run check:purchase-access && npm run check:content-intent && npm run check:funnel-source && npm run check:security-boundaries && npm run check:workerbee-studio && npm run check:navigator-import && npm run check:storysculpt-trust"
+    "check:admin-identity": "node scripts/check-admin-identity-alignment.mjs",
+    "test": "npm run check:prompt-style && npm run check:story-architecture && npm run check:lock-state && npm run check:progress-meter && npm run check:level-consistency && npm run check:journey-map && npm run check:answer-help && npm run check:studio-catalog && npm run check:purchase-access && npm run check:content-intent && npm run check:funnel-source && npm run check:security-boundaries && npm run check:workerbee-studio && npm run check:navigator-import && npm run check:storysculpt-trust && npm run check:admin-identity"
   }
 }
