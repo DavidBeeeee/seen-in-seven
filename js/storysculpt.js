@@ -38,6 +38,7 @@ function showProject(project) {
   storyEl('delete-project-button').hidden = false;
   storyEl('story-page-title').textContent = project.title || 'Untitled script';
   storyEl('story-page-copy').textContent = 'Answer one useful question at a time. StorySculpt will hold the thread.';
+  storyEl('story-method').hidden = true;
   storyEl('story-title').value = project.title || '';
   storyEl('story-mode').value = project.content_type || 'bold';
   storyEl('story-context').value = project.intake && project.intake.context || '';
@@ -52,7 +53,8 @@ function showModePicker() {
   storyEl('story-editor').hidden = true;
   storyEl('delete-project-button').hidden = true;
   storyEl('story-page-title').textContent = 'Choose the kind of script you want to build.';
-  storyEl('story-page-copy').textContent = 'The interview asks for one useful decision at a time and keeps the raw details intact.';
+  storyEl('story-page-copy').textContent = 'Bring the rough idea. StorySculpt will interview you one decision at a time, then shape your answers into a script that still sounds like you.';
+  storyEl('story-method').hidden = false;
   renderProjectList();
 }
 
@@ -167,6 +169,16 @@ storyEl('copy-story-output').addEventListener('click', async () => {
   await navigator.clipboard.writeText(activeStory.output);
   storyEl('copy-story-output').querySelector('span').textContent = 'Copied';
   setTimeout(() => { storyEl('copy-story-output').querySelector('span').textContent = 'Copy'; }, 1300);
+});
+storyEl('copy-story-output-bottom').addEventListener('click', async () => {
+  if (!activeStory || !activeStory.output) return;
+  await navigator.clipboard.writeText(activeStory.output);
+  storyEl('copy-story-output-bottom').querySelector('span').textContent = 'Copied. Go record it.';
+  setTimeout(() => { storyEl('copy-story-output-bottom').querySelector('span').textContent = 'Copy my script'; }, 1800);
+});
+storyEl('start-another-story').addEventListener('click', () => {
+  showModePicker();
+  storyEl('story-page-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
 });
 
 EEEStudio.initialize(async context => {

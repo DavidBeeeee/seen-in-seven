@@ -21,7 +21,12 @@
         <div class="eee-rail-list" id="story-project-list"></div>
       </aside>
       <section class="eee-work-main">
-        <div class="eee-work-head"><div><p class="eyebrow">StorySculpt</p><h1 id="story-page-title">Choose the kind of script you want to build.</h1><p id="story-page-copy">The interview asks for one useful decision at a time and keeps the raw details intact.</p></div><button class="secondary-button" id="delete-project-button" type="button" hidden><i data-lucide="trash-2"></i><span>Delete</span></button></div>
+        <div class="eee-work-head"><div><p class="eyebrow">StorySculpt</p><h1 id="story-page-title">Choose the kind of script you want to build.</h1><p id="story-page-copy">Bring the rough idea. StorySculpt will interview you one decision at a time, then shape your answers into a script that still sounds like you.</p></div><button class="secondary-button" id="delete-project-button" type="button" hidden><i data-lucide="trash-2"></i><span>Delete</span></button></div>
+
+        <section class="story-method" id="story-method">
+          <div><p class="eyebrow">Not another blank AI chat</p><h2>Your ideas lead. The framework does the heavy lifting.</h2></div>
+          <p>Generic AI asks for a prompt and guesses what you meant. StorySculpt keeps asking until it has the opinion, example, tension, and emotional direction your video needs. Its 5E framework helps you choose the kind of response you want to create: <strong>Entertainment, Enragement, Epiphany, Empathy, or Education.</strong></p>
+        </section>
 
         <section class="story-mode-grid" id="story-mode-grid">
           <button class="story-mode" type="button" data-mode="bold"><span class="story-mode-icon"><i data-lucide="zap"></i></span><strong>Bold</strong><small>A sharp opinion or hot take</small></button>
@@ -46,7 +51,18 @@
           <section class="story-output" id="story-output" hidden>
             <div class="story-output-head"><div><p class="eyebrow">Finished Draft</p><h2>Your script</h2></div><button class="secondary-button" id="copy-story-output" type="button"><i data-lucide="copy"></i><span>Copy</span></button></div>
             <div class="story-output-copy" id="story-output-copy"></div>
+            <div class="story-next-step">
+              <div><p class="eyebrow">Make it yours</p><h3>Your next step is not another prompt. It is one honest read-through.</h3></div>
+              <ol><li>Read the script out loud.</li><li>Change any sentence you would never actually say.</li><li>Copy the finished version and record it in your normal setup.</li></ol>
+              <div class="story-next-actions"><button class="primary-button" id="copy-story-output-bottom" type="button"><span>Copy my script</span><i data-lucide="copy"></i></button><button class="secondary-button" id="start-another-story" type="button"><span>Start another</span><i data-lucide="plus"></i></button></div>
+            </div>
           </section>
+        </section>
+
+        <section class="story-trust" aria-label="StorySculpt membership and data details">
+          <div><strong>Built and supported by David Bee</strong><span>StorySculpt is part of The Momentum Hub, a $250 monthly membership. You may cancel the monthly membership. Your included app license continues for the remainder of its 12-month term.</span></div>
+          <div><strong>Your work and AI</strong><span>Your projects are saved to your Studio account. When you continue the interview, your title, background notes, and conversation are sent to DeepSeek to generate the next question or draft. Do not enter information you do not want processed by an AI service.</span></div>
+          <div><strong>Need help or want to cancel?</strong><span>Email David at <a href="mailto:email@davidbee.me?subject=Momentum%20Hub%20support">email@davidbee.me</a>. There is no long-term membership contract.</span></div>
         </section>
       </section>
     </main>
