@@ -2131,8 +2131,9 @@ function clientActivityAt(client) {
 
 function orderedClients(clients) {
   return [...clients].sort((a, b) => {
-    const aOrder = Number.isFinite(Number(a.display_order)) ? Number(a.display_order) : null;
-    const bOrder = Number.isFinite(Number(b.display_order)) ? Number(b.display_order) : null;
+    const explicitOrder = value => value !== null && value !== undefined && value !== '' && Number.isFinite(Number(value)) ? Number(value) : null;
+    const aOrder = explicitOrder(a.display_order);
+    const bOrder = explicitOrder(b.display_order);
     if (aOrder !== null || bOrder !== null) return (aOrder ?? Number.MAX_SAFE_INTEGER) - (bOrder ?? Number.MAX_SAFE_INTEGER) || a.name.localeCompare(b.name);
     return clientActivityAt(b) - clientActivityAt(a) || a.name.localeCompare(b.name);
   });
@@ -2173,7 +2174,7 @@ function clientWorkspaceCard(client, peers, index, archived = false) {
   const stamp = document.createElement('span');
   stamp.className = 'client-workspace-stamp';
   const transcript = client.metadata?.latestTranscript ? `Last transcript: ${client.metadata.latestTranscript}` : 'No transcript recorded';
-  stamp.textContent = `${transcript}${client.metadata?.latestSessionAt ? ` · ${formatDate(client.metadata.latestSessionAt)}` : ''}`;
+  stamp.textContent = `${transcript}${client.metadata?.latestSessionAt ? ` · ${formatDate(client.metadata.latestSessionAt)}` : ''}${client.plan_updated_at ? ` · plan updated ${formatDate(client.plan_updated_at)}` : ''}`;
   summary.append(name, stamp);
   details.append(summary);
   const body = document.createElement('div');
@@ -2193,8 +2194,8 @@ function clientWorkspaceCard(client, peers, index, archived = false) {
   const planForm = document.createElement('form');
   planForm.className = 'client-plan-form';
   const fields = [
-    ['currentGoal', 'Current goal'], ['clientCommitments', 'Client commitments'], ['davidSupport', 'David support'],
-    ['nextStep', 'Next step'], ['nextSessionAgenda', 'Next-session agenda'], ['privateSummary', 'Private Client Thread summary']
+    ['currentGoal', 'Current goal'], ['nextStep', 'Next step'], ['nextSessionAgenda', 'Next-session agenda'],
+    ['privateSummary', 'Private Client Thread summary']
   ];
   const boxes = {};
   fields.forEach(([key, label]) => {
@@ -2218,15 +2219,82 @@ function clientWorkspaceCard(client, peers, index, archived = false) {
   planForm.addEventListener('submit', async event => {
     event.preventDefault();
     savePlan.disabled = true;
-    const living_plan = Object.fromEntries(Object.entries(boxes).map(([key, box]) => [key, box.value.trim()]));
+    // Keep legacy prose untouched while this card moves to the structured
+    // commitment panel below. A save should never blank a field David has not
+    // chosen to edit just because it is no longer shown as a second checklist.
+    const living_plan = { ...plan, ...Object.fromEntries(Object.entries(boxes).map(([key, box]) => [key, box.value.trim()])) };
     try {
-      const updated = await api('update_client_plan', { stable_key: client.stable_key, living_plan });
+      const updated = await api('update_client_plan', { stable_key: client.stable_key, expected_plan_version: client.plan_version, living_plan });
       Object.assign(client, updated);
       showToast(`${client.name}'s Living Plan is saved.`);
     } catch (error) { showToast(error.message, true); }
     finally { savePlan.disabled = false; }
   });
   body.append(planForm);
+
+  const activeCommitments = Array.isArray(client.commitments) ? client.commitments
+    .filter(item => !['done', 'complete', 'completed', 'dropped'].includes(String(item.status || '').toLowerCase())) : [];
+  const commitmentBlock = document.createElement('section');
+  commitmentBlock.className = 'client-commitments';
+  const commitmentHeading = document.createElement('h3');
+  commitmentHeading.textContent = `Active commitments (${activeCommitments.length})`;
+  commitmentBlock.append(commitmentHeading);
+  if (!activeCommitments.length) commitmentBlock.append(empty('No active commitments have been extracted yet.'));
+  else {
+    const groups = new Map();
+    activeCommitments.forEach(item => {
+      const group = String(item.group || 'Current work').trim() || 'Current work';
+      groups.set(group, [...(groups.get(group) || []), item]);
+    });
+    groups.forEach((items, group) => {
+      const groupNode = document.createElement('details');
+      groupNode.className = 'client-commitment-group';
+      groupNode.open = groups.size === 1;
+      const groupSummary = document.createElement('summary');
+      groupSummary.textContent = `${group} (${items.length})`;
+      groupNode.append(groupSummary);
+      const list = document.createElement('div');
+      list.className = 'client-commitment-list';
+      items.forEach(item => {
+        const row = document.createElement('article');
+        row.className = 'client-commitment';
+        const title = document.createElement('strong');
+        title.textContent = item.title || 'Untitled commitment';
+        const meta = document.createElement('small');
+        const details = [item.owner, item.status, item.nextCheck ? `check ${item.nextCheck}` : ''].filter(Boolean);
+        meta.textContent = details.join(' · ');
+        row.append(title, meta);
+        list.append(row);
+      });
+      groupNode.append(list);
+      commitmentBlock.append(groupNode);
+    });
+  }
+  body.append(commitmentBlock);
+
+  const changeBlock = document.createElement('section');
+  changeBlock.className = 'client-changes';
+  const changeHeading = document.createElement('h3');
+  changeHeading.textContent = 'Recent changes';
+  changeBlock.append(changeHeading);
+  const changes = (client.changes || []).slice().sort((a, b) => String(b.created_at).localeCompare(String(a.created_at)));
+  if (!changes.length) changeBlock.append(empty('No dated changes recorded yet. New transcript decisions will appear here.'));
+  else changes.slice(0, 12).forEach(change => {
+    const entry = document.createElement('article');
+    entry.className = 'client-change';
+    const meta = document.createElement('small');
+    meta.textContent = `${change.author === 'workerbee' ? 'WorkerBee' : 'David'} · ${formatDateTime(change.created_at)}`;
+    const summaryText = document.createElement('strong');
+    summaryText.textContent = change.summary;
+    entry.append(meta, summaryText);
+    if (change.changed) { const changed = document.createElement('p'); changed.textContent = `Changed: ${change.changed}`; entry.append(changed); }
+    if (change.uncertainty) { const uncertain = document.createElement('p'); uncertain.className = 'client-change-uncertainty'; uncertain.textContent = `Needs verification: ${change.uncertainty}`; entry.append(uncertain); }
+    if (change.source_url) {
+      const source = document.createElement('a'); source.href = change.source_url; source.target = '_blank'; source.rel = 'noopener'; source.textContent = 'Open source transcript'; entry.append(source);
+    }
+    changeBlock.append(entry);
+  });
+  body.append(changeBlock);
 
   const linked = state.tasks.filter(task => task.client_key === client.stable_key && task.status !== 'done' && !task.deleted_at);
   const todoBlock = document.createElement('section');

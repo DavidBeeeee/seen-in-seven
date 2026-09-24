@@ -439,8 +439,20 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .client-plan-field { display: grid; gap: 5px; color: var(--teal-light); font: 800 10px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .1em; text-transform: uppercase; }
 .client-plan-field textarea, .client-note-form textarea { width: 100%; box-sizing: border-box; min-height: 7.5rem; padding: 12px 13px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg-deep); color: var(--text); font: 400 14px/1.55 inherit; letter-spacing: normal; text-transform: none; resize: vertical; }
 .client-plan-form .primary-button { justify-self: start; }
-.client-linked-todos, .client-notes { display: grid; gap: 8px; }
-.client-linked-todos h3, .client-notes h3 { margin: 0; font-size: 14px; }
+.client-linked-todos, .client-notes, .client-commitments, .client-changes { display: grid; gap: 8px; }
+.client-linked-todos h3, .client-notes h3, .client-commitments h3, .client-changes h3 { margin: 0; font-size: 14px; }
+.client-commitment-group { border: 1px solid var(--line-soft); border-radius: 8px; background: var(--surface-2); overflow: hidden; }
+.client-commitment-group > summary { padding: 9px 10px; cursor: pointer; color: var(--soft); font-size: 12px; font-weight: 800; }
+.client-commitment-list { display: grid; gap: 6px; padding: 0 10px 10px; }
+.client-commitment { display: grid; gap: 3px; padding: 8px 9px; border-left: 3px solid var(--teal); background: var(--surface); }
+.client-commitment strong { font-size: 13px; line-height: 1.35; }
+.client-commitment small { color: var(--muted); font-size: 11px; }
+.client-change { display: grid; gap: 5px; padding: 10px 11px; border-left: 3px solid var(--gold); border-radius: 0 7px 7px 0; background: var(--surface-2); }
+.client-change small { color: var(--muted); font-size: 11px; }
+.client-change strong { line-height: 1.4; }
+.client-change p { margin: 0; color: var(--soft); font-size: 12.5px; line-height: 1.45; white-space: pre-wrap; }
+.client-change .client-change-uncertainty { color: var(--gold); }
+.client-change a { justify-self: start; color: var(--teal-light); font-size: 12px; }
 .client-note { padding: 10px 11px; border-left: 3px solid var(--gold); border-radius: 0 7px 7px 0; background: var(--surface-2); }
 .client-note.from-workerbee { border-left-color: var(--teal); }
 .client-note small { color: var(--muted); font-size: 11px; }

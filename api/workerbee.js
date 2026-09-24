@@ -63,7 +63,7 @@ function cleanUrl(value) {
 const ACTIONS = new Set([
   'create_section', 'update_section', 'create_task', 'update_task', 'delete_task', 'restore_task',
   'create_item_note', 'create_task_note', 'acknowledge_task_note',
-  'update_client_plan', 'create_client_note', 'acknowledge_client_note',
+  'update_client_plan', 'create_client_change', 'create_client_note', 'acknowledge_client_note',
   'set_client_archive', 'set_client_order', 'link_task_client',
   'create_update', 'update_update', 'create_journal', 'update_journal', 'mark_viewed',
   'reorder_outcomes', 'upsert_client', 'upsert_event', 'upsert_product'
@@ -74,7 +74,7 @@ const ACTIONS = new Set([
 // deciding, so a caller cannot claim an item was routed without saying which
 // quadrant it went into.
 const TASK_FIELDS = new Set(['id', 'title', 'section_id', 'sort_order', 'status', 'owner', 'due_date', 'follow_up_date', 'work_area', 'source_url', 'urgent', 'important']);
-const CLIENT_MUTATION_FIELDS = new Set(['id', 'task_id', 'stable_key', 'body', 'living_plan', 'archived', 'display_order', 'client_key']);
+const CLIENT_MUTATION_FIELDS = new Set(['id', 'task_id', 'stable_key', 'body', 'living_plan', 'expected_plan_version', 'summary', 'changed', 'uncertainty', 'source_url', 'source_transcript_id', 'archived', 'display_order', 'client_key']);
 // A note carries nothing but the task it belongs to and the words. `author` is
 // derived inside workerbee_mutate from the call itself, never from the payload,
 // so a note cannot claim to be David's because a caller said so.
@@ -126,9 +126,19 @@ function sanitize(action, input) {
   }
   if (action === 'update_client_plan') {
     payload.stable_key = cleanText(payload.stable_key, 120, true);
+    payload.expected_plan_version = Number(payload.expected_plan_version);
+    if (!Number.isInteger(payload.expected_plan_version) || payload.expected_plan_version < 1) throw new Error('Reload this client before saving the plan.');
     if (!payload.living_plan || typeof payload.living_plan !== 'object' || Array.isArray(payload.living_plan)) throw new Error('A Living Plan needs its five sections.');
     const allowed = ['currentGoal', 'clientCommitments', 'davidSupport', 'nextStep', 'nextSessionAgenda', 'privateSummary'];
     payload.living_plan = Object.fromEntries(allowed.map((key) => [key, cleanText(payload.living_plan[key], 8000) || '']));
+  }
+  if (action === 'create_client_change') {
+    payload.stable_key = cleanText(payload.stable_key, 120, true);
+    payload.summary = cleanText(payload.summary, 1200, true);
+    payload.changed = cleanText(payload.changed, 4000);
+    payload.uncertainty = cleanText(payload.uncertainty, 2000);
+    payload.source_url = cleanUrl(payload.source_url);
+    payload.source_transcript_id = cleanText(payload.source_transcript_id, 200);
   }
   if (action === 'acknowledge_client_note') payload.id = cleanText(payload.id, 64, true);
   if (action === 'set_client_archive' || action === 'set_client_order') {
@@ -231,6 +241,8 @@ export default async function handler(req, res) {
     return json(res, 200, { result });
   } catch (error) {
     console.error('WorkerBee API error:', error);
-    return json(res, 500, { error: error.message || 'WorkerBee could not save that change.' });
+    const message = error.message || 'WorkerBee could not save that change.';
+    const status = message.includes('changed while you were editing') ? 409 : 500;
+    return json(res, status, { error: message });
   }
 }

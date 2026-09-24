@@ -8,6 +8,7 @@ const operatingMigration = read('supabase_migrations/2026-08-10-add-workerbee-op
 const diagnosticMigration = read('supabase_migrations/2026-08-11-allow-workerbee-diagnostic-updates.sql');
 const itemNotesMigration = read('supabase_migrations/2026-09-14-generalize-workerbee-item-notes.sql');
 const clientWorkspaceMigration = read('supabase_migrations/2026-09-24-workerbee-client-workspace.sql');
+const clientPlanContinuityMigration = read('supabase_migrations/2026-09-24-workerbee-client-plan-continuity.sql');
 const api = read('api/workerbee.js');
 const client = read('js/workerbee.js');
 const dashboard = read('dashboard.html');
@@ -96,9 +97,18 @@ assert.match(clientWorkspaceMigration, /revoke all on table public\.workerbee_cl
 assert.match(clientWorkspaceMigration, /workerbee_client_mutate/, 'Client workspace mutations need a dedicated, authorized function.');
 assert.match(clientWorkspaceMigration, /revoke all on function public\.workerbee_client_mutate\(text, jsonb, text\) from public, anon, authenticated/, 'Client mutations must not retain PUBLIC execution.');
 assert.match(clientWorkspaceMigration, /'clients', coalesce/, 'Bootstrap must return the private client workspace in its one authorized read.');
+assert.match(clientPlanContinuityMigration, /plan_version integer not null default 1/, 'Client plans need a durable version for safe concurrent saves.');
+assert.match(clientPlanContinuityMigration, /workerbee_client_changes enable row level security/, 'Private client changes must retain RLS.');
+assert.match(clientPlanContinuityMigration, /revoke all on table public\.workerbee_client_changes from anon, authenticated/, 'Client changes must deny direct browser access.');
+assert.match(clientPlanContinuityMigration, /'create_client_change'/, 'Client updates need a dated change action.');
+assert.match(clientPlanContinuityMigration, /plan_version = v_expected_version/, 'A stale client-plan save must be refused rather than overwriting current work.');
+assert.match(api, /create_client_change/, 'The private API must route dated client changes through the narrow client mutation path.');
+assert.match(api, /expected_plan_version/, 'The private API must require an expected version before saving a client plan.');
 assert.match(todo, /data-todo-owner="clients"/, 'The Todo page must expose the third private Clients tab.');
 assert.match(client, /function renderClientWorkspace/, 'The client tab must render private Living Plans and notes.');
 assert.match(client, /link_task_client/, 'New manual Todos must be linkable to a specific client.');
+assert.match(client, /Active commitments/, 'Client cards must render structured commitments instead of a second editable checklist.');
+assert.match(client, /Recent changes/, 'Client cards must show a dated history of plan-changing evidence.');
 
 const rewriteMap = Object.fromEntries(vercel.rewrites.map(item => [item.source, item.destination]));
 assert.equal(rewriteMap['/dashboard'], '/dashboard.html');
