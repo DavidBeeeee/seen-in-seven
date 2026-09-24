@@ -108,6 +108,8 @@ assert.match(todo, /data-todo-owner="clients"/, 'The Todo page must expose the t
 assert.match(client, /function renderClientWorkspace/, 'The client tab must render private Living Plans and notes.');
 assert.match(client, /link_task_client/, 'New manual Todos must be linkable to a specific client.');
 assert.match(client, /Active commitments/, 'Client cards must render structured commitments instead of a second editable checklist.');
+assert.match(client, /Waiting and future paths/, 'Held client history must stay visible without inflating active workload.');
+assert.match(client, /=== 'active'/, 'Only active commitments may count as active workload.');
 assert.match(client, /Recent changes/, 'Client cards must show a dated history of plan-changing evidence.');
 
 const rewriteMap = Object.fromEntries(vercel.rewrites.map(item => [item.source, item.destination]));

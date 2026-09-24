@@ -2232,30 +2232,32 @@ function clientWorkspaceCard(client, peers, index, archived = false) {
   });
   body.append(planForm);
 
-  const activeCommitments = Array.isArray(client.commitments) ? client.commitments
-    .filter(item => !['done', 'complete', 'completed', 'dropped'].includes(String(item.status || '').toLowerCase())) : [];
-  const commitmentBlock = document.createElement('section');
-  commitmentBlock.className = 'client-commitments';
-  const commitmentHeading = document.createElement('h3');
-  commitmentHeading.textContent = `Active commitments (${activeCommitments.length})`;
-  commitmentBlock.append(commitmentHeading);
-  if (!activeCommitments.length) commitmentBlock.append(empty('No active commitments have been extracted yet.'));
-  else {
+  const commitments = Array.isArray(client.commitments) ? client.commitments : [];
+  // A client card should show the work that is actually live first. Held,
+  // future, and dependency-bound paths remain available as history, but they
+  // must not make a client's current workload look larger than it is.
+  const activeCommitments = commitments.filter(item => String(item.status || '').toLowerCase() === 'active');
+  const waitingCommitments = commitments.filter(item => {
+    const status = String(item.status || '').toLowerCase();
+    return !['active', 'done', 'complete', 'completed', 'dropped'].includes(status);
+  });
+  const renderCommitmentGroups = (items, { openSingleGroup = false } = {}) => {
+    const fragment = document.createDocumentFragment();
     const groups = new Map();
-    activeCommitments.forEach(item => {
+    items.forEach(item => {
       const group = String(item.group || 'Current work').trim() || 'Current work';
       groups.set(group, [...(groups.get(group) || []), item]);
     });
-    groups.forEach((items, group) => {
+    groups.forEach((groupItems, group) => {
       const groupNode = document.createElement('details');
       groupNode.className = 'client-commitment-group';
-      groupNode.open = groups.size === 1;
+      groupNode.open = openSingleGroup && groups.size === 1;
       const groupSummary = document.createElement('summary');
-      groupSummary.textContent = `${group} (${items.length})`;
+      groupSummary.textContent = `${group} (${groupItems.length})`;
       groupNode.append(groupSummary);
       const list = document.createElement('div');
       list.className = 'client-commitment-list';
-      items.forEach(item => {
+      groupItems.forEach(item => {
         const row = document.createElement('article');
         row.className = 'client-commitment';
         const title = document.createElement('strong');
@@ -2267,8 +2269,24 @@ function clientWorkspaceCard(client, peers, index, archived = false) {
         list.append(row);
       });
       groupNode.append(list);
-      commitmentBlock.append(groupNode);
+      fragment.append(groupNode);
     });
+    return fragment;
+  };
+  const commitmentBlock = document.createElement('section');
+  commitmentBlock.className = 'client-commitments';
+  const commitmentHeading = document.createElement('h3');
+  commitmentHeading.textContent = `Active commitments (${activeCommitments.length})`;
+  commitmentBlock.append(commitmentHeading);
+  if (!activeCommitments.length) commitmentBlock.append(empty('No active commitments have been extracted yet.'));
+  else commitmentBlock.append(renderCommitmentGroups(activeCommitments, { openSingleGroup: true }));
+  if (waitingCommitments.length) {
+    const waitingBlock = document.createElement('details');
+    waitingBlock.className = 'client-commitment-history';
+    const waitingSummary = document.createElement('summary');
+    waitingSummary.textContent = `Waiting and future paths (${waitingCommitments.length})`;
+    waitingBlock.append(waitingSummary, renderCommitmentGroups(waitingCommitments));
+    commitmentBlock.append(waitingBlock);
   }
   body.append(commitmentBlock);
 
