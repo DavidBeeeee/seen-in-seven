@@ -437,7 +437,7 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .client-workspace-controls { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 6px; }
 .client-plan-form { display: grid; grid-template-columns: 1fr; gap: 10px; }
 .client-plan-field { display: grid; gap: 5px; color: var(--teal-light); font: 800 10px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .1em; text-transform: uppercase; }
-.client-plan-field textarea, .client-note-form textarea { width: 100%; box-sizing: border-box; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg-deep); color: var(--text); font: 400 13px/1.45 inherit; letter-spacing: normal; text-transform: none; resize: vertical; }
+.client-plan-field textarea, .client-note-form textarea { width: 100%; box-sizing: border-box; min-height: 7.5rem; padding: 12px 13px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg-deep); color: var(--text); font: 400 14px/1.55 inherit; letter-spacing: normal; text-transform: none; resize: vertical; }
 .client-plan-form .primary-button { justify-self: start; }
 .client-linked-todos, .client-notes { display: grid; gap: 8px; }
 .client-linked-todos h3, .client-notes h3 { margin: 0; font-size: 14px; }

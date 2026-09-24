@@ -2164,7 +2164,9 @@ function renderClientWorkspace() {
 function clientWorkspaceCard(client, peers, index, archived = false) {
   const details = document.createElement('details');
   details.className = 'client-workspace-card';
-  details.open = !archived && index === 0;
+  // The Clients tab is a roster first. Opening a card is an intentional choice,
+  // so returning to the page never drops someone into one client's workspace.
+  details.open = false;
   const summary = document.createElement('summary');
   const name = document.createElement('strong');
   name.textContent = client.name;
@@ -2201,7 +2203,7 @@ function clientWorkspaceCard(client, peers, index, archived = false) {
     const text = document.createElement('span');
     text.textContent = label;
     const box = document.createElement('textarea');
-    box.rows = key === 'currentGoal' || key === 'privateSummary' ? 4 : 3;
+    box.rows = key === 'currentGoal' || key === 'privateSummary' ? 7 : 5;
     box.value = plan[key] || '';
     box.name = key;
     wrap.append(text, box);
@@ -2259,7 +2261,7 @@ function clientWorkspaceCard(client, peers, index, archived = false) {
   const noteForm = document.createElement('form');
   noteForm.className = 'client-note-form';
   const noteBox = document.createElement('textarea');
-  noteBox.rows = 3;
+  noteBox.rows = 5;
   noteBox.placeholder = `Add a private note for ${client.name}`;
   const noteSave = document.createElement('button');
   noteSave.type = 'submit';
