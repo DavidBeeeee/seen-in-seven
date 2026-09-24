@@ -435,7 +435,7 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .client-workspace-stamp { color: var(--muted); font-size: 12px; text-align: right; }
 .client-workspace-body { display: grid; gap: 15px; padding: 14px; }
 .client-workspace-controls { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 6px; }
-.client-plan-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.client-plan-form { display: grid; grid-template-columns: 1fr; gap: 10px; }
 .client-plan-field { display: grid; gap: 5px; color: var(--teal-light); font: 800 10px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .1em; text-transform: uppercase; }
 .client-plan-field textarea, .client-note-form textarea { width: 100%; box-sizing: border-box; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg-deep); color: var(--text); font: 400 13px/1.45 inherit; letter-spacing: normal; text-transform: none; resize: vertical; }
 .client-plan-form .primary-button { justify-self: start; }
@@ -449,7 +449,6 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .client-note-form .secondary-button { justify-self: start; }
 .client-archive-body { display: grid; gap: 8px; padding: 0 10px 10px; }
 @media (max-width: 640px) {
-  .client-plan-form { grid-template-columns: 1fr; }
   .client-workspace-card > summary { align-items: flex-start; flex-direction: column; }
   .client-workspace-stamp { text-align: left; }
 }
