@@ -409,6 +409,8 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .capture-field textarea:focus { border-color: var(--teal); }
 .capture-field textarea::placeholder { color: var(--muted); }
 .capture-field .primary-button { min-height: 38px; padding: 0 14px; }
+.capture-client-picker { display: grid; gap: 4px; margin: 10px 0 0; color: var(--teal-light); font: 800 10px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .12em; text-transform: uppercase; }
+.capture-client-picker select { min-height: 36px; padding: 0 9px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg-deep); color: var(--text); font: 600 13px/1.2 inherit; letter-spacing: normal; text-transform: none; }
 .capture-list { margin-top: 12px; display: grid; gap: 9px; }
 .capture-list:empty { margin-top: 0; }
 .capture-item { padding: 10px 11px; border: 1px solid var(--line-soft); border-radius: 9px; background: var(--surface-2); }
@@ -421,6 +423,36 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .capture-quadrant small { color: var(--muted); font-size: 11px; }
 .capture-quadrant:hover:not(:disabled) { border-color: rgba(50, 184, 184, .55); background: rgba(50, 184, 184, .12); }
 .capture-quadrant:disabled { opacity: .45; cursor: default; }
+
+/* WBR-393. Private client operations live beside the rest of the Todo board:
+   the cards are deliberately quiet at rest and expand only when someone needs
+   a plan, thread, note, or linked task. */
+.clients-workspace { display: grid; gap: 10px; }
+.client-workspace-card, .client-archive { border: 1px solid var(--line); border-radius: 11px; background: var(--surface); overflow: hidden; }
+.client-workspace-card > summary, .client-archive > summary { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 13px 14px; cursor: pointer; list-style: none; }
+.client-workspace-card > summary::-webkit-details-marker, .client-archive > summary::-webkit-details-marker { display: none; }
+.client-workspace-card[open] > summary { border-bottom: 1px solid var(--line); background: var(--surface-2); }
+.client-workspace-stamp { color: var(--muted); font-size: 12px; text-align: right; }
+.client-workspace-body { display: grid; gap: 15px; padding: 14px; }
+.client-workspace-controls { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 6px; }
+.client-plan-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.client-plan-field { display: grid; gap: 5px; color: var(--teal-light); font: 800 10px/1.2 ui-monospace, SFMono-Regular, Menlo, monospace; letter-spacing: .1em; text-transform: uppercase; }
+.client-plan-field textarea, .client-note-form textarea { width: 100%; box-sizing: border-box; padding: 9px 10px; border: 1px solid var(--line); border-radius: 8px; background: var(--bg-deep); color: var(--text); font: 400 13px/1.45 inherit; letter-spacing: normal; text-transform: none; resize: vertical; }
+.client-plan-form .primary-button { justify-self: start; }
+.client-linked-todos, .client-notes { display: grid; gap: 8px; }
+.client-linked-todos h3, .client-notes h3 { margin: 0; font-size: 14px; }
+.client-note { padding: 10px 11px; border-left: 3px solid var(--gold); border-radius: 0 7px 7px 0; background: var(--surface-2); }
+.client-note.from-workerbee { border-left-color: var(--teal); }
+.client-note small { color: var(--muted); font-size: 11px; }
+.client-note p { margin: 5px 0 0; white-space: pre-wrap; font-size: 13px; line-height: 1.5; }
+.client-note-form { display: grid; gap: 7px; }
+.client-note-form .secondary-button { justify-self: start; }
+.client-archive-body { display: grid; gap: 8px; padding: 0 10px 10px; }
+@media (max-width: 640px) {
+  .client-plan-form { grid-template-columns: 1fr; }
+  .client-workspace-card > summary { align-items: flex-start; flex-direction: column; }
+  .client-workspace-stamp { text-align: left; }
+}
 
 /* WBR-348. Browsing what got moved off the list. */
 /* WBR-355. The walkthrough button on the morning card, and the panel it opens. */

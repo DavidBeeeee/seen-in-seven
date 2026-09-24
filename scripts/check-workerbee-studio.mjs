@@ -7,6 +7,7 @@ const privateApiMigration = read('supabase_migrations/2026-08-10-add-workerbee-p
 const operatingMigration = read('supabase_migrations/2026-08-10-add-workerbee-operating-modules.sql');
 const diagnosticMigration = read('supabase_migrations/2026-08-11-allow-workerbee-diagnostic-updates.sql');
 const itemNotesMigration = read('supabase_migrations/2026-09-14-generalize-workerbee-item-notes.sql');
+const clientWorkspaceMigration = read('supabase_migrations/2026-09-24-workerbee-client-workspace.sql');
 const api = read('api/workerbee.js');
 const client = read('js/workerbee.js');
 const dashboard = read('dashboard.html');
@@ -43,6 +44,7 @@ assert.match(api, /serverSecret: internalSecret/, 'The dedicated ChatGPT Action 
 assert.match(api, /workerbee_bootstrap/, 'Reads must use the narrow WorkerBee database function.');
 assert.match(api, /workerbee_mutate/, 'Writes must use the narrow WorkerBee database function.');
 assert.match(api, /workerbee_note_mutate/, 'Notes on either ToDo item type must use the narrow note function.');
+assert.match(api, /workerbee_client_mutate/, 'Private client workspace writes must use their narrow mutation function.');
 assert.doesNotMatch(api, /SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY/, 'The WorkerBee API must not require a database master key.');
 assert.doesNotMatch(client, /SERVICE_ROLE|SUPABASE_SECRET|WORKERBEE_STUDIO_SECRET/, 'No server credential may enter browser code.');
 assert.match(client, /onAuthStateChange[\s\S]*setTimeout\(\(\) => activate/, 'Auth hydration must leave the Supabase callback before database work.');
@@ -89,6 +91,14 @@ assert.match(itemNotesMigration, /alter table public\.workerbee_task_notes enabl
 assert.match(itemNotesMigration, /revoke all on table public\.workerbee_task_notes from anon, authenticated/, 'Generalized notes must retain denied direct access.');
 assert.match(itemNotesMigration, /revoke all on function public\.workerbee_note_mutate\(text, jsonb, text\) from public, anon, authenticated/, 'The note function must not retain PUBLIC execution.');
 assert.match(itemNotesMigration, /where n\.update_id = u\.id/, 'Bootstrap must return Board-item notes with their item.');
+assert.match(clientWorkspaceMigration, /alter table public\.workerbee_client_notes enable row level security/, 'Private client notes must retain RLS.');
+assert.match(clientWorkspaceMigration, /revoke all on table public\.workerbee_client_notes from anon, authenticated/, 'Client notes must deny direct browser access.');
+assert.match(clientWorkspaceMigration, /workerbee_client_mutate/, 'Client workspace mutations need a dedicated, authorized function.');
+assert.match(clientWorkspaceMigration, /revoke all on function public\.workerbee_client_mutate\(text, jsonb, text\) from public, anon, authenticated/, 'Client mutations must not retain PUBLIC execution.');
+assert.match(clientWorkspaceMigration, /'clients', coalesce/, 'Bootstrap must return the private client workspace in its one authorized read.');
+assert.match(todo, /data-todo-owner="clients"/, 'The Todo page must expose the third private Clients tab.');
+assert.match(client, /function renderClientWorkspace/, 'The client tab must render private Living Plans and notes.');
+assert.match(client, /link_task_client/, 'New manual Todos must be linkable to a specific client.');
 
 const rewriteMap = Object.fromEntries(vercel.rewrites.map(item => [item.source, item.destination]));
 assert.equal(rewriteMap['/dashboard'], '/dashboard.html');

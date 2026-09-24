@@ -1771,6 +1771,8 @@ function bindCaptureForms() {
           urgent: null,
           important: null
         });
+        const clientKey = todoOwner === 'clients' ? el('capture-client-key')?.value : '';
+        if (clientKey) Object.assign(created, await api('link_task_client', { task_id: created.id, client_key: clientKey }));
         state.tasks.push(created);
         input.value = '';
         renderTodo();
@@ -1925,6 +1927,32 @@ function taskMatches(task) {
 function renderTodo() {
   const root = el('todo-board');
   root.replaceChildren();
+  const clientPicker = el('capture-client-key');
+  const clientPickerWrap = document.querySelector('.capture-client-picker');
+  const isClients = todoOwner === 'clients';
+  if (clientPickerWrap) clientPickerWrap.hidden = !isClients;
+  if (clientPicker) {
+    const previous = clientPicker.value;
+    clientPicker.replaceChildren(new Option('Choose a client', ''));
+    state.clients.filter(client => !client.archived_at).forEach(client => clientPicker.add(new Option(client.name, client.stable_key)));
+    clientPicker.value = previous;
+  }
+  if (isClients) {
+    const activeClients = state.clients.filter(client => !client.archived_at);
+    el('clients-task-count').textContent = String(activeClients.length);
+    document.querySelectorAll('[data-todo-owner]').forEach(button => {
+      const active = button.dataset.todoOwner === 'clients';
+      button.classList.toggle('active', active);
+      button.setAttribute('aria-selected', String(active));
+    });
+    const legend = el('todo-count-legend');
+    if (legend) legend.textContent = `${activeClients.length} active client${activeClients.length === 1 ? '' : 's'} · newest transcript first, then first name. Dragging nobody around: use the small arrows when you want a deliberate order.`;
+    root.append(renderClientWorkspace());
+    renderCaptures();
+    renderTodoSearchCount({ workerbee: 0, david: 0, clients: activeClients.length });
+    icons();
+    return;
+  }
   const sections = sortByOrder(state.sections);
   // Unrouted captures live in the strip above, not in a quadrant. Counting them
   // on the owner tabs is still right: they are open work, and a tab that says 4
@@ -2008,6 +2036,7 @@ function renderTodo() {
   // held work is today's workload.
   el('workerbee-task-count').textContent = String(bands.workerbee.active ?? 0);
   el('david-task-count').textContent = String(bands.david.active ?? 0);
+  el('clients-task-count').textContent = String(state.clients.filter(client => !client.archived_at).length);
   document.querySelectorAll('[data-todo-owner]').forEach(button => {
     const side = button.dataset.todoOwner;
     const active = side === todoOwner;
@@ -2076,6 +2105,218 @@ function renderTodo() {
   renderCaptures();
   renderTodoSearchCount(counts);
   icons();
+}
+
+function clientPlan(client) {
+  const saved = client.living_plan && typeof client.living_plan === 'object' ? client.living_plan : {};
+  const active = Array.isArray(client.commitments) ? client.commitments.filter(item => !['done', 'complete', 'completed'].includes(item.status)) : [];
+  const byDavid = active.filter(item => /^(david|workerbee)$/i.test(item.owner || '')).map(item => item.title);
+  const byClient = active.filter(item => !/^(david|workerbee)$/i.test(item.owner || '')).map(item => item.title);
+  const next = client.metadata?.nextCheck || active[0]?.nextCheck || '';
+  return {
+    currentGoal: saved.currentGoal || client.current_focus || '',
+    clientCommitments: saved.clientCommitments || byClient.join('\n'),
+    davidSupport: saved.davidSupport || byDavid.join('\n'),
+    nextStep: saved.nextStep || next,
+    nextSessionAgenda: saved.nextSessionAgenda || next,
+    privateSummary: saved.privateSummary || client.metadata?.privateSummary || ''
+  };
+}
+
+function clientActivityAt(client) {
+  const raw = client.metadata?.latestSessionAt || client.updated_at || client.created_at || '';
+  const at = Date.parse(raw);
+  return Number.isFinite(at) ? at : 0;
+}
+
+function orderedClients(clients) {
+  return [...clients].sort((a, b) => {
+    const aOrder = Number.isFinite(Number(a.display_order)) ? Number(a.display_order) : null;
+    const bOrder = Number.isFinite(Number(b.display_order)) ? Number(b.display_order) : null;
+    if (aOrder !== null || bOrder !== null) return (aOrder ?? Number.MAX_SAFE_INTEGER) - (bOrder ?? Number.MAX_SAFE_INTEGER) || a.name.localeCompare(b.name);
+    return clientActivityAt(b) - clientActivityAt(a) || a.name.localeCompare(b.name);
+  });
+}
+
+function renderClientWorkspace() {
+  const root = document.createElement('section');
+  root.className = 'clients-workspace';
+  const active = orderedClients(state.clients.filter(client => !client.archived_at).filter(client => matchesTodoFilter([client.name, client.current_focus, client.metadata?.latestTranscript])));
+  if (!active.length) root.append(empty(todoFilter ? 'No active client matches that search.' : 'No active clients are in the private workspace yet.'));
+  active.forEach((client, index) => root.append(clientWorkspaceCard(client, active, index)));
+
+  const archived = orderedClients(state.clients.filter(client => client.archived_at));
+  if (archived.length) {
+    const archive = document.createElement('details');
+    archive.className = 'client-archive';
+    const summary = document.createElement('summary');
+    summary.textContent = `Archived clients (${archived.length})`;
+    archive.append(summary);
+    const body = document.createElement('div');
+    body.className = 'client-archive-body';
+    archived.forEach((client, index) => body.append(clientWorkspaceCard(client, archived, index, true)));
+    archive.append(body);
+    root.append(archive);
+  }
+  return root;
+}
+
+function clientWorkspaceCard(client, peers, index, archived = false) {
+  const details = document.createElement('details');
+  details.className = 'client-workspace-card';
+  details.open = !archived && index === 0;
+  const summary = document.createElement('summary');
+  const name = document.createElement('strong');
+  name.textContent = client.name;
+  const stamp = document.createElement('span');
+  stamp.className = 'client-workspace-stamp';
+  const transcript = client.metadata?.latestTranscript ? `Last transcript: ${client.metadata.latestTranscript}` : 'No transcript recorded';
+  stamp.textContent = `${transcript}${client.metadata?.latestSessionAt ? ` · ${formatDate(client.metadata.latestSessionAt)}` : ''}`;
+  summary.append(name, stamp);
+  details.append(summary);
+  const body = document.createElement('div');
+  body.className = 'client-workspace-body';
+  const controls = document.createElement('div');
+  controls.className = 'client-workspace-controls';
+  if (!archived) {
+    controls.append(
+      textButton('↑', 'Move client up', () => moveClient(client, peers, index, -1)),
+      textButton('↓', 'Move client down', () => moveClient(client, peers, index, 1)),
+      textButton('Archive', `Archive ${client.name}`, () => archiveClient(client, true))
+    );
+  } else controls.append(textButton('Restore', `Restore ${client.name}`, () => archiveClient(client, false)));
+  body.append(controls);
+
+  const plan = clientPlan(client);
+  const planForm = document.createElement('form');
+  planForm.className = 'client-plan-form';
+  const fields = [
+    ['currentGoal', 'Current goal'], ['clientCommitments', 'Client commitments'], ['davidSupport', 'David support'],
+    ['nextStep', 'Next step'], ['nextSessionAgenda', 'Next-session agenda'], ['privateSummary', 'Private Client Thread summary']
+  ];
+  const boxes = {};
+  fields.forEach(([key, label]) => {
+    const wrap = document.createElement('label');
+    wrap.className = 'client-plan-field';
+    const text = document.createElement('span');
+    text.textContent = label;
+    const box = document.createElement('textarea');
+    box.rows = key === 'currentGoal' || key === 'privateSummary' ? 4 : 3;
+    box.value = plan[key] || '';
+    box.name = key;
+    wrap.append(text, box);
+    boxes[key] = box;
+    planForm.append(wrap);
+  });
+  const savePlan = document.createElement('button');
+  savePlan.type = 'submit';
+  savePlan.className = 'primary-button small';
+  savePlan.textContent = 'Save Living Plan';
+  planForm.append(savePlan);
+  planForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    savePlan.disabled = true;
+    const living_plan = Object.fromEntries(Object.entries(boxes).map(([key, box]) => [key, box.value.trim()]));
+    try {
+      const updated = await api('update_client_plan', { stable_key: client.stable_key, living_plan });
+      Object.assign(client, updated);
+      showToast(`${client.name}'s Living Plan is saved.`);
+    } catch (error) { showToast(error.message, true); }
+    finally { savePlan.disabled = false; }
+  });
+  body.append(planForm);
+
+  const linked = state.tasks.filter(task => task.client_key === client.stable_key && task.status !== 'done' && !task.deleted_at);
+  const todoBlock = document.createElement('section');
+  todoBlock.className = 'client-linked-todos';
+  const todoHeading = document.createElement('h3');
+  todoHeading.textContent = `Client Todos (${linked.length})`;
+  todoBlock.append(todoHeading);
+  if (linked.length) {
+    const list = document.createElement('div');
+    list.className = 'task-list';
+    linked.forEach((task, taskIndex) => list.append(taskRow(task, linked, taskIndex)));
+    todoBlock.append(list);
+  } else todoBlock.append(empty('No client-linked Todos yet. Use the selector in the manual Todo box above.'));
+  body.append(todoBlock);
+
+  const noteBlock = document.createElement('section');
+  noteBlock.className = 'client-notes';
+  const noteHeading = document.createElement('h3');
+  noteHeading.textContent = 'Private notes';
+  noteBlock.append(noteHeading);
+  const notes = (client.notes || []).slice().sort((a, b) => String(a.created_at).localeCompare(String(b.created_at)));
+  notes.forEach(note => {
+    const noteNode = document.createElement('article');
+    noteNode.className = `client-note ${note.author === 'workerbee' ? 'from-workerbee' : ''}`;
+    const meta = document.createElement('small');
+    meta.textContent = `${note.author === 'workerbee' ? 'WorkerBee' : 'David'} · ${formatDateTime(note.created_at)}${note.acknowledged_at ? '' : ' · needs review'}`;
+    const words = document.createElement('p');
+    words.textContent = note.body;
+    noteNode.append(meta, words);
+    noteBlock.append(noteNode);
+  });
+  const noteForm = document.createElement('form');
+  noteForm.className = 'client-note-form';
+  const noteBox = document.createElement('textarea');
+  noteBox.rows = 3;
+  noteBox.placeholder = `Add a private note for ${client.name}`;
+  const noteSave = document.createElement('button');
+  noteSave.type = 'submit';
+  noteSave.className = 'secondary-button small';
+  noteSave.textContent = 'Add note';
+  noteForm.append(noteBox, noteSave);
+  noteForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    if (!noteBox.value.trim()) return;
+    noteSave.disabled = true;
+    try {
+      const note = await api('create_client_note', { stable_key: client.stable_key, body: noteBox.value.trim() });
+      client.notes = [...(client.notes || []), note];
+      noteBox.value = '';
+      renderTodo();
+    } catch (error) { showToast(error.message, true); }
+    finally { noteSave.disabled = false; }
+  });
+  noteBlock.append(noteForm);
+  body.append(noteBlock);
+  details.append(body);
+  return details;
+}
+
+function textButton(text, label, handler) {
+  const button = document.createElement('button');
+  button.type = 'button';
+  button.className = 'secondary-button small';
+  button.textContent = text;
+  button.setAttribute('aria-label', label);
+  button.addEventListener('click', handler);
+  return button;
+}
+
+async function archiveClient(client, archived) {
+  try {
+    const updated = await api('set_client_archive', { stable_key: client.stable_key, archived });
+    Object.assign(client, updated);
+    renderTodo();
+    showToast(archived ? `${client.name} moved to Archived.` : `${client.name} restored.`);
+  } catch (error) { showToast(error.message, true); }
+}
+
+async function moveClient(client, peers, index, direction) {
+  const other = peers[index + direction];
+  if (!other) return;
+  try {
+    const currentOrder = Number.isFinite(Number(client.display_order)) ? Number(client.display_order) : index * 100;
+    const otherOrder = Number.isFinite(Number(other.display_order)) ? Number(other.display_order) : (index + direction) * 100;
+    const [updatedClient, updatedOther] = await Promise.all([
+      api('set_client_order', { stable_key: client.stable_key, display_order: otherOrder }),
+      api('set_client_order', { stable_key: other.stable_key, display_order: currentOrder })
+    ]);
+    Object.assign(client, updatedClient);
+    Object.assign(other, updatedOther);
+    renderTodo();
+  } catch (error) { showToast(error.message, true); }
 }
 
 // WBR-351. Practices, with a review cadence instead of a checkbox, below the
@@ -2158,6 +2399,11 @@ function renderTodoSearchCount(counts) {
   const node = el('todo-search-count');
   if (!node) return;
   if (!todoFilter) { node.textContent = ''; return; }
+  if (todoOwner === 'clients') {
+    const here = counts.clients || 0;
+    node.textContent = here ? `${here} client${here === 1 ? '' : 's'} match${here === 1 ? 'es' : ''}.` : 'No clients match that.';
+    return;
+  }
   const here = counts[todoOwner];
   const other = todoOwner === 'workerbee' ? 'david' : 'workerbee';
   const elsewhere = counts[other];

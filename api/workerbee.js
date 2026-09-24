@@ -63,6 +63,8 @@ function cleanUrl(value) {
 const ACTIONS = new Set([
   'create_section', 'update_section', 'create_task', 'update_task', 'delete_task', 'restore_task',
   'create_item_note', 'create_task_note', 'acknowledge_task_note',
+  'update_client_plan', 'create_client_note', 'acknowledge_client_note',
+  'set_client_archive', 'set_client_order', 'link_task_client',
   'create_update', 'update_update', 'create_journal', 'update_journal', 'mark_viewed',
   'reorder_outcomes', 'upsert_client', 'upsert_event', 'upsert_product'
 ]);
@@ -72,6 +74,7 @@ const ACTIONS = new Set([
 // deciding, so a caller cannot claim an item was routed without saying which
 // quadrant it went into.
 const TASK_FIELDS = new Set(['id', 'title', 'section_id', 'sort_order', 'status', 'owner', 'due_date', 'follow_up_date', 'work_area', 'source_url', 'urgent', 'important']);
+const CLIENT_MUTATION_FIELDS = new Set(['id', 'task_id', 'stable_key', 'body', 'living_plan', 'archived', 'display_order', 'client_key']);
 // A note carries nothing but the task it belongs to and the words. `author` is
 // derived inside workerbee_mutate from the call itself, never from the payload,
 // so a note cannot claim to be David's because a caller said so.
@@ -94,6 +97,7 @@ function pick(input, fields) {
 function sanitize(action, input) {
   let payload;
   if (action === 'reorder_outcomes' || action.startsWith('upsert_')) payload = pick(input, OPERATING_FIELDS);
+  else if (action.includes('client') || action === 'link_task_client') payload = pick(input, CLIENT_MUTATION_FIELDS);
   else if (action.includes('section')) payload = pick(input, SECTION_FIELDS);
   else if (action.includes('item_note') || action.includes('task_note')) payload = pick(input, ITEM_NOTE_FIELDS);
   else if (action.includes('task')) payload = pick(input, TASK_FIELDS);
@@ -115,6 +119,26 @@ function sanitize(action, input) {
   if (action === 'acknowledge_task_note') {
     payload.id = cleanText(payload.id, 64);
     if (!payload.id) throw new Error('Acknowledging a note needs the note.');
+  }
+  if (action === 'create_client_note') {
+    payload.stable_key = cleanText(payload.stable_key, 120, true);
+    payload.body = cleanText(payload.body, 4000, true);
+  }
+  if (action === 'update_client_plan') {
+    payload.stable_key = cleanText(payload.stable_key, 120, true);
+    if (!payload.living_plan || typeof payload.living_plan !== 'object' || Array.isArray(payload.living_plan)) throw new Error('A Living Plan needs its five sections.');
+    const allowed = ['currentGoal', 'clientCommitments', 'davidSupport', 'nextStep', 'nextSessionAgenda', 'privateSummary'];
+    payload.living_plan = Object.fromEntries(allowed.map((key) => [key, cleanText(payload.living_plan[key], 8000) || '']));
+  }
+  if (action === 'acknowledge_client_note') payload.id = cleanText(payload.id, 64, true);
+  if (action === 'set_client_archive' || action === 'set_client_order') {
+    payload.stable_key = cleanText(payload.stable_key, 120, true);
+    if (action === 'set_client_archive') payload.archived = Boolean(payload.archived);
+    if (action === 'set_client_order') payload.display_order = Number(payload.display_order);
+  }
+  if (action === 'link_task_client') {
+    payload.task_id = cleanText(payload.task_id, 64, true);
+    payload.client_key = cleanText(payload.client_key, 120);
   }
   if (action === 'create_journal' || (action === 'update_journal' && 'body' in payload)) payload.body = cleanText(payload.body, 30000, true);
   if (action === 'create_update' || action === 'update_update') {
@@ -201,7 +225,8 @@ export default async function handler(req, res) {
     const payload = sanitize(action, body.payload || {});
     const operatingAction = action === 'reorder_outcomes' || action.startsWith('upsert_');
     const noteAction = action.includes('item_note') || action.includes('task_note');
-    const mutation = noteAction ? 'workerbee_note_mutate' : operatingAction ? 'workerbee_operating_mutate' : 'workerbee_mutate';
+    const clientAction = action.includes('client') || action === 'link_task_client';
+    const mutation = clientAction ? 'workerbee_client_mutate' : noteAction ? 'workerbee_note_mutate' : operatingAction ? 'workerbee_operating_mutate' : 'workerbee_mutate';
     const result = await rpc(mutation, { p_action: action, p_payload: payload, p_server_secret: auth.serverSecret }, auth.token);
     return json(res, 200, { result });
   } catch (error) {

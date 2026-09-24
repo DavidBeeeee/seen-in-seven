@@ -50,6 +50,7 @@
       <div class="todo-owner-tabs" role="tablist" aria-label="Task owner">
         <button class="todo-owner-tab active" type="button" data-todo-owner="workerbee" role="tab" aria-selected="true">WorkerBee <span id="workerbee-task-count">0</span></button>
         <button class="todo-owner-tab" type="button" data-todo-owner="david" role="tab" aria-selected="false">DavidBee <span id="david-task-count">0</span></button>
+        <button class="todo-owner-tab" type="button" data-todo-owner="clients" role="tab" aria-selected="false">Clients <span id="clients-task-count">0</span></button>
       </div>
       <!-- WBR-350. The number on the tab used to stand on its own, and David's
            said 23 while three other surfaces said 48, 14 and 27. A count with
@@ -76,6 +77,9 @@
             <div class="capture-field"><textarea id="capture-david" rows="3" autocomplete="off" placeholder="Something for you to do"></textarea><button class="primary-button" type="submit">Add</button></div>
           </form>
         </div>
+        <label class="capture-client-picker" for="capture-client-key" hidden>Attach this Todo to a client
+          <select id="capture-client-key" aria-label="Client this Todo belongs to"><option value="">Choose a client</option></select>
+        </label>
         <div id="capture-list" class="capture-list"></div>
       </section>
       <div id="todo-board" class="todo-board"></div>
