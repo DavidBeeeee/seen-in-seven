@@ -181,10 +181,7 @@ function renderStudio() {
   el('device-progress').hidden = !localProgress || hasStudioAccess('seeninseven');
   const isAdmin = Boolean(signedIn && studioProfile && studioProfile.is_admin === true);
   el('workerbee-nav-item').hidden = !isAdmin;
-  el('workerbee-menu-item').hidden = !isAdmin;
   el('admin-nav-item').hidden = !isAdmin;
-  el('admin-menu-item').hidden = !isAdmin;
-  el('eee-menu-item').hidden = !eeeUnlocked;
   el('eee-card').hidden = !eeeCardVisible;
   el('studio-app-count').textContent = (eeeCardVisible ? 3 : 2) + ' apps';
 

@@ -22,4 +22,13 @@ assert.match(migration, /enable row level security/);
 assert.match(migration, /grant select on table public\.studio_catalog_settings to anon, authenticated/);
 assert.match(migration, /revoke all on function public\.admin_set_studio_catalog_visibility\(text\) from public, anon/);
 
-console.log('Studio catalog visibility checks passed for member access, launch timing, and admin overrides.');
+const sidebar = index.split('<aside class="studio-sidebar"')[1].split('</aside>')[0];
+const hub = sidebar.split('<span>Momentum Hub</span>')[1].split('</details>')[0];
+for (const route of ['/eee', '/storysculpt', '/navigator', '/boardroom']) assert.ok(hub.includes(`href="${route}"`));
+for (const route of ['/vault', '/certainty']) assert.ok(!hub.includes(`href="${route}"`), `${route} belongs outside the Hub group.`);
+for (const id of ['workerbee-nav-item', 'admin-nav-item']) assert.match(sidebar, new RegExp(`id="${id}"[^>]+hidden`));
+const accountMenu = index.split('id="account-menu"')[1];
+for (const route of ['/seeninseven', '/eee', '/dashboard', '/admin']) assert.ok(!accountMenu.includes(`href="${route}"`), 'App navigation must not be duplicated in the account menu.');
+assert.ok(!studio.includes("el('workerbee-menu-item')"), 'Removed menu elements must not cause a render error.');
+assert.match(read('css/studio.css'), /\.studio-home \.studio-sidebar \{[^}]*display: flex/);
+console.log('Studio catalog and nested navigation checks passed, including private links, mobile access and no duplicate account navigation.');

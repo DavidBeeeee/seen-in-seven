@@ -21,7 +21,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
-<body>
+<body class="studio-home">
   <header class="studio-header">
     <a class="studio-brand" href="/" aria-label="Colorado Mastermind Studio home">
       <span class="studio-mark">CM</span>
@@ -51,18 +51,32 @@
   <div class="studio-layout">
     <aside class="studio-sidebar" aria-label="Studio navigation">
       <nav>
-        <a class="nav-item active" href="/">
-          <i data-lucide="layout-grid"></i>
-          <span>My Studio</span>
-        </a>
+        <details class="studio-nav-group" open>
+        <summary class="nav-item active"><i data-lucide="layout-grid"></i><span>My Studio</span></summary>
+        <div class="studio-nav-children">
+        <a class="nav-item" href="/" aria-current="page"><span>Overview</span></a>
         <a class="nav-item" id="workerbee-nav-item" href="/dashboard" hidden>
           <i data-lucide="list-checks"></i>
           <span>WorkerBee</span>
         </a>
+        <a class="nav-item" href="/seeninseven"><i data-lucide="video"></i><span>SeenInSeven</span></a>
+        <details class="studio-nav-group">
+          <summary class="nav-item"><i data-lucide="sparkles"></i><span>Momentum Hub</span></summary>
+          <div class="studio-nav-children">
+            <a class="nav-item" href="/eee"><span>Hub workspace</span></a>
+            <a class="nav-item" href="/storysculpt"><span>StorySculpt</span></a>
+            <a class="nav-item" href="/navigator"><span>Next Step Navigator</span></a>
+            <a class="nav-item" href="/boardroom"><span>AI Boardroom</span></a>
+          </div>
+        </details>
+        <a class="nav-item" href="/vault"><i data-lucide="library"></i><span>Solution Vault</span></a>
+        <a class="nav-item" href="/certainty"><i data-lucide="calendar-check"></i><span>Certainty Sessions</span></a>
         <a class="nav-item" id="admin-nav-item" href="/admin" hidden>
           <i data-lucide="shield-check"></i>
           <span>Administration</span>
         </a>
+        </div>
+        </details>
       </nav>
       <div class="sidebar-note">
         <span class="status-dot"></span>
@@ -249,21 +263,6 @@
       <i data-lucide="settings"></i>
       Account settings
     </button>
-    <a href="/seeninseven">
-      <i data-lucide="video"></i>
-      SeenInSeven
-    </a>
-    <a href="/eee" id="eee-menu-item" hidden>
-      <i data-lucide="sparkles"></i>
-      Momentum Hub Workspace    </a>
-    <a id="workerbee-menu-item" href="/dashboard" hidden>
-      <i data-lucide="list-checks"></i>
-      WorkerBee Dashboard
-    </a>
-    <a id="admin-menu-item" href="/admin" hidden>
-      <i data-lucide="shield-check"></i>
-      Administration
-    </a>
     <button id="sign-out-button" type="button">
       <i data-lucide="log-out"></i>
       Sign out
@@ -271,6 +270,6 @@
   </div>
 
   <script src="/js/777-launch-cycle.js?v=2026-09"></script>
-  <script src="/js/studio.js?v=password-default-1"></script>
+  <script src="/js/studio.js?v=nested-studio-nav-20260926"></script>
 </body>
 </html>
