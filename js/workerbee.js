@@ -925,6 +925,11 @@ function barColumn(label, total, max, subset = 0) {
 }
 
 function renderAnalytics() {
+  const procedure = (state.updates || []).find(item => item.metadata?.source === 'operations-catalog' && item.status !== 'archived');
+  const procedureBody = el('operations-catalog');
+  if (procedureBody) procedureBody.textContent = procedure?.body || 'The procedure catalog has not been published yet.';
+  const procedureDate = el('operations-catalog-date');
+  if (procedureDate) procedureDate.textContent = procedure ? `Published ${procedure.updated_at || procedure.created_at}. Canonical source: ${procedure.metadata.path}.` : '';
   const snapshots = metricSnapshots();
   const note = el('analytics-note');
   const cards = el('analytics-cards');
