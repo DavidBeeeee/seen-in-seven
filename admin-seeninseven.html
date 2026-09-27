@@ -236,6 +236,19 @@
       </div>
     </section>
 
+    <section class="grid">
+      <div class="card card-pad">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Certainty Sessions</div>
+            <div class="section-note" id="certainty-note">Upcoming and past 1:1 bookings.</div>
+          </div>
+          <button class="btn btn-small" onclick="copyCertaintySessions()">Copy</button>
+        </div>
+        <div id="certainty-panel" class="loading">Loading sessions...</div>
+      </div>
+    </section>
+
     <section class="grid main-grid">
       <div class="card card-pad">
         <div class="section-head">
@@ -398,7 +411,8 @@ async function loadAll() {
     rpcSafe('logs', 'admin_get_logs'),
     rpcSafe('preauth', 'admin_get_preauth_events'),
     rpcSafe('points', 'admin_get_points'),
-    rpcSafe('studioAccess', 'admin_get_studio_entitlements')
+    rpcSafe('studioAccess', 'admin_get_studio_entitlements'),
+    rpcSafe('certainty', 'admin_get_certainty_sessions')
   ]);
   const byName = Object.fromEntries(calls.map(c => [c.name, c]));
   adminState.users = byName.users.data || [];
@@ -410,8 +424,10 @@ async function loadAll() {
   adminState.preauthEvents = byName.preauth.data || [];
   adminState.points = byName.points.data || [];
   adminState.studioAccess = byName.studioAccess.data || [];
-  adminState.optionalWarnings = Object.fromEntries(calls.filter(c => (c.name === 'preauth' || c.name === 'points' || c.name === 'studioAccess') && c.error).map(c => [c.name, c.error]));
-  adminState.loadErrors = Object.fromEntries(calls.filter(c => c.error && c.name !== 'preauth' && c.name !== 'points' && c.name !== 'studioAccess').map(c => [c.name, c.error]));
+  adminState.certainty = (byName.certainty.data && !Array.isArray(byName.certainty.data)) ? byName.certainty.data : { upcoming: [], past: [], counts: { upcoming: 0, past: 0, cancelled: 0 } };
+  const optionalNames = ['preauth', 'points', 'studioAccess', 'certainty'];
+  adminState.optionalWarnings = Object.fromEntries(calls.filter(c => optionalNames.includes(c.name) && c.error).map(c => [c.name, c.error]));
+  adminState.loadErrors = Object.fromEntries(calls.filter(c => c.error && !optionalNames.includes(c.name)).map(c => [c.name, c.error]));
   adminState.rows = buildRows();
   pruneSelectedIds();
   document.getElementById('last-loaded').textContent = 'Loaded ' + new Date().toLocaleTimeString([], {hour:'numeric', minute:'2-digit'});
@@ -432,7 +448,62 @@ function setLoading() {
   document.getElementById('funnel-panel').innerHTML = '<div class="loading">Loading funnel...</div>';
   document.getElementById('stall-panel').innerHTML = '<div class="loading">Loading stalls...</div>';
   document.getElementById('issue-panel').innerHTML = '<div class="loading">Loading issues...</div>';
+  document.getElementById('certainty-panel').innerHTML = '<div class="loading">Loading sessions...</div>';
   document.getElementById('user-tbody').innerHTML = '<tr><td colspan="11" class="loading">Loading...</td></tr>';
+}
+
+// The operator view David never had: who booked a Certainty session, upcoming
+// and past, behind the same is_admin boundary as every other admin_get_*. Reads
+// admin_get_certainty_sessions (a jsonb object, not a row set).
+function renderCertainty() {
+  const panel = document.getElementById('certainty-panel');
+  const note = document.getElementById('certainty-note');
+  if (!panel) return;
+  if (adminState.optionalWarnings && adminState.optionalWarnings.certainty) {
+    panel.innerHTML = '<div class="loading">Sessions unavailable: ' + h(adminState.optionalWarnings.certainty) + '</div>';
+    return;
+  }
+  const data = adminState.certainty || { upcoming: [], past: [], counts: {} };
+  const upcoming = Array.isArray(data.upcoming) ? data.upcoming : [];
+  const past = Array.isArray(data.past) ? data.past : [];
+  const counts = data.counts || {};
+  if (note) note.textContent = (counts.upcoming || 0) + ' upcoming · ' + (counts.past || 0) + ' past · ' + (counts.cancelled || 0) + ' cancelled';
+  if (!upcoming.length && !past.length) {
+    panel.innerHTML = '<div class="loading">No Certainty sessions booked yet.</div>';
+    return;
+  }
+  const row = (s, isUpcoming) => {
+    const when = h(s.label_day || '') + ' · ' + h(s.label_start || '') + '–' + h(s.label_end || '') + ' ET';
+    const modeLabel = s.mode === 'zoom' ? 'Zoom' : 'Phone' + (s.phone ? ' (' + h(s.phone) + ')' : '');
+    const cal = s.status === 'cancelled'
+      ? '<span style="color:#fca5a5">cancelled</span>'
+      : 'cal: ' + h(s.calendar_status || 'pending');
+    return '<tr>' +
+      '<td>' + when + '</td>' +
+      '<td>' + h(s.member_name || '—') + '<div class="muted" style="font-size:.8em">' + h(s.member_email || '') + '</div></td>' +
+      '<td>' + modeLabel + '</td>' +
+      '<td>' + (s.topic ? h(s.topic) : '<span class="muted">—</span>') + '</td>' +
+      '<td>' + cal + '</td>' +
+      '</tr>';
+  };
+  const section = (title, list, isUpcoming) => list.length
+    ? '<div style="margin-bottom:6px;font-weight:700;color:var(--ink,inherit)">' + title + ' (' + list.length + ')</div>' +
+      '<div class="table-wrap" style="margin-bottom:16px"><table style="min-width:640px"><thead><tr>' +
+      '<th>When (ET)</th><th>Member</th><th>Mode</th><th>Bringing</th><th>Status</th>' +
+      '</tr></thead><tbody>' + list.map(s => row(s, isUpcoming)).join('') + '</tbody></table></div>'
+    : '';
+  panel.innerHTML = section('Upcoming', upcoming, true) + section('Past & cancelled', past, false);
+}
+
+function copyCertaintySessions() {
+  const data = adminState.certainty || { upcoming: [], past: [] };
+  const all = [].concat(
+    (data.upcoming || []).map(s => Object.assign({ bucket: 'upcoming' }, s)),
+    (data.past || []).map(s => Object.assign({ bucket: 'past' }, s))
+  );
+  const lines = all.map(s => [s.bucket, s.label_day, (s.label_start || '') + '-' + (s.label_end || ''), s.member_name, s.member_email, s.mode, s.status, s.calendar_status, (s.topic || '').replace(/\t/g, ' ')].join('\t'));
+  const header = ['bucket', 'day', 'time_et', 'member', 'email', 'mode', 'status', 'calendar', 'topic'].join('\t');
+  navigator.clipboard.writeText([header].concat(lines).join('\n')).catch(() => {});
 }
 
 function eventDetailValue(event, key) {
@@ -626,6 +697,7 @@ function renderAll() {
   renderFunnel();
   renderStalls();
   renderIssues();
+  renderCertainty();
   applyFilters();
   if (adminState.selectedUserId) renderDrawer(adminState.selectedUserId);
 }

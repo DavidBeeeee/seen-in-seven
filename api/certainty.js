@@ -44,6 +44,48 @@ async function rpc(name, args, userToken) {
   return { ok: response.ok, status: response.status, data };
 }
 
+// Observability. Every book, cancel, state read, and calendar write records an
+// event so a broken booking is diagnosable and detectable before a member
+// reports it (Developer 21, 22, 71, 72, 76, 79, 80). It goes through the
+// record_log_event RPC, not a direct POST to /rest/v1/logs: the logs INSERT
+// policy checks the INTERNAL public.users.id, which this serverless function
+// does not hold (it only has the auth uid). The RPC resolves the member's
+// internal id from auth.uid() itself, so the event is attributed to the member
+// who caused it and actually lands. It is best-effort and never throws or
+// blocks the booking on its own failure: telemetry that breaks the feature it
+// watches is worse than no telemetry. An event NEVER carries member content:
+// no topic, no phone, no email, only outcomes, modes, codes, and timings.
+async function recordEvent(userToken, eventType, detail) {
+  if (!userToken) return;
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 2500);
+    try {
+      await fetch(SUPABASE_URL + '/rest/v1/rpc/record_log_event', {
+        method: 'POST',
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: 'Bearer ' + userToken,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal'
+        },
+        body: JSON.stringify({ p_event_type: eventType, p_detail: detail || {} }),
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+  } catch (error) {
+    // Observability must never break the app.
+  }
+}
+
+// The friendly error code an RPC raised, e.g. SLOT_TAKEN, for the event detail.
+// It is a low-cardinality class, never member content.
+function resultCode(result) {
+  return (result && result.data && result.data.message) || (result && !result.ok ? 'rpc-error' : null);
+}
+
 // David's personal Zoom room. Override with the CERTAINTY_ZOOM_URL env var to
 // keep it out of source (the Vercel token could not set it during the build).
 // Either way it stays server-side: the join link is only ever returned to the
@@ -127,16 +169,27 @@ export default async function handler(req, res) {
   const userToken = token(req);
   const user = await authenticatedUser(req);
   if (!user || !(await hasEeeAccess(userToken))) {
+    // An authenticated member without access is worth seeing; an anonymous
+    // caller has no member row so the event is simply dropped by the RPC.
+    if (user) await recordEvent(userToken, 'certainty_denied', { schema: 1, outcome: 'denied', reason: 'no-eee-access' });
     return json(res, 403, { error: 'An active Momentum Hub membership is required.' });
   }
 
   const action = String(req.body && req.body.action || 'state');
+  const startedAt = Date.now();
 
   try {
     if (action === 'state') {
       const result = await rpc('certainty_state', { p_days: 21 }, userToken);
-      if (!result.ok) return fail(res, result);
+      if (!result.ok) {
+        await recordEvent(userToken, 'certainty_state', { schema: 1, outcome: 'error', code: resultCode(result), latencyMs: Date.now() - startedAt });
+        return fail(res, result);
+      }
       const state = result.data || {};
+      await recordEvent(userToken, 'certainty_state', {
+        schema: 1, outcome: 'ok', latencyMs: Date.now() - startedAt,
+        bookedThisWeek: Boolean(state.bookedThisWeek), hasUpcoming: Boolean(state.upcoming), historyCount: Number(state.historyCount || 0)
+      });
       return json(res, 200, { ...state, upcoming: state.upcoming ? { ...state.upcoming, join: joinFor(state.upcoming) } : null });
     }
 
@@ -149,7 +202,12 @@ export default async function handler(req, res) {
         p_phone: body.phone ? String(body.phone) : null,
         p_topic: body.topic ? String(body.topic) : null
       }, userToken);
-      if (!booked.ok) return fail(res, booked);
+      if (!booked.ok) {
+        await recordEvent(userToken, 'certainty_book', {
+          schema: 1, outcome: 'error', mode: String(body.mode || ''), code: resultCode(booked), latencyMs: Date.now() - startedAt
+        });
+        return fail(res, booked);
+      }
 
       const session = booked.data;
       const join = joinFor(session);
@@ -162,6 +220,15 @@ export default async function handler(req, res) {
         calendar = { connected: true, status: 'failed' };
       }
       await rpc('certainty_set_calendar', { p_id: session.id, p_event_id: calendar.eventId || null, p_status: calendar.status }, userToken);
+      // The calendar write is its own event so a silent calendar outage is
+      // visible on its own, not buried inside the booking's success.
+      await recordEvent(userToken, 'certainty_calendar', {
+        schema: 1, status: calendar.status, connected: Boolean(calendar.connected)
+      });
+      await recordEvent(userToken, 'certainty_book', {
+        schema: 1, outcome: 'ok', mode: String(session.mode || ''), calendarStatus: calendar.status,
+        calendarConnected: Boolean(calendar.connected), latencyMs: Date.now() - startedAt
+      });
 
       return json(res, 200, {
         session: { ...session, calendar_status: calendar.status, join },
@@ -171,12 +238,17 @@ export default async function handler(req, res) {
 
     if (action === 'cancel') {
       const cancelled = await rpc('cancel_certainty_session', { p_id: String(req.body && req.body.id || '') }, userToken);
-      if (!cancelled.ok) return fail(res, cancelled);
+      if (!cancelled.ok) {
+        await recordEvent(userToken, 'certainty_cancel', { schema: 1, outcome: 'error', code: resultCode(cancelled), latencyMs: Date.now() - startedAt });
+        return fail(res, cancelled);
+      }
+      await recordEvent(userToken, 'certainty_cancel', { schema: 1, outcome: 'ok', latencyMs: Date.now() - startedAt });
       return json(res, 200, { cancelled: true });
     }
 
     return json(res, 400, { error: 'Unknown action.' });
   } catch (error) {
+    await recordEvent(userToken, 'certainty_error', { schema: 1, outcome: 'error', action, latencyMs: Date.now() - startedAt });
     return json(res, 500, { error: (error && error.message) || 'The session service is unavailable right now.' });
   }
 }

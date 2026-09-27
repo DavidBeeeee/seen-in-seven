@@ -52,18 +52,25 @@ const PROMPT_VERSION = promptVersion(
   PROMPT_TEMPLATE_TAG
 );
 
-// Best-effort event write to the logs table, using the member's own token so it
-// passes the same row-level policy the client logEvent uses. It never throws
-// and never blocks generation on its own failure: telemetry that breaks the
-// feature it watches is worse than no telemetry. Member content is never
-// passed; buildEventDetail whitelists the fields. WBR-384.
+// Best-effort event write, using the member's own token. It goes through the
+// record_log_event RPC, NOT a direct POST to /rest/v1/logs. The logs INSERT
+// policy checks the INTERNAL public.users.id (user_id IN (select id from users
+// where auth_id = auth.uid())), but a serverless function only holds the auth
+// uid from /auth/v1/user, and the auth uid is never a valid internal id here:
+// every one of these writes was silently rejected by RLS and StorySculpt's
+// WBR-384 observability logged 0 rows from the day it shipped. The RPC resolves
+// the caller's internal id from auth.uid() itself, so the event is attributed
+// to the right member and actually lands. It never throws and never blocks
+// generation on its own failure; member content is never passed, buildEventDetail
+// whitelists the fields. WBR-384; RLS fix filed alongside the Certainty
+// observability build, 2026-09-27.
 async function recordEvent(token, userId, eventType, detail) {
-  if (!token || !userId) return;
+  if (!token) return;
   try {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 2500);
     try {
-      await fetch(SUPABASE_URL + '/rest/v1/logs', {
+      await fetch(SUPABASE_URL + '/rest/v1/rpc/record_log_event', {
         method: 'POST',
         headers: {
           apikey: SUPABASE_ANON_KEY,
@@ -71,7 +78,7 @@ async function recordEvent(token, userId, eventType, detail) {
           'Content-Type': 'application/json',
           Prefer: 'return=minimal'
         },
-        body: JSON.stringify({ user_id: userId, event_type: eventType, detail }),
+        body: JSON.stringify({ p_event_type: eventType, p_detail: detail }),
         signal: controller.signal
       });
     } finally {

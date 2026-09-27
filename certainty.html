@@ -49,6 +49,26 @@
     }
     .cs-cal-note i { width: 14px; height: 14px; }
 
+    /* Member session history */
+    .cs-hist-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+    .cs-hist-row {
+      display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+      background: var(--studio-surface-2); border: 1px solid var(--studio-border); border-radius: 10px;
+    }
+    .cs-hist-cal {
+      flex: none; display: inline-flex; align-items: center; justify-content: center;
+      width: 34px; height: 34px; border-radius: 9px; background: var(--studio-surface); color: var(--studio-teal);
+    }
+    .cs-hist-cal i { width: 18px; height: 18px; }
+    .cs-hist-row > div { flex: 1 1 auto; min-width: 0; }
+    .cs-hist-day { font-family: 'Oswald', sans-serif; font-size: .98rem; line-height: 1.15; }
+    .cs-hist-meta { display: inline-flex; align-items: center; gap: 6px; font-size: .78rem; color: var(--studio-muted); margin-top: 2px; }
+    .cs-hist-meta i { width: 13px; height: 13px; }
+    .cs-hist-time { flex: none; font-size: .8rem; font-weight: 700; color: var(--studio-soft); white-space: nowrap; }
+    @media (max-width: 560px) {
+      .cs-hist-time { display: none; }
+    }
+
     /* Personal panel (David) */
     .cs-david { display: grid; gap: 12px; align-content: start; }
     .cs-david-mark {
@@ -246,6 +266,9 @@
             </div>
             <div class="cs-msg" id="cs-msg" role="status" aria-live="polite" aria-atomic="true"></div>
           </section>
+
+          <!-- Your past sessions: what the membership has delivered so far -->
+          <section class="cs-card cs-history cs-hide" id="cs-history"><!-- filled by JS --></section>
 
           <!-- Supporting content -->
           <section class="cs-support">
@@ -498,12 +521,43 @@
         URL.revokeObjectURL(a.href);
       }
 
+      // Your past sessions: makes the membership's accruing value visible, so a
+      // member paying every month can see what they have gotten. Shows held
+      // sessions that have happened, most recent first; cancellations are not
+      // value received and are left out. The server sends only the caller's own
+      // rows.
+      function renderHistory() {
+        var host = el('cs-history');
+        var items = (state && state.history) || [];
+        var count = (state && state.historyCount) || items.length;
+        if (!items.length) { host.classList.add('cs-hide'); host.innerHTML = ''; return; }
+        var rows = items.map(function (h) {
+          var icon = h.mode === 'zoom' ? 'video' : 'phone';
+          var meta = (h.mode === 'zoom' ? 'On Zoom' : 'By phone') + (h.topic ? ' &middot; ' + escapeHtml(h.topic) : '');
+          return '<li class="cs-hist-row">' +
+            '<span class="cs-hist-cal"><i data-lucide="calendar-check"></i></span>' +
+            '<div><div class="cs-hist-day">' + escapeHtml(h.label_day || '') + '</div>' +
+            '<div class="cs-hist-meta"><i data-lucide="' + icon + '"></i>' + meta + '</div></div>' +
+            '<span class="cs-hist-time">' + escapeHtml(h.label_start || '') + ' &ndash; ' + escapeHtml(h.label_end || '') + ' ET</span>' +
+            '</li>';
+        }).join('');
+        host.innerHTML =
+          '<p class="cs-eyebrow">Your sessions so far</p>' +
+          '<h2 style="font-family:\'Oswald\',sans-serif;font-size:1.15rem;margin:2px 0 2px">' +
+            count + ' session' + (count === 1 ? '' : 's') + ' with David</h2>' +
+          '<p style="color:var(--studio-muted);font-size:.82rem;margin:0 0 12px">Every week your membership includes is one of these.</p>' +
+          '<ul class="cs-hist-list">' + rows + '</ul>';
+        host.classList.remove('cs-hide');
+        icons();
+      }
+
       function refresh() {
         return api('state').then(function (r) {
           state = r.ok ? r.data : { upcoming: null, taken: [] };
           el('cs-state-skeleton').classList.add('cs-hide');
           el('cs-hero').classList.remove('cs-hide');
           renderPrimary();
+          renderHistory();
           if (el('cs-book').classList.contains('open')) { renderDays(); renderTimes(); }
         });
       }
