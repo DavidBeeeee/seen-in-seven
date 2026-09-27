@@ -313,7 +313,7 @@ function reportDayLabel(reportDate) {
   return formatDate(reportDate) || 'Report';
 }
 
-function renderReportPeriod(label, period) {
+function renderReportPeriod(label, period, reportDate) {
   const card = document.createElement('article');
   card.className = 'report-period';
   const header = document.createElement('header');
@@ -401,7 +401,7 @@ function renderReportPeriod(label, period) {
   // tonight runs it, in English, instead of decoding Board ids at the point
   // where correcting it is still cheap.
   if (label === 'Morning') {
-    const walkthroughs = todaysWalkthroughs();
+    const walkthroughs = todaysWalkthroughs(reportDate);
     if (walkthroughs.length) card.append(walkthroughButton(walkthroughs));
   }
   const publicActions = period && Array.isArray(period.publicActions) ? period.publicActions : [];
@@ -430,22 +430,28 @@ function renderReportPeriod(label, period) {
 // prose still matches the assignment: an order amended after its walkthrough
 // was written says so on the page rather than reading as current, which is the
 // failure the whole mechanism exists to make visible.
-export function todaysWalkthroughs() {
+export function todaysWalkthroughs(forDate = dailyReportUpdates()[0]?.metadata.report_date) {
   const orders = (state.updates || [])
     .filter(item => item.kind === 'outcome'
       && (item.metadata || {}).source === 'morning-work-order'
+      && ['active', 'completed'].includes(item.status)
       && (item.metadata || {}).walkthrough);
   // ST-873773fb. Only the current day's work orders belong here. A retired plan
   // row keeps its `source: morning-work-order` and its walkthrough after the
   // next morning defers it, so filtering on source alone stacked every past
   // day's orders onto this list ("17 from yesterday"). The current day is the
   // latest published order date; anything older is history, not today's plan.
-  const today = orders.reduce((latest, item) => {
+  const today = forDate || orders.reduce((latest, item) => {
     const date = (item.metadata || {}).date || '';
     return date > latest ? date : latest;
   }, '');
-  return orders
-    .filter(item => ((item.metadata || {}).date || '') === today)
+  const current = orders.filter(item => ((item.metadata || {}).date || '') === today);
+  // Republishing an order must not multiply its explanation. Keep the newest
+  // published row for the same order (or lane for legacy rows).
+  const unique = new Map();
+  current.sort((a, b) => String(a.updated_at || a.created_at || '').localeCompare(String(b.updated_at || b.created_at || '')))
+    .forEach(item => unique.set(item.metadata.order_id || item.metadata.work_order_id || item.metadata.lane || item.id, item));
+  return [...unique.values()]
     .sort((a, b) => Number(a.metadata.rank || 99) - Number(b.metadata.rank || 99))
     .map(item => ({
       item,
@@ -537,7 +543,7 @@ function renderDailyReport() {
     const grid = document.createElement('div');
     grid.className = 'daily-report-grid';
     grid.append(
-      renderReportPeriod('Morning', record.metadata.morning),
+      renderReportPeriod('Morning', record.metadata.morning, reportDate),
       renderReportPeriod('Afternoon', record.metadata.afternoon),
       renderReportPeriod('Moltbook', record.metadata.moltbook),
       renderReportPeriod('Late night', record.metadata.late_night)
