@@ -2,7 +2,8 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 
 const read = path => fs.readFileSync(new URL('../' + path, import.meta.url), 'utf8');
-const challenge = read('funnel-pages/777-challenge-page1-block1-optin-above-form.html');
+// This checks historical pasted source only; Systeme is the live source of truth.
+const challenge = read('funnel-pages/archive-stale-2026-09-15/777-challenge-page1-block1-optin-above-form.html');
 const standalone = read('funnel-pages/sis-page1-block1-main-body.html');
 const thankYou = read('funnel-pages/sis-page6-block1-thankyou.html');
 
@@ -16,4 +17,4 @@ assert.doesNotMatch(standalone, /Comment-to-Client Formula/, 'The deferred Comme
 assert.doesNotMatch(thankYou, /login link has been sent/i, 'The thank-you page still promises an automatic login email that checkout does not send.');
 assert.match(thankYou, /choose Sign In, and enter the same email you used for your order/, 'The thank-you page does not explain the verified access flow.');
 
-console.log('Funnel-source checks passed for durable form CTAs, current offer scope, and truthful buyer access instructions.');
+console.log('Historical funnel-source checks passed; this does not verify the live Systeme pages.');
