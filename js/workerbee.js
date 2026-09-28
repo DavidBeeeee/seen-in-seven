@@ -2542,6 +2542,17 @@ function queueQuadrant(item) {
 // on purpose but stay visible. An execution-queue card keeps its own logic.
 function boardQuadrant(item) {
   if (item.metadata?.source === 'execution-queue') return queueQuadrant(item);
+  // Scored cards: urgency and importance, 1 to 10 each, six or more counts.
+  // David, 2026-09-28: every item is judged on both, one at a time, and the
+  // quadrant follows from the pair. Priority alone put Ward in Q2.
+  const urgency = Number(item.metadata?.urgency);
+  const importance = Number(item.metadata?.importance);
+  if (urgency >= 1 && importance >= 1) {
+    const urgent = urgency >= 6;
+    const important = importance >= 6;
+    if (urgent) return important ? 'Q1' : 'Q3';
+    return important ? 'Q2' : 'Q4';
+  }
   const priority = Number(item.metadata?.priority);
   const blocked = Boolean(item.metadata?.blocked_by);
   if (priority <= 1) return blocked ? 'Q3' : 'Q1';
