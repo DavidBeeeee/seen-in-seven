@@ -1,4 +1,12 @@
 {
+  "functions": {
+    "api/hub-page.js": {
+      "includeFiles": "api/_hub/**"
+    },
+    "api/storysculpt.js": {
+      "includeFiles": "api/_hub/storysculpt-src/**"
+    }
+  },
   "rewrites": [
     {
       "source": "/studio",
@@ -38,43 +46,43 @@
     },
     {
       "source": "/eee",
-      "destination": "/eee.html"
+      "destination": "/api/hub-page?tool=eee"
     },
     {
       "source": "/eee/",
-      "destination": "/eee.html"
+      "destination": "/api/hub-page?tool=eee"
     },
     {
       "source": "/storysculpt",
-      "destination": "/storysculpt.html"
+      "destination": "/api/hub-page?tool=storysculpt"
     },
     {
       "source": "/storysculpt/",
-      "destination": "/storysculpt.html"
+      "destination": "/api/hub-page?tool=storysculpt"
     },
     {
       "source": "/navigator",
-      "destination": "/navigator.html"
+      "destination": "/api/hub-page?tool=navigator"
     },
     {
       "source": "/navigator/",
-      "destination": "/navigator.html"
+      "destination": "/api/hub-page?tool=navigator"
     },
     {
       "source": "/vault",
-      "destination": "/vault.html"
+      "destination": "/api/hub-page?tool=vault"
     },
     {
       "source": "/vault/",
-      "destination": "/vault.html"
+      "destination": "/api/hub-page?tool=vault"
     },
     {
       "source": "/certainty",
-      "destination": "/certainty.html"
+      "destination": "/api/hub-page?tool=certainty"
     },
     {
       "source": "/certainty/",
-      "destination": "/certainty.html"
+      "destination": "/api/hub-page?tool=certainty"
     },
     {
       "source": "/admin",

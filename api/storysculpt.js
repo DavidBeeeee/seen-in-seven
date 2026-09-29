@@ -16,8 +16,12 @@ const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zdtkwpzdwnzzmdwrvmka.s
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
 const MODES = new Set(['bold', 'mini', 'rant']);
 
+// The StorySculpt knowledge lives under api/_hub, not assets, so it is bundled
+// into the function but never served as a public static file. It used to sit in
+// assets/storysculpt, where /assets/storysculpt/instructions.txt and every
+// knowledge file was downloadable by anyone. WBR-385.
 function source(name) {
-  return readFileSync(join(process.cwd(), 'assets', 'storysculpt', name), 'utf8');
+  return readFileSync(join(process.cwd(), 'api', '_hub', 'storysculpt-src', name), 'utf8');
 }
 
 const CORE_INSTRUCTIONS = source('instructions.txt');

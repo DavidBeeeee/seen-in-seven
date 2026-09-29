@@ -12,7 +12,7 @@ const APP_CATALOG = [
 
 const adminEl = id => document.getElementById(id);
 let studioAdminSession = null;
-let studioAdminState = { users: [], entitlements: [], grants: [], webhooks: [], scripts: [], progress: [], logs: [], boardroom: [], catalog: [], rows: [], errors: {} };
+let studioAdminState = { users: [], entitlements: [], grants: [], webhooks: [], scripts: [], progress: [], logs: [], boardroom: [], catalog: [], hubUsage: [], rows: [], errors: {} };
 
 function refreshAdminIcons() {
   if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
@@ -175,6 +175,7 @@ async function loadStudioAdmin() {
     rpcSafe('progress', 'admin_get_progress'),
     rpcSafe('logs', 'admin_get_logs'),
     rpcSafe('boardroom', 'admin_get_boardroom_activity'),
+    rpcSafe('hubUsage', 'admin_get_hub_usage'),
     tableSafe('catalog', 'studio_catalog_settings', 'app_key,catalog_mode,updated_at')
   ]);
   const loaded = Object.fromEntries(results.map(result => [result.name, result]));
@@ -186,6 +187,7 @@ async function loadStudioAdmin() {
   studioAdminState.progress = loaded.progress.data;
   studioAdminState.logs = loaded.logs.data;
   studioAdminState.boardroom = loaded.boardroom.data;
+  studioAdminState.hubUsage = loaded.hubUsage.data;
   studioAdminState.catalog = loaded.catalog.data;
   studioAdminState.errors = Object.fromEntries(results.filter(result => result.error).map(result => [result.name, result.error]));
   studioAdminState.rows = buildCustomerRows();
@@ -232,10 +234,35 @@ function renderStudioAdmin() {
   renderNotice();
   renderMetrics();
   renderAppSummary();
+  renderHubUsage();
   renderEeeVisibility();
   renderCommerce();
   renderCustomers();
   refreshAdminIcons();
+}
+
+// WBR-384: surface each Momentum Hub tool's server-logged usage. Defensive by
+// design: any failure here must never break the rest of the admin, so it is
+// wrapped and every element write is guarded.
+function renderHubUsage() {
+  try {
+    const usage = (Array.isArray(studioAdminState.hubUsage) && studioAdminState.hubUsage[0]) || {};
+    const setText = (id, value) => { const el = adminEl(id); if (el) el.textContent = value; };
+    setText('usage-storysculpt', String(Number(usage.storysculpt_generations || 0)));
+    setText('usage-navigator', String(Number(usage.navigator_generations || 0)));
+    setText('usage-boardroom', String(Number(usage.boardroom_deepseek_calls || 0)));
+    setText('usage-certainty', String(Number(usage.certainty_events || 0)));
+    const lastValues = [usage.storysculpt_last, usage.navigator_last, usage.boardroom_last, usage.certainty_last]
+      .map(dateMs).filter(ms => ms > 0);
+    const updated = adminEl('usage-updated');
+    if (updated) {
+      updated.textContent = lastValues.length
+        ? 'Last tool activity ' + formatDate(new Date(Math.max.apply(null, lastValues)).toISOString())
+        : (studioAdminState.errors && studioAdminState.errors.hubUsage ? 'Usage could not be loaded.' : 'No tool usage recorded yet.');
+    }
+  } catch (error) {
+    // Never let the usage panel break the admin.
+  }
 }
 
 function currentEeeCatalogMode() {

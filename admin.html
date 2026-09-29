@@ -213,6 +213,24 @@
                 <i data-lucide="arrow-right"></i>
               </a>
             </article>
+
+            <article class="admin-app-card">
+              <div class="admin-app-top">
+                <span class="app-admin-icon"><i data-lucide="activity"></i></span>
+                <span class="status-chip status-live">Live</span>
+              </div>
+              <h3>Hub tool usage</h3>
+              <p>Server-logged usage for each Momentum Hub tool. StorySculpt, Next Step Navigator, and Certainty log to the shared event log; AI Boardroom logs its own generations and turns.</p>
+              <div class="app-stat-row">
+                <div><strong id="usage-storysculpt">-</strong><span>StorySculpt scripts</span></div>
+                <div><strong id="usage-navigator">-</strong><span>Navigator routes</span></div>
+              </div>
+              <div class="app-stat-row">
+                <div><strong id="usage-boardroom">-</strong><span>Boardroom generations</span></div>
+                <div><strong id="usage-certainty">-</strong><span>Certainty events</span></div>
+              </div>
+              <p class="catalog-visibility-status" id="usage-updated">Loading usage...</p>
+            </article>
           </div>
         </section>
 
