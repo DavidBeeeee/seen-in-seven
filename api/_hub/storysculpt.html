@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>StorySculpt | The Momentum Hub</title>
-  <meta name="description" content="Turn a raw idea into a talking-head script through the StorySculpt interview.">
+  <title>StorySculpt | Talking-head script builder</title>
+  <meta name="description" content="Turn a raw idea into a talking-head script through a StorySculpt chat.">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
   <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
@@ -12,61 +12,96 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
-  <main class="eee-gate" id="eee-access-gate"><section class="eee-gate-box"><span class="studio-mark">MH</span><h1 id="eee-gate-title">Checking your membership.</h1><p id="eee-gate-copy">Your Studio access will be ready in a moment.</p><a class="primary-button" id="eee-gate-button" href="/"><span>Return to Studio</span><i data-lucide="arrow-right"></i></a></section></main>
+  <main class="eee-gate" id="eee-access-gate"><section class="eee-gate-box"><span class="studio-mark">SS</span><h1 id="eee-gate-title">Checking your membership.</h1><p id="eee-gate-copy">Your Studio access will be ready in a moment.</p><a class="primary-button" id="eee-gate-button" href="/"><span>Return to Studio</span><i data-lucide="arrow-right"></i></a></section></main>
   <div id="eee-app" hidden>
-    <header class="studio-header eee-header"><a class="studio-brand" href="/eee"><span class="studio-mark">MH</span><span><strong>StorySculpt</strong><small>The 5E Script Builder</small></span></a><div class="header-actions"><a class="secondary-button" href="/eee"><i data-lucide="arrow-left"></i><span>Home</span></a><button class="icon-button" data-eee-theme type="button" title="Change color theme" aria-label="Change color theme"><i data-lucide="sun" class="theme-sun-icon"></i><i data-lucide="moon" class="theme-moon-icon"></i></button><div class="eee-account"><span class="account-avatar" id="eee-account-avatar">E</span><span class="eee-account-email" id="eee-account-email"></span></div></div></header>
+    <header class="studio-header eee-header"><a class="studio-brand" href="/eee"><span class="studio-mark">SS</span><span><strong>StorySculpt</strong><small>The 5E Script Builder</small></span></a><div class="header-actions"><button class="secondary-button" id="story-open-memory-top" type="button"><i data-lucide="user-round"></i><span>Story profile</span></button><a class="secondary-button" href="/eee"><i data-lucide="arrow-left"></i><span>Home</span></a><button class="icon-button" data-eee-theme type="button" title="Change color theme" aria-label="Change color theme"><i data-lucide="sun" class="theme-sun-icon"></i><i data-lucide="moon" class="theme-moon-icon"></i></button><div class="eee-account"><span class="account-avatar" id="eee-account-avatar">S</span><span class="eee-account-email" id="eee-account-email"></span></div></div></header>
     <main class="eee-workspace story-workspace">
       <aside class="eee-rail story-projects">
-        <div class="story-rail-head"><h2>Saved projects</h2><button class="icon-button" id="new-project-button" type="button" title="New project" aria-label="Create a new StorySculpt project"><i data-lucide="plus"></i></button></div>
+        <div class="story-rail-head"><h2>Chats</h2><button class="icon-button" id="new-project-button" type="button" title="New chat" aria-label="Start a new StorySculpt chat"><i data-lucide="plus"></i></button></div>
         <div class="eee-rail-list" id="story-project-list"></div>
+        <button class="story-memory-link" id="story-open-memory" type="button"><span class="story-memory-link-icon"><i data-lucide="user-round"></i></span><span><strong>Your story profile</strong><small>Voice, facts and offers StorySculpt remembers on every chat.</small></span></button>
       </aside>
-      <section class="eee-work-main">
-        <div class="eee-work-head"><div><p class="eyebrow">StorySculpt</p><h1 id="story-page-title">Choose the kind of script you want to build.</h1><p id="story-page-copy">Bring the rough idea. StorySculpt will interview you one decision at a time, then shape your answers into a script that still sounds like you.</p></div><button class="secondary-button" id="delete-project-button" type="button" hidden><i data-lucide="trash-2"></i><span>Delete</span></button></div>
 
-        <section class="story-method" id="story-method">
-          <div><p class="eyebrow">Not another blank AI chat</p><h2>Your ideas lead. The framework does the heavy lifting.</h2></div>
-          <p>Generic AI asks for a prompt and guesses what you meant. StorySculpt keeps asking until it has the opinion, example, tension, and emotional direction your video needs. Its 5E framework helps you choose the kind of response you want to create: <strong>Entertainment, Enragement, Epiphany, Empathy, or Education.</strong></p>
-        </section>
+      <section class="eee-work-main story-main">
+        <div class="story-start" id="story-start">
+          <div class="eee-work-head"><div><p class="eyebrow">StorySculpt</p><h1 id="story-page-title">Start a script the way you would talk about it.</h1><p id="story-page-copy">Pick a format, then talk it through. StorySculpt asks one thing at a time and shapes your answers into a script that still sounds like you.</p></div></div>
 
-        <section class="story-mode-grid" id="story-mode-grid">
-          <button class="story-mode" type="button" data-mode="bold"><span class="story-mode-icon"><i data-lucide="zap"></i></span><strong>Bold</strong><small>A sharp opinion or hot take</small></button>
-          <button class="story-mode" type="button" data-mode="mini"><span class="story-mode-icon"><i data-lucide="presentation"></i></span><strong>Mini</strong><small>A compact lesson with a story</small></button>
-          <button class="story-mode" type="button" data-mode="rant"><span class="story-mode-icon"><i data-lucide="flame"></i></span><strong>Rant</strong><small>A raw thought with emotional force</small></button>
-        </section>
+          <section class="story-method" id="story-method">
+            <div><p class="eyebrow">Not another blank AI chat</p><h2>Your ideas lead. The framework does the heavy lifting.</h2></div>
+            <p>Generic AI asks for a prompt and guesses what you meant. StorySculpt keeps asking until it has the opinion, example, tension, and emotional direction your video needs. Its 5E framework helps you choose the kind of response you want to create: <strong>Entertainment, Enragement, Epiphany, Empathy, or Education.</strong></p>
+          </section>
 
-        <section id="story-editor" hidden>
-          <div class="eee-panel story-project-meta">
-            <div class="eee-form-grid"><label>Project title<input id="story-title" maxlength="160"></label><label>Format<select id="story-mode" disabled><option value="bold">Bold</option><option value="mini">Mini</option><option value="rant">Rant</option></select></label></div>
-            <label>Background StorySculpt should remember<textarea id="story-context" placeholder="Names, context, voice notes, facts, or details you do not want lost."></textarea></label>
+          <section class="story-mode-grid" id="story-mode-grid">
+            <button class="story-mode" type="button" data-mode="bold"><span class="story-mode-icon"><i data-lucide="zap"></i></span><strong>Bold</strong><small>A sharp opinion or hot take</small></button>
+            <button class="story-mode" type="button" data-mode="mini"><span class="story-mode-icon"><i data-lucide="presentation"></i></span><strong>Mini</strong><small>A compact lesson with a story</small></button>
+            <button class="story-mode" type="button" data-mode="rant"><span class="story-mode-icon"><i data-lucide="flame"></i></span><strong>Rant</strong><small>A raw thought with emotional force</small></button>
+          </section>
+
+          <section class="story-trust" aria-label="StorySculpt details">
+            <div><strong>Built and supported by David Bee</strong><span>StorySculpt turns a rough idea into a talking-head script that still sounds like you. It is built and supported by David Bee.</span></div>
+            <div><strong>Your work and AI</strong><span>Your chats are saved to your Studio account. When you continue, your title, story profile, notes, and messages are sent to DeepSeek to write the next question or draft. Do not enter anything you would not want processed by an AI service.</span></div>
+            <div><strong>Need help?</strong><span>Email David at <a href="mailto:email@davidbee.me?subject=StorySculpt%20support">email@davidbee.me</a>. Tell him what you were doing and he will help.</span></div>
+          </section>
+        </div>
+
+        <section class="story-chat" id="story-editor" hidden>
+          <div class="story-chat-head">
+            <div class="story-chat-title-wrap"><input id="story-title" class="story-chat-title" maxlength="160" aria-label="Chat title"><span class="story-format-badge" id="story-format-badge">Bold</span></div>
+            <div class="story-chat-actions"><button class="secondary-button" id="story-notes-toggle" type="button"><i data-lucide="sticky-note"></i><span>Notes</span></button><button class="secondary-button danger" id="delete-project-button" type="button" hidden><i data-lucide="trash-2"></i><span>Delete</span></button></div>
+          </div>
+
+          <div class="story-notes" id="story-notes" hidden>
+            <label>Notes for this chat<textarea id="story-context" placeholder="Anything specific to this one script: a name, a date, a detail you do not want lost. Your standing voice and facts live in your story profile."></textarea></label>
+            <select id="story-mode" hidden><option value="bold">Bold</option><option value="mini">Mini</option><option value="rant">Rant</option></select>
             <p class="eee-message" id="story-save-status"></p>
           </div>
 
-          <div class="story-conversation" id="story-conversation" aria-live="polite"></div>
-          <form class="story-composer" id="story-composer">
-            <label for="story-answer">Your answer</label>
-            <textarea id="story-answer" rows="5" placeholder="Write it the way you would say it. Rough is useful." required></textarea>
-            <div class="story-composer-actions"><span id="story-generation-status">Your project saves as you go.</span><button class="primary-button" id="story-send" type="submit"><span>Continue</span><i data-lucide="arrow-up"></i></button></div>
-          </form>
+          <div class="story-scroll" id="story-scroll">
+          <div class="story-thread" id="story-conversation" aria-live="polite"></div>
 
           <section class="story-output" id="story-output" hidden>
-            <div class="story-output-head"><div><p class="eyebrow">Finished Draft</p><h2>Your script</h2></div><button class="secondary-button" id="copy-story-output" type="button"><i data-lucide="copy"></i><span>Copy</span></button></div>
-            <div class="story-output-copy" id="story-output-copy"></div>
-            <div class="story-next-step">
-              <div><p class="eyebrow">Make it yours</p><h3>Your next step is not another prompt. It is one honest read-through.</h3></div>
-              <ol><li>Read the script out loud.</li><li>Change any sentence you would never actually say.</li><li>Copy the finished version and record it in your normal setup.</li></ol>
-              <div class="story-next-actions"><button class="primary-button" id="copy-story-output-bottom" type="button"><span>Copy my script</span><i data-lucide="copy"></i></button><button class="secondary-button" id="start-another-story" type="button"><span>Start another</span><i data-lucide="plus"></i></button></div>
+            <div class="story-output-head"><div><p class="eyebrow">Your finished script</p><h2>Edit it like a document. It saves as you type.</h2></div><button class="secondary-button" id="copy-story-output" type="button"><i data-lucide="copy"></i><span>Copy</span></button></div>
+            <textarea class="story-output-copy" id="story-output-copy" aria-label="Your finished script" spellcheck="true"></textarea>
+            <div class="story-refine">
+              <label for="story-refine-note">Refine with a note</label>
+              <div class="story-refine-row">
+                <textarea id="story-refine-note" rows="2" placeholder="Say what to change in plain words. For example: make the opening punchier, or cut the last line."></textarea>
+                <button class="primary-button" id="story-refine-send" type="button"><span>Revise</span><i data-lucide="wand-sparkles"></i></button>
+              </div>
+              <p class="eee-message" id="story-refine-status"></p>
             </div>
+            <div class="story-next-actions"><button class="secondary-button" id="copy-story-output-bottom" type="button"><i data-lucide="copy"></i><span>Copy my script</span></button><button class="secondary-button" id="start-another-story" type="button"><i data-lucide="plus"></i><span>Start another</span></button></div>
           </section>
-        </section>
+          </div>
 
-        <section class="story-trust" aria-label="StorySculpt membership and data details">
-          <div><strong>Built and supported by David Bee</strong><span>StorySculpt is part of The Momentum Hub, a $250 monthly membership. You may cancel the monthly membership. Your included app license continues for the remainder of its 12-month term.</span></div>
-          <div><strong>Your work and AI</strong><span>Your projects are saved to your Studio account. When you continue the interview, your title, background notes, and conversation are sent to DeepSeek to generate the next question or draft. Do not enter information you do not want processed by an AI service.</span></div>
-          <div><strong>Need help or want to cancel?</strong><span>Email David at <a href="mailto:email@davidbee.me?subject=Momentum%20Hub%20support">email@davidbee.me</a>. There is no long-term membership contract.</span></div>
+          <form class="story-composer" id="story-composer">
+            <textarea id="story-answer" rows="1" placeholder="Write it the way you would say it. Rough is useful." required></textarea>
+            <button class="story-send" id="story-send" type="submit" title="Send" aria-label="Send"><i data-lucide="arrow-up"></i></button>
+          </form>
+          <p class="story-composer-status" id="story-generation-status">StorySculpt saves your chat as you go.</p>
         </section>
       </section>
     </main>
+
+    <div class="story-memory-scrim" id="story-memory-scrim" hidden></div>
+    <aside class="story-memory-panel" id="story-memory" hidden aria-label="Your story profile">
+      <div class="story-memory-head">
+        <div><p class="eyebrow">Your story profile</p><h2>Set this once. Every chat reads it.</h2></div>
+        <button class="icon-button" id="story-memory-close" type="button" title="Close" aria-label="Close story profile"><i data-lucide="x"></i></button>
+      </div>
+      <p class="story-memory-intro">These are the standing facts about you and your work. StorySculpt keeps them in mind on every script, so you never re-explain who you are.</p>
+      <div class="story-memory-fields">
+        <label>What should StorySculpt call you?<input id="mem-name" maxlength="80" placeholder="Your name"></label>
+        <label>What do you do?<input id="mem-role" maxlength="160" placeholder="Coach, founder, creator, consultant"></label>
+        <label>Who are your videos for?<textarea id="mem-audience" maxlength="1200" placeholder="The people you are talking to and what they care about."></textarea></label>
+        <label>Your voice and phrasing<textarea id="mem-voice" maxlength="1600" placeholder="How you sound, words and phrases you use, and anything you never want to say."></textarea></label>
+        <label>Offers and recurring calls to action<textarea id="mem-offers" maxlength="1600" placeholder="What you sell or point people to, and the call to action you come back to."></textarea></label>
+        <label>Facts and results to reuse<textarea id="mem-facts" maxlength="1600" placeholder="True details, numbers, credentials, or stories you reuse. StorySculpt will not invent these."></textarea></label>
+        <label>Anything else<textarea id="mem-notes" maxlength="1600" placeholder="Anything else StorySculpt should keep in mind."></textarea></label>
+      </div>
+      <div class="story-memory-foot"><p class="eee-message" id="mem-status"></p><button class="primary-button" id="mem-save" type="button"><i data-lucide="save"></i><span>Save profile</span></button></div>
+    </aside>
   </div>
-  <script src="/js/eee-common.js?v=eee-launch-v1"></script><script src="/js/storysculpt.js?v=eee-launch-v1"></script>
+  <script src="/js/eee-common.js?v=eee-launch-v1"></script><script src="/js/storysculpt.js?v=storysculpt-chat-v1"></script>
 </body>
 </html>

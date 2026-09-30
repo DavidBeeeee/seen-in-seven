@@ -3,11 +3,28 @@ const STORY_STARTERS = {
   mini: 'What recent insight, lesson, belief, or idea do you want to turn into a short video?',
   rant: 'Type the raw rant or experience you want to turn into a video. Do not organize it first. Get the real thought out.'
 };
+const STORY_MODE_LABELS = { bold: 'Bold', mini: 'Mini', rant: 'Rant' };
+const STORY_TITLES = { bold: 'New bold script', mini: 'New mini lesson', rant: 'New rant' };
+
+// The member's standing "story profile". One row per member in
+// storysculpt_member_context, editable in the profile panel, and read into the
+// existing MEMBER CONTEXT block on every generation. The StorySculpt prompt and
+// interview flow are untouched: this only supplies context the member controls.
+const MEMORY_FIELDS = [
+  ['name', 'mem-name', 'Name'],
+  ['role', 'mem-role', 'What they do'],
+  ['audience', 'mem-audience', 'Who their videos are for'],
+  ['voice', 'mem-voice', 'Voice and phrasing'],
+  ['offers', 'mem-offers', 'Offers and recurring calls to action'],
+  ['facts', 'mem-facts', 'Facts and results to reuse'],
+  ['notes', 'mem-notes', 'Other notes']
+];
 
 let storyContext = null;
 let storyProjects = [];
 let activeStory = null;
 let storySaveTimer = null;
+let memoryProfile = {};
 
 const storyEl = id => document.getElementById(id);
 
@@ -15,46 +32,83 @@ function storyEscape(value) {
   return String(value == null ? '' : value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
 }
 
+function autoGrow(el) {
+  if (!el) return;
+  el.style.height = 'auto';
+  el.style.height = Math.min(el.scrollHeight, 320) + 'px';
+}
+
+// Build the standing story-profile block. Empty when the member has set nothing,
+// so a blank profile adds nothing to the context.
+function composeMemory() {
+  const lines = MEMORY_FIELDS
+    .map(([key, , label]) => {
+      const value = String(memoryProfile[key] || '').trim();
+      return value ? label + ': ' + value : '';
+    })
+    .filter(Boolean);
+  return lines.length ? 'MEMBER STORY PROFILE (standing facts the member set once):\n' + lines.join('\n') : '';
+}
+
+// The context sent to StorySculpt: the standing story profile first, then any
+// notes specific to this one chat. Both are the member's own words.
+function composeContext() {
+  const notes = storyEl('story-context').value.trim();
+  return [composeMemory(), notes].filter(part => part && part.trim()).join('\n\n');
+}
+
 function renderProjectList() {
   const list = storyEl('story-project-list');
   list.innerHTML = storyProjects.length ? storyProjects.map(project =>
     '<button class="eee-rail-button' + (activeStory && activeStory.id === project.id ? ' active' : '') + '" type="button" data-project-id="' + storyEscape(project.id) + '">' + storyEscape(project.title || 'Untitled script') + '</button>'
-  ).join('') : '<p class="eee-message">No projects yet.</p>';
+  ).join('') : '<p class="eee-message">No chats yet.</p>';
 }
 
 function renderConversation() {
   const conversation = Array.isArray(activeStory && activeStory.conversation) ? activeStory.conversation : [];
   storyEl('story-conversation').innerHTML = conversation.map(message =>
-    '<article class="story-message ' + (message.role === 'user' ? 'user' : 'assistant') + '"><span class="story-message-role">' + (message.role === 'user' ? 'You' : 'StorySculpt') + '</span>' + storyEscape(message.content) + '</article>'
+    '<article class="story-message ' + (message.role === 'user' ? 'user' : 'assistant') + '">' +
+      '<span class="story-message-role">' + (message.role === 'user' ? 'You' : 'StorySculpt') + '</span>' +
+      '<div class="story-message-body">' + storyEscape(message.content) + '</div>' +
+    '</article>'
   ).join('');
-  storyEl('story-output').hidden = !activeStory.output;
-  storyEl('story-output-copy').textContent = activeStory.output || '';
+  const hasOutput = Boolean(activeStory && activeStory.output);
+  storyEl('story-output').hidden = !hasOutput;
+  if (hasOutput) {
+    storyEl('story-output-copy').value = activeStory.output || '';
+    autoGrow(storyEl('story-output-copy'));
+  }
+}
+
+function scrollThread() {
+  const thread = storyEl('story-conversation');
+  if (thread) thread.scrollTop = thread.scrollHeight;
 }
 
 function showProject(project) {
   activeStory = project;
-  storyEl('story-mode-grid').hidden = true;
+  storyEl('story-start').hidden = true;
   storyEl('story-editor').hidden = false;
   storyEl('delete-project-button').hidden = false;
-  storyEl('story-page-title').textContent = project.title || 'Untitled script';
-  storyEl('story-page-copy').textContent = 'Answer one useful question at a time. StorySculpt will hold the thread.';
-  storyEl('story-method').hidden = true;
   storyEl('story-title').value = project.title || '';
   storyEl('story-mode').value = project.content_type || 'bold';
+  storyEl('story-format-badge').textContent = STORY_MODE_LABELS[project.content_type] || 'Bold';
   storyEl('story-context').value = project.intake && project.intake.context || '';
+  storyEl('story-save-status').textContent = '';
+  storyEl('story-refine-status').textContent = '';
   renderProjectList();
   renderConversation();
   EEEStudio.refreshIcons();
+  scrollThread();
+  storyEl('story-answer').focus();
 }
 
-function showModePicker() {
+function showStart() {
   activeStory = null;
-  storyEl('story-mode-grid').hidden = false;
+  storyEl('story-start').hidden = false;
   storyEl('story-editor').hidden = true;
   storyEl('delete-project-button').hidden = true;
-  storyEl('story-page-title').textContent = 'Choose the kind of script you want to build.';
-  storyEl('story-page-copy').textContent = 'Bring the rough idea. StorySculpt will interview you one decision at a time, then shape your answers into a script that still sounds like you.';
-  storyEl('story-method').hidden = false;
+  storyEl('story-notes').hidden = true;
   renderProjectList();
 }
 
@@ -62,17 +116,15 @@ async function loadStoryProjects() {
   const { data, error } = await storyContext.sb.from('storysculpt_projects').select('*').eq('user_id', storyContext.profile.id).order('updated_at', { ascending: false });
   if (error) throw error;
   storyProjects = data || [];
-  if (storyProjects.length) showProject(storyProjects[0]); else showModePicker();
+  if (storyProjects.length) showProject(storyProjects[0]); else showStart();
 }
 
 async function createStoryProject(mode) {
-  const title = mode === 'bold' ? 'New bold script' : mode === 'mini' ? 'New mini lesson' : 'New rant';
   const conversation = [{ role: 'assistant', content: STORY_STARTERS[mode] }];
-  const { data, error } = await storyContext.sb.from('storysculpt_projects').insert({ user_id: storyContext.profile.id, title, content_type: mode, conversation }).select().single();
+  const { data, error } = await storyContext.sb.from('storysculpt_projects').insert({ user_id: storyContext.profile.id, title: STORY_TITLES[mode], content_type: mode, conversation }).select().single();
   if (error) throw error;
   storyProjects.unshift(data);
   showProject(data);
-  storyEl('story-answer').focus();
 }
 
 async function saveActiveStory(message) {
@@ -87,10 +139,11 @@ async function saveActiveStory(message) {
   const { error } = await storyContext.sb.from('storysculpt_projects').update(updates).eq('id', activeStory.id);
   if (error) throw error;
   Object.assign(activeStory, updates);
-  storyEl('story-page-title').textContent = updates.title;
   renderProjectList();
-  storyEl('story-save-status').textContent = message || 'Saved';
-  storyEl('story-save-status').className = 'eee-message success';
+  if (message) {
+    storyEl('story-save-status').textContent = message;
+    storyEl('story-save-status').className = 'eee-message success';
+  }
 }
 
 function queueStorySave() {
@@ -101,53 +154,152 @@ function queueStorySave() {
   }), 500);
 }
 
+// One request path for both a fresh answer and a refine note. It posts the
+// current conversation (plus the member's standing profile as context) to the
+// unchanged /api/storysculpt endpoint and folds the response back in.
+async function runGeneration(statusEl) {
+  const response = await fetch('/api/storysculpt', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + storyContext.session.access_token },
+    body: JSON.stringify({
+      mode: activeStory.content_type,
+      projectTitle: storyEl('story-title').value,
+      context: composeContext(),
+      messages: activeStory.conversation
+    })
+  });
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) throw new Error(data.error || 'StorySculpt could not complete this step.');
+  if (data.final) activeStory.output = data.content;
+  else activeStory.conversation.push({ role: 'assistant', content: data.content });
+  await saveActiveStory(data.final ? 'Finished draft saved' : null);
+  renderConversation();
+  scrollThread();
+  return data;
+}
+
 async function sendStoryAnswer(event) {
   event.preventDefault();
   const answer = storyEl('story-answer').value.trim();
   if (!activeStory || !answer) return;
   const button = storyEl('story-send');
   button.disabled = true;
-  button.querySelector('span').textContent = 'Sculpting...';
   storyEl('story-generation-status').textContent = 'Reading the full thread and finding the next useful move.';
   activeStory.conversation = [...(activeStory.conversation || []), { role: 'user', content: answer }];
   storyEl('story-answer').value = '';
+  autoGrow(storyEl('story-answer'));
   renderConversation();
+  scrollThread();
   try {
     await saveActiveStory();
-    const response = await fetch('/api/storysculpt', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + storyContext.session.access_token },
-      body: JSON.stringify({
-        mode: activeStory.content_type,
-        projectTitle: storyEl('story-title').value,
-        context: storyEl('story-context').value,
-        messages: activeStory.conversation
-      })
-    });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error || 'StorySculpt could not complete this step.');
-    if (data.final) activeStory.output = data.content;
-    else activeStory.conversation.push({ role: 'assistant', content: data.content });
-    await saveActiveStory(data.final ? 'Finished draft saved' : 'Saved');
-    renderConversation();
+    const data = await runGeneration();
     if (data.final) storyEl('story-output').scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch (error) {
     storyEl('story-generation-status').textContent = error.message || 'This step did not finish. Your answers are still saved.';
   } finally {
     button.disabled = false;
-    button.querySelector('span').textContent = 'Continue';
-    if (!activeStory.output) storyEl('story-generation-status').textContent = 'Your project saves as you go.';
+    if (!activeStory.output) storyEl('story-generation-status').textContent = 'StorySculpt saves your chat as you go.';
     EEEStudio.refreshIcons();
   }
 }
 
+// Refine with a note. The current (possibly edited) script goes back into the
+// conversation as the last draft, then the member's plain-words note follows, so
+// StorySculpt revises the existing script instead of starting over. No prompt or
+// flow change: it is one more turn in the same interview.
+async function refineStory() {
+  const note = storyEl('story-refine-note').value.trim();
+  if (!activeStory || !note || !activeStory.output) return;
+  const button = storyEl('story-refine-send');
+  button.disabled = true;
+  const status = storyEl('story-refine-status');
+  status.textContent = 'Revising your script with that note.';
+  status.className = 'eee-message';
+  const currentScript = storyEl('story-output-copy').value.trim();
+  activeStory.output = currentScript;
+  activeStory.conversation = [
+    ...(activeStory.conversation || []),
+    { role: 'assistant', content: currentScript },
+    { role: 'user', content: 'Please revise the script above. Keep what works and change this: ' + note }
+  ];
+  try {
+    await saveActiveStory();
+    const data = await runGeneration();
+    storyEl('story-refine-note').value = '';
+    autoGrow(storyEl('story-refine-note'));
+    if (data.final) { status.textContent = 'Script revised.'; status.className = 'eee-message success'; }
+    else { status.textContent = 'StorySculpt asked a question before revising. See the chat above.'; status.className = 'eee-message'; }
+  } catch (error) {
+    status.textContent = error.message || 'That revision did not finish. Your script is still saved.';
+    status.className = 'eee-message error';
+  } finally {
+    button.disabled = false;
+    EEEStudio.refreshIcons();
+  }
+}
+
+// Inline edits to the finished script save straight to the project.
+function queueOutputSave() {
+  if (!activeStory) return;
+  activeStory.output = storyEl('story-output-copy').value;
+  clearTimeout(storySaveTimer);
+  storySaveTimer = setTimeout(() => saveActiveStory().catch(() => {}), 600);
+}
+
 async function deleteActiveStory() {
-  if (!activeStory || !window.confirm('Delete this StorySculpt project?')) return;
+  if (!activeStory || !window.confirm('Delete this StorySculpt chat?')) return;
   const id = activeStory.id;
   const { error } = await storyContext.sb.from('storysculpt_projects').delete().eq('id', id);
   if (error) return;
   storyProjects = storyProjects.filter(project => project.id !== id);
-  if (storyProjects.length) showProject(storyProjects[0]); else showModePicker();
+  if (storyProjects.length) showProject(storyProjects[0]); else showStart();
+}
+
+// Story profile (member memory) panel.
+async function loadMemory() {
+  const { data, error } = await storyContext.sb.from('storysculpt_member_context').select('profile').eq('user_id', storyContext.profile.id).maybeSingle();
+  if (error) throw error;
+  memoryProfile = (data && data.profile) || {};
+  MEMORY_FIELDS.forEach(([key, id]) => { storyEl(id).value = memoryProfile[key] || ''; });
+}
+
+function openMemory() {
+  MEMORY_FIELDS.forEach(([key, id]) => { storyEl(id).value = memoryProfile[key] || ''; });
+  storyEl('mem-status').textContent = '';
+  storyEl('story-memory').hidden = false;
+  storyEl('story-memory-scrim').hidden = false;
+  EEEStudio.refreshIcons();
+}
+
+function closeMemory() {
+  storyEl('story-memory').hidden = true;
+  storyEl('story-memory-scrim').hidden = true;
+}
+
+async function saveMemory() {
+  const draft = {};
+  MEMORY_FIELDS.forEach(([key, id]) => { draft[key] = storyEl(id).value.trim(); });
+  const button = storyEl('mem-save');
+  button.disabled = true;
+  const status = storyEl('mem-status');
+  status.textContent = 'Saving your story profile.';
+  status.className = 'eee-message';
+  try {
+    const { error } = await storyContext.sb.from('storysculpt_member_context').upsert({
+      user_id: storyContext.profile.id,
+      profile: draft,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id' });
+    if (error) throw error;
+    memoryProfile = draft;
+    status.textContent = 'Saved. StorySculpt will use this on every chat.';
+    status.className = 'eee-message success';
+  } catch (error) {
+    status.textContent = error.message || 'Your story profile could not be saved yet.';
+    status.className = 'eee-message error';
+  } finally {
+    button.disabled = false;
+  }
 }
 
 storyEl('story-mode-grid').addEventListener('click', event => {
@@ -159,29 +311,41 @@ storyEl('story-project-list').addEventListener('click', event => {
   const project = button && storyProjects.find(item => item.id === button.dataset.projectId);
   if (project) showProject(project);
 });
-storyEl('new-project-button').addEventListener('click', showModePicker);
+storyEl('new-project-button').addEventListener('click', showStart);
 storyEl('delete-project-button').addEventListener('click', deleteActiveStory);
+storyEl('story-notes-toggle').addEventListener('click', () => {
+  storyEl('story-notes').hidden = !storyEl('story-notes').hidden;
+});
 storyEl('story-title').addEventListener('input', queueStorySave);
 storyEl('story-context').addEventListener('input', queueStorySave);
 storyEl('story-composer').addEventListener('submit', sendStoryAnswer);
-storyEl('copy-story-output').addEventListener('click', async () => {
+storyEl('story-answer').addEventListener('input', event => autoGrow(event.target));
+storyEl('story-answer').addEventListener('keydown', event => {
+  if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); storyEl('story-composer').requestSubmit(); }
+});
+storyEl('story-output-copy').addEventListener('input', event => { autoGrow(event.target); queueOutputSave(); });
+storyEl('story-refine-send').addEventListener('click', refineStory);
+storyEl('story-refine-note').addEventListener('input', event => autoGrow(event.target));
+storyEl('story-open-memory').addEventListener('click', openMemory);
+storyEl('story-open-memory-top').addEventListener('click', openMemory);
+storyEl('story-memory-close').addEventListener('click', closeMemory);
+storyEl('story-memory-scrim').addEventListener('click', closeMemory);
+storyEl('mem-save').addEventListener('click', saveMemory);
+
+async function copyOutput(button, doneLabel) {
   if (!activeStory || !activeStory.output) return;
-  await navigator.clipboard.writeText(activeStory.output);
-  storyEl('copy-story-output').querySelector('span').textContent = 'Copied';
-  setTimeout(() => { storyEl('copy-story-output').querySelector('span').textContent = 'Copy'; }, 1300);
-});
-storyEl('copy-story-output-bottom').addEventListener('click', async () => {
-  if (!activeStory || !activeStory.output) return;
-  await navigator.clipboard.writeText(activeStory.output);
-  storyEl('copy-story-output-bottom').querySelector('span').textContent = 'Copied. Go record it.';
-  setTimeout(() => { storyEl('copy-story-output-bottom').querySelector('span').textContent = 'Copy my script'; }, 1800);
-});
-storyEl('start-another-story').addEventListener('click', () => {
-  showModePicker();
-  storyEl('story-page-title').scrollIntoView({ behavior: 'smooth', block: 'start' });
-});
+  await navigator.clipboard.writeText(storyEl('story-output-copy').value);
+  const span = button.querySelector('span');
+  const original = span.textContent;
+  span.textContent = doneLabel;
+  setTimeout(() => { span.textContent = original; }, 1500);
+}
+storyEl('copy-story-output').addEventListener('click', () => copyOutput(storyEl('copy-story-output'), 'Copied'));
+storyEl('copy-story-output-bottom').addEventListener('click', () => copyOutput(storyEl('copy-story-output-bottom'), 'Copied. Go record it.'));
+storyEl('start-another-story').addEventListener('click', showStart);
 
 EEEStudio.initialize(async context => {
   storyContext = context;
+  try { await loadMemory(); } catch (error) { memoryProfile = {}; }
   await loadStoryProjects();
 });

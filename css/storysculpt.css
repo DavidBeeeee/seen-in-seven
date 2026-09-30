@@ -1,39 +1,121 @@
+/* StorySculpt, rebuilt as a familiar chat window in SeenInSeven's colors.
+   Layout cues from AI Boardroom: a projects rail, a chat column with the
+   composer pinned at the bottom, and a story-profile panel the member edits
+   once. The interview mechanic and the prompts behind it are unchanged. */
+
 .story-rail-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .story-rail-head .icon-button { width: 34px; height: 34px; }
+.story-projects { display: flex; flex-direction: column; }
+.story-memory-link { display: flex; gap: 11px; align-items: flex-start; margin-top: auto; padding: 13px; border: 1px solid var(--studio-border); background: transparent; color: var(--studio-soft); text-align: left; cursor: pointer; }
+.story-memory-link:hover { border-color: var(--studio-teal); background: color-mix(in srgb, var(--studio-teal) 7%, transparent); }
+.story-memory-link-icon { display: grid; place-items: center; width: 30px; height: 30px; flex-shrink: 0; color: var(--studio-teal); border: 1px solid var(--studio-border); }
+.story-memory-link strong { display: block; color: var(--studio-text); font-size: 13px; }
+.story-memory-link small { display: block; margin-top: 3px; color: var(--studio-muted); font-size: 11px; line-height: 1.4; }
+
+/* The shell header is fixed at var(--header-height). Push the whole workspace
+   below it so the chat column, which is a fixed height rather than a scrolling
+   page, is not clipped under the header. */
+.story-workspace { margin-top: var(--header-height); min-height: calc(100vh - var(--header-height)); }
+
+/* The main column is a flex stack. The start screen scrolls on its own; the
+   chat fills the viewport height with the composer fixed to the bottom. */
+.story-main { padding: 0; display: flex; flex-direction: column; min-width: 0; }
+#story-start { padding: 28px 34px 60px; overflow-y: auto; }
+
+/* Start screen: format picker and the method note. */
 .story-method { display: grid; grid-template-columns: minmax(220px, .78fr) minmax(280px, 1.22fr); gap: 28px; margin-bottom: 18px; padding: 22px 24px; border: 1px solid color-mix(in srgb, var(--studio-teal) 45%, var(--studio-border)); background: color-mix(in srgb, var(--studio-teal) 7%, var(--studio-surface)); }
 .story-method h2 { margin: 0; max-width: 520px; font-family: 'Oswald', sans-serif; font-size: clamp(24px, 3vw, 34px); font-weight: 600; line-height: 1.08; }
 .story-method > p { margin: 0; color: var(--studio-soft); line-height: 1.7; }
 .story-method strong { color: var(--studio-text); }
 .story-mode-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.story-mode { min-height: 190px; padding: 20px; border: 1px solid var(--studio-border); background: var(--studio-surface); color: var(--studio-text); cursor: pointer; text-align: left; }
+.story-mode { min-height: 170px; padding: 20px; border: 1px solid var(--studio-border); background: var(--studio-surface); color: var(--studio-text); cursor: pointer; text-align: left; }
 .story-mode:hover { border-color: var(--studio-teal); background: color-mix(in srgb, var(--studio-teal) 6%, var(--studio-surface)); }
-.story-mode-icon { display: grid; place-items: center; width: 42px; height: 42px; margin-bottom: 28px; color: var(--studio-teal); border: 1px solid var(--studio-border); }
+.story-mode-icon { display: grid; place-items: center; width: 42px; height: 42px; margin-bottom: 24px; color: var(--studio-teal); border: 1px solid var(--studio-border); }
 .story-mode strong, .story-mode small { display: block; }
 .story-mode strong { font-family: 'Oswald', sans-serif; font-size: 23px; font-weight: 600; }
 .story-mode small { margin-top: 5px; color: var(--studio-muted); font-size: 12px; line-height: 1.45; }
-.story-project-meta textarea { min-height: 82px; }
-.story-conversation { display: grid; gap: 10px; margin: 14px 0; }
-.story-message { max-width: 780px; padding: 15px 17px; border: 1px solid var(--studio-border); white-space: pre-wrap; line-height: 1.62; }
-.story-message.assistant { justify-self: start; background: var(--studio-surface); }
-.story-message.user { justify-self: end; background: color-mix(in srgb, var(--studio-teal) 10%, var(--studio-surface)); }
-.story-message-role { display: block; margin-bottom: 5px; color: var(--studio-muted); font-size: 9px; font-weight: 900; text-transform: uppercase; }
-.story-composer { padding: 18px; border: 1px solid var(--studio-border); background: var(--studio-surface); }
-.story-composer label { display: block; margin-bottom: 6px; color: var(--studio-soft); font-size: 11px; font-weight: 900; }
-.story-composer textarea { width: 100%; min-height: 115px; padding: 12px; border: 1px solid var(--studio-border); background: var(--studio-bg); color: var(--studio-text); resize: vertical; outline: 0; line-height: 1.55; }
+
+/* Chat column. */
+.story-chat { display: flex; flex-direction: column; height: calc(100vh - var(--header-height)); overflow: hidden; }
+.story-chat-head { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 15px 26px; border-bottom: 1px solid var(--studio-border); flex-shrink: 0; }
+.story-chat-title-wrap { display: flex; align-items: center; gap: 12px; min-width: 0; flex: 1; }
+.story-chat-title { flex: 1; min-width: 0; padding: 6px 8px; border: 1px solid transparent; background: transparent; color: var(--studio-text); font-family: 'Oswald', sans-serif; font-size: 21px; font-weight: 600; outline: 0; }
+.story-chat-title:hover { border-color: var(--studio-border); }
+.story-chat-title:focus { border-color: var(--studio-teal); background: var(--studio-bg); }
+.story-format-badge { flex-shrink: 0; padding: 4px 11px; border: 1px solid color-mix(in srgb, var(--studio-gold) 55%, var(--studio-border)); background: color-mix(in srgb, var(--studio-gold) 12%, var(--studio-surface)); color: var(--studio-gold); font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .05em; }
+.story-chat-actions { display: flex; gap: 8px; flex-shrink: 0; }
+.secondary-button.danger:hover { border-color: #d9736b; color: #d9736b; }
+
+.story-notes { padding: 14px 26px; border-bottom: 1px solid var(--studio-border); background: var(--studio-surface); flex-shrink: 0; }
+.story-notes label { display: block; margin-bottom: 6px; color: var(--studio-soft); font-size: 11px; font-weight: 900; }
+.story-notes textarea { width: 100%; min-height: 70px; padding: 11px; border: 1px solid var(--studio-border); background: var(--studio-bg); color: var(--studio-text); resize: vertical; outline: 0; line-height: 1.55; }
+.story-notes textarea:focus { border-color: var(--studio-teal); }
+
+/* The one scroll region: the thread and the finished script move together. */
+.story-scroll { flex: 1; overflow-y: auto; padding: 22px 26px; }
+.story-thread { display: grid; gap: 14px; }
+.story-message { max-width: 760px; padding: 4px 2px; }
+.story-message-role { display: block; margin-bottom: 6px; color: var(--studio-muted); font-size: 9px; font-weight: 900; text-transform: uppercase; letter-spacing: .06em; }
+.story-message-body { padding: 13px 16px; border: 1px solid var(--studio-border); white-space: pre-wrap; line-height: 1.62; }
+.story-message.assistant { justify-self: start; }
+.story-message.assistant .story-message-body { background: var(--studio-surface); border-top-left-radius: 2px; }
+.story-message.user { justify-self: end; text-align: right; }
+.story-message.user .story-message-role { text-align: right; }
+.story-message.user .story-message-body { background: color-mix(in srgb, var(--studio-teal) 12%, var(--studio-surface)); border-color: color-mix(in srgb, var(--studio-teal) 40%, var(--studio-border)); text-align: left; }
+
+/* Finished script: an editable document, plus refine-with-a-note. */
+.story-output { margin-top: 22px; padding: 22px; border: 1px solid color-mix(in srgb, var(--studio-teal) 40%, var(--studio-border)); background: var(--studio-surface); }
+.story-output-head { display: flex; justify-content: space-between; align-items: end; gap: 18px; padding-bottom: 14px; border-bottom: 1px solid var(--studio-border); }
+.story-output-head h2 { margin: 0; font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: 600; }
+.story-output-copy { width: 100%; min-height: 160px; margin-top: 16px; padding: 16px; border: 1px solid var(--studio-border); background: var(--studio-bg); color: var(--studio-text); font: inherit; line-height: 1.68; resize: vertical; outline: 0; overflow: hidden; }
+.story-output-copy:focus { border-color: var(--studio-teal); }
+.story-refine { margin-top: 16px; padding: 16px; border: 1px solid var(--studio-border); background: color-mix(in srgb, var(--studio-gold) 7%, var(--studio-bg)); }
+.story-refine > label { display: block; margin-bottom: 8px; color: var(--studio-soft); font-size: 11px; font-weight: 900; text-transform: uppercase; letter-spacing: .05em; }
+.story-refine-row { display: flex; gap: 10px; align-items: flex-end; }
+.story-refine-row textarea { flex: 1; min-height: 48px; padding: 11px; border: 1px solid var(--studio-border); background: var(--studio-surface); color: var(--studio-text); resize: none; outline: 0; line-height: 1.5; overflow: hidden; }
+.story-refine-row textarea:focus { border-color: var(--studio-teal); }
+.story-refine-row .primary-button { flex-shrink: 0; }
+.story-next-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+
+/* Composer, pinned to the bottom of the chat column like every chat app. */
+.story-composer { display: flex; gap: 10px; align-items: flex-end; padding: 16px 26px 10px; border-top: 1px solid var(--studio-border); background: var(--studio-bg); flex-shrink: 0; }
+.story-composer textarea { flex: 1; min-height: 46px; max-height: 320px; padding: 12px 14px; border: 1px solid var(--studio-border); background: var(--studio-surface); color: var(--studio-text); resize: none; outline: 0; line-height: 1.55; overflow-y: auto; }
 .story-composer textarea:focus { border-color: var(--studio-teal); }
-.story-composer-actions { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-top: 10px; color: var(--studio-muted); font-size: 11px; }
-.story-output { margin-top: 14px; padding: 24px; border: 1px solid color-mix(in srgb, var(--studio-teal) 40%, var(--studio-border)); background: var(--studio-surface); }
-.story-output-head { display: flex; justify-content: space-between; align-items: end; gap: 18px; padding-bottom: 15px; border-bottom: 1px solid var(--studio-border); }
-.story-output-head h2 { margin: 0; font-family: 'Oswald', sans-serif; font-size: 25px; font-weight: 600; }
-.story-output-copy { padding-top: 18px; white-space: pre-wrap; line-height: 1.68; }
-.story-next-step { display: grid; grid-template-columns: minmax(220px, .8fr) minmax(240px, 1.2fr); gap: 18px 28px; margin-top: 24px; padding: 22px; border-top: 1px solid var(--studio-border); background: color-mix(in srgb, var(--studio-gold) 8%, var(--studio-bg)); }
-.story-next-step h3 { margin: 0; font-family: 'Oswald', sans-serif; font-size: 22px; line-height: 1.2; }
-.story-next-step ol { margin: 0; padding-left: 20px; color: var(--studio-soft); line-height: 1.8; }
-.story-next-actions { grid-column: 1 / -1; display: flex; flex-wrap: wrap; gap: 10px; }
+.story-send { display: grid; place-items: center; width: 46px; height: 46px; flex-shrink: 0; border: 1px solid var(--studio-teal); background: var(--studio-teal); color: #071313; cursor: pointer; }
+.story-send:hover { background: color-mix(in srgb, var(--studio-teal) 88%, #000); }
+.story-send:disabled { opacity: .5; cursor: default; }
+.story-composer-status { margin: 0; padding: 0 26px 14px; color: var(--studio-muted); font-size: 11px; background: var(--studio-bg); flex-shrink: 0; }
+
+/* Details strip on the start screen. */
 .story-trust { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin-top: 18px; border: 1px solid var(--studio-border); background: var(--studio-border); }
 .story-trust > div { padding: 18px; background: var(--studio-surface); }
 .story-trust strong, .story-trust span { display: block; }
 .story-trust strong { margin-bottom: 7px; font-family: 'Oswald', sans-serif; font-size: 16px; }
 .story-trust span { color: var(--studio-muted); font-size: 12px; line-height: 1.6; }
 .story-trust a { color: var(--studio-teal); }
-@media (max-width: 780px) { .story-method, .story-next-step, .story-trust { grid-template-columns: 1fr; } .story-mode-grid { grid-template-columns: 1fr; } .story-mode { min-height: 130px; } .story-mode-icon { margin-bottom: 16px; } .story-next-actions { grid-column: auto; } }
+
+/* Story-profile panel: the member's standing memory, modeled on the Boardroom
+   profile. It slides over from the right and every chat reads what it holds. */
+.story-memory-scrim { position: fixed; inset: 0; z-index: 40; background: rgba(4, 12, 12, .55); }
+.story-memory-panel { position: fixed; top: 0; right: 0; z-index: 41; display: flex; flex-direction: column; width: min(480px, 94vw); height: 100vh; border-left: 1px solid var(--studio-border); background: var(--studio-bg); box-shadow: -18px 0 50px rgba(0, 0, 0, .35); }
+.story-memory-head { display: flex; align-items: start; justify-content: space-between; gap: 14px; padding: 22px 24px 16px; border-bottom: 1px solid var(--studio-border); }
+.story-memory-head h2 { margin: 4px 0 0; font-family: 'Oswald', sans-serif; font-size: 23px; font-weight: 600; line-height: 1.12; }
+.story-memory-intro { margin: 0; padding: 16px 24px 0; color: var(--studio-muted); font-size: 13px; line-height: 1.6; }
+.story-memory-fields { flex: 1; overflow-y: auto; display: grid; gap: 14px; padding: 18px 24px; }
+.story-memory-fields label { display: block; color: var(--studio-soft); font-size: 12px; font-weight: 800; }
+.story-memory-fields input, .story-memory-fields textarea { width: 100%; margin-top: 6px; padding: 10px 12px; border: 1px solid var(--studio-border); background: var(--studio-surface); color: var(--studio-text); font: inherit; outline: 0; }
+.story-memory-fields textarea { min-height: 82px; resize: vertical; line-height: 1.55; }
+.story-memory-fields input:focus, .story-memory-fields textarea:focus { border-color: var(--studio-teal); }
+.story-memory-foot { display: flex; align-items: center; justify-content: space-between; gap: 14px; padding: 16px 24px; border-top: 1px solid var(--studio-border); }
+.story-memory-foot .eee-message { margin: 0; }
+
+@media (max-width: 780px) {
+  .story-method, .story-trust { grid-template-columns: 1fr; }
+  .story-mode-grid { grid-template-columns: 1fr; }
+  .story-mode { min-height: 120px; }
+  .story-mode-icon { margin-bottom: 16px; }
+  #story-start { padding: 22px 16px 50px; }
+  .story-chat { height: auto; min-height: calc(100vh - var(--header-height)); }
+  .story-chat-head, .story-scroll, .story-composer, .story-composer-status, .story-notes { padding-left: 16px; padding-right: 16px; }
+  .story-message { max-width: 100%; }
+}
