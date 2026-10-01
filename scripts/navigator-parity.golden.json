@@ -1,0 +1,98 @@
+{
+  "resultFields": [
+    "next_action",
+    "first_15_minutes",
+    "done_when",
+    "why_this_now"
+  ],
+  "safeFallback": {
+    "next_action": "Write the one outcome you need next and the single thing blocking it, in two plain sentences.",
+    "first_15_minutes": "Open a blank note. Sentence one: the outcome you want. Sentence two: the one obstacle in the way. Do not edit, just get both down.",
+    "done_when": "You have two sentences saved: one naming the outcome, one naming the obstacle.",
+    "why_this_now": "The Navigator could not reach its model for a tailored route this time. Naming the outcome and the obstacle in your own words is the move that makes the real next step obvious, and it needs nothing but you and two minutes."
+  },
+  "inputs": {
+    "empty-object": "rejected",
+    "null-body": "rejected",
+    "whitespace-only": "rejected",
+    "missing-blocker": "rejected",
+    "objective-over-limit": "rejected",
+    "vague": "normalized",
+    "broad": "normalized",
+    "conflicting": "normalized",
+    "prompt-injection": "normalized",
+    "unicode-emoji": "normalized",
+    "non-string-types": "normalized",
+    "deadline-over-limit-ok": "normalized"
+  },
+  "outputs": {
+    "valid-plain": {
+      "source": "generated",
+      "valid": true
+    },
+    "valid-extra-keys": {
+      "source": "generated",
+      "valid": true
+    },
+    "valid-markdown-fenced": {
+      "source": "generated",
+      "valid": true
+    },
+    "valid-prose-wrapped": {
+      "source": "generated",
+      "valid": true
+    },
+    "valid-object-not-string": {
+      "source": "generated",
+      "valid": true
+    },
+    "missing-field": {
+      "source": "fallback",
+      "valid": true
+    },
+    "empty-string-fields": {
+      "source": "fallback",
+      "valid": true
+    },
+    "numeric-fields": {
+      "source": "fallback",
+      "valid": true
+    },
+    "empty-string": {
+      "source": "fallback",
+      "valid": true
+    },
+    "whitespace-string": {
+      "source": "fallback",
+      "valid": true
+    },
+    "prose-no-json": {
+      "source": "fallback",
+      "valid": true
+    },
+    "array": {
+      "source": "fallback",
+      "valid": true
+    },
+    "number": {
+      "source": "fallback",
+      "valid": true
+    },
+    "null-literal": {
+      "source": "fallback",
+      "valid": true
+    },
+    "truncated-json": {
+      "source": "fallback",
+      "valid": true
+    },
+    "injection-echo": {
+      "source": "fallback",
+      "valid": true
+    },
+    "nested-valid-top-level": {
+      "source": "generated",
+      "valid": true
+    }
+  }
+}

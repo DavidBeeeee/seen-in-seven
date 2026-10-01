@@ -81,6 +81,87 @@
             animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
+        /* Next Move panel (WBR-409). Reuses the card/button/input system; these
+           classes only cover the move-record extras. */
+        .nav-label {
+            display: block;
+            font-size: 12px;
+            color: var(--muted);
+            margin: 14px 0 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+        .nav-row { display: flex; gap: 12px; }
+        .nav-momentum {
+            background: var(--surface, rgba(255, 255, 255, 0.04));
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            color: var(--muted);
+        }
+        .nav-momentum-count { color: var(--cyan); font-weight: 700; font-size: 18px; }
+        .nav-momentum-open { color: var(--cream); }
+        .nav-result {
+            margin-top: 24px;
+            text-align: left;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+        .nav-result.completed { opacity: 0.7; }
+        .nav-result-head {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--cyan);
+            margin-bottom: 10px;
+        }
+        .nav-result-action { font-size: 18px; color: var(--cream); font-weight: 600; margin-bottom: 14px; }
+        .nav-result-field { margin-bottom: 10px; }
+        .nav-result-field span {
+            display: block;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            color: var(--muted);
+            margin-bottom: 2px;
+        }
+        .nav-result-field p { margin: 0; color: var(--text, #e8e8e8); font-size: 14px; }
+        .nav-source { color: var(--muted); font-size: 12px; font-style: italic; margin: 8px 0 0; }
+        .nav-result-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
+        .nav-history { margin-top: 28px; text-align: left; }
+        .nav-history-title {
+            font-family: 'Space Mono', monospace;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: var(--muted);
+            margin-bottom: 10px;
+        }
+        .nav-history-list { list-style: none; margin: 0; padding: 0; }
+        .nav-history-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border);
+            font-size: 13px;
+        }
+        .nav-history-badge {
+            flex: none;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+            padding: 2px 8px;
+            border-radius: 999px;
+            border: 1px solid var(--border);
+            color: var(--muted);
+        }
+        .nav-history-completed .nav-history-badge { color: #10b981; border-color: #10b981; }
+        .nav-history-text { flex: 1; color: var(--text, #e8e8e8); }
+        .nav-history-date { flex: none; color: var(--muted); font-size: 12px; }
+
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -1372,6 +1453,7 @@
             <div class="nav-links">
                 <a href="/eee">Momentum Hub</a>
                 <a href="#" onclick="showRoadmap()">Roadmap</a>
+                <a href="#" onclick="showScreen('screen-nextmove')">Next Move</a>
                 <a href="#" onclick="showScreen('screen-assets')">Profile</a>
                 <span id="eee-account-email" style="font-size:11px;color:var(--muted)"></span>
             </div>
@@ -1523,6 +1605,62 @@
                         onclick="if(confirm('Warning: This will delete your entire business profile, tasks, and roadmap progress. Are you sure?')) resetApp()">⚠️
                         Start Entirely New Audit (Danger)</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- NEXT MOVE: the member's durable, returning move record. WBR-409. -->
+        <div class="screen" id="screen-nextmove">
+            <div class="wizard-card" style="max-width:760px;">
+                <div class="tagline">The Momentum Hub</div>
+                <h1>Your Next Move</h1>
+                <p class="desc">Your roadmap is the plan. This turns it into the one thing to do right now, and
+                    keeps every move you make, so there is always a reason and a place to come back.</p>
+
+                <div id="nav-momentum" class="nav-momentum" hidden></div>
+
+                <form id="navigator-form" autocomplete="off" style="text-align:left;">
+                    <label class="nav-label" for="navigator-objective">What are you trying to get done?</label>
+                    <input type="text" id="navigator-objective" class="input-text"
+                        placeholder="e.g. Launch my paid newsletter">
+                    <label class="nav-label" for="navigator-reality">Where do things actually stand right now?</label>
+                    <textarea id="navigator-reality" class="input-text" rows="3"
+                        placeholder="What exists, what does not, what you have tried"></textarea>
+                    <label class="nav-label" for="navigator-blocker">What is the one thing blocking you?</label>
+                    <textarea id="navigator-blocker" class="input-text" rows="2"
+                        placeholder="The sticking point"></textarea>
+                    <div class="nav-row">
+                        <div style="flex:1;">
+                            <label class="nav-label" for="navigator-time">Time you have</label>
+                            <input type="text" id="navigator-time" class="input-text" placeholder="1 hour">
+                        </div>
+                        <div style="flex:1;">
+                            <label class="nav-label" for="navigator-deadline">Deadline (optional)</label>
+                            <input type="text" id="navigator-deadline" class="input-text" placeholder="e.g. Friday">
+                        </div>
+                    </div>
+                    <button type="submit" id="navigator-submit" class="btn-primary"><span>Choose my next move</span></button>
+                </form>
+
+                <div id="navigator-message" class="eee-message"></div>
+
+                <div id="navigator-result" class="nav-result" hidden>
+                    <div class="nav-result-head">Your move</div>
+                    <div class="nav-result-action" id="navigator-action"></div>
+                    <div class="nav-result-field"><span>First 15 minutes</span><p id="navigator-start"></p></div>
+                    <div class="nav-result-field"><span>Done when</span><p id="navigator-done"></p></div>
+                    <div class="nav-result-field"><span>Why this now</span><p id="navigator-why"></p></div>
+                    <p id="navigator-source" class="nav-source" hidden></p>
+                    <div class="nav-result-actions">
+                        <button type="button" id="navigator-complete" class="btn-primary"
+                            style="width:auto;margin:0;padding:8px 16px;"><span>Mark complete</span></button>
+                        <button type="button" id="navigator-copy" class="btn-secondary"
+                            style="width:auto;margin:0;padding:8px 16px;"><span>Copy next move</span></button>
+                        <button type="button" id="navigator-new" class="btn-secondary"
+                            style="width:auto;margin:0;padding:8px 16px;"><span>New move</span></button>
+                    </div>
+                </div>
+
+                <div id="navigator-history" class="nav-history"></div>
             </div>
         </div>
     </div>
@@ -2651,10 +2789,14 @@
         window.onload = loadData;
     </script>
     <script src="/js/eee-common.js?v=momentum-hub-v2"></script>
+    <script src="/js/navigator.js?v=wbr409-1"></script>
     <script>
-        EEEStudio.initialize(context => {
+        EEEStudio.initialize(async context => {
             const email = document.getElementById('eee-account-email');
             if (email) email.textContent = context.session.user.email || '';
+            // The durable Next Move record. Isolated and defensive, so a failure
+            // here never takes down the roadmap builder. WBR-409.
+            try { if (window.NavigatorMoves) await window.NavigatorMoves.mount(context); } catch (error) {}
             if (window.lucide) window.lucide.createIcons();
         });
     </script>

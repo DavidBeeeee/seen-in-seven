@@ -1,72 +1,247 @@
-let navigatorContext = null;
-let navigatorState = {};
-const navEl = id => document.getElementById(id);
+// Next Step Navigator: the member's durable move record and return path. WBR-409.
+//
+// The roadmap builder on this page is the big plan. This module is the "what do I
+// do right now" layer that sits beside it: every move the member chooses is saved
+// server-side in navigator_moves, so a member who leaves and comes back finds
+// their past moves, how many they have completed, and the one still open. The
+// Navigator stops forgetting them.
+//
+// It does not self-initialize. The page calls window.NavigatorMoves.mount(context)
+// from inside its own EEEStudio.initialize callback, so there is exactly one auth
+// bootstrap. Everything here is wrapped so a failure in the move layer can never
+// take down the roadmap builder it lives next to.
 
-function renderNavigatorState() {
-  navEl('navigator-objective').value = navigatorState.objective || '';
-  navEl('navigator-reality').value = navigatorState.current_reality || '';
-  navEl('navigator-blocker').value = navigatorState.blocker || '';
-  navEl('navigator-time').value = navigatorState.available_time || '1 hour';
-  navEl('navigator-deadline').value = navigatorState.deadline || '';
-  const hasResult = Boolean(navigatorState.next_action);
-  navEl('navigator-result').hidden = !hasResult;
-  if (hasResult) {
-    navEl('navigator-action').textContent = navigatorState.next_action;
-    navEl('navigator-start').textContent = navigatorState.first_15_minutes || '';
-    navEl('navigator-done').textContent = navigatorState.done_when || '';
-    navEl('navigator-why').textContent = navigatorState.why_this_now || '';
-    navEl('navigator-result').classList.toggle('completed', navigatorState.completed === true);
-    navEl('navigator-complete').querySelector('span').textContent = navigatorState.completed ? 'Completed' : 'Mark complete';
+(function () {
+  const el = id => document.getElementById(id);
+  let ctx = null;
+  let moves = [];
+  let lastResult = null;
+
+  function escapeHtml(value) {
+    return String(value == null ? '' : value).replace(/[&<>"']/g, ch => ({
+      '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[ch]);
   }
-  EEEStudio.refreshIcons();
-}
 
-async function saveNavigatorState() {
-  const { error } = await navigatorContext.sb.from('navigator_states').upsert({ user_id: navigatorContext.profile.id, state: navigatorState, updated_at: new Date().toISOString() }, { onConflict: 'user_id' });
-  if (error) throw error;
-}
-
-async function chooseNextMove(event) {
-  event.preventDefault();
-  const button = navEl('navigator-submit');
-  button.disabled = true;
-  button.querySelector('span').textContent = 'Finding the route...';
-  navEl('navigator-message').textContent = 'Comparing the objective, blocker, and time available.';
-  navigatorState = {
-    objective: navEl('navigator-objective').value.trim(),
-    current_reality: navEl('navigator-reality').value.trim(),
-    blocker: navEl('navigator-blocker').value.trim(),
-    available_time: navEl('navigator-time').value,
-    deadline: navEl('navigator-deadline').value,
-    completed: false
-  };
-  try {
-    await saveNavigatorState();
-    const response = await fetch('/api/navigator', { method: 'POST', headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + navigatorContext.session.access_token }, body: JSON.stringify(navigatorState) });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error || 'The Navigator could not choose the next move.');
-    navigatorState = { ...navigatorState, ...data, updated_at: new Date().toISOString() };
-    await saveNavigatorState();
-    renderNavigatorState();
-    navEl('navigator-message').textContent = 'Next move saved.';
-    navEl('navigator-message').className = 'eee-message success';
-  } catch (error) {
-    navEl('navigator-message').textContent = error.message || 'The route did not finish. Your answers are saved.';
-    navEl('navigator-message').className = 'eee-message error';
-  } finally {
-    button.disabled = false;
-    button.querySelector('span').textContent = 'Choose my next move';
+  function formatDate(iso) {
+    try {
+      return new Date(iso).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    } catch (error) {
+      return '';
+    }
   }
-}
 
-navEl('navigator-form').addEventListener('submit', chooseNextMove);
-navEl('navigator-clear').addEventListener('click', async () => { navigatorState = {}; await saveNavigatorState(); renderNavigatorState(); });
-navEl('navigator-complete').addEventListener('click', async () => { navigatorState.completed = true; navigatorState.completed_at = new Date().toISOString(); await saveNavigatorState(); renderNavigatorState(); });
-navEl('navigator-copy').addEventListener('click', async () => { await navigator.clipboard.writeText(navigatorState.next_action || ''); navEl('navigator-copy').querySelector('span').textContent = 'Copied'; setTimeout(() => { navEl('navigator-copy').querySelector('span').textContent = 'Copy next move'; }, 1300); });
+  async function loadMoves() {
+    const { data, error } = await ctx.sb
+      .from('navigator_moves')
+      .select('*')
+      .eq('user_id', ctx.profile.id)
+      .order('created_at', { ascending: false })
+      .limit(50);
+    if (error) throw error;
+    moves = Array.isArray(data) ? data : [];
+  }
 
-EEEStudio.initialize(async context => {
-  navigatorContext = context;
-  const { data } = await context.sb.from('navigator_states').select('state').eq('user_id', context.profile.id).maybeSingle();
-  navigatorState = data && data.state || {};
-  renderNavigatorState();
-});
+  function openMoves() {
+    return moves.filter(move => move.status === 'active');
+  }
+
+  function completedMoves() {
+    return moves.filter(move => move.status === 'completed');
+  }
+
+  // The return mechanic: a member arriving with history sees how far they have
+  // come and the move still waiting, not an empty slot.
+  function renderMomentum() {
+    const strip = el('nav-momentum');
+    if (!strip) return;
+    const total = moves.length;
+    if (!total) { strip.hidden = true; return; }
+    const done = completedMoves().length;
+    const open = openMoves().length;
+    strip.hidden = false;
+    strip.innerHTML =
+      `<span class="nav-momentum-count">${done}</span> move${done === 1 ? '' : 's'} completed` +
+      (open ? ` &middot; <span class="nav-momentum-open">${open} waiting for you</span>` : '') +
+      ` &middot; ${total} in all`;
+  }
+
+  function renderResult(move) {
+    const box = el('navigator-result');
+    if (!box) return;
+    if (!move) { box.hidden = true; return; }
+    box.hidden = false;
+    box.classList.toggle('completed', move.status === 'completed');
+    el('navigator-action').textContent = move.next_action || '';
+    el('navigator-start').textContent = move.first_15_minutes || '';
+    el('navigator-done').textContent = move.done_when || '';
+    el('navigator-why').textContent = move.why_this_now || '';
+    const flag = el('navigator-source');
+    if (flag) {
+      flag.hidden = move.source !== 'fallback';
+      flag.textContent = move.source === 'fallback'
+        ? 'The model was unreachable, so this is a safe fallback move you can always do.'
+        : '';
+    }
+    const completeBtn = el('navigator-complete');
+    if (completeBtn) {
+      completeBtn.hidden = move.status === 'completed';
+      completeBtn.dataset.moveId = move.id || '';
+    }
+  }
+
+  function renderHistory() {
+    const list = el('navigator-history');
+    if (!list) return;
+    const prior = moves.slice(1); // the newest is shown as the current move
+    if (!prior.length) { list.innerHTML = ''; return; }
+    const rows = prior.map(move => {
+      const badge = move.status === 'completed' ? 'done' : (move.status === 'abandoned' ? 'let go' : 'open');
+      return `<li class="nav-history-row nav-history-${escapeHtml(move.status)}">
+        <span class="nav-history-badge">${badge}</span>
+        <span class="nav-history-text">${escapeHtml(move.next_action)}</span>
+        <span class="nav-history-date">${formatDate(move.created_at)}</span>
+      </li>`;
+    }).join('');
+    list.innerHTML = `<div class="nav-history-title">Earlier moves</div><ul class="nav-history-list">${rows}</ul>`;
+  }
+
+  function render() {
+    renderMomentum();
+    renderResult(moves[0] || null);
+    renderHistory();
+    if (window.EEEStudio && window.EEEStudio.refreshIcons) window.EEEStudio.refreshIcons();
+  }
+
+  function setMessage(text, kind) {
+    const node = el('navigator-message');
+    if (!node) return;
+    node.textContent = text || '';
+    node.className = 'eee-message' + (kind ? ' ' + kind : '');
+  }
+
+  async function chooseNextMove(event) {
+    event.preventDefault();
+    const button = el('navigator-submit');
+    const input = {
+      objective: (el('navigator-objective').value || '').trim(),
+      current_reality: (el('navigator-reality').value || '').trim(),
+      blocker: (el('navigator-blocker').value || '').trim(),
+      available_time: (el('navigator-time').value || '').trim(),
+      deadline: (el('navigator-deadline').value || '').trim()
+    };
+    if (!input.objective || !input.current_reality || !input.blocker || !input.available_time) {
+      setMessage('Fill in the objective, where things stand, the blocker, and the time you have.', 'error');
+      return;
+    }
+    button.disabled = true;
+    const label = button.querySelector('span');
+    if (label) label.textContent = 'Finding the route...';
+    setMessage('Comparing the objective, blocker, and time available.');
+    try {
+      const response = await fetch('/api/navigator', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + ctx.session.access_token },
+        body: JSON.stringify(input)
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) throw new Error(data.error || 'The Navigator could not choose the next move.');
+      const row = {
+        user_id: ctx.profile.id,
+        objective: input.objective,
+        current_reality: input.current_reality,
+        blocker: input.blocker,
+        available_time: input.available_time,
+        deadline: input.deadline,
+        next_action: data.next_action || '',
+        first_15_minutes: data.first_15_minutes || '',
+        done_when: data.done_when || '',
+        why_this_now: data.why_this_now || '',
+        source: data.source === 'fallback' ? 'fallback' : 'generated',
+        status: 'active'
+      };
+      const { error } = await ctx.sb.from('navigator_moves').insert(row);
+      if (error) throw error;
+      lastResult = row;
+      await loadMoves();
+      render();
+      setMessage(data.source === 'fallback'
+        ? 'Saved. The model was busy, so this is a safe move you can always make.'
+        : 'Next move saved. It will be here when you come back.', 'success');
+    } catch (error) {
+      setMessage(error.message || 'The route did not finish. Nothing was lost.', 'error');
+    } finally {
+      button.disabled = false;
+      if (label) label.textContent = 'Choose my next move';
+    }
+  }
+
+  async function markComplete(event) {
+    const button = event.currentTarget;
+    const moveId = button.dataset.moveId;
+    if (!moveId) return;
+    button.disabled = true;
+    try {
+      const { error } = await ctx.sb.from('navigator_moves')
+        .update({ status: 'completed', completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+        .eq('id', moveId)
+        .eq('user_id', ctx.profile.id);
+      if (error) throw error;
+      await loadMoves();
+      render();
+      setMessage('Marked complete. That is real progress, saved.', 'success');
+    } catch (error) {
+      setMessage(error.message || 'Could not mark that complete.', 'error');
+    } finally {
+      button.disabled = false;
+    }
+  }
+
+  function startNew() {
+    const form = el('navigator-form');
+    if (form) form.reset();
+    const timeField = el('navigator-time');
+    if (timeField && !timeField.value) timeField.value = '1 hour';
+    renderResult(null);
+    const objective = el('navigator-objective');
+    if (objective) objective.focus();
+    setMessage('');
+  }
+
+  async function copyMove() {
+    try {
+      await navigator.clipboard.writeText((moves[0] && moves[0].next_action) || '');
+      const span = el('navigator-copy') && el('navigator-copy').querySelector('span');
+      if (span) {
+        span.textContent = 'Copied';
+        setTimeout(() => { span.textContent = 'Copy next move'; }, 1300);
+      }
+    } catch (error) {
+      // Clipboard is a convenience; a failure is not worth a message.
+    }
+  }
+
+  async function mount(context) {
+    try {
+      ctx = context;
+      const form = el('navigator-form');
+      if (!form) return; // Panel not on this page; nothing to do.
+      form.addEventListener('submit', chooseNextMove);
+      const complete = el('navigator-complete');
+      if (complete) complete.addEventListener('click', markComplete);
+      const copy = el('navigator-copy');
+      if (copy) copy.addEventListener('click', copyMove);
+      const fresh = el('navigator-new');
+      if (fresh) fresh.addEventListener('click', startNew);
+      const timeField = el('navigator-time');
+      if (timeField && !timeField.value) timeField.value = '1 hour';
+      await loadMoves();
+      render();
+    } catch (error) {
+      // The move layer must never break the roadmap builder it sits beside.
+      setMessage('Your saved moves could not load just now. Your roadmap is unaffected.', 'error');
+    }
+  }
+
+  window.NavigatorMoves = { mount };
+})();

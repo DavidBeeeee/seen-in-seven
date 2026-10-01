@@ -1,4 +1,5 @@
 import { authenticatedUser, consumeQuota, json } from './_lib/security.js';
+import { normalizeInput, coerceResult } from './_lib/navigator-core.js';
 
 export const config = { maxDuration: 60 };
 
@@ -54,22 +55,23 @@ async function recordEvent(token, eventType, detail) {
   }
 }
 
-function field(body, key, maximum) {
-  const value = String(body && body[key] || '').trim();
-  if (!value || value.length > maximum) throw new Error('Complete each Navigator prompt before choosing the next move.');
-  return value;
-}
-
-async function chooseNextAction(input) {
+// Call the model and return its raw message content plus usage. Throws only on a
+// real failure (missing key, HTTP error, network, timeout). It does NOT parse or
+// validate: parsing, validation, and the safe fallback all live in
+// api/_lib/navigator-core.js so the exact same logic is what the harness tests.
+async function callModel(input) {
   const apiKey = process.env.DEEPSEEK_API_KEY;
-  if (!apiKey) throw new Error('The Navigator is not configured.');
-  const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + apiKey },
-    body: JSON.stringify({
-      model: 'deepseek-v4-pro',
-      messages: [
-        { role: 'system', content: `You are the Next Step Navigator. Reduce a complicated business or creative situation to one concrete next action the member can complete in the time available.
+  if (!apiKey) throw new Error('not-configured');
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 55000);
+  try {
+    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + apiKey },
+      body: JSON.stringify({
+        model: 'deepseek-v4-pro',
+        messages: [
+          { role: 'system', content: `You are the Next Step Navigator. Reduce a complicated business or creative situation to one concrete next action the member can complete in the time available.
 
 Return valid JSON with exactly these string fields: next_action, first_15_minutes, done_when, why_this_now.
 
@@ -80,20 +82,22 @@ Rules:
 - Address the stated blocker without diagnosing the member or adding a new project.
 - Use plain language. Do not promote a tool, course, coach, or service.
 - Do not include markdown or commentary outside the JSON.` },
-        { role: 'user', content: JSON.stringify(input) }
-      ],
-      response_format: { type: 'json_object' },
-      max_tokens: 450,
-      thinking: { type: 'disabled' },
-      temperature: 0.55
-    })
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(data.error && data.error.message || 'The Navigator did not respond normally.');
-  const content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-  const parsed = JSON.parse(String(content || '{}'));
-  if (!parsed.next_action || !parsed.first_15_minutes || !parsed.done_when || !parsed.why_this_now) throw new Error('The Navigator could not reduce this to one clear move.');
-  return { result: parsed, usage: data.usage || null };
+          { role: 'user', content: JSON.stringify(input) }
+        ],
+        response_format: { type: 'json_object' },
+        max_tokens: 450,
+        thinking: { type: 'disabled' },
+        temperature: 0.55
+      }),
+      signal: controller.signal
+    });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) throw new Error(data.error && data.error.message || 'model-error');
+    const content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+    return { content, usage: data.usage || null };
+  } finally {
+    clearTimeout(timeout);
+  }
 }
 
 export default async function handler(req, res) {
@@ -115,24 +119,41 @@ export default async function handler(req, res) {
     await emit('denied');
     return json(res, 403, { error: 'An active EEE membership is required.' });
   }
+
+  let input;
   try {
-    const input = {
-      objective: field(req.body, 'objective', 1200),
-      current_reality: field(req.body, 'current_reality', 1800),
-      blocker: field(req.body, 'blocker', 1200),
-      available_time: field(req.body, 'available_time', 120),
-      deadline: String(req.body && req.body.deadline || '').trim()
-    };
-    const allowed = await consumeQuota({ subject: 'user:' + user.id, endpoint: 'navigator', limit: 30, req, userId: user.id });
-    if (!allowed) {
-      await emit('denied', { failureClass: 'quota' });
-      return json(res, 429, { error: 'The Navigator needs a short pause before another route.' });
-    }
-    const { result, usage } = await chooseNextAction(input);
-    await emit('generation', { hasDeadline: Boolean(input.deadline), usage });
-    return json(res, 200, result);
+    input = normalizeInput(req.body);
   } catch (error) {
-    await emit('error', { failureClass: 'generation' });
-    return json(res, 500, { error: error && error.message || 'The Navigator could not choose the next move.' });
+    await emit('error', { failureClass: 'input' });
+    return json(res, 400, { error: error && error.message || 'Complete each Navigator prompt before choosing the next move.' });
   }
+
+  const allowed = await consumeQuota({ subject: 'user:' + user.id, endpoint: 'navigator', limit: 30, req, userId: user.id });
+  if (!allowed) {
+    await emit('denied', { failureClass: 'quota' });
+    return json(res, 429, { error: 'The Navigator needs a short pause before another route.' });
+  }
+
+  // The generation path never returns a raw error. A valid model answer ships as
+  // source 'generated'; an unreachable model, a timeout, or an unusable response
+  // ships the SAFE_FALLBACK from navigator-core as source 'fallback', 200, so the
+  // member always gets a usable move. WBR-368, continuation of WBR-409.
+  let raw = null;
+  let usage = null;
+  let failureClass;
+  try {
+    const call = await callModel(input);
+    raw = call.content;
+    usage = call.usage;
+  } catch (error) {
+    failureClass = error && error.message === 'not-configured' ? 'config' : 'generation';
+  }
+
+  const { result, source } = coerceResult(raw);
+  if (source === 'generated') {
+    await emit('generation', { hasDeadline: Boolean(input.deadline), usage });
+  } else {
+    await emit('fallback', { failureClass: failureClass || 'output' });
+  }
+  return json(res, 200, { ...result, source });
 }
