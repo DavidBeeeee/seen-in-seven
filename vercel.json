@@ -7,6 +7,12 @@
       "includeFiles": "api/_hub/storysculpt-src/**"
     }
   },
+  "crons": [
+    {
+      "path": "/api/certainty-reminders",
+      "schedule": "*/15 * * * *"
+    }
+  ],
   "rewrites": [
     {
       "source": "/studio",
