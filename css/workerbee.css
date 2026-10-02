@@ -181,8 +181,10 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 .module-card.client-current { border-color: rgba(74, 222, 128, .3); }
 .journal-panel { align-self: stretch; }
 .journal-panel .journal-entry p { display: -webkit-box; overflow: hidden; -webkit-box-orient: vertical; -webkit-line-clamp: 4; }
+.journal-panel.lessons-view .journal-entry p { display: block; overflow: visible; }
 .panel-actions { display: flex; gap: 5px; }
 .panel-actions .quiet-button { min-height: 30px; padding: 0 8px; font-size: 10px; }
+.panel-actions a.quiet-button { display: inline-flex; align-items: center; text-decoration: none; }
 
 .journal-form { margin-bottom: 12px; padding: 13px; border: 1px solid var(--teal); border-radius: 8px; background: var(--bg-deep); }
 .journal-form .form-row { display: grid; grid-template-columns: 150px 1fr; gap: 8px; }

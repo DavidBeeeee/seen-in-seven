@@ -10,6 +10,7 @@ let session = null;
 let state = { sections: [], tasks: [], updates: [], journal: [], clients: [], events: [], products: [], changes: [], readState: null };
 let toastTimer = null;
 let journalExpanded = false;
+let journalView = location.hash === '#journal-lessons' ? 'lessons' : 'journal';
 let todoOwner = 'workerbee';
 let todoFilter = '';
 // WBR-359. Writing a revision re-renders the Dashboard, so whether the
@@ -717,21 +718,29 @@ function renderJournal() {
   const root = el('journal-list');
   root.replaceChildren();
   const scanStatus = el('journal-scan-status');
+  const entries = journalView === 'lessons'
+    ? state.journal.filter(entry => /^lesson:\s/i.test(entry.title || ''))
+    : state.journal;
+  el('journal-heading').textContent = journalView === 'lessons' ? 'Lessons learned' : 'Journal';
+  el('journal').classList.toggle('lessons-view', journalView === 'lessons');
+  el('toggle-lessons').textContent = journalView === 'lessons' ? 'Back to Journal' : 'Lessons learned';
+  el('toggle-lessons').href = journalView === 'lessons' ? '#journal' : '#journal-lessons';
   if (scanStatus) {
-    if (!state.journal.length) {
-      scanStatus.textContent = 'No entries yet · daily scan runs every scheduled session.';
+    if (!entries.length) {
+      scanStatus.textContent = journalView === 'lessons' ? 'Lessons live in this same private Journal.' : 'No entries yet · daily scan runs every scheduled session.';
     } else {
-      const latest = new Date(`${state.journal[0].entry_date}T12:00:00`);
+      const latest = new Date(`${entries[0].entry_date}T12:00:00`);
       const weekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
-      const recent = state.journal.filter(entry => new Date(`${entry.entry_date}T12:00:00`).getTime() >= weekAgo).length;
-      scanStatus.textContent = `Last entry ${latest.toLocaleDateString([], { dateStyle: 'medium' })} · ${recent} in last 7 days · ${state.journal.length} total`;
+      const recent = entries.filter(entry => new Date(`${entry.entry_date}T12:00:00`).getTime() >= weekAgo).length;
+      scanStatus.textContent = `Last entry ${latest.toLocaleDateString([], { dateStyle: 'medium' })} · ${recent} in last 7 days · ${entries.length} total`;
     }
   }
-  if (!state.journal.length) {
-    root.append(empty('The Journal is ready. I will write only when something real surfaces.'));
+  if (!entries.length) {
+    root.append(empty(journalView === 'lessons' ? 'No durable lessons recorded yet.' : 'The Journal is ready. I will write only when something real surfaces.'));
+    el('toggle-journal').hidden = true;
     return;
   }
-  const visible = journalExpanded ? state.journal.slice(0, 20) : state.journal.slice(0, 1);
+  const visible = journalExpanded ? entries.slice(0, 20) : entries.slice(0, 1);
   for (const entry of visible) {
     const article = document.createElement('article');
     article.className = 'journal-entry';
@@ -753,8 +762,8 @@ function renderJournal() {
     appendRecordTimestamp(article, entry.updated_at, 'Entry updated');
     root.append(article);
   }
-  el('toggle-journal').hidden = state.journal.length <= 1;
-  el('toggle-journal').textContent = journalExpanded ? 'Show latest' : `View all (${state.journal.length})`;
+  el('toggle-journal').hidden = entries.length <= 1;
+  el('toggle-journal').textContent = journalExpanded ? 'Show latest' : `View all (${entries.length})`;
 }
 
 function makeLink(label, url) {
@@ -3035,6 +3044,15 @@ function bindEvents() {
     bindMomentum300Filters();
   } else {
     el('toggle-journal').addEventListener('click', () => { journalExpanded = !journalExpanded; renderJournal(); });
+    el('toggle-lessons').addEventListener('click', () => {
+      journalView = journalView === 'lessons' ? 'journal' : 'lessons';
+      journalExpanded = false;
+      renderJournal();
+    });
+    window.addEventListener('hashchange', () => {
+      journalView = location.hash === '#journal-lessons' ? 'lessons' : 'journal';
+      renderJournal();
+    });
     el('new-journal-button').addEventListener('click', () => { el('journal-form').hidden = false; el('journal-title').focus(); });
     el('cancel-journal').addEventListener('click', () => { el('journal-form').reset(); el('journal-form').hidden = true; });
     el('journal-form').addEventListener('submit', async event => {
@@ -3042,7 +3060,10 @@ function bindEvents() {
       const button = event.submitter;
       button.disabled = true;
       try {
-        const created = await api('create_journal', { category: el('journal-category').value, title: el('journal-title').value, body: el('journal-body').value });
+        const category = el('journal-category').value;
+        const rawTitle = el('journal-title').value.trim();
+        const title = category === 'lesson' && !/^lesson:\s/i.test(rawTitle) ? `Lesson: ${rawTitle}` : rawTitle;
+        const created = await api('create_journal', { category: category === 'lesson' ? 'evolution' : category, title, body: el('journal-body').value });
         state.journal.unshift(created);
         event.currentTarget.reset();
         event.currentTarget.hidden = true;
