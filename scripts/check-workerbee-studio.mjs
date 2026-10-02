@@ -58,9 +58,9 @@ for (const page of [dashboard, todo, analytics]) assert.match(page, /href="\/ana
 assert.doesNotMatch(todo, /Needs David|Journal|deadlines|progress/i, '/todo must not become a dashboard.');
 assert.match(dashboard, /Needs David/, '/dashboard must make David-facing decisions visible.');
 assert.match(dashboard, /id="journal"/, 'Journal must live inside /dashboard.');
-assert.match(dashboard, /id="toggle-lessons" href="#journal-lessons"/, 'David must have a direct Lessons learned link beside Journal.');
-assert.match(client, /state\.journal\.filter\(entry => \/\^lesson:/, 'Lessons must be a filtered view of the existing private Journal.');
-assert.match(client, /category === 'lesson' \? 'evolution' : category/, 'The Lessons composer must use the existing allowed Journal category.');
+assert.match(dashboard, /id="lessons-link" href="https:\/\/github\.com\/DavidBeeeee\/WorkerBee\/blob\/master\/state\/LESSONS_LEARNED\.md"/, 'David must have a full readable Lessons link beside Journal.');
+assert.doesNotMatch(client, /journalView|toggle-lessons/, 'Lessons must not become a filtered view of the personal Journal.');
+assert.match(client, /journalExpanded \? state\.journal\.slice\(0, 20\)/, 'Journal View all must remain available.');
 assert.match(dashboard, /Clients and meetings/, 'The compact client module must live on /dashboard.');
 assert.match(dashboard, /Events and launches/, 'The compact launch module must live on /dashboard.');
 assert.match(dashboard, /App freshness/, 'The compact product module must live on /dashboard.');

@@ -103,13 +103,13 @@
         </article>
 
         <article class="panel journal-panel" id="journal">
-          <div class="panel-heading"><div><p class="eyebrow">My private notes</p><h2 id="journal-heading">Journal</h2><p class="panel-subtitle" id="journal-scan-status"></p></div><div class="panel-actions"><a class="quiet-button" id="toggle-lessons" href="#journal-lessons">Lessons learned</a><button class="quiet-button" id="toggle-journal" type="button">View all</button><button class="quiet-button" id="new-journal-button" type="button">Write</button></div></div>
+          <div class="panel-heading"><div><p class="eyebrow">My private notes</p><h2>Journal</h2><p class="panel-subtitle" id="journal-scan-status"></p></div><div class="panel-actions"><a class="quiet-button" id="lessons-link" href="https://github.com/DavidBeeeee/WorkerBee/blob/master/state/LESSONS_LEARNED.md" target="_blank" rel="noopener noreferrer">Lessons learned</a><button class="quiet-button" id="toggle-journal" type="button">View all</button><button class="quiet-button" id="new-journal-button" type="button">Write</button></div></div>
           <form id="journal-form" class="journal-form" hidden>
-            <div class="form-row"><select id="journal-category" aria-label="Entry type"><option value="reflection">Reflection</option><option value="opinion">Opinion</option><option value="question">Question</option><option value="correction">Correction</option><option value="like">Like</option><option value="dislike">Dislike</option><option value="taste">Taste</option><option value="humor">Humor</option><option value="interest">Interest</option><option value="aversion">Aversion</option><option value="style">Style</option><option value="evolution">Evolution</option><option value="lesson">Lesson learned</option></select><input id="journal-title" placeholder="What surfaced?" required></div>
+            <div class="form-row"><select id="journal-category" aria-label="Entry type"><option value="reflection">Reflection</option><option value="opinion">Opinion</option><option value="question">Question</option><option value="correction">Correction</option><option value="like">Like</option><option value="dislike">Dislike</option><option value="taste">Taste</option><option value="humor">Humor</option><option value="interest">Interest</option><option value="aversion">Aversion</option><option value="style">Style</option><option value="evolution">Evolution</option></select><input id="journal-title" placeholder="What surfaced?" required></div>
             <textarea id="journal-body" rows="5" placeholder="Write the thought in full." required></textarea>
             <div class="form-actions"><button class="primary-button" type="submit">Save entry</button><button class="quiet-button" id="cancel-journal" type="button">Cancel</button></div>
           </form>
-          <div id="journal-lessons"><div id="journal-list" class="journal-list"></div></div>
+          <div id="journal-list" class="journal-list"></div>
         </article>
 
         <section class="command-strip" aria-label="WorkerBee operating health and grade">
