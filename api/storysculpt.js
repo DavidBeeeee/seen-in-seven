@@ -15,6 +15,7 @@ export const config = { maxDuration: 90 };
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
 const MODES = new Set(['bold', 'mini', 'rant']);
+const PROJECT_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // The StorySculpt knowledge lives under api/_hub, not assets, so it is bundled
 // into the function but never served as a public static file. It used to sit in
@@ -103,9 +104,15 @@ function cleanText(value, maximum) {
 function validateBody(body) {
   const mode = String(body && body.mode || '').toLowerCase();
   if (!MODES.has(mode)) throw new Error('Choose a StorySculpt format first.');
+  const projectId = String(body && body.projectId || '');
+  if (!PROJECT_ID.test(projectId)) throw new Error('Open a saved StorySculpt chat before continuing.');
+  const intent = String(body && body.intent || '');
+  if (intent !== 'interview' && intent !== 'refine') throw new Error('Choose whether to continue the interview or revise a script.');
   const messages = Array.isArray(body && body.messages) ? body.messages.slice(-24) : [];
   return {
     mode,
+    projectId,
+    intent,
     projectTitle: cleanText(body && body.projectTitle, 160),
     context: cleanText(body && body.context, 12000),
     messages: messages.map(message => ({
@@ -113,6 +120,16 @@ function validateBody(body) {
       content: cleanText(message && message.content, 8000)
     })).filter(message => message.content)
   };
+}
+
+async function loadOwnedProject(token, projectId) {
+  // Member-scoped RLS is the authority here. Never trust client-supplied output
+  // or use a service-role lookup for a member-owned script.
+  const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=eq.' + projectId + '&select=id,output,content_type&limit=1';
+  const response = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token } });
+  if (!response.ok) throw new Error('StorySculpt could not check your saved chat. Please try again.');
+  const rows = await response.json();
+  return Array.isArray(rows) ? rows[0] || null : null;
 }
 
 async function hasEeeAccess(req) {
@@ -224,6 +241,18 @@ export default async function handler(req, res) {
   }
 
   try {
+    const project = await loadOwnedProject(token, input.projectId);
+    if (!project) {
+      await emit('denied', { failureClass: classifyFailure('input') });
+      return json(res, 404, { error: 'That saved StorySculpt chat was not found in your account.' });
+    }
+    if (project.content_type !== input.mode) return json(res, 400, { error: 'This chat has a different format. Please reopen it.' });
+    if (project.output && input.intent === 'interview') {
+      await emit('denied', { failureClass: classifyFailure('input') });
+      return json(res, 409, { error: 'This script is already finished. Use Refine with a note to change it.' });
+    }
+    if (!project.output && input.intent === 'refine') return json(res, 409, { error: 'Finish a script before asking for a revision.' });
+
     const allowed = await consumeQuota({ subject: 'user:' + user.id, endpoint: 'storysculpt', limit: 60, req, userId: user.id });
     if (!allowed) {
       await emit('denied', { failureClass: classifyFailure('quota') });

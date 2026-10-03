@@ -25,6 +25,7 @@ let storyProjects = [];
 let activeStory = null;
 let storySaveTimer = null;
 let memoryProfile = {};
+let helpReturnFocus = null;
 
 const storyEl = id => document.getElementById(id);
 
@@ -74,6 +75,8 @@ function renderConversation() {
   ).join('');
   const hasOutput = Boolean(activeStory && activeStory.output);
   storyEl('story-output').hidden = !hasOutput;
+  storyEl('story-composer').hidden = hasOutput;
+  storyEl('story-generation-status').hidden = hasOutput;
   if (hasOutput) {
     storyEl('story-output-copy').value = activeStory.output || '';
     autoGrow(storyEl('story-output-copy'));
@@ -100,7 +103,7 @@ function showProject(project) {
   renderConversation();
   EEEStudio.refreshIcons();
   scrollThread();
-  storyEl('story-answer').focus();
+  (project.output ? storyEl('story-refine-note') : storyEl('story-answer')).focus();
 }
 
 function showStart() {
@@ -157,12 +160,14 @@ function queueStorySave() {
 // One request path for both a fresh answer and a refine note. It posts the
 // current conversation (plus the member's standing profile as context) to the
 // unchanged /api/storysculpt endpoint and folds the response back in.
-async function runGeneration(statusEl) {
+async function runGeneration(intent = 'interview') {
   const response = await fetch('/api/storysculpt', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + storyContext.session.access_token },
     body: JSON.stringify({
       mode: activeStory.content_type,
+      projectId: activeStory.id,
+      intent,
       projectTitle: storyEl('story-title').value,
       context: composeContext(),
       messages: activeStory.conversation
@@ -182,6 +187,11 @@ async function sendStoryAnswer(event) {
   event.preventDefault();
   const answer = storyEl('story-answer').value.trim();
   if (!activeStory || !answer) return;
+  if (activeStory.output) {
+    storyEl('story-refine-status').textContent = 'Your script is finished. Use Refine with a note to change it.';
+    storyEl('story-refine-note').focus();
+    return;
+  }
   const button = storyEl('story-send');
   button.disabled = true;
   storyEl('story-generation-status').textContent = 'Reading the full thread and finding the next useful move.';
@@ -192,7 +202,7 @@ async function sendStoryAnswer(event) {
   scrollThread();
   try {
     await saveActiveStory();
-    const data = await runGeneration();
+    const data = await runGeneration('interview');
     if (data.final) storyEl('story-output').scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch (error) {
     storyEl('story-generation-status').textContent = error.message || 'This step did not finish. Your answers are still saved.';
@@ -224,7 +234,7 @@ async function refineStory() {
   ];
   try {
     await saveActiveStory();
-    const data = await runGeneration();
+    const data = await runGeneration('refine');
     storyEl('story-refine-note').value = '';
     autoGrow(storyEl('story-refine-note'));
     if (data.final) { status.textContent = 'Script revised.'; status.className = 'eee-message success'; }
@@ -274,6 +284,20 @@ function openMemory() {
 function closeMemory() {
   storyEl('story-memory').hidden = true;
   storyEl('story-memory-scrim').hidden = true;
+}
+
+function openHelp() {
+  helpReturnFocus = document.activeElement;
+  storyEl('story-help').hidden = false;
+  storyEl('story-help-scrim').hidden = false;
+  storyEl('story-help-close').focus();
+  EEEStudio.refreshIcons();
+}
+
+function closeHelp() {
+  storyEl('story-help').hidden = true;
+  storyEl('story-help-scrim').hidden = true;
+  if (helpReturnFocus && typeof helpReturnFocus.focus === 'function') helpReturnFocus.focus();
 }
 
 async function saveMemory() {
@@ -330,6 +354,18 @@ storyEl('story-open-memory').addEventListener('click', openMemory);
 storyEl('story-open-memory-top').addEventListener('click', openMemory);
 storyEl('story-memory-close').addEventListener('click', closeMemory);
 storyEl('story-memory-scrim').addEventListener('click', closeMemory);
+storyEl('story-help-open').addEventListener('click', openHelp);
+storyEl('story-help-close').addEventListener('click', closeHelp);
+storyEl('story-help-scrim').addEventListener('click', closeHelp);
+storyEl('story-help').addEventListener('keydown', event => {
+  if (event.key === 'Escape') { closeHelp(); return; }
+  if (event.key !== 'Tab') return;
+  const focusable = [...storyEl('story-help').querySelectorAll('button, a[href]')];
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+  else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first.focus(); }
+});
 storyEl('mem-save').addEventListener('click', saveMemory);
 
 async function copyOutput(button, doneLabel) {

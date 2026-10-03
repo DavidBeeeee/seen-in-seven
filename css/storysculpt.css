@@ -101,6 +101,11 @@
 .story-memory-head { display: flex; align-items: start; justify-content: space-between; gap: 14px; padding: 22px 24px 16px; border-bottom: 1px solid var(--studio-border); }
 .story-memory-head h2 { margin: 4px 0 0; font-family: 'Oswald', sans-serif; font-size: 23px; font-weight: 600; line-height: 1.12; }
 .story-memory-intro { margin: 0; padding: 16px 24px 0; color: var(--studio-muted); font-size: 13px; line-height: 1.6; }
+.story-help-content { padding: 8px 24px 28px; overflow-y: auto; line-height: 1.6; }
+.story-help-content section { padding: 12px 0; border-bottom: 1px solid var(--studio-border); }
+.story-help-content h3 { margin: 0 0 8px; font-size: 16px; }
+.story-help-content p { margin: 0 0 10px; color: var(--studio-muted); }
+.story-help-content a { color: var(--studio-teal); text-decoration: underline; }
 .story-memory-fields { flex: 1; overflow-y: auto; display: grid; gap: 14px; padding: 18px 24px; }
 .story-memory-fields label { display: block; color: var(--studio-soft); font-size: 12px; font-weight: 800; }
 .story-memory-fields input, .story-memory-fields textarea { width: 100%; margin-top: 6px; padding: 10px 12px; border: 1px solid var(--studio-border); background: var(--studio-surface); color: var(--studio-text); font: inherit; outline: 0; }
