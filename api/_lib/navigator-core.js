@@ -129,8 +129,23 @@ function pickFields(obj) {
 // a mock can produce, return a usable four-field result and say where it came
 // from. Valid output is passed through as 'generated'; everything else yields the
 // SAFE_FALLBACK as 'fallback'. Never throws.
-export function coerceResult(rawContent) {
+export function repeatsRecentMove(result, recentMoves = []) {
+  const key = value => String(value || '').toLowerCase().replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+  return recentMoves.some(move => key(move.next_action) === key(result.next_action));
+}
+
+export function coerceResult(rawContent, recentMoves = []) {
   const parsed = parseNavigatorResult(rawContent);
-  if (parsed.ok) return { result: parsed.result, source: 'generated' };
+  if (parsed.ok && !repeatsRecentMove(parsed.result, recentMoves)) return { result: parsed.result, source: 'generated' };
+  if (repeatsRecentMove(SAFE_FALLBACK, recentMoves)) {
+    const alternative = {
+      next_action: 'Compare your last move with what happened and write the one thing you would change before trying again.',
+      first_15_minutes: 'Read your saved move. Write what happened, what you learned, and one specific change to your next attempt.',
+      done_when: 'You have saved one concrete change based on the result of your last move.',
+      why_this_now: 'The Navigator could not produce a fresh tailored route. This review uses your last attempt instead of asking you to repeat it.'
+    };
+    if (repeatsRecentMove(alternative, recentMoves)) throw new Error('No fresh move is available just now. Review your saved moves before trying again.');
+    return { result: alternative, source: 'fallback' };
+  }
   return { result: { ...SAFE_FALLBACK }, source: 'fallback' };
 }

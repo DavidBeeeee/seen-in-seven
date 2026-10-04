@@ -2533,7 +2533,7 @@
 
             if (!container.querySelector('.earnings-title')) {
                 container.innerHTML = `
-                <div class="earnings-title">Annual Revenue Simulator</div>
+                <div class="earnings-title">Annual Revenue Projection</div>
                 <div class="toggle-group">
                     <button id="toggle-1" class="toggle-btn" onclick="applyFunnelMath(1)">1 Lead/mo</button>
                     <button id="toggle-10" class="toggle-btn" onclick="applyFunnelMath(10)">10 Leads/mo</button>
@@ -2562,7 +2562,7 @@
                 </div>
 
                 <div class="earnings-amount" id="yearly-earnings">$0</div>
-                <div class="earnings-subtext" style="margin-bottom:16px;">Estimated yearly income based on your entered offer prices. Edit the customer counts above to project your revenue.</div>
+                <div class="earnings-subtext" style="margin-bottom:16px;">This is a scenario, not a prediction or a promise of income. It multiplies your offer prices by the monthly customer counts above, then by 12. The presets assume 100% become MVO customers, 30% become Signature clients, and 5% become VIP clients. Those are editable assumptions, not measured conversion rates. It assumes the same sales every month and excludes expenses, taxes, refunds, and cancellations. Recurring offers count one monthly payment per customer, not growing cohorts.</div>
             `;
             }
 

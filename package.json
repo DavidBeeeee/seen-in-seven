@@ -18,7 +18,7 @@
     "check:security-boundaries": "node scripts/check-security-boundaries.mjs",
     "check:workerbee-studio": "node scripts/check-workerbee-studio.mjs",
     "check:navigator-import": "node scripts/check-navigator-import.mjs",
-    "check:navigator-eval": "node scripts/navigator-eval.mjs",
+    "check:navigator-eval": "node scripts/navigator-eval.mjs && node scripts/check-navigator-repetition.mjs",
     "check:navigator-parity": "node scripts/navigator-parity.mjs",
     "check:storysculpt-trust": "node scripts/check-storysculpt-trust.mjs",
     "check:storysculpt-completion": "node scripts/check-storysculpt-completion.mjs",
