@@ -85,6 +85,7 @@
 .story-send:hover { background: color-mix(in srgb, var(--studio-teal) 88%, #000); }
 .story-send:disabled { opacity: .5; cursor: default; }
 .story-composer-status { margin: 0; padding: 0 26px 14px; color: var(--studio-muted); font-size: 11px; background: var(--studio-bg); flex-shrink: 0; }
+.story-composer-status.error { color: var(--studio-danger); font-size: 12px; }
 
 /* Details strip on the start screen. */
 .story-trust { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1px; margin-top: 18px; border: 1px solid var(--studio-border); background: var(--studio-border); }

@@ -7,7 +7,8 @@ import {
   promptVersion,
   classifyOutput,
   classifyFailure,
-  buildEventDetail
+  buildEventDetail,
+  failureLayer
 } from './_lib/storysculpt-observability.js';
 
 export const config = { maxDuration: 90 };
@@ -125,10 +126,21 @@ function validateBody(body) {
 async function loadOwnedProject(token, projectId) {
   // Member-scoped RLS is the authority here. Never trust client-supplied output
   // or use a service-role lookup for a member-owned script.
+  // A failure here is the database layer, not an application bug, and it is
+  // tagged so the event says so. Developer H.74 to H.78: an operator must be
+  // able to tell Supabase being down from DeepSeek being down from our code.
   const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=eq.' + projectId + '&select=id,output,content_type&limit=1';
-  const response = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token } });
-  if (!response.ok) throw new Error('StorySculpt could not check your saved chat. Please try again.');
-  const rows = await response.json();
+  let rows;
+  try {
+    const response = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token } });
+    if (!response.ok) throw new Error('status ' + response.status);
+    rows = await response.json();
+  } catch (cause) {
+    const error = new Error('StorySculpt could not check your saved chat. Please try again.');
+    error.stage = 'database';
+    error.cause = cause;
+    throw error;
+  }
   return Array.isArray(rows) ? rows[0] || null : null;
 }
 
@@ -167,6 +179,15 @@ ${CORE_INSTRUCTIONS}
 
 FORMAT REFERENCE MATERIAL:
 ${MODE_SOURCES[mode]}`;
+}
+
+// Everything the member supplied in this request: the context, the title, and
+// the whole thread, including earlier accepted assistant turns (a hook the
+// member chose from three options is theirs once chosen). The output validator
+// checks a finished script's quotations and credentials against this, and it
+// never leaves the function: buildEventDetail cannot carry it.
+function memberSource(input) {
+  return [input.projectTitle, input.context, ...input.messages.map((message) => message.content)].join('\n');
 }
 
 async function callStorySculpt(input) {
@@ -227,9 +248,13 @@ export default async function handler(req, res) {
     ...extra
   }));
 
+  // Every error body carries the trace, so a member's browser can report a
+  // delivery or save failure against the same id the server logged.
+  const fail = (status, error) => json(res, status, { error, trace });
+
   if (!(await hasEeeAccess(req))) {
     await emit('denied', { failureClass: classifyFailure('entitlement') });
-    return json(res, 403, { error: 'An active EEE membership is required.' });
+    return fail(403, 'An active EEE membership is required.');
   }
 
   let input;
@@ -237,26 +262,32 @@ export default async function handler(req, res) {
     input = validateBody(req.body);
   } catch (error) {
     await emit('error', { failureClass: classifyFailure('input') });
-    return json(res, 400, { error: error && error.message ? error.message : 'StorySculpt could not read that request.' });
+    return fail(400, error && error.message ? error.message : 'StorySculpt could not read that request.');
   }
 
   try {
     const project = await loadOwnedProject(token, input.projectId);
     if (!project) {
       await emit('denied', { failureClass: classifyFailure('input') });
-      return json(res, 404, { error: 'That saved StorySculpt chat was not found in your account.' });
+      return fail(404, 'That saved StorySculpt chat was not found in your account.');
     }
-    if (project.content_type !== input.mode) return json(res, 400, { error: 'This chat has a different format. Please reopen it.' });
+    if (project.content_type !== input.mode) {
+      await emit('denied', { failureClass: classifyFailure('input') });
+      return fail(400, 'This chat has a different format. Please reopen it.');
+    }
     if (project.output && input.intent === 'interview') {
       await emit('denied', { failureClass: classifyFailure('input') });
-      return json(res, 409, { error: 'This script is already finished. Use Refine with a note to change it.' });
+      return fail(409, 'This script is already finished. Use Refine with a note to change it.');
     }
-    if (!project.output && input.intent === 'refine') return json(res, 409, { error: 'Finish a script before asking for a revision.' });
+    if (!project.output && input.intent === 'refine') {
+      await emit('denied', { failureClass: classifyFailure('input') });
+      return fail(409, 'Finish a script before asking for a revision.');
+    }
 
     const allowed = await consumeQuota({ subject: 'user:' + user.id, endpoint: 'storysculpt', limit: 60, req, userId: user.id });
     if (!allowed) {
       await emit('denied', { failureClass: classifyFailure('quota') });
-      return json(res, 429, { error: 'StorySculpt needs a short pause before the next request.' });
+      return fail(429, 'StorySculpt needs a short pause before the next request.');
     }
 
     let result;
@@ -267,15 +298,26 @@ export default async function handler(req, res) {
       const message = error && error.name === 'AbortError'
         ? 'StorySculpt took too long on this pass. Your project is saved, so please try this step again.'
         : error && error.message ? error.message : 'StorySculpt could not complete this step.';
-      return json(res, error && error.name === 'AbortError' ? 504 : 502, { error: message });
+      return fail(error && error.name === 'AbortError' ? 504 : 502, message);
     }
 
     // Server-side output validation. Developer F.60: a technically successful
     // generation that breaks the script contract is caught here, not shipped.
-    const verdict = classifyOutput(result.content);
+    // Checked against the member's own material, so an invented testimonial or
+    // credential in a finished script is refused and recorded, never returned.
+    // WBR-005, 2026-10-03 evening order.
+    const verdict = classifyOutput(result.content, { source: memberSource(input) });
     if (!verdict.ok) {
-      await emit('output_rejected', { failureClass: classifyFailure('output'), violations: [verdict.reason] });
-      return json(res, 502, { error: 'StorySculpt produced a response that did not meet the script contract. Your project is saved, so please try this step again.' });
+      await emit('output_rejected', {
+        failureClass: classifyFailure('output'),
+        violations: verdict.violations && verdict.violations.length ? verdict.violations : [verdict.reason],
+        usage: result.usage
+      });
+      return json(res, 502, {
+        error: 'StorySculpt drafted something that broke its own rules, so it was not shown to you. Nothing was lost. Please try this step again.',
+        rejected: verdict.reason,
+        trace
+      });
     }
 
     await emit('generation', {
@@ -289,8 +331,9 @@ export default async function handler(req, res) {
     });
     return json(res, 200, { final: verdict.final, content: verdict.content, promptVersion: PROMPT_VERSION, model: MODEL_VERSION, trace });
   } catch (error) {
-    await emit('error', { failureClass: classifyFailure('internal', error) });
-    return json(res, 500, { error: error && error.message ? error.message : 'StorySculpt could not complete this step.' });
+    const failureClass = classifyFailure(error && error.stage === 'database' ? 'database' : 'internal', error);
+    await emit('error', { failureClass });
+    return fail(failureLayer(failureClass) === 'database' ? 503 : 500, error && error.message ? error.message : 'StorySculpt could not complete this step.');
   }
 }
 

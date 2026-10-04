@@ -157,11 +157,40 @@ function queueStorySave() {
   }), 500);
 }
 
+// The browser half of the receipt-to-outcome trail. The server logs every
+// request under a trace id; this records the two failures only the browser can
+// see, against that same id: the answer never arrived (delivery), or it arrived
+// and could not be saved (save). Fire and forget: it never blocks or throws,
+// and it carries no member content, only the class, the trace, and a status.
+// WBR-005, 2026-10-03 evening order.
+function recordStoryFailure(failureClass, trace, status) {
+  try {
+    const layer = failureClass === 'delivery-error' ? 'delivery' : 'database';
+    storyContext.sb.rpc('record_log_event', {
+      p_event_type: 'storysculpt_' + (layer === 'delivery' ? 'delivery_failed' : 'save_failed'),
+      p_detail: {
+        schema: 1,
+        trace: String(trace || ''),
+        outcome: 'error',
+        mode: String(activeStory && activeStory.content_type || ''),
+        failureClass,
+        layer,
+        ...(Number.isFinite(status) ? { status } : {}),
+        side: 'browser'
+      }
+    }).then(() => {}, () => {});
+  } catch (error) {
+    // Observability never breaks the app.
+  }
+}
+
 // One request path for both a fresh answer and a refine note. It posts the
 // current conversation (plus the member's standing profile as context) to the
 // unchanged /api/storysculpt endpoint and folds the response back in.
 async function runGeneration(intent = 'interview') {
-  const response = await fetch('/api/storysculpt', {
+  let response;
+  try {
+    response = await fetch('/api/storysculpt', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + storyContext.session.access_token },
     body: JSON.stringify({
@@ -172,12 +201,26 @@ async function runGeneration(intent = 'interview') {
       context: composeContext(),
       messages: activeStory.conversation
     })
-  });
-  const data = await response.json().catch(() => ({}));
+    });
+  } catch (error) {
+    recordStoryFailure('delivery-error', '', 0);
+    throw new Error('StorySculpt could not be reached. Check your connection. Your answers are still saved.');
+  }
+  const data = await response.json().catch(() => null);
+  if (!data) {
+    recordStoryFailure('delivery-error', '', response.status);
+    throw new Error('StorySculpt\'s reply did not arrive in one piece. Your answers are still saved, so please try again.');
+  }
   if (!response.ok) throw new Error(data.error || 'StorySculpt could not complete this step.');
   if (data.final) activeStory.output = data.content;
   else activeStory.conversation.push({ role: 'assistant', content: data.content });
-  await saveActiveStory(data.final ? 'Finished draft saved' : null);
+  try {
+    await saveActiveStory(data.final ? 'Finished draft saved' : null);
+  } catch (error) {
+    recordStoryFailure('save-error', data.trace, 0);
+    renderConversation();
+    throw new Error('StorySculpt answered, but it could not be saved to your account yet. Keep this page open and try again.');
+  }
   renderConversation();
   scrollThread();
   return data;
@@ -200,15 +243,26 @@ async function sendStoryAnswer(event) {
   autoGrow(storyEl('story-answer'));
   renderConversation();
   scrollThread();
+  // The finally block used to reset this status line unconditionally, which
+  // wiped the error the catch had just written: a rejected or failed step
+  // showed the member the idle line and nothing else. Only a success resets it
+  // now. WBR-005, found 2026-10-03 while surfacing the output rejection.
+  const status = storyEl('story-generation-status');
+  let failed = false;
   try {
     await saveActiveStory();
     const data = await runGeneration('interview');
     if (data.final) storyEl('story-output').scrollIntoView({ behavior: 'smooth', block: 'start' });
   } catch (error) {
-    storyEl('story-generation-status').textContent = error.message || 'This step did not finish. Your answers are still saved.';
+    failed = true;
+    status.textContent = error.message || 'This step did not finish. Your answers are still saved.';
+    status.classList.add('error');
   } finally {
     button.disabled = false;
-    if (!activeStory.output) storyEl('story-generation-status').textContent = 'StorySculpt saves your chat as you go.';
+    if (!failed && !activeStory.output) {
+      status.textContent = 'StorySculpt saves your chat as you go.';
+      status.classList.remove('error');
+    }
     EEEStudio.refreshIcons();
   }
 }

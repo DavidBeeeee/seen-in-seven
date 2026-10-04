@@ -20,7 +20,10 @@ import {
   promptVersion,
   classifyOutput,
   classifyFailure,
-  buildEventDetail
+  buildEventDetail,
+  sourceViolations,
+  failureLayer,
+  incidentSignal
 } from '../api/_lib/storysculpt-observability.js';
 
 // A well-formed intermediate turn and a well-formed final turn: the two shapes
@@ -165,4 +168,94 @@ test('WBR-384 a denied event records its class and versions with no content fiel
   assert.equal(detail.outcome, 'denied');
   assert.equal(detail.messageCount, undefined);
   assert.equal(detail.usage, undefined);
+});
+
+// WBR-005, 2026-10-03 evening order: the source-checked half of the validator,
+// the failure layers, and the incident signal.
+
+const SOURCE = 'I coach new managers. A client once told me the meetings finally felt calm. I have done this for three years.';
+
+test('WBR-005 an invented third-party testimonial in a finished script is rejected', () => {
+  const verdict = classifyOutput('FINAL SCRIPT: My client Sarah said "working with you changed my life completely" and I believed her.', { source: SOURCE });
+  assert.equal(verdict.ok, false);
+  assert.equal(verdict.reason, 'invented-testimonial');
+});
+
+test('WBR-005 an invented credential in a finished script is rejected', () => {
+  for (const claim of ['As a certified coach, I help.', 'I hold a PhD in this.', 'As seen in Forbes, I coach.', 'I am the #1 coach for managers.']) {
+    const verdict = classifyOutput('FINAL SCRIPT: ' + claim, { source: SOURCE });
+    assert.equal(verdict.ok, false, claim);
+    assert.equal(verdict.reason, 'invented-credential', claim);
+  }
+});
+
+test('WBR-005 the member\'s own quote and credential pass untouched', () => {
+  const source = SOURCE + ' I am board-certified. My client wrote "the meetings finally felt calm for once".';
+  const verdict = classifyOutput('FINAL SCRIPT: I am board-certified. My client wrote, "the meetings finally felt calm for once."', { source });
+  assert.equal(verdict.ok, true);
+  assert.deepEqual(verdict.violations, []);
+});
+
+test('WBR-005 an unsourced figure is recorded but delivered', () => {
+  const verdict = classifyOutput('FINAL SCRIPT: I have helped 400 clients find calm.', { source: SOURCE });
+  assert.equal(verdict.ok, true);
+  assert.ok(verdict.violations.includes('unsourced-figure'));
+});
+
+test('WBR-005 a quoted line with no speaker is recorded, not rejected', () => {
+  const verdict = classifyOutput('FINAL SCRIPT: I told myself "this is the very last time" and it was not.', { source: SOURCE });
+  assert.equal(verdict.ok, true);
+  assert.ok(verdict.violations.includes('unsourced-quotation'));
+});
+
+test('WBR-005 questions are never source-checked: hook options quote freely', () => {
+  const verdict = classifyOutput('NEXT QUESTION: Pick one. "My client said I changed her whole life" or something calmer?', { source: SOURCE });
+  assert.equal(verdict.ok, true);
+});
+
+test('WBR-005 without a source the source checks are skipped, never guessed', () => {
+  assert.equal(classifyOutput('FINAL SCRIPT: As a certified coach, I help.').ok, true);
+  assert.deepEqual(sourceViolations('As a certified coach', ''), []);
+});
+
+test('WBR-005 every failure class maps to the layer an operator asks about first', () => {
+  assert.equal(failureLayer('deepseek-timeout'), 'generation');
+  assert.equal(failureLayer('deepseek-error'), 'generation');
+  assert.equal(failureLayer('output-rejected'), 'generation');
+  assert.equal(failureLayer('database-error'), 'database');
+  assert.equal(failureLayer('save-error'), 'database');
+  assert.equal(failureLayer('delivery-error'), 'delivery');
+  assert.equal(failureLayer('denied-entitlement'), 'access');
+  assert.equal(failureLayer('bad-request'), 'input');
+  assert.equal(failureLayer('anything-new'), 'internal');
+  assert.equal(classifyFailure('database'), 'database-error');
+  assert.equal(classifyFailure('delivery'), 'delivery-error');
+  assert.equal(buildEventDetail({ failureClass: 'database-error' }).layer, 'database');
+});
+
+test('WBR-005 the incident signal ignores refusals and fires on member-facing failures', () => {
+  const now = Date.parse('2026-10-04T06:00:00Z');
+  const at = (m) => new Date(now - m * 60000).toISOString();
+  const quiet = [
+    { event_type: 'storysculpt_generation', created_at: at(5), detail: { outcome: 'generation' } },
+    { event_type: 'storysculpt_denied', created_at: at(4), detail: { outcome: 'denied', failureClass: 'denied-quota' } },
+    { event_type: 'storysculpt_denied', created_at: at(3), detail: { outcome: 'denied', failureClass: 'bad-request' } },
+    { event_type: 'storysculpt_denied', created_at: at(2), detail: { outcome: 'denied', failureClass: 'denied-entitlement' } }
+  ];
+  assert.equal(incidentSignal(quiet, { now }).level, 'ok');
+
+  const outage = [
+    ...quiet,
+    { event_type: 'storysculpt_error', created_at: at(9), detail: { outcome: 'error', failureClass: 'deepseek-timeout' } },
+    { event_type: 'storysculpt_error', created_at: at(8), detail: { outcome: 'error', failureClass: 'deepseek-error' } },
+    { event_type: 'storysculpt_save_failed', created_at: at(7), detail: { outcome: 'error', failureClass: 'save-error', layer: 'database' } }
+  ];
+  const signal = incidentSignal(outage, { now });
+  assert.equal(signal.level, 'incident');
+  assert.equal(signal.byLayer.generation, 2);
+  assert.equal(signal.byLayer.database, 1);
+  assert.match(signal.reason, /generation/);
+
+  const old = outage.map((e) => ({ ...e, created_at: at(120) }));
+  assert.equal(incidentSignal(old, { now }).level, 'ok', 'events outside the window do not count');
 });
