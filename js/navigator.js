@@ -80,7 +80,7 @@
     if (flag) {
       flag.hidden = move.source !== 'fallback';
       flag.textContent = move.source === 'fallback'
-        ? 'The model was unreachable, so this is a safe fallback move you can always do.'
+        ? 'A fresh tailored route was not available, so this is a safe fallback move you can make.'
         : '';
     }
     const completeBtn = el('navigator-complete');
@@ -166,7 +166,7 @@
       await loadMoves();
       render();
       setMessage(data.source === 'fallback'
-        ? 'Saved. The model was busy, so this is a safe move you can always make.'
+        ? 'Saved. A fresh tailored route was not available, so this is a safe fallback move.'
         : 'Next move saved. It will be here when you come back.', 'success');
     } catch (error) {
       setMessage(error.message || 'The route did not finish. Nothing was lost.', 'error');

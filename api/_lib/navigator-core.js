@@ -147,5 +147,7 @@ export function coerceResult(rawContent, recentMoves = []) {
     if (repeatsRecentMove(alternative, recentMoves)) throw new Error('No fresh move is available just now. Review your saved moves before trying again.');
     return { result: alternative, source: 'fallback' };
   }
-  return { result: { ...SAFE_FALLBACK }, source: 'fallback' };
+  return { result: { ...SAFE_FALLBACK,
+    ...(parsed.ok ? { why_this_now: 'The Navigator did not produce a fresh tailored route this time. Naming the outcome and obstacle in your own words helps you choose a different next step.' } : {})
+  }, source: 'fallback' };
 }
