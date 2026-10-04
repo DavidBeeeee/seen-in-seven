@@ -1,5 +1,5 @@
 import assert from 'node:assert/strict';
-import handler from '../api/storysculpt.js';
+import handler, { contractHistory } from '../api/storysculpt.js';
 
 const projectId = '11111111-1111-4111-8111-111111111111';
 const originalFetch = globalThis.fetch;
@@ -46,6 +46,25 @@ try {
   const prematureRefine = await request('refine');
   assert.equal(prematureRefine.code, 409);
   assert.equal(deepSeekCalls, 0);
+  // WBR-428: the history DeepSeek reads carries the contract prefixes the
+  // browser strips, so the model is not taught to drop them.
+  const thread = [
+    { role: 'assistant', content: 'Share one specific insight.' },
+    { role: 'user', content: 'My insight' },
+    { role: 'assistant', content: 'NEXT QUESTION: Already labelled.' },
+    { role: 'user', content: 'Pick two' },
+    { role: 'assistant', content: 'Title\nThe finished script.' },
+    { role: 'user', content: 'Please revise the script above.' }
+  ];
+  const interview = contractHistory(thread, 'interview');
+  assert.equal(interview[0].content, 'NEXT QUESTION: Share one specific insight.');
+  assert.equal(interview[2].content, 'NEXT QUESTION: Already labelled.', 'an existing prefix is not doubled');
+  assert.equal(interview[1].content, 'My insight', 'member turns are untouched');
+  const refine = contractHistory(thread, 'refine');
+  assert.equal(refine[4].content, 'FINAL SCRIPT: Title\nThe finished script.', 'the script being refined is labelled as the final script');
+  assert.equal(refine[0].content, 'NEXT QUESTION: Share one specific insight.');
+  assert.equal(thread[0].content, 'Share one specific insight.', 'the stored thread is not mutated');
+
   console.log('StorySculpt completion guard passed: final interview and premature refine rejected before quota or generation.');
 } finally {
   globalThis.fetch = originalFetch;

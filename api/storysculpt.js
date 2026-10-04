@@ -190,6 +190,26 @@ function memberSource(input) {
   return [input.projectTitle, input.context, ...input.messages.map((message) => message.content)].join('\n');
 }
 
+// The thread exactly as the contract says it was spoken. WBR-428.
+//
+// The browser stores each assistant turn with its NEXT QUESTION: / FINAL
+// SCRIPT: prefix already stripped, because the member should never see it, and
+// sends that thread back on the next turn. So from turn two DeepSeek read its
+// own earlier replies without the prefix and imitated them: on 2026-09-29/30,
+// 5 of 12 real member generations were refused as missing-contract-prefix, and
+// the 2026-10-03 signed-in walk saw 9 of 13. Restoring the prefix on the way
+// out is not a prompt or flow change; it is the same turns, labelled the way
+// the system prompt already says they were. In a refine, the last assistant
+// turn is the finished script the member is revising.
+export function contractHistory(messages, intent) {
+  const lastAssistant = messages.map((m) => m.role).lastIndexOf('assistant');
+  return messages.map((message, index) => {
+    if (message.role !== 'assistant' || /^(NEXT QUESTION|FINAL SCRIPT):/i.test(message.content)) return message;
+    const prefix = intent === 'refine' && index === lastAssistant ? 'FINAL SCRIPT: ' : 'NEXT QUESTION: ';
+    return { role: 'assistant', content: prefix + message.content };
+  });
+}
+
 async function callStorySculpt(input) {
   const apiKey = process.env.DEEPSEEK_API_KEY;
   if (!apiKey) throw new Error('StorySculpt generation is not configured.');
@@ -208,7 +228,7 @@ async function callStorySculpt(input) {
         messages: [
           { role: 'system', content: systemPrompt(input.mode) },
           ...(context ? [{ role: 'user', content: context }] : []),
-          ...input.messages
+          ...contractHistory(input.messages, input.intent)
         ],
         max_tokens: 1900,
         thinking: { type: 'disabled' },
