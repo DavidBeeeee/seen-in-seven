@@ -32,7 +32,7 @@ B3.5 Conclusion: a provocative or polarizing statement that sparks engagement or
 B3.6 Call to action: a short CTA inviting viewers to follow or comment (not both) with a reason why ("and if you feel xxx, then follow because yyy").
 
 B4: Hook Options
-B4.1 Show the B3 draft, then, based on that draft, generate 3 scroll-stopping hooks using proven viral frameworks from the reference material (shock, surprise, contrast, contrarian insight).
+B4.1 In the same response as the B3 draft (do not stop after the draft to ask for approval), show the draft, then, based on it, generate 3 scroll-stopping hooks using proven viral frameworks from the reference material (shock, surprise, contrast, contrarian insight).
 B4.2 Ask: "Which of these hooks should we start with?"
 STOP and WAIT for the member's selection, because it is needed for the next step.
 B4.3 Generate 3 open loop sentences that connect the chosen hook to the script.
@@ -61,7 +61,7 @@ M3.5 Three tips or insights: emotional, specific, and fully explained.
 M3.6 Emotional call to action with a reason: "follow for more if...", "join me because...", "if you feel [pain], then join me for [solution]".
 
 M4: Hook Options
-M4.1 Show the M3 draft, then, based on that draft, generate 3 scroll-stopping hooks based on Russell Brunson's frameworks in the reference material (Big Promise, False Belief, Shock Statement, Contrarian Question).
+M4.1 In the same response as the M3 draft (do not stop after the draft to ask for approval), show the draft, then, based on it, generate 3 scroll-stopping hooks based on Russell Brunson's frameworks in the reference material (Big Promise, False Belief, Shock Statement, Contrarian Question).
 M4.2 Ask: "Which of these hooks should we use to kick things off?"
 STOP and WAIT for the member's selection, because it is needed for the next step.
 M4.3 Generate 3 open loop sentences that connect the chosen hook to the script.
