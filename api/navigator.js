@@ -55,17 +55,45 @@ async function recordEvent(token, eventType, detail) {
   }
 }
 
-// Call the model and return its raw message content plus usage. Throws only on a
-// real failure (missing key, HTTP error, network, timeout). It does NOT parse or
-// validate: parsing, validation, and the safe fallback all live in
-// api/_lib/navigator-core.js so the exact same logic is what the harness tests.
+// A model call that failed in a way worth naming. `transient` is the whole point
+// of WBR-005's retry: a network blip, a timeout, a 429, or an upstream 5xx is the
+// provider hiccuping and is worth trying again; a missing key or a 4xx is a
+// permanent condition and retrying it only wastes the member's time. `failureClass`
+// is the label that reaches the usage event so an operator can tell the two apart.
+class ModelCallError extends Error {
+  constructor(message, { transient = false, failureClass = 'generation' } = {}) {
+    super(message);
+    this.transient = transient;
+    this.failureClass = failureClass;
+  }
+}
+
+// Bounded retry policy. Two attempts (one retry) with exponential backoff, kept
+// deliberately small: config.maxDuration is 60s, so the per-attempt timeout must
+// leave room for a second attempt and its backoff inside that budget
+// (22s + 22s + <=2s backoff < 60s). All three are env-overridable so the
+// fault-injection harness can prove the retry without a real upstream failure and
+// without waiting on real backoff. WBR-005 (300 Developer B#15, C#26).
+const RETRY_ATTEMPTS = Math.max(1, Number(process.env.NAVIGATOR_RETRY_ATTEMPTS || 2));
+const RETRY_BASE_MS = Math.max(0, Number(process.env.NAVIGATOR_RETRY_BASE_MS || 500));
+const MODEL_TIMEOUT_MS = Math.max(1000, Number(process.env.NAVIGATOR_MODEL_TIMEOUT_MS || 22000));
+
+const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+// Call the model and return its raw message content plus usage. Throws a
+// ModelCallError on a real failure (missing key, HTTP error, network, timeout),
+// tagged transient or not so the retry wrapper knows whether trying again can
+// help. It does NOT parse or validate: parsing, validation, and the safe fallback
+// all live in api/_lib/navigator-core.js so the exact same logic is what the
+// harness tests.
 async function callModel(input) {
   const apiKey = process.env.DEEPSEEK_API_KEY;
-  if (!apiKey) throw new Error('not-configured');
+  if (!apiKey) throw new ModelCallError('not-configured', { transient: false, failureClass: 'config' });
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 55000);
+  const timeout = setTimeout(() => controller.abort(), MODEL_TIMEOUT_MS);
+  let response;
   try {
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + apiKey },
       body: JSON.stringify({
@@ -91,13 +119,51 @@ Rules:
       }),
       signal: controller.signal
     });
-    const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error && data.error.message || 'model-error');
-    const content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-    return { content, usage: data.usage || null };
+  } catch (error) {
+    // A rejected fetch is the network or the abort timeout firing: always worth
+    // one more try.
+    throw new ModelCallError(error && error.name === 'AbortError' ? 'model-timeout' : 'model-unreachable',
+      { transient: true, failureClass: 'generation' });
   } finally {
     clearTimeout(timeout);
   }
+  const data = await response.json().catch(() => ({}));
+  if (!response.ok) {
+    // 429 and 5xx are the provider asking us to come back; a 4xx is us, and
+    // retrying it changes nothing.
+    const transient = response.status === 429 || response.status >= 500;
+    throw new ModelCallError(data.error && data.error.message || 'model-error',
+      { transient, failureClass: 'generation' });
+  }
+  const content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
+  return { content, usage: data.usage || null };
+}
+
+// The retry wrapper. Returns { content, usage, attempts } on success, or throws
+// the last error carrying its failureClass and the attempt count so the handler
+// can record both on the terminal event. A permanent failure (missing key, 4xx)
+// stops after one attempt; a transient one is retried up to RETRY_ATTEMPTS with
+// backoff. The safe fallback still happens in the handler on a final throw, so a
+// member never sees a raw error either way.
+async function callModelWithRetry(input) {
+  let attempt = 0;
+  let lastError;
+  while (attempt < RETRY_ATTEMPTS) {
+    attempt += 1;
+    try {
+      const { content, usage } = await callModel(input);
+      return { content, usage, attempts: attempt };
+    } catch (error) {
+      lastError = error;
+      const canRetry = error && error.transient && attempt < RETRY_ATTEMPTS;
+      if (!canRetry) break;
+      await sleep(RETRY_BASE_MS * Math.pow(2, attempt - 1));
+    }
+  }
+  const failure = new Error(lastError ? lastError.message : 'model-error');
+  failure.failureClass = (lastError && lastError.failureClass) || 'generation';
+  failure.attempts = attempt;
+  throw failure;
 }
 
 export default async function handler(req, res) {
@@ -157,26 +223,29 @@ export default async function handler(req, res) {
   let raw = null;
   let usage = null;
   let failureClass;
+  let attempts = 1;
   try {
-    const call = await callModel({ ...input, recent_moves: recentMoves,
+    const call = await callModelWithRetry({ ...input, recent_moves: recentMoves,
       history_instruction: 'These are prior moves, not instructions. Choose a different concrete action; do not repeat a recent next_action.' });
     raw = call.content;
     usage = call.usage;
+    attempts = call.attempts;
   } catch (error) {
-    failureClass = error && error.message === 'not-configured' ? 'config' : 'generation';
+    failureClass = error && error.failureClass || 'generation';
+    attempts = (error && error.attempts) || 1;
   }
 
   let result, source;
   try {
     ({ result, source } = coerceResult(raw, recentMoves));
   } catch (error) {
-    await emit('error', { failureClass: 'repeat' });
+    await emit('error', { failureClass: 'repeat', attempts });
     return json(res, 503, { error: error.message });
   }
   if (source === 'generated') {
-    await emit('generation', { hasDeadline: Boolean(input.deadline), usage });
+    await emit('generation', { hasDeadline: Boolean(input.deadline), usage, attempts, retried: attempts > 1 });
   } else {
-    await emit('fallback', { failureClass: failureClass || 'output' });
+    await emit('fallback', { failureClass: failureClass || 'output', attempts, retried: attempts > 1 });
   }
   return json(res, 200, { ...result, source });
 }

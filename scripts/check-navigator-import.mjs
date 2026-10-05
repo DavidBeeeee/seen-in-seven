@@ -40,6 +40,9 @@ const nextMove = [
   'Choose my next move',
   'NavigatorMoves',
   '/js/navigator.js',
+  // The idempotent move write is a module the page must actually load, or the
+  // double-submit guard is dead code. WBR-005.
+  '/js/navigator-moves-store.mjs',
 ];
 
 for (const marker of [...roadmap, ...nextMove]) {
@@ -52,5 +55,15 @@ if (!moveJs.includes('window.NavigatorMoves')) {
 if (!moveJs.includes("from('navigator_moves')")) {
   throw new Error('js/navigator.js must read and write the durable navigator_moves record.');
 }
+if (!moveJs.includes('NavigatorMovesStore')) {
+  throw new Error('js/navigator.js must save moves through NavigatorMovesStore so the write is the idempotent, tested path.');
+}
 
-console.log('Next Step Navigator import checks passed for the roadmap builder and the durable Next Move record.');
+// The store module itself must mint a key and upsert on the idempotency index,
+// not plain-insert, or the migration's unique index guards nothing on this path.
+const storeJs = fs.readFileSync(path.join(root, 'js', 'navigator-moves-store.mjs'), 'utf8');
+for (const marker of ['newIdempotencyKey', "onConflict: 'user_id,idempotency_key'", 'ignoreDuplicates: true']) {
+  if (!storeJs.includes(marker)) throw new Error(`js/navigator-moves-store.mjs is missing ${marker}`);
+}
+
+console.log('Next Step Navigator import checks passed for the roadmap builder, the durable Next Move record, and the idempotent write.');

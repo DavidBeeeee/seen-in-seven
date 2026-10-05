@@ -16,6 +16,51 @@
   let ctx = null;
   let moves = [];
   let lastResult = null;
+  // Reused across a retry of the same submission so a resubmit cannot duplicate
+  // the move; cleared once a submission's write lands. WBR-005.
+  let pendingIdempotencyKey = null;
+
+  // The move write and its idempotency key live in js/navigator-moves-store.mjs,
+  // a module the page loads as window.NavigatorMovesStore so the logic is unit
+  // tested under node. These thin wrappers prefer that module and keep a plain
+  // inline path as a defensive fallback, because the move layer must never break
+  // the roadmap builder it sits beside even if the module failed to load.
+  function store() {
+    return (typeof window !== 'undefined' && window.NavigatorMovesStore) || null;
+  }
+
+  function makeIdempotencyKey() {
+    const s = store();
+    if (s) return s.newIdempotencyKey();
+    if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
+    return 'k-' + Date.now() + '-' + Math.random().toString(16).slice(2);
+  }
+
+  function buildRow(input, data, idempotencyKey) {
+    const s = store();
+    if (s) return s.buildMoveRow({ profileId: ctx.profile.id, input, result: data, idempotencyKey });
+    return {
+      user_id: ctx.profile.id,
+      objective: input.objective,
+      current_reality: input.current_reality,
+      blocker: input.blocker,
+      available_time: input.available_time,
+      deadline: input.deadline,
+      next_action: data.next_action || '',
+      first_15_minutes: data.first_15_minutes || '',
+      done_when: data.done_when || '',
+      why_this_now: data.why_this_now || '',
+      source: data.source === 'fallback' ? 'fallback' : 'generated',
+      status: 'active',
+      idempotency_key: idempotencyKey
+    };
+  }
+
+  function saveRow(sb, row) {
+    const s = store();
+    if (s) return s.saveMove(sb, row);
+    return sb.from('navigator_moves').insert(row);
+  }
 
   function escapeHtml(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, ch => ({
@@ -138,6 +183,10 @@
     const label = button.querySelector('span');
     if (label) label.textContent = 'Finding the route...';
     setMessage('Comparing the objective, blocker, and time available.');
+    // One idempotency key per submission attempt. If the route is retried after a
+    // flaky response the same key is reused, so the server-side unique index turns
+    // the second write into a no-op rather than a duplicate move. WBR-005.
+    if (!pendingIdempotencyKey) pendingIdempotencyKey = makeIdempotencyKey();
     try {
       const response = await fetch('/api/navigator', {
         method: 'POST',
@@ -146,23 +195,13 @@
       });
       const data = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(data.error || 'The Navigator could not choose the next move.');
-      const row = {
-        user_id: ctx.profile.id,
-        objective: input.objective,
-        current_reality: input.current_reality,
-        blocker: input.blocker,
-        available_time: input.available_time,
-        deadline: input.deadline,
-        next_action: data.next_action || '',
-        first_15_minutes: data.first_15_minutes || '',
-        done_when: data.done_when || '',
-        why_this_now: data.why_this_now || '',
-        source: data.source === 'fallback' ? 'fallback' : 'generated',
-        status: 'active'
-      };
-      const { error } = await ctx.sb.from('navigator_moves').insert(row);
+      const row = buildRow(input, data, pendingIdempotencyKey);
+      const { error } = await saveRow(ctx.sb, row);
       if (error) throw error;
       lastResult = row;
+      // The write landed (or was a no-op for a duplicate key); this submission is
+      // done, so the next one starts a fresh key.
+      pendingIdempotencyKey = null;
       await loadMoves();
       render();
       setMessage(data.source === 'fallback'

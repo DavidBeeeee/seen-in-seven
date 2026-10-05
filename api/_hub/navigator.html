@@ -2789,7 +2789,10 @@
         window.onload = loadData;
     </script>
     <script src="/js/eee-common.js?v=momentum-hub-v2"></script>
-    <script src="/js/navigator.js?v=wbr409-1"></script>
+    <!-- The idempotent move write, loaded as a module so it is unit-testable under
+         node; it hangs window.NavigatorMovesStore before mount() runs. WBR-005. -->
+    <script type="module" src="/js/navigator-moves-store.mjs?v=wbr005-1"></script>
+    <script src="/js/navigator.js?v=wbr409-2"></script>
     <script>
         EEEStudio.initialize(async context => {
             const email = document.getElementById('eee-account-email');
