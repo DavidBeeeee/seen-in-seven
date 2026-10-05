@@ -17,7 +17,7 @@
 
 import assert from 'node:assert/strict';
 
-process.env.NAVIGATOR_RETRY_ATTEMPTS = '2';
+process.env.NAVIGATOR_RETRY_ATTEMPTS = '999'; // hostile override must still stop at two
 process.env.NAVIGATOR_RETRY_BASE_MS = '1';
 process.env.NAVIGATOR_MODEL_TIMEOUT_MS = '2000';
 process.env.RATE_LIMIT_SECRET = 'fixture-rate-limit-secret-at-least-32-characters';
@@ -98,6 +98,7 @@ async function run(deepseek, { withKey = true } = {}) {
   assert.equal(state.event.type, 'navigator_generation');
   assert.equal(state.event.detail.attempts, 2, 'the event records both attempts');
   assert.equal(state.event.detail.retried, true, 'the event marks the request as retried');
+  assert.deepEqual(state.event.detail.recoveredFailureClasses, ['generation'], 'recovery retains the failure class instead of erasing it');
 }
 
 // Case 2: every attempt is a transient network failure. The retry is bounded: it
