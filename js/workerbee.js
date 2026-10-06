@@ -544,6 +544,9 @@ function renderDailyReport() {
     grid.className = 'daily-report-grid';
     grid.append(
       renderReportPeriod('Morning', record.metadata.morning, reportDate),
+      // 2026-10-06: Antigravity's 10:00 build lane (David). Older reports have no
+      // late_morning period and render as not run.
+      renderReportPeriod('Late morning · Antigravity', record.metadata.late_morning),
       renderReportPeriod('Afternoon', record.metadata.afternoon),
       renderReportPeriod('Moltbook', record.metadata.moltbook),
       renderReportPeriod('Late night', record.metadata.late_night)
