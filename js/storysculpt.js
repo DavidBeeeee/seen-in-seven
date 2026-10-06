@@ -3,7 +3,7 @@ const STORY_STARTERS = {
   mini: 'What recent insight, lesson, belief, or idea do you want to turn into a short video?',
   rant: 'Type the raw rant or experience you want to turn into a video. Do not organize it first. Get the real thought out.'
 };
-const STORY_MODE_LABELS = { bold: 'Bold', mini: 'Mini', rant: 'Rant' };
+const STORY_MODE_LABELS = { bold: 'Controversial Take', mini: 'Mini-Webinar', rant: '5E Talking Head' };
 const STORY_TITLES = { bold: 'New bold script', mini: 'New mini lesson', rant: 'New rant' };
 
 // The member's standing "story profile". One row per member in
@@ -95,7 +95,7 @@ function showProject(project) {
   storyEl('delete-project-button').hidden = false;
   storyEl('story-title').value = project.title || '';
   storyEl('story-mode').value = project.content_type || 'bold';
-  storyEl('story-format-badge').textContent = STORY_MODE_LABELS[project.content_type] || 'Bold';
+  storyEl('story-format-badge').textContent = STORY_MODE_LABELS[project.content_type] || 'Controversial Take';
   storyEl('story-context').value = project.intake && project.intake.context || '';
   storyEl('story-save-status').textContent = '';
   storyEl('story-refine-status').textContent = '';
