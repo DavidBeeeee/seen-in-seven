@@ -188,7 +188,8 @@ export default async function handler(req, res) {
       const state = result.data || {};
       await recordEvent(userToken, 'certainty_state', {
         schema: 1, outcome: 'ok', latencyMs: Date.now() - startedAt,
-        bookedThisWeek: Boolean(state.bookedThisWeek), hasUpcoming: Boolean(state.upcoming), historyCount: Number(state.historyCount || 0)
+        bookedThisWeek: Boolean(state.bookedThisWeek), hasUpcoming: Boolean(state.upcoming), historyCount: Number(state.historyCount || 0),
+        engagement: String(state.engagement || 'unknown')
       });
       return json(res, 200, { ...state, upcoming: state.upcoming ? { ...state.upcoming, join: joinFor(state.upcoming) } : null });
     }

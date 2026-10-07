@@ -378,6 +378,23 @@
           el('cs-reschedule').onclick = function () { reschedule(u.id); };
           el('cs-cancel').onclick = function () { cancelSession(u.id); };
           el('cs-addcal').onclick = function () { downloadIcs(u); };
+        } else if (state && state.engagement === 'lapsed' && state.lastHeld) {
+          // Lapse awareness (WBR-373). Three weekly cycles with no session is a
+          // pattern, not a busy week; the threshold lives in the database
+          // (certainty_engagement, 21 days) so this page and David's lapsed list
+          // always agree. This is a way back, not a scolding.
+          var last = state.lastHeld;
+          var weeks = Number(state.weeksSinceLastHeld || 0);
+          var ago = weeks >= 2 ? 'about ' + weeks + ' weeks ago' : 'a few weeks ago';
+          host.innerHTML =
+            '<p class="cs-eyebrow">Welcome back</p>' +
+            '<h2>Your seat with David is still here.</h2>' +
+            '<p style="color:var(--studio-soft);margin:8px 0 0">Your last session was ' + escapeHtml(last.label_day || '') + ', ' + ago +
+              (last.topic ? ', when you brought <strong>' + escapeHtml(last.topic) + '</strong>' : '') + '. ' +
+              'However those weeks went, that is a fine place to pick back up. Bring where it landed, or whatever is in the way now.</p>' +
+            '<p style="color:var(--studio-muted);margin:8px 0 0;font-size:.88rem">Your weekly session is still included, and this week\'s is open.</p>' +
+            '<div class="cs-actions"><button class="primary-button" type="button" id="cs-open-book"><i data-lucide="calendar-plus"></i><span>Pick a time this week</span></button></div>';
+          el('cs-open-book').onclick = openBooking;
         } else {
           host.innerHTML =
             '<p class="cs-eyebrow">This week</p>' +

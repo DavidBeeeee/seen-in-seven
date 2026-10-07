@@ -247,6 +247,16 @@
         </div>
         <div id="certainty-panel" class="loading">Loading sessions...</div>
       </div>
+      <div class="card card-pad">
+        <div class="section-head">
+          <div>
+            <div class="section-title">Certainty: who has gone quiet</div>
+            <div class="section-note" id="certainty-lapse-note">Members with no held session in 21+ days.</div>
+          </div>
+          <button class="btn btn-small" onclick="copyCertaintyLapsed()">Copy</button>
+        </div>
+        <div id="certainty-lapse-panel" class="loading">Loading members...</div>
+      </div>
     </section>
 
     <section class="grid main-grid">
@@ -412,7 +422,8 @@ async function loadAll() {
     rpcSafe('preauth', 'admin_get_preauth_events'),
     rpcSafe('points', 'admin_get_points'),
     rpcSafe('studioAccess', 'admin_get_studio_entitlements'),
-    rpcSafe('certainty', 'admin_get_certainty_sessions')
+    rpcSafe('certainty', 'admin_get_certainty_sessions'),
+    rpcSafe('certaintyEngagement', 'admin_get_certainty_engagement')
   ]);
   const byName = Object.fromEntries(calls.map(c => [c.name, c]));
   adminState.users = byName.users.data || [];
@@ -425,7 +436,8 @@ async function loadAll() {
   adminState.points = byName.points.data || [];
   adminState.studioAccess = byName.studioAccess.data || [];
   adminState.certainty = (byName.certainty.data && !Array.isArray(byName.certainty.data)) ? byName.certainty.data : { upcoming: [], past: [], counts: { upcoming: 0, past: 0, cancelled: 0 } };
-  const optionalNames = ['preauth', 'points', 'studioAccess', 'certainty'];
+  adminState.certaintyEngagement = (byName.certaintyEngagement.data && !Array.isArray(byName.certaintyEngagement.data)) ? byName.certaintyEngagement.data : { members: [], counts: {} };
+  const optionalNames = ['preauth', 'points', 'studioAccess', 'certainty', 'certaintyEngagement'];
   adminState.optionalWarnings = Object.fromEntries(calls.filter(c => optionalNames.includes(c.name) && c.error).map(c => [c.name, c.error]));
   adminState.loadErrors = Object.fromEntries(calls.filter(c => c.error && !optionalNames.includes(c.name)).map(c => [c.name, c.error]));
   adminState.rows = buildRows();
@@ -449,6 +461,7 @@ function setLoading() {
   document.getElementById('stall-panel').innerHTML = '<div class="loading">Loading stalls...</div>';
   document.getElementById('issue-panel').innerHTML = '<div class="loading">Loading issues...</div>';
   document.getElementById('certainty-panel').innerHTML = '<div class="loading">Loading sessions...</div>';
+  document.getElementById('certainty-lapse-panel').innerHTML = '<div class="loading">Loading members...</div>';
   document.getElementById('user-tbody').innerHTML = '<tr><td colspan="11" class="loading">Loading...</td></tr>';
 }
 
@@ -493,6 +506,50 @@ function renderCertainty() {
       '</tr></thead><tbody>' + list.map(s => row(s, isUpcoming)).join('') + '</tbody></table></div>'
     : '';
   panel.innerHTML = section('Upcoming', upcoming, true) + section('Past & cancelled', past, false);
+}
+
+// Lapse awareness (WBR-373): who has drifted away from their weekly session.
+// The threshold lives in the database (certainty_engagement): lapsed is 21+
+// days since the last held session with nothing booked; a skipped week or two
+// is not a lapse. Churned (membership ended) is counted apart from lapsed,
+// because a lapsed member is still paying and one booking away from back.
+function certaintyLapsedMembers() {
+  const data = adminState.certaintyEngagement || { members: [] };
+  return (Array.isArray(data.members) ? data.members : []).filter(m => m.engagement === 'lapsed');
+}
+
+function renderCertaintyLapse() {
+  const panel = document.getElementById('certainty-lapse-panel');
+  const note = document.getElementById('certainty-lapse-note');
+  if (!panel) return;
+  if (adminState.optionalWarnings && adminState.optionalWarnings.certaintyEngagement) {
+    panel.innerHTML = '<div class="loading">Engagement unavailable: ' + h(adminState.optionalWarnings.certaintyEngagement) + '</div>';
+    return;
+  }
+  const data = adminState.certaintyEngagement || { members: [], counts: {} };
+  const c = data.counts || {};
+  if (note) note.textContent = (c.lapsed || 0) + ' lapsed · ' + (c.skipped || 0) + ' skipped a week · ' + (c.current || 0) + ' current · ' + (c.new || 0) + ' never booked · ' + (c.churned || 0) + ' churned';
+  const lapsed = certaintyLapsedMembers();
+  if (!lapsed.length) {
+    panel.innerHTML = '<div class="loading">Nobody has lapsed. Every member has held a session in the last ' + h(data.lapseThresholdDays || 21) + ' days, has one booked, or has not started yet.</div>';
+    return;
+  }
+  const rows = lapsed.map(m => '<tr>' +
+    '<td>' + h(m.member_name || '—') + '<div class="muted" style="font-size:.8em">' + h(m.member_email || '') + '</div></td>' +
+    '<td>' + h(m.last_held_label || '') + '</td>' +
+    '<td>' + h(Math.floor((m.days_since_last_held || 0) / 7)) + ' weeks (' + h(m.days_since_last_held) + ' days)</td>' +
+    '<td>' + h(m.held_count || 0) + '</td>' +
+    '<td>' + (m.last_topic ? h(m.last_topic) : '<span class="muted">—</span>') + '</td>' +
+    '</tr>').join('');
+  panel.innerHTML = '<div class="table-wrap"><table style="min-width:640px"><thead><tr>' +
+    '<th>Member</th><th>Last session</th><th>Quiet for</th><th>Sessions held</th><th>Last brought</th>' +
+    '</tr></thead><tbody>' + rows + '</tbody></table></div>';
+}
+
+function copyCertaintyLapsed() {
+  const header = ['member', 'email', 'last_session', 'days_quiet', 'sessions_held', 'last_topic'].join('\t');
+  const lines = certaintyLapsedMembers().map(m => [m.member_name, m.member_email, m.last_held_label, m.days_since_last_held, m.held_count, (m.last_topic || '').replace(/\t/g, ' ')].join('\t'));
+  navigator.clipboard.writeText([header].concat(lines).join('\n')).catch(() => {});
 }
 
 function copyCertaintySessions() {
@@ -698,6 +755,7 @@ function renderAll() {
   renderStalls();
   renderIssues();
   renderCertainty();
+  renderCertaintyLapse();
   applyFilters();
   if (adminState.selectedUserId) renderDrawer(adminState.selectedUserId);
 }
