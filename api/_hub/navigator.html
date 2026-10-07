@@ -1508,6 +1508,9 @@
                     <button class="btn-secondary" onclick="startFromScratch()"
                         style="margin-top:24px; font-size: 14px; text-transform:none; border:none;">I'm starting
                         from scratch! Just tell me what to do first. &rarr;</button>
+                    <p class="onboarding-disclosure" style="margin-top:20px; font-size:12px; color:var(--muted); text-align:center; line-height:1.5;">
+                        Recommendations are curated from tools David Bee uses in real operations. Some partner links provide referral commissions at no extra cost to you; see our <a href="/terms#affiliate-disclosure" style="color:var(--teal); text-decoration:underline;">terms and disclosure</a>.
+                    </p>
                 </div>
             </div>
         </div>
@@ -1780,16 +1783,28 @@
                     prompt: 'Act as an expert email campaign manager in the [NICHE] space. Outline a 5-day automated email series for my new subscribers. For each of the 5 days, give me the exact Subject Line and tell me what the core message of that email should be, leading up to them paying for my main service.'
                 }
             ],
-            groupcall: [
+            salescall: [
                 {
-                    level: 1, title: 'Write a 1-on-1 Discovery Call Script', goal: 'Know exactly what to say to turn conversations into clients.', why: 'Getting on a video call is the fastest way to sign premium clients, but you need a plan so you aren\'t just chatting aimlessly.', tech: ['Calendly', 'Zoom'], steps: ['Create a free booking link on a site like Calendly.', 'Write a simple 15-minute script asking them about their goals and challenges.', 'Always ask what they are struggling with before they get on the call so you are prepared.'],
-                    example: 'Call Plan: 5 mins: Ask "Where are you now?" (Find the pain). 5 mins: Ask "Where do you want to be?" (Find the goal). 5 mins: Say "Here is the gap between those two things, and here is how my program helps you cross it. Want to join?"',
-                    prompt: 'Act as an expert sales coach. Write a friendly, 15-minute discovery call script made specifically for the [NICHE] space. I need the 3 most important questions I should ask the person to figure out what they are really struggling with emotionally, and tell me exactly what words to say when it is time to tell them the price of my service.'
+                    level: 1, title: 'Set Up a 1-on-1 Discovery Call Link', goal: 'Give interested leads an easy way to book a call with you.', why: 'Direct conversations are the fastest path to client revenue. Having a simple calendar link removes scheduling friction.', tech: ['Calendly', 'Google Meet', 'Zoom'], steps: ['Create a free booking link on Calendly or Google Calendar.', 'Connect your video meeting link (Zoom or Google Meet) automatically.', 'Add 2 qualifying questions to the booking form so you know their needs before the call.'],
+                    example: 'Booking Questions: 1. "What is your primary goal right now?" 2. "What is the biggest obstacle stopping you from reaching it?"',
+                    prompt: 'Act as an expert sales coach. Write a friendly, 15-minute discovery call script made specifically for the [NICHE] space. I need the 3 most important questions I should ask the person to figure out what they are really struggling with emotionally, and tell me exactly what words to say when it is time to present my offer.'
                 },
                 {
-                    level: 2, title: 'Start a Free Online Group', goal: 'Gather all your interested fans in one place you own.', why: 'A free community builds long-term loyalty. When people hang out with you regularly, they are much more likely to eventually buy your paid programs.', tech: ['Facebook Groups', 'Skool'], steps: ['Decide on a "Big Promise" that explains why someone should join the group.', 'Pick a platform (Facebook is easy for beginners).', 'Write and pin 3 valuable posts so it doesn\'t look empty when new people arrive.'],
+                    level: 2, title: 'Create a Structured Qualification and Sales System', goal: 'Qualify prospects before the call and increase close rates.', why: 'As your lead volume grows, qualifying applicants ensures your time is spent only with high-intent buyers.', tech: ['Calendly', 'Typeform', 'Fathom'], steps: ['Add a brief pre-call application to verify commitment and budget.', 'Use an AI note-taker to record and review objections.', 'Follow a structured 5-part sales framework: discovery, diagnostic, vision, plan, and agreement.'],
+                    example: 'Application Filter: "Are you ready to commit time and effort to implement this solution over the next 90 days?"',
+                    prompt: 'Act as a high-ticket sales mentor. Help me create an application form for high-value clients in the [NICHE] space. Give me 5 essential qualification questions that filter for readiness, commitment, and fit.'
+                }
+            ],
+            groupcall: [
+                {
+                    level: 1, title: 'Set Up an Audience Group Chat', goal: 'Give your warmest followers a direct place to interact.', why: 'A community builds long-term loyalty and trust faster than broadcast posts.', tech: ['Facebook Groups', 'Skool', 'Telegram'], steps: ['Pick a platform where your audience already hangs out.', 'Create a welcome thread for new members to introduce themselves.', 'Post once a week with a discussion prompt.'],
+                    example: 'Group Chat Prompt: "What is your biggest win this week? Drop it below!"',
+                    prompt: 'Act as a community strategist. Write 5 engaging discussion questions for a private group in the [NICHE] space that prompt thoughtful comments.'
+                },
+                {
+                    level: 2, title: 'Start a Free Online Group', goal: 'Gather all your interested fans in one place you own.', why: 'A free community builds long-term loyalty. When people hang out with you regularly, they are much more likely to eventually buy your paid programs.', tech: ['Facebook Groups', 'Skool'], steps: ['Decide on a "Big Promise" that explains why someone should join the group.', 'Pick a platform (Facebook is easy for beginners).', 'Write and pin 3 valuable posts so it does not look empty when new people arrive.'],
                     example: 'Group Promise: "The Daily Fitness Motivation Hub: Learn how to stay fit without completely giving up the foods you love."\nWelcome post: A quick video welcoming them and a post pointing them to where to start.',
-                    prompt: 'Act as an expert community manager for the [NICHE] space. Help me design a Free Community concept. I need: 1. A catchy name for the group. 2. A "Big Promise" description covering exactly what they get out of being in it. 3. Three simple ideas for weekly recurring posts (like "Win Wednesday") to keep people commenting and engaged.'
+                    prompt: 'Act as an expert community manager for the [NICHE] space. Help me design a Free Community concept. I need: 1. A catchy name for the group. 2. A "Big Promise" description covering exactly what they get out of being in it. 3. Three simple ideas for weekly recurring posts to keep people commenting and engaged.'
                 }
             ],
             traffic: [
@@ -1817,6 +1832,76 @@
                     example: 'Automation Idea: Connect your calendar (Calendly) to Zapier. Now, whenever someone books a call, their info goes into your main spreadsheet, they automatically get a personalized prep email, and it sends you a notification on your phone: all without you lifting a finger.',
                     prompt: 'Act as an expert Automation Engineer. Imagine a growing, busy business in the [NICHE] space. Point out 3 common, annoying operational tasks they probably do over and over again by hand. For each of the 3 tasks, explain to me step-by-step how I can use a tool like Zapier or Make.com to make it happen completely automatically.'
                 }
+            ],
+            paidtraffic: [
+                {
+                    level: 1, title: 'Launch a Low-Budget Paid Ad Test', goal: 'Validate that paid traffic converts to leads at an acceptable cost.', why: 'Organic traffic builds authority, but paid advertising allows predictable, on-demand growth once your funnel works.', tech: ['Meta Ads Manager', 'Google Ads'], steps: ['Pick your best-performing organic post or free giveaway.', 'Set up a Meta Business Manager account and install your pixel.', 'Run a modest test campaign ($5 to $10/day) targeting your ideal audience interest.'],
+                    example: 'Ad Hook: "Struggling to [solve problem]? Get our free 1-page roadmap to fix it in 15 minutes."',
+                    prompt: 'Act as a direct response paid ads specialist in the [NICHE] space. Write 3 short ad variations for Meta (Facebook/Instagram). For each, provide: 1. A scroll-stopping hook line. 2. A 3-sentence body explaining why this matters. 3. A clear call to action to download my free guide.'
+                },
+                {
+                    level: 2, title: 'Scale Paid Traffic With Funnel Retargeting', goal: 'Turn profitable ad spend into predictable client acquisition.', why: 'Retargeting warm visitors who viewed your offer dramatically increases conversion rates and lowers your cost per client.', tech: ['Meta Ads Manager', 'Google Ads'], steps: ['Create custom audiences of people who visited your landing page but did not buy.', 'Run a testimonial or case-study ad specifically to that warm audience.', 'Track your cost per lead and cost per customer acquisition weekly.'],
+                    example: 'Retargeting ad: "Still thinking about [result]? Here is how [Client Name] solved it in 30 days."',
+                    prompt: 'Act as a paid media director. Outline a simple retargeting campaign for visitors who opted in for my free guide but have not booked a call or bought. Give me 3 creative concepts (testimonial, FAQ breakdown, objection handler).'
+                }
+            ]
+        };
+
+        // THE PER-STAGE TOOL CATALOGUE: Curated options with tiers and recommended flag
+        const TOOL_CATALOGUE = {
+            storefront: [
+                { name: 'Systeme.io', tier: 'mid', recommended: true, url: 'https://systeme.io', desc: 'All-in-one funnels, landing pages, email, and courses.' },
+                { name: 'Carrd', tier: 'cheap', recommended: false, url: 'https://carrd.co', desc: 'Simple, responsive one-page websites for $19/year.' },
+                { name: 'Linktree', tier: 'free', recommended: false, url: 'https://linktr.ee', desc: 'Free bio link page for social media profiles.' },
+                { name: 'Framer', tier: '', recommended: false, url: 'https://framer.com', desc: 'Design-forward visual website builder.' }
+            ],
+            mvo: [
+                { name: 'Stripe Payment Links', tier: 'free', recommended: true, url: 'https://stripe.com', desc: 'Fast, secure buy-now checkout links with zero monthly fees.' },
+                { name: 'Systeme.io', tier: 'mid', recommended: true, url: 'https://systeme.io', desc: 'Sell digital products and mini-courses directly in your funnel.' },
+                { name: 'Gumroad', tier: 'cheap', recommended: false, url: 'https://gumroad.com', desc: 'Simple digital product checkout platform.' },
+                { name: 'Payhip', tier: '', recommended: false, url: 'https://payhip.com', desc: 'Easiest way to sell downloads and memberships.' }
+            ],
+            signature: [
+                { name: 'Skool', tier: 'mid', recommended: true, url: 'https://skool.com', desc: 'Community, classroom, and gamification in one clean hub.' },
+                { name: 'Systeme.io', tier: 'cheap', recommended: true, url: 'https://systeme.io', desc: 'Host member courses and automate student access.' },
+                { name: 'Kajabi', tier: '', recommended: false, url: 'https://kajabi.com', desc: 'All-in-one course and premium membership platform.' }
+            ],
+            leadmagnet: [
+                { name: 'Google Docs', tier: 'free', recommended: true, url: 'https://docs.google.com', desc: 'Clean, simple document export to PDF in minutes.' },
+                { name: 'Canva', tier: 'cheap', recommended: true, url: 'https://canva.com', desc: 'Visual templates for guides, checklists, and cheat sheets.' },
+                { name: 'Notion', tier: 'free', recommended: false, url: 'https://notion.so', desc: 'Interactive resources, dashboards, and shared workspaces.' }
+            ],
+            emails: [
+                { name: 'Systeme.io', tier: 'cheap', recommended: true, url: 'https://systeme.io', desc: 'Send automated email sequences up to 2,000 contacts free.' },
+                { name: 'MailerLite', tier: 'free', recommended: false, url: 'https://mailerlite.com', desc: 'Clean, beginner-friendly email campaign builder.' },
+                { name: 'Kit (ConvertKit)', tier: 'mid', recommended: false, url: 'https://kit.com', desc: 'Advanced creator email marketing and tagging automation.' }
+            ],
+            salescall: [
+                { name: 'Calendly', tier: 'cheap', recommended: true, url: 'https://calendly.com', desc: 'Effortless automated meeting scheduling with reminder emails.' },
+                { name: 'Google Meet', tier: 'free', recommended: false, url: 'https://meet.google.com', desc: 'Free 1-on-1 video calls with zero software download needed.' },
+                { name: 'Zoom', tier: 'cheap', recommended: false, url: 'https://zoom.us', desc: 'Standard reliable video conferencing platform.' }
+            ],
+            groupcall: [
+                { name: 'Facebook Groups', tier: 'free', recommended: true, url: 'https://facebook.com', desc: 'Free community space where prospective clients already hang out.' },
+                { name: 'Skool', tier: 'mid', recommended: false, url: 'https://skool.com', desc: 'Dedicated community space with high member engagement.' }
+            ],
+            traffic: [
+                { name: 'Native Social (YouTube, LinkedIn, IG, TikTok)', tier: 'free', recommended: true, url: '', desc: 'Direct organic posting to build organic search and social reach.' },
+                { name: 'CapCut', tier: 'cheap', recommended: true, url: 'https://capcut.com', desc: 'Fast, professional mobile and desktop short-form video editing.' },
+                { name: 'Metricool', tier: 'free', recommended: false, url: 'https://metricool.com', desc: 'Schedule and analyze content across multiple platforms.' }
+            ],
+            highticket: [
+                { name: 'Zoom Pro', tier: 'cheap', recommended: true, url: 'https://zoom.us', desc: 'High-definition 1-on-1 client coaching and recording.' },
+                { name: 'Google Workspace', tier: 'cheap', recommended: false, url: 'https://workspace.google.com', desc: 'Professional email, shared drive, and client calendar.' }
+            ],
+            aiaas: [
+                { name: 'ChatGPT and Claude', tier: 'free', recommended: true, url: 'https://chatgpt.com', desc: 'AI reasoning, content drafting, and operational analysis.' },
+                { name: 'Zapier', tier: 'cheap', recommended: true, url: 'https://zapier.com', desc: 'Connect your apps and automate repetitive workflows.' },
+                { name: 'Make.com', tier: 'cheap', recommended: false, url: 'https://make.com', desc: 'Visual workflow automation with advanced logic.' }
+            ],
+            paidtraffic: [
+                { name: 'Meta Ads Manager', tier: 'free', recommended: true, url: 'https://adsmanager.facebook.com', desc: 'Official platform for Facebook and Instagram ad campaigns.' },
+                { name: 'Google Ads', tier: 'free', recommended: false, url: 'https://ads.google.com', desc: 'Intent-based search and YouTube video advertising.' }
             ]
         };
 
@@ -1826,10 +1911,12 @@
             { id: 'signature', category: 'Core Service', text: 'Do you have a main premium program?', hint: 'The main thing you want to be known for selling.', desc: 'Primary core focus.', options: [{ label: 'Nothing yet', depth: 0, retail: 'Empty store' }, { label: 'Yes, a clear main program', depth: 2, retail: 'Main product' }], required: 2 },
             { id: 'leadmagnet', category: 'Free Value', text: 'Do you have a free "giveaway"?', hint: 'Something you trade in exchange for their email address.', desc: 'Free helpful resource.', options: [{ label: 'Nothing', depth: 0, retail: 'No sample' }, { label: 'A 1-page checklist', depth: 1, retail: 'Fast summary' }, { label: 'A detailed free guide', depth: 2, retail: 'Deep dive' }, { label: 'A free live video training', depth: 3, retail: 'Live class' }], required: 2 },
             { id: 'emails', category: 'Follow-Up', text: 'How do you talk to people after they sign up?', hint: 'What happens immediately after they give you their email?', desc: 'Email responses.', options: [{ label: 'Nothing right now', depth: 0, retail: 'Ignored' }, { label: 'I message them manually', depth: 1, retail: 'Hand written' }, { label: '1 automated welcome email', depth: 2, retail: 'Quick nod' }, { label: 'A full automated email series', depth: 3, retail: 'Tour guide' }], required: 2 },
-            { id: 'groupcall', category: 'Community', text: 'Where do your biggest fans hang out?', hint: 'How do you connect with them directly?', desc: 'Audience connection point.', options: [{ label: 'Nowhere', depth: 0, retail: 'Just browsing' }, { label: '1-on-1 video calls', depth: 1, retail: 'Direct chats' }, { label: 'A free online community group', depth: 2, retail: 'Clubhouse' }], required: 1 },
+            { id: 'salescall', category: 'Sales Conversations', text: 'Do you offer a 1-on-1 discovery or sales call?', hint: 'A structured conversation where you invite someone to become a client.', desc: '1-on-1 sales calls.', options: [{ label: 'No sales calls yet', depth: 0, retail: 'No call setup' }, { label: 'Manual booking via chat or email', depth: 1, retail: 'Manual chat booking' }, { label: 'Automated booking calendar (Calendly)', depth: 2, retail: 'Booking calendar link' }], required: 1 },
+            { id: 'groupcall', category: 'Community', text: 'Where do your biggest fans hang out?', hint: 'How do you connect with them directly?', desc: 'Audience connection point.', options: [{ label: 'Nowhere', depth: 0, retail: 'Just browsing' }, { label: 'A simple group chat or channel', depth: 1, retail: 'Chat channel' }, { label: 'A free online community group', depth: 2, retail: 'Clubhouse' }], required: 1 },
             { id: 'traffic', category: 'Social Media', text: 'How often do you post on social media?', hint: 'How are new strangers discovering you?', desc: 'Social posting plan.', options: [{ label: 'Rarely or never', depth: 0, retail: 'Invisible' }, { label: 'Sometimes, when I feel like it', depth: 1, retail: 'Quiet street' }, { label: 'Very regularly with a planned strategy', depth: 2, retail: 'Busy billboards' }], required: 2 },
             { id: 'highticket', category: 'VIP Support', text: 'Do you offer a highly premium, expensive option?', hint: 'A top-tier service where you do the difficult work for them.', desc: 'Premium white-glove tier.', options: [{ label: 'Nothing like that', depth: 0, retail: 'No VIP' }, { label: 'Yes, a high-priced VIP package', depth: 2, retail: 'Elite tier' }], required: 1 },
-            { id: 'aiaas', category: 'Systems & AI', text: 'Do you use AI or automation to save time?', hint: 'Are you doing everything manually?', desc: 'Automation and AI.', options: [{ label: 'Everything is manual', depth: 0, retail: 'Manual labor' }, { label: 'I use some basic automations', depth: 1, retail: 'Basic tools' }, { label: 'I have AI agents and full automation', depth: 2, retail: 'Automated workflow' }], required: 2 }
+            { id: 'aiaas', category: 'Systems & AI', text: 'Do you use AI or automation to save time?', hint: 'Are you doing everything manually?', desc: 'Automation and AI.', options: [{ label: 'Everything is manual', depth: 0, retail: 'Manual labor' }, { label: 'I use some basic automations', depth: 1, retail: 'Basic tools' }, { label: 'I have AI agents and full automation', depth: 2, retail: 'Automated workflow' }], required: 2 },
+            { id: 'paidtraffic', category: 'Paid Traffic', text: 'Do you run paid advertising to your funnel?', hint: 'Paid ads that drive consistent new leads into your funnel.', desc: 'Paid ad campaigns.', options: [{ label: 'No paid ads yet (100% organic)', depth: 0, retail: 'Organic only' }, { label: 'Experimented with boosted posts or small tests', depth: 1, retail: 'Initial ad tests' }, { label: 'Active paid ad campaigns with positive ROI', depth: 2, retail: 'Scalable paid traffic' }], required: 1 }
         ];
 
         // THE PRIORITY CHAIN: Explicit Order defined by the user
@@ -1839,13 +1926,15 @@
             { id: 'signature', min: 2, label: 'Main Premium Program' },
             { id: 'leadmagnet', min: 1, label: 'Free Giveaway' },
             { id: 'emails', min: 2, label: 'Welcome Email' },
+            { id: 'salescall', min: 1, label: '1-on-1 Sales Call' },
             { id: 'groupcall', min: 2, label: 'Free Group' },
             { id: 'traffic', min: 1, label: 'Social 7-Day Plan' },
             { id: 'storefront', min: 3, label: 'Sales Website' },
             { id: 'mvo', min: 2, label: 'Dedicated Mini Course / Ebook' },
             { id: 'traffic', min: 2, label: 'Content Strategy' },
             { id: 'highticket', min: 2, label: 'VIP Package' },
-            { id: 'aiaas', min: 2, label: 'Task Automation' }
+            { id: 'aiaas', min: 2, label: 'Task Automation' },
+            { id: 'paidtraffic', min: 1, label: 'Paid Traffic' }
         ];
 
         let userProfile = { name: '', niche: '', answers: {}, progress: {}, viewedTasks: [], todos: [], assets: {} };
@@ -1948,16 +2037,28 @@
                 criticalStepId = firstGap.id;
                 criticalTargetLevel = firstGap.min;
             } else {
-                criticalStepId = 'aiaas';
-                criticalTargetLevel = 2;
+                criticalStepId = 'paidtraffic';
+                criticalTargetLevel = 1;
             }
         }
 
         function renderMap() {
-            const nodes = [{ id: 'traffic', x: 40, y: 50, label: 'Traffic' }, { id: 'leadmagnet', x: 90, y: 50, label: 'Magnet' }, { id: 'storefront', x: 140, y: 50, label: 'Landing' }, { id: 'emails', x: 190, y: 50, label: 'Emails' }, { id: 'groupcall', x: 240, y: 50, label: 'Lobby' }, { id: 'mvo', x: 290, y: 50, label: 'Sample' }, { id: 'signature', x: 340, y: 50, label: 'Core' }, { id: 'highticket', x: 390, y: 50, label: 'Premium' }, { id: 'aiaas', x: 440, y: 50, label: 'AI' }];
-            let svg = `<svg viewBox="0 0 480 100" style="overflow:visible;">`;
+            const nodes = [
+                { id: 'traffic', x: 30, y: 50, label: 'Organic' },
+                { id: 'leadmagnet', x: 90, y: 50, label: 'Magnet' },
+                { id: 'storefront', x: 150, y: 50, label: 'Landing' },
+                { id: 'emails', x: 210, y: 50, label: 'Emails' },
+                { id: 'salescall', x: 270, y: 50, label: '1-1 Call' },
+                { id: 'groupcall', x: 330, y: 50, label: 'Group' },
+                { id: 'mvo', x: 390, y: 50, label: 'Sample' },
+                { id: 'signature', x: 450, y: 50, label: 'Core' },
+                { id: 'highticket', x: 510, y: 50, label: 'VIP' },
+                { id: 'aiaas', x: 570, y: 50, label: 'AI' },
+                { id: 'paidtraffic', x: 630, y: 50, label: 'Paid Ads' }
+            ];
+            let svg = `<svg viewBox="0 0 660 100" style="overflow:visible; width:100%; height:auto;">`;
             let pathD = `M ${nodes[0].x} ${nodes[0].y}`;
-            for (let i = 1; i < nodes.length; i++) pathD += ` C ${nodes[i - 1].x + 25} ${nodes[i - 1].y}, ${nodes[i - 1].x + 25} ${nodes[i].y}, ${nodes[i].x} ${nodes[i].y}`;
+            for (let i = 1; i < nodes.length; i++) pathD += ` C ${nodes[i - 1].x + 30} ${nodes[i - 1].y}, ${nodes[i - 1].x + 30} ${nodes[i].y}, ${nodes[i].x} ${nodes[i].y}`;
             svg += `<path d="${pathD}" class="path-line" /><path d="${pathD}" class="path-active" />`;
             nodes.forEach(n => {
                 const qRef = QUESTIONS.find(qi => qi.id === n.id);
@@ -1965,7 +2066,7 @@
                 const status = n.id === criticalStepId ? 'gap' : (currentLevel > 0 ? 'completed' : 'locked');
                 let levelColor = 'var(--muted)';
                 if (status === 'completed') levelColor = 'var(--teal)';
-                else if (status === 'gap') levelColor = 'var(--amber)';
+                else if (status === 'gap') levelColor = 'var(--gold, var(--amber))';
 
                 svg += `<g class="node ${status}" onmouseover="showTooltip(event, '${qRef?.desc || 'Process Component'}')" onmouseout="hideTooltip()">
                 <circle cx="${n.x}" cy="${n.y}" r="7" class="node-circle" stroke-width="2.5" />
@@ -1979,7 +2080,6 @@
         function renderSandwich() {
             const box = document.getElementById('diagnosis-sandwich');
             let positive = [];
-            let bottleneck = null;
             let score = 0;
 
             QUESTIONS.forEach(q => {
@@ -1987,17 +2087,11 @@
                 if (depth >= q.required) {
                     positive.push(q.category);
                 }
-
-                // Allow CRM (depth == 0) to be the bottleneck if its required dependencies are roughly met, or if it's naturally next
-                if (q.id === criticalStepId || (!bottleneck && depth < q.required)) {
-                    bottleneck = q;
-                }
                 score += depth;
             });
 
-            // Fallback if everything is maxed
-            if (!bottleneck) bottleneck = QUESTIONS[QUESTIONS.length - 1];
-
+            // Keep roadmap and summary focus strictly aligned with Priority One (criticalStepId)
+            const bottleneck = QUESTIONS.find(q => q.id === criticalStepId) || QUESTIONS[0];
             const isScratch = score === 0;
 
             box.innerHTML = `
@@ -2109,6 +2203,12 @@
             renderTodos();
         }
 
+        function formatStageStatus(compId) {
+            const ans = userProfile.answers[compId];
+            if (!ans || ans.depth === 0) return 'Not set up yet';
+            return ans.label;
+        }
+
         function renderRoadmapContent(animateNew = false) {
             const priArea = document.getElementById('priority-roadmap');
             const listArea = document.getElementById('matrix-list');
@@ -2117,7 +2217,6 @@
             // Priority One Logic
             const task = (TASK_DATA[criticalStepId] || []).find(t => t.level === criticalTargetLevel);
             if (task) {
-                const currentLabel = userProfile.answers[criticalStepId]?.label || "Nothing";
                 const taskKey = `${criticalStepId}_${criticalTargetLevel}`;
                 const isNew = !userProfile.viewedTasks.includes(taskKey);
                 priArea.innerHTML = `
@@ -2126,7 +2225,7 @@
                     <div class="system-row" style="border-color:var(--amber); background:rgba(245, 158, 11, 0.1);" onclick="openDeepDive('${criticalStepId}', ${criticalTargetLevel})">
                         <div class="system-info">
                             <div class="row-name">${task.title} ${isNew ? '<span class="new-badge">NEW</span>' : ''}</div>
-                            <div class="row-desc">You have <strong>${currentLabel}</strong>. The next step is <strong>${task.title}</strong> because ${task.why}</div>
+                            <div class="row-desc">Current setup: <strong>${formatStageStatus(criticalStepId)}</strong>. Next focus: <strong>${task.title}</strong> (${task.why})</div>
                         </div>
                         <div class="row-arrow">→</div>
                     </div>
@@ -2147,7 +2246,7 @@
                         row.style.animation = `slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards ${Math.random() * 0.2 + 0.2}s`;
                         row.style.opacity = '0';
                     }
-                    row.innerHTML = `<div class="system-info"><div class="row-name">${nextTask.title} ${isNew ? '<span class="new-badge">NEW</span>' : ''}</div><div class="row-desc">You have ${userProfile.answers[compId]?.label || 'Nothing'}. Next: ${nextTask.title}.</div></div><div class="row-arrow">→</div>`;
+                    row.innerHTML = `<div class="system-info"><div class="row-name">${nextTask.title} ${isNew ? '<span class="new-badge">NEW</span>' : ''}</div><div class="row-desc">Current setup: ${formatStageStatus(compId)}. Next: ${nextTask.title}.</div></div><div class="row-arrow">→</div>`;
                     row.onclick = () => openDeepDive(compId, nextTask.level);
                     listArea.appendChild(row);
                 }
@@ -2226,6 +2325,37 @@
             </div>`;
             }
 
+            const catalogTools = TOOL_CATALOGUE[compId] || [];
+            let toolsHTML = '';
+            if (catalogTools.length > 0) {
+                toolsHTML = `
+                <div class="dive-section">
+                    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+                        <span class="dive-label" style="margin:0;">Curated Tool Options</span>
+                        <a href="/terms#affiliate-disclosure" style="font-size:11px; color:var(--muted); text-decoration:none;">Affiliate disclosure</a>
+                    </div>
+                    <div class="tool-catalog-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:12px; margin-top:10px;">
+                        ${catalogTools.map(t => {
+                            const tierBadge = t.tier ? `<span class="tool-tier-badge" style="font-size:10px; text-transform:uppercase; font-weight:700; padding:2px 8px; border-radius:999px; background:var(--card2); border:1px solid var(--border); color:var(--soft);">${t.tier}</span>` : '';
+                            const recBadge = t.recommended ? `<span class="tool-rec-badge" style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; background:color-mix(in srgb, var(--gold) 18%, transparent); border:1px solid var(--gold); color:var(--gold);">★ Recommended</span>` : '';
+                            const linkContent = t.url ? `<a href="${t.url}" target="_blank" rel="noopener noreferrer" style="color:var(--teal); text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:4px;">${t.name} <span style="font-size:11px;">↗</span></a>` : `<strong style="color:var(--cream); font-size:14px;">${t.name}</strong>`;
+                            return `
+                            <div class="tool-catalog-card" style="background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:12px 14px; display:flex; flex-direction:column; gap:6px;">
+                                <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+                                    ${linkContent}
+                                    <div style="display:flex; gap:4px;">${tierBadge}${recBadge}</div>
+                                </div>
+                                ${t.desc ? `<p style="font-size:12px; color:var(--soft); margin:0; line-height:1.4;">${t.desc}</p>` : ''}
+                            </div>
+                            `;
+                        }).join('')}
+                    </div>
+                </div>
+                `;
+            } else {
+                toolsHTML = `<div class="dive-section"><span class="dive-label">Recommended Tech</span>${(task.tech || []).map(t => `<span class="tech-pill">${t}</span>`).join('')}</div>`;
+            }
+
             content.innerHTML = `
             <div class="btn-back" onclick="showRoadmap()">< Back</div>
 
@@ -2247,7 +2377,7 @@
             ${renderDeepDiveTrafficCalc()}
 
             <div class="dive-section"><span class="dive-label">Why are we doing this?</span><p>${task.goal} ${task.why}</p></div>
-            <div class="dive-section"><span class="dive-label">Recommended Tech</span>${(task.tech || []).map(t => `<span class="tech-pill">${t}</span>`).join('')}</div>
+            ${toolsHTML}
 
             <div class="dive-section"><span class="dive-label">Your Step-By-Step Instructions</span>
                 <div class="action-list">
@@ -2422,9 +2552,12 @@
                 if (q.id === 'storefront') icon = '🌍';
                 if (q.id === 'emails') icon = '✉️';
                 if (q.id === 'leadmagnet') icon = '🎁';
+                if (q.id === 'salescall') icon = '📞';
                 if (q.id === 'groupcall') icon = '🤝';
                 if (q.id === 'traffic') icon = '📱';
+                if (q.id === 'paidtraffic') icon = '🎯';
                 if (q.id === 'mvo' || q.id === 'signature' || q.id === 'highticket') icon = '💳';
+                if (q.id === 'aiaas') icon = '⚡';
 
                 let bodyHTML = '';
                 let btnHTML = '';
@@ -2443,7 +2576,7 @@
 
                         const isRecur = assetItem.isRecurring === true;
 
-                        if (['storefront', 'leadmagnet', 'groupcall', 'traffic'].includes(q.id)) {
+                        if (['storefront', 'leadmagnet', 'groupcall', 'traffic', 'salescall', 'paidtraffic'].includes(q.id)) {
                             fieldsHTML = `
                             <div class="asset-input-group">
                                 <label class="asset-field-label">Live URL / Link</label>
@@ -2523,7 +2656,7 @@
 
         function renderVisualMap() {
             const container = document.getElementById('visual-map');
-            const mapOrder = ['traffic', 'storefront', 'leadmagnet', 'emails', 'groupcall', 'mvo', 'signature', 'highticket', 'aiaas'];
+            const mapOrder = ['traffic', 'storefront', 'leadmagnet', 'emails', 'salescall', 'groupcall', 'mvo', 'signature', 'highticket', 'aiaas', 'paidtraffic'];
 
             let html = '';
             mapOrder.forEach((id, index) => {
@@ -2789,6 +2922,10 @@
                 story.push(`Right now, without an automated system, you'll have to rely on talking to people in person one at a time to build interest.`);
             }
 
+            if (hasAsset('salescall')) {
+                story.push(`Warm leads can easily book a 1-on-1 strategy call through <span class="story-highlight">${getValue('salescall', 'your booking calendar')}</span>.`);
+            }
+
             if (hasAsset('signature')) {
                 story.push(`With trust established, you'll be able to confidently invite them into <span class="story-highlight">${getValue('signature', 'your Signature Program')}</span>.`);
                 if (hasAsset('mvo')) {
@@ -2800,6 +2937,10 @@
 
             if (hasAsset('highticket')) {
                 story.push(`Finally, after experiencing incredible success with your core methods, they will happily graduate to <span class="story-highlight">${getValue('highticket', 'your VIP Package')}</span> and refer all their friends, getting you even more clients!`);
+            }
+
+            if (hasAsset('paidtraffic')) {
+                story.push(`Targeted paid advertising through <span class="story-highlight">${getValue('paidtraffic', 'your ad campaigns')}</span> keeps predictable new leads entering this journey continuously.`);
             }
 
             board.innerHTML = `
