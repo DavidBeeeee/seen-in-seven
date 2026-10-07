@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Terms &amp; FAQ | The Momentum Hub</title>
+  <meta name="description" content="Terms of service, affiliate disclosure, AI usage, privacy, pricing, and FAQ for The Momentum Hub.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('sis_theme_v1') === 'light') {
+          document.documentElement.classList.add('studio-light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/hub-theme.css">
+  <link rel="stylesheet" href="/css/studio.css">
+  <link rel="stylesheet" href="/css/eee.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <style>
+    .terms-main {
+      width: min(920px, 100%);
+      margin: 0 auto;
+      padding: 48px 36px 80px;
+    }
+    .terms-section {
+      background: var(--studio-surface);
+      border: 1px solid var(--studio-border);
+      border-radius: var(--radius-card, 16px);
+      padding: 32px 36px;
+      margin-top: 24px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12);
+    }
+    .terms-section h2 {
+      margin: 0 0 16px;
+      font-family: var(--font-display, 'Oswald', sans-serif);
+      font-size: 26px;
+      font-weight: 600;
+      color: var(--studio-text);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .terms-section h2 i {
+      color: var(--studio-teal);
+      width: 24px;
+      height: 24px;
+    }
+    .terms-section p {
+      margin: 0 0 16px;
+      color: var(--studio-soft);
+      line-height: 1.7;
+      font-size: 15px;
+    }
+    .terms-section p:last-child {
+      margin-bottom: 0;
+    }
+    .terms-section ul {
+      margin: 0 0 16px;
+      padding-left: 24px;
+      color: var(--studio-soft);
+      line-height: 1.7;
+    }
+    .terms-section li {
+      margin-bottom: 8px;
+    }
+    .terms-section a {
+      color: var(--studio-teal);
+      text-decoration: underline;
+    }
+    .terms-section a:hover {
+      color: color-mix(in srgb, var(--studio-teal) 80%, white);
+    }
+    .faq-item {
+      padding: 16px 0;
+      border-top: 1px solid var(--studio-border);
+    }
+    .faq-item:first-of-type {
+      border-top: none;
+      padding-top: 0;
+    }
+    .faq-item h3 {
+      margin: 0 0 8px;
+      font-family: var(--font-body, 'Nunito', sans-serif);
+      font-size: 17px;
+      font-weight: 800;
+      color: var(--studio-text);
+    }
+    .faq-item p {
+      margin: 0;
+      color: var(--studio-muted);
+      font-size: 15px;
+      line-height: 1.65;
+    }
+    .badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 12px;
+      border-radius: var(--radius-pill, 999px);
+      background: color-mix(in srgb, var(--studio-teal) 12%, transparent);
+      border: 1px solid color-mix(in srgb, var(--studio-teal) 30%, transparent);
+      color: var(--studio-teal);
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+    @media (max-width: 780px) {
+      .terms-main {
+        padding: 28px 16px 60px;
+      }
+      .terms-section {
+        padding: 24px 20px;
+      }
+    }
+  </style>
+</head>
+<body class="studio-terms">
+  <header class="studio-header eee-header">
+    <a class="studio-brand" href="/" aria-label="The Momentum Hub">
+      <span class="studio-mark">MH</span>
+      <span>
+        <strong>The Momentum Hub</strong>
+        <small>Colorado Mastermind Studio</small>
+      </span>
+    </a>
+    <div class="header-actions">
+      <a class="secondary-button" href="/"><i data-lucide="layout-grid"></i><span>My Studio</span></a>
+      <button class="icon-button" id="theme-button" type="button" title="Change color theme" aria-label="Change color theme">
+        <i data-lucide="sun" class="theme-sun-icon"></i>
+        <i data-lucide="moon" class="theme-moon-icon"></i>
+      </button>
+      <div class="eee-account" id="eee-account-wrap" hidden>
+        <span class="account-avatar" id="eee-account-avatar">D</span>
+        <span class="eee-account-email" id="eee-account-email"></span>
+      </div>
+    </div>
+  </header>
+
+  <div class="studio-layout eee-layout">
+    <aside class="studio-sidebar eee-sidebar" aria-label="Hub navigation">
+      <nav>
+        <a class="nav-item" href="/"><i data-lucide="layout-grid"></i><span>My Studio</span></a>
+        <a class="nav-item" href="/eee"><i data-lucide="layout-dashboard"></i><span>Hub workspace</span></a>
+        <a class="nav-item" href="/storysculpt"><i data-lucide="clapperboard"></i><span>StorySculpt</span></a>
+        <a class="nav-item" href="/navigator"><i data-lucide="route"></i><span>Next Step Navigator</span></a>
+        <a class="nav-item" href="/vault"><i data-lucide="library"></i><span>Solution Vault</span></a>
+        <a class="nav-item" href="/boardroom"><i data-lucide="messages-square"></i><span>AI Boardroom</span></a>
+        <a class="nav-item" href="/certainty"><i data-lucide="calendar-check"></i><span>Certainty Sessions</span></a>
+        <a class="nav-item active" href="/terms" aria-current="page"><i data-lucide="file-text"></i><span>Terms &amp; FAQ</span></a>
+      </nav>
+      <div class="sidebar-note">
+        <span class="status-dot"></span>
+        <span>The Momentum Hub</span>
+      </div>
+    </aside>
+
+    <main class="terms-main">
+      <section class="eee-page-head">
+        <div>
+          <span class="badge-pill"><i data-lucide="shield-check"></i> Transparency and Trust</span>
+          <h1>Terms of Service &amp; Frequently Asked Questions</h1>
+          <p>Everything you need to know about how The Momentum Hub operates, how your data is handled, our tools, pricing, and our affiliate commitments.</p>
+        </div>
+      </section>
+
+      <section class="terms-section" id="affiliate-disclosure">
+        <h2><i data-lucide="badge-percent"></i> Affiliate Disclosure</h2>
+        <p>Transparency is foundational to our relationship with you. Within Next Step Navigator, Solution Vault, and other Momentum Hub recommendations, David Bee recommends software tools, platforms, and services that he actively uses and trusts in real business operations.</p>
+        <p>Some of these links are affiliate links. If you click on an affiliate link and choose to purchase a product or subscription, David Bee may receive a referral commission at no additional cost to you. In many cases, our partner agreements provide you with an exclusive discount or extended trial period.</p>
+        <p>We never recommend any tool merely for a commission. Recommendations are curated based on reliability, practical value, and ease of use for entrepreneurs.</p>
+      </section>
+
+      <section class="terms-section" id="ai-use">
+        <h2><i data-lucide="sparkles"></i> AI Technology &amp; Responsible Use</h2>
+        <p>The Momentum Hub applications (including StorySculpt, Next Step Navigator, and AI Boardroom) use modern artificial intelligence models (such as DeepSeek and language intelligence engines) to assist you with scriptwriting, business diagnostics, and strategic reflection.</p>
+        <ul>
+          <li><strong>Assistance, Not Automation:</strong> AI is provided as a thinking partner and accelerator. You remain the creator, editor, and decision-maker for all content, scripts, and business directions produced.</li>
+          <li><strong>Confidentiality:</strong> Do not enter passwords, credit card numbers, confidential proprietary trade secrets, or protected personal health information into prompt boxes or chat inputs.</li>
+          <li><strong>Output Verification:</strong> While our engines are built with strict factual and style boundaries, AI generated drafts should always be reviewed by you before publication or external use.</li>
+        </ul>
+      </section>
+
+      <section class="terms-section" id="data-handling">
+        <h2><i data-lucide="lock"></i> Data Handling &amp; Privacy</h2>
+        <p>Your privacy and the security of your work are taken very seriously.</p>
+        <ul>
+          <li><strong>Account Data:</strong> Your profile information, saved scripts, business answers, and Next Move action items are stored securely in our encrypted cloud database (Supabase).</li>
+          <li><strong>Ownership:</strong> You retain full intellectual property ownership of the scripts, business strategies, and copy you generate and edit inside The Momentum Hub.</li>
+          <li><strong>No Selling of Data:</strong> We never sell, rent, or trade your personal information, email address, or project contents to third-party data brokers or advertisers.</li>
+        </ul>
+      </section>
+
+      <section class="terms-section" id="pricing-cancellation">
+        <h2><i data-lucide="credit-card"></i> Pricing, Access, &amp; Cancellation</h2>
+        <p>Access to The Momentum Hub apps is provided through active Colorado Mastermind memberships and program entitlements.</p>
+        <ul>
+          <li><strong>Clear Terms:</strong> Membership pricing, billing cadences, and renewal intervals are clearly presented upon enrollment.</li>
+          <li><strong>Cancellation Anytime:</strong> You may cancel your subscription at any time without hassle or penalty. Upon cancellation, your access remains active through the end of your current paid billing period.</li>
+          <li><strong>Data Retention:</strong> If your membership lapses, your saved scripts and workspace history remain securely stored in case you decide to return, until you request deletion.</li>
+        </ul>
+      </section>
+
+      <section class="terms-section" id="faq">
+        <h2><i data-lucide="help-circle"></i> Frequently Asked Questions</h2>
+        <div class="faq-item">
+          <h3>How do I access the different Momentum Hub tools?</h3>
+          <p>Once you are signed into your Colorado Mastermind Studio account, you can access StorySculpt, Next Step Navigator, Certainty Sessions, and Solution Vault directly from the sidebar navigation.</p>
+        </div>
+        <div class="faq-item">
+          <h3>Can I switch between dark and light color modes?</h3>
+          <p>Yes. Click the sun or moon icon in the top header on any page to switch between our custom dark and light themes.</p>
+        </div>
+        <div class="faq-item">
+          <h3>What should I do if a tool fails to generate or save?</h3>
+          <p>First, check your internet connection and refresh the browser. If an issue persists, contact David directly at the email address below so we can assist and resolve it immediately.</p>
+        </div>
+        <div class="faq-item">
+          <h3>How do Certainty Sessions work?</h3>
+          <p>Certainty Sessions are private working sessions with David Bee. Eligible members can select an available date and time on the Certainty Sessions page to lock in their spot via Zoom or phone.</p>
+        </div>
+      </section>
+
+      <section class="terms-section" id="support">
+        <h2><i data-lucide="mail"></i> Support &amp; Contact</h2>
+        <p>If you have any questions, encounter a technical issue, or need help with your account or billing, please reach out directly:</p>
+        <p><strong>Email David Bee:</strong> <a href="mailto:email@davidbee.me?subject=Momentum%20Hub%20Support">email@davidbee.me</a></p>
+        <p>Include details about what you were doing, and David will get back to you promptly to help.</p>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    (function () {
+      const themeBtn = document.getElementById('theme-button');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', function () {
+          const isLight = document.documentElement.classList.toggle('studio-light');
+          try {
+            localStorage.setItem('sis_theme_v1', isLight ? 'light' : 'dark');
+          } catch (e) {}
+        });
+      }
+      if (window.lucide) window.lucide.createIcons();
+    })();
+  </script>
+</body>
+</html>

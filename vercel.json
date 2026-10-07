@@ -137,6 +137,14 @@
     {
       "source": "/seeninseven/",
       "destination": "/seeninseven.html"
+    },
+    {
+      "source": "/terms",
+      "destination": "/terms.html"
+    },
+    {
+      "source": "/terms/",
+      "destination": "/terms.html"
     }
   ]
 }

@@ -9,8 +9,9 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,400;0,500;0,700;1,400&family=Space+Mono:wght@400;700&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Space+Mono:wght@400;700&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="/css/hub-theme.css">
     <link rel="stylesheet" href="/css/studio.css">
     <link rel="stylesheet" href="/css/eee.css">
     <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
@@ -18,18 +19,18 @@
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
     <style>
         :root {
-            --bg: #0b0f1a;
-            --card: #151c2c;
-            --card2: #1e293b;
-            --border: #2e4460;
-            --cream: #f0f9ff;
-            --soft: #bae6fd;
-            --muted: #64748b;
-            --teal: #2dd4bf;
-            --cyan: #67e8f9;
-            --amber: #f59e0b;
-            --green: #4ade80;
-            --glow: rgba(45, 212, 191, 0.4);
+            --bg: var(--studio-bg, #0D2828);
+            --card: var(--studio-surface, #163636);
+            --card2: var(--studio-surface-2, #1E4A4A);
+            --border: var(--studio-border, rgba(50, 184, 184, 0.22));
+            --cream: var(--studio-text, #F8FAFA);
+            --soft: var(--studio-soft, #A8DEDE);
+            --muted: var(--studio-muted, #68C8C8);
+            --teal: var(--studio-teal, #32B8B8);
+            --cyan: var(--cyan, #7DD8D8);
+            --amber: var(--studio-gold, #C8A84B);
+            --green: var(--studio-green, #4ade80);
+            --glow: var(--glow, rgba(50, 184, 184, 0.35));
         }
 
         * {
@@ -37,9 +38,10 @@
         }
 
         body {
-            background: var(--bg);
+            background: var(--bg-page, var(--bg));
+            background-color: var(--bg);
             color: var(--cream);
-            font-family: 'DM Sans', sans-serif;
+            font-family: var(--font-body, 'Nunito', sans-serif);
             margin: 0;
             padding: 0;
             overflow-x: hidden;
@@ -1446,18 +1448,37 @@
             <a class="primary-button" id="eee-gate-button" href="/"><span>Return to Studio</span></a>
         </section>
     </main>
-    <div class="app-container" id="eee-app" hidden>
-        <!-- HEADER -->
-        <header class="header">
-            <a class="logo" href="/eee" style="text-decoration:none;color:inherit">NEXT STEP <strong>NAVIGATOR</strong></a>
-            <div class="nav-links">
-                <a href="/eee">Momentum Hub</a>
-                <a href="#" onclick="showRoadmap()">Roadmap</a>
-                <a href="#" onclick="showScreen('screen-nextmove')">Next Move</a>
-                <a href="#" onclick="showScreen('screen-assets')">Profile</a>
-                <span id="eee-account-email" style="font-size:11px;color:var(--muted)"></span>
+    <div id="eee-app" hidden>
+        <header class="studio-header eee-header">
+            <a class="studio-brand" href="/eee"><span class="studio-mark">MH</span><span><strong>Next Step Navigator</strong><small>The Momentum Hub</small></span></a>
+            <div class="header-actions">
+                <a class="secondary-button" href="/eee"><i data-lucide="arrow-left"></i><span>Hub workspace</span></a>
+                <button class="icon-button" data-eee-theme type="button" title="Change color theme" aria-label="Change color theme"><i data-lucide="sun" class="theme-sun-icon"></i><i data-lucide="moon" class="theme-moon-icon"></i></button>
+                <div class="eee-account"><span class="account-avatar" id="eee-account-avatar">N</span><span class="eee-account-email" id="eee-account-email"></span></div>
             </div>
         </header>
+
+        <div class="studio-layout eee-layout">
+            <aside class="studio-sidebar eee-sidebar">
+                <nav>
+                    <a class="nav-item" href="/eee"><i data-lucide="layout-dashboard"></i><span>Home</span></a>
+                    <a class="nav-item" href="/storysculpt"><i data-lucide="clapperboard"></i><span>StorySculpt</span></a>
+                    <a class="nav-item active" href="/navigator"><i data-lucide="route"></i><span>Next Step Navigator</span></a>
+                    <a class="nav-item" href="/vault"><i data-lucide="library"></i><span>Solution Vault</span></a>
+                    <a class="nav-item" href="/boardroom"><i data-lucide="messages-square"></i><span>AI Boardroom</span></a>
+                    <a class="nav-item" href="/certainty"><i data-lucide="calendar-check"></i><span>Certainty Sessions</span></a>
+                    <a class="nav-item" href="/terms"><i data-lucide="file-text"></i><span>Terms &amp; FAQ</span></a>
+                </nav>
+                <div class="eee-sidebar-bottom"><button class="nav-item" data-eee-sign-out type="button"><i data-lucide="log-out"></i><span>Sign out</span></button></div>
+            </aside>
+
+            <main class="eee-main navigator-main-layout" id="app">
+                <nav class="nav-subtabs" aria-label="Navigator screens" style="display:flex; gap:10px; margin-bottom:24px; flex-wrap:wrap;">
+                    <button class="secondary-button" type="button" onclick="showScreen('screen-wizard')" style="font-size:13px; min-height:36px;"><i data-lucide="sparkles"></i><span>Diagnostic</span></button>
+                    <button class="secondary-button" type="button" onclick="showRoadmap()" style="font-size:13px; min-height:36px;"><i data-lucide="map"></i><span>Roadmap</span></button>
+                    <button class="secondary-button" type="button" onclick="showScreen('screen-nextmove')" style="font-size:13px; min-height:36px;"><i data-lucide="play"></i><span>Next Move</span></button>
+                    <button class="secondary-button" type="button" onclick="showScreen('screen-assets')" style="font-size:13px; min-height:36px;"><i data-lucide="user"></i><span>Profile</span></button>
+                </nav>
 
         <!-- WIZARD -->
         <div class="screen active" id="screen-wizard">
@@ -1663,8 +1684,8 @@
                 <div id="navigator-history" class="nav-history"></div>
             </div>
         </div>
-    </div>
-    </div>
+        </main>
+        </div>
     </div>
 
     <!-- Drawer / To-Do List -->
@@ -1793,7 +1814,7 @@
             aiaas: [
                 {
                     level: 2, title: 'Automate Repetitive Tasks', goal: 'Remove yourself as the bottleneck using software.', why: 'Automating the boring stuff lets you handle more clients and make more money without working longer hours.', tech: ['ChatGPT', 'Zapier', 'Make.com'], steps: ['Write down 3 boring things you do manually over and over (like sending emails or moving data).', 'Use a service like Zapier to connect the tools so they talk to each other automatically.', 'Use AI to draft standard responses or summarize information for you.'],
-                    example: 'Automation Idea: Connect your calendar (Calendly) to Zapier. Now, whenever someone books a call, their info goes into your main spreadsheet, they automatically get a personalized prep email, and it sends you a notification on your phone—all without you lifting a finger.',
+                    example: 'Automation Idea: Connect your calendar (Calendly) to Zapier. Now, whenever someone books a call, their info goes into your main spreadsheet, they automatically get a personalized prep email, and it sends you a notification on your phone: all without you lifting a finger.',
                     prompt: 'Act as an expert Automation Engineer. Imagine a growing, busy business in the [NICHE] space. Point out 3 common, annoying operational tasks they probably do over and over again by hand. For each of the 3 tasks, explain to me step-by-step how I can use a tool like Zapier or Make.com to make it happen completely automatically.'
                 }
             ]
@@ -2778,7 +2799,7 @@
             }
 
             if (hasAsset('highticket')) {
-                story.push(`Finally, after experiencing incredible success with your core methods, they will happily graduate to <span class="story-highlight">${getValue('highticket', 'your VIP Package')}</span> and refer all their friends—getting you even more clients!`);
+                story.push(`Finally, after experiencing incredible success with your core methods, they will happily graduate to <span class="story-highlight">${getValue('highticket', 'your VIP Package')}</span> and refer all their friends, getting you even more clients!`);
             }
 
             board.innerHTML = `
