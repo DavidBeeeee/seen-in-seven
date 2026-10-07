@@ -26,17 +26,69 @@ let activeStory = null;
 let storySaveTimer = null;
 let memoryProfile = {};
 let helpReturnFocus = null;
+let viewingVersionIndex = -1; // -1 means viewing active/latest draft
+let mobileActiveTab = 'chat'; // 'chat' or 'script'
 
 const storyEl = id => document.getElementById(id);
 
 function storyEscape(value) {
-  return String(value == null ? '' : value).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  return String(value == null ? '' : value)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;');
 }
 
 function autoGrow(el) {
   if (!el) return;
   el.style.height = 'auto';
-  el.style.height = Math.min(el.scrollHeight, 320) + 'px';
+  el.style.height = Math.min(el.scrollHeight, 180) + 'px';
+}
+
+function updateWordCount(text) {
+  const words = (text || '').trim().split(/\s+/).filter(Boolean).length;
+  const minutes = Math.max(1, Math.round(words / 130 * 10) / 10);
+  const countEl = storyEl('story-word-count');
+  if (countEl) {
+    countEl.textContent = words === 1 ? '1 word (~1 min)' : words + ' words (~' + minutes + ' min)';
+  }
+}
+
+function ensureVersions(project) {
+  if (!project) return [];
+  if (!project.intake) project.intake = {};
+  if (!Array.isArray(project.intake.versions)) {
+    project.intake.versions = [];
+  }
+  if (project.output && project.intake.versions.length === 0) {
+    const drafts = [];
+    if (Array.isArray(project.conversation)) {
+      for (let i = 0; i < project.conversation.length; i++) {
+        const msg = project.conversation[i];
+        if (msg && msg.role === 'assistant') {
+          const next = project.conversation[i + 1];
+          if (next && next.role === 'user' && typeof next.content === 'string' && next.content.startsWith('Please revise the script above')) {
+            const noteMatch = next.content.replace('Please revise the script above. Keep what works and change this: ', '').trim();
+            drafts.push({
+              version: drafts.length + 1,
+              note: drafts.length === 0 ? 'Initial draft' : (noteMatch || 'Revision'),
+              content: msg.content,
+              createdAt: project.created_at || new Date().toISOString()
+            });
+          }
+        }
+      }
+    }
+    drafts.push({
+      version: drafts.length + 1,
+      note: drafts.length > 0 ? 'Latest revision' : 'Initial draft',
+      content: project.output,
+      createdAt: project.updated_at || new Date().toISOString()
+    });
+    project.intake.versions = drafts;
+  }
+  return project.intake.versions;
 }
 
 // Build the standing story-profile block. Empty when the member has set nothing,
@@ -65,31 +117,197 @@ function renderProjectList() {
   ).join('') : '<p class="eee-message">No chats yet.</p>';
 }
 
-function renderConversation() {
-  const conversation = Array.isArray(activeStory && activeStory.conversation) ? activeStory.conversation : [];
-  storyEl('story-conversation').innerHTML = conversation.map(message =>
-    '<article class="story-message ' + (message.role === 'user' ? 'user' : 'assistant') + '">' +
-      '<span class="story-message-role">' + (message.role === 'user' ? 'You' : 'StorySculpt') + '</span>' +
-      '<div class="story-message-body">' + storyEscape(message.content) + '</div>' +
-    '</article>'
-  ).join('');
-  const hasOutput = Boolean(activeStory && activeStory.output);
-  storyEl('story-output').hidden = !hasOutput;
-  storyEl('story-composer').hidden = hasOutput;
-  storyEl('story-generation-status').hidden = hasOutput;
-  if (hasOutput) {
-    storyEl('story-output-copy').value = activeStory.output || '';
-    autoGrow(storyEl('story-output-copy'));
+function renderVersionPills() {
+  const pillsContainer = storyEl('story-version-pills');
+  if (!pillsContainer || !activeStory) return;
+  const versions = ensureVersions(activeStory);
+  if (versions.length === 0) {
+    pillsContainer.innerHTML = '';
+    return;
+  }
+  pillsContainer.innerHTML = versions.map((v, idx) => {
+    const isLatest = idx === versions.length - 1;
+    const isSelected = viewingVersionIndex === -1 ? isLatest : viewingVersionIndex === idx;
+    const label = 'v' + v.version + (isLatest ? ' (latest)' : '');
+    return '<button class="story-version-pill' + (isSelected ? ' active' : '') + '" type="button" data-ver-index="' + idx + '" title="' + storyEscape(v.note || '') + '">' + storyEscape(label) + '</button>';
+  }).join('');
+
+  const badge = storyEl('story-tab-version-badge');
+  if (badge) badge.textContent = 'v' + versions.length;
+
+  const banner = storyEl('story-version-banner');
+  const bannerText = storyEl('story-version-banner-text');
+  if (banner && bannerText) {
+    const isOlder = viewingVersionIndex !== -1 && viewingVersionIndex < versions.length - 1;
+    banner.hidden = !isOlder;
+    if (isOlder) {
+      const v = versions[viewingVersionIndex];
+      bannerText.textContent = 'Viewing Version ' + v.version + (v.note ? ' (' + v.note + ')' : '');
+    }
   }
 }
 
+function renderScriptPanel() {
+  const hasOutput = Boolean(activeStory && activeStory.output);
+  const editor = storyEl('story-editor');
+  const output = storyEl('story-output');
+  const mobileTabs = storyEl('story-mobile-tabs');
+  const composer = storyEl('story-composer');
+  const refineBox = storyEl('story-refine-box');
+  const genStatus = storyEl('story-generation-status');
+
+  if (hasOutput) {
+    editor.classList.add('has-output');
+    output.hidden = false;
+    mobileTabs.hidden = false;
+    composer.hidden = true;
+    genStatus.hidden = true;
+    refineBox.hidden = false;
+
+    renderVersionPills();
+
+    const versions = ensureVersions(activeStory);
+    const contentToShow = (viewingVersionIndex !== -1 && versions[viewingVersionIndex])
+      ? versions[viewingVersionIndex].content
+      : (activeStory.output || '');
+
+    const copyEl = storyEl('story-output-copy');
+    if (document.activeElement !== copyEl && copyEl.value !== contentToShow) {
+      copyEl.value = contentToShow;
+    }
+    copyEl.readOnly = viewingVersionIndex !== -1;
+    updateWordCount(contentToShow);
+  } else {
+    editor.classList.remove('has-output');
+    output.hidden = true;
+    mobileTabs.hidden = true;
+    composer.hidden = false;
+    genStatus.hidden = false;
+    refineBox.hidden = true;
+    viewingVersionIndex = -1;
+  }
+}
+
+function renderConversation() {
+  const conversation = Array.isArray(activeStory && activeStory.conversation) ? activeStory.conversation : [];
+  const versions = (activeStory && activeStory.intake && activeStory.intake.versions) || [];
+
+  storyEl('story-conversation').innerHTML = conversation.map((message, index) => {
+    if (message.role === 'user') {
+      const isRefine = message.refineNote || (typeof message.content === 'string' && message.content.startsWith('Please revise the script above. Keep what works and change this: '));
+      if (isRefine) {
+        const note = message.refineNote || message.content.replace('Please revise the script above. Keep what works and change this: ', '').trim();
+        return '<article class="story-message user story-message-refine">' +
+          '<span class="story-message-role">You</span>' +
+          '<div class="story-message-body"><span class="story-refine-badge"><i data-lucide="wand-sparkles"></i> Revision note</span><p class="story-refine-text">' + storyEscape(note) + '</p></div>' +
+        '</article>';
+      }
+      return '<article class="story-message user">' +
+        '<span class="story-message-role">You</span>' +
+        '<div class="story-message-body">' + storyEscape(message.content) + '</div>' +
+      '</article>';
+    }
+
+    const isScript = message.isScriptDraft ||
+      (index + 1 < conversation.length && conversation[index + 1].role === 'user' && typeof conversation[index + 1].content === 'string' && conversation[index + 1].content.startsWith('Please revise the script above')) ||
+      (activeStory && activeStory.output && message.content === activeStory.output);
+
+    if (isScript) {
+      const ver = versions.find(v => v.content === message.content);
+      const verLabel = ver ? ('Version ' + ver.version) : 'Working draft';
+      const verNote = ver && ver.note ? ver.note : 'Draft moved to script panel';
+      return '<article class="story-message assistant story-message-artifact-chip">' +
+        '<span class="story-message-role">StorySculpt</span>' +
+        '<div class="story-artifact-chip">' +
+          '<div class="story-artifact-chip-icon"><i data-lucide="file-text"></i></div>' +
+          '<div class="story-artifact-chip-content">' +
+            '<strong>' + storyEscape(verLabel) + '</strong>' +
+            '<small>' + storyEscape(verNote) + '</small>' +
+          '</div>' +
+          '<button class="story-artifact-chip-view" type="button" data-view-script="true">View in panel →</button>' +
+        '</div>' +
+      '</article>';
+    }
+
+    return '<article class="story-message assistant">' +
+      '<span class="story-message-role">StorySculpt</span>' +
+      '<div class="story-message-body">' + storyEscape(message.content) + '</div>' +
+    '</article>';
+  }).join('');
+
+  renderScriptPanel();
+  EEEStudio.refreshIcons();
+}
+
 function scrollThread() {
-  const thread = storyEl('story-conversation');
+  const thread = storyEl('story-scroll');
   if (thread) thread.scrollTop = thread.scrollHeight;
+}
+
+function switchMobileTab(tab) {
+  mobileActiveTab = tab;
+  const chatPane = storyEl('story-pane-chat');
+  const scriptPane = storyEl('story-output');
+  const btnChat = storyEl('tab-btn-chat');
+  const btnScript = storyEl('tab-btn-script');
+
+  if (tab === 'chat') {
+    if (btnChat) btnChat.classList.add('active');
+    if (btnScript) btnScript.classList.remove('active');
+    if (chatPane) chatPane.classList.remove('mobile-hidden');
+    if (scriptPane) scriptPane.classList.add('mobile-hidden');
+    scrollThread();
+  } else {
+    if (btnScript) btnScript.classList.add('active');
+    if (btnChat) btnChat.classList.remove('active');
+    if (scriptPane) scriptPane.classList.remove('mobile-hidden');
+    if (chatPane) chatPane.classList.add('mobile-hidden');
+  }
+}
+
+function selectVersion(index) {
+  const versions = ensureVersions(activeStory);
+  if (index < 0 || index >= versions.length || index === versions.length - 1) {
+    viewingVersionIndex = -1;
+  } else {
+    viewingVersionIndex = index;
+  }
+  const content = viewingVersionIndex === -1 ? (activeStory.output || '') : versions[viewingVersionIndex].content;
+  const copyEl = storyEl('story-output-copy');
+  copyEl.value = content;
+  copyEl.readOnly = viewingVersionIndex !== -1;
+  updateWordCount(content);
+  renderVersionPills();
+  EEEStudio.refreshIcons();
+}
+
+async function restoreOlderVersion() {
+  if (!activeStory || viewingVersionIndex === -1) return;
+  const versions = ensureVersions(activeStory);
+  const target = versions[viewingVersionIndex];
+  if (!target) return;
+  const nextVerNum = versions.length + 1;
+  const note = 'Restored from v' + target.version;
+  activeStory.output = target.content;
+  versions.push({
+    version: nextVerNum,
+    note: note,
+    content: target.content,
+    createdAt: new Date().toISOString()
+  });
+  viewingVersionIndex = -1;
+  const copyEl = storyEl('story-output-copy');
+  copyEl.value = target.content;
+  copyEl.readOnly = false;
+  await saveActiveStory('Restored version ' + target.version);
+  renderScriptPanel();
+  renderConversation();
 }
 
 function showProject(project) {
   activeStory = project;
+  viewingVersionIndex = -1;
+  ensureVersions(project);
   storyEl('story-start').hidden = true;
   storyEl('story-editor').hidden = false;
   storyEl('delete-project-button').hidden = false;
@@ -99,15 +317,21 @@ function showProject(project) {
   storyEl('story-context').value = project.intake && project.intake.context || '';
   storyEl('story-save-status').textContent = '';
   storyEl('story-refine-status').textContent = '';
+  switchMobileTab('chat');
   renderProjectList();
   renderConversation();
   EEEStudio.refreshIcons();
   scrollThread();
-  (project.output ? storyEl('story-refine-note') : storyEl('story-answer')).focus();
+  if (project.output) {
+    if (window.innerWidth > 820) storyEl('story-refine-note').focus();
+  } else {
+    storyEl('story-answer').focus();
+  }
 }
 
 function showStart() {
   activeStory = null;
+  viewingVersionIndex = -1;
   storyEl('story-start').hidden = false;
   storyEl('story-editor').hidden = true;
   storyEl('delete-project-button').hidden = true;
@@ -124,7 +348,13 @@ async function loadStoryProjects() {
 
 async function createStoryProject(mode) {
   const conversation = [{ role: 'assistant', content: STORY_STARTERS[mode] }];
-  const { data, error } = await storyContext.sb.from('storysculpt_projects').insert({ user_id: storyContext.profile.id, title: STORY_TITLES[mode], content_type: mode, conversation }).select().single();
+  const { data, error } = await storyContext.sb.from('storysculpt_projects').insert({
+    user_id: storyContext.profile.id,
+    title: STORY_TITLES[mode],
+    content_type: mode,
+    conversation,
+    intake: { context: '', versions: [] }
+  }).select().single();
   if (error) throw error;
   storyProjects.unshift(data);
   showProject(data);
@@ -134,7 +364,10 @@ async function saveActiveStory(message) {
   if (!activeStory) return;
   const updates = {
     title: storyEl('story-title').value.trim() || 'Untitled script',
-    intake: { context: storyEl('story-context').value.trim() },
+    intake: {
+      context: storyEl('story-context').value.trim(),
+      versions: (activeStory.intake && activeStory.intake.versions) || []
+    },
     conversation: activeStory.conversation || [],
     output: activeStory.output || null,
     updated_at: new Date().toISOString()
@@ -191,16 +424,16 @@ async function runGeneration(intent = 'interview') {
   let response;
   try {
     response = await fetch('/api/storysculpt', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + storyContext.session.access_token },
-    body: JSON.stringify({
-      mode: activeStory.content_type,
-      projectId: activeStory.id,
-      intent,
-      projectTitle: storyEl('story-title').value,
-      context: composeContext(),
-      messages: activeStory.conversation
-    })
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + storyContext.session.access_token },
+      body: JSON.stringify({
+        mode: activeStory.content_type,
+        projectId: activeStory.id,
+        intent,
+        projectTitle: storyEl('story-title').value,
+        context: composeContext(),
+        messages: activeStory.conversation
+      })
     });
   } catch (error) {
     recordStoryFailure('delivery-error', '', 0);
@@ -231,10 +464,25 @@ async function sendStoryAnswer(event) {
   const answer = storyEl('story-answer').value.trim();
   if (!activeStory || !answer) return;
   if (activeStory.output) {
-    storyEl('story-refine-status').textContent = 'Your script is finished. Use Refine with a note to change it.';
+    storyEl('story-refine-status').textContent = 'Your script is finished. Use Revise to change it.';
     storyEl('story-refine-note').focus();
     return;
   }
+
+  // Auto-name chat from user's first answer if still on default title
+  const defaultTitles = ['New bold script', 'New mini lesson', 'New rant', 'Untitled script'];
+  if (!activeStory.title || defaultTitles.includes(activeStory.title.trim()) || activeStory.title.startsWith('New ')) {
+    const cleanAnswer = answer.replace(/[\r\n]+/g, ' ').replace(/[^\w\s'-]/g, '').trim();
+    if (cleanAnswer) {
+      const words = cleanAnswer.split(/\s+/).slice(0, 6).join(' ');
+      const candidate = words.charAt(0).toUpperCase() + words.slice(1);
+      if (candidate.length >= 3) {
+        activeStory.title = candidate.slice(0, 50);
+        storyEl('story-title').value = activeStory.title;
+      }
+    }
+  }
+
   const button = storyEl('story-send');
   button.disabled = true;
   storyEl('story-generation-status').textContent = 'Reading the full thread and finding the next useful move.';
@@ -243,16 +491,31 @@ async function sendStoryAnswer(event) {
   autoGrow(storyEl('story-answer'));
   renderConversation();
   scrollThread();
-  // The finally block used to reset this status line unconditionally, which
-  // wiped the error the catch had just written: a rejected or failed step
-  // showed the member the idle line and nothing else. Only a success resets it
-  // now. WBR-005, found 2026-10-03 while surfacing the output rejection.
+
   const status = storyEl('story-generation-status');
   let failed = false;
   try {
     await saveActiveStory();
     const data = await runGeneration('interview');
-    if (data.final) storyEl('story-output').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    if (data.final) {
+      ensureVersions(activeStory);
+      if (activeStory.intake.versions.length === 0) {
+        activeStory.intake.versions.push({
+          version: 1,
+          note: 'Initial draft',
+          content: data.content,
+          createdAt: new Date().toISOString()
+        });
+      }
+      viewingVersionIndex = -1;
+      await saveActiveStory('Initial draft saved');
+      renderScriptPanel();
+      if (window.innerWidth <= 820) {
+        switchMobileTab('script');
+      } else {
+        storyEl('story-output-copy').focus();
+      }
+    }
   } catch (error) {
     failed = true;
     status.textContent = error.message || 'This step did not finish. Your answers are still saved.';
@@ -278,24 +541,60 @@ async function refineStory() {
   button.disabled = true;
   const status = storyEl('story-refine-status');
   status.textContent = 'Revising your script with that note.';
-  status.className = 'eee-message';
+  status.className = 'eee-message story-refine-status';
+
   const currentScript = storyEl('story-output-copy').value.trim();
   activeStory.output = currentScript;
+
+  const versions = ensureVersions(activeStory);
+  if (versions.length > 0) {
+    versions[versions.length - 1].content = currentScript;
+  }
+
   activeStory.conversation = [
     ...(activeStory.conversation || []),
-    { role: 'assistant', content: currentScript },
-    { role: 'user', content: 'Please revise the script above. Keep what works and change this: ' + note }
+    { role: 'assistant', content: currentScript, isScriptDraft: true },
+    { role: 'user', content: 'Please revise the script above. Keep what works and change this: ' + note, refineNote: note }
   ];
+
+  renderConversation();
+  scrollThread();
+
   try {
     await saveActiveStory();
     const data = await runGeneration('refine');
     storyEl('story-refine-note').value = '';
     autoGrow(storyEl('story-refine-note'));
-    if (data.final) { status.textContent = 'Script revised.'; status.className = 'eee-message success'; }
-    else { status.textContent = 'StorySculpt asked a question before revising. See the chat above.'; status.className = 'eee-message'; }
+
+    if (data.final) {
+      status.textContent = 'Script revised.';
+      status.className = 'eee-message story-refine-status success';
+
+      const nextVerNum = versions.length + 1;
+      activeStory.output = data.content;
+      versions.push({
+        version: nextVerNum,
+        note: note,
+        content: data.content,
+        createdAt: new Date().toISOString()
+      });
+
+      viewingVersionIndex = -1;
+      await saveActiveStory('Revised draft saved');
+      renderScriptPanel();
+      renderConversation();
+
+      if (window.innerWidth <= 820) {
+        switchMobileTab('script');
+      }
+    } else {
+      status.textContent = 'StorySculpt asked a question before revising. See the chat above.';
+      status.className = 'eee-message story-refine-status';
+      renderConversation();
+    }
   } catch (error) {
     status.textContent = error.message || 'That revision did not finish. Your script is still saved.';
-    status.className = 'eee-message error';
+    status.className = 'eee-message story-refine-status error';
   } finally {
     button.disabled = false;
     EEEStudio.refreshIcons();
@@ -305,9 +604,26 @@ async function refineStory() {
 // Inline edits to the finished script save straight to the project.
 function queueOutputSave() {
   if (!activeStory) return;
-  activeStory.output = storyEl('story-output-copy').value;
+  const val = storyEl('story-output-copy').value;
+  activeStory.output = val;
+
+  const versions = ensureVersions(activeStory);
+  if (versions.length > 0 && (viewingVersionIndex === -1 || viewingVersionIndex === versions.length - 1)) {
+    versions[versions.length - 1].content = val;
+  }
+  updateWordCount(val);
+
+  const saveStatusEl = storyEl('story-script-save-status');
+  if (saveStatusEl) saveStatusEl.textContent = 'Saving...';
+
   clearTimeout(storySaveTimer);
-  storySaveTimer = setTimeout(() => saveActiveStory().catch(() => {}), 600);
+  storySaveTimer = setTimeout(() => {
+    saveActiveStory().then(() => {
+      if (saveStatusEl) saveStatusEl.textContent = 'Saves as you type';
+    }).catch(() => {
+      if (saveStatusEl) saveStatusEl.textContent = 'Connection error. Retrying...';
+    });
+  }, 600);
 }
 
 async function deleteActiveStory() {
@@ -401,9 +717,33 @@ storyEl('story-answer').addEventListener('input', event => autoGrow(event.target
 storyEl('story-answer').addEventListener('keydown', event => {
   if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); storyEl('story-composer').requestSubmit(); }
 });
-storyEl('story-output-copy').addEventListener('input', event => { autoGrow(event.target); queueOutputSave(); });
+
+// Artifact panel and version history events
+storyEl('story-output-copy').addEventListener('input', queueOutputSave);
 storyEl('story-refine-send').addEventListener('click', refineStory);
 storyEl('story-refine-note').addEventListener('input', event => autoGrow(event.target));
+storyEl('story-refine-note').addEventListener('keydown', event => {
+  if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); refineStory(); }
+});
+
+storyEl('story-version-pills').addEventListener('click', event => {
+  const btn = event.target.closest('[data-ver-index]');
+  if (btn) selectVersion(Number(btn.dataset.verIndex));
+});
+storyEl('story-version-restore-btn').addEventListener('click', restoreOlderVersion);
+
+storyEl('story-conversation').addEventListener('click', event => {
+  const btn = event.target.closest('[data-view-script]');
+  if (btn) {
+    if (window.innerWidth <= 820) switchMobileTab('script');
+    else storyEl('story-output-copy').focus();
+  }
+});
+
+// Mobile tab events
+storyEl('tab-btn-chat').addEventListener('click', () => switchMobileTab('chat'));
+storyEl('tab-btn-script').addEventListener('click', () => switchMobileTab('script'));
+
 storyEl('story-open-memory').addEventListener('click', openMemory);
 storyEl('story-open-memory-top').addEventListener('click', openMemory);
 storyEl('story-memory-close').addEventListener('click', closeMemory);
@@ -424,11 +764,14 @@ storyEl('mem-save').addEventListener('click', saveMemory);
 
 async function copyOutput(button, doneLabel) {
   if (!activeStory || !activeStory.output) return;
-  await navigator.clipboard.writeText(storyEl('story-output-copy').value);
+  const copyEl = storyEl('story-output-copy');
+  await navigator.clipboard.writeText(copyEl.value);
   const span = button.querySelector('span');
-  const original = span.textContent;
-  span.textContent = doneLabel;
-  setTimeout(() => { span.textContent = original; }, 1500);
+  if (span) {
+    const original = span.textContent;
+    span.textContent = doneLabel;
+    setTimeout(() => { span.textContent = original; }, 1500);
+  }
 }
 storyEl('copy-story-output').addEventListener('click', () => copyOutput(storyEl('copy-story-output'), 'Copied'));
 storyEl('copy-story-output-bottom').addEventListener('click', () => copyOutput(storyEl('copy-story-output-bottom'), 'Copied. Go record it.'));
