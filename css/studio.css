@@ -111,6 +111,11 @@ a { color: inherit; text-decoration: none; }
 .nav-item:focus-visible { outline: 2px solid var(--studio-teal); outline-offset: 2px; }
 .studio-sidebar { overflow-y: auto; gap: 24px; }
 .nav-item.active { background: color-mix(in srgb, var(--studio-teal) 10%, transparent); color: var(--studio-teal); border-left: 3px solid var(--studio-teal); }
+.sidebar-section-divider { height: 1px; background: var(--studio-border); margin: 12px 0; }
+.sidebar-footer { display: flex; flex-direction: column; gap: 10px; margin-top: auto; padding-top: 14px; border-top: 1px solid var(--studio-border); }
+.sidebar-sublink { display: inline-flex; align-items: center; gap: 8px; padding: 4px 12px; color: var(--studio-muted); font-size: 12px; font-weight: 700; text-decoration: none; transition: color 0.15s ease; }
+.sidebar-sublink:hover { color: var(--studio-teal); }
+.sidebar-sublink svg { width: 14px; height: 14px; }
 .sidebar-note { display: flex; align-items: center; gap: 9px; padding: 0 12px; color: var(--studio-muted); font-size: 12px; }
 .status-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--studio-green); box-shadow: 0 0 0 4px color-mix(in srgb, var(--studio-green) 13%, transparent); }
 

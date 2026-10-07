@@ -71,7 +71,9 @@ async function eeeInitialize(onReady) {
   if (app) app.hidden = false;
   const email = eeeElement('eee-account-email');
   const avatar = eeeElement('eee-account-avatar');
+  const menuEmail = eeeElement('eee-menu-email') || eeeElement('menu-email');
   if (email) email.textContent = session.user.email || '';
+  if (menuEmail) menuEmail.textContent = session.user.email || '';
   if (avatar) avatar.textContent = String(profile.name || session.user.email || 'E').charAt(0).toUpperCase();
   if (typeof onReady === 'function') await onReady({ session, profile, sb: eeeSb });
   eeeRefreshIcons();
@@ -82,6 +84,19 @@ document.addEventListener('click', event => {
   if (themeButton) eeeSetTheme(document.documentElement.classList.contains('studio-light') ? 'dark' : 'light');
   const signOut = event.target.closest('[data-eee-sign-out]');
   if (signOut) eeeSb.auth.signOut().then(() => { window.location.href = '/'; });
+
+  const accountBtn = event.target.closest('#account-button, #eee-account-button, .account-button, .eee-account');
+  const accountMenu = eeeElement('account-menu') || eeeElement('eee-account-menu');
+  if (accountBtn && accountMenu) {
+    accountMenu.hidden = !accountMenu.hidden;
+    accountBtn.setAttribute('aria-expanded', !accountMenu.hidden);
+    return;
+  }
+  if (accountMenu && !event.target.closest('#account-menu, #eee-account-menu')) {
+    accountMenu.hidden = true;
+    const btn = eeeElement('account-button') || eeeElement('eee-account-button') || document.querySelector('.account-button, .eee-account');
+    if (btn) btn.setAttribute('aria-expanded', 'false');
+  }
 });
 
 eeeSb.auth.onAuthStateChange((event, session) => {

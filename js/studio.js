@@ -142,15 +142,21 @@ function hasStudioAccess(appKey) {
 }
 
 function renderAppAccess(appKey, unlocked, betaCopy, lockedCopy) {
-  el(appKey + '-locked-cover').hidden = unlocked;
-  el(appKey + '-open-button').hidden = !unlocked;
-  el(appKey + '-request-button').hidden = unlocked;
-  el(appKey + '-access-label').textContent = unlocked ? (appKey === 'eee' ? 'Membership active' : 'Beta access') : (appKey === 'eee' ? 'Membership' : 'Early access');
-  el(appKey + '-access-label').classList.toggle('unlocked', unlocked);
-  el(appKey + '-status').classList.toggle('unlocked', unlocked);
-  el(appKey + '-status').innerHTML = unlocked
-    ? '<i data-lucide="badge-check"></i><span>' + betaCopy + '</span>'
-    : '<i data-lucide="lock"></i><span>' + (lockedCopy || 'Coming soon. Message David Bee for early access.') + '</span>';
+  const cover = el(appKey + '-locked-cover');
+  if (!cover) return;
+  cover.hidden = unlocked;
+  if (el(appKey + '-open-button')) el(appKey + '-open-button').hidden = !unlocked;
+  if (el(appKey + '-request-button')) el(appKey + '-request-button').hidden = unlocked;
+  if (el(appKey + '-access-label')) {
+    el(appKey + '-access-label').textContent = unlocked ? (appKey === 'eee' ? 'Membership active' : 'Beta access') : (appKey === 'eee' ? 'Membership' : 'Early access');
+    el(appKey + '-access-label').classList.toggle('unlocked', unlocked);
+  }
+  if (el(appKey + '-status')) {
+    el(appKey + '-status').classList.toggle('unlocked', unlocked);
+    el(appKey + '-status').innerHTML = unlocked
+      ? '<i data-lucide="badge-check"></i><span>' + betaCopy + '</span>'
+      : '<i data-lucide="lock"></i><span>' + (lockedCopy || 'Coming soon. Message David Bee for early access.') + '</span>';
+  }
 }
 
 async function hydrateStudio(session) {
@@ -180,10 +186,12 @@ function renderStudio() {
   el('account-button').hidden = !signedIn;
   el('device-progress').hidden = !localProgress || hasStudioAccess('seeninseven');
   const isAdmin = Boolean(signedIn && studioProfile && studioProfile.is_admin === true);
+  if (el('management-label')) el('management-label').hidden = !isAdmin;
+  if (el('management-divider')) el('management-divider').hidden = !isAdmin;
   el('workerbee-nav-item').hidden = !isAdmin;
   el('admin-nav-item').hidden = !isAdmin;
   el('eee-card').hidden = !eeeCardVisible;
-  el('studio-app-count').textContent = (eeeCardVisible ? 3 : 2) + ' apps';
+  el('studio-app-count').textContent = (eeeCardVisible ? 2 : 1) + ' workspace' + (eeeCardVisible ? 's' : '');
 
   if (signedIn) {
     el('account-email').textContent = email;

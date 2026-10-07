@@ -28,8 +28,49 @@ let memoryProfile = {};
 let helpReturnFocus = null;
 let viewingVersionIndex = -1; // -1 means viewing active/latest draft
 let mobileActiveTab = 'chat'; // 'chat' or 'script'
+let storyRailFilter = 'all'; // 'all' | 'active' | 'filmed'
 
 const storyEl = id => document.getElementById(id);
+
+function generateSmartTitle(rawText) {
+  if (!rawText) return '';
+  let clean = rawText.replace(/[\r\n]+/g, ' ').replace(/[^\w\s'-]/g, ' ').trim();
+  const fillerPatterns = [
+    /^(?:i\s+(?:want\s+to|would\s+like\s+to|feel\s+like|think|really|just|am\s+thinking\s+about))\s+/i,
+    /^(?:can\s+you(?:\s+help\s+me)?|help\s+me)\s+(?:to\s+|with\s+|write\s+(?:a\s+|about\s+)?)?/i,
+    /^(?:let'?s\s+(?:talk\s+about|do\s+a|write\s+a))\s+/i,
+    /^(?:my\s+(?:rant|topic|idea|thought|take)\s+is)\s+/i,
+    /^(?:what\s+if|why\s+do\s+people|why\s+does|how\s+come)\s+/i,
+    /^(?:write\s+(?:a|about)|talk\s+about)\s+/i
+  ];
+  let changed = true;
+  while (changed) {
+    changed = false;
+    for (const pat of fillerPatterns) {
+      if (pat.test(clean)) {
+        clean = clean.replace(pat, '').trim();
+        changed = true;
+      }
+    }
+  }
+  const words = clean.split(/\s+/).filter(Boolean);
+  if (!words.length) return '';
+  const titleWords = words.slice(0, 6);
+  let title = titleWords.map((w, idx) => {
+    const lower = w.toLowerCase();
+    if (idx > 0 && ['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by', 'with', 'in', 'of'].includes(lower)) {
+      return lower;
+    }
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+  }).join(' ');
+
+  if (title.length > 50) {
+    title = title.slice(0, 50).trim();
+    const lastSpace = title.lastIndexOf(' ');
+    if (lastSpace > 20) title = title.slice(0, lastSpace);
+  }
+  return title;
+}
 
 function storyEscape(value) {
   return String(value == null ? '' : value)
@@ -112,9 +153,75 @@ function composeContext() {
 
 function renderProjectList() {
   const list = storyEl('story-project-list');
-  list.innerHTML = storyProjects.length ? storyProjects.map(project =>
-    '<button class="eee-rail-button' + (activeStory && activeStory.id === project.id ? ' active' : '') + '" type="button" data-project-id="' + storyEscape(project.id) + '">' + storyEscape(project.title || 'Untitled script') + '</button>'
-  ).join('') : '<p class="eee-message">No chats yet.</p>';
+  const filtered = storyProjects.filter(project => {
+    const isFilmed = Boolean(project.intake && project.intake.filmed);
+    if (storyRailFilter === 'active') return !isFilmed;
+    if (storyRailFilter === 'filmed') return isFilmed;
+    return true;
+  });
+
+  if (!filtered.length) {
+    const emptyMsg = storyRailFilter === 'filmed' ? 'No filmed scripts yet.' : (storyRailFilter === 'active' ? 'No active chats.' : 'No chats yet.');
+    list.innerHTML = '<p class="eee-message">' + emptyMsg + '</p>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(project => {
+    const isActive = activeStory && activeStory.id === project.id;
+    const isFilmed = Boolean(project.intake && project.intake.filmed);
+    const title = project.title || 'Untitled script';
+    return '<div class="story-project-item' + (isActive ? ' active' : '') + (isFilmed ? ' filmed' : '') + '">' +
+      '<button class="story-project-select" type="button" data-project-id="' + storyEscape(project.id) + '" title="' + storyEscape(title) + '">' +
+        '<span class="story-project-title">' + storyEscape(title) + '</span>' +
+      '</button>' +
+      '<div class="story-project-actions">' +
+        '<button class="story-action-btn story-film-btn' + (isFilmed ? ' is-filmed' : '') + '" type="button" data-action="toggle-filmed" data-project-id="' + storyEscape(project.id) + '" title="' + (isFilmed ? 'Mark as not filmed' : 'Mark as filmed') + '" aria-label="' + (isFilmed ? 'Mark as not filmed' : 'Mark as filmed') + '">' +
+          '<i data-lucide="' + (isFilmed ? 'check-circle-2' : 'check') + '"></i>' +
+        '</button>' +
+        '<button class="story-action-btn story-delete-btn" type="button" data-action="delete-project" data-project-id="' + storyEscape(project.id) + '" title="Delete chat" aria-label="Delete chat">' +
+          '<i data-lucide="trash-2"></i>' +
+        '</button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+  EEEStudio.refreshIcons();
+}
+
+async function toggleFilmed(projectId) {
+  const project = storyProjects.find(p => p.id === projectId);
+  if (!project) return;
+  const intake = Object.assign({}, project.intake);
+  intake.filmed = !intake.filmed;
+  project.intake = intake;
+  if (activeStory && activeStory.id === projectId) {
+    activeStory.intake = intake;
+  }
+  renderProjectList();
+  try {
+    await storyContext.sb.from('storysculpt_projects').update({
+      intake,
+      updated_at: new Date().toISOString()
+    }).eq('id', projectId);
+  } catch (err) {
+    console.error('Failed to update filmed status', err);
+  }
+}
+
+async function deleteStoryProjectById(projectId) {
+  const project = storyProjects.find(p => p.id === projectId);
+  if (!project || !window.confirm('Delete "' + (project.title || 'this chat') + '"?')) return;
+  try {
+    const { error } = await storyContext.sb.from('storysculpt_projects').delete().eq('id', projectId);
+    if (error) throw error;
+    storyProjects = storyProjects.filter(p => p.id !== projectId);
+    if (activeStory && activeStory.id === projectId) {
+      if (storyProjects.length) showProject(storyProjects[0]); else showStart();
+    } else {
+      renderProjectList();
+    }
+  } catch (err) {
+    console.error('Failed to delete project', err);
+  }
 }
 
 function renderVersionPills() {
@@ -232,11 +339,43 @@ function renderConversation() {
     return '<article class="story-message assistant">' +
       '<span class="story-message-role">StorySculpt</span>' +
       '<div class="story-message-body">' + storyEscape(message.content) + '</div>' +
+      '<div class="story-message-actions">' +
+        '<button class="story-msg-btn" type="button" data-action="copy-msg" data-msg-index="' + index + '" title="Copy response">' +
+          '<i data-lucide="copy"></i><span>Copy</span>' +
+        '</button>' +
+        '<button class="story-msg-btn promote" type="button" data-action="promote-msg" data-msg-index="' + index + '" title="Open this draft in the script panel">' +
+          '<i data-lucide="file-text"></i><span>Use as Script</span>' +
+        '</button>' +
+      '</div>' +
     '</article>';
   }).join('');
 
   renderScriptPanel();
   EEEStudio.refreshIcons();
+}
+
+async function promoteMessageToScript(msgIndex) {
+  if (!activeStory || !activeStory.conversation || !activeStory.conversation[msgIndex]) return;
+  const msg = activeStory.conversation[msgIndex];
+  const content = msg.content;
+  activeStory.output = content;
+  ensureVersions(activeStory);
+  const nextVerNum = activeStory.intake.versions.length + 1;
+  activeStory.intake.versions.push({
+    version: nextVerNum,
+    note: nextVerNum === 1 ? 'Initial draft' : 'Promoted from chat',
+    content: content,
+    createdAt: new Date().toISOString()
+  });
+  viewingVersionIndex = -1;
+  await saveActiveStory('Draft moved to script panel');
+  renderScriptPanel();
+  renderConversation();
+  if (window.innerWidth <= 820) {
+    switchMobileTab('script');
+  } else {
+    storyEl('story-output-copy').focus();
+  }
 }
 
 function scrollThread() {
@@ -366,7 +505,8 @@ async function saveActiveStory(message) {
     title: storyEl('story-title').value.trim() || 'Untitled script',
     intake: {
       context: storyEl('story-context').value.trim(),
-      versions: (activeStory.intake && activeStory.intake.versions) || []
+      versions: (activeStory.intake && activeStory.intake.versions) || [],
+      filmed: Boolean(activeStory.intake && activeStory.intake.filmed)
     },
     conversation: activeStory.conversation || [],
     output: activeStory.output || null,
@@ -472,14 +612,10 @@ async function sendStoryAnswer(event) {
   // Auto-name chat from user's first answer if still on default title
   const defaultTitles = ['New bold script', 'New mini lesson', 'New rant', 'Untitled script'];
   if (!activeStory.title || defaultTitles.includes(activeStory.title.trim()) || activeStory.title.startsWith('New ')) {
-    const cleanAnswer = answer.replace(/[\r\n]+/g, ' ').replace(/[^\w\s'-]/g, '').trim();
-    if (cleanAnswer) {
-      const words = cleanAnswer.split(/\s+/).slice(0, 6).join(' ');
-      const candidate = words.charAt(0).toUpperCase() + words.slice(1);
-      if (candidate.length >= 3) {
-        activeStory.title = candidate.slice(0, 50);
-        storyEl('story-title').value = activeStory.title;
-      }
+    const smart = generateSmartTitle(answer);
+    if (smart && smart.length >= 3) {
+      activeStory.title = smart;
+      storyEl('story-title').value = smart;
     }
   }
 
@@ -701,10 +837,42 @@ storyEl('story-mode-grid').addEventListener('click', event => {
   if (button) createStoryProject(button.dataset.mode).catch(() => {});
 });
 storyEl('story-project-list').addEventListener('click', event => {
+  const selectBtn = event.target.closest('.story-project-select');
+  if (selectBtn) {
+    const project = storyProjects.find(item => item.id === selectBtn.dataset.projectId);
+    if (project) showProject(project);
+    return;
+  }
+  const filmBtn = event.target.closest('[data-action="toggle-filmed"]');
+  if (filmBtn) {
+    event.stopPropagation();
+    toggleFilmed(filmBtn.dataset.projectId);
+    return;
+  }
+  const delBtn = event.target.closest('[data-action="delete-project"]');
+  if (delBtn) {
+    event.stopPropagation();
+    deleteStoryProjectById(delBtn.dataset.projectId);
+    return;
+  }
   const button = event.target.closest('[data-project-id]');
   const project = button && storyProjects.find(item => item.id === button.dataset.projectId);
   if (project) showProject(project);
 });
+
+const railFilterEl = storyEl('story-rail-filter');
+if (railFilterEl) {
+  railFilterEl.addEventListener('click', event => {
+    const btn = event.target.closest('[data-filter]');
+    if (!btn) return;
+    storyRailFilter = btn.dataset.filter;
+    railFilterEl.querySelectorAll('.story-filter-btn').forEach(b => {
+      b.classList.toggle('active', b.dataset.filter === storyRailFilter);
+    });
+    renderProjectList();
+  });
+}
+
 storyEl('new-project-button').addEventListener('click', showStart);
 storyEl('delete-project-button').addEventListener('click', deleteActiveStory);
 storyEl('story-notes-toggle').addEventListener('click', () => {
@@ -737,6 +905,28 @@ storyEl('story-conversation').addEventListener('click', event => {
   if (btn) {
     if (window.innerWidth <= 820) switchMobileTab('script');
     else storyEl('story-output-copy').focus();
+    return;
+  }
+  const copyBtn = event.target.closest('[data-action="copy-msg"]');
+  if (copyBtn && activeStory && activeStory.conversation) {
+    const idx = Number(copyBtn.dataset.msgIndex);
+    const msg = activeStory.conversation[idx];
+    if (msg && msg.content) {
+      navigator.clipboard.writeText(msg.content);
+      const span = copyBtn.querySelector('span');
+      if (span) {
+        const orig = span.textContent;
+        span.textContent = 'Copied';
+        setTimeout(() => { span.textContent = orig; }, 1500);
+      }
+    }
+    return;
+  }
+  const promoteBtn = event.target.closest('[data-action="promote-msg"]');
+  if (promoteBtn && activeStory && activeStory.conversation) {
+    const idx = Number(promoteBtn.dataset.msgIndex);
+    promoteMessageToScript(idx);
+    return;
   }
 });
 
@@ -745,7 +935,8 @@ storyEl('tab-btn-chat').addEventListener('click', () => switchMobileTab('chat'))
 storyEl('tab-btn-script').addEventListener('click', () => switchMobileTab('script'));
 
 storyEl('story-open-memory').addEventListener('click', openMemory);
-storyEl('story-open-memory-top').addEventListener('click', openMemory);
+if (storyEl('story-open-memory-top')) storyEl('story-open-memory-top').addEventListener('click', openMemory);
+if (storyEl('menu-story-profile')) storyEl('menu-story-profile').addEventListener('click', openMemory);
 storyEl('story-memory-close').addEventListener('click', closeMemory);
 storyEl('story-memory-scrim').addEventListener('click', closeMemory);
 storyEl('story-help-open').addEventListener('click', openHelp);

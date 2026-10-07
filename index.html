@@ -52,16 +52,9 @@
   <div class="studio-layout">
     <aside class="studio-sidebar" aria-label="Studio navigation">
       <nav>
-        <details class="studio-nav-group" open>
-        <summary class="nav-item active"><i data-lucide="layout-grid"></i><span>My Studio</span></summary>
-        <div class="studio-nav-children">
-        <a class="nav-item" href="/" aria-current="page"><span>Overview</span></a>
-        <a class="nav-item" id="workerbee-nav-item" href="/dashboard" hidden>
-          <i data-lucide="list-checks"></i>
-          <span>WorkerBee</span>
-        </a>
+        <a class="nav-item active" href="/" aria-current="page"><i data-lucide="layout-grid"></i><span>My Studio</span></a>
         <a class="nav-item" href="/seeninseven"><i data-lucide="video"></i><span>SeenInSeven</span></a>
-        <details class="studio-nav-group">
+        <details class="studio-nav-group" open>
           <summary class="nav-item"><i data-lucide="sparkles"></i><span>Momentum Hub</span></summary>
           <div class="studio-nav-children">
             <a class="nav-item" href="/eee"><span>Hub workspace</span></a>
@@ -70,19 +63,25 @@
             <a class="nav-item" href="/boardroom"><span>AI Boardroom</span></a>
           </div>
         </details>
-        <a class="nav-item" href="/vault"><i data-lucide="library"></i><span>Solution Vault</span></a>
         <a class="nav-item" href="/certainty"><i data-lucide="calendar-check"></i><span>Certainty Sessions</span></a>
-        <a class="nav-item" href="/terms"><i data-lucide="file-text"></i><span>Terms &amp; FAQ</span></a>
+        <a class="nav-item" href="/vault"><i data-lucide="library"></i><span>Solution Vault</span></a>
+
+        <div class="sidebar-section-divider" id="management-divider" hidden></div>
+        <a class="nav-item" id="workerbee-nav-item" href="/dashboard" hidden>
+          <i data-lucide="list-checks"></i>
+          <span>WorkerBee</span>
+        </a>
         <a class="nav-item" id="admin-nav-item" href="/admin" hidden>
           <i data-lucide="shield-check"></i>
           <span>Administration</span>
         </a>
-        </div>
-        </details>
       </nav>
-      <div class="sidebar-note">
-        <span class="status-dot"></span>
-        <span>Beta Studio</span>
+      <div class="sidebar-footer">
+        <a class="sidebar-sublink" href="/terms"><i data-lucide="file-text"></i><span>Terms &amp; FAQ</span></a>
+        <div class="sidebar-note">
+          <span class="status-dot"></span>
+          <span>Beta Studio</span>
+        </div>
       </div>
     </aside>
 
@@ -147,39 +146,6 @@
                 <i data-lucide="arrow-right"></i>
               </a>
               <a class="secondary-button" id="seeninseven-request-button" href="mailto:email@davidbee.me?subject=SeenInSeven%20early%20access" hidden>
-                <i data-lucide="message-circle"></i>
-                <span>Message David Bee</span>
-              </a>
-            </div>
-          </div>
-        </article>
-
-        <article class="app-card" id="boardroom-card">
-          <div class="app-preview boardroom-preview">
-            <img src="/assets/boardroom-preview.jpg" alt="AI Boardroom conversation and advisor workbench preview">
-            <div class="locked-cover" id="boardroom-locked-cover">
-              <span class="lock-icon"><i data-lucide="lock"></i></span>
-            </div>
-          </div>
-          <div class="app-details">
-            <div class="app-title-row">
-              <div>
-                <span class="access-label" id="boardroom-access-label">Early access</span>
-                <h3>AI Boardroom</h3>
-              </div>
-              <span class="app-icon"><i data-lucide="messages-square"></i></span>
-            </div>
-            <p>Bring a real decision to six focused AI advisors, pressure-test the plan, and leave with clear actions.</p>
-            <div class="app-status" id="boardroom-status">
-              <i data-lucide="clock-3"></i>
-              <span>Coming soon. Message David Bee for early access.</span>
-            </div>
-            <div class="app-actions">
-              <a class="primary-button" id="boardroom-open-button" href="/boardroom" hidden>
-                <span>Open AI Boardroom</span>
-                <i data-lucide="arrow-right"></i>
-              </a>
-              <a class="secondary-button" id="boardroom-request-button" href="mailto:email@davidbee.me?subject=AI%20Boardroom%20early%20access">
                 <i data-lucide="message-circle"></i>
                 <span>Message David Bee</span>
               </a>

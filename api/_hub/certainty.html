@@ -137,6 +137,7 @@
       outline: 3px solid var(--studio-gold); outline-offset: 3px;
     }
     .cs-privacy { margin: 10px 0 0; color: var(--studio-muted); font-size: .8rem; line-height: 1.45; }
+    .cs-optional { font-weight: 400; color: var(--studio-muted); }
     .cs-confirm { margin-top: 20px; display: flex; gap: 10px; flex-wrap: wrap; }
     .cs-confirm .primary-button { flex: 1 1 auto; justify-content: center; font-size: 1rem; }
     .cs-msg { margin-top: 14px; padding: 11px 14px; border-radius: 12px; font-size: .86rem; display: none; }
@@ -185,26 +186,44 @@
 
   <div id="eee-app" hidden>
     <header class="studio-header eee-header">
-      <a class="studio-brand" href="/eee"><span class="studio-mark">MH</span><span><strong>The Momentum Hub</strong><small>Colorado Mastermind Studio</small></span></a>
+      <a class="studio-brand" href="/"><span class="studio-mark">CS</span><span><strong>Certainty Sessions</strong><small>Colorado Mastermind Studio</small></span></a>
       <div class="header-actions">
         <a class="secondary-button" href="/"><i data-lucide="layout-grid"></i><span>My Studio</span></a>
         <button class="icon-button" data-eee-theme type="button" title="Change color theme" aria-label="Change color theme"><i data-lucide="sun" class="theme-sun-icon"></i><i data-lucide="moon" class="theme-moon-icon"></i></button>
-        <div class="eee-account"><span class="account-avatar" id="eee-account-avatar">E</span><span class="eee-account-email" id="eee-account-email"></span></div>
+        <button class="account-button" id="eee-account-button" type="button" aria-expanded="false" aria-haspopup="menu">
+          <span class="account-avatar" id="eee-account-avatar">C</span>
+          <span class="eee-account-email" id="eee-account-email"></span>
+          <i data-lucide="chevron-down"></i>
+        </button>
       </div>
     </header>
+
+    <div class="account-menu" id="eee-account-menu" hidden>
+      <div class="account-menu-email" id="eee-menu-email"></div>
+      <button data-eee-sign-out type="button"><i data-lucide="log-out"></i><span>Sign out</span></button>
+    </div>
 
     <div class="studio-layout eee-layout">
       <aside class="studio-sidebar eee-sidebar">
         <nav>
-          <a class="nav-item" href="/eee"><i data-lucide="layout-dashboard"></i><span>Home</span></a>
-          <a class="nav-item" href="/storysculpt"><i data-lucide="clapperboard"></i><span>StorySculpt</span></a>
-          <a class="nav-item" href="/navigator"><i data-lucide="route"></i><span>Next Step Navigator</span></a>
-          <a class="nav-item" href="/vault"><i data-lucide="library"></i><span>Solution Vault</span></a>
-          <a class="nav-item" href="/boardroom"><i data-lucide="messages-square"></i><span>AI Boardroom</span></a>
+          <a class="nav-item" href="/"><i data-lucide="layout-grid"></i><span>My Studio</span></a>
+          <a class="nav-item" href="/seeninseven"><i data-lucide="video"></i><span>SeenInSeven</span></a>
+          <details class="studio-nav-group">
+            <summary class="nav-item"><i data-lucide="sparkles"></i><span>Momentum Hub</span></summary>
+            <div class="studio-nav-children">
+              <a class="nav-item" href="/eee"><span>Hub workspace</span></a>
+              <a class="nav-item" href="/storysculpt"><span>StorySculpt</span></a>
+              <a class="nav-item" href="/navigator"><span>Next Step Navigator</span></a>
+              <a class="nav-item" href="/boardroom"><span>AI Boardroom</span></a>
+            </div>
+          </details>
           <a class="nav-item active" href="/certainty"><i data-lucide="calendar-check"></i><span>Certainty Sessions</span></a>
-          <a class="nav-item" href="/terms"><i data-lucide="file-text"></i><span>Terms &amp; FAQ</span></a>
+          <a class="nav-item" href="/vault"><i data-lucide="library"></i><span>Solution Vault</span></a>
         </nav>
-        <div class="eee-sidebar-bottom"><button class="nav-item" data-eee-sign-out type="button"><i data-lucide="log-out"></i><span>Sign out</span></button></div>
+        <div class="eee-sidebar-bottom">
+          <a class="sidebar-sublink" href="/terms"><i data-lucide="file-text"></i><span>Terms &amp; FAQ</span></a>
+          <button class="nav-item" data-eee-sign-out type="button"><i data-lucide="log-out"></i><span>Sign out</span></button>
+        </div>
       </aside>
 
       <main class="eee-main">
@@ -259,7 +278,7 @@
               <p class="cs-privacy">Used only so David can call you for this session.</p>
             </div>
             <div class="cs-field">
-              <label for="cs-topic">What are you bringing? <span style="font-weight:400;color:var(--studio-muted)">(optional)</span></label>
+              <label for="cs-topic">What would you like some support with on this session? <span class="cs-optional">(optional)</span></label>
               <input class="cs-input" id="cs-topic" type="text" maxlength="200" placeholder="e.g. Fixing my email automation">
             </div>
 

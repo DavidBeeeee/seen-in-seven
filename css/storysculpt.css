@@ -183,3 +183,33 @@
   .story-chat.has-output .story-pane-chat { border-right: 0; }
   .story-stage .mobile-hidden { display: none !important; }
 }
+
+/* Chat rail filters and project list actions */
+.story-rail-filter { display: flex; gap: 4px; padding: 4px; margin: 10px 0 12px; border-radius: var(--radius-sm, 6px); background: var(--studio-surface-2); border: 1px solid var(--studio-border); }
+.story-filter-btn { flex: 1; padding: 5px 6px; border: 0; background: transparent; color: var(--studio-muted); font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer; transition: all 0.15s ease; text-align: center; }
+.story-filter-btn:hover { color: var(--studio-text); }
+.story-filter-btn.active { background: var(--studio-surface); color: var(--studio-teal); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
+
+.story-project-item { display: flex; align-items: center; justify-content: space-between; gap: 4px; border-radius: var(--radius-md, 8px); border: 1px solid var(--studio-border); background: transparent; transition: all 0.15s ease; padding-right: 6px; }
+.story-project-item:hover { border-color: var(--studio-teal); background: color-mix(in srgb, var(--studio-teal) 4%, transparent); }
+.story-project-item.active { border-color: var(--studio-teal); background: color-mix(in srgb, var(--studio-teal) 8%, transparent); }
+.story-project-select { flex: 1; min-width: 0; padding: 10px 8px 10px 10px; border: 0; background: transparent; color: var(--studio-soft); text-align: left; cursor: pointer; font-size: 13px; font-weight: 600; font-family: inherit; }
+.story-project-item.active .story-project-select { color: var(--studio-text); font-weight: 700; }
+.story-project-title { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.story-project-item.filmed .story-project-title { text-decoration: line-through; opacity: 0.55; }
+.story-project-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.story-action-btn { display: grid; place-items: center; width: 26px; height: 26px; padding: 0; border: 0; background: transparent; color: var(--studio-muted); border-radius: 4px; cursor: pointer; transition: all 0.15s ease; }
+.story-action-btn svg { width: 14px; height: 14px; }
+.story-action-btn:hover { color: var(--studio-text); background: color-mix(in srgb, var(--studio-teal) 12%, transparent); }
+.story-action-btn.story-film-btn.is-filmed { color: var(--studio-green, #85c7a5); }
+.story-action-btn.story-film-btn:hover { color: var(--studio-green, #85c7a5); }
+.story-action-btn.story-delete-btn:hover { color: var(--studio-danger, #d9736b); background: color-mix(in srgb, var(--studio-danger, #d9736b) 12%, transparent); }
+
+/* Assistant message actions */
+.story-message-actions { display: flex; align-items: center; gap: 6px; margin-top: 8px; }
+.story-msg-btn { display: inline-flex; align-items: center; gap: 5px; padding: 4px 9px; border-radius: var(--radius-sm, 6px); border: 1px solid var(--studio-border); background: var(--studio-surface); color: var(--studio-muted); font-size: 11px; font-weight: 700; cursor: pointer; transition: all 0.15s ease; }
+.story-msg-btn svg { width: 13px; height: 13px; }
+.story-msg-btn:hover { border-color: var(--studio-teal); color: var(--studio-teal); }
+.story-msg-btn.promote { background: color-mix(in srgb, var(--studio-teal) 8%, var(--studio-surface)); border-color: color-mix(in srgb, var(--studio-teal) 30%, var(--studio-border)); color: var(--studio-teal); }
+.story-msg-btn.promote:hover { background: var(--studio-teal); color: #071313; }
+

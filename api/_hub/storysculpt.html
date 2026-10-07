@@ -14,10 +14,46 @@
 <body>
   <main class="eee-gate" id="eee-access-gate"><section class="eee-gate-box"><span class="studio-mark">SS</span><h1 id="eee-gate-title">Checking your membership.</h1><p id="eee-gate-copy">Your Studio access will be ready in a moment.</p><a class="primary-button" id="eee-gate-button" href="/"><span>Return to Studio</span><i data-lucide="arrow-right"></i></a></section></main>
   <div id="eee-app" hidden>
-    <header class="studio-header eee-header"><a class="studio-brand" href="/eee"><span class="studio-mark">SS</span><span><strong>StorySculpt</strong><small>The 5E Script Builder</small></span></a><div class="header-actions"><button class="secondary-button" id="story-help-open" type="button" aria-haspopup="dialog"><i data-lucide="circle-help"></i><span>Help &amp; privacy</span></button><button class="secondary-button" id="story-open-memory-top" type="button"><i data-lucide="user-round"></i><span>Story profile</span></button><a class="secondary-button" href="/eee"><i data-lucide="arrow-left"></i><span>Home</span></a><button class="icon-button" data-eee-theme type="button" title="Change color theme" aria-label="Change color theme"><i data-lucide="sun" class="theme-sun-icon"></i><i data-lucide="moon" class="theme-moon-icon"></i></button><div class="eee-account"><span class="account-avatar" id="eee-account-avatar">S</span><span class="eee-account-email" id="eee-account-email"></span></div></div></header>
+    <header class="studio-header eee-header">
+      <a class="studio-brand" href="/"><span class="studio-mark">SS</span><span><strong>StorySculpt</strong><small>The 5E Script Builder</small></span></a>
+      <div class="header-actions">
+        <a class="secondary-button" href="/"><i data-lucide="layout-grid"></i><span>My Studio</span></a>
+        <button class="icon-button" data-eee-theme type="button" title="Change color theme" aria-label="Change color theme"><i data-lucide="sun" class="theme-sun-icon"></i><i data-lucide="moon" class="theme-moon-icon"></i></button>
+        <button class="account-button" id="eee-account-button" type="button" aria-expanded="false" aria-haspopup="menu">
+          <span class="account-avatar" id="eee-account-avatar">S</span>
+          <span class="eee-account-email" id="eee-account-email"></span>
+          <i data-lucide="chevron-down"></i>
+        </button>
+      </div>
+    </header>
+
+    <div class="account-menu" id="eee-account-menu" hidden>
+      <div class="account-menu-email" id="eee-menu-email"></div>
+      <button id="menu-story-profile" type="button">
+        <i data-lucide="user-round"></i>
+        <span>Story profile</span>
+      </button>
+      <button id="story-help-open" type="button" aria-haspopup="dialog">
+        <i data-lucide="circle-help"></i>
+        <span>Help &amp; privacy</span>
+      </button>
+      <button data-eee-sign-out type="button">
+        <i data-lucide="log-out"></i>
+        <span>Sign out</span>
+      </button>
+    </div>
+
     <main class="eee-workspace story-workspace">
       <aside class="eee-rail story-projects">
-        <div class="story-rail-head"><h2>Chats</h2><button class="icon-button" id="new-project-button" type="button" title="New chat" aria-label="Start a new StorySculpt chat"><i data-lucide="plus"></i></button></div>
+        <div class="story-rail-head">
+          <h2>Chats</h2>
+          <button class="icon-button" id="new-project-button" type="button" title="New chat" aria-label="Start a new StorySculpt chat"><i data-lucide="plus"></i></button>
+        </div>
+        <div class="story-rail-filter" id="story-rail-filter" role="tablist" aria-label="Filter chats">
+          <button class="story-filter-btn active" data-filter="all" type="button">All</button>
+          <button class="story-filter-btn" data-filter="active" type="button">Active</button>
+          <button class="story-filter-btn" data-filter="filmed" type="button">Filmed</button>
+        </div>
         <div class="eee-rail-list" id="story-project-list"></div>
         <button class="story-memory-link" id="story-open-memory" type="button"><span class="story-memory-link-icon"><i data-lucide="user-round"></i></span><span><strong>Your story profile</strong><small>Voice, facts and offers StorySculpt remembers on every chat.</small></span></button>
       </aside>

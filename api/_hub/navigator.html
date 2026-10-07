@@ -31,26 +31,44 @@
     </main>
     <div id="eee-app" hidden>
         <header class="studio-header eee-header">
-            <a class="studio-brand" href="/eee"><span class="studio-mark">MH</span><span><strong>Next Step Navigator</strong><small>The Momentum Hub</small></span></a>
+            <a class="studio-brand" href="/"><span class="studio-mark">NN</span><span><strong>Next Step Navigator</strong><small>Colorado Mastermind Studio</small></span></a>
             <div class="header-actions">
-                <a class="secondary-button" href="/eee"><i data-lucide="arrow-left"></i><span>Hub workspace</span></a>
+                <a class="secondary-button" href="/"><i data-lucide="layout-grid"></i><span>My Studio</span></a>
                 <button class="icon-button" data-eee-theme type="button" title="Change color theme" aria-label="Change color theme"><i data-lucide="sun" class="theme-sun-icon"></i><i data-lucide="moon" class="theme-moon-icon"></i></button>
-                <div class="eee-account"><span class="account-avatar" id="eee-account-avatar">N</span><span class="eee-account-email" id="eee-account-email"></span></div>
+                <button class="account-button" id="eee-account-button" type="button" aria-expanded="false" aria-haspopup="menu">
+                    <span class="account-avatar" id="eee-account-avatar">N</span>
+                    <span class="eee-account-email" id="eee-account-email"></span>
+                    <i data-lucide="chevron-down"></i>
+                </button>
             </div>
         </header>
+
+        <div class="account-menu" id="eee-account-menu" hidden>
+            <div class="account-menu-email" id="eee-menu-email"></div>
+            <button data-eee-sign-out type="button"><i data-lucide="log-out"></i><span>Sign out</span></button>
+        </div>
 
         <div class="studio-layout eee-layout">
             <aside class="studio-sidebar eee-sidebar">
                 <nav>
-                    <a class="nav-item" href="/eee"><i data-lucide="layout-dashboard"></i><span>Home</span></a>
-                    <a class="nav-item" href="/storysculpt"><i data-lucide="clapperboard"></i><span>StorySculpt</span></a>
-                    <a class="nav-item active" href="/navigator"><i data-lucide="route"></i><span>Next Step Navigator</span></a>
-                    <a class="nav-item" href="/vault"><i data-lucide="library"></i><span>Solution Vault</span></a>
-                    <a class="nav-item" href="/boardroom"><i data-lucide="messages-square"></i><span>AI Boardroom</span></a>
+                    <a class="nav-item" href="/"><i data-lucide="layout-grid"></i><span>My Studio</span></a>
+                    <a class="nav-item" href="/seeninseven"><i data-lucide="video"></i><span>SeenInSeven</span></a>
+                    <details class="studio-nav-group" open>
+                        <summary class="nav-item active"><i data-lucide="sparkles"></i><span>Momentum Hub</span></summary>
+                        <div class="studio-nav-children">
+                            <a class="nav-item" href="/eee"><span>Hub workspace</span></a>
+                            <a class="nav-item" href="/storysculpt"><span>StorySculpt</span></a>
+                            <a class="nav-item active" href="/navigator"><span>Next Step Navigator</span></a>
+                            <a class="nav-item" href="/boardroom"><span>AI Boardroom</span></a>
+                        </div>
+                    </details>
                     <a class="nav-item" href="/certainty"><i data-lucide="calendar-check"></i><span>Certainty Sessions</span></a>
-                    <a class="nav-item" href="/terms"><i data-lucide="file-text"></i><span>Terms &amp; FAQ</span></a>
+                    <a class="nav-item" href="/vault"><i data-lucide="library"></i><span>Solution Vault</span></a>
                 </nav>
-                <div class="eee-sidebar-bottom"><button class="nav-item" data-eee-sign-out type="button"><i data-lucide="log-out"></i><span>Sign out</span></button></div>
+                <div class="eee-sidebar-bottom">
+                    <a class="sidebar-sublink" href="/terms"><i data-lucide="file-text"></i><span>Terms &amp; FAQ</span></a>
+                    <button class="nav-item" data-eee-sign-out type="button"><i data-lucide="log-out"></i><span>Sign out</span></button>
+                </div>
             </aside>
 
             <main class="eee-main navigator-main-layout" id="app">
