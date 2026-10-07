@@ -17,1426 +17,7 @@
     <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
-    <style>
-        :root {
-            --bg: var(--studio-bg, #0D2828);
-            --card: var(--studio-surface, #163636);
-            --card2: var(--studio-surface-2, #1E4A4A);
-            --border: var(--studio-border, rgba(50, 184, 184, 0.22));
-            --cream: var(--studio-text, #F8FAFA);
-            --soft: var(--studio-soft, #A8DEDE);
-            --muted: var(--studio-muted, #68C8C8);
-            --teal: var(--studio-teal, #32B8B8);
-            --cyan: var(--cyan, #7DD8D8);
-            --amber: var(--studio-gold, #C8A84B);
-            --green: var(--studio-green, #4ade80);
-            --glow: var(--glow, rgba(50, 184, 184, 0.35));
-        }
-
-        * {
-            box-sizing: border-box;
-        }
-
-        body {
-            background: var(--bg-page, var(--bg));
-            background-color: var(--bg);
-            color: var(--cream);
-            font-family: var(--font-body, 'Nunito', sans-serif);
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-
-        #app {
-            min-height: 100vh;
-            padding: 40px 20px;
-            position: relative;
-        }
-
-        #app::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 10% 10%, rgba(45, 212, 191, 0.08) 0%, transparent 40%),
-                radial-gradient(circle at 90% 90%, rgba(103, 232, 249, 0.08) 0%, transparent 40%);
-            pointer-events: none;
-        }
-
-        .container {
-            max-width: 850px;
-            margin: 0 auto;
-            position: relative;
-            z-index: 1;
-        }
-
-        /* --- Screens --- */
-        .screen {
-            display: none;
-            width: 100%;
-        }
-
-        .screen.active {
-            display: block;
-            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        /* Next Move panel (WBR-409). Reuses the card/button/input system; these
-           classes only cover the move-record extras. */
-        .nav-label {
-            display: block;
-            font-size: 12px;
-            color: var(--muted);
-            margin: 14px 0 6px;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-        .nav-row { display: flex; gap: 12px; }
-        .nav-momentum {
-            background: var(--surface, rgba(255, 255, 255, 0.04));
-            border: 1px solid var(--border);
-            border-radius: 10px;
-            padding: 12px 16px;
-            margin-bottom: 20px;
-            font-size: 14px;
-            color: var(--muted);
-        }
-        .nav-momentum-count { color: var(--cyan); font-weight: 700; font-size: 18px; }
-        .nav-momentum-open { color: var(--cream); }
-        .nav-result {
-            margin-top: 24px;
-            text-align: left;
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 20px;
-        }
-        .nav-result.completed { opacity: 0.7; }
-        .nav-result-head {
-            font-family: 'Space Mono', monospace;
-            font-size: 12px;
-            text-transform: uppercase;
-            color: var(--cyan);
-            margin-bottom: 10px;
-        }
-        .nav-result-action { font-size: 18px; color: var(--cream); font-weight: 600; margin-bottom: 14px; }
-        .nav-result-field { margin-bottom: 10px; }
-        .nav-result-field span {
-            display: block;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            color: var(--muted);
-            margin-bottom: 2px;
-        }
-        .nav-result-field p { margin: 0; color: var(--text, #e8e8e8); font-size: 14px; }
-        .nav-source { color: var(--muted); font-size: 12px; font-style: italic; margin: 8px 0 0; }
-        .nav-result-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
-        .nav-history { margin-top: 28px; text-align: left; }
-        .nav-history-title {
-            font-family: 'Space Mono', monospace;
-            font-size: 12px;
-            text-transform: uppercase;
-            color: var(--muted);
-            margin-bottom: 10px;
-        }
-        .nav-history-list { list-style: none; margin: 0; padding: 0; }
-        .nav-history-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px 0;
-            border-bottom: 1px solid var(--border);
-            font-size: 13px;
-        }
-        .nav-history-badge {
-            flex: none;
-            font-size: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            padding: 2px 8px;
-            border-radius: 999px;
-            border: 1px solid var(--border);
-            color: var(--muted);
-        }
-        .nav-history-completed .nav-history-badge { color: #10b981; border-color: #10b981; }
-        .nav-history-text { flex: 1; color: var(--text, #e8e8e8); }
-        .nav-history-date { flex: none; color: var(--muted); font-size: 12px; }
-
-        @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* --- Components --- */
-        .wizard-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 24px;
-            padding: 48px;
-            position: relative;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-            margin-bottom: 24px;
-        }
-
-        .tagline {
-            font-family: 'Space Mono', monospace;
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            color: var(--teal);
-            margin-bottom: 12px;
-        }
-
-        h1,
-        h2,
-        h3 {
-            font-family: 'Bebas Neue', sans-serif;
-            margin: 0 0 24px;
-            letter-spacing: 0.02em;
-            line-height: 1;
-        }
-
-        h1 {
-            font-size: clamp(48px, 10vw, 72px);
-            text-shadow: 0 0 30px rgba(45, 212, 191, 0.2);
-        }
-
-        h2 {
-            font-size: 36px;
-            color: var(--cream);
-        }
-
-        .desc {
-            font-size: 18px;
-            color: var(--muted);
-            line-height: 1.6;
-            margin-bottom: 32px;
-        }
-
-        .audit-progress-container {
-            width: 100%;
-            height: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
-            margin-bottom: 24px;
-            overflow: hidden;
-        }
-
-        .audit-progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--teal), var(--cyan));
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        .toggle-switch-group {
-            display: inline-flex;
-            background: rgba(0, 0, 0, 0.3);
-            border-radius: 8px;
-            border: 1px solid var(--border);
-            overflow: hidden;
-            margin-top: 8px;
-        }
-
-        .toggle-switch-btn {
-            padding: 6px 12px;
-            font-size: 10px;
-            font-family: 'Space Mono', monospace;
-            background: transparent;
-            color: var(--muted);
-            border: none;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .toggle-switch-btn.active {
-            background: var(--teal);
-            color: #000;
-            font-weight: bold;
-        }
-
-        .bubble-grid {
-            display: grid;
-            grid-template-columns: 1fr;
-            gap: 14px;
-            margin-bottom: 32px;
-        }
-
-        .bubble {
-            background: var(--card2);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px 24px;
-            cursor: pointer;
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .bubble:hover {
-            border-color: var(--teal);
-            background: rgba(45, 212, 191, 0.08);
-            transform: translateX(6px);
-        }
-
-        .bubble-label {
-            font-weight: 600;
-            font-size: 16px;
-            color: var(--soft);
-        }
-
-        .bubble-depth {
-            font-family: 'Space Mono', monospace;
-            font-size: 10px;
-            padding: 4px 10px;
-            border-radius: 6px;
-            background: rgba(0, 0, 0, 0.3);
-            color: var(--muted);
-            border: 1px solid var(--border);
-        }
-
-        .btn-primary {
-            display: block;
-            width: 100%;
-            background: linear-gradient(135deg, var(--teal), var(--cyan));
-            color: #0b0f1a;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 26px;
-            letter-spacing: 0.1em;
-            border: none;
-            border-radius: 14px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-align: center;
-            text-transform: uppercase;
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(45, 212, 191, 0.4);
-        }
-
-        .btn-secondary {
-            display: block;
-            width: 100%;
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--muted);
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 18px;
-            letter-spacing: 0.05em;
-            border-radius: 14px;
-            padding: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-            text-transform: uppercase;
-            margin-top: 12px;
-            text-decoration: none;
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--soft);
-            color: var(--soft);
-        }
-
-        .btn-back {
-            background: none;
-            border: none;
-            color: var(--muted);
-            cursor: pointer;
-            font-family: 'Space Mono', monospace;
-            font-size: 11px;
-            margin-bottom: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .btn-back:hover {
-            color: var(--soft);
-        }
-
-        /* --- Roadmap UI --- */
-        .priority-section {
-            margin-bottom: 40px;
-            padding: 30px;
-            background: rgba(245, 158, 11, 0.05);
-            border: 1px solid var(--amber);
-            border-radius: 20px;
-            position: relative;
-        }
-
-        .priority-badge {
-            position: absolute;
-            top: -12px;
-            left: 24px;
-            background: var(--amber);
-            color: #000;
-            font-family: 'Space Mono', monospace;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 4px 12px;
-            border-radius: 4px;
-            animation: pulse-glow 2s infinite ease-in-out;
-        }
-
-        @keyframes pulse-glow {
-
-            0%,
-            100% {
-                opacity: 1;
-                filter: drop-shadow(0 0 0px var(--amber));
-            }
-
-            50% {
-                opacity: 0.8;
-                filter: drop-shadow(0 0 10px var(--amber));
-            }
-        }
-
-        .matrix-list {
-            display: flex;
-            flex-direction: column;
-            gap: 12px;
-        }
-
-        .system-row {
-            background: var(--card2);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px 24px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            position: relative;
-        }
-
-        .system-row:hover {
-            border-color: var(--cyan);
-            background: rgba(103, 232, 249, 0.05);
-            transform: translateX(6px);
-        }
-
-        .new-badge {
-            position: absolute;
-            top: 10px;
-            right: 40px;
-            background: var(--cyan);
-            color: #000;
-            font-size: 9px;
-            font-weight: bold;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-family: 'Space Mono';
-        }
-
-        .system-info {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .row-name {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 20px;
-            color: var(--cream);
-        }
-
-        .row-desc {
-            font-size: 12px;
-            color: var(--muted);
-            line-height: 1.4;
-            max-width: 90%;
-        }
-
-        .row-arrow {
-            color: var(--cyan);
-            font-weight: bold;
-        }
-
-        /* --- Deep Dive --- */
-        .dive-section {
-            margin-bottom: 32px;
-        }
-
-        .dive-label {
-            font-family: 'Space Mono', monospace;
-            font-size: 11px;
-            color: var(--cyan);
-            margin-bottom: 12px;
-            display: block;
-            text-transform: uppercase;
-            letter-spacing: 0.1em;
-        }
-
-        .action-item {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 12px;
-            padding: 16px;
-            background: rgba(255, 255, 255, 0.03);
-            border-radius: 12px;
-            align-items: flex-start;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-
-        .action-item.done {
-            background: rgba(74, 222, 128, 0.05);
-        }
-
-        .action-check {
-            width: 22px;
-            height: 22px;
-            border: 2px solid var(--border);
-            border-radius: 6px;
-            flex-shrink: 0;
-            margin-top: 2px;
-            position: relative;
-        }
-
-        .action-item.done .action-check {
-            background: var(--teal);
-            border-color: var(--teal);
-        }
-
-        .action-item.done .action-check::after {
-            content: '✓';
-            position: absolute;
-            left: 4px;
-            top: -2px;
-            color: #000;
-            font-weight: bold;
-        }
-
-        .action-text {
-            font-size: 15px;
-            color: var(--soft);
-            line-height: 1.5;
-        }
-
-        .action-item.done .action-text {
-            text-decoration: line-through;
-            opacity: 0.5;
-        }
-
-        .tech-pill {
-            display: inline-block;
-            background: var(--card2);
-            border: 1px solid var(--border);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            margin-right: 8px;
-            margin-bottom: 8px;
-            color: var(--muted);
-        }
-
-        /* --- Help Button --- */
-        .btn-help {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            background: rgba(103, 232, 249, 0.05);
-            border: 1px solid rgba(103, 232, 249, 0.3);
-            color: var(--cyan);
-            font-family: 'Space Mono', monospace;
-            font-size: 12px;
-            padding: 12px 24px;
-            border-radius: 50px;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            margin-top: 24px;
-            width: 100%;
-        }
-
-        .btn-help:hover {
-            background: rgba(103, 232, 249, 0.1);
-            border-color: var(--cyan);
-        }
-
-        /* --- Funnel Map --- */
-        .map-container {
-            background: rgba(0, 0, 0, 0.4);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 40px 10px;
-            margin-bottom: 32px;
-            position: relative;
-            overflow-x: auto;
-        }
-
-        .node text {
-            font-family: 'Space Mono', monospace;
-            font-size: 7px;
-            fill: var(--muted);
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            pointer-events: none;
-        }
-
-        .path-line {
-            fill: none;
-            stroke: var(--border);
-            stroke-width: 2;
-            stroke-linecap: round;
-        }
-
-        .path-active {
-            fill: none;
-            stroke: var(--teal);
-            stroke-width: 2.5;
-            stroke-dasharray: 1000;
-            stroke-dashoffset: 1000;
-            animation: drawLine 2s forwards;
-        }
-
-        @keyframes drawLine {
-            to {
-                stroke-dashoffset: 0;
-            }
-        }
-
-        .node-circle {
-            transition: all 0.4s;
-            fill: var(--bg);
-            stroke: var(--border);
-            cursor: pointer;
-        }
-
-        .node.completed .node-circle {
-            fill: var(--teal);
-            stroke: var(--teal);
-            filter: drop-shadow(0 0 8px var(--teal));
-        }
-
-        .node.gap .node-circle {
-            fill: var(--amber);
-            stroke: var(--amber);
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-
-            0%,
-            100% {
-                filter: drop-shadow(0 0 0px var(--amber));
-            }
-
-            50% {
-                filter: drop-shadow(0 0 15px var(--amber));
-            }
-        }
-
-        /* --- Diagnosis Sandwich --- */
-        .sandwich-box {
-            display: flex;
-            flex-direction: column;
-            gap: 16px;
-            margin-bottom: 40px;
-        }
-
-        .sandwich-part {
-            background: var(--card2);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            position: relative;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-
-        .sandwich-part:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-        }
-
-        .sandwich-part::before {
-            content: '';
-            position: absolute;
-            left: 0;
-            top: 0;
-            bottom: 0;
-            width: 4px;
-        }
-
-        .part-positive::before {
-            background: var(--teal);
-            box-shadow: 0 0 15px var(--teal);
-        }
-
-        .part-positive {
-            border-left-color: var(--teal);
-            background: linear-gradient(135deg, rgba(45, 212, 191, 0.05) 0%, var(--card2) 100%);
-        }
-
-        .part-constructive::before {
-            background: var(--amber);
-            box-shadow: 0 0 15px var(--amber);
-        }
-
-        .part-constructive {
-            border-left-color: var(--amber);
-            background: linear-gradient(135deg, rgba(245, 158, 11, 0.05) 0%, var(--card2) 100%);
-        }
-
-        .part-verdict::before {
-            background: var(--cyan);
-            box-shadow: 0 0 15px var(--cyan);
-        }
-
-        .part-verdict {
-            border-left-color: var(--cyan);
-            background: linear-gradient(135deg, rgba(103, 232, 249, 0.05) 0%, var(--card2) 100%);
-        }
-
-        .sandwich-title {
-            font-family: 'Space Mono', monospace;
-            font-size: 13px;
-            font-weight: 700;
-            letter-spacing: 0.1em;
-            text-transform: uppercase;
-            margin-bottom: 12px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .title-pos {
-            color: var(--teal);
-        }
-
-        .title-pos::before {
-            content: '✓';
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px;
-            height: 24px;
-            background: rgba(45, 212, 191, 0.2);
-            border-radius: 50%;
-            font-size: 14px;
-        }
-
-        .title-con {
-            color: var(--amber);
-        }
-
-        .title-con::before {
-            content: '⚡';
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px;
-            height: 24px;
-            background: rgba(245, 158, 11, 0.2);
-            border-radius: 50%;
-            font-size: 14px;
-            font-style: normal;
-        }
-
-        .title-verdict {
-            color: var(--cyan);
-        }
-
-        .title-verdict::before {
-            content: '🚀';
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 24px;
-            height: 24px;
-            background: rgba(103, 232, 249, 0.2);
-            border-radius: 50%;
-            font-size: 14px;
-        }
-
-        .sandwich-body {
-            font-size: 16px;
-            color: var(--soft);
-            line-height: 1.6;
-            margin: 0;
-        }
-
-        .output-card {
-            background: var(--card2);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 32px;
-            margin-bottom: 24px;
-        }
-
-        pre {
-            white-space: pre-wrap;
-            font-size: 14px;
-            line-height: 1.7;
-            color: var(--soft);
-            background: rgba(0, 0, 0, 0.4);
-            padding: 24px;
-            border-radius: 12px;
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
-
-        .copy-btn {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--muted);
-            font-size: 10px;
-            padding: 8px 16px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-family: 'Space Mono';
-        }
-
-        .input-text {
-            width: 100%;
-            background: var(--card2);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 20px;
-            color: var(--cream);
-            font-family: inherit;
-            font-size: 18px;
-            outline: none;
-            margin-bottom: 20px;
-            transition: all 0.2s;
-        }
-
-        .input-text:focus {
-            border-color: var(--teal);
-        }
-
-        #tooltip {
-            position: fixed;
-            background: var(--card2);
-            border: 1px solid var(--teal);
-            padding: 12px 16px;
-            border-radius: 8px;
-            font-size: 12px;
-            color: var(--cream);
-            pointer-events: none;
-            z-index: 1000;
-            display: none;
-            max-width: 200px;
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-        }
-
-        .progress-bar {
-            height: 6px;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 3px;
-            margin-bottom: 48px;
-            overflow: hidden;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, var(--teal), var(--cyan));
-            width: 0%;
-            transition: width 0.4s ease;
-        }
-
-        /* --- Celebration --- */
-        #celebration {
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 2000;
-            display: none;
-            text-align: center;
-        }
-
-        .celeb-box {
-            background: var(--teal);
-            color: #000;
-            padding: 30px 60px;
-            border-radius: 20px;
-            font-family: 'Bebas Neue';
-            font-size: 40px;
-            box-shadow: 0 0 50px var(--teal);
-            animation: popUp 0.5s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-        }
-
-        @keyframes popUp {
-            0% {
-                transform: scale(0);
-                opacity: 0;
-            }
-
-            100% {
-                transform: scale(1);
-                opacity: 1;
-            }
-        }
-
-        @keyframes fadeOutUp {
-            0% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-
-            100% {
-                opacity: 0;
-                transform: translateY(-40px) scale(0.9);
-            }
-        }
-
-        .fade-out-up {
-            animation: fadeOutUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-            animation-delay: 0.7s;
-        }
-
-        /* --- Visual Map --- */
-        .visual-map-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            gap: 12px;
-            margin-bottom: 32px;
-            padding: 24px;
-            background: rgba(0, 0, 0, 0.2);
-            border-radius: 16px;
-            border: 1px dashed var(--border);
-        }
-
-        .map-block {
-            background: var(--card2);
-            border: 1px solid var(--border);
-            padding: 12px 16px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 18px;
-            color: var(--cream);
-            transition: all 0.3s;
-        }
-
-        .map-block.active {
-            border-color: var(--teal);
-            background: rgba(45, 212, 191, 0.1);
-            box-shadow: 0 0 15px rgba(45, 212, 191, 0.2);
-        }
-
-        .map-arrow {
-            color: var(--muted);
-            font-size: 20px;
-            display: flex;
-            align-items: center;
-        }
-
-        /* --- Earnings Toggle --- */
-        .earnings-section {
-            background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(5, 150, 105, 0.1) 100%);
-            border: 1px solid rgba(16, 185, 129, 0.2);
-            border-radius: 16px;
-            padding: 24px;
-            margin-bottom: 32px;
-            text-align: center;
-        }
-
-        .earnings-title {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 24px;
-            color: #10b981;
-            margin-bottom: 16px;
-        }
-
-        .toggle-group {
-            display: flex;
-            justify-content: center;
-            gap: 8px;
-            margin-bottom: 24px;
-            flex-wrap: wrap;
-        }
-
-        .toggle-btn {
-            background: var(--bg);
-            border: 1px solid var(--border);
-            color: var(--muted);
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-family: 'Space Mono', monospace;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .toggle-btn.active {
-            background: #10b981;
-            color: #000;
-            border-color: #10b981;
-            font-weight: bold;
-        }
-
-        .earnings-amount {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 56px;
-            color: var(--cream);
-            line-height: 1;
-            margin-bottom: 8px;
-            text-shadow: 0 0 20px rgba(16, 185, 129, 0.2);
-        }
-
-        .earnings-subtext {
-            font-size: 14px;
-            color: var(--soft);
-        }
-
-        /* --- Story Board --- */
-        .story-board {
-            background: var(--card2);
-            border-left: 4px solid var(--cyan);
-            padding: 24px;
-            border-radius: 0 16px 16px 0;
-            margin-bottom: 40px;
-            font-size: 16px;
-            line-height: 1.6;
-            color: var(--cream);
-        }
-
-        .story-highlight {
-            color: var(--teal);
-            font-weight: bold;
-            font-style: italic;
-        }
-
-        /* --- Asset Profile Grid Updates --- */
-        .asset-btn-group {
-            display: flex;
-            gap: 8px;
-            margin-top: 16px;
-        }
-
-        .btn-upgrade {
-            flex: 1;
-            background: rgba(45, 212, 191, 0.1);
-            border: 1px solid rgba(45, 212, 191, 0.3);
-            color: var(--teal);
-            padding: 8px;
-            border-radius: 8px;
-            font-family: 'Space Mono', monospace;
-            font-size: 10px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-align: center;
-        }
-
-        .btn-upgrade:hover {
-            background: var(--teal);
-            color: #000;
-        }
-
-        .locked-msg {
-            border: 1px solid var(--amber);
-            background: rgba(245, 158, 11, 0.05);
-            color: var(--amber);
-            font-size: 12px;
-            padding: 10px;
-            border-radius: 8px;
-            text-align: center;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.2s;
-            margin-top: auto;
-        }
-
-        .locked-msg:hover {
-            background: var(--amber);
-            color: #000;
-        }
-
-        .reset-audit-wrap {
-            text-align: center;
-            margin-top: 60px;
-            padding-top: 24px;
-            border-top: 1px dashed var(--border);
-        }
-
-        .btn-tiny-reset {
-            background: transparent;
-            border: none;
-            color: var(--muted);
-            font-size: 11px;
-            text-decoration: underline;
-            cursor: pointer;
-            transition: color 0.2s;
-        }
-
-        .btn-tiny-reset:hover {
-            color: var(--amber);
-        }
-
-        @keyframes slideInUp {
-            0% {
-                opacity: 0;
-                transform: translateY(40px) scale(0.9);
-            }
-
-            100% {
-                opacity: 1;
-                transform: translateY(0) scale(1);
-            }
-        }
-
-        .slide-in-up {
-            animation: slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
-        /* --- Drawer / Tasks --- */
-        #todo-drawer {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 400px;
-            max-width: 100vw;
-            height: 100vh;
-            background: var(--card);
-            border-left: 1px solid var(--border);
-            box-shadow: -10px 0 30px rgba(0, 0, 0, 0.5);
-            z-index: 3000;
-            transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-            display: flex;
-            flex-direction: column;
-        }
-
-        #todo-drawer.open {
-            right: 0;
-        }
-
-        .drawer-header {
-            padding: 24px;
-            border-bottom: 1px solid var(--border);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .drawer-title {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 28px;
-            margin: 0;
-            color: var(--cream);
-        }
-
-        .close-drawer {
-            background: none;
-            border: none;
-            color: var(--muted);
-            cursor: pointer;
-            font-size: 24px;
-        }
-
-        .drawer-body {
-            padding: 24px;
-            overflow-y: auto;
-            flex: 1;
-        }
-
-        .drawer-footer {
-            padding: 24px;
-            border-top: 1px solid var(--border);
-        }
-
-        .floating-todo-btn {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: var(--teal);
-            color: #000;
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 20px;
-            padding: 12px 24px;
-            border-radius: 30px;
-            border: none;
-            cursor: pointer;
-            z-index: 2900;
-            box-shadow: 0 10px 20px rgba(45, 212, 191, 0.3);
-            transition: transform 0.2s;
-            display: none;
-        }
-
-        .floating-todo-btn:hover {
-            transform: translateY(-3px);
-        }
-
-        .task-card {
-            background: var(--card2);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 16px;
-            margin-bottom: 12px;
-        }
-
-        .task-card-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 8px;
-            font-family: 'Space Mono', monospace;
-            font-size: 10px;
-            color: var(--cyan);
-            text-transform: uppercase;
-        }
-
-        .task-card-title {
-            font-size: 15px;
-            color: var(--cream);
-            line-height: 1.4;
-            font-weight: 500;
-        }
-
-        .task-actions {
-            display: flex;
-            gap: 8px;
-            margin-top: 12px;
-        }
-
-        .task-btn {
-            background: transparent;
-            border: 1px solid var(--border);
-            color: var(--muted);
-            padding: 6px 12px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-family: 'Space Mono', monospace;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-
-        .task-btn:hover {
-            border-color: var(--teal);
-            color: var(--teal);
-        }
-
-        .task-btn.done-btn:hover {
-            background: rgba(45, 212, 191, 0.1);
-        }
-
-        .task-btn.remove-btn:hover {
-            border-color: var(--amber);
-            color: var(--amber);
-            background: rgba(245, 158, 11, 0.1);
-        }
-
-        .add-todo-btn {
-            background: rgba(103, 232, 249, 0.1);
-            border: 1px solid rgba(103, 232, 249, 0.3);
-            color: var(--cyan);
-            padding: 4px 10px;
-            border-radius: 6px;
-            font-size: 11px;
-            font-family: 'Space Mono';
-            cursor: pointer;
-            transition: all 0.2s;
-            height: fit-content;
-            margin-top: 3px;
-        }
-
-        .add-todo-btn:hover {
-            background: var(--cyan);
-            color: #000;
-        }
-
-        /* --- Calculator --- */
-        .calculator-box {
-            background: linear-gradient(135deg, rgba(45, 212, 191, 0.05) 0%, rgba(103, 232, 249, 0.05) 100%);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            margin-top: 24px;
-            margin-bottom: 32px;
-        }
-
-        .calc-title {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 24px;
-            color: var(--teal);
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .calc-input-group {
-            display: flex;
-            gap: 16px;
-            margin-bottom: 24px;
-        }
-
-        .calc-input-wrapper {
-            flex: 1;
-        }
-
-        .calc-label {
-            font-family: 'Space Mono', monospace;
-            font-size: 11px;
-            color: var(--muted);
-            margin-bottom: 8px;
-            display: block;
-            text-transform: uppercase;
-        }
-
-        .calc-input {
-            width: 100%;
-            background: var(--bg);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 12px;
-            color: var(--cream);
-            font-size: 16px;
-            outline: none;
-            transition: border-color 0.2s;
-            font-family: 'Space Mono', monospace;
-        }
-
-        .calc-input:focus {
-            border-color: var(--teal);
-        }
-
-        .calc-result {
-            background: var(--card2);
-            border-radius: 12px;
-            padding: 20px;
-            text-align: center;
-            border: 1px solid rgba(45, 212, 191, 0.2);
-        }
-
-        .calc-big-number {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 48px;
-            color: var(--cream);
-            line-height: 1;
-            margin: 8px 0;
-            text-shadow: 0 0 20px rgba(45, 212, 191, 0.2);
-        }
-
-        .calc-subtext {
-            font-size: 14px;
-            color: var(--soft);
-            line-height: 1.5;
-        }
-
-        /* --- Asset Profile Grid --- */
-        .asset-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            margin-top: 32px;
-        }
-
-        .asset-card {
-            background: var(--card2);
-            border: 1px solid var(--border);
-            border-radius: 16px;
-            padding: 24px;
-            transition: all 0.3s;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .asset-card:hover {
-            border-color: var(--cyan);
-            background: rgba(103, 232, 249, 0.02);
-        }
-
-        .asset-card.locked {
-            opacity: 0.6;
-            border-style: dashed;
-        }
-
-        .asset-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 16px;
-        }
-
-        .asset-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            background: rgba(255, 255, 255, 0.05);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 20px;
-            border: 1px solid var(--border);
-        }
-
-        .asset-level {
-            font-family: 'Space Mono', monospace;
-            font-size: 10px;
-            color: var(--teal);
-            background: rgba(45, 212, 191, 0.1);
-            padding: 4px 8px;
-            border-radius: 4px;
-        }
-
-        .asset-title {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 22px;
-            color: var(--cream);
-            margin-bottom: 8px;
-        }
-
-        .asset-desc {
-            font-size: 13px;
-            color: var(--muted);
-            line-height: 1.4;
-            margin-bottom: 20px;
-            flex: 1;
-        }
-
-        .asset-input-group {
-            margin-bottom: 12px;
-        }
-
-        .asset-field-label {
-            font-family: 'Space Mono', monospace;
-            font-size: 10px;
-            color: var(--soft);
-            text-transform: uppercase;
-            margin-bottom: 6px;
-            display: block;
-        }
-
-        .asset-input-field {
-            width: 100%;
-            background: rgba(0, 0, 0, 0.3);
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 10px 12px;
-            color: var(--cream);
-            font-size: 14px;
-            font-family: 'DM Sans', sans-serif;
-            outline: none;
-            transition: border-color 0.2s;
-        }
-
-        .asset-input-field:focus {
-            border-color: var(--teal);
-        }
-    </style>
+    <link rel="stylesheet" href="/css/navigator.css">
 </head>
 
 <body>
@@ -1473,11 +54,11 @@
             </aside>
 
             <main class="eee-main navigator-main-layout" id="app">
-                <nav class="nav-subtabs" aria-label="Navigator screens" style="display:flex; gap:10px; margin-bottom:24px; flex-wrap:wrap;">
-                    <button class="secondary-button" type="button" onclick="showScreen('screen-wizard')" style="font-size:13px; min-height:36px;"><i data-lucide="sparkles"></i><span>Diagnostic</span></button>
-                    <button class="secondary-button" type="button" onclick="showRoadmap()" style="font-size:13px; min-height:36px;"><i data-lucide="map"></i><span>Roadmap</span></button>
-                    <button class="secondary-button" type="button" onclick="showScreen('screen-nextmove')" style="font-size:13px; min-height:36px;"><i data-lucide="play"></i><span>Next Move</span></button>
-                    <button class="secondary-button" type="button" onclick="showScreen('screen-assets')" style="font-size:13px; min-height:36px;"><i data-lucide="user"></i><span>Profile</span></button>
+                <nav class="nav-subtabs" aria-label="Navigator screens">
+                    <button class="secondary-button nav-subtab-btn" type="button" onclick="showScreen('screen-wizard')"><i data-lucide="sparkles"></i><span>Diagnostic</span></button>
+                    <button class="secondary-button nav-subtab-btn" type="button" onclick="showRoadmap()"><i data-lucide="map"></i><span>Roadmap</span></button>
+                    <button class="secondary-button nav-subtab-btn" type="button" onclick="showScreen('screen-nextmove')"><i data-lucide="play"></i><span>Next Move</span></button>
+                    <button class="secondary-button nav-subtab-btn" type="button" onclick="showScreen('screen-assets')"><i data-lucide="user"></i><span>Profile</span></button>
                 </nav>
 
         <!-- WIZARD -->
@@ -1488,9 +69,8 @@
                 <p class="desc">Identify your business bottlenecks using the Bee Formula hierarchy. We build
                     infrastructure first and traffic last.</p>
 
-                <div id="resume-container" style="display:none; margin-bottom:24px;">
-                    <button class="btn-primary" style="margin-bottom:12px;" onclick="resumeAudit()">RESUME SAVED
-                        PLAN</button>
+                <div id="resume-container" class="resume-container-box" hidden>
+                    <button class="btn-primary btn-resume-plan" onclick="resumeAudit()">RESUME SAVED PLAN</button>
                     <button class="btn-secondary" onclick="resetApp()">START FRESH AUDIT</button>
                 </div>
 
@@ -1501,15 +81,12 @@
                         placeholder="Your Passion or Topic (e.g. Health Coaching)..."
                         onkeydown="if(event.key==='Enter')startDiagnostic()">
 
-                    <div style="display:flex; gap:12px; margin-top:20px;">
-                        <button class="btn-primary" onclick="startDiagnostic()" style="font-size: 20px;">START
-                            AUDIT</button>
+                    <div class="start-inputs-actions">
+                        <button class="btn-primary btn-start-audit" onclick="startDiagnostic()">START AUDIT</button>
                     </div>
-                    <button class="btn-secondary" onclick="startFromScratch()"
-                        style="margin-top:24px; font-size: 14px; text-transform:none; border:none;">I'm starting
-                        from scratch! Just tell me what to do first. &rarr;</button>
-                    <p class="onboarding-disclosure" style="margin-top:20px; font-size:12px; color:var(--muted); text-align:center; line-height:1.5;">
-                        Recommendations are curated from tools David Bee uses in real operations. Some partner links provide referral commissions at no extra cost to you; see our <a href="/terms#affiliate-disclosure" style="color:var(--teal); text-decoration:underline;">terms and disclosure</a>.
+                    <button class="btn-secondary btn-start-scratch" onclick="startFromScratch()">I'm starting from scratch! Just tell me what to do first. &rarr;</button>
+                    <p class="onboarding-disclosure">
+                        Recommendations are curated from tools David Bee uses in real operations. Some partner links provide referral commissions at no extra cost to you; see our <a href="/terms#affiliate-disclosure" class="disclosure-terms-link">terms and disclosure</a>.
                     </p>
                 </div>
             </div>
@@ -1525,7 +102,7 @@
                     <div class="wizard-card">
                         <div class="tagline" id="q-category">Audit Step</div>
                         <h2 id="q-text">Loading...</h2>
-                        <p id="q-hint" style="font-size: 13px; color: var(--muted); margin-bottom: 24px;"></p>
+                        <p id="q-hint" class="q-hint"></p>
                         <div class="bubble-grid" id="bubble-container"></div>
                     </div>
         </div>
@@ -1555,33 +132,38 @@
 
         <!-- ROADMAP -->
         <div class="screen" id="screen-roadmap">
-            <div class="wizard-card">
-                <div
-                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; border-bottom: 1px dashed var(--border); padding-bottom: 12px;">
-                    <div class="tagline" style="margin-bottom:0;">Your Bee Formula Roadmap</div>
-                    <div style="display:flex; gap: 8px;">
-                        <button class="btn-secondary"
-                            style="margin:0; width:auto; padding: 6px 12px; font-size:14px; color:var(--muted); border-color:var(--border);"
-                            onclick="emailPlan()">📧 EMAIL MY PLAN</button>
+            <div class="wizard-card roadmap-card">
+                <div class="roadmap-header-row">
+                    <div class="tagline roadmap-tagline">Your Bee Formula Roadmap</div>
+                    <div class="roadmap-actions-group">
+                        <button class="btn-secondary btn-email-plan" onclick="emailPlan()">📧 EMAIL MY PLAN</button>
                     </div>
                 </div>
                 <h2>THE FLIGHT PLAN</h2>
-                <div
-                    style="font-size: 16px; color: var(--soft); line-height: 1.6; margin-bottom: 32px; background: rgba(0,0,0,0.2); padding: 20px; border-radius: 12px; border-left: 3px solid var(--teal);">
-                    Welcome to your custom implementation plan! Based on your answers, we've organized exactly what you
-                    need to build next.
+                <div class="roadmap-intro-box">
+                    Welcome to your custom implementation plan! Based on your answers, we have organized exactly what you need to build next.
                     <br><br>
-                    <strong>How to use this page:</strong> Click on your #1 Priority to open a step-by-step checklist.
-                    Focus <em>only</em> on completing that single goal. Building a reliable business is about setting
-                    up one solid piece of infrastructure at a time, not doing everything at once. Once it's built, we
-                    will automatically celebrate your progress and hand you your next objective!
+                    <strong>How to use this page:</strong> Focus strictly on your Priority One bottleneck below. Building a reliable business is about setting up one solid piece of infrastructure at a time, not doing everything at once. Work through the checklist, use the curated tools, or copy the prompt into your AI to generate your asset.
                 </div>
-                <div id="priority-roadmap"></div>
-                <div class="matrix-list" id="matrix-list"></div>
 
-                <button class="btn-primary"
-                    style="margin-top:40px; background:linear-gradient(135deg, #a855f7, #ec4899); border:none; box-shadow:0 8px 20px rgba(168,85,247,0.4); text-transform:uppercase; letter-spacing:0.1em; font-size: 24px; padding: 24px;"
-                    onclick="showScreen('screen-assets')">VIEW MY BUSINESS PROFILE →</button>
+                <div class="funnel-strip-section">
+                    <div class="funnel-strip-header">
+                        <span class="dive-label">11-Stage Business Pipeline</span>
+                        <span class="funnel-strip-subtitle">Infrastructure first, traffic last</span>
+                    </div>
+                    <div class="map-container" id="funnel-map"></div>
+                </div>
+
+                <div id="priority-roadmap"></div>
+
+                <div class="all-stages-section">
+                    <div class="all-stages-header">
+                        <span class="dive-label">All Stages &amp; Progression Ladder</span>
+                    </div>
+                    <div class="matrix-list" id="matrix-list"></div>
+                </div>
+
+                <button class="btn-primary btn-view-profile" onclick="showScreen('screen-assets')">VIEW MY BUSINESS PROFILE &rarr;</button>
             </div>
         </div>
 
@@ -1592,9 +174,9 @@
 
         <!-- ASSETS / PROFILE -->
         <div class="screen" id="screen-assets">
-            <div class="wizard-card" style="max-width: 1000px; padding: 40px;">
+            <div class="wizard-card assets-card">
                 <div class="tagline">Your Living Business Map</div>
-                <h2 style="text-align: center; margin-bottom: 32px;">The Foundation</h2>
+                <h2 class="assets-heading">The Foundation</h2>
 
                 <!-- 1. Visual Map -->
                 <div class="visual-map-container" id="visual-map"></div>
@@ -1605,22 +187,14 @@
                 <!-- 3. Customer Journey Story -->
                 <div class="story-board" id="customer-journey"></div>
 
-                <div
-                    style="display:flex; justify-content:center; gap: 12px; margin-bottom: 40px; border-bottom: 1px solid var(--border); padding-bottom: 40px;">
-                    <button class="btn-secondary" style="margin:0; width:auto; padding: 8px 16px;"
-                        onclick="showRoadmap()">&larr; BACK TO ROADMAP</button>
-                    <button class="btn-primary"
-                        style="margin:0; width:auto; padding: 8px 16px; background:linear-gradient(135deg, #10b981, #059669);"
-                        onclick="emailPlan()">📧 EMAIL PROFILE & PLAN</button>
+                <div class="assets-action-row">
+                    <button class="btn-secondary btn-assets-back" onclick="showRoadmap()">&larr; BACK TO ROADMAP</button>
+                    <button class="btn-primary btn-assets-email" onclick="emailPlan()">📧 EMAIL PROFILE &amp; PLAN</button>
                 </div>
 
                 <!-- 4. Input Grid -->
-                <h3
-                    style="font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--cream); margin-bottom: 16px;">
-                    System Components</h3>
-                <p style="color: var(--muted); font-size: 14px; margin-bottom: 24px;">Enter your URLs and details
-                    below.
-                    Hit 'Enter' to save. Upgrade components to unlock the next level of revenue.</p>
+                <h3 class="assets-components-title">System Components</h3>
+                <p class="assets-components-desc">Enter your URLs and details below. Hit 'Enter' to save. Upgrade components to unlock the next level of revenue.</p>
                 <div class="asset-grid" id="profile-grid"></div>
 
                 <!-- 5. Reset -->
@@ -1634,7 +208,7 @@
 
         <!-- NEXT MOVE: the member's durable, returning move record. WBR-409. -->
         <div class="screen" id="screen-nextmove">
-            <div class="wizard-card" style="max-width:760px;">
+            <div class="wizard-card nextmove-card">
                 <div class="tagline">The Momentum Hub</div>
                 <h1>Your Next Move</h1>
                 <p class="desc">Your roadmap is the plan. This turns it into the one thing to do right now, and
@@ -1642,7 +216,7 @@
 
                 <div id="nav-momentum" class="nav-momentum" hidden></div>
 
-                <form id="navigator-form" autocomplete="off" style="text-align:left;">
+                <form id="navigator-form" class="navigator-form" autocomplete="off">
                     <label class="nav-label" for="navigator-objective">What are you trying to get done?</label>
                     <input type="text" id="navigator-objective" class="input-text"
                         placeholder="e.g. Launch my paid newsletter">
@@ -1653,11 +227,11 @@
                     <textarea id="navigator-blocker" class="input-text" rows="2"
                         placeholder="The sticking point"></textarea>
                     <div class="nav-row">
-                        <div style="flex:1;">
+                        <div class="nav-col">
                             <label class="nav-label" for="navigator-time">Time you have</label>
                             <input type="text" id="navigator-time" class="input-text" placeholder="1 hour">
                         </div>
-                        <div style="flex:1;">
+                        <div class="nav-col">
                             <label class="nav-label" for="navigator-deadline">Deadline (optional)</label>
                             <input type="text" id="navigator-deadline" class="input-text" placeholder="e.g. Friday">
                         </div>
@@ -1675,12 +249,9 @@
                     <div class="nav-result-field"><span>Why this now</span><p id="navigator-why"></p></div>
                     <p id="navigator-source" class="nav-source" hidden></p>
                     <div class="nav-result-actions">
-                        <button type="button" id="navigator-complete" class="btn-primary"
-                            style="width:auto;margin:0;padding:8px 16px;"><span>Mark complete</span></button>
-                        <button type="button" id="navigator-copy" class="btn-secondary"
-                            style="width:auto;margin:0;padding:8px 16px;"><span>Copy next move</span></button>
-                        <button type="button" id="navigator-new" class="btn-secondary"
-                            style="width:auto;margin:0;padding:8px 16px;"><span>New move</span></button>
+                        <button type="button" id="navigator-complete" class="btn-primary btn-nav-action"><span>Mark complete</span></button>
+                        <button type="button" id="navigator-copy" class="btn-secondary btn-nav-action"><span>Copy next move</span></button>
+                        <button type="button" id="navigator-new" class="btn-secondary btn-nav-action"><span>New move</span></button>
                     </div>
                 </div>
 
@@ -2056,7 +627,7 @@
                 { id: 'aiaas', x: 570, y: 50, label: 'AI' },
                 { id: 'paidtraffic', x: 630, y: 50, label: 'Paid Ads' }
             ];
-            let svg = `<svg viewBox="0 0 660 100" style="overflow:visible; width:100%; height:auto;">`;
+            let svg = `<svg viewBox="0 0 660 100" class="funnel-svg">`;
             let pathD = `M ${nodes[0].x} ${nodes[0].y}`;
             for (let i = 1; i < nodes.length; i++) pathD += ` C ${nodes[i - 1].x + 30} ${nodes[i - 1].y}, ${nodes[i - 1].x + 30} ${nodes[i].y}, ${nodes[i].x} ${nodes[i].y}`;
             svg += `<path d="${pathD}" class="path-line" /><path d="${pathD}" class="path-active" />`;
@@ -2071,7 +642,7 @@
                 svg += `<g class="node ${status}" onmouseover="showTooltip(event, '${qRef?.desc || 'Process Component'}')" onmouseout="hideTooltip()">
                 <circle cx="${n.x}" cy="${n.y}" r="7" class="node-circle" stroke-width="2.5" />
                 <text x="${n.x}" y="${n.y + 18}" text-anchor="middle">${n.label}</text>
-                <text x="${n.x}" y="${n.y + 26}" text-anchor="middle" style="fill: ${levelColor}; font-size: 6px;">LVL ${currentLevel}</text>
+                <text x="${n.x}" y="${n.y + 26}" class="node-lvl-text ${status}">LVL ${currentLevel}</text>
             </g>`;
             });
             document.getElementById('funnel-map').innerHTML = svg + `</svg>`;
@@ -2136,7 +707,7 @@
             list.innerHTML = '';
 
             if (userProfile.todos.length === 0) {
-                list.innerHTML = '<div style="color:var(--muted); text-align:center; margin-top:40px; font-size:14px;">Your to-do list is empty.<br>Add tasks from the roadmap instructions to track them here!</div>';
+                list.innerHTML = '<div class="todo-empty-state">Your to-do list is empty.<br>Add tasks from the roadmap instructions to track them here!</div>';
                 btn.style.display = 'none';
             } else {
                 userProfile.todos.forEach(t => {
@@ -2214,23 +785,111 @@
             const listArea = document.getElementById('matrix-list');
             priArea.innerHTML = ''; listArea.innerHTML = '';
 
-            // Priority One Logic
+            // Priority One Logic: One Flow on a Single Screen
             const task = (TASK_DATA[criticalStepId] || []).find(t => t.level === criticalTargetLevel);
             if (task) {
                 const taskKey = `${criticalStepId}_${criticalTargetLevel}`;
+                if (!userProfile.progress[taskKey]) userProfile.progress[taskKey] = task.steps.map(() => false);
                 const isNew = !userProfile.viewedTasks.includes(taskKey);
+                if (isNew) { userProfile.viewedTasks.push(taskKey); saveData(); }
+
+                const isComplete = userProfile.progress[taskKey].every(v => v === true);
+                const qRef = QUESTIONS.find(qi => qi.id === criticalStepId);
+                const promptText = (task.prompt || '').replaceAll('[NICHE]', userProfile.niche || 'your business');
+                const encodedPrompt = encodeURIComponent(promptText);
+
+                const catalogTools = TOOL_CATALOGUE[criticalStepId] || [];
+                let toolsHTML = '';
+                if (catalogTools.length > 0) {
+                    toolsHTML = `
+                    <div class="dive-section">
+                        <div class="tool-catalog-header">
+                            <span class="dive-label tool-catalog-title">Curated Tool Options</span>
+                            <a href="/terms#affiliate-disclosure" class="tool-disclosure-link">Affiliate disclosure</a>
+                        </div>
+                        <div class="tool-catalog-grid">
+                            ${catalogTools.map(t => {
+                                const tierBadge = t.tier ? `<span class="tool-tier-badge">${t.tier}</span>` : '';
+                                const recBadge = t.recommended ? `<span class="tool-rec-badge">★ Recommended</span>` : '';
+                                const linkContent = t.url ? `<a href="${t.url}" target="_blank" rel="noopener noreferrer" class="tool-link">${t.name} <span class="tool-arrow">↗</span></a>` : `<strong class="tool-name-static">${t.name}</strong>`;
+                                return `
+                                <div class="tool-catalog-card">
+                                    <div class="tool-card-head">
+                                        ${linkContent}
+                                        <div class="tool-badges">${tierBadge}${recBadge}</div>
+                                    </div>
+                                    ${t.desc ? `<p class="tool-desc">${t.desc}</p>` : ''}
+                                </div>
+                                `;
+                            }).join('')}
+                        </div>
+                    </div>
+                    `;
+                }
+
                 priArea.innerHTML = `
                 <div class="priority-section ${animateNew ? 'slide-in-up' : ''}">
-                    <div class="priority-badge">Priority One</div>
-                    <div class="system-row" style="border-color:var(--amber); background:rgba(245, 158, 11, 0.1);" onclick="openDeepDive('${criticalStepId}', ${criticalTargetLevel})">
-                        <div class="system-info">
-                            <div class="row-name">${task.title} ${isNew ? '<span class="new-badge">NEW</span>' : ''}</div>
-                            <div class="row-desc">Current setup: <strong>${formatStageStatus(criticalStepId)}</strong>. Next focus: <strong>${task.title}</strong> (${task.why})</div>
+                    <div class="priority-badge">Priority One Bottleneck</div>
+                    <div class="priority-stage-card">
+                        <div class="priority-stage-head">
+                            <div>
+                                <div class="tagline">Immediate Focus: ${qRef ? qRef.category : 'Focus Stage'}</div>
+                                <h3 class="priority-stage-title">${task.title} ${isNew ? '<span class="new-badge">NEW</span>' : ''}</h3>
+                                <p class="priority-stage-status">Current setup: <strong>${formatStageStatus(criticalStepId)}</strong></p>
+                            </div>
+                            <button class="btn-primary btn-nextmove-launch" onclick="getWeeksNextMove()"><span>Get This Week's Next Move</span> <i data-lucide="play"></i></button>
                         </div>
-                        <div class="row-arrow">→</div>
+
+                        ${isComplete ? '<div class="stage-complete-banner">STAGE COMPLETED! FOCUS SHIFTING...</div>' : ''}
+
+                        <div class="priority-stage-why">
+                            <span class="dive-label">Why are we doing this?</span>
+                            <p>${task.goal} ${task.why}</p>
+                        </div>
+
+                        ${toolsHTML}
+
+                        <div class="dive-section">
+                            <span class="dive-label">Your Step-By-Step Checklist</span>
+                            <div class="action-list">
+                                ${(task.steps || []).map((s, i) => {
+                                    const escapedText = s.replace(/'/g, "\\'");
+                                    return `
+                                    <div class="action-checklist-wrap">
+                                        <div class="action-item ${userProfile.progress[taskKey][i] ? 'done' : ''} action-item-inner" onclick="toggleCheck('${taskKey}', ${i}, this)">
+                                            <div class="action-check"></div>
+                                            <div class="action-text">${s}</div>
+                                        </div>
+                                        <button class="add-todo-btn" onclick="addTodo('${criticalStepId}', ${i}, '${escapedText}')">+ Track Task</button>
+                                    </div>
+                                    `;
+                                }).join('')}
+                            </div>
+                        </div>
+
+                        ${task.example ? `
+                        <div class="dive-example-box">
+                            <span class="dive-label dive-example-label">Example for ${userProfile.niche || 'You'}</span>
+                            <div class="dive-example-text">${task.example}</div>
+                        </div>
+                        ` : ''}
+
+                        <div class="dive-section">
+                            <span class="dive-label">Copy Prompt to Your AI</span>
+                            <p class="dive-prompt-desc">Instructions customized for your topic. Click to copy into ChatGPT, Claude, or Google Gemini.</p>
+                            <div class="output-card dive-prompt-box">
+                                <pre id="prompt-task">${promptText}</pre>
+                                <button class="copy-btn" onclick="copyText('prompt-task')">COPY PROMPT</button>
+                            </div>
+                            <div class="dive-gemini-wrap">
+                                <button onclick="openGemini('${encodedPrompt}')" class="btn-primary btn-open-gemini">
+                                    ✨ OPEN IN GOOGLE GEMINI
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
-            `;
+                `;
             }
 
             // Other Tasks Logic
@@ -2241,16 +900,44 @@
                 if (nextTask) {
                     const taskKey = `${compId}_${nextTask.level}`;
                     const isNew = !userProfile.viewedTasks.includes(taskKey);
-                    const row = document.createElement('div'); row.className = 'system-row';
-                    if (animateNew) {
-                        row.style.animation = `slideInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards ${Math.random() * 0.2 + 0.2}s`;
-                        row.style.opacity = '0';
-                    }
+                    const row = document.createElement('div');
+                    row.className = animateNew ? 'system-row slide-in-up' : 'system-row';
                     row.innerHTML = `<div class="system-info"><div class="row-name">${nextTask.title} ${isNew ? '<span class="new-badge">NEW</span>' : ''}</div><div class="row-desc">Current setup: ${formatStageStatus(compId)}. Next: ${nextTask.title}.</div></div><div class="row-arrow">→</div>`;
                     row.onclick = () => openDeepDive(compId, nextTask.level);
                     listArea.appendChild(row);
                 }
             });
+            if (window.lucide) window.lucide.createIcons();
+        }
+
+        function getWeeksNextMove() {
+            const task = (TASK_DATA[criticalStepId] || []).find(t => t.level === criticalTargetLevel);
+            const qRef = QUESTIONS.find(q => q.id === criticalStepId);
+            const catName = qRef ? qRef.category : 'Objective';
+            const currentSetup = formatStageStatus(criticalStepId);
+            const firstStep = (task && task.steps && task.steps[0]) ? task.steps[0] : (task ? task.why : 'Complete stage tasks');
+
+            const objEl = document.getElementById('navigator-objective');
+            const realEl = document.getElementById('navigator-reality');
+            const blkEl = document.getElementById('navigator-blocker');
+            const timeEl = document.getElementById('navigator-time');
+            const deadEl = document.getElementById('navigator-deadline');
+
+            if (objEl) objEl.value = `${task ? task.title : catName} for ${userProfile.niche || 'my business'}`;
+            if (realEl) realEl.value = `Current setup: ${currentSetup}`;
+            if (blkEl) blkEl.value = `First implementation step: ${firstStep}`;
+            if (timeEl && !timeEl.value) timeEl.value = '1 hour';
+            if (deadEl && !deadEl.value) deadEl.value = 'This week';
+
+            showScreen('screen-nextmove');
+
+            const formEl = document.getElementById('navigator-form');
+            if (formEl) {
+                const submitBtn = document.getElementById('navigator-submit');
+                if (submitBtn && !submitBtn.disabled) {
+                    submitBtn.click();
+                }
+            }
         }
 
         function animatePriorityShift(oldStepId, oldTargetLevel) {
@@ -2262,14 +949,14 @@
             const oldTask = (TASK_DATA[oldStepId] || []).find(t => t.level === oldTargetLevel);
             if (oldTask) {
                 priArea.innerHTML = `
-                <div class="priority-section fade-out-up" style="border-color:var(--teal); background:rgba(45, 212, 191, 0.1);">
-                    <div class="priority-badge" style="background:var(--teal); color:#000;">COMPLETED!</div>
-                    <div class="system-row" style="border-color:var(--teal); background:rgba(45, 212, 191, 0.05);">
+                <div class="priority-section fade-out-up priority-completed-section">
+                    <div class="priority-badge priority-completed-badge">COMPLETED!</div>
+                    <div class="system-row priority-completed-row">
                         <div class="system-info">
-                            <div class="row-name" style="text-decoration: line-through; opacity: 0.7;">${oldTask.title}</div>
-                            <div class="row-desc" style="color:var(--teal);">Goal Achieved. Focus Shifting...</div>
+                            <div class="row-name priority-completed-name">${oldTask.title}</div>
+                            <div class="row-desc priority-completed-desc">Goal Achieved. Focus Shifting...</div>
                         </div>
-                        <div class="row-arrow" style="color:var(--teal);">✓</div>
+                        <div class="row-arrow priority-completed-arrow">✓</div>
                     </div>
                 </div>
             `;
@@ -2306,7 +993,7 @@
                 calcHTML = `
             <div class="calculator-box">
                 <div class="calc-title">✨ The "100 True Fans" Predictor</div>
-                <p style="font-size:14px; color:var(--soft); margin-bottom:20px; line-height:1.5;">You do not need a million followers to make a full-time living. Enter a monthly goal and the price of your offer below to see the math play out.</p>
+                <p class="calc-explainer">You do not need a million followers to make a full-time living. Enter a monthly goal and the price of your offer below to see the math play out.</p>
                 <div class="calc-input-group">
                     <div class="calc-input-wrapper">
                         <span class="calc-label">My Offer Price ($)</span>
@@ -2320,7 +1007,7 @@
                 <div class="calc-result">
                     <div id="calc-big-num" class="calc-big-number">--</div>
                     <div id="calc-sub-text" class="calc-subtext">sales needed per month</div>
-                    <div style="font-family:'Space Mono'; font-size:11px; color:var(--cyan); margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);" id="calc-internet-text">That is barely anybody on the internet!</div>
+                    <div class="calc-internet-subtext" id="calc-internet-text">That is barely anybody on the internet!</div>
                 </div>
             </div>`;
             }
@@ -2330,22 +1017,22 @@
             if (catalogTools.length > 0) {
                 toolsHTML = `
                 <div class="dive-section">
-                    <div style="display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
-                        <span class="dive-label" style="margin:0;">Curated Tool Options</span>
-                        <a href="/terms#affiliate-disclosure" style="font-size:11px; color:var(--muted); text-decoration:none;">Affiliate disclosure</a>
+                    <div class="tool-catalog-header">
+                        <span class="dive-label tool-catalog-title">Curated Tool Options</span>
+                        <a href="/terms#affiliate-disclosure" class="tool-disclosure-link">Affiliate disclosure</a>
                     </div>
-                    <div class="tool-catalog-grid" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(220px, 1fr)); gap:12px; margin-top:10px;">
+                    <div class="tool-catalog-grid">
                         ${catalogTools.map(t => {
-                            const tierBadge = t.tier ? `<span class="tool-tier-badge" style="font-size:10px; text-transform:uppercase; font-weight:700; padding:2px 8px; border-radius:999px; background:var(--card2); border:1px solid var(--border); color:var(--soft);">${t.tier}</span>` : '';
-                            const recBadge = t.recommended ? `<span class="tool-rec-badge" style="font-size:10px; font-weight:700; padding:2px 8px; border-radius:999px; background:color-mix(in srgb, var(--gold) 18%, transparent); border:1px solid var(--gold); color:var(--gold);">★ Recommended</span>` : '';
-                            const linkContent = t.url ? `<a href="${t.url}" target="_blank" rel="noopener noreferrer" style="color:var(--teal); text-decoration:none; font-weight:700; font-size:14px; display:inline-flex; align-items:center; gap:4px;">${t.name} <span style="font-size:11px;">↗</span></a>` : `<strong style="color:var(--cream); font-size:14px;">${t.name}</strong>`;
+                            const tierBadge = t.tier ? `<span class="tool-tier-badge">${t.tier}</span>` : '';
+                            const recBadge = t.recommended ? `<span class="tool-rec-badge">★ Recommended</span>` : '';
+                            const linkContent = t.url ? `<a href="${t.url}" target="_blank" rel="noopener noreferrer" class="tool-link">${t.name} <span class="tool-arrow">↗</span></a>` : `<strong class="tool-name-static">${t.name}</strong>`;
                             return `
-                            <div class="tool-catalog-card" style="background:var(--card2); border:1px solid var(--border); border-radius:12px; padding:12px 14px; display:flex; flex-direction:column; gap:6px;">
-                                <div style="display:flex; justify-content:space-between; align-items:center; gap:6px;">
+                            <div class="tool-catalog-card">
+                                <div class="tool-card-head">
                                     ${linkContent}
-                                    <div style="display:flex; gap:4px;">${tierBadge}${recBadge}</div>
+                                    <div class="tool-badges">${tierBadge}${recBadge}</div>
                                 </div>
-                                ${t.desc ? `<p style="font-size:12px; color:var(--soft); margin:0; line-height:1.4;">${t.desc}</p>` : ''}
+                                ${t.desc ? `<p class="tool-desc">${t.desc}</p>` : ''}
                             </div>
                             `;
                         }).join('')}
@@ -2359,19 +1046,19 @@
             content.innerHTML = `
             <div class="btn-back" onclick="showRoadmap()">< Back</div>
 
-            <div style="background: rgba(0,0,0,0.3); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 32px; display:flex; align-items:center; gap: 16px;">
-                <div style="width:40px; height:40px; border-radius:50%; background:rgba(45, 212, 191, 0.1); display:flex; align-items:center; justify-content:center; border: 1px solid var(--teal); flex-shrink:0;">
-                    <div style="width:16px; height:16px; border-radius:50%; background:var(--teal); box-shadow:0 0 20px var(--teal);"></div>
+            <div class="you-are-here-box">
+                <div class="you-are-here-icon">
+                    <div class="you-are-here-dot"></div>
                 </div>
                 <div>
-                    <div style="font-family:'Space Mono', monospace; font-size:10px; color:var(--muted); text-transform:uppercase;">You Are Here</div>
-                    <div style="font-size:16px; color:var(--cream); font-weight:bold;">${qRef ? qRef.category : 'Focus Area'}</div>
+                    <div class="you-are-here-tag">You Are Here</div>
+                    <div class="you-are-here-title">${qRef ? qRef.category : 'Focus Area'}</div>
                 </div>
             </div>
 
             <div class="tagline">Implementation Guide</div>
             <h2>${task.title}</h2>
-            ${isComplete ? '<div style="background:var(--teal); color:#000; padding:10px; border-radius:8px; margin-bottom:20px; font-weight:700; text-align:center;">GOAL COMPLETED!</div>' : ''}
+            ${isComplete ? '<div class="stage-complete-banner">GOAL COMPLETED!</div>' : ''}
 
             ${calcHTML}
             ${renderDeepDiveTrafficCalc()}
@@ -2384,8 +1071,8 @@
                     ${(task.steps || []).map((s, i) => {
                 const escapedText = s.replace(/'/g, "\\'");
                 return `
-                        <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom: 12px; gap:16px; background: rgba(255,255,255,0.03); border-radius: 12px; padding: 16px;">
-                            <div class="action-item ${userProfile.progress[taskKey][i] ? 'done' : ''}" onclick="toggleCheck('${taskKey}', ${i}, this)" style="background:transparent; padding:0; margin:0; flex:1; align-items:flex-start;">
+                        <div class="action-checklist-wrap">
+                            <div class="action-item ${userProfile.progress[taskKey][i] ? 'done' : ''} action-item-inner" onclick="toggleCheck('${taskKey}', ${i}, this)">
                                 <div class="action-check"></div><div class="action-text">${s}</div>
                             </div>
                             <button class="add-todo-btn" onclick="addTodo('${compId}', ${i}, '${escapedText}')">+ Track Task</button>
@@ -2395,24 +1082,24 @@
             </div>
 
             ${task.example ? `
-            <div class="dive-section" style="background: rgba(45, 212, 191, 0.05); border-left: 3px solid var(--teal); padding: 16px; border-radius: 0 8px 8px 0; margin-bottom: 32px;">
-                <span class="dive-label" style="color: var(--teal); margin-bottom: 8px;">Example for ${userProfile.niche || 'You'}</span>
-                <div style="font-size: 14px; color: var(--cream); line-height: 1.6; white-space: pre-wrap;">${task.example}</div>
+            <div class="dive-example-box">
+                <span class="dive-label dive-example-label">Example for ${userProfile.niche || 'You'}</span>
+                <div class="dive-example-text">${task.example}</div>
             </div>
             ` : ''}
 
             <div class="dive-section">
                 <span class="dive-label">Let AI Do The Heavy Lifting</span>
-                <p style="font-size: 14px; color: var(--muted); margin-bottom: 16px;">We wrote the perfect set of instructions. Click the button below to have Google Gemini write this for you, or copy the prompt manually.</p>
-                <div class="output-card" style="margin-bottom: 20px;"><pre id="prompt-task">${promptText}</pre><button class="copy-btn" onclick="copyText('prompt-task')">COPY PROMPT</button></div>
+                <p class="dive-prompt-desc">We wrote the perfect set of instructions. Click the button below to have Google Gemini write this for you, or copy the prompt manually.</p>
+                <div class="output-card dive-prompt-box"><pre id="prompt-task">${promptText}</pre><button class="copy-btn" onclick="copyText('prompt-task')">COPY PROMPT</button></div>
 
-                <div style="display:flex; justify-content: center; margin-bottom: 20px;">
-                    <button onclick="openGemini('${encodedPrompt}')" class="btn-primary" style="width:auto; padding: 12px 24px; background:linear-gradient(135deg, #4285F4, #9B72CB); box-shadow: 0 0 15px rgba(155, 114, 203, 0.2); font-size: 14px; display:inline-flex; align-items:center; justify-content:center; gap:8px;">
+                <div class="dive-gemini-wrap">
+                    <button onclick="openGemini('${encodedPrompt}')" class="btn-primary btn-open-gemini">
                         ✨ GENERATE WITH GEMINI
                     </button>
                 </div>
             </div>
-            <button class="btn-secondary" onclick="showRoadmap()" style="margin-bottom: 30px;">Return to Roadmap</button>
+            <button class="btn-secondary btn-return-roadmap" onclick="showRoadmap()">Return to Roadmap</button>
         `;
 
             if (calcHTML) setTimeout(updateCalculator, 100);
@@ -2593,8 +1280,8 @@
                                 <label class="asset-field-label">Offer Name</label>
                                 <input type="text" name="name" class="asset-input-field" placeholder="Name of your offer" value="${assetItem.name || ''}" ${onChangeStr} ${onEnterStr}>
                             </div>
-                            <div class="asset-input-group" style="display:flex; gap:12px; flex-wrap:wrap;">
-                                <div style="flex:1; min-width: 100px;">
+                            <div class="asset-input-group asset-input-wrap">
+                                <div class="asset-input-col-1">
                                     <label class="asset-field-label">Price ($)</label>
                                     <input type="number" name="price" class="asset-input-field" placeholder="0" value="${assetItem.price || ''}" ${onChangeStr} ${onEnterStr}>
                                     <div class="toggle-switch-group">
@@ -2602,7 +1289,7 @@
                                         <button class="toggle-switch-btn ${isRecur ? 'active' : ''}" onclick="window.setRecurringToggle('${q.id}', ${index}, true)">/mo</button>
                                     </div>
                                 </div>
-                                <div style="flex:2; min-width: 200px;">
+                                <div class="asset-input-col-2">
                                     <label class="asset-field-label">Checkout Link</label>
                                     <input type="text" name="url" class="asset-input-field" placeholder="https://stripe..." value="${assetItem.url || ''}" ${onChangeStr} ${onEnterStr}>
                                 </div>
@@ -2622,19 +1309,19 @@
                         }
 
                         bodyHTML += `
-                        <div style="${index > 0 ? 'border-top:1px dashed var(--border); padding-top:16px; margin-top:16px;' : ''} position: relative;">
-                            ${index > 0 ? `<button onclick="window.removeAssetItem('${q.id}', ${index})" style="position:absolute; top:12px; right:0; background:none; border:none; color:var(--amber); font-size:10px; cursor:pointer;" tabindex="-1">&times; REMOVE</button>` : ''}
+                        <div class="${index > 0 ? 'asset-item-repeater' : 'asset-item-single'}">
+                            ${index > 0 ? `<button onclick="window.removeAssetItem('${q.id}', ${index})" class="btn-remove-asset" tabindex="-1">&times; REMOVE</button>` : ''}
                             ${fieldsHTML}
                         </div>
                     `;
                     });
 
-                    bodyHTML += `<button onclick="window.addAssetItem('${q.id}')" style="background:transparent; border:1px dashed rgba(255,255,255,0.2); color:var(--cyan); padding:8px; width:100%; border-radius:8px; font-family:'Space Mono'; font-size:11px; cursor:pointer; margin: 16px 0;">+ ADD ANOTHER</button>`;
+                    bodyHTML += `<button onclick="window.addAssetItem('${q.id}')" class="btn-add-asset">+ ADD ANOTHER</button>`;
 
                     if (level < maxLevel) {
                         btnHTML = `<div class="asset-btn-group"><button class="btn-upgrade" onclick="upgradeAsset('${q.id}')">↑ UPGRADE (LVL ${level + 1})</button></div>`;
                     } else {
-                        btnHTML = `<div class="asset-btn-group"><div style="flex:1; text-align:center; padding:8px; font-size:10px; color:var(--teal); font-family:'Space Mono'; border:1px solid rgba(45,212,191,0.2); border-radius:8px;">★ MAX LEVEL</div></div>`;
+                        btnHTML = `<div class="asset-btn-group"><div class="asset-max-level-badge">★ MAX LEVEL</div></div>`;
                     }
                 }
 
@@ -2667,8 +1354,8 @@
                     if (html !== '') html += `<div class="map-arrow">→</div>`;
                     html += `<div class="map-block active">${qRef.category}</div>`;
                 } else {
-                    if (html !== '') html += `<div class="map-arrow" style="opacity:0.3;">→</div>`;
-                    html += `<div class="map-block" style="opacity:0.3; border-style:dashed;">${qRef.category}</div>`;
+                    if (html !== '') html += `<div class="map-arrow map-arrow-muted">→</div>`;
+                    html += `<div class="map-block map-block-muted">${qRef.category}</div>`;
                 }
             });
             container.innerHTML = html;
@@ -2695,28 +1382,28 @@
                     <button id="toggle-1000" class="toggle-btn" onclick="applyFunnelMath(1000)">1000 Leads/mo</button>
                 </div>
 
-                <div style="display:flex; justify-content:center; gap: 16px; margin-bottom: 24px; flex-wrap: wrap;">
+                <div class="calc-input-row">
                     ${userProfile.answers['mvo']?.depth > 0 ? `
-                    <div style="background: rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px 16px;">
-                        <label style="display:block; font-family:'Space Mono'; font-size:10px; color:var(--muted); margin-bottom:4px;">MVO Customrs/mo</label>
-                        <input type="number" id="calc-cust-mvo" value="0" style="width:80px; background:transparent; border:none; border-bottom:1px solid var(--teal); color:var(--cyan); font-size:18px; text-align:center; font-family:'Bebas Neue';" oninput="updateEarningsTotal()">
+                    <div class="calc-card-item">
+                        <label class="calc-card-label">MVO Customers/mo</label>
+                        <input type="number" id="calc-cust-mvo" value="0" class="calc-num-input" oninput="updateEarningsTotal()">
                     </div>` : ''}
 
                     ${userProfile.answers['signature']?.depth > 0 ? `
-                    <div style="background: rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px 16px;">
-                        <label style="display:block; font-family:'Space Mono'; font-size:10px; color:var(--muted); margin-bottom:4px;">Signature Clients/mo</label>
-                        <input type="number" id="calc-cust-sig" value="0" style="width:80px; background:transparent; border:none; border-bottom:1px solid var(--teal); color:var(--cyan); font-size:18px; text-align:center; font-family:'Bebas Neue';" oninput="updateEarningsTotal()">
+                    <div class="calc-card-item">
+                        <label class="calc-card-label">Signature Clients/mo</label>
+                        <input type="number" id="calc-cust-sig" value="0" class="calc-num-input" oninput="updateEarningsTotal()">
                     </div>` : ''}
 
                     ${userProfile.answers['highticket']?.depth > 0 ? `
-                    <div style="background: rgba(0,0,0,0.2); border:1px solid rgba(255,255,255,0.1); border-radius:8px; padding:8px 16px;">
-                        <label style="display:block; font-family:'Space Mono'; font-size:10px; color:var(--muted); margin-bottom:4px;">VIP Clients/mo</label>
-                        <input type="number" id="calc-cust-ht" value="0" style="width:80px; background:transparent; border:none; border-bottom:1px solid var(--teal); color:var(--cyan); font-size:18px; text-align:center; font-family:'Bebas Neue';" oninput="updateEarningsTotal()">
+                    <div class="calc-card-item">
+                        <label class="calc-card-label">VIP Clients/mo</label>
+                        <input type="number" id="calc-cust-ht" value="0" class="calc-num-input" oninput="updateEarningsTotal()">
                     </div>` : ''}
                 </div>
 
                 <div class="earnings-amount" id="yearly-earnings">$0</div>
-                <div class="earnings-subtext" style="margin-bottom:16px;">This is a scenario, not a prediction or a promise of income. It multiplies your offer prices by the monthly customer counts above, then by 12. The presets assume 100% become MVO customers, 30% become Signature clients, and 5% become VIP clients. Those are editable assumptions, not measured conversion rates. It assumes the same sales every month and excludes expenses, taxes, refunds, and cancellations. Recurring offers count one monthly payment per customer, not growing cohorts.</div>
+                <div class="earnings-subtext earnings-subtext-spaced">This is a scenario, not a prediction or a promise of income. It multiplies your offer prices by the monthly customer counts above, then by 12. The presets assume 100% become MVO customers, 30% become Signature clients, and 5% become VIP clients. Those are editable assumptions, not measured conversion rates. It assumes the same sales every month and excludes expenses, taxes, refunds, and cancellations. Recurring offers count one monthly payment per customer, not growing cohorts.</div>
             `;
             }
 
@@ -2777,36 +1464,36 @@
 
         function renderDeepDiveTrafficCalc() {
             let html = `
-                <div style="background:var(--card2); border:1px solid var(--border); border-radius:16px; padding:24px; margin-top:32px;">
+                <div class="traffic-calc-box">
                     <div class="tagline">Funnel Reality Check</div>
-                    <h3 style="margin-bottom: 16px;">Traffic to Sales Calculator</h3>
-                    <p style="color:var(--muted); font-size:14px; margin-bottom:24px;">How much attention does it really take to make a sale? Enter or edit any number below to see the standard 10% industry-average conversion trickle up and down your funnel.</p>
+                    <h3 class="traffic-calc-heading">Traffic to Sales Calculator</h3>
+                    <p class="traffic-calc-desc">How much attention does it really take to make a sale? Enter or edit any number below to see the standard 10% industry-average conversion trickle up and down your funnel.</p>
 
-                    <div style="margin-bottom: 24px;">
-                        <label style="display:block; font-family:'Space Mono'; font-size:12px; color:var(--teal); margin-bottom:8px; text-transform:uppercase;">Monthly Social Media Views:</label>
-                        <input type="number" id="calc-views" class="input-text" placeholder="e.g. 100000" style="margin-bottom:0;" oninput="updateDeepDiveCalc('views')">
+                    <div class="traffic-calc-input-wrap">
+                        <label class="traffic-calc-label">Monthly Social Media Views:</label>
+                        <input type="number" id="calc-views" class="input-text traffic-calc-input" placeholder="e.g. 100000" oninput="updateDeepDiveCalc('views')">
                     </div>
 
-                    <div id="calc-results-block" style="display:flex; flex-direction:column; gap:12px;">
-                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed var(--border); padding-bottom:8px;">
-                            <span style="color:var(--soft);">👀 Profile Visitors (10%)</span>
-                            <input type="number" id="calc-visitors" value="0" style="background:transparent; border:none; text-align:right; font-family:'Bebas Neue'; font-size:24px; color:var(--cream); width:150px;" oninput="updateDeepDiveCalc('visitors')">
+                    <div id="calc-results-block" class="traffic-calc-results">
+                        <div class="traffic-calc-row">
+                            <span class="traffic-calc-row-label">👀 Profile Visitors (10%)</span>
+                            <input type="number" id="calc-visitors" value="0" class="traffic-calc-row-input" oninput="updateDeepDiveCalc('visitors')">
                         </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed var(--border); padding-bottom:8px;">
-                            <span style="color:var(--soft);">🔗 Link Clicks (10%)</span>
-                            <input type="number" id="calc-clicks" value="0" style="background:transparent; border:none; text-align:right; font-family:'Bebas Neue'; font-size:24px; color:var(--cream); width:150px;" oninput="updateDeepDiveCalc('clicks')">
+                        <div class="traffic-calc-row">
+                            <span class="traffic-calc-row-label">🔗 Link Clicks (10%)</span>
+                            <input type="number" id="calc-clicks" value="0" class="traffic-calc-row-input" oninput="updateDeepDiveCalc('clicks')">
                         </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed var(--border); padding-bottom:8px;">
-                            <span style="color:var(--soft);">📧 Leads / Opt-ins (10%)</span>
-                            <input type="number" id="calc-leads" value="0" style="background:transparent; border:none; text-align:right; font-family:'Bebas Neue'; font-size:24px; color:var(--cream); width:150px;" oninput="updateDeepDiveCalc('leads')">
+                        <div class="traffic-calc-row">
+                            <span class="traffic-calc-row-label">📧 Leads / Opt-ins (10%)</span>
+                            <input type="number" id="calc-leads" value="0" class="traffic-calc-row-input" oninput="updateDeepDiveCalc('leads')">
                         </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px dashed var(--border); padding-bottom:8px;">
-                            <span style="color:var(--soft);">🤝 High-Intent Calls (10%)</span>
-                            <input type="number" id="calc-calls" value="0" style="background:transparent; border:none; text-align:right; font-family:'Bebas Neue'; font-size:24px; color:var(--cyan); width:150px;" oninput="updateDeepDiveCalc('calls')">
+                        <div class="traffic-calc-row">
+                            <span class="traffic-calc-row-label">🤝 High-Intent Calls (10%)</span>
+                            <input type="number" id="calc-calls" value="0" class="traffic-calc-row-input" oninput="updateDeepDiveCalc('calls')">
                         </div>
-                        <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(45,212,191,0.1); padding:16px; border-radius:8px;">
-                            <span style="color:var(--teal); font-weight:bold;">💳 Final Sales (10%)</span>
-                            <input type="number" id="calc-sales" value="0" style="background:transparent; border:none; text-align:right; font-family:'Bebas Neue'; font-size:32px; color:var(--teal); width:150px;" oninput="updateDeepDiveCalc('sales')">
+                        <div class="traffic-calc-row-final">
+                            <span class="traffic-calc-row-label-final">💳 Final Sales (10%)</span>
+                            <input type="number" id="calc-sales" value="0" class="traffic-calc-row-input-final" oninput="updateDeepDiveCalc('sales')">
                         </div>
                     </div>
                 </div>
@@ -2944,7 +1631,7 @@
             }
 
             board.innerHTML = `
-            <div style="font-family: 'Space Mono', monospace; font-size: 12px; color: var(--cyan); margin-bottom: 12px; text-transform: uppercase;">The Customer Journey</div>
+            <div class="customer-journey-eyebrow">The Customer Journey</div>
             ${story.join(" ")}
         `;
         }
