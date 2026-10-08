@@ -10,6 +10,16 @@ import {
   buildEventDetail,
   failureLayer
 } from './_lib/storysculpt-observability.js';
+import {
+  extractBannedTerms,
+  parseInstructions,
+  resolveStep,
+  getReferenceDocsForStep,
+  checkDeterministic,
+  stepFallbackMessage,
+  detectCrisis,
+  crisisResponse
+} from './_lib/storysculpt-steps.js';
 
 export const config = { maxDuration: 90 };
 
@@ -27,34 +37,29 @@ function source(name) {
 }
 
 const CORE_INSTRUCTIONS = source('instructions.txt');
-const MODE_SOURCES = {
-  bold: [
-    source('knowledge/Tiktok Hooks.txt'),
-    source('knowledge/Hooks and CTA Scripts for 2026.txt'),
-    source("knowledge/Example Scripts for the 5 E's.txt")
-  ].join('\n\n'),
-  mini: [
-    source('knowledge/60 Second Perfect Framework for Video Shorts.txt'),
-    source('knowledge/_mini example script.txt'),
-    source('knowledge/Hooks and CTA Scripts for 2026.txt')
-  ].join('\n\n'),
-  rant: [
-    source('knowledge/Tiktok Hooks.txt'),
-    source("knowledge/Example Scripts for the 5 E's.txt"),
-    source('knowledge/Hooks and CTA Scripts for 2026.txt')
-  ].join('\n\n')
+const BLUEPRINTS = readFileSync(join(process.cwd(), 'api', '_lib', 'blueprints.txt'), 'utf8');
+const BANNED_TERMS = extractBannedTerms(BLUEPRINTS);
+const PARSED_INSTRUCTIONS = parseInstructions(CORE_INSTRUCTIONS, BANNED_TERMS);
+
+const KNOWLEDGE_MAP = {
+  'Tiktok Hooks.txt': source('knowledge/Tiktok Hooks.txt'),
+  'Hooks and CTA Scripts for 2026.txt': source('knowledge/Hooks and CTA Scripts for 2026.txt'),
+  "Example Scripts for the 5 E's.txt": source("knowledge/Example Scripts for the 5 E's.txt"),
+  '60 Second Perfect Framework for Video Shorts.txt': source('knowledge/60 Second Perfect Framework for Video Shorts.txt'),
+  '_mini example script.txt': source('knowledge/_mini example script.txt'),
+  'Hook, Engage, and Influence - Your Essential Video Short Guide.txt': source('knowledge/Hook, Engage, and Influence - Your Essential Video Short Guide.txt'),
+  'Writing Examples For David Bee.txt': source('knowledge/Writing Examples For David Bee.txt'),
+  'David Bee Bio for Video ScriptGPT.txt': source('knowledge/David Bee Bio for Video ScriptGPT.txt')
 };
 
 // Bump this when the systemPrompt() template below changes in a way that alters
 // generation. The blueprint sources are hashed automatically; this tag covers
 // the wrapper the sources are assembled into, so the recorded prompt version
 // moves whenever the real prompt does. Developer I.89.
-const PROMPT_TEMPLATE_TAG = 'v1';
+const PROMPT_TEMPLATE_TAG = 'v2';
 const PROMPT_VERSION = promptVersion(
   CORE_INSTRUCTIONS,
-  MODE_SOURCES.bold,
-  MODE_SOURCES.mini,
-  MODE_SOURCES.rant,
+  PARSED_INSTRUCTIONS.globalText,
   PROMPT_TEMPLATE_TAG
 );
 
@@ -129,7 +134,7 @@ async function loadOwnedProject(token, projectId) {
   // A failure here is the database layer, not an application bug, and it is
   // tagged so the event says so. Developer H.74 to H.78: an operator must be
   // able to tell Supabase being down from DeepSeek being down from our code.
-  const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=eq.' + projectId + '&select=id,output,content_type&limit=1';
+  const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=eq.' + projectId + '&select=id,output,content_type,intake&limit=1';
   let rows;
   try {
     const response = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token } });
@@ -142,6 +147,31 @@ async function loadOwnedProject(token, projectId) {
     throw error;
   }
   return Array.isArray(rows) ? rows[0] || null : null;
+}
+
+async function updateProjectIntake(token, projectId, intake) {
+  if (!token || !projectId) return;
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 2500);
+    try {
+      await fetch(SUPABASE_URL + '/rest/v1/storysculpt_projects?id=eq.' + projectId, {
+        method: 'PATCH',
+        headers: {
+          apikey: SUPABASE_ANON_KEY,
+          Authorization: 'Bearer ' + token,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal'
+        },
+        body: JSON.stringify({ intake }),
+        signal: controller.signal
+      });
+    } finally {
+      clearTimeout(timeout);
+    }
+  } catch (_) {
+    // Non-blocking intake update
+  }
 }
 
 async function hasEeeAccess(req) {
@@ -159,26 +189,25 @@ async function hasEeeAccess(req) {
   return response.ok && await response.json().catch(() => false) === true;
 }
 
-function systemPrompt(mode) {
+export function systemPrompt(mode, stepLabel, stepText, referenceDocs) {
+  const effectiveLabel = stepLabel || (mode === 'bold' ? 'B1' : mode === 'mini' ? 'M1' : 'R1');
+  const effectiveStepText = stepText || PARSED_INSTRUCTIONS.steps[effectiveLabel] || '';
+  const currentStepBlock = effectiveStepText
+    ? `CURRENT STEP (follow exactly):\n${effectiveStepText}`
+    : '';
+
   return `You are StorySculpt, an interactive talking-head script interview inside Colorado Mastermind Studio.
 
-The active format is /${mode}. Follow only that format's process in the supplied instructions. Guide the member through one decision at a time. Preserve raw, rough, uncomfortable, funny, aggressive, or speculative details instead of sanding them down. Never invent testimonials, credentials, results, diagnoses, or exact quotations. You may infer motives, connective tissue, and plausible interpretations that strengthen the member's own material.
-
 INTERACTION CONTRACT:
-- Ask only the next question or present the next small set of choices. Do not dump the whole workflow on the member.
-- Read the complete conversation before deciding which step comes next. Never repeat a question already answered.
-- When offering directions or hooks, give exactly three concise options and end by asking the member to choose one, mix them, or request three more.
-- Do not write the final script before the format's required choices and story evidence are present.
-- When ready, return the finished title and continuous script prefixed with exactly FINAL SCRIPT:. Do not add an explanation after it.
 - For every intermediate response, prefix the response with exactly NEXT QUESTION:.
-- Write for the member's voice and facts. Source documents teach structure, not David Bee's biography or personal voice.
-- Never use an em dash. Not in questions, not in options, not in the finished script. Use a comma, a full stop, or a rewritten sentence instead. This applies to every format, not only /rant.
+- When ready, return the finished title and continuous script prefixed with exactly FINAL SCRIPT:. Do not add an explanation after it.
+- Never use an em dash. Not in questions, not in options, not in the finished script.
+- Never invent testimonials, credentials, results, diagnoses, or exact quotations.
 
 ESTABLISHED STORYSCULPT INSTRUCTIONS:
-${CORE_INSTRUCTIONS}
+${PARSED_INSTRUCTIONS.globalText}
 
-FORMAT REFERENCE MATERIAL:
-${MODE_SOURCES[mode]}`;
+${referenceDocs ? 'REFERENCE MATERIAL:\n' + referenceDocs + '\n\n' : ''}${currentStepBlock}`.trim();
 }
 
 // Everything the member supplied in this request: the context, the title, and
@@ -210,12 +239,13 @@ export function contractHistory(messages, intent) {
   });
 }
 
-async function callStorySculpt(input) {
+async function callStorySculpt(input, stepLabel, stepText, referenceDocs, retryDirective = null) {
   const apiKey = process.env.DEEPSEEK_API_KEY;
   if (!apiKey) throw new Error('StorySculpt generation is not configured.');
   const context = [
     input.projectTitle ? 'PROJECT TITLE: ' + input.projectTitle : '',
-    input.context ? 'MEMBER CONTEXT:\n' + input.context : ''
+    input.context ? 'MEMBER CONTEXT:\n' + input.context : '',
+    retryDirective ? 'IMPORTANT RETRY DIRECTIVE:\n' + retryDirective : ''
   ].filter(Boolean).join('\n\n');
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60000);
@@ -226,7 +256,7 @@ async function callStorySculpt(input) {
       body: JSON.stringify({
         model: 'deepseek-v4-pro',
         messages: [
-          { role: 'system', content: systemPrompt(input.mode) },
+          { role: 'system', content: systemPrompt(input.mode, stepLabel, stepText, referenceDocs) },
           ...(context ? [{ role: 'user', content: context }] : []),
           ...contractHistory(input.messages, input.intent)
         ],
@@ -304,15 +334,48 @@ export default async function handler(req, res) {
       return fail(409, 'Finish a script before asking for a revision.');
     }
 
+    // Safety pre-check: crisis or self-harm language skips generation
+    const userMessages = input.messages.filter(m => m.role === 'user');
+    const latestUserMessage = userMessages.length ? userMessages[userMessages.length - 1].content : '';
+    const crisis = detectCrisis(latestUserMessage);
+    if (crisis.tripped) {
+      await recordEvent(token, user.id, 'storysculpt_safety', buildEventDetail({
+        trace,
+        outcome: 'safety',
+        mode,
+        promptVersion: PROMPT_VERSION,
+        model: MODEL_VERSION,
+        category: crisis.category,
+        patternId: crisis.patternId
+      }));
+      return json(res, 200, {
+        final: false,
+        content: crisisResponse(user.name || ''),
+        promptVersion: PROMPT_VERSION,
+        model: MODEL_VERSION,
+        trace
+      });
+    }
+
     const allowed = await consumeQuota({ subject: 'user:' + user.id, endpoint: 'storysculpt', limit: 60, req, userId: user.id });
     if (!allowed) {
       await emit('denied', { failureClass: classifyFailure('quota') });
       return fail(429, 'StorySculpt needs a short pause before the next request.');
     }
 
+    const currentStepInDb = project.intake && project.intake.current_step;
+    const activeStep = resolveStep({
+      mode: input.mode,
+      intent: input.intent,
+      messages: input.messages,
+      currentStep: currentStepInDb
+    });
+    const stepText = PARSED_INSTRUCTIONS.steps[activeStep] || PARSED_INSTRUCTIONS.steps.R1;
+    const refDocs = getReferenceDocsForStep(activeStep, stepText, KNOWLEDGE_MAP);
+
     let result;
     try {
-      result = await callStorySculpt(input);
+      result = await callStorySculpt(input, activeStep, stepText, refDocs);
     } catch (error) {
       await emit('error', { failureClass: classifyFailure('generation', error) });
       const message = error && error.name === 'AbortError'
@@ -326,7 +389,7 @@ export default async function handler(req, res) {
     // Checked against the member's own material, so an invented testimonial or
     // credential in a finished script is refused and recorded, never returned.
     // WBR-005, 2026-10-03 evening order.
-    const verdict = classifyOutput(result.content, { source: memberSource(input) });
+    let verdict = classifyOutput(result.content, { source: memberSource(input) });
     if (!verdict.ok) {
       await emit('output_rejected', {
         failureClass: classifyFailure('output'),
@@ -340,6 +403,51 @@ export default async function handler(req, res) {
       });
     }
 
+    let detCheck = checkDeterministic({
+      content: result.content,
+      stepLabel: activeStep,
+      memberMessages: input.messages,
+      bannedTerms: BANNED_TERMS
+    });
+
+    if (!detCheck.ok) {
+      try {
+        const retryResult = await callStorySculpt(
+          input,
+          activeStep,
+          stepText,
+          refDocs,
+          `Previous draft failed check: ${detCheck.issue}. Fix this issue and strictly follow the step instructions.`
+        );
+        const retryVerdict = classifyOutput(retryResult.content, { source: memberSource(input) });
+        if (retryVerdict.ok) {
+          const retryDetCheck = checkDeterministic({
+            content: retryResult.content,
+            stepLabel: activeStep,
+            memberMessages: input.messages,
+            bannedTerms: BANNED_TERMS
+          });
+          if (retryDetCheck.ok) {
+            result = retryResult;
+            verdict = retryVerdict;
+            detCheck = retryDetCheck;
+          }
+        }
+      } catch (_) {}
+
+      if (!detCheck.ok) {
+        const fallback = stepFallbackMessage(activeStep, stepText);
+        result = {
+          content: fallback,
+          usage: result?.usage || null
+        };
+        verdict = classifyOutput(fallback, { source: memberSource(input) });
+      }
+    }
+
+    const updatedIntake = { ...(project.intake || {}), current_step: activeStep };
+    await updateProjectIntake(token, input.projectId, updatedIntake);
+
     await emit('generation', {
       failureClass: undefined,
       final: verdict.final,
@@ -349,7 +457,7 @@ export default async function handler(req, res) {
       contextChars: input.context.length,
       usage: result.usage
     });
-    return json(res, 200, { final: verdict.final, content: verdict.content, promptVersion: PROMPT_VERSION, model: MODEL_VERSION, trace });
+    return json(res, 200, { final: verdict.final, content: verdict.content, step: activeStep, promptVersion: PROMPT_VERSION, model: MODEL_VERSION, trace });
   } catch (error) {
     const failureClass = classifyFailure(error && error.stage === 'database' ? 'database' : 'internal', error);
     await emit('error', { failureClass });
