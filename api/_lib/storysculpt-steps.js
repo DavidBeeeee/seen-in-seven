@@ -65,37 +65,105 @@ export function parseInstructions(content, bannedTermsList = []) {
   return { globalText, steps };
 }
 
-export function resolveStep({ mode, intent, messages = [], currentStep = null }) {
+// ── Turns (WBR-436 repair, 2026-10-08) ──────────────────────────────────────
+//
+// David's file marks its own turn boundaries with "STOP and WAIT" / "WAIT"
+// lines, not with its step labels. B3 (draft) and B4.1-B4.2 (hooks) are one
+// turn ("In the same response as the B3 draft... show the draft, then...
+// generate 3 scroll-stopping hooks"), and B4.3-B4.4 is the next turn. The
+// first engine sent one label per turn, so Bold and Mini split a single
+// response across two turns. Each turn below is the file's own text between
+// two wait markers, byte for byte, plus the format's own preface line.
+const MODE_HEADERS = [
+  { mode: 'bold', re: /^\/Bold:/m },
+  { mode: 'mini', re: /^\/Mini:/m },
+  { mode: 'rant', re: /^\/Rant:/m },
+  { mode: 'fix', re: /^\/fix\s*$/m }
+];
+const WAIT_LINE = /^(?:STOP and WAIT|WAIT)\b.*$/;
+const LABEL_LINE = /^([BMRF]\d+(?:\.\d+)?)\b/;
+
+export function parseTurns(content) {
+  const text = String(content || '');
+  const firstFormat = text.search(/^\/Bold:/m);
+  const positions = MODE_HEADERS
+    .map(h => {
+      const sub = text.slice(Math.max(firstFormat, 0));
+      const idx = sub.search(h.re);
+      return { mode: h.mode, index: idx === -1 ? -1 : idx + Math.max(firstFormat, 0) };
+    })
+    .filter(p => p.index !== -1)
+    .sort((a, b) => a.index - b.index);
+  const modes = {};
+  positions.forEach((pos, i) => {
+    const block = text.slice(pos.index, i + 1 < positions.length ? positions[i + 1].index : text.length).trim();
+    const lines = block.split('\n');
+    const firstLabel = lines.findIndex(line => LABEL_LINE.test(line.trim()));
+    const preface = (firstLabel === -1 ? lines : lines.slice(0, firstLabel)).join('\n').trim();
+    const body = firstLabel === -1 ? [] : lines.slice(firstLabel);
+    const turns = [];
+    let current = [];
+    const flush = () => {
+      const chunk = current.join('\n').trim();
+      current = [];
+      if (!chunk) return;
+      const label = (chunk.split('\n').map(l => l.trim()).find(l => LABEL_LINE.test(l)) || '').match(LABEL_LINE);
+      turns.push({ label: label ? label[1] : 'T' + (turns.length + 1), text: chunk });
+    };
+    for (const line of body) {
+      current.push(line);
+      if (WAIT_LINE.test(line.trim())) flush();
+    }
+    flush();
+    modes[pos.mode] = { preface, turns };
+  });
+  return modes;
+}
+
+// Is the member asking to change what is on screen rather than moving on?
+const REVISE = /\b(revise|rewrite|re-write|redo|regenerate|try again|another (?:option|version|set|round)|(?:three|3) more|more options|different (?:ones|options|hooks|versions)|change (?:this|that|it|the|some|a|my)|keep what works|make it (?:more|less|shorter|longer)|can you (?:change|make|fix|tweak|adjust|rework)|tweak|adjust|rework|fix (?:the|this|it))\b/i;
+
+export function isRevisionRequest(text) {
+  const clean = String(text || '').trim();
+  if (!clean) return false;
+  if (/^(?:option\s*)?#?\d\b/i.test(clean) && clean.length < 40) return false;
+  return REVISE.test(clean);
+}
+
+function turnIndexFor(turns, label) {
+  if (!label) return -1;
+  const exact = turns.findIndex(t => t.label === label);
+  if (exact !== -1) return exact;
+  // Older projects stored one label per step (for example "B4"); map it to the
+  // turn that contains that label's text.
+  return turns.findIndex(t => new RegExp(`(^|\\n)${label.replace('.', '\\.')}[.:\\s]`).test(t.text));
+}
+
+export function resolveStep({ mode, intent, messages = [], currentStep = null, turns = null }) {
   if (intent === 'refine') return 'F1';
 
   const userMessages = messages.filter(m => m.role === 'user');
   const lastUserMsg = (userMessages.length ? userMessages[userMessages.length - 1].content : '').trim();
-
   if (/^\s*\/fix\b/i.test(lastUserMsg)) return 'F1';
 
-  if (/skip to (?:the )?hook/i.test(lastUserMsg)) {
-    if (mode === 'rant') return 'R6';
-    if (mode === 'bold') return 'B4';
-    if (mode === 'mini') return 'M4';
+  const sequence = turns
+    ? turns.map(t => t.label)
+    : (MODE_STEPS[mode] || MODE_STEPS.rant);
+  const hookTurn = { rant: 'R6', bold: turns ? 'B3' : 'B4', mini: turns ? 'M3' : 'M4' }[mode];
+  if (/skip to (?:the )?hooks?/i.test(lastUserMsg) && hookTurn) return hookTurn;
+
+  const currentIdx = turns ? turnIndexFor(turns, currentStep) : sequence.indexOf(currentStep);
+  if (currentIdx !== -1) {
+    if (isRevisionRequest(lastUserMsg)) return sequence[currentIdx];
+    return sequence[Math.min(currentIdx + 1, sequence.length - 1)];
   }
 
-  if (/^(?:revise this|revise|try again|redo|redo this|another option)\b/i.test(lastUserMsg) || lastUserMsg.toLowerCase().includes('revise this')) {
-    if (currentStep) return currentStep;
-  }
-
-  const sequence = MODE_STEPS[mode] || MODE_STEPS.rant;
-  if (currentStep) {
-    const idx = sequence.indexOf(currentStep);
-    if (idx !== -1) {
-      if (idx < sequence.length - 1) return sequence[idx + 1];
-      return sequence[idx];
-    }
-  }
-
+  // No stored position (older projects, or a save that lost it): the browser
+  // shows the first turn's question itself, so each assistant reply already in
+  // the thread is one turn done.
   const assistantCount = messages.filter(m => m.role === 'assistant').length;
-  if (assistantCount === 0) return sequence[0];
-  if (assistantCount === 1) return sequence[1] || sequence[0];
-  const targetIdx = Math.min(assistantCount, sequence.length - 1);
+  const targetIdx = Math.min(Math.max(assistantCount, 0), sequence.length - 1);
+  if (assistantCount > 0 && isRevisionRequest(lastUserMsg)) return sequence[Math.max(targetIdx - 1, 0)];
   return sequence[targetIdx];
 }
 
@@ -185,20 +253,34 @@ export function extractStems(text) {
   return stems;
 }
 
+const OPTION_START = /^(?:\d+\s*[.):-]|[-*\u2022]\s|option\s*\d+\s*[:.)-]?|level\s+(?:one|two|three|\d+)\s*[:.)-]?|hook\s*\d+\s*[:.)-]?)\s*/i;
+
+function normaliseOptionLine(line) {
+  return String(line || '')
+    .replace(/\*\*/g, '')
+    .replace(/^#+\s*/, '')
+    .replace(/^[>"\u201c\u2018']+/, '')
+    .trim();
+}
+
 export function extractOptions(text) {
-  const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
+  const lines = String(text || '').split('\n').map(normaliseOptionLine).filter(Boolean);
   const options = [];
   let currentOption = '';
   for (const line of lines) {
-    if (/^(?:(?:\d+[\.\)]|[-*•]|option\s+\d+:?|level\s+(?:one|two|three|\d+):?|hook\s+\d+:?))\s+/i.test(line)) {
+    if (OPTION_START.test(line)) {
       if (currentOption) options.push(currentOption);
       currentOption = line;
-    } else if (currentOption) {
+    } else if (currentOption && !/[?]\s*$/.test(line)) {
       currentOption += ' ' + line;
+    } else if (currentOption) {
+      options.push(currentOption);
+      currentOption = '';
     }
   }
   if (currentOption) options.push(currentOption);
-  return options;
+  // The spoken option, without its "1." / "Level One:" marker.
+  return options.map(option => option.replace(OPTION_START, '').replace(OPTION_START, '').replace(/^["\u201c]|["\u201d]$/g, '').trim()).filter(Boolean);
 }
 
 export function checkBannedTerms(text, bannedTerms = []) {
@@ -213,22 +295,57 @@ export function checkBannedTerms(text, bannedTerms = []) {
   return { ok: true };
 }
 
-export function checkHookEvidence(hookOptions, memberMessages = []) {
-  const memberText = memberMessages
-    .filter(m => m.role === 'user')
-    .map(m => m.content)
-    .join(' ');
-  const evidenceStems = extractStems(memberText);
+// Everyday words that carry no evidence. R6: "Treat the member's raw text as the
+// Evidence and the hook as the Verdict. If a hook contains words from the
+// evidence, you have failed." The evidence is the raw text the member typed at
+// R1, not every reply in the chat ("go for the hook" is not evidence), and the
+// words that matter are the distinctive ones: "montage", "clone", "rejection",
+// not "good" or "people".
+const COMMON = new Set([
+  'just', 'like', 'really', 'thing', 'things', 'want', 'need', 'know', 'think', 'make', 'made', 'good', 'well', 'even',
+  'still', 'much', 'many', 'every', 'thing', 'people', 'time', 'times', 'work', 'will', 'also', 'back', 'want', 'going',
+  'gonna', 'yeah', 'okay', 'something', 'anything', 'everything', 'nothing', 'someone', 'everyone', 'anyone', 'way',
+  'ways', 'same', 'different', 'most', 'more', 'less', 'right', 'part', 'kind', 'sort', 'stuff', 'into', 'than',
+  'then', 'when', 'what', 'with', 'without', 'from', 'that', 'this', 'they', 'them', 'there', 'their', 'have', 'been',
+  'being', 'doing', 'does', 'done', 'said', 'says', 'tell', 'telling', 'get', 'gets', 'getting', 'got', 'take', 'come',
+  'look', 'feel', 'feels', 'felt', 'year', 'years', 'day', 'days', 'life', 'real', 'actually', 'probably', 'maybe'
+].map(stem));
 
-  for (const opt of hookOptions) {
-    const optStems = extractStems(opt);
-    for (const s of optStems) {
-      if (evidenceStems.has(s)) {
-        return { ok: false, issue: `hook-contains-evidence-stem: "${s}" in option: "${opt}"` };
-      }
-    }
+export function evidenceText(memberMessages = []) {
+  const first = memberMessages.find(m => m.role === 'user');
+  return first ? String(first.content || '') : '';
+}
+
+export function evidenceWords(memberMessages = []) {
+  const words = evidenceText(memberMessages).toLowerCase().replace(/[^\w\s'-]/g, ' ').split(/\s+/).filter(Boolean);
+  const out = new Map();
+  for (const word of words) {
+    const clean = word.replace(/[^a-z]/g, '');
+    if (clean.length < 4 || STOPWORDS.has(word)) continue;
+    const st = stem(clean);
+    if (st.length < 3 || COMMON.has(st)) continue;
+    if (!out.has(st)) out.set(st, clean);
   }
-  return { ok: true };
+  return out;
+}
+
+export function hookEvidenceViolations(hookOptions, memberMessages = []) {
+  const evidence = evidenceWords(memberMessages);
+  return hookOptions.map(opt => {
+    const hits = [];
+    for (const word of String(opt).toLowerCase().replace(/[^\w\s'-]/g, ' ').split(/\s+/)) {
+      const st = stem(word.replace(/[^a-z]/g, ''));
+      if (evidence.has(st) && !hits.includes(evidence.get(st))) hits.push(evidence.get(st));
+    }
+    return hits;
+  });
+}
+
+export function checkHookEvidence(hookOptions, memberMessages = []) {
+  const violations = hookEvidenceViolations(hookOptions, memberMessages);
+  const index = violations.findIndex(v => v.length);
+  if (index === -1) return { ok: true };
+  return { ok: false, issue: `hook-contains-evidence-stem: "${violations[index][0]}"`, words: [...new Set(violations.flat())], badOptions: violations.filter(v => v.length).length };
 }
 
 export function checkR7Shape(text) {
@@ -263,33 +380,38 @@ export function checkGenericYou(scriptText) {
   return { ok: true };
 }
 
-export function checkDeterministic({ content, stepLabel, memberMessages = [], bannedTerms = [] }) {
-  const SCRIPT_AND_HOOK_STEPS = new Set(['B5', 'M5', 'R6', 'R7', 'R8', 'R9', 'F1']);
-  if (/^FINAL SCRIPT:/i.test(content) || SCRIPT_AND_HOOK_STEPS.has(stepLabel)) {
+// What a turn's own text asks for, read from the file rather than a label list,
+// so an edit to instructions.txt moves the checks with it.
+export function turnKind(stepLabel, turnText = '') {
+  const t = String(turnText);
+  return {
+    hooks: /\bhooks?\b/i.test(t) && /\b(generate|rewrite)\b/i.test(t) && !/open loop sentences/i.test(t),
+    evidenceRule: /words from the evidence/i.test(t),
+    escalation: /increasingly extreme/i.test(t),
+    threeOptions: /\b(?:3|three)\b[^\n]*(?:hooks|open loop|directions|angles|options|lessons)/i.test(t) || /increasingly extreme/i.test(t),
+    final: /^[BMR]\d+:\s*Output the full script/m.test(t) || stepLabel === 'F1',
+    question: /\bask\b/i.test(t) && !/\b(draft|generate|rewrite|output|identify 3)\b/i.test(t)
+  };
+}
+
+export function checkDeterministic({ content, stepLabel, turnText = '', memberMessages = [], bannedTerms = [] }) {
+  const kind = turnKind(stepLabel, turnText);
+  const isFinal = /^FINAL SCRIPT:/i.test(content) || kind.final;
+  if (isFinal || kind.hooks || kind.threeOptions) {
     const bannedCheck = checkBannedTerms(content, bannedTerms);
     if (!bannedCheck.ok) return bannedCheck;
   }
 
-  if (stepLabel === 'R6' || stepLabel === 'R7') {
+  if (kind.threeOptions && !isFinal) {
     const options = extractOptions(content);
-    if (options.length > 0) {
-      const evidenceCheck = checkHookEvidence(options, memberMessages);
+    if (options.length < 3) return { ok: false, issue: 'three-options: step requires 3 options, found ' + options.length };
+    if (kind.evidenceRule || kind.escalation) {
+      const evidenceCheck = checkHookEvidence(options.slice(-3), memberMessages);
       if (!evidenceCheck.ok) return evidenceCheck;
     }
   }
 
-  if (stepLabel === 'R7') {
-    const shapeCheck = checkR7Shape(content);
-    if (!shapeCheck.ok) return shapeCheck;
-  }
-
-  const THREE_OPTION_STEPS = new Set(['B2', 'B4', 'M4', 'R6', 'R7', 'R8']);
-  if (THREE_OPTION_STEPS.has(stepLabel) && !/^FINAL SCRIPT:/i.test(content)) {
-    const threeCheck = checkThreeOptions(content);
-    if (!threeCheck.ok) return threeCheck;
-  }
-
-  if (/^FINAL SCRIPT:/i.test(content) || stepLabel === 'B5' || stepLabel === 'M5' || stepLabel === 'R9' || stepLabel === 'F1') {
+  if (isFinal) {
     const genericYouCheck = checkGenericYou(content);
     if (!genericYouCheck.ok) return genericYouCheck;
   }
@@ -297,23 +419,15 @@ export function checkDeterministic({ content, stepLabel, memberMessages = [], ba
   return { ok: true };
 }
 
+// Last resort after the retries. A step that asks the member to choose must
+// never arrive without the choices: show the best attempt rather than a bare
+// question (2026-10-08 17:47: "which of these 3 hooks" with no hooks).
 export function stepFallbackMessage(stepLabel, stepText, rawDraft = null) {
-  if (rawDraft && (stepLabel === 'R6' || stepLabel === 'R7' || stepLabel === 'B4' || stepLabel === 'M4')) {
-    const options = extractOptions(rawDraft);
-    if (options.length >= 2) {
-      const cleanDraft = rawDraft.replace(/^(FINAL SCRIPT:|NEXT QUESTION:)\s*/i, '').trim();
-      return `NEXT QUESTION: ${cleanDraft}\n\n(Note: Choose one of these options, or let me know how you would like to adjust them.)`;
-    }
-  }
-  let question = '';
-  const askMatch = stepText.match(/Ask:?\s*"([^"]+)"/i) || stepText.match(/Ask:?\s*([^\n]+)/i);
-  if (askMatch) {
-    question = askMatch[1].trim();
-  } else {
-    const lines = stepText.split('\n').filter(l => l.trim() && !l.startsWith('STOP') && !l.startsWith('WAIT'));
-    question = lines.slice(1, 3).join(' ').trim();
-  }
-  return `NEXT QUESTION: ${question}\n\n(Note: I had trouble shaping the options for this step. Please share your preference or let me know how you would like to proceed.)`;
+  const cleanDraft = String(rawDraft || '').replace(/^(FINAL SCRIPT:|NEXT QUESTION:)\s*/i, '').trim();
+  if (cleanDraft) return `NEXT QUESTION: ${cleanDraft}`;
+  const askMatch = String(stepText).match(/Ask:?\s*"([^"]+)"/i);
+  const question = askMatch ? askMatch[1].trim() : 'Could you say a little more so I can take the next step?';
+  return `NEXT QUESTION: ${question}`;
 }
 
 export const CRISIS_PATTERNS = [

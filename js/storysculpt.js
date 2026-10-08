@@ -515,7 +515,8 @@ async function saveActiveStory(message) {
     intake: {
       context: storyEl('story-context').value.trim(),
       versions: (activeStory.intake && activeStory.intake.versions) || [],
-      filmed: Boolean(activeStory.intake && activeStory.intake.filmed)
+      filmed: Boolean(activeStory.intake && activeStory.intake.filmed),
+      ...(activeStory.intake && activeStory.intake.current_step ? { current_step: activeStory.intake.current_step } : {})
     },
     conversation: activeStory.conversation || [],
     output: activeStory.output || null,
@@ -596,6 +597,9 @@ async function runGeneration(intent = 'interview') {
   if (!response.ok) throw new Error(data.error || 'StorySculpt could not complete this step.');
   if (data.final) activeStory.output = data.content;
   else activeStory.conversation.push({ role: 'assistant', content: data.content });
+  // Keep the server's position in David's steps. The save below rewrites the
+  // whole intake, and until 2026-10-08 it dropped current_step every turn.
+  if (data.step) activeStory.intake = Object.assign({}, activeStory.intake, { current_step: data.step });
   try {
     await saveActiveStory(data.final ? 'Finished draft saved' : null);
   } catch (error) {

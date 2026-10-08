@@ -13,8 +13,10 @@ import {
 import {
   extractBannedTerms,
   parseInstructions,
+  parseTurns,
   resolveStep,
-  getReferenceDocsForStep,
+  turnKind,
+  evidenceWords,
   checkDeterministic,
   stepFallbackMessage,
   detectCrisis,
@@ -40,6 +42,8 @@ const CORE_INSTRUCTIONS = source('instructions.txt');
 const BLUEPRINTS = readFileSync(join(process.cwd(), 'api', '_lib', 'blueprints.txt'), 'utf8');
 const BANNED_TERMS = extractBannedTerms(BLUEPRINTS);
 const PARSED_INSTRUCTIONS = parseInstructions(CORE_INSTRUCTIONS, BANNED_TERMS);
+// The file's own turns, cut at its STOP and WAIT lines. WBR-436 repair.
+const TURNS = parseTurns(CORE_INSTRUCTIONS);
 
 const KNOWLEDGE_MAP = {
   'Tiktok Hooks.txt': source('knowledge/Tiktok Hooks.txt'),
@@ -52,11 +56,47 @@ const KNOWLEDGE_MAP = {
   'David Bee Bio for Video ScriptGPT.txt': source('knowledge/David Bee Bio for Video ScriptGPT.txt')
 };
 
+// The reference set each format always had before the step engine. A turn that
+// drafts, writes hooks, escalates or revises gets its format's full set; a turn
+// that only asks a question gets just the documents its own text names.
+const MODE_REFERENCE_SETS = {
+  bold: ['Tiktok Hooks.txt', 'Hooks and CTA Scripts for 2026.txt', "Example Scripts for the 5 E's.txt"],
+  mini: ['60 Second Perfect Framework for Video Shorts.txt', '_mini example script.txt', 'Hooks and CTA Scripts for 2026.txt'],
+  rant: ['Tiktok Hooks.txt', "Example Scripts for the 5 E's.txt", 'Hooks and CTA Scripts for 2026.txt']
+};
+
+const NAMED_DOCUMENTS = [
+  ['Hooks and CTA Scripts for 2026', 'Hooks and CTA Scripts for 2026.txt'],
+  ['_mini example script', '_mini example script.txt'],
+  ['mini-webinar framework', '60 Second Perfect Framework for Video Shorts.txt'],
+  ['60 Second Perfect Framework', '60 Second Perfect Framework for Video Shorts.txt'],
+  ["5 E's", "Example Scripts for the 5 E's.txt"],
+  ['Tiktok Hooks', 'Tiktok Hooks.txt'],
+  ['Hook, Engage, and Influence', 'Hook, Engage, and Influence - Your Essential Video Short Guide.txt'],
+  ['Writing Examples For David Bee', 'Writing Examples For David Bee.txt']
+];
+
+export function referenceDocsForTurn(mode, turn) {
+  const text = String(turn && turn.text || '');
+  const names = [];
+  for (const [phrase, file] of NAMED_DOCUMENTS) if (text.includes(phrase) && !names.includes(file)) names.push(file);
+  const kind = turnKind(turn && turn.label, text);
+  if (!kind.question) {
+    for (const file of (MODE_REFERENCE_SETS[mode] || MODE_REFERENCE_SETS.rant)) if (!names.includes(file)) names.push(file);
+  }
+  return names.map(name => KNOWLEDGE_MAP[name]).filter(Boolean).join('\n\n');
+}
+
+export function turnFor(mode, label) {
+  const modeTurns = (TURNS[label === 'F1' ? 'fix' : mode] || TURNS.rant).turns;
+  return modeTurns.find(t => t.label === label) || modeTurns[0];
+}
+
 // Bump this when the systemPrompt() template below changes in a way that alters
 // generation. The blueprint sources are hashed automatically; this tag covers
 // the wrapper the sources are assembled into, so the recorded prompt version
 // moves whenever the real prompt does. Developer I.89.
-const PROMPT_TEMPLATE_TAG = 'v2';
+const PROMPT_TEMPLATE_TAG = 'v3';
 const PROMPT_VERSION = promptVersion(
   CORE_INSTRUCTIONS,
   PARSED_INSTRUCTIONS.globalText,
@@ -191,9 +231,10 @@ async function hasEeeAccess(req) {
 
 export function systemPrompt(mode, stepLabel, stepText, referenceDocs) {
   const effectiveLabel = stepLabel || (mode === 'bold' ? 'B1' : mode === 'mini' ? 'M1' : 'R1');
-  const effectiveStepText = stepText || PARSED_INSTRUCTIONS.steps[effectiveLabel] || '';
+  const effectiveStepText = stepText || (turnFor(mode, effectiveLabel) || {}).text || PARSED_INSTRUCTIONS.steps[effectiveLabel] || '';
+  const preface = (TURNS[effectiveLabel === 'F1' ? 'fix' : mode] || {}).preface || '';
   const currentStepBlock = effectiveStepText
-    ? `CURRENT STEP (follow exactly):\n${effectiveStepText}`
+    ? `${preface ? preface + '\n\n' : ''}CURRENT STEP (follow exactly):\n${effectiveStepText}`
     : '';
 
   return `You are StorySculpt, an interactive talking-head script interview inside Colorado Mastermind Studio.
@@ -208,6 +249,35 @@ ESTABLISHED STORYSCULPT INSTRUCTIONS:
 ${PARSED_INSTRUCTIONS.globalText}
 
 ${referenceDocs ? 'REFERENCE MATERIAL:\n' + referenceDocs + '\n\n' : ''}${currentStepBlock}`.trim();
+}
+
+// The binding instruction for this turn, sent as the LAST message, after the
+// conversation. When it sat only in the system prompt, DeepSeek followed the
+// conversation's momentum instead: on 2026-10-08 the server sent R3 ("How long
+// do you want the final video to be?") and R4 (the 5 E's) and the model asked
+// its own questions both times.
+export function stepDirective(mode, stepLabel, stepText, memberMessages = []) {
+  const kind = turnKind(stepLabel, stepText);
+  const lines = [
+    'STORYSCULPT STEP INSTRUCTION. This comes from the app, not from the member. The member\'s latest reply is the message before this one.',
+    `Do this step now, exactly as written below, and do nothing that belongs to any other step. Use the member's answers above as the material.`,
+    '',
+    stepText
+  ];
+  if (kind.evidenceRule || kind.escalation) {
+    const words = [...evidenceWords(memberMessages).values()];
+    if (words.length) {
+      lines.push('', 'EVIDENCE WORDS (the member\'s raw text). No option may contain any of these words or a form of them: ' + words.join(', ') + '.');
+    }
+  }
+  if (kind.threeOptions && !kind.final) {
+    lines.push('', 'Number the three options 1., 2. and 3., each on its own line.');
+  }
+  lines.push('', 'Use none of the BANNED WORDS listed in the instructions above, in any form, even where the member used them.');
+  lines.push('', kind.final
+    ? 'Begin your reply with exactly FINAL SCRIPT:'
+    : 'Begin your reply with exactly NEXT QUESTION:');
+  return lines.join('\n');
 }
 
 // Everything the member supplied in this request: the context, the title, and
@@ -240,12 +310,12 @@ export function contractHistory(messages, intent) {
 }
 
 async function callStorySculpt(input, stepLabel, stepText, referenceDocs, retryDirective = null) {
+  const kind = turnKind(stepLabel, stepText);
   const apiKey = process.env.DEEPSEEK_API_KEY;
   if (!apiKey) throw new Error('StorySculpt generation is not configured.');
   const context = [
     input.projectTitle ? 'PROJECT TITLE: ' + input.projectTitle : '',
     input.context ? 'MEMBER CONTEXT:\n' + input.context : '',
-    retryDirective ? 'IMPORTANT RETRY DIRECTIVE:\n' + retryDirective : ''
   ].filter(Boolean).join('\n\n');
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60000);
@@ -258,11 +328,13 @@ async function callStorySculpt(input, stepLabel, stepText, referenceDocs, retryD
         messages: [
           { role: 'system', content: systemPrompt(input.mode, stepLabel, stepText, referenceDocs) },
           ...(context ? [{ role: 'user', content: context }] : []),
-          ...contractHistory(input.messages, input.intent)
+          ...contractHistory(input.messages, input.intent),
+          { role: 'user', content: stepDirective(input.mode, stepLabel, stepText, input.messages) + (retryDirective ? '\n\nRETRY: ' + retryDirective : '') }
         ],
         max_tokens: 1900,
         thinking: { type: 'disabled' },
-        temperature: 0.86
+        // A turn that only asks David's fixed question needs fidelity, not flair.
+        temperature: kind.question ? 0.4 : 0.86
       }),
       signal: controller.signal
     });
@@ -274,6 +346,15 @@ async function callStorySculpt(input, stepLabel, stepText, referenceDocs, retryD
   } finally {
     clearTimeout(timeout);
   }
+}
+
+// Lower is better: 0 passes. For hook steps, the number of options that reuse
+// the member's words, so the least-bad attempt wins.
+function failureScore(content, check) {
+  if (check.ok) return 0;
+  if (String(check.issue || '').startsWith('hook-contains-evidence-stem')) return 1 + (check.badOptions || 1);
+  if (String(check.issue || '').startsWith('three-options')) return 10;
+  return 5;
 }
 
 export default async function handler(req, res) {
@@ -368,10 +449,13 @@ export default async function handler(req, res) {
       mode: input.mode,
       intent: input.intent,
       messages: input.messages,
-      currentStep: currentStepInDb
+      currentStep: currentStepInDb,
+      turns: (TURNS[input.mode] || TURNS.rant).turns
     });
-    const stepText = PARSED_INSTRUCTIONS.steps[activeStep] || PARSED_INSTRUCTIONS.steps.R1;
-    const refDocs = getReferenceDocsForStep(activeStep, stepText, KNOWLEDGE_MAP);
+    const activeTurn = turnFor(input.mode, activeStep);
+    const stepText = activeTurn.text;
+    const refDocs = referenceDocsForTurn(input.mode, activeTurn);
+    const stepLog = { step: activeStep, stepSource: currentStepInDb ? 'stored' : 'counted', attempts: 1 };
 
     let result;
     try {
@@ -403,60 +487,55 @@ export default async function handler(req, res) {
       });
     }
 
-    let detCheck = checkDeterministic({
-      content: result.content,
+    const checkArgs = (content) => ({
+      content,
       stepLabel: activeStep,
+      turnText: stepText,
       memberMessages: input.messages,
       bannedTerms: BANNED_TERMS
     });
+    let detCheck = checkDeterministic(checkArgs(result.content));
+
+    // Up to two retries, each told exactly what failed (for hooks, the member's
+    // own words it used). Keep the attempt with the fewest failures, so a choice
+    // step never arrives empty.
+    let best = { result, verdict, detCheck, score: failureScore(result.content, detCheck) };
+    for (let retry = 0; retry < 2 && !detCheck.ok; retry++) {
+      stepLog.attempts++;
+      try {
+        let retryDirective = `The previous reply failed the check "${String(detCheck.issue || '').split(':')[0]}". ${detCheck.issue}. Write this step again and fix that.`;
+        if (detCheck.words && detCheck.words.length) {
+          retryDirective += ` It reused the member's words: ${detCheck.words.join(', ')}. Replace them with fresh Metaphorical Bridge imagery.`;
+        }
+        const retryResult = await callStorySculpt(input, activeStep, stepText, refDocs, retryDirective);
+        const retryVerdict = classifyOutput(retryResult.content, { source: memberSource(input) });
+        if (!retryVerdict.ok) continue;
+        const retryDetCheck = checkDeterministic(checkArgs(retryResult.content));
+        const score = failureScore(retryResult.content, retryDetCheck);
+        if (score < best.score) best = { result: retryResult, verdict: retryVerdict, detCheck: retryDetCheck, score };
+        result = retryResult;
+        verdict = retryVerdict;
+        detCheck = retryDetCheck;
+      } catch (_) {
+        break;
+      }
+    }
+    if (!detCheck.ok) {
+      ({ result, verdict, detCheck } = best);
+      stepLog.checkFailed = String(detCheck.issue || '').split(':')[0];
+    }
 
     if (!detCheck.ok) {
-      try {
-        let retryDirective = `Previous draft failed check: ${detCheck.issue}. Fix this issue and strictly follow the step instructions.`;
-        if (detCheck.issue && detCheck.issue.startsWith('hook-contains-evidence-stem')) {
-          retryDirective += ' You MUST NOT reuse any words or stems from the member messages. Create completely fresh metaphorical hooks.';
+      if (activeStep === 'F1' || /^FINAL SCRIPT:/i.test(result.content)) {
+        // A finished script that still trips a style check is shipped as is
+        // (and logged) rather than lost; the member can refine it.
+        if (!verdict.ok) {
+          verdict = { ok: true, final: true, content: result.content.replace(/^FINAL SCRIPT:\s*/i, '').trim() };
         }
-        const retryResult = await callStorySculpt(
-          input,
-          activeStep,
-          stepText,
-          refDocs,
-          retryDirective
-        );
-        const retryVerdict = classifyOutput(retryResult.content, { source: memberSource(input) });
-        if (retryVerdict.ok) {
-          const retryDetCheck = checkDeterministic({
-            content: retryResult.content,
-            stepLabel: activeStep,
-            memberMessages: input.messages,
-            bannedTerms: BANNED_TERMS
-          });
-          if (retryDetCheck.ok) {
-            result = retryResult;
-            verdict = retryVerdict;
-            detCheck = retryDetCheck;
-          }
-        }
-      } catch (_) {}
-
-      if (!detCheck.ok) {
-        if (activeStep === 'F1' || /^FINAL SCRIPT:/i.test(result.content)) {
-          let scriptContent = result.content;
-          if (!/^FINAL SCRIPT:/i.test(scriptContent)) {
-            scriptContent = 'FINAL SCRIPT:\n' + scriptContent;
-          }
-          verdict = classifyOutput(scriptContent, { source: memberSource(input) });
-          if (!verdict.ok) {
-            verdict = { ok: true, final: true, content: scriptContent.replace(/^FINAL SCRIPT:\s*/i, '').trim() };
-          }
-        } else {
-          const fallback = stepFallbackMessage(activeStep, stepText, result.content);
-          result = {
-            content: fallback,
-            usage: result?.usage || null
-          };
-          verdict = classifyOutput(fallback, { source: memberSource(input) });
-        }
+      } else if (!verdict.ok || !String(verdict.content || '').trim()) {
+        const fallback = stepFallbackMessage(activeStep, stepText, result.content);
+        stepLog.fallback = true;
+        verdict = classifyOutput(fallback, { source: memberSource(input) });
       }
     }
 
@@ -464,6 +543,7 @@ export default async function handler(req, res) {
     await updateProjectIntake(token, input.projectId, updatedIntake);
 
     await emit('generation', {
+      ...stepLog,
       failureClass: undefined,
       final: verdict.final,
       sanitized: verdict.sanitized,
