@@ -1,5 +1,34 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
+import { hubScoreSummary } from '../api/workerbee.js';
+import vm from 'node:vm';
+
+const scoreProjection = hubScoreSummary({ journal: [{ body: 'private' }], clients: [{ name: 'private' }], updates: [{ metadata: { momentum_hub_artifact: { apps: [
+  { key: 'storysculpt', lastScoredAt: '2026-10-08T11:45:00Z', lastScore: { PASS: 104, PART: 143, FAIL: 42, 'N/A': 11 }, privateNote: 'private' },
+  { key: 'nsn', lastScore: { PASS: 999 } }, { key: 'unrelated', lastScore: {} }
+] } } }] });
+assert.equal(scoreProjection.apps.length, 2);
+assert.equal(scoreProjection.apps[0].tally.PASS, 104);
+assert.equal(scoreProjection.apps[1].tally, null);
+assert.doesNotMatch(JSON.stringify(scoreProjection), /private|unrelated|journal|clients/);
+assert.deepEqual(hubScoreSummary({}), { apps: [] });
+
+const scoreLines = [];
+let scoreFetches = 0;
+const homeContext = vm.createContext({ Intl, Date, EEEStudio: { initialize() {} },
+  document: { querySelector: () => ({ closest: () => ({ appendChild: (node) => scoreLines.push(node) }) }), createElement: () => ({ setAttribute() {} }) },
+  fetch: async () => { scoreFetches++; return { ok: true, json: async () => ({ apps: scoreProjection.apps }) }; }
+});
+vm.runInContext(fs.readFileSync(new URL('../js/eee.js', import.meta.url), 'utf8'), homeContext);
+await homeContext.renderHubScoreDates({ is_admin: false }, {});
+assert.equal(scoreFetches, 0, 'Member home must not fetch private audit data.');
+await homeContext.renderHubScoreDates({ is_admin: true }, { access_token: 'fixture-only' });
+assert.equal(scoreLines.length, 4);
+assert.match(scoreLines[0].textContent, /Oct 8, 2026: 104 pass, 143 partial, 42 fail, 11 N\/A/);
+assert.match(scoreLines[1].textContent, /no verified published score/);
+homeContext.fetch = async () => ({ ok: false });
+await homeContext.renderHubScoreDates({ is_admin: true }, { access_token: 'fixture-only' });
+assert.match(scoreLines[4].textContent, /audit unavailable/);
 
 const read = path => fs.readFileSync(new URL('../' + path, import.meta.url), 'utf8');
 const migration = read('supabase_migrations/2026-08-10-add-private-workerbee-studio.sql');

@@ -210,6 +210,17 @@ function compactChatGPTState(result) {
   };
 }
 
+export function hubScoreSummary(result) {
+  const artifact = (result.updates || []).find((row) => row.metadata?.momentum_hub_artifact)?.metadata.momentum_hub_artifact;
+  const allowed = new Set(['storysculpt', 'nsn', 'boardroom', 'certainty']);
+  return { apps: (artifact?.apps || []).filter((app) => allowed.has(app.key)).map((app) => {
+    const values = ['PASS', 'PART', 'FAIL', 'N/A'].map((key) => app.lastScore?.[key]);
+    const valid = values.every((n) => Number.isInteger(n) && n >= 0) && values.reduce((a, b) => a + b, 0) === 300;
+    return { key: app.key, lastScoredAt: app.lastScoredAt || null,
+      tally: valid ? Object.fromEntries(['PASS', 'PART', 'FAIL', 'N/A'].map((key, i) => [key, values[i]])) : null };
+  }) };
+}
+
 export default async function handler(req, res) {
   if (!['GET', 'POST'].includes(req.method)) return json(res, 405, { error: 'Method not allowed.' });
   const auth = await authorize(req);
@@ -217,6 +228,10 @@ export default async function handler(req, res) {
   try {
     if (req.method === 'GET') {
       const result = await rpc('workerbee_bootstrap', { p_server_secret: auth.serverSecret }, auth.token);
+      // Same admin authorization, only four score summaries cross the wire.
+      // Never send private client plans, journal entries, or the 1,200 rows to
+      // a Hub home card. Morning's normal publication keeps this source fresh.
+      if (req.query?.view === 'hub-scores') return json(res, 200, hubScoreSummary(result));
       return json(res, 200, auth.compact ? compactChatGPTState(result) : result);
     }
     const body = req.body && typeof req.body === 'object' ? req.body : {};
