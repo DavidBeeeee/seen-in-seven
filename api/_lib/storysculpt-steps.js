@@ -390,8 +390,35 @@ export function turnKind(stepLabel, turnText = '') {
     escalation: /increasingly extreme/i.test(t),
     threeOptions: /\b(?:3|three)\b[^\n]*(?:hooks|open loop|directions|angles|options|lessons)/i.test(t) || /increasingly extreme/i.test(t),
     final: /^[BMR]\d+:\s*Output the full script/m.test(t) || stepLabel === 'F1',
+    draft: /Script Draft/i.test(t),
     question: /\bask\b/i.test(t) && !/\b(draft|generate|rewrite|output|identify 3)\b/i.test(t)
   };
+}
+
+// Backstop for THE ALLY RULE, not the fix itself: the fix is that drafts are
+// built from the member's input already re-aimed (see reaimMemberInput in
+// api/storysculpt.js). This only catches the plain accusations that slipped
+// through, e.g. 2026-10-08: "if you are about to comment that clones are the
+// future, you are probably the exact person the clone tool creators are
+// cashing in on". Questions are left alone.
+const VIEWER_ATTACKS = [
+  /\bif you(?:'re| are) about to (?:comment|say|tell me|argue|type)\b/i,
+  /\byou(?:'re| are) (?:probably|just|not (?:an?|the|really)\b|the exact|lazy|hiding|scared|afraid|lying|wrong|the problem|part of the problem|delusional|kidding yourself|still pretending|making excuses)/i,
+  /\byour (?:product|message|messaging|offer|content|work|business|idea|excuses?) (?:is|are) (?:weak|bad|broken|garbage|trash|the problem|not (?:good|ready|working))/i,
+  /\byour (?:product|message|messaging|offer|content|work|business|idea) (?:sucks|isn't|aren't)\b/i,
+  /\bwhat(?:'s| is) wrong with you\b/i,
+  /\bstop (?:lying to yourself|making excuses|hiding behind)\b/i
+];
+
+export function checkViewerAttack(text) {
+  const body = String(text || '').replace(/^(?:FINAL SCRIPT|NEXT QUESTION):\s*/i, '');
+  const sentences = body.split(/(?<=[.!?])\s+|\n+/);
+  for (const sentence of sentences) {
+    const s = sentence.trim();
+    if (!s || s.endsWith('?')) continue;
+    if (VIEWER_ATTACKS.some(re => re.test(s))) return { ok: false, issue: 'viewer-attack: "' + s.slice(0, 160) + '"' };
+  }
+  return { ok: true };
 }
 
 export function checkDeterministic({ content, stepLabel, turnText = '', memberMessages = [], bannedTerms = [] }) {
@@ -411,9 +438,9 @@ export function checkDeterministic({ content, stepLabel, turnText = '', memberMe
     }
   }
 
-  if (isFinal) {
-    const genericYouCheck = checkGenericYou(content);
-    if (!genericYouCheck.ok) return genericYouCheck;
+  if (isFinal || kind.draft || kind.threeOptions) {
+    const allyCheck = checkViewerAttack(content);
+    if (!allyCheck.ok) return allyCheck;
   }
 
   return { ok: true };

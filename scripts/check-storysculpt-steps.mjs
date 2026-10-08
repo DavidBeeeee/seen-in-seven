@@ -38,8 +38,9 @@ assert.equal(Object.keys(parsed.steps).length, 20, 'Exactly 20 steps parsed');
 
 // (b) Global text contains required sections
 assert.ok(parsed.globalText.includes('THE SEAMLESS RULE'), 'Global text must include THE SEAMLESS RULE');
-assert.ok(parsed.globalText.includes('direct address to the viewer as "you", never a generic "you"'), 'Seamless rule phrase update present');
-assert.ok(parsed.globalText.includes('THE I / WE RULE'), 'Global text must include THE I / WE RULE');
+assert.ok(parsed.globalText.includes('the speaker talking to the viewer as an ally, under THE ALLY RULE'), 'Seamless rule hands off to THE ALLY RULE');
+assert.ok(parsed.globalText.includes('THE ALLY RULE (applies to every script'), 'Global text must include THE ALLY RULE');
+assert.ok(!/you probably still think/i.test(instructionsText), 'no example in the file attacks the viewer any more');
 assert.ok(parsed.globalText.includes('BANNED WORDS:'), 'Global text must include BANNED WORDS line');
 assert.ok(parsed.globalText.includes('floor\n'), 'Global text must include canonical banned terms list');
 
@@ -91,6 +92,16 @@ const r7 = turns.rant.turns[6].text;
 assert.equal(checkDeterministic({ content: 'NEXT QUESTION: Which?\n- Level One: They promised you applause.\n- Level Two: Praise is a slow sedative.', stepLabel: 'R7', turnText: r7, memberMessages: thread, bannedTerms }).ok, false, 'R7 needs three levels');
 assert.equal(checkDeterministic({ content: 'NEXT QUESTION: Which?\n- Level One: They promised you applause.\n- Level Two: Praise is a slow sedative.\n- Level Three: The crowd cheers while the body rots.', stepLabel: 'R7', turnText: r7, memberMessages: thread, bannedTerms }).ok, true);
 console.log('PASS: hook checks match R6 and R7 as written, without the impossible all-words test.');
+
+console.log('3a. THE ALLY RULE backstop catches accusations and leaves allies alone...');
+const finalTurn = turns.rant.turns[8].text;
+const ally = (content) => checkDeterministic({ content: 'FINAL SCRIPT: ' + content, stepLabel: 'R9', turnText: finalTurn, memberMessages: [], bannedTerms });
+assert.equal(ally('And if you are about to comment that clones are the future, you are probably the exact person the clone tool creators are cashing in on.').ok, false, 'the 2026-10-08 18:14 line is caught');
+assert.equal(ally('If you need a clone, you are not an entrepreneur.').ok, false);
+assert.equal(ally('Your product is weak and your messaging is weak.').ok, false);
+assert.equal(ally('If that is where you are right now, it is not on you. I did it for two years because the clone tool creators told me it was scale. You can do this without a stand-in.').ok, true, 'confessions and ally lines pass');
+assert.equal(ally('So tell me, are you hiding behind the clone, or are you ready?').ok, true, 'questions are left alone');
+console.log('PASS: viewer accusations are caught; confessions, charges and questions pass.');
 
 console.log('3b. Step resolution walks each format turn by turn...');
 const rantTurns = turns.rant.turns;
@@ -206,11 +217,20 @@ console.log('5. Replaying David\'s 2026-10-08 17:45 /rant through the real handl
     assert.equal(out.step, 'R4');
     assert.ok(lastMessage().includes('Epiphany: sociologically thoughtful'), 'R4 carries the 5 E\'s');
 
-    out = await send('epiphany', ['NEXT QUESTION: Here is the draft.\n\nIf you need a stand-in to be seen, the business is already hiding.\n\nHow does this sound? Would you like to change anything, or should I move on to generating the hook?']);
+    out = await send('epiphany', [
+      'I almost wanted a clone too, because a fake version of me could take the rejection. The clone tool creators are selling a stand-in for the scariest part of building: being told no.',
+      'NEXT QUESTION: Here is the draft.\n\nI almost wanted a stand-in too, and the clone tool creators know exactly why.\n\nHow does this sound? Would you like to change anything, or should I move on to generating the hook?'
+    ]);
+    assert.equal(deepSeekCalls.length, 2, 'a draft step re-aims the raw input first, then drafts');
+    assert.ok(deepSeekCalls[0].messages[0].content.includes('THE ALLY RULE (applies'), 'the re-aim pass carries David\'s Ally Rule from his file');
+    assert.ok(deepSeekCalls[0].messages[1].content.includes("If you need an ai clone, you\u2019re not an entrepreneur"), 'the re-aim pass reads the raw rant');
+    assert.ok(deepSeekCalls[0].messages[1].content.includes('entrepreneurs using clones to hide'), 'and the enemy he chose');
+    assert.ok(deepSeekCalls[1].messages.at(-1).content.includes('RE-AIMED UNDER THE ALLY RULE') && deepSeekCalls[1].messages.at(-1).content.includes('a fake version of me could take the rejection'), 'the draft step uses the re-aimed input as the member\'s original input');
+    assert.equal(events.at(-1).p_detail.reaimed, true, 'the log records the re-aim');
     assert.equal(out.step, 'R5');
-    assert.ok(deepSeekCalls[0].messages[0].content.includes('Enragement'), 'the draft step gets the 5 E\'s example scripts back');
+    assert.ok(deepSeekCalls[1].messages[0].content.includes('Enragement'), 'the draft step gets the 5 E\'s example scripts back');
 
-    out = await send('Please revise the script above. Keep what works and change this: less "you"', ['NEXT QUESTION: Revised draft. How does this sound?']);
+    out = await send('Please revise the script above. Keep what works and change this: less "you"', ['I wanted a clone too.', 'NEXT QUESTION: Revised draft. How does this sound?']);
     assert.equal(out.step, 'R5', 'a revision note stays on the draft');
 
     // R6: first try reuses his words, second is clean.

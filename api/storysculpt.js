@@ -76,6 +76,8 @@ const NAMED_DOCUMENTS = [
   ['Writing Examples For David Bee', 'Writing Examples For David Bee.txt']
 ];
 
+const REFERENCE_NOTE = 'REFERENCE NOTE: the examples below teach structure, rhythm, and intensity. Many of them speak to the viewer as "you" and accuse them. When you borrow a structure, re-aim it under THE ALLY RULE: hit the system or the speaker\'s past self, never the viewer.';
+
 export function referenceDocsForTurn(mode, turn) {
   const text = String(turn && turn.text || '');
   const names = [];
@@ -84,7 +86,38 @@ export function referenceDocsForTurn(mode, turn) {
   if (!kind.question) {
     for (const file of (MODE_REFERENCE_SETS[mode] || MODE_REFERENCE_SETS.rant)) if (!names.includes(file)) names.push(file);
   }
-  return names.map(name => KNOWLEDGE_MAP[name]).filter(Boolean).join('\n\n');
+  const docs = names.map(name => KNOWLEDGE_MAP[name]).filter(Boolean).join('\n\n');
+  return docs ? REFERENCE_NOTE + '\n\n' + docs : '';
+}
+
+// David's Ally Rule, read from his file so his edits flow straight through.
+const ALLY_RULE = (CORE_INSTRUCTIONS.match(/^THE ALLY RULE[^\n]*/m) || [''])[0].trim();
+
+// The build change behind THE ALLY RULE (2026-10-08). The draft steps say to use
+// "as much of the member's original input as possible", and a rant written as
+// an accusation ("If you need an AI clone, you're not an entrepreneur") was
+// carried into the script nearly word for word. So before any draft, the raw
+// input is re-aimed once: same opinions, facts, heat and wording where the rule
+// allows, with each attack on the viewer turned into a confession or a charge
+// against the system. The draft step then treats that as the member's input.
+export function reaimSystemPrompt() {
+  return [
+    'You prepare a member\'s raw words for a StorySculpt script draft.',
+    ALLY_RULE,
+    'Rewrite the member\'s raw input so it obeys THE ALLY RULE. Keep every opinion, argument, example, and fact, the full emotional heat, and as much of their exact wording as the rule allows. Turn each line that attacks the viewer into either a confession in the speaker\'s own voice (a feeling, temptation, belief, or habit the speaker had) or a charge against the system or enemy that taught it. Aim charges at the enemy the member chose, when they named one. Do not add events, numbers, dates, results, credentials, or quotations. Do not soften the opinion. Never use an em dash.',
+    'Return only the rewritten input, as plain text, with no heading or commentary.'
+  ].join('\n\n');
+}
+
+async function reaimMemberInput(input) {
+  const raw = (input.messages.find(m => m.role === 'user') || {}).content || '';
+  if (!ALLY_RULE || !raw.trim()) return '';
+  const answers = input.messages.filter(m => m.role === 'user').slice(1).map(m => '- ' + m.content).join('\n');
+  const result = await callModel([
+    { role: 'system', content: reaimSystemPrompt() },
+    { role: 'user', content: 'MEMBER\'S RAW INPUT:\n' + raw + (answers ? '\n\nTHE MEMBER\'S LATER ANSWERS (context, including the enemy they chose):\n' + answers : '') }
+  ], { temperature: 0.5, maxTokens: 1200 });
+  return String(result.content || '').replace(/^(?:NEXT QUESTION|FINAL SCRIPT):\s*/i, '').trim();
 }
 
 export function turnFor(mode, label) {
@@ -256,7 +289,7 @@ ${referenceDocs ? 'REFERENCE MATERIAL:\n' + referenceDocs + '\n\n' : ''}${curren
 // conversation's momentum instead: on 2026-10-08 the server sent R3 ("How long
 // do you want the final video to be?") and R4 (the 5 E's) and the model asked
 // its own questions both times.
-export function stepDirective(mode, stepLabel, stepText, memberMessages = []) {
+export function stepDirective(mode, stepLabel, stepText, memberMessages = [], reaimed = '') {
   const kind = turnKind(stepLabel, stepText);
   const lines = [
     'STORYSCULPT STEP INSTRUCTION. This comes from the app, not from the member. The member\'s latest reply is the message before this one.',
@@ -264,6 +297,9 @@ export function stepDirective(mode, stepLabel, stepText, memberMessages = []) {
     '',
     stepText
   ];
+  if (kind.draft && reaimed) {
+    lines.push('', 'THE MEMBER\'S ORIGINAL INPUT, RE-AIMED UNDER THE ALLY RULE. Wherever this step says to use the member\'s original input, use this version, not the raw message above:', reaimed);
+  }
   if (kind.evidenceRule || kind.escalation) {
     const words = [...evidenceWords(memberMessages).values()];
     if (words.length) {
@@ -312,14 +348,9 @@ export function contractHistory(messages, intent) {
   });
 }
 
-async function callStorySculpt(input, stepLabel, stepText, referenceDocs, retryDirective = null) {
-  const kind = turnKind(stepLabel, stepText);
+async function callModel(messages, { temperature = 0.86, maxTokens = 1900 } = {}) {
   const apiKey = process.env.DEEPSEEK_API_KEY;
   if (!apiKey) throw new Error('StorySculpt generation is not configured.');
-  const context = [
-    input.projectTitle ? 'PROJECT TITLE: ' + input.projectTitle : '',
-    input.context ? 'MEMBER CONTEXT:\n' + input.context : '',
-  ].filter(Boolean).join('\n\n');
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60000);
   try {
@@ -328,16 +359,10 @@ async function callStorySculpt(input, stepLabel, stepText, referenceDocs, retryD
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + apiKey },
       body: JSON.stringify({
         model: 'deepseek-v4-pro',
-        messages: [
-          { role: 'system', content: systemPrompt(input.mode, stepLabel, stepText, referenceDocs) },
-          ...(context ? [{ role: 'user', content: context }] : []),
-          ...contractHistory(input.messages, input.intent),
-          { role: 'user', content: stepDirective(input.mode, stepLabel, stepText, input.messages) + (retryDirective ? '\n\nRETRY: ' + retryDirective : '') }
-        ],
-        max_tokens: 1900,
+        messages,
+        max_tokens: maxTokens,
         thinking: { type: 'disabled' },
-        // A turn that only asks David's fixed question needs fidelity, not flair.
-        temperature: kind.question ? 0.4 : 0.86
+        temperature
       }),
       signal: controller.signal
     });
@@ -349,6 +374,23 @@ async function callStorySculpt(input, stepLabel, stepText, referenceDocs, retryD
   } finally {
     clearTimeout(timeout);
   }
+}
+
+async function callStorySculpt(input, stepLabel, stepText, referenceDocs, retryDirective = null) {
+  const kind = turnKind(stepLabel, stepText);
+  const context = [
+    input.projectTitle ? 'PROJECT TITLE: ' + input.projectTitle : '',
+    input.context ? 'MEMBER CONTEXT:\n' + input.context : ''
+  ].filter(Boolean).join('\n\n');
+  return callModel([
+    { role: 'system', content: systemPrompt(input.mode, stepLabel, stepText, referenceDocs) },
+    ...(context ? [{ role: 'user', content: context }] : []),
+    ...contractHistory(input.messages, input.intent),
+    { role: 'user', content: stepDirective(input.mode, stepLabel, stepText, input.messages, input.reaimed) + (retryDirective ? '\n\nRETRY: ' + retryDirective : '') }
+  ], {
+    // A turn that only asks David's fixed question needs fidelity, not flair.
+    temperature: kind.question ? 0.4 : 0.86
+  });
 }
 
 // Lower is better: 0 passes. For hook steps, the number of options that reuse
@@ -459,6 +501,17 @@ export default async function handler(req, res) {
     const stepText = activeTurn.text;
     const refDocs = referenceDocsForTurn(input.mode, activeTurn);
     const stepLog = { step: activeStep, stepSource: currentStepInDb ? 'stored' : 'counted', attempts: 1 };
+
+    if (turnKind(activeStep, stepText).draft) {
+      try {
+        input.reaimed = await reaimMemberInput(input);
+        stepLog.reaimed = Boolean(input.reaimed);
+      } catch (_) {
+        // Drafting still runs on the raw input; THE ALLY RULE is in the prompt
+        // and the backstop check still applies.
+        stepLog.reaimed = false;
+      }
+    }
 
     let result;
     try {
