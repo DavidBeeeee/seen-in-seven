@@ -39,9 +39,14 @@ function generateSmartTitle(rawText) {
     /^(?:i\s+(?:want\s+to|would\s+like\s+to|feel\s+like|think|really|just|am\s+thinking\s+about))\s+/i,
     /^(?:can\s+you(?:\s+help\s+me)?|help\s+me)\s+(?:to\s+|with\s+|write\s+(?:a\s+|about\s+)?)?/i,
     /^(?:let'?s\s+(?:talk\s+about|do\s+a|write\s+a))\s+/i,
-    /^(?:my\s+(?:rant|topic|idea|thought|take)\s+is)\s+/i,
-    /^(?:what\s+if|why\s+do\s+people|why\s+does|how\s+come)\s+/i,
-    /^(?:write\s+(?:a|about)|talk\s+about)\s+/i
+    /^(?:my\s+(?:rant|topic|idea|thought|take)\s+(?:is|was)(?:\s+(?:about|that))?)\s+/i,
+    /^(?:(?:a\s+)?(?:quick\s+)?(?:rant|take)(?:\s+(?:about|on))?)\s+/i,
+    /^(?:ranting\s+(?:about|on))\s+/i,
+    /^(?:what\s+if|why\s+do\s+people|why\s+(?:do|does|are|is|did)|how\s+come)\s+/i,
+    /^(?:write\s+(?:a|about)|talk\s+about)\s+/i,
+    /^(?:so\s+(?:i\s+)?(?:was\s+thinking|think|feel|basically))\s+/i,
+    /^(?:the\s+thing\s+(?:is|about)|the\s+problem\s+with)\s+/i,
+    /^(?:basically|honestly|actually|seriously)\s+/i
   ];
   let changed = true;
   while (changed) {
@@ -55,7 +60,7 @@ function generateSmartTitle(rawText) {
   }
   const words = clean.split(/\s+/).filter(Boolean);
   if (!words.length) return '';
-  const titleWords = words.slice(0, 6);
+  const titleWords = words.slice(0, 4);
   let title = titleWords.map((w, idx) => {
     const lower = w.toLowerCase();
     if (idx > 0 && ['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by', 'with', 'in', 'of'].includes(lower)) {
@@ -64,10 +69,10 @@ function generateSmartTitle(rawText) {
     return lower.charAt(0).toUpperCase() + lower.slice(1);
   }).join(' ');
 
-  if (title.length > 50) {
-    title = title.slice(0, 50).trim();
+  if (title.length > 28) {
+    title = title.slice(0, 28).trim();
     const lastSpace = title.lastIndexOf(' ');
-    if (lastSpace > 20) title = title.slice(0, lastSpace);
+    if (lastSpace > 14) title = title.slice(0, lastSpace);
   }
   return title;
 }

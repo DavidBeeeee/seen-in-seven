@@ -8,9 +8,11 @@
    - Version history tracking with teleprompter-friendly reading.
 */
 
-.story-rail-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.story-rail-head .icon-button { width: 34px; height: 34px; }
-.story-projects { display: flex; flex-direction: column; }
+.story-rail-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; width: 100%; box-sizing: border-box; }
+.story-rail-head h2 { margin: 0; font-family: var(--font-display, 'Oswald'), sans-serif; font-size: 20px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.story-rail-head .icon-button { width: 34px; height: 34px; flex-shrink: 0; }
+.story-projects { display: flex; flex-direction: column; width: 260px; max-width: 260px; min-width: 0; overflow-x: hidden; box-sizing: border-box; }
+.story-projects .eee-rail-list { display: grid; gap: 7px; width: 100%; max-width: 100%; min-width: 0; overflow-y: auto; overflow-x: hidden; flex: 1; }
 .story-memory-link { display: flex; gap: 11px; align-items: flex-start; margin-top: auto; padding: 13px; border-radius: var(--radius-card, 14px); border: 1px solid var(--studio-border); background: transparent; color: var(--studio-soft); text-align: left; cursor: pointer; transition: all 0.15s ease; }
 .story-memory-link:hover { border-color: var(--studio-teal); background: color-mix(in srgb, var(--studio-teal) 7%, transparent); }
 .story-memory-link-icon { display: grid; place-items: center; width: 30px; height: 30px; border-radius: var(--radius-md, 8px); flex-shrink: 0; color: var(--studio-teal); border: 1px solid var(--studio-border); }
@@ -164,6 +166,7 @@
 
 /* Responsive adjustments */
 @media (max-width: 820px) {
+  .story-projects { width: 100%; max-width: 100%; }
   .story-method, .story-trust { grid-template-columns: 1fr; }
   .story-mode-grid { grid-template-columns: 1fr; }
   .story-mode { min-height: 120px; }
@@ -185,20 +188,20 @@
 }
 
 /* Chat rail filters and project list actions */
-.story-rail-filter { display: flex; gap: 4px; padding: 4px; margin: 10px 0 12px; border-radius: var(--radius-sm, 6px); background: var(--studio-surface-2); border: 1px solid var(--studio-border); }
-.story-filter-btn { flex: 1; padding: 5px 6px; border: 0; background: transparent; color: var(--studio-muted); font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer; transition: all 0.15s ease; text-align: center; }
+.story-rail-filter { display: flex; gap: 4px; padding: 4px; margin: 10px 0 12px; border-radius: var(--radius-sm, 6px); background: var(--studio-surface-2); border: 1px solid var(--studio-border); width: 100%; max-width: 100%; box-sizing: border-box; min-width: 0; }
+.story-filter-btn { flex: 1; min-width: 0; padding: 5px 6px; border: 0; background: transparent; color: var(--studio-muted); font-size: 11px; font-weight: 700; border-radius: 4px; cursor: pointer; transition: all 0.15s ease; text-align: center; white-space: nowrap; }
 .story-filter-btn:hover { color: var(--studio-text); }
 .story-filter-btn.active { background: var(--studio-surface); color: var(--studio-teal); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
 
-.story-project-item { display: flex; align-items: center; justify-content: space-between; gap: 4px; border-radius: var(--radius-md, 8px); border: 1px solid var(--studio-border); background: transparent; transition: all 0.15s ease; padding-right: 6px; }
+.story-project-item { display: flex; align-items: center; justify-content: space-between; gap: 4px; border-radius: var(--radius-md, 8px); border: 1px solid var(--studio-border); background: transparent; transition: all 0.15s ease; padding-right: 6px; width: 100%; max-width: 100%; min-width: 0; overflow: hidden; box-sizing: border-box; }
 .story-project-item:hover { border-color: var(--studio-teal); background: color-mix(in srgb, var(--studio-teal) 4%, transparent); }
 .story-project-item.active { border-color: var(--studio-teal); background: color-mix(in srgb, var(--studio-teal) 8%, transparent); }
-.story-project-select { flex: 1; min-width: 0; padding: 10px 8px 10px 10px; border: 0; background: transparent; color: var(--studio-soft); text-align: left; cursor: pointer; font-size: 13px; font-weight: 600; font-family: inherit; }
+.story-project-select { flex: 1; min-width: 0; max-width: calc(100% - 62px); overflow: hidden; padding: 10px 8px 10px 10px; border: 0; background: transparent; color: var(--studio-soft); text-align: left; cursor: pointer; font-size: 13px; font-weight: 600; font-family: inherit; }
 .story-project-item.active .story-project-select { color: var(--studio-text); font-weight: 700; }
-.story-project-title { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.story-project-title { display: block; width: 100%; max-width: 100%; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .story-project-item.filmed .story-project-title { text-decoration: line-through; opacity: 0.55; }
-.story-project-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
-.story-action-btn { display: grid; place-items: center; width: 26px; height: 26px; padding: 0; border: 0; background: transparent; color: var(--studio-muted); border-radius: 4px; cursor: pointer; transition: all 0.15s ease; }
+.story-project-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; margin-left: auto; }
+.story-action-btn { display: grid; place-items: center; width: 26px; height: 26px; padding: 0; border: 0; background: transparent; color: var(--studio-muted); border-radius: 4px; cursor: pointer; transition: all 0.15s ease; flex-shrink: 0; }
 .story-action-btn svg { width: 14px; height: 14px; }
 .story-action-btn:hover { color: var(--studio-text); background: color-mix(in srgb, var(--studio-teal) 12%, transparent); }
 .story-action-btn.story-film-btn.is-filmed { color: var(--studio-green, #85c7a5); }
