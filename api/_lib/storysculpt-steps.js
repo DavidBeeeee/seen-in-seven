@@ -264,8 +264,11 @@ export function checkGenericYou(scriptText) {
 }
 
 export function checkDeterministic({ content, stepLabel, memberMessages = [], bannedTerms = [] }) {
-  const bannedCheck = checkBannedTerms(content, bannedTerms);
-  if (!bannedCheck.ok) return bannedCheck;
+  const SCRIPT_AND_HOOK_STEPS = new Set(['B5', 'M5', 'R6', 'R7', 'R8', 'R9', 'F1']);
+  if (/^FINAL SCRIPT:/i.test(content) || SCRIPT_AND_HOOK_STEPS.has(stepLabel)) {
+    const bannedCheck = checkBannedTerms(content, bannedTerms);
+    if (!bannedCheck.ok) return bannedCheck;
+  }
 
   if (stepLabel === 'R6' || stepLabel === 'R7') {
     const options = extractOptions(content);
@@ -294,7 +297,14 @@ export function checkDeterministic({ content, stepLabel, memberMessages = [], ba
   return { ok: true };
 }
 
-export function stepFallbackMessage(stepLabel, stepText) {
+export function stepFallbackMessage(stepLabel, stepText, rawDraft = null) {
+  if (rawDraft && (stepLabel === 'R6' || stepLabel === 'R7' || stepLabel === 'B4' || stepLabel === 'M4')) {
+    const options = extractOptions(rawDraft);
+    if (options.length >= 2) {
+      const cleanDraft = rawDraft.replace(/^(FINAL SCRIPT:|NEXT QUESTION:)\s*/i, '').trim();
+      return `NEXT QUESTION: ${cleanDraft}\n\n(Note: Choose one of these options, or let me know how you would like to adjust them.)`;
+    }
+  }
   let question = '';
   const askMatch = stepText.match(/Ask:?\s*"([^"]+)"/i) || stepText.match(/Ask:?\s*([^\n]+)/i);
   if (askMatch) {

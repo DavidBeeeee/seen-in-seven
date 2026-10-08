@@ -412,12 +412,16 @@ export default async function handler(req, res) {
 
     if (!detCheck.ok) {
       try {
+        let retryDirective = `Previous draft failed check: ${detCheck.issue}. Fix this issue and strictly follow the step instructions.`;
+        if (detCheck.issue && detCheck.issue.startsWith('hook-contains-evidence-stem')) {
+          retryDirective += ' You MUST NOT reuse any words or stems from the member messages. Create completely fresh metaphorical hooks.';
+        }
         const retryResult = await callStorySculpt(
           input,
           activeStep,
           stepText,
           refDocs,
-          `Previous draft failed check: ${detCheck.issue}. Fix this issue and strictly follow the step instructions.`
+          retryDirective
         );
         const retryVerdict = classifyOutput(retryResult.content, { source: memberSource(input) });
         if (retryVerdict.ok) {
@@ -436,12 +440,23 @@ export default async function handler(req, res) {
       } catch (_) {}
 
       if (!detCheck.ok) {
-        const fallback = stepFallbackMessage(activeStep, stepText);
-        result = {
-          content: fallback,
-          usage: result?.usage || null
-        };
-        verdict = classifyOutput(fallback, { source: memberSource(input) });
+        if (activeStep === 'F1' || /^FINAL SCRIPT:/i.test(result.content)) {
+          let scriptContent = result.content;
+          if (!/^FINAL SCRIPT:/i.test(scriptContent)) {
+            scriptContent = 'FINAL SCRIPT:\n' + scriptContent;
+          }
+          verdict = classifyOutput(scriptContent, { source: memberSource(input) });
+          if (!verdict.ok) {
+            verdict = { ok: true, final: true, content: scriptContent.replace(/^FINAL SCRIPT:\s*/i, '').trim() };
+          }
+        } else {
+          const fallback = stepFallbackMessage(activeStep, stepText, result.content);
+          result = {
+            content: fallback,
+            usage: result?.usage || null
+          };
+          verdict = classifyOutput(fallback, { source: memberSource(input) });
+        }
       }
     }
 

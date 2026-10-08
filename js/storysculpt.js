@@ -449,6 +449,8 @@ async function restoreOlderVersion() {
 }
 
 function showProject(project) {
+  hideThinkingIndicator();
+  hideErrorInConversation();
   activeStory = project;
   viewingVersionIndex = -1;
   ensureVersions(project);
@@ -474,6 +476,8 @@ function showProject(project) {
 }
 
 function showStart() {
+  hideThinkingIndicator();
+  hideErrorInConversation();
   activeStory = null;
   viewingVersionIndex = -1;
   storyEl('story-start').hidden = false;
@@ -604,8 +608,168 @@ async function runGeneration(intent = 'interview') {
   return data;
 }
 
+let thinkingInterval = null;
+
+function showThinkingIndicator(initialStage = 'Reading the thread...') {
+  hideThinkingIndicator();
+  hideErrorInConversation();
+  const thread = storyEl('story-conversation');
+  if (!thread) return;
+
+  const indicator = document.createElement('article');
+  indicator.className = 'story-message assistant story-message-thinking';
+  indicator.id = 'story-thinking-indicator';
+  indicator.innerHTML =
+    '<span class="story-message-role">StorySculpt</span>' +
+    '<div class="story-thinking-card">' +
+      '<div class="story-thinking-dots" aria-hidden="true">' +
+        '<span class="story-thinking-dot"></span>' +
+        '<span class="story-thinking-dot"></span>' +
+        '<span class="story-thinking-dot"></span>' +
+      '</div>' +
+      '<div class="story-thinking-content">' +
+        '<strong class="story-thinking-title">Thinking</strong>' +
+        '<span class="story-thinking-stage" id="story-thinking-stage-text">' + storyEscape(initialStage) + '</span>' +
+      '</div>' +
+    '</div>';
+  thread.appendChild(indicator);
+  scrollThread();
+
+  const stages = [
+    'Connecting with DeepSeek...',
+    'Shaping the response with the 5E framework...',
+    'Checking prompt rules and script structure...'
+  ];
+  let stageIdx = 0;
+  thinkingInterval = setInterval(() => {
+    const stageEl = storyEl('story-thinking-stage-text');
+    if (!stageEl) return;
+    stageEl.textContent = stages[stageIdx % stages.length];
+    stageIdx++;
+  }, 4500);
+}
+
+function hideThinkingIndicator() {
+  if (thinkingInterval) {
+    clearInterval(thinkingInterval);
+    thinkingInterval = null;
+  }
+  const indicator = storyEl('story-thinking-indicator');
+  if (indicator && indicator.parentNode) {
+    indicator.parentNode.removeChild(indicator);
+  }
+}
+
+function hideErrorInConversation() {
+  const errEl = storyEl('story-error-indicator');
+  if (errEl && errEl.parentNode) {
+    errEl.parentNode.removeChild(errEl);
+  }
+}
+
+function showErrorInConversation(message, retryCallback) {
+  hideThinkingIndicator();
+  hideErrorInConversation();
+  const thread = storyEl('story-conversation');
+  if (!thread) return;
+
+  // Preserve no em dashes in member-facing copy rule
+  const cleanMsg = String(message || 'StorySculpt could not finish this step.')
+    .replace(/[—–]/g, ', ');
+
+  const errArticle = document.createElement('article');
+  errArticle.className = 'story-message assistant story-message-error';
+  errArticle.id = 'story-error-indicator';
+  errArticle.innerHTML =
+    '<span class="story-message-role" style="color: var(--studio-danger, #f28b82);">Notice</span>' +
+    '<div class="story-error-card">' +
+      '<div class="story-error-header">' +
+        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+          '<circle cx="12" cy="12" r="10"></circle>' +
+          '<line x1="12" y1="8" x2="12" y2="12"></line>' +
+          '<line x1="12" y1="16" x2="12.01" y2="16"></line>' +
+        '</svg>' +
+        '<span>Could not finish this step</span>' +
+      '</div>' +
+      '<p class="story-error-text">' + storyEscape(cleanMsg) + '</p>' +
+      (typeof retryCallback === 'function' ? (
+        '<div class="story-error-actions">' +
+          '<button class="story-msg-btn retry" type="button" id="story-retry-btn">' +
+            '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
+              '<path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>' +
+            '</svg>' +
+            '<span>Try Again</span>' +
+          '</button>' +
+        '</div>'
+      ) : '') +
+    '</div>';
+
+  thread.appendChild(errArticle);
+  if (typeof retryCallback === 'function') {
+    const btn = errArticle.querySelector('#story-retry-btn');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        hideErrorInConversation();
+        retryCallback();
+      });
+    }
+  }
+  scrollThread();
+}
+
+async function retryInterviewGeneration() {
+  hideErrorInConversation();
+  showThinkingIndicator('Retrying... connecting with DeepSeek');
+  await executeInterviewGeneration();
+}
+
+async function executeInterviewGeneration() {
+  const button = storyEl('story-send');
+  if (button) button.disabled = true;
+  const status = storyEl('story-generation-status');
+  let failed = false;
+  try {
+    await saveActiveStory();
+    const data = await runGeneration('interview');
+    hideThinkingIndicator();
+    if (data.final) {
+      ensureVersions(activeStory);
+      if (activeStory.intake.versions.length === 0) {
+        activeStory.intake.versions.push({
+          version: 1,
+          note: 'Initial draft',
+          content: data.content,
+          createdAt: new Date().toISOString()
+        });
+      }
+      viewingVersionIndex = -1;
+      await saveActiveStory('Initial draft saved');
+      renderScriptPanel();
+      if (window.innerWidth <= 820) {
+        switchMobileTab('script');
+      } else {
+        storyEl('story-output-copy').focus();
+      }
+    }
+  } catch (error) {
+    failed = true;
+    hideThinkingIndicator();
+    const cleanMsg = (error && error.message) || 'This step did not finish. Your answers are still saved.';
+    status.textContent = cleanMsg;
+    status.classList.add('error');
+    showErrorInConversation(cleanMsg, () => retryInterviewGeneration());
+  } finally {
+    if (button) button.disabled = false;
+    if (!failed && !activeStory.output) {
+      status.textContent = 'StorySculpt saves your chat as you go.';
+      status.classList.remove('error');
+    }
+    EEEStudio.refreshIcons();
+  }
+}
+
 async function sendStoryAnswer(event) {
-  event.preventDefault();
+  if (event && event.preventDefault) event.preventDefault();
   const answer = storyEl('story-answer').value.trim();
   if (!activeStory || !answer) return;
   if (activeStory.output) {
@@ -631,81 +795,30 @@ async function sendStoryAnswer(event) {
   storyEl('story-answer').value = '';
   autoGrow(storyEl('story-answer'));
   renderConversation();
+  showThinkingIndicator('Reading the thread...');
   scrollThread();
 
-  const status = storyEl('story-generation-status');
-  let failed = false;
-  try {
-    await saveActiveStory();
-    const data = await runGeneration('interview');
-    if (data.final) {
-      ensureVersions(activeStory);
-      if (activeStory.intake.versions.length === 0) {
-        activeStory.intake.versions.push({
-          version: 1,
-          note: 'Initial draft',
-          content: data.content,
-          createdAt: new Date().toISOString()
-        });
-      }
-      viewingVersionIndex = -1;
-      await saveActiveStory('Initial draft saved');
-      renderScriptPanel();
-      if (window.innerWidth <= 820) {
-        switchMobileTab('script');
-      } else {
-        storyEl('story-output-copy').focus();
-      }
-    }
-  } catch (error) {
-    failed = true;
-    status.textContent = error.message || 'This step did not finish. Your answers are still saved.';
-    status.classList.add('error');
-  } finally {
-    button.disabled = false;
-    if (!failed && !activeStory.output) {
-      status.textContent = 'StorySculpt saves your chat as you go.';
-      status.classList.remove('error');
-    }
-    EEEStudio.refreshIcons();
-  }
+  await executeInterviewGeneration();
 }
 
-// Refine with a note. The current (possibly edited) script goes back into the
-// conversation as the last draft, then the member's plain-words note follows, so
-// StorySculpt revises the existing script instead of starting over. No prompt or
-// flow change: it is one more turn in the same interview.
-async function refineStory() {
-  const note = storyEl('story-refine-note').value.trim();
-  if (!activeStory || !note || !activeStory.output) return;
+async function retryRefineGeneration(note) {
+  hideErrorInConversation();
+  showThinkingIndicator('Retrying script revision...');
+  await executeRefineGeneration(note);
+}
+
+async function executeRefineGeneration(note) {
   const button = storyEl('story-refine-send');
-  button.disabled = true;
+  if (button) button.disabled = true;
   const status = storyEl('story-refine-status');
   status.textContent = 'Revising your script with that note.';
   status.className = 'eee-message story-refine-status';
-
-  const currentScript = storyEl('story-output-copy').value.trim();
-  activeStory.output = currentScript;
-
   const versions = ensureVersions(activeStory);
-  if (versions.length > 0) {
-    versions[versions.length - 1].content = currentScript;
-  }
-
-  activeStory.conversation = [
-    ...(activeStory.conversation || []),
-    { role: 'assistant', content: currentScript, isScriptDraft: true },
-    { role: 'user', content: 'Please revise the script above. Keep what works and change this: ' + note, refineNote: note }
-  ];
-
-  renderConversation();
-  scrollThread();
 
   try {
     await saveActiveStory();
     const data = await runGeneration('refine');
-    storyEl('story-refine-note').value = '';
-    autoGrow(storyEl('story-refine-note'));
+    hideThinkingIndicator();
 
     if (data.final) {
       status.textContent = 'Script revised.';
@@ -715,7 +828,7 @@ async function refineStory() {
       activeStory.output = data.content;
       versions.push({
         version: nextVerNum,
-        note: note,
+        note: note || 'Revision',
         content: data.content,
         createdAt: new Date().toISOString()
       });
@@ -734,12 +847,46 @@ async function refineStory() {
       renderConversation();
     }
   } catch (error) {
-    status.textContent = error.message || 'That revision did not finish. Your script is still saved.';
+    hideThinkingIndicator();
+    const cleanMsg = (error && error.message) || 'That revision did not finish. Your script is still saved.';
+    status.textContent = cleanMsg;
     status.className = 'eee-message story-refine-status error';
+    showErrorInConversation(cleanMsg, () => retryRefineGeneration(note));
   } finally {
-    button.disabled = false;
+    if (button) button.disabled = false;
     EEEStudio.refreshIcons();
   }
+}
+
+// Refine with a note. The current (possibly edited) script goes back into the
+// conversation as the last draft, then the member's plain-words note follows, so
+// StorySculpt revises the existing script instead of starting over. No prompt or
+// flow change: it is one more turn in the same interview.
+async function refineStory() {
+  const note = storyEl('story-refine-note').value.trim();
+  if (!activeStory || !note || !activeStory.output) return;
+
+  const currentScript = storyEl('story-output-copy').value.trim();
+  activeStory.output = currentScript;
+
+  const versions = ensureVersions(activeStory);
+  if (versions.length > 0) {
+    versions[versions.length - 1].content = currentScript;
+  }
+
+  activeStory.conversation = [
+    ...(activeStory.conversation || []),
+    { role: 'assistant', content: currentScript, isScriptDraft: true },
+    { role: 'user', content: 'Please revise the script above. Keep what works and change this: ' + note, refineNote: note }
+  ];
+
+  storyEl('story-refine-note').value = '';
+  autoGrow(storyEl('story-refine-note'));
+  renderConversation();
+  showThinkingIndicator('Revising your script with that note...');
+  scrollThread();
+
+  await executeRefineGeneration(note);
 }
 
 // Inline edits to the finished script save straight to the project.
