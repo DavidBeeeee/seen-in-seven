@@ -272,6 +272,9 @@ export function stepDirective(mode, stepLabel, stepText, memberMessages = []) {
   }
   if (kind.threeOptions && !kind.final) {
     lines.push('', 'Number the three options 1., 2. and 3., each on its own line.');
+    if (/open loop sentences/i.test(stepText)) {
+      lines.push('Each option is only the new open loop sentence. Do not repeat the chosen hook inside it; the member already has the hook.');
+    }
   }
   lines.push('', 'Use none of the BANNED WORDS listed in the instructions above, in any form, even where the member used them.');
   lines.push('', kind.final

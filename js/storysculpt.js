@@ -300,6 +300,45 @@ function renderScriptPanel() {
   }
 }
 
+// What the member is being asked to do at each of David's steps, so a choice
+// never arrives as an unexplained list (2026-10-08: the open loops "just gave
+// an option and assumed I knew what it meant"). Keyed by the server's step.
+const STEP_GUIDE = {
+  B2: { title: 'Choose your direction', note: 'Pick the angle this video should take.', choices: true },
+  B3: { title: 'Your draft, then choose your hook', note: 'Read the draft, then pick the first line people will hear.', choices: true, more: 'Give me 3 different hooks' },
+  M3: { title: 'Your draft, then choose your hook', note: 'Read the draft, then pick the first line people will hear.', choices: true, more: 'Give me 3 different hooks' },
+  R5: { title: 'Your first draft', note: 'Change anything you like, or move on to the hook when it feels right.', actions: [['Generate the hook', 'Looks good, go for the hook'], ['Revise the draft', null]] },
+  R6: { title: 'Choose your hook', note: 'The first line people hear. It has one job: stop the scroll.', choices: true, more: 'Give me 3 different hooks' },
+  R7: { title: 'Choose how hard your hook hits', note: 'The same hook at three levels of intensity, from a lie people believe to a final warning.', choices: true },
+  R8: { title: 'Choose your open loop', note: 'The sentence right after your hook that makes people stay to hear the rest.', choices: true, more: 'Give me 3 different open loops' },
+  'B4.3': { title: 'Choose your open loop', note: 'The sentence right after your hook that makes people stay to hear the rest.', choices: true, more: 'Give me 3 different open loops' },
+  'M4.3': { title: 'Choose your open loop', note: 'The sentence right after your hook that makes people stay to hear the rest.', choices: true, more: 'Give me 3 different open loops' }
+};
+
+function stepGuideMarkup(message, isLatest) {
+  const guide = message && message.step && STEP_GUIDE[message.step];
+  if (!guide) return { banner: '', actions: '' };
+  const banner = '<div class="story-step-banner"><strong>' + storyEscape(guide.title) + '</strong><span>' + storyEscape(guide.note) + '</span></div>';
+  if (!isLatest || (activeStory && activeStory.output)) return { banner, actions: '' };
+  const buttons = [];
+  if (guide.choices) {
+    for (const n of [1, 2, 3]) buttons.push('<button class="story-quick-btn" type="button" data-quick-reply="' + n + '">Use ' + n + '</button>');
+    if (guide.more) buttons.push('<button class="story-quick-btn subtle" type="button" data-quick-reply="' + storyEscape(guide.more) + '">' + storyEscape(guide.more) + '</button>');
+  }
+  for (const [label, reply] of (guide.actions || [])) {
+    buttons.push(reply
+      ? '<button class="story-quick-btn primary" type="button" data-quick-reply="' + storyEscape(reply) + '"><i data-lucide="sparkles"></i> ' + storyEscape(label) + '</button>'
+      : '<button class="story-quick-btn subtle" type="button" data-quick-focus="true">' + storyEscape(label) + '</button>');
+  }
+  return { banner, actions: '<div class="story-quick-actions">' + buttons.join('') + '</div>' };
+}
+
+function sendQuickReply(text) {
+  if (!text || !activeStory || activeStory.output) return;
+  storyEl('story-answer').value = text;
+  sendStoryAnswer();
+}
+
 function renderConversation() {
   const conversation = Array.isArray(activeStory && activeStory.conversation) ? activeStory.conversation : [];
   const versions = (activeStory && activeStory.intake && activeStory.intake.versions) || [];
@@ -341,9 +380,13 @@ function renderConversation() {
       '</article>';
     }
 
+    const lastAssistant = conversation.map(m => m.role).lastIndexOf('assistant');
+    const guide = stepGuideMarkup(message, index === lastAssistant && index === conversation.length - 1);
     return '<article class="story-message assistant">' +
       '<span class="story-message-role">StorySculpt</span>' +
+      guide.banner +
       '<div class="story-message-body">' + storyEscape(message.content) + '</div>' +
+      guide.actions +
       '<div class="story-message-actions">' +
         '<button class="story-msg-btn" type="button" data-action="copy-msg" data-msg-index="' + index + '" title="Copy response">' +
           '<i data-lucide="copy"></i><span>Copy</span>' +
@@ -596,7 +639,7 @@ async function runGeneration(intent = 'interview') {
   }
   if (!response.ok) throw new Error(data.error || 'StorySculpt could not complete this step.');
   if (data.final) activeStory.output = data.content;
-  else activeStory.conversation.push({ role: 'assistant', content: data.content });
+  else activeStory.conversation.push({ role: 'assistant', content: data.content, step: data.step || null });
   // Keep the server's position in David's steps. The save below rewrites the
   // whole intake, and until 2026-10-08 it dropped current_step every turn.
   if (data.step) activeStory.intake = Object.assign({}, activeStory.intake, { current_step: data.step });
@@ -640,9 +683,9 @@ function showThinkingIndicator(initialStage = 'Reading the thread...') {
   scrollThread();
 
   const stages = [
-    'Connecting with DeepSeek...',
-    'Shaping the response with the 5E framework...',
-    'Checking prompt rules and script structure...'
+    'Reading every word you wrote...',
+    'Shaping it in your voice with the 5E framework...',
+    'Polishing it so it sounds like you on your best day...'
   ];
   let stageIdx = 0;
   thinkingInterval = setInterval(() => {
@@ -723,7 +766,7 @@ function showErrorInConversation(message, retryCallback) {
 
 async function retryInterviewGeneration() {
   hideErrorInConversation();
-  showThinkingIndicator('Retrying... connecting with DeepSeek');
+  showThinkingIndicator('Taking another careful pass at this for you...');
   await executeInterviewGeneration();
 }
 
@@ -1037,6 +1080,11 @@ storyEl('story-notes-toggle').addEventListener('click', () => {
 storyEl('story-title').addEventListener('input', queueStorySave);
 storyEl('story-context').addEventListener('input', queueStorySave);
 storyEl('story-composer').addEventListener('submit', sendStoryAnswer);
+storyEl('story-conversation').addEventListener('click', event => {
+  const quick = event.target.closest('[data-quick-reply]');
+  if (quick) { sendQuickReply(quick.getAttribute('data-quick-reply')); return; }
+  if (event.target.closest('[data-quick-focus]')) storyEl('story-answer').focus();
+});
 storyEl('story-answer').addEventListener('input', event => autoGrow(event.target));
 storyEl('story-answer').addEventListener('keydown', event => {
   if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); storyEl('story-composer').requestSubmit(); }

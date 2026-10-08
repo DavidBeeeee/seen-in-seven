@@ -20,13 +20,16 @@ const script = readFileSync(join(root, 'js', 'storysculpt.js'), 'utf8');
 const checks = [
   ['responsible owner', /Built and supported by David Bee/],
   ['support route', /mailto:email@davidbee\.me/],
-  ['AI provider disclosure', /sent to DeepSeek/],
+  ['AI processing disclosure', /processed by the AI model/],
   ['saved-work disclosure', /saved to your Studio account/],
   ['generic AI distinction', /Not another blank AI chat/],
   ['5E mechanism', /Entertainment, Enragement, Epiphany, Empathy, or Education/]
 ];
 
 const failures = checks.filter(([, pattern]) => !pattern.test(html)).map(([label]) => label);
+// David 2026-10-08: no AI vendor name anywhere a member can see it; the
+// provider will change, and the disclosure stays honest without it.
+if (/deepseek/i.test(html) || /deepseek/i.test(script)) failures.push('no vendor name in member copy');
 if (!/copy-story-output-bottom/.test(script) || !/start-another-story/.test(script)) {
   failures.push('finished-script actions');
 }
