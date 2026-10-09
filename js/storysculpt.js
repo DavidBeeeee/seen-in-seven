@@ -1219,6 +1219,20 @@ async function copyOutput(button, doneLabel) {
     setTimeout(() => { span.textContent = original; }, 1500);
   }
 }
+// UX 37: export exactly what the panel shows, as a text file named for the chat.
+function downloadScript() {
+  if (!activeStory || !activeStory.output) return;
+  const text = storyEl('story-output-copy').value;
+  const url = URL.createObjectURL(new Blob([text], { type: 'text/plain;charset=utf-8' }));
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = STATES.exportFileName(storyEl('story-title').value || activeStory.title);
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+storyEl('download-story-output').addEventListener('click', downloadScript);
 storyEl('copy-story-output').addEventListener('click', () => copyOutput(storyEl('copy-story-output'), 'Copied'));
 storyEl('copy-story-output-bottom').addEventListener('click', () => copyOutput(storyEl('copy-story-output-bottom'), 'Copied. Go record it.'));
 storyEl('start-another-story').addEventListener('click', showStart);

@@ -155,7 +155,16 @@ function longThread(turns) {
   check(/is in your chats whenever you want it/.test(appSrc), 'leaving a chat must say it is saved');
 }
 
-// 8. Copy and auth hygiene.
+// 8. A finished script exports as a text file named for its chat (UX 37).
+{
+  const ctx = {}; vm.createContext(ctx); vm.runInContext(statesSrc, ctx);
+  const S = ctx.StorySculptStates;
+  check(S.exportFileName('Posting Daily Myth!') === 'posting-daily-myth.txt', 'export file is named for the chat');
+  check(S.exportFileName('  ') === 'storysculpt-script.txt', 'an untitled chat still exports with a name');
+  check(/id="download-story-output"/.test(page) && /addEventListener\('click', downloadScript\)/.test(appSrc), 'the script panel carries a working Download button');
+}
+
+// 9. Copy and auth hygiene.
 {
   const memberCopy = statesSrc + page;
   check(!/—/.test(memberCopy), 'no em dashes in member copy');

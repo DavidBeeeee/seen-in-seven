@@ -94,10 +94,16 @@
       '<i data-lucide="chevrons-up"></i><span>' + escapeHtml(label) + '</span></button></div>';
   }
 
+  // UX 37: a script leaves StorySculpt as a plain text file named for its chat.
+  function exportFileName(title) {
+    const base = String(title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
+    return (base || 'storysculpt-script') + '.txt';
+  }
+
   const api = {
     DAY_MS, QUIET_AFTER_DAYS, LAPSE_AFTER_DAYS, COLLAPSE_AFTER, KEEP_VISIBLE,
     INACTIVITY_LINE, FINISHED_LINE,
-    engagement, returnNotice, returnNoticeMarkup, threadWindow, showEarlierMarkup
+    engagement, returnNotice, exportFileName, returnNoticeMarkup, threadWindow, showEarlierMarkup
   };
   root.StorySculptStates = api;
 })(typeof window !== 'undefined' ? window : globalThis);
