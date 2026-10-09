@@ -151,3 +151,25 @@ export function coerceResult(rawContent, recentMoves = []) {
     ...(parsed.ok ? { why_this_now: 'The Navigator did not produce a fresh tailored route this time. Naming the outcome and obstacle in your own words helps you choose a different next step.' } : {})
   }, source: 'fallback' };
 }
+
+// Safety boundary: re-export StorySculpt's crisis detector to share cleanly across Hub tools.
+export { detectCrisis } from './storysculpt-steps.js';
+
+export function navigatorCrisisResponse(name) {
+  const who = name && name.trim() ? `${name.trim()}, ` : '';
+  return [
+    `${who}I am going to pause the Navigator here, because what you just wrote matters more than any next step we could choose today.`,
+    '',
+    "If you are thinking about ending your life or hurting yourself, please talk to a real person right now. You do not have to have the right words.",
+    '',
+    '- **US and Canada:** call or text **988** (Suicide and Crisis Lifeline)',
+    '- **UK and Ireland:** call **116 123** (Samaritans)',
+    '- **Australia:** call **13 11 14** (Lifeline)',
+    '- **Anywhere else:** findahelpline.com lists free, confidential lines in your country',
+    '- **If you are in immediate danger:** call your local emergency number',
+    '',
+    "Next Step Navigator is an automated planning tool. It can help find business actions, but it cannot be there for you the way a real person can. Please reach out to someone you trust, too.",
+    '',
+    "When you are ready, the Navigator will still be here, and so will every move you have saved."
+  ].join('\n');
+}

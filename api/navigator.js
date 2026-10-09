@@ -1,5 +1,5 @@
 import { authenticatedUser, consumeQuota, json } from './_lib/security.js';
-import { normalizeInput, coerceResult } from './_lib/navigator-core.js';
+import { normalizeInput, coerceResult, detectCrisis, navigatorCrisisResponse } from './_lib/navigator-core.js';
 
 export const config = { maxDuration: 60 };
 
@@ -192,6 +192,35 @@ export default async function handler(req, res) {
   if (!user || !(await hasEeeAccess(req))) {
     await emit('denied');
     return json(res, 403, { error: 'An active EEE membership is required.' });
+  }
+
+  // Safety boundary: crisis or self-harm language in the objective, situation or blocker
+  // skips generation, returns one plain human response pointing to real help, writes no move,
+  // and logs navigator_safety. Ordinary business frustration must not trip it.
+  const textToScan = [
+    req.body && req.body.objective,
+    req.body && req.body.current_reality,
+    req.body && req.body.situation,
+    req.body && req.body.blocker
+  ].filter(Boolean).join('\n');
+  const crisis = detectCrisis(textToScan);
+  if (crisis.tripped) {
+    await emit('safety', {
+      category: crisis.category,
+      patternId: crisis.patternId
+    });
+    const message = navigatorCrisisResponse(user.name || '');
+    return json(res, 200, {
+      safety: true,
+      crisis: true,
+      content: message,
+      message,
+      next_action: '',
+      first_15_minutes: '',
+      done_when: '',
+      why_this_now: '',
+      source: 'safety'
+    });
   }
 
   // Member-token read: existing ownership + EEE RLS select only this member's
