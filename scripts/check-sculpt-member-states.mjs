@@ -168,4 +168,4 @@ if (failures.length) {
   console.error('check-sculpt-member-states FAIL\n- ' + failures.join('\n- '));
   process.exit(1);
 }
-console.log('check-sculpt-member-states PASS');
+console.log('PASS: check-sculpt-member-states: 22-day lapse names the chat, 5-day renders nothing, 10-day is quiet, 40-turn chat collapses behind Show earlier.');
