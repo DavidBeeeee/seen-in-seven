@@ -65,24 +65,21 @@ chapter has to accomplish:
 6. **Second Epiphany or Elixir.** Level 1 finds the truth earned through the fall. Level 2 reveals the speaker's counterintuitive way of working, grounded in lived evidence.
 7. **Return.** The speaker integrates the journey and becomes capable of guiding someone who recognizes the earlier struggle. Level 2 also makes the earned professional difference clear.
 
-Level 1 finishes by inviting the person into Level 2. Whether Level 2 is
-visible to a first-time buyer in launch copy is an open decision and is not
-made here.
+Level 1 finishes by inviting the person into Level 2. David's October 4
+decision keeps Level 2 out of onboarding, sales pages and checkout. It surfaces
+only after the person finishes their first videos.
 
 **The live source for generation is `api/_lib/blueprints.txt`, assembled by
 `api/_lib/prompt-engine.js`.** Neither is in a `prompts/` directory, whatever
 any older document says.
 
-**The two levels are named differently in two places and nobody has picked
-one.** WBR-206. `api/_lib/blueprints.txt`, which is what actually generates,
-calls them `LEVEL 1 - THE RELATABLE HERO SERIES` and `LEVEL 2 - THE RELUCTANT
-EXPERT SERIES`. The July 25 architecture override in
-`Hero's Journey 777 Video Challenge.md` calls them THE PERSON SERIES and THE
-EXPERT SERIES, and the business document says Level 2 has no name yet. Do not
-reconcile these by editing the generator: it is live, two participants are
-mid-challenge inside it, and the name is David's decision. Use the blueprint
-names when you mean what the product does today, and say which source you are
-quoting.
+**The names are decided.** WBR-206. David chose **The Relatable Hero** for
+Level 1 and **The Heroic Leader** for Level 2 (September 22; canonical source:
+WorkerBee's `state/VOCABULARY.md`). The architecture document and eligible
+member copy use that decision. The protected `api/_lib/blueprints.txt` still
+carries its earlier Level 2 header until David publishes the ready rename
+through the Prompt Tester. Never edit that file or `api/_lib/prompt-engine.js`
+directly to reconcile naming.
 
 Systeme.io remains the public funnel, checkout, and email platform. Studio never sells; it only delivers.
 

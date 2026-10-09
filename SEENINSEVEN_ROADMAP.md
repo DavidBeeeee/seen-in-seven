@@ -71,12 +71,12 @@ the developer brief:
 - **Whether Level 2 is visible to a first-time buyer in launch copy is an open
   decision** and is not made here. The 777 sales page currently says seven
   videos and never mentions a second level.
-- **Level 2 has no agreed name.** WBR-206. `api/_lib/blueprints.txt`, the live
-  generation source assembled by `api/_lib/prompt-engine.js`, calls the two
-  series THE RELATABLE HERO SERIES and THE RELUCTANT EXPERT SERIES. The July 25
-  architecture override calls them THE PERSON SERIES and THE EXPERT SERIES. The
-  business document says Level 2 is unnamed. Do not settle this by editing the
-  generator; it is live and it is David's call.
+- **Level 2 is The Heroic Leader.** WBR-206. David chose the name September 22;
+  Level 1 is The Relatable Hero. The protected generation source still needs
+  its ready header rename published through the Prompt Tester. No direct
+  edit to `api/_lib/blueprints.txt` or `api/_lib/prompt-engine.js`. David's
+  October 4 decision keeps Level 2 out of onboarding, sales pages and checkout;
+  it surfaces after the member finishes their first videos.
 
 The current operating assumptions:
 

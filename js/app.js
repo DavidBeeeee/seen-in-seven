@@ -3488,7 +3488,7 @@ function _buildPromptsContent(container, v, idx) {
     // Build the intro declaration (read-only for V1)
     const introDeclaration = `Hi, my name is ${state.name || '(your name)'}. I never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me... some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of.`;
 
-    // Level 2 declaration (for Authority Series)
+    // Level 2 declaration (for The Heroic Leader)
     const l2Declaration = `For those of you who don't know me yet, my name is ${state.name || '(your name)'}. I kinda never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos about me, some of my deepest thoughts, vulnerable opinions, and personal history that you probably aren't aware of. I'm specifically doing this 7 Video Challenge because I have to share my knowledge, my experience, and my lived reality for the specific people I want to help before the world changes forever and I won't have the chance. I'm scared, I'm frustrated, I don't know how it's going to go, but I'm committed to finishing.`;
 
     const v0Prompts = level === 1
@@ -3549,7 +3549,7 @@ function _buildPromptsContent(container, v, idx) {
       promptsHTML = `
         <div class="input-group">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">
-            <label class="input-label" style="margin-bottom:0;">Your Authority Series declaration</label>
+            <label class="input-label" style="margin-bottom:0;">Your Heroic Leader declaration</label>
             <span style="font-size:10px;color:var(--muted);background:rgba(255,255,255,0.06);padding:2px 8px;border-radius:4px;letter-spacing:.06em;">READ ONLY</span>
           </div>
           <span class="input-hint" style="font-size:10px;opacity:0.65;">Pre-filled from your onboarding. You can edit on the next page.</span>
@@ -4709,7 +4709,7 @@ function runItAgain() {
     activateJourneyLevel(2);
     // update the badge while we're at it
     const badge = document.getElementById('plan-level-badge');
-    if (badge) badge.textContent = '🔥 LEVEL 2 — THE AUTHORITY SERIES';
+    if (badge) badge.textContent = '🔥 LEVEL 2 - THE HEROIC LEADER';
   }
   // Keep each level's scripts isolated while retaining shared onboarding context.
   state.mvoQ2 = null;
@@ -5530,7 +5530,7 @@ function openSettings() {
     levelDisplay.textContent = state.level === 1
       ? 'Level 1: The Relatable Hero'
       : state.level === 2
-        ? 'Level 2 — The Authority Series'
+        ? 'Level 2: The Heroic Leader'
         : 'Not set';
   }
 
@@ -5710,7 +5710,7 @@ function showLevelChangeConfirm() {
   const levelMsg = document.getElementById('settings-level-msg');
   const currentLevel = state.level;
   const otherLevel = currentLevel === 1 ? 2 : 1;
-  const otherLabel = otherLevel === 1 ? 'Level 1 (Relatable Hero)' : 'Level 2 (Authority Series)';
+  const otherLabel = otherLevel === 1 ? 'Level 1 (Relatable Hero)' : 'Level 2 (The Heroic Leader)';
 
   if (levelMsg) {
     levelMsg.innerHTML = 'Switch to ' + otherLabel + '? Your current scripts will be kept. '
@@ -5750,7 +5750,7 @@ async function confirmLevelChange(newLevel) {
   if (levelDisplay) {
     levelDisplay.textContent = newLevel === 1
       ? 'Level 1: The Relatable Hero'
-      : 'Level 2 — The Authority Series';
+      : 'Level 2: The Heroic Leader';
   }
   const levelMsg = document.getElementById('settings-level-msg');
   if (levelMsg) {
@@ -6105,7 +6105,7 @@ function buildPlan(){
     }
     localStorage.setItem('sis_returned', '1');
   }
-  const levelLabel = state.level === 1 ? 'Level 1 — Relatable Hero' : 'Level 2 — Authority Series';
+  const levelLabel = state.level === 1 ? 'Level 1 — Relatable Hero' : 'Level 2: The Heroic Leader';
   if (dbPill) dbPill.textContent = levelLabel;
   if (dbSummary) dbSummary.textContent = '';
   if (dbActions) dbActions.innerHTML = '';
@@ -6290,7 +6290,7 @@ function buildPlan(){
     document.getElementById('mission-cta').innerHTML = filmedCount === totalVideos ? `
       You just completed <strong style="color:var(--teal)">Level 1: The Relatable Hero</strong>.
       That's the foundation — most people never build it.<br><br>
-      <strong>Your next move:</strong> Level 2 — The Authority Series.<br><br>
+      <strong>Your next move:</strong> Level 2: The Heroic Leader.<br><br>
       <button onclick="runItAgain()" style="background:var(--teal);color:#0f172a;font-family:'Oswald',sans-serif;font-size:18px;letter-spacing:0.1em;padding:13px 34px;border:none;border-radius:8px;cursor:pointer;margin-top:8px;">
         Start Level 2 — Skip the Setup →
       </button>` : `
@@ -6301,7 +6301,7 @@ function buildPlan(){
       </button>`;
   } else {
     const l2Done = filmedCount === totalVideos;
-    document.getElementById('mission-label').textContent = l2Done ? '🔥 Level 2 Complete' : '🔥 Authority Series';
+    document.getElementById('mission-label').textContent = l2Done ? '🔥 Level 2 Complete' : '🔥 The Heroic Leader';
     document.getElementById('mission-title').textContent = l2Done ? 'YOU JUST PROVED YOUR VOICE WORKS.' : 'KEEP BUILDING.';
     document.getElementById('mission-cta').innerHTML = l2Done ? `
       <strong style="color:var(--cream)">Now let's build the business you deserve.</strong><br><br>
@@ -6410,7 +6410,7 @@ function buildPlanTracker() {
     ).join('');
     html = `<div class="vt-dual-wrap">`+
       `<div class="vt-row-label">L1 — RELATABLE HERO</div><div class="vt-row">${l1Row}</div>`+
-      `<div class="vt-row-label vt-l2-label">L2 — AUTHORITY SERIES</div><div class="vt-row">${l2Row}</div>`+
+      `<div class="vt-row-label vt-l2-label">L2: THE HEROIC LEADER</div><div class="vt-row">${l2Row}</div>`+
       `</div>`;
   } else {
     html = labels.map((lbl,i) => {
@@ -6628,7 +6628,7 @@ function exportPDF(mode) {
   }
   const name = state.name || 'Your';
   const videos = getVideos();
-  const levelLabel = state.level === 1 ? 'Level 1: The Relatable Hero' : 'Level 2 — The Authority Series';
+  const levelLabel = state.level === 1 ? 'Level 1: The Relatable Hero' : 'Level 2: The Heroic Leader';
 
   let html = `<!DOCTYPE html><html><head><meta charset="UTF-8">
   <title>${name}'s Scripts — SeenInSeven</title>

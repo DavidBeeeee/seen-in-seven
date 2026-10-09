@@ -183,11 +183,11 @@ SeenInSeven contains two seven-video levels.
 
 For someone finding their voice, becoming comfortable on camera, and proving they are worth listening to. This is the level the public $7 challenge sells.
 
-### Level 2: The Expert Series
+### Level 2: The Heroic Leader
 
 For someone with knowledge, skills, experience, or a developing offer who needs to become visible as a useful guide. It must never assume an established company, clients, revenue, or a mature offer.
 
-Level 2 exists and is already being used privately. Whether it appears in public challenge marketing remains a decision. Do not promise fourteen videos publicly until David settles that.
+Level 2 exists and is already being used privately. David's October 4 decision keeps it out of onboarding, sales pages and checkout. It surfaces only after the member finishes their first videos; do not promise fourteen videos in public challenge marketing.
 
 ### Current internal story architecture
 
