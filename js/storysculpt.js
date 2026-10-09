@@ -29,6 +29,9 @@ let helpReturnFocus = null;
 let viewingVersionIndex = -1; // -1 means viewing active/latest draft
 let mobileActiveTab = 'chat'; // 'chat' or 'script'
 let storyRailFilter = 'all'; // 'all' | 'active' | 'filmed'
+let storyReturnNotice = null; // WBR-373: the lapse or quiet-week line shown on reopen
+const expandedThreads = new Set(); // chats whose earlier turns the member chose to show
+const STATES = window.StorySculptStates;
 
 const storyEl = id => document.getElementById(id);
 
@@ -220,6 +223,7 @@ async function deleteStoryProjectById(projectId) {
     if (error) throw error;
     storyProjects = storyProjects.filter(p => p.id !== projectId);
     if (activeStory && activeStory.id === projectId) {
+      clearTimeout(storySaveTimer); storySaveTimer = null; activeStory = null;
       if (storyProjects.length) showProject(storyProjects[0]); else showStart();
     } else {
       renderProjectList();
@@ -343,7 +347,13 @@ function renderConversation() {
   const conversation = Array.isArray(activeStory && activeStory.conversation) ? activeStory.conversation : [];
   const versions = (activeStory && activeStory.intake && activeStory.intake.versions) || [];
 
-  storyEl('story-conversation').innerHTML = conversation.map((message, index) => {
+  // WBR-373: a long chat opens on the latest exchange. Earlier turns sit behind
+  // "Show earlier"; indices stay absolute so every action finds its message.
+  const windowed = STATES.threadWindow(conversation.length, activeStory && expandedThreads.has(activeStory.id));
+  const lastAssistant = conversation.map(m => m.role).lastIndexOf('assistant');
+
+  storyEl('story-conversation').innerHTML = STATES.showEarlierMarkup(windowed.hidden) + conversation.map((message, index) => {
+    if (index < windowed.start) return '';
     if (message.role === 'user') {
       const isRefine = message.refineNote || (typeof message.content === 'string' && message.content.startsWith('Please revise the script above. Keep what works and change this: '));
       if (isRefine) {
@@ -380,7 +390,6 @@ function renderConversation() {
       '</article>';
     }
 
-    const lastAssistant = conversation.map(m => m.role).lastIndexOf('assistant');
     const guide = stepGuideMarkup(message, index === lastAssistant && index === conversation.length - 1);
     return '<article class="story-message assistant">' +
       '<span class="story-message-role">StorySculpt</span>' +
@@ -400,6 +409,29 @@ function renderConversation() {
 
   renderScriptPanel();
   EEEStudio.refreshIcons();
+}
+
+function showEarlierTurns() {
+  if (!activeStory) return;
+  const scroller = storyEl('story-scroll');
+  const before = scroller ? scroller.scrollHeight - scroller.scrollTop : 0;
+  expandedThreads.add(activeStory.id);
+  renderConversation();
+  // Keep the member's place: the newly shown turns appear above, not under them.
+  if (scroller) scroller.scrollTop = scroller.scrollHeight - before;
+}
+
+function renderReturnNotice() {
+  const slot = storyEl('story-return-notice');
+  if (!slot) return;
+  slot.innerHTML = STATES.returnNoticeMarkup(storyReturnNotice);
+  slot.hidden = !storyReturnNotice;
+  EEEStudio.refreshIcons();
+}
+
+function dismissReturnNotice() {
+  storyReturnNotice = null;
+  renderReturnNotice();
 }
 
 async function promoteMessageToScript(msgIndex) {
@@ -521,6 +553,17 @@ function showProject(project) {
 function showStart() {
   hideThinkingIndicator();
   hideErrorInConversation();
+  // WBR-373: leaving a chat says where it went. Any typed change is flushed now
+  // rather than waiting out the save timer.
+  const leaving = activeStory;
+  const leftNote = storyEl('story-left-note');
+  if (leaving) {
+    if (storySaveTimer) { clearTimeout(storySaveTimer); storySaveTimer = null; saveActiveStory().catch(() => {}); }
+    leftNote.textContent = 'Saved. "' + ((storyEl('story-title').value || '').trim() || leaving.title || 'Untitled script') + '" is in your chats whenever you want it.';
+    leftNote.hidden = false;
+  } else {
+    leftNote.hidden = true;
+  }
   activeStory = null;
   viewingVersionIndex = -1;
   storyEl('story-start').hidden = false;
@@ -534,7 +577,11 @@ async function loadStoryProjects() {
   const { data, error } = await storyContext.sb.from('storysculpt_projects').select('*').eq('user_id', storyContext.profile.id).order('updated_at', { ascending: false });
   if (error) throw error;
   storyProjects = data || [];
-  if (storyProjects.length) showProject(storyProjects[0]); else showStart();
+  // Measured from the saved timestamps before this visit writes anything.
+  storyReturnNotice = STATES.returnNotice(storyProjects);
+  renderReturnNotice();
+  const resume = storyReturnNotice && storyProjects.find(project => project.id === storyReturnNotice.projectId);
+  if (resume) showProject(resume); else if (storyProjects.length) showProject(storyProjects[0]); else showStart();
 }
 
 async function createStoryProject(mode) {
@@ -577,10 +624,10 @@ async function saveActiveStory(message) {
 
 function queueStorySave() {
   clearTimeout(storySaveTimer);
-  storySaveTimer = setTimeout(() => saveActiveStory().catch(() => {
+  storySaveTimer = setTimeout(() => { storySaveTimer = null; return saveActiveStory().catch(() => {
     storyEl('story-save-status').textContent = 'This change could not be saved yet.';
     storyEl('story-save-status').className = 'eee-message error';
-  }), 500);
+  }); }, 500);
 }
 
 // The browser half of the receipt-to-outcome trail. The server logs every
@@ -820,7 +867,7 @@ async function sendStoryAnswer(event) {
   const answer = storyEl('story-answer').value.trim();
   if (!activeStory || !answer) return;
   if (activeStory.output) {
-    storyEl('story-refine-status').textContent = 'Your script is finished. Use Revise to change it.';
+    storyEl('story-refine-status').textContent = STATES.FINISHED_LINE;
     storyEl('story-refine-note').focus();
     return;
   }
@@ -835,6 +882,7 @@ async function sendStoryAnswer(event) {
     }
   }
 
+  if (storyReturnNotice) dismissReturnNotice();
   const button = storyEl('story-send');
   button.disabled = true;
   storyEl('story-generation-status').textContent = 'Reading the full thread and finding the next useful move.';
@@ -953,6 +1001,7 @@ function queueOutputSave() {
 
   clearTimeout(storySaveTimer);
   storySaveTimer = setTimeout(() => {
+    storySaveTimer = null;
     saveActiveStory().then(() => {
       if (saveStatusEl) saveStatusEl.textContent = 'Saves as you type';
     }).catch(() => {
@@ -967,6 +1016,7 @@ async function deleteActiveStory() {
   const { error } = await storyContext.sb.from('storysculpt_projects').delete().eq('id', id);
   if (error) return;
   storyProjects = storyProjects.filter(project => project.id !== id);
+  clearTimeout(storySaveTimer); storySaveTimer = null; activeStory = null;
   if (storyProjects.length) showProject(storyProjects[0]); else showStart();
 }
 
@@ -1081,6 +1131,7 @@ storyEl('story-title').addEventListener('input', queueStorySave);
 storyEl('story-context').addEventListener('input', queueStorySave);
 storyEl('story-composer').addEventListener('submit', sendStoryAnswer);
 storyEl('story-conversation').addEventListener('click', event => {
+  if (event.target.closest('[data-show-earlier]')) { showEarlierTurns(); return; }
   const quick = event.target.closest('[data-quick-reply]');
   if (quick) { sendQuickReply(quick.getAttribute('data-quick-reply')); return; }
   if (event.target.closest('[data-quick-focus]')) storyEl('story-answer').focus();
@@ -1171,6 +1222,14 @@ async function copyOutput(button, doneLabel) {
 storyEl('copy-story-output').addEventListener('click', () => copyOutput(storyEl('copy-story-output'), 'Copied'));
 storyEl('copy-story-output-bottom').addEventListener('click', () => copyOutput(storyEl('copy-story-output-bottom'), 'Copied. Go record it.'));
 storyEl('start-another-story').addEventListener('click', showStart);
+storyEl('story-finished-new').addEventListener('click', showStart);
+storyEl('story-return-notice').addEventListener('click', event => {
+  if (event.target.closest('[data-return-dismiss]')) dismissReturnNotice();
+});
+// Leaving the page with a typed change still on the save timer: send it now.
+window.addEventListener('pagehide', () => {
+  if (storySaveTimer && activeStory) { clearTimeout(storySaveTimer); storySaveTimer = null; saveActiveStory().catch(() => {}); }
+});
 
 EEEStudio.initialize(async context => {
   storyContext = context;

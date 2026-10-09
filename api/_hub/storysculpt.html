@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
   <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
-  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=storysculpt-split-v4">
+  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=storysculpt-split-v5">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -55,11 +55,13 @@
           <button class="story-filter-btn" data-filter="filmed" type="button">Filmed</button>
         </div>
         <div class="eee-rail-list" id="story-project-list"></div>
+        <p class="story-rail-keep" id="story-inactivity-line"><i data-lucide="archive"></i><span>Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them.</span></p>
         <button class="story-memory-link" id="story-open-memory" type="button"><span class="story-memory-link-icon"><i data-lucide="user-round"></i></span><span><strong>Your story profile</strong><small>Voice, facts and offers StorySculpt remembers on every chat.</small></span></button>
       </aside>
 
       <section class="eee-work-main story-main">
         <div class="story-start" id="story-start">
+          <p class="story-left-note" id="story-left-note" role="status" hidden></p>
           <div class="eee-work-head"><div><p class="eyebrow">StorySculpt</p><h1 id="story-page-title">Start a script the way you would talk about it.</h1><p id="story-page-copy">Pick a format, then talk it through. StorySculpt asks one thing at a time and shapes your answers into a script that still sounds like you.</p></div></div>
 
           <section class="story-method" id="story-method">
@@ -80,6 +82,8 @@
             <div class="story-chat-title-wrap"><input id="story-title" class="story-chat-title" maxlength="160" aria-label="Chat title"><span class="story-format-badge" id="story-format-badge">Controversial Take</span></div>
             <div class="story-chat-actions"><button class="secondary-button" id="story-notes-toggle" type="button"><i data-lucide="sticky-note"></i><span>Notes</span></button><button class="secondary-button danger" id="delete-project-button" type="button" hidden><i data-lucide="trash-2"></i><span>Delete</span></button></div>
           </div>
+
+          <div class="story-return-slot" id="story-return-notice" hidden></div>
 
           <div class="story-notes" id="story-notes" hidden>
             <label>Notes for this chat<textarea id="story-context" placeholder="Anything specific to this one script: a name, a date, a detail you do not want lost. Your standing voice and facts live in your story profile."></textarea></label>
@@ -105,6 +109,7 @@
               <p class="story-composer-status" id="story-generation-status">StorySculpt saves your chat as you go.</p>
 
               <div class="story-refine-box" id="story-refine-box" hidden>
+                <div class="story-finished-line" id="story-finished-line"><i data-lucide="circle-check"></i><p>This script is finished. Refine it with a note or start a new chat.</p><button class="secondary-button" id="story-finished-new" type="button"><i data-lucide="plus"></i><span>New chat</span></button></div>
                 <div class="story-refine-inner">
                   <textarea id="story-refine-note" rows="1" placeholder="Say what to change in plain words (e.g. make the opening punchier)..."></textarea>
                   <button class="primary-button" id="story-refine-send" type="button"><span>Revise</span><i data-lucide="wand-sparkles"></i></button>
@@ -178,11 +183,11 @@
       <div class="story-memory-head"><div><p class="eyebrow">StorySculpt</p><h2 id="story-help-title">Help &amp; privacy</h2></div><button class="icon-button" id="story-help-close" type="button" aria-label="Close help"><i data-lucide="x"></i></button></div>
       <div class="story-help-content">
         <section><h3>Who makes this?</h3><p>Built and supported by David Bee. StorySculpt is part of The Momentum Hub, and every step of it follows David's own scriptwriting method.</p></section>
-        <section><h3>What happens to my work?</h3><p>Your chats, project titles, notes, finished scripts, and story profile are saved to your Studio account so you can return to them. When you ask StorySculpt to continue or revise, your title, profile, notes, and recent messages are processed by the AI model that writes your next question or draft, guided by David's method and your own words. Do not enter anything you do not want processed by an AI service.</p><p>You can delete a chat and its saved script with the Delete button inside that chat. Your standing story profile is separate and can be edited from Story profile.</p></section>
+        <section><h3>What happens to my work?</h3><p>Your chats, project titles, notes, finished scripts, and story profile are saved to your Studio account so you can return to them. When you ask StorySculpt to continue or revise, your title, profile, notes, and recent messages are processed by the AI model that writes your next question or draft, guided by David's method and your own words. Do not enter anything you do not want processed by an AI service.</p><p>Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them. You can delete a chat and its saved script with the Delete button inside that chat. Your standing story profile is separate and can be edited from Story profile.</p></section>
         <section><h3>Where do I get help?</h3><p>For a question about a script, chat, or your story profile, email <a href="mailto:email@davidbee.me?subject=StorySculpt%20support">email@davidbee.me</a> and say what you were doing. For Studio sign-in, access, or billing, use the <a href="/eee">Studio home</a> and its account support options, or email the same address with “Studio account” in the subject.</p><p>Review our <a href="/terms">Terms of Service, AI usage, and FAQ</a>.</p></section>
       </div>
     </aside>
   </div>
-  <script src="/js/eee-common.js?v=eee-launch-v1"></script><script src="/js/storysculpt.js?v=storysculpt-split-v4"></script>
+  <script src="/js/eee-common.js?v=eee-launch-v1"></script><script src="/js/storysculpt-member-states.js?v=storysculpt-states-v1"></script><script src="/js/storysculpt.js?v=storysculpt-split-v5"></script>
 </body>
 </html>
