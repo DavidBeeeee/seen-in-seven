@@ -2211,3 +2211,31 @@ pre {
     padding: 14px 16px;
   }
 }
+
+/* WBR-373: the roadmap is saved to the member's account. */
+.roadmap-last-updated,
+.roadmap-sync-note {
+  font-size: 13px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin: 4px 0 16px;
+}
+
+.roadmap-sync-note {
+  margin: 14px 0 0;
+  text-align: center;
+}
+
+.roadmap-versions {
+  margin-top: 18px;
+  padding: 14px 16px;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-card, 16px);
+  text-align: center;
+}
+
+.roadmap-versions-text {
+  font-size: 13px;
+  color: var(--soft);
+  margin: 0 0 10px;
+}

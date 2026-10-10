@@ -90,7 +90,9 @@
                 <div id="resume-container" class="resume-container-box" hidden>
                     <button class="btn-primary btn-resume-plan" onclick="resumeAudit()">RESUME SAVED PLAN</button>
                     <button class="btn-secondary" onclick="resetApp()">START FRESH AUDIT</button>
+                    <p class="roadmap-sync-note" id="roadmap-sync-note" hidden></p>
                 </div>
+                <div class="roadmap-versions" id="roadmap-versions" hidden></div>
 
                 <div id="start-inputs">
                     <input type="text" id="user-name" class="input-text" placeholder="First Name..."
@@ -158,6 +160,7 @@
                     </div>
                 </div>
                 <h2>THE FLIGHT PLAN</h2>
+                <p class="roadmap-last-updated" id="roadmap-last-updated" hidden></p>
                 <div class="roadmap-intro-box">
                     Welcome to your custom implementation plan! Based on your answers, we have organized exactly what you need to build next.
                     <br><br>
@@ -218,7 +221,7 @@
                 <!-- 5. Reset -->
                 <div class="reset-audit-wrap">
                     <button class="btn-tiny-reset"
-                        onclick="if(confirm('Warning: This will delete your entire business profile, tasks, and roadmap progress. Are you sure?')) resetApp()">⚠️
+                        onclick="if(confirm('This clears your business profile, diagnostic answers, tasks and roadmap progress from this screen on every device, and starts a new audit. Your current roadmap is kept in your account as a past version you can bring back, and every Next Move you have made is kept. Continue?')) resetApp()">⚠️
                         Start Entirely New Audit (Danger)</button>
                 </div>
             </div>
@@ -533,9 +536,131 @@
 
         const tooltip = document.getElementById('tooltip');
 
+        function readLocalProfile() {
+            try { const raw = localStorage.getItem(STORAGE_KEY); return raw ? JSON.parse(raw) : null; } catch (e) { return null; }
+        }
+
+        function showResume() {
+            document.getElementById('resume-container').style.display = 'block';
+            document.getElementById('start-inputs').style.display = 'none';
+        }
+
         function loadData() {
-            const raw = localStorage.getItem(STORAGE_KEY);
-            if (raw) { userProfile = JSON.parse(raw); document.getElementById('resume-container').style.display = 'block'; document.getElementById('start-inputs').style.display = 'none'; }
+            if (roadmapAccountLoaded) return;
+            const local = readLocalProfile();
+            if (local) { userProfile = local; showResume(); }
+            updateLastUpdated();
+        }
+
+        // WBR-373: the roadmap is saved to the member's account (navigator_roadmaps),
+        // with localStorage as the offline fallback. js/navigator-roadmap-store.mjs.
+        let roadmapCtx = null;
+        let roadmapAccountLoaded = false;
+        let roadmapSyncTimer = null;
+        let roadmapSyncFailed = false;
+
+        function roadmapStore() {
+            if (window.NavigatorRoadmapStore) return Promise.resolve(window.NavigatorRoadmapStore);
+            return new Promise(resolve => {
+                window.addEventListener('navigator-roadmap-store-ready', () => resolve(window.NavigatorRoadmapStore), { once: true });
+                setTimeout(() => resolve(window.NavigatorRoadmapStore || null), 5000);
+            });
+        }
+
+        function setSyncNote(text) {
+            const el = document.getElementById('roadmap-sync-note');
+            if (!el) return;
+            el.textContent = text;
+            el.hidden = !text;
+        }
+
+        function updateLastUpdated() {
+            const el = document.getElementById('roadmap-last-updated');
+            if (!el) return;
+            const store = window.NavigatorRoadmapStore;
+            const when = userProfile.updatedAt && store ? store.formatUpdated(userProfile.updatedAt) : '';
+            if (!when) { el.hidden = true; return; }
+            el.textContent = roadmapCtx && !roadmapSyncFailed
+                ? 'Last updated ' + when + '. Your plan is saved to your account, so it follows you to any device.'
+                : 'Last updated ' + when + '. Saved on this device; it will copy to your account when you are signed in and online.';
+            el.hidden = false;
+        }
+
+        function scheduleRoadmapSync() {
+            if (!roadmapCtx) return;
+            clearTimeout(roadmapSyncTimer);
+            roadmapSyncTimer = setTimeout(syncRoadmapNow, 800);
+        }
+
+        async function syncRoadmapNow() {
+            const store = await roadmapStore();
+            if (!store || !roadmapCtx || !userProfile.name) return;
+            const { error } = await store.saveCurrent(roadmapCtx.sb, roadmapCtx.profile.id, userProfile);
+            roadmapSyncFailed = !!error;
+            updateLastUpdated();
+        }
+
+        async function mountRoadmapSync(context) {
+            const store = await roadmapStore();
+            if (!store) return;
+            roadmapCtx = context;
+            const local = readLocalProfile();
+            const { row, error } = await store.loadCurrent(context.sb, context.profile.id);
+            if (error) {
+                roadmapSyncFailed = true;
+                if (local) setSyncNote('We could not reach your account just now, so this is the copy saved on this device.');
+                updateLastUpdated();
+                return;
+            }
+            const choice = store.chooseNewer(local, row);
+            if (choice.profile) {
+                userProfile = choice.profile;
+                roadmapAccountLoaded = true;
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(userProfile));
+                showResume();
+                const when = store.formatUpdated(userProfile.updatedAt);
+                if (choice.source === 'account') {
+                    setSyncNote('Loaded from your account' + (when ? ', last updated ' + when : '') + '. Your plan is saved to your account, so it follows you to any device.');
+                } else {
+                    setSyncNote('Loaded from this device' + (when ? ', last updated ' + when : '') + ', which is newer than your account copy. Saving it to your account now.');
+                    await syncRoadmapNow();
+                }
+            }
+            updateLastUpdated();
+            renderPastVersions();
+        }
+
+        async function renderPastVersions() {
+            const box = document.getElementById('roadmap-versions');
+            const store = window.NavigatorRoadmapStore;
+            if (!box || !store || !roadmapCtx) return;
+            const { versions } = await store.listVersions(roadmapCtx.sb, roadmapCtx.profile.id);
+            if (!versions.length) { box.hidden = true; return; }
+            const v = versions[0];
+            const when = store.formatUpdated(v.profile_updated_at);
+            const name = (v.profile && v.profile.niche) ? ' for ' + v.profile.niche : '';
+            box.innerHTML = '';
+            const p = document.createElement('p');
+            p.className = 'roadmap-versions-text';
+            p.textContent = 'Your previous roadmap' + name + (when ? ', last updated ' + when : '') + ', is kept in your account.';
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.className = 'btn-secondary btn-restore-roadmap';
+            b.textContent = 'Bring back my previous roadmap';
+            b.addEventListener('click', () => restorePreviousRoadmap(v));
+            box.append(p, b);
+            box.hidden = false;
+        }
+
+        async function restorePreviousRoadmap(version) {
+            const store = window.NavigatorRoadmapStore;
+            if (!store || !roadmapCtx) return;
+            if (userProfile.name && !confirm('Bring back your previous roadmap? The one you have now is kept as a past version.')) return;
+            if (userProfile.name) await store.archiveCurrent(roadmapCtx.sb, roadmapCtx.profile.id);
+            userProfile = Object.assign({}, version.profile, { updatedAt: new Date().toISOString() });
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(userProfile));
+            await store.saveCurrent(roadmapCtx.sb, roadmapCtx.profile.id, userProfile);
+            location.reload();
         }
 
         function resumeAudit() {
@@ -1176,7 +1301,12 @@
         }
 
         function triggerCelebration() { const c = document.getElementById('celebration'); c.style.display = 'block'; setTimeout(() => { c.style.display = 'none'; }, 2000); }
-        function saveData() { localStorage.setItem(STORAGE_KEY, JSON.stringify(userProfile)); }
+        function saveData() {
+            userProfile.updatedAt = new Date().toISOString();
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(userProfile));
+            updateLastUpdated();
+            scheduleRoadmapSync();
+        }
         function showScreen(id) {
             document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
             document.getElementById(id).classList.add('active');
@@ -1186,7 +1316,17 @@
         } function copyText(id) { const el = document.getElementById(id); if (!el) return; navigator.clipboard.writeText(el.textContent).then(() => { const b = event.target; b.innerText = "COPIED"; setTimeout(() => b.innerText = "COPY", 2000); }); }
         function showTooltip(e, text) { if (window.innerWidth < 768) return; tooltip.textContent = text; tooltip.style.display = 'block'; tooltip.style.left = (e.pageX + 10) + 'px'; tooltip.style.top = (e.pageY + 10) + 'px'; }
         function hideTooltip() { tooltip.style.display = 'none'; }
-        function resetApp() { localStorage.removeItem(STORAGE_KEY); location.reload(); }
+        // Start Fresh keeps the current roadmap as a past version in the account.
+        async function resetApp() {
+            const store = window.NavigatorRoadmapStore;
+            clearTimeout(roadmapSyncTimer);
+            if (store && roadmapCtx) {
+                if (userProfile.name) await store.saveCurrent(roadmapCtx.sb, roadmapCtx.profile.id, userProfile);
+                await store.archiveCurrent(roadmapCtx.sb, roadmapCtx.profile.id);
+            }
+            localStorage.removeItem(STORAGE_KEY);
+            location.reload();
+        }
         function upgradeAsset(compId) {
             const qRef = QUESTIONS.find(q => q.id === compId);
             if (!qRef) return;
@@ -1659,6 +1799,7 @@
     <!-- The idempotent move write, loaded as a module so it is unit-testable under
          node; it hangs window.NavigatorMovesStore before mount() runs. WBR-005. -->
     <script type="module" src="/js/navigator-moves-store.mjs?v=wbr005-1"></script>
+    <script type="module" src="/js/navigator-roadmap-store.mjs?v=wbr373-1"></script>
     <script src="/js/navigator.js?v=wbr409-2"></script>
     <script>
         EEEStudio.initialize(async context => {
@@ -1667,6 +1808,8 @@
             // The durable Next Move record. Isolated and defensive, so a failure
             // here never takes down the roadmap builder. WBR-409.
             try { if (window.NavigatorMoves) await window.NavigatorMoves.mount(context); } catch (error) {}
+            // The roadmap follows the member across devices. WBR-373.
+            try { await mountRoadmapSync(context); } catch (error) {}
             if (window.lucide) window.lucide.createIcons();
         });
     </script>
