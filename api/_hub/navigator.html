@@ -90,9 +90,9 @@
                 <div id="resume-container" class="resume-container-box" hidden>
                     <button class="btn-primary btn-resume-plan" onclick="resumeAudit()">RESUME SAVED PLAN</button>
                     <button class="btn-secondary" onclick="resetApp()">START FRESH AUDIT</button>
-                    <p class="roadmap-sync-note" id="roadmap-sync-note" hidden></p>
+                    <p class="roadmap-sync-note" id="roadmap-sync-note" role="status" aria-live="polite" hidden></p>
                 </div>
-                <div class="roadmap-versions" id="roadmap-versions" hidden></div>
+                <div class="roadmap-versions" id="roadmap-versions" role="region" aria-label="Past roadmaps" hidden></div>
 
                 <div id="start-inputs">
                     <input type="text" id="user-name" class="input-text" placeholder="First Name..."
@@ -160,7 +160,7 @@
                     </div>
                 </div>
                 <h2>THE FLIGHT PLAN</h2>
-                <p class="roadmap-last-updated" id="roadmap-last-updated" hidden></p>
+                <p class="roadmap-last-updated" id="roadmap-last-updated" role="status" aria-live="polite" hidden></p>
                 <div class="roadmap-intro-box">
                     Welcome to your custom implementation plan! Based on your answers, we have organized exactly what you need to build next.
                     <br><br>
