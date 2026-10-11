@@ -93,4 +93,4 @@ if (failures.length) {
   console.error('check-certainty-engagement FAIL\n- ' + failures.join('\n- '));
   process.exit(1);
 }
-console.log('check-certainty-engagement PASS (' + cases.length + ' cases; current < ' + CURRENT_DAYS + 'd, lapsed >= ' + LAPSE_DAYS + 'd)');
+console.log('PASS check-certainty-engagement (' + cases.length + ' cases; current < ' + CURRENT_DAYS + 'd, lapsed >= ' + LAPSE_DAYS + 'd)');

@@ -47,4 +47,4 @@ if (failures.length) {
   console.error('check-certainty-engagement-reminders FAIL\n- ' + failures.join('\n- '));
   process.exit(1);
 }
-console.log('check-certainty-engagement-reminders PASS');
+console.log('PASS check-certainty-engagement-reminders');
