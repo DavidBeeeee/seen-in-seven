@@ -477,10 +477,15 @@ function renderCertainty() {
     return;
   }
   const data = adminState.certainty || { upcoming: [], past: [], counts: {} };
-  const upcoming = Array.isArray(data.upcoming) ? data.upcoming : [];
+  // Flagged sessions first (WBR-373, Developer 96): the booking side read the
+  // topic as a crisis, the reminder job sent the member nothing, and David
+  // reaches out himself. Sorted here too so an older RPC cannot bury them.
+  const upcoming = (Array.isArray(data.upcoming) ? data.upcoming : []).slice()
+    .sort((a, b) => (Number(Boolean(b.safety_flag)) - Number(Boolean(a.safety_flag))) || String(a.starts_at || '').localeCompare(String(b.starts_at || '')));
   const past = Array.isArray(data.past) ? data.past : [];
   const counts = data.counts || {};
-  if (note) note.textContent = (counts.upcoming || 0) + ' upcoming · ' + (counts.past || 0) + ' past · ' + (counts.cancelled || 0) + ' cancelled';
+  const flaggedCount = upcoming.filter(s => s.safety_flag).length;
+  if (note) note.textContent = (flaggedCount ? flaggedCount + ' need a human look · ' : '') + (counts.upcoming || 0) + ' upcoming · ' + (counts.past || 0) + ' past · ' + (counts.cancelled || 0) + ' cancelled';
   if (!upcoming.length && !past.length) {
     panel.innerHTML = '<div class="loading">No Certainty sessions booked yet.</div>';
     return;
@@ -491,8 +496,12 @@ function renderCertainty() {
     const cal = s.status === 'cancelled'
       ? '<span style="color:#fca5a5">cancelled</span>'
       : 'cal: ' + h(s.calendar_status || 'pending');
-    return '<tr>' +
-      '<td>' + when + '</td>' +
+    const flag = s.safety_flag && isUpcoming
+      ? '<div class="certainty-safety-flag" style="margin-top:4px;font-size:.8em;font-weight:700;color:#fca5a5">Needs a human look before this session</div>' +
+        '<div class="muted" style="font-size:.75em">No automated reminder goes to them. Reach out yourself.</div>'
+      : '';
+    return '<tr' + (s.safety_flag && isUpcoming ? ' style="background:rgba(252,165,165,.08)"' : '') + '>' +
+      '<td>' + when + flag + '</td>' +
       '<td>' + h(s.member_name || '—') + '<div class="muted" style="font-size:.8em">' + h(s.member_email || '') + '</div></td>' +
       '<td>' + modeLabel + '</td>' +
       '<td>' + (s.topic ? h(s.topic) : '<span class="muted">—</span>') + '</td>' +
@@ -558,8 +567,8 @@ function copyCertaintySessions() {
     (data.upcoming || []).map(s => Object.assign({ bucket: 'upcoming' }, s)),
     (data.past || []).map(s => Object.assign({ bucket: 'past' }, s))
   );
-  const lines = all.map(s => [s.bucket, s.label_day, (s.label_start || '') + '-' + (s.label_end || ''), s.member_name, s.member_email, s.mode, s.status, s.calendar_status, (s.topic || '').replace(/\t/g, ' ')].join('\t'));
-  const header = ['bucket', 'day', 'time_et', 'member', 'email', 'mode', 'status', 'calendar', 'topic'].join('\t');
+  const lines = all.map(s => [s.bucket, s.label_day, (s.label_start || '') + '-' + (s.label_end || ''), s.member_name, s.member_email, s.mode, s.status, s.calendar_status, s.safety_flag ? 'needs-human-look' : '', (s.topic || '').replace(/\t/g, ' ')].join('\t'));
+  const header = ['bucket', 'day', 'time_et', 'member', 'email', 'mode', 'status', 'calendar', 'safety', 'topic'].join('\t');
   navigator.clipboard.writeText([header].concat(lines).join('\n')).catch(() => {});
 }
 

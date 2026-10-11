@@ -9,7 +9,7 @@
 //
 // Why this is the one Certainty path that uses the service key. Every member
 // action goes through a SECURITY DEFINER RPC that resolves the member from
-// auth.uid(). A cron has no member session — auth.uid() is null — so the booking
+// auth.uid(). A cron has no member session (auth.uid() is null), so the booking
 // RPCs cannot drive it. The three certainty_reminder_* RPCs are granted to
 // service_role only and are called here with the service key. This file never
 // reaches the browser (it is an API route), so no server credential leaves the
@@ -105,7 +105,7 @@ async function sendEmail({ to, subject, text }) {
 // to join, and nothing to do but show up. The lead window only chooses the first
 // line; the time itself is always stated so the message is right whether it
 // lands a day or an hour ahead.
-function memberMessage(item) {
+export function memberMessage(item) {
   const lead = item.lead_window === '1h' ? 'Your Certainty session is coming up soon.' : 'A reminder about your Certainty session.';
   const when = item.label_day + ', ' + item.label_start + ' to ' + item.label_end + ' Eastern';
   const how = item.mode === 'zoom'
@@ -113,7 +113,7 @@ function memberMessage(item) {
     : 'David will call you' + (item.phone ? ' at ' + item.phone : '') + '.';
   const name = item.member_name ? item.member_name.split(' ')[0] : 'there';
   return {
-    subject: item.lead_window === '1h' ? 'Your session with David starts soon' : 'Your session with David — ' + item.label_day,
+    subject: item.lead_window === '1h' ? 'Your session with David starts soon' : 'Your session with David on ' + item.label_day,
     text: [
       'Hi ' + name + ',',
       '',
@@ -129,16 +129,31 @@ function memberMessage(item) {
 
 // David's upcoming-session summary for this run: the sessions just reminded, so
 // he sees what is coming without opening the operator view.
-function operatorMessage(items) {
-  const lines = items.map((it) => {
+// Flagged sessions lead, labelled, and say that no automated reminder went to
+// the member, so David knows the reach-out is his.
+export function operatorMessage(items) {
+  const ordered = items.slice().sort((a, b) => Number(Boolean(b.safety_flag)) - Number(Boolean(a.safety_flag)));
+  const lines = ordered.map((it) => {
     const who = it.member_name ? it.member_name + ' (' + it.member_email + ')' : it.member_email;
     const how = it.mode === 'zoom' ? 'Zoom' : 'phone' + (it.phone ? ' ' + it.phone : '');
-    return '- ' + it.label_day + ', ' + it.label_start + ' — ' + who + ' — ' + how;
+    const flag = it.safety_flag ? ' [Needs a human look before this session. No automated reminder was sent to them.]' : '';
+    return '- ' + it.label_day + ', ' + it.label_start + ': ' + who + ', ' + how + flag;
   });
   return {
     subject: 'Certainty sessions coming up (' + items.length + ')',
     text: ['Upcoming Certainty sessions just reminded:', '', ...lines].join('\n')
   };
+}
+
+// The one decision the job makes per member reminder. A safety-flagged session
+// (the booking side read the topic as a crisis) never gets an automated nudge,
+// whatever the channel: David reaches out himself, and the skip is recorded as
+// held with reason 'safety-flag'. Otherwise the channel decides. Pure, so the
+// check script can exercise it without a network.
+export function planMemberReminder(item, channel) {
+  if (item && item.safety_flag) return { send: false, outcome: 'held', holdReason: 'safety-flag' };
+  if (!channel || !channel.active) return { send: false, outcome: 'held', holdReason: null };
+  return { send: true, outcome: null, holdReason: null };
 }
 
 export default async function handler(req, res) {
@@ -198,10 +213,11 @@ export default async function handler(req, res) {
     }
   }
 
-  const counts = { sent: 0, held: 0, failed: 0 };
+  const counts = { sent: 0, held: 0, failed: 0, safetyHeld: 0 };
   for (const item of claimed) {
-    let memberOutcome = 'held';
-    if (channel.active) {
+    const plan = planMemberReminder(item, channel);
+    let memberOutcome = plan.outcome || 'held';
+    if (plan.send) {
       try {
         const msg = memberMessage(item);
         await sendEmail({ to: item.member_email, subject: msg.subject, text: msg.text });
@@ -217,8 +233,10 @@ export default async function handler(req, res) {
       p_lead_window: item.lead_window,
       p_channel: channel.name === 'email' ? 'email' : 'held',
       p_member_outcome: memberOutcome,
-      p_operator_outcome: operatorOutcome
+      p_operator_outcome: operatorOutcome,
+      p_hold_reason: plan.holdReason
     });
+    if (plan.holdReason) counts.safetyHeld = (counts.safetyHeld || 0) + 1;
   }
 
   return sendJson(res, 200, {
