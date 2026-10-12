@@ -104,4 +104,19 @@ eeeSb.auth.onAuthStateChange((event, session) => {
   setTimeout(() => eeeShowGate('sign-in'), 0);
 });
 
-window.EEEStudio = { initialize: eeeInitialize, refreshIcons: eeeRefreshIcons, supabase: eeeSb };
+// A current access token for each API call (2026-10-12). The tools used to keep
+// the token from page load, and Supabase tokens expire after about an hour, so
+// a member who left StorySculpt, Navigator or Certainty open got "Please sign
+// in again" on their next step. getSession() refreshes an expired token.
+async function eeeAccessToken(fallback) {
+  try {
+    const { data } = await eeeSb.auth.getSession();
+    const token = data && data.session && data.session.access_token;
+    if (token) return token;
+  } catch (error) {
+    // Fall back to the token the page started with.
+  }
+  return fallback || '';
+}
+
+window.EEEStudio = { initialize: eeeInitialize, refreshIcons: eeeRefreshIcons, supabase: eeeSb, accessToken: eeeAccessToken };

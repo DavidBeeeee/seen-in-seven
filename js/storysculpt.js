@@ -791,9 +791,10 @@ function showVariant(index, step) {
 async function runGeneration(intent = 'interview', options = {}) {
   let response;
   try {
+    const token = EEEStudio.accessToken ? await EEEStudio.accessToken(storyContext.session.access_token) : storyContext.session.access_token;
     response = await fetch('/api/storysculpt', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + storyContext.session.access_token },
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
       body: JSON.stringify({
         mode: activeStory.content_type,
         projectId: activeStory.id,

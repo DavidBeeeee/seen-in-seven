@@ -320,7 +320,7 @@
     </div>
   </div>
 
-  <script src="/js/eee-common.js?v=momentum-hub-v2"></script>
+  <script src="/js/eee-common.js?v=token-refresh-v1"></script>
   <script>
     (function () {
       var accessToken = null;
@@ -331,10 +331,14 @@
       var icons = function () { if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } }); };
 
       function api(action, body) {
-        return fetch('/api/certainty', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + accessToken },
-          body: JSON.stringify(Object.assign({ action: action }, body || {}))
+        // A fresh token per call: the page-load token expires after an hour.
+        var tokenReady = window.EEEStudio && window.EEEStudio.accessToken ? window.EEEStudio.accessToken(accessToken) : Promise.resolve(accessToken);
+        return tokenReady.then(function (token) {
+          return fetch('/api/certainty', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+            body: JSON.stringify(Object.assign({ action: action }, body || {}))
+          });
         }).then(function (r) { return r.json().then(function (d) { return { ok: r.ok, data: d }; }); });
       }
 

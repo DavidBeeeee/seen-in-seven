@@ -293,9 +293,10 @@
     // the second write into a no-op rather than a duplicate move. WBR-005.
     if (!pendingIdempotencyKey) pendingIdempotencyKey = makeIdempotencyKey();
     try {
+      const token = window.EEEStudio && EEEStudio.accessToken ? await EEEStudio.accessToken(ctx.session.access_token) : ctx.session.access_token;
       const response = await fetch('/api/navigator', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + ctx.session.access_token },
+        headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
         body: JSON.stringify(input)
       });
       const data = await response.json().catch(() => ({}));
