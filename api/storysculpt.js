@@ -121,7 +121,7 @@ async function reaimMemberInput(input) {
 }
 
 export function turnFor(mode, label) {
-  const modeTurns = (TURNS[label === 'F1' ? 'fix' : mode] || TURNS.rant).turns;
+  const modeTurns = (TURNS[/^F\d$/.test(label || '') ? 'fix' : mode] || TURNS.rant).turns;
   return modeTurns.find(t => t.label === label) || modeTurns[0];
 }
 
@@ -265,7 +265,7 @@ async function hasEeeAccess(req) {
 export function systemPrompt(mode, stepLabel, stepText, referenceDocs) {
   const effectiveLabel = stepLabel || (mode === 'bold' ? 'B1' : mode === 'mini' ? 'M1' : 'R1');
   const effectiveStepText = stepText || (turnFor(mode, effectiveLabel) || {}).text || PARSED_INSTRUCTIONS.steps[effectiveLabel] || '';
-  const preface = (TURNS[effectiveLabel === 'F1' ? 'fix' : mode] || {}).preface || '';
+  const preface = (TURNS[/^F\d$/.test(effectiveLabel) ? 'fix' : mode] || {}).preface || '';
   const currentStepBlock = effectiveStepText
     ? `${preface ? preface + '\n\n' : ''}CURRENT STEP (follow exactly):\n${effectiveStepText}`
     : '';
@@ -582,7 +582,7 @@ export default async function handler(req, res) {
     }
 
     if (!detCheck.ok) {
-      if (activeStep === 'F1' || /^FINAL SCRIPT:/i.test(result.content)) {
+      if (/^F\d$/.test(activeStep) || /^FINAL SCRIPT:/i.test(result.content)) {
         // A finished script that still trips a style check is shipped as is
         // (and logged) rather than lost; the member can refine it.
         if (!verdict.ok) {

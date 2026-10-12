@@ -5,14 +5,14 @@ export const STEP_LABELS = [
   'B1', 'B2', 'B3', 'B4', 'B5',
   'M1', 'M2', 'M3', 'M4', 'M5',
   'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R9',
-  'F1'
+  'F1', 'F2'
 ];
 
 export const MODE_STEPS = {
   bold: ['B1', 'B2', 'B3', 'B4', 'B5'],
   mini: ['M1', 'M2', 'M3', 'M4', 'M5'],
   rant: ['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R9'],
-  fix: ['F1']
+  fix: ['F1', 'F2']
 };
 
 export function extractBannedTerms(source) {
@@ -123,6 +123,13 @@ export function parseTurns(content) {
 // Is the member asking to change what is on screen rather than moving on?
 const REVISE = /\b(revise|rewrite|re-write|redo|regenerate|try again|another (?:option|version|set|round)|(?:three|3) more|more options|different (?:ones|options|hooks|versions)|change (?:this|that|it|the|some|a|my)|keep what works|make it (?:more|less|shorter|longer)|can you (?:change|make|fix|tweak|adjust|rework)|tweak|adjust|rework|fix (?:the|this|it))\b/i;
 
+const PUNCH_UP = /(?:^|\s)\/fix\b|\bpunch (?:it |this )?up\b|\bmake it (?:better|pop|more viral|go viral)\b|\bimprove (?:it|this|the script)\b|\bmore viral\b|\bmaximi[sz]e virality\b/i;
+
+export function isPunchUpRequest(text) {
+  const note = String(text || '').replace(/^Please revise the script above\. Keep what works and change this:\s*/i, '');
+  return PUNCH_UP.test(note);
+}
+
 export function isRevisionRequest(text) {
   const clean = String(text || '').trim();
   if (!clean) return false;
@@ -140,10 +147,13 @@ function turnIndexFor(turns, label) {
 }
 
 export function resolveStep({ mode, intent, messages = [], currentStep = null, turns = null }) {
-  if (intent === 'refine') return 'F1';
-
   const userMessages = messages.filter(m => m.role === 'user');
   const lastUserMsg = (userMessages.length ? userMessages[userMessages.length - 1].content : '').trim();
+  // A revision note is carried out as written (F2). Only an explicit ask to
+  // punch up or improve the script runs the ten-ways virality pass (F1).
+  // Until 2026-10-12 every note went to F1, whose job is to keep the hook and
+  // open loop, so notes like "lead with ..." were quietly ignored.
+  if (intent === 'refine') return isPunchUpRequest(lastUserMsg) ? 'F1' : 'F2';
   if (/^\s*\/fix\b/i.test(lastUserMsg)) return 'F1';
 
   const sequence = turns
@@ -389,7 +399,7 @@ export function turnKind(stepLabel, turnText = '') {
     evidenceRule: /words from the evidence/i.test(t),
     escalation: /increasingly extreme/i.test(t),
     threeOptions: /\b(?:3|three)\b[^\n]*(?:hooks|open loop|directions|angles|options|lessons)/i.test(t) || /increasingly extreme/i.test(t),
-    final: /^[BMR]\d+:\s*Output the full script/m.test(t) || stepLabel === 'F1',
+    final: /^[BMR]\d+:\s*Output the full script/m.test(t) || /^F\d$/.test(stepLabel || ''),
     draft: /Script Draft/i.test(t),
     question: /\bask\b/i.test(t) && !/\b(draft|generate|rewrite|output|identify 3)\b/i.test(t)
   };
@@ -460,7 +470,10 @@ export function stepFallbackMessage(stepLabel, stepText, rawDraft = null) {
 export const CRISIS_PATTERNS = [
   { id: 'kill_myself', category: 'suicide', re: /\b(kill|killing|off)\s+(my\s*self|myself)\b/ },
   { id: 'suicide_word', category: 'suicide', re: /\b(suicid(e|al)|end it all|take my (own )?life|end my (own )?life|ending my life)\b/ },
-  { id: 'want_to_die', category: 'suicide', re: /\b(i\s+)?(want|wanna|wish(ed)?|going|plan(ning)?)\s+(to\s+)?(die|be dead)\b/ },
+  // "Going to die" is not here on purpose (2026-10-12): "I realized I'm going
+  // to die one day" is how people talk about mortality and urgency, and it
+  // paused David's own script. Wanting or planning to die still trips.
+  { id: 'want_to_die', category: 'suicide', re: /\b(i\s+)?(want|wanna|wish(ed)?|plan(ning)?)\s+(to\s+)?(die|be dead)\b/ },
   { id: 'not_be_here', category: 'suicide', re: /\b(don'?t|do not)\s+want\s+to\s+(be here|be alive|live|wake up)( anymore| any more)?\b/ },
   { id: 'better_off', category: 'suicide', re: /\b(better off (dead|without me)|no (reason|point) (to|in) (live|living|being alive|going on))\b/ },
   { id: 'cant_go_on', category: 'suicide', re: /\b(can'?t|cannot)\s+(go on|keep going|do this)\s+(anymore|any more)\b.*\b(life|living|alive|die|myself)\b/ },

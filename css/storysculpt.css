@@ -354,3 +354,11 @@
   .story-next-actions .secondary-button { min-height: 36px; padding: 0 12px; }
   #copy-story-output-bottom { display: none; }
 }
+
+/* The conversation is a grid, and a grid column grows to its widest
+   unbreakable line: the script card's one-line summary made every message
+   497px wide on a 375px phone (2026-10-12). */
+.story-thread { grid-template-columns: minmax(0, 1fr); }
+.story-message { min-width: 0; max-width: min(760px, 100%); }
+.story-message-body { overflow-wrap: anywhere; }
+.story-message-artifact-chip, .story-artifact-chip { max-width: 100%; min-width: 0; }

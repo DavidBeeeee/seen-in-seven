@@ -34,7 +34,7 @@ for (const label of STEP_LABELS) {
   assert.ok(parsed.steps[label], `Step label ${label} must be present`);
   assert.ok(parsed.steps[label].length > 30, `Step label ${label} must not be empty`);
 }
-assert.equal(Object.keys(parsed.steps).length, 20, 'Exactly 20 steps parsed');
+assert.equal(Object.keys(parsed.steps).length, 21, 'Exactly 21 steps parsed (F2, the revise step, added 2026-10-12)');
 
 // (b) Global text contains required sections
 assert.ok(parsed.globalText.includes('THE SEAMLESS RULE'), 'Global text must include THE SEAMLESS RULE');
@@ -119,7 +119,11 @@ assert.equal(t('B3', '1', 'bold', turns.bold.turns), 'B4.3', 'after choosing a B
 assert.equal(t('B4', '1', 'bold', turns.bold.turns), 'B4.3', 'an older stored label maps onto its turn');
 assert.equal(t('M3', '3', 'mini', turns.mini.turns), 'M4.3');
 assert.equal(resolveStep({ mode: 'rant', messages: [{ role: 'assistant', content: 'Type the raw rant' }, { role: 'user', content: davidRant }], currentStep: null, turns: rantTurns }), 'R2', 'a counted position starts after the browser\'s own first question');
-assert.equal(resolveStep({ mode: 'bold', intent: 'refine', messages: [] }), 'F1');
+assert.equal(resolveStep({ mode: 'bold', intent: 'refine', messages: [] }), 'F2');
+// A revision note is carried out as written (F2); only an explicit punch-up runs F1.
+assert.equal(resolveStep({ mode: 'rant', intent: 'refine', messages: [{ role: 'user', content: 'Please revise the script above. Keep what works and change this: lead with the line about dying one day' }] }), 'F2');
+assert.equal(resolveStep({ mode: 'rant', intent: 'refine', messages: [{ role: 'user', content: 'Please revise the script above. Keep what works and change this: punch it up' }] }), 'F1');
+assert.equal(resolveStep({ mode: 'mini', intent: 'refine', messages: [{ role: 'user', content: 'Please revise the script above. Keep what works and change this: /fix' }] }), 'F1');
 assert.equal(resolveStep({ mode: 'bold', messages: [{ role: 'user', content: '/fix make it punchy' }] }), 'F1');
 console.log('PASS: Rant, Bold and Mini advance, stay for revisions, and honour skip and /fix.');
 
