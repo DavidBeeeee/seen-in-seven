@@ -318,6 +318,7 @@ const LOOP_GUIDE = { title: 'Choose your open loop', note: 'The sentence right a
 const STEP_GUIDE = {
   B2: { title: 'Choose your direction', note: 'Pick the angle this video should take.', choices: true },
   B3: LENGTH_GUIDE, M3: LENGTH_GUIDE, R3: LENGTH_GUIDE,
+  R4: { title: 'Choose your tone', note: 'One of the 5 E\'s. Tap one, or type your own style.', replies: ['Entertainment', 'Enragement', 'Epiphany', 'Empathy', 'Education'] },
   B4: DRAFT_GUIDE, M4: DRAFT_GUIDE, R5: DRAFT_GUIDE,
   B5: HOOK_GUIDE, M5: HOOK_GUIDE, R6: HOOK_GUIDE,
   B6: LOOP_GUIDE, M6: LOOP_GUIDE, R7: LOOP_GUIDE
