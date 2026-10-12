@@ -315,6 +315,9 @@
   .story-rail-toggle svg { display: block; width: 17px; height: 17px; color: var(--studio-muted); transition: transform 0.15s ease; }
   .story-projects.is-open .story-rail-toggle svg { transform: rotate(180deg); }
 
+  /* The workspace's top margin collapsed through #eee-app, so the page began
+     66px down and always scrolled by that much. */
+  #eee-app:not([hidden]) { display: flow-root; }
   .story-workspace.is-editing { display: flex; flex-direction: column; min-height: 0; height: calc(100vh - var(--header-height)); height: calc(var(--story-vvh, 100dvh) - var(--header-height)); overflow: hidden; }
   .story-workspace.is-editing .story-projects { flex-shrink: 0; }
   .story-workspace.is-editing .story-main { flex: 1; min-height: 0; padding: 0; }
@@ -332,7 +335,8 @@
   .story-refine-box { gap: 6px; padding-top: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
   .story-finished-line { flex-wrap: nowrap; gap: 8px; padding-bottom: 0; }
   .story-finished-line p { min-width: 0; font-size: 13px; font-weight: 600; line-height: 1.35; }
-  .story-finished-line .secondary-button { min-height: 34px; padding: 0 10px; flex-shrink: 0; }
+  .story-finished-line .secondary-button { width: auto; min-height: 34px; padding: 0 10px; flex-shrink: 0; }
+  .story-finished-line p { flex: 1 1 auto; }
   .story-refine-inner textarea { max-height: 30vh; }
   .story-refine-inner .primary-button { min-height: 46px; padding: 0 14px; flex-shrink: 0; }
   .story-refine-status:empty { display: none; }
