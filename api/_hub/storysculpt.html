@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
   <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
-  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=storysculpt-split-v5">
+  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=storysculpt-phone-v1">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -43,10 +43,10 @@
       </button>
     </div>
 
-    <main class="eee-workspace story-workspace">
-      <aside class="eee-rail story-projects">
+    <main class="eee-workspace story-workspace" id="story-workspace">
+      <aside class="eee-rail story-projects" id="story-projects">
         <div class="story-rail-head">
-          <h2>Chats</h2>
+          <h2><button class="story-rail-toggle" id="story-rail-toggle" type="button" aria-expanded="false" aria-controls="story-projects"><span>Chats</span><span class="story-rail-count" id="story-rail-count"></span><i data-lucide="chevron-down"></i></button></h2>
           <button class="icon-button" id="new-project-button" type="button" title="New chat" aria-label="Start a new StorySculpt chat"><i data-lucide="plus"></i></button>
         </div>
         <div class="story-rail-filter" id="story-rail-filter" role="tablist" aria-label="Filter chats">
@@ -189,6 +189,6 @@
       </div>
     </aside>
   </div>
-  <script src="/js/eee-common.js?v=eee-launch-v1"></script><script src="/js/storysculpt-member-states.js?v=storysculpt-states-v1"></script><script src="/js/storysculpt.js?v=storysculpt-split-v5"></script>
+  <script src="/js/eee-common.js?v=eee-launch-v1"></script><script src="/js/storysculpt-member-states.js?v=storysculpt-states-v1"></script><script src="/js/storysculpt.js?v=storysculpt-phone-v1"></script>
 </body>
 </html>

@@ -161,6 +161,8 @@ function composeContext() {
 
 function renderProjectList() {
   const list = storyEl('story-project-list');
+  const count = storyEl('story-rail-count');
+  if (count) count.textContent = storyProjects.length ? String(storyProjects.length) : '';
   const filtered = storyProjects.filter(project => {
     const isFilmed = Boolean(project.intake && project.intake.filmed);
     if (storyRailFilter === 'active') return !isFilmed;
@@ -531,6 +533,8 @@ function showProject(project) {
   ensureVersions(project);
   storyEl('story-start').hidden = true;
   storyEl('story-editor').hidden = false;
+  setStoryEditing(true);
+  if (isStoryPhone()) setStoryRailOpen(false);
   storyEl('delete-project-button').hidden = false;
   storyEl('story-title').value = project.title || '';
   storyEl('story-mode').value = project.content_type || 'bold';
@@ -568,6 +572,7 @@ function showStart() {
   viewingVersionIndex = -1;
   storyEl('story-start').hidden = false;
   storyEl('story-editor').hidden = true;
+  setStoryEditing(false);
   storyEl('delete-project-button').hidden = true;
   storyEl('story-notes').hidden = true;
   renderProjectList();
@@ -1186,6 +1191,41 @@ storyEl('story-conversation').addEventListener('click', event => {
 });
 
 // Mobile tab events
+// Phone layout (2026-10-12). On a phone the chat list folds into one "Chats"
+// bar so the script and the text box get the screen, and the open chat is a
+// fixed-height screen sized to what is actually visible, so the keyboard
+// pushes the text box up instead of covering it.
+function isStoryPhone() {
+  return typeof window.matchMedia === 'function' && window.matchMedia('(max-width: 820px)').matches;
+}
+function setStoryRailOpen(open) {
+  const rail = storyEl('story-projects');
+  const toggle = storyEl('story-rail-toggle');
+  if (!rail || !toggle || !rail.classList) return;
+  rail.classList.toggle('is-open', open);
+  toggle.setAttribute('aria-expanded', String(open));
+}
+function setStoryEditing(editing) {
+  const workspace = storyEl('story-workspace');
+  if (workspace && workspace.classList) workspace.classList.toggle('is-editing', editing);
+}
+function syncStoryViewport() {
+  const vv = window.visualViewport;
+  if (!vv) return;
+  document.documentElement.style.setProperty('--story-vvh', Math.round(vv.height) + 'px');
+  // iOS scrolls the whole page to show a focused field; the editor already fits
+  // the visible area, so put the page back where the header stays in view.
+  if (isStoryPhone() && !storyEl('story-editor').hidden && window.scrollY) window.scrollTo(0, 0);
+}
+storyEl('story-rail-toggle').addEventListener('click', () => {
+  if (!isStoryPhone()) return;
+  setStoryRailOpen(!storyEl('story-projects').classList.contains('is-open'));
+});
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', syncStoryViewport);
+  syncStoryViewport();
+}
+
 storyEl('tab-btn-chat').addEventListener('click', () => switchMobileTab('chat'));
 storyEl('tab-btn-script').addEventListener('click', () => switchMobileTab('script'));
 
