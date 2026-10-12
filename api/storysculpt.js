@@ -329,7 +329,7 @@ export function stepDirective(mode, stepLabel, stepText, memberMessages = [], re
   // Fidelity, stated up front so the checks rarely need a retry (2026-10-12).
   if (kind.draft || kind.final) {
     const { seconds, words } = targetWords(memberMessages);
-    lines.push('', `TARGET LENGTH: about ${words} words${seconds ? ' (the member chose ' + seconds + ' seconds; 3 spoken words per second)' : ''}. Stay within 15 percent of it.`);
+    lines.push('', `TARGET LENGTH: about ${words} words${seconds ? ' (the member chose ' + seconds + ' seconds; 3 spoken words per second)' : ''}, which is about ${Math.round(words / 15)} sentences of ordinary length. Stay within 15 percent. Scripts most often run long, so count before you answer, and do not state a word count in your reply.`);
     const items = mode === 'bold' ? [] : memberListItems(memberMessages);
     if (items.length) {
       lines.push('', 'THE MEMBER\'S OWN LIST. Keep every item, in their order, close to their words:', ...items.map((item, i) => (i + 1) + '. ' + item));
@@ -440,6 +440,9 @@ function failureScore(content, check) {
   if (check.ok) return 0;
   if (String(check.issue || '').startsWith('hook-contains-evidence-stem')) return 1 + (check.badOptions || 1);
   if (String(check.issue || '').startsWith('three-options')) return 10;
+  // A script that misses its length is ranked by how far it missed, so when
+  // every attempt runs long the closest one is shown, not the first.
+  if (String(check.issue || '').startsWith('length') && check.target) return 2 + Math.min(2.9, Math.abs(check.words - check.target) / check.target * 10);
   return 5;
 }
 

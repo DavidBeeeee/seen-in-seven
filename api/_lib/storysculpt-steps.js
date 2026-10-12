@@ -665,9 +665,12 @@ export function checkFidelity({ content, stepLabel, kind, isFinal, memberMessage
     const low = Math.round(target * (1 - LENGTH_TOLERANCE));
     const high = Math.round(target * (1 + LENGTH_TOLERANCE));
     if (words < low || words > high) {
+      const change = words > high ? `Cut about ${words - target} words` : `Add about ${target - words} words`;
       return {
         ok: false,
-        issue: `length: the script is ${words} words; ${seconds ? 'the member chose ' + seconds + ' seconds, which is' : 'the format calls for'} about ${target} words. Rewrite it to between ${low} and ${high} words`
+        issue: `length: the script is ${words} words; ${seconds ? 'the member chose ' + seconds + ' seconds, which is' : 'the format calls for'} about ${target} words. ${change}, so it lands between ${low} and ${high} words (about ${Math.round(target / 15)} sentences)`,
+        words,
+        target
       };
     }
   }
