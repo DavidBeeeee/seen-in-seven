@@ -1376,6 +1376,31 @@ function syncStoryViewport() {
   // the visible area, so put the page back where the header stays in view.
   if (isStoryPhone() && !storyEl('story-editor').hidden && window.scrollY) window.scrollTo(0, 0);
 }
+// Typing mode (2026-10-12): with the phone keyboard up, the header, chat
+// list bar, title row, tabs and status line used most of what was left of the
+// screen, so the conversation could not be read. While a field in the editor
+// has focus on a phone, those bars hide and the conversation gets the space.
+const STORY_TYPING_FIELDS = '#story-answer, #story-refine-note, .story-regen-form input, #story-output-copy, #story-context';
+function setStoryTyping(on) {
+  if (!document.body || !document.body.classList) return;
+  const typing = Boolean(on) && isStoryPhone();
+  if (document.body.classList.contains('story-typing') === typing) return;
+  document.body.classList.toggle('story-typing', typing);
+  syncStoryViewport();
+  if (typing) setTimeout(scrollThread, 60);
+}
+if (typeof document.addEventListener === 'function') {
+  document.addEventListener('focusin', event => {
+    if (event.target && event.target.matches && event.target.matches(STORY_TYPING_FIELDS)) setStoryTyping(true);
+  });
+  document.addEventListener('focusout', () => {
+    // Wait for focus to land: moving between two fields keeps typing mode.
+    setTimeout(() => {
+      const active = document.activeElement;
+      setStoryTyping(Boolean(active && active.matches && active.matches(STORY_TYPING_FIELDS)));
+    }, 120);
+  });
+}
 storyEl('story-rail-toggle').addEventListener('click', () => {
   if (!isStoryPhone()) return;
   setStoryRailOpen(!storyEl('story-projects').classList.contains('is-open'));
