@@ -338,6 +338,9 @@
   .story-finished-line .secondary-button { width: auto; min-height: 34px; padding: 0 10px; flex-shrink: 0; }
   .story-finished-line p { flex: 1 1 auto; }
   .story-refine-inner textarea { max-height: 30vh; }
+  /* studio.css makes every button full width on small phones; inside the
+     editor's rows that squeezed the revise field to 30px. */
+  .story-chat .primary-button, .story-chat .secondary-button { width: auto; }
   .story-refine-inner .primary-button { min-height: 46px; padding: 0 14px; flex-shrink: 0; }
   .story-refine-status:empty { display: none; }
 
