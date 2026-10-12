@@ -19,6 +19,10 @@ import {
   evidenceWords,
   checkDeterministic,
   stepFallbackMessage,
+  splitTitle,
+  targetWords,
+  memberListItems,
+  chosenOptions,
   detectCrisis,
   crisisResponse
 } from './_lib/storysculpt-steps.js';
@@ -186,12 +190,21 @@ function validateBody(body) {
   const projectId = String(body && body.projectId || '');
   if (!PROJECT_ID.test(projectId)) throw new Error('Open a saved StorySculpt chat before continuing.');
   const intent = String(body && body.intent || '');
-  if (intent !== 'interview' && intent !== 'refine') throw new Error('Choose whether to continue the interview or revise a script.');
-  const messages = Array.isArray(body && body.messages) ? body.messages.slice(-24) : [];
+  if (intent !== 'interview' && intent !== 'refine' && intent !== 'regenerate') throw new Error('Choose whether to continue the interview or revise a script.');
+  // Long chats keep their opening: the member's first two messages hold the raw
+  // idea and any list, and dropping them (the old slice(-24)) lost both.
+  const all = Array.isArray(body && body.messages) ? body.messages : [];
+  const messages = all.length > 24 ? [...all.slice(0, 2), ...all.slice(-22)] : all;
   return {
     mode,
     projectId,
     intent,
+    // Regenerate (2026-10-12): a fresh version of the last step ("step") or a
+    // fresh finished script from the interview answers ("final"), with an
+    // optional note and the version being replaced, so it is not repeated.
+    target: body && body.target === 'final' ? 'final' : 'step',
+    regenerateNote: cleanText(body && body.regenerateNote, 1000),
+    previous: cleanText(body && body.previous, 8000),
     projectTitle: cleanText(body && body.projectTitle, 160),
     context: cleanText(body && body.context, 12000),
     messages: messages.map(message => ({
@@ -289,8 +302,9 @@ ${referenceDocs ? 'REFERENCE MATERIAL:\n' + referenceDocs + '\n\n' : ''}${curren
 // conversation's momentum instead: on 2026-10-08 the server sent R3 ("How long
 // do you want the final video to be?") and R4 (the 5 E's) and the model asked
 // its own questions both times.
-export function stepDirective(mode, stepLabel, stepText, memberMessages = [], reaimed = '') {
+export function stepDirective(mode, stepLabel, stepText, memberMessages = [], reaimed = '', request = {}) {
   const kind = turnKind(stepLabel, stepText);
+  const isRevision = /^F\d$/.test(stepLabel || '');
   const lines = [
     'STORYSCULPT STEP INSTRUCTION. This comes from the app, not from the member. The member\'s latest reply is the message before this one.',
     `Do this step now, exactly as written below, and do nothing that belongs to any other step. Use the member's answers above as the material.`,
@@ -312,6 +326,27 @@ export function stepDirective(mode, stepLabel, stepText, memberMessages = [], re
       lines.push('Each option is only the new open loop sentence. Do not repeat the chosen hook inside it; the member already has the hook.');
     }
   }
+  // Fidelity, stated up front so the checks rarely need a retry (2026-10-12).
+  if (kind.draft || kind.final) {
+    const { seconds, words } = targetWords(memberMessages);
+    lines.push('', `TARGET LENGTH: about ${words} words${seconds ? ' (the member chose ' + seconds + ' seconds; 3 spoken words per second)' : ''}. Stay within 15 percent of it.`);
+    const items = mode === 'bold' ? [] : memberListItems(memberMessages);
+    if (items.length) {
+      lines.push('', 'THE MEMBER\'S OWN LIST. Keep every item, in their order, close to their words:', ...items.map((item, i) => (i + 1) + '. ' + item));
+    }
+    lines.push('', 'Use only topics the member raised. Do not add a topic, platform, or term they did not give.');
+  }
+  if (kind.final && !isRevision) {
+    const chosen = chosenOptions(memberMessages);
+    if (chosen.hook) lines.push('', 'CHOSEN HOOK. The script opens with this, word for word: ' + chosen.hook);
+    if (chosen.openLoop) lines.push('', 'CHOSEN OPEN LOOP. It comes right after the hook, word for word: ' + chosen.openLoop);
+    lines.push('', 'Then the approved draft, with its opening rewritten so no line or idea is said twice.');
+  }
+  if (request.intent === 'regenerate') {
+    lines.push('', 'REGENERATE. The member asked for a fresh version of this step. Write it again from scratch with new wording; do not reuse lines from the version being replaced.');
+    if (request.previous) lines.push('', 'THE VERSION BEING REPLACED (do not repeat it):', request.previous);
+    if (request.regenerateNote) lines.push('', 'THE MEMBER\'S NOTE FOR THIS VERSION (follow it): ' + request.regenerateNote);
+  }
   lines.push('', 'Use none of the BANNED WORDS listed in the instructions above, in any form, even where the member used them.');
   lines.push('', kind.final
     ? 'Begin your reply with exactly FINAL SCRIPT:'
@@ -324,6 +359,12 @@ export function stepDirective(mode, stepLabel, stepText, memberMessages = [], re
 // member chose from three options is theirs once chosen). The output validator
 // checks a finished script's quotations and credentials against this, and it
 // never leaves the function: buildEventDetail cannot carry it.
+// Only the member's own words (their messages, title and context), for the
+// invented-topic check: a word the model introduced earlier does not count.
+function memberOwnText(input) {
+  return [input.projectTitle, input.context, ...input.messages.filter(m => m.role === 'user').map(m => m.content)].join('\n');
+}
+
 function memberSource(input) {
   return [input.projectTitle, input.context, ...input.messages.map((message) => message.content)].join('\n');
 }
@@ -386,7 +427,7 @@ async function callStorySculpt(input, stepLabel, stepText, referenceDocs, retryD
     { role: 'system', content: systemPrompt(input.mode, stepLabel, stepText, referenceDocs) },
     ...(context ? [{ role: 'user', content: context }] : []),
     ...contractHistory(input.messages, input.intent),
-    { role: 'user', content: stepDirective(input.mode, stepLabel, stepText, input.messages, input.reaimed) + (retryDirective ? '\n\nRETRY: ' + retryDirective : '') }
+    { role: 'user', content: stepDirective(input.mode, stepLabel, stepText, input.messages, input.reaimed, input) + (retryDirective ? '\n\nRETRY: ' + retryDirective : '') }
   ], {
     // A turn that only asks David's fixed question needs fidelity, not flair.
     temperature: kind.question ? 0.4 : 0.86
@@ -463,7 +504,7 @@ export default async function handler(req, res) {
     // Safety pre-check: crisis or self-harm language skips generation
     const userMessages = input.messages.filter(m => m.role === 'user');
     const latestUserMessage = userMessages.length ? userMessages[userMessages.length - 1].content : '';
-    const crisis = detectCrisis(latestUserMessage);
+    const crisis = detectCrisis(latestUserMessage + (input.regenerateNote ? '\n' + input.regenerateNote : ''));
     if (crisis.tripped) {
       await recordEvent(token, user.id, 'storysculpt_safety', buildEventDetail({
         trace,
@@ -490,13 +531,25 @@ export default async function handler(req, res) {
     }
 
     const currentStepInDb = project.intake && project.intake.current_step;
-    const activeStep = resolveStep({
-      mode: input.mode,
-      intent: input.intent,
-      messages: input.messages,
-      currentStep: currentStepInDb,
-      turns: (TURNS[input.mode] || TURNS.rant).turns
-    });
+    const modeTurns = (TURNS[input.mode] || TURNS.rant).turns;
+    let activeStep;
+    if (input.intent === 'regenerate') {
+      // The step being replaced is the one that produced the last reply, which
+      // is the stored position; a fresh finished script is the format's last turn.
+      const stored = modeTurns.find(t => t.label === currentStepInDb);
+      activeStep = input.target === 'final' || !stored ? modeTurns[modeTurns.length - 1].label : stored.label;
+      if (input.target !== 'final' && !stored) {
+        activeStep = resolveStep({ mode: input.mode, intent: 'interview', messages: input.messages, currentStep: null, turns: modeTurns });
+      }
+    } else {
+      activeStep = resolveStep({
+        mode: input.mode,
+        intent: input.intent,
+        messages: input.messages,
+        currentStep: currentStepInDb,
+        turns: modeTurns
+      });
+    }
     const activeTurn = turnFor(input.mode, activeStep);
     const stepText = activeTurn.text;
     const refDocs = referenceDocsForTurn(input.mode, activeTurn);
@@ -548,7 +601,9 @@ export default async function handler(req, res) {
       stepLabel: activeStep,
       turnText: stepText,
       memberMessages: input.messages,
-      bannedTerms: BANNED_TERMS
+      bannedTerms: BANNED_TERMS,
+      mode: input.mode,
+      memberText: memberOwnText(input)
     });
     let detCheck = checkDeterministic(checkArgs(result.content));
 
@@ -608,7 +663,12 @@ export default async function handler(req, res) {
       contextChars: input.context.length,
       usage: result.usage
     });
-    return json(res, 200, { final: verdict.final, content: verdict.content, step: activeStep, promptVersion: PROMPT_VERSION, model: MODEL_VERSION, trace });
+    // A finished script's title travels separately, so the script panel and the
+    // teleprompter hold the script alone.
+    let title = '';
+    let content = verdict.content;
+    if (verdict.final) ({ title, body: content } = splitTitle(verdict.content));
+    return json(res, 200, { final: verdict.final, content, title: title || undefined, step: activeStep, promptVersion: PROMPT_VERSION, model: MODEL_VERSION, trace });
   } catch (error) {
     const failureClass = classifyFailure(error && error.stage === 'database' ? 'database' : 'internal', error);
     await emit('error', { failureClass });

@@ -1,17 +1,20 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
+// 2026-10-12: every format asks for a length, shows its draft and waits, then
+// hooks, then open loops, then the assembled script. The Rant hook-escalation
+// round (old R7) is gone; Bold and Mini no longer fold hooks into the draft.
 export const STEP_LABELS = [
-  'B1', 'B2', 'B3', 'B4', 'B5',
-  'M1', 'M2', 'M3', 'M4', 'M5',
-  'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R9',
+  'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7',
+  'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7',
+  'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8',
   'F1', 'F2'
 ];
 
 export const MODE_STEPS = {
-  bold: ['B1', 'B2', 'B3', 'B4', 'B5'],
-  mini: ['M1', 'M2', 'M3', 'M4', 'M5'],
-  rant: ['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8', 'R9'],
+  bold: ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7'],
+  mini: ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7'],
+  rant: ['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8'],
   fix: ['F1', 'F2']
 };
 
@@ -159,7 +162,7 @@ export function resolveStep({ mode, intent, messages = [], currentStep = null, t
   const sequence = turns
     ? turns.map(t => t.label)
     : (MODE_STEPS[mode] || MODE_STEPS.rant);
-  const hookTurn = { rant: 'R6', bold: turns ? 'B3' : 'B4', mini: turns ? 'M3' : 'M4' }[mode];
+  const hookTurn = { rant: 'R6', bold: 'B5', mini: 'M5' }[mode];
   if (/skip to (?:the )?hooks?/i.test(lastUserMsg) && hookTurn) return hookTurn;
 
   const currentIdx = turns ? turnIndexFor(turns, currentStep) : sequence.indexOf(currentStep);
@@ -395,7 +398,7 @@ export function checkGenericYou(scriptText) {
 export function turnKind(stepLabel, turnText = '') {
   const t = String(turnText);
   return {
-    hooks: /\bhooks?\b/i.test(t) && /\b(generate|rewrite)\b/i.test(t) && !/open loop sentences/i.test(t),
+    hooks: /\bhooks?\b/i.test(t) && /\b(generate|rewrite|write)\b/i.test(t) && !/open loop sentences/i.test(t) && !/Script Draft/i.test(t),
     evidenceRule: /words from the evidence/i.test(t),
     escalation: /increasingly extreme/i.test(t),
     threeOptions: /\b(?:3|three)\b[^\n]*(?:hooks|open loop|directions|angles|options|lessons)/i.test(t) || /increasingly extreme/i.test(t),
@@ -431,9 +434,11 @@ export function checkViewerAttack(text) {
   return { ok: true };
 }
 
-export function checkDeterministic({ content, stepLabel, turnText = '', memberMessages = [], bannedTerms = [] }) {
+export function checkDeterministic({ content, stepLabel, turnText = '', memberMessages = [], bannedTerms = [], mode = '', memberText = '' }) {
   const kind = turnKind(stepLabel, turnText);
   const isFinal = /^FINAL SCRIPT:/i.test(content) || kind.final;
+  const fidelity = checkFidelity({ content, stepLabel, kind, isFinal, memberMessages, mode, memberText });
+  if (!fidelity.ok) return fidelity;
   if (isFinal || kind.hooks || kind.threeOptions) {
     const bannedCheck = checkBannedTerms(content, bannedTerms);
     if (!bannedCheck.ok) return bannedCheck;
@@ -453,6 +458,259 @@ export function checkDeterministic({ content, stepLabel, turnText = '', memberMe
     if (!allyCheck.ok) return allyCheck;
   }
 
+  return { ok: true };
+}
+
+// ── Script fidelity (2026-10-12) ───────────────────────────────────────────
+//
+// From David's own chats that day: he asked for 75 seconds and got 342, 491
+// and 451 words; he listed five series and the script said "three series";
+// "the algorithm" appeared twice though he never said it; the final stitched
+// the hook onto a draft that already opened with the same line, so "I'm going
+// to die one day" was said twice; and his chosen hook came back reworded.
+// These checks run on drafts and finished scripts and feed the same retry
+// loop as every other check, each failure naming exactly what to fix.
+
+// David's rule in the instructions: 300 words is about 100 seconds.
+export const WORDS_PER_SECOND = 3;
+export const DEFAULT_SCRIPT_WORDS = 250;
+const LENGTH_TOLERANCE = 0.15;
+
+const NUMBER_WORDS = {
+  one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10,
+  eleven: 11, twelve: 12, thirteen: 13, fourteen: 14, fifteen: 15, sixteen: 16, seventeen: 17, eighteen: 18, nineteen: 19,
+  twenty: 20, thirty: 30, forty: 40, fifty: 50, sixty: 60, seventy: 70, eighty: 80, ninety: 90, hundred: 100
+};
+
+const REFINE_PREFIX = /^Please revise the script above\. Keep what works and change this:\s*/i;
+
+// The member's chosen length in seconds, from a short answer like "75 seconds",
+// "90s", "2 minutes" or "a minute". The last such answer wins.
+export function chosenSeconds(memberMessages = []) {
+  let seconds = null;
+  for (const message of memberMessages) {
+    if (message.role !== 'user') continue;
+    const text = String(message.content || '').trim().toLowerCase();
+    if (!text || text.length > 60 || REFINE_PREFIX.test(text)) continue;
+    const digits = text.match(/(\d+(?:\.\d+)?)\s*(s|sec|secs|seconds?|m|min|mins|minutes?)\b/);
+    if (digits) {
+      const n = parseFloat(digits[1]);
+      seconds = /^m/.test(digits[2]) ? n * 60 : n;
+      continue;
+    }
+    const spelled = text.match(/\b(half a|a|one|two|three|four|five)\s+minutes?\b/);
+    if (spelled) seconds = { 'half a': 30, a: 60, one: 60, two: 120, three: 180, four: 240, five: 300 }[spelled[1]];
+  }
+  return seconds;
+}
+
+export function targetWords(memberMessages = []) {
+  const seconds = chosenSeconds(memberMessages);
+  return { seconds, words: seconds ? Math.round(seconds * WORDS_PER_SECOND) : DEFAULT_SCRIPT_WORDS };
+}
+
+// Pulls a title off the first line of a finished script, so the teleprompter
+// text is the script alone. "Title: X", "TITLE: X", or a short line with no
+// closing punctuation followed by the script.
+export function splitTitle(text) {
+  const clean = String(text || '').replace(/^(?:FINAL SCRIPT|NEXT QUESTION):\s*/i, '').trim();
+  const lines = clean.split('\n');
+  const first = (lines[0] || '').trim();
+  const rest = lines.slice(1).join('\n').trim();
+  const titled = /^\**\s*title\s*:/i.test(first);
+  const bare = first.replace(/^\**\s*title\s*:\s*/i, '').replace(/\*\*/g, '').replace(/^["\u201c']+|["\u201d']+$/g, '').trim();
+  if (rest && bare && (titled || (bare.split(/\s+/).length <= 12 && !/[.!?,]$/.test(bare)))) return { title: bare, body: rest };
+  return { title: '', body: clean };
+}
+
+function countWords(text) {
+  return String(text || '').trim().split(/\s+/).filter(Boolean).length;
+}
+
+// The script inside a reply: for a finished script, everything after the
+// title; for a draft shown with its question, the substantial paragraphs.
+export function scriptBody(content, isFinal) {
+  if (isFinal) return splitTitle(content).body;
+  const clean = String(content || '').replace(/^(?:FINAL SCRIPT|NEXT QUESTION):\s*/i, '');
+  return clean.split(/\n\s*\n/).filter(p => countWords(p) >= 40).join('\n\n');
+}
+
+// Items the member numbered ("1) Lessons... 2) Apparently, I'm 40..."), from
+// any of their own messages except revision notes. A run must start at 1.
+export function memberListItems(memberMessages = []) {
+  const items = [];
+  for (const message of memberMessages) {
+    if (message.role !== 'user') continue;
+    const text = String(message.content || '');
+    if (REFINE_PREFIX.test(text)) continue;
+    const marks = [...text.matchAll(/(?:^|\s)(\d{1,2})\s*[.)]\s+(?=\S)/g)];
+    const run = [];
+    let expect = 1;
+    for (const mark of marks) {
+      if (Number(mark[1]) === expect) { run.push(mark); expect++; }
+    }
+    if (run.length < 2) continue;
+    run.forEach((mark, i) => {
+      const start = mark.index + mark[0].length;
+      const end = i + 1 < run.length ? run[i + 1].index : text.length;
+      const item = text.slice(start, end).split('\n')[0].trim();
+      if (item) items.push(item);
+    });
+  }
+  return items;
+}
+
+function itemKeys(item) {
+  const keys = new Set();
+  for (const word of item.toLowerCase().replace(/[^\w\s'-]/g, ' ').split(/\s+/).filter(Boolean)) {
+    if (/^\d+$/.test(word)) { keys.add(word); continue; }
+    const clean = word.replace(/[^a-z]/g, '');
+    if (clean.length < 4 || STOPWORDS.has(word)) continue;
+    const st = stem(clean);
+    if (st.length >= 3 && !COMMON.has(st)) keys.add(st);
+  }
+  return keys;
+}
+
+function scriptKeys(text) {
+  const keys = new Set(extractStems(text));
+  for (const word of String(text).toLowerCase().split(/[^a-z0-9]+/)) {
+    if (/^\d+$/.test(word)) keys.add(word);
+    if (NUMBER_WORDS[word]) keys.add(String(NUMBER_WORDS[word]));
+  }
+  return keys;
+}
+
+// Topics the model has added on its own in real chats. Flagged only when the
+// member never used the word themselves.
+export const INVENTED_TOPIC_WATCH = ['algorithm', 'content calendar', 'engagement rate', 'analytics', 'funnel'];
+
+function normWords(text) {
+  return String(text || '').toLowerCase()
+    .replace(/[\u2019\u2018]/g, "'")
+    .replace(/\b(i|you|we|they|he|she|it|that|there|what)'(m|re|s|ve|ll|d)\b/g, (m, a, b) => a + ' ' + ({ m: 'am', re: 'are', s: 'is', ve: 'have', ll: 'will', d: 'would' })[b])
+    .replace(/n't\b/g, ' not')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .split(/\s+/).filter(Boolean);
+}
+
+// The hook and open loop the member picked, read from the thread: an assistant
+// turn with numbered options followed by a short "1" / "option 2" / "Use 3".
+export function chosenOptions(messages = []) {
+  const out = { hook: '', openLoop: '' };
+  for (let i = 0; i < messages.length - 1; i++) {
+    const message = messages[i];
+    const next = messages[i + 1];
+    if (message.role !== 'assistant' || next.role !== 'user') continue;
+    const reply = String(next.content || '').trim();
+    const pick = reply.length <= 40 && reply.match(/^(?:option\s*|use\s*|#)?([1-3])\b/i);
+    if (!pick) continue;
+    const content = String(message.content || '');
+    const line = content.match(new RegExp('(?:^|\\n)\\s*\\**' + pick[1] + '\\s*[.):]\\**\\s*(.+)'));
+    if (!line) continue;
+    const text = line[1].replace(/\*\*/g, '').replace(/^["\u201c]|["\u201d]$/g, '').trim();
+    if (/open loop/i.test(content)) out.openLoop = text;
+    else if (/\bhooks?\b/i.test(content)) out.hook = text;
+  }
+  // An open loop that restates the hook would make the assembled script say
+  // the hook twice; keep only the new part.
+  if (out.hook && out.openLoop) {
+    const hookNorm = normWords(out.hook).join(' ');
+    const loopWords = normWords(out.openLoop);
+    if (loopWords.join(' ').startsWith(hookNorm) && loopWords.length > normWords(out.hook).length) {
+      const index = out.openLoop.toLowerCase().indexOf(out.hook.toLowerCase().replace(/[.!?]+$/, ''));
+      if (index === 0) out.openLoop = out.openLoop.slice(out.hook.replace(/[.!?]+$/, '').length).replace(/^[\s,;:.!?-]+/, '').trim();
+    }
+  }
+  return out;
+}
+
+function coverage(needle, haystackWords) {
+  const words = normWords(needle);
+  if (!words.length) return 1;
+  const pool = haystackWords.slice();
+  let found = 0;
+  for (const word of words) {
+    const at = pool.indexOf(word);
+    if (at !== -1) { found++; pool.splice(at, 1); }
+  }
+  return found / words.length;
+}
+
+// Any six-word run said twice (contractions expanded, so "I'm going to die one
+// day" and "I am going to die one day" match).
+export function repeatedRun(text, size = 6) {
+  const words = normWords(text);
+  const seen = new Map();
+  for (let i = 0; i + size <= words.length; i++) {
+    const run = words.slice(i, i + size).join(' ');
+    if (seen.has(run) && i - seen.get(run) >= size) return run;
+    if (!seen.has(run)) seen.set(run, i);
+  }
+  return '';
+}
+
+export function checkFidelity({ content, stepLabel, kind, isFinal, memberMessages = [], mode = '', memberText = '' }) {
+  const isRevision = /^F\d$/.test(stepLabel || '');
+  if (!isFinal && !kind.draft) return { ok: true };
+  const body = scriptBody(content, isFinal);
+  if (!body) return { ok: true };
+  const userMessages = memberMessages.filter(m => m.role === 'user');
+  const lastNote = isRevision ? String((userMessages[userMessages.length - 1] || {}).content || '').replace(REFINE_PREFIX, '') : '';
+
+  // Length, unless a revision note is itself about length.
+  if (!/\b(short|shorter|long|longer|length|second|seconds|minute|minutes|word|words|trim|cut|expand)\b/i.test(lastNote)) {
+    const { seconds, words: target } = targetWords(memberMessages);
+    const words = countWords(body);
+    const low = Math.round(target * (1 - LENGTH_TOLERANCE));
+    const high = Math.round(target * (1 + LENGTH_TOLERANCE));
+    if (words < low || words > high) {
+      return {
+        ok: false,
+        issue: `length: the script is ${words} words; ${seconds ? 'the member chose ' + seconds + ' seconds, which is' : 'the format calls for'} about ${target} words. Rewrite it to between ${low} and ${high} words`
+      };
+    }
+  }
+
+  // Every item the member listed (Rant and Mini; Bold narrows to one angle).
+  if (mode !== 'bold' && !/\b(remove|drop|cut|delete|without|only)\b/i.test(lastNote)) {
+    const keys = scriptKeys(body);
+    const missing = memberListItems(memberMessages).filter(item => {
+      const itemKeySet = itemKeys(item);
+      return itemKeySet.size && ![...itemKeySet].some(key => keys.has(key));
+    });
+    if (missing.length) {
+      return { ok: false, issue: `missing-item: the member listed ${missing.length === 1 ? 'an item' : 'items'} the script leaves out: ${missing.map(m => '"' + m + '"').join(', ')}. Include every item the member listed` };
+    }
+  }
+
+  // Topics the member never raised.
+  const source = (memberText || userMessages.map(m => m.content).join('\n')).toLowerCase();
+  for (const term of INVENTED_TOPIC_WATCH) {
+    const re = new RegExp('\\b' + term + 's?\\b', 'i');
+    if (re.test(body) && !re.test(source)) {
+      return { ok: false, issue: `invented-topic: the script mentions "${term}", which the member never said. Remove it and use only the member's own topics` };
+    }
+  }
+
+  // Assembly of the finished script: the chosen hook first, word for word,
+  // then the chosen open loop, and nothing said twice.
+  if (isFinal && !isRevision) {
+    const chosen = chosenOptions(memberMessages);
+    const words = normWords(body);
+    const hookLen = normWords(chosen.hook).length;
+    const loopLen = normWords(chosen.openLoop).length;
+    if (chosen.hook && coverage(chosen.hook, words.slice(0, hookLen + 12)) < 0.8) {
+      return { ok: false, issue: `hook-not-used: the script must open with the member's chosen hook, word for word: "${chosen.hook}"` };
+    }
+    if (chosen.openLoop && coverage(chosen.openLoop, words.slice(0, hookLen + loopLen + 25)) < 0.8) {
+      return { ok: false, issue: `open-loop-not-used: right after the hook, the script must use the member's chosen open loop, word for word: "${chosen.openLoop}"` };
+    }
+  }
+  const repeated = repeatedRun(body);
+  if (repeated) {
+    return { ok: false, issue: `repeated-line: the script says "${repeated}" more than once. Say it once and rewrite the other place` };
+  }
   return { ok: true };
 }
 

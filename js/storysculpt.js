@@ -309,16 +309,18 @@ function renderScriptPanel() {
 // What the member is being asked to do at each of David's steps, so a choice
 // never arrives as an unexplained list (2026-10-08: the open loops "just gave
 // an option and assumed I knew what it meant"). Keyed by the server's step.
+const LENGTH_GUIDE = { title: 'Choose your length', note: 'About 3 spoken words per second. Tap one or type your own.', replies: ['30 seconds', '60 seconds', '75 seconds', '90 seconds', '2 minutes'] };
+const DRAFT_GUIDE = { title: 'Your first draft', note: 'Change anything you like, or move on to the hooks when it feels right.', actions: [['Write the hooks', 'Looks good, go for the hooks'], ['Revise the draft', null]] };
+const HOOK_GUIDE = { title: 'Choose your hook', note: 'The first line people hear. It has one job: stop the scroll.', choices: true };
+const LOOP_GUIDE = { title: 'Choose your open loop', note: 'The sentence right after your hook that makes people stay to hear the rest.', choices: true };
+// 2026-10-12 steps: length, draft (then wait), hooks, open loops, finished
+// script. "Regenerate" on any of these replaces the old "Give me 3 different".
 const STEP_GUIDE = {
   B2: { title: 'Choose your direction', note: 'Pick the angle this video should take.', choices: true },
-  B3: { title: 'Your draft, then choose your hook', note: 'Read the draft, then pick the first line people will hear.', choices: true, more: 'Give me 3 different hooks' },
-  M3: { title: 'Your draft, then choose your hook', note: 'Read the draft, then pick the first line people will hear.', choices: true, more: 'Give me 3 different hooks' },
-  R5: { title: 'Your first draft', note: 'Change anything you like, or move on to the hook when it feels right.', actions: [['Generate the hook', 'Looks good, go for the hook'], ['Revise the draft', null]] },
-  R6: { title: 'Choose your hook', note: 'The first line people hear. It has one job: stop the scroll.', choices: true, more: 'Give me 3 different hooks' },
-  R7: { title: 'Choose how hard your hook hits', note: 'The same hook at three levels of intensity, from a lie people believe to a final warning.', choices: true },
-  R8: { title: 'Choose your open loop', note: 'The sentence right after your hook that makes people stay to hear the rest.', choices: true, more: 'Give me 3 different open loops' },
-  'B4.3': { title: 'Choose your open loop', note: 'The sentence right after your hook that makes people stay to hear the rest.', choices: true, more: 'Give me 3 different open loops' },
-  'M4.3': { title: 'Choose your open loop', note: 'The sentence right after your hook that makes people stay to hear the rest.', choices: true, more: 'Give me 3 different open loops' }
+  B3: LENGTH_GUIDE, M3: LENGTH_GUIDE, R3: LENGTH_GUIDE,
+  B4: DRAFT_GUIDE, M4: DRAFT_GUIDE, R5: DRAFT_GUIDE,
+  B5: HOOK_GUIDE, M5: HOOK_GUIDE, R6: HOOK_GUIDE,
+  B6: LOOP_GUIDE, M6: LOOP_GUIDE, R7: LOOP_GUIDE
 };
 
 function stepGuideMarkup(message, isLatest) {
@@ -327,6 +329,7 @@ function stepGuideMarkup(message, isLatest) {
   const banner = '<div class="story-step-banner"><strong>' + storyEscape(guide.title) + '</strong><span>' + storyEscape(guide.note) + '</span></div>';
   if (!isLatest || (activeStory && activeStory.output)) return { banner, actions: '' };
   const buttons = [];
+  for (const reply of (guide.replies || [])) buttons.push('<button class="story-quick-btn" type="button" data-quick-reply="' + storyEscape(reply) + '">' + storyEscape(reply) + '</button>');
   if (guide.choices) {
     for (const n of [1, 2, 3]) buttons.push('<button class="story-quick-btn" type="button" data-quick-reply="' + n + '">Use ' + n + '</button>');
     if (guide.more) buttons.push('<button class="story-quick-btn subtle" type="button" data-quick-reply="' + storyEscape(guide.more) + '">' + storyEscape(guide.more) + '</button>');
@@ -392,13 +395,36 @@ function renderConversation() {
       '</article>';
     }
 
-    const guide = stepGuideMarkup(message, index === lastAssistant && index === conversation.length - 1);
+    const isLatest = index === lastAssistant && index === conversation.length - 1;
+    const guide = stepGuideMarkup(message, isLatest);
+    // Regenerate (2026-10-12): the latest reply of any generated step can be
+    // written again, with an optional note. Every version is kept, and the
+    // pager switches between them before the member answers.
+    const canRegenerate = isLatest && message.step && !(activeStory && activeStory.output);
+    const variants = Array.isArray(message.variants) ? message.variants : [];
+    const variantAt = Number.isInteger(message.variantIndex) ? message.variantIndex : variants.length - 1;
+    const pager = canRegenerate && variants.length > 1
+      ? '<span class="story-variant-pager" aria-label="Versions of this reply">' +
+          '<button class="story-msg-btn" type="button" data-action="variant-prev" data-msg-index="' + index + '" aria-label="Previous version"' + (variantAt <= 0 ? ' disabled' : '') + '><i data-lucide="chevron-left"></i></button>' +
+          '<span class="story-variant-count">' + (variantAt + 1) + ' / ' + variants.length + '</span>' +
+          '<button class="story-msg-btn" type="button" data-action="variant-next" data-msg-index="' + index + '" aria-label="Next version"' + (variantAt >= variants.length - 1 ? ' disabled' : '') + '><i data-lucide="chevron-right"></i></button>' +
+        '</span>'
+      : '';
+    const regenForm = canRegenerate
+      ? '<form class="story-regen-form" data-regen-form="' + index + '" hidden>' +
+          '<input type="text" maxlength="1000" placeholder="What should be different? (optional)" aria-label="What should be different in the new version">' +
+          '<button class="story-quick-btn primary" type="submit"><i data-lucide="refresh-cw"></i> Regenerate</button>' +
+        '</form>'
+      : '';
     return '<article class="story-message assistant">' +
       '<span class="story-message-role">StorySculpt</span>' +
       guide.banner +
       '<div class="story-message-body">' + storyEscape(message.content) + '</div>' +
       guide.actions +
+      regenForm +
       '<div class="story-message-actions">' +
+        (canRegenerate ? '<button class="story-msg-btn" type="button" data-action="regen-open" data-msg-index="' + index + '" title="Write this step again"><i data-lucide="refresh-cw"></i><span>Regenerate</span></button>' : '') +
+        pager +
         '<button class="story-msg-btn" type="button" data-action="copy-msg" data-msg-index="' + index + '" title="Copy response">' +
           '<i data-lucide="copy"></i><span>Copy</span>' +
         '</button>' +
@@ -662,10 +688,107 @@ function recordStoryFailure(failureClass, trace, status) {
   }
 }
 
+// A finished script's title (sent apart from the script since 2026-10-12)
+// names the chat unless the member already named it themselves.
+function adoptScriptTitle(title) {
+  const clean = String(title || '').trim();
+  if (!clean || !activeStory) return;
+  const firstAnswer = ((activeStory.conversation || []).find(m => m.role === 'user') || {}).content || '';
+  const current = (storyEl('story-title').value || activeStory.title || '').trim();
+  const automatic = !current || current.startsWith('New ') || current === 'Untitled script' || current === generateSmartTitle(firstAnswer);
+  if (!automatic) return;
+  activeStory.title = clean;
+  storyEl('story-title').value = clean;
+}
+
+// The interview as it stood when the script was first finished: everything
+// before the first revision. A fresh script is rebuilt from these answers.
+function interviewMessages() {
+  const conversation = activeStory.conversation || [];
+  const cut = conversation.findIndex(m => m.isScriptDraft || (m.role === 'user' && typeof m.content === 'string' && m.content.startsWith('Please revise the script above')));
+  return cut === -1 ? conversation : conversation.slice(0, cut);
+}
+
+async function regenerateStep(index, note) {
+  if (!activeStory || activeStory.output) return;
+  const message = activeStory.conversation[index];
+  if (!message || message.role !== 'assistant') return;
+  hideErrorInConversation();
+  showThinkingIndicator('Writing a fresh version of this step...');
+  const status = storyEl('story-generation-status');
+  const send = storyEl('story-send');
+  if (send) send.disabled = true;
+  try {
+    await runGeneration('regenerate', { target: 'step', note, previous: message.content, messages: activeStory.conversation.slice(0, index), replaceIndex: index });
+    hideThinkingIndicator();
+    status.textContent = 'New version ready. Your earlier versions are kept; use the arrows to compare.';
+    status.classList.remove('error');
+  } catch (error) {
+    hideThinkingIndicator();
+    const cleanMsg = (error && error.message) || 'That version did not finish. The earlier one is still here.';
+    status.textContent = cleanMsg;
+    status.classList.add('error');
+    showErrorInConversation(cleanMsg, () => regenerateStep(index, note));
+  } finally {
+    if (send) send.disabled = false;
+    EEEStudio.refreshIcons();
+  }
+}
+
+// A fresh finished script from the interview answers (the SeenInSeven
+// "Regenerate Full Script" idea), saved as a new version; nothing is lost.
+async function regenerateScript() {
+  if (!activeStory || !activeStory.output) return;
+  const noteEl = storyEl('story-refine-note');
+  const note = noteEl.value.trim();
+  const status = storyEl('story-refine-status');
+  const buttons = [storyEl('story-regenerate-script'), storyEl('story-refine-send'), storyEl('story-regenerate-script-foot')].filter(Boolean);
+  buttons.forEach(b => { b.disabled = true; });
+  status.textContent = 'Writing a fresh script from your answers' + (note ? ' and your note.' : '.');
+  status.className = 'eee-message story-refine-status';
+  showThinkingIndicator('Writing a fresh script from your answers...');
+  const versions = ensureVersions(activeStory);
+  try {
+    const data = await runGeneration('regenerate', { target: 'final', note, previous: activeStory.output, messages: interviewMessages() });
+    hideThinkingIndicator();
+    if (data.final) {
+      versions.push({ version: versions.length + 1, note: note ? 'Regenerated: ' + note : 'Regenerated', content: data.content, createdAt: new Date().toISOString() });
+      viewingVersionIndex = -1;
+      noteEl.value = '';
+      autoGrow(noteEl);
+      await saveActiveStory('Fresh script saved');
+      status.textContent = 'Fresh script ready. Earlier versions are in the version list.';
+      status.className = 'eee-message story-refine-status success';
+      renderScriptPanel();
+      renderConversation();
+      if (window.innerWidth <= 820) switchMobileTab('script');
+    }
+  } catch (error) {
+    hideThinkingIndicator();
+    const cleanMsg = (error && error.message) || 'The fresh script did not finish. Your current script is unchanged.';
+    status.textContent = cleanMsg;
+    status.className = 'eee-message story-refine-status error';
+    showErrorInConversation(cleanMsg, () => regenerateScript());
+  } finally {
+    buttons.forEach(b => { b.disabled = false; });
+    EEEStudio.refreshIcons();
+  }
+}
+
+function showVariant(index, step) {
+  const message = activeStory && activeStory.conversation[index];
+  if (!message || !Array.isArray(message.variants)) return;
+  const next = Math.max(0, Math.min(message.variants.length - 1, (Number.isInteger(message.variantIndex) ? message.variantIndex : message.variants.length - 1) + step));
+  message.variantIndex = next;
+  message.content = message.variants[next];
+  renderConversation();
+  queueStorySave();
+}
+
 // One request path for both a fresh answer and a refine note. It posts the
 // current conversation (plus the member's standing profile as context) to the
 // unchanged /api/storysculpt endpoint and folds the response back in.
-async function runGeneration(intent = 'interview') {
+async function runGeneration(intent = 'interview', options = {}) {
   let response;
   try {
     response = await fetch('/api/storysculpt', {
@@ -677,7 +800,10 @@ async function runGeneration(intent = 'interview') {
         intent,
         projectTitle: storyEl('story-title').value,
         context: composeContext(),
-        messages: activeStory.conversation
+        messages: options.messages || activeStory.conversation,
+        target: options.target,
+        regenerateNote: options.note || undefined,
+        previous: options.previous || undefined
       })
     });
   } catch (error) {
@@ -690,8 +816,20 @@ async function runGeneration(intent = 'interview') {
     throw new Error('StorySculpt\'s reply did not arrive in one piece. Your answers are still saved, so please try again.');
   }
   if (!response.ok) throw new Error(data.error || 'StorySculpt could not complete this step.');
-  if (data.final) activeStory.output = data.content;
-  else activeStory.conversation.push({ role: 'assistant', content: data.content, step: data.step || null });
+  if (data.final) {
+    activeStory.output = data.content;
+    adoptScriptTitle(data.title);
+  } else if (Number.isInteger(options.replaceIndex) && activeStory.conversation[options.replaceIndex]) {
+    const message = activeStory.conversation[options.replaceIndex];
+    const variants = Array.isArray(message.variants) && message.variants.length ? message.variants : [message.content];
+    variants.push(data.content);
+    message.variants = variants;
+    message.variantIndex = variants.length - 1;
+    message.content = data.content;
+    message.step = data.step || message.step;
+  } else {
+    activeStory.conversation.push({ role: 'assistant', content: data.content, step: data.step || null });
+  }
   // Keep the server's position in David's steps. The save below rewrites the
   // whole intake, and until 2026-10-08 it dropped current_step every turn.
   if (data.step) activeStory.intake = Object.assign({}, activeStory.intake, { current_step: data.step });
@@ -1141,6 +1279,12 @@ storyEl('story-conversation').addEventListener('click', event => {
   if (quick) { sendQuickReply(quick.getAttribute('data-quick-reply')); return; }
   if (event.target.closest('[data-quick-focus]')) storyEl('story-answer').focus();
 });
+storyEl('story-conversation').addEventListener('submit', event => {
+  const form = event.target.closest('[data-regen-form]');
+  if (!form) return;
+  event.preventDefault();
+  regenerateStep(Number(form.dataset.regenForm), form.querySelector('input').value.trim());
+});
 storyEl('story-answer').addEventListener('input', event => autoGrow(event.target));
 storyEl('story-answer').addEventListener('keydown', event => {
   if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); storyEl('story-composer').requestSubmit(); }
@@ -1149,6 +1293,8 @@ storyEl('story-answer').addEventListener('keydown', event => {
 // Artifact panel and version history events
 storyEl('story-output-copy').addEventListener('input', queueOutputSave);
 storyEl('story-refine-send').addEventListener('click', refineStory);
+storyEl('story-regenerate-script').addEventListener('click', regenerateScript);
+storyEl('story-regenerate-script-foot').addEventListener('click', regenerateScript);
 storyEl('story-refine-note').addEventListener('input', event => autoGrow(event.target));
 storyEl('story-refine-note').addEventListener('keydown', event => {
   if (event.key === 'Enter' && !event.shiftKey) { event.preventDefault(); refineStory(); }
@@ -1180,6 +1326,17 @@ storyEl('story-conversation').addEventListener('click', event => {
         setTimeout(() => { span.textContent = orig; }, 1500);
       }
     }
+    return;
+  }
+  const regenOpen = event.target.closest('[data-action="regen-open"]');
+  if (regenOpen) {
+    const form = document.querySelector('[data-regen-form="' + regenOpen.dataset.msgIndex + '"]');
+    if (form) { form.hidden = !form.hidden; if (!form.hidden) form.querySelector('input').focus(); }
+    return;
+  }
+  const variantBtn = event.target.closest('[data-action="variant-prev"], [data-action="variant-next"]');
+  if (variantBtn) {
+    showVariant(Number(variantBtn.dataset.msgIndex), variantBtn.dataset.action === 'variant-next' ? 1 : -1);
     return;
   }
   const promoteBtn = event.target.closest('[data-action="promote-msg"]');

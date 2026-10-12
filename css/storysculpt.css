@@ -362,3 +362,23 @@
 .story-message { min-width: 0; max-width: min(760px, 100%); }
 .story-message-body { overflow-wrap: anywhere; }
 .story-message-artifact-chip, .story-artifact-chip { max-width: 100%; min-width: 0; }
+
+/* Regenerate (2026-10-12): a fresh version of any step, with an optional note,
+   and a pager across the versions of the latest reply. */
+.story-regen-form { display: flex; gap: 8px; align-items: center; margin-top: 10px; }
+.story-regen-form[hidden] { display: none; }
+.story-regen-form input { flex: 1; min-width: 0; min-height: 38px; padding: 0 12px; border: 1px solid var(--studio-border); border-radius: 999px; background: var(--studio-surface); color: var(--studio-text); font: inherit; font-size: 14px; outline: 0; }
+.story-regen-form input:focus { border-color: var(--studio-teal); }
+.story-regen-form .story-quick-btn { flex-shrink: 0; }
+.story-variant-pager { display: inline-flex; align-items: center; gap: 4px; }
+.story-variant-pager .story-msg-btn { padding: 4px 6px; }
+.story-variant-pager .story-msg-btn:disabled { opacity: 0.35; cursor: default; }
+.story-variant-count { font-family: var(--font-mono, monospace); font-size: 11px; color: var(--studio-muted); min-width: 34px; text-align: center; }
+.story-message-actions { flex-wrap: wrap; }
+.story-refine-inner #story-regenerate-script { min-height: 46px; flex-shrink: 0; }
+@media (max-width: 820px) {
+  .story-regen-form input { font-size: 16px; }
+  .story-refine-inner #story-regenerate-script { width: auto; padding: 0 12px; }
+  .story-refine-inner #story-regenerate-script span, #story-regenerate-script-foot span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  #story-regenerate-script-foot { width: auto; padding: 0 12px; }
+}
