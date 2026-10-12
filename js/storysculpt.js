@@ -1222,7 +1222,9 @@ storyEl('story-rail-toggle').addEventListener('click', () => {
   setStoryRailOpen(!storyEl('story-projects').classList.contains('is-open'));
 });
 if (window.visualViewport) {
+  // The keyboard resizes the visual viewport; rotation resizes the window.
   window.visualViewport.addEventListener('resize', syncStoryViewport);
+  if (typeof window.addEventListener === 'function') window.addEventListener('resize', syncStoryViewport);
   syncStoryViewport();
 }
 
