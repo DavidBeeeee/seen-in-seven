@@ -1375,7 +1375,16 @@ function syncStoryViewport() {
   // iOS scrolls the whole page to show a focused field; the editor already fits
   // the visible area, so put the page back where the header stays in view.
   if (isStoryPhone() && !storyEl('story-editor').hidden && window.scrollY) window.scrollTo(0, 0);
+  // Backup for typing mode: the keyboard shrinks the visible area while a
+  // field is active, and closing it gives the space back.
+  if (typeof setStoryTyping === 'function' && document.activeElement && document.activeElement.matches) {
+    storyTallestView = Math.max(storyTallestView, vv.height);
+    const fieldActive = document.activeElement.matches(STORY_TYPING_FIELDS);
+    if (fieldActive && vv.height < storyTallestView * 0.8) setStoryTyping(true);
+    else if (!fieldActive) setStoryTyping(false);
+  }
 }
+let storyTallestView = 0;
 // Typing mode (2026-10-12): with the phone keyboard up, the header, chat
 // list bar, title row, tabs and status line used most of what was left of the
 // screen, so the conversation could not be read. While a field in the editor
