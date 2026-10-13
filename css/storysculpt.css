@@ -487,6 +487,11 @@
 
 /* Filming plan panel */
 .ugc-filming-plan-panel { margin-top: 16px; padding: 18px 22px; border-radius: var(--radius-card, 14px); border: 1px solid var(--studio-border); background: var(--studio-surface); display: flex; flex-direction: column; gap: 14px; }
+/* The script pane is a fixed-height column that hides overflow, so the plan
+   scrolls in its own share and the script keeps room to be read and edited
+   (2026-10-13 live test: the plan squeezed the script box to 38px). */
+.story-pane-artifact .ugc-filming-plan-panel { flex: 0 1 45%; min-height: 0; overflow-y: auto; margin: 0 24px 18px; }
+.story-pane-artifact .story-artifact-body { min-height: 180px; }
 .ugc-filming-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .ugc-filming-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-display, 'Oswald'), sans-serif; font-size: 18px; color: var(--studio-text); }
 .ugc-filming-actions { display: flex; align-items: center; gap: 10px; }
