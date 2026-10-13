@@ -11,7 +11,8 @@ import {
   validateResearchUrl,
   isRetailBlock,
   extractProductFromHtml,
-  synthesizeResearch
+  synthesizeResearch,
+  handleResearchRequest
 } from '../api/_lib/storysculpt-research.js';
 
 import {
@@ -219,8 +220,7 @@ console.log('PASS: UGC system prompt contract verified.');
 console.log('9. Checking Zero Em Dash across new files...');
 const filesToCheck = [
   'api/_lib/storysculpt-research.js',
-  'api/_lib/storysculpt-ugc.js',
-  'api/storysculpt-research.js'
+  'api/_lib/storysculpt-ugc.js'
 ];
 for (const rel of filesToCheck) {
   const content = readFileSync(join(root, rel), 'utf8');

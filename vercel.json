@@ -15,6 +15,10 @@
   ],
   "rewrites": [
     {
+      "source": "/api/storysculpt-research",
+      "destination": "/api/storysculpt?action=research"
+    },
+    {
       "source": "/studio",
       "destination": "/index.html"
     },

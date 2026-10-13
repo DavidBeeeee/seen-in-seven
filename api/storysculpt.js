@@ -33,6 +33,7 @@ import {
   buildUgcHookOptions,
   ugcSystemPrompt
 } from './_lib/storysculpt-ugc.js';
+import { handleResearchRequest } from './_lib/storysculpt-research.js';
 
 export const config = { maxDuration: 90 };
 
@@ -583,6 +584,15 @@ export default async function handler(req, res) {
   const token = bearerToken(req);
   const user = await authenticatedUser(req);
   if (!user) return json(res, 401, { error: 'Please sign in again to continue.' });
+
+  const isResearch = (
+    (req.url && req.url.includes('research')) ||
+    (req.query && req.query.action === 'research') ||
+    (req.body && (req.body.action === 'research' || req.body.mode === 'research'))
+  );
+  if (isResearch) {
+    return handleResearchRequest(req, res, { token, user });
+  }
 
   const trace = randomUUID();
   const started = Date.now();

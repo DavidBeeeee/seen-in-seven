@@ -1053,6 +1053,7 @@ function initUgcListeners() {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
           body: JSON.stringify({
+            action: 'research',
             projectId: activeStory.id,
             productUrl: url,
             userDetails,
