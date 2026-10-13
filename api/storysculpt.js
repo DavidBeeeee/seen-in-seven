@@ -26,12 +26,19 @@ import {
   detectCrisis,
   crisisResponse
 } from './_lib/storysculpt-steps.js';
+import {
+  generateAngleCards,
+  reviewScriptClaims,
+  buildFilmingPlan,
+  buildUgcHookOptions,
+  ugcSystemPrompt
+} from './_lib/storysculpt-ugc.js';
 
 export const config = { maxDuration: 90 };
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
-const MODES = new Set(['bold', 'mini', 'rant']);
+const MODES = new Set(['bold', 'mini', 'rant', 'ugc']);
 const PROJECT_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 // The StorySculpt knowledge lives under api/_hub, not assets, so it is bundled
@@ -207,6 +214,7 @@ function validateBody(body) {
     previous: cleanText(body && body.previous, 8000),
     projectTitle: cleanText(body && body.projectTitle, 160),
     context: cleanText(body && body.context, 12000),
+    ugc: body && typeof body.ugc === 'object' ? body.ugc : null,
     messages: messages.map(message => ({
       role: message && message.role === 'assistant' ? 'assistant' : 'user',
       content: cleanText(message && message.content, 8000)
@@ -446,6 +454,130 @@ function failureScore(content, check) {
   return 5;
 }
 
+async function handleUgcTurn({ input, project, token, user, trace, emit, fail, res }) {
+  const ugcState = input.ugc || (project.intake && project.intake.ugc) || {};
+  const product = ugcState.product || {};
+  const research = ugcState.research || {};
+  const selectedAngle = ugcState.selectedAngle || { title: 'Product demonstration', structure: 'direct-response' };
+  const creatorExperience = ugcState.creatorExperience || {};
+  const salesApproach = ugcState.salesApproach || 'direct';
+  const outputStyle = ugcState.outputStyle || 'script';
+  const targetDurationSeconds = ugcState.durationSeconds || 60;
+  const filming = ugcState.filming || {};
+
+  const system = ugcSystemPrompt({
+    product,
+    selectedAngle,
+    creatorExperience,
+    salesApproach,
+    outputStyle,
+    targetDurationSeconds,
+    filmingEnabled: Boolean(filming.enabled)
+  });
+
+  const messages = [
+    { role: 'system', content: system }
+  ];
+
+  if (input.context) {
+    messages.push({ role: 'user', content: 'MEMBER CONTEXT:\n' + input.context });
+  }
+
+  const researchExcerpt = [
+    product.name ? `PRODUCT: ${product.name}` : '',
+    research.findings && research.findings.brandClaims && research.findings.brandClaims.length ? `BRAND CLAIMS:\n- ${research.findings.brandClaims.join('\n- ')}` : '',
+    research.findings && research.findings.features && research.findings.features.length ? `FEATURES:\n- ${research.findings.features.join('\n- ')}` : '',
+    research.findings && research.findings.customerReports && research.findings.customerReports.length ? `CUSTOMER EXPERIENCES:\n- ${research.findings.customerReports.join('\n- ')}` : '',
+    creatorExperience.observations ? `CREATOR OBSERVATIONS: ${creatorExperience.observations}` : ''
+  ].filter(Boolean).join('\n\n');
+
+  if (researchExcerpt) {
+    messages.push({ role: 'user', content: 'VERIFIED PRODUCT RESEARCH & EVIDENCE:\n' + researchExcerpt });
+  }
+
+  if (input.intent === 'refine' && project.output) {
+    messages.push({ role: 'assistant', content: 'FINAL SCRIPT:\n' + project.output });
+    messages.push({ role: 'user', content: 'REVISION REQUEST: ' + (input.regenerateNote || (input.messages.length && input.messages[input.messages.length - 1].content) || 'Make it tighter and more natural.') });
+  } else {
+    messages.push({ role: 'user', content: `Please write the ${outputStyle === 'points' ? 'talking points' : 'video script'} based on the selected angle "${selectedAngle.title}". Hook and hold the viewer, keep it natural and authentic, and end with an appropriate CTA.` });
+  }
+
+  let result;
+  try {
+    result = await callModel(messages, {
+      temperature: 0.8,
+      maxTokens: 1800
+    });
+  } catch (error) {
+    await emit('error', { failureClass: classifyFailure('generation', error) });
+    const message = error && error.name === 'AbortError'
+      ? 'StorySculpt took too long on this pass. Please try again.'
+      : error && error.message ? error.message : 'StorySculpt could not complete this step.';
+    return fail(error && error.name === 'AbortError' ? 504 : 502, message);
+  }
+
+  let scriptContent = String(result.content || '').replace(/^(?:FINAL SCRIPT|NEXT QUESTION):\s*/i, '').trim();
+  scriptContent = scriptContent.replace(/[\u2014\u2013]/g, ', ');
+
+  const claimsIssues = reviewScriptClaims(scriptContent, { creatorExperience, research });
+  const hookOptions = buildUgcHookOptions(product.name, selectedAngle.title, scriptContent);
+
+  let filmingPlan = [];
+  if (filming.enabled) {
+    filmingPlan = buildFilmingPlan(scriptContent, {
+      format: filming.format || 'talking-head',
+      durationSeconds: targetDurationSeconds,
+      constraints: filming.constraints || ''
+    });
+  }
+
+  const updatedUgc = {
+    ...ugcState,
+    scriptVersion: (ugcState.scriptVersion || 0) + 1,
+    filming: {
+      ...filming,
+      plan: filmingPlan.length ? filmingPlan : (filming.plan || []),
+      stale: false
+    },
+    review: {
+      issues: claimsIssues,
+      checkedAt: new Date().toISOString()
+    },
+    hooks: hookOptions,
+    currentStep: 'final'
+  };
+
+  const updatedIntake = {
+    ...(project.intake || {}),
+    ugc: updatedUgc,
+    current_step: 'final'
+  };
+
+  await updateProjectIntake(token, input.projectId, updatedIntake);
+
+  await emit('generation', {
+    step: 'UGC-FINAL',
+    stepSource: 'ugc',
+    attempts: 1,
+    failureClass: undefined,
+    final: true,
+    messageCount: input.messages.length,
+    contextChars: input.context ? input.context.length : 0,
+    usage: result.usage
+  });
+
+  return json(res, 200, {
+    final: true,
+    content: scriptContent,
+    title: product.name ? `${product.name} UGC script` : 'UGC Video Script',
+    step: 'UGC-FINAL',
+    ugc: updatedUgc,
+    promptVersion: PROMPT_VERSION,
+    model: MODEL_VERSION,
+    trace
+  });
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed.' });
   const token = bearerToken(req);
@@ -531,6 +663,10 @@ export default async function handler(req, res) {
     if (!allowed) {
       await emit('denied', { failureClass: classifyFailure('quota') });
       return fail(429, 'StorySculpt needs a short pause before the next request.');
+    }
+
+    if (input.mode === 'ugc') {
+      return await handleUgcTurn({ input, project, token, user, trace, emit, fail, res });
     }
 
     const currentStepInDb = project.intake && project.intake.current_step;

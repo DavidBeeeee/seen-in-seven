@@ -74,6 +74,7 @@
             <button class="story-mode" type="button" data-mode="bold"><span class="story-mode-icon"><i data-lucide="zap"></i></span><strong>Controversial Take</strong><small>A sharp opinion or hot take</small></button>
             <button class="story-mode" type="button" data-mode="mini"><span class="story-mode-icon"><i data-lucide="presentation"></i></span><strong>Mini-Webinar</strong><small>A compact lesson with a story</small></button>
             <button class="story-mode" type="button" data-mode="rant"><span class="story-mode-icon"><i data-lucide="flame"></i></span><strong>5E Talking Head</strong><small>A raw thought with emotional force</small></button>
+            <button class="story-mode" type="button" data-mode="ugc"><span class="story-mode-icon"><i data-lucide="package"></i></span><strong>UGC / Product Video</strong><small>Turn a product into a video worth watching</small></button>
           </section>
 
         </div>
@@ -86,7 +87,7 @@
 
           <div class="story-notes" id="story-notes" hidden>
             <label>Notes for this chat<textarea id="story-context" placeholder="Anything specific to this one script: a name, a date, a detail you do not want lost. Your standing voice and facts live in your story profile."></textarea></label>
-            <select id="story-mode" hidden><option value="bold">Controversial Take</option><option value="mini">Mini-Webinar</option><option value="rant">5E Talking Head</option></select>
+            <select id="story-mode" hidden><option value="bold">Controversial Take</option><option value="mini">Mini-Webinar</option><option value="rant">5E Talking Head</option><option value="ugc">UGC / Product Video</option></select>
             <p class="eee-message" id="story-save-status"></p>
           </div>
 
@@ -99,6 +100,156 @@
             <div class="story-pane-chat" id="story-pane-chat">
               <div class="story-scroll" id="story-scroll">
                 <div class="story-thread" id="story-conversation" aria-live="polite"></div>
+              </div>
+
+              <div class="story-ugc-flow" id="story-ugc-flow" hidden>
+                <!-- Step A: Product & Entry -->
+                <div class="ugc-step-card" id="ugc-step-entry">
+                  <div class="ugc-step-head">
+                    <span class="eyebrow">Product &amp; Direction</span>
+                    <h3>What product are we featuring?</h3>
+                    <p>Enter a product link or paste its details. StorySculpt will research the claims and find an angle worth watching.</p>
+                  </div>
+                  <div class="ugc-input-group">
+                    <label for="ugc-product-url">Product link (Amazon or brand store)</label>
+                    <input type="url" id="ugc-product-url" placeholder="https://..." autocomplete="off">
+                    <button class="text-link-btn" id="ugc-toggle-details-btn" type="button">Paste product details instead</button>
+                  </div>
+                  <div class="ugc-input-group" id="ugc-details-group" hidden>
+                    <label for="ugc-product-details">Product details &amp; features</label>
+                    <textarea id="ugc-product-details" rows="3" placeholder="Product name, what it does, key features, and price..."></textarea>
+                  </div>
+                  <details class="ugc-details-fold" id="ugc-brief-fold">
+                    <summary>Optional brand brief or requirements</summary>
+                    <div class="ugc-input-group">
+                      <textarea id="ugc-brand-brief" rows="2" placeholder="Talking points the brand asked for, do-nots, or specific hashtags..."></textarea>
+                    </div>
+                  </details>
+                  <div class="ugc-input-group">
+                    <label>Selling approach</label>
+                    <div class="ugc-pill-select" id="ugc-approach-select" role="radiogroup" aria-label="Selling approach">
+                      <button class="ugc-pill-btn active" type="button" data-approach="help-decide">Help me decide</button>
+                      <button class="ugc-pill-btn" type="button" data-approach="direct">Sell directly</button>
+                      <button class="ugc-pill-btn" type="button" data-approach="useful">Useful content featuring it</button>
+                    </div>
+                  </div>
+                  <div class="ugc-toggle-row">
+                    <label class="ugc-switch-label" for="ugc-filming-toggle">
+                      <input type="checkbox" id="ugc-filming-toggle" class="ugc-switch-input">
+                      <span class="ugc-switch-slider"></span>
+                      <span class="ugc-switch-text">Include filming plan (shots &amp; camera action)</span>
+                    </label>
+                  </div>
+                  <div class="ugc-actions-row">
+                    <button class="primary-button" id="ugc-start-research-btn" type="button">
+                      <span>Find my angle</span>
+                      <i data-lucide="sparkles"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Step B: Experience & Observations (shown during/after research) -->
+                <div class="ugc-step-card" id="ugc-step-experience" hidden>
+                  <div class="ugc-step-head">
+                    <span class="eyebrow">Your Honest Experience</span>
+                    <h3>Have you used it? What stood out?</h3>
+                    <p>Or what are you planning to test? Tell us roughly; StorySculpt will preserve your actual words.</p>
+                  </div>
+                  <div class="ugc-research-status" id="ugc-research-status">
+                    <i data-lucide="loader" class="spin-icon"></i>
+                    <span id="ugc-research-status-text">Reading the product page...</span>
+                  </div>
+                  <div class="ugc-input-group">
+                    <label>Your experience with this product</label>
+                    <div class="ugc-pill-select" id="ugc-experience-select" role="radiogroup" aria-label="Your experience">
+                      <button class="ugc-pill-btn active" type="button" data-exp="used">Used it</button>
+                      <button class="ugc-pill-btn" type="button" data-exp="not-yet">Not yet</button>
+                      <button class="ugc-pill-btn" type="button" data-exp="my-own">My own product</button>
+                    </div>
+                  </div>
+                  <div class="ugc-input-group">
+                    <label for="ugc-creator-notes">Your observations, likes, dislikes, or test plan</label>
+                    <textarea id="ugc-creator-notes" rows="2" placeholder="e.g. It was much lighter than expected, battery lasts 2 days, but the charging port is tight."></textarea>
+                  </div>
+                  <div class="ugc-actions-row">
+                    <button class="primary-button" id="ugc-see-angles-btn" type="button">
+                      <span>See angles</span>
+                      <i data-lucide="arrow-right"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Step C: Angle Selection & Draft Preferences -->
+                <div class="ugc-step-card" id="ugc-step-angles" hidden>
+                  <div class="ugc-step-head">
+                    <span class="eyebrow">Grounded Angles</span>
+                    <h3>Choose the angle for this video</h3>
+                    <p>Three angles supported by product research and customer experiences.</p>
+                  </div>
+                  <div class="ugc-angles-grid" id="ugc-angles-grid"></div>
+
+                  <details class="ugc-details-fold ugc-findings-fold" id="ugc-findings-fold">
+                    <summary><i data-lucide="search"></i><span>What we found (verified research &amp; gaps)</span></summary>
+                    <div class="ugc-findings-content" id="ugc-findings-content"></div>
+                  </details>
+
+                  <div class="ugc-draft-prefs">
+                    <div class="ugc-input-group">
+                      <label>Output style</label>
+                      <div class="ugc-pill-select" id="ugc-style-select">
+                        <button class="ugc-pill-btn active" type="button" data-style="script">Full spoken script</button>
+                        <button class="ugc-pill-btn" type="button" data-style="points">Ordered talking points</button>
+                      </div>
+                    </div>
+                    <div class="ugc-input-group">
+                      <label>Target video length</label>
+                      <div class="ugc-pill-select" id="ugc-duration-select">
+                        <button class="ugc-pill-btn" type="button" data-duration="30">30 seconds</button>
+                        <button class="ugc-pill-btn active" type="button" data-duration="60">60 seconds</button>
+                        <button class="ugc-pill-btn" type="button" data-duration="90">90 seconds</button>
+                      </div>
+                    </div>
+                    <div class="ugc-toggle-row">
+                      <label class="ugc-switch-label" for="ugc-filming-toggle-angle">
+                        <input type="checkbox" id="ugc-filming-toggle-angle" class="ugc-switch-input">
+                        <span class="ugc-switch-slider"></span>
+                        <span class="ugc-switch-text">Include filming plan</span>
+                      </label>
+                    </div>
+                  </div>
+
+                  <div class="ugc-actions-row">
+                    <button class="primary-button" id="ugc-generate-script-btn" type="button">
+                      <span>Write my script</span>
+                      <i data-lucide="sparkles"></i>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Step D: Review & Hook selection (shown when draft is ready) -->
+                <div class="ugc-step-card" id="ugc-step-review" hidden>
+                  <div class="ugc-claims-box" id="ugc-claims-box" hidden></div>
+                  <div class="ugc-hooks-box" id="ugc-hooks-box">
+                    <h4>Hooks to stop the scroll</h4>
+                    <p>Tap a hook to use it as the opening line of your active draft:</p>
+                    <div class="ugc-hooks-list" id="ugc-hooks-list"></div>
+                  </div>
+                  <div class="ugc-quick-revisions">
+                    <span class="eyebrow">Quick revisions</span>
+                    <div class="ugc-quick-rev-btns" id="ugc-quick-rev-btns">
+                      <button class="secondary-button" type="button" data-rev-note="Make it sound more like natural casual speech, less polished.">More like me</button>
+                      <button class="secondary-button" type="button" data-rev-note="Tone down any hype or selling language. Keep it honest and grounded.">Less salesy</button>
+                      <button class="secondary-button" type="button" data-rev-note="Tighten the pacing. Trim unnecessary words and cut 10-15 seconds.">Shorter</button>
+                      <button class="secondary-button" type="button" data-rev-note="Simplify the visuals and actions so it is easy to shoot in one sitting.">Easier to film</button>
+                    </div>
+                  </div>
+                  <div class="ugc-another-row">
+                    <button class="secondary-button" id="ugc-another-video-btn" type="button">
+                      <i data-lucide="copy-plus"></i>
+                      <span>Another video for this product</span>
+                    </button>
+                  </div>
+                </div>
               </div>
 
               <form class="story-composer" id="story-composer">
@@ -142,6 +293,27 @@
 
               <div class="story-artifact-body">
                 <textarea class="story-output-copy" id="story-output-copy" aria-label="Your finished script" spellcheck="true" placeholder="Your finished talking-head script will appear here..."></textarea>
+              </div>
+
+              <div class="ugc-filming-plan-panel" id="ugc-filming-plan-panel" hidden>
+                <div class="ugc-filming-head">
+                  <div class="ugc-filming-title">
+                    <i data-lucide="video"></i>
+                    <strong>Filming plan &amp; scene breakdown</strong>
+                  </div>
+                  <div class="ugc-filming-actions">
+                    <button class="secondary-button" id="ugc-update-filming-btn" type="button" hidden>
+                      <i data-lucide="refresh-cw"></i>
+                      <span>Update filming plan</span>
+                    </button>
+                    <button class="text-link-btn" id="ugc-toggle-filming-view-btn" type="button">Hide scenes</button>
+                  </div>
+                </div>
+                <div class="ugc-filming-stale-alert" id="ugc-filming-stale-alert" hidden>
+                  <i data-lucide="info"></i>
+                  <span>The script text was modified since this plan was generated. Tap <strong>Update filming plan</strong> to re-sync shot timings.</span>
+                </div>
+                <div class="ugc-filming-scenes" id="ugc-filming-scenes"></div>
               </div>
 
               <div class="story-artifact-foot">
