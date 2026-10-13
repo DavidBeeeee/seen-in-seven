@@ -49,6 +49,7 @@
           <h2><button class="story-rail-toggle" id="story-rail-toggle" type="button" aria-expanded="false" aria-controls="story-projects"><span>Chats</span><span class="story-rail-count" id="story-rail-count"></span><i data-lucide="chevron-down"></i></button></h2>
           <button class="icon-button" id="new-project-button" type="button" title="New chat" aria-label="Start a new StorySculpt chat"><i data-lucide="plus"></i></button>
         </div>
+        <div class="story-return-slot" id="story-return-notice" hidden></div>
         <div class="story-rail-filter" id="story-rail-filter" role="tablist" aria-label="Filter chats">
           <button class="story-filter-btn active" data-filter="all" type="button">All</button>
           <button class="story-filter-btn" data-filter="active" type="button">Active</button>
@@ -82,8 +83,6 @@
             <div class="story-chat-title-wrap"><input id="story-title" class="story-chat-title" maxlength="160" aria-label="Chat title"><span class="story-format-badge" id="story-format-badge">Controversial Take</span></div>
             <div class="story-chat-actions"><button class="secondary-button" id="story-notes-toggle" type="button"><i data-lucide="sticky-note"></i><span>Notes</span></button><button class="secondary-button danger" id="delete-project-button" type="button" hidden><i data-lucide="trash-2"></i><span>Delete</span></button></div>
           </div>
-
-          <div class="story-return-slot" id="story-return-notice" hidden></div>
 
           <div class="story-notes" id="story-notes" hidden>
             <label>Notes for this chat<textarea id="story-context" placeholder="Anything specific to this one script: a name, a date, a detail you do not want lost. Your standing voice and facts live in your story profile."></textarea></label>
@@ -146,13 +145,18 @@
               </div>
 
               <div class="story-artifact-foot">
-                <div class="story-artifact-save-state">
-                  <span class="story-save-dot"></span>
-                  <span id="story-script-save-status">Saves as you type</span>
+                <div class="story-artifact-foot-row">
+                  <div class="story-artifact-save-state">
+                    <span class="story-save-dot"></span>
+                    <span id="story-script-save-status">Saves as you type</span>
+                  </div>
+                  <div class="story-next-actions">
+                    <button class="secondary-button" id="copy-story-output-bottom" type="button"><i data-lucide="copy"></i><span>Copy my script</span></button>
+                    <button class="secondary-button" id="story-regenerate-script-foot" type="button" title="Write a fresh script from your answers"><i data-lucide="refresh-cw"></i><span>Regenerate</span></button><button class="secondary-button" id="start-another-story" type="button"><i data-lucide="plus"></i><span>Start another</span></button>
+                  </div>
                 </div>
-                <div class="story-next-actions">
-                  <button class="secondary-button" id="copy-story-output-bottom" type="button"><i data-lucide="copy"></i><span>Copy my script</span></button>
-                  <button class="secondary-button" id="story-regenerate-script-foot" type="button" title="Write a fresh script from your answers"><i data-lucide="refresh-cw"></i><span>Regenerate</span></button><button class="secondary-button" id="start-another-story" type="button"><i data-lucide="plus"></i><span>Start another</span></button>
+                <div class="story-consequence-note" id="story-consequence-note">
+                  <p>Finishing a script means your interview is complete and ready to film. Nothing in StorySculpt escalates, deteriorates, or expires. Your script stays right here until you delete it. Delete is the one irreversible action and is confirmed before anything is removed.</p>
                 </div>
               </div>
             </section>
@@ -185,6 +189,7 @@
       <div class="story-help-content">
         <section><h3>Who makes this?</h3><p>Built and supported by David Bee. StorySculpt is part of The Momentum Hub, and every step of it follows David's own scriptwriting method.</p></section>
         <section><h3>What happens to my work?</h3><p>Your chats, project titles, notes, finished scripts, and story profile are saved to your Studio account so you can return to them. When you ask StorySculpt to continue or revise, your title, profile, notes, and recent messages are processed by the AI model that writes your next question or draft, guided by David's method and your own words. Do not enter anything you do not want processed by an AI service.</p><p>Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them. You can delete a chat and its saved script with the Delete button inside that chat. Your standing story profile is separate and can be edited from Story profile.</p></section>
+        <section><h3>What does finishing a script mean?</h3><p>Finishing a script means your interview is complete and your answers are assembled into a script you can record. Copy it, download the text file, or refine it whenever you are ready. Nothing in StorySculpt escalates, deteriorates, or expires: your script stays in your account until you delete it, with no countdown and no lost work. Delete is the one irreversible action and is confirmed before anything is removed.</p></section>
         <section><h3>Where do I get help?</h3><p>For a question about a script, chat, or your story profile, email <a href="mailto:email@davidbee.me?subject=StorySculpt%20support">email@davidbee.me</a> and say what you were doing. For Studio sign-in, access, or billing, use the <a href="/eee">Studio home</a> and its account support options, or email the same address with “Studio account” in the subject.</p><p>Review our <a href="/terms">Terms of Service, AI usage, and FAQ</a>.</p></section>
       </div>
     </aside>

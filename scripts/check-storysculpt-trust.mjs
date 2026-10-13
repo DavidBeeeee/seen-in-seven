@@ -23,7 +23,10 @@ const checks = [
   ['AI processing disclosure', /processed by the AI model/],
   ['saved-work disclosure', /saved to your Studio account/],
   ['generic AI distinction', /Not another blank AI chat/],
-  ['5E mechanism', /Entertainment, Enragement, Epiphany, Empathy, or Education/]
+  ['5E mechanism', /Entertainment, Enragement, Epiphany, Empathy, or Education/],
+  ['consequence model: what finishing means', /finishing a script means/i],
+  ['consequence model: nothing escalates deteriorates or expires', /nothing in storysculpt escalates, deteriorates, or expires/i],
+  ['consequence model: delete is irreversible and confirmed', /delete is the one irreversible action and is confirmed/i]
 ];
 
 const failures = checks.filter(([, pattern]) => !pattern.test(html)).map(([label]) => label);

@@ -23,7 +23,9 @@ import {
   buildEventDetail,
   sourceViolations,
   failureLayer,
-  incidentSignal
+  incidentSignal,
+  isProviderFailure,
+  isMemberWalkaway
 } from '../api/_lib/storysculpt-observability.js';
 
 // A well-formed intermediate turn and a well-formed final turn: the two shapes
@@ -259,3 +261,22 @@ test('WBR-005 the incident signal ignores refusals and fires on member-facing fa
   const old = outage.map((e) => ({ ...e, created_at: at(120) }));
   assert.equal(incidentSignal(old, { now }).level, 'ok', 'events outside the window do not count');
 });
+
+test('WBR-373 incidentSignal separates provider/infrastructure failures from member walkaways', () => {
+  const now = Date.parse('2026-10-13T10:00:00Z');
+  const at = (m) => new Date(now - m * 60000).toISOString();
+  const mixed = [
+    { event_type: 'storysculpt_generation', created_at: at(10), detail: { outcome: 'generation' } },
+    { event_type: 'storysculpt_error', created_at: at(8), detail: { outcome: 'error', failureClass: 'deepseek-timeout' } },
+    { event_type: 'storysculpt_error', created_at: at(6), detail: { outcome: 'error', failureClass: 'deepseek-error' } },
+    { event_type: 'storysculpt_walkaway', created_at: at(4), detail: { outcome: 'walkaway', failureClass: 'member-walkaway' } },
+    { event_type: 'storysculpt_walkaway', created_at: at(2), detail: { outcome: 'walkaway', failureClass: 'member-walkaway' } }
+  ];
+  const signal = incidentSignal(mixed, { now });
+  assert.equal(signal.providerFailures, 2);
+  assert.equal(signal.memberWalkaways, 2);
+  assert.equal(isProviderFailure('deepseek-timeout'), true);
+  assert.equal(isProviderFailure('member-walkaway'), false);
+  assert.equal(isMemberWalkaway('member-walkaway', 'walkaway', 'storysculpt_walkaway'), true);
+});
+

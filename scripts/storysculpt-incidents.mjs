@@ -16,7 +16,7 @@
 // readable with a member token. Prints counts and classes only; event detail
 // never carries member content, and this prints none.
 //
-//   node scripts/storysculpt-incidents.mjs [--minutes 60] [--json]
+//   node scripts/storysculpt-incidents.mjs [--minutes 60] [--json] [--sample]
 //
 // WBR-005, 2026-10-03 evening order.
 
@@ -31,24 +31,36 @@ const option = (name, fallback) => {
 };
 const minutes = Math.max(1, Number(option('--minutes', 60)) || 60);
 
-if (!serviceKey) {
-  console.error('storysculpt-incidents: SUPABASE_SECRET_KEY is required to read public.logs.');
-  process.exit(1);
+let rows;
+if (argv.includes('--sample')) {
+  const now = Date.now();
+  rows = [
+    { event_type: 'storysculpt_generation', created_at: new Date(now - 20 * 60000).toISOString(), detail: { outcome: 'generation' } },
+    { event_type: 'storysculpt_walkaway', created_at: new Date(now - 15 * 60000).toISOString(), detail: { outcome: 'walkaway', failureClass: 'member-walkaway' } },
+    { event_type: 'storysculpt_error', created_at: new Date(now - 10 * 60000).toISOString(), detail: { outcome: 'error', failureClass: 'deepseek-error', layer: 'generation' } },
+    { event_type: 'storysculpt_generation', created_at: new Date(now - 5 * 60000).toISOString(), detail: { outcome: 'generation' } }
+  ];
+} else {
+  if (!serviceKey) {
+    console.error('storysculpt-incidents: SUPABASE_SECRET_KEY is required to read public.logs (or pass --sample).');
+    process.exit(1);
+  }
+
+  const since = new Date(Date.now() - minutes * 60000).toISOString();
+  const url = `${supabaseUrl}/rest/v1/logs?select=event_type,detail,created_at&event_type=like.storysculpt_*&created_at=gte.${encodeURIComponent(since)}&order=created_at.asc&limit=2000`;
+  const response = await fetch(url, { headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` } });
+  if (!response.ok) {
+    console.error(`storysculpt-incidents: could not read logs (${response.status}).`);
+    process.exit(1);
+  }
+  rows = await response.json();
 }
 
-const since = new Date(Date.now() - minutes * 60000).toISOString();
-const url = `${supabaseUrl}/rest/v1/logs?select=event_type,detail,created_at&event_type=like.storysculpt_*&created_at=gte.${encodeURIComponent(since)}&order=created_at.asc&limit=2000`;
-const response = await fetch(url, { headers: { apikey: serviceKey, Authorization: `Bearer ${serviceKey}` } });
-if (!response.ok) {
-  console.error(`storysculpt-incidents: could not read logs (${response.status}).`);
-  process.exit(1);
-}
-const rows = await response.json();
 const signal = incidentSignal(rows, { windowMinutes: minutes });
 
 if (argv.includes('--json')) console.log(JSON.stringify(signal, null, 2));
 else {
   const layers = Object.entries(signal.byLayer).map(([layer, n]) => `${layer}=${n}`).join(' ') || 'none';
-  console.log(`StorySculpt ${signal.level.toUpperCase()}: ${signal.reason}. Last ${minutes}m: ${signal.attempts} attempt(s), ${signal.failures} failure(s), rate ${signal.failureRate}, by layer ${layers}.`);
+  console.log(`StorySculpt ${signal.level.toUpperCase()}: ${signal.reason}. Last ${minutes}m: ${signal.attempts} attempt(s), ${signal.failures} failure(s), rate ${signal.failureRate}, by layer ${layers}. Provider failures: ${signal.providerFailures}, member walk-aways: ${signal.memberWalkaways}.`);
 }
 process.exit(signal.level === 'incident' ? 2 : 0);

@@ -589,6 +589,7 @@ function showStart() {
   const leaving = activeStory;
   const leftNote = storyEl('story-left-note');
   if (leaving) {
+    recordStoryWalkaway(leaving);
     if (storySaveTimer) { clearTimeout(storySaveTimer); storySaveTimer = null; saveActiveStory().catch(() => {}); }
     leftNote.textContent = 'Saved. "' + ((storyEl('story-title').value || '').trim() || leaving.title || 'Untitled script') + '" is in your chats whenever you want it.';
     leftNote.hidden = false;
@@ -685,6 +686,32 @@ function recordStoryFailure(failureClass, trace, status) {
       }
     }).then(() => {}, () => {});
   } catch (error) {
+    // Observability never breaks the app.
+  }
+}
+
+// Records when a member steps away from an active interview mid-step with no
+// error, so incidents can separate member walk-aways from provider failures.
+function recordStoryWalkaway(project) {
+  try {
+    if (!project || project.output || !storyContext || !storyContext.sb) return;
+    const conv = Array.isArray(project.conversation) ? project.conversation : [];
+    if (conv.length < 2) return;
+    storyContext.sb.rpc('record_log_event', {
+      p_event_type: 'storysculpt_walkaway',
+      p_detail: {
+        schema: 1,
+        outcome: 'walkaway',
+        mode: String(project.content_type || ''),
+        failureClass: 'member-walkaway',
+        layer: 'walkaway',
+        failureKind: 'member-walkaway',
+        step: String((project.intake && project.intake.current_step) || ''),
+        messageCount: conv.length,
+        side: 'browser'
+      }
+    }).then(() => {}, () => {});
+  } catch (_) {
     // Observability never breaks the app.
   }
 }
