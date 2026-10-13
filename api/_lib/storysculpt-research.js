@@ -203,6 +203,44 @@ function decodeHtml(html) {
     .replace(/&ndash;/g, ', ');
 }
 
+// A product fact or a review reads like a sentence: mostly lowercase words,
+// not a run of capitalised menu labels.
+function looksLikeSentence(text) {
+  const words = String(text || '').split(/\s+/).filter(w => /[a-z]/i.test(w));
+  if (words.length < 3) return false;
+  const capped = words.filter(w => /^[A-Z]/.test(w)).length;
+  if (capped / words.length > 0.5) return false;
+  return !/\b(?:shop all|new arrivals|bestsellers|sign in|log in|add to cart|free shipping|skip to content|also available in)\b/i.test(text);
+}
+
+// schema.org Product data from JSON-LD blocks: name, description and up to
+// four review bodies. Anything malformed is skipped rather than guessed at.
+function productJsonLd(html) {
+  const out = { name: '', description: '', reviews: [] };
+  const blocks = String(html || '').matchAll(/<script[^>]*type=["']application\/ld\+json["'][^>]*>([\s\S]*?)<\/script>/gi);
+  const visit = (node) => {
+    if (!node || typeof node !== 'object') return;
+    if (Array.isArray(node)) { node.forEach(visit); return; }
+    if (node['@graph']) visit(node['@graph']);
+    const type = [].concat(node['@type'] || []).join(' ');
+    if (/\bProduct\b/.test(type)) {
+      if (!out.name && typeof node.name === 'string') out.name = decodeHtml(node.name).trim();
+      if (!out.description && typeof node.description === 'string') out.description = decodeHtml(node.description.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim().slice(0, 600);
+      for (const review of [].concat(node.review || [])) {
+        const body = review && (review.reviewBody || review.description);
+        if (typeof body === 'string') {
+          const text = decodeHtml(body.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
+          if (text.length > 20 && out.reviews.length < 4) out.reviews.push(text.slice(0, 350));
+        }
+      }
+    }
+  };
+  for (const block of blocks) {
+    try { visit(JSON.parse(block[1].trim())); } catch { /* not valid JSON-LD */ }
+  }
+  return out;
+}
+
 export function extractProductFromHtml(html, url) {
   const cleanHtml = String(html || '')
     .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, ' ')
@@ -232,42 +270,48 @@ export function extractProductFromHtml(html, url) {
     cleanHtml.match(/<meta[^>]*content=["']([^"']+)["'][^>]*name=["']description["']/i);
   if (ogDescMatch) description = decodeHtml(ogDescMatch[1]).replace(/\s+/g, ' ').trim();
 
-  // 3. Bullets / features extraction
+  // 3. Structured product data first. Most stores publish schema.org Product
+  // JSON-LD; it carries the real description and real review text, which the
+  // page's visible markup buries under navigation. 2026-10-13 live test: the
+  // markup scrape returned menus ("Featured New Arrivals Bestsellers") as
+  // features and "Also available in: Women's Sizes" as a customer report.
+  const ld = productJsonLd(html);
+  if (!description && ld.description) description = ld.description;
+
+  // Navigation, header, footer and asides are never product facts.
+  const bodyHtml = cleanHtml.replace(/<(nav|header|footer|aside)\b[\s\S]*?<\/\1>/gi, ' ');
+
+  // 4. Bullets / features extraction
   const bullets = [];
-  const liMatches = cleanHtml.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/gi);
+  const liMatches = bodyHtml.matchAll(/<li[^>]*>([\s\S]*?)<\/li>/gi);
   for (const m of liMatches) {
     const text = decodeHtml(m[1].replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
-    if (text.length > 20 && text.length < 350 && !text.includes('cookie') && !text.includes('privacy') && !text.includes('copyright')) {
-      bullets.push(text);
+    if (text.length > 20 && text.length < 350 && looksLikeSentence(text) && !/cookie|privacy|copyright/i.test(text)) {
+      if (!bullets.includes(text)) bullets.push(text);
       if (bullets.length >= 8) break;
     }
   }
 
-  // 4. Customer feedback extraction
-  const customerReports = [];
-  const reviewBlocks = cleanHtml.matchAll(/<(?:div|section|ul)[^>]*(?:review|customer|testimonial|feedback)[^>]*>([\s\S]*?)<\/(?:div|section|ul)>/gi);
-  for (const rb of reviewBlocks) {
-    const pMatches = rb[1].matchAll(/<(?:p|div|li)[^>]*>([\s\S]*?)<\/(?:p|div|li)>/gi);
-    for (const pm of pMatches) {
-      const text = decodeHtml(pm[1].replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
-      if (text.length > 25 && text.length < 350 && !text.includes('cookie') && !text.includes('sign in')) {
-        customerReports.push(text);
-        if (customerReports.length >= 5) break;
-      }
-    }
-  }
+  // 5. Customer feedback: structured reviews, then only review-body markup.
+  const customerReports = ld.reviews.slice(0, 4);
   if (customerReports.length < 2) {
-    const reviewMatches = cleanHtml.matchAll(/<(?:p|div|span|li)[^>]*(?:review|customer|testimonial|feedback|comment)[^>]*>([\s\S]*?)<\/(?:p|div|span|li)>/gi);
-    for (const rm of reviewMatches) {
-      const text = decodeHtml(rm[1].replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
-      if (text.length > 25 && text.length < 350 && !text.includes('cookie') && !text.includes('sign in')) {
-        if (!customerReports.includes(text)) {
-          customerReports.push(text);
-          if (customerReports.length >= 5) break;
-        }
+    // Paragraphs inside a reviews container, or elements marked as a review
+    // body. Each must read like a sentence, which drops "Reviews for X" and
+    // variant pickers that happen to sit in the same block.
+    const candidates = [];
+    for (const block of bodyHtml.matchAll(/<(?:div|section|ul)[^>]*class=["'][^"']*review[^"']*["'][^>]*>([\s\S]*?)<\/(?:div|section|ul)>/gi)) {
+      for (const pm of block[1].matchAll(/<(?:p|li)[^>]*>([\s\S]*?)<\/(?:p|li)>/gi)) candidates.push(pm[1]);
+    }
+    for (const rm of bodyHtml.matchAll(/<(?:p|div|span)[^>]*class=["'][^"']*review[-_]?(?:body|text|content)[^"']*["'][^>]*>([\s\S]*?)<\/(?:p|div|span)>/gi)) candidates.push(rm[1]);
+    for (const raw of candidates) {
+      const text = decodeHtml(raw.replace(/<[^>]+>/g, ' ')).replace(/\s+/g, ' ').trim();
+      if (text.length > 40 && text.length < 350 && looksLikeSentence(text) && !customerReports.includes(text)) {
+        customerReports.push(text);
+        if (customerReports.length >= 4) break;
       }
     }
   }
+  if (!title && ld.name) title = ld.name;
 
   return {
     title: title || 'Product from ' + new URL(url).hostname,

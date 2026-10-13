@@ -265,6 +265,15 @@ const ugcSrc = readFileSync(join(root, 'api/storysculpt.js'), 'utf8');
 assert(/cleanUgcScript\(result\.content\)/.test(ugcSrc), 'The UGC handler cleans model output before saving');
 const migration = readFileSync(join(root, 'supabase_migrations/2026-10-13-allow-storysculpt-research-quota.sql'), 'utf8');
 assert(migration.includes("'storysculpt-research'"), 'The quota allowlist names the research endpoint');
+const navPage = `<html><head><title>Tree Runner</title></head><body>
+<nav><ul><li>Featured New Arrivals Bestsellers LEATHER ALTERNATIVES</li><li>Men's Shoes Shop All Sneakers Slip Ons Sandals</li></ul></nav>
+<div class="product-reviews-summary"><p>Men's Tree Runner Also available in: Women's Sizes</p><p>Reviews for Men's Tree Runner and Runner NZ Cruiser</p></div>
+<ul><li>Sugarcane-based SweetFoam cushioning with responsive energy return</li></ul>
+<script type="application/ld+json">{"@type":"Product","name":"Tree Runner","review":[{"reviewBody":"Comfortable all day on my feet, but the heel wore through in four months."}]}</script>
+</body></html>`;
+const navExtract = extractProductFromHtml(navPage, 'https://example.com/tree');
+assert.deepEqual(navExtract.features, ['Sugarcane-based SweetFoam cushioning with responsive energy return'], 'Menus are not product features');
+assert.deepEqual(navExtract.customerReports, ['Comfortable all day on my feet, but the heel wore through in four months.'], 'Only real review text is a customer report');
 console.log('PASS: Live-test regressions verified.');
 
 console.log('\nALL STORYSCULPT UGC TESTS PASSED (10/10 areas verified)!');
