@@ -20,6 +20,8 @@ import {
   reviewScriptClaims,
   buildFilmingPlan,
   buildUgcHookOptions,
+  cleanUgcScript,
+  splitDirections,
   ugcSystemPrompt
 } from '../api/_lib/storysculpt-ugc.js';
 
@@ -229,4 +231,40 @@ for (const rel of filesToCheck) {
 
 console.log('PASS: Zero em dashes confirmed across all UGC modules.');
 
-console.log('\nALL STORYSCULPT UGC TESTS PASSED (9/9 areas verified)!');
+// 10. Live-test regressions, 2026-10-13. Each case is a real output from
+// production, not a feature word search.
+console.log('10. Checking live-test regressions...');
+assert.equal(
+  cleanUgcScript('Alright, here\u2019s the honest, first-test angle. I\u2019ve kept it tight, direct, and true to your actual experience.\n\n---\n\n**Title:** I Finally Got These.\n\n**Script:**\n\nLook, I\u2019m going to be straight with you.\n\nI just unboxed these.'),
+  'Look, I\u2019m going to be straight with you.\n\nI just unboxed these.',
+  'A preamble, separator, title and labels are not saved as the script');
+assert.equal(
+  cleanUgcScript('I can\u2019t add that line. It would be inventing a health benefit, and David Bee\u2019s core rules forbid that.\n\nHere is the revised script with everything else kept intact:\n\nYou know the worst part?'),
+  'You know the worst part?',
+  'A refusal is never saved as the script');
+for (const keep of ['Alright, let\u2019s get one thing straight. Shoes matter.\n\nSecond.', 'Honestly this angle surprised me.\n\nSecond.', 'Okay so here is the thing about ice:\n\nIt lasts.']) {
+  assert.equal(cleanUgcScript(keep), keep, 'A real opening line is kept: ' + keep.slice(0, 30));
+}
+const split = splitDirections('[Visual: In the car, holding the tumbler.]\n\nYou know the worst part?\n\n[Visual: Ice close-up.]\n\nStill ice next morning.');
+assert.deepEqual(split.paragraphs, ['You know the worst part?', 'Still ice next morning.'], 'Camera directions are not spoken lines');
+const plan = buildFilmingPlan('[Visual: In the car.]\n\nYou know the worst part?\n\nStill ice.', { durationSeconds: 30 });
+assert.equal(plan.length, 2);
+assert.equal(plan[0].visualAction, 'In the car.', 'A direction becomes the shot for the line after it');
+assert(!plan.some(scene => /\[visual/i.test(scene.spokenSegment)), 'No scene asks the creator to say a direction');
+assert.equal(reviewScriptClaims('For me, my knees feel better since I started carrying it.').length, 0, 'Personal experience is not flagged (David, 2026-10-13)');
+assert.equal(reviewScriptClaims('This tumbler cures joint pain.').length, 1, 'An impersonal cure promise is still flagged');
+const noteAngles = generateAngleCards({ research: {}, creatorExperience: { used: 'used', observations: 'Ice really does last into the next morning in my car. Lid leaks if it tips over with the straw open.' } });
+assert(noteAngles[0].whyViewerCares.includes('Ice really does last'), 'Without research, angles come from the creator notes');
+assert(!/buyers report/.test(noteAngles[0].whyViewerCares), 'Angles do not claim buyer reports that were never read');
+const usefulPrompt = ugcSystemPrompt({ salesApproach: 'useful', targetDurationSeconds: 30 });
+assert(/Hard limit: 69 spoken words/.test(usefulPrompt), 'Length is a hard word limit');
+assert(/not a hard "buy it"/.test(usefulPrompt), 'Useful content ends soft');
+assert(/Never refuse it/.test(usefulPrompt), 'Creator experience is never refused');
+assert(!/David Bee/.test(usefulPrompt), 'The prompt does not name David to the model as rules it can quote back');
+const ugcSrc = readFileSync(join(root, 'api/storysculpt.js'), 'utf8');
+assert(/cleanUgcScript\(result\.content\)/.test(ugcSrc), 'The UGC handler cleans model output before saving');
+const migration = readFileSync(join(root, 'supabase_migrations/2026-10-13-allow-storysculpt-research-quota.sql'), 'utf8');
+assert(migration.includes("'storysculpt-research'"), 'The quota allowlist names the research endpoint');
+console.log('PASS: Live-test regressions verified.');
+
+console.log('\nALL STORYSCULPT UGC TESTS PASSED (10/10 areas verified)!');

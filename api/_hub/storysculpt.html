@@ -184,7 +184,7 @@
                   <div class="ugc-step-head">
                     <span class="eyebrow">Grounded Angles</span>
                     <h3>Choose the angle for this video</h3>
-                    <p>Three angles supported by product research and customer experiences.</p>
+                    <p id="ugc-angles-basis">Three angles built from what you told us about the product.</p>
                   </div>
                   <div class="ugc-angles-grid" id="ugc-angles-grid"></div>
 
@@ -243,6 +243,13 @@
                       <button class="secondary-button" type="button" data-rev-note="Simplify the visuals and actions so it is easy to shoot in one sitting.">Easier to film</button>
                     </div>
                   </div>
+                  <div class="ugc-toggle-row">
+                    <label class="ugc-switch-label" for="ugc-filming-toggle-review">
+                      <input type="checkbox" id="ugc-filming-toggle-review" class="ugc-switch-input">
+                      <span class="ugc-switch-slider"></span>
+                      <span class="ugc-switch-text">Include filming plan (shots &amp; camera action)</span>
+                    </label>
+                  </div>
                   <div class="ugc-another-row">
                     <button class="secondary-button" id="ugc-another-video-btn" type="button">
                       <i data-lucide="copy-plus"></i>
@@ -272,7 +279,7 @@
               <div class="story-artifact-head">
                 <div class="story-artifact-info">
                   <div class="story-artifact-eyebrow-row">
-                    <span class="eyebrow">Talking-head script</span>
+                    <span class="eyebrow" id="story-output-eyebrow">Talking-head script</span>
                     <span class="story-artifact-wordcount" id="story-word-count">0 words</span>
                   </div>
                   <div class="story-version-nav" id="story-version-nav" aria-label="Script versions">

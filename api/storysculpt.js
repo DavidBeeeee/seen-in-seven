@@ -31,6 +31,7 @@ import {
   reviewScriptClaims,
   buildFilmingPlan,
   buildUgcHookOptions,
+  cleanUgcScript,
   ugcSystemPrompt
 } from './_lib/storysculpt-ugc.js';
 import { handleResearchRequest } from './_lib/storysculpt-research.js';
@@ -517,8 +518,8 @@ async function handleUgcTurn({ input, project, token, user, trace, emit, fail, r
     return fail(error && error.name === 'AbortError' ? 504 : 502, message);
   }
 
-  let scriptContent = String(result.content || '').replace(/^(?:FINAL SCRIPT|NEXT QUESTION):\s*/i, '').trim();
-  scriptContent = scriptContent.replace(/[\u2014\u2013]/g, ', ');
+  const scriptContent = cleanUgcScript(result.content);
+  if (!scriptContent) return fail(502, 'StorySculpt could not complete this step.');
 
   const claimsIssues = reviewScriptClaims(scriptContent, { creatorExperience, research });
   const hookOptions = buildUgcHookOptions(product.name, selectedAngle.title, scriptContent);

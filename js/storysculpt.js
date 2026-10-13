@@ -295,6 +295,8 @@ function renderScriptPanel() {
       copyEl.value = contentToShow;
     }
     copyEl.readOnly = viewingVersionIndex !== -1;
+    const eyebrow = storyEl('story-output-eyebrow');
+    if (eyebrow) eyebrow.textContent = activeStory.content_type === 'ugc' ? 'Product video script' : 'Talking-head script';
     updateWordCount(contentToShow);
     if (activeStory && activeStory.content_type === 'ugc') {
       renderUgcFilmingPlan(activeStory);
@@ -568,14 +570,16 @@ function generateAnglesClient(research = {}, creatorExperience = {}, salesApproa
   const customerReports = findings.customerReports || [];
   const used = creatorExperience.used || 'used';
   const sourceRefs = ((research && research.sources) || []).map(s => s.id);
+  const noteBits = String(creatorExperience.observations || '').split(/(?<=[.!?])\s+|\n+/).map(t => t.trim().replace(/[.!?]+$/, '')).filter(t => t.length > 8);
 
   const approach = salesApproach === 'help-decide'
     ? (used === 'not-yet' ? 'useful' : 'direct')
     : salesApproach;
 
-  const primaryProblem = customerReports[0] || claims[0] || features[0] || 'the everyday problem people buy this to solve';
-  const testFeature = features[1] || features[0] || 'the main claimed benefit';
-  const contrastPoint = features[2] || customerReports[1] || 'what people usually waste money on instead';
+  const primaryProblem = customerReports[0] || noteBits[0] || claims[0] || features[0] || 'the everyday problem people buy this to solve';
+  const problemLead = customerReports[0] ? 'Focuses on the exact friction buyers report: ' : noteBits[0] ? 'Built on what you noticed: ' : 'Focuses on the everyday problem: ';
+  const testFeature = noteBits[1] || features[1] || features[0] || '';
+  const contrastPoint = noteBits[2] || features[2] || customerReports[1] || 'what people usually waste money on instead';
 
   return [
     {
@@ -583,7 +587,7 @@ function generateAnglesClient(research = {}, creatorExperience = {}, salesApproa
       title: 'The Real Problem Solver',
       approach: approach === 'direct' ? 'Direct recommendation' : 'Useful problem breakdown',
       structure: approach === 'direct' ? 'direct-response' : 'tutorial',
-      whyViewerCares: 'Focuses on the exact friction buyers report: ' + primaryProblem.slice(0, 120),
+      whyViewerCares: problemLead + primaryProblem.slice(0, 120),
       demonstrationIdea: used === 'not-yet'
         ? 'Demonstrate unboxing and testing whether ' + productName + ' actually addresses this.'
         : 'Show the specific moment where ' + productName + ' replaced the messy old way.',
@@ -594,7 +598,7 @@ function generateAnglesClient(research = {}, creatorExperience = {}, salesApproa
       title: used === 'not-yet' ? 'The First-Impression Test' : 'The Everyday Routine Fit',
       approach: 'Demonstration and observation',
       structure: used === 'not-yet' ? 'honest-test' : 'lifestyle-broll',
-      whyViewerCares: 'Shows realistic use rather than high-pressure selling. Tests: ' + testFeature.slice(0, 120),
+      whyViewerCares: 'Shows realistic use rather than high-pressure selling.' + (testFeature ? ' Shows: ' + testFeature.slice(0, 120) : ''),
       demonstrationIdea: 'Camera captures natural action in real lighting, highlighting practical pros and one honest limitation.',
       evidenceRefs: sourceRefs.slice(0, 2)
     },
@@ -614,11 +618,24 @@ function buildFilmingPlanClient(scriptText, options = {}) {
   const format = options.format || 'talking-head';
   const durationSeconds = options.durationSeconds || 60;
   const constraints = options.constraints || '';
-  const text = String(scriptText || '').trim();
-  const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim());
+  // Bracketed camera directions are shots for the scene they precede, not
+  // lines to say. Mirrors splitDirections in api/_lib/storysculpt-ugc.js.
+  const blocks = String(scriptText || '').trim().split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+  const paragraphs = [];
+  const directions = [];
+  let pending = [];
+  blocks.forEach(block => {
+    const visuals = [...block.matchAll(/\[(?:visual|shot|b-roll|camera)\s*:\s*([^\]]+)\]/gi)].map(m => m[1].trim());
+    const spoken = block.replace(/\[(?:visual|shot|b-roll|camera)\s*:[^\]]*\]/gi, '').trim();
+    pending.push(...visuals);
+    if (!spoken) return;
+    paragraphs.push(spoken);
+    directions.push(pending.join(' Then: '));
+    pending = [];
+  });
   if (!paragraphs.length) return [];
 
-  const totalWords = text.split(/\s+/).filter(Boolean).length;
+  const totalWords = paragraphs.join(' ').split(/\s+/).filter(Boolean).length;
   const secondsPerWord = durationSeconds / Math.max(1, totalWords);
   let elapsed = 0;
 
@@ -656,7 +673,7 @@ function buildFilmingPlanClient(scriptText, options = {}) {
       sceneNumber: index + 1,
       timing,
       spokenSegment: para.trim(),
-      visualAction,
+      visualAction: directions[index] || visualAction,
       filmingNotes
     };
   });
@@ -750,6 +767,8 @@ function renderUgcProject(project) {
       }
     }
 
+    const reviewToggle = storyEl('ugc-filming-toggle-review');
+    if (reviewToggle) reviewToggle.checked = Boolean(ugcState.filming && ugcState.filming.enabled);
     renderUgcFilmingPlan(project);
     EEEStudio.refreshIcons();
     return;
@@ -785,7 +804,9 @@ function renderUgcProject(project) {
     const statusEl = storyEl('ugc-research-status-text');
     const research = ugcState.research || {};
     if (statusEl) {
-      if (research.coverage === 'blocked') {
+      if (research.coverage === 'unavailable') {
+        statusEl.textContent = 'Could not read that page' + (research.gaps && research.gaps[0] ? ' (' + research.gaps[0] + ')' : '') + '. Carry on: your own details and experience are enough.';
+      } else if (research.coverage === 'blocked') {
         statusEl.textContent = 'Retail verification active. Using your provided product details.';
       } else if (research.product && research.product.name) {
         statusEl.textContent = 'Product findings ready: ' + research.product.name;
@@ -805,6 +826,15 @@ function renderUgcProject(project) {
     ugcState.angleOptions = angles;
     if (!ugcState.selectedAngle) ugcState.selectedAngle = angles[0];
 
+    const basis = storyEl('ugc-angles-basis');
+    if (basis) {
+      const r = ugcState.research || {};
+      const f = r.findings || {};
+      const researched = (f.brandClaims || []).length || (f.features || []).length || (f.customerReports || []).length;
+      basis.textContent = researched
+        ? 'Three angles built from the product page and what you told us.'
+        : 'Three angles built from what you told us. ' + (r.coverage === 'unavailable' || r.coverage === 'blocked' ? 'We could not read the product page, so nothing here comes from it.' : 'No product page was read.');
+    }
     const grid = storyEl('ugc-angles-grid');
     if (grid) {
       grid.innerHTML = angles.map(a => {
@@ -875,9 +905,11 @@ async function runUgcGeneration() {
       throw new Error((data && data.error) || 'StorySculpt could not complete the script.');
     }
 
+    // Versions before output: ensureVersions backfills a draft from any output
+    // it finds, which saved every first UGC draft twice.
+    ensureVersions(activeStory);
     activeStory.output = data.content;
     activeStory.intake.ugc = data.ugc || ugcState;
-    ensureVersions(activeStory);
     const versions = activeStory.intake.versions;
     versions.push({
       version: versions.length + 1,
@@ -1014,6 +1046,18 @@ function initUgcListeners() {
     });
   }
 
+  const filmingToggleReview = storyEl('ugc-filming-toggle-review');
+  if (filmingToggleReview) {
+    filmingToggleReview.addEventListener('change', () => {
+      if (!activeStory || !activeStory.intake.ugc) return;
+      if (!activeStory.intake.ugc.filming) activeStory.intake.ugc.filming = {};
+      activeStory.intake.ugc.filming.enabled = filmingToggleReview.checked;
+      ['ugc-filming-toggle', 'ugc-filming-toggle-angle'].forEach(id => { const el = storyEl(id); if (el) el.checked = filmingToggleReview.checked; });
+      queueStorySave();
+      renderUgcFilmingPlan(activeStory);
+    });
+  }
+
   const filmingToggleAngle = storyEl('ugc-filming-toggle-angle');
   if (filmingToggleAngle) {
     filmingToggleAngle.addEventListener('change', () => {
@@ -1061,6 +1105,16 @@ function initUgcListeners() {
           })
         });
         const data = await res.json().catch(() => null);
+        if (!res.ok || !data || !data.research) {
+          activeStory.intake.ugc.research = {
+            coverage: 'unavailable',
+            checkedAt: new Date().toISOString(),
+            gaps: [(data && data.error) || ('research returned ' + res.status)]
+          };
+          await saveActiveStory();
+          renderUgcProject(activeStory);
+          return;
+        }
         if (data && data.research) {
           activeStory.intake.ugc.research = data.research;
           if (data.research.product && data.research.product.name) {
@@ -1076,6 +1130,10 @@ function initUgcListeners() {
         }
       } catch (err) {
         console.error('Research error', err);
+        if (activeStory && activeStory.intake && activeStory.intake.ugc && !activeStory.intake.ugc.research) {
+          activeStory.intake.ugc.research = { coverage: 'unavailable', checkedAt: new Date().toISOString(), gaps: ['the connection dropped'] };
+          renderUgcProject(activeStory);
+        }
       }
     });
   }
@@ -1271,10 +1329,12 @@ function showProject(project) {
     storyEl('story-composer').hidden = true;
     storyEl('story-generation-status').hidden = true;
     renderUgcProject(project);
-    if (project.output) {
-      renderScriptPanel();
-      if (window.innerWidth > 820) storyEl('story-refine-note').focus();
-    }
+    // Always render the script panel, so a new UGC chat clears the script the
+    // previous chat left on screen (2026-10-13 live test).
+    renderScriptPanel();
+    storyEl('story-composer').hidden = true;
+    storyEl('story-generation-status').hidden = true;
+    if (project.output && window.innerWidth > 820) storyEl('story-refine-note').focus();
   } else {
     storyEl('story-scroll').hidden = false;
     const ugcFlow = storyEl('story-ugc-flow');

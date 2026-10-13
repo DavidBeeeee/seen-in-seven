@@ -64,6 +64,12 @@ export const UGC_STRUCTURES = {
   }
 };
 
+// The creator's own notes, split into usable sentences, so angles reflect what
+// they actually said when research has nothing to offer.
+function creatorNoteBits(notes) {
+  return String(notes || '').split(/(?<=[.!?])\s+|\n+/).map(t => t.trim().replace(/[.!?]+$/, '')).filter(t => t.length > 8);
+}
+
 // Generate 3 distinct angles grounded in research and creator context.
 export function generateAngleCards({
   research = {},
@@ -79,6 +85,7 @@ export function generateAngleCards({
   const used = creatorExperience.used || 'used'; // 'used' | 'not-yet' | 'my-own'
   const creatorNotes = creatorExperience.observations || '';
   const sourceRefs = (research.sources || []).map(s => s.id);
+  const noteBits = creatorNoteBits(creatorNotes);
 
   // Determine primary approach
   const approach = salesApproach === 'help-decide'
@@ -88,13 +95,14 @@ export function generateAngleCards({
   const angles = [];
 
   // Angle 1: Problem / Friction solve
-  const primaryProblem = customerReports[0] || claims[0] || features[0] || 'the everyday problem people buy this to solve';
+  const primaryProblem = customerReports[0] || noteBits[0] || claims[0] || features[0] || 'the everyday problem people buy this to solve';
+  const problemLead = customerReports[0] ? 'Focuses on the exact friction buyers report: ' : noteBits[0] ? 'Built on what you noticed: ' : 'Focuses on the everyday problem: ';
   angles.push({
     id: 'angle-1',
     title: 'The Real Problem Solver',
     approach: approach === 'direct' ? 'Direct recommendation' : 'Useful problem breakdown',
     structure: approach === 'direct' ? 'direct-response' : 'tutorial',
-    whyViewerCares: `Focuses on the exact friction buyers report: ${primaryProblem.slice(0, 120)}`,
+    whyViewerCares: problemLead + primaryProblem.slice(0, 120),
     demonstrationIdea: used === 'not-yet'
       ? `Demonstrate unboxing and testing whether ${productName} actually addresses this.`
       : `Show the specific moment where ${productName} replaced the messy old way.`,
@@ -102,19 +110,19 @@ export function generateAngleCards({
   });
 
   // Angle 2: Honest Test / Demonstration
-  const testFeature = features[1] || features[0] || 'the main claimed benefit';
+  const testFeature = noteBits[1] || features[1] || features[0] || '';
   angles.push({
     id: 'angle-2',
     title: used === 'not-yet' ? 'The First-Impression Test' : 'The Everyday Routine Fit',
     approach: 'Demonstration and observation',
     structure: used === 'not-yet' ? 'honest-test' : 'lifestyle-broll',
-    whyViewerCares: `Shows realistic use rather than high-pressure selling. Tests: ${testFeature.slice(0, 120)}`,
+    whyViewerCares: 'Shows realistic use rather than high-pressure selling.' + (testFeature ? ' Shows: ' + testFeature.slice(0, 120) : ''),
     demonstrationIdea: `Camera captures natural action in real lighting, highlighting practical pros and one honest limitation.`,
     evidenceRefs: sourceRefs.slice(0, 2)
   });
 
   // Angle 3: Common Alternative / Contrast
-  const contrastPoint = features[2] || customerReports[1] || 'what people usually waste money on instead';
+  const contrastPoint = noteBits[2] || features[2] || customerReports[1] || 'what people usually waste money on instead';
   angles.push({
     id: 'angle-3',
     title: 'Stop Doing It The Hard Way',
@@ -148,7 +156,10 @@ export function reviewScriptClaims(scriptText, { creatorExperience = {}, researc
     const cleanLine = line.trim();
     if (!cleanLine) return;
 
-    if (MEDICAL_REGEX.test(cleanLine)) {
+    // A line in the creator's own voice ("my knees feel better", "I think") is
+    // personal experience or opinion, not an expert claim. David, 2026-10-13.
+    const personal = /\b(?:I|I'm|I've|my|me|for me)\b/i.test(cleanLine);
+    if (MEDICAL_REGEX.test(cleanLine) && !personal) {
       issues.push({
         line: cleanLine,
         lineIndex: index,
@@ -188,18 +199,68 @@ export function reviewScriptClaims(scriptText, { creatorExperience = {}, researc
   return issues;
 }
 
+// Separates bracketed camera directions from the spoken lines. A direction
+// belongs to the spoken paragraph that follows it, so the plan shows it as that
+// scene's shot instead of asking the creator to say it out loud.
+export function splitDirections(scriptText) {
+  const blocks = String(scriptText || '').trim().split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+  const paragraphs = [];
+  const directions = [];
+  let pending = [];
+  for (const block of blocks) {
+    const visuals = [...block.matchAll(/\[(?:visual|shot|b-roll|camera)\s*:\s*([^\]]+)\]/gi)].map(m => m[1].trim());
+    const spoken = block.replace(/\[(?:visual|shot|b-roll|camera)\s*:[^\]]*\]/gi, '').trim();
+    pending.push(...visuals);
+    if (!spoken) continue;
+    paragraphs.push(spoken);
+    directions.push(pending.length ? pending.join(' Then: ') : '');
+    pending = [];
+  }
+  if (pending.length && directions.length) directions[directions.length - 1] += (directions[directions.length - 1] ? ' Then: ' : '') + pending.join(' Then: ');
+  return { paragraphs, directions };
+}
+
+// Strips everything a model says around a script so only filmable words are
+// saved: a preamble addressed to the creator, separators, markdown emphasis and
+// "Title:" / "Script:" labels. 2026-10-13 live test: a draft opened with "Here's
+// the honest, first-test angle. I've kept it tight" and a refused revision was
+// saved as the script itself.
+export function cleanUgcScript(raw) {
+  let text = String(raw || '').replace(/\r\n/g, '\n').trim();
+  text = text.replace(/^(?:FINAL SCRIPT|NEXT QUESTION):\s*/i, '');
+  // A preamble before a --- separator near the top is talk, not script.
+  const sep = text.match(/^([\s\S]{0,600}?)\n\s*(?:-{3,}|\*{3,}|_{3,})\s*\n/);
+  if (sep) text = text.slice(sep[0].length);
+  text = text.split('\n').filter(line => !/^\s*(?:-{3,}|\*{3,}|_{3,})\s*$/.test(line)).join('\n');
+  // Label-only lines and label prefixes.
+  text = text.replace(/^\s*\**\s*(?:title|script|video script|talking points|hook|cta|call to action|body)\s*:?\s*\**\s*:?\s*$/gim, '');
+  text = text.replace(/^\s*\*\*\s*(?:title)\s*:?\s*\*\*\s*:?.*$/gim, '');
+  text = text.replace(/^\s*\*\*\s*(?:script|hook|cta|body)\s*:?\s*\*\*\s*:?\s*/gim, '');
+  text = text.replace(/^#{1,6}\s+/gm, '');
+  text = text.replace(/\*\*([^*]+)\*\*/g, '$1').replace(/(^|\s)\*([^*\n]+)\*(?=\s|$)/g, '$1$2');
+  // A first paragraph that talks about the script rather than to the viewer.
+  const paras = text.split(/\n\s*\n/);
+  // Talk about the deliverable: "here's the script", "I've kept it tight", "I
+  // can't add that line", "David Bee's core rules". A real opening line that
+  // merely uses the word "angle" or "version" is left alone.
+  const meta = /(?:\b(?:here(?:'|’)s|here is|below is|this is)\s+(?:the|your|a)\s+(?:\w+[ ,-]+){0,4}(?:script|draft|version|angle|take)\b|\bI(?:'|’)ve kept\b|\bkept it (?:tight|short|direct)|\bI (?:can(?:'|’)t|cannot|won(?:'|’)t) (?:add|include|write|say)\b|\bcore rules\b|\bas requested\b|\b(?:revised|updated|tightened) (?:script|draft|version)\b)/i;
+  for (let i = 0; i < 2 && paras.length > 1; i += 1) {
+    const first = paras[0].trim();
+    if (first.length < 400 && meta.test(first)) paras.shift(); else break;
+  }
+  return paras.join('\n\n').replace(/\n{3,}/g, '\n\n').replace(/[\u2014\u2013]/g, ', ').trim();
+}
+
 // Generates a structured scene-by-scene filming plan for an approved script.
 export function buildFilmingPlan(scriptText, {
   format = 'talking-head',
   durationSeconds = 60,
   constraints = ''
 } = {}) {
-  const text = String(scriptText || '').trim();
-  const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim());
+  const { paragraphs, directions } = splitDirections(scriptText);
   if (!paragraphs.length) return [];
 
-  const totalWords = text.split(/\s+/).filter(Boolean).length;
-  const wordPacing = Math.max(1, Math.round(totalWords / paragraphs.length));
+  const totalWords = paragraphs.join(' ').split(/\s+/).filter(Boolean).length;
   const secondsPerWord = durationSeconds / Math.max(1, totalWords);
 
   let elapsed = 0;
@@ -241,7 +302,7 @@ export function buildFilmingPlan(scriptText, {
       sceneNumber: index + 1,
       timing,
       spokenSegment: para.trim(),
-      visualAction,
+      visualAction: directions[index] || visualAction,
       filmingNotes
     };
   });
@@ -287,17 +348,18 @@ export function ugcSystemPrompt({
 
   return [
     'You are StorySculpt writing an authentic, creator-led product video script.',
-    'David Bee\'s core rules apply at all times:',
+    'These rules apply at all times:',
     '1. NEVER use an em dash. Use commas or clean short sentences.',
     '2. NEVER invent testimonials from imaginary third parties ("my client Sarah said...").',
-    '3. NEVER invent numbers, testing durations, or fake medical/financial guarantees.',
+    '3. Do not make up numbers or testing durations the creator did not give you, and do not promise the viewer guaranteed results (cures, guaranteed income).',
+    '3a. Personal experience and opinion are the creator\'s to say. Anything the creator tells you about how the product worked for them, including in a revision request, goes in as their own first-person experience ("for me", "I noticed", "I feel"). Never refuse it and never lecture about it. The script is a person talking, not an expert claiming authority.',
     '4. Creator fidelity: The creator declared their experience with this product as: ' + used + '.' + (obs ? ' Creator notes: ' + obs : ''),
     used === 'not-yet' ? 'Do NOT write as if the creator has owned or used this for months. Frame as an honest unboxing, first test, or feature examination.' : '',
-    '5. Selling approach: ' + (salesApproach === 'useful' ? 'Useful/educational content featuring the product naturally (subtle recommendation).' : 'Direct recommendation (honest, clear benefits, direct CTA).'),
+    '5. Selling approach: ' + (salesApproach === 'useful' ? 'Useful/educational content featuring the product naturally (subtle recommendation). End on a soft sign-off or a question to the viewer, not a hard "buy it" or "link below" push.' : 'Direct recommendation (honest, clear benefits, direct CTA).'),
     '6. Selected Angle: ' + (selectedAngle.title || 'Product demonstration') + ' (' + (selectedAngle.structure || 'direct-response') + ').',
     '7. Output format: ' + (outputStyle === 'points' ? 'Ordered bulleted talking points for creator delivery.' : 'Full spoken video script with natural rhythm.'),
-    '8. Target duration: ' + targetDurationSeconds + ' seconds (roughly ' + Math.round(targetDurationSeconds * 2.3) + ' words).',
+    '8. Target duration: ' + targetDurationSeconds + ' seconds. Hard limit: ' + Math.round(targetDurationSeconds * 2.3) + ' spoken words. Count them. Bracketed camera directions do not count.',
     filmingEnabled ? 'Include scene hints or visual cues in brackets [Visual: ...] where helpful.' : 'Do not include filming instructions or camera directions in the spoken script text.',
-    'Deliver clean, compelling, authentic text ready to film.'
+    'Return ONLY the words of the video, ready to film. No preamble, no note to the creator, no title, no headings, no labels like "Script:", no markdown, no --- separators.'
   ].filter(Boolean).join('\n\n');
 }
