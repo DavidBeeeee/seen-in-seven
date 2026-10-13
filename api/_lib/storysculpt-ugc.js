@@ -312,22 +312,25 @@ export function buildFilmingPlan(scriptText, {
 export function buildUgcHookOptions(productName, angleTitle, scriptBody) {
   const body = String(scriptBody || '').trim();
   const firstSentence = (body.match(/^[^.!?]+[.!?]/) || [''])[0].trim();
+  // "Men's Tree Runner - Jet Black (White Sole)" reads as "Men's Tree Runner"
+  // in a spoken hook; a product is never the thing someone is struggling with.
+  const name = String(productName || '').split(/\s+[-|:]\s+|\s*\(/)[0].trim() || 'this';
 
   return [
     {
       id: 'hook-1',
       kind: 'Problem callout',
-      text: `If you have been struggling with ${productName || 'this'}, watch this before buying anything else.`
+      text: `If you have been on the fence about ${name}, watch this before you buy anything else.`
     },
     {
       id: 'hook-2',
       kind: 'Counter-intuitive test',
-      text: `I honestly didn't think ${productName || 'this'} would make any difference, but here is what actually happened.`
+      text: `I honestly didn't think ${name} would make any difference, but here is what actually happened.`
     },
     {
       id: 'hook-3',
       kind: 'Direct demonstration',
-      text: firstSentence ? firstSentence.replace(/[\u2014\u2013]/g, ', ') : `Here is the one reason ${productName || 'this'} is worth testing today.`
+      text: firstSentence ? firstSentence.replace(/[\u2014\u2013]/g, ', ') : `Here is the one reason ${name} is worth testing today.`
     }
   ];
 }
