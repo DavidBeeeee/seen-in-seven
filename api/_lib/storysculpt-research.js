@@ -402,7 +402,9 @@ export function synthesizeResearch({
   } else if (fetchResult && fetchResult.blocked) {
     blockedReason = fetchResult.reason;
     coverage = userDetails || brandBrief ? 'partial' : 'blocked';
-    gaps.push('Direct page access was blocked; relying on user-provided details.');
+    gaps.push(userDetails || brandBrief
+      ? 'The store blocked StorySculpt from reading the page, so the script uses the details you gave.'
+      : (amazon ? 'Amazon blocked StorySculpt from reading this page.' : 'The store blocked StorySculpt from reading this page.'));
   } else if (fetchResult && !fetchResult.ok) {
     // Neither read nor blocked: a timeout, an error status, a dropped
     // connection. This branch used to keep no reason at all, so the member saw

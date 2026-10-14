@@ -727,7 +727,13 @@ function isAmazonLink(url) {
 function updateAmazonNote() {
   const note = storyEl('ugc-amazon-note');
   const field = storyEl('ugc-product-url');
-  if (note && field) note.hidden = !isAmazonLink(field.value);
+  if (!note || !field) return;
+  const amazon = isAmazonLink(field.value);
+  note.hidden = !amazon;
+  // The details box is folded by default; an Amazon link opens it, because
+  // that is where the script's facts will have to come from.
+  const group = storyEl('ugc-details-group');
+  if (amazon && group) group.hidden = false;
 }
 
 // What StorySculpt actually knows about the product, as opposed to a name.
@@ -767,7 +773,8 @@ function renderUgcResearchStatus(ugcState = {}) {
   } else {
     state = 'warning';
     const gap = (research.gaps || []).find(g => !/independent customer reviews/i.test(g));
-    text.textContent = (gap || 'StorySculpt could not read anything about the product from that link.') + ' Paste the product details below so the script is about the real product.';
+    const base = gap || 'StorySculpt could not read anything about the product from that link.';
+    text.textContent = /paste/i.test(base) ? base : base + ' Paste the product details below so the script is about the real product.';
   }
   box.dataset.state = state;
   box.setAttribute('aria-busy', state === 'pending' ? 'true' : 'false');
