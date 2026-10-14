@@ -321,6 +321,34 @@ export function extractProductFromHtml(html, url) {
   };
 }
 
+// Amazon short links and product pages. Amazon mostly refuses automated reads,
+// and when it does answer it often sends a stripped page with nothing but the
+// page title (WBR-441, 2026-10-14), so the member is asked for the details up
+// front rather than finding out after a script built on nothing.
+export function isAmazonUrl(url) {
+  try {
+    const host = new URL(String(url || '').trim()).hostname.toLowerCase().replace(/^www\./, '');
+    return host === 'a.co' || host === 'amzn.to' || host === 'amzn.com' || /(^|\.)amazon\.[a-z.]+$/.test(host);
+  } catch { return false; }
+}
+
+// A page title is not a product name. Amazon's is
+// "Amazon.com: <long keyword string> | <more keywords> : Home & Kitchen", 222
+// characters on 2026-10-14, which became the chat title and then tripped the
+// 160-character limit on every request. Keep the part a person would say.
+export function cleanProductName(title) {
+  let name = String(title || '').replace(/\s+/g, ' ').trim();
+  name = name.replace(/^amazon\.[a-z.]+\s*:\s*/i, '');
+  name = name.replace(/\s+:\s+[^:]{2,40}$/, '');
+  name = name.split(/\s+[|\u2013\u2014]\s+/)[0].trim();
+  if (name.length > 70) {
+    const forCut = name.search(/\s+for\s+/i);
+    if (forCut >= 15 && forCut <= 70) name = name.slice(0, forCut);
+  }
+  if (name.length > 80) name = name.slice(0, 80).replace(/\s+\S*$/, '');
+  return name.replace(/[\s,;:(]+$/, '').trim();
+}
+
 export function synthesizeResearch({
   url = '',
   fetchResult = null,
@@ -339,11 +367,18 @@ export function synthesizeResearch({
   let coverage = 'user-only';
   let blockedReason = null;
 
+  let readFailure = null;
+  const amazon = isAmazonUrl(url) || isAmazonUrl(fetchResult && fetchResult.url);
+
   if (fetchResult && fetchResult.ok && fetchResult.html) {
     const extracted = extractProductFromHtml(fetchResult.html, fetchResult.url || url);
-    productName = extracted.title;
-    if (extracted.description) brandClaims.push(extracted.description);
-    extracted.features.forEach(f => features.push(f));
+    productName = cleanProductName(extracted.title);
+    // A "fact" that is only the page title again says nothing about the
+    // product. Amazon's stripped page repeated its title as both.
+    const rawTitle = String(extracted.title || '').trim();
+    const says = (text) => Boolean(text) && text.trim() !== rawTitle && cleanProductName(text) !== productName;
+    if (says(extracted.description)) brandClaims.push(extracted.description);
+    extracted.features.filter(says).forEach(f => features.push(f));
     extracted.customerReports.forEach(r => customerReports.push(r));
 
     const srcId = `src-${sourceCounter++}`;
@@ -356,11 +391,25 @@ export function synthesizeResearch({
       excerpt: (extracted.description + ' ' + extracted.features.slice(0, 3).join('. ')).trim().slice(0, 400),
       supportedFacts: [extracted.title, ...extracted.features.slice(0, 3)]
     });
-    coverage = customerReports.length ? 'full' : 'partial';
+    if (customerReports.length) coverage = 'full';
+    else if (brandClaims.length || features.length) coverage = 'partial';
+    else {
+      coverage = 'name-only';
+      gaps.push(amazon
+        ? 'Amazon only showed the product name, not its details. Paste the bullet points from the listing.'
+        : 'The page only showed the product name, not its details. Paste the product details.');
+    }
   } else if (fetchResult && fetchResult.blocked) {
     blockedReason = fetchResult.reason;
     coverage = userDetails || brandBrief ? 'partial' : 'blocked';
     gaps.push('Direct page access was blocked; relying on user-provided details.');
+  } else if (fetchResult && !fetchResult.ok) {
+    // Neither read nor blocked: a timeout, an error status, a dropped
+    // connection. This branch used to keep no reason at all, so the member saw
+    // "findings ready" for a page nobody read (WBR-441).
+    readFailure = fetchResult.reason || 'the page did not respond';
+    coverage = 'unavailable';
+    gaps.push('Could not read the page: ' + readFailure);
   } else if (url && !fetchResult) {
     gaps.push('No web fetch performed; relying on user-provided input.');
   }
@@ -404,12 +453,18 @@ export function synthesizeResearch({
     gaps.push('No independent customer reviews retrieved. Creator testing or honest demonstration recommended.');
   }
 
-  if (!productName) productName = 'Product video';
+  // No placeholder name. "Product video" read as a real product to the status
+  // line and to the model; an empty name is honest and every consumer has its
+  // own neutral fallback.
+  const knowsProduct = Boolean(brandClaims.length || features.length || customerReports.length);
 
   return {
     status: blockedReason ? 'blocked' : (sources.length ? 'completed' : 'empty'),
     checkedAt: new Date().toISOString(),
-    coverage,
+    coverage: coverage === 'user-only' && !knowsProduct && url ? 'unavailable' : coverage,
+    knowsProduct,
+    retailer: amazon ? 'amazon' : null,
+    readFailure,
     product: {
       name: productName,
       variant: variant || '',

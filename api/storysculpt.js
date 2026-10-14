@@ -214,7 +214,10 @@ function validateBody(body) {
     target: body && body.target === 'final' ? 'final' : 'step',
     regenerateNote: cleanText(body && body.regenerateNote, 1000),
     previous: cleanText(body && body.previous, 8000),
-    projectTitle: cleanText(body && body.projectTitle, 160),
+    // The title is a label, not material. An over-long one is shortened, never
+    // a reason to refuse the step: a 222-character Amazon page title blocked a
+    // whole chat on 2026-10-14 (WBR-441).
+    projectTitle: String(body && body.projectTitle || '').trim().slice(0, 160),
     context: cleanText(body && body.context, 12000),
     ugc: body && typeof body.ugc === 'object' ? body.ugc : null,
     messages: messages.map(message => ({
@@ -456,10 +459,29 @@ function failureScore(content, check) {
   return 5;
 }
 
+// Whether StorySculpt knows anything about the product itself: a researched
+// fact, details the member pasted, or what they noticed using it. A product
+// name alone is not knowledge. On 2026-10-14 a final ran with none of these
+// and wrote the member's coaching pitch from their story profile (WBR-441).
+export function ugcKnowsProduct(ugcState = {}) {
+  const findings = (ugcState.research && ugcState.research.findings) || {};
+  const product = ugcState.product || {};
+  const exp = ugcState.creatorExperience || {};
+  return Boolean(
+    (findings.brandClaims || []).length || (findings.features || []).length || (findings.customerReports || []).length ||
+    String(product.userDetails || '').trim() || String(product.brief || '').trim() ||
+    String(exp.observations || '').trim()
+  );
+}
+
 async function handleUgcTurn({ input, project, token, user, trace, emit, fail, res }) {
   const ugcState = input.ugc || (project.intake && project.intake.ugc) || {};
   const product = ugcState.product || {};
   const research = ugcState.research || {};
+  if (!ugcKnowsProduct(ugcState)) {
+    await emit('denied', { failureClass: classifyFailure('input') });
+    return fail(422, 'StorySculpt does not know anything about this product yet, so it would be guessing. Paste the product details (the listing bullet points work), or add what you noticed using it, then write the script.');
+  }
   const selectedAngle = ugcState.selectedAngle || { title: 'Product demonstration', structure: 'direct-response' };
   const creatorExperience = ugcState.creatorExperience || {};
   const salesApproach = ugcState.salesApproach || 'direct';
@@ -482,7 +504,7 @@ async function handleUgcTurn({ input, project, token, user, trace, emit, fail, r
   ];
 
   if (input.context) {
-    messages.push({ role: 'user', content: 'MEMBER CONTEXT:\n' + input.context });
+    messages.push({ role: 'user', content: 'ABOUT THE CREATOR (who is speaking on camera; this is not the product and not the subject of the video):\n' + input.context + '\n\nUse this only for the speaker\'s voice and life. Never pitch, mention or promote the creator\'s own business, coaching, services or offers in this product video.' });
   }
 
   const researchExcerpt = [

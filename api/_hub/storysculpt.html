@@ -119,6 +119,7 @@
                     <label for="ugc-product-details">Product details &amp; features</label>
                     <textarea id="ugc-product-details" rows="3" placeholder="Product name, what it does, key features, and price..."></textarea>
                   </div>
+                  <p class="ugc-amazon-note" id="ugc-amazon-note" hidden>Amazon usually blocks StorySculpt from reading its pages. Paste the listing's bullet points above so the script is about the real product.</p>
                   <details class="ugc-details-fold" id="ugc-brief-fold">
                     <summary>Optional brand brief or requirements</summary>
                     <div class="ugc-input-group">
@@ -155,9 +156,13 @@
                     <h3>Have you used it? What stood out?</h3>
                     <p>Or what are you planning to test? Tell us roughly; StorySculpt will preserve your actual words.</p>
                   </div>
-                  <div class="ugc-research-status" id="ugc-research-status">
-                    <i data-lucide="loader" class="spin-icon"></i>
+                  <div class="ugc-research-status" id="ugc-research-status" data-state="pending" role="status" aria-live="polite" aria-busy="true">
+                    <span class="ugc-research-status-icon" id="ugc-research-status-icon"><i data-lucide="loader" class="spin-icon"></i></span>
                     <span id="ugc-research-status-text">Reading the product page...</span>
+                  </div>
+                  <div class="ugc-input-group" id="ugc-missing-details-group" hidden>
+                    <label for="ugc-missing-details">Product details</label>
+                    <textarea id="ugc-missing-details" rows="4" placeholder="Paste the bullet points or description from the listing: what it is, what it does, what it is made of, the price."></textarea>
                   </div>
                   <div class="ugc-input-group">
                     <label>Your experience with this product</label>

@@ -443,6 +443,10 @@
 .ugc-research-status { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: var(--radius-md, 8px); background: color-mix(in srgb, var(--studio-teal) 10%, var(--studio-bg)); border: 1px solid color-mix(in srgb, var(--studio-teal) 30%, var(--studio-border)); color: var(--studio-teal); font-size: 13px; font-weight: 600; }
 .ugc-research-status i { width: 18px; height: 18px; flex-shrink: 0; }
 .spin-icon { animation: spin 1s linear infinite; }
+.ugc-research-status-icon { display: inline-flex; flex-shrink: 0; }
+.ugc-research-status-icon svg { width: 18px; height: 18px; }
+.ugc-research-status[data-state="warning"] { color: var(--studio-gold); background: color-mix(in srgb, var(--studio-gold) 10%, var(--studio-bg)); border-color: color-mix(in srgb, var(--studio-gold) 35%, var(--studio-border)); }
+.ugc-amazon-note { margin: 6px 0 0; font-size: 13px; color: var(--studio-gold); }
 @keyframes spin { 100% { transform: rotate(360deg); } }
 
 /* Angle cards */

@@ -1,0 +1,71 @@
+// StorySculpt UGC says what it actually knows. WBR-441.
+//
+// On 2026-10-14 David gave it two Amazon short links. Research read nothing,
+// the status said "Product findings ready: Product video" under a spinner that
+// never stopped, the final script was his coaching pitch written from his
+// story profile, and a third chat refused every request because its title was
+// a 222-character Amazon page title. Each of those is pinned here.
+
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import { dirname, join } from 'node:path';
+import { synthesizeResearch, cleanProductName, isAmazonUrl } from '../api/_lib/storysculpt-research.js';
+import { ugcKnowsProduct } from '../api/storysculpt.js';
+
+const root = dirname(dirname(fileURLToPath(import.meta.url)));
+const read = (...p) => readFileSync(join(root, ...p), 'utf8');
+
+const AMAZON_TITLE = 'Amazon.com: Stainless Steel Egg Slicer for Salads and Sandwiches (white) | stainless steel egg slicer for boiled eggs, salads, sandwiches, breakfast prep, uniform slices, and kitchen garnish use : Home & Kitchen';
+
+// 1. A page nobody read says so, with its reason, and invents no name.
+const unread = synthesizeResearch({ url: 'https://a.co/d/09WHjuTz', fetchResult: { ok: false, blocked: false, reason: 'Product page took longer than 10 seconds to respond.' } });
+assert.equal(unread.coverage, 'unavailable');
+assert.equal(unread.knowsProduct, false);
+assert.equal(unread.product.name, '', 'no "Product video" placeholder');
+assert.ok(unread.gaps.some(g => g.includes('took longer than 10 seconds')), 'the reason is kept');
+assert.equal(unread.retailer, 'amazon');
+
+// 2. A page that only gave its title is not findings.
+const titleOnly = synthesizeResearch({
+  url: 'https://a.co/d/09WHjuTz',
+  fetchResult: { ok: true, url: 'https://www.amazon.com/dp/B0HG7DGRXN', html: `<title>${AMAZON_TITLE}</title><meta name="description" content="${AMAZON_TITLE}">` }
+});
+assert.equal(titleOnly.coverage, 'name-only');
+assert.equal(titleOnly.knowsProduct, false);
+assert.equal(titleOnly.findings.features.length + titleOnly.findings.brandClaims.length, 0);
+assert.ok(titleOnly.gaps.some(g => /Amazon only showed the product name/.test(g)));
+
+// 3. Product names are what a person would say, short enough to title a chat.
+assert.equal(cleanProductName(AMAZON_TITLE), 'Stainless Steel Egg Slicer for Salads and Sandwiches (white)');
+assert.ok((cleanProductName(AMAZON_TITLE) + ' UGC script').length <= 160);
+assert.equal(cleanProductName("Men's Tree Runner - Jet Black (White Sole)"), "Men's Tree Runner - Jet Black (White Sole)");
+assert.equal(isAmazonUrl('https://a.co/d/09WHjuTz'), true);
+assert.equal(isAmazonUrl('https://www.amazon.co.uk/dp/x'), true);
+assert.equal(isAmazonUrl('https://www.allbirds.com/products/mens-tree-runners'), false);
+
+// 4. No final script without something about the product.
+assert.equal(ugcKnowsProduct({ product: { name: 'Product video' }, research: unread }), false);
+assert.equal(ugcKnowsProduct({ research: { findings: { features: ['TENCEL upper'] } } }), true);
+assert.equal(ugcKnowsProduct({ product: { userDetails: 'Egg slicer, 10 stainless wires' } }), true);
+assert.equal(ugcKnowsProduct({ creatorExperience: { observations: 'Cuts a whole egg in one press' } }), true);
+
+const handler = read('api', 'storysculpt.js');
+assert.ok(handler.includes('if (!ugcKnowsProduct(ugcState))'), 'the UGC turn refuses with nothing to go on');
+assert.ok(/ABOUT THE CREATOR[^\n]*not the product/.test(handler), 'the story profile is labelled as the speaker, not the product');
+assert.ok(handler.includes("Never pitch, mention or promote the creator\\'s own business"));
+assert.ok(!/projectTitle: cleanText\(/.test(handler), 'a long title is shortened, not refused');
+
+// 5. The page: a status with real states, a paste box, an Amazon note, and
+// research bound to the chat that asked.
+const html = read('api', '_hub', 'storysculpt.html');
+const script = read('js', 'storysculpt.js');
+assert.ok(html.includes('id="ugc-research-status-icon"'));
+assert.ok(html.includes('id="ugc-missing-details"'));
+assert.ok(html.includes('id="ugc-amazon-note"'));
+assert.ok(!script.includes("'Product findings ready: '"), 'no false success line');
+assert.ok(script.includes("'circle-check'") && script.includes("'triangle-alert'"), 'the spinner resolves to done or warning');
+assert.ok(script.includes('const project = activeStory;') && script.includes('if (activeStory !== project)'), 'research lands in the chat that asked');
+assert.ok(script.includes("seeAngles.disabled = state === 'pending'"), 'angles wait for research');
+
+console.log('PASS check-storysculpt-ugc-honesty: unread pages say why, title-only pages are not findings, names are short, no script from nothing, status resolves');

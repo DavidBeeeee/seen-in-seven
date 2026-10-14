@@ -715,6 +715,68 @@ function renderUgcFilmingPlan(project) {
   EEEStudio.refreshIcons();
 }
 
+// Amazon mostly refuses automated reads, so an Amazon link asks for the
+// listing details up front instead of after an empty script. WBR-441.
+function isAmazonLink(url) {
+  try {
+    const host = new URL(String(url || '').trim()).hostname.toLowerCase().replace(/^www\./, '');
+    return host === 'a.co' || host === 'amzn.to' || host === 'amzn.com' || /(^|\.)amazon\.[a-z.]+$/.test(host);
+  } catch { return false; }
+}
+
+function updateAmazonNote() {
+  const note = storyEl('ugc-amazon-note');
+  const field = storyEl('ugc-product-url');
+  if (note && field) note.hidden = !isAmazonLink(field.value);
+}
+
+// What StorySculpt actually knows about the product, as opposed to a name.
+// Mirrors ugcKnowsProduct in api/storysculpt.js, which refuses a final without it.
+function ugcKnowsProduct(ugcState = {}) {
+  const findings = (ugcState.research && ugcState.research.findings) || {};
+  const product = ugcState.product || {};
+  const exp = ugcState.creatorExperience || {};
+  return Boolean(
+    (findings.brandClaims || []).length || (findings.features || []).length || (findings.customerReports || []).length ||
+    String(product.userDetails || '').trim() || String(product.brief || '').trim() ||
+    String(exp.observations || '').trim()
+  );
+}
+
+// The research line has three real states: reading, found, and could not
+// read. It used to be a spinner that never stopped and a "findings ready"
+// line even when nothing was read (WBR-441, 2026-10-14).
+function renderUgcResearchStatus(ugcState = {}) {
+  const box = storyEl('ugc-research-status');
+  const text = storyEl('ugc-research-status-text');
+  const icon = storyEl('ugc-research-status-icon');
+  const missing = storyEl('ugc-missing-details-group');
+  const seeAngles = storyEl('ugc-see-angles-btn');
+  if (!box || !text || !icon) return;
+  const research = ugcState.research;
+  const findings = (research && research.findings) || {};
+  const found = (findings.brandClaims || []).length + (findings.features || []).length + (findings.customerReports || []).length;
+  let state;
+  if (!research) {
+    state = 'pending';
+    text.textContent = 'Reading the product page...';
+  } else if (found) {
+    state = 'done';
+    const name = research.product && research.product.name;
+    text.textContent = (name ? 'Found ' + name : 'Found the product') + ': ' + found + ' detail' + (found === 1 ? '' : 's') + ' to work from.';
+  } else {
+    state = 'warning';
+    const gap = (research.gaps || []).find(g => !/independent customer reviews/i.test(g));
+    text.textContent = (gap || 'StorySculpt could not read anything about the product from that link.') + ' Paste the product details below so the script is about the real product.';
+  }
+  box.dataset.state = state;
+  box.setAttribute('aria-busy', state === 'pending' ? 'true' : 'false');
+  icon.innerHTML = '<i data-lucide="' + (state === 'pending' ? 'loader' : state === 'done' ? 'circle-check' : 'triangle-alert') + '"' + (state === 'pending' ? ' class="spin-icon"' : '') + '></i>';
+  if (missing) missing.hidden = state !== 'warning';
+  if (seeAngles) seeAngles.disabled = state === 'pending';
+  EEEStudio.refreshIcons();
+}
+
 function renderUgcProject(project) {
   const ugcFlow = storyEl('story-ugc-flow');
   if (!ugcFlow) return;
@@ -785,6 +847,7 @@ function renderUgcProject(project) {
 
     const prod = ugcState.product || {};
     storyEl('ugc-product-url').value = prod.url || '';
+    updateAmazonNote();
     storyEl('ugc-product-details').value = prod.userDetails || '';
     storyEl('ugc-brand-brief').value = prod.brief || '';
     storyEl('ugc-filming-toggle').checked = Boolean(ugcState.filming && ugcState.filming.enabled);
@@ -801,19 +864,7 @@ function renderUgcProject(project) {
     expBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.exp === (exp.used || 'used')));
     storyEl('ugc-creator-notes').value = exp.observations || '';
 
-    const statusEl = storyEl('ugc-research-status-text');
-    const research = ugcState.research || {};
-    if (statusEl) {
-      if (research.coverage === 'unavailable') {
-        statusEl.textContent = 'Could not read that page' + (research.gaps && research.gaps[0] ? ' (' + research.gaps[0] + ')' : '') + '. Carry on: your own details and experience are enough.';
-      } else if (research.coverage === 'blocked') {
-        statusEl.textContent = 'Retail verification active. Using your provided product details.';
-      } else if (research.product && research.product.name) {
-        statusEl.textContent = 'Product findings ready: ' + research.product.name;
-      } else {
-        statusEl.textContent = 'Reading product page and brand claims...';
-      }
-    }
+    renderUgcResearchStatus(ugcState);
   } else if (currentStep === 'angles') {
     if (stepEntry) stepEntry.hidden = true;
     if (stepExp) stepExp.hidden = true;
@@ -1071,6 +1122,9 @@ function initUgcListeners() {
     });
   }
 
+  const productUrlField = storyEl('ugc-product-url');
+  if (productUrlField) productUrlField.addEventListener('input', () => updateAmazonNote());
+
   const startResearchBtn = storyEl('ugc-start-research-btn');
   if (startResearchBtn) {
     startResearchBtn.addEventListener('click', async () => {
@@ -1090,7 +1144,29 @@ function initUgcListeners() {
       await saveActiveStory('Product entered');
       renderUgcProject(activeStory);
 
-      // Start research in background
+      // Start research in background. The answer belongs to the chat that
+      // asked, even if the member has opened another chat by the time it
+      // lands; it used to be written into whichever chat was active then.
+      const project = activeStory;
+      const finishResearch = async (research) => {
+        if (!project.intake.ugc) project.intake.ugc = {};
+        project.intake.ugc.research = research;
+        if (research.product && research.product.name) project.intake.ugc.product.name = research.product.name;
+        if (activeStory !== project) {
+          // The server already saved it to this chat; keep the local copy in step.
+          renderProjectList();
+          return;
+        }
+        if (research.product && research.product.name) {
+          const currentTitle = (storyEl('story-title').value || '').trim();
+          if (!currentTitle || currentTitle === 'New UGC script') {
+            project.title = research.product.name + ' UGC script';
+            storyEl('story-title').value = project.title;
+          }
+        }
+        await saveActiveStory();
+        renderUgcProject(project);
+      };
       try {
         const token = EEEStudio.accessToken ? await EEEStudio.accessToken(storyContext.session.access_token) : storyContext.session.access_token;
         const res = await fetch('/api/storysculpt-research', {
@@ -1106,33 +1182,18 @@ function initUgcListeners() {
         });
         const data = await res.json().catch(() => null);
         if (!res.ok || !data || !data.research) {
-          activeStory.intake.ugc.research = {
+          await finishResearch({
             coverage: 'unavailable',
             checkedAt: new Date().toISOString(),
-            gaps: [(data && data.error) || ('research returned ' + res.status)]
-          };
-          await saveActiveStory();
-          renderUgcProject(activeStory);
+            gaps: ['Could not read the page: ' + ((data && data.error) || ('research returned ' + res.status))]
+          });
           return;
         }
-        if (data && data.research) {
-          activeStory.intake.ugc.research = data.research;
-          if (data.research.product && data.research.product.name) {
-            activeStory.intake.ugc.product.name = data.research.product.name;
-            const currentTitle = (storyEl('story-title').value || '').trim();
-            if (!currentTitle || currentTitle === 'New UGC script') {
-              activeStory.title = data.research.product.name + ' UGC script';
-              storyEl('story-title').value = activeStory.title;
-            }
-          }
-          await saveActiveStory();
-          renderUgcProject(activeStory);
-        }
+        await finishResearch(data.research);
       } catch (err) {
         console.error('Research error', err);
-        if (activeStory && activeStory.intake && activeStory.intake.ugc && !activeStory.intake.ugc.research) {
-          activeStory.intake.ugc.research = { coverage: 'unavailable', checkedAt: new Date().toISOString(), gaps: ['the connection dropped'] };
-          renderUgcProject(activeStory);
+        if (project.intake && project.intake.ugc && !project.intake.ugc.research) {
+          await finishResearch({ coverage: 'unavailable', checkedAt: new Date().toISOString(), gaps: ['Could not read the page: the connection dropped.'] }).catch(() => {});
         }
       }
     });
@@ -1159,6 +1220,28 @@ function initUgcListeners() {
       if (!activeStory.intake.ugc.creatorExperience) activeStory.intake.ugc.creatorExperience = {};
       const obs = (storyEl('ugc-creator-notes').value || '').trim();
       activeStory.intake.ugc.creatorExperience.observations = obs;
+      const pasted = (storyEl('ugc-missing-details') && storyEl('ugc-missing-details').value || '').trim();
+      if (pasted) {
+        const ugc = activeStory.intake.ugc;
+        ugc.product = { ...(ugc.product || {}), userDetails: pasted };
+        const research = ugc.research || { coverage: 'user-only', gaps: [] };
+        research.findings = research.findings || { brandClaims: [], features: [], customerReports: [], gaps: [] };
+        research.findings.features = [pasted.slice(0, 600), ...(research.findings.features || []).filter(f => f !== pasted.slice(0, 600))];
+        research.sources = [...(research.sources || []).filter(src => src.kind !== 'user-supplied'), { id: 'src-user', url: null, title: 'Creator provided product details', kind: 'user-supplied', accessedAt: new Date().toISOString(), excerpt: pasted.slice(0, 350), supportedFacts: [pasted.slice(0, 100)] }];
+        research.knowsProduct = true;
+        ugc.research = research;
+        ugc.angleOptions = null;
+        ugc.selectedAngle = null;
+      }
+      if (!ugcKnowsProduct(activeStory.intake.ugc)) {
+        const text = storyEl('ugc-research-status-text');
+        if (text) text.textContent = 'StorySculpt needs something about the product before it can find an angle. Paste the product details, or say what you noticed using it.';
+        const box = storyEl('ugc-missing-details-group');
+        if (box) box.hidden = false;
+        const field = storyEl('ugc-missing-details');
+        if (field) field.focus();
+        return;
+      }
       activeStory.intake.ugc.currentStep = 'angles';
       await saveActiveStory('Experience noted');
       renderUgcProject(activeStory);
