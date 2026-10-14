@@ -18,7 +18,7 @@ async function hasEeeAccess(req) {
   const response = await fetch(SUPABASE_URL + '/rest/v1/rpc/has_studio_app_access', {
     method: 'POST',
     headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ target_app_key: 'eee' })
+    body: JSON.stringify({ target_app_key: 'navigator' }) // its own key, or the Momentum Hub bundle (WBR-442)
   });
   return response.ok && await response.json().catch(() => false) === true;
 }
@@ -191,7 +191,7 @@ export default async function handler(req, res) {
   const user = await authenticatedUser(req);
   if (!user || !(await hasEeeAccess(req))) {
     await emit('denied');
-    return json(res, 403, { error: 'An active EEE membership is required.' });
+    return json(res, 403, { error: 'Next Step Navigator is not included in your Studio access.' });
   }
 
   // Safety boundary: crisis or self-harm language in the objective, situation or blocker

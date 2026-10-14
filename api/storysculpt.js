@@ -283,7 +283,7 @@ async function hasEeeAccess(req) {
       Authorization: 'Bearer ' + token,
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ target_app_key: 'eee' })
+    body: JSON.stringify({ target_app_key: 'storysculpt' }) // its own key, or the Momentum Hub bundle (WBR-442)
   });
   return response.ok && await response.json().catch(() => false) === true;
 }
@@ -639,7 +639,7 @@ export default async function handler(req, res) {
 
   if (!(await hasEeeAccess(req))) {
     await emit('denied', { failureClass: classifyFailure('entitlement') });
-    return fail(403, 'An active EEE membership is required.');
+    return fail(403, 'StorySculpt is not included in your Studio access.');
   }
 
   let input;

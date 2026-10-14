@@ -22,10 +22,40 @@ async function eeeProfileFor(session) {
   return data;
 }
 
+// Each Hub page opens on its own app key, or the Momentum Hub bundle; the Hub
+// workspace opens for anyone with any Hub app. WBR-442, per-app access.
+const EEE_PAGE_ACCESS = { storysculpt: 'storysculpt', navigator: 'navigator', vault: 'vault', certainty: 'certainty', eee: 'hub' };
+const EEE_APP_PATHS = { '/storysculpt': 'storysculpt', '/navigator': 'navigator', '/vault': 'vault', '/certainty': 'certainty', '/boardroom': 'boardroom' };
+
+function eeePageAccessKey() {
+  const page = String(window.location.pathname || '').split('/').filter(Boolean)[0] || 'eee';
+  return EEE_PAGE_ACCESS[page] || 'hub';
+}
+
 async function eeeHasAccess() {
-  const { data, error } = await eeeSb.rpc('has_studio_app_access', { target_app_key: 'eee' });
+  const { data, error } = await eeeSb.rpc('has_studio_app_access', { target_app_key: eeePageAccessKey() });
   if (error) throw error;
   return data === true;
+}
+
+// Show only the Hub apps this person has: links and tool cards for the others
+// are hidden, so a StorySculpt-only member sees StorySculpt, not four locks.
+async function eeeApplyAppAccess() {
+  let apps;
+  try {
+    const { data, error } = await eeeSb.rpc('my_hub_apps');
+    if (error || !Array.isArray(data)) return;
+    apps = new Set(data);
+  } catch (error) {
+    return;
+  }
+  document.querySelectorAll('a[href]').forEach(link => {
+    const app = EEE_APP_PATHS[link.getAttribute('href')];
+    if (!app || apps.has(app)) return;
+    const holder = link.closest('.eee-tool') || link.closest('.nav-item') || link;
+    holder.hidden = true;
+    holder.setAttribute('data-app-not-included', app);
+  });
 }
 
 function eeeShowGate(kind) {
@@ -43,7 +73,7 @@ function eeeShowGate(kind) {
     button.textContent = 'Go to Studio sign in';
     button.href = '/?access=eee';
   } else {
-    title.textContent = 'EEE membership is not active on this account.';
+    title.textContent = 'This app is not included in your Studio access.';
     copy.textContent = 'Your other Studio access remains unchanged.';
     button.textContent = 'Return to My Studio';
     button.href = '/';
@@ -75,6 +105,7 @@ async function eeeInitialize(onReady) {
   if (email) email.textContent = session.user.email || '';
   if (menuEmail) menuEmail.textContent = session.user.email || '';
   if (avatar) avatar.textContent = String(profile.name || session.user.email || 'E').charAt(0).toUpperCase();
+  await eeeApplyAppAccess();
   if (typeof onReady === 'function') await onReady({ session, profile, sb: eeeSb });
   eeeRefreshIcons();
 }

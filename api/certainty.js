@@ -9,7 +9,7 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIs
 // is a real fault and surfaces as a generic message rather than a raw code.
 const FRIENDLY = {
   SIGN_IN_REQUIRED: 'Sign in to book a session.',
-  MEMBERSHIP_REQUIRED: 'An active Momentum Hub membership is required.',
+  MEMBERSHIP_REQUIRED: 'Certainty Sessions is not included in your Studio access.',
   BAD_MODE: 'Choose Zoom or phone for the session.',
   OUTSIDE_HOURS: 'Sessions run between 10am and midnight Eastern.',
   PHONE_REQUIRED: 'Add the number for David to call.',
@@ -27,7 +27,7 @@ async function hasEeeAccess(userToken) {
   const response = await fetch(SUPABASE_URL + '/rest/v1/rpc/has_studio_app_access', {
     method: 'POST',
     headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + userToken, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ target_app_key: 'eee' })
+    body: JSON.stringify({ target_app_key: 'certainty' }) // its own key, or the Momentum Hub bundle (WBR-442)
   });
   return response.ok && (await response.json().catch(() => false)) === true;
 }
@@ -172,7 +172,7 @@ export default async function handler(req, res) {
     // An authenticated member without access is worth seeing; an anonymous
     // caller has no member row so the event is simply dropped by the RPC.
     if (user) await recordEvent(userToken, 'certainty_denied', { schema: 1, outcome: 'denied', reason: 'no-eee-access' });
-    return json(res, 403, { error: 'An active Momentum Hub membership is required.' });
+    return json(res, 403, { error: 'Certainty Sessions is not included in your Studio access.' });
   }
 
   const action = String(req.body && req.body.action || 'state');

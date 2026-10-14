@@ -8,7 +8,9 @@ let studioProfile = null;
 let studioAccess = [];
 let studioCatalogMode = 'automatic';
 let authMode = 'password';
-const ACCESS_APP_NAMES = { seeninseven: 'SeenInSeven', boardroom: 'AI Boardroom', eee: 'EEE Membership' };
+const ACCESS_APP_NAMES = { seeninseven: 'SeenInSeven', boardroom: 'AI Boardroom', eee: 'EEE Membership', storysculpt: 'StorySculpt', navigator: 'Next Step Navigator', vault: 'Solution Vault', certainty: 'Certainty Sessions' };
+// Per-app Hub access (WBR-442): the Hub opens for its bundle or any one app.
+const HUB_APP_KEYS = ['storysculpt', 'navigator', 'vault', 'certainty'];
 const accessNoticeApp = new URLSearchParams(window.location.search).get('access');
 
 const el = id => document.getElementById(id);
@@ -178,8 +180,11 @@ function renderStudio() {
   const email = signedIn ? studioSession.user.email : '';
   const localProgress = hasLocalSeenInSevenProgress();
   const seenInSevenUnlocked = true;
-  const boardroomUnlocked = hasStudioAccess('boardroom');
-  const eeeUnlocked = hasStudioAccess('eee');
+  const hubBundle = hasStudioAccess('eee');
+  // The Momentum Hub bundle includes AI Boardroom (David, 2026-10-14).
+  const boardroomUnlocked = hasStudioAccess('boardroom') || hubBundle;
+  const hubApps = HUB_APP_KEYS.filter(hasStudioAccess);
+  const eeeUnlocked = hubBundle || hubApps.length > 0;
   const eeeCardVisible = shouldShowEeeCard(eeeUnlocked);
 
   el('sign-in-button').hidden = signedIn;
@@ -210,7 +215,9 @@ function renderStudio() {
   renderAppAccess(
     'eee',
     eeeUnlocked,
-    'All five EEE components are ready in one workspace.',
+    hubBundle
+      ? 'All five EEE components are ready in one workspace.'
+      : 'Ready for you: ' + hubApps.map(key => ACCESS_APP_NAMES[key]).join(', ') + '.',
     eeeCardVisible ? 'Founders enrollment is open. Explore the complete EEE membership.' : 'Sign in with the email connected to your EEE membership.'
   );
   const accessName = ACCESS_APP_NAMES[accessNoticeApp];

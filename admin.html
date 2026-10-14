@@ -265,7 +265,7 @@
             <div class="enrollment-fields">
               <label>Name<input id="enrollment-name" type="text" maxlength="120" placeholder="Their name"></label>
               <label>Email <span aria-hidden="true">*</span><input id="enrollment-email" type="email" maxlength="320" autocomplete="email" required placeholder="person@example.com"></label>
-              <fieldset><legend>Give access to</legend><label><input id="enrollment-seeninseven" type="checkbox" checked> SeenInSeven</label><label><input id="enrollment-boardroom" type="checkbox"> AI Boardroom</label><label><input id="enrollment-eee" type="checkbox"> EEE Membership</label></fieldset>
+              <fieldset><legend>Give access to</legend><label><input id="enrollment-seeninseven" type="checkbox" checked> SeenInSeven</label><label><input id="enrollment-storysculpt" type="checkbox"> StorySculpt</label><label><input id="enrollment-navigator" type="checkbox"> Next Step Navigator</label><label><input id="enrollment-vault" type="checkbox"> Solution Vault</label><label><input id="enrollment-boardroom" type="checkbox"> AI Boardroom</label><label><input id="enrollment-certainty" type="checkbox"> Certainty Sessions</label><label><input id="enrollment-eee" type="checkbox"> Full Momentum Hub (all five)</label></fieldset>
               <button class="secondary-button" id="enrollment-submit" type="submit"><i data-lucide="user-plus"></i><span>Enroll person</span></button>
             </div>
             <p class="enrollment-message" id="enrollment-message" role="status" aria-live="polite"></p>
@@ -281,7 +281,11 @@
               <option value="none">No app access</option>
               <option value="seeninseven">SeenInSeven access</option>
               <option value="boardroom">AI Boardroom access</option>
-              <option value="eee">EEE Membership access</option>
+              <option value="eee">Full Momentum Hub</option>
+              <option value="storysculpt">StorySculpt access</option>
+              <option value="navigator">Next Step Navigator access</option>
+              <option value="vault">Solution Vault access</option>
+              <option value="certainty">Certainty Sessions access</option>
             </select>
           </div>
 
@@ -316,6 +320,6 @@
   </div>
 
   <script src="/js/777-launch-cycle.js?v=2026-09"></script>
-  <script src="/js/admin-studio.js?v=studio-access-v2"></script>
+  <script src="/js/admin-studio.js?v=per-app-access-v1"></script>
 </body>
 </html>

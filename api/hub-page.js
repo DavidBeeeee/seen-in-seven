@@ -22,6 +22,10 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIs
 // asked to keep.
 const TOOLS = new Set(['storysculpt', 'navigator', 'vault', 'eee', 'certainty']);
 
+// Each page opens on its own app key, or the Momentum Hub bundle; the Hub
+// workspace opens for anyone with any Hub app (WBR-442, per-app access).
+export const ACCESS_KEY = { storysculpt: 'storysculpt', navigator: 'navigator', vault: 'vault', certainty: 'certainty', eee: 'hub' };
+
 function bearer(req) {
   const value = String(req.headers.authorization || '');
   return value.startsWith('Bearer ') ? value.slice(7).trim() : '';
@@ -39,7 +43,7 @@ function splitDoc(html) {
 
 // Server-side entitlement check, the same target_app_key the member app uses.
 // The token must resolve to a real user AND that user must hold eee access.
-async function hasEeeAccess(token) {
+async function hasToolAccess(token, appKey) {
   if (!token) return false;
   const userRes = await fetch(SUPABASE_URL + '/auth/v1/user', {
     headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token }
@@ -48,7 +52,7 @@ async function hasEeeAccess(token) {
   const accRes = await fetch(SUPABASE_URL + '/rest/v1/rpc/has_studio_app_access', {
     method: 'POST',
     headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ target_app_key: 'eee' })
+    body: JSON.stringify({ target_app_key: appKey })
   });
   return accRes.ok && (await accRes.json().catch(() => false)) === true;
 }
@@ -68,6 +72,7 @@ function shellHtml(head, tool) {
     var SB_URL = ${JSON.stringify(SUPABASE_URL)};
     var SB_KEY = ${JSON.stringify(SUPABASE_ANON_KEY)};
     var TOOL = ${JSON.stringify(tool)};
+    var ACCESS = ${JSON.stringify(ACCESS_KEY[tool])};
     function gate(kind) {
       var t = document.getElementById('hub-boot-title');
       var c = document.getElementById('hub-boot-copy');
@@ -77,7 +82,7 @@ function shellHtml(head, tool) {
         if (c) c.textContent = 'Use the Studio email connected to your membership.';
         if (b) { b.href = '/?access=eee'; var s = b.querySelector('span'); if (s) s.textContent = 'Go to Studio sign in'; }
       } else {
-        if (t) t.textContent = 'This membership is not active on your account.';
+        if (t) t.textContent = 'This app is not included in your Studio access.';
         if (c) c.textContent = 'Your other Studio access remains unchanged.';
         if (b) { b.href = '/'; var s2 = b.querySelector('span'); if (s2) s2.textContent = 'Return to My Studio'; }
       }
@@ -103,7 +108,7 @@ function shellHtml(head, tool) {
         var sb = window.supabase.createClient(SB_URL, SB_KEY);
         var session = (await sb.auth.getSession()).data.session;
         if (!session) { gate('sign-in'); return; }
-        var access = await sb.rpc('has_studio_app_access', { target_app_key: 'eee' });
+        var access = await sb.rpc('has_studio_app_access', { target_app_key: ACCESS });
         if (!access || access.error || access.data !== true) { gate('access'); return; }
         var res = await fetch('/api/hub-page?tool=' + encodeURIComponent(TOOL) + '&fragment=1', {
           headers: { Authorization: 'Bearer ' + session.access_token }
@@ -155,9 +160,9 @@ export default async function handler(req, res) {
 
   const isFragment = String((req.query && req.query.fragment) || '') === '1';
   if (isFragment) {
-    const ok = await hasEeeAccess(bearer(req));
+    const ok = await hasToolAccess(bearer(req), ACCESS_KEY[tool]);
     if (!ok) {
-      res.status(403).json({ error: 'An active Momentum Hub membership is required.' });
+      res.status(403).json({ error: 'This app is not included in your Studio access.' });
       return;
     }
     res.setHeader('Content-Type', 'text/html; charset=utf-8');

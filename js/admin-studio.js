@@ -10,6 +10,33 @@ const APP_CATALOG = [
   { key: 'eee', name: 'EEE Membership', connected: true, adminPath: '/eee' }
 ];
 
+// Per-app access (WBR-442). Every app has its own switch; the Momentum Hub
+// bundle ('eee', what a purchase grants) opens every Hub app, including AI
+// Boardroom. An app a person holds only through the bundle shows "via Hub".
+const ACCESS_APPS = [
+  { key: 'seeninseven', name: 'SeenInSeven', short: 'SeenInSeven', hub: false },
+  { key: 'storysculpt', name: 'StorySculpt', short: 'StorySculpt', hub: true },
+  { key: 'navigator', name: 'Next Step Navigator', short: 'Navigator', hub: true },
+  { key: 'vault', name: 'Solution Vault', short: 'Vault', hub: true },
+  { key: 'boardroom', name: 'AI Boardroom', short: 'Boardroom', hub: true },
+  { key: 'certainty', name: 'Certainty Sessions', short: 'Certainty', hub: true }
+];
+const HUB_BUNDLE = { key: 'eee', name: 'Full Momentum Hub', short: 'Full Hub' };
+const HUB_APP_KEYS = ACCESS_APPS.filter(app => app.hub).map(app => app.key);
+
+function accessAppName(appKey) {
+  if (appKey === HUB_BUNDLE.key) return HUB_BUNDLE.name;
+  const app = ACCESS_APPS.find(item => item.key === appKey);
+  return app ? app.name : appKey;
+}
+
+// 'own' (its own switch), 'bundle' (only through the Momentum Hub), or 'none'.
+function appAccessState(row, appKey) {
+  if (row.activeAccess.some(item => item.app_key === appKey)) return 'own';
+  if (appKey !== HUB_BUNDLE.key && HUB_APP_KEYS.includes(appKey) && row.activeAccess.some(item => item.app_key === HUB_BUNDLE.key)) return 'bundle';
+  return 'none';
+}
+
 const adminEl = id => document.getElementById(id);
 let studioAdminSession = null;
 let studioAdminState = { users: [], entitlements: [], grants: [], webhooks: [], scripts: [], progress: [], logs: [], boardroom: [], catalog: [], hubUsage: [], rows: [], errors: {} };
@@ -223,8 +250,9 @@ function buildCustomerRows() {
       filmedCount: uniqueVideoCount(filmed, 'video_index'),
       lastActive: user.last_active || (logs[0] && logs[0].created_at) || user.created_at,
       seenInSevenAccess: activeAccess.some(item => item.app_key === 'seeninseven'),
-      boardroomAccess: activeAccess.some(item => item.app_key === 'boardroom'),
+      boardroomAccess: activeAccess.some(item => item.app_key === 'boardroom' || item.app_key === 'eee'),
       eeeAccess: activeAccess.some(item => item.app_key === 'eee'),
+      hubAccess: activeAccess.some(item => item.app_key === 'eee' || HUB_APP_KEYS.includes(item.app_key)),
       boardroom: boardroom[0] || null
     };
   }).sort((a, b) => dateMs(b.lastActive) - dateMs(a.lastActive));
@@ -399,6 +427,7 @@ function filteredCustomerRows() {
     if (filter === 'seeninseven' && !row.seenInSevenAccess) return false;
     if (filter === 'boardroom' && !row.boardroomAccess) return false;
     if (filter === 'eee' && !row.eeeAccess) return false;
+    if (HUB_APP_KEYS.includes(filter) && filter !== 'boardroom' && appAccessState(row, filter) === 'none') return false;
     return true;
   });
 }
@@ -414,26 +443,19 @@ function renderCustomers() {
 
   tbody.innerHTML = rows.map(row => {
     const name = row.user.name || 'Studio customer';
-    const badges = APP_CATALOG.filter(app => app.connected).map(app => {
-      const active = row.activeAccess.some(item => item.app_key === app.key);
-      return '<span class="access-badge' + (active ? ' active' : '') + '">' + escapeHtml(app.name) + '</span>';
-    }).join('');
+    // Only what they can actually open, so the column reads at a glance.
+    const badges = (row.eeeAccess ? '<span class="access-badge active">' + escapeHtml(HUB_BUNDLE.name) + '</span>' : '') +
+      ACCESS_APPS.filter(app => appAccessState(row, app.key) === 'own')
+        .map(app => '<span class="access-badge active">' + escapeHtml(app.name) + '</span>').join('') ||
+      '<span class="access-badge">No apps</span>';
     const progressPercent = Math.round((row.filmedCount / 7) * 100);
-    const sisButton = row.seenInSevenAccess
-      ? '<button class="revoke" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'seeninseven\',false)">Remove SIS</button>'
-      : '<button onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'seeninseven\',true)">Grant SIS</button>';
-    const boardroomButton = row.boardroomAccess
-      ? '<button class="revoke" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'boardroom\',false)">Remove Boardroom</button>'
-      : '<button onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'boardroom\',true)">Grant Boardroom</button>';
-    const eeeButton = row.eeeAccess
-      ? '<button class="revoke" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'eee\',false)">Remove EEE</button>'
-      : '<button onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'eee\',true)">Grant EEE</button>';
+    const switches = accessSwitches(row);
     return '<tr>' +
       '<td><div class="customer-name">' + escapeHtml(name) + (row.user.is_admin ? '<span class="customer-role">Admin</span>' : '') + '</div><div class="customer-email">' + escapeHtml(row.user.email || 'No email') + '</div></td>' +
       '<td><div class="access-badges">' + badges + '</div></td>' +
       '<td><div class="progress-mini"><div class="progress-mini-bar"><div class="progress-mini-fill" style="width:' + progressPercent + '%"></div></div><span>' + row.filmedCount + '/7 filmed · ' + row.scriptCount + '/7 scripts</span></div></td>' +
       '<td>' + escapeHtml(formatDate(row.lastActive)) + '</td>' +
-      '<td><div class="access-control">' + sisButton + boardroomButton + eeeButton + '</div></td>' +
+      '<td><div class="access-control">' + switches + '</div></td>' +
       '<td><button class="icon-button row-detail-button" type="button" title="View customer" aria-label="View ' + safeAttr(name) + '" onclick="openCustomer(\'' + safeAttr(row.user.id) + '\')"><i data-lucide="chevron-right"></i></button></td>' +
       '</tr>';
   }).join('');
@@ -441,11 +463,77 @@ function renderCustomers() {
   refreshAdminIcons();
 }
 
+// One switch per app plus the bundle. On: click removes. Off: click grants.
+// Via Hub: click offers to take just this app away from a bundle member.
+function accessSwitches(row, { hubOnly = false } = {}) {
+  const id = safeAttr(row.user.id);
+  const one = (key, label) => {
+    const state = appAccessState(row, key);
+    const title = accessAppName(key) + (state === 'own' ? ': on. Click to remove.' : state === 'bundle' ? ': on through the Full Momentum Hub. Click to remove just this app.' : ': off. Click to grant.');
+    const action = state === 'own'
+      ? 'setAppAccess(event,\'' + id + '\',\'' + key + '\',false)'
+      : state === 'bundle'
+        ? 'removeFromHub(event,\'' + id + '\',\'' + key + '\')'
+        : 'setAppAccess(event,\'' + id + '\',\'' + key + '\',true)';
+    return '<button type="button" class="access-switch is-' + state + '" aria-pressed="' + (state !== 'none') + '" title="' + safeAttr(title) + '" onclick="' + action + '">' +
+      escapeHtml(label) + (state === 'bundle' ? ' <small>via Hub</small>' : '') + '</button>';
+  };
+  return ACCESS_APPS.filter(app => !hubOnly || app.hub).map(app => one(app.key, app.short)).join('') + one(HUB_BUNDLE.key, HUB_BUNDLE.short);
+}
+
+// Take one app away from someone who has it through the Momentum Hub bundle:
+// they move from the bundle to individual switches for every other Hub app,
+// so nothing else changes for them.
+async function removeFromHub(event, userId, appKey) {
+  event.stopPropagation();
+  const customer = studioAdminState.rows.find(item => item.user.id === userId);
+  const keep = HUB_APP_KEYS.filter(key => key !== appKey);
+  const who = customer && (customer.user.name || customer.user.email) || 'This customer';
+  if (!window.confirm(who + ' has ' + accessAppName(appKey) + ' through the Full Momentum Hub. Remove just ' + accessAppName(appKey) + '? They will keep ' + keep.map(accessAppName).join(', ') + ' as individual apps. Their saved work stays in place.')) return;
+  const button = event.currentTarget;
+  button.disabled = true;
+  try {
+    for (const key of keep) {
+      if (customer && appAccessState(customer, key) === 'own') continue;
+      const { error } = await adminSb.rpc('admin_set_studio_access', { target_user_id: userId, target_app_key: key, enabled: true, target_access_source: 'admin' });
+      if (error) throw error;
+    }
+    const own = customer && customer.activeAccess.some(item => item.app_key === appKey);
+    if (own) {
+      const { error } = await adminSb.rpc('admin_set_studio_access', { target_user_id: userId, target_app_key: appKey, enabled: false, target_access_source: 'admin' });
+      if (error) throw error;
+    }
+    const { error } = await adminSb.rpc('admin_set_studio_access', { target_user_id: userId, target_app_key: HUB_BUNDLE.key, enabled: false, target_access_source: 'admin' });
+    if (error) throw error;
+    await loadStudioAdmin();
+    reportAccessOutcome(userId, appKey, false);
+    if (!adminEl('drawer-backdrop').hidden) openCustomer(userId);
+  } catch (error) {
+    button.disabled = false;
+    adminEl('admin-notice').hidden = false;
+    adminEl('admin-notice').textContent = 'Access was not changed. Please refresh and try again.';
+  }
+}
+
+// Say what is actually true after a change. A purchase grant is separate from
+// an admin grant, so removing the admin one can leave access on; say so rather
+// than let the page look like the removal worked.
+function reportAccessOutcome(userId, appKey, wanted) {
+  const row = studioAdminState.rows.find(item => item.user.id === userId);
+  if (!row) return;
+  const now = appKey === HUB_BUNDLE.key ? row.eeeAccess : appAccessState(row, appKey) !== 'none';
+  if (now === wanted) return;
+  adminEl('admin-notice').hidden = false;
+  adminEl('admin-notice').textContent = wanted
+    ? accessAppName(appKey) + ' did not turn on. Please refresh and try again.'
+    : accessAppName(appKey) + ' is still on for this person because it also comes from a purchase or the Full Momentum Hub. Remove that first.';
+}
+
 async function setAppAccess(event, userId, appKey, enabled) {
   event.stopPropagation();
-  const app = APP_CATALOG.find(item => item.key === appKey);
+  const app = { key: appKey, name: accessAppName(appKey) };
   const customer = studioAdminState.rows.find(item => item.user.id === userId);
-  if (!app || !app.connected) return;
+  if (appKey !== HUB_BUNDLE.key && !ACCESS_APPS.some(item => item.key === appKey)) return;
   if (!enabled && !window.confirm('Remove this customer\'s access to ' + app.name + '? Their saved work will remain in place.')) return;
 
   const button = event.currentTarget;
@@ -461,6 +549,7 @@ async function setAppAccess(event, userId, appKey, enabled) {
     });
     if (error) throw error;
     await loadStudioAdmin();
+    reportAccessOutcome(userId, appKey, enabled);
     if (enabled && customer && customer.user.email) {
       const inviteError = await sendStudioAccessEmail(customer.user.email, appKey);
       adminEl('admin-notice').hidden = false;
@@ -492,7 +581,7 @@ async function enrollCustomer(event) {
   event.preventDefault();
   const email = adminEl('enrollment-email').value.trim().toLowerCase();
   const name = adminEl('enrollment-name').value.trim();
-  const appKeys = APP_CATALOG.filter(app => adminEl('enrollment-' + app.key).checked).map(app => app.key);
+  const appKeys = ACCESS_APPS.concat([HUB_BUNDLE]).filter(app => adminEl('enrollment-' + app.key) && adminEl('enrollment-' + app.key).checked).map(app => app.key);
   const button = adminEl('enrollment-submit');
 
   if (!email) {
@@ -543,8 +632,6 @@ function openCustomer(userId) {
   const name = row.user.name || 'Studio customer';
   adminEl('drawer-title').textContent = name;
   const sisAccess = row.seenInSevenAccess;
-  const boardroomAccess = row.boardroomAccess;
-  const eeeAccess = row.eeeAccess;
   const boardroom = row.boardroom || {};
   const activeGrants = studioAdminState.grants.filter(grant => grant.user_id === row.user.id && grant.status === 'active');
   const grantSummary = activeGrants.length
@@ -567,22 +654,11 @@ function openCustomer(userId) {
           : '<button class="secondary-button" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'seeninseven\',true)">Grant access</button>') +
         '<a class="secondary-button" href="/admin/seeninseven">Open app admin</a>' +
       '</div></article>' +
-      '<article class="drawer-app"><div class="drawer-app-head"><strong>AI Boardroom</strong><span class="access-badge' + (boardroomAccess ? ' active' : '') + '">' + (boardroomAccess ? 'Active' : 'No access') + '</span></div>' +
-      '<p>' + Number(boardroom.conversations || 0) + ' conversations, ' + Number(boardroom.messages || 0) + ' messages, and ' + Number(boardroom.active_cards || 0) + ' open cards.</p>' +
-      '<div class="drawer-actions">' +
-        (boardroomAccess
-          ? '<button class="secondary-button" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'boardroom\',false)">Remove access</button>'
-          : '<button class="secondary-button" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'boardroom\',true)">Grant access</button>') +
-        '<a class="secondary-button" href="/admin/boardroom">Open app admin</a>' +
-      '</div></article>' +
-      '<article class="drawer-app"><div class="drawer-app-head"><strong>EEE Membership</strong><span class="access-badge' + (eeeAccess ? ' active' : '') + '">' + (eeeAccess ? 'Active' : 'No access') + '</span></div>' +
-      '<p>StorySculpt, Next Step Navigator, Solution Vault, AI Boardroom, and Certainty Sessions from one Studio home.</p>' +
-      '<div class="drawer-actions">' +
-        (eeeAccess
-          ? '<button class="secondary-button" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'eee\',false)">Remove access</button>'
-          : '<button class="secondary-button" onclick="setAppAccess(event,\'' + safeAttr(row.user.id) + '\',\'eee\',true)">Grant access</button>') +
-        '<a class="secondary-button" href="/eee">Open EEE home</a>' +
-      '</div></article>' +
+      '<article class="drawer-app"><div class="drawer-app-head"><strong>Momentum Hub apps</strong><span class="access-badge' + (row.hubAccess ? ' active' : '') + '">' + (row.eeeAccess ? 'Full Hub' : row.hubAccess ? 'Some apps' : 'No access') + '</span></div>' +
+      '<p>Turn each app on or off. "Via Hub" means it comes with the Full Momentum Hub; removing one of those keeps the others as individual apps. AI Boardroom: ' + Number(boardroom.conversations || 0) + ' conversations and ' + Number(boardroom.active_cards || 0) + ' open cards.</p>' +
+      '<div class="access-control drawer-switches">' + accessSwitches(row, { hubOnly: true }) + '</div>' +
+      '<div class="drawer-actions"><a class="secondary-button" href="/eee">Open Hub home</a><a class="secondary-button" href="/admin/boardroom">Boardroom admin</a></div>' +
+      '</article>' +
     '</section>';
   adminEl('drawer-backdrop').hidden = false;
   document.body.style.overflow = 'hidden';
