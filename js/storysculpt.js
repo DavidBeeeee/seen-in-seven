@@ -936,12 +936,62 @@ function renderUgcProject(project) {
   EEEStudio.refreshIcons();
 }
 
+// Progress where the member is looking. The shared thinking indicator draws
+// into the interview thread, which the product-video screens hide, so "Write
+// my script" looked like it did nothing for the 10 to 40 seconds it takes
+// (David, 2026-10-14). The button says it is working, a status line under it
+// moves through what is happening, and the end is said out loud.
+function startUgcWorking({ statusId, button, busyLabel, stages }) {
+  const status = storyEl(statusId);
+  const original = button ? { html: button.innerHTML, disabled: button.disabled } : null;
+  if (button) {
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+    button.innerHTML = '<i data-lucide="loader" class="spin-icon"></i><span>' + storyEscape(busyLabel) + '</span>';
+  }
+  let stage = 0;
+  const paint = () => {
+    if (!status) return;
+    status.hidden = false;
+    status.dataset.state = 'working';
+    status.innerHTML = '<i data-lucide="loader" class="spin-icon"></i><span>' + storyEscape(stages[Math.min(stage, stages.length - 1)]) + '</span>';
+    EEEStudio.refreshIcons();
+  };
+  paint();
+  const timer = setInterval(() => { stage += 1; paint(); }, 7000);
+  return function finish(outcome) {
+    clearInterval(timer);
+    if (button && original) {
+      button.innerHTML = original.html;
+      button.disabled = original.disabled;
+      button.removeAttribute('aria-busy');
+    }
+    if (status) {
+      if (outcome && outcome.message) {
+        status.hidden = false;
+        status.dataset.state = outcome.ok ? 'done' : 'error';
+        status.innerHTML = '<i data-lucide="' + (outcome.ok ? 'circle-check' : 'triangle-alert') + '"></i><span>' + storyEscape(outcome.message) + '</span>';
+        if (outcome.ok) setTimeout(() => { if (status.dataset.state === 'done') status.hidden = true; }, 6000);
+      } else {
+        status.hidden = true;
+      }
+    }
+    EEEStudio.refreshIcons();
+  };
+}
+
+const UGC_WRITING_STAGES = [
+  'Reading the product details and your notes...',
+  'Writing it in your voice...',
+  'Checking the claims and building your hooks...',
+  'Almost there. A full script can take up to a minute.'
+];
+
 async function runUgcGeneration() {
   if (!activeStory) return;
   const ugcState = (activeStory.intake && activeStory.intake.ugc) || {};
-  showThinkingIndicator('Writing your creator-led video script...');
-  const genBtn = storyEl('ugc-generate-script-btn');
-  if (genBtn) genBtn.disabled = true;
+  const finish = startUgcWorking({ statusId: 'ugc-generate-status', button: storyEl('ugc-generate-script-btn'), busyLabel: 'Writing your script...', stages: UGC_WRITING_STAGES });
+  let outcome = null;
 
   try {
     const token = EEEStudio.accessToken ? await EEEStudio.accessToken(storyContext.session.access_token) : storyContext.session.access_token;
@@ -978,22 +1028,22 @@ async function runUgcGeneration() {
 
     adoptScriptTitle(data.title);
     await saveActiveStory('UGC script generated');
+    outcome = { ok: true, message: 'Your script is ready.' };
     renderScriptPanel();
     renderUgcProject(activeStory);
     if (window.innerWidth <= 820) switchMobileTab('script');
   } catch (error) {
-    alert(error.message || 'Script generation could not be completed.');
+    outcome = { ok: false, message: (error && error.message) || 'Script generation could not be completed. Please try again.' };
   } finally {
-    hideThinkingIndicator();
-    if (genBtn) genBtn.disabled = false;
-    EEEStudio.refreshIcons();
+    finish(outcome);
   }
 }
 
-async function runUgcRevision(note) {
+async function runUgcRevision(note, button) {
   if (!activeStory || !activeStory.output) return;
   const ugcState = (activeStory.intake && activeStory.intake.ugc) || {};
-  showThinkingIndicator('Revising your script...');
+  const finish = startUgcWorking({ statusId: 'ugc-revise-status', button, busyLabel: 'Revising...', stages: ['Reading your script and the change you asked for...', 'Rewriting it...', 'Almost there...'] });
+  let outcome = null;
 
   try {
     const token = EEEStudio.accessToken ? await EEEStudio.accessToken(storyContext.session.access_token) : storyContext.session.access_token;
@@ -1028,14 +1078,14 @@ async function runUgcRevision(note) {
     });
 
     await saveActiveStory('Revised draft saved');
+    outcome = { ok: true, message: 'Revised. The new version is in your script.' };
     renderScriptPanel();
     renderUgcProject(activeStory);
     if (window.innerWidth <= 820) switchMobileTab('script');
   } catch (error) {
-    alert(error.message || 'Revision could not be completed.');
+    outcome = { ok: false, message: (error && error.message) || 'Revision could not be completed. Please try again.' };
   } finally {
-    hideThinkingIndicator();
-    EEEStudio.refreshIcons();
+    finish(outcome);
   }
 }
 
@@ -1339,7 +1389,7 @@ function initUgcListeners() {
   if (quickRevContainer) {
     quickRevContainer.addEventListener('click', event => {
       const btn = event.target.closest('[data-rev-note]');
-      if (btn) runUgcRevision(btn.dataset.revNote);
+      if (btn && !btn.disabled) runUgcRevision(btn.dataset.revNote, btn);
     });
   }
 

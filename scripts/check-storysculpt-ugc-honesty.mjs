@@ -69,3 +69,12 @@ assert.ok(script.includes('const project = activeStory;') && script.includes('if
 assert.ok(script.includes("seeAngles.disabled = state === 'pending'"), 'angles wait for research');
 
 console.log('PASS check-storysculpt-ugc-honesty: unread pages say why, title-only pages are not findings, names are short, no script from nothing, status resolves');
+
+// 6. Writing and revising show progress where the member is looking, not in
+// the interview thread the product-video screens hide (David, 2026-10-14).
+assert.ok(html.includes('id="ugc-generate-status"') && html.includes('id="ugc-revise-status"'), 'status lines sit under the buttons');
+const genFn = script.slice(script.indexOf('async function runUgcGeneration()'), script.indexOf('async function runUgcRevision('));
+assert.ok(genFn.includes("startUgcWorking({ statusId: 'ugc-generate-status'"), 'Write my script shows its own progress');
+assert.ok(!genFn.includes('showThinkingIndicator('), 'not the hidden interview indicator');
+assert.ok(!/alert\(/.test(genFn), 'a failure is shown on the page, not only in a popup');
+console.log('PASS check-storysculpt-ugc-honesty: Write my script and quick revisions show visible progress');
