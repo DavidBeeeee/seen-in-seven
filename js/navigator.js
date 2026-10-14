@@ -187,7 +187,7 @@
       (open ? ` &middot; <span class="nav-momentum-open">${open} waiting for you</span>` : '') +
       ` &middot; ${total} in all` +
       `</div>` +
-      `<div class="nav-momentum-retention" style="margin-top: 6px; font-size: 13px; color: var(--studio-muted, #94a3b8);">When you stop, nothing is deleted. Every move stays.</div>`;
+      `<div class="nav-momentum-retention" style="margin-top: 6px; font-size: 13px; color: var(--studio-muted, #94a3b8);">When you stop, nothing is deleted. Every move stays. <button type="button" class="nav-over-time-link" onclick="window.openNavigatorOverTime &amp;&amp; window.openNavigatorOverTime()">How Navigator works over time</button></div>`;
   }
 
   function renderResult(move) {
@@ -239,20 +239,46 @@
     }
   }
 
+  let historyExpanded = false;
+
   function renderHistory() {
     const list = el('navigator-history');
     if (!list) return;
     const prior = moves.slice(1); // the newest is shown as the current move
     if (!prior.length) { list.innerHTML = ''; return; }
-    const rows = prior.map(move => {
+    const hasMore = prior.length > 10;
+    const rows = prior.map((move, idx) => {
+      const isCollapsed = !historyExpanded && idx >= 10;
       const badge = move.status === 'completed' ? 'done' : (move.status === 'abandoned' ? 'let go' : 'open');
-      return `<li class="nav-history-row nav-history-${escapeHtml(move.status)}">
+      return `<li class="nav-history-row nav-history-${escapeHtml(move.status)}${isCollapsed ? ' nav-history-collapsed' : ''}"${isCollapsed ? ' hidden' : ''}>
         <span class="nav-history-badge">${badge}</span>
         <span class="nav-history-text">${escapeHtml(move.next_action)}</span>
         <span class="nav-history-date">${formatDate(move.created_at)}</span>
       </li>`;
     }).join('');
-    list.innerHTML = `<div class="nav-history-title">Earlier moves</div><ul class="nav-history-list">${rows}</ul>`;
+
+    let toggleHtml = '';
+    if (hasMore) {
+      toggleHtml = `<div class="nav-history-toggle-wrap" style="margin-top: 10px;">
+        <button type="button" id="navigator-history-toggle" class="btn-secondary nav-history-toggle-btn">
+          <span>${historyExpanded ? 'Show fewer' : 'Show all'}</span>
+        </button>
+      </div>`;
+    }
+
+    const noteHtml = `<p class="nav-history-note" style="margin-top: 10px; font-size: 13px; color: var(--studio-muted, #94a3b8);">The newest 50 are shown and the rest are kept.</p>`;
+
+    list.innerHTML = `<div class="nav-history-title">Earlier moves</div><ul class="nav-history-list">${rows}</ul>${toggleHtml}${noteHtml}`;
+
+    const toggleBtn = el('navigator-history-toggle');
+    if (toggleBtn) {
+      const onToggle = () => {
+        historyExpanded = !historyExpanded;
+        renderHistory();
+      };
+      toggleBtn.onclick = onToggle;
+      toggleBtn.addEventListener('click', onToggle);
+    }
   }
 
   function render() {

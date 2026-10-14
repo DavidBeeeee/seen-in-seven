@@ -167,6 +167,12 @@
                     <strong>How to use this page:</strong> Focus strictly on your Priority One bottleneck below. Building a reliable business is about setting up one solid piece of infrastructure at a time, not doing everything at once. Work through the checklist, use the curated tools, or copy the prompt into your AI to generate your asset.
                 </div>
 
+                <div class="roadmap-over-time-wrap">
+                    <button type="button" class="btn-secondary btn-over-time" onclick="openNavigatorOverTime()">
+                        <span>How Navigator works over time</span>
+                    </button>
+                </div>
+
                 <div class="funnel-strip-section">
                     <div class="funnel-strip-header">
                         <span class="dive-label">11-Stage Business Pipeline</span>
@@ -174,6 +180,9 @@
                     </div>
                     <div class="map-container" id="funnel-map"></div>
                 </div>
+
+                <div id="roadmap-milestones-container" class="roadmap-milestones-container" hidden></div>
+                <div id="roadmap-complete-state" class="roadmap-complete-state" hidden></div>
 
                 <div id="priority-roadmap"></div>
 
@@ -236,6 +245,11 @@
                     keeps every move you make, so there is always a reason and a place to come back.</p>
 
                 <div id="nav-momentum" class="nav-momentum" hidden></div>
+                <div class="nav-over-time-nextmove-wrap" style="margin-bottom: 18px;">
+                    <button type="button" class="btn-secondary btn-over-time" onclick="openNavigatorOverTime()">
+                        <span>How Navigator works over time</span>
+                    </button>
+                </div>
 
                 <form id="navigator-form" class="navigator-form" autocomplete="off">
                     <label class="nav-label" for="navigator-objective">What are you trying to get done?</label>
@@ -277,6 +291,23 @@
                 </div>
 
                 <div id="navigator-history" class="nav-history"></div>
+            </div>
+        </div>
+
+        <!-- How Navigator works over time modal dialog -->
+        <div id="navigator-over-time-modal" class="nav-over-time-modal" hidden role="dialog" aria-modal="true" aria-labelledby="nav-over-time-title">
+            <div class="nav-over-time-scrim" onclick="closeNavigatorOverTime()"></div>
+            <div class="nav-over-time-dialog">
+                <div class="nav-over-time-head">
+                    <h3 id="nav-over-time-title">How Navigator works over time</h3>
+                    <button type="button" class="nav-over-time-close" onclick="closeNavigatorOverTime()" aria-label="Close">&times;</button>
+                </div>
+                <div class="nav-over-time-body">
+                    <p>Nothing in Navigator escalates, deteriorates or expires. There are no countdown clocks, no streaks to break, and no penalties for taking time away.</p>
+                    <p>When you stop, nothing is ever deleted by stopping. Your profile, answers, and roadmaps stay right where you left them in your account.</p>
+                    <p>If you decide an action is no longer the right priority, a move you let go stays in history with a "let go" badge. You do not have to finish something that is no longer useful.</p>
+                    <p>When your business direction changes, Start Fresh keeps your roadmap as a past version you can bring back at any time. Your previous versions and every completed move are kept safely.</p>
+                </div>
             </div>
         </div>
         </main>
@@ -1050,6 +1081,7 @@
                     listArea.appendChild(row);
                 }
             });
+            renderMilestones();
             if (window.lucide) window.lucide.createIcons();
         }
 
@@ -1281,6 +1313,7 @@
         function toggleCheck(key, index, el) {
             userProfile.progress[key][index] = !userProfile.progress[key][index];
             el.classList.toggle('done'); saveData();
+            renderMilestones();
             if (userProfile.progress[key].every(v => v === true)) {
                 triggerCelebration();
                 const parts = key.split('_'); const compId = parts[0]; const level = parseInt(parts[1]);
@@ -1316,6 +1349,88 @@
         } function copyText(id) { const el = document.getElementById(id); if (!el) return; navigator.clipboard.writeText(el.textContent).then(() => { const b = event.target; b.innerText = "COPIED"; setTimeout(() => b.innerText = "COPY", 2000); }); }
         function showTooltip(e, text) { if (window.innerWidth < 768) return; tooltip.textContent = text; tooltip.style.display = 'block'; tooltip.style.left = (e.pageX + 10) + 'px'; tooltip.style.top = (e.pageY + 10) + 'px'; }
         function hideTooltip() { tooltip.style.display = 'none'; }
+
+        function renderMilestones() {
+            const milestoneContainer = document.getElementById('roadmap-milestones-container');
+            const completeContainer = document.getElementById('roadmap-complete-state');
+            if (!milestoneContainer || !completeContainer) return;
+
+            const milestonesModule = window.NavigatorMilestones;
+            if (!milestonesModule) return;
+
+            const phases = milestonesModule.BEE_FORMULA_PHASES.map(p => {
+                const taskKeys = Object.keys(userProfile.progress || {}).filter(k => k.startsWith(p.id + '_'));
+                return {
+                    id: p.id,
+                    name: p.name,
+                    taskKeys
+                };
+            }).filter(p => p.taskKeys.length > 0);
+
+            (userProfile.viewedTasks || []).forEach(vk => {
+                const comp = vk.split('_')[0];
+                let ph = phases.find(p => p.id === comp);
+                if (!ph) {
+                    const bp = milestonesModule.BEE_FORMULA_PHASES.find(b => b.id === comp);
+                    if (bp) {
+                        ph = { id: bp.id, name: bp.name, taskKeys: [vk] };
+                        phases.push(ph);
+                    }
+                } else if (!ph.taskKeys.includes(vk)) {
+                    ph.taskKeys.push(vk);
+                }
+            });
+
+            const res = milestonesModule.evaluateMilestones({ phases, progress: userProfile.progress });
+
+            if (res.milestoneLines && res.milestoneLines.length > 0) {
+                milestoneContainer.innerHTML = res.milestoneLines.map(line =>
+                    `<div class="nav-milestone-line" role="status"><span class="milestone-icon">✓</span> <span>${line}</span></div>`
+                ).join('');
+                milestoneContainer.hidden = false;
+            } else {
+                milestoneContainer.innerHTML = '';
+                milestoneContainer.hidden = true;
+            }
+
+            if (res.isComplete && res.completeState) {
+                completeContainer.innerHTML = `
+                    <div class="roadmap-complete-card">
+                        <div class="roadmap-complete-badge">ROADMAP COMPLETE</div>
+                        <h3 class="roadmap-complete-title">${res.completeState.title}</h3>
+                        <p class="roadmap-complete-means">${res.completeState.whatFinishingMeans}</p>
+                        <div class="roadmap-complete-steps">
+                            <h4>Next steps:</h4>
+                            <div class="roadmap-complete-step-item">
+                                <strong>1. ${res.completeState.nextSteps[0].title}</strong>
+                                <p>${res.completeState.nextSteps[0].text}</p>
+                                <button type="button" class="btn-primary" onclick="showScreen('screen-nextmove')"><span>${res.completeState.nextSteps[0].label}</span></button>
+                            </div>
+                            <div class="roadmap-complete-step-item">
+                                <strong>2. ${res.completeState.nextSteps[1].title}</strong>
+                                <p>${res.completeState.nextSteps[1].text}</p>
+                                <button type="button" class="btn-secondary" onclick="if(confirm('Run a new audit? Your finished roadmap will be kept as a past version in your account.')) resetApp()"><span>${res.completeState.nextSteps[1].label}</span></button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                completeContainer.hidden = false;
+            } else {
+                completeContainer.innerHTML = '';
+                completeContainer.hidden = true;
+            }
+        }
+
+        function openNavigatorOverTime() {
+            const m = document.getElementById('navigator-over-time-modal');
+            if (m) { m.hidden = false; m.classList.add('open'); }
+        }
+        function closeNavigatorOverTime() {
+            const m = document.getElementById('navigator-over-time-modal');
+            if (m) { m.hidden = true; m.classList.remove('open'); }
+        }
+        window.openNavigatorOverTime = openNavigatorOverTime;
+        window.closeNavigatorOverTime = closeNavigatorOverTime;
         // Start Fresh keeps the current roadmap as a past version in the account.
         async function resetApp() {
             const store = window.NavigatorRoadmapStore;
@@ -1800,6 +1915,7 @@
          node; it hangs window.NavigatorMovesStore before mount() runs. WBR-005. -->
     <script type="module" src="/js/navigator-moves-store.mjs?v=wbr005-1"></script>
     <script type="module" src="/js/navigator-roadmap-store.mjs?v=wbr373-1"></script>
+    <script type="module" src="/js/navigator-milestones.mjs?v=wbr373-2"></script>
     <script src="/js/navigator.js?v=token-refresh-v1"></script>
     <script>
         EEEStudio.initialize(async context => {

@@ -355,9 +355,54 @@ console.log('6. Verifying engagement boundary pure functions...');
   check(S.computeReturnNotice(at(22), NOW).state === 'lapsed', '22 days gives lapsed notice');
 }
 
+console.log('7. Testing collapsed history past 10 moves and retention copy...');
+{
+  const manyMoves = Array.from({ length: 16 }, (_, i) =>
+    move(`m-${i}`, `Action move ${i}`, i + 1, i % 2 === 0 ? 'completed' : 'active')
+  );
+  const app = boot(manyMoves);
+  await app.run();
+
+  const hist = app.document.getElementById('navigator-history');
+  check(!hist.hidden, 'History must be visible with 16 moves');
+  check(hist.innerHTML.includes('Show all'), 'Earlier moves past 10 must collapse behind "Show all"');
+  check(hist.innerHTML.includes('The newest 50 are shown and the rest are kept.'),
+    'History list must state plainly that newest 50 are shown and rest kept');
+  check(!hist.innerHTML.includes('—'), 'History text must contain no em dashes');
+
+  const toggleBtn = app.document.getElementById('navigator-history-toggle');
+  assert.ok(toggleBtn, '#navigator-history-toggle button must exist');
+  const toggleClicks = toggleBtn.listeners.click || [];
+  if (toggleClicks.length > 0) {
+    toggleClicks[0]({ currentTarget: toggleBtn });
+  } else if (toggleBtn.onclick) {
+    toggleBtn.onclick();
+  }
+
+  const histAfter = app.document.getElementById('navigator-history');
+  check(histAfter.innerHTML.includes('Show fewer'), 'Button toggles to "Show fewer" after click');
+  check(histAfter.innerHTML.includes('Action move 15'), 'All 15 earlier moves rendered after expanding');
+}
+
+console.log('8. Testing consequence copy on the served page...');
+{
+  const html = readFileSync('api/_hub/navigator.html', 'utf8');
+  check(html.includes('How Navigator works over time'), 'Served page must contain "How Navigator works over time"');
+  check(html.includes('nothing escalates, deteriorates or expires') || html.includes('Nothing in Navigator escalates, deteriorates or expires'),
+    'Served page must state nothing escalates, deteriorates or expires');
+  check(html.includes('a move you let go stays in history'),
+    'Served page must state a move you let go stays in history');
+  check(html.includes('Start Fresh keeps your roadmap as a past version you can bring back'),
+    'Served page must state Start Fresh keeps your roadmap as a past version you can bring back');
+  check(html.includes('nothing is ever deleted by stopping'),
+    'Served page must state nothing is ever deleted by stopping');
+  check(!html.includes('—'), 'Served page must contain no em dashes');
+}
+
 if (failures.length) {
   console.error('check-navigator-lapse FAIL\n- ' + failures.join('\n- '));
   process.exit(1);
 }
 
-console.log('PASS: check-navigator-lapse: 22-day welcome back names last move, 10-day quiet, 5-day suppressed, data retention line present, and open move abandons to "let go" badge.');
+console.log('PASS: check-navigator-lapse: 22-day welcome back names last move, 10-day quiet, 5-day suppressed, data retention line present, open move abandons to "let go" badge, collapsed history past 10, and consequence copy verified on served page.');
+
