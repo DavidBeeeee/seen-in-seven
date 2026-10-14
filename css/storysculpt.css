@@ -192,6 +192,19 @@
 .story-filter-btn:hover { color: var(--studio-text); }
 .story-filter-btn.active { background: var(--studio-surface); color: var(--studio-teal); box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1); }
 
+.story-bulk-bar { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin: -4px 0 10px; min-width: 0; flex-wrap: wrap; }
+.story-bulk-toggle, .story-bulk-link, .story-bulk-delete { display: inline-flex; align-items: center; gap: 5px; min-height: 28px; padding: 0 8px; border: 1px solid var(--studio-border); border-radius: var(--radius-sm, 6px); background: transparent; color: var(--studio-soft); font-size: 11px; font-weight: 700; font-family: inherit; cursor: pointer; }
+.story-bulk-toggle svg, .story-bulk-delete svg { width: 14px; height: 14px; }
+.story-bulk-toggle[aria-pressed="true"] { color: var(--studio-teal); border-color: var(--studio-teal); }
+.story-bulk-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; min-width: 0; }
+.story-bulk-count { font-size: 11px; color: var(--studio-muted); white-space: nowrap; }
+.story-bulk-link { border-color: transparent; color: var(--studio-teal); padding: 0 4px; }
+.story-bulk-delete { color: var(--studio-danger, #f28b82); border-color: color-mix(in srgb, var(--studio-danger, #f28b82) 45%, var(--studio-border)); }
+.story-bulk-delete:disabled { opacity: .45; cursor: not-allowed; }
+.story-project-check { flex: 1; min-width: 0; height: 100%; display: flex; align-items: center; gap: 8px; padding: 0 10px; cursor: pointer; color: var(--studio-soft); font-size: 13px; font-weight: 600; overflow: hidden; }
+.story-project-check input { width: 16px; height: 16px; flex-shrink: 0; accent-color: var(--studio-teal); }
+.story-project-check .story-project-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.story-project-item.is-checked { border-color: var(--studio-teal); background: color-mix(in srgb, var(--studio-teal) 8%, transparent); }
 .story-project-item { display: flex; align-items: center; justify-content: space-between; gap: 4px; height: 42px; min-height: 42px; max-height: 42px; flex-shrink: 0; border-radius: var(--radius-md, 8px); border: 1px solid var(--studio-border); background: transparent; transition: all 0.15s ease; padding-right: 6px; width: 100%; max-width: 100%; min-width: 0; overflow: hidden; box-sizing: border-box; }
 .story-project-item:hover { border-color: var(--studio-teal); background: color-mix(in srgb, var(--studio-teal) 4%, transparent); }
 .story-project-item.active { border-color: var(--studio-teal); background: color-mix(in srgb, var(--studio-teal) 8%, transparent); }

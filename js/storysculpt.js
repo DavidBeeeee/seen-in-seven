@@ -30,6 +30,9 @@ let helpReturnFocus = null;
 let viewingVersionIndex = -1; // -1 means viewing active/latest draft
 let mobileActiveTab = 'chat'; // 'chat' or 'script'
 let storyRailFilter = 'all'; // 'all' | 'active' | 'filmed'
+// Select mode for deleting several chats at once (David, 2026-10-14).
+let storySelectMode = false;
+const storySelected = new Set();
 let storyReturnNotice = null; // WBR-373: the lapse or quiet-week line shown on reopen
 const expandedThreads = new Set(); // chats whose earlier turns the member chose to show
 const STATES = window.StorySculptStates;
@@ -171,6 +174,7 @@ function renderProjectList() {
     return true;
   });
 
+  renderBulkBar(filtered);
   if (!filtered.length) {
     const emptyMsg = storyRailFilter === 'filmed' ? 'No filmed scripts yet.' : (storyRailFilter === 'active' ? 'No active chats.' : 'No chats yet.');
     list.innerHTML = '<p class="eee-message">' + emptyMsg + '</p>';
@@ -181,6 +185,15 @@ function renderProjectList() {
     const isActive = activeStory && activeStory.id === project.id;
     const isFilmed = Boolean(project.intake && project.intake.filmed);
     const title = project.title || 'Untitled script';
+    if (storySelectMode) {
+      const checked = storySelected.has(project.id);
+      return '<div class="story-project-item is-selecting' + (checked ? ' is-checked' : '') + (isFilmed ? ' filmed' : '') + '">' +
+        '<label class="story-project-check" title="' + storyEscape(title) + '">' +
+          '<input type="checkbox" data-select-project="' + storyEscape(project.id) + '"' + (checked ? ' checked' : '') + '>' +
+          '<span class="story-project-title">' + storyEscape(title) + '</span>' +
+        '</label>' +
+      '</div>';
+    }
     return '<div class="story-project-item' + (isActive ? ' active' : '') + (isFilmed ? ' filmed' : '') + '">' +
       '<button class="story-project-select" type="button" data-project-id="' + storyEscape(project.id) + '" title="' + storyEscape(title) + '">' +
         '<span class="story-project-title">' + storyEscape(title) + '</span>' +
@@ -196,6 +209,71 @@ function renderProjectList() {
     '</div>';
   }).join('');
   EEEStudio.refreshIcons();
+}
+
+// The select bar: a Select toggle, and in select mode the count, Select all
+// (the chats in the current filter) and Delete.
+function renderBulkBar(visible) {
+  const bar = storyEl('story-bulk-bar');
+  if (!bar) return;
+  bar.hidden = !storyProjects.length;
+  const toggle = storyEl('story-bulk-toggle');
+  const actions = storyEl('story-bulk-actions');
+  toggle.setAttribute('aria-pressed', String(storySelectMode));
+  storyEl('story-bulk-toggle-label').textContent = storySelectMode ? 'Cancel' : 'Select';
+  actions.hidden = !storySelectMode;
+  const visibleIds = (visible || []).map(project => project.id);
+  const allChosen = visibleIds.length > 0 && visibleIds.every(id => storySelected.has(id));
+  storyEl('story-bulk-all').textContent = allChosen ? 'Clear' : 'Select all';
+  storyEl('story-bulk-count').textContent = storySelected.size + ' selected';
+  storyEl('story-bulk-delete').disabled = storySelected.size === 0;
+}
+
+function setStorySelectMode(on) {
+  storySelectMode = on;
+  storySelected.clear();
+  renderProjectList();
+}
+
+// One confirmation, one request, then say what actually happened. Row security
+// limits the delete to the member's own chats; the rows the database returns
+// are the ones that are really gone.
+async function deleteSelectedStories() {
+  const ids = [...storySelected];
+  if (!ids.length) return;
+  const label = ids.length === 1 ? '1 chat' : ids.length + ' chats';
+  if (!window.confirm('Delete ' + label + ' and their scripts? This cannot be undone.')) return;
+  const button = storyEl('story-bulk-delete');
+  button.disabled = true;
+  storyEl('story-bulk-delete-label').textContent = 'Deleting...';
+  const status = storyEl('story-bulk-count');
+  try {
+    const { data, error } = await storyContext.sb.from('storysculpt_projects').delete().in('id', ids).select('id');
+    if (error) throw error;
+    const gone = new Set((data || []).map(row => row.id));
+    storyProjects = storyProjects.filter(project => !gone.has(project.id));
+    const activeGone = activeStory && gone.has(activeStory.id);
+    storySelectMode = false;
+    storySelected.clear();
+    if (activeGone) {
+      clearTimeout(storySaveTimer); storySaveTimer = null; activeStory = null;
+      if (storyProjects.length) showProject(storyProjects[0]); else showStart();
+    } else {
+      renderProjectList();
+    }
+    const saveStatus = storyEl('story-save-status');
+    if (saveStatus) {
+      saveStatus.textContent = gone.size === ids.length
+        ? 'Deleted ' + (gone.size === 1 ? '1 chat.' : gone.size + ' chats.')
+        : 'Deleted ' + gone.size + ' of ' + ids.length + '. The rest could not be deleted; please try again.';
+      saveStatus.className = 'eee-message ' + (gone.size === ids.length ? 'success' : 'error');
+    }
+  } catch (error) {
+    status.textContent = 'Nothing was deleted. Please try again.';
+    button.disabled = false;
+  } finally {
+    storyEl('story-bulk-delete-label').textContent = 'Delete';
+  }
 }
 
 async function toggleFilmed(projectId) {
@@ -2212,6 +2290,25 @@ storyEl('story-project-list').addEventListener('click', event => {
   const project = button && storyProjects.find(item => item.id === button.dataset.projectId);
   if (project) showProject(project);
 });
+
+storyEl('story-project-list').addEventListener('change', event => {
+  const box = event.target.closest('[data-select-project]');
+  if (!box) return;
+  if (box.checked) storySelected.add(box.dataset.selectProject);
+  else storySelected.delete(box.dataset.selectProject);
+  renderProjectList();
+});
+storyEl('story-bulk-toggle').addEventListener('click', () => setStorySelectMode(!storySelectMode));
+storyEl('story-bulk-all').addEventListener('click', () => {
+  const visible = storyProjects.filter(project => {
+    const isFilmed = Boolean(project.intake && project.intake.filmed);
+    return storyRailFilter === 'active' ? !isFilmed : storyRailFilter === 'filmed' ? isFilmed : true;
+  });
+  const allChosen = visible.length > 0 && visible.every(project => storySelected.has(project.id));
+  visible.forEach(project => { if (allChosen) storySelected.delete(project.id); else storySelected.add(project.id); });
+  renderProjectList();
+});
+storyEl('story-bulk-delete').addEventListener('click', deleteSelectedStories);
 
 const railFilterEl = storyEl('story-rail-filter');
 if (railFilterEl) {

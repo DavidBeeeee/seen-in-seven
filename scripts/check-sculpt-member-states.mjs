@@ -23,6 +23,7 @@ function stubElement(id) {
     addEventListener(type, fn) { (listeners[type] = listeners[type] || []).push(fn); },
     querySelector() { return null }, querySelectorAll() { return []; },
     focus() {}, requestSubmit() {}, appendChild() {}, parentNode: null,
+    setAttribute() {}, removeAttribute() {}, getAttribute() { return null; },
     listeners
   };
 }

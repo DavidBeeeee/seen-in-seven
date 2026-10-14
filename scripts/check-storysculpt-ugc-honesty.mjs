@@ -78,3 +78,13 @@ assert.ok(genFn.includes("startUgcWorking({ statusId: 'ugc-generate-status'"), '
 assert.ok(!genFn.includes('showThinkingIndicator('), 'not the hidden interview indicator');
 assert.ok(!/alert\(/.test(genFn), 'a failure is shown on the page, not only in a popup');
 console.log('PASS check-storysculpt-ugc-honesty: Write my script and quick revisions show visible progress');
+
+// 7. Several chats can be deleted at once (David, 2026-10-14): a Select mode
+// with checkboxes, Select all for the current filter, one confirmation, one
+// request limited by row security, and a report of what was really deleted.
+assert.ok(html.includes('id="story-bulk-toggle"') && html.includes('id="story-bulk-delete"') && html.includes('id="story-bulk-all"'));
+assert.ok(script.includes("data-select-project="), 'select mode renders a checkbox per chat');
+assert.ok(script.includes(".delete().in('id', ids).select('id')"), 'one request, and the deleted rows come back');
+assert.ok(/window\.confirm\('Delete ' \+ label/.test(script), 'one confirmation names how many');
+assert.ok(script.includes("'Deleted ' + gone.size + ' of ' + ids.length"), 'a partial delete is said out loud');
+console.log('PASS check-storysculpt-ugc-honesty: several chats can be selected and deleted at once');

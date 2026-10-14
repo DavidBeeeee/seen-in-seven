@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
   <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
-  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=ugc-progress-v1">
+  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=bulk-delete-v1">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -54,6 +54,14 @@
           <button class="story-filter-btn active" data-filter="all" type="button">All</button>
           <button class="story-filter-btn" data-filter="active" type="button">Active</button>
           <button class="story-filter-btn" data-filter="filmed" type="button">Filmed</button>
+        </div>
+        <div class="story-bulk-bar" id="story-bulk-bar">
+          <button class="story-bulk-toggle" id="story-bulk-toggle" type="button" aria-pressed="false"><i data-lucide="list-checks"></i><span id="story-bulk-toggle-label">Select</span></button>
+          <div class="story-bulk-actions" id="story-bulk-actions" hidden>
+            <span class="story-bulk-count" id="story-bulk-count" role="status" aria-live="polite">0 selected</span>
+            <button class="story-bulk-link" id="story-bulk-all" type="button">Select all</button>
+            <button class="story-bulk-delete" id="story-bulk-delete" type="button" disabled><i data-lucide="trash-2"></i><span id="story-bulk-delete-label">Delete</span></button>
+          </div>
         </div>
         <div class="eee-rail-list" id="story-project-list"></div>
         <p class="story-rail-keep" id="story-inactivity-line"><i data-lucide="archive"></i><span>Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them.</span></p>
@@ -380,6 +388,6 @@
       </div>
     </aside>
   </div>
-  <script src="/js/eee-common.js?v=per-app-access-v1"></script><script src="/js/storysculpt-member-states.js?v=storysculpt-states-v1"></script><script src="/js/storysculpt.js?v=ugc-progress-v1"></script>
+  <script src="/js/eee-common.js?v=per-app-access-v1"></script><script src="/js/storysculpt-member-states.js?v=storysculpt-states-v1"></script><script src="/js/storysculpt.js?v=bulk-delete-v1"></script>
 </body>
 </html>
