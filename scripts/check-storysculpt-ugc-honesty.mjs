@@ -11,7 +11,7 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
 import { synthesizeResearch, cleanProductName, isAmazonUrl } from '../api/_lib/storysculpt-research.js';
-import { ugcKnowsProduct } from '../api/storysculpt.js';
+import { ugcKnowsProduct, stepDirective } from '../api/storysculpt.js';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const read = (...p) => readFileSync(join(root, ...p), 'utf8');
@@ -98,4 +98,14 @@ console.log('PASS check-storysculpt-ugc-honesty: several chats can be selected a
   const css = read('css', 'storysculpt.css');
   assert.ok(/@media \(min-width: 821px\) \{\s*\.story-refine-inner \{ flex-wrap: wrap;[\s\S]*flex: 1 1 100%/.test(css), 'the note gets its own row on desktop');
   console.log('PASS check-storysculpt-ugc-honesty: Revise explains an empty note and its box has room');
+}
+
+// 9. A draft that stays put for feedback is told so (2026-10-16).
+{
+  const directive = stepDirective('rant', 'R5', 'R5: Script Draft', [{ role: 'user', content: 'too long' }], '', { revisionNote: 'a bit repetitive and a little long' });
+  assert.ok(directive.includes('THE MEMBER ASKED FOR CHANGES') && directive.includes('a bit repetitive and a little long') && directive.includes('Do not move on to the next step'));
+  assert.ok(!stepDirective('rant', 'R5', 'R5: Script Draft', [], '', {}).includes('THE MEMBER ASKED FOR CHANGES'), 'a first draft carries no revision note');
+  const handler = read('api', 'storysculpt.js');
+  assert.ok(handler.includes("if (input.intent === 'interview' && currentStepInDb && activeStep === currentStepInDb)"), 'the handler flags a repeated step');
+  console.log('PASS check-storysculpt-ugc-honesty: a repeated draft step carries the member\'s change request');
 }

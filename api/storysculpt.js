@@ -355,6 +355,9 @@ export function stepDirective(mode, stepLabel, stepText, memberMessages = [], re
     if (chosen.openLoop) lines.push('', 'CHOSEN OPEN LOOP. It comes right after the hook, word for word: ' + chosen.openLoop);
     lines.push('', 'Then the approved draft, with its opening rewritten so no line or idea is said twice.');
   }
+  if (request.revisionNote && !isRevision) {
+    lines.push('', 'THE MEMBER ASKED FOR CHANGES to your previous version of this step (their message just before this one): "' + request.revisionNote + '". Revise that version to do exactly what they asked. Keep everything they did not ask to change. Do not move on to the next step.');
+  }
   if (request.intent === 'regenerate') {
     lines.push('', 'REGENERATE. The member asked for a fresh version of this step. Write it again from scratch with new wording; do not reuse lines from the version being replaced.');
     if (request.previous) lines.push('', 'THE VERSION BEING REPLACED (do not repeat it):', request.previous);
@@ -721,6 +724,12 @@ export default async function handler(req, res) {
         currentStep: currentStepInDb,
         turns: modeTurns
       });
+    }
+    // Staying on the same step means the member asked for changes to the
+    // version they were just shown; the directive says so (2026-10-16).
+    if (input.intent === 'interview' && currentStepInDb && activeStep === currentStepInDb) {
+      const users = input.messages.filter(m => m.role === 'user');
+      input.revisionNote = users.length ? users[users.length - 1].content : '';
     }
     const activeTurn = turnFor(input.mode, activeStep);
     const stepText = activeTurn.text;

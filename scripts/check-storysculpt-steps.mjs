@@ -119,6 +119,14 @@ const t = (label, msg = 'ok', mode = 'rant', list = rantTurns) => resolveStep({ 
 assert.equal(t('R2'), 'R3');
 assert.equal(t('R5', 'go for the hook'), 'R6');
 assert.equal(t('R5', 'Please revise the script above. Keep what works and change this: you keep using "you"'), 'R5', 'a revision note stays on the draft (it used to advance)');
+// 2026-10-16: plain feedback on a draft is a revision, not a yes. David's
+// 2026-10-15 reply moved on to the hooks and left the draft unchanged.
+assert.equal(t('R5', "I think it's close, it's a bit repetitive and a little long. I think the lesson is that the commitment to doing, even without a full plan is more powerful than planning a perfect end result."), 'R5', 'feedback on the draft revises it');
+assert.equal(t('R5', 'it is too long'), 'R5');
+assert.equal(t('R5', 'I love it but the ending is weak'), 'R5');
+assert.equal(t('R5', 'Looks good, go for the hooks'), 'R6', 'the approval button still moves on');
+assert.equal(t('R5', 'perfect'), 'R6');
+assert.equal(t('B4', 'too repetitive', 'bold', turns.bold.turns), 'B4', 'Bold drafts revise on plain feedback too');
 assert.equal(t('R6', '1'), 'R7', 'choosing a hook goes straight to the open loops');
 assert.equal(t('R6', 'give me three more'), 'R6');
 assert.equal(t('R7', '2'), 'R8', 'choosing an open loop assembles the script');

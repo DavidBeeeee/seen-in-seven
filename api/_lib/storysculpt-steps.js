@@ -133,6 +133,19 @@ export function isPunchUpRequest(text) {
   return PUNCH_UP.test(note);
 }
 
+// A clear yes to a draft: "looks good", "move on", "go for the hooks" and the
+// like, with nothing asked to change. At a draft step anything else is
+// feedback. Until 2026-10-16 the draft step only stayed put when the reply hit
+// the REVISE keywords, so "it's a bit repetitive and a little long" (David,
+// 2026-10-15) moved straight on to the hooks with the draft unchanged.
+const APPROVE = /^(?:yes|yeah|yep|yup|ok(?:ay)?|sure|great|perfect|nice|awesome|amazing|good|cool|love it|i love it|looks? (?:good|great|perfect|right)|sounds? (?:good|great|perfect|right)|that(?:'s| is) (?:good|great|perfect|it|right)|that works|works for me|move on|next|continue|go (?:ahead|on)|go for (?:it|the hooks?)|let'?s (?:go|move on|do (?:the )?hooks?)|(?:on to |do |write )?(?:the )?hooks?|skip to (?:the )?hooks?)\b/i;
+const HEDGE = /\b(?:but|though|although|however|except|change|cut|shorten|shorter|longer|too|less|instead|rather|fix|repetitive|repeat|repeats|tweak|adjust|add|remove|drop|replace|swap|weak|wordy|clunky)\b/i;
+
+export function isApproval(text) {
+  const clean = String(text || '').trim();
+  return Boolean(clean) && APPROVE.test(clean) && !HEDGE.test(clean);
+}
+
 export function isRevisionRequest(text) {
   const clean = String(text || '').trim();
   if (!clean) return false;
@@ -168,6 +181,8 @@ export function resolveStep({ mode, intent, messages = [], currentStep = null, t
   const currentIdx = turns ? turnIndexFor(turns, currentStep) : sequence.indexOf(currentStep);
   if (currentIdx !== -1) {
     if (isRevisionRequest(lastUserMsg)) return sequence[currentIdx];
+    const current = turns ? turns[currentIdx] : null;
+    if (current && turnKind(current.label, current.text).draft && !isApproval(lastUserMsg)) return sequence[currentIdx];
     return sequence[Math.min(currentIdx + 1, sequence.length - 1)];
   }
 
