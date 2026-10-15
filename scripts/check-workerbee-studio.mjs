@@ -77,7 +77,9 @@ assert.match(api, /workerbee_note_mutate/, 'Notes on either ToDo item type must 
 assert.match(api, /workerbee_client_mutate/, 'Private client workspace writes must use their narrow mutation function.');
 assert.doesNotMatch(api, /SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY/, 'The WorkerBee API must not require a database master key.');
 assert.doesNotMatch(client, /SERVICE_ROLE|SUPABASE_SECRET|WORKERBEE_STUDIO_SECRET/, 'No server credential may enter browser code.');
-assert.match(client, /onAuthStateChange[\s\S]*setTimeout\(\(\) => activate/, 'Auth hydration must leave the Supabase callback before database work.');
+assert.match(client, /onAuthStateChange[\s\S]*setTimeout\(\(\) => (activate|handleSession)\(/, 'Auth hydration must leave the Supabase callback before database work.');
+// WBR-444: a token refresh or tab focus must not reload the ~4 MB state.
+assert.match(client, /function handleSession\(nextSession\)[\s\S]*userId === activeUserId[\s\S]*session = nextSession;\s*return;[\s\S]*activate\(nextSession\)/, 'The Dashboard reloads state only when the signed-in user changes.');
 assert.doesNotMatch(client, /\.innerHTML\s*=/, 'WorkerBee client rendering must not inject untrusted HTML.');
 assert.match(todo, /data-workerbee-surface="todo"/, '/todo must use the focused todo surface.');
 assert.match(analytics, /data-workerbee-surface="analytics"/, '/analytics must remain a first-class WorkerBee surface.');
