@@ -108,6 +108,13 @@
 .story-refine-inner textarea { flex: 1; min-height: 46px; max-height: 140px; padding: 11px 14px; border-radius: var(--radius-md, 9px); border: 1px solid var(--studio-border); background: var(--studio-surface); color: var(--studio-text); font-family: var(--font-body, 'Nunito'), sans-serif; font-size: 14px; line-height: 1.5; resize: none; outline: 0; box-sizing: border-box; }
 .story-refine-inner textarea:focus { border-color: var(--studio-teal); }
 .story-refine-status { margin: 0; font-size: 12px; min-height: 16px; }
+/* The note gets its own full-width row on desktop. Squeezed between the
+   finished line and two buttons it was 156px wide with a cut-off placeholder,
+   and Revise clicked beside it did nothing (David, 2026-10-16). */
+@media (min-width: 821px) {
+  .story-refine-inner { flex-wrap: wrap; justify-content: flex-end; }
+  .story-refine-inner textarea { flex: 1 1 100%; min-height: 68px; }
+}
 
 /* Right Pane: Artifact Script Panel (Claude Artifact style) */
 .story-pane-artifact { display: flex; flex-direction: column; height: 100%; min-height: 0; background: color-mix(in srgb, var(--studio-surface) 60%, var(--studio-bg)); overflow: hidden; flex: 1.25; }

@@ -88,3 +88,14 @@ assert.ok(script.includes(".delete().in('id', ids).select('id')"), 'one request,
 assert.ok(/window\.confirm\('Delete ' \+ label/.test(script), 'one confirmation names how many');
 assert.ok(script.includes("'Deleted ' + gone.size + ' of ' + ids.length"), 'a partial delete is said out loud');
 console.log('PASS check-storysculpt-ugc-honesty: several chats can be selected and deleted at once');
+
+// 8. Revise is never a silent no-op, and its note box is not squeezed
+// (David, 2026-10-16: Revise "didn't actually work"; the box was 156px wide and
+// an empty note returned without a word).
+{
+  const refine = script.slice(script.indexOf('async function refineStory()'), script.indexOf('// Inline edits to the finished script'));
+  assert.ok(/if \(!note\) \{[\s\S]*story-refine-status[\s\S]*focus\(\)/.test(refine), 'an empty note says what to do and focuses the box');
+  const css = read('css', 'storysculpt.css');
+  assert.ok(/@media \(min-width: 821px\) \{\s*\.story-refine-inner \{ flex-wrap: wrap;[\s\S]*flex: 1 1 100%/.test(css), 'the note gets its own row on desktop');
+  console.log('PASS check-storysculpt-ugc-honesty: Revise explains an empty note and its box has room');
+}

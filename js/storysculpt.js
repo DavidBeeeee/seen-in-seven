@@ -2141,7 +2141,15 @@ async function executeRefineGeneration(note) {
 // flow change: it is one more turn in the same interview.
 async function refineStory() {
   const note = storyEl('story-refine-note').value.trim();
-  if (!activeStory || !note || !activeStory.output) return;
+  if (!activeStory || !activeStory.output) return;
+  if (!note) {
+    // Never a silent no-op: Revise needs to know what to change.
+    const status = storyEl('story-refine-status');
+    status.textContent = 'Type what to change in the box first, then press Revise. Or press Regenerate for a fresh script.';
+    status.className = 'eee-message story-refine-status error';
+    storyEl('story-refine-note').focus();
+    return;
+  }
 
   const currentScript = storyEl('story-output-copy').value.trim();
   activeStory.output = currentScript;
