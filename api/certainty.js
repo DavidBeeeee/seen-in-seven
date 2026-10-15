@@ -1,4 +1,5 @@
 import { authenticatedUser, json } from './_lib/security.js';
+import { detectCrisis } from './_lib/navigator-core.js';
 
 export const config = { maxDuration: 30 };
 
@@ -18,6 +19,62 @@ const FRIENDLY = {
   SLOT_TAKEN: 'Someone just took that time. Pick another open slot.',
   NOT_FOUND: 'That session could not be found.'
 };
+
+export const CERTAINTY_CRISIS_LINE = 'If you are in distress or thinking about hurting yourself, please call or text 988 right now. Your seat is held, but please reach out to someone who can support you today.';
+
+// Pure helper: assesses a booking topic for crisis / self-harm language.
+// Returns { tripped: true, line: '...', category: '...' } when crisis language
+// is detected, or { tripped: false, line: null } for ordinary or empty topics.
+export function evaluateCertaintyTopicSafety(topic) {
+  const text = typeof topic === 'string' ? topic.trim() : '';
+  if (!text) {
+    return { tripped: false, line: null };
+  }
+  const check = detectCrisis(text);
+  if (!check || !check.tripped) {
+    return { tripped: false, line: null };
+  }
+  return {
+    tripped: true,
+    line: CERTAINTY_CRISIS_LINE,
+    category: check.category || 'crisis'
+  };
+}
+
+export const evaluateCertaintyTopic = evaluateCertaintyTopicSafety;
+export const checkCertaintySafety = evaluateCertaintyTopicSafety;
+
+// Timezone and slot time calculation helpers.
+export function getSlotInstant(isoDate, etHour) {
+  const approx = new Date(`${isoDate}T${String(etHour).padStart(2, '0')}:00:00Z`);
+  const f = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', hour12: false
+  });
+  const parts = {};
+  f.formatToParts(approx).forEach(p => { if (p.type !== 'literal') parts[p.type] = p.value; });
+  let h = Number(parts.hour === '24' ? 0 : parts.hour);
+  let diff = etHour - h;
+  return new Date(approx.getTime() + diff * 3600000);
+}
+
+export function formatSlotTime(isoDate, etHour, timeZone = 'America/New_York') {
+  const instant = getSlotInstant(isoDate, etHour);
+  const etFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone: 'America/New_York',
+    hour: 'numeric', minute: '2-digit', hour12: true
+  });
+  const etText = `${etFormatter.format(instant)} ET`;
+  if (!timeZone || timeZone === 'America/New_York') {
+    return etText;
+  }
+  const memberFormatter = new Intl.DateTimeFormat('en-US', {
+    timeZone,
+    hour: 'numeric', minute: '2-digit', hour12: true
+  });
+  const memberText = memberFormatter.format(instant);
+  return `${memberText} (${etText})`;
+}
 
 function token(req) {
   return String(req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim();
@@ -138,7 +195,7 @@ async function writeToCalendar(session, join) {
     session.topic ? 'Bringing: ' + session.topic : null
   ].filter(line => line !== null);
   const event = {
-    summary: 'Certainty Session — ' + (session.member_name || session.member_email),
+    summary: 'Certainty Session with ' + (session.member_name || session.member_email),
     description: lines.join('\n'),
     start: { dateTime: session.starts_at },
     end: { dateTime: session.ends_at },
@@ -186,16 +243,56 @@ export default async function handler(req, res) {
         return fail(res, result);
       }
       const state = result.data || {};
+
+      let settings = null;
+      try {
+        const settingsRes = await rpc('certainty_get_settings', {}, userToken);
+        if (settingsRes.ok && settingsRes.data) settings = settingsRes.data;
+      } catch (err) {
+        // Settings are additive and never block state read.
+      }
+
       await recordEvent(userToken, 'certainty_state', {
         schema: 1, outcome: 'ok', latencyMs: Date.now() - startedAt,
         bookedThisWeek: Boolean(state.bookedThisWeek), hasUpcoming: Boolean(state.upcoming), historyCount: Number(state.historyCount || 0),
         engagement: String(state.engagement || 'unknown')
       });
-      return json(res, 200, { ...state, upcoming: state.upcoming ? { ...state.upcoming, join: joinFor(state.upcoming) } : null });
+      return json(res, 200, {
+        ...state,
+        settings,
+        upcoming: state.upcoming ? { ...state.upcoming, join: joinFor(state.upcoming) } : null
+      });
+    }
+
+    if (action === 'settings') {
+      const settingsRes = await rpc('certainty_get_settings', {}, userToken);
+      if (!settingsRes.ok) return fail(res, settingsRes);
+      return json(res, 200, { settings: settingsRes.data });
+    }
+
+    if (action === 'save_settings') {
+      const body = req.body || {};
+      const saved = await rpc('certainty_save_settings', {
+        p_time_zone: body.time_zone ? String(body.time_zone) : null,
+        p_phone: body.phone ? String(body.phone) : null,
+        p_default_mode: body.default_mode ? String(body.default_mode) : 'zoom'
+      }, userToken);
+      if (!saved.ok) return fail(res, saved);
+
+      await recordEvent(userToken, 'certainty_settings', {
+        schema: 1,
+        mode: String(body.default_mode || 'zoom'),
+        hasTimeZone: Boolean(body.time_zone),
+        hasPhone: Boolean(body.phone),
+        latencyMs: Date.now() - startedAt
+      });
+      return json(res, 200, { ok: true, settings: saved.data });
     }
 
     if (action === 'book') {
       const body = req.body || {};
+      const safetyAssessment = evaluateCertaintyTopicSafety(body.topic);
+
       const booked = await rpc('book_certainty_session', {
         p_local_date: String(body.date || ''),
         p_hour: Number(body.hour),
@@ -211,6 +308,24 @@ export default async function handler(req, res) {
       }
 
       const session = booked.data;
+
+      if (safetyAssessment.tripped) {
+        try {
+          await rpc('certainty_flag_safety', { p_id: session.id }, userToken);
+        } catch (e) {
+          // If RPC is unavailable, flag is remembered in-session
+        }
+        session.safety_flag = true;
+        session.safety_flagged_at = new Date().toISOString();
+
+        // Log safety event that carries NO topic text
+        await recordEvent(userToken, 'certainty_safety', {
+          schema: 1,
+          category: safetyAssessment.category || 'crisis',
+          sessionId: session.id
+        });
+      }
+
       const join = joinFor(session);
       // Hold it on David's calendar. If the calendar is not connected yet, the
       // booking is still real; we just record that it did not sync.
@@ -228,12 +343,21 @@ export default async function handler(req, res) {
       });
       await recordEvent(userToken, 'certainty_book', {
         schema: 1, outcome: 'ok', mode: String(session.mode || ''), calendarStatus: calendar.status,
-        calendarConnected: Boolean(calendar.connected), latencyMs: Date.now() - startedAt
+        calendarConnected: Boolean(calendar.connected), latencyMs: Date.now() - startedAt,
+        safetyTripped: safetyAssessment.tripped
       });
+
+      const crisisPayload = safetyAssessment.tripped ? {
+        tripped: true,
+        line: safetyAssessment.line,
+        category: safetyAssessment.category
+      } : null;
 
       return json(res, 200, {
         session: { ...session, calendar_status: calendar.status, join },
-        calendar
+        calendar,
+        crisis: crisisPayload,
+        safety: safetyAssessment.tripped ? true : undefined
       });
     }
 

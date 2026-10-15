@@ -102,10 +102,11 @@
     .cs-day .cs-day-num { font-family: 'Oswald', sans-serif; font-size: 1.35rem; line-height: 1.1; }
     .cs-day .cs-day-mon { font-size: .68rem; opacity: .8; }
 
-    .cs-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(104px, 1fr)); gap: 9px; }
+    .cs-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 9px; }
     .cs-time {
-      padding: 11px 8px; border-radius: 12px; cursor: pointer; text-align: center; font-weight: 700; font-size: .9rem;
+      padding: 11px 8px; border-radius: 12px; cursor: pointer; text-align: center; font-weight: 700; font-size: .86rem;
       background: var(--studio-surface-2); border: 1px solid var(--studio-border); color: var(--studio-text);
+      line-height: 1.25;
     }
     .cs-time:hover:not(:disabled) { border-color: var(--studio-teal); }
     .cs-time.sel { background: var(--studio-teal); color: #05201f; border-color: var(--studio-teal); }
@@ -239,6 +240,9 @@
         <div class="cs-wrap">
           <div id="cs-state-skeleton" class="cs-skeleton"></div>
 
+          <!-- Crisis safety line banner -->
+          <div class="cs-msg err cs-hide" id="cs-crisis-banner" role="alert" style="margin-top:0;"></div>
+
           <section class="cs-hero cs-hide" id="cs-hero">
             <!-- Left: next session OR book prompt -->
             <article class="cs-card" id="cs-primary"><!-- filled by JS --></article>
@@ -264,7 +268,7 @@
             <div class="cs-step-label"><span class="cs-step-num">1</span>Pick a day</div>
             <div class="cs-days" id="cs-days"></div>
 
-            <div class="cs-step-label"><span class="cs-step-num">2</span>Pick a time <span style="font-weight:600;color:var(--studio-muted);font-size:.8rem">(2 hours, Eastern time)</span></div>
+            <div class="cs-step-label"><span class="cs-step-num">2</span>Pick a time <span style="font-weight:600;color:var(--studio-muted);font-size:.8rem">(2 hours, with Eastern time alongside)</span></div>
             <div class="cs-times" id="cs-times"></div>
 
             <div class="cs-step-label"><span class="cs-step-num">3</span>How do you want to meet?</div>
@@ -290,6 +294,47 @@
 
           <!-- Your past sessions: what the membership has delivered so far -->
           <section class="cs-card cs-history cs-hide" id="cs-history"><!-- filled by JS --></section>
+
+          <!-- Your settings panel -->
+          <section class="cs-card cs-settings cs-hide" id="cs-settings">
+            <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+              <div>
+                <p class="cs-eyebrow">Preferences</p>
+                <h2>Your settings</h2>
+              </div>
+            </div>
+            <p style="color:var(--studio-soft);margin:4px 0 16px;font-size:.9rem">Save your session preferences once so booking is faster each week.</p>
+
+            <div class="cs-settings-grid" style="display:grid;gap:16px;max-width:600px">
+              <div class="cs-field" style="margin-top:0">
+                <label for="cs-setting-tz">Time zone</label>
+                <select class="cs-input" id="cs-setting-tz"></select>
+                <p class="cs-privacy">Shows session times in your local time zone while keeping David's Eastern time visible alongside.</p>
+              </div>
+
+              <div class="cs-field" style="margin-top:0">
+                <label for="cs-setting-mode">Default meeting format</label>
+                <select class="cs-input" id="cs-setting-mode">
+                  <option value="zoom">Zoom (video)</option>
+                  <option value="phone">Phone (David calls you)</option>
+                </select>
+                <p class="cs-privacy">Prefills whether you usually meet on Zoom or by phone on new bookings.</p>
+              </div>
+
+              <div class="cs-field" style="margin-top:0">
+                <label for="cs-setting-phone">Remembered phone number <span class="cs-optional">(for phone sessions)</span></label>
+                <input class="cs-input" id="cs-setting-phone" type="tel" placeholder="(555) 123-4567" autocomplete="tel">
+                <p class="cs-privacy">Remembered and prefilled when you choose phone sessions so you do not have to type it every time.</p>
+              </div>
+
+              <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
+                <button class="primary-button" type="button" id="cs-save-settings">
+                  <i data-lucide="save"></i><span>Save settings</span>
+                </button>
+                <span class="cs-msg" id="cs-settings-msg" style="margin-top:0;padding:8px 14px"></span>
+              </div>
+            </div>
+          </section>
 
           <!-- Supporting content -->
           <section class="cs-support">
@@ -325,7 +370,23 @@
     (function () {
       var accessToken = null;
       var state = null;
+      var settings = { time_zone: null, phone: '', default_mode: 'zoom' };
       var pick = { date: null, hour: null, mode: 'zoom' };
+
+      var COMMON_TIMEZONES = [
+        { value: 'America/New_York', label: 'Eastern Time (ET) - US & Canada' },
+        { value: 'America/Chicago', label: 'Central Time (CT) - US & Canada' },
+        { value: 'America/Denver', label: 'Mountain Time (MT) - US & Canada' },
+        { value: 'America/Phoenix', label: 'Arizona (MST, no DST)' },
+        { value: 'America/Los_Angeles', label: 'Pacific Time (PT) - US & Canada' },
+        { value: 'America/Anchorage', label: 'Alaska Time (AKT)' },
+        { value: 'Pacific/Honolulu', label: 'Hawaii Time (HST)' },
+        { value: 'Europe/London', label: 'London / UK / Ireland (GMT/BST)' },
+        { value: 'Europe/Paris', label: 'Central European Time (CET/CEST)' },
+        { value: 'Australia/Sydney', label: 'Sydney / Melbourne (AEST/AEDT)' },
+        { value: 'Australia/Perth', label: 'Perth (AWST)' },
+        { value: 'Pacific/Auckland', label: 'Auckland / New Zealand (NZST/NZDT)' }
+      ];
 
       var el = function (id) { return document.getElementById(id); };
       var icons = function () { if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } }); };
@@ -357,6 +418,71 @@
         var hh = h % 12; if (hh === 0) hh = 12;
         return hh + ':00 ' + suffix;
       }
+
+      function getMemberTimeZone() {
+        var sel = el('cs-setting-tz');
+        var chosen = (sel && sel.value) || (settings && settings.time_zone);
+        if (chosen) return chosen;
+        try {
+          return (Intl && Intl.DateTimeFormat && Intl.DateTimeFormat().resolvedOptions().timeZone) || 'America/New_York';
+        } catch (e) {
+          return 'America/New_York';
+        }
+      }
+
+      function initTimezones() {
+        var sel = el('cs-setting-tz');
+        if (!sel) return;
+        sel.innerHTML = '';
+        var browserTz = 'America/New_York';
+        try {
+          browserTz = (Intl && Intl.DateTimeFormat && Intl.DateTimeFormat().resolvedOptions().timeZone) || 'America/New_York';
+        } catch (e) {}
+        var hasBrowserTz = false;
+        COMMON_TIMEZONES.forEach(function (tz) {
+          if (tz.value === browserTz) hasBrowserTz = true;
+          var opt = document.createElement('option');
+          opt.value = tz.value;
+          opt.textContent = tz.label;
+          sel.appendChild(opt);
+        });
+        if (!hasBrowserTz && browserTz) {
+          var opt = document.createElement('option');
+          opt.value = browserTz;
+          opt.textContent = browserTz + ' (Detected local)';
+          sel.insertBefore(opt, sel.firstChild);
+        }
+        var currentTz = (settings && settings.time_zone) || browserTz;
+        sel.value = currentTz;
+      }
+
+      function slotInstant(isoDate, etHour) {
+        var approx = new Date(isoDate + 'T' + pad(etHour) + ':00:00Z');
+        var parts = etParts(approx);
+        var diffHours = etHour - Number(parts.hour);
+        return new Date(approx.getTime() + diffHours * 3600000);
+      }
+
+      function formatSlotLabel(isoDate, etHour, memberTz) {
+        var instant = slotInstant(isoDate, etHour);
+        var etStr = hourLabel(etHour) + ' ET';
+        var tz = memberTz || getMemberTimeZone();
+        if (!tz || tz === 'America/New_York') {
+          return etStr;
+        }
+        try {
+          var memberFormatter = new Intl.DateTimeFormat('en-US', {
+            timeZone: tz,
+            hour: 'numeric',
+            minute: '2-digit',
+            hour12: true
+          });
+          return memberFormatter.format(instant) + ' (' + etStr + ')';
+        } catch (e) {
+          return etStr;
+        }
+      }
+
       // A list of the next 14 ET calendar days, as {iso, dow, num, mon}.
       function upcomingDays() {
         var now = etParts(new Date());
@@ -386,12 +512,24 @@
           var joinRow = j.mode === 'zoom'
             ? '<a class="primary-button" href="' + (j.joinUrl || '#') + '" target="_blank" rel="noopener"' + (j.joinUrl ? '' : ' aria-disabled="true"') + '><i data-lucide="video"></i><span>Join on Zoom</span></a>'
             : '<span class="primary-button" style="cursor:default"><i data-lucide="phone"></i><span>David calls ' + (j.phone || 'you') + '</span></span>';
+          
+          var tz = getMemberTimeZone();
+          var timeDisplay = u.label_start + ' &ndash; ' + u.label_end + ' ET';
+          if (tz && tz !== 'America/New_York' && u.starts_at && u.ends_at) {
+            try {
+              var f = new Intl.DateTimeFormat('en-US', { timeZone: tz, hour: 'numeric', minute: '2-digit', hour12: true });
+              var sStr = f.format(new Date(u.starts_at));
+              var eStr = f.format(new Date(u.ends_at));
+              timeDisplay = sStr + ' &ndash; ' + eStr + ' (' + u.label_start + ' &ndash; ' + u.label_end + ' ET)';
+            } catch (e) {}
+          }
+
           host.innerHTML =
             '<p class="cs-eyebrow">Your next session</p>' +
             '<div class="cs-next-when">' +
               '<span class="cs-next-cal"><i data-lucide="calendar-days"></i></span>' +
               '<div><div class="cs-next-day">' + u.label_day + '</div>' +
-              '<div class="cs-next-time">' + u.label_start + ' &ndash; ' + u.label_end + ' ET</div>' +
+              '<div class="cs-next-time">' + timeDisplay + '</div>' +
               '<div class="cs-next-meta"><i data-lucide="' + (j.mode === 'zoom' ? 'video' : 'phone') + '"></i>' + (j.mode === 'zoom' ? 'On Zoom' : 'By phone') + (u.topic ? ' &middot; ' + escapeHtml(u.topic) : '') + '</div></div>' +
             '</div>' +
             '<div class="cs-actions">' + joinRow +
@@ -433,17 +571,19 @@
 
       function calNote(status) {
         if (status === 'created') return '<div class="cs-cal-note"><i data-lucide="check-circle-2"></i>Added to David\'s calendar. He will see you there.</div>';
-        return '<div class="cs-cal-note"><i data-lucide="clock"></i>Your spot is held. David is confirmed for this time.</div>';
+        return '<div class="cs-cal-note"><i data-lucide="clock"></i>Your spot is held. See you at your session time.</div>';
       }
 
       function openBooking() {
-        pick = { date: null, hour: null, mode: 'zoom' };
+        var defaultMode = (settings && settings.default_mode) || 'zoom';
+        var defaultPhone = (settings && settings.phone) || '';
+        pick = { date: null, hour: null, mode: defaultMode };
         el('cs-book').classList.add('open');
         el('cs-book-title').textContent = 'Choose your time';
         renderDays();
         renderTimes();
-        setMode('zoom');
-        el('cs-phone').value = '';
+        setMode(defaultMode);
+        el('cs-phone').value = defaultPhone;
         el('cs-topic').value = '';
         showMsg('', null);
         el('cs-book').scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -473,13 +613,15 @@
         var curHour = Number(now.hour);
         var taken = takenSet();
         var any = false;
+        var memberTz = getMemberTimeZone();
         for (var h = 10; h <= 22; h++) {
           var b = document.createElement('button');
           b.type = 'button';
           b.className = 'cs-time' + (pick.hour === h ? ' sel' : '');
-          b.textContent = hourLabel(h);
+          var labelText = formatSlotLabel(pick.date, h, memberTz);
+          b.textContent = labelText;
           b.setAttribute('aria-pressed', pick.hour === h ? 'true' : 'false');
-          b.setAttribute('aria-label', hourLabel(h) + (pick.hour === h ? ', selected' : ''));
+          b.setAttribute('aria-label', labelText + (pick.hour === h ? ', selected' : ''));
           var isTaken = taken[pick.date + ':' + h];
           var isPast = isToday && h <= curHour;
           if (isTaken || isPast) { b.disabled = true; if (isTaken) b.title = 'Already booked'; }
@@ -520,12 +662,60 @@
           btn.disabled = false;
           el('cs-confirm-text').textContent = 'Confirm session';
           if (!r.ok) { showMsg((r.data && r.data.error) || 'That did not go through. Try another time.', 'err'); refresh(); return; }
+
+          var banner = el('cs-crisis-banner');
+          if (r.data && r.data.crisis && r.data.crisis.line) {
+            if (banner) {
+              banner.textContent = r.data.crisis.line;
+              banner.classList.remove('cs-hide');
+              banner.classList.add('show');
+            }
+          } else if (banner) {
+            banner.classList.add('cs-hide');
+            banner.classList.remove('show');
+          }
+
           el('cs-book').classList.remove('open');
           refresh();
         }).catch(function () {
           btn.disabled = false;
           el('cs-confirm-text').textContent = 'Confirm session';
           showMsg('Something interrupted the booking. Try again.', 'err');
+        });
+      }
+
+      function saveSettings() {
+        var tz = el('cs-setting-tz').value;
+        var mode = el('cs-setting-mode').value;
+        var phone = el('cs-setting-phone').value.trim() || null;
+        var btn = el('cs-save-settings');
+        var msg = el('cs-settings-msg');
+        btn.disabled = true;
+        msg.textContent = 'Saving...';
+        msg.className = 'cs-msg show';
+        api('save_settings', {
+          time_zone: tz,
+          default_mode: mode,
+          phone: phone
+        }).then(function (r) {
+          btn.disabled = false;
+          if (!r.ok) {
+            msg.textContent = (r.data && r.data.error) || 'Could not save settings.';
+            msg.className = 'cs-msg show err';
+            return;
+          }
+          settings = (r.data && r.data.settings) || { time_zone: tz, default_mode: mode, phone: phone };
+          msg.textContent = 'Settings saved.';
+          msg.className = 'cs-msg show ok';
+          setTimeout(function () { msg.className = 'cs-msg'; }, 3000);
+          if (el('cs-book').classList.contains('open')) {
+            renderTimes();
+          }
+          renderPrimary();
+        }).catch(function () {
+          btn.disabled = false;
+          msg.textContent = 'Network error saving settings.';
+          msg.className = 'cs-msg show err';
         });
       }
 
@@ -596,6 +786,16 @@
       function refresh() {
         return api('state').then(function (r) {
           state = r.ok ? r.data : { upcoming: null, taken: [] };
+          if (state && state.settings) {
+            settings = state.settings;
+          }
+          initTimezones();
+          if (settings) {
+            if (settings.time_zone) el('cs-setting-tz').value = settings.time_zone;
+            if (settings.default_mode) el('cs-setting-mode').value = settings.default_mode;
+            if (settings.phone) el('cs-setting-phone').value = settings.phone;
+          }
+          el('cs-settings').classList.remove('cs-hide');
           el('cs-state-skeleton').classList.add('cs-hide');
           el('cs-hero').classList.remove('cs-hide');
           renderPrimary();
@@ -618,6 +818,11 @@
       });
       el('cs-book-close').onclick = function () { el('cs-book').classList.remove('open'); };
       el('cs-confirm').onclick = confirmBooking;
+      el('cs-save-settings').onclick = saveSettings;
+      el('cs-setting-tz').onchange = function () {
+        if (el('cs-book').classList.contains('open')) { renderTimes(); }
+        renderPrimary();
+      };
 
       window.EEEStudio.initialize(function (ctx) {
         accessToken = ctx.session.access_token;
