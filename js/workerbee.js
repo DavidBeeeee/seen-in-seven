@@ -3059,11 +3059,26 @@ function bindEvents() {
 
 bindEvents();
 icons();
+// WBR-444. Supabase reports an auth event on every token refresh and when the
+// tab regains focus, and each one used to reload the whole WorkerBee state
+// (about 4 MB) and record a view, on top of a double load at page open. That was
+// a large share of the free plan's egress. Reload only when who is signed in
+// actually changes; a refreshed token just replaces the one API calls use.
+let activeUserId;
+function handleSession(nextSession) {
+  const userId = nextSession?.user?.id || null;
+  if (activeUserId !== undefined && userId === activeUserId) {
+    session = nextSession;
+    return;
+  }
+  activeUserId = userId;
+  activate(nextSession);
+}
 sb.auth.onAuthStateChange((_event, nextSession) => {
-  setTimeout(() => activate(nextSession), 0);
+  setTimeout(() => handleSession(nextSession), 0);
 });
 const { data } = await sb.auth.getSession();
-await activate(data.session);
+handleSession(data.session);
 
 // ── MOMENTUM HUB THREE HUNDRED ────────────────────────
 // WBR-373. David asked three times to read these results from the Dashboard
