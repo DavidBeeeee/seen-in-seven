@@ -293,6 +293,7 @@
           </section>
 
           <!-- Your past sessions: what the membership has delivered so far -->
+          <section class="cs-card cs-hide" id="cs-post-session" aria-label="After your session"><!-- filled by JS --></section>
           <section class="cs-card cs-history cs-hide" id="cs-history"><!-- filled by JS --></section>
 
           <!-- Your settings panel -->
@@ -758,6 +759,19 @@
       // sessions that have happened, most recent first; cancellations are not
       // value received and are left out. The server sends only the caller's own
       // rows.
+      function renderPostSession() {
+        var host = el('cs-post-session');
+        var held = ((state && state.history) || []).filter(function (session) {
+          return session.outcome === 'held' && session.status !== 'cancelled' &&
+            Number.isFinite(Date.parse(session.ends_at)) && Date.parse(session.ends_at) <= Date.now();
+        }).sort(function (a, b) { return Date.parse(b.ends_at) - Date.parse(a.ends_at); })[0];
+        if (!held) { host.classList.add('cs-hide'); host.innerHTML = ''; return; }
+        host.innerHTML = '<p class="cs-eyebrow">After your session</p>' +
+          '<h2>Your session' + (held.label_day ? ' on ' + escapeHtml(held.label_day) : '') + ' is complete.</h2>' +
+          '<p style="color:var(--studio-soft);margin:8px 0 0">What is one thing you want to put into practice before your next session?</p>';
+        host.classList.remove('cs-hide');
+      }
+
       function renderHistory() {
         var host = el('cs-history');
         var items = (state && state.history) || [];
@@ -799,6 +813,7 @@
           el('cs-state-skeleton').classList.add('cs-hide');
           el('cs-hero').classList.remove('cs-hide');
           renderPrimary();
+          renderPostSession();
           renderHistory();
           if (el('cs-book').classList.contains('open')) { renderDays(); renderTimes(); }
         });
