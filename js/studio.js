@@ -227,9 +227,11 @@ async function hydrateStudio(session) {
   const nextPath = !studioSession && pendingStudioNext();
   if (nextPath) {
     openAuthModal();
-    setAuthMessage(nextPath.startsWith('/vault')
-      ? 'Sign in with the email your book was sent to, and it opens right away.'
-      : 'Sign in and Studio takes you straight back.');
+    setAuthMessage(nextPath.startsWith('/vault?claim=')
+      ? 'Sign in, or get a magic link if you are new here, and your book goes onto your shelf and opens.'
+      : nextPath.startsWith('/vault')
+        ? 'Sign in with the email your book was sent to, and it opens right away.'
+        : 'Sign in and Studio takes you straight back.');
   }
 }
 
