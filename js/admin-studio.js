@@ -1094,7 +1094,7 @@ function interactiveEditorHtml() {
     '<button type="button" class="secondary-button" data-vi-quote-remove>Remove</button></div>').join('');
 
   return '<section class="drawer-section"><h4>Content</h4>' +
-    '<p>' + c.items.filter(i => !i.hidden).length + ' claims showing · ' + stats.readers + ' readers have called at least one. Placeholders: {total}, {total_word}, {doubted}.</p>' +
+    '<p>' + c.items.filter(i => !i.hidden).length + ' claims showing · ' + stats.readers + (stats.readers === 1 ? ' reader has' : ' readers have') + ' called at least one. Placeholders: {total}, {total_word}, {doubted}.</p>' +
     '<div class="book-editor-form vi-edit">' +
       viField('Kicker', 'kicker', c.kicker, { max: 120 }) +
       viField('Heading', 'heading', c.heading, { max: 200 }) +
