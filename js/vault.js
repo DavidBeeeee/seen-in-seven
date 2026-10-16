@@ -289,13 +289,15 @@ function renderPdfPage(num) {
     const viewport = page.getViewport({ scale: pdfScale });
     canvas.width = Math.floor(viewport.width * ratio);
     canvas.height = Math.floor(viewport.height * ratio);
-    canvas.style.width = Math.floor(viewport.width) + 'px';
+    vaultEl('pdf-page').style.width = Math.floor(viewport.width) + 'px';
+    const linkLayer = vaultEl('pdf-link-layer');
+    if (linkLayer) linkLayer.textContent = '';
     pdfRenderTask = page.render({
       canvasContext: canvas.getContext('2d'),
       viewport,
       transform: ratio !== 1 ? [ratio, 0, 0, ratio, 0, 0] : null
     });
-    return pdfRenderTask.promise;
+    return pdfRenderTask.promise.then(() => renderPdfLinks(page, viewport, token));
   }).catch(() => {}).then(() => {
     pdfRenderTask = null;
     pdfRendering = false;
@@ -305,6 +307,64 @@ function renderPdfPage(num) {
       renderPdfPage(next);
     }
   });
+}
+
+// The page is drawn as an image, so its links are laid over it as real
+// anchors, positioned in percentages so they scale with the page. Jumps
+// inside the book go through goToPdfPage (and save the page like any other
+// move); outside links open in a new tab so the reader keeps their place.
+// Only http, https and mailto links are made clickable.
+async function renderPdfLinks(page, viewport, token) {
+  const layer = vaultEl('pdf-link-layer');
+  if (!layer || !pdfDoc) return;
+  let annotations = [];
+  try { annotations = await page.getAnnotations(); } catch (e) { return; }
+  if (token !== pdfLoadToken) return;
+  layer.textContent = '';
+  for (const annotation of annotations) {
+    if (annotation.subtype !== 'Link' || !annotation.rect) continue;
+    const [x1, y1, x2, y2] = viewport.convertToViewportRectangle(annotation.rect);
+    const link = document.createElement('a');
+    link.className = 'pdf-link';
+    link.style.left = (Math.min(x1, x2) / viewport.width * 100) + '%';
+    link.style.top = (Math.min(y1, y2) / viewport.height * 100) + '%';
+    link.style.width = (Math.abs(x2 - x1) / viewport.width * 100) + '%';
+    link.style.height = (Math.abs(y2 - y1) / viewport.height * 100) + '%';
+
+    if (annotation.url) {
+      let url;
+      try { url = new URL(annotation.url); } catch (e) { continue; }
+      if (!['http:', 'https:', 'mailto:'].includes(url.protocol)) continue;
+      link.href = url.href;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.title = url.protocol === 'mailto:' ? url.pathname : url.host;
+      link.setAttribute('aria-label', 'Open ' + link.title + ' in a new tab');
+    } else if (annotation.dest) {
+      link.href = '#';
+      link.setAttribute('aria-label', 'Go to another page in this book');
+      link.addEventListener('click', event => {
+        event.preventDefault();
+        goToPdfDestination(annotation.dest);
+      });
+    } else {
+      continue;
+    }
+    layer.appendChild(link);
+  }
+}
+
+async function goToPdfDestination(dest) {
+  if (!pdfDoc) return;
+  try {
+    const explicit = typeof dest === 'string' ? await pdfDoc.getDestination(dest) : dest;
+    if (!Array.isArray(explicit) || !explicit.length) return;
+    const target = explicit[0];
+    const pageIndex = typeof target === 'number' ? target : await pdfDoc.getPageIndex(target);
+    goToPdfPage(pageIndex + 1);
+  } catch (e) {
+    showPdfNotice('That link could not be followed. You can use the page box to jump instead.');
+  }
 }
 
 function queueRenderPage(num) {

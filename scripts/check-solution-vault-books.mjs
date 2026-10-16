@@ -89,7 +89,11 @@ assert.ok(vaultJs.includes("visibilityState === 'hidden') flushPdfSave()"), 'hid
 assert.ok(!/function renderPdfPage[\s\S]*?queueSavePage[\s\S]*?\n\}/.test(vaultJs.slice(vaultJs.indexOf('function renderPdfPage'), vaultJs.indexOf('function queueRenderPage'))), 'rendering a page (open, zoom, fit) never writes progress');
 assert.ok(vaultCss.includes('object-fit: contain'), 'covers are uncropped');
 assert.ok(vaultCss.includes('minmax(min(320px, 100%), 1fr)'), 'shelf grid cannot overflow a phone');
-assert.ok(/#pdf-canvas \{ align-self: flex-start; flex: none;/.test(vaultCss), 'the page canvas keeps its aspect ratio instead of stretching to the reader height');
+assert.ok(/\.pdf-page \{ position: relative; align-self: flex-start; flex: none;/.test(vaultCss) && /#pdf-canvas \{ display: block; width: 100%; height: auto;/.test(vaultCss), 'the page keeps its aspect ratio instead of stretching to the reader height');
+assert.ok(vaultCss.includes('#eee-app { padding-top: var(--header-height); }'), 'the Vault clears the fixed Studio header, so the Book Shelf and Video Room tabs are visible');
+assert.ok(vaultHtml.includes('id="pdf-link-layer"') && vaultJs.includes('renderPdfLinks(page, viewport, token)'), 'PDF links are laid over the page');
+assert.ok(vaultJs.includes("['http:', 'https:', 'mailto:'].includes(url.protocol)") && vaultJs.includes("link.rel = 'noopener noreferrer'"), 'outside links are limited to http, https and mailto and open safely');
+assert.ok(vaultJs.includes('goToPdfPage(pageIndex + 1)'), 'links inside the book jump through the same page path');
 console.log('PASS: reader contracts verified.');
 
 // 5. Sign-in returns to the book.
