@@ -30,7 +30,8 @@ for (const table of ['solution_vault_books', 'solution_vault_book_grants', 'solu
 }
 assert.ok(!/grant (insert|update|delete)[^;]*solution_vault/i.test(migrationSql), 'no direct table writes for members; writes go through functions');
 const editingSql = read('supabase_migrations', '2026-10-16-solution-vault-book-editing.sql');
-const allSql = migrationSql + '\n' + editingSql;
+const interactiveSql = read('supabase_migrations', '2026-10-16-solution-vault-interactive-books.sql');
+const allSql = migrationSql + '\n' + editingSql + '\n' + interactiveSql;
 const fnSignature = name => {
   const m = allSql.match(new RegExp('create or replace function public\\.' + name + '\\(([^)]*)\\)'));
   return m ? m[1].split(',').map(part => part.trim().split(/\s+/)[0]).filter(Boolean) : null;
@@ -49,7 +50,7 @@ console.log('PASS: migration contract verified.');
 
 // 2. Every RPC the browser calls exists with the parameter names it sends.
 console.log('2. Verifying client RPC calls match the database...');
-const clientSources = ['js/vault.js', 'js/studio.js', 'js/admin-studio.js', 'api/_lib/gift-delivery.js'].map(f => [f, read(...f.split('/'))]);
+const clientSources = ['js/vault.js', 'js/studio.js', 'js/admin-studio.js', 'api/_lib/gift-delivery.js', 'api/hub-page.js'].map(f => [f, read(...f.split('/'))]);
 for (const [file, src] of clientSources) {
   for (const call of src.matchAll(/rpc\('([a-z_]+(?:book|vault)[a-z_]*)'\s*(?:,\s*\{([^}]*)\})?/g)) {
     const params = fnSignature(call[1]);
@@ -180,6 +181,25 @@ assert.ok(editingSql.includes("where o.bucket_id = 'solution-vault-books' and o.
 const detailKeys = (adminJs.match(/function currentDetails\(book\) \{[\s\S]*?\n\}/) || [''])[0].match(/p_[a-z_]+/g) || [];
 for (const key of detailKeys.concat(['p_cover_url'])) assert.ok(fnSignature('admin_update_book_details').includes(key), 'editor sends ' + key + ', which admin_update_book_details takes');
 assert.ok(adminJs.includes("if (await sha256Hex(await stored.arrayBuffer()) !== sha)"), 'a replaced file is verified from storage before the book switches to it');
+
+// Interactive books
+for (const fn of ['save_solution_vault_answers', 'admin_save_interactive_content', 'admin_book_answer_stats', 'claim_solution_vault_book', 'admin_rotate_claim_link']) {
+  assert.ok(fnSignature(fn), fn + ' defined');
+  assert.ok(new RegExp('revoke all on function public\\.' + fn + '\\([^)]*\\) from public, anon;').test(interactiveSql), fn + ' is revoked from public and anon');
+}
+assert.ok(interactiveSql.includes("v_merged := p_answers || coalesce(v_row.answers, '{}'::jsonb);"), "a reader's first call on a claim stands");
+assert.ok(interactiveSql.includes('was removed. Hide it instead'), 'saved claim ids can be hidden but never removed');
+assert.ok(interactiveSql.includes("elsif v_grant.status = 'revoked' then\n    v_state := 'revoked_kept';"), 'a claim link never re-grants a revoked gift');
+assert.ok(!/values \('[a-f0-9]{18,}'/.test(interactiveSql), 'no claim code is committed');
+assert.ok(/'content-lies', 'The Stupidest Lies You Were Told About Making Content'/.test(interactiveSql), 'the Day One gift is seeded');
+const viBlock = vaultJs.slice(vaultJs.indexOf('/* ── Interactive Book Reader'), vaultJs.indexOf('/* ── Video Room'));
+assert.ok(viBlock.length > 1000, 'interactive reader present');
+assert.ok(!/innerHTML/.test(viBlock), 'interactive content is built from text nodes, never innerHTML');
+assert.ok(viBlock.includes("if (!viBook || viBook.admin_preview) return;"), 'admin preview never saves answers');
+assert.ok(/a\.href = close\.button_url/.test(viBlock) && viBlock.includes("/^https:\\/\\//.test(close.button_url || '')"), 'the closing button only links to https');
+assert.ok(hubPageSrc.includes("sb.rpc('claim_solution_vault_book', { p_code: claimCode })") && hubPageSrc.indexOf('claim_solution_vault_book') < hubPageSrc.indexOf("sb.rpc('has_vault_access')"), 'a claim link adds the book before the Vault access check');
+assert.ok(safeNext.test('/vault?claim=0123456789abcdef0123456789abcdef'), 'a claim link survives sign-in');
+assert.ok(adminJs.includes("rpc('admin_save_interactive_content', { p_book_slug: viEdit.slug, p_content: viEdit.content })"), 'admin saves interactive content through the validating function');
 console.log('PASS: Studio Home and Admin Studio verified.');
 
 // 8. Zero Em Dashes Invariant Check
@@ -192,7 +212,8 @@ const filesToCheck = [
   'index.html',
   'js/studio.js',
   'admin.html',
-  'js/admin-studio.js'
+  'js/admin-studio.js',
+  'api/hub-page.js'
 ];
 
 for (const relPath of filesToCheck) {

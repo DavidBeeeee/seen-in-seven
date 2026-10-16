@@ -204,7 +204,7 @@ async function loadStudioAdmin() {
     rpcSafe('boardroom', 'admin_get_boardroom_activity'),
     rpcSafe('hubUsage', 'admin_get_hub_usage'),
     tableSafe('catalog', 'studio_catalog_settings', 'app_key,catalog_mode,updated_at'),
-    tableSafe('books', 'solution_vault_books', 'id,slug,title,subtitle,description,format,status,cover_url,content_path,content_version,page_count,file_size_bytes,sha256,download_enabled,previous_content_path,updated_at,created_at'),
+    tableSafe('books', 'solution_vault_books', 'id,slug,title,subtitle,description,format,status,cover_url,content_path,content_version,page_count,file_size_bytes,sha256,download_enabled,previous_content_path,interactive,updated_at,created_at'),
     tableSafe('bookGrants', 'solution_vault_book_grants', 'id,user_id,book_id,grant_kind,source_kind,source_ref,status,expires_at,granted_at,revoked_at')
   ]);
   const loaded = Object.fromEntries(results.map(result => [result.name, result]));
@@ -928,7 +928,8 @@ function openBookEditor(slug) {
           '<div class="drawer-actions"><button class="secondary-button" type="button" id="book-file-save">Replace book file</button>' +
           (book.previous_content_path ? '<button class="secondary-button" type="button" id="book-file-restore">Restore previous file</button>' : '') + '</div>' +
           '<p class="enrollment-message" id="book-file-message" role="status"></p></section>'
-      : '');
+      : '') +
+    (book.format === 'interactive' ? '<div id="vi-editor-host"></div>' : '');
   adminEl('drawer-backdrop').hidden = false;
   document.body.style.overflow = 'hidden';
   refreshAdminIcons();
@@ -940,6 +941,7 @@ function openBookEditor(slug) {
     if (file && COVER_TYPES[file.type]) adminEl('book-edit-cover-preview').src = URL.createObjectURL(file);
   });
   if (isPdf) adminEl('book-file-save').addEventListener('click', () => replaceBookFile(book));
+  if (book.format === 'interactive') openInteractiveEditor(book);
   if (adminEl('book-file-restore')) adminEl('book-file-restore').addEventListener('click', () => restoreBookFile(book));
 }
 
@@ -1035,6 +1037,224 @@ async function restoreBookFile(book) {
   if (error) return bookEditorMessage('book-file-message', 'Not restored: ' + error.message, 'error');
   await reopenBookEditor(book.slug);
   bookEditorMessage('book-file-message', 'The previous file is back. Saved pages reset, as with any file change.', 'success');
+}
+
+/* ── Interactive book editor (WBR-445) ─────────────────────────────────── */
+// Edits the whole interactive book as data: the intro, every claim (add, move,
+// hide, never delete once saved), pull quotes, verdict lines, score messages
+// and the closing. The database validates before saving. Each claim shows how
+// many readers believed it, said "No way" or just opened it.
+const STUDIO_ORIGIN = 'https://studio.coloradomastermind.com';
+let viEdit = null;
+
+const paras = text => String(text || '').split(/\n\s*\n/).map(p => p.trim()).filter(Boolean);
+const lines = text => String(text || '').split('\n').map(l => l.trim()).filter(Boolean);
+const joinParas = list => (list || []).join('\n\n');
+
+function claimSlug(text, taken) {
+  const base = String(text || 'claim').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 40) || 'claim';
+  let id = base;
+  for (let n = 2; taken.has(id); n++) id = base.slice(0, 36) + '-' + n;
+  return id;
+}
+
+function viField(label, key, value, opts = {}) {
+  const tag = opts.area ? 'textarea' : 'input';
+  const rows = opts.area ? ' rows="' + (opts.rows || 3) + '"' : '';
+  const val = opts.area ? escapeHtml(value || '') : '';
+  const attr = opts.area ? '' : ' value="' + safeAttr(value || '') + '"';
+  return '<label>' + escapeHtml(label) + (opts.hint ? ' <small>' + escapeHtml(opts.hint) + '</small>' : '') +
+    '<' + tag + ' data-vi="' + key + '"' + rows + attr + (opts.max ? ' maxlength="' + opts.max + '"' : '') + '>' + (opts.area ? val + '</textarea>' : '') + '</label>';
+}
+
+function interactiveEditorHtml() {
+  const c = viEdit.content;
+  const close = c.close || {};
+  const score = c.score || {};
+  const stats = viEdit.stats || { readers: 0, claims: {} };
+  const claimOptions = id => c.items.map((item, i) => '<option value="' + safeAttr(item.id) + '"' + (item.id === id ? ' selected' : '') + '>' + (i + 1) + '. ' + escapeHtml(item.claim.slice(0, 50)) + '</option>').join('');
+
+  const items = c.items.map((item, i) => {
+    const s = stats.claims[item.id] || { yes: 0, no: 0, open: 0 };
+    return '<article class="vi-edit-claim' + (item.hidden ? ' is-hidden' : '') + '" data-index="' + i + '">' +
+      '<div class="vi-edit-claim-head"><strong>' + (i + 1) + '</strong>' +
+        '<span class="vi-edit-stat">No way ' + s.no + ' · Believe ' + s.yes + ' · Opened ' + s.open + '</span>' +
+        '<span class="vi-edit-moves"><button type="button" class="icon-button" data-vi-move="-1" title="Move up" aria-label="Move claim ' + (i + 1) + ' up">&uarr;</button>' +
+        '<button type="button" class="icon-button" data-vi-move="1" title="Move down" aria-label="Move claim ' + (i + 1) + ' down">&darr;</button></span></div>' +
+      '<label>Claim<input data-vi-item="claim" maxlength="300" value="' + safeAttr(item.claim) + '"></label>' +
+      '<label>What you say after it <small>blank line between paragraphs; **bold**</small><textarea data-vi-item="body" rows="5">' + escapeHtml(joinParas(item.body)) + '</textarea></label>' +
+      '<label class="book-editor-check"><input type="checkbox" data-vi-item="hidden"' + (item.hidden ? ' checked' : '') + '> Hidden from readers (answers are kept)</label>' +
+      (viEdit.savedIds.has(item.id) ? '' : '<button type="button" class="secondary-button" data-vi-remove>Remove (not saved yet)</button>') +
+    '</article>';
+  }).join('');
+
+  const quotes = (c.quotes || []).map((q, i) =>
+    '<div class="vi-edit-quote" data-quote="' + i + '"><input data-vi-quote="text" maxlength="300" value="' + safeAttr(q.text) + '">' +
+    '<select data-vi-quote="after" aria-label="Show after claim">' + claimOptions(q.after) + '</select>' +
+    '<button type="button" class="secondary-button" data-vi-quote-remove>Remove</button></div>').join('');
+
+  return '<section class="drawer-section"><h4>Content</h4>' +
+    '<p>' + c.items.filter(i => !i.hidden).length + ' claims showing · ' + stats.readers + ' readers have called at least one. Placeholders: {total}, {total_word}, {doubted}.</p>' +
+    '<div class="book-editor-form vi-edit">' +
+      viField('Kicker', 'kicker', c.kicker, { max: 120 }) +
+      viField('Heading', 'heading', c.heading, { max: 200 }) +
+      viField('Heading, italic ending', 'heading_emphasis', c.heading_emphasis, { max: 120 }) +
+      viField('Intro', 'intro', joinParas(c.intro), { area: true, rows: 6, hint: 'blank line between paragraphs; **bold**' }) +
+      '<div class="vi-edit-row">' + viField('Divider label', 'start_label', c.start_label, { max: 60 }) +
+        viField('Believe button', 'believe_label', c.believe_label, { max: 40 }) + viField('Doubt button', 'doubt_label', c.doubt_label, { max: 40 }) + '</div>' +
+      '<div class="vi-edit-row">' + viField('Skip line, top', 'skip_top', c.skip_top, { max: 120 }) +
+        viField('Skip line, bottom', 'skip_bottom', c.skip_bottom, { max: 120 }) + viField('Skip button', 'skip_button', c.skip_button, { max: 60 }) + '</div>' +
+      '<h5>Claims</h5>' + items +
+      '<button type="button" class="secondary-button" data-vi-add>Add a claim</button>' +
+      '<h5>Pull quotes</h5>' + quotes +
+      '<button type="button" class="secondary-button" data-vi-quote-add>Add a pull quote</button>' +
+      '<h5>Verdict lines</h5>' +
+      viField('After "Believe it"', 'believed_lines', (c.believed_lines || []).join('\n'), { area: true, rows: 4, hint: 'one per line, picked at random' }) +
+      viField('After "No way"', 'doubted_lines', (c.doubted_lines || []).join('\n'), { area: true, rows: 4, hint: 'one per line' }) +
+      viField('After "Open all"', 'opened_line', c.opened_line, { max: 80 }) +
+      '<h5>Score</h5>' +
+      [['none', 'Believed every one'], ['one', 'Doubted exactly one'], ['most', 'Doubted three quarters or more'], ['some', 'Doubted some']].map(([key, label]) =>
+        viField(label + ': heading', 'score.' + key + '.heading', (score[key] || {}).heading, { max: 200 }) +
+        viField(label + ': message', 'score.' + key + '.body', (score[key] || {}).body, { area: true, rows: 2 })).join('') +
+      '<h5>Closing</h5>' +
+      viField('Heading', 'close.heading', close.heading, { max: 200 }) +
+      viField('Paragraphs', 'close.paragraphs', joinParas(close.paragraphs), { area: true, rows: 6, hint: 'blank line between paragraphs' }) +
+      '<div class="vi-edit-row">' + viField('Button label', 'close.button_label', close.button_label, { max: 60 }) +
+        viField('Button link', 'close.button_url', close.button_url, { max: 300, hint: 'https:// address; leave empty for no button' }) + '</div>' +
+      viField('Signature', 'close.signature', close.signature, { max: 80 }) +
+      '<div class="drawer-actions"><button type="button" class="secondary-button" data-vi-save>Save content</button>' +
+        '<a class="secondary-button" href="/vault?book=' + encodeURIComponent(viEdit.slug) + '" target="_blank" rel="noopener">Preview in reader</a></div>' +
+      '<p class="enrollment-message" id="vi-edit-message" role="status"></p>' +
+    '</div></section>' +
+    '<section class="drawer-section"><h4>Claim link</h4>' +
+      '<p>Put this on the RSVP page. Whoever opens it while signed in (or signs in from it) gets the book on their shelf once. Replacing it stops the old link working; people who already claimed keep the book.</p>' +
+      '<div id="vi-claim-link"></div>' +
+      '<p class="enrollment-message" id="vi-claim-message" role="status"></p>' +
+    '</section>';
+}
+
+function setDeep(obj, path, value) {
+  const keys = path.split('.');
+  let target = obj;
+  keys.slice(0, -1).forEach(k => { target[k] = target[k] && typeof target[k] === 'object' ? target[k] : {}; target = target[k]; });
+  target[keys[keys.length - 1]] = value;
+}
+
+function readInteractiveForm(root) {
+  const c = viEdit.content;
+  root.querySelectorAll('[data-vi]').forEach(el => {
+    const key = el.dataset.vi;
+    const value = el.value;
+    if (key === 'intro' || key === 'close.paragraphs') setDeep(c, key, paras(value));
+    else if (key === 'believed_lines' || key === 'doubted_lines') c[key] = lines(value);
+    else setDeep(c, key, value.trim());
+  });
+  root.querySelectorAll('.vi-edit-claim').forEach(card => {
+    const item = c.items[Number(card.dataset.index)];
+    item.claim = card.querySelector('[data-vi-item="claim"]').value.trim();
+    item.body = paras(card.querySelector('[data-vi-item="body"]').value);
+    item.hidden = card.querySelector('[data-vi-item="hidden"]').checked;
+  });
+  c.quotes = [...root.querySelectorAll('.vi-edit-quote')].map(row => ({
+    text: row.querySelector('[data-vi-quote="text"]').value.trim(),
+    after: row.querySelector('[data-vi-quote="after"]').value
+  })).filter(q => q.text);
+  // A new claim's id comes from its words the first time it is saved, then never changes.
+  const taken = new Set(c.items.filter(i => i.id).map(i => i.id));
+  c.items.forEach(item => { if (!item.id) { item.id = claimSlug(item.claim, taken); taken.add(item.id); } });
+}
+
+function renderInteractiveEditor() {
+  const host = adminEl('vi-editor-host');
+  host.innerHTML = interactiveEditorHtml();
+  host.querySelector('[data-vi-add]').addEventListener('click', () => {
+    readInteractiveForm(host);
+    viEdit.content.items.push({ id: '', claim: 'A new claim', body: [], hidden: false, added_at: new Date().toISOString() });
+    renderInteractiveEditor();
+    const cards = host.querySelectorAll('.vi-edit-claim');
+    cards[cards.length - 1].querySelector('input').focus();
+  });
+  host.querySelectorAll('[data-vi-move]').forEach(btn => btn.addEventListener('click', () => {
+    readInteractiveForm(host);
+    const i = Number(btn.closest('.vi-edit-claim').dataset.index);
+    const j = i + Number(btn.dataset.viMove);
+    const items = viEdit.content.items;
+    if (j < 0 || j >= items.length) return;
+    [items[i], items[j]] = [items[j], items[i]];
+    renderInteractiveEditor();
+  }));
+  host.querySelectorAll('[data-vi-remove]').forEach(btn => btn.addEventListener('click', () => {
+    readInteractiveForm(host);
+    viEdit.content.items.splice(Number(btn.closest('.vi-edit-claim').dataset.index), 1);
+    renderInteractiveEditor();
+  }));
+  host.querySelector('[data-vi-quote-add]').addEventListener('click', () => {
+    readInteractiveForm(host);
+    const last = viEdit.content.items[viEdit.content.items.length - 1];
+    viEdit.content.quotes = (viEdit.content.quotes || []).concat([{ text: 'A new pull quote', after: last ? last.id : '' }]);
+    renderInteractiveEditor();
+  });
+  host.querySelectorAll('[data-vi-quote-remove]').forEach(btn => btn.addEventListener('click', () => {
+    readInteractiveForm(host);
+    viEdit.content.quotes.splice(Number(btn.closest('.vi-edit-quote').dataset.quote), 1);
+    renderInteractiveEditor();
+  }));
+  host.querySelector('[data-vi-save]').addEventListener('click', saveInteractiveContent);
+  renderClaimLink();
+}
+
+async function saveInteractiveContent() {
+  const host = adminEl('vi-editor-host');
+  readInteractiveForm(host);
+  bookEditorMessage('vi-edit-message', 'Saving...');
+  const { data, error } = await adminSb.rpc('admin_save_interactive_content', { p_book_slug: viEdit.slug, p_content: viEdit.content });
+  if (error) return bookEditorMessage('vi-edit-message', 'Not saved: ' + error.message, 'error');
+  viEdit.savedIds = new Set(viEdit.content.items.map(i => i.id));
+  renderInteractiveEditor();
+  bookEditorMessage('vi-edit-message', 'Saved ' + data.claims + ' claims. Readers see it the next time they open the book.', 'success');
+}
+
+async function renderClaimLink() {
+  const host = adminEl('vi-claim-link');
+  if (!host) return;
+  const { data, error } = await adminSb.from('solution_vault_claim_links')
+    .select('code,claims,created_at').eq('book_id', viEdit.bookId).eq('active', true).maybeSingle();
+  if (error) { host.innerHTML = '<p>Could not load the link: ' + escapeHtml(error.message) + '</p>'; return; }
+  const url = data ? STUDIO_ORIGIN + '/vault?claim=' + data.code : '';
+  host.innerHTML = (data
+    ? '<input class="vi-claim-url" readonly value="' + safeAttr(url) + '" aria-label="Claim link">' +
+      '<p>' + data.claims + ' ' + (data.claims === 1 ? 'person has' : 'people have') + ' claimed through this link since ' + escapeHtml(formatDate(data.created_at)) + '.</p>'
+    : '<p>No claim link yet.</p>') +
+    '<div class="drawer-actions">' + (data ? '<button type="button" class="secondary-button" data-vi-copy>Copy link</button>' : '') +
+    '<button type="button" class="secondary-button" data-vi-rotate>' + (data ? 'Replace link' : 'Create link') + '</button></div>';
+  const copy = host.querySelector('[data-vi-copy]');
+  if (copy) copy.addEventListener('click', async () => {
+    try { await navigator.clipboard.writeText(url); bookEditorMessage('vi-claim-message', 'Copied.', 'success'); }
+    catch (e) { host.querySelector('.vi-claim-url').select(); bookEditorMessage('vi-claim-message', 'Select the link and copy it.', ''); }
+  });
+  host.querySelector('[data-vi-rotate]').addEventListener('click', async () => {
+    if (data && !window.confirm('Replace the claim link? The current link stops working right away. Anyone who already claimed keeps the book.')) return;
+    const { error: rotateError } = await adminSb.rpc('admin_rotate_claim_link', { p_book_slug: viEdit.slug });
+    if (rotateError) return bookEditorMessage('vi-claim-message', 'Not changed: ' + rotateError.message, 'error');
+    bookEditorMessage('vi-claim-message', data ? 'Replaced. Update the RSVP page with the new link.' : 'Created. Put it on the RSVP page.', 'success');
+    renderClaimLink();
+  });
+}
+
+async function openInteractiveEditor(book) {
+  const host = adminEl('vi-editor-host');
+  if (!host) return;
+  host.innerHTML = '<p>Loading content...</p>';
+  const { data: stats } = await adminSb.rpc('admin_book_answer_stats', { p_book_slug: book.slug });
+  viEdit = {
+    slug: book.slug,
+    bookId: book.id,
+    content: JSON.parse(JSON.stringify(book.interactive || { items: [] })),
+    savedIds: new Set(((book.interactive || {}).items || []).map(i => i.id)),
+    stats: stats || { readers: 0, claims: {} }
+  };
+  if (!Array.isArray(viEdit.content.items)) viEdit.content.items = [];
+  renderInteractiveEditor();
 }
 
 window.openBookEditor = openBookEditor;

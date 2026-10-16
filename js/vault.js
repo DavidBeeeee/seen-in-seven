@@ -95,10 +95,19 @@ function renderBookShelf() {
   if (empty) empty.hidden = true;
   grid.innerHTML = vaultBooks.map(book => {
     const isWeb = book.format === 'web';
-    const badge = book.admin_preview ? 'Admin preview' : (isWeb ? 'Web book' : 'PDF book');
+    const isInteractive = book.format === 'interactive';
+    const badge = book.admin_preview ? 'Admin preview' : (isInteractive ? 'Interactive' : isWeb ? 'Web book' : 'PDF book');
     let progressHtml = '';
     let actionLabel = 'Read book';
-    if (book.progress_reset) {
+    if (isInteractive) {
+      const items = ((book.interactive && book.interactive.items) || []).filter(item => !item.hidden);
+      const answers = (book.progress && book.progress.answers) || {};
+      const called = items.filter(item => answers[item.id]).length;
+      if (called) {
+        progressHtml = '<span class="book-progress-chip"><i data-lucide="check-circle"></i><span>' + called + ' of ' + items.length + ' called</span></span>';
+        actionLabel = called < items.length ? 'Continue' : 'Open again';
+      }
+    } else if (book.progress_reset) {
       progressHtml = '<span class="book-progress-chip"><i data-lucide="refresh-cw"></i><span>Updated edition, starts from the beginning</span></span>';
     } else if (book.progress && !isWeb && book.progress.last_page) {
       progressHtml = '<span class="book-progress-chip"><i data-lucide="bookmark"></i><span>Page ' + vaultEscape(book.progress.last_page) + (book.page_count ? ' of ' + vaultEscape(book.page_count) : '') + '</span></span>';
@@ -516,6 +525,267 @@ function showWebChapter(idx) {
   }
 }
 
+/* ── Interactive Book Reader ────────────────────────────────────────── */
+// An interactive book is a list of claims the reader calls before each is
+// revealed. Content comes from the database as data and is built here from
+// text nodes only (**double asterisks** become bold), so nothing in it runs as
+// code. Answers are saved per claim id, so claims David adds later appear as
+// New without disturbing anyone's earlier answers.
+const VI_NUMBER_WORDS = ['zero', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten',
+  'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen', 'twenty'];
+let viBook = null;
+let viAnswers = {};
+
+function viFill(text, vars) {
+  return String(text || '').replace(/\{(total|total_word|doubted)\}/g, (m, key) => (vars[key] == null ? m : String(vars[key])));
+}
+
+function viRich(el, text) {
+  el.textContent = '';
+  String(text || '').split(/(\*\*[^*]+\*\*)/g).forEach(part => {
+    if (!part) return;
+    if (/^\*\*[^*]+\*\*$/.test(part)) {
+      const b = document.createElement('b');
+      b.textContent = part.slice(2, -2);
+      el.appendChild(b);
+    } else {
+      el.appendChild(document.createTextNode(part));
+    }
+  });
+  return el;
+}
+
+function viNode(tag, className, text) {
+  const el = document.createElement(tag);
+  if (className) el.className = className;
+  if (text != null) el.textContent = text;
+  return el;
+}
+
+function viLoadFonts() {
+  if (document.getElementById('vi-fonts')) return;
+  const link = document.createElement('link');
+  link.id = 'vi-fonts';
+  link.rel = 'stylesheet';
+  link.href = 'https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,600;1,500;1,600&family=Oswald:wght@400;500&family=Permanent+Marker&display=swap';
+  document.head.appendChild(link);
+}
+
+function viVisibleItems(content) {
+  return (Array.isArray(content.items) ? content.items : []).filter(item => !item.hidden);
+}
+
+function viCounts(content) {
+  const items = viVisibleItems(content);
+  const answered = items.filter(item => viAnswers[item.id]).length;
+  const doubted = items.filter(item => viAnswers[item.id] === 'no').length;
+  const total = items.length;
+  return { total, answered, doubted, total_word: VI_NUMBER_WORDS[total] || String(total) };
+}
+
+function viVerdict(content, item, answer, fresh) {
+  if (answer === 'open') return content.opened_line || 'True.';
+  const pool = (answer === 'no' ? content.doubted_lines : content.believed_lines) || [];
+  if (!pool.length) return 'True.';
+  // A fresh call gets a random line; a returning reader always sees the same one.
+  if (fresh) return pool[Math.floor(Math.random() * pool.length)];
+  let hash = 0;
+  for (const ch of item.id) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
+  return pool[hash % pool.length];
+}
+
+function viShowNotice(message) {
+  const n = vaultEl('vi-notice');
+  if (!n) return;
+  n.textContent = message || '';
+  n.hidden = !message;
+}
+
+function openInteractiveReader(book) {
+  activeBook = book;
+  viBook = book;
+  viAnswers = Object.assign({}, book.progress && book.progress.answers ? book.progress.answers : {});
+  ['vault-books-section', 'vault-videos-section', 'vault-tabs'].forEach(id => { const el = vaultEl(id); if (el) el.hidden = true; });
+  showVaultLinkNotice('');
+  viShowNotice(book.admin_preview ? 'Admin preview: your answers here are not saved.' : '');
+  viLoadFonts();
+  renderInteractiveBook();
+  vaultEl('vault-interactive-reader').hidden = false;
+  window.scrollTo(0, 0);
+}
+
+function closeInteractiveReader() {
+  vaultEl('vault-interactive-reader').hidden = true;
+  const tabs = vaultEl('vault-tabs');
+  if (tabs && !tabs.dataset.forcedHidden) tabs.hidden = false;
+  const booksSec = vaultEl('vault-books-section');
+  if (booksSec) booksSec.hidden = false;
+  activeBook = null;
+  viBook = null;
+  loadBooks().catch(console.error);
+}
+
+function renderInteractiveBook() {
+  const book = viBook;
+  const content = book.interactive || {};
+  const page = vaultEl('vi-page');
+  page.textContent = '';
+  const vars = viCounts(content);
+  const lastSeen = book.progress && book.progress.updated_at ? Date.parse(book.progress.updated_at) : null;
+  const hasAnswers = Object.keys(viAnswers).length > 0;
+
+  page.appendChild(viNode('p', 'vi-kicker', content.kicker || ''));
+  const h1 = viNode('h1', 'vi-h1', (content.heading || book.title) + (content.heading_emphasis ? ' ' : ''));
+  if (content.heading_emphasis) h1.appendChild(viNode('i', null, content.heading_emphasis));
+  page.appendChild(h1);
+
+  const intro = viNode('div', 'vi-intro');
+  (content.intro || []).forEach(text => intro.appendChild(viRich(document.createElement('p'), viFill(text, vars))));
+  page.appendChild(intro);
+
+  const skip = (label, extraClass) => {
+    const p = viNode('p', 'vi-skip' + (extraClass ? ' ' + extraClass : ''), viFill(label, vars) + ' ');
+    const btn = viNode('button', 'vi-skipbtn', viFill(content.skip_button || 'Open all', vars));
+    btn.type = 'button';
+    btn.addEventListener('click', viOpenAll);
+    p.appendChild(btn);
+    return p;
+  };
+  if (content.skip_top) page.appendChild(skip(content.skip_top, 'vi-skip-top'));
+
+  const brk = viNode('div', 'vi-break');
+  brk.appendChild(viNode('span', null, content.start_label || 'Start here'));
+  brk.appendChild(viNode('i'));
+  page.appendChild(brk);
+
+  const quotesAfter = {};
+  (content.quotes || []).forEach(q => { (quotesAfter[q.after] = quotesAfter[q.after] || []).push(q.text); });
+
+  viVisibleItems(content).forEach((item, index) => {
+    const answer = viAnswers[item.id];
+    const row = viNode('div', 'vi-item' + (answer ? ' answered' : ''));
+    row.dataset.claimId = item.id;
+    row.appendChild(viNode('p', 'vi-num', String(index + 1)));
+    const main = viNode('div');
+    const isNew = !answer && hasAnswers && lastSeen && item.added_at && Date.parse(item.added_at) > lastSeen;
+    if (isNew) main.appendChild(viNode('span', 'vi-new', 'New'));
+    main.appendChild(viNode('h2', 'vi-claim', item.claim));
+
+    const ask = viNode('div', 'vi-ask');
+    [['yes', content.believe_label || 'Believe it'], ['no', content.doubt_label || 'No way']].forEach(([value, label]) => {
+      const btn = viNode('button', 'vi-opt', label);
+      btn.type = 'button';
+      btn.addEventListener('click', () => viAnswer(item, value));
+      ask.appendChild(btn);
+    });
+    main.appendChild(ask);
+
+    const reveal = viNode('div', 'vi-reveal');
+    reveal.appendChild(viNode('p', 'vi-verdict', answer ? viVerdict(content, item, answer, false) : ''));
+    (item.body || []).forEach(text => reveal.appendChild(viRich(viNode('p', 'vi-body'), text)));
+    main.appendChild(reveal);
+    row.appendChild(main);
+    page.appendChild(row);
+
+    (quotesAfter[item.id] || []).forEach(text => page.appendChild(viNode('p', 'vi-quote', text)));
+  });
+
+  if (content.skip_bottom) page.appendChild(skip(content.skip_bottom));
+
+  const score = viNode('div', 'vi-score');
+  score.id = 'vi-score';
+  page.appendChild(score);
+
+  const close = content.close || {};
+  const closeBox = viNode('div', 'vi-close');
+  if (close.heading) closeBox.appendChild(viNode('p', 'vi-close-h', close.heading));
+  (close.paragraphs || []).forEach(text => closeBox.appendChild(viRich(viNode('p', 'vi-close-p'), viFill(text, vars))));
+  if (close.button_label && /^https:\/\//.test(close.button_url || '')) {
+    const a = viNode('a', 'vi-btn', close.button_label);
+    a.href = close.button_url;
+    a.rel = 'noopener';
+    closeBox.appendChild(a);
+  }
+  if (close.signature) closeBox.appendChild(viNode('p', 'vi-sig', close.signature));
+  page.appendChild(closeBox);
+
+  viUpdateScore(false);
+}
+
+function viUpdateScore(scroll) {
+  const content = viBook.interactive || {};
+  const vars = viCounts(content);
+  const page = vaultEl('vi-page');
+  const score = vaultEl('vi-score');
+  const complete = vars.total > 0 && vars.answered === vars.total;
+  page.classList.toggle('is-complete', complete);
+  score.textContent = '';
+  if (!complete) return;
+  const messages = content.score || {};
+  const key = vars.doubted === 0 ? 'none'
+    : vars.doubted === 1 ? 'one'
+    : vars.doubted / vars.total >= 0.75 ? 'most' : 'some';
+  const message = messages[key] || {};
+  score.appendChild(viNode('h2', 'vi-score-h', viFill(message.heading, vars)));
+  score.appendChild(viRich(viNode('p', 'vi-score-p'), viFill(message.body, vars)));
+  if (scroll) setTimeout(() => score.scrollIntoView({ behavior: 'smooth', block: 'center' }), 220);
+}
+
+async function viSave(changes) {
+  if (!viBook || viBook.admin_preview) return;
+  const slug = viBook.slug;
+  try {
+    const { data, error } = await vaultContext.sb.rpc('save_solution_vault_answers', { target_book_slug: slug, p_answers: changes });
+    if (error) throw error;
+    if (viBook && viBook.slug === slug) {
+      viShowNotice('');
+      viBook.progress = Object.assign({}, viBook.progress || {}, { answers: data.answers, updated_at: new Date().toISOString() });
+    }
+  } catch (err) {
+    if (viBook && viBook.slug === slug) viShowNotice('Your answer could not be saved just now. You can keep going; try again later to keep your score.');
+  }
+}
+
+function viAnswer(item, value) {
+  if (viAnswers[item.id]) return;
+  viAnswers[item.id] = value;
+  const row = vaultEl('vi-page').querySelector('[data-claim-id="' + CSS.escape(item.id) + '"]');
+  if (row) {
+    row.classList.add('answered');
+    const isNew = row.querySelector('.vi-new');
+    if (isNew) isNew.remove();
+    row.querySelector('.vi-verdict').textContent = viVerdict(viBook.interactive, item, value, true);
+  }
+  const counts = viCounts(viBook.interactive);
+  viUpdateScore(counts.answered === counts.total);
+  viSave({ [item.id]: value });
+}
+
+function viOpenAll() {
+  const content = viBook.interactive || {};
+  const changes = {};
+  viVisibleItems(content).forEach(item => {
+    if (viAnswers[item.id]) return;
+    viAnswers[item.id] = 'open';
+    changes[item.id] = 'open';
+    const row = vaultEl('vi-page').querySelector('[data-claim-id="' + CSS.escape(item.id) + '"]');
+    if (row) {
+      row.classList.add('answered');
+      const isNew = row.querySelector('.vi-new');
+      if (isNew) isNew.remove();
+      row.querySelector('.vi-verdict').textContent = content.opened_line || 'True.';
+    }
+  });
+  viUpdateScore(true);
+  if (Object.keys(changes).length) viSave(changes);
+}
+
+function openBook(book) {
+  if (book.format === 'interactive') openInteractiveReader(book);
+  else if (book.format === 'web') openWebReader(book);
+  else openPdfReader(book);
+}
+
 /* ── Video Room (existing implementation preserved) ─────────────────── */
 function filteredVaultItems() {
   const query = vaultEl('vault-search').value.trim().toLowerCase();
@@ -615,11 +885,7 @@ function wireEvents() {
       const slug = readBtn.dataset.readSlug;
       const book = vaultBooks.find(b => b.slug === slug);
       if (!book) return;
-      if (book.format === 'web') {
-        openWebReader(book);
-      } else {
-        openPdfReader(book);
-      }
+      openBook(book);
     });
   }
 
@@ -660,6 +926,9 @@ function wireEvents() {
   if (pdfFit) pdfFit.addEventListener('click', fitPdfWidth);
 
   // Web reader controls
+  const viBack = vaultEl('vi-back-btn');
+  if (viBack) viBack.addEventListener('click', closeInteractiveReader);
+
   const webBack = vaultEl('web-back-btn');
   if (webBack) webBack.addEventListener('click', closeWebReader);
 
@@ -710,6 +979,11 @@ function wireEvents() {
       } else if (event.key === 'Escape') {
         closePdfReader();
       }
+      return;
+    }
+    const viReader = vaultEl('vault-interactive-reader');
+    if (viReader && !viReader.hidden) {
+      if (event.key === 'Escape') closeInteractiveReader();
       return;
     }
     const webReader = vaultEl('vault-web-reader');
@@ -801,13 +1075,20 @@ EEEStudio.initialize(async context => {
     return;
   }
 
+  let claimProblem = null;
+  try { claimProblem = sessionStorage.getItem('vault_claim_problem'); sessionStorage.removeItem('vault_claim_problem'); } catch (e) {}
+  if (claimProblem) {
+    showVaultLinkNotice(claimProblem === 'revoked'
+      ? 'That gift was removed from this account, so the link cannot add it again. Ask David if that looks wrong.'
+      : 'That gift link is no longer active. Ask David for the current one. Everything already on your shelf is still here.');
+  }
+
   // A direct book link opens that book. If this account does not hold it,
   // say so plainly instead of showing anything else in its place.
   if (targetSlug && booksLoaded) {
     const targetBook = vaultBooks.find(b => b.slug === targetSlug);
     if (targetBook) {
-      if (targetBook.format === 'web') openWebReader(targetBook);
-      else openPdfReader(targetBook);
+      openBook(targetBook);
     } else {
       showVaultLinkNotice('That book is not in the library for ' + (context.profile && context.profile.email ? context.profile.email : 'this account') +
         '. If it was sent to a different email address, sign out and sign in with that one.');

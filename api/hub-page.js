@@ -89,7 +89,10 @@ function shellHtml(head, tool) {
         // Return here after sign-in (WBR-445): a gifted book link must land in
         // the book, not on Studio home. Studio only honours local paths.
         var back = window.location.pathname + window.location.search;
-        if (TOOL === 'vault') {
+        if (TOOL === 'vault' && /[?&]claim=/.test(window.location.search)) {
+          if (t) t.textContent = 'Sign in to get your book.';
+          if (c) c.textContent = 'New to Studio? Use the email you signed up with and we will send you a sign-in link. The book goes straight onto your shelf.';
+        } else if (TOOL === 'vault') {
           if (t) t.textContent = 'Sign in to open your Solution Vault.';
           if (c) c.textContent = 'Use the email address your book or membership was sent to.';
         } else {
@@ -97,6 +100,10 @@ function shellHtml(head, tool) {
           if (c) c.textContent = 'Use the Studio email connected to your membership.';
         }
         if (b) { b.href = '/?next=' + encodeURIComponent(back); var s = b.querySelector('span'); if (s) s.textContent = 'Go to Studio sign in'; }
+      } else if (kind === 'claim') {
+        if (t) t.textContent = 'This gift link is no longer active.';
+        if (c) c.textContent = 'Ask David for the current link. Anything already on your shelf is still there.';
+        if (b) { b.href = '/'; var s4 = b.querySelector('span'); if (s4) s4.textContent = 'Return to My Studio'; }
       } else if (TOOL === 'vault' && /[?&]book=/.test(window.location.search)) {
         if (t) t.textContent = 'This book is not in this account\u2019s library.';
         if (c) c.textContent = 'If it was sent to a different email address, sign out and sign in with that one.';
@@ -128,6 +135,24 @@ function shellHtml(head, tool) {
         var sb = window.supabase.createClient(SB_URL, SB_KEY);
         var session = (await sb.auth.getSession()).data.session;
         if (!session) { gate('sign-in'); return; }
+        // A gift claim link (/vault?claim=<code>) adds its book before the
+        // access check, so a first-time reader is let in by the book itself.
+        var claimProblem = null;
+        var claimCode = TOOL === 'vault' ? new URLSearchParams(window.location.search).get('claim') : null;
+        if (claimCode) {
+          try {
+            var claimed = await sb.rpc('claim_solution_vault_book', { p_code: claimCode });
+            if (claimed && !claimed.error && claimed.data && claimed.data.ok) {
+              window.history.replaceState({}, '', '/vault?book=' + encodeURIComponent(claimed.data.slug));
+            } else {
+              claimProblem = (claimed && claimed.data && claimed.data.error) || 'error';
+            }
+          } catch (e) { claimProblem = 'error'; }
+          if (claimProblem) {
+            window.history.replaceState({}, '', '/vault');
+            try { sessionStorage.setItem('vault_claim_problem', claimProblem); } catch (e) {}
+          }
+        }
         var access = false;
         if (TOOL === 'vault') {
           try {
@@ -139,7 +164,7 @@ function shellHtml(head, tool) {
           var aCheck = await sb.rpc('has_studio_app_access', { target_app_key: ACCESS });
           if (aCheck && !aCheck.error && aCheck.data === true) access = true;
         }
-        if (!access) { gate('access'); return; }
+        if (!access) { gate(claimProblem ? 'claim' : 'access'); return; }
         var res = await fetch('/api/hub-page?tool=' + encodeURIComponent(TOOL) + '&fragment=1', {
           headers: { Authorization: 'Bearer ' + session.access_token }
         });

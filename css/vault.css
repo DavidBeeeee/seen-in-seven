@@ -119,3 +119,71 @@
   .book-card-cover { height: 280px; }
   .web-content-wrap { padding: 24px 16px 64px; }
 }
+
+/* ── Interactive book (WBR-445): the Day One gift's own look ───────────── */
+.vi-reader { background: #0D2828; min-height: calc(100vh - var(--header-height)); }
+.vi-bar { width: min(1220px, 100%); margin: 0 auto; padding: 18px 42px 0; }
+.vi-page {
+  --vi-vivid: #32B8B8; --vi-gold: #C8A84B; --vi-gold-lt: #E8C86C; --vi-paper: #F7F4EC;
+  max-width: 620px; margin: 0 auto; padding: 40px 18px 68px; color: var(--vi-paper);
+  font-family: 'Nunito', system-ui, -apple-system, sans-serif; -webkit-font-smoothing: antialiased;
+}
+.vi-page * { box-sizing: border-box; }
+.vi-kicker { font-family: 'Oswald', sans-serif; font-size: 13px; letter-spacing: .18em; text-transform: uppercase; color: var(--vi-vivid); margin: 0 0 18px; }
+.vi-h1 { font-family: 'Lora', Georgia, serif; font-weight: 600; font-size: 46px; line-height: 1.04; letter-spacing: -.022em; margin: 0 0 26px; color: var(--vi-paper); }
+.vi-h1 i { font-style: italic; font-weight: 500; color: var(--vi-gold-lt); }
+.vi-intro p { font-size: 18px; line-height: 1.64; margin: 0 0 15px; color: rgba(247, 244, 236, .82); max-width: 46ch; }
+.vi-intro b { color: var(--vi-paper); font-weight: 700; }
+.vi-break { display: flex; align-items: center; gap: 14px; margin: 44px 0 8px; }
+.vi-break span { font-family: 'Oswald', sans-serif; font-size: 12px; letter-spacing: .2em; text-transform: uppercase; color: rgba(247, 244, 236, .42); white-space: nowrap; }
+.vi-break i { display: block; flex: 1; height: 1px; background: rgba(200, 168, 75, .34); }
+.vi-item { display: grid; grid-template-columns: 1fr; padding: 34px 0; border-bottom: 1px solid rgba(247, 244, 236, .1); }
+.vi-num { font-family: 'Lora', Georgia, serif; font-style: italic; font-weight: 500; font-size: 44px; line-height: 1; color: var(--vi-gold); margin: 0 0 10px; }
+.vi-new { display: inline-block; margin: 0 0 10px; padding: 3px 10px; border-radius: 999px; background: var(--vi-vivid); color: #0D2828; font-family: 'Oswald', sans-serif; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; }
+.vi-claim { font-family: 'Lora', Georgia, serif; font-weight: 600; font-size: 28px; line-height: 1.2; letter-spacing: -.012em; margin: 0 0 18px; color: var(--vi-paper); }
+.vi-ask { display: flex; gap: 10px; flex-wrap: wrap; }
+.vi-opt { font-family: 'Oswald', sans-serif; font-weight: 400; font-size: 15px; letter-spacing: .06em; text-transform: uppercase; background: transparent; color: var(--vi-paper); border: 1px solid rgba(247, 244, 236, .32); border-radius: 999px; padding: 11px 22px; cursor: pointer; transition: background .16s ease, border-color .16s ease, color .16s ease; }
+.vi-opt:hover { border-color: var(--vi-gold); color: var(--vi-gold-lt); }
+.vi-opt:focus-visible, .vi-skipbtn:focus-visible { outline: 3px solid var(--vi-vivid); outline-offset: 3px; }
+.vi-item.answered .vi-ask { display: none; }
+.vi-reveal { display: none; }
+.vi-item.answered .vi-reveal { display: block; animation: viIn .42s cubic-bezier(.2, .7, .3, 1) both; }
+@keyframes viIn { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+.vi-verdict { font-family: 'Oswald', sans-serif; font-size: 14px; letter-spacing: .14em; text-transform: uppercase; color: var(--vi-gold); margin: 0 0 14px; }
+.vi-body { font-size: 17px; line-height: 1.62; margin: 0 0 12px; color: rgba(247, 244, 236, .7); max-width: 48ch; }
+.vi-body b { color: rgba(247, 244, 236, .94); font-weight: 700; }
+.vi-quote { font-family: 'Permanent Marker', cursive; font-size: 30px; line-height: 1.28; color: var(--vi-gold-lt); margin: 46px 0; padding: 0 0 0 22px; border-left: 3px solid var(--vi-gold); max-width: 24ch; transform: rotate(-1.1deg); }
+.vi-skip { margin: 26px 0 0; font-size: 15px; color: rgba(247, 244, 236, .45); }
+.vi-skip-top { margin: 22px 0 0; }
+.vi-skipbtn { background: none; border: 0; padding: 0; font: inherit; color: var(--vi-vivid); border-bottom: 1px solid rgba(50, 184, 184, .4); cursor: pointer; }
+.vi-page.is-complete .vi-skip { display: none; }
+.vi-score { display: none; margin-top: 44px; border: 1px solid rgba(200, 168, 75, .42); border-radius: 16px; padding: 30px 26px; background: rgba(200, 168, 75, .07); }
+.vi-page.is-complete .vi-score { display: block; animation: viIn .5s cubic-bezier(.2, .7, .3, 1) both; }
+.vi-score-h { font-family: 'Lora', Georgia, serif; font-weight: 600; font-size: 30px; line-height: 1.16; margin: 0 0 12px; color: var(--vi-gold-lt); }
+.vi-score-p { font-size: 17px; line-height: 1.6; margin: 0; color: rgba(247, 244, 236, .78); }
+.vi-close { margin-top: 26px; background: var(--vi-gold); border-radius: 16px; padding: 32px 28px; }
+.vi-close-h { font-family: 'Lora', Georgia, serif; font-weight: 600; font-size: 26px; line-height: 1.2; margin: 0 0 14px; color: #0D2828; }
+.vi-close-p { font-size: 17px; line-height: 1.58; margin: 0 0 13px; color: rgba(13, 40, 40, .86); }
+.vi-btn { display: inline-block; margin-top: 22px; background: #0D2828; color: var(--vi-gold-lt); font-family: 'Oswald', sans-serif; font-weight: 500; font-size: 17px; letter-spacing: .05em; text-transform: uppercase; text-decoration: none; padding: 15px 30px; border-radius: 8px; transition: transform .15s ease, color .15s ease; }
+.vi-btn:hover, .vi-btn:focus-visible { transform: translateY(-2px); color: #fff; text-decoration: none; }
+.vi-btn:focus-visible { outline: 3px solid #0D2828; outline-offset: 3px; }
+.vi-sig { font-family: 'Oswald', sans-serif; font-size: 14px; letter-spacing: .12em; text-transform: uppercase; color: rgba(13, 40, 40, .62); margin: 22px 0 0; }
+@media (prefers-reduced-motion: reduce) {
+  .vi-item.answered .vi-reveal, .vi-page.is-complete .vi-score { animation: none; }
+  .vi-btn { transition: none; }
+}
+@media (min-width: 660px) {
+  .vi-item { grid-template-columns: 96px 1fr; column-gap: 26px; align-items: start; }
+  .vi-num { font-size: 62px; margin: -8px 0 0; text-align: right; }
+  .vi-h1 { font-size: 56px; }
+  .vi-quote { margin-left: 96px; padding-left: 26px; font-size: 34px; }
+}
+@media (max-width: 520px) {
+  .vi-bar { padding: 14px 16px 0; }
+  .vi-page { padding: 28px 16px 54px; }
+  .vi-h1 { font-size: 36px; }
+  .vi-claim { font-size: 24px; }
+  .vi-num { font-size: 38px; }
+  .vi-quote { font-size: 26px; }
+  .vi-score-h { font-size: 25px; }
+}
