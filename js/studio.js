@@ -260,6 +260,16 @@ function renderStudio() {
   el('admin-nav-item').hidden = !isAdmin;
   el('eee-card').hidden = !eeeCardVisible;
 
+  // Solution Vault in the sidebar (WBR-445): a Book Shelf and a Video Room
+  // link under it, each shown only when this account can use that section.
+  // Admins can preview every book. With neither, it stays one plain link.
+  const vaultVideos = signedIn && (hasStudioAccess('vault') || hubBundle);
+  const vaultBooksNav = signedIn && (userHasBooks || isAdmin);
+  el('vault-nav-books').hidden = !vaultBooksNav;
+  el('vault-nav-videos').hidden = !vaultVideos;
+  el('vault-nav-group').hidden = !(vaultBooksNav || vaultVideos);
+  el('vault-nav-link').hidden = vaultBooksNav || vaultVideos;
+
   const vaultCard = el('vault-card');
   if (vaultCard) {
     vaultCard.hidden = !showVaultCard;

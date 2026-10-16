@@ -64,7 +64,14 @@
           </div>
         </details>
         <a class="nav-item" href="/certainty"><i data-lucide="calendar-check"></i><span>Certainty Sessions</span></a>
-        <a class="nav-item" href="/vault"><i data-lucide="library"></i><span>Solution Vault</span></a>
+        <a class="nav-item" id="vault-nav-link" href="/vault"><i data-lucide="library"></i><span>Solution Vault</span></a>
+        <details class="studio-nav-group" id="vault-nav-group" open hidden>
+          <summary class="nav-item"><i data-lucide="library"></i><span>Solution Vault</span></summary>
+          <div class="studio-nav-children">
+            <a class="nav-item" id="vault-nav-books" href="/vault?section=books" hidden><span>Book Shelf</span></a>
+            <a class="nav-item" id="vault-nav-videos" href="/vault?section=video" hidden><span>Video Room</span></a>
+          </div>
+        </details>
 
         <div class="sidebar-section-divider" id="management-divider" hidden></div>
         <a class="nav-item" id="workerbee-nav-item" href="/dashboard" hidden>
@@ -265,6 +272,6 @@
   </div>
 
   <script src="/js/777-launch-cycle.js?v=2026-09"></script>
-  <script src="/js/studio.js?v=solution-vault-books-v2"></script>
+  <script src="/js/studio.js?v=solution-vault-books-v3"></script>
 </body>
 </html>
