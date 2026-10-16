@@ -6,6 +6,7 @@ const studioSb = supabase.createClient(STUDIO_SUPABASE_URL, STUDIO_SUPABASE_KEY)
 let studioSession = null;
 let studioProfile = null;
 let studioAccess = [];
+let userHasBooks = false;
 let studioCatalogMode = 'automatic';
 let authMode = 'password';
 const ACCESS_APP_NAMES = { seeninseven: 'SeenInSeven', boardroom: 'AI Boardroom', eee: 'EEE Membership', storysculpt: 'StorySculpt', navigator: 'Next Step Navigator', vault: 'Solution Vault', certainty: 'Certainty Sessions' };
@@ -165,12 +166,21 @@ async function hydrateStudio(session) {
   studioSession = session;
   studioProfile = null;
   studioAccess = [];
+  userHasBooks = false;
 
   await loadStudioCatalogMode();
 
   if (session && session.user) {
     studioProfile = await ensureStudioProfile(session.user);
-    if (studioProfile) studioAccess = await loadStudioAccess(studioProfile);
+    if (studioProfile) {
+      studioAccess = await loadStudioAccess(studioProfile);
+      try {
+        const { data: hasBooks } = await studioSb.rpc('has_any_book_access');
+        userHasBooks = Boolean(hasBooks);
+      } catch (e) {
+        userHasBooks = false;
+      }
+    }
   }
   renderStudio();
 }
@@ -187,6 +197,11 @@ function renderStudio() {
   const eeeUnlocked = hubBundle || hubApps.length > 0;
   const eeeCardVisible = shouldShowEeeCard(eeeUnlocked);
 
+  // Solution Vault book access or standalone vault access
+  const vaultUnlocked = hasStudioAccess('vault') || userHasBooks;
+  // If user is book-only or has standalone vault access without full EEE bundle, show vault-card
+  const showVaultCard = signedIn && vaultUnlocked && !hubBundle;
+
   el('sign-in-button').hidden = signedIn;
   el('account-button').hidden = !signedIn;
   el('device-progress').hidden = !localProgress || hasStudioAccess('seeninseven');
@@ -196,7 +211,24 @@ function renderStudio() {
   el('workerbee-nav-item').hidden = !isAdmin;
   el('admin-nav-item').hidden = !isAdmin;
   el('eee-card').hidden = !eeeCardVisible;
-  el('studio-app-count').textContent = (eeeCardVisible ? 2 : 1) + ' workspace' + (eeeCardVisible ? 's' : '');
+
+  const vaultCard = el('vault-card');
+  if (vaultCard) {
+    vaultCard.hidden = !showVaultCard;
+    if (showVaultCard) {
+      const statusText = el('vault-status-text');
+      if (statusText) {
+        statusText.textContent = userHasBooks
+          ? 'Your books are ready in your personal library.'
+          : 'Your Solution Vault masterclasses are ready.';
+      }
+    }
+  }
+
+  let workspaceCount = 1; // SeenInSeven
+  if (eeeCardVisible) workspaceCount++;
+  if (showVaultCard) workspaceCount++;
+  el('studio-app-count').textContent = workspaceCount + ' workspace' + (workspaceCount === 1 ? '' : 's');
 
   if (signedIn) {
     el('account-email').textContent = email;
@@ -274,6 +306,7 @@ async function signOutStudio() {
   studioSession = null;
   studioProfile = null;
   studioAccess = [];
+  userHasBooks = false;
   closeSettingsModal();
   renderStudio();
 }

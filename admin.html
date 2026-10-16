@@ -231,6 +231,26 @@
               </div>
               <p class="catalog-visibility-status" id="usage-updated">Loading usage...</p>
             </article>
+
+            <article class="admin-app-card">
+              <div class="admin-app-top">
+                <span class="app-admin-icon"><i data-lucide="library"></i></span>
+                <span class="status-chip status-live">Connected</span>
+              </div>
+              <h3>Solution Vault Books</h3>
+              <p>Personal digital library books, reader progress, and direct gift delivery grants.</p>
+              <div class="app-stat-row">
+                <div><strong id="books-total">-</strong><span>titles</span></div>
+                <div><strong id="books-published">-</strong><span>published</span></div>
+                <div><strong id="books-grants">-</strong><span>grants</span></div>
+              </div>
+              <div class="drawer-actions" style="margin-top: auto;">
+                <a class="secondary-button" href="/vault">
+                  <span>Open Library</span>
+                  <i data-lucide="arrow-right"></i>
+                </a>
+              </div>
+            </article>
           </div>
         </section>
 
@@ -265,7 +285,7 @@
             <div class="enrollment-fields">
               <label>Name<input id="enrollment-name" type="text" maxlength="120" placeholder="Their name"></label>
               <label>Email <span aria-hidden="true">*</span><input id="enrollment-email" type="email" maxlength="320" autocomplete="email" required placeholder="person@example.com"></label>
-              <fieldset><legend>Give access to</legend><label><input id="enrollment-seeninseven" type="checkbox" checked> SeenInSeven</label><label><input id="enrollment-storysculpt" type="checkbox"> StorySculpt</label><label><input id="enrollment-navigator" type="checkbox"> Next Step Navigator</label><label><input id="enrollment-vault" type="checkbox"> Solution Vault</label><label><input id="enrollment-boardroom" type="checkbox"> AI Boardroom</label><label><input id="enrollment-certainty" type="checkbox"> Certainty Sessions</label><label><input id="enrollment-eee" type="checkbox"> Full Momentum Hub (all five)</label></fieldset>
+              <fieldset><legend>Give access to</legend><label><input id="enrollment-seeninseven" type="checkbox" checked> SeenInSeven</label><label><input id="enrollment-storysculpt" type="checkbox"> StorySculpt</label><label><input id="enrollment-navigator" type="checkbox"> Next Step Navigator</label><label><input id="enrollment-vault" type="checkbox"> Solution Vault</label><label><input id="enrollment-boardroom" type="checkbox"> AI Boardroom</label><label><input id="enrollment-certainty" type="checkbox"> Certainty Sessions</label><label><input id="enrollment-eee" type="checkbox"> Full Momentum Hub (all five)</label><label><input id="enrollment-book-5e" type="checkbox"> The 5E Framework (Book)</label></fieldset>
               <button class="secondary-button" id="enrollment-submit" type="submit"><i data-lucide="user-plus"></i><span>Enroll person</span></button>
             </div>
             <p class="enrollment-message" id="enrollment-message" role="status" aria-live="polite"></p>

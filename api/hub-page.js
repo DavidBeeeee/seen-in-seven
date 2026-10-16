@@ -49,6 +49,14 @@ async function hasToolAccess(token, appKey) {
     headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token }
   });
   if (!userRes.ok) return false;
+  if (appKey === 'vault') {
+    const vaultRes = await fetch(SUPABASE_URL + '/rest/v1/rpc/has_vault_access', {
+      method: 'POST',
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+      body: JSON.stringify({})
+    });
+    if (vaultRes.ok && (await vaultRes.json().catch(() => false)) === true) return true;
+  }
   const accRes = await fetch(SUPABASE_URL + '/rest/v1/rpc/has_studio_app_access', {
     method: 'POST',
     headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
@@ -108,8 +116,18 @@ function shellHtml(head, tool) {
         var sb = window.supabase.createClient(SB_URL, SB_KEY);
         var session = (await sb.auth.getSession()).data.session;
         if (!session) { gate('sign-in'); return; }
-        var access = await sb.rpc('has_studio_app_access', { target_app_key: ACCESS });
-        if (!access || access.error || access.data !== true) { gate('access'); return; }
+        var access = false;
+        if (TOOL === 'vault') {
+          try {
+            var vCheck = await sb.rpc('has_vault_access');
+            if (vCheck && !vCheck.error && vCheck.data === true) access = true;
+          } catch (e) {}
+        }
+        if (!access) {
+          var aCheck = await sb.rpc('has_studio_app_access', { target_app_key: ACCESS });
+          if (aCheck && !aCheck.error && aCheck.data === true) access = true;
+        }
+        if (!access) { gate('access'); return; }
         var res = await fetch('/api/hub-page?tool=' + encodeURIComponent(TOOL) + '&fragment=1', {
           headers: { Authorization: 'Bearer ' + session.access_token }
         });

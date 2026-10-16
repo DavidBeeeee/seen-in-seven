@@ -39,7 +39,7 @@ function appAccessState(row, appKey) {
 
 const adminEl = id => document.getElementById(id);
 let studioAdminSession = null;
-let studioAdminState = { users: [], entitlements: [], grants: [], webhooks: [], scripts: [], progress: [], logs: [], boardroom: [], catalog: [], hubUsage: [], rows: [], errors: {} };
+let studioAdminState = { users: [], entitlements: [], grants: [], webhooks: [], scripts: [], progress: [], logs: [], boardroom: [], catalog: [], hubUsage: [], books: [], bookGrants: [], rows: [], errors: {} };
 
 function refreshAdminIcons() {
   if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
@@ -203,7 +203,9 @@ async function loadStudioAdmin() {
     rpcSafe('logs', 'admin_get_logs'),
     rpcSafe('boardroom', 'admin_get_boardroom_activity'),
     rpcSafe('hubUsage', 'admin_get_hub_usage'),
-    tableSafe('catalog', 'studio_catalog_settings', 'app_key,catalog_mode,updated_at')
+    tableSafe('catalog', 'studio_catalog_settings', 'app_key,catalog_mode,updated_at'),
+    tableSafe('books', 'solution_vault_books', 'id,slug,title,subtitle,format,is_published,created_at'),
+    tableSafe('bookGrants', 'solution_vault_book_grants', 'id,user_id,book_id,source_kind,source_id,status,granted_at,revoked_at')
   ]);
   const loaded = Object.fromEntries(results.map(result => [result.name, result]));
   studioAdminState.users = loaded.users.data;
@@ -216,6 +218,8 @@ async function loadStudioAdmin() {
   studioAdminState.boardroom = loaded.boardroom.data;
   studioAdminState.hubUsage = loaded.hubUsage.data;
   studioAdminState.catalog = loaded.catalog.data;
+  studioAdminState.books = loaded.books ? loaded.books.data : [];
+  studioAdminState.bookGrants = loaded.bookGrants ? loaded.bookGrants.data : [];
   studioAdminState.errors = Object.fromEntries(results.filter(result => result.error).map(result => [result.name, result.error]));
   studioAdminState.rows = buildCustomerRows();
   renderStudioAdmin();
@@ -258,10 +262,22 @@ function buildCustomerRows() {
   }).sort((a, b) => dateMs(b.lastActive) - dateMs(a.lastActive));
 }
 
+function renderBooksSummary() {
+  const books = studioAdminState.books || [];
+  const grants = studioAdminState.bookGrants || [];
+  const published = books.filter(b => b.is_published !== false);
+  const activeGrants = grants.filter(g => g.status === 'active');
+  const setText = (id, value) => { const el = adminEl(id); if (el) el.textContent = String(value); };
+  setText('books-total', books.length);
+  setText('books-published', published.length);
+  setText('books-grants', activeGrants.length);
+}
+
 function renderStudioAdmin() {
   renderNotice();
   renderMetrics();
   renderAppSummary();
+  renderBooksSummary();
   renderHubUsage();
   renderEeeVisibility();
   renderCommerce();
@@ -604,6 +620,20 @@ async function enrollCustomer(event) {
     });
     if (error) throw error;
 
+    const book5eCheckbox = adminEl('enrollment-book-5e');
+    if (book5eCheckbox && book5eCheckbox.checked) {
+      try {
+        await adminSb.rpc('admin_grant_book_by_email', {
+          p_email: email,
+          p_book_slug: 'the-5e-framework',
+          p_source_kind: 'admin',
+          p_source_id: 'manual'
+        });
+      } catch (bookErr) {
+        // Book grant failed but customer enrolled
+      }
+    }
+
     const linkError = await sendStudioAccessEmail(email, appKeys[0]);
     setEnrollmentMessage(
       linkError
@@ -624,6 +654,35 @@ async function enrollCustomer(event) {
 
 function drawerKv(label, value) {
   return '<div class="drawer-kv"><span>' + escapeHtml(label) + '</span><span>' + escapeHtml(value) + '</span></div>';
+}
+
+function customerBookSection(row) {
+  const books = studioAdminState.books || [];
+  const allGrants = studioAdminState.bookGrants || [];
+  const userGrants = allGrants.filter(g => g.user_id === row.user.id && g.status === 'active');
+
+  if (!books.length) {
+    return '<p style="color: var(--studio-muted); font-size: 12px;">No books are registered in the catalog yet.</p>';
+  }
+
+  return books.map(book => {
+    const activeGrant = userGrants.find(g => g.book_id === book.id);
+    const hasAccess = Boolean(activeGrant);
+    return '<article class="drawer-app">' +
+      '<div class="drawer-app-head">' +
+        '<strong>' + escapeHtml(book.title) + '</strong>' +
+        '<span class="access-badge' + (hasAccess ? ' active' : '') + '">' + (hasAccess ? 'Active grant' : 'No access') + '</span>' +
+      '</div>' +
+      '<p>' + escapeHtml(book.subtitle || (book.format ? book.format.toUpperCase() + ' book' : 'Book')) +
+        (activeGrant ? ' · Granted via ' + escapeHtml(activeGrant.source_kind) + ' (' + formatDate(activeGrant.granted_at) + ')' : '') +
+      '</p>' +
+      '<div class="drawer-actions">' +
+        (hasAccess
+          ? '<button class="secondary-button" onclick="adminRevokeBook(event,\'' + safeAttr(row.user.id) + '\',\'' + safeAttr(book.slug) + '\',\'' + safeAttr(activeGrant.source_kind) + '\',\'' + safeAttr(activeGrant.source_id) + '\')">Revoke book</button>'
+          : '<button class="secondary-button" onclick="adminGrantBook(event,\'' + safeAttr(row.user.id) + '\',\'' + safeAttr(book.slug) + '\')">Grant book</button>') +
+      '</div>' +
+    '</article>';
+  }).join('');
 }
 
 function openCustomer(userId) {
@@ -659,6 +718,9 @@ function openCustomer(userId) {
       '<div class="access-control drawer-switches">' + accessSwitches(row, { hubOnly: true }) + '</div>' +
       '<div class="drawer-actions"><a class="secondary-button" href="/eee">Open Hub home</a><a class="secondary-button" href="/admin/boardroom">Boardroom admin</a></div>' +
       '</article>' +
+    '</section>' +
+    '<section class="drawer-section"><h4>Solution Vault Books</h4>' +
+      customerBookSection(row) +
     '</section>';
   adminEl('drawer-backdrop').hidden = false;
   document.body.style.overflow = 'hidden';
@@ -708,5 +770,74 @@ document.addEventListener('keydown', event => {
     adminEl('account-menu').hidden = true;
   }
 });
+
+async function adminGrantBook(event, userId, bookSlug) {
+  event.stopPropagation();
+  const button = event.currentTarget;
+  button.disabled = true;
+  button.textContent = 'Granting...';
+  try {
+    const { error } = await adminSb.rpc('admin_grant_book', {
+      p_user_id: userId,
+      p_book_slug: bookSlug,
+      p_source_kind: 'admin',
+      p_source_id: 'manual'
+    });
+    if (error) throw error;
+    await loadStudioAdmin();
+    openCustomer(userId);
+  } catch (error) {
+    alert('Could not grant book: ' + (error.message || String(error)));
+    button.disabled = false;
+    button.textContent = 'Grant book';
+  }
+}
+
+async function adminRevokeBook(event, userId, bookSlug, sourceKind, sourceId) {
+  event.stopPropagation();
+  if (!window.confirm('Revoke access to ' + bookSlug + '? Their saved reading position will remain in place.')) return;
+  const button = event.currentTarget;
+  button.disabled = true;
+  button.textContent = 'Revoking...';
+  try {
+    const { error } = await adminSb.rpc('admin_revoke_book_grant', {
+      p_user_id: userId,
+      p_book_slug: bookSlug,
+      p_source_kind: sourceKind || 'admin',
+      p_source_id: sourceId || 'manual'
+    });
+    if (error) throw error;
+    await loadStudioAdmin();
+    openCustomer(userId);
+  } catch (error) {
+    alert('Could not revoke book grant: ' + (error.message || String(error)));
+    button.disabled = false;
+    button.textContent = 'Revoke book';
+  }
+}
+
+async function adminToggleBookPublish(event, bookSlug, currentlyPublished) {
+  event.stopPropagation();
+  if (currentlyPublished && !window.confirm('Unpublish ' + bookSlug + '? Existing entitled readers will keep access, but new distribution stops.')) return;
+  const button = event.currentTarget;
+  button.disabled = true;
+  try {
+    if (currentlyPublished) {
+      const { error } = await adminSb.rpc('admin_unpublish_book', { p_book_slug: bookSlug });
+      if (error) throw error;
+    } else {
+      const { error } = await adminSb.from('solution_vault_books').update({ is_published: true }).eq('slug', bookSlug);
+      if (error) throw error;
+    }
+    await loadStudioAdmin();
+  } catch (error) {
+    alert('Could not update book status: ' + (error.message || String(error)));
+    button.disabled = false;
+  }
+}
+
+window.adminGrantBook = adminGrantBook;
+window.adminRevokeBook = adminRevokeBook;
+window.adminToggleBookPublish = adminToggleBookPublish;
 
 refreshAdminIcons();

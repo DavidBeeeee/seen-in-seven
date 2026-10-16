@@ -1,6 +1,65 @@
-/* Solution Vault, styled with SeenInSeven and Hub theme tokens. */
+/* Solution Vault: Book Shelf, in-Studio Readers, and Video Room.
+   Styled with SeenInSeven and Hub theme tokens. WBR-445. */
 
-.vault-main { width: min(1220px, 100%); margin: 0 auto; padding: 38px 42px 72px; }
+.vault-main { width: min(1220px, 100%); margin: 0 auto; padding: 28px 42px 72px; }
+
+/* ── Section Switcher Tabs ─────────────────────────────────────────── */
+.vault-tabs { display: flex; gap: 8px; width: min(1220px, 100%); margin: 18px auto 0; padding: 0 42px; border-bottom: 1px solid var(--studio-border); }
+.vault-tab { display: inline-flex; align-items: center; gap: 8px; padding: 12px 20px; border: 0; background: transparent; color: var(--studio-muted); font-family: var(--font-body, 'Nunito'), sans-serif; font-size: 14px; font-weight: 700; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.15s ease; }
+.vault-tab svg { width: 18px; height: 18px; }
+.vault-tab:hover { color: var(--studio-text); }
+.vault-tab.active { color: var(--studio-teal); border-bottom-color: var(--studio-teal); }
+
+/* ── Book Shelf Grid ────────────────────────────────────────────────── */
+.book-shelf-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 24px; margin-top: 24px; }
+.book-card { display: flex; flex-direction: column; border-radius: var(--radius-card, 16px); border: 1px solid var(--studio-border); background: var(--studio-surface); overflow: hidden; box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1); transition: all 0.15s ease; }
+.book-card:hover { border-color: var(--studio-teal); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16); }
+
+.book-card-cover { position: relative; width: 100%; height: 380px; background: var(--studio-surface-2); display: flex; align-items: center; justify-content: center; overflow: hidden; padding: 16px; }
+.book-card-cover img { max-width: 100%; max-height: 100%; width: auto; height: auto; object-fit: contain; border-radius: 8px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.25); }
+.book-format-badge { position: absolute; top: 14px; right: 14px; padding: 4px 10px; border-radius: var(--radius-pill, 999px); background: rgba(3, 13, 13, 0.85); color: #fff; font-size: 10px; font-weight: 900; text-transform: uppercase; font-family: var(--font-mono, monospace); letter-spacing: 0.05em; border: 1px solid rgba(255, 255, 255, 0.1); }
+
+.book-card-body { display: flex; flex-direction: column; flex: 1; padding: 22px; }
+.book-card-body h2 { margin: 0; font-family: var(--font-display, 'Oswald'), sans-serif; font-size: 22px; font-weight: 600; line-height: 1.25; }
+.book-card-subtitle { margin: 6px 0 12px; color: var(--studio-teal); font-size: 13px; font-weight: 700; font-family: var(--font-body, 'Nunito'), sans-serif; }
+.book-card-desc { margin: 0 0 18px; color: var(--studio-muted); font-size: 13px; line-height: 1.55; font-family: var(--font-body, 'Nunito'), sans-serif; flex: 1; }
+
+.book-progress-chip { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; margin-bottom: 14px; border-radius: var(--radius-pill, 999px); background: color-mix(in srgb, var(--studio-teal) 15%, transparent); color: var(--studio-teal); font-size: 12px; font-weight: 700; width: fit-content; }
+.book-progress-chip svg { width: 14px; height: 14px; }
+
+.book-card-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: auto; }
+.book-card-actions button, .book-card-actions a { border-radius: var(--radius-md, 8px); }
+
+/* ── In-Studio PDF Reader ───────────────────────────────────────────── */
+.vault-reader-view { position: fixed; inset: 0; z-index: 100; background: var(--studio-bg, #080f12); display: flex; flex-direction: column; overflow: hidden; }
+.reader-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 24px; background: var(--studio-surface); border-bottom: 1px solid var(--studio-border); z-index: 10; }
+.reader-title-wrap { min-width: 0; flex: 1; }
+.reader-title-wrap h2 { margin: 0; font-family: var(--font-display, 'Oswald'), sans-serif; font-size: 18px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.reader-subtitle { color: var(--studio-muted); font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block; }
+
+.reader-controls { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.reader-page-nav { display: flex; align-items: center; gap: 6px; padding: 2px 8px; border-radius: var(--radius-md, 8px); border: 1px solid var(--studio-border); background: var(--studio-surface-2); }
+.reader-page-indicator { font-size: 13px; color: var(--studio-muted); font-family: var(--font-mono, monospace); }
+.reader-page-indicator input { width: 44px; padding: 2px 4px; border: 1px solid var(--studio-border); border-radius: 4px; background: var(--studio-surface); color: var(--studio-text); text-align: center; font-family: var(--font-mono, monospace); font-size: 13px; outline: 0; }
+.reader-page-indicator input:focus { border-color: var(--studio-teal); }
+
+.reader-zoom-nav { display: flex; align-items: center; gap: 4px; }
+.reader-font-nav { display: flex; align-items: center; gap: 4px; }
+.reader-font-nav button { font-weight: 800; font-family: var(--font-mono, monospace); font-size: 13px; }
+
+.reader-notice { padding: 6px 16px; background: #f59e0b; color: #1c1917; font-size: 12px; font-weight: 700; text-align: center; }
+
+.pdf-canvas-wrap { flex: 1; overflow: auto; display: flex; justify-content: center; padding: 32px 16px 64px; background: color-mix(in srgb, var(--studio-bg) 90%, black); }
+#pdf-canvas { max-width: 100%; height: auto; border-radius: 4px; box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45); }
+
+/* ── In-Studio Web Book Reader ──────────────────────────────────────── */
+.web-reader-view .web-content-wrap { flex: 1; overflow-y: auto; max-width: 760px; margin: 0 auto; width: 100%; padding: 48px 24px 96px; }
+.web-content-wrap h1 { margin: 0 0 24px; font-family: var(--font-display, 'Oswald'), sans-serif; font-size: 32px; font-weight: 700; color: var(--studio-text); line-height: 1.25; }
+.web-body-text { color: var(--studio-text); font-family: var(--font-body, 'Nunito'), sans-serif; font-size: 17px; line-height: 1.8; }
+.web-body-text p { margin-bottom: 20px; }
+.web-chapter-nav { display: flex; justify-content: space-between; gap: 16px; margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--studio-border); }
+
+/* ── Existing Video Room Styles ─────────────────────────────────────── */
 .vault-toolbar { display: flex; gap: 10px; margin: 24px 0 14px; }
 .vault-toolbar label { min-width: 0; flex: 1; min-height: 44px; display: flex; align-items: center; gap: 9px; padding: 0 14px; border-radius: var(--radius-md, 9px); border: 1px solid var(--studio-border); background: var(--studio-surface); }
 .vault-toolbar label svg { width: 17px; color: var(--studio-muted); }
@@ -32,6 +91,22 @@
 .vault-empty h2 { margin: 14px 0 6px; color: var(--studio-text); font-family: var(--font-display, 'Oswald'), sans-serif; font-weight: 600; }
 .vault-empty p { max-width: 560px; margin: 0 auto; line-height: 1.6; font-family: var(--font-body, 'Nunito'), sans-serif; }
 
-@media (max-width: 980px) { .vault-grid { grid-template-columns: 1fr; } }
-@media (max-width: 780px) { .vault-main { padding: 28px 16px 56px; } .vault-toolbar { flex-direction: column; } .vault-toolbar select { min-height: 44px; width: 100%; } }
-@media (max-width: 520px) { .vault-card { grid-template-columns: 1fr; } .vault-card-media { height: 180px; } }
+/* ── Responsive rules ───────────────────────────────────────────────── */
+@media (max-width: 980px) {
+  .vault-grid { grid-template-columns: 1fr; }
+  .book-shelf-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+}
+@media (max-width: 780px) {
+  .vault-main { padding: 24px 16px 56px; }
+  .vault-tabs { padding: 0 16px; }
+  .vault-toolbar { flex-direction: column; }
+  .vault-toolbar select { min-height: 44px; width: 100%; }
+  .reader-toolbar { flex-direction: column; align-items: stretch; gap: 10px; }
+  .reader-controls { justify-content: space-between; }
+}
+@media (max-width: 520px) {
+  .vault-card { grid-template-columns: 1fr; }
+  .vault-card-media { height: 180px; }
+  .book-card-cover { height: 280px; }
+  .web-content-wrap { padding: 24px 16px 64px; }
+}
