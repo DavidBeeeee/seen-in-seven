@@ -53,11 +53,14 @@ const NOW = Date.parse('2026-10-13T10:00:00Z');
 function stubElement(id) {
   const listeners = {};
   const children = [];
+  const attributes = new Map();
   return {
     id, innerHTML: '', textContent: '', value: '', hidden: false, disabled: false, readOnly: false,
     className: '', style: {}, scrollTop: 0, scrollHeight: 1000, dataset: {},
     parentNode: null, children,
     classList: { add() {}, remove() {}, toggle() {}, contains() { return false; } },
+    setAttribute(name, value) { attributes.set(name, String(value)); },
+    getAttribute(name) { return attributes.get(name) ?? null; },
     addEventListener(type, fn) { (listeners[type] = listeners[type] || []).push(fn); },
     querySelector() { return null; }, querySelectorAll() { return []; },
     appendChild(child) { child.parentNode = this; children.push(child); return child; },
