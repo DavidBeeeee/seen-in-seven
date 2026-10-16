@@ -29,8 +29,10 @@ for (const table of ['solution_vault_books', 'solution_vault_book_grants', 'solu
   assert.ok(migrationSql.includes(`revoke all on table public.${table} from public, anon, authenticated;`), `${table} has no default grants`);
 }
 assert.ok(!/grant (insert|update|delete)[^;]*solution_vault/i.test(migrationSql), 'no direct table writes for members; writes go through functions');
+const editingSql = read('supabase_migrations', '2026-10-16-solution-vault-book-editing.sql');
+const allSql = migrationSql + '\n' + editingSql;
 const fnSignature = name => {
-  const m = migrationSql.match(new RegExp('create or replace function public\\.' + name + '\\(([^)]*)\\)'));
+  const m = allSql.match(new RegExp('create or replace function public\\.' + name + '\\(([^)]*)\\)'));
   return m ? m[1].split(',').map(part => part.trim().split(/\s+/)[0]).filter(Boolean) : null;
 };
 for (const fn of ['has_book_access', 'has_any_book_access', 'has_vault_access', 'my_solution_vault_books', 'save_solution_vault_progress',
@@ -169,6 +171,15 @@ assert.ok(vaultJs.includes("params.get('section') === 'video'"), 'the Video Room
 assert.ok(adminJs.includes("rpc('admin_grant_book', { p_email: email, p_book_slug: '5e-framework' })"), 'enrollment grants the seeded slug');
 assert.ok(adminJs.includes("rpc('admin_revoke_book_grant', { p_grant_id: grantId })"), 'revoke targets one source grant');
 assert.ok(adminJs.includes("rpc('admin_set_book_status'"), 'publish and unpublish go through the status function');
+for (const fn of ['admin_update_book_details', 'admin_replace_book_file', 'admin_restore_previous_book_file']) {
+  assert.ok(new RegExp('if not public\\.vault_caller_is_admin\\(\\) then[\\s\\S]{0,80}Admin access required').test(editingSql.slice(editingSql.indexOf('function public.' + fn))), fn + ' is admin-only');
+  assert.ok(editingSql.includes('revoke all on function public.' + fn), fn + ' is revoked from public and anon');
+}
+assert.ok(/values \('solution-vault-covers', 'solution-vault-covers', true/.test(editingSql), 'covers live in a public bucket; book files stay private');
+assert.ok(editingSql.includes("where o.bucket_id = 'solution-vault-books' and o.name = p_content_path") && editingSql.includes('v_object_size <> p_file_size_bytes'), 'a replacement file must exist in storage at the declared size');
+const detailKeys = (adminJs.match(/function currentDetails\(book\) \{[\s\S]*?\n\}/) || [''])[0].match(/p_[a-z_]+/g) || [];
+for (const key of detailKeys.concat(['p_cover_url'])) assert.ok(fnSignature('admin_update_book_details').includes(key), 'editor sends ' + key + ', which admin_update_book_details takes');
+assert.ok(adminJs.includes("if (await sha256Hex(await stored.arrayBuffer()) !== sha)"), 'a replaced file is verified from storage before the book switches to it');
 console.log('PASS: Studio Home and Admin Studio verified.');
 
 // 8. Zero Em Dashes Invariant Check

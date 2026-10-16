@@ -204,7 +204,7 @@ async function loadStudioAdmin() {
     rpcSafe('boardroom', 'admin_get_boardroom_activity'),
     rpcSafe('hubUsage', 'admin_get_hub_usage'),
     tableSafe('catalog', 'studio_catalog_settings', 'app_key,catalog_mode,updated_at'),
-    tableSafe('books', 'solution_vault_books', 'id,slug,title,subtitle,format,status,created_at'),
+    tableSafe('books', 'solution_vault_books', 'id,slug,title,subtitle,description,format,status,cover_url,content_path,content_version,page_count,file_size_bytes,sha256,download_enabled,previous_content_path,updated_at,created_at'),
     tableSafe('bookGrants', 'solution_vault_book_grants', 'id,user_id,book_id,grant_kind,source_kind,source_ref,status,expires_at,granted_at,revoked_at')
   ]);
   const loaded = Object.fromEntries(results.map(result => [result.name, result]));
@@ -284,7 +284,9 @@ function renderBooksSummary() {
     const label = { published: 'Published', unpublished: 'Unpublished, readers keep it', draft: 'Draft', retired: 'Retired' }[book.status] || book.status;
     const action = book.status === 'retired' ? '' :
       '<button class="secondary-button" type="button" onclick="adminToggleBookPublish(event,\'' + safeAttr(book.slug) + '\',' + (isPublished ? 'true' : 'false') + ')">' + (isPublished ? 'Unpublish' : 'Publish') + '</button>';
-    return '<div class="books-status-row"><span><strong>' + escapeHtml(book.title) + '</strong> · ' + escapeHtml(label) + '</span>' + action + '</div>';
+    const edit = book.status === 'retired' ? '' :
+      '<button class="secondary-button" type="button" onclick="openBookEditor(\'' + safeAttr(book.slug) + '\')">Edit</button>';
+    return '<div class="books-status-row"><span><strong>' + escapeHtml(book.title) + '</strong> · ' + escapeHtml(label) + '</span><span class="books-status-actions">' + edit + action + '</span></div>';
   }).join('');
 }
 
@@ -718,6 +720,7 @@ function openCustomer(userId) {
   if (!row) return;
   const name = row.user.name || 'Studio customer';
   adminEl('drawer-title').textContent = name;
+  if (adminEl('drawer-eyebrow')) adminEl('drawer-eyebrow').textContent = 'Customer';
   const sisAccess = row.seenInSevenAccess;
   const boardroom = row.boardroom || {};
   const activeGrants = studioAdminState.grants.filter(grant => grant.user_id === row.user.id && grant.status === 'active');
@@ -851,6 +854,190 @@ async function adminToggleBookPublish(event, bookSlug, currentlyPublished) {
   await loadStudioAdmin();
 }
 
+/* ── Book editor (WBR-445) ───────────────────────────────────────────── */
+// Covers go to the public solution-vault-covers bucket; book files go to the
+// private solution-vault-books bucket as the next content version. Every
+// upload is checked before the book points at it: the file's own checksum is
+// re-read from storage, and the database refuses an object that is not there.
+// The old file is kept so "Restore previous file" can put it back.
+const COVER_TYPES = { 'image/png': 'png', 'image/jpeg': 'jpg', 'image/webp': 'webp' };
+const COVER_MAX_BYTES = 5 * 1024 * 1024;
+const BOOK_MAX_BYTES = 50 * 1024 * 1024;
+const PDFJS_SRC = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js';
+const PDFJS_WORKER = 'https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.worker.min.js';
+
+function formatBytes(bytes) {
+  if (!bytes) return '-';
+  return bytes >= 1048576 ? (bytes / 1048576).toFixed(1) + ' MB' : Math.round(bytes / 1024) + ' KB';
+}
+
+async function sha256Hex(buffer) {
+  const digest = await crypto.subtle.digest('SHA-256', buffer);
+  return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function loadPdfJs() {
+  if (window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  return new Promise((resolve, reject) => {
+    const script = document.createElement('script');
+    script.src = PDFJS_SRC;
+    script.onload = () => {
+      window.pdfjsLib.GlobalWorkerOptions.workerSrc = PDFJS_WORKER;
+      resolve(window.pdfjsLib);
+    };
+    script.onerror = () => reject(new Error('The PDF checker could not load.'));
+    document.head.appendChild(script);
+  });
+}
+
+function bookEditorMessage(id, text, type) {
+  const el = adminEl(id);
+  if (!el) return;
+  el.textContent = text || '';
+  el.className = 'enrollment-message' + (type ? ' ' + type : '');
+}
+
+function openBookEditor(slug) {
+  const book = (studioAdminState.books || []).find(b => b.slug === slug);
+  if (!book) return;
+  adminEl('drawer-eyebrow').textContent = 'Book';
+  adminEl('drawer-title').textContent = book.title;
+  const isPdf = book.format === 'pdf';
+  adminEl('drawer-content').innerHTML =
+    '<section class="drawer-section"><h4>Details</h4>' +
+      '<form class="book-editor-form" id="book-details-form">' +
+        '<label>Title<input id="book-edit-title" maxlength="200" required value="' + safeAttr(book.title) + '"></label>' +
+        '<label>Subtitle<input id="book-edit-subtitle" maxlength="300" value="' + safeAttr(book.subtitle || '') + '"></label>' +
+        '<label>Description<textarea id="book-edit-description" maxlength="1200" rows="4">' + escapeHtml(book.description || '') + '</textarea></label>' +
+        (isPdf ? '<label class="book-editor-check"><input id="book-edit-download" type="checkbox"' + (book.download_enabled ? ' checked' : '') + '> Readers can download the PDF</label>' : '') +
+        '<button class="secondary-button" type="submit">Save details</button>' +
+        '<p class="enrollment-message" id="book-details-message" role="status"></p>' +
+      '</form></section>' +
+    '<section class="drawer-section"><h4>Cover</h4>' +
+      '<div class="book-editor-cover"><img id="book-edit-cover-preview" src="' + safeAttr(book.cover_url || '/assets/eee/vault.png') + '" alt="Current cover">' +
+      '<div><p>PNG, JPEG or WebP, up to 5 MB. Portrait works best; it is shown whole, never cropped.</p>' +
+      '<input id="book-edit-cover" type="file" accept="image/png,image/jpeg,image/webp">' +
+      '<button class="secondary-button" type="button" id="book-cover-save">Upload new cover</button>' +
+      '<p class="enrollment-message" id="book-cover-message" role="status"></p></div></div></section>' +
+    (isPdf
+      ? '<section class="drawer-section"><h4>Book file</h4>' +
+          '<p class="book-editor-file">Version ' + escapeHtml(book.content_version) + ' · ' + escapeHtml(book.page_count || '?') + ' pages · ' + escapeHtml(formatBytes(book.file_size_bytes)) +
+          (book.sha256 ? ' · SHA-256 ' + escapeHtml(book.sha256.slice(0, 8)) + '...' : '') + '</p>' +
+          '<p>Replacing the file keeps the current one, so it can be restored. Readers keep the book; their saved page resets because page numbers may have moved, and the shelf tells them so. Copies people already downloaded are not affected.</p>' +
+          '<input id="book-edit-file" type="file" accept="application/pdf">' +
+          '<div class="drawer-actions"><button class="secondary-button" type="button" id="book-file-save">Replace book file</button>' +
+          (book.previous_content_path ? '<button class="secondary-button" type="button" id="book-file-restore">Restore previous file</button>' : '') + '</div>' +
+          '<p class="enrollment-message" id="book-file-message" role="status"></p></section>'
+      : '');
+  adminEl('drawer-backdrop').hidden = false;
+  document.body.style.overflow = 'hidden';
+  refreshAdminIcons();
+
+  adminEl('book-details-form').addEventListener('submit', event => saveBookDetails(event, book));
+  adminEl('book-cover-save').addEventListener('click', () => uploadBookCover(book));
+  adminEl('book-edit-cover').addEventListener('change', () => {
+    const file = adminEl('book-edit-cover').files[0];
+    if (file && COVER_TYPES[file.type]) adminEl('book-edit-cover-preview').src = URL.createObjectURL(file);
+  });
+  if (isPdf) adminEl('book-file-save').addEventListener('click', () => replaceBookFile(book));
+  if (adminEl('book-file-restore')) adminEl('book-file-restore').addEventListener('click', () => restoreBookFile(book));
+}
+
+function currentDetails(book) {
+  return {
+    p_book_slug: book.slug,
+    p_title: adminEl('book-edit-title').value,
+    p_subtitle: adminEl('book-edit-subtitle').value,
+    p_description: adminEl('book-edit-description').value,
+    p_download_enabled: adminEl('book-edit-download') ? adminEl('book-edit-download').checked : null
+  };
+}
+
+async function reopenBookEditor(slug) {
+  await loadStudioAdmin();
+  openBookEditor(slug);
+}
+
+async function saveBookDetails(event, book) {
+  event.preventDefault();
+  bookEditorMessage('book-details-message', 'Saving...');
+  const { error } = await adminSb.rpc('admin_update_book_details', currentDetails(book));
+  if (error) return bookEditorMessage('book-details-message', 'Not saved: ' + error.message, 'error');
+  await reopenBookEditor(book.slug);
+  bookEditorMessage('book-details-message', 'Saved. Readers see it the next time their shelf loads.', 'success');
+}
+
+async function uploadBookCover(book) {
+  const file = adminEl('book-edit-cover').files[0];
+  if (!file) return bookEditorMessage('book-cover-message', 'Choose an image first.', 'error');
+  const ext = COVER_TYPES[file.type];
+  if (!ext) return bookEditorMessage('book-cover-message', 'Covers must be PNG, JPEG or WebP.', 'error');
+  if (file.size > COVER_MAX_BYTES) return bookEditorMessage('book-cover-message', 'That image is ' + formatBytes(file.size) + '; the limit is 5 MB.', 'error');
+
+  bookEditorMessage('book-cover-message', 'Uploading...');
+  const path = book.slug + '/' + Date.now() + '-cover.' + ext;
+  const bucket = adminSb.storage.from('solution-vault-covers');
+  const { error: uploadError } = await bucket.upload(path, file, { contentType: file.type, upsert: false });
+  if (uploadError) return bookEditorMessage('book-cover-message', 'Upload failed: ' + uploadError.message, 'error');
+  const publicUrl = bucket.getPublicUrl(path).data.publicUrl;
+  const { error } = await adminSb.rpc('admin_update_book_details', Object.assign(currentDetails(book), { p_cover_url: publicUrl }));
+  if (error) return bookEditorMessage('book-cover-message', 'Uploaded, but the book was not updated: ' + error.message, 'error');
+  await reopenBookEditor(book.slug);
+  bookEditorMessage('book-cover-message', 'New cover is live. The previous cover image is kept in storage.', 'success');
+}
+
+async function replaceBookFile(book) {
+  const file = adminEl('book-edit-file').files[0];
+  const say = (text, type) => bookEditorMessage('book-file-message', text, type);
+  if (!file) return say('Choose a PDF first.', 'error');
+  if (file.size > BOOK_MAX_BYTES) return say('That file is ' + formatBytes(file.size) + '; the limit is 50 MB.', 'error');
+
+  const buffer = await file.arrayBuffer();
+  if (new TextDecoder().decode(buffer.slice(0, 5)) !== '%PDF-') return say('That file is not a PDF.', 'error');
+
+  say('Checking the PDF...');
+  let pages;
+  try {
+    const pdfjs = await loadPdfJs();
+    const doc = await pdfjs.getDocument({ data: buffer.slice(0) }).promise;
+    pages = doc.numPages;
+    doc.destroy();
+  } catch (err) {
+    return say('This PDF could not be opened, so it was not uploaded: ' + (err.message || err), 'error');
+  }
+  if (!window.confirm('Replace "' + book.title + '" with ' + file.name + ' (' + pages + ' pages, ' + formatBytes(file.size) + ')? Readers keep the book; their saved page resets.')) return say('');
+
+  const sha = await sha256Hex(buffer);
+  const name = file.name.replace(/\.pdf$/i, '').replace(/[^A-Za-z0-9._-]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 80) || 'book';
+  const path = book.slug + '/v' + (Number(book.content_version) + 1) + '/' + name + '.pdf';
+  const bucket = adminSb.storage.from('solution-vault-books');
+
+  say('Uploading...');
+  const { error: uploadError } = await bucket.upload(path, new Blob([buffer], { type: 'application/pdf' }), { contentType: 'application/pdf', upsert: false });
+  if (uploadError) return say('Upload failed: ' + uploadError.message, 'error');
+
+  say('Verifying the stored copy...');
+  const { data: stored, error: readError } = await bucket.download(path);
+  if (readError || !stored) return say('Uploaded but could not be read back, so the book was not switched: ' + (readError ? readError.message : 'empty'), 'error');
+  if (await sha256Hex(await stored.arrayBuffer()) !== sha) return say('The stored copy does not match your file, so the book was not switched. Try again.', 'error');
+
+  const { error } = await adminSb.rpc('admin_replace_book_file', {
+    p_book_slug: book.slug, p_content_path: path, p_sha256: sha, p_file_size_bytes: file.size, p_page_count: pages
+  });
+  if (error) return say('Stored, but the book was not switched: ' + error.message, 'error');
+  await reopenBookEditor(book.slug);
+  say('Readers now get the new file (' + pages + ' pages, SHA-256 ' + sha.slice(0, 8) + '...). The previous file is kept and can be restored.', 'success');
+}
+
+async function restoreBookFile(book) {
+  if (!window.confirm('Put the previous file back for "' + book.title + '"? The current file is kept as the one you can restore next.')) return;
+  const { error } = await adminSb.rpc('admin_restore_previous_book_file', { p_book_slug: book.slug });
+  if (error) return bookEditorMessage('book-file-message', 'Not restored: ' + error.message, 'error');
+  await reopenBookEditor(book.slug);
+  bookEditorMessage('book-file-message', 'The previous file is back. Saved pages reset, as with any file change.', 'success');
+}
+
+window.openBookEditor = openBookEditor;
 window.adminGrantBook = adminGrantBook;
 window.adminRevokeBook = adminRevokeBook;
 window.adminToggleBookPublish = adminToggleBookPublish;
