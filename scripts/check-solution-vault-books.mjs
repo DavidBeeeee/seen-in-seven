@@ -89,6 +89,7 @@ assert.ok(vaultJs.includes("visibilityState === 'hidden') flushPdfSave()"), 'hid
 assert.ok(!/function renderPdfPage[\s\S]*?queueSavePage[\s\S]*?\n\}/.test(vaultJs.slice(vaultJs.indexOf('function renderPdfPage'), vaultJs.indexOf('function queueRenderPage'))), 'rendering a page (open, zoom, fit) never writes progress');
 assert.ok(vaultCss.includes('object-fit: contain'), 'covers are uncropped');
 assert.ok(vaultCss.includes('minmax(min(320px, 100%), 1fr)'), 'shelf grid cannot overflow a phone');
+assert.ok(/#pdf-canvas \{ align-self: flex-start; flex: none;/.test(vaultCss), 'the page canvas keeps its aspect ratio instead of stretching to the reader height');
 console.log('PASS: reader contracts verified.');
 
 // 5. Sign-in returns to the book.
