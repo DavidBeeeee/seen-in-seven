@@ -16,6 +16,46 @@ const accessNoticeApp = new URLSearchParams(window.location.search).get('access'
 
 const el = id => document.getElementById(id);
 
+// Return to a Studio page after sign-in (WBR-445). A gifted book link sends a
+// signed-out reader here with ?next=/vault?book=...; once they sign in they
+// land in the book. Only same-site paths are kept, never another origin. The
+// value lives in localStorage for 30 minutes so a magic link opened in a new
+// tab still finds it.
+const STUDIO_NEXT_KEY = 'studio_next_v1';
+const SAFE_NEXT = /^\/[a-z0-9-]+(\/[a-z0-9-]+)*(\?[A-Za-z0-9_=&%.-]*)?$/;
+
+function rememberStudioNext() {
+  const raw = new URLSearchParams(window.location.search).get('next');
+  if (!raw) return;
+  try {
+    if (SAFE_NEXT.test(raw)) localStorage.setItem(STUDIO_NEXT_KEY, JSON.stringify({ path: raw, at: Date.now() }));
+  } catch (e) {}
+  if (window.history && window.history.replaceState) {
+    const cleanUrl = new URL(window.location.href);
+    cleanUrl.searchParams.delete('next');
+    window.history.replaceState({}, '', cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
+  }
+}
+
+function pendingStudioNext() {
+  try {
+    const saved = JSON.parse(localStorage.getItem(STUDIO_NEXT_KEY) || 'null');
+    if (saved && SAFE_NEXT.test(saved.path) && Date.now() - saved.at < 30 * 60 * 1000) return saved.path;
+    localStorage.removeItem(STUDIO_NEXT_KEY);
+  } catch (e) {}
+  return null;
+}
+
+function followStudioNext() {
+  const path = pendingStudioNext();
+  if (!path) return false;
+  try { localStorage.removeItem(STUDIO_NEXT_KEY); } catch (e) {}
+  window.location.replace(path);
+  return true;
+}
+
+rememberStudioNext();
+
 function refreshIcons() {
   if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
 }
@@ -180,9 +220,17 @@ async function hydrateStudio(session) {
       } catch (e) {
         userHasBooks = false;
       }
+      if (followStudioNext()) return;
     }
   }
   renderStudio();
+  const nextPath = !studioSession && pendingStudioNext();
+  if (nextPath) {
+    openAuthModal();
+    setAuthMessage(nextPath.startsWith('/vault')
+      ? 'Sign in with the email your book was sent to, and it opens right away.'
+      : 'Sign in and Studio takes you straight back.');
+  }
 }
 
 function renderStudio() {

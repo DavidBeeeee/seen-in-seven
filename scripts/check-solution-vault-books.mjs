@@ -20,136 +20,146 @@ const read = (...p) => readFileSync(join(root, ...p), 'utf8');
 
 console.log('--- Checking Solution Vault Books & Digital Library (WBR-445) ---');
 
-// 1. Database migration & RLS invariants
-console.log('1. Verifying database migration and RLS policies...');
+// 1. Database migration: the contract the code calls
+console.log('1. Verifying database migration contract...');
 const migrationSql = read('supabase_migrations', '2026-10-16-solution-vault-books.sql');
-
-// Verify all four core tables exist
-assert.ok(migrationSql.includes('create table if not exists public.solution_vault_books'), 'books table created');
-assert.ok(migrationSql.includes('create table if not exists public.solution_vault_book_grants'), 'book grants table created');
-assert.ok(migrationSql.includes('create table if not exists public.solution_vault_book_progress'), 'book progress table created');
-assert.ok(migrationSql.includes('create table if not exists public.solution_vault_deliveries'), 'deliveries table created');
-
-// Verify RLS enabled on all tables
-assert.ok(migrationSql.includes('alter table public.solution_vault_books enable row level security;'), 'RLS enabled on books');
-assert.ok(migrationSql.includes('alter table public.solution_vault_book_grants enable row level security;'), 'RLS enabled on grants');
-assert.ok(migrationSql.includes('alter table public.solution_vault_book_progress enable row level security;'), 'RLS enabled on progress');
-assert.ok(migrationSql.includes('alter table public.solution_vault_deliveries enable row level security;'), 'RLS enabled on deliveries');
-
-// Verify helper RPCs and security definers
-const expectedRpcs = [
-  'member_has_book',
-  'has_book_access',
-  'member_has_any_book',
-  'has_any_book_access',
-  'has_vault_access',
-  'my_solution_vault_books',
-  'save_solution_vault_progress',
-  'admin_grant_book',
-  'admin_grant_book_by_email',
-  'admin_revoke_book_grant',
-  'admin_unpublish_book'
-];
-for (const rpc of expectedRpcs) {
-  assert.ok(migrationSql.includes(`create or replace function public.${rpc}`), `function ${rpc} defined`);
+for (const table of ['solution_vault_books', 'solution_vault_book_grants', 'solution_vault_book_progress', 'solution_vault_gift_sources', 'solution_vault_deliveries']) {
+  assert.ok(migrationSql.includes(`create table if not exists public.${table}`), `${table} created`);
+  assert.ok(migrationSql.includes(`alter table public.${table} enable row level security;`), `RLS on ${table}`);
+  assert.ok(migrationSql.includes(`revoke all on table public.${table} from public, anon, authenticated;`), `${table} has no default grants`);
 }
+assert.ok(!/grant (insert|update|delete)[^;]*solution_vault/i.test(migrationSql), 'no direct table writes for members; writes go through functions');
+const fnSignature = name => {
+  const m = migrationSql.match(new RegExp('create or replace function public\\.' + name + '\\(([^)]*)\\)'));
+  return m ? m[1].split(',').map(part => part.trim().split(/\s+/)[0]).filter(Boolean) : null;
+};
+for (const fn of ['has_book_access', 'has_any_book_access', 'has_vault_access', 'my_solution_vault_books', 'save_solution_vault_progress',
+  'admin_grant_book', 'admin_revoke_book_grant', 'admin_set_book_status', 'receive_book_gift', 'record_book_gift_notification']) {
+  assert.ok(fnSignature(fn), `function ${fn} defined`);
+}
+assert.ok(!migrationSql.includes('insert into public.studio_entitlements'), 'book grants never write studio_entitlements');
+assert.ok(/'5e-framework\/v1\/the-5e-framework\.pdf'/.test(migrationSql), '5E content lives at a storage path, not a repo path');
+assert.ok(/values \('solution-vault-books', 'solution-vault-books', false/.test(migrationSql), 'book bucket is private');
+assert.ok(/'yeees_optin', b\.id, false/.test(migrationSql), '/yeees source seeded inactive');
+assert.ok(/grant execute on function public\.receive_book_gift\(text, text, text, text\) to anon, service_role;/.test(migrationSql), 'gift entry callable by the webhook');
+assert.ok(/v_grant\.status = 'revoked' then\s+v_state := 'revoked_kept'/.test(migrationSql), 'a revoked opt-in grant is never reactivated by a repeat event');
+console.log('PASS: migration contract verified.');
 
-// Invariant: Book grants must NEVER touch studio_entitlements for vault app
-assert.ok(!migrationSql.includes("insert into public.studio_entitlements (user_id, app_key"), 'book grants do not write to studio_entitlements');
-console.log('PASS: Migration SQL and RLS invariants verified.');
+// 2. Every RPC the browser calls exists with the parameter names it sends.
+console.log('2. Verifying client RPC calls match the database...');
+const clientSources = ['js/vault.js', 'js/studio.js', 'js/admin-studio.js', 'api/_lib/gift-delivery.js'].map(f => [f, read(...f.split('/'))]);
+for (const [file, src] of clientSources) {
+  for (const call of src.matchAll(/rpc\('([a-z_]+(?:book|vault)[a-z_]*)'\s*(?:,\s*\{([^}]*)\})?/g)) {
+    const params = fnSignature(call[1]);
+    assert.ok(params, `${file} calls ${call[1]}, which the migration does not define`);
+    const sent = (call[2] || '').split(',').map(part => part.split(':')[0].trim()).filter(Boolean);
+    for (const key of sent) assert.ok(params.includes(key), `${file} sends ${key} to ${call[1]}, which takes ${params.join(', ')}`);
+  }
+  assert.ok(!/is_published|source_id\b|the-5e-framework'/.test(src), `${file} uses no stale column names or slugs`);
+}
+console.log('PASS: client RPC calls match the database.');
 
-// 2. Entrance & Hub Page Authorization
-console.log('2. Verifying entrance and route isolation...');
-const hubPageSrc = read('api', 'hub-page.js');
-assert.ok(hubPageSrc.includes("has_vault_access"), 'hub-page checks has_vault_access for vault entry');
-assert.ok(hubPageSrc.includes("if (appKey === 'vault')"), 'vault entrance handles books additively');
-
-// Verify other tools remain strictly per-app
-assert.ok(hubPageSrc.includes("hasToolAccess(bearer(req), ACCESS_KEY[tool])"), 'other tools still use exact per-app checks');
-console.log('PASS: Entrance and route isolation verified.');
-
-// 3. Asset Integrity (5E Framework PDF and Cover)
-console.log('3. Verifying 5E Framework PDF and cover assets...');
+// 3. Assets: the cover ships with the site, the book does not.
+console.log('3. Verifying assets...');
+const { execSync } = await import('node:child_process');
+const tracked = execSync('git ls-files', { cwd: root, encoding: 'utf8' }).split('\n');
+assert.ok(!tracked.some(f => /(^|\/)books\/|5e[-_ ]?framework.*\.pdf$/i.test(f)), 'no book file is committed to the public repository');
+const coverBytes = readFileSync(join(root, 'assets', 'vault', 'the-5e-framework-cover.png'));
+assert.equal(createHash('sha256').update(coverBytes).digest('hex'), 'dbdb465cae0c6256d522491f3b12e0729e99a2d688e1d180fbe68ee7e8187646', 'cover matches the supplied file');
 const pdfPath = '/Users/flutemusik/Library/CloudStorage/GoogleDrive-davidkamau.t@gmail.com/My Drive/GPT\'s/Social Media GPT/5E Framework Ebook v.2026.03.06.pdf';
-assert.ok(existsSync(pdfPath), '5E Framework PDF source file exists');
-const pdfBytes = readFileSync(pdfPath);
-assert.equal(pdfBytes.length, 505492, 'PDF file size matches 505,492 bytes');
-const pdfHash = createHash('sha256').update(pdfBytes).digest('hex');
-assert.equal(pdfHash, '7392961c0f492eaa4fe8eab517870efc19a7548cf2ec74619dc82772adf3e386', 'PDF SHA-256 checksum matches verified baseline');
+if (existsSync(pdfPath)) {
+  assert.equal(createHash('sha256').update(readFileSync(pdfPath)).digest('hex'), '7392961c0f492eaa4fe8eab517870efc19a7548cf2ec74619dc82772adf3e386', 'source PDF matches the seeded checksum');
+}
+console.log('PASS: assets verified.');
 
-const coverPath = join(root, 'assets', 'vault', 'the-5e-framework-cover.png');
-assert.ok(existsSync(coverPath), '5E Framework cover image exists in assets');
-const coverBytes = readFileSync(coverPath);
-assert.equal(coverBytes.length, 2681644, 'Cover image file size matches 2,681,644 bytes');
-const coverHash = createHash('sha256').update(coverBytes).digest('hex');
-assert.equal(coverHash, 'dbdb465cae0c6256d522491f3b12e0729e99a2d688e1d180fbe68ee7e8187646', 'Cover SHA-256 checksum matches verified baseline');
-console.log('PASS: 5E Framework PDF and cover checksums verified.');
-
-// 4. In-Studio PDF and Web Reader contracts
-console.log('4. Verifying in-Studio PDF reader and Web book reader contracts...');
+// 4. Reader contracts
+console.log('4. Verifying reader contracts...');
 const vaultHtml = read('api', '_hub', 'vault.html');
 const vaultJs = read('js', 'vault.js');
 const vaultCss = read('css', 'vault.css');
+for (const id of ['vault-books-section', 'vault-pdf-reader', 'vault-web-reader', 'vault-videos-section', 'vault-tabs', 'vault-link-notice']) {
+  assert.ok(vaultHtml.includes(`id="${id}"`), `${id} present`);
+}
+assert.ok(/<button class="secondary-button" id="pdf-download-btn" type="button">/.test(vaultHtml), 'download is a signed-URL button, not a bare link');
+assert.ok(vaultJs.includes("createSignedUrl(book.content_path"), 'book files open through short-lived signed URLs');
+assert.ok(!vaultJs.includes('/api/vault-book'), 'no unauthenticated file route remains');
+assert.ok(/ArrowLeft'\) \{\s*goToPdfPage\(currentPdfPage - 1\)/.test(vaultJs) && /ArrowRight'\) \{\s*goToPdfPage\(currentPdfPage \+ 1\)/.test(vaultJs), 'arrow keys page through goToPdfPage');
+assert.ok(/function closePdfReader\(\) \{\s*flushPdfSave\(\);/.test(vaultJs), 'closing the reader flushes the pending page save');
+assert.ok(vaultJs.includes("visibilityState === 'hidden') flushPdfSave()"), 'hiding the tab flushes the pending page save');
+assert.ok(!/function renderPdfPage[\s\S]*?queueSavePage[\s\S]*?\n\}/.test(vaultJs.slice(vaultJs.indexOf('function renderPdfPage'), vaultJs.indexOf('function queueRenderPage'))), 'rendering a page (open, zoom, fit) never writes progress');
+assert.ok(vaultCss.includes('object-fit: contain'), 'covers are uncropped');
+assert.ok(vaultCss.includes('minmax(min(320px, 100%), 1fr)'), 'shelf grid cannot overflow a phone');
+console.log('PASS: reader contracts verified.');
 
-// UI elements present
-assert.ok(vaultHtml.includes('id="vault-books-section"'), 'books shelf section present in HTML');
-assert.ok(vaultHtml.includes('id="vault-pdf-reader"'), 'PDF reader container present in HTML');
-assert.ok(vaultHtml.includes('id="vault-web-reader"'), 'Web reader container present in HTML');
-assert.ok(vaultHtml.includes('id="vault-videos-section"'), 'Video room section preserved');
-assert.ok(vaultHtml.includes('id="vault-tabs"'), 'Navigation tab switcher present');
+// 5. Sign-in returns to the book.
+console.log('5. Verifying sign-in return path...');
+const hubPageSrc = read('api', 'hub-page.js');
+const studioJs = read('js', 'studio.js');
+assert.ok(hubPageSrc.includes("b.href = '/?next=' + encodeURIComponent(back)"), 'gate sends signed-out readers to sign in with their destination');
+const safeNext = new RegExp(studioJs.match(/const SAFE_NEXT = \/(.*)\/;/)[1]);
+for (const ok of ['/vault?book=5e-framework', '/vault']) assert.ok(safeNext.test(ok), `${ok} is followed`);
+for (const bad of ['//evil.example', 'https://evil.example', '/\\evil.example', 'javascript:alert(1)', '/vault#x']) assert.ok(!safeNext.test(bad), `${bad} is refused`);
+assert.ok(studioJs.includes('if (followStudioNext()) return;'), 'Studio follows the saved destination after sign-in');
+console.log('PASS: sign-in return path verified.');
 
-// Reader logic & contracts in vault.js
-assert.ok(vaultJs.includes('pdfjsLib.getDocument'), 'PDF.js reader initialized');
-assert.ok(vaultJs.includes('Math.max(1, Math.min(pdfDoc.numPages, val))'), 'page clamping enforced');
-assert.ok(vaultJs.includes('save_solution_vault_progress'), 'progress saved via save_solution_vault_progress RPC');
-assert.ok(vaultJs.includes('queueSavePage') && vaultJs.includes('pdfSaveTimer'), 'progress persistence is debounced');
-assert.ok(vaultJs.includes("addEventListener('keydown'"), 'keyboard navigation supported (Arrow keys/Escape)');
-assert.ok(vaultJs.includes("section === 'books'"), 'section switching supports books');
-assert.ok(vaultJs.includes("showSection('videos')"), 'section switching supports videos');
-
-// Styling & uncropped covers in vault.css
-assert.ok(vaultCss.includes('.book-card-cover img'), 'book cover styling defined');
-assert.ok(vaultCss.includes('object-fit: contain'), 'portrait covers are uncropped with object-fit: contain');
-assert.ok(vaultCss.includes('.pdf-canvas-wrap'), 'responsive canvas container styled');
-console.log('PASS: In-Studio reader contracts verified.');
-
-// 5. Streamer API contract
-console.log('5. Verifying vault-book API streaming contract...');
-const vaultBookApi = read('api', '_lib', 'vault-book.js');
-assert.ok(vaultBookApi.includes('has_book_access'), 'vault-book API checks has_book_access');
-assert.ok(vaultBookApi.includes('wantsContent'), 'content streaming supported');
-assert.ok(vaultBookApi.includes('wantsDownload'), 'download action supported');
-assert.ok(vaultBookApi.includes('application/pdf'), 'PDF content-type served');
-assert.ok(hubPageSrc.includes('vaultBookHandler'), 'hub-page dispatches to vaultBookHandler');
-console.log('PASS: vault-book API streaming contract verified.');
-
-// 6. Gift Delivery Contract
-console.log('6. Verifying gift-delivery integration contract...');
-const deliveryApi = read('api', '_lib', 'gift-delivery.js');
-const webhookSrc = read('api', 'systeme-webhook.js');
-assert.ok(deliveryApi.includes("'yeees_optin': {") && deliveryApi.includes("active: false"), 'truthful pending status for /yeees mapping');
-assert.ok(deliveryApi.includes('GIFT_DELIVERY_SECRET'), 'supports HMAC authentication');
-assert.ok(deliveryApi.includes('duplicate: true'), 'idempotency handled without duplicate grants');
-assert.ok(deliveryApi.includes('admin_grant_book_by_email'), 'uses admin_grant_book_by_email RPC');
-assert.ok(deliveryApi.includes('solution_vault_deliveries'), 'logs delivery receipts');
-assert.ok(webhookSrc.includes('giftDeliveryHandler'), 'systeme-webhook dispatches to giftDeliveryHandler');
-console.log('PASS: Gift delivery contract verified.');
+// 6. Gift delivery, exercised with a fake database.
+console.log('6. Exercising gift delivery...');
+process.env.SYSTEME_WEBHOOK_SECRET = 'test-secret';
+delete process.env.RESEND_API_KEY;
+const { createHmac } = await import('node:crypto');
+const { default: giftDelivery, welcomeEmail } = await import('../api/_lib/gift-delivery.js');
+const calls = [];
+let nextResult = null;
+const realFetch = globalThis.fetch;
+globalThis.fetch = async (url, init) => {
+  const name = String(url).split('/rpc/')[1];
+  calls.push({ name, body: JSON.parse(init.body) });
+  return { ok: true, status: 200, json: async () => (name === 'receive_book_gift' ? nextResult : { ok: true }) };
+};
+async function deliver(payload, { sign = true, headers = {} } = {}) {
+  const raw = JSON.stringify(payload);
+  const req = {
+    method: 'POST', body: raw,
+    headers: Object.assign({ 'x-webhook-signature': sign ? createHmac('sha256', 'test-secret').update(raw).digest('hex') : 'bad' }, headers)
+  };
+  const res = { statusCode: 0, headers: {}, setHeader(k, v) { this.headers[k] = v; }, end(body) { this.body = JSON.parse(body); } };
+  await giftDelivery(req, res);
+  return res;
+}
+calls.length = 0;
+let res = await deliver({ source_key: 'yeees_optin', email: 'a@b.co' }, { sign: false });
+assert.equal(res.statusCode, 401, 'bad signature refused');
+assert.equal(calls.length, 0, 'bad signature reaches no database call');
+nextResult = { ok: false, error: 'source_inactive', note: 'Pending' };
+res = await deliver({ source_key: 'yeees_optin', email: 'reader@example.com', event_id: 'e1' });
+assert.equal(res.statusCode, 409, 'inactive /yeees source refused');
+assert.equal(calls.filter(c => c.name === 'record_book_gift_notification').length, 0, 'refused delivery sends nothing');
+calls.length = 0;
+nextResult = { ok: true, duplicate: false, delivery_id: 'd1', grant_state: 'granted', notification_status: 'pending', book_slug: '5e-framework', book_title: 'The 5E Framework' };
+res = await deliver({ source_key: 'trusted_source', email: ' Reader@Example.com ', event_id: 'e2', book_slug: 'other', user_id: 'x', grant_kind: 'conditional' });
+assert.equal(res.statusCode, 200, 'signed delivery accepted');
+const sent = calls.find(c => c.name === 'receive_book_gift').body;
+assert.deepEqual(Object.keys(sent).sort(), ['p_email', 'p_event_id', 'p_secret', 'p_source_key'], 'caller cannot choose book, user, grant kind or source');
+assert.equal(sent.p_email, 'reader@example.com', 'email normalized');
+assert.equal(res.body.notification_status, 'pending', 'no mail route: welcome stays pending, not claimed sent');
+calls.length = 0;
+nextResult = { ok: true, duplicate: true, delivery_id: 'd1', grant_state: 'granted', notification_status: 'sent', book_slug: '5e-framework', book_title: 'The 5E Framework' };
+res = await deliver({ source_key: 'trusted_source', email: 'reader@example.com', event_id: 'e2' });
+assert.ok(res.body.duplicate && res.body.notification_status === 'sent', 'replay after a sent welcome is a duplicate');
+assert.equal(calls.filter(c => c.name === 'record_book_gift_notification').length, 0, 'replay sends no second welcome');
+assert.ok(!welcomeEmail({ bookSlug: '5e-framework', bookTitle: '<b>x</b>' }).html.includes('<b>x</b>'), 'welcome email escapes the title');
+assert.ok(welcomeEmail({ bookSlug: '5e-framework', bookTitle: 'T' }).html.includes('https://studio.coloradomastermind.com/vault?book=5e-framework'), 'welcome links to the book');
+globalThis.fetch = realFetch;
+console.log('PASS: gift delivery exercised.');
 
 // 7. Studio Home & Admin Studio
-console.log('7. Verifying Studio Home and Admin Studio updates...');
-const studioHtml = read('index.html');
-const studioJs = read('js', 'studio.js');
-const adminHtml = read('admin.html');
+console.log('7. Verifying Studio Home and Admin Studio...');
 const adminJs = read('js', 'admin-studio.js');
-
-assert.ok(studioHtml.includes('id="vault-card"'), 'vault-card added to Studio Home HTML');
-assert.ok(studioJs.includes('has_any_book_access'), 'studio.js checks book access');
-assert.ok(studioJs.includes('showVaultCard'), 'studio.js toggles vault-card for book recipients');
-assert.ok(adminHtml.includes('Solution Vault Books'), 'admin.html includes Solution Vault Books card');
-assert.ok(adminHtml.includes('id="enrollment-book-5e"'), 'admin.html includes 5E book enrollment checkbox');
-assert.ok(adminJs.includes('customerBookSection'), 'admin-studio.js includes customer book section');
-assert.ok(adminJs.includes('adminGrantBook'), 'admin-studio.js includes adminGrantBook');
-assert.ok(adminJs.includes('adminRevokeBook'), 'admin-studio.js includes adminRevokeBook');
+assert.ok(read('index.html').includes('id="vault-card"'), 'vault card on Studio Home');
+assert.ok(studioJs.includes('has_any_book_access'), 'Studio Home checks book access');
+assert.ok(adminJs.includes("rpc('admin_grant_book', { p_email: email, p_book_slug: '5e-framework' })"), 'enrollment grants the seeded slug');
+assert.ok(adminJs.includes("rpc('admin_revoke_book_grant', { p_grant_id: grantId })"), 'revoke targets one source grant');
+assert.ok(adminJs.includes("rpc('admin_set_book_status'"), 'publish and unpublish go through the status function');
 console.log('PASS: Studio Home and Admin Studio verified.');
 
 // 8. Zero Em Dashes Invariant Check
@@ -158,7 +168,6 @@ const filesToCheck = [
   'api/_hub/vault.html',
   'css/vault.css',
   'js/vault.js',
-  'api/_lib/vault-book.js',
   'api/_lib/gift-delivery.js',
   'index.html',
   'js/studio.js',
@@ -208,4 +217,4 @@ try {
   console.log('NOTE: Live database probe skipped or password not in local keychain:', err.message);
 }
 
-console.log('\nALL SOLUTION VAULT BOOK CHECKS PASSED (9/9 areas verified)!');
+console.log('\nALL SOLUTION VAULT BOOK CHECKS PASSED');

@@ -204,8 +204,8 @@ async function loadStudioAdmin() {
     rpcSafe('boardroom', 'admin_get_boardroom_activity'),
     rpcSafe('hubUsage', 'admin_get_hub_usage'),
     tableSafe('catalog', 'studio_catalog_settings', 'app_key,catalog_mode,updated_at'),
-    tableSafe('books', 'solution_vault_books', 'id,slug,title,subtitle,format,is_published,created_at'),
-    tableSafe('bookGrants', 'solution_vault_book_grants', 'id,user_id,book_id,source_kind,source_id,status,granted_at,revoked_at')
+    tableSafe('books', 'solution_vault_books', 'id,slug,title,subtitle,format,status,created_at'),
+    tableSafe('bookGrants', 'solution_vault_book_grants', 'id,user_id,book_id,grant_kind,source_kind,source_ref,status,expires_at,granted_at,revoked_at')
   ]);
   const loaded = Object.fromEntries(results.map(result => [result.name, result]));
   studioAdminState.users = loaded.users.data;
@@ -265,12 +265,27 @@ function buildCustomerRows() {
 function renderBooksSummary() {
   const books = studioAdminState.books || [];
   const grants = studioAdminState.bookGrants || [];
-  const published = books.filter(b => b.is_published !== false);
+  const published = books.filter(b => b.status === 'published');
   const activeGrants = grants.filter(g => g.status === 'active');
   const setText = (id, value) => { const el = adminEl(id); if (el) el.textContent = String(value); };
   setText('books-total', books.length);
   setText('books-published', published.length);
   setText('books-grants', activeGrants.length);
+  const list = adminEl('books-status-list');
+  if (!list) return;
+  if (studioAdminState.errors.books) {
+    list.innerHTML = '<p class="catalog-visibility-status">Books could not load: ' + escapeHtml(studioAdminState.errors.books) + '</p>';
+    return;
+  }
+  // Publishing distributes a book; unpublishing stops new gifts but every
+  // reader who already holds it keeps it. Retiring is left to SQL on purpose.
+  list.innerHTML = books.map(book => {
+    const isPublished = book.status === 'published';
+    const label = { published: 'Published', unpublished: 'Unpublished, readers keep it', draft: 'Draft', retired: 'Retired' }[book.status] || book.status;
+    const action = book.status === 'retired' ? '' :
+      '<button class="secondary-button" type="button" onclick="adminToggleBookPublish(event,\'' + safeAttr(book.slug) + '\',' + (isPublished ? 'true' : 'false') + ')">' + (isPublished ? 'Unpublish' : 'Publish') + '</button>';
+    return '<div class="books-status-row"><span><strong>' + escapeHtml(book.title) + '</strong> · ' + escapeHtml(label) + '</span>' + action + '</div>';
+  }).join('');
 }
 
 function renderStudioAdmin() {
@@ -582,11 +597,13 @@ async function setAppAccess(event, userId, appKey, enabled) {
   }
 }
 
-async function sendStudioAccessEmail(email, appKey) {
+async function sendStudioAccessEmail(email, appKey, nextPath) {
   const { error } = await adminSb.auth.signInWithOtp({
     email,
     options: {
-      emailRedirectTo: window.location.origin + '/?access=' + encodeURIComponent(appKey),
+      emailRedirectTo: window.location.origin + (nextPath
+        ? '/?next=' + encodeURIComponent(nextPath)
+        : '/?access=' + encodeURIComponent(appKey)),
       shouldCreateUser: true
     }
   });
@@ -604,8 +621,9 @@ async function enrollCustomer(event) {
     setEnrollmentMessage('Enter an email address first.', 'error');
     return;
   }
-  if (!appKeys.length) {
-    setEnrollmentMessage('Choose at least one app to enroll this person in.', 'error');
+  const giveBook = Boolean(adminEl('enrollment-book-5e') && adminEl('enrollment-book-5e').checked);
+  if (!appKeys.length && !giveBook) {
+    setEnrollmentMessage('Choose at least one app or book to give this person.', 'error');
     return;
   }
 
@@ -613,33 +631,33 @@ async function enrollCustomer(event) {
   button.querySelector('span').textContent = 'Enrolling...';
   setEnrollmentMessage('');
   try {
-    const { error } = await adminSb.rpc('admin_enroll_studio_customer', {
-      target_email: email,
-      target_name: name || null,
-      target_app_keys: appKeys
-    });
-    if (error) throw error;
-
-    const book5eCheckbox = adminEl('enrollment-book-5e');
-    if (book5eCheckbox && book5eCheckbox.checked) {
-      try {
-        await adminSb.rpc('admin_grant_book_by_email', {
-          p_email: email,
-          p_book_slug: 'the-5e-framework',
-          p_source_kind: 'admin',
-          p_source_id: 'manual'
-        });
-      } catch (bookErr) {
-        // Book grant failed but customer enrolled
-      }
+    // A book on its own is a gift, not an app enrollment: no Studio app access
+    // is created for a book-only recipient (WBR-445).
+    if (appKeys.length) {
+      const { error } = await adminSb.rpc('admin_enroll_studio_customer', {
+        target_email: email,
+        target_name: name || null,
+        target_app_keys: appKeys
+      });
+      if (error) throw error;
     }
 
-    const linkError = await sendStudioAccessEmail(email, appKeys[0]);
+    let bookNote = '';
+    if (giveBook) {
+      const { error: bookError } = await adminSb.rpc('admin_grant_book', { p_email: email, p_book_slug: '5e-framework' });
+      if (bookError && !appKeys.length) throw bookError;
+      bookNote = bookError
+        ? ' The 5E Framework was NOT granted: ' + bookError.message
+        : ' The 5E Framework is on their Book Shelf as a lifetime gift.';
+    }
+
+    const bookOnly = giveBook && !appKeys.length;
+    const linkError = await sendStudioAccessEmail(email, appKeys[0], bookOnly ? '/vault?book=5e-framework' : null);
     setEnrollmentMessage(
-      linkError
+      (linkError
         ? 'Access is ready for ' + email + ', but the Studio access email could not be sent.'
-        : 'Access is ready for ' + email + ' and their Studio access email is on its way.',
-      linkError ? 'error' : 'success'
+        : 'Access is ready for ' + email + ' and their Studio access email is on its way.') + bookNote,
+      linkError || /NOT granted/.test(bookNote) ? 'error' : 'success'
     );
     adminEl('enrollment-form').reset();
     adminEl('enrollment-seeninseven').checked = true;
@@ -657,29 +675,39 @@ function drawerKv(label, value) {
 }
 
 function customerBookSection(row) {
-  const books = studioAdminState.books || [];
-  const allGrants = studioAdminState.bookGrants || [];
-  const userGrants = allGrants.filter(g => g.user_id === row.user.id && g.status === 'active');
-
+  const books = (studioAdminState.books || []).filter(book => book.status !== 'retired');
+  const grants = (studioAdminState.bookGrants || []).filter(g => g.user_id === row.user.id);
+  if (studioAdminState.errors.books || studioAdminState.errors.bookGrants) {
+    return '<p style="color: var(--studio-muted); font-size: 12px;">Books could not load: ' + escapeHtml(studioAdminState.errors.books || studioAdminState.errors.bookGrants) + '</p>';
+  }
   if (!books.length) {
-    return '<p style="color: var(--studio-muted); font-size: 12px;">No books are registered in the catalog yet.</p>';
+    return '<p style="color: var(--studio-muted); font-size: 12px;">No books are in the catalog yet.</p>';
   }
 
+  // Every contributing source is listed with its own revoke, because access is
+  // the union of sources: revoking one leaves the others in place.
+  const now = Date.now();
   return books.map(book => {
-    const activeGrant = userGrants.find(g => g.book_id === book.id);
-    const hasAccess = Boolean(activeGrant);
+    const bookGrants = grants.filter(g => g.book_id === book.id);
+    const live = bookGrants.filter(g => g.status === 'active' && (!g.expires_at || Date.parse(g.expires_at) > now));
+    const sources = bookGrants.map(g => {
+      const expired = g.expires_at && Date.parse(g.expires_at) <= now;
+      const state = g.status === 'revoked' ? 'revoked ' + formatDate(g.revoked_at) : expired ? 'ended ' + formatDate(g.expires_at) : 'active';
+      const kind = g.grant_kind === 'conditional' ? 'conditional until ' + formatDate(g.expires_at) : 'lifetime gift';
+      const revoke = g.status === 'active' && !expired
+        ? ' <button class="secondary-button" type="button" onclick="adminRevokeBook(event,\'' + safeAttr(g.id) + '\',\'' + safeAttr(row.user.id) + '\')">Revoke this source</button>'
+        : '';
+      return '<li>' + escapeHtml(g.source_kind + ' (' + g.source_ref + ')') + ' · ' + escapeHtml(kind) + ' · ' + escapeHtml(state) + revoke + '</li>';
+    }).join('');
     return '<article class="drawer-app">' +
       '<div class="drawer-app-head">' +
         '<strong>' + escapeHtml(book.title) + '</strong>' +
-        '<span class="access-badge' + (hasAccess ? ' active' : '') + '">' + (hasAccess ? 'Active grant' : 'No access') + '</span>' +
+        '<span class="access-badge' + (live.length ? ' active' : '') + '">' + (live.length ? 'Has this book' : 'No access') + '</span>' +
       '</div>' +
-      '<p>' + escapeHtml(book.subtitle || (book.format ? book.format.toUpperCase() + ' book' : 'Book')) +
-        (activeGrant ? ' · Granted via ' + escapeHtml(activeGrant.source_kind) + ' (' + formatDate(activeGrant.granted_at) + ')' : '') +
-      '</p>' +
+      (sources ? '<ul class="book-grant-sources">' + sources + '</ul>' : '<p>No grants yet.</p>') +
       '<div class="drawer-actions">' +
-        (hasAccess
-          ? '<button class="secondary-button" onclick="adminRevokeBook(event,\'' + safeAttr(row.user.id) + '\',\'' + safeAttr(book.slug) + '\',\'' + safeAttr(activeGrant.source_kind) + '\',\'' + safeAttr(activeGrant.source_id) + '\')">Revoke book</button>'
-          : '<button class="secondary-button" onclick="adminGrantBook(event,\'' + safeAttr(row.user.id) + '\',\'' + safeAttr(book.slug) + '\')">Grant book</button>') +
+        (live.some(g => g.source_kind === 'admin' && g.source_ref === 'admin:manual') ? '' :
+          '<button class="secondary-button" type="button" onclick="adminGrantBook(event,\'' + safeAttr(row.user.email || '') + '\',\'' + safeAttr(book.slug) + '\',\'' + safeAttr(row.user.id) + '\')">Give as lifetime gift</button>') +
       '</div>' +
     '</article>';
   }).join('');
@@ -771,69 +799,56 @@ document.addEventListener('keydown', event => {
   }
 });
 
-async function adminGrantBook(event, userId, bookSlug) {
+async function adminGrantBook(event, email, bookSlug, userId) {
   event.stopPropagation();
   const button = event.currentTarget;
+  if (!email) { alert('This customer has no email on file, so a book cannot be granted.'); return; }
   button.disabled = true;
   button.textContent = 'Granting...';
-  try {
-    const { error } = await adminSb.rpc('admin_grant_book', {
-      p_user_id: userId,
-      p_book_slug: bookSlug,
-      p_source_kind: 'admin',
-      p_source_id: 'manual'
-    });
-    if (error) throw error;
-    await loadStudioAdmin();
-    openCustomer(userId);
-  } catch (error) {
-    alert('Could not grant book: ' + (error.message || String(error)));
+  const { error } = await adminSb.rpc('admin_grant_book', { p_email: email, p_book_slug: bookSlug });
+  if (error) {
+    alert('Could not grant book: ' + error.message);
     button.disabled = false;
-    button.textContent = 'Grant book';
+    button.textContent = 'Give as lifetime gift';
+    return;
   }
+  await loadStudioAdmin();
+  openCustomer(userId);
 }
 
-async function adminRevokeBook(event, userId, bookSlug, sourceKind, sourceId) {
+async function adminRevokeBook(event, grantId, userId) {
   event.stopPropagation();
-  if (!window.confirm('Revoke access to ' + bookSlug + '? Their saved reading position will remain in place.')) return;
+  if (!window.confirm('Revoke this source? Any other source that gives them the book stays in place, and their saved page is kept. A copy they already downloaded cannot be taken back.')) return;
   const button = event.currentTarget;
   button.disabled = true;
   button.textContent = 'Revoking...';
-  try {
-    const { error } = await adminSb.rpc('admin_revoke_book_grant', {
-      p_user_id: userId,
-      p_book_slug: bookSlug,
-      p_source_kind: sourceKind || 'admin',
-      p_source_id: sourceId || 'manual'
-    });
-    if (error) throw error;
-    await loadStudioAdmin();
-    openCustomer(userId);
-  } catch (error) {
-    alert('Could not revoke book grant: ' + (error.message || String(error)));
+  const { data, error } = await adminSb.rpc('admin_revoke_book_grant', { p_grant_id: grantId });
+  if (error) {
+    alert('Could not revoke: ' + error.message);
     button.disabled = false;
-    button.textContent = 'Revoke book';
+    button.textContent = 'Revoke this source';
+    return;
   }
+  if (data && data.still_has_book) alert('Revoked. They still have the book through another source.');
+  await loadStudioAdmin();
+  openCustomer(userId);
 }
 
 async function adminToggleBookPublish(event, bookSlug, currentlyPublished) {
   event.stopPropagation();
-  if (currentlyPublished && !window.confirm('Unpublish ' + bookSlug + '? Existing entitled readers will keep access, but new distribution stops.')) return;
+  if (currentlyPublished && !window.confirm('Unpublish this book? New gifts stop. Everyone who already has it keeps it.')) return;
   const button = event.currentTarget;
   button.disabled = true;
-  try {
-    if (currentlyPublished) {
-      const { error } = await adminSb.rpc('admin_unpublish_book', { p_book_slug: bookSlug });
-      if (error) throw error;
-    } else {
-      const { error } = await adminSb.from('solution_vault_books').update({ is_published: true }).eq('slug', bookSlug);
-      if (error) throw error;
-    }
-    await loadStudioAdmin();
-  } catch (error) {
-    alert('Could not update book status: ' + (error.message || String(error)));
+  const { error } = await adminSb.rpc('admin_set_book_status', {
+    p_book_slug: bookSlug,
+    p_status: currentlyPublished ? 'unpublished' : 'published'
+  });
+  if (error) {
+    alert('Could not update book status: ' + error.message);
     button.disabled = false;
+    return;
   }
+  await loadStudioAdmin();
 }
 
 window.adminGrantBook = adminGrantBook;

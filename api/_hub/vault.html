@@ -39,6 +39,8 @@
       <button class="vault-tab" id="tab-videos" type="button"><i data-lucide="video"></i><span>Video Room</span></button>
     </nav>
 
+    <div class="reader-notice vault-link-notice" id="vault-link-notice" role="status" hidden></div>
+
     <!-- SECTION 1: BOOK SHELF -->
     <main class="vault-main" id="vault-books-section">
       <section class="eee-page-head">
@@ -78,7 +80,7 @@
             <button class="secondary-button" id="pdf-fit-width" type="button"><span>Fit</span></button>
             <button class="icon-button" id="pdf-zoom-in" type="button" title="Zoom in"><i data-lucide="zoom-in"></i></button>
           </div>
-          <a class="secondary-button" id="pdf-download-btn" href="#" download><i data-lucide="download"></i><span>Download PDF</span></a>
+          <button class="secondary-button" id="pdf-download-btn" type="button"><i data-lucide="download"></i><span>Download PDF</span></button>
         </div>
       </header>
       <div class="reader-notice" id="pdf-notice" hidden></div>
@@ -153,6 +155,6 @@
   </div>
 
   <script src="/js/eee-common.js?v=per-app-access-v1"></script>
-  <script src="/js/vault.js?v=solution-vault-books-v1"></script>
+  <script src="/js/vault.js?v=solution-vault-books-v2"></script>
 </body>
 </html>

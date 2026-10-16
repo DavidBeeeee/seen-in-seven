@@ -1,6 +1,5 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import vaultBookHandler from './_lib/vault-book.js';
 
 export const config = { maxDuration: 15 };
 
@@ -87,9 +86,21 @@ function shellHtml(head, tool) {
       var c = document.getElementById('hub-boot-copy');
       var b = document.getElementById('hub-boot-button');
       if (kind === 'sign-in') {
-        if (t) t.textContent = 'Sign in to enter the Momentum Hub.';
-        if (c) c.textContent = 'Use the Studio email connected to your membership.';
-        if (b) { b.href = '/?access=eee'; var s = b.querySelector('span'); if (s) s.textContent = 'Go to Studio sign in'; }
+        // Return here after sign-in (WBR-445): a gifted book link must land in
+        // the book, not on Studio home. Studio only honours local paths.
+        var back = window.location.pathname + window.location.search;
+        if (TOOL === 'vault') {
+          if (t) t.textContent = 'Sign in to open your Solution Vault.';
+          if (c) c.textContent = 'Use the email address your book or membership was sent to.';
+        } else {
+          if (t) t.textContent = 'Sign in to enter the Momentum Hub.';
+          if (c) c.textContent = 'Use the Studio email connected to your membership.';
+        }
+        if (b) { b.href = '/?next=' + encodeURIComponent(back); var s = b.querySelector('span'); if (s) s.textContent = 'Go to Studio sign in'; }
+      } else if (TOOL === 'vault' && /[?&]book=/.test(window.location.search)) {
+        if (t) t.textContent = 'This book is not in this account\u2019s library.';
+        if (c) c.textContent = 'If it was sent to a different email address, sign out and sign in with that one.';
+        if (b) { b.href = '/'; var s3 = b.querySelector('span'); if (s3) s3.textContent = 'Return to My Studio'; }
       } else {
         if (t) t.textContent = 'This app is not included in your Studio access.';
         if (c) c.textContent = 'Your other Studio access remains unchanged.';
@@ -164,9 +175,6 @@ export default async function handler(req, res) {
   }
 
   const tool = String((req.query && req.query.tool) || '').toLowerCase();
-  if (tool === 'vault-book' || (req.url && req.url.startsWith('/api/vault-book'))) {
-    return vaultBookHandler(req, res);
-  }
   if (!TOOLS.has(tool)) {
     res.status(404).send('Not found.');
     return;

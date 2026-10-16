@@ -49,48 +49,74 @@ function showSection(section) {
 }
 
 /* ── Book Shelf rendering ───────────────────────────────────────────── */
+// Book files live in a private bucket. Every open or download asks for a
+// fresh short-lived signed URL, and the storage policy rechecks the exact book
+// grant each time, so a revoked or expired grant stops the file too.
+const BOOK_BUCKET = 'solution-vault-books';
+let booksState = 'loading';
+
+function showVaultLinkNotice(message) {
+  const notice = vaultEl('vault-link-notice');
+  if (!notice) return;
+  notice.textContent = message || '';
+  notice.hidden = !message;
+}
+
 function renderBookShelf() {
   const grid = vaultEl('vault-books-grid');
   const empty = vaultEl('vault-books-empty');
   const countEl = vaultEl('vault-books-count');
+  if (!grid) return;
 
-  if (countEl) {
-    countEl.textContent = vaultBooks.length + ' title' + (vaultBooks.length === 1 ? '' : 's');
+  if (booksState === 'loading') {
+    if (countEl) countEl.textContent = 'Loading';
+    grid.innerHTML = '<p class="book-shelf-status">Opening your library...</p>';
+    if (empty) empty.hidden = true;
+    return;
   }
 
-  if (!vaultBooks || vaultBooks.length === 0) {
-    if (grid) grid.innerHTML = '';
+  if (booksState === 'error') {
+    if (countEl) countEl.textContent = 'Not loaded';
+    grid.innerHTML = '<div class="book-shelf-status"><p>Your library could not load just now. Your books and saved pages are safe.</p>' +
+      '<button class="secondary-button" type="button" data-books-retry><i data-lucide="refresh-cw"></i><span>Try again</span></button></div>';
+    if (empty) empty.hidden = true;
+    EEEStudio.refreshIcons();
+    return;
+  }
+
+  if (countEl) countEl.textContent = vaultBooks.length + ' title' + (vaultBooks.length === 1 ? '' : 's');
+
+  if (!vaultBooks.length) {
+    grid.innerHTML = '';
     if (empty) empty.hidden = false;
     return;
   }
 
   if (empty) empty.hidden = true;
-  if (!grid) return;
-
   grid.innerHTML = vaultBooks.map(book => {
-    const cover = book.cover_url || '/assets/vault/the-5e-framework-cover.png';
     const isWeb = book.format === 'web';
-    const badge = isWeb ? 'Web Book' : 'PDF Book';
-
+    const badge = book.admin_preview ? 'Admin preview' : (isWeb ? 'Web book' : 'PDF book');
     let progressHtml = '';
     let actionLabel = 'Read book';
-    if (book.progress) {
-      if (!isWeb && book.progress.last_page) {
-        progressHtml = '<span class="book-progress-chip"><i data-lucide="bookmark"></i><span>Page ' + vaultEscape(book.progress.last_page) + '</span></span>';
-        actionLabel = 'Continue reading (Page ' + vaultEscape(book.progress.last_page) + ')';
-      } else if (isWeb && book.progress.last_chapter_id) {
-        progressHtml = '<span class="book-progress-chip"><i data-lucide="bookmark"></i><span>Chapter saved</span></span>';
-        actionLabel = 'Continue reading';
-      }
+    if (book.progress_reset) {
+      progressHtml = '<span class="book-progress-chip"><i data-lucide="refresh-cw"></i><span>Updated edition, starts from the beginning</span></span>';
+    } else if (book.progress && !isWeb && book.progress.last_page) {
+      progressHtml = '<span class="book-progress-chip"><i data-lucide="bookmark"></i><span>Page ' + vaultEscape(book.progress.last_page) + (book.page_count ? ' of ' + vaultEscape(book.page_count) : '') + '</span></span>';
+      actionLabel = 'Continue reading';
+    } else if (book.progress && isWeb && book.progress.last_chapter_id) {
+      const chapters = Array.isArray(book.chapters) ? book.chapters : [];
+      const chapter = chapters.find(c => c.id === book.progress.last_chapter_id);
+      progressHtml = '<span class="book-progress-chip"><i data-lucide="bookmark"></i><span>' + vaultEscape(chapter ? chapter.title : 'Chapter saved') + '</span></span>';
+      actionLabel = 'Continue reading';
     }
 
-    const downloadBtn = (book.download_enabled && book.download_path)
-      ? '<a class="secondary-button" href="' + vaultEscape(book.download_path) + '" download><i data-lucide="download"></i><span>Download</span></a>'
+    const downloadBtn = book.download_enabled
+      ? '<button class="secondary-button" type="button" data-download-slug="' + vaultEscape(book.slug) + '"><i data-lucide="download"></i><span>Download</span></button>'
       : '';
 
     return '<article class="book-card" data-book-slug="' + vaultEscape(book.slug) + '">' +
       '<div class="book-card-cover">' +
-        '<img src="' + vaultEscape(cover) + '" alt="' + vaultEscape(book.title) + '">' +
+        '<img src="' + vaultEscape(book.cover_url || '/assets/eee/vault.png') + '" alt="Cover of ' + vaultEscape(book.title) + '">' +
         '<span class="book-format-badge">' + badge + '</span>' +
       '</div>' +
       '<div class="book-card-body">' +
@@ -112,134 +138,173 @@ function renderBookShelf() {
 }
 
 async function loadBooks() {
+  booksState = 'loading';
+  renderBookShelf();
   try {
     const { data, error } = await vaultContext.sb.rpc('my_solution_vault_books');
-    if (!error && Array.isArray(data)) {
-      vaultBooks = data;
-    } else {
-      // Direct query fallback
-      const direct = await vaultContext.sb.from('solution_vault_books').select('*').eq('published', true);
-      vaultBooks = direct.data || [];
-    }
+    if (error || !Array.isArray(data)) throw error || new Error('Unexpected library response');
+    vaultBooks = data;
+    booksState = 'ready';
   } catch (err) {
     vaultBooks = [];
+    booksState = 'error';
   }
   renderBookShelf();
+  return booksState === 'ready';
+}
+
+async function signedBookUrl(book, download) {
+  if (!book || !book.content_path) throw new Error('This book has no file yet.');
+  const options = download ? { download: book.download_filename || true } : undefined;
+  const { data, error } = await vaultContext.sb.storage.from(BOOK_BUCKET).createSignedUrl(book.content_path, 120, options);
+  if (error || !data || !data.signedUrl) throw error || new Error('No file link');
+  return data.signedUrl;
+}
+
+async function downloadBook(book, onError) {
+  try {
+    window.location.assign(await signedBookUrl(book, true));
+  } catch (err) {
+    onError('The download is not available right now. Reading here in Studio still works.');
+  }
 }
 
 /* ── PDF Reader ─────────────────────────────────────────────────────── */
+// One path changes the page (goToPdfPage), so buttons, the page box and the
+// arrow keys all clamp and save the same way. Opening a book never writes;
+// only a page change does, debounced, and the pending save is flushed when the
+// reader closes or the tab is hidden, so the last page is not lost.
+let pdfLoadToken = 0;
+let pdfRenderTask = null;
+let pdfSavePending = null;
+let pdfLastSaved = null;
+
 function openPdfReader(book) {
   activeBook = book;
   const reader = vaultEl('vault-pdf-reader');
   const booksSec = vaultEl('vault-books-section');
+  const videosSec = vaultEl('vault-videos-section');
   const tabs = vaultEl('vault-tabs');
-
   if (booksSec) booksSec.hidden = true;
+  if (videosSec) videosSec.hidden = true;
   if (tabs) tabs.hidden = true;
   if (reader) reader.hidden = false;
+  showVaultLinkNotice('');
 
   vaultEl('pdf-reader-title').textContent = book.title;
   vaultEl('pdf-reader-subtitle').textContent = book.subtitle || '';
-
   const downloadBtn = vaultEl('pdf-download-btn');
-  if (downloadBtn) {
-    downloadBtn.hidden = !book.download_enabled;
-    downloadBtn.href = book.download_path || ('/api/vault-book?slug=' + encodeURIComponent(book.slug) + '&download=1');
-  }
+  if (downloadBtn) downloadBtn.hidden = !book.download_enabled;
 
-  const savedPage = (book.progress && book.progress.last_page) ? Number(book.progress.last_page) : 1;
-  currentPdfPage = Number.isFinite(savedPage) && savedPage >= 1 ? savedPage : 1;
+  const saved = book.progress && Number(book.progress.last_page);
+  currentPdfPage = Number.isFinite(saved) && saved >= 1 ? saved : 1;
+  pdfLastSaved = { slug: book.slug, page: currentPdfPage };
 
-  loadPdfDocument(book.slug);
+  const canvas = vaultEl('pdf-canvas');
+  if (canvas) { canvas.width = 0; canvas.height = 0; }
+  vaultEl('pdf-page-count').textContent = book.page_count || '-';
+  vaultEl('pdf-page-num').value = currentPdfPage;
+  showPdfNotice(book.progress_reset ? 'This book was updated since you last read it, so it opens at the start.' : 'Opening your book...');
+
+  loadPdfDocument(book);
   EEEStudio.refreshIcons();
+  window.scrollTo(0, 0);
 }
 
 function closePdfReader() {
+  flushPdfSave();
+  pdfLoadToken++;
+  if (pdfRenderTask) { try { pdfRenderTask.cancel(); } catch (e) {} pdfRenderTask = null; }
+  if (pdfDoc) { try { pdfDoc.destroy(); } catch (e) {} }
+  pdfDoc = null;
+  pdfRendering = false;
+  pdfPendingPage = null;
+
   const reader = vaultEl('vault-pdf-reader');
   if (reader) reader.hidden = true;
-
   const tabs = vaultEl('vault-tabs');
   if (tabs && !tabs.dataset.forcedHidden) tabs.hidden = false;
-
   const booksSec = vaultEl('vault-books-section');
   if (booksSec) booksSec.hidden = false;
+  showPdfNotice('');
 
-  pdfDoc = null;
   activeBook = null;
   loadBooks().catch(console.error);
 }
 
-async function loadPdfDocument(slug) {
+async function loadPdfDocument(book) {
+  const token = ++pdfLoadToken;
   const canvasWrap = vaultEl('pdf-canvas-wrap');
   if (canvasWrap) canvasWrap.scrollTop = 0;
 
+  if (!window.pdfjsLib) {
+    showPdfNotice('The book viewer could not load. Refresh the page to try again.');
+    return;
+  }
+
+  let url;
   try {
-    if (!window.pdfjsLib) {
-      throw new Error('PDF viewing library could not be loaded.');
-    }
+    url = await signedBookUrl(book, false);
+  } catch (err) {
+    if (token === pdfLoadToken) showPdfNotice('This book file is not available right now. Your access and saved page are safe; please try again later.');
+    return;
+  }
 
-    const { data } = await vaultContext.sb.auth.getSession();
-    const token = data && data.session ? data.session.access_token : '';
-
-    const loadingTask = window.pdfjsLib.getDocument({
-      url: '/api/vault-book?slug=' + encodeURIComponent(slug) + '&content=1',
-      httpHeaders: { Authorization: 'Bearer ' + token }
-    });
-
-    pdfDoc = await loadingTask.promise;
+  try {
+    const doc = await window.pdfjsLib.getDocument({ url }).promise;
+    if (token !== pdfLoadToken) { doc.destroy(); return; }
+    pdfDoc = doc;
     vaultEl('pdf-page-count').textContent = pdfDoc.numPages;
     vaultEl('pdf-page-num').max = pdfDoc.numPages;
-
-    if (currentPdfPage > pdfDoc.numPages) currentPdfPage = pdfDoc.numPages;
-
+    currentPdfPage = Math.max(1, Math.min(pdfDoc.numPages, currentPdfPage));
+    showPdfNotice(book.progress_reset ? 'This book was updated since you last read it, so it opens at the start.' : '');
     fitPdfWidth();
   } catch (err) {
-    showPdfNotice('Could not load PDF document. Please try again.');
+    if (token === pdfLoadToken) showPdfNotice('This book could not be opened. Check your connection and try again.');
   }
 }
 
 function fitPdfWidth() {
   if (!pdfDoc) return;
   const wrap = vaultEl('pdf-canvas-wrap');
-  const availableWidth = wrap ? wrap.clientWidth - 48 : 800;
-
+  const availableWidth = wrap ? Math.max(240, wrap.clientWidth - 32) : 800;
   pdfDoc.getPage(currentPdfPage).then(page => {
-    const defaultViewport = page.getViewport({ scale: 1.0 });
-    pdfScale = Math.max(0.5, Math.min(2.5, availableWidth / defaultViewport.width));
-    renderPdfPage(currentPdfPage);
-  }).catch(() => {
-    renderPdfPage(currentPdfPage);
-  });
+    const viewport = page.getViewport({ scale: 1.0 });
+    pdfScale = Math.max(0.4, Math.min(2.5, availableWidth / viewport.width));
+    queueRenderPage(currentPdfPage);
+  }).catch(() => queueRenderPage(currentPdfPage));
 }
 
 function renderPdfPage(num) {
   if (!pdfDoc) return;
   pdfRendering = true;
+  const token = pdfLoadToken;
+  vaultEl('pdf-page-num').value = num;
 
   pdfDoc.getPage(num).then(page => {
+    if (token !== pdfLoadToken) return;
     const canvas = vaultEl('pdf-canvas');
     if (!canvas) return;
-    const ctx = canvas.getContext('2d');
+    const ratio = window.devicePixelRatio || 1;
     const viewport = page.getViewport({ scale: pdfScale });
-
-    canvas.height = viewport.height;
-    canvas.width = viewport.width;
-
-    const renderContext = { canvasContext: ctx, viewport };
-    const renderTask = page.render(renderContext);
-
-    renderTask.promise.then(() => {
-      pdfRendering = false;
-      if (pdfPendingPage !== null) {
-        const next = pdfPendingPage;
-        pdfPendingPage = null;
-        renderPdfPage(next);
-      }
+    canvas.width = Math.floor(viewport.width * ratio);
+    canvas.height = Math.floor(viewport.height * ratio);
+    canvas.style.width = Math.floor(viewport.width) + 'px';
+    pdfRenderTask = page.render({
+      canvasContext: canvas.getContext('2d'),
+      viewport,
+      transform: ratio !== 1 ? [ratio, 0, 0, ratio, 0, 0] : null
     });
+    return pdfRenderTask.promise;
+  }).catch(() => {}).then(() => {
+    pdfRenderTask = null;
+    pdfRendering = false;
+    if (pdfPendingPage !== null) {
+      const next = pdfPendingPage;
+      pdfPendingPage = null;
+      renderPdfPage(next);
+    }
   });
-
-  vaultEl('pdf-page-num').value = num;
-  queueSavePage(num);
 }
 
 function queueRenderPage(num) {
@@ -250,94 +315,122 @@ function queueRenderPage(num) {
   }
 }
 
+function goToPdfPage(num) {
+  if (!pdfDoc || !Number.isFinite(num)) return;
+  const page = Math.max(1, Math.min(pdfDoc.numPages, Math.round(num)));
+  vaultEl('pdf-page-num').value = page;
+  if (page === currentPdfPage) return;
+  currentPdfPage = page;
+  queueRenderPage(page);
+  queueSavePage(page);
+  const wrap = vaultEl('pdf-canvas-wrap');
+  if (wrap) wrap.scrollTop = 0;
+}
+
 function showPdfNotice(msg) {
   const n = vaultEl('pdf-notice');
   if (!n) return;
-  n.textContent = msg;
+  n.textContent = msg || '';
   n.hidden = !msg;
 }
 
 function queueSavePage(page) {
   if (!activeBook) return;
+  pdfSavePending = {
+    slug: activeBook.slug,
+    page,
+    completed: pdfDoc && page >= pdfDoc.numPages ? true : null
+  };
   clearTimeout(pdfSaveTimer);
-  pdfSaveTimer = setTimeout(async () => {
-    try {
-      const { error } = await vaultContext.sb.rpc('save_solution_vault_progress', {
-        target_book_slug: activeBook.slug,
-        target_page: page,
-        target_completed: pdfDoc ? page >= pdfDoc.numPages : false
-      });
-      if (error) {
-        showPdfNotice('Reading progress could not be saved to your account right now.');
-      } else {
-        showPdfNotice('');
-      }
-    } catch (e) {
-      showPdfNotice('Reading progress could not be saved to your account right now.');
-    }
-  }, 750);
+  pdfSaveTimer = setTimeout(flushPdfSave, 1200);
 }
 
+async function flushPdfSave() {
+  clearTimeout(pdfSaveTimer);
+  pdfSaveTimer = null;
+  const pending = pdfSavePending;
+  pdfSavePending = null;
+  if (!pending) return;
+  if (pdfLastSaved && pdfLastSaved.slug === pending.slug && pdfLastSaved.page === pending.page) return;
+  try {
+    const { error } = await vaultContext.sb.rpc('save_solution_vault_progress', {
+      target_book_slug: pending.slug,
+      target_page: pending.page,
+      target_completed: pending.completed
+    });
+    if (error) throw error;
+    pdfLastSaved = { slug: pending.slug, page: pending.page };
+    if (activeBook && activeBook.slug === pending.slug && pdfDoc) showPdfNotice('');
+  } catch (e) {
+    if (activeBook && activeBook.slug === pending.slug) showPdfNotice('Your page could not be saved just now. You can keep reading.');
+  }
+}
+
+document.addEventListener('visibilitychange', () => {
+  if (document.visibilityState === 'hidden') flushPdfSave();
+});
+window.addEventListener('pagehide', () => { flushPdfSave(); });
+
 /* ── Web Book Reader ────────────────────────────────────────────────── */
+let webLastSavedChapter = null;
+
 function openWebReader(book) {
   activeBook = book;
   const reader = vaultEl('vault-web-reader');
   const booksSec = vaultEl('vault-books-section');
+  const videosSec = vaultEl('vault-videos-section');
   const tabs = vaultEl('vault-tabs');
-
   if (booksSec) booksSec.hidden = true;
+  if (videosSec) videosSec.hidden = true;
   if (tabs) tabs.hidden = true;
   if (reader) reader.hidden = false;
+  showVaultLinkNotice('');
 
   vaultEl('web-reader-title').textContent = book.title;
-  vaultEl('web-reader-subtitle').textContent = book.subtitle || 'Web Book';
+  vaultEl('web-reader-subtitle').textContent = book.progress_reset
+    ? 'Updated edition: starting from the first chapter.'
+    : (book.subtitle || 'Web book');
 
   const chapters = Array.isArray(book.chapters) ? book.chapters : [];
   const select = vaultEl('web-chapter-select');
-  select.innerHTML = chapters.map((ch, i) => {
-    return '<option value="' + i + '">' + vaultEscape(ch.title || ('Chapter ' + (i + 1))) + '</option>';
-  }).join('');
+  select.innerHTML = chapters.map((ch, i) => '<option value="' + i + '">' + vaultEscape(ch.title || ('Chapter ' + (i + 1))) + '</option>').join('');
 
   let startIdx = 0;
-  if (book.progress && book.progress.last_chapter_id) {
-    const found = chapters.findIndex(c => c.id === book.progress.last_chapter_id);
+  webLastSavedChapter = book.progress && book.progress.last_chapter_id ? book.progress.last_chapter_id : null;
+  if (webLastSavedChapter) {
+    const found = chapters.findIndex(c => c.id === webLastSavedChapter);
     if (found >= 0) startIdx = found;
   }
 
   showWebChapter(startIdx);
   EEEStudio.refreshIcons();
+  window.scrollTo(0, 0);
 }
 
 function closeWebReader() {
   const reader = vaultEl('vault-web-reader');
   if (reader) reader.hidden = true;
-
   const tabs = vaultEl('vault-tabs');
   if (tabs && !tabs.dataset.forcedHidden) tabs.hidden = false;
-
   const booksSec = vaultEl('vault-books-section');
   if (booksSec) booksSec.hidden = false;
-
   activeBook = null;
   loadBooks().catch(console.error);
 }
 
 function showWebChapter(idx) {
-  if (!activeBook || !Array.isArray(activeBook.chapters)) return;
+  if (!activeBook || !Array.isArray(activeBook.chapters) || !activeBook.chapters.length) return;
   const chapters = activeBook.chapters;
-  if (idx < 0) idx = 0;
-  if (idx >= chapters.length) idx = chapters.length - 1;
-
+  idx = Math.max(0, Math.min(chapters.length - 1, idx));
   currentWebChapterIdx = idx;
   const ch = chapters[idx];
   vaultEl('web-chapter-select').value = idx;
   vaultEl('web-chapter-heading').textContent = ch.title || ('Chapter ' + (idx + 1));
 
-  // Safe DOM construction: sanitize paragraph text
+  // Plain text only: paragraphs are text nodes, so no markup in content runs.
   const bodyEl = vaultEl('web-body-text');
-  bodyEl.innerHTML = '';
-  const paras = String(ch.content || '').split(/\n\s*\n/).filter(Boolean);
-  for (const para of paras) {
+  bodyEl.textContent = '';
+  for (const para of String(ch.content || '').split(/\n\s*\n/).filter(Boolean)) {
     const p = document.createElement('p');
     p.textContent = para.trim();
     bodyEl.appendChild(p);
@@ -346,13 +439,19 @@ function showWebChapter(idx) {
   vaultEl('web-prev-chapter').disabled = idx === 0;
   vaultEl('web-next-chapter').disabled = idx === chapters.length - 1;
 
-  // Save progress
-  if (vaultContext && vaultContext.sb) {
+  // Save only a real chapter change, never the act of opening.
+  if (ch.id && ch.id !== webLastSavedChapter && !activeBook.admin_preview) {
+    const slug = activeBook.slug;
+    webLastSavedChapter = ch.id;
     vaultContext.sb.rpc('save_solution_vault_progress', {
-      target_book_slug: activeBook.slug,
+      target_book_slug: slug,
       target_chapter_id: ch.id,
-      target_completed: idx === chapters.length - 1
-    }).catch(console.error);
+      target_completed: idx === chapters.length - 1 ? true : null
+    }).then(({ error }) => {
+      if (error && activeBook && activeBook.slug === slug) {
+        vaultEl('web-reader-subtitle').textContent = 'Your chapter could not be saved just now. You can keep reading.';
+      }
+    });
   }
 }
 
@@ -443,6 +542,13 @@ function wireEvents() {
   const booksGrid = vaultEl('vault-books-grid');
   if (booksGrid) {
     booksGrid.addEventListener('click', event => {
+      if (event.target.closest('[data-books-retry]')) { loadBooks().catch(console.error); return; }
+      const downloadBtn = event.target.closest('[data-download-slug]');
+      if (downloadBtn) {
+        const target = vaultBooks.find(b => b.slug === downloadBtn.dataset.downloadSlug);
+        if (target) downloadBook(target, showVaultLinkNotice);
+        return;
+      }
       const readBtn = event.target.closest('[data-read-slug]');
       if (!readBtn) return;
       const slug = readBtn.dataset.readSlug;
@@ -461,39 +567,32 @@ function wireEvents() {
   if (pdfBack) pdfBack.addEventListener('click', closePdfReader);
 
   const pdfPrev = vaultEl('pdf-prev');
-  if (pdfPrev) pdfPrev.addEventListener('click', () => {
-    if (currentPdfPage <= 1) return;
-    currentPdfPage--;
-    queueRenderPage(currentPdfPage);
-  });
+  if (pdfPrev) pdfPrev.addEventListener('click', () => goToPdfPage(currentPdfPage - 1));
 
   const pdfNext = vaultEl('pdf-next');
-  if (pdfNext) pdfNext.addEventListener('click', () => {
-    if (!pdfDoc || currentPdfPage >= pdfDoc.numPages) return;
-    currentPdfPage++;
-    queueRenderPage(currentPdfPage);
-  });
+  if (pdfNext) pdfNext.addEventListener('click', () => goToPdfPage(currentPdfPage + 1));
 
   const pdfPageInput = vaultEl('pdf-page-num');
   if (pdfPageInput) {
-    pdfPageInput.addEventListener('change', () => {
-      const val = Number(pdfPageInput.value);
-      if (!pdfDoc || !Number.isFinite(val)) return;
-      currentPdfPage = Math.max(1, Math.min(pdfDoc.numPages, val));
-      queueRenderPage(currentPdfPage);
-    });
+    pdfPageInput.addEventListener('change', () => goToPdfPage(Number(pdfPageInput.value)));
   }
 
   const pdfZoomIn = vaultEl('pdf-zoom-in');
   if (pdfZoomIn) pdfZoomIn.addEventListener('click', () => {
     pdfScale = Math.min(3.0, pdfScale + 0.25);
-    renderPdfPage(currentPdfPage);
+    queueRenderPage(currentPdfPage);
   });
 
   const pdfZoomOut = vaultEl('pdf-zoom-out');
   if (pdfZoomOut) pdfZoomOut.addEventListener('click', () => {
-    pdfScale = Math.max(0.5, pdfScale - 0.25);
-    renderPdfPage(currentPdfPage);
+    pdfScale = Math.max(0.4, pdfScale - 0.25);
+    queueRenderPage(currentPdfPage);
+  });
+
+  const pdfDownload = vaultEl('pdf-download-btn');
+  if (pdfDownload) pdfDownload.addEventListener('click', event => {
+    event.preventDefault();
+    if (activeBook) downloadBook(activeBook, showPdfNotice);
   });
 
   const pdfFit = vaultEl('pdf-fit-width');
@@ -544,9 +643,9 @@ function wireEvents() {
     const pdfReader = vaultEl('vault-pdf-reader');
     if (pdfReader && !pdfReader.hidden) {
       if (event.key === 'ArrowLeft') {
-        renderPdfPage(currentPdfPage - 1);
+        goToPdfPage(currentPdfPage - 1);
       } else if (event.key === 'ArrowRight') {
-        renderPdfPage(currentPdfPage + 1);
+        goToPdfPage(currentPdfPage + 1);
       } else if (event.key === 'Escape') {
         closePdfReader();
       }
@@ -606,39 +705,34 @@ EEEStudio.initialize(async context => {
     hasVideos = data === true;
   } catch (e) {}
 
-  await loadBooks();
-  const hasBooks = vaultBooks.length > 0;
+  const booksLoaded = await loadBooks();
+  // A failed library load still shows the shelf, with its retry, rather than
+  // hiding books the person may own.
+  const hasBooks = !booksLoaded || vaultBooks.length > 0;
 
   const tabs = vaultEl('vault-tabs');
   const booksSec = vaultEl('vault-books-section');
   const videosSec = vaultEl('vault-videos-section');
+  const params = new URLSearchParams(window.location.search);
+  const targetSlug = (params.get('book') || '').toLowerCase();
 
-  // Case 1: Both access types
   if (hasVideos && hasBooks) {
     tabs.hidden = false;
     delete tabs.dataset.forcedHidden;
-    const urlParams = new URLSearchParams(window.location.search);
-    const hash = window.location.hash;
-    if (hash === '#videos' || urlParams.get('section') === 'video') {
+    if (window.location.hash === '#videos' || params.get('section') === 'video') {
       showSection('videos');
     } else {
       showSection('books');
     }
-  }
-  // Case 2: Book-only access
-  else if (hasBooks) {
+  } else if (hasBooks) {
     tabs.hidden = true;
     tabs.dataset.forcedHidden = 'true';
     showSection('books');
-  }
-  // Case 3: Video-only access
-  else if (hasVideos) {
+  } else if (hasVideos) {
     tabs.hidden = true;
     tabs.dataset.forcedHidden = 'true';
     showSection('videos');
-  }
-  // Case 4: Neither access type
-  else {
+  } else {
     tabs.hidden = true;
     if (booksSec) booksSec.hidden = true;
     if (videosSec) videosSec.hidden = true;
@@ -646,16 +740,16 @@ EEEStudio.initialize(async context => {
     return;
   }
 
-  // Check for direct book link in URL
-  const targetSlug = new URLSearchParams(window.location.search).get('book');
-  if (targetSlug) {
-    const targetBook = vaultBooks.find(b => b.slug === targetSlug.toLowerCase());
+  // A direct book link opens that book. If this account does not hold it,
+  // say so plainly instead of showing anything else in its place.
+  if (targetSlug && booksLoaded) {
+    const targetBook = vaultBooks.find(b => b.slug === targetSlug);
     if (targetBook) {
-      if (targetBook.format === 'web') {
-        openWebReader(targetBook);
-      } else {
-        openPdfReader(targetBook);
-      }
+      if (targetBook.format === 'web') openWebReader(targetBook);
+      else openPdfReader(targetBook);
+    } else {
+      showVaultLinkNotice('That book is not in the library for ' + (context.profile && context.profile.email ? context.profile.email : 'this account') +
+        '. If it was sent to a different email address, sign out and sign in with that one.');
     }
   }
 });
