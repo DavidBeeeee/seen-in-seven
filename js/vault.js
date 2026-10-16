@@ -587,8 +587,7 @@ function viVerdict(content, item, answer, fresh) {
   if (answer === 'open') return content.opened_line || 'True.';
   const pool = (answer === 'no' ? content.doubted_lines : content.believed_lines) || [];
   if (!pool.length) return 'True.';
-  // A fresh call gets a random line; a returning reader always sees the same one.
-  if (fresh) return pool[Math.floor(Math.random() * pool.length)];
+  // Picked from the claim id, so a reader sees the same line now and on return.
   let hash = 0;
   for (const ch of item.id) hash = (hash * 31 + ch.charCodeAt(0)) >>> 0;
   return pool[hash % pool.length];
