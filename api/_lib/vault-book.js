@@ -9,6 +9,7 @@ const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIs
 // Candidate file locations for The 5E Framework PDF
 const LOCAL_BOOK_PATHS = {
   '5e-framework': [
+    join(process.cwd(), 'api', '_hub', 'books', '5e-framework.pdf'),
     join(process.cwd(), 'assets', 'vault', 'books', '5e-framework.pdf'),
     join(process.cwd(), 'assets', 'vault', 'books', 'The-5E-Framework.pdf'),
     '/Users/flutemusik/Library/CloudStorage/GoogleDrive-davidkamau.t@gmail.com/My Drive/GPT\'s/Social Media GPT/5E Framework Ebook v.2026.03.06.pdf'

@@ -115,21 +115,24 @@ console.log('PASS: In-Studio reader contracts verified.');
 
 // 5. Streamer API contract
 console.log('5. Verifying vault-book API streaming contract...');
-const vaultBookApi = read('api', 'vault-book.js');
+const vaultBookApi = read('api', '_lib', 'vault-book.js');
 assert.ok(vaultBookApi.includes('has_book_access'), 'vault-book API checks has_book_access');
 assert.ok(vaultBookApi.includes('wantsContent'), 'content streaming supported');
 assert.ok(vaultBookApi.includes('wantsDownload'), 'download action supported');
 assert.ok(vaultBookApi.includes('application/pdf'), 'PDF content-type served');
+assert.ok(hubPageSrc.includes('vaultBookHandler'), 'hub-page dispatches to vaultBookHandler');
 console.log('PASS: vault-book API streaming contract verified.');
 
 // 6. Gift Delivery Contract
 console.log('6. Verifying gift-delivery integration contract...');
-const deliveryApi = read('api', 'gift-delivery.js');
+const deliveryApi = read('api', '_lib', 'gift-delivery.js');
+const webhookSrc = read('api', 'systeme-webhook.js');
 assert.ok(deliveryApi.includes("'yeees_optin': {") && deliveryApi.includes("active: false"), 'truthful pending status for /yeees mapping');
 assert.ok(deliveryApi.includes('GIFT_DELIVERY_SECRET'), 'supports HMAC authentication');
 assert.ok(deliveryApi.includes('duplicate: true'), 'idempotency handled without duplicate grants');
 assert.ok(deliveryApi.includes('admin_grant_book_by_email'), 'uses admin_grant_book_by_email RPC');
 assert.ok(deliveryApi.includes('solution_vault_deliveries'), 'logs delivery receipts');
+assert.ok(webhookSrc.includes('giftDeliveryHandler'), 'systeme-webhook dispatches to giftDeliveryHandler');
 console.log('PASS: Gift delivery contract verified.');
 
 // 7. Studio Home & Admin Studio
@@ -155,8 +158,8 @@ const filesToCheck = [
   'api/_hub/vault.html',
   'css/vault.css',
   'js/vault.js',
-  'api/vault-book.js',
-  'api/gift-delivery.js',
+  'api/_lib/vault-book.js',
+  'api/_lib/gift-delivery.js',
   'index.html',
   'js/studio.js',
   'admin.html',

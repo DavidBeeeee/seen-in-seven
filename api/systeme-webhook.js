@@ -1,4 +1,5 @@
 import { createHmac, timingSafeEqual } from 'node:crypto';
+import giftDeliveryHandler from './_lib/gift-delivery.js';
 
 export const config = {
   api: { bodyParser: false }
@@ -77,6 +78,10 @@ async function callSupabaseRpc(name, args, env) {
 }
 
 export default async function handler(req, res) {
+  if ((req.query && req.query.channel === 'gift-delivery') || (req.url && req.url.startsWith('/api/gift-delivery'))) {
+    return giftDeliveryHandler(req, res);
+  }
+
   if (req.method !== 'POST') {
     res.setHeader('Allow', 'POST');
     return sendJson(res, 405, { error: 'Method not allowed.' });

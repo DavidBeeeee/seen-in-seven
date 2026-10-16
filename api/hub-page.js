@@ -1,5 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
+import vaultBookHandler from './_lib/vault-book.js';
 
 export const config = { maxDuration: 15 };
 
@@ -163,6 +164,9 @@ export default async function handler(req, res) {
   }
 
   const tool = String((req.query && req.query.tool) || '').toLowerCase();
+  if (tool === 'vault-book' || (req.url && req.url.startsWith('/api/vault-book'))) {
+    return vaultBookHandler(req, res);
+  }
   if (!TOOLS.has(tool)) {
     res.status(404).send('Not found.');
     return;

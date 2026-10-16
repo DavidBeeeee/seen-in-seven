@@ -49,8 +49,25 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed.' });
   }
 
-  const rawBody = typeof req.body === 'string' ? req.body : JSON.stringify(req.body || {});
-  const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+  let rawBody = '';
+  if (typeof req.body === 'string') {
+    rawBody = req.body;
+  } else if (req.body && typeof req.body === 'object') {
+    rawBody = JSON.stringify(req.body);
+  } else {
+    const chunks = [];
+    for await (const chunk of req) {
+      chunks.push(chunk);
+    }
+    rawBody = Buffer.concat(chunks).toString('utf8');
+  }
+
+  let body = {};
+  try {
+    body = JSON.parse(rawBody);
+  } catch (e) {
+    body = {};
+  }
 
   const authHeader = req.headers['x-delivery-secret'] || req.headers['authorization'] || '';
   const signature = req.headers['x-delivery-signature'] || req.headers['x-webhook-signature'] || '';

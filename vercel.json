@@ -19,6 +19,14 @@
       "destination": "/api/storysculpt?action=research"
     },
     {
+      "source": "/api/vault-book",
+      "destination": "/api/hub-page?tool=vault-book"
+    },
+    {
+      "source": "/api/gift-delivery",
+      "destination": "/api/systeme-webhook?channel=gift-delivery"
+    },
+    {
       "source": "/studio",
       "destination": "/index.html"
     },
