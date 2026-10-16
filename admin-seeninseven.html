@@ -482,10 +482,12 @@ function renderCertainty() {
   // reaches out himself. Sorted here too so an older RPC cannot bury them.
   const upcoming = (Array.isArray(data.upcoming) ? data.upcoming : []).slice()
     .sort((a, b) => (Number(Boolean(b.safety_flag)) - Number(Boolean(a.safety_flag))) || String(a.starts_at || '').localeCompare(String(b.starts_at || '')));
-  const past = Array.isArray(data.past) ? data.past : [];
+  const past = (Array.isArray(data.past) ? data.past : []).slice()
+    .sort((a, b) => (Number(Boolean(b.safety_flag)) - Number(Boolean(a.safety_flag))) || String(b.starts_at || '').localeCompare(String(a.starts_at || '')));
   const counts = data.counts || {};
   const flaggedCount = upcoming.filter(s => s.safety_flag).length;
-  if (note) note.textContent = (flaggedCount ? flaggedCount + ' need a human look · ' : '') + (counts.upcoming || 0) + ' upcoming · ' + (counts.past || 0) + ' past · ' + (counts.cancelled || 0) + ' cancelled';
+  const unmarked = past.filter(certaintyNeedsOutcome).length;
+  if (note) note.textContent = (flaggedCount ? flaggedCount + ' need a human look · ' : '') + (unmarked ? unmarked + ' to mark held or no-show · ' : '') + (counts.upcoming || 0) + ' upcoming · ' + (counts.past || 0) + ' past · ' + (counts.cancelled || 0) + ' cancelled';
   if (!upcoming.length && !past.length) {
     panel.innerHTML = '<div class="loading">No Certainty sessions booked yet.</div>';
     return;
@@ -506,15 +508,66 @@ function renderCertainty() {
       '<td>' + modeLabel + '</td>' +
       '<td>' + (s.topic ? h(s.topic) : '<span class="muted">—</span>') + '</td>' +
       '<td>' + cal + '</td>' +
+      (isUpcoming ? '' : '<td>' + certaintyOutcomeCell(s) + '</td>') +
       '</tr>';
   };
   const section = (title, list, isUpcoming) => list.length
     ? '<div style="margin-bottom:6px;font-weight:700;color:var(--ink,inherit)">' + title + ' (' + list.length + ')</div>' +
       '<div class="table-wrap" style="margin-bottom:16px"><table style="min-width:640px"><thead><tr>' +
-      '<th>When (ET)</th><th>Member</th><th>Mode</th><th>Bringing</th><th>Status</th>' +
+      '<th>When (ET)</th><th>Member</th><th>Mode</th><th>Bringing</th><th>Status</th>' + (isUpcoming ? '' : '<th>Outcome</th>') +
       '</tr></thead><tbody>' + list.map(s => row(s, isUpcoming)).join('') + '</tbody></table></div>'
     : '';
   panel.innerHTML = section('Upcoming', upcoming, true) + section('Past & cancelled', past, false);
+}
+
+// Attendance (WBR-373, Momentum 300 Developer 4, 5, 38): once a session has
+// ended David marks it held or no-show. certainty_mark_outcome is the only
+// writer; it refuses cancelled and not-yet-ended sessions. A no-show stops
+// counting as a held session in history and in the lapse list; an unmarked one
+// still counts, exactly as before.
+function certaintyNeedsOutcome(s) {
+  return s && s.status === 'booked' && !s.outcome && (s.ended === true || Date.parse(s.ends_at) <= Date.now());
+}
+
+function certaintyOutcomeCell(s) {
+  if (s.status === 'cancelled') return '<span class="muted">—</span>';
+  if (s.outcome === 'held') return '<span style="color:#86efac;font-weight:700">Held</span>';
+  if (s.outcome === 'no_show') return '<span style="color:#fca5a5;font-weight:700">No-show</span>';
+  if (!certaintyNeedsOutcome(s)) return '<span class="muted">—</span>';
+  const id = h(s.id);
+  return '<div class="certainty-outcome-actions" style="display:flex;gap:6px;flex-wrap:wrap">' +
+    '<button class="btn btn-small" data-certainty-outcome="held" onclick="markCertaintyOutcome(\'' + id + '\', \'held\', this)">Held</button>' +
+    '<button class="btn btn-small" data-certainty-outcome="no_show" onclick="markCertaintyOutcome(\'' + id + '\', \'no_show\', this)">No-show</button>' +
+    '</div>';
+}
+
+async function markCertaintyOutcome(id, outcome, button) {
+  const cell = button && button.parentElement;
+  if (cell) cell.querySelectorAll('button').forEach(b => { b.disabled = true; });
+  try {
+    const res = await sb.rpc('certainty_mark_outcome', { p_id: id, p_outcome: outcome });
+    if (res.error) throw new Error(res.error.message);
+    const row = ((adminState.certainty && adminState.certainty.past) || []).find(s => s.id === id);
+    if (row) {
+      row.outcome = outcome;
+      row.outcome_at = res.data && res.data.outcome_at;
+    }
+    renderCertainty();
+    const engagement = await rpcSafe('certaintyEngagement', 'admin_get_certainty_engagement');
+    if (!engagement.error && engagement.data && !Array.isArray(engagement.data)) {
+      adminState.certaintyEngagement = engagement.data;
+      renderCertaintyLapse();
+    }
+  } catch (e) {
+    if (cell) {
+      cell.querySelectorAll('button').forEach(b => { b.disabled = false; });
+      const msg = document.createElement('div');
+      msg.className = 'muted';
+      msg.style.fontSize = '.75em';
+      msg.textContent = 'Not saved: ' + (e.message || String(e));
+      cell.appendChild(msg);
+    }
+  }
 }
 
 // Lapse awareness (WBR-373): who has drifted away from their weekly session.
@@ -567,8 +620,8 @@ function copyCertaintySessions() {
     (data.upcoming || []).map(s => Object.assign({ bucket: 'upcoming' }, s)),
     (data.past || []).map(s => Object.assign({ bucket: 'past' }, s))
   );
-  const lines = all.map(s => [s.bucket, s.label_day, (s.label_start || '') + '-' + (s.label_end || ''), s.member_name, s.member_email, s.mode, s.status, s.calendar_status, s.safety_flag ? 'needs-human-look' : '', (s.topic || '').replace(/\t/g, ' ')].join('\t'));
-  const header = ['bucket', 'day', 'time_et', 'member', 'email', 'mode', 'status', 'calendar', 'safety', 'topic'].join('\t');
+  const lines = all.map(s => [s.bucket, s.label_day, (s.label_start || '') + '-' + (s.label_end || ''), s.member_name, s.member_email, s.mode, s.status, s.calendar_status, s.safety_flag ? 'needs-human-look' : '', s.outcome || '', (s.topic || '').replace(/\t/g, ' ')].join('\t'));
+  const header = ['bucket', 'day', 'time_et', 'member', 'email', 'mode', 'status', 'calendar', 'safety', 'outcome', 'topic'].join('\t');
   navigator.clipboard.writeText([header].concat(lines).join('\n')).catch(() => {});
 }
 

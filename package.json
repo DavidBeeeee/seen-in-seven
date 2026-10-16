@@ -32,6 +32,7 @@
     "storysculpt:incidents": "node scripts/storysculpt-incidents.mjs",
     "check:certainty-lapse": "node scripts/check-certainty-lapse.mjs",
     "check:certainty-engagement": "node scripts/check-certainty-engagement.mjs",
+    "check:certainty-attendance": "node scripts/check-certainty-attendance.mjs",
     "check:certainty-reminders": "node scripts/check-certainty-engagement-reminders.mjs",
     "check:certainty-safety": "node scripts/check-certainty-safety.mjs",
     "check:certainty-settings": "node scripts/check-certainty-settings.mjs",
