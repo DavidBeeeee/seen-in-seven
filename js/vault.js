@@ -335,7 +335,8 @@ function showPdfNotice(msg) {
 }
 
 function queueSavePage(page) {
-  if (!activeBook) return;
+  // An admin previewing a book they do not hold has no reading position to keep.
+  if (!activeBook || activeBook.admin_preview) return;
   pdfSavePending = {
     slug: activeBook.slug,
     page,
