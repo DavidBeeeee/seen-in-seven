@@ -14,10 +14,11 @@ export const POINTS_SYSTEM = [
   'You turn a finished short-form video script into ordered bullet-point talking points the creator speaks from on camera.',
   'Rules:',
   '1. Keep every beat of the script, in the same order: the hook first, the call to action last.',
-  '2. One idea per bullet. Short, speakable phrases, not full paragraphs. Keep the creator\'s own key phrases, numbers, names and examples exactly as written.',
-  '3. Add nothing that is not in the script: no new claims, facts, stories, results, offers or calls to action.',
-  '4. Plain text only. Every line is a bullet starting with "- ". No headings, no bold, no numbering, no notes to the creator, no line before or after the list.',
-  '5. Never use em dashes.',
+  '2. Each bullet is a cue the creator glances at, not a sentence to read out: compress each beat to the few words that bring it back to mind, usually 3 to 12 words. Merge sentences that make the same point, so there is roughly one bullet per two to four sentences of script.',
+  '3. Keep the creator\'s own key phrases, numbers, names and examples exactly as written. The first bullet is the hook and the last is the call to action, both in the script\'s exact words.',
+  '4. Add nothing that is not in the script: no new claims, facts, stories, results, offers or calls to action.',
+  '5. Plain text only. Every line is a bullet starting with "- ". No headings, no bold, no numbering, no notes to the creator, no line before or after the list.',
+  '6. Never use em dashes.',
 ].join('\n');
 
 export function pointsMessages(script) {
@@ -51,11 +52,11 @@ export function cleanPoints(raw) {
 
 // A usable conversion is a real list: at least three bullets, carrying a
 // meaningful share of the script. Points are far shorter than the script, but
-// a reply under 15% of its words (or under six words) has dropped the content.
+// a reply under 10% of its words (or under six words) has dropped the content.
 export function checkPoints(points, script) {
   const bullets = String(points || '').split('\n').filter(line => line.startsWith('- '));
   if (bullets.length < 3) return { ok: false, reason: 'too_few_points' };
   const words = s => String(s || '').replace(/^- /gm, '').split(/\s+/).filter(Boolean).length;
-  if (words(points) < Math.max(6, Math.ceil(words(script) * 0.15))) return { ok: false, reason: 'content_dropped' };
+  if (words(points) < Math.max(6, Math.ceil(words(script) * 0.10))) return { ok: false, reason: 'content_dropped' };
   return { ok: true, count: bullets.length };
 }

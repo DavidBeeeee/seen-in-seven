@@ -24,6 +24,8 @@ const script = 'Everyone tells you to post every day. I did that for a year and 
 
 check('prompt keeps order, adds nothing, plain bullets, no em dashes', () => {
   assert.match(POINTS_SYSTEM, /same order/);
+  assert.match(POINTS_SYSTEM, /cue the creator glances at/);
+  assert.match(POINTS_SYSTEM, /hook and the last is the call to action/);
   assert.match(POINTS_SYSTEM, /Add nothing/);
   assert.match(POINTS_SYSTEM, /"- "/);
   assert.match(POINTS_SYSTEM, /em dashes/);
