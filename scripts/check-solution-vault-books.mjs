@@ -31,13 +31,15 @@ for (const table of ['solution_vault_books', 'solution_vault_book_grants', 'solu
 assert.ok(!/grant (insert|update|delete)[^;]*solution_vault/i.test(migrationSql), 'no direct table writes for members; writes go through functions');
 const editingSql = read('supabase_migrations', '2026-10-16-solution-vault-book-editing.sql');
 const interactiveSql = read('supabase_migrations', '2026-10-16-solution-vault-interactive-books.sql');
-const allSql = migrationSql + '\n' + editingSql + '\n' + interactiveSql;
+const createBookSql = read('supabase_migrations', '2026-10-17-solution-vault-admin-create-book.sql');
+const allSql = migrationSql + '\n' + editingSql + '\n' + interactiveSql + '\n' + createBookSql;
 const fnSignature = name => {
   const m = allSql.match(new RegExp('create or replace function public\\.' + name + '\\(([^)]*)\\)'));
   return m ? m[1].split(',').map(part => part.trim().split(/\s+/)[0]).filter(Boolean) : null;
 };
 for (const fn of ['has_book_access', 'has_any_book_access', 'has_vault_access', 'my_solution_vault_books', 'save_solution_vault_progress',
-  'admin_grant_book', 'admin_revoke_book_grant', 'admin_set_book_status', 'receive_book_gift', 'record_book_gift_notification']) {
+  'admin_grant_book', 'admin_revoke_book_grant', 'admin_set_book_status', 'receive_book_gift', 'record_book_gift_notification',
+  'admin_create_book', 'admin_delete_book']) {
   assert.ok(fnSignature(fn), `function ${fn} defined`);
 }
 assert.ok(!migrationSql.includes('insert into public.studio_entitlements'), 'book grants never write studio_entitlements');
@@ -176,6 +178,13 @@ for (const fn of ['admin_update_book_details', 'admin_replace_book_file', 'admin
   assert.ok(new RegExp('if not public\\.vault_caller_is_admin\\(\\) then[\\s\\S]{0,80}Admin access required').test(editingSql.slice(editingSql.indexOf('function public.' + fn))), fn + ' is admin-only');
   assert.ok(editingSql.includes('revoke all on function public.' + fn), fn + ' is revoked from public and anon');
 }
+for (const fn of ['admin_create_book', 'admin_delete_book']) {
+  assert.ok(new RegExp('if not public\\.vault_caller_is_admin\\(\\) then[\\s\\S]{0,80}Admin access required').test(createBookSql.slice(createBookSql.indexOf('function public.' + fn))), fn + ' is admin-only');
+  assert.ok(createBookSql.includes('revoke all on function public.' + fn), fn + ' is revoked from public and anon');
+}
+assert.ok(adminJs.includes("rpc('admin_create_book'"), 'admin creates books through admin_create_book RPC');
+assert.ok(adminJs.includes("rpc('admin_delete_book'"), 'admin deletes books through admin_delete_book RPC');
+assert.ok(read('admin.html').includes('openNewBookDrawer'), 'admin.html has New book action button');
 assert.ok(/values \('solution-vault-covers', 'solution-vault-covers', true/.test(editingSql), 'covers live in a public bucket; book files stay private');
 assert.ok(editingSql.includes("where o.bucket_id = 'solution-vault-books' and o.name = p_content_path") && editingSql.includes('v_object_size <> p_file_size_bytes'), 'a replacement file must exist in storage at the declared size');
 const detailKeys = (adminJs.match(/function currentDetails\(book\) \{[\s\S]*?\n\}/) || [''])[0].match(/p_[a-z_]+/g) || [];
@@ -218,7 +227,7 @@ const filesToCheck = [
 
 for (const relPath of filesToCheck) {
   const content = read(relPath);
-  const emDashCount = (content.match(/—/g) || []).length;
+  const emDashCount = (content.match(/\u2014/g) || []).length;
   assert.equal(emDashCount, 0, `File ${relPath} contains ${emDashCount} em dash(es)! Must be strictly 0.`);
 }
 console.log('PASS: Zero em dashes verified across all Solution Vault files.');

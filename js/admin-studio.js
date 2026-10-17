@@ -929,7 +929,11 @@ function openBookEditor(slug) {
           (book.previous_content_path ? '<button class="secondary-button" type="button" id="book-file-restore">Restore previous file</button>' : '') + '</div>' +
           '<p class="enrollment-message" id="book-file-message" role="status"></p></section>'
       : '') +
-    (book.format === 'interactive' ? '<div id="vi-editor-host"></div>' : '');
+    (book.format === 'interactive' ? '<div id="vi-editor-host"></div>' : '') +
+    (book.slug !== '5e-framework' && book.slug !== 'content-lies'
+      ? '<section class="drawer-section"><h4>Manage</h4>' +
+          '<div class="drawer-actions"><button class="secondary-button" type="button" style="color: var(--studio-danger, #ef4444);" onclick="deleteBook(\'' + safeAttr(book.slug) + '\')">Delete book</button></div></section>'
+      : '');
   adminEl('drawer-backdrop').hidden = false;
   document.body.style.overflow = 'hidden';
   refreshAdminIcons();
@@ -1037,6 +1041,193 @@ async function restoreBookFile(book) {
   if (error) return bookEditorMessage('book-file-message', 'Not restored: ' + error.message, 'error');
   await reopenBookEditor(book.slug);
   bookEditorMessage('book-file-message', 'The previous file is back. Saved pages reset, as with any file change.', 'success');
+}
+
+/* ── New book creation & deletion (WBR-445) ─────────────────────────── */
+function openNewBookDrawer() {
+  adminEl('drawer-eyebrow').textContent = 'Solution Vault';
+  adminEl('drawer-title').textContent = 'New book';
+  adminEl('drawer-content').innerHTML =
+    '<section class="drawer-section"><h4>Book details</h4>' +
+      '<form class="book-editor-form" id="book-new-form">' +
+        '<label>Slug (internal identifier)<input id="book-new-slug" maxlength="60" required placeholder="my-new-book" pattern="[a-z0-9][a-z0-9_-]*"></label>' +
+        '<label>Title<input id="book-new-title" maxlength="200" required placeholder="Title of the book"></label>' +
+        '<label>Subtitle<input id="book-new-subtitle" maxlength="300" placeholder="Subtitle or hook"></label>' +
+        '<label>Description<textarea id="book-new-description" maxlength="1200" rows="3" placeholder="Short description for the shelf card"></textarea></label>' +
+        '<label>Format' +
+          '<select id="book-new-format">' +
+            '<option value="pdf">PDF document</option>' +
+            '<option value="web">Web book (chapters)</option>' +
+            '<option value="interactive">Interactive book (claims)</option>' +
+          '</select>' +
+        '</label>' +
+        '<label>Cover image (optional)<input id="book-new-cover" type="file" accept="image/png,image/jpeg,image/webp"></label>' +
+        '<div id="book-new-pdf-fields">' +
+          '<label>PDF file <span aria-hidden="true">*</span><input id="book-new-file" type="file" accept="application/pdf"></label>' +
+          '<label class="book-editor-check"><input id="book-new-download" type="checkbox" checked> Allow PDF download</label>' +
+        '</div>' +
+        '<p style="font-size: 12px; color: var(--studio-muted); margin: 4px 0;">New books start unpublished. You can preview and review them before publishing.</p>' +
+        '<div class="drawer-actions"><button class="secondary-button" type="submit" id="book-new-submit"><span>Create book</span></button></div>' +
+        '<p class="enrollment-message" id="book-new-message" role="status"></p>' +
+      '</form>' +
+    '</section>';
+  adminEl('drawer-backdrop').hidden = false;
+  document.body.style.overflow = 'hidden';
+  refreshAdminIcons();
+
+  const slugInput = adminEl('book-new-slug');
+  const titleInput = adminEl('book-new-title');
+  let slugManual = false;
+  slugInput.addEventListener('input', () => { slugManual = true; });
+  titleInput.addEventListener('input', () => {
+    if (!slugManual) {
+      slugInput.value = titleInput.value.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '').slice(0, 50);
+    }
+  });
+
+  const formatSelect = adminEl('book-new-format');
+  const pdfFields = adminEl('book-new-pdf-fields');
+  formatSelect.addEventListener('change', () => {
+    pdfFields.hidden = formatSelect.value !== 'pdf';
+  });
+
+  adminEl('book-new-form').addEventListener('submit', createBook);
+}
+
+async function createBook(event) {
+  event.preventDefault();
+  const say = (text, type) => bookEditorMessage('book-new-message', text, type);
+  const slug = adminEl('book-new-slug').value.trim().toLowerCase();
+  const title = adminEl('book-new-title').value.trim();
+  const subtitle = adminEl('book-new-subtitle').value.trim() || null;
+  const description = adminEl('book-new-description').value.trim() || null;
+  const format = adminEl('book-new-format').value;
+  const submitBtn = adminEl('book-new-submit');
+
+  if (!slug || !/^[a-z0-9][a-z0-9_-]*$/.test(slug)) {
+    return say('Slug must contain only lowercase letters, numbers, dashes, and underscores.', 'error');
+  }
+  if (!title) {
+    return say('Title is required.', 'error');
+  }
+
+  submitBtn.disabled = true;
+  say('Preparing book...');
+
+  let coverUrl = null;
+  const coverFile = adminEl('book-new-cover').files[0];
+  if (coverFile) {
+    const ext = COVER_TYPES[coverFile.type];
+    if (!ext) {
+      submitBtn.disabled = false;
+      return say('Cover must be PNG, JPEG or WebP.', 'error');
+    }
+    if (coverFile.size > COVER_MAX_BYTES) {
+      submitBtn.disabled = false;
+      return say('Cover is ' + formatBytes(coverFile.size) + '; limit is 5 MB.', 'error');
+    }
+    say('Uploading cover...');
+    const coverPath = slug + '/' + Date.now() + '-cover.' + ext;
+    const coverBucket = adminSb.storage.from('solution-vault-covers');
+    const { error: coverErr } = await coverBucket.upload(coverPath, coverFile, { contentType: coverFile.type, upsert: false });
+    if (coverErr) {
+      submitBtn.disabled = false;
+      return say('Cover upload failed: ' + coverErr.message, 'error');
+    }
+    coverUrl = coverBucket.getPublicUrl(coverPath).data.publicUrl;
+  }
+
+  let contentPath = null;
+  let sha = null;
+  let fileSize = null;
+  let pages = null;
+  let downloadEnabled = false;
+
+  if (format === 'pdf') {
+    const pdfFile = adminEl('book-new-file').files[0];
+    if (!pdfFile) {
+      submitBtn.disabled = false;
+      return say('A PDF file is required for PDF format books.', 'error');
+    }
+    if (pdfFile.size > BOOK_MAX_BYTES) {
+      submitBtn.disabled = false;
+      return say('PDF is ' + formatBytes(pdfFile.size) + '; limit is 50 MB.', 'error');
+    }
+    const buffer = await pdfFile.arrayBuffer();
+    if (new TextDecoder().decode(buffer.slice(0, 5)) !== '%PDF-') {
+      submitBtn.disabled = false;
+      return say('Selected file is not a valid PDF.', 'error');
+    }
+    say('Inspecting PDF...');
+    try {
+      const pdfjs = await loadPdfJs();
+      const doc = await pdfjs.getDocument({ data: buffer }).promise;
+      pages = doc.numPages;
+    } catch (e) {
+      submitBtn.disabled = false;
+      return say('Could not read PDF pages: ' + e.message, 'error');
+    }
+
+    sha = await sha256Hex(buffer);
+    fileSize = pdfFile.size;
+    downloadEnabled = adminEl('book-new-download').checked;
+    contentPath = slug + '/v1/' + (slug + '.pdf');
+
+    say('Uploading PDF file...');
+    const bookBucket = adminSb.storage.from('solution-vault-books');
+    const { error: pdfErr } = await bookBucket.upload(contentPath, new Blob([buffer], { type: 'application/pdf' }), { contentType: 'application/pdf', upsert: false });
+    if (pdfErr) {
+      submitBtn.disabled = false;
+      return say('PDF upload failed: ' + pdfErr.message, 'error');
+    }
+
+    say('Verifying stored file...');
+    const { data: stored, error: readError } = await bookBucket.download(contentPath);
+    if (readError || !stored) {
+      submitBtn.disabled = false;
+      return say('Uploaded file could not be verified.', 'error');
+    }
+    const storedSha = await sha256Hex(await stored.arrayBuffer());
+    if (storedSha !== sha) {
+      submitBtn.disabled = false;
+      return say('Stored checksum mismatch.', 'error');
+    }
+  }
+
+  say('Creating book in catalog...');
+  const { data, error } = await adminSb.rpc('admin_create_book', {
+    p_slug: slug,
+    p_title: title,
+    p_subtitle: subtitle,
+    p_description: description,
+    p_format: format,
+    p_cover_url: coverUrl,
+    p_content_path: contentPath,
+    p_sha256: sha,
+    p_file_size_bytes: fileSize,
+    p_page_count: pages,
+    p_download_enabled: downloadEnabled,
+    p_download_filename: format === 'pdf' ? slug + '.pdf' : null
+  });
+
+  if (error) {
+    submitBtn.disabled = false;
+    return say('Failed to create book: ' + error.message, 'error');
+  }
+
+  say('Book created successfully.', 'success');
+  await loadStudioAdmin();
+  openBookEditor(slug);
+}
+
+async function deleteBook(slug) {
+  if (!window.confirm('Delete book "' + slug + '" and remove all associated files and progress? This cannot be undone.')) return;
+  const { error } = await adminSb.rpc('admin_delete_book', { p_book_slug: slug });
+  if (error) {
+    return alert('Could not delete book: ' + error.message);
+  }
+  closeCustomer();
+  await loadStudioAdmin();
 }
 
 /* ── Interactive book editor (WBR-445) ─────────────────────────────────── */
@@ -1261,5 +1452,7 @@ window.openBookEditor = openBookEditor;
 window.adminGrantBook = adminGrantBook;
 window.adminRevokeBook = adminRevokeBook;
 window.adminToggleBookPublish = adminToggleBookPublish;
+window.openNewBookDrawer = openNewBookDrawer;
+window.deleteBook = deleteBook;
 
 refreshAdminIcons();
