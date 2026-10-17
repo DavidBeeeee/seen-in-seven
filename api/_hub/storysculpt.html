@@ -8,7 +8,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
   <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
-  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=revise-note-v1">
+  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=points-voice-v1">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -286,7 +286,7 @@
                   <textarea id="story-refine-note" rows="2" aria-label="What to change in the script" placeholder="What should change? e.g. make it shorter, cut the repeated lesson, give it a warmer ending."></textarea>
                   <button class="primary-button" id="story-refine-send" type="button"><span>Revise</span><i data-lucide="wand-sparkles"></i></button><button class="secondary-button" id="story-regenerate-script" type="button" title="Write a fresh script from your answers (your note, if any, guides it)" aria-label="Regenerate the script"><i data-lucide="refresh-cw"></i><span>Regenerate</span></button>
                 </div>
-                <p class="eee-message story-refine-status" id="story-refine-status"></p>
+                <p class="eee-message story-refine-status" id="story-refine-status" role="status" aria-live="polite"></p>
               </div>
             </div>
 
@@ -303,6 +303,7 @@
                   </div>
                 </div>
                 <div class="story-artifact-actions">
+                  <button class="secondary-button" id="points-story-output" type="button" title="Turn this script into bullet-point talking points. The full script stays in Versions." aria-label="Turn the script into bullet points"><i data-lucide="list"></i><span>Bullet points</span></button>
                   <button class="secondary-button" id="copy-story-output" type="button" title="Copy script" aria-label="Copy script"><i data-lucide="copy"></i><span>Copy</span></button>
                   <button class="secondary-button" id="download-story-output" type="button" title="Download this script as a text file" aria-label="Download script"><i data-lucide="download"></i><span>Download</span></button>
                 </div>
@@ -388,6 +389,6 @@
       </div>
     </aside>
   </div>
-  <script src="/js/eee-common.js?v=per-app-access-v1"></script><script src="/js/storysculpt-member-states.js?v=storysculpt-states-v1"></script><script src="/js/storysculpt.js?v=revise-note-v1"></script>
+  <script src="/js/eee-common.js?v=per-app-access-v1"></script><script src="/js/storysculpt-member-states.js?v=storysculpt-states-v1"></script><script src="/js/storysculpt.js?v=points-voice-v1"></script><script src="/js/voice-input.js?v=points-voice-v1"></script>
 </body>
 </html>

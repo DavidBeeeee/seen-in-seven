@@ -325,7 +325,7 @@ function renderVersionPills() {
   pillsContainer.innerHTML = versions.map((v, idx) => {
     const isLatest = idx === versions.length - 1;
     const isSelected = viewingVersionIndex === -1 ? isLatest : viewingVersionIndex === idx;
-    const label = 'v' + v.version + (isLatest ? ' (latest)' : '');
+    const label = 'v' + v.version + (v.kind === 'points' ? ' points' : '') + (isLatest ? ' (latest)' : '');
     return '<button class="story-version-pill' + (isSelected ? ' active' : '') + '" type="button" data-ver-index="' + idx + '" title="' + storyEscape(v.note || '') + '">' + storyEscape(label) + '</button>';
   }).join('');
 
@@ -2174,6 +2174,61 @@ async function refineStory() {
   await executeRefineGeneration(note);
 }
 
+// Bullet points (2026-10-17): turns the finished script, in any format, into
+// ordered talking points and saves them as a new version, so the full script is
+// one tap away in Versions. The member's latest edits are saved first, because
+// the server converts the saved script.
+async function convertToPoints() {
+  if (!activeStory || !activeStory.output) return;
+  const button = storyEl('points-story-output');
+  const status = storyEl('story-refine-status');
+  const versions = ensureVersions(activeStory);
+  if (viewingVersionIndex !== -1 && viewingVersionIndex < versions.length - 1) {
+    status.textContent = 'Bullet points are made from your latest version. Open it first, or restore this one as the active draft.';
+    status.className = 'eee-message story-refine-status error';
+    return;
+  }
+  const currentScript = storyEl('story-output-copy').value.trim();
+  if (!currentScript) return;
+  activeStory.output = currentScript;
+  if (versions.length > 0) versions[versions.length - 1].content = currentScript;
+
+  const buttonLabel = button && button.querySelector('span');
+  if (button) button.disabled = true;
+  if (buttonLabel) buttonLabel.textContent = 'Making points...';
+  status.textContent = 'Turning your script into bullet points...';
+  status.className = 'eee-message story-refine-status';
+  try {
+    await saveActiveStory();
+    const data = await runGeneration('points');
+    if (!data || !data.final) throw new Error('StorySculpt could not make your bullet points just now. Your script is unchanged, so please try again.');
+    versions.push({
+      version: versions.length + 1,
+      note: 'Bullet points',
+      kind: 'points',
+      content: data.content,
+      createdAt: new Date().toISOString()
+    });
+    activeStory.output = data.content;
+    viewingVersionIndex = -1;
+    await saveActiveStory('Bullet points saved');
+    renderScriptPanel();
+    status.textContent = 'Bullet points ready. Your full script is still in Versions, one tap back.';
+    status.className = 'eee-message story-refine-status success';
+    if (window.innerWidth <= 820) switchMobileTab('script');
+  } catch (error) {
+    // runGeneration writes data.content into output only on success, so a
+    // failure leaves the script exactly as it was.
+    activeStory.output = currentScript;
+    status.textContent = (error && error.message) || 'StorySculpt could not make your bullet points just now. Your script is unchanged, so please try again.';
+    status.className = 'eee-message story-refine-status error';
+  } finally {
+    if (button) button.disabled = false;
+    if (buttonLabel) buttonLabel.textContent = 'Bullet points';
+    EEEStudio.refreshIcons();
+  }
+}
+
 // Inline edits to the finished script save straight to the project.
 function queueOutputSave() {
   if (!activeStory) return;
@@ -2533,6 +2588,7 @@ function downloadScript() {
 }
 storyEl('download-story-output').addEventListener('click', downloadScript);
 storyEl('copy-story-output').addEventListener('click', () => copyOutput(storyEl('copy-story-output'), 'Copied'));
+storyEl('points-story-output').addEventListener('click', convertToPoints);
 storyEl('copy-story-output-bottom').addEventListener('click', () => copyOutput(storyEl('copy-story-output-bottom'), 'Copied. Go record it.'));
 storyEl('start-another-story').addEventListener('click', showStart);
 storyEl('story-finished-new').addEventListener('click', showStart);

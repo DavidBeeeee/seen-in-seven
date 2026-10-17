@@ -35,6 +35,7 @@ import {
   ugcSystemPrompt
 } from './_lib/storysculpt-ugc.js';
 import { handleResearchRequest } from './_lib/storysculpt-research.js';
+import { checkPoints, cleanPoints, pointsMessages } from './_lib/storysculpt-points.js';
 
 export const config = { maxDuration: 90 };
 
@@ -199,7 +200,7 @@ function validateBody(body) {
   const projectId = String(body && body.projectId || '');
   if (!PROJECT_ID.test(projectId)) throw new Error('Open a saved StorySculpt chat before continuing.');
   const intent = String(body && body.intent || '');
-  if (intent !== 'interview' && intent !== 'refine' && intent !== 'regenerate') throw new Error('Choose whether to continue the interview or revise a script.');
+  if (intent !== 'interview' && intent !== 'refine' && intent !== 'regenerate' && intent !== 'points') throw new Error('Choose whether to continue the interview or revise a script.');
   // Long chats keep their opening: the member's first two messages hold the raw
   // idea and any list, and dropping them (the old slice(-24)) lost both.
   const all = Array.isArray(body && body.messages) ? body.messages : [];
@@ -667,6 +668,10 @@ export default async function handler(req, res) {
       await emit('denied', { failureClass: classifyFailure('input') });
       return fail(409, 'This script is already finished. Use Refine with a note to change it.');
     }
+    if (!project.output && input.intent === 'points') {
+      await emit('denied', { failureClass: classifyFailure('input') });
+      return fail(409, 'Finish a script before turning it into bullet points.');
+    }
     if (!project.output && input.intent === 'refine') {
       await emit('denied', { failureClass: classifyFailure('input') });
       return fail(409, 'Finish a script before asking for a revision.');
@@ -699,6 +704,13 @@ export default async function handler(req, res) {
     if (!allowed) {
       await emit('denied', { failureClass: classifyFailure('quota') });
       return fail(429, 'StorySculpt needs a short pause before the next request.');
+    }
+
+    // Bullet points (2026-10-17): converts the saved finished script, in any
+    // format, into ordered talking points. Reads the script from the project,
+    // not the request, so it converts exactly what is saved.
+    if (input.intent === 'points') {
+      return await handlePointsTurn({ project, trace, emit, fail, res });
     }
 
     if (input.mode === 'ugc') {
@@ -855,6 +867,32 @@ export default async function handler(req, res) {
     await emit('error', { failureClass });
     return fail(failureLayer(failureClass) === 'database' ? 503 : 500, error && error.message ? error.message : 'StorySculpt could not complete this step.');
   }
+}
+
+async function handlePointsTurn({ project, trace, emit, fail, res }) {
+  const script = String(project.output || '');
+  let result;
+  let points = '';
+  let check = { ok: false, reason: 'not_run' };
+  // One retry: a reply that is not a real list never replaces the script.
+  for (let attempt = 0; attempt < 2 && !check.ok; attempt++) {
+    try {
+      result = await callModel(pointsMessages(script), { temperature: 0.3, maxTokens: 1400 });
+    } catch (error) {
+      await emit('error', { failureClass: classifyFailure('generation', error) });
+      return fail(error && error.name === 'AbortError' ? 504 : 502, error && error.name === 'AbortError'
+        ? 'StorySculpt took too long making your bullet points. Your script is unchanged, so please try again.'
+        : 'StorySculpt could not make your bullet points just now. Your script is unchanged, so please try again.');
+    }
+    points = cleanPoints(result.content);
+    check = checkPoints(points, script);
+  }
+  if (!check.ok) {
+    await emit('output_rejected', { failureClass: classifyFailure('output'), violations: [check.reason], usage: result && result.usage });
+    return fail(502, 'StorySculpt could not turn this script into clean bullet points. Your script is unchanged, so please try again.');
+  }
+  await emit('generation', { step: 'points', failureClass: undefined, final: true, points: check.count, usage: result.usage });
+  return json(res, 200, { final: true, content: points, promptVersion: PROMPT_VERSION, model: MODEL_VERSION, trace });
 }
 
 function bearerToken(req) {
