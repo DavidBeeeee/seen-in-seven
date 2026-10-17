@@ -313,6 +313,9 @@
 @media (max-width: 1360px) {
   .story-artifact-actions .secondary-button { padding-left: 10px; padding-right: 10px; }
   .story-artifact-actions .secondary-button span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  /* Copy and Download read fine as icons; a list icon alone does not say
+     "turn this into bullet points", so that one keeps its words (2026-10-17). */
+  .story-artifact-actions #points-story-output span { position: static; width: auto; height: auto; overflow: visible; clip: auto; }
 }
 
 /* Chats rail toggle: plain heading text on desktop, a fold-out bar on phones. */
