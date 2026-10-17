@@ -15,11 +15,6 @@
   const SKIP_IDS = new Set(['story-output-copy', 'story-title', 'mem-name', 'mem-role', 'ugc-product-url']);
   const SELECTOR = 'textarea, input[type="text"]';
 
-  let activeRecognition = null;
-  let activeBtn = null;
-  let activeBadge = null;
-  let silenceTimer = null;
-
   function eligible(el) {
     if (!el || el.dataset.voiceAttached) return false;
     if (SKIP_IDS.has(el.id)) return false;
@@ -59,86 +54,95 @@
     btn.addEventListener('click', (event) => {
       event.preventDefault();
       event.stopPropagation();
-      if (activeBtn === btn) stopListening();
+      if (active && active.btn === btn) stopListening();
       else startListening(el, btn, badge);
     });
   }
 
+  // Each listening session owns its field, its button and the text that was
+  // in the field when it started. Chrome keeps delivering the last words for a
+  // moment after stop, so a session's late results still land after that
+  // starting text, and a session's own end can never switch off a newer one
+  // (David, 2026-10-17: start, stop, start again wiped what was there).
+  let active = null;
+  const latestSession = new WeakMap();
+
   function startListening(el, btn, badge) {
-    if (activeRecognition) {
-      activeRecognition.abort();
-      if (activeBtn) { activeBtn.classList.remove('listening'); activeBtn.innerHTML = '🎤'; }
-      if (activeBadge) activeBadge.style.display = 'none';
-    }
+    if (active) finishSession(active);
 
     const recognition = new SpeechRecognition();
     recognition.continuous = true;
     recognition.interimResults = true;
     recognition.lang = 'en-US';
 
-    activeRecognition = recognition;
-    activeBtn = btn;
-    activeBadge = badge;
+    const session = {
+      recognition, el, btn, badge,
+      base: el.value ? el.value.trimEnd() + ' ' : '',
+      finalText: '',
+      timer: null,
+      live: true,
+    };
+    active = session;
+    latestSession.set(el, session);
+
     btn.classList.add('listening');
     btn.innerHTML = '🟢';
     badge.style.display = 'block';
 
-    let finalTranscript = '';
-
     recognition.onresult = (event) => {
-      clearTimeout(silenceTimer);
+      // A newer session on this field has taken over; this one is history.
+      if (latestSession.get(el) !== session) return;
       let interim = '';
       for (let i = event.resultIndex; i < event.results.length; i++) {
         const text = event.results[i][0].transcript;
-        if (event.results[i].isFinal) finalTranscript += text + ' ';
+        if (event.results[i].isFinal) session.finalText += text + ' ';
         else interim = text;
       }
-      el.value = (el.dataset.voiceBase || '') + finalTranscript + interim;
-      // StorySculpt's own handlers (autosave, auto-grow, word count) run as if typed.
+      el.value = session.base + session.finalText + interim;
+      // Existing handlers (autosave, auto-grow, word count) run as if typed.
       el.dispatchEvent(new Event('input', { bubbles: true }));
-      silenceTimer = setTimeout(() => stopListening(), 3000);
+      if (session.live) {
+        clearTimeout(session.timer);
+        session.timer = setTimeout(() => finishSession(session), 3000);
+      }
     };
 
     recognition.onerror = (event) => {
       if (event.error === 'not-allowed' || event.error === 'permission-denied') {
+        finishSession(session);
         btn.title = 'Microphone access denied';
         btn.innerHTML = '🚫';
-        setTimeout(() => { btn.innerHTML = '🎤'; btn.title = 'Click to speak'; }, 3000);
+        setTimeout(() => { if (!btn.classList.contains('listening')) { btn.innerHTML = '🎤'; btn.title = 'Click to speak'; } }, 3000);
+        return;
       }
-      stopListening(false);
+      finishSession(session);
     };
 
-    recognition.onend = () => stopListening(false);
-
-    el.dataset.voiceBase = el.value ? el.value.trimEnd() + ' ' : '';
-    finalTranscript = '';
+    recognition.onend = () => finishSession(session);
 
     try {
       recognition.start();
-      silenceTimer = setTimeout(() => stopListening(), 10000);
+      session.timer = setTimeout(() => finishSession(session), 10000);
     } catch (_) {
-      stopListening(false);
+      finishSession(session);
     }
   }
 
-  function stopListening(cleanupBase = true) {
-    clearTimeout(silenceTimer);
-    if (activeRecognition) {
-      try { activeRecognition.stop(); } catch (_) {}
-      activeRecognition = null;
-    }
-    if (activeBtn) {
-      activeBtn.classList.remove('listening');
-      activeBtn.innerHTML = '🎤';
-      activeBtn = null;
-    }
-    if (activeBadge) {
-      activeBadge.style.display = 'none';
-      activeBadge = null;
-    }
-    if (cleanupBase) {
-      document.querySelectorAll('[data-voice-base]').forEach(el => { delete el.dataset.voiceBase; });
-    }
+  // Stops one session. stop(), not abort(), so the words still being
+  // recognised arrive and are kept.
+  function finishSession(session) {
+    if (!session || !session.live) return;
+    session.live = false;
+    clearTimeout(session.timer);
+    try { session.recognition.stop(); } catch (_) {}
+    session.btn.classList.remove('listening');
+    session.btn.innerHTML = '🎤';
+    session.badge.style.display = 'none';
+    if (active === session) active = null;
+  }
+
+  function stopListening() {
+    finishSession(active);
   }
 
   function attachAll(root) {

@@ -91,7 +91,7 @@ check('voice input loads on StorySculpt and skips the script editor', () => {
   assert.match(voice, /if \(!SpeechRecognition\) return;/);
   assert.match(voice, /'story-output-copy'/);
   assert.match(voice, /dispatchEvent\(new Event\('input', \{ bubbles: true \}\)\)/);
-  assert.match(voice, /setTimeout\(\(\) => stopListening\(\), 3000\)/);
+  assert.match(voice, /setTimeout\(\(\) => finishSession\(session\), 3000\)/);
   assert.match(read('css/storysculpt.css'), /\.story-composer > \.voice-input-wrap/);
 });
 
