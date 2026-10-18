@@ -1222,6 +1222,27 @@ async function createBook(event) {
 
 async function deleteBook(slug) {
   if (!window.confirm('Delete book "' + slug + '" and remove all associated files and progress? This cannot be undone.')) return;
+
+  try {
+    const bookBucket = adminSb.storage.from('solution-vault-books');
+    const { data: v1Files } = await bookBucket.list(slug + '/v1');
+    if (v1Files && v1Files.length) {
+      await bookBucket.remove(v1Files.map(f => slug + '/v1/' + f.name));
+    }
+    const { data: rootFiles } = await bookBucket.list(slug);
+    if (rootFiles && rootFiles.length) {
+      await bookBucket.remove(rootFiles.filter(f => f.name !== 'v1').map(f => slug + '/' + f.name));
+    }
+
+    const coverBucket = adminSb.storage.from('solution-vault-covers');
+    const { data: coverFiles } = await coverBucket.list(slug);
+    if (coverFiles && coverFiles.length) {
+      await coverBucket.remove(coverFiles.map(f => slug + '/' + f.name));
+    }
+  } catch (storageErr) {
+    console.warn('Could not clean up storage objects for ' + slug + ':', storageErr);
+  }
+
   const { error } = await adminSb.rpc('admin_delete_book', { p_book_slug: slug });
   if (error) {
     return alert('Could not delete book: ' + error.message);

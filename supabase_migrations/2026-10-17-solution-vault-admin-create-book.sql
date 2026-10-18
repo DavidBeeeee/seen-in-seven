@@ -164,9 +164,6 @@ begin
     raise exception 'Seeded production books cannot be deleted' using errcode = '22023';
   end if;
 
-  delete from storage.objects
-  where bucket_id in ('solution-vault-books', 'solution-vault-covers')
-    and (name like v_book.slug || '/%' or split_part(name, '/', 1) = v_book.slug);
 
   delete from public.solution_vault_book_progress where book_id = v_book.id;
   delete from public.solution_vault_claim_links where book_id = v_book.id;
