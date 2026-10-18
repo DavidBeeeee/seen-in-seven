@@ -28,6 +28,7 @@ let storySaveTimer = null;
 let memoryProfile = {};
 let helpReturnFocus = null;
 let viewingVersionIndex = -1; // -1 means viewing active/latest draft
+let viewingSeenLength = 0; // how many versions existed when an older one was chosen
 let mobileActiveTab = 'chat'; // 'chat' or 'script'
 let storyRailFilter = 'all'; // 'all' | 'active' | 'filmed'
 // Select mode for deleting several chats at once (David, 2026-10-14).
@@ -163,7 +164,32 @@ function composeContext() {
   return [composeMemory(), notes].filter(part => part && part.trim()).join('\n\n');
 }
 
+// WBR-373: the 'Your scripts' strip and the one next step. The rail, the
+// finished-script footer and Help all render the same STATES.nextStep, so they
+// cannot disagree.
+function renderMemberProgress() {
+  const strip = storyEl('story-progress');
+  if (strip) strip.innerHTML = STATES.progressMarkup(STATES.progress(storyProjects));
+  const step = STATES.nextStep(activeStory || 'start');
+  for (const [id, surface] of [['story-next-step-rail', 'rail'], ['story-next-step-footer', 'footer'], ['story-next-step-help', 'help']]) {
+    const slot = storyEl(id);
+    if (slot) slot.innerHTML = STATES.nextStepMarkup(step, surface);
+  }
+}
+
+function runNextStep(action) {
+  if (action === 'film' && activeStory) { toggleFilmed(activeStory.id); return; }
+  if (!storyEl('story-help').hidden) closeHelp();
+  if (action === 'new') { showStart(); return; }
+  if (action === 'continue' && activeStory) {
+    if (window.innerWidth <= 820) switchMobileTab('chat');
+    const answer = storyEl('story-answer');
+    if (answer && typeof answer.focus === 'function') answer.focus();
+  }
+}
+
 function renderProjectList() {
+  renderMemberProgress();
   const list = storyEl('story-project-list');
   const count = storyEl('story-rail-count');
   if (count) count.textContent = storyProjects.length ? String(storyProjects.length) : '';
@@ -281,6 +307,8 @@ async function toggleFilmed(projectId) {
   if (!project) return;
   const intake = Object.assign({}, project.intake);
   intake.filmed = !intake.filmed;
+  // Dated from here on; scripts filmed before this have only the flag.
+  if (intake.filmed) intake.filmedAt = new Date().toISOString(); else delete intake.filmedAt;
   project.intake = intake;
   if (activeStory && activeStory.id === projectId) {
     activeStory.intake = intake;
@@ -314,6 +342,14 @@ async function deleteStoryProjectById(projectId) {
   }
 }
 
+// UX 57: a choice to view an older version lapses once a newer one is saved, so
+// no older version stays selected or labelled after a new save.
+function normalizeViewingVersion() {
+  if (!activeStory) return;
+  const view = STATES.versionView(ensureVersions(activeStory), viewingVersionIndex, viewingSeenLength);
+  viewingVersionIndex = view.index;
+}
+
 function renderVersionPills() {
   const pillsContainer = storyEl('story-version-pills');
   if (!pillsContainer || !activeStory) return;
@@ -322,11 +358,11 @@ function renderVersionPills() {
     pillsContainer.innerHTML = '';
     return;
   }
-  pillsContainer.innerHTML = versions.map((v, idx) => {
-    const isLatest = idx === versions.length - 1;
-    const isSelected = viewingVersionIndex === -1 ? isLatest : viewingVersionIndex === idx;
-    const label = 'v' + v.version + (v.kind === 'points' ? ' points' : '') + (isLatest ? ' (latest)' : '');
-    return '<button class="story-version-pill' + (isSelected ? ' active' : '') + '" type="button" data-ver-index="' + idx + '" title="' + storyEscape(v.note || '') + '">' + storyEscape(label) + '</button>';
+  const view = STATES.versionView(versions, viewingVersionIndex, viewingSeenLength);
+  viewingVersionIndex = view.index;
+  pillsContainer.innerHTML = view.pills.map(pill => {
+    const v = versions[pill.index];
+    return '<button class="story-version-pill' + (pill.active ? ' active' : '') + '" type="button" data-ver-index="' + pill.index + '" title="' + storyEscape(v.note || '') + '">' + storyEscape('v' + v.version + (v.kind === 'points' ? ' points' : '') + (pill.latest ? ' (latest)' : '')) + '</button>';
   }).join('');
 
   const badge = storyEl('story-tab-version-badge');
@@ -335,16 +371,14 @@ function renderVersionPills() {
   const banner = storyEl('story-version-banner');
   const bannerText = storyEl('story-version-banner-text');
   if (banner && bannerText) {
-    const isOlder = viewingVersionIndex !== -1 && viewingVersionIndex < versions.length - 1;
-    banner.hidden = !isOlder;
-    if (isOlder) {
-      const v = versions[viewingVersionIndex];
-      bannerText.textContent = 'Viewing Version ' + v.version + (v.note ? ' (' + v.note + ')' : '');
-    }
+    banner.hidden = !view.older;
+    if (view.older) bannerText.textContent = view.banner;
   }
 }
 
 function renderScriptPanel() {
+  normalizeViewingVersion();
+  renderMemberProgress();
   const hasOutput = Boolean(activeStory && activeStory.output);
   const editor = storyEl('story-editor');
   const output = storyEl('story-output');
@@ -544,9 +578,23 @@ function renderReturnNotice() {
   EEEStudio.refreshIcons();
 }
 
-function dismissReturnNotice() {
+// UX 54: the dismissal is saved on the chat it named, for the timestamp it was
+// measured from, without touching updated_at, so it stays dismissed on every
+// device until the member comes back and a new 21-day gap opens.
+async function dismissReturnNotice() {
+  const notice = storyReturnNotice;
   storyReturnNotice = null;
   renderReturnNotice();
+  const project = notice && storyProjects.find(p => p.id === notice.projectId);
+  const stamp = STATES.dismissalStamp(project);
+  if (!project || !stamp) return;
+  project.intake = Object.assign({}, project.intake, { returnDismissedFor: stamp });
+  if (activeStory && activeStory.id === project.id) activeStory.intake = project.intake;
+  try {
+    await storyContext.sb.from('storysculpt_projects').update({ intake: project.intake }).eq('id', project.id);
+  } catch (err) {
+    console.error('Failed to save the dismissed notice', err);
+  }
 }
 
 async function promoteMessageToScript(msgIndex) {
@@ -605,6 +653,7 @@ function selectVersion(index) {
     viewingVersionIndex = -1;
   } else {
     viewingVersionIndex = index;
+    viewingSeenLength = versions.length;
   }
   const content = viewingVersionIndex === -1 ? (activeStory.output || '') : versions[viewingVersionIndex].content;
   const copyEl = storyEl('story-output-copy');
@@ -1606,7 +1655,7 @@ async function loadStoryProjects() {
   if (error) throw error;
   storyProjects = data || [];
   // Measured from the saved timestamps before this visit writes anything.
-  storyReturnNotice = STATES.returnNotice(storyProjects);
+  storyReturnNotice = STATES.returnNoticeFor(storyProjects);
   renderReturnNotice();
   const resume = storyReturnNotice && storyProjects.find(project => project.id === storyReturnNotice.projectId);
   if (resume) showProject(resume); else if (storyProjects.length) showProject(storyProjects[0]); else showStart();
@@ -2595,6 +2644,13 @@ storyEl('story-finished-new').addEventListener('click', showStart);
 storyEl('story-return-notice').addEventListener('click', event => {
   if (event.target.closest('[data-return-dismiss]')) dismissReturnNotice();
 });
+// WBR-373: the one next step, wherever it is shown.
+for (const id of ['story-next-step-rail', 'story-next-step-footer', 'story-next-step-help']) {
+  storyEl(id).addEventListener('click', event => {
+    const button = event.target.closest('[data-next-action]');
+    if (button) runNextStep(button.dataset.nextAction);
+  });
+}
 // Leaving the page with a typed change still on the save timer: send it now.
 window.addEventListener('pagehide', () => {
   if (storySaveTimer && activeStory) { clearTimeout(storySaveTimer); storySaveTimer = null; saveActiveStory().catch(() => {}); }

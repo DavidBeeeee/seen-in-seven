@@ -94,6 +94,137 @@
       '<i data-lucide="chevrons-up"></i><span>' + escapeHtml(label) + '</span></button></div>';
   }
 
+  // UX 54: a dismissed return notice stays dismissed for that chat. The chat
+  // remembers which last-touched timestamp it was dismissed for, so it only
+  // comes back after the member touches a chat again and a new gap opens.
+  function returnNoticeFor(projects, now) {
+    const notice = returnNotice(projects, now);
+    if (!notice) return null;
+    const e = engagement(projects, now);
+    const chat = e.lastChat;
+    const touched = chat && (chat.updated_at || chat.created_at);
+    const dismissed = chat && chat.intake && chat.intake.returnDismissedFor;
+    if (dismissed && touched && dismissed === touched) return null;
+    return notice;
+  }
+
+  // The value stored on the chat when its notice is dismissed.
+  function dismissalStamp(project) {
+    return project ? (project.updated_at || project.created_at || null) : null;
+  }
+
+  // WBR-373 progress (Stranger 52, 55, 57; UX 13, 45). Only a finished script
+  // counts, and only a finished script can be filmed. An empty or abandoned
+  // chat adds nothing. No points, no streaks.
+  function isFinished(project) {
+    return Boolean(project && typeof project.output === 'string' && project.output.trim());
+  }
+
+  function isFilmed(project) {
+    return isFinished(project) && Boolean(project.intake && project.intake.filmed);
+  }
+
+  // When a script was first finished: its first saved version, else the last
+  // time the chat was touched.
+  function finishedTime(project) {
+    const versions = project && project.intake && Array.isArray(project.intake.versions) ? project.intake.versions : [];
+    const first = versions.length ? Date.parse(versions[0].createdAt) : NaN;
+    if (Number.isFinite(first)) return first;
+    return projectTime(project);
+  }
+
+  function progress(projects, now) {
+    const at = now == null ? Date.now() : now;
+    const list = (Array.isArray(projects) ? projects : []).filter(isFinished);
+    let last30 = 0;
+    let prior30 = 0;
+    let lastFinished = null;
+    for (const project of list) {
+      const t = finishedTime(project);
+      if (t == null) continue;
+      if (lastFinished == null || t > lastFinished) lastFinished = t;
+      const age = at - t;
+      if (age >= 0 && age < 30 * DAY_MS) last30 += 1;
+      else if (age >= 30 * DAY_MS && age < 60 * DAY_MS) prior30 += 1;
+    }
+    return { finished: list.length, filmed: list.filter(isFilmed).length, last30, prior30, lastFinished };
+  }
+
+  function countWord(n, one, many) {
+    return n + ' ' + (n === 1 ? one : many);
+  }
+
+  // One plain line comparing the last 30 days with the 30 before.
+  function progressLine(p) {
+    if (!p || !p.finished) return 'Finish a script and it counts here.';
+    if (!p.last30 && !p.prior30) return 'None finished in the last 60 days. Every script you finished is still here.';
+    const now = countWord(p.last30, 'script', 'scripts') + ' finished in the last 30 days';
+    if (p.last30 === p.prior30) return now + ', the same as the 30 days before.';
+    return now + ', ' + (p.last30 > p.prior30 ? 'up from ' : 'down from ') + p.prior30 + ' the 30 days before.';
+  }
+
+  function progressMarkup(p) {
+    const stats = p && p.finished
+      ? '<span class="story-progress-stat"><strong>' + p.finished + '</strong> finished</span>' +
+        '<span class="story-progress-stat"><strong>' + p.filmed + '</strong> filmed</span>'
+      : '';
+    return '<div class="story-progress" data-finished="' + (p ? p.finished : 0) + '" data-filmed="' + (p ? p.filmed : 0) + '">' +
+      '<p class="story-progress-head">Your scripts</p>' +
+      (stats ? '<div class="story-progress-stats">' + stats + '</div>' : '') +
+      '<p class="story-progress-line">' + escapeHtml(progressLine(p)) + '</p>' +
+    '</div>';
+  }
+
+  // UX 36: one next step, rendered by the rail, the finished-script footer and
+  // Help, so the three never disagree.
+  function memberStep(project) {
+    if (!project) return 'start';
+    if (!isFinished(project)) return 'interview';
+    return isFilmed(project) ? 'filmed' : 'film';
+  }
+
+  const NEXT_STEPS = {
+    start: { action: 'new', label: 'Start a script', text: 'Pick a format to start a script. StorySculpt asks one question at a time.' },
+    interview: { action: 'continue', label: 'Continue', text: 'Answer the next question to finish this script.' },
+    film: { action: 'film', label: 'Mark filmed', text: 'Film this script, then mark it Filmed.' },
+    filmed: { action: 'new', label: 'New chat', text: 'This one is filmed. Start your next script.' }
+  };
+
+  function nextStep(state) {
+    const key = typeof state === 'string' ? state : memberStep(state);
+    const step = NEXT_STEPS[key] || NEXT_STEPS.start;
+    return { state: key, action: step.action, label: step.label, text: step.text };
+  }
+
+  function nextStepMarkup(step, surface) {
+    if (!step) return '';
+    return '<div class="story-next-step" data-next-state="' + escapeHtml(step.state) + '" data-surface="' + escapeHtml(surface || '') + '">' +
+      '<p><strong>Next:</strong> <span class="story-next-step-text">' + escapeHtml(step.text) + '</span></p>' +
+      '<button class="secondary-button story-next-step-btn" type="button" data-next-action="' + escapeHtml(step.action) + '">' + escapeHtml(step.label) + '</button>' +
+    '</div>';
+  }
+
+  // UX 57: version pills. Only the newest version is ever called latest, and a
+  // choice to view an older version lapses as soon as a newer one is saved
+  // (seenLength is how many versions existed when the member chose it).
+  function versionView(versions, viewingIndex, seenLength) {
+    const list = Array.isArray(versions) ? versions : [];
+    const last = list.length - 1;
+    let index = Number.isInteger(viewingIndex) ? viewingIndex : -1;
+    if (index !== -1 && (index > last || seenLength !== list.length)) index = -1;
+    const pills = list.map((v, idx) => {
+      const isLatest = idx === last;
+      return {
+        index: idx,
+        latest: isLatest,
+        active: index === -1 ? isLatest : index === idx,
+        label: 'v' + v.version + (v.kind === 'points' ? ' points' : '') + (isLatest ? ' (latest)' : '')
+      };
+    });
+    const older = index !== -1 && index < last;
+    return { index, older, pills, banner: older ? 'Viewing Version ' + list[index].version + (list[index].note ? ' (' + list[index].note + ')' : '') : '' };
+  }
+
   // UX 37: a script leaves StorySculpt as a plain text file named for its chat.
   function exportFileName(title) {
     const base = String(title || '').toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60);
@@ -103,7 +234,9 @@
   const api = {
     DAY_MS, QUIET_AFTER_DAYS, LAPSE_AFTER_DAYS, COLLAPSE_AFTER, KEEP_VISIBLE,
     INACTIVITY_LINE, FINISHED_LINE,
-    engagement, returnNotice, exportFileName, returnNoticeMarkup, threadWindow, showEarlierMarkup
+    engagement, returnNotice, exportFileName, returnNoticeMarkup, threadWindow, showEarlierMarkup,
+    returnNoticeFor, dismissalStamp, isFinished, isFilmed, finishedTime, progress, progressLine, progressMarkup,
+    memberStep, nextStep, nextStepMarkup, versionView
   };
   root.StorySculptStates = api;
 })(typeof window !== 'undefined' ? window : globalThis);
