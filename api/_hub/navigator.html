@@ -85,8 +85,12 @@
             <div class="wizard-card">
                 <div class="tagline">The Momentum Hub</div>
                 <h1>Next Step Navigator</h1>
-                <p class="desc">Identify your business bottlenecks using the Bee Formula hierarchy. We build
-                    infrastructure first and traffic last.</p>
+                <p class="desc nav-bee-formula-line">The Bee Formula is David Bee's 11-stage order for building a business: the parts that hold it up come first, and traffic comes last.</p>
+                <p class="desc">A short audit finds where your business is stuck in that order, then gives you one stage to work on first.</p>
+                <p class="nav-why-not-chatbot">Why not just ask a chatbot? Navigator remembers your audit, every move you make, and what you have finished, so each next step starts from where you really are.</p>
+                <div class="nav-over-time-welcome-wrap">
+                    <button type="button" class="nav-over-time-link" onclick="openNavigatorOverTime()">How Navigator works over time</button>
+                </div>
 
                 <div id="resume-container" class="resume-container-box" hidden>
                     <button class="btn-primary btn-resume-plan" onclick="resumeAudit()">RESUME SAVED PLAN</button>
@@ -147,6 +151,14 @@
                 <h2>The Bee Formula Roadmap</h2>
                 <div class="map-container" id="funnel-map"></div>
                 <div class="sandwich-box" id="diagnosis-sandwich"></div>
+                <div class="audit-handoff" role="region" aria-label="What happens next">
+                    <div class="audit-handoff-title">Your audit is done. Here is how you use it from today.</div>
+                    <ol class="audit-handoff-steps">
+                        <li><strong>Work your Priority One.</strong> Your roadmap opens on the one stage to set up first, with a short checklist.</li>
+                        <li><strong>Turn it into a Next Move.</strong> When you sit down to work, Next Move gives you one concrete action for the time you have.</li>
+                        <li><strong>Come back whenever.</strong> Your roadmap, your moves and your finished steps stay in your account. Each phase you finish is marked as a milestone.</li>
+                    </ol>
+                </div>
                 <button class="btn-primary" onclick="showRoadmap()">CHOOSE MY FOCUS</button>
             </div>
         </div>
@@ -172,7 +184,11 @@
                     <button type="button" class="btn-secondary btn-over-time" onclick="openNavigatorOverTime()">
                         <span>How Navigator works over time</span>
                     </button>
+                    <button type="button" class="btn-secondary btn-roadmap-text" id="roadmap-text-toggle" aria-pressed="false" aria-controls="roadmap-text-view" onclick="toggleRoadmapTextMode()">
+                        <span>Text-only view</span>
+                    </button>
                 </div>
+                <div id="roadmap-text-view" class="roadmap-text-view" hidden></div>
 
                 <div class="funnel-strip-section">
                     <div class="funnel-strip-header">
@@ -561,7 +577,7 @@
             { id: 'paidtraffic', min: 1, label: 'Paid Traffic' }
         ];
 
-        let userProfile = { name: '', niche: '', answers: {}, progress: {}, viewedTasks: [], todos: [], assets: {} };
+        let userProfile = { name: '', niche: '', answers: {}, progress: {}, viewedTasks: [], todos: [], assets: {}, announcedMilestones: [] };
         let currentQIndex = 0;
         let criticalStepId = '';
         let criticalTargetLevel = 0;
@@ -1351,52 +1367,55 @@
         function showTooltip(e, text) { if (window.innerWidth < 768) return; tooltip.textContent = text; tooltip.style.display = 'block'; tooltip.style.left = (e.pageX + 10) + 'px'; tooltip.style.top = (e.pageY + 10) + 'px'; }
         function hideTooltip() { tooltip.style.display = 'none'; }
 
+        // A phase is every level TASK_DATA defines for it, so opening or finishing
+        // one level never reads as a finished phase. Assembly lives in
+        // js/navigator-milestones.mjs where the gate tests it. WO-20261018-evening.
+        function roadmapEvaluation() {
+            const m = window.NavigatorMilestones;
+            if (!m || !m.evaluateRoadmap) return null;
+            return m.evaluateRoadmap({
+                taskData: TASK_DATA,
+                answers: userProfile.answers || {},
+                progress: userProfile.progress || {},
+                announced: userProfile.announcedMilestones || []
+            });
+        }
+
+        const milestonesEarnedThisVisit = new Set();
         function renderMilestones() {
             const milestoneContainer = document.getElementById('roadmap-milestones-container');
             const completeContainer = document.getElementById('roadmap-complete-state');
             if (!milestoneContainer || !completeContainer) return;
 
-            const milestonesModule = window.NavigatorMilestones;
-            if (!milestonesModule) return;
+            const res = roadmapEvaluation();
+            if (!res) return;
 
-            const phases = milestonesModule.BEE_FORMULA_PHASES.map(p => {
-                const taskKeys = Object.keys(userProfile.progress || {}).filter(k => k.startsWith(p.id + '_'));
-                return {
-                    id: p.id,
-                    name: p.name,
-                    taskKeys
-                };
-            }).filter(p => p.taskKeys.length > 0);
+            // Announce a milestone once, when it is earned; after that it is a quiet record.
+            const before = JSON.stringify(userProfile.announcedMilestones || []);
+            if (JSON.stringify(res.announced) !== before) {
+                userProfile.announcedMilestones = res.announced;
+                saveData();
+            }
+            // Announced (role=status) only on the render that earns it; the line stays
+            // in its celebrated form for the rest of this visit, then becomes a record.
+            const announceNow = new Set(res.newlyEarned.map(p => p.id));
+            announceNow.forEach(id => milestonesEarnedThisVisit.add(id));
 
-            (userProfile.viewedTasks || []).forEach(vk => {
-                const comp = vk.split('_')[0];
-                let ph = phases.find(p => p.id === comp);
-                if (!ph) {
-                    const bp = milestonesModule.BEE_FORMULA_PHASES.find(b => b.id === comp);
-                    if (bp) {
-                        ph = { id: bp.id, name: bp.name, taskKeys: [vk] };
-                        phases.push(ph);
-                    }
-                } else if (!ph.taskKeys.includes(vk)) {
-                    ph.taskKeys.push(vk);
-                }
-            });
-
-            const res = milestonesModule.evaluateMilestones({ phases, progress: userProfile.progress });
-
-            if (res.milestoneLines && res.milestoneLines.length > 0) {
-                milestoneContainer.innerHTML = res.milestoneLines.map(line =>
-                    `<div class="nav-milestone-line" role="status"><span class="milestone-icon">✓</span> <span>${line}</span></div>`
+            if (res.completedPhases.length > 0) {
+                milestoneContainer.innerHTML = res.completedPhases.map(p => milestonesEarnedThisVisit.has(p.id)
+                    ? `<div class="nav-milestone-line nav-milestone-new"${announceNow.has(p.id) ? ' role="status"' : ''}><span class="milestone-icon">✓</span> <span>${p.milestoneLine}</span></div>`
+                    : `<div class="nav-milestone-line nav-milestone-earned"><span class="milestone-icon">✓</span> <span>${p.name}: finished</span></div>`
                 ).join('');
                 milestoneContainer.hidden = false;
             } else {
                 milestoneContainer.innerHTML = '';
                 milestoneContainer.hidden = true;
             }
+            renderTextRoadmap(res);
 
             if (res.isComplete && res.completeState) {
                 completeContainer.innerHTML = `
-                    <div class="roadmap-complete-card">
+                    <div class="roadmap-complete-card"${res.announceComplete ? ' role="status"' : ''}>
                         <div class="roadmap-complete-badge">ROADMAP COMPLETE</div>
                         <h3 class="roadmap-complete-title">${res.completeState.title}</h3>
                         <p class="roadmap-complete-means">${res.completeState.whatFinishingMeans}</p>
@@ -1421,6 +1440,42 @@
                 completeContainer.hidden = true;
             }
         }
+
+
+        function renderTextRoadmap(res) {
+            const box = document.getElementById('roadmap-text-view');
+            const m = window.NavigatorMilestones;
+            if (!box || !m || !m.buildTextRoadmap) return;
+            const result = res || roadmapEvaluation();
+            if (!result) return;
+            box.innerHTML = '<ol class="roadmap-text-list">' + m.buildTextRoadmap(result.phases, { id: criticalStepId, level: criticalTargetLevel }).map(p =>
+                `<li><h4>${p.heading.replace(/^\d+\.\s*/, '')}</h4><ul>${p.levels.map(l => `<li>${l}</li>`).join('')}</ul></li>`
+            ).join('') + '</ol>';
+        }
+
+        function setRoadmapTextMode(on) {
+            const card = document.querySelector('#screen-roadmap .roadmap-card');
+            const btn = document.getElementById('roadmap-text-toggle');
+            const box = document.getElementById('roadmap-text-view');
+            if (!card || !btn || !box) return;
+            card.classList.toggle('roadmap-text-mode', on);
+            box.hidden = !on;
+            btn.setAttribute('aria-pressed', on ? 'true' : 'false');
+            btn.querySelector('span').textContent = on ? 'Show the visual roadmap' : 'Text-only view';
+            try { localStorage.setItem('nav_roadmap_text_v1', on ? '1' : '0'); } catch (e) {}
+            if (on) renderTextRoadmap();
+        }
+        function toggleRoadmapTextMode() {
+            const card = document.querySelector('#screen-roadmap .roadmap-card');
+            setRoadmapTextMode(!(card && card.classList.contains('roadmap-text-mode')));
+        }
+        window.toggleRoadmapTextMode = toggleRoadmapTextMode;
+        window.addEventListener('navigator-milestones-ready', () => { try { renderMilestones(); } catch (e) {} });
+        document.addEventListener('DOMContentLoaded', () => {
+            let on = false;
+            try { on = localStorage.getItem('nav_roadmap_text_v1') === '1'; } catch (e) {}
+            if (on) setRoadmapTextMode(true);
+        });
 
         function openNavigatorOverTime() {
             const m = document.getElementById('navigator-over-time-modal');
@@ -1916,7 +1971,8 @@
          node; it hangs window.NavigatorMovesStore before mount() runs. WBR-005. -->
     <script type="module" src="/js/navigator-moves-store.mjs?v=wbr005-1"></script>
     <script type="module" src="/js/navigator-roadmap-store.mjs?v=wbr373-1"></script>
-    <script type="module" src="/js/navigator-milestones.mjs?v=wbr373-2"></script>
+    <script type="module" src="/js/navigator-milestones.mjs?v=wo1018-1"></script>
+    <script type="module" src="/js/navigator-history.mjs?v=wo1018-1"></script>
     <script src="/js/navigator.js?v=token-refresh-v1"></script>
     <script>
         EEEStudio.initialize(async context => {

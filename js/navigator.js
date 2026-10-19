@@ -246,39 +246,37 @@
     if (!list) return;
     const prior = moves.slice(1); // the newest is shown as the current move
     if (!prior.length) { list.innerHTML = ''; return; }
-    const hasMore = prior.length > 10;
-    const rows = prior.map((move, idx) => {
-      const isCollapsed = !historyExpanded && idx >= 10;
+    const H = window.NavigatorHistory;
+    // Without the history module every row is shown and there is no toggle.
+    const view = H ? H.historyView(prior, historyExpanded)
+      : { rows: prior.map(move => ({ move, hidden: false })), hasMore: false, label: '', note: '' };
+    const rows = view.rows.map(({ move, hidden }) => {
       const badge = move.status === 'completed' ? 'done' : (move.status === 'abandoned' ? 'let go' : 'open');
-      return `<li class="nav-history-row nav-history-${escapeHtml(move.status)}${isCollapsed ? ' nav-history-collapsed' : ''}"${isCollapsed ? ' hidden' : ''}>
+      return `<li class="nav-history-row nav-history-${escapeHtml(move.status)}${hidden ? ' nav-history-collapsed' : ''}"${hidden ? ' hidden' : ''}>
         <span class="nav-history-badge">${badge}</span>
         <span class="nav-history-text">${escapeHtml(move.next_action)}</span>
         <span class="nav-history-date">${formatDate(move.created_at)}</span>
       </li>`;
     }).join('');
 
-    let toggleHtml = '';
-    if (hasMore) {
-      toggleHtml = `<div class="nav-history-toggle-wrap" style="margin-top: 10px;">
-        <button type="button" id="navigator-history-toggle" class="btn-secondary nav-history-toggle-btn">
-          <span>${historyExpanded ? 'Show fewer' : 'Show all'}</span>
+    const toggleHtml = view.hasMore
+      ? `<div class="nav-history-toggle-wrap" style="margin-top: 10px;">
+        <button type="button" id="navigator-history-toggle" class="btn-secondary nav-history-toggle-btn" aria-expanded="${historyExpanded ? 'true' : 'false'}">
+          <span>${escapeHtml(view.label)}</span>
         </button>
-      </div>`;
-    }
-
-    const noteHtml = `<p class="nav-history-note" style="margin-top: 10px; font-size: 13px; color: var(--studio-muted, #94a3b8);">The newest 50 are shown and the rest are kept.</p>`;
+      </div>`
+      : '';
+    const noteHtml = view.note
+      ? `<p class="nav-history-note" style="margin-top: 10px; font-size: 13px; color: var(--studio-muted, #94a3b8);">${escapeHtml(view.note)}</p>`
+      : '';
 
     list.innerHTML = `<div class="nav-history-title">Earlier moves</div><ul class="nav-history-list">${rows}</ul>${toggleHtml}${noteHtml}`;
 
-    const toggleBtn = el('navigator-history-toggle');
-    if (toggleBtn) {
-      const onToggle = () => {
-        historyExpanded = !historyExpanded;
-        renderHistory();
-      };
-      toggleBtn.onclick = onToggle;
-      toggleBtn.addEventListener('click', onToggle);
-    }
+    // One binding only. Two bindings flipped the list open and shut on one click.
+    if (H) H.bindToggleOnce(el('navigator-history-toggle'), () => {
+      historyExpanded = !historyExpanded;
+      renderHistory();
+    });
   }
 
   function render() {
@@ -464,6 +462,11 @@
       // The move layer must never break the roadmap builder it sits beside.
       setMessage('Your saved moves could not load just now. Your roadmap is unaffected.', 'error');
     }
+  }
+
+  // The history module is a deferred module; redraw once it lands if moves are already shown.
+  if (typeof window.addEventListener === 'function') {
+    window.addEventListener('navigator-history-ready', () => { if (ctx) renderHistory(); });
   }
 
   window.NavigatorMoves = { mount, computeEngagement, computeReturnNotice };

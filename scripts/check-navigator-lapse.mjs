@@ -14,6 +14,8 @@ const failures = [];
 const check = (ok, message) => { if (!ok) failures.push(message); };
 
 const appSrc = readFileSync('js/navigator.js', 'utf8');
+// The page loads js/navigator-history.mjs as a module before mount(); give the vm the same.
+const NavigatorHistory = await import('../js/navigator-history.mjs');
 const DAY = 24 * 60 * 60 * 1000;
 const NOW = Date.parse('2026-10-09T10:00:00Z');
 
@@ -191,6 +193,7 @@ function boot(initialMoves = []) {
     Date: FixedDate,
     navigator: { clipboard: { writeText() {} } },
     EEEStudio: { refreshIcons() {} },
+    NavigatorHistory,
     fetch: () => Promise.reject(new Error('no network in test'))
   };
   context.window = context;
@@ -366,18 +369,16 @@ console.log('7. Testing collapsed history past 10 moves and retention copy...');
   const hist = app.document.getElementById('navigator-history');
   check(!hist.hidden, 'History must be visible with 16 moves');
   check(hist.innerHTML.includes('Show all'), 'Earlier moves past 10 must collapse behind "Show all"');
-  check(hist.innerHTML.includes('The newest 50 are shown and the rest are kept.'),
-    'History list must state plainly that newest 50 are shown and rest kept');
+  check(hist.innerHTML.includes('This list shows your newest 50; older moves stay saved and are not shown here.'),
+    'History list must state plainly that moves past the newest 50 are kept and not shown');
   check(!hist.innerHTML.includes('—'), 'History text must contain no em dashes');
 
   const toggleBtn = app.document.getElementById('navigator-history-toggle');
   assert.ok(toggleBtn, '#navigator-history-toggle button must exist');
-  const toggleClicks = toggleBtn.listeners.click || [];
-  if (toggleClicks.length > 0) {
-    toggleClicks[0]({ currentTarget: toggleBtn });
-  } else if (toggleBtn.onclick) {
-    toggleBtn.onclick();
-  }
+  // Click the way a browser does: onclick and every added listener all fire.
+  // Firing only the first listener hid the double binding that made Show all a no-op.
+  if (toggleBtn.onclick) toggleBtn.onclick({ currentTarget: toggleBtn });
+  (toggleBtn.listeners.click || []).forEach(fn => fn({ currentTarget: toggleBtn }));
 
   const histAfter = app.document.getElementById('navigator-history');
   check(histAfter.innerHTML.includes('Show fewer'), 'Button toggles to "Show fewer" after click');

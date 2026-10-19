@@ -2462,3 +2462,103 @@ pre {
   line-height: 1.5;
 }
 
+
+/* WO-20261018-evening: onboarding lines, audit hand-off, earned milestones, text-only roadmap. */
+.nav-bee-formula-line {
+  color: var(--cream);
+}
+
+.nav-why-not-chatbot {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--soft);
+  background: rgba(0, 0, 0, 0.18);
+  border-left: 3px solid var(--teal);
+  border-radius: var(--radius-btn, 8px);
+  padding: 10px 14px;
+  margin: 0 0 12px;
+  text-align: left;
+}
+
+.nav-over-time-welcome-wrap {
+  margin: 0 0 18px;
+}
+
+.nav-over-time-welcome-wrap .nav-over-time-link {
+  margin-left: 0;
+  font-size: 14px;
+}
+
+.audit-handoff {
+  text-align: left;
+  background: rgba(0, 0, 0, 0.2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-card, 16px);
+  padding: 18px 20px;
+  margin: 20px 0;
+}
+
+.audit-handoff-title {
+  font-weight: 700;
+  color: var(--cream);
+  margin-bottom: 10px;
+}
+
+.audit-handoff-steps {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--soft);
+  line-height: 1.55;
+}
+
+.audit-handoff-steps li + li {
+  margin-top: 8px;
+}
+
+.audit-handoff-steps strong {
+  color: var(--cream);
+}
+
+.nav-milestone-earned {
+  background: transparent;
+  border-style: dashed;
+  color: var(--soft);
+}
+
+.roadmap-over-time-wrap {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.roadmap-text-view {
+  text-align: left;
+  margin: 0 0 24px;
+}
+
+.roadmap-text-list {
+  margin: 0;
+  padding-left: 22px;
+  color: var(--soft);
+  line-height: 1.6;
+}
+
+.roadmap-text-list > li + li {
+  margin-top: 14px;
+}
+
+.roadmap-text-list h4 {
+  margin: 0 0 4px;
+  font-size: 16px;
+  color: var(--cream);
+}
+
+.roadmap-text-list ul {
+  margin: 0;
+  padding-left: 18px;
+}
+
+.roadmap-text-mode .funnel-strip-section,
+.roadmap-text-mode .all-stages-section {
+  display: none;
+}

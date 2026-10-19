@@ -124,12 +124,103 @@ export function evaluateMilestones(input = {}) {
   };
 }
 
+// The page's phase assembly, WO-20261018-evening. A phase is every level
+// TASK_DATA defines for it, not only the levels a member has opened. A level is
+// in place when its checklist is fully ticked or the member's audit depth already
+// covers it. A phase counts as a milestone only when every level is in place and
+// at least one of them was finished here, so a phase the audit already covered is
+// never announced as something the member just did.
+export const ROADMAP_COMPLETE_ID = '__roadmap_complete__';
+
+export function levelDone(progressSteps) {
+  return Array.isArray(progressSteps) && progressSteps.length > 0 && progressSteps.every(v => v === true);
+}
+
+export function assembleRoadmapPhases({ taskData = {}, answers = {}, progress = {} } = {}) {
+  return BEE_FORMULA_PHASES
+    .filter(p => Array.isArray(taskData[p.id]) && taskData[p.id].length > 0)
+    .map(p => {
+      const depth = Number((answers[p.id] && answers[p.id].depth) || 0);
+      const levels = taskData[p.id]
+        .map(t => {
+          const key = `${p.id}_${t.level}`;
+          const finishedHere = levelDone(progress[key]);
+          const coveredByAudit = !finishedHere && t.level <= depth;
+          return {
+            key,
+            level: t.level,
+            title: t.title || '',
+            finishedHere,
+            coveredByAudit,
+            done: finishedHere || coveredByAudit
+          };
+        })
+        .sort((a, b) => a.level - b.level);
+      const isComplete = levels.every(l => l.done);
+      const earned = isComplete && levels.some(l => l.finishedHere);
+      const next = levels.find(l => !l.done) || null;
+      return { id: p.id, name: p.name, levels, isComplete, earned, next };
+    });
+}
+
+export function evaluateRoadmap({ taskData = {}, answers = {}, progress = {}, announced = [] } = {}) {
+  const phases = assembleRoadmapPhases({ taskData, answers, progress });
+  const seen = new Set(Array.isArray(announced) ? announced : []);
+  const completedPhases = phases
+    .filter(p => p.earned)
+    .map(p => ({ id: p.id, name: p.name, milestoneLine: formatMilestoneLine(p.name) }));
+  const isComplete = phases.length > 0 && phases.every(p => p.isComplete) && phases.some(p => p.earned);
+  const newlyEarned = completedPhases.filter(p => !seen.has(p.id));
+  const announceComplete = isComplete && !seen.has(ROADMAP_COMPLETE_ID);
+  const nextAnnounced = [...seen].filter(id => id === ROADMAP_COMPLETE_ID ? isComplete : completedPhases.some(p => p.id === id));
+  newlyEarned.forEach(p => nextAnnounced.push(p.id));
+  if (announceComplete) nextAnnounced.push(ROADMAP_COMPLETE_ID);
+  return {
+    phases,
+    completedPhases,
+    milestoneLines: completedPhases.map(p => p.milestoneLine),
+    newlyEarned,
+    announceComplete,
+    announced: nextAnnounced,
+    isComplete,
+    completeState: isComplete ? buildRoadmapCompleteState() : null
+  };
+}
+
+
+// A plain reading of the whole roadmap for the text-only view. focus is the
+// page's Priority One ({ id, level }); in that phase it is the level marked next,
+// matching what the visual roadmap opens on. Elsewhere next is the first level
+// not yet in place, which is the level the All Stages list shows.
+export function buildTextRoadmap(phases = [], focus = null) {
+  return phases.map((p, i) => {
+    const status = p.isComplete ? 'Finished' : (p.levels.some(l => l.done) ? 'Started' : 'Not started');
+    const focusHere = focus && focus.id === p.id && p.levels.some(l => l.level === focus.level && !l.done);
+    const nextKey = focusHere ? `${p.id}_${focus.level}` : (p.next ? p.next.key : null);
+    return {
+      id: p.id,
+      heading: `${i + 1}. ${p.name}: ${status}`,
+      levels: p.levels.map(l => {
+        const state = l.finishedHere ? 'done here'
+          : (l.coveredByAudit ? 'already in place'
+            : (l.key === nextKey ? (focusHere ? 'your Priority One' : 'next up') : 'to do'));
+        return `Level ${l.level}, ${l.title}: ${state}`;
+      })
+    };
+  });
+}
+
 if (typeof window !== 'undefined') {
   window.NavigatorMilestones = {
     BEE_FORMULA_PHASES,
     formatMilestoneLine,
     buildRoadmapCompleteState,
-    evaluateMilestones
+    evaluateMilestones,
+    levelDone,
+    assembleRoadmapPhases,
+    evaluateRoadmap,
+    buildTextRoadmap,
+    ROADMAP_COMPLETE_ID
   };
   window.dispatchEvent(new Event('navigator-milestones-ready'));
 }
