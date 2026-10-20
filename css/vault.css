@@ -116,7 +116,12 @@
 @media (max-width: 520px) {
   .vault-card { grid-template-columns: 1fr; }
   .vault-card-media { height: 180px; }
-  .book-card-cover { height: 280px; }
+  .book-card-cover { height: 280px; padding: 12px; }
+  .book-card-body { padding: 16px; }
+  .book-card-actions button, .book-card-actions a { width: 100%; justify-content: center; }
+  .vault-tab { padding: 10px 14px; font-size: 13px; }
+  .reader-toolbar { padding: 8px 14px; }
+  .reader-title-wrap h2 { font-size: 16px; }
   .web-content-wrap { padding: 24px 16px 64px; }
 }
 
