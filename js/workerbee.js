@@ -3168,7 +3168,8 @@ function renderMomentum300() {
   const rows = scored[m300App].rows || [];
   const tally = scored[m300App].tally || {};
 
-  for (const verdict of ['PASS', 'PART', 'FAIL', 'LIVE', 'N/A']) {
+  // PART was retired 2026-10-21 (David): a row is PASS, FAIL or N/A.
+  for (const verdict of ['PASS', 'FAIL', 'LIVE', 'N/A']) {
     if (!tally[verdict]) continue;
     const card = document.createElement('div');
     card.className = 'analytics-card';
@@ -3182,8 +3183,7 @@ function renderMomentum300() {
     sub.className = 'analytics-card-sub';
     sub.textContent = ({
       PASS: 'The product does this.',
-      PART: 'Half of it.',
-      FAIL: 'It does not.',
+      FAIL: 'Not done yet. The note says what is missing.',
       LIVE: 'Needs a live look that has not happened.',
       'N/A': 'The capability genuinely does not exist.',
     })[verdict] || '';
