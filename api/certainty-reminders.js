@@ -137,7 +137,8 @@ export function operatorMessage(items) {
     const who = it.member_name ? it.member_name + ' (' + it.member_email + ')' : it.member_email;
     const how = it.mode === 'zoom' ? 'Zoom' : 'phone' + (it.phone ? ' ' + it.phone : '');
     const flag = it.safety_flag ? ' [Needs a human look before this session. No automated reminder was sent to them.]' : '';
-    return '- ' + it.label_day + ', ' + it.label_start + ': ' + who + ', ' + how + flag;
+    const calFlag = it.calendar_status === 'failed' ? ' [CALENDAR SYNC FAILED: needs retry]' : '';
+    return '- ' + it.label_day + ', ' + it.label_start + ': ' + who + ', ' + how + flag + calFlag;
   });
   return {
     subject: 'Certainty sessions coming up (' + items.length + ')',
