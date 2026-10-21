@@ -227,4 +227,50 @@ function makeReqRes(body) {
   assert.equal(res.body.settings.time_zone, 'America/Los_Angeles');
 }
 
+// 5. Settings honesty (UX 85, 86; Stranger 99): the panel says how the phone
+// number is used and kept, and the server refuses an unknown time zone or a
+// malformed phone with a friendly error before anything is saved.
+console.log('5. Testing phone-use line and server-side settings validation...');
+{
+  const line = html.match(/<p class="cs-privacy" id="cs-phone-use">([^<]+)<\/p>/);
+  assert.ok(line, 'Settings panel has the phone-use line #cs-phone-use');
+  assert.match(line[1], /only to call you/i, 'Phone line says what the number is used for');
+  assert.match(line[1], /never used for marketing/i, 'Phone line says what it is not used for');
+  assert.match(line[1], /removes it/i, 'Phone line says how to remove it');
+  assert.ok(!/\u2014/.test(line[1]), 'No em dash in member copy');
+
+  const rejects = [
+    [{ time_zone: 'Mars/Olympus_Mons', default_mode: 'zoom', phone: null }, 'BAD_TIME_ZONE', /time zone/i],
+    [{ time_zone: 'America/Chicago', default_mode: 'phone', phone: 'call me maybe' }, 'BAD_PHONE', /phone number/i],
+    [{ time_zone: 'America/Chicago', default_mode: 'phone', phone: '12345' }, 'BAD_PHONE', /phone number/i]
+  ];
+  for (const [body, code, friendly] of rejects) {
+    const before = JSON.stringify(savedDbSettings);
+    const { req, res } = makeReqRes({ action: 'save_settings', ...body });
+    await handler(req, res);
+    assert.equal(res.code, 400, `${code} must be refused`);
+    assert.equal(res.body.code, code);
+    assert.match(res.body.error, friendly, `${code} error is friendly`);
+    assert.ok(!/\u2014/.test(res.body.error), 'No em dash in member error');
+    assert.equal(JSON.stringify(savedDbSettings), before, `${code} must not reach the database`);
+  }
+
+  const accepts = [
+    { time_zone: 'Europe/London', default_mode: 'phone', phone: '+44 20 7946 0958' },
+    { time_zone: 'Asia/Tokyo', default_mode: 'zoom', phone: '' }
+  ];
+  for (const body of accepts) {
+    const { req, res } = makeReqRes({ action: 'save_settings', ...body });
+    await handler(req, res);
+    assert.equal(res.code, 200, `valid settings ${body.time_zone} must save`);
+    assert.equal(savedDbSettings.time_zone, body.time_zone);
+  }
+
+  const { req, res } = makeReqRes({ action: 'book', date: '2026-12-01', hour: 14, mode: 'phone', phone: 'nope' });
+  await handler(req, res);
+  assert.equal(res.code, 400, 'A booking with a malformed phone is refused');
+  assert.equal(res.body.code, 'BAD_PHONE');
+}
+console.log('PASS: phone-use line present; unknown time zone and malformed phone refused with friendly errors; valid values save.');
+
 console.log('PASS check-certainty-settings: slot renders in member zone with ET alongside, saved values prefill, and server RPCs verify');

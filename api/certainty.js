@@ -44,6 +44,41 @@ export function evaluateCertaintyTopicSafety(topic) {
 export const evaluateCertaintyTopic = evaluateCertaintyTopicSafety;
 export const checkCertaintySafety = evaluateCertaintyTopicSafety;
 
+// The time zones the settings panel offers by name. The panel also offers the
+// member's own detected browser zone, which is always a real IANA zone, so the
+// server accepts this list plus any zone the runtime itself recognises, and
+// nothing else (UX 85, 86).
+export const OFFERED_TIME_ZONES = [
+  'America/New_York', 'America/Chicago', 'America/Denver', 'America/Phoenix',
+  'America/Los_Angeles', 'America/Anchorage', 'Pacific/Honolulu', 'Europe/London',
+  'Europe/Paris', 'Australia/Sydney', 'Australia/Perth', 'Pacific/Auckland'
+];
+
+export function isOfferedTimeZone(value) {
+  if (typeof value !== 'string' || !value.trim()) return false;
+  const tz = value.trim();
+  if (OFFERED_TIME_ZONES.includes(tz)) return true;
+  try {
+    if (typeof Intl.supportedValuesOf === 'function' && Intl.supportedValuesOf('timeZone').includes(tz)) return true;
+  } catch (e) { /* fall through */ }
+  return false;
+}
+
+// A phone number David can actually dial: digits with the usual separators,
+// an optional leading +, and 7 to 15 digits in all.
+export function isDialablePhone(value) {
+  if (typeof value !== 'string') return false;
+  const raw = value.trim();
+  if (!/^\+?[\d\s().-]+$/.test(raw)) return false;
+  const digits = raw.replace(/\D/g, '');
+  return digits.length >= 7 && digits.length <= 15;
+}
+
+export const SETTINGS_ERRORS = {
+  BAD_TIME_ZONE: 'Pick your time zone from the list so session times show correctly.',
+  BAD_PHONE: 'That phone number does not look right. Use digits, with an area code, like (555) 123-4567.'
+};
+
 // Timezone and slot time calculation helpers.
 export function getSlotInstant(isoDate, etHour) {
   const approx = new Date(`${isoDate}T${String(etHour).padStart(2, '0')}:00:00Z`);
@@ -272,6 +307,12 @@ export default async function handler(req, res) {
 
     if (action === 'save_settings') {
       const body = req.body || {};
+      if (body.time_zone != null && body.time_zone !== '' && !isOfferedTimeZone(body.time_zone)) {
+        return json(res, 400, { error: SETTINGS_ERRORS.BAD_TIME_ZONE, code: 'BAD_TIME_ZONE' });
+      }
+      if (body.phone != null && String(body.phone).trim() !== '' && !isDialablePhone(String(body.phone))) {
+        return json(res, 400, { error: SETTINGS_ERRORS.BAD_PHONE, code: 'BAD_PHONE' });
+      }
       const saved = await rpc('certainty_save_settings', {
         p_time_zone: body.time_zone ? String(body.time_zone) : null,
         p_phone: body.phone ? String(body.phone) : null,
@@ -292,6 +333,9 @@ export default async function handler(req, res) {
     if (action === 'book') {
       const body = req.body || {};
       const safetyAssessment = evaluateCertaintyTopicSafety(body.topic);
+      if (body.mode === 'phone' && body.phone && !isDialablePhone(String(body.phone))) {
+        return json(res, 400, { error: SETTINGS_ERRORS.BAD_PHONE, code: 'BAD_PHONE' });
+      }
 
       const booked = await rpc('book_certainty_session', {
         p_local_date: String(body.date || ''),

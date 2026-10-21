@@ -327,6 +327,7 @@
                 <label for="cs-setting-phone">Remembered phone number <span class="cs-optional">(for phone sessions)</span></label>
                 <input class="cs-input" id="cs-setting-phone" type="tel" placeholder="(555) 123-4567" autocomplete="tel">
                 <p class="cs-privacy">Remembered and prefilled when you choose phone sessions so you do not have to type it every time.</p>
+                <p class="cs-privacy" id="cs-phone-use">David uses this number only to call you for phone sessions. It stays with your account, is never used for marketing or shared with anyone else, and clearing this field and saving removes it.</p>
               </div>
 
               <div style="display:flex;align-items:center;gap:12px;margin-top:4px">
@@ -571,9 +572,13 @@
         icons();
       }
 
+      // Honest confirmation (WBR-435 lane, Stranger 30, 83; UX 35; Developer 45).
+      // Only a booking that actually landed on David's calendar ('created') may
+      // read as confirmed. Pending, skipped or failed means the time is held for
+      // the member and David still has to confirm it himself.
       function calNote(status) {
-        if (status === 'created') return '<div class="cs-cal-note"><i data-lucide="check-circle-2"></i>Added to David\'s calendar. He will see you there.</div>';
-        return '<div class="cs-cal-note"><i data-lucide="clock"></i>Your spot is held. See you at your session time.</div>';
+        if (status === 'created') return '<div class="cs-cal-note" data-cal="confirmed"><i data-lucide="check-circle-2"></i>Confirmed. This time is on David\'s calendar and he will see you there.</div>';
+        return '<div class="cs-cal-note" data-cal="held"><i data-lucide="clock"></i>Your time is held for you. David has not confirmed it on his calendar yet, and he will confirm with you before the session.</div>';
       }
 
       function openBooking() {
