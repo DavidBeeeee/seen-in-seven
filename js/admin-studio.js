@@ -930,7 +930,7 @@ function openBookEditor(slug) {
           '<p class="enrollment-message" id="book-file-message" role="status"></p></section>'
       : '') +
     (book.format === 'interactive' ? '<div id="vi-editor-host"></div>' : '') +
-    (book.slug !== '5e-framework' && book.slug !== 'content-lies'
+    (!['5e-framework', 'content-lies', 'sample-web-book'].includes(book.slug)
       ? '<section class="drawer-section"><h4>Manage</h4>' +
           '<div class="drawer-actions"><button class="secondary-button" type="button" style="color: var(--studio-danger, #ef4444);" onclick="deleteBook(\'' + safeAttr(book.slug) + '\')">Delete book</button></div></section>'
       : '');
@@ -1221,31 +1221,38 @@ async function createBook(event) {
 }
 
 async function deleteBook(slug) {
-  if (!window.confirm('Delete book "' + slug + '" and remove all associated files and progress? This cannot be undone.')) return;
+  if (!window.confirm('Delete book "' + slug + '" and remove its files? This cannot be undone.')) return;
 
-  try {
-    const bookBucket = adminSb.storage.from('solution-vault-books');
-    const { data: v1Files } = await bookBucket.list(slug + '/v1');
-    if (v1Files && v1Files.length) {
-      await bookBucket.remove(v1Files.map(f => slug + '/v1/' + f.name));
-    }
-    const { data: rootFiles } = await bookBucket.list(slug);
-    if (rootFiles && rootFiles.length) {
-      await bookBucket.remove(rootFiles.filter(f => f.name !== 'v1').map(f => slug + '/' + f.name));
-    }
-
-    const coverBucket = adminSb.storage.from('solution-vault-covers');
-    const { data: coverFiles } = await coverBucket.list(slug);
-    if (coverFiles && coverFiles.length) {
-      await coverBucket.remove(coverFiles.map(f => slug + '/' + f.name));
-    }
-  } catch (storageErr) {
-    console.warn('Could not clean up storage objects for ' + slug + ':', storageErr);
-  }
-
+  // The database decides first (WBR-445 review): it refuses seeded books and
+  // any book someone holds or has read, and files are only removed after the
+  // row is gone, so a refused delete never leaves a book without its file.
   const { error } = await adminSb.rpc('admin_delete_book', { p_book_slug: slug });
   if (error) {
     return alert('Could not delete book: ' + error.message);
+  }
+
+  const leftovers = [];
+  async function clearFolder(bucket, folder) {
+    const { data: entries, error: listError } = await bucket.list(folder, { limit: 1000 });
+    if (listError) { leftovers.push(folder); return; }
+    const files = [];
+    for (const entry of entries || []) {
+      if (entry.id) files.push(folder + '/' + entry.name);
+      else await clearFolder(bucket, folder + '/' + entry.name);
+    }
+    if (files.length) {
+      const { data: removed, error: removeError } = await bucket.remove(files);
+      if (removeError || !removed || removed.length !== files.length) leftovers.push(folder);
+    }
+  }
+  try {
+    await clearFolder(adminSb.storage.from('solution-vault-books'), slug);
+    await clearFolder(adminSb.storage.from('solution-vault-covers'), slug);
+  } catch (storageErr) {
+    leftovers.push(slug);
+  }
+  if (leftovers.length) {
+    alert('The book was deleted, but some of its files could not be removed: ' + leftovers.join(', '));
   }
   closeCustomer();
   await loadStudioAdmin();

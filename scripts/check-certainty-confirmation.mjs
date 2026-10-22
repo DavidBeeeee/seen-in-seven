@@ -14,11 +14,15 @@ import { dirname, join } from 'node:path';
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const html = readFileSync(join(root, 'api', '_hub', 'certainty.html'), 'utf8');
 
-const src = html.match(/function calNote\(status\) \{[\s\S]*?\n      \}/);
-assert.ok(src, 'certainty.html defines calNote(status)');
-const calNote = new Function(`${src[0]}; return calNote;`)();
+// calNote now takes the session so it can show the server's sync state
+// (UX 6, Stranger 38); the confirmation contract below is unchanged.
+const src = html.match(/function calNote\(u\) \{[\s\S]*?\n      \}/);
+assert.ok(src, 'certainty.html defines calNote(u)');
+const calNoteFor = new Function(`${src[0]}; return calNote;`)();
+const calNote = (status) => calNoteFor({ calendar_status: status });
 
-assert.ok(/calNote\(u\.calendar_status\)/.test(html), 'The next-session card renders calNote(u.calendar_status)');
+assert.ok(/calNote\(u\)/.test(html), 'The next-session card renders calNote(u)');
+assert.match(calNoteFor({ calendar_status: 'pending', calendar_sync_state: 'synced' }), /data-cal="held"/, 'only calendar_status created may read as confirmed');
 
 const strip = (h) => h.replace(/<[^>]+>/g, '');
 

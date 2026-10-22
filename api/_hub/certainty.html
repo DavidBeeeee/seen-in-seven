@@ -162,6 +162,14 @@
     .cs-skeleton { height: 120px; border-radius: 20px; background: linear-gradient(90deg, var(--studio-surface) 25%, var(--studio-surface-2) 50%, var(--studio-surface) 75%); background-size: 200% 100%; animation: cs-shimmer 1.3s infinite; }
     @keyframes cs-shimmer { to { background-position: -200% 0; } }
     .cs-hide { display: none !important; }
+    .cs-rhythm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 14px; }
+    .cs-rhythm-grid h3 { font-family: 'Oswald', sans-serif; font-size: 1rem; margin: 0 0 4px; letter-spacing: .2px; }
+    .cs-rhythm-grid p { color: var(--studio-soft); font-size: .9rem; line-height: 1.5; margin: 0; }
+    .cs-arc { list-style: none; margin: 14px 0 0; padding: 0; display: grid; gap: 10px; }
+    .cs-arc li { display: flex; align-items: flex-start; gap: 10px; color: var(--studio-soft); font-size: .9rem; line-height: 1.45; }
+    .cs-arc li strong { color: var(--studio-text); }
+    .cs-arc li i { width: 17px; height: 17px; color: var(--studio-teal); flex: none; margin-top: 2px; }
+    .cs-cal-note[data-sync="failed"] { color: var(--studio-gold); }
 
     /* Keep the shared Hub header from overflowing on a phone: drop the
        secondary labels rather than push the page wide. */
@@ -339,6 +347,35 @@
             </div>
           </section>
 
+          <!-- When life gets in the way: said before it happens, not after -->
+          <section class="cs-card" id="cs-rhythm" aria-labelledby="cs-rhythm-title">
+            <p class="cs-eyebrow">When life gets in the way</p>
+            <h2 id="cs-rhythm-title">What happens if you miss a week, drift off, or leave.</h2>
+            <div class="cs-rhythm-grid">
+              <div data-cs-copy="missed-week">
+                <h3>You miss a week</h3>
+                <p>Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.</p>
+              </div>
+              <div data-cs-copy="stop-booking">
+                <h3>You stop booking for a while</h3>
+                <p>Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.</p>
+              </div>
+              <div data-cs-copy="reschedule">
+                <h3>You need a different time</h3>
+                <p>Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.</p>
+              </div>
+              <div data-cs-copy="membership-ends">
+                <h3>Your membership ends</h3>
+                <p>Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.</p>
+              </div>
+            </div>
+            <div class="cs-actions" style="margin-top:18px">
+              <button class="secondary-button" type="button" id="cs-delete-data" data-cs-copy="delete-data"><i data-lucide="trash-2"></i><span>Delete my past sessions and phone number</span></button>
+            </div>
+            <p class="cs-privacy">This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.</p>
+            <div class="cs-msg" id="cs-delete-msg" role="status" aria-live="polite"></div>
+          </section>
+
           <!-- Supporting content -->
           <section class="cs-support">
             <article class="cs-card">
@@ -359,8 +396,12 @@
                 <div>Bring the real thing you are working on or stuck on.</div>
                 <div>We make progress on it together, live, in the session.</div>
               </div>
+              <p class="cs-privacy" data-cs-copy="not-a-scheduler"><strong>Not a calendar link.</strong> A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before.</p>
+              <p class="cs-privacy" data-cs-copy="held-outcome"><strong>What counts:</strong> a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.</p>
               <p style="margin-top:16px;color:var(--studio-muted);font-size:.82rem"><i data-lucide="info" style="width:14px;height:14px;vertical-align:-2px"></i> One session per week is included with your membership.</p>
               <p class="cs-privacy"><strong>Private by default:</strong> your booking details are saved to your Studio account and are not visible to other members. Need help? Email <a href="mailto:email@davidbee.me?subject=Certainty%20Sessions%20support">email@davidbee.me</a>.</p>
+              <p class="cs-privacy" data-cs-copy="topic-reader"><strong>Who reads your topic:</strong> only David. It is there so he knows what you are walking in with. Other members never see it.</p>
+              <p class="cs-privacy" data-cs-copy="not-for"><strong>What sessions are not for:</strong> they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.</p>
             </article>
           </section>
         </div>
@@ -540,7 +581,7 @@
               '<button class="secondary-button" type="button" id="cs-addcal"><i data-lucide="calendar-plus"></i><span>Add to my calendar</span></button>' +
               '<button class="secondary-button" type="button" id="cs-cancel"><i data-lucide="x"></i><span>Cancel</span></button>' +
             '</div>' +
-            calNote(u.calendar_status);
+            calNote(u) + (isFirstTimer() ? firstArc() : '');
           el('cs-reschedule').onclick = function () { reschedule(u.id); };
           el('cs-cancel').onclick = function () { cancelSession(u.id); };
           el('cs-addcal').onclick = function () { downloadIcs(u); };
@@ -570,6 +611,7 @@
             '<h2 data-first-session="true">Start with one thing you are stuck on.</h2>' +
             '<p style="color:var(--studio-soft);margin:8px 0 0">This is two hours, one-on-one with David, on Zoom or by phone. Bring the problem that keeps stalling you, a page, a launch, a decision, and you work on it together until it moves. Nothing to prepare beyond that.</p>' +
             '<p style="color:var(--studio-muted);margin:8px 0 0;font-size:.88rem">One session is included every week. Pick any open time below.</p>' +
+            firstArc() +
             '<div class="cs-actions"><button class="primary-button" type="button" id="cs-open-book"><i data-lucide="calendar-plus"></i><span>Book my first session</span></button></div>';
           el('cs-open-book').onclick = openBooking;
         } else {
@@ -595,9 +637,37 @@
         return !count && !state.lastHeld;
       }
 
-      function calNote(status) {
+      // Calendar sync state from the server (UX 6, Stranger 38): a failed write
+      // to David's calendar is shown, not hidden behind "held".
+      function calNote(u) {
+        var status = u && u.calendar_status;
+        var sync = (u && u.calendar_sync_state) || (status === 'created' ? 'synced' : status === 'failed' ? 'failed' : 'pending');
+        if (sync === 'failed') return '<div class="cs-cal-note" data-cal="held" data-sync="failed"><i data-lucide="alert-triangle"></i>Your time is held, but David\'s calendar has not taken it yet. It retries on its own, and he will confirm with you before the session.</div>';
         if (status === 'created') return '<div class="cs-cal-note" data-cal="confirmed"><i data-lucide="check-circle-2"></i>Confirmed. This time is on David\'s calendar and he will see you there.</div>';
         return '<div class="cs-cal-note" data-cal="held"><i data-lucide="clock"></i>Your time is held for you. David has not confirmed it on his calendar yet, and he will confirm with you before the session.</div>';
+      }
+
+      // First-session arc (UX 21, 26): before, during and after, so the first
+      // session reads as a beginning rather than a single booking screen.
+      function firstArc() {
+        return '<ul class="cs-arc" data-first-arc="true">' +
+          '<li><i data-lucide="pencil-line"></i><span><strong>Before.</strong> Pick a time and write one line about what is stuck. That is all the preparation there is.</span></li>' +
+          '<li><i data-lucide="users"></i><span><strong>During.</strong> Two hours with David. You work the thing together until it moves.</span></li>' +
+          '<li><i data-lucide="footprints"></i><span><strong>After.</strong> You leave with one next step, and this page asks what you will put into practice before next week.</span></li>' +
+          '</ul>';
+      }
+
+      function deleteData() {
+        if (!window.confirm('Delete your past sessions, their topics and your remembered phone number? This cannot be undone. An upcoming session stays booked.')) return;
+        var m = el('cs-delete-msg');
+        api('delete_data').then(function (r) {
+          if (!r.ok) { m.textContent = (r.data && r.data.error) || 'That did not go through. Try again.'; m.className = 'cs-msg show err'; return; }
+          var n = Number(r.data && (r.data.deleted_sessions != null ? r.data.deleted_sessions : r.data.deletedSessions)) || 0;
+          m.textContent = 'Done. ' + n + ' past session' + (n === 1 ? '' : 's') + ' and your phone number are gone.';
+          m.className = 'cs-msg show ok';
+          el('cs-setting-phone').value = '';
+          refresh();
+        }).catch(function () { m.textContent = 'Something interrupted that. Try again.'; m.className = 'cs-msg show err'; });
       }
 
       function openBooking() {
@@ -751,7 +821,7 @@
       }
 
       function reschedule(id) {
-        if (!window.confirm('Reschedule? This cancels the current time so you can pick a new one.')) return;
+        if (!window.confirm('Reschedule? This releases your current time first, and someone else can book it before you pick a new one.')) return;
         api('cancel', { id: id }).then(function () { refresh().then(openBooking); });
       }
 
@@ -859,6 +929,7 @@
       el('cs-book-close').onclick = function () { el('cs-book').classList.remove('open'); };
       el('cs-confirm').onclick = confirmBooking;
       el('cs-save-settings').onclick = saveSettings;
+      el('cs-delete-data').onclick = deleteData;
       el('cs-setting-tz').onchange = function () {
         if (el('cs-book').classList.contains('open')) { renderTimes(); }
         renderPrimary();
