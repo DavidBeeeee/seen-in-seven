@@ -22,13 +22,15 @@ let analyticsPeriod = 'week';
 // or every save throws away the place he was working.
 const openNoteComposers = new Set();
 const noteDrafts = new Map();
-const openProjects = new Set();
+// Groups open by default (David, 2026-10-22: "everything is hidden, I think it
+// should default to being open"). What is remembered is what he closed.
+const closedProjects = new Set();
 
 const TODO_QUADRANTS = {
   Q1: { title: 'Urgent and important', note: 'Doing now.' },
   Q2: { title: 'Important, not urgent', note: 'The real work. Protect this from the noise.' },
   Q3: { title: 'Urgent, not important', note: 'Deadlines that do not move the business.' },
-  Q4: { title: 'Neither', note: 'Parked on purpose, still visible.' }
+  Q4: { title: 'Not urgent, not important', note: 'Small and cheap. Do it when it costs little, or drop it. Nothing waits here: waiting work has its own section below.' }
 };
 
 function icons() {
@@ -653,28 +655,10 @@ function renderGrade() {
 }
 
 function renderDashboard() {
-  // Every panel's contents come from js/panels.mjs, which WorkerBee's own gate
-  // reads back from this deployed file. One definition, checked where it runs.
-  const panels = dashboardPanels(state);
-  const { needs, completed, commitments, diagnostics } = panels;
-  const outcomes = currentOutcomes();
-  const lastViewed = state.readState && state.readState.last_dashboard_viewed_at;
-  fillUpdates('outcomes-list', outcomes, 'Today\u2019s outcomes will appear after the next WorkerBee synchronization.', 'outcome');
-  fillUpdates('needs-list', needs, 'No explicit decision is recorded right now. Ongoing initiatives and improvement work still remain visible elsewhere on this page.', 'decision');
-  fillUpdates('completed-list', completed, 'Nothing has been recorded as finished in the last fortnight.');
-  fillUpdates('commitments-list', commitments, 'No dated commitment or blocker is currently published.');
-  fillUpdates('diagnostics-list', diagnostics, 'No active defect, friction, streamlining opportunity, or expansion candidate is currently recorded.');
-  // New since the last visit is an emphasis on work that is shown either way,
-  // never the condition for showing it. WBR-336: any load moves that marker,
-  // including a run's, so nothing a person needs may hang off it.
-  const list = el('completed-list');
-  if (list) {
-    [...list.children].forEach((node, index) => {
-      const item = completed[index];
-      node.classList.toggle('is-new', Boolean(item && isNewSince(item, lastViewed)));
-    });
-  }
-  el('needs-count').textContent = String(needs.length);
+  // David, 2026-10-22: lean. The panels that were copies nothing kept current
+  // are gone from the page; js/panels.mjs still computes them because the
+  // board-visible gate reads that module, but nothing renders them here.
+  renderThisWeek();
   // WBR-350. The workload count on the page he opens first, from the same
   // function as the Todo tabs, the analytics card and the audit.
   //
@@ -709,11 +693,82 @@ function renderDashboard() {
   renderHealth();
   renderGrade();
   renderDailyReport();
-  renderClients();
-  renderEvents();
-  renderProducts();
   renderJournal();
   icons();
+}
+
+// This week (David, 2026-10-22). Only things a real system dates: Certainty
+// bookings read live, the next Eventbrite events with registrations, and the
+// Tiny Challenge numbers from Systeme. Each part says when it was read, so an
+// old read looks old instead of looking current.
+let certaintyWeekCache = null;
+function ageLabel(iso) {
+  const at = Date.parse(iso || '');
+  if (!Number.isFinite(at)) return 'never read';
+  const hours = Math.round((Date.now() - at) / 3600000);
+  if (hours < 1) return 'read just now';
+  if (hours < 36) return `read ${hours}h ago`;
+  return `read ${Math.round(hours / 24)} days ago`;
+}
+function weekBlock(title, checkedAt, staleAfterHours) {
+  const block = document.createElement('section');
+  block.className = 'this-week-block';
+  const head = document.createElement('header');
+  const h = document.createElement('h3');
+  h.textContent = title;
+  const when = document.createElement('small');
+  const at = Date.parse(checkedAt || '');
+  const stale = !Number.isFinite(at) || (Date.now() - at) > staleAfterHours * 3600000;
+  when.className = stale ? 'week-age stale' : 'week-age';
+  when.textContent = stale ? `${ageLabel(checkedAt)} · stale` : ageLabel(checkedAt);
+  head.append(h, when);
+  const list = document.createElement('ul');
+  block.append(head, list);
+  return { block, list };
+}
+function weekLine(list, text, strong) {
+  const li = document.createElement('li');
+  if (strong) { const b = document.createElement('strong'); b.textContent = strong; li.append(b, ' '); }
+  li.append(text);
+  list.append(li);
+}
+function renderThisWeek() {
+  const root = el('this-week');
+  if (!root) return;
+  root.replaceChildren();
+  const feed = (state.updates || []).find(item => item.kind === 'summary' && item.metadata?.source === 'this-week');
+  const meta = feed?.metadata || {};
+  const day = iso => new Date(iso).toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+
+  const certainty = weekBlock('Certainty sessions', certaintyWeekCache?.checkedAt, 1);
+  if (!certaintyWeekCache) weekLine(certainty.list, 'Reading bookings…');
+  else if (!certaintyWeekCache.ok) weekLine(certainty.list, `Could not read bookings (${certaintyWeekCache.error}).`);
+  else if (!certaintyWeekCache.sessions.length) weekLine(certainty.list, 'Nobody is booked in the next seven days.');
+  else certaintyWeekCache.sessions.forEach(row => weekLine(certainty.list, `${row.who} · ${row.mode === 'zoom' ? 'Zoom' : 'phone'}${row.calendar === 'created' ? '' : ' · not on your calendar yet'}`, day(row.startsAt)));
+
+  const events = weekBlock('Eventbrite', meta.events_checked_at, 36);
+  const list = Array.isArray(meta.events) ? meta.events : [];
+  if (!list.length) weekLine(events.list, meta.events_error ? `Could not read Eventbrite (${meta.events_error}).` : 'No upcoming events.');
+  list.forEach(event => {
+    const seats = event.capacity ? `${event.registered} of ${event.capacity} registered` : `${event.registered} registered`;
+    weekLine(events.list, `${event.name} · ${seats}`, day(event.start));
+  });
+
+  const tc = meta.tiny_challenge;
+  const tiny = weekBlock('Tiny Challenge', tc?.checkedAt, 36);
+  if (!tc) weekLine(tiny.list, 'Not read from Systeme yet.');
+  else {
+    weekLine(tiny.list, `new on the Tiny Challenge page this week (${tc.interestTotal} in all${tc.latestInterestAt ? `, latest ${tc.latestInterestAt}` : ''})`, String(tc.interestThisWeek));
+    weekLine(tiny.list, `purchases this week (${tc.purchasesTotal} in all)`, String(tc.purchasesThisWeek));
+  }
+  root.append(certainty.block, events.block, tiny.block);
+
+  if (!certaintyWeekCache) {
+    fetch('/api/workerbee?view=certainty-week', { headers: { Authorization: `Bearer ${session.access_token}` } })
+      .then(response => response.json())
+      .then(result => { certaintyWeekCache = result && typeof result === 'object' ? result : { ok: false, error: 'no answer' }; renderThisWeek(); })
+      .catch(error => { certaintyWeekCache = { ok: false, error: String(error.message || error) }; renderThisWeek(); });
+  }
 }
 
 function renderJournal() {
@@ -2069,8 +2124,11 @@ function renderTodo() {
     // Dashboard, and now it says so.
     const current = bands[side];
     const supporting = bandSupporting(current);
-    legend.textContent = `${who}: ${bandPrimary(current)}${supporting ? ` · ${supporting}` : ''}. `
-      + `${current.open ?? 0} tracked in all — Board, execution queue, loose tasks and unrouted captures on this side.`;
+    legend.textContent = `${who}: ${supporting ? `${supporting} · ` : ''}${current.open ?? 0} tracked in all.`;
+    const figure = el('todo-headline-figure');
+    if (figure) figure.textContent = String(current.active ?? 0);
+    const words = el('todo-headline-label');
+    if (words) words.textContent = `${who === 'DavidBee' ? 'on your list' : 'on my list'} to do now`;
   }
 
   for (const [quadrant, copy] of Object.entries(TODO_QUADRANTS)) {
@@ -2104,9 +2162,7 @@ function renderTodo() {
         sectionTasks,
         tasks: sectionTasks.filter(task => taskQuadrant(task, sectionTasks) === quadrant)
       };
-    }).filter(project => (project.sectionTasks.length
-      ? project.tasks.length > 0
-      : (todoOwner === 'david' && quadrant === 'Q2')));
+    }).filter(project => project.tasks.length > 0); // an empty group disappears; the quadrant stays
     const queueProjects = groupQueueProjects(queueItems.filter(item => (item.metadata?.owner === 'david' ? 'david' : 'workerbee') === todoOwner && boardQuadrant(item) === quadrant));
 
     editableProjects.forEach(project => panel.append(editableTodoProject(project)));
@@ -2114,8 +2170,10 @@ function renderTodo() {
     if (!editableProjects.length && !queueProjects.length) panel.append(empty('Nothing here.'));
     root.append(panel);
   }
-  if (standingItems.length) root.append(standingPanel(standingItems));
   if (heldItems.length) root.append(heldPanel(heldItems));
+  if (standingItems.length) root.append(standingPanel(standingItems));
+  const doneStrip = doneThisWeekStrip(todoOwner);
+  if (doneStrip) root.prepend(doneStrip);
   renderCaptures();
   renderTodoSearchCount(counts);
   icons();
@@ -2434,7 +2492,7 @@ function standingPanel(items) {
   const title = document.createElement('h2');
   title.textContent = 'Standing';
   const note = document.createElement('p');
-  note.textContent = 'Practices, not tasks. These have no finish line on purpose, so they are read on a cadence rather than checked off. They are counted in the tracked total and the supporting line but not in the to-do-now number, and they stay out of the quadrants, because something that can never be finished sitting in "urgent and important" makes the quadrant meaningless for everything beside it.';
+  note.textContent = 'Ongoing practices with no finish line. They are not counted in the to-do-now number, but they still have to keep moving: every review adds what is new since the last one.';
   words.append(title, note);
   const label = document.createElement('span');
   label.className = 'quadrant-label';
@@ -2459,21 +2517,55 @@ function standingPanel(items) {
   return panel;
 }
 
-// Held work, with the reopening condition on the row instead of a checkbox.
-// Nothing is ever blocked: a held item is deliberately inactive until its
-// named condition is true, and the condition is the whole reason it is not
-// in a quadrant competing with work that can actually start.
+// Done this week: what actually closed in the last seven days on this side, so
+// the list reads as moving rather than as a pile that never shrinks.
+function doneThisWeekStrip(side) {
+  const since = Date.now() - 7 * 86400000;
+  const done = boardCards(state)
+    .filter(item => isClosedWork(item) && !['dropped', 'cancelled', 'merged'].includes(String(item.metadata?.roadmap_status || item.status)))
+    .filter(item => ((item.metadata?.owner || 'workerbee') === 'david' ? 'david' : 'workerbee') === side)
+    .map(item => ({ item, at: Date.parse(completedAt(item) || '') }))
+    .filter(entry => Number.isFinite(entry.at) && entry.at >= since)
+    .sort((a, b) => b.at - a.at);
+  if (!done.length || todoFilter) return null;
+  const strip = document.createElement('section');
+  strip.className = 'done-week-strip';
+  const head = document.createElement('p');
+  head.className = 'eyebrow';
+  head.textContent = `Done this week · ${done.length}`;
+  const list = document.createElement('ul');
+  done.slice(0, 8).forEach(({ item, at }) => {
+    const li = document.createElement('li');
+    const ref = item.metadata?.roadmap_item_id || item.metadata?.queue_item_id || '';
+    li.textContent = `${new Date(at).toLocaleDateString(undefined, { weekday: 'short' })} · ${ref ? `${ref} ` : ''}${item.title}`;
+    list.append(li);
+  });
+  if (done.length > 8) {
+    const more = document.createElement('li');
+    more.className = 'done-more';
+    more.textContent = `and ${done.length - 8} more`;
+    list.append(more);
+  }
+  strip.append(head, list);
+  return strip;
+}
+
+// Waiting on (David, 2026-10-22). Work that cannot move until something
+// specific is true, kept out of the quadrants and out of the to-do-now number.
+// A card may only wait when it names what it waits for, how WorkerBee checks
+// it, who owns the condition and when it is next checked. The audit runs the
+// check; the moment it passes, the card goes back into a quadrant with a step.
 function heldPanel(items) {
   const panel = document.createElement('section');
-  panel.className = 'todo-quadrant standing-panel';
-  panel.dataset.quadrant = 'held';
+  panel.className = 'todo-quadrant standing-panel waiting-panel';
+  panel.dataset.quadrant = 'waiting';
   const heading = document.createElement('header');
   heading.className = 'todo-quadrant-heading';
   const words = document.createElement('div');
   const title = document.createElement('h2');
-  title.textContent = 'Held';
+  title.textContent = 'Waiting on';
   const note = document.createElement('p');
-  note.textContent = 'Deliberately inactive, each with the condition that reopens it written on the row. Held is not a junk drawer and it is not blocked: the moment its condition is true, the item comes back. Held work is counted in the tracked total on the tab tooltip and in the supporting line, but not in the to-do-now number, because work waiting on its condition is not to-do however it is prioritized.';
+  note.textContent = 'Work that moves the moment something specific is true. Each card says what it is waiting for, how I check it and when I check next. When the check passes, it goes back into a quadrant with a real next step.';
   words.append(title, note);
   const label = document.createElement('span');
   label.className = 'quadrant-label';
@@ -2482,12 +2574,25 @@ function heldPanel(items) {
   panel.append(heading);
   items.forEach(item => {
     const row = boardRow(item);
-    const condition = document.createElement('small');
-    condition.className = 'last-moved';
-    condition.textContent = item.metadata?.reopening_condition
-      ? `Reopens when: ${item.metadata.reopening_condition}`
-      : 'No reopening condition recorded — that is a defect, because an unconditioned hold is parking.';
-    row.insertBefore(condition, row.querySelector('.task-thread'));
+    const meta = item.metadata || {};
+    const box = document.createElement('div');
+    box.className = 'waiting-terms';
+    const line = (label, value, flag) => {
+      const node = document.createElement('small');
+      node.className = flag ? 'waiting-on stale' : 'waiting-on';
+      node.textContent = `${label}: ${value}`;
+      box.append(node);
+    };
+    const on = meta.waiting_on || meta.reopening_condition;
+    if (on) line('Waiting for', on);
+    else line('Waiting for', 'nothing named, so this is parking, not waiting. The next audit moves it back into a quadrant.', true);
+    if (meta.waiting_check) line('How I check', meta.waiting_check);
+    if (meta.waiting_owner) line('Condition owned by', meta.waiting_owner);
+    if (meta.waiting_last_checked) line('Last checked', `${String(meta.waiting_last_checked).slice(0, 10)}${meta.waiting_last_result ? ` · ${meta.waiting_last_result}` : ''}`);
+    const next = meta.waiting_next_check;
+    const overdue = next && Date.parse(next) <= Date.now();
+    line('Next check', next ? `${String(next).slice(0, 10)}${overdue ? ' · due now' : ''}` : 'not set', !next || overdue);
+    row.insertBefore(box, row.querySelector('.task-thread'));
     panel.append(row);
   });
   return panel;
@@ -2576,10 +2681,10 @@ function groupQueueProjects(items) {
 function projectShell(title, count, key) {
   const details = document.createElement('details');
   details.className = 'todo-project';
+  details.open = !(key && closedProjects.has(key));
   if (key) {
-    details.open = openProjects.has(key);
     details.addEventListener('toggle', () => {
-      if (details.open) openProjects.add(key); else openProjects.delete(key);
+      if (details.open) closedProjects.delete(key); else closedProjects.add(key);
     });
   }
   const summary = document.createElement('summary');
@@ -2731,7 +2836,13 @@ function boardRow(item) {
   row.append(head);
 
   const detail = document.createElement('small');
+  detail.className = 'queue-task-detail clamped';
   writeBodyText(detail, item.body || meta.intended_result || '');
+  detail.title = 'Click to read the whole card';
+  detail.addEventListener('click', event => {
+    if (event.target.closest('a')) return;
+    detail.classList.toggle('clamped');
+  });
   row.append(detail);
 
   const itemUrl = firstUrl(meta.source_url) || firstUrl(item.body);
@@ -2748,9 +2859,9 @@ function boardRow(item) {
   if (meta.last_moved_at) {
     const days = Math.max(0, Math.floor((Date.now() - Date.parse(meta.last_moved_at)) / 86400000));
     const moved = document.createElement('small');
-    moved.className = `last-moved${days > 21 ? ' stale' : ''}`;
+    moved.className = `last-moved${days >= 14 ? ' stale' : ''}`;
     const kind = meta.last_moved_kind === 'created' ? 'written down' : meta.last_moved_kind;
-    moved.textContent = `Last moved ${days === 0 ? 'today' : `${days}d ago`} · ${kind}${meta.last_moved_ref ? ` ${meta.last_moved_ref}` : ''}`;
+    moved.textContent = `Moved ${days === 0 ? 'today' : `${days} day${days === 1 ? '' : 's'} ago`} · ${kind}${meta.last_moved_ref ? ` ${meta.last_moved_ref}` : ''}${days >= 14 ? ' · stale, the next audit has to move it' : ''}`;
     row.append(moved);
   }
 

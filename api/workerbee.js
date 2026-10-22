@@ -221,6 +221,17 @@ export function hubScoreSummary(result) {
   }) };
 }
 
+async function certaintyWeek(token) {
+  // certainty_admin_week (2026-10-22 migration) refuses anyone but an admin and
+  // returns only when, how, a first name and the calendar state.
+  try {
+    const sessions = await rpc('certainty_admin_week', {}, token);
+    return { ok: true, checkedAt: new Date().toISOString(), sessions: Array.isArray(sessions) ? sessions : [] };
+  } catch (error) {
+    return { ok: false, error: String(error.message || error).slice(0, 160), sessions: [] };
+  }
+}
+
 export default async function handler(req, res) {
   if (!['GET', 'POST'].includes(req.method)) return json(res, 405, { error: 'Method not allowed.' });
   const auth = await authorize(req);
@@ -232,6 +243,10 @@ export default async function handler(req, res) {
       // Never send private client plans, journal entries, or the 1,200 rows to
       // a Hub home card. Morning's normal publication keeps this source fresh.
       if (req.query?.view === 'hub-scores') return json(res, 200, hubScoreSummary(result));
+      // This week's Certainty bookings for the Dashboard, read live so the
+      // panel can never show a stale copy (David, 2026-10-22). David's own
+      // token; the database function checks he is the admin.
+      if (req.query?.view === 'certainty-week') return json(res, 200, await certaintyWeek(auth.token));
       return json(res, 200, auth.compact ? compactChatGPTState(result) : result);
     }
     const body = req.body && typeof req.body === 'object' ? req.body : {};

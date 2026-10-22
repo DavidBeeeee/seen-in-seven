@@ -62,44 +62,13 @@
           <div id="daily-report" class="daily-report"></div>
         </article>
 
-        <article class="panel panel-wide">
-          <div class="panel-heading"><div><p class="eyebrow">Today</p><h2>Three outcomes</h2></div></div>
-          <div id="outcomes-list" class="stack-list"></div>
-        </article>
-
-        <article class="panel attention-panel">
-          <div class="panel-heading"><div><p class="eyebrow">Your move</p><h2>Needs David</h2></div><span class="count-badge" id="needs-count">0</span></div>
-          <div id="needs-list" class="stack-list"></div>
-        </article>
-
-        <article class="panel">
-          <div class="panel-heading"><div><p class="eyebrow">Since your last visit</p><h2>WorkerBee progress</h2></div></div>
-          <div id="completed-list" class="stack-list"></div>
-        </article>
-
-        <article class="panel">
-          <div class="panel-heading"><div><p class="eyebrow">Coming up</p><h2>Commitments and deadlines</h2></div></div>
-          <div id="commitments-list" class="stack-list"></div>
-        </article>
-
-        <article class="panel module-panel panel-wide">
-          <div class="panel-heading"><div><p class="eyebrow">Phase 6</p><h2>Clients and meetings</h2></div></div>
-          <div id="clients-list" class="module-grid clients-grid"></div>
-        </article>
-
-        <article class="panel module-panel">
-          <div class="panel-heading"><div><p class="eyebrow">Phase 7</p><h2>Events and launches</h2></div></div>
-          <div id="events-list" class="stack-list"></div>
-        </article>
-
-        <article class="panel module-panel">
-          <div class="panel-heading"><div><p class="eyebrow">Phase 8</p><h2>App freshness</h2></div></div>
-          <div id="products-list" class="stack-list"></div>
-        </article>
-
-        <article class="panel module-panel" id="diagnostics-panel">
-          <div class="panel-heading"><div><p class="eyebrow">WorkerBee internal</p><h2>System diagnostics &amp; evolution</h2></div></div>
-          <div id="diagnostics-list" class="stack-list"></div>
+        <!-- David, 2026-10-22: the Dashboard stays lean because /todo is where he
+             works. The outcome, decision, progress, commitment, client, event and
+             app panels are gone: each was a copy that nothing kept current.
+             What stays has to be dated by a real system. -->
+        <article class="panel panel-wide this-week-panel">
+          <div class="panel-heading"><div><p class="eyebrow">Dated by real systems</p><h2>This week</h2></div><a class="quiet-button" href="/todo">Open the Todo list</a></div>
+          <div id="this-week" class="this-week-grid"></div>
         </article>
 
         <article class="panel journal-panel" id="journal">

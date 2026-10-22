@@ -104,7 +104,7 @@ export function bandPrimary(bands) {
 // where a surface must show a band it shows the 0 explicitly.
 export function bandSupporting(bands) {
   const parts = [];
-  if (bands.held) parts.push(`${bands.held} held`);
+  if (bands.held) parts.push(`${bands.held} waiting`);
   if (bands.standing) parts.push(`${bands.standing} standing`);
   return parts.join(' · ');
 }
@@ -112,7 +112,7 @@ export function bandSupporting(bands) {
 // The full composition, for tooltips and anywhere the tracked total belongs.
 export function bandLabel(bands) {
   const parts = [`${bands.active ?? 0} to do now`];
-  parts.push(`${bands.held ?? 0} held`);
+  parts.push(`${bands.held ?? 0} waiting`);
   parts.push(`${bands.standing ?? 0} standing`);
   return `${parts.join(' · ')} · ${bands.open ?? 0} tracked in all.`;
 }

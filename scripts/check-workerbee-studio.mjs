@@ -87,20 +87,21 @@ assert.match(analytics, /id="analytics-chart"/, '/analytics must retain its deli
 assert.match(analytics, /id="analytics-demerits"/, '/analytics must retain the demerit ledger.');
 for (const page of [dashboard, todo, analytics]) assert.match(page, /href="\/analytics"/, 'Every WorkerBee surface must link to Analytics.');
 assert.doesNotMatch(todo, /Needs David|Journal|deadlines|progress/i, '/todo must not become a dashboard.');
-assert.match(dashboard, /Needs David/, '/dashboard must make David-facing decisions visible.');
+// David-facing decisions live on /todo's DavidBee tab now (David, 2026-10-22).
 assert.match(dashboard, /id="journal"/, 'Journal must live inside /dashboard.');
 assert.match(dashboard, /id="lessons-link" href="https:\/\/github\.com\/DavidBeeeee\/WorkerBee\/blob\/master\/state\/LESSONS_LEARNED\.md"/, 'David must have a full readable Lessons link beside Journal.');
 assert.doesNotMatch(client, /journalView|toggle-lessons/, 'Lessons must not become a filtered view of the personal Journal.');
 assert.match(client, /journalExpanded \? state\.journal\.slice\(0, 20\)/, 'Journal View all must remain available.');
-assert.match(dashboard, /Clients and meetings/, 'The compact client module must live on /dashboard.');
-assert.match(dashboard, /Events and launches/, 'The compact launch module must live on /dashboard.');
-assert.match(dashboard, /App freshness/, 'The compact product module must live on /dashboard.');
+// David, 2026-10-22: the Dashboard is lean. Clients live on /todo's Clients tab,
+// and every panel left on /dashboard is dated by a real system.
+assert.doesNotMatch(dashboard, /Clients and meetings|Three outcomes|Needs David|Commitments and deadlines|Phase 7|Phase 8/, 'Retired Dashboard panels must not come back.');
+assert.match(dashboard, /id="this-week"/, 'The Dashboard carries the This week panel.');
+assert.match(client, /view=certainty-week/, 'This week reads Certainty bookings live.');
 assert.match(client, /reorder_outcomes/, 'Daily outcomes must be directly reorderable.');
 assert.match(client, /setOutcomeStatus/, 'Daily outcomes must support direct status changes.');
 assert.match(client, /itemThread\(item, \{ update_id: item\.id \}\)/, 'Published Board cards must expose the same instruction thread as editable tasks.');
 assert.match(client, /itemThread\(task, \{ task_id: task\.id \}\)/, 'Editable tasks must retain their instruction thread.');
-assert.match(dashboard, /id="diagnostics-panel"/, 'WorkerBee diagnostics must stay separate from business work.');
-assert.ok(dashboard.indexOf('id="diagnostics-panel"') < dashboard.indexOf('aria-label="WorkerBee operating health and grade"'), 'Health and grade must sit below the primary business dashboard.');
+assert.ok(dashboard.indexOf('id="this-week"') < dashboard.indexOf('aria-label="WorkerBee operating health and grade"'), 'Health and grade must sit below the primary business dashboard.');
 assert.match(dashboard, /id="daily-report"/, 'The dashboard must expose a durable same-day morning and afternoon report.');
 assert.match(client, /source === 'daily-report'/, 'The dashboard must render the canonical daily report independently of last-visit filtering.');
 assert.match(dashboard, /Four-cycle operating reports/, 'The Dashboard must expose both retained four-cycle WorkerBee reports.');

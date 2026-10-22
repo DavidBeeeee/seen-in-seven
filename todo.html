@@ -33,7 +33,20 @@
 
     <div id="todo-app" hidden>
       <section class="todo-intro">
-        <div><p class="eyebrow">The whole board</p><h1>What needs doing?</h1><p>Everything stays visible. Projects fold shut so the list can grow without becoming a wall.</p></div>
+        <div><p class="eyebrow">The whole board</p><h1>What needs doing?</h1>
+          <p class="todo-headline"><span class="todo-headline-figure" id="todo-headline-figure">0</span> <span id="todo-headline-label">to do now</span></p>
+          <details class="todo-key">
+            <summary>How to read this list</summary>
+            <ul>
+              <li><strong>The number</strong> is work that can be done now. Waiting and standing items are tracked but not counted in it.</li>
+              <li><strong>Q1 to Q4</strong> sort that work: urgent and important first, then important, then urgent but small, then small and cheap.</li>
+              <li><strong>Waiting on</strong> holds work that moves the moment a named, checkable thing is true. Each card says what, how I check it and when.</li>
+              <li><strong>Standing</strong> is ongoing practice with no finish line. It still has to keep moving.</li>
+              <li><strong>Moved N days ago</strong> counts real movement, not reviews. At 14 days a card is stale and the next audit has to move it.</li>
+              <li><strong>Tabs:</strong> WorkerBee is mine, DavidBee is yours, Clients is each client's living plan.</li>
+            </ul>
+          </details>
+        </div>
         <button class="quiet-button" id="add-section" type="button"><i data-lucide="plus"></i> Add heading</button>
       </section>
       <!-- WBR-351. David, 2026-09-15: "my search is gone from the TODO list so I
