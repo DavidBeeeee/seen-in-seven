@@ -2524,7 +2524,9 @@ function doneThisWeekStrip(side) {
   const done = boardCards(state)
     .filter(item => isClosedWork(item) && !['dropped', 'cancelled', 'merged'].includes(String(item.metadata?.roadmap_status || item.status)))
     .filter(item => ((item.metadata?.owner || 'workerbee') === 'david' ? 'david' : 'workerbee') === side)
-    .map(item => ({ item, at: Date.parse(completedAt(item) || '') }))
+    // Only a real finish date counts. completedAt() falls back to the row's
+    // publish time, which made week-old closures read as done this week.
+    .map(item => ({ item, at: Date.parse(item.metadata?.completed_at || '') }))
     .filter(entry => Number.isFinite(entry.at) && entry.at >= since)
     .sort((a, b) => b.at - a.at);
   if (!done.length || todoFilter) return null;
