@@ -686,7 +686,7 @@ function renderDashboard() {
     const sub = el('board-count-sub');
     if (sub) {
       sub.textContent =
-        `${boardBands.held ?? 0} held · ${boardBands.standing ?? 0} standing · ${queueBands.open ?? 0} in the execution queue.`;
+        `${boardBands.held ?? 0} waiting · ${boardBands.standing ?? 0} standing · ${queueBands.open ?? 0} in the execution queue.`;
     }
   }
   el('dashboard-freshness').textContent = state.generatedAt ? `Dashboard synced ${formatDateTime(state.generatedAt)}.` : 'Current state loaded.';
