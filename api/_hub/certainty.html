@@ -70,6 +70,22 @@
     @media (max-width: 560px) {
       .cs-hist-time { display: none; }
     }
+    .cs-hist-pagination { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+    .cs-hist-page-info { font-size: .84rem; color: var(--studio-muted); font-weight: 600; }
+    .cs-hist-page-controls { display: flex; align-items: center; gap: 8px; }
+    .cs-hist-toggle-wrap { margin-top: 12px; }
+    .cs-missed-week {
+      display: flex; align-items: center; gap: 10px; padding: 12px 14px; margin-top: 12px;
+      background: var(--studio-surface-2); border: 1px solid var(--studio-border); border-radius: 12px;
+      color: var(--studio-soft); font-size: .88rem; line-height: 1.4;
+    }
+    .cs-missed-week i { width: 16px; height: 16px; color: var(--studio-teal); flex: none; }
+    .cs-lapsed-state {
+      padding: 24px; background: var(--studio-surface); border: 1px solid var(--studio-border);
+      border-radius: 20px; text-align: left; max-width: 540px; margin: 0 auto;
+    }
+    .cs-lapsed-state h1, .cs-lapsed-state h2 { font-family: 'Oswald', sans-serif; font-size: 1.4rem; margin: 0 0 8px; }
+    .cs-lapsed-state p { color: var(--studio-soft); margin: 0 0 12px; line-height: 1.5; font-size: .94rem; }
 
     /* Personal panel (David) */
     .cs-david { display: grid; gap: 12px; align-content: start; }
@@ -186,11 +202,11 @@
 </head>
 <body>
   <main class="eee-gate" id="eee-access-gate">
-    <section class="eee-gate-box">
-      <span class="studio-mark">MH</span>
-      <h1 id="eee-gate-title">Checking your membership.</h1>
-      <p id="eee-gate-copy">Your Certainty Sessions access will be ready in a moment.</p>
-      <a class="primary-button" id="eee-gate-button" href="/"><span>Return to Studio</span><i data-lucide="arrow-right"></i></a>
+    <section class="eee-gate-box" id="cs-lapsed-gate" data-cs-copy="lapsed-membership">
+      <span class="studio-mark">CS</span>
+      <h1 id="eee-gate-title">Your Certainty Sessions membership has ended.</h1>
+      <p id="eee-gate-copy">Booking is closed. Your past sessions are kept on your account, so if you come back they are still here. How to come back: email David at <a href="mailto:email@davidbee.me">email@davidbee.me</a> or return to My Studio.</p>
+      <a class="primary-button" id="eee-gate-button" href="/"><span>Return to My Studio</span><i data-lucide="arrow-right"></i></a>
     </section>
   </main>
 
@@ -251,6 +267,15 @@
 
           <!-- Crisis safety line banner -->
           <div class="cs-msg err cs-hide" id="cs-crisis-banner" role="alert" style="margin-top:0;"></div>
+
+          <!-- Lapsed membership ending card for within-app churn/ended state -->
+          <article class="cs-card cs-hide" id="cs-membership-ended" data-cs-copy="membership-ended" data-cs-ended="true">
+            <p class="cs-eyebrow">Membership ended</p>
+            <h2>Your Certainty Sessions membership has ended.</h2>
+            <p style="color:var(--studio-soft);margin:8px 0 0">Booking is closed. Your past sessions are kept on your account, so if you come back they are still here.</p>
+            <p class="cs-privacy" style="margin-top:12px">How to come back: email David at <a href="mailto:email@davidbee.me">email@davidbee.me</a> or return to My Studio.</p>
+            <div class="cs-actions" style="margin-top:16px"><a class="secondary-button" href="/"><i data-lucide="layout-grid"></i><span>Return to My Studio</span></a></div>
+          </article>
 
           <section class="cs-hero cs-hide" id="cs-hero">
             <!-- Left: next session OR book prompt -->
@@ -545,12 +570,31 @@
       }
       function takenSet() {
         var s = {};
-        (state && state.taken || []).forEach(function (t) { s[t.date + ':' + t.hour] = true; });
+        var editDate = null, editHour = null;
+        if (editingSession && editingSession.starts_at) {
+          var ep = etParts(new Date(editingSession.starts_at));
+          editDate = ep.year + '-' + ep.month + '-' + ep.day;
+          editHour = Number(ep.hour);
+        }
+        (state && state.taken || []).forEach(function (t) {
+          if (editDate && t.date === editDate && Number(t.hour) === editHour) return;
+          s[t.date + ':' + t.hour] = true;
+        });
         return s;
       }
 
       function renderPrimary() {
         var host = el('cs-primary');
+        if (state && (state.engagement === 'churned' || state.membership_ended)) {
+          host.innerHTML =
+            '<p class="cs-eyebrow">Membership ended</p>' +
+            '<h2 data-cs-ended-title="true">Your Certainty Sessions membership has ended.</h2>' +
+            '<p style="color:var(--studio-soft);margin:8px 0 0">Booking is closed. Your past sessions are kept on your account, so if you come back they are still here.</p>' +
+            '<p class="cs-privacy" style="margin-top:12px">How to come back: email David at <a href="mailto:email@davidbee.me">email@davidbee.me</a> or return to My Studio.</p>' +
+            '<div class="cs-actions" style="margin-top:16px"><a class="secondary-button" href="/"><i data-lucide="layout-grid"></i><span>Return to My Studio</span></a></div>';
+          icons();
+          return;
+        }
         if (state && state.upcoming) {
           var u = state.upcoming, j = u.join || {};
           var joinRow = j.mode === 'zoom'
@@ -577,11 +621,13 @@
               '<div class="cs-next-meta"><i data-lucide="' + (j.mode === 'zoom' ? 'video' : 'phone') + '"></i>' + (j.mode === 'zoom' ? 'On Zoom' : 'By phone') + (u.topic ? ' &middot; ' + escapeHtml(u.topic) : '') + '</div></div>' +
             '</div>' +
             '<div class="cs-actions">' + joinRow +
+              '<button class="secondary-button" type="button" id="cs-edit"><i data-lucide="pencil"></i><span>Edit session</span></button>' +
               '<button class="secondary-button" type="button" id="cs-reschedule"><i data-lucide="calendar-clock"></i><span>Reschedule</span></button>' +
               '<button class="secondary-button" type="button" id="cs-addcal"><i data-lucide="calendar-plus"></i><span>Add to my calendar</span></button>' +
               '<button class="secondary-button" type="button" id="cs-cancel"><i data-lucide="x"></i><span>Cancel</span></button>' +
             '</div>' +
             calNote(u) + (isFirstTimer() ? firstArc() : '');
+          el('cs-edit').onclick = function () { openEdit(u); };
           el('cs-reschedule').onclick = function () { reschedule(u.id); };
           el('cs-cancel').onclick = function () { cancelSession(u.id); };
           el('cs-addcal').onclick = function () { downloadIcs(u); };
@@ -618,6 +664,9 @@
           host.innerHTML =
             '<p class="cs-eyebrow">This week</p>' +
             '<h2>You have not booked this week yet.</h2>' +
+            (!isFirstTimer() && state && state.weeksSinceLastHeld >= 1 && state.engagement !== 'lapsed'
+              ? '<div class="cs-missed-week" data-cs-copy="missed-week-line" data-cs-missed-week="true"><i data-lucide="info"></i><span>You missed last week. Unused weeks do not roll over, but your session for this week is open.</span></div>'
+              : '') +
             '<p style="color:var(--studio-soft);margin:8px 0 0">Your session is included. Grab a time while it is open and bring whatever you are stuck on.</p>' +
             '<div class="cs-actions"><button class="primary-button" type="button" id="cs-open-book"><i data-lucide="calendar-plus"></i><span>Book my session</span></button></div>';
           el('cs-open-book').onclick = openBooking;
@@ -670,12 +719,36 @@
         }).catch(function () { m.textContent = 'Something interrupted that. Try again.'; m.className = 'cs-msg show err'; });
       }
 
+      var editingSession = null;
+
+      function openEdit(u) {
+        editingSession = u;
+        var p = etParts(new Date(u.starts_at));
+        var iso = p.year + '-' + p.month + '-' + p.day;
+        var hour = Number(p.hour);
+        var curMode = (u.join && u.join.mode) || 'zoom';
+        var curPhone = (u.join && u.join.phone) || (settings && settings.phone) || '';
+        pick = { date: iso, hour: hour, mode: curMode };
+        el('cs-book').classList.add('open');
+        el('cs-book-title').textContent = 'Edit your session';
+        renderDays();
+        renderTimes();
+        setMode(curMode);
+        el('cs-phone').value = curPhone;
+        el('cs-topic').value = u.topic || '';
+        el('cs-confirm-text').textContent = 'Save changes';
+        showMsg('', null);
+        el('cs-book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
       function openBooking() {
+        editingSession = null;
         var defaultMode = (settings && settings.default_mode) || 'zoom';
         var defaultPhone = (settings && settings.phone) || '';
         pick = { date: null, hour: null, mode: defaultMode };
         el('cs-book').classList.add('open');
         el('cs-book-title').textContent = 'Choose your time';
+        el('cs-confirm-text').textContent = 'Confirm session';
         renderDays();
         renderTimes();
         setMode(defaultMode);
@@ -747,17 +820,44 @@
       function confirmBooking() {
         if (!pick.date || !pick.hour) { showMsg('Pick a day and a time first.', 'err'); return; }
         if (pick.mode === 'phone' && el('cs-phone').value.trim().length < 7) { showMsg('Add the number for David to call.', 'err'); return; }
+        var topicVal = el('cs-topic').value.trim();
+        if (topicVal.length > 200) { showMsg('Topic must be 200 characters or fewer.', 'err'); return; }
+
         var btn = el('cs-confirm');
         btn.disabled = true;
-        el('cs-confirm-text').textContent = 'Booking...';
-        api('book', {
-          date: pick.date, hour: pick.hour, mode: pick.mode,
+        var isEdit = Boolean(editingSession);
+        el('cs-confirm-text').textContent = isEdit ? 'Saving...' : 'Booking...';
+
+        var action = isEdit ? 'update' : 'book';
+        var payload = {
+          date: pick.date,
+          hour: pick.hour,
+          mode: pick.mode,
           phone: pick.mode === 'phone' ? el('cs-phone').value.trim() : null,
-          topic: el('cs-topic').value.trim() || null
-        }).then(function (r) {
+          topic: topicVal || null
+        };
+        if (isEdit) {
+          payload.id = editingSession.id;
+        }
+
+        api(action, payload).then(function (r) {
           btn.disabled = false;
-          el('cs-confirm-text').textContent = 'Confirm session';
-          if (!r.ok) { showMsg((r.data && r.data.error) || 'That did not go through. Try another time.', 'err'); refresh(); return; }
+          el('cs-confirm-text').textContent = isEdit ? 'Save changes' : 'Confirm session';
+          if (!r.ok) {
+            var errCode = r.data && (r.data.code || r.data.error);
+            var errMsg = r.data && r.data.error;
+            if (errCode === 'SLOT_TAKEN' || String(errMsg).includes('SLOT_TAKEN') || String(errMsg).includes('Someone just took')) {
+              showMsg('Someone just took that time. Pick another open slot.', 'err');
+            } else if (errCode === 'ALREADY_BOOKED_THIS_WEEK' || String(errMsg).includes('ALREADY_BOOKED_THIS_WEEK') || String(errMsg).includes('already have a session')) {
+              showMsg('You already have a session booked for that week. Pick a time in an open week.', 'err');
+            } else if (errCode === 'TOPIC_TOO_LONG' || String(errMsg).includes('TOPIC_TOO_LONG') || String(errMsg).includes('200 characters')) {
+              showMsg('Topic must be 200 characters or fewer.', 'err');
+            } else {
+              showMsg(errMsg || (isEdit ? 'Could not update session. Try another time.' : 'That did not go through. Try another time.'), 'err');
+            }
+            refresh();
+            return;
+          }
 
           var banner = el('cs-crisis-banner');
           if (r.data && r.data.crisis && r.data.crisis.line) {
@@ -771,12 +871,13 @@
             banner.classList.remove('show');
           }
 
+          editingSession = null;
           el('cs-book').classList.remove('open');
           refresh();
         }).catch(function () {
           btn.disabled = false;
-          el('cs-confirm-text').textContent = 'Confirm session';
-          showMsg('Something interrupted the booking. Try again.', 'err');
+          el('cs-confirm-text').textContent = isEdit ? 'Save changes' : 'Confirm session';
+          showMsg(isEdit ? 'Something interrupted updating your session. Try again.' : 'Something interrupted the booking. Try again.', 'err');
         });
       }
 
@@ -867,12 +968,28 @@
         host.classList.remove('cs-hide');
       }
 
+      var historyExpanded = false;
+      var historyPage = 1;
+      var HISTORY_PAGE_SIZE = 25;
+
       function renderHistory() {
         var host = el('cs-history');
         var items = (state && state.history) || [];
         var count = (state && state.historyCount) || items.length;
         if (!items.length) { host.classList.add('cs-hide'); host.innerHTML = ''; return; }
-        var rows = items.map(function (h) {
+
+        var totalPages = Math.ceil(items.length / HISTORY_PAGE_SIZE);
+        var displayItems = items;
+        if (!historyExpanded) {
+          displayItems = items.slice(0, 5);
+        } else {
+          if (historyPage > totalPages) historyPage = totalPages;
+          if (historyPage < 1) historyPage = 1;
+          var startIdx = (historyPage - 1) * HISTORY_PAGE_SIZE;
+          displayItems = items.slice(startIdx, startIdx + HISTORY_PAGE_SIZE);
+        }
+
+        var rows = displayItems.map(function (h) {
           var icon = h.mode === 'zoom' ? 'video' : 'phone';
           var meta = (h.mode === 'zoom' ? 'On Zoom' : 'By phone') + (h.topic ? ' &middot; ' + escapeHtml(h.topic) : '');
           return '<li class="cs-hist-row">' +
@@ -882,14 +999,83 @@
             '<span class="cs-hist-time">' + escapeHtml(h.label_start || '') + ' &ndash; ' + escapeHtml(h.label_end || '') + ' ET</span>' +
             '</li>';
         }).join('');
+
+        var paginationHtml = '';
+        if (historyExpanded && items.length > HISTORY_PAGE_SIZE) {
+          var startNum = (historyPage - 1) * HISTORY_PAGE_SIZE + 1;
+          var endNum = Math.min(historyPage * HISTORY_PAGE_SIZE, items.length);
+          paginationHtml = '<div class="cs-hist-pagination" data-cs-hist-pagination="true">' +
+            '<span class="cs-hist-page-info">Showing ' + startNum + ' &ndash; ' + endNum + ' of ' + count + ' sessions (Page ' + historyPage + ' of ' + totalPages + ')</span>' +
+            '<div class="cs-hist-page-controls">' +
+              '<button class="secondary-button" type="button" id="cs-hist-prev"' + (historyPage <= 1 ? ' disabled' : '') + '><i data-lucide="chevron-left"></i><span>Previous</span></button>' +
+              '<button class="secondary-button" type="button" id="cs-hist-next"' + (historyPage >= totalPages ? ' disabled' : '') + '><i data-lucide="chevron-right"></i><span>Next</span></button>' +
+            '</div>' +
+          '</div>';
+        }
+
+        var toggleHtml = '';
+        if (items.length > 5) {
+          toggleHtml = '<div class="cs-hist-toggle-wrap">' +
+            '<button class="secondary-button" type="button" id="cs-hist-toggle" aria-expanded="' + (historyExpanded ? 'true' : 'false') + '">' +
+              '<i data-lucide="' + (historyExpanded ? 'chevron-up' : 'chevron-down') + '"></i>' +
+              '<span>' + (historyExpanded ? 'Show fewer' : 'Show all ' + count + ' sessions') + '</span>' +
+            '</button>' +
+          '</div>';
+        }
+
         host.innerHTML =
           '<p class="cs-eyebrow">Your sessions so far</p>' +
           '<h2 style="font-family:\'Oswald\',sans-serif;font-size:1.15rem;margin:2px 0 2px">' +
             count + ' session' + (count === 1 ? '' : 's') + ' with David</h2>' +
           '<p style="color:var(--studio-muted);font-size:.82rem;margin:0 0 12px">Every week your membership includes is one of these.</p>' +
-          '<ul class="cs-hist-list">' + rows + '</ul>';
+          '<ul class="cs-hist-list">' + rows + '</ul>' +
+          paginationHtml +
+          toggleHtml;
+
         host.classList.remove('cs-hide');
+
+        var toggleBtn = el('cs-hist-toggle');
+        if (toggleBtn) {
+          toggleBtn.onclick = function () {
+            historyExpanded = !historyExpanded;
+            historyPage = 1;
+            renderHistory();
+          };
+        }
+        var prevBtn = el('cs-hist-prev');
+        if (prevBtn) {
+          prevBtn.onclick = function () {
+            if (historyPage > 1) {
+              historyPage--;
+              renderHistory();
+            }
+          };
+        }
+        var nextBtn = el('cs-hist-next');
+        if (nextBtn) {
+          nextBtn.onclick = function () {
+            if (historyPage < totalPages) {
+              historyPage++;
+              renderHistory();
+            }
+          };
+        }
+
         icons();
+      }
+
+      function applyCertaintyEndedState() {
+        var gate = el('eee-access-gate');
+        if (!gate) return;
+        var title = el('eee-gate-title');
+        var copy = el('eee-gate-copy');
+        var button = el('eee-gate-button');
+        if (title) title.textContent = 'Your Certainty Sessions membership has ended.';
+        if (copy) copy.innerHTML = 'Booking is closed. Your past sessions are kept on your account, so if you come back they are still here. How to come back: email David at <a href="mailto:email@davidbee.me">email@davidbee.me</a> or return to My Studio.';
+        if (button) {
+          button.textContent = 'Return to My Studio';
+          button.href = '/';
+        }
       }
 
       function refresh() {
@@ -926,7 +1112,10 @@
         setMode(next);
         document.querySelector('.cs-mode[data-mode="' + next + '"]').focus();
       });
-      el('cs-book-close').onclick = function () { el('cs-book').classList.remove('open'); };
+      el('cs-book-close').onclick = function () {
+        editingSession = null;
+        el('cs-book').classList.remove('open');
+      };
       el('cs-confirm').onclick = confirmBooking;
       el('cs-save-settings').onclick = saveSettings;
       el('cs-delete-data').onclick = deleteData;
@@ -940,6 +1129,7 @@
         return refresh();
       }).catch(function () {
         el('cs-state-skeleton').classList.add('cs-hide');
+        applyCertaintyEndedState();
       });
     })();
   </script>
