@@ -116,4 +116,15 @@ assert.match(client, /findIndex\(m => m && m\.key === replyKey\)/, 'a replayed r
 assert.match(client, /Finish the script before marking it filmed\./, 'drafting to filmed is explained, not attempted');
 console.log('PASS: the browser serializes versioned saves and keys every turn.');
 
+// ── Lifecycle trail as server events (Developer 23, 25, 72) ────────────────
+const life = read('supabase_migrations', '2026-10-22-storysculpt-lifecycle-events.sql');
+assert.match(life, /after update on public\.storysculpt_projects/, 'lifecycle trigger runs after every update');
+assert.match(life, /security definer/, 'lifecycle trigger writes logs whatever the client');
+for (const event of ['finished', 'filmed', 'unfilmed', 'restored', 'version_added']) {
+  assert.ok(life.includes("'" + event + "'"), 'lifecycle logs ' + event);
+}
+assert.ok(!/'kind', left\(|'note', v_note|v_note\s*\)\s*\)/.test(life), 'a version note is never copied into the event');
+assert.match(life, /else 'revision'/, 'unknown notes map to a fixed kind');
+console.log('PASS: finish, filmed, unfilmed, restore and every new version are logged by the database without member text.');
+
 console.log('StorySculpt state and idempotency: all checks pass.');
