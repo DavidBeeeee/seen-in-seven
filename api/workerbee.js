@@ -238,15 +238,18 @@ export default async function handler(req, res) {
   if (!auth) return json(res, 403, { error: 'This private workspace is only available to David.' });
   try {
     if (req.method === 'GET') {
-      const result = await rpc('workerbee_bootstrap', { p_server_secret: auth.serverSecret }, auth.token);
       // Same admin authorization, only four score summaries cross the wire.
       // Never send private client plans, journal entries, or the 1,200 rows to
       // a Hub home card. Morning's normal publication keeps this source fresh.
-      if (req.query?.view === 'hub-scores') return json(res, 200, hubScoreSummary(result));
+      if (req.query?.view === 'hub-scores') {
+        const scores = await rpc('workerbee_read', { p_profile: 'hub-scores', p_server_secret: auth.serverSecret }, auth.token);
+        return json(res, 200, hubScoreSummary(scores));
+      }
       // This week's Certainty bookings for the Dashboard, read live so the
       // panel can never show a stale copy (David, 2026-10-22). David's own
       // token; the database function checks he is the admin.
       if (req.query?.view === 'certainty-week') return json(res, 200, await certaintyWeek(auth.token));
+      const result = await rpc('workerbee_bootstrap', { p_server_secret: auth.serverSecret }, auth.token);
       return json(res, 200, auth.compact ? compactChatGPTState(result) : result);
     }
     const body = req.body && typeof req.body === 'object' ? req.body : {};

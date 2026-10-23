@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import { hubScoreSummary } from '../api/workerbee.js';
+import workerbeeHandler, { hubScoreSummary } from '../api/workerbee.js';
 import vm from 'node:vm';
 
 const scoreProjection = hubScoreSummary({ journal: [{ body: 'private' }], clients: [{ name: 'private' }], updates: [{ metadata: { momentum_hub_artifact: { apps: [
@@ -12,6 +12,30 @@ assert.equal(scoreProjection.apps[0].tally.PASS, 104);
 assert.equal(scoreProjection.apps[1].tally, null);
 assert.doesNotMatch(JSON.stringify(scoreProjection), /private|unrelated|journal|clients/);
 assert.deepEqual(hubScoreSummary({}), { apps: [] });
+
+// Execute the API branches: a small response after a full DB download does not
+// save Supabase egress. Each small view must skip bootstrap altogether.
+const priorFetch = globalThis.fetch;
+const priorSecret = process.env.WORKERBEE_STUDIO_SECRET;
+process.env.WORKERBEE_STUDIO_SECRET = 'test-only-secret-not-a-real-credential-1234';
+try {
+  for (const [view, expected] of [['certainty-week', 'certainty_admin_week'], ['hub-scores', 'workerbee_read']]) {
+    const calls = [];
+    globalThis.fetch = async (url, options) => {
+      calls.push({ url, body: JSON.parse(options.body) });
+      return { ok: true, json: async () => expected === 'workerbee_read' ? {updates: []} : [] };
+    };
+    const res = { setHeader() {}, status(code) { assert.equal(code,200); return this; }, json(body) { return body; } };
+    await workerbeeHandler({ method:'GET', query:{view}, headers:{'x-workerbee-secret':process.env.WORKERBEE_STUDIO_SECRET} },res);
+    assert.equal(calls.length,1);
+    assert.ok(calls[0].url.endsWith(`/rpc/${expected}`));
+    if (view === 'hub-scores') assert.equal(calls[0].body.p_profile,'hub-scores');
+  }
+} finally {
+  globalThis.fetch = priorFetch;
+  if (priorSecret === undefined) delete process.env.WORKERBEE_STUDIO_SECRET;
+  else process.env.WORKERBEE_STUDIO_SECRET = priorSecret;
+}
 
 const scoreLines = [];
 let scoreFetches = 0;
