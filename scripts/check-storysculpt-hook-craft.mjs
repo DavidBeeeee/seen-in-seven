@@ -17,6 +17,14 @@ assert.equal(checkHookCraft(['My training montage came with a lease.','My traini
 for (const mode of ['bold','mini','rant']) {
   const hookLabel = mode==='rant'?'R6':`${mode==='bold'?'B':'M'}5`;
   const refine = hookLabel+'.5';
+  const escalationText = turns[mode].turns.find(t=>t.label===refine).text;
+  for (const required of ['Level One: target a common lie the audience believes.', 'Level Two: a Biological Threat that frames the problem as a loss of human agency.', 'Level Three: an Existential Crisis that works as a final verdict or warning before collapse.', 'biological decay, predator and prey dynamics, or high-stakes survival']) {
+    assert.ok(escalationText.includes(required), `${mode} preserves David's original escalation: ${required}`);
+  }
+  assert.doesNotMatch(escalationText, /sharper, bolder, boldest|not danger or doom/);
+  const directive = stepDirective(mode,refine,escalationText,thread);
+  assert.match(directive, /Biological Threat.*Existential Crisis/);
+  assert.doesNotMatch(directive, /Before showing them, replace generic summaries/);
   const hookTurn = turns[mode].turns.find(t=>t.label===hookLabel);
   assert.equal(turnKind(hookLabel,'Entirely reworded prose').hookCraft,true,'wording changes cannot disable hook checks');
   assert.equal(turnKind(refine,'Entirely reworded prose').escalation,true);
@@ -30,6 +38,7 @@ for (const tone of ['Entertainment','Enragement','Epiphany','Empathy','Education
   assert.ok(ref.includes(tone),`the actual ${tone} examples reach hook generation`);
 }
 const picked = [{role:'assistant',content:'Hook options\n1. Cinema gave failure better lighting than success.\n2. B.\n3. C.'},{role:'user',content:'1'}];
+assert.doesNotMatch(instructions, /do not turn a funny story into compulsory biological decay/);
 assert.equal(checkOpenLoopCraft(['Cinema gave failure better lighting than success.','Another.','Third.'],picked).ok,false);
 assert.equal(checkOpenLoopCraft(['And that is when everything changed.','Another.','Third.'],picked).ok,false);
 const withRefinement = [...picked,{role:'assistant',content:'Stronger hooks\n1. The soundtrack quit before the hard part started.\n2. B.\n3. C.'},{role:'user',content:'1'},{role:'assistant',content:'Open loops\n1. Because the credits never showed how long that part lasts.\n2. B.\n3. C.'},{role:'user',content:'1'}];

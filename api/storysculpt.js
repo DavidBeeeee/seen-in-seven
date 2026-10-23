@@ -358,7 +358,9 @@ export function stepDirective(mode, stepLabel, stepText, memberMessages = [], re
     }
   }
   if (kind.hookCraft) {
-    lines.push('', 'CREATIVE CONTRACT: three genuinely different fresh openings, not sentences extracted or lightly paraphrased from the draft. Each numbered option contains only the spoken hook, not an explanation or a mechanism label. Necessary topic words are allowed. Apply the supplied hook examples and chosen 5E tone, but invent no facts. Before showing them, replace generic summaries with a specific contradiction, visual comparison or verdict.');
+    lines.push('', kind.escalation
+      ? 'CREATIVE CONTRACT: escalate the ONE selected hook under the exact three-level hierarchy in this step: common lie, Biological Threat and loss of human agency, then Existential Crisis and a final verdict or warning before collapse. Use the specified Metaphorical Bridge imagery, not three unrelated hook mechanisms or a softer intensity ladder. Each numbered option contains only the spoken hook. Keep metaphors distinct from factual claims; invent no facts.'
+      : 'CREATIVE CONTRACT: three genuinely different fresh openings, not sentences extracted or lightly paraphrased from the draft. Each numbered option contains only the spoken hook, not an explanation or a mechanism label. Necessary topic words are allowed. Apply the supplied hook examples and chosen 5E tone, but invent no facts. Before showing them, replace generic summaries with a specific contradiction, visual comparison or verdict.');
     if (kind.escalation) {
       const chosen = chosenOptions(memberMessages).hook;
       lines.push('Start the options with the heading "Stronger hooks". These are stronger versions of ONE chosen hook, not three new topics. The member may keep the original.');
