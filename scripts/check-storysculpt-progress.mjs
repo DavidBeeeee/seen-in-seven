@@ -151,6 +151,21 @@ const readStep = markup => {
   return { state, text, action };
 };
 
+// A server-added escalation step must have working client choices, including
+// when an existing saved conversation is reopened. Version the script URL so
+// a reload does not reuse the pre-escalation client.
+check(html.includes('/js/storysculpt.js?v=storysculpt-hook-escalation-v2'), 'page must load the escalation-aware client version');
+for (const step of ['B5.5', 'M5.5', 'R6.5']) {
+  const app = boot([]);
+  app.context.choiceProject = { id: 'choices', output: null, intake: { current_step: step }, conversation: [{ role: 'assistant', step, content: 'Stronger hooks\n1. First.\n2. Second.\n3. Third.' }] };
+  vm.runInContext('activeStory = choiceProject; renderConversation();', app.context);
+  const rendered = app.el('story-conversation').innerHTML;
+  for (const n of [1, 2, 3]) check(rendered.includes('data-quick-reply="'+n+'">Use '+n+'</button>'), step+': escalation must render selectable option '+n);
+  check(rendered.includes('data-quick-reply="Keep the original hook"'), step+': retain original-hook choice');
+  vm.runInContext('sendStoryAnswer = () => { window.sentChoice = storyEl("story-answer").value; }; sendQuickReply("2");', app.context);
+  check(app.context.sentChoice === '2', step+': button submits the numbered choice');
+}
+
 // 3. One next step, identical on all three surfaces, in all three states
 {
   const cases = [
