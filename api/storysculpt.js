@@ -422,13 +422,62 @@ export function contractHistory(messages, intent) {
   });
 }
 
-async function callModel(messages, { temperature = 0.86, maxTokens = 1900 } = {}) {
+// Temporary provider failures (rate limit, 5xx, a dropped connection, an empty
+// reply) get one automatic retry; permanent ones (bad request, auth, billing,
+// not configured) are not retried, because the same request fails the same way
+// (Developer 28, 29, 31). A timeout is not retried: a second 60-second wait
+// would outrun the function. Every error leaves tagged with its kind and the
+// attempts taken, and the member never sees the provider's own wording.
+export const PROVIDER_RETRY_DELAY_MS = 1000;
+const PROVIDER_RETRY_WINDOW_MS = 20000;
+
+export const PROVIDER_MESSAGES = {
+  transient: 'StorySculpt\'s writing service is busy right now. Your chat is saved, so please try this step again in a minute.',
+  permanent: 'StorySculpt could not write this step, and trying again right away will not help. Your chat is saved and the problem has been logged.'
+};
+
+export function isTransientProviderStatus(status) {
+  return status === 408 || status === 409 || status === 425 || status === 429 || status >= 500;
+}
+
+function providerError(kind, detail = {}) {
+  const error = new Error(PROVIDER_MESSAGES[kind]);
+  error.providerFailure = kind;
+  Object.assign(error, detail);
+  return error;
+}
+
+export async function callModelWithRetry(attemptFn, { sleepFn = ms => new Promise(r => setTimeout(r, ms)), now = () => Date.now() } = {}) {
+  const started = now();
+  let attempts = 0;
+  for (;;) {
+    attempts += 1;
+    try {
+      const result = await attemptFn();
+      return { ...result, attempts };
+    } catch (error) {
+      if (error) error.attempts = attempts;
+      const retry = error && error.providerFailure === 'transient' && error.name !== 'AbortError'
+        && attempts < 2 && now() - started < PROVIDER_RETRY_WINDOW_MS;
+      if (!retry) throw error;
+      await sleepFn(PROVIDER_RETRY_DELAY_MS);
+    }
+  }
+}
+
+async function callModel(messages, options = {}) {
+  return callModelWithRetry(() => callModelOnce(messages, options));
+}
+
+async function callModelOnce(messages, { temperature = 0.86, maxTokens = 1900 } = {}) {
   const apiKey = process.env.DEEPSEEK_API_KEY;
-  if (!apiKey) throw new Error('StorySculpt generation is not configured.');
+  if (!apiKey) throw providerError('permanent', { status: 0, reason: 'not-configured' });
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 60000);
   try {
-    const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
+    let response;
+    try {
+      response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + apiKey },
       body: JSON.stringify({
@@ -439,11 +488,17 @@ async function callModel(messages, { temperature = 0.86, maxTokens = 1900 } = {}
         temperature
       }),
       signal: controller.signal
-    });
+      });
+    } catch (error) {
+      if (error && error.name === 'AbortError') throw error;
+      throw providerError('transient', { status: 0, reason: 'network' });
+    }
     const data = await response.json().catch(() => ({}));
-    if (!response.ok) throw new Error(data.error && data.error.message ? data.error.message : 'StorySculpt did not respond normally.');
+    if (!response.ok) {
+      throw providerError(isTransientProviderStatus(response.status) ? 'transient' : 'permanent', { status: response.status, reason: 'http' });
+    }
     const content = data.choices && data.choices[0] && data.choices[0].message && data.choices[0].message.content;
-    if (!content || !String(content).trim()) throw new Error('StorySculpt returned an empty response.');
+    if (!content || !String(content).trim()) throw providerError('transient', { status: response.status, reason: 'empty' });
     return { content: String(content).trim(), usage: data.usage || null };
   } finally {
     clearTimeout(timeout);
@@ -553,7 +608,7 @@ async function handleUgcTurn({ input, project, token, user, trace, emit, fail, r
       maxTokens: 1800
     });
   } catch (error) {
-    await emit('error', { failureClass: classifyFailure('generation', error) });
+    await emit('error', { failureClass: classifyFailure('generation', error), providerFailure: error && error.providerFailure, attempts: error && error.attempts, status: error && error.status });
     const message = error && error.name === 'AbortError'
       ? 'StorySculpt took too long on this pass. Please try again.'
       : error && error.message ? error.message : 'StorySculpt could not complete this step.';
@@ -790,7 +845,7 @@ export default async function handler(req, res) {
     try {
       result = await callStorySculpt(input, activeStep, stepText, refDocs);
     } catch (error) {
-      await emit('error', { failureClass: classifyFailure('generation', error) });
+      await emit('error', { failureClass: classifyFailure('generation', error), providerFailure: error && error.providerFailure, attempts: error && error.attempts, status: error && error.status });
       const message = error && error.name === 'AbortError'
         ? 'StorySculpt took too long on this pass. Your project is saved, so please try this step again.'
         : error && error.message ? error.message : 'StorySculpt could not complete this step.';
@@ -906,7 +961,7 @@ async function handlePointsTurn({ project, trace, emit, fail, res }) {
     try {
       result = await callModel(pointsMessages(script), { temperature: 0.3, maxTokens: 1400 });
     } catch (error) {
-      await emit('error', { failureClass: classifyFailure('generation', error) });
+      await emit('error', { failureClass: classifyFailure('generation', error), providerFailure: error && error.providerFailure, attempts: error && error.attempts, status: error && error.status });
       return fail(error && error.name === 'AbortError' ? 504 : 502, error && error.name === 'AbortError'
         ? 'StorySculpt took too long making your bullet points. Your script is unchanged, so please try again.'
         : 'StorySculpt could not make your bullet points just now. Your script is unchanged, so please try again.');
