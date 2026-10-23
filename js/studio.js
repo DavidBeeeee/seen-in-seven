@@ -54,6 +54,74 @@ function followStudioNext() {
   return true;
 }
 
+const STUDIO_GIFT_SHOWN_PREFIX = 'studio_gift_shown_v1_';
+
+function isGiftBookShown(userId, slug) {
+  try {
+    return Boolean(localStorage.getItem(STUDIO_GIFT_SHOWN_PREFIX + userId + '_' + slug));
+  } catch (e) {
+    return false;
+  }
+}
+
+function markGiftBookShown(userId, slug) {
+  try {
+    localStorage.setItem(STUDIO_GIFT_SHOWN_PREFIX + userId + '_' + slug, String(Date.now()));
+  } catch (e) {}
+}
+
+async function findNewestUnopenedGiftBook(userProfile) {
+  if (!userProfile || !userProfile.id) return null;
+  try {
+    const { data: grants, error: grantsErr } = await studioSb
+      .from('solution_vault_book_grants')
+      .select('book_id, grant_kind, status, granted_at, solution_vault_books(slug, title, status)')
+      .eq('user_id', userProfile.id)
+      .eq('grant_kind', 'gift')
+      .eq('status', 'active')
+      .order('granted_at', { ascending: false });
+
+    if (grantsErr || !grants || grants.length === 0) return null;
+
+    const { data: progressRows, error: progErr } = await studioSb
+      .from('solution_vault_book_progress')
+      .select('book_id, last_page, last_chapter_id, completed')
+      .eq('user_id', userProfile.id);
+
+    if (progErr) return null;
+
+    const progressByBook = new Map();
+    for (const p of (progressRows || [])) {
+      if (p.book_id) progressByBook.set(p.book_id, p);
+    }
+
+    for (const grant of grants) {
+      const book = Array.isArray(grant.solution_vault_books)
+        ? grant.solution_vault_books[0]
+        : grant.solution_vault_books;
+      if (!book || !book.slug || book.status === 'retired' || book.status === 'draft') continue;
+
+      if (isGiftBookShown(userProfile.id, book.slug)) continue;
+
+      const p = progressByBook.get(grant.book_id);
+      const hasProgress = Boolean(
+        p && (
+          (p.last_page != null && p.last_page > 1) ||
+          (p.last_chapter_id != null && p.last_chapter_id !== '') ||
+          p.completed === true
+        )
+      );
+
+      if (!hasProgress) {
+        return book.slug;
+      }
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+
 rememberStudioNext();
 
 function refreshIcons() {
@@ -221,6 +289,15 @@ async function hydrateStudio(session) {
         userHasBooks = false;
       }
       if (followStudioNext()) return;
+
+      if (userHasBooks) {
+        const unopenedSlug = await findNewestUnopenedGiftBook(studioProfile);
+        if (unopenedSlug) {
+          markGiftBookShown(studioProfile.id, unopenedSlug);
+          window.location.replace('/vault?book=' + encodeURIComponent(unopenedSlug));
+          return;
+        }
+      }
     }
   }
   renderStudio();

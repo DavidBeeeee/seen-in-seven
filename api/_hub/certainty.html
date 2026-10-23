@@ -32,7 +32,7 @@
     .cs-eyebrow { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: .16em; font-size: .72rem; color: var(--studio-teal); font-weight: 600; }
 
     /* Next session */
-    .cs-next-when { display: flex; align-items: center; gap: 16px; margin: 14px 0 6px; }
+    .cs-next-when { display: flex; align-items: center; gap: 16px; margin: 14px 0 6px; flex-wrap: wrap; }
     .cs-next-cal {
       width: 58px; height: 58px; border-radius: 16px; flex: none; display: grid; place-items: center;
       background: color-mix(in srgb, var(--studio-teal) 16%, transparent); color: var(--studio-teal);
@@ -54,7 +54,7 @@
     /* Member session history */
     .cs-hist-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
     .cs-hist-row {
-      display: flex; align-items: center; gap: 12px; padding: 10px 12px;
+      display: flex; align-items: center; gap: 12px; padding: 10px 12px; flex-wrap: wrap;
       background: var(--studio-surface-2); border: 1px solid var(--studio-border); border-radius: 10px;
     }
     .cs-hist-cal {
@@ -68,7 +68,7 @@
     .cs-hist-meta i { width: 13px; height: 13px; }
     .cs-hist-time { flex: none; font-size: .8rem; font-weight: 700; color: var(--studio-soft); white-space: nowrap; }
     @media (max-width: 560px) {
-      .cs-hist-time { display: none; }
+      .cs-hist-time { font-size: .76rem; }
     }
     .cs-hist-pagination { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
     .cs-hist-page-info { font-size: .84rem; color: var(--studio-muted); font-weight: 600; }
@@ -113,24 +113,37 @@
       position: relative;
     }
     .cs-day:hover { border-color: var(--studio-teal); }
-    .cs-day.sel { background: var(--studio-teal); color: #05201f; border-color: var(--studio-teal); }
-    .cs-day.sel::after, .cs-time.sel::after { content: ' ✓'; font-weight: 900; }
+    .cs-day.sel {
+      background: var(--studio-teal); color: #05201f; border: 2px solid #05201f;
+      box-shadow: 0 0 0 2px var(--studio-teal);
+    }
+    .cs-day-check {
+      position: absolute; top: -6px; right: -6px; width: 18px; height: 18px; border-radius: 50%;
+      background: #05201f; color: var(--studio-teal); font-size: .75rem; font-weight: 900;
+      display: grid; place-items: center; border: 1.5px solid var(--studio-surface);
+    }
     .cs-day .cs-day-dow { font-size: .68rem; text-transform: uppercase; letter-spacing: .1em; font-weight: 700; opacity: .85; }
     .cs-day .cs-day-num { font-family: 'Oswald', sans-serif; font-size: 1.35rem; line-height: 1.1; }
     .cs-day .cs-day-mon { font-size: .68rem; opacity: .8; }
 
-    .cs-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 9px; }
+    .cs-times { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(125px, 100%), 1fr)); gap: 9px; }
     .cs-time {
       padding: 11px 8px; border-radius: 12px; cursor: pointer; text-align: center; font-weight: 700; font-size: .86rem;
       background: var(--studio-surface-2); border: 1px solid var(--studio-border); color: var(--studio-text);
       line-height: 1.25;
     }
     .cs-time:hover:not(:disabled) { border-color: var(--studio-teal); }
-    .cs-time.sel { background: var(--studio-teal); color: #05201f; border-color: var(--studio-teal); }
+    .cs-time.sel {
+      background: var(--studio-teal); color: #05201f; border: 2px solid #05201f;
+      box-shadow: 0 0 0 2px var(--studio-teal); font-weight: 800;
+    }
+    .cs-time-check {
+      display: inline-block; font-weight: 900; margin-left: 4px;
+    }
     .cs-time:disabled { opacity: .32; cursor: not-allowed; text-decoration: line-through; }
     .cs-times-empty { color: var(--studio-muted); font-size: .88rem; padding: 8px 0; }
 
-    .cs-modes { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    .cs-modes { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr)); gap: 10px; }
     .cs-mode {
       display: flex; align-items: center; gap: 11px; padding: 14px; border-radius: 14px; cursor: pointer;
       background: var(--studio-surface-2); border: 1px solid var(--studio-border);
@@ -149,10 +162,11 @@
     }
     .cs-textarea { resize: vertical; min-height: 62px; }
     .cs-input:focus, .cs-textarea:focus { border-color: var(--studio-teal); }
+    button:focus-visible, a:focus-visible, select:focus-visible, input:focus-visible, textarea:focus-visible,
     .cs-day:focus-visible, .cs-time:focus-visible, .cs-mode:focus-visible,
     .cs-input:focus-visible, .cs-textarea:focus-visible, .cs-confirm button:focus-visible,
     .cs-support a:focus-visible {
-      outline: 3px solid var(--studio-gold); outline-offset: 3px;
+      outline: 3px solid var(--studio-gold) !important; outline-offset: 2px !important;
     }
     .cs-privacy { margin: 10px 0 0; color: var(--studio-muted); font-size: .8rem; line-height: 1.45; }
     .cs-optional { font-weight: 400; color: var(--studio-muted); }
@@ -202,11 +216,14 @@
 </head>
 <body>
   <main class="eee-gate" id="eee-access-gate">
-    <section class="eee-gate-box" id="cs-lapsed-gate" data-cs-copy="lapsed-membership">
+    <section class="eee-gate-box" id="cs-lapsed-gate">
       <span class="studio-mark">CS</span>
-      <h1 id="eee-gate-title">Your Certainty Sessions membership has ended.</h1>
-      <p id="eee-gate-copy">Booking is closed. Your past sessions are kept on your account, so if you come back they are still here. How to come back: email David at <a href="mailto:email@davidbee.me">email@davidbee.me</a> or return to My Studio.</p>
+      <h1 id="eee-gate-title">One moment...</h1>
+      <p id="eee-gate-copy">Checking your Certainty Sessions access...</p>
       <a class="primary-button" id="eee-gate-button" href="/"><span>Return to My Studio</span><i data-lucide="arrow-right"></i></a>
+      <div data-cs-copy="lapsed-membership" hidden>
+        Booking is closed. Your past sessions are kept on your account, so if you come back they are still here. How to come back: email David at <a href="mailto:email@davidbee.me">email@davidbee.me</a> or return to My Studio.
+      </div>
     </section>
   </main>
 
@@ -358,6 +375,7 @@
 
               <div class="cs-field" style="margin-top:0">
                 <label for="cs-setting-phone">Remembered phone number <span class="cs-optional">(for phone sessions)</span></label>
+                <div id="cs-setting-phone-on-file" class="cs-phone-on-file" style="margin-bottom:6px;font-size:.88rem;color:var(--studio-soft)"></div>
                 <input class="cs-input" id="cs-setting-phone" type="tel" placeholder="(555) 123-4567" autocomplete="tel">
                 <p class="cs-privacy">Remembered and prefilled when you choose phone sessions so you do not have to type it every time.</p>
                 <p class="cs-privacy" id="cs-phone-use">David uses this number only to call you for phone sessions. It stays with your account, is never used for marketing or shared with anyone else, and clearing this field and saving removes it.</p>
@@ -486,6 +504,32 @@
         var suffix = h < 12 ? 'AM' : 'PM';
         var hh = h % 12; if (hh === 0) hh = 12;
         return hh + ':00 ' + suffix;
+      }
+
+      function hasMissedWholeCalendarWeek(lastHeld, nowOverride) {
+        if (!lastHeld || !lastHeld.ends_at) return false;
+        var nowDate = nowOverride ? new Date(nowOverride) : new Date();
+        var nyParts = etParts(nowDate);
+        var nyNow = new Date(nyParts.year + '-' + nyParts.month + '-' + nyParts.day + 'T' + nyParts.hour + ':00:00');
+        var day = nyNow.getDay();
+        var daysSinceMonday = (day + 6) % 7;
+        var currentWeekMonday = new Date(nyNow.getFullYear(), nyNow.getMonth(), nyNow.getDate() - daysSinceMonday, 0, 0, 0, 0);
+        var prevWeekMonday = new Date(currentWeekMonday.getTime() - 7 * 86400000);
+
+        var heldParts = etParts(new Date(lastHeld.ends_at));
+        var heldDate = new Date(heldParts.year + '-' + heldParts.month + '-' + heldParts.day + 'T' + heldParts.hour + ':00:00');
+        return heldDate.getTime() < prevWeekMonday.getTime();
+      }
+
+      function updatePhoneOnFileDisplay(phone) {
+        var elPhone = el('cs-setting-phone-on-file');
+        if (!elPhone) return;
+        var p = String(phone || '').trim();
+        if (p) {
+          elPhone.textContent = 'Phone number on file: ' + p;
+        } else {
+          elPhone.textContent = 'No phone number on file yet.';
+        }
       }
 
       function getMemberTimeZone() {
@@ -661,10 +705,12 @@
             '<div class="cs-actions"><button class="primary-button" type="button" id="cs-open-book"><i data-lucide="calendar-plus"></i><span>Book my first session</span></button></div>';
           el('cs-open-book').onclick = openBooking;
         } else {
+          var missedWeek = !isFirstTimer() && state && state.weeksSinceLastHeld >= 1 &&
+            state.engagement !== 'lapsed' && hasMissedWholeCalendarWeek(state.lastHeld);
           host.innerHTML =
             '<p class="cs-eyebrow">This week</p>' +
             '<h2>You have not booked this week yet.</h2>' +
-            (!isFirstTimer() && state && state.weeksSinceLastHeld >= 1 && state.engagement !== 'lapsed'
+            (missedWeek
               ? '<div class="cs-missed-week" data-cs-copy="missed-week-line" data-cs-missed-week="true"><i data-lucide="info"></i><span>You missed last week. Unused weeks do not roll over, but your session for this week is open.</span></div>'
               : '') +
             '<p style="color:var(--studio-soft);margin:8px 0 0">Your session is included. Grab a time while it is open and bring whatever you are stuck on.</p>' +
@@ -715,6 +761,7 @@
           m.textContent = 'Done. ' + n + ' past session' + (n === 1 ? '' : 's') + ' and your phone number are gone.';
           m.className = 'cs-msg show ok';
           el('cs-setting-phone').value = '';
+          updatePhoneOnFileDisplay('');
           refresh();
         }).catch(function () { m.textContent = 'Something interrupted that. Try again.'; m.className = 'cs-msg show err'; });
       }
@@ -762,12 +809,14 @@
         var host = el('cs-days');
         host.innerHTML = '';
         upcomingDays().forEach(function (d) {
+          var isSel = pick.date === d.iso;
           var b = document.createElement('button');
-          b.className = 'cs-day' + (pick.date === d.iso ? ' sel' : '');
+          b.className = 'cs-day' + (isSel ? ' sel' : '');
           b.type = 'button';
-          b.setAttribute('aria-pressed', pick.date === d.iso ? 'true' : 'false');
-          b.setAttribute('aria-label', d.dow + ', ' + d.mon + ' ' + d.num + (pick.date === d.iso ? ', selected' : ''));
-          b.innerHTML = '<div class="cs-day-dow">' + d.dow + '</div><div class="cs-day-num">' + d.num + '</div><div class="cs-day-mon">' + d.mon + '</div>';
+          b.setAttribute('aria-pressed', isSel ? 'true' : 'false');
+          b.setAttribute('aria-label', d.dow + ', ' + d.mon + ' ' + d.num + (isSel ? ', selected' : ''));
+          b.innerHTML = '<div class="cs-day-dow">' + d.dow + '</div><div class="cs-day-num">' + d.num + '</div><div class="cs-day-mon">' + d.mon + '</div>' +
+            (isSel ? '<span class="cs-day-check" aria-hidden="true">✓</span>' : '');
           b.onclick = function () { pick.date = d.iso; pick.hour = null; renderDays(); renderTimes(); };
           host.appendChild(b);
         });
@@ -784,13 +833,14 @@
         var any = false;
         var memberTz = getMemberTimeZone();
         for (var h = 10; h <= 22; h++) {
+          var isSel = pick.hour === h;
           var b = document.createElement('button');
           b.type = 'button';
-          b.className = 'cs-time' + (pick.hour === h ? ' sel' : '');
+          b.className = 'cs-time' + (isSel ? ' sel' : '');
           var labelText = formatSlotLabel(pick.date, h, memberTz);
-          b.textContent = labelText;
-          b.setAttribute('aria-pressed', pick.hour === h ? 'true' : 'false');
-          b.setAttribute('aria-label', labelText + (pick.hour === h ? ', selected' : ''));
+          b.setAttribute('aria-pressed', isSel ? 'true' : 'false');
+          b.setAttribute('aria-label', labelText + (isSel ? ', selected' : ''));
+          b.innerHTML = '<span>' + escapeHtml(labelText) + '</span>' + (isSel ? ' <span class="cs-time-check" aria-hidden="true">✓</span>' : '');
           var isTaken = taken[pick.date + ':' + h];
           var isPast = isToday && h <= curHour;
           if (isTaken || isPast) { b.disabled = true; if (isTaken) b.title = 'Already booked'; }
@@ -902,6 +952,7 @@
             return;
           }
           settings = (r.data && r.data.settings) || { time_zone: tz, default_mode: mode, phone: phone };
+          updatePhoneOnFileDisplay(settings && settings.phone);
           msg.textContent = 'Settings saved.';
           msg.className = 'cs-msg show ok';
           setTimeout(function () { msg.className = 'cs-msg'; }, 3000);
@@ -1064,23 +1115,81 @@
         icons();
       }
 
-      function applyCertaintyEndedState() {
+      function showGateScreen(type) {
         var gate = el('eee-access-gate');
+        var app = el('eee-app');
+        if (app) app.hidden = true;
         if (!gate) return;
+        gate.hidden = false;
         var title = el('eee-gate-title');
         var copy = el('eee-gate-copy');
         var button = el('eee-gate-button');
-        if (title) title.textContent = 'Your Certainty Sessions membership has ended.';
-        if (copy) copy.innerHTML = 'Booking is closed. Your past sessions are kept on your account, so if you come back they are still here. How to come back: email David at <a href="mailto:email@davidbee.me">email@davidbee.me</a> or return to My Studio.';
-        if (button) {
-          button.textContent = 'Return to My Studio';
-          button.href = '/';
+
+        if (type === 'ended') {
+          if (title) title.textContent = 'Your Certainty Sessions membership has ended.';
+          if (copy) copy.innerHTML = 'Booking is closed. Your past sessions are kept on your account, so if you come back they are still here. How to come back: email David at <a href="mailto:email@davidbee.me">email@davidbee.me</a> or return to My Studio.';
+          if (button) {
+            button.innerHTML = '<span>Return to My Studio</span><i data-lucide="arrow-right"></i>';
+            button.href = '/';
+            button.onclick = null;
+          }
+        } else if (type === 'network') {
+          if (title) title.textContent = 'We could not reach the server just now.';
+          if (copy) copy.innerHTML = 'There was a problem reaching Certainty Sessions. Check your connection and try again.';
+          if (button) {
+            button.innerHTML = '<span>Try again</span><i data-lucide="refresh-cw"></i>';
+            button.href = '#';
+            button.onclick = function (e) {
+              e.preventDefault();
+              el('eee-access-gate').hidden = true;
+              el('cs-state-skeleton').classList.remove('cs-hide');
+              refresh();
+            };
+          }
+        } else if (type === 'sign-in') {
+          if (title) title.textContent = 'Sign in to enter Certainty Sessions.';
+          if (copy) copy.innerHTML = 'Use the Studio email connected to your membership.';
+          if (button) {
+            button.innerHTML = '<span>Go to Studio sign in</span><i data-lucide="arrow-right"></i>';
+            button.href = '/?access=certainty';
+            button.onclick = null;
+          }
+        } else if (type === 'no-access') {
+          if (title) title.textContent = 'Certainty Sessions is not included in your Studio access.';
+          if (copy) copy.innerHTML = 'Your other Studio access remains unchanged. Message David if you would like to join Certainty Sessions.';
+          if (button) {
+            button.innerHTML = '<span>Return to My Studio</span><i data-lucide="arrow-right"></i>';
+            button.href = '/';
+            button.onclick = null;
+          }
         }
+        icons();
+      }
+
+      function applyCertaintyEndedState() {
+        showGateScreen('ended');
       }
 
       function refresh() {
         return api('state').then(function (r) {
+          if (!r.ok) {
+            var errStr = String(r.data && (r.data.error || r.data.code) || '').toLowerCase();
+            if (errStr.includes('ended') || errStr.includes('churned')) {
+              applyCertaintyEndedState();
+              return;
+            } else if (errStr.includes('not included') || (r.data && r.data.code === 'no-eee-access')) {
+              showGateScreen('no-access');
+              return;
+            } else {
+              showGateScreen('network');
+              return;
+            }
+          }
           state = r.ok ? r.data : { upcoming: null, taken: [] };
+          if (state && (state.engagement === 'churned' || state.membership_ended)) {
+            applyCertaintyEndedState();
+            return;
+          }
           if (state && state.settings) {
             settings = state.settings;
           }
@@ -1090,6 +1199,7 @@
             if (settings.default_mode) el('cs-setting-mode').value = settings.default_mode;
             if (settings.phone) el('cs-setting-phone').value = settings.phone;
           }
+          updatePhoneOnFileDisplay(settings && settings.phone);
           el('cs-settings').classList.remove('cs-hide');
           el('cs-state-skeleton').classList.add('cs-hide');
           el('cs-hero').classList.remove('cs-hide');
@@ -1097,6 +1207,13 @@
           renderPostSession();
           renderHistory();
           if (el('cs-book').classList.contains('open')) { renderDays(); renderTimes(); }
+        }).catch(function (err) {
+          var errStr = String(err && (err.message || err) || '').toLowerCase();
+          if (errStr.includes('ended') || errStr.includes('churned')) {
+            applyCertaintyEndedState();
+          } else {
+            showGateScreen('network');
+          }
         });
       }
 
@@ -1127,9 +1244,18 @@
       window.EEEStudio.initialize(function (ctx) {
         accessToken = ctx.session.access_token;
         return refresh();
-      }).catch(function () {
+      }).catch(function (err) {
         el('cs-state-skeleton').classList.add('cs-hide');
-        applyCertaintyEndedState();
+        var errStr = String(err && (err.message || err) || '').toLowerCase();
+        if (errStr.includes('ended') || errStr.includes('churned')) {
+          applyCertaintyEndedState();
+        } else if (errStr.includes('access') || errStr.includes('not included')) {
+          showGateScreen('no-access');
+        } else if (errStr.includes('sign-in') || errStr.includes('auth')) {
+          showGateScreen('sign-in');
+        } else {
+          showGateScreen('network');
+        }
       });
     })();
   </script>
