@@ -123,8 +123,13 @@ h3 { margin-bottom: 4px; font-size: 14px; font-weight: 800; }
 /* Five periods since 2026-10-06; the last one spans so the grid never ends on a half-empty row. */
 .daily-report-grid > .report-period:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .report-period { min-width: 0; padding: 13px; border: 1px solid var(--line-soft); border-radius: 8px; background: rgba(6, 22, 22, .35); }
-.report-period header { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; }
-.report-period header h3 { margin: 0; color: var(--teal-light); font-size: 15px; }
+.report-period > summary { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 7px; cursor: pointer; list-style: none; }
+.report-period > summary::-webkit-details-marker { display: none; }
+.report-period > summary h3 { margin: 0; color: var(--teal-light); font-size: 15px; }
+.report-period > summary h3::before { content: '▾'; display: inline-block; width: 14px; color: var(--muted); font-size: 11px; transition: transform .15s; }
+.report-period:not([open]) > summary { margin-bottom: 0; }
+.report-period:not([open]) > summary h3::before { transform: rotate(-90deg); }
+.report-period:not([open]) { opacity: .8; }
 .report-period-meta { display: grid; justify-items: end; gap: 4px; text-align: right; }
 .report-period-meta time { color: var(--muted); font: 9px/1.3 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: nowrap; }
 .report-period p { margin: 0; color: var(--soft); font-size: 12px; }

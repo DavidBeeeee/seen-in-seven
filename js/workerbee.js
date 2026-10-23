@@ -315,10 +315,27 @@ function reportDayLabel(reportDate) {
   return formatDate(reportDate) || 'Report';
 }
 
-function renderReportPeriod(label, period, reportDate) {
-  const card = document.createElement('article');
+// Lanes fold (David, 2026-10-23). Every lane card opens and closes. The only
+// automatic close: once today's morning has reported, yesterday's lanes fold
+// shut except yesterday's Late night, the overnight work he reads beside the
+// morning. Whatever he opens or closes by hand is remembered per lane per day.
+function laneOpenState(reportDate, label, defaultOpen) {
+  try {
+    const saved = localStorage.getItem(`wb-lane:${reportDate}:${label}`);
+    if (saved === 'open') return true;
+    if (saved === 'closed') return false;
+  } catch (error) { /* storage unavailable: fall back to the default */ }
+  return defaultOpen;
+}
+
+function renderReportPeriod(label, period, reportDate, defaultOpen = true) {
+  const card = document.createElement('details');
   card.className = 'report-period';
-  const header = document.createElement('header');
+  card.open = laneOpenState(reportDate, label, defaultOpen);
+  card.addEventListener('toggle', () => {
+    try { localStorage.setItem(`wb-lane:${reportDate}:${label}`, card.open ? 'open' : 'closed'); } catch (error) { /* not remembered */ }
+  });
+  const header = document.createElement('summary');
   const title = document.createElement('h3');
   title.textContent = label;
   const status = document.createElement('span');
@@ -530,7 +547,14 @@ function renderDailyReport() {
     return;
   }
   date.textContent = records.length > 1 ? 'Today + Yesterday' : reportDayLabel(records[0].metadata.report_date);
+  // The newest report is today's once the morning has written it. Until then
+  // every lane stays open, because yesterday is still the latest picture.
+  const newestDate = records.map(record => String(record.metadata.report_date)).sort().pop();
+  const newest = records.find(record => String(record.metadata.report_date) === newestDate);
+  const morningRan = Boolean(newest?.metadata?.morning?.updatedAt) && !['not-run', 'pending', ''].includes(String(newest?.metadata?.morning?.status || ''));
   records.forEach(record => {
+    const older = String(record.metadata.report_date) !== newestDate;
+    const fold = laneLabel => !(older && morningRan && laneLabel !== 'Late night');
     const reportDate = record.metadata.report_date;
     const day = document.createElement('section');
     day.className = 'daily-report-day';
@@ -545,13 +569,13 @@ function renderDailyReport() {
     const grid = document.createElement('div');
     grid.className = 'daily-report-grid';
     grid.append(
-      renderReportPeriod('Morning', record.metadata.morning, reportDate),
+      renderReportPeriod('Morning', record.metadata.morning, reportDate, fold('Morning')),
       // 2026-10-06: Antigravity's 10:00 build lane (David). Older reports have no
       // late_morning period and render as not run.
-      renderReportPeriod('Late morning · Antigravity', record.metadata.late_morning),
-      renderReportPeriod('Afternoon', record.metadata.afternoon),
-      renderReportPeriod('Moltbook', record.metadata.moltbook),
-      renderReportPeriod('Late night', record.metadata.late_night)
+      renderReportPeriod('Late morning · Antigravity', record.metadata.late_morning, reportDate, fold('Late morning · Antigravity')),
+      renderReportPeriod('Afternoon', record.metadata.afternoon, reportDate, fold('Afternoon')),
+      renderReportPeriod('Moltbook', record.metadata.moltbook, reportDate, fold('Moltbook')),
+      renderReportPeriod('Late night', record.metadata.late_night, reportDate, fold('Late night'))
     );
     day.append(heading, grid);
     root.append(day);
