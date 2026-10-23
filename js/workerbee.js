@@ -284,6 +284,12 @@ function currentOutcomes() {
 }
 
 function statusLabel(status) {
+  const delivery = {
+    'built-awaiting-integration': 'Built, awaiting integration',
+    'ready-for-review': 'Built, awaiting review',
+    verified: 'Verified',
+  };
+  if (delivery[status]) return delivery[status];
   return String(status || 'unknown').replaceAll('_', ' ');
 }
 
@@ -500,6 +506,13 @@ function walkthroughButton(walkthroughs) {
   const fill = () => {
     panel.replaceChildren();
     walkthroughs.forEach(entry => {
+      const delivery = entry.item.metadata && entry.item.metadata.delivery;
+      if (delivery) {
+        const progress = document.createElement('p');
+        progress.className = 'walkthrough-delivery';
+        progress.textContent = `${statusLabel(delivery.stage)}: ${delivery.summary} Next: ${delivery.nextAction}`;
+        panel.append(progress);
+      }
       if (!entry.current) {
         const warning = document.createElement('p');
         warning.className = 'walkthrough-stale';
@@ -573,6 +586,7 @@ function renderDailyReport() {
       // 2026-10-06: Antigravity's 10:00 build lane (David). Older reports have no
       // late_morning period and render as not run.
       renderReportPeriod('Late morning · Antigravity', record.metadata.late_morning, reportDate, fold('Late morning · Antigravity')),
+      renderReportPeriod('Kimi build', record.metadata.kimi, reportDate, fold('Kimi build')),
       renderReportPeriod('Afternoon', record.metadata.afternoon, reportDate, fold('Afternoon')),
       renderReportPeriod('Moltbook', record.metadata.moltbook, reportDate, fold('Moltbook')),
       renderReportPeriod('Late night', record.metadata.late_night, reportDate, fold('Late night'))
