@@ -38,9 +38,12 @@ const RESEND_API_KEY = process.env.RESEND_API_KEY || '';
 const REMINDER_FROM = process.env.CERTAINTY_REMINDER_FROM || '';
 const OPERATOR_EMAIL = process.env.CERTAINTY_OPERATOR_EMAIL || '';
 
-// David's Zoom room, server-side only, same source as the booking endpoint: only
-// a member who holds a booking ever receives the link, here in their reminder.
-const ZOOM_URL = process.env.CERTAINTY_ZOOM_URL || 'https://us06web.zoom.us/my/davidbee?pwd=yjZwIYrQ32ju9k66B0VvZKADp9fxMs.1';
+// David's Zoom room, server-side only, from the same CERTAINTY_ZOOM_URL setting
+// as the booking endpoint and never from source: only a member who holds a
+// booking ever receives the link, here in their reminder (Developer 97).
+function zoomUrl() {
+  return String(process.env.CERTAINTY_ZOOM_URL || '').trim() || null;
+}
 
 function sendJson(res, status, body) {
   res.statusCode = status;
@@ -109,7 +112,7 @@ export function memberMessage(item) {
   const lead = item.lead_window === '1h' ? 'Your Certainty session is coming up soon.' : 'A reminder about your Certainty session.';
   const when = item.label_day + ', ' + item.label_start + ' to ' + item.label_end + ' Eastern';
   const how = item.mode === 'zoom'
-    ? 'Join on Zoom: ' + ZOOM_URL
+    ? (zoomUrl() ? 'Join on Zoom: ' + zoomUrl() : 'David will send the Zoom link before the session.')
     : 'David will call you' + (item.phone ? ' at ' + item.phone : '') + '.';
   const name = item.member_name ? item.member_name.split(' ')[0] : 'there';
   return {

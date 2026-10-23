@@ -305,6 +305,17 @@ async function deleteSelectedStories() {
 async function toggleFilmed(projectId) {
   const project = storyProjects.find(p => p.id === projectId);
   if (!project) return;
+  // The database refuses drafting to filmed (ILLEGAL_TRANSITION): there is no
+  // script to film yet. Say so here instead of flipping a flag that will not save.
+  if (!project.output && !(project.intake && project.intake.filmed)) {
+    const saveStatus = storyEl('story-save-status');
+    if (saveStatus) {
+      saveStatus.textContent = 'Finish the script before marking it filmed.';
+      saveStatus.className = 'eee-message error';
+    }
+    return;
+  }
+  const previousIntake = project.intake;
   const intake = Object.assign({}, project.intake);
   intake.filmed = !intake.filmed;
   // Dated from here on; scripts filmed before this have only the flag.
@@ -315,12 +326,18 @@ async function toggleFilmed(projectId) {
   }
   renderProjectList();
   try {
-    await storyContext.sb.from('storysculpt_projects').update({
+    const { data, error } = await storyContext.sb.from('storysculpt_projects').update({
       intake,
       updated_at: new Date().toISOString()
-    }).eq('id', projectId);
+    }).eq('id', projectId).select('status,version').single();
+    if (error) throw error;
+    Object.assign(project, data);
+    if (activeStory && activeStory.id === projectId) Object.assign(activeStory, data);
   } catch (err) {
     console.error('Failed to update filmed status', err);
+    project.intake = previousIntake;
+    if (activeStory && activeStory.id === projectId) activeStory.intake = previousIntake;
+    renderProjectList();
   }
 }
 
@@ -1688,7 +1705,25 @@ async function createStoryProject(mode, initialIntakeOverrides = null) {
   return data;
 }
 
-async function saveActiveStory(message) {
+// An idempotency key for one sent turn or one generation. The database keeps
+// the first message per key, so a double send or a retried save appends once.
+function storyTurnKey() {
+  const raw = (window.crypto && window.crypto.randomUUID) ? window.crypto.randomUUID() : (Date.now().toString(36) + Math.random().toString(36).slice(2));
+  return 'turn:' + raw;
+}
+
+// Content saves run one at a time and each names the version it read, so a slow
+// save can never land after a newer one: the database refuses a stale version
+// (STALE_VERSION) instead of letting the older copy win.
+let storySaveChain = Promise.resolve();
+
+function saveActiveStory(message) {
+  const run = storySaveChain.then(() => saveActiveStoryNow(message));
+  storySaveChain = run.catch(() => {});
+  return run;
+}
+
+async function saveActiveStoryNow(message) {
   if (!activeStory) return;
   const currentIntake = activeStory.intake || {};
   const updates = {
@@ -1702,11 +1737,20 @@ async function saveActiveStory(message) {
     },
     conversation: activeStory.conversation || [],
     output: activeStory.output || null,
+    expected_version: Number(activeStory.version) || 1,
     updated_at: new Date().toISOString()
   };
-  const { error } = await storyContext.sb.from('storysculpt_projects').update(updates).eq('id', activeStory.id);
-  if (error) throw error;
-  Object.assign(activeStory, updates);
+  const saving = activeStory;
+  const { data, error } = await storyContext.sb.from('storysculpt_projects').update(updates).eq('id', saving.id).select('status,version,conversation').single();
+  if (error) {
+    if (String(error.message || '').includes('STALE_VERSION')) {
+      storyEl('story-save-status').textContent = 'A newer copy of this chat was saved from another tab or device. Reload to see it. Nothing newer was overwritten.';
+      storyEl('story-save-status').className = 'eee-message error';
+    }
+    throw error;
+  }
+  delete updates.expected_version;
+  Object.assign(saving, updates, data);
   renderProjectList();
   if (message) {
     storyEl('story-save-status').textContent = message;
@@ -1877,6 +1921,10 @@ function showVariant(index, step) {
 // unchanged /api/storysculpt endpoint and folds the response back in.
 async function runGeneration(intent = 'interview', options = {}) {
   let response;
+  // An interview reply is keyed to the member turn it answers, so a retry of the
+  // same turn reuses the key and the server replays a reply it already saved.
+  const lastUser = intent === 'interview' ? [...(activeStory.conversation || [])].reverse().find(m => m && m.role === 'user') : null;
+  const generationKey = lastUser && lastUser.key ? 'gen:' + lastUser.key.replace(/^turn:/, '') : storyTurnKey().replace(/^turn:/, 'gen:');
   try {
     const token = EEEStudio.accessToken ? await EEEStudio.accessToken(storyContext.session.access_token) : storyContext.session.access_token;
     response = await fetch('/api/storysculpt', {
@@ -1891,7 +1939,8 @@ async function runGeneration(intent = 'interview', options = {}) {
         messages: options.messages || activeStory.conversation,
         target: options.target,
         regenerateNote: options.note || undefined,
-        previous: options.previous || undefined
+        previous: options.previous || undefined,
+        idempotencyKey: generationKey
       })
     });
   } catch (error) {
@@ -1916,7 +1965,10 @@ async function runGeneration(intent = 'interview', options = {}) {
     message.content = data.content;
     message.step = data.step || message.step;
   } else {
-    activeStory.conversation.push({ role: 'assistant', content: data.content, step: data.step || null });
+    const replyKey = data.idempotencyKey || generationKey;
+    const existing = activeStory.conversation.findIndex(m => m && m.key === replyKey);
+    const reply = { role: 'assistant', content: data.content, step: data.step || null, key: replyKey };
+    if (existing >= 0) activeStory.conversation[existing] = reply; else activeStory.conversation.push(reply);
   }
   // Keep the server's position in David's steps. The save below rewrites the
   // whole intake, and until 2026-10-08 it dropped current_step every turn.
@@ -1934,6 +1986,7 @@ async function runGeneration(intent = 'interview', options = {}) {
 }
 
 let thinkingInterval = null;
+let storySending = false;
 
 function showThinkingIndicator(initialStage = 'Reading the thread...') {
   hideThinkingIndicator();
@@ -2096,7 +2149,7 @@ async function executeInterviewGeneration() {
 async function sendStoryAnswer(event) {
   if (event && event.preventDefault) event.preventDefault();
   const answer = storyEl('story-answer').value.trim();
-  if (!activeStory || !answer) return;
+  if (!activeStory || !answer || storySending) return;
   if (activeStory.output) {
     storyEl('story-refine-status').textContent = STATES.FINISHED_LINE;
     storyEl('story-refine-note').focus();
@@ -2117,14 +2170,20 @@ async function sendStoryAnswer(event) {
   const button = storyEl('story-send');
   button.disabled = true;
   storyEl('story-generation-status').textContent = 'Reading the full thread and finding the next useful move.';
-  activeStory.conversation = [...(activeStory.conversation || []), { role: 'user', content: answer }];
+  storySending = true;
+  const turnKey = storyTurnKey();
+  activeStory.conversation = [...(activeStory.conversation || []), { role: 'user', content: answer, key: turnKey }];
   storyEl('story-answer').value = '';
   autoGrow(storyEl('story-answer'));
   renderConversation();
   showThinkingIndicator('Reading the thread...');
   scrollThread();
 
-  await executeInterviewGeneration();
+  try {
+    await executeInterviewGeneration();
+  } finally {
+    storySending = false;
+  }
 }
 
 async function retryRefineGeneration(note) {

@@ -116,7 +116,14 @@ function boot(projects) {
       const q = {
         select() { return q; }, eq() { return q; }, order() { return Promise.resolve({ data: projects, error: null }); },
         maybeSingle() { return Promise.resolve({ data: null, error: null }); },
-        update(payload) { updates.push(payload); return { eq: () => Promise.resolve({ error: null }) }; }
+        // Thenable like supabase-js, and chainable to .select().single() for the
+        // writes that read back status and version (WBR-435 state cluster).
+        update(payload) {
+          updates.push(payload);
+          const done = Promise.resolve({ data: null, error: null });
+          const read = { single: () => Promise.resolve({ data: { status: 'filmed', version: 2 }, error: null }) };
+          return { eq: () => Object.assign(done, { select: () => read }) };
+        }
       };
       return q;
     },

@@ -43,6 +43,9 @@ const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zdtkwpzdwnzzmdwrvmka.s
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
 const MODES = new Set(['bold', 'mini', 'rant', 'ugc']);
 const PROJECT_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+// One sent turn or generation, as the browser keys it. The same shape the
+// storysculpt_append_turn RPC accepts.
+export const IDEMPOTENCY_KEY = /^[A-Za-z0-9:_-]{8,80}$/;
 
 // The StorySculpt knowledge lives under api/_hub, not assets, so it is bundled
 // into the function but never served as a public static file. It used to sit in
@@ -200,6 +203,8 @@ function validateBody(body) {
   const projectId = String(body && body.projectId || '');
   if (!PROJECT_ID.test(projectId)) throw new Error('Open a saved StorySculpt chat before continuing.');
   const intent = String(body && body.intent || '');
+  const idempotencyKey = body && body.idempotencyKey != null ? String(body.idempotencyKey) : '';
+  if (idempotencyKey && !IDEMPOTENCY_KEY.test(idempotencyKey)) throw new Error('StorySculpt could not read that request.');
   if (intent !== 'interview' && intent !== 'refine' && intent !== 'regenerate' && intent !== 'points') throw new Error('Choose whether to continue the interview or revise a script.');
   // Long chats keep their opening: the member's first two messages hold the raw
   // idea and any list, and dropping them (the old slice(-24)) lost both.
@@ -209,6 +214,7 @@ function validateBody(body) {
     mode,
     projectId,
     intent,
+    idempotencyKey: idempotencyKey || null,
     // Regenerate (2026-10-12): a fresh version of the last step ("step") or a
     // fresh finished script from the interview answers ("final"), with an
     // optional note and the version being replaced, so it is not repeated.
@@ -234,7 +240,7 @@ async function loadOwnedProject(token, projectId) {
   // A failure here is the database layer, not an application bug, and it is
   // tagged so the event says so. Developer H.74 to H.78: an operator must be
   // able to tell Supabase being down from DeepSeek being down from our code.
-  const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=eq.' + projectId + '&select=id,output,content_type,intake&limit=1';
+  const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=eq.' + projectId + '&select=id,output,content_type,intake,conversation,status,version&limit=1';
   let rows;
   try {
     const response = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token } });
@@ -247,6 +253,16 @@ async function loadOwnedProject(token, projectId) {
     throw error;
   }
   return Array.isArray(rows) ? rows[0] || null : null;
+}
+
+// The saved reply for an interview generation key, if the project already has
+// one. Only interview replies are keyed messages; a finished script is not.
+export function replayFor(project, input) {
+  if (!project || !input || input.intent !== 'interview' || !input.idempotencyKey) return null;
+  const conversation = Array.isArray(project.conversation) ? project.conversation : [];
+  const saved = conversation.find(m => m && m.role === 'assistant' && m.key === input.idempotencyKey);
+  if (!saved) return null;
+  return { final: false, content: saved.content, step: saved.step || undefined, idempotencyKey: input.idempotencyKey, replayed: true };
 }
 
 async function updateProjectIntake(token, projectId, intake) {
@@ -664,6 +680,17 @@ export default async function handler(req, res) {
       await emit('denied', { failureClass: classifyFailure('input') });
       return fail(400, 'This chat has a different format. Please reopen it.');
     }
+    if (project.status === 'archived') {
+      await emit('denied', { failureClass: classifyFailure('input') });
+      return fail(409, 'This chat is archived. Restore it before continuing.');
+    }
+    // A generation already saved under this key is replayed, not run again, so a
+    // retried or doubled send never produces a second reply or a second charge.
+    const replay = replayFor(project, input);
+    if (replay) {
+      await emit('replayed', {});
+      return json(res, 200, { ...replay, promptVersion: PROMPT_VERSION, model: MODEL_VERSION, trace });
+    }
     if (project.output && input.intent === 'interview') {
       await emit('denied', { failureClass: classifyFailure('input') });
       return fail(409, 'This script is already finished. Use Refine with a note to change it.');
@@ -861,7 +888,7 @@ export default async function handler(req, res) {
     let title = '';
     let content = verdict.content;
     if (verdict.final) ({ title, body: content } = splitTitle(verdict.content));
-    return json(res, 200, { final: verdict.final, content, title: title || undefined, step: activeStep, promptVersion: PROMPT_VERSION, model: MODEL_VERSION, trace });
+    return json(res, 200, { final: verdict.final, content, title: title || undefined, step: activeStep, idempotencyKey: input.idempotencyKey || undefined, promptVersion: PROMPT_VERSION, model: MODEL_VERSION, trace });
   } catch (error) {
     const failureClass = classifyFailure(error && error.stage === 'database' ? 'database' : 'internal', error);
     await emit('error', { failureClass });

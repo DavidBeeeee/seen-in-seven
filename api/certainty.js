@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { authenticatedUser, consumeQuota, json } from './_lib/security.js';
+import { consumeQuota, json } from './_lib/security.js';
 import { detectCrisis } from './_lib/navigator-core.js';
 
 export const config = { maxDuration: 30 };
@@ -31,6 +31,40 @@ const FRIENDLY = {
   SESSION_ALREADY_ENDED: 'Past sessions cannot be rescheduled.',
   RATE_LIMITED: 'Certainty Sessions needs a short pause before the next request.'
 };
+
+// The planned answer when the session database cannot be reached (Developer 82):
+// a coded 503 the page can show as written, logged without member content,
+// never a hanging request or a blank page.
+export const SESSIONS_UNREACHABLE = {
+  code: 'SESSIONS_UNREACHABLE',
+  error: 'We could not reach your sessions just now. Your bookings are safe. Give it a minute and try again.'
+};
+export const SUPABASE_TIMEOUT_MS = 6000;
+
+function unreachable(res, where, correlationId, detail = {}) {
+  // recordEvent goes through Supabase too and is likely down with it, so the
+  // outage is also written to the runtime log, where it always lands.
+  console.error(JSON.stringify({
+    event: 'certainty_unreachable', where, correlationId, appVersion: CERTAINTY_APP_VERSION, ...detail
+  }));
+  return json(res, 503, { ...SESSIONS_UNREACHABLE, correlationId });
+}
+
+async function supabaseFetch(url, init, fetchFn = fetch) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), SUPABASE_TIMEOUT_MS);
+  try {
+    return await fetchFn(url, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+// An outage is a network failure, a timeout, or a gateway-class status. A 4xx is
+// a real answer from a database that is up.
+function isOutageStatus(status) {
+  return status === 0 || status >= 500;
+}
 
 export const CERTAINTY_CRISIS_LINE = 'If you are in distress or thinking about hurting yourself, please call or text 988 right now. Your seat is held, but please reach out to someone who can support you today.';
 
@@ -127,25 +161,52 @@ function token(req) {
   return String(req.headers.authorization || '').replace(/^Bearer\s+/i, '').trim();
 }
 
+// The signed-in member, or null, or 'unreachable' when Supabase auth itself is
+// down, so an outage is never reported as "not included in your access".
+async function memberFor(userToken) {
+  if (!userToken) return null;
+  try {
+    const response = await supabaseFetch(SUPABASE_URL + '/auth/v1/user', {
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + userToken }
+    });
+    if (isOutageStatus(response.status)) return 'unreachable';
+    if (!response.ok) return null;
+    const user = await response.json().catch(() => null);
+    return user && user.id ? user : null;
+  } catch (error) {
+    return 'unreachable';
+  }
+}
+
 async function hasEeeAccess(userToken) {
-  const response = await fetch(SUPABASE_URL + '/rest/v1/rpc/has_studio_app_access', {
-    method: 'POST',
-    headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + userToken, 'Content-Type': 'application/json' },
-    body: JSON.stringify({ target_app_key: 'certainty' }) // its own key, or the Momentum Hub bundle (WBR-442)
-  });
-  return response.ok && (await response.json().catch(() => false)) === true;
+  try {
+    const response = await supabaseFetch(SUPABASE_URL + '/rest/v1/rpc/has_studio_app_access', {
+      method: 'POST',
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + userToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify({ target_app_key: 'certainty' }) // its own key, or the Momentum Hub bundle (WBR-442)
+    });
+    if (isOutageStatus(response.status)) return 'unreachable';
+    return response.ok && (await response.json().catch(() => false)) === true;
+  } catch (error) {
+    return 'unreachable';
+  }
 }
 
 async function rpc(name, args, userToken) {
-  const response = await fetch(SUPABASE_URL + '/rest/v1/rpc/' + name, {
-    method: 'POST',
-    headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + userToken, 'Content-Type': 'application/json' },
-    body: JSON.stringify(args || {})
-  });
-  const raw = await response.text();
+  let response;
+  try {
+    response = await supabaseFetch(SUPABASE_URL + '/rest/v1/rpc/' + name, {
+      method: 'POST',
+      headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + userToken, 'Content-Type': 'application/json' },
+      body: JSON.stringify(args || {})
+    });
+  } catch (error) {
+    return { ok: false, status: 0, data: null, unreachable: true, rpc: name };
+  }
+  const raw = await response.text().catch(() => '');
   let data = null;
   try { data = raw ? JSON.parse(raw) : null; } catch (error) { data = raw; }
-  return { ok: response.ok, status: response.status, data };
+  return { ok: response.ok, status: response.status, data, unreachable: isOutageStatus(response.status), rpc: name };
 }
 
 // Observability. Every book, cancel, state read, and calendar write records an
@@ -192,15 +253,23 @@ function resultCode(result) {
   return (result && result.data && result.data.message) || (result && !result.ok ? 'rpc-error' : null);
 }
 
-// David's personal Zoom room.
-const ZOOM_URL = process.env.CERTAINTY_ZOOM_URL || 'https://us06web.zoom.us/my/davidbee?pwd=yjZwIYrQ32ju9k66B0VvZKADp9fxMs.1';
+// David's personal Zoom room lives in the CERTAINTY_ZOOM_URL setting on Vercel,
+// never in source (Developer 97). It is read per request, and a missing setting
+// gives an honest pending state rather than a dead or stale link.
+export const ZOOM_PENDING_LABEL = 'Zoom link coming from David';
+
+export function zoomUrl() {
+  return String(process.env.CERTAINTY_ZOOM_URL || '').trim() || null;
+}
 
 // The join detail is composed here, not stored, so the Zoom room link only ever
 // reaches a member who holds the booking.
-function joinFor(session) {
+export function joinFor(session) {
   if (!session) return null;
   if (session.mode === 'zoom') {
-    return { mode: 'zoom', label: 'Join on Zoom', joinUrl: ZOOM_URL };
+    const url = zoomUrl();
+    if (!url) return { mode: 'zoom', label: ZOOM_PENDING_LABEL, joinUrl: null, pending: true };
+    return { mode: 'zoom', label: 'Join on Zoom', joinUrl: url };
   }
   return { mode: 'phone', label: 'David will call you', phone: session.phone || '' };
 }
@@ -281,6 +350,8 @@ export async function writeToCalendarWithRetry(session, join, options = {}) {
   const accessToken = await tokenFn();
   if (!accessToken) return { connected: false, status: 'skipped', attempts: 0 };
 
+  // The destination is the calendar id, which names a calendar and is never a
+  // secret; it rides on every outcome so a write can be traced (Developer 27).
   const calendarId = process.env.GOOGLE_CALENDAR_ID || 'primary';
   const lines = [
     'Certainty Session with a Momentum Hub member.',
@@ -321,6 +392,7 @@ export async function writeToCalendarWithRetry(session, join, options = {}) {
           connected: true,
           status: 'created',
           eventId: created.id || null,
+          destination: calendarId,
           attempts
         };
       }
@@ -334,7 +406,8 @@ export async function writeToCalendarWithRetry(session, join, options = {}) {
           attempts,
           statusCode: response.status,
           lastError: errText || `HTTP ${response.status}`,
-          retryable: false
+          retryable: false,
+          destination: calendarId
         };
       }
 
@@ -354,13 +427,17 @@ export async function writeToCalendarWithRetry(session, join, options = {}) {
     status: 'failed',
     attempts,
     lastError,
-    retryable: true
+    retryable: true,
+    destination: calendarId
   };
 }
 
 export const writeToCalendar = writeToCalendarWithRetry;
 
 function fail(res, result, correlationId = null) {
+  if (result && result.unreachable) {
+    return unreachable(res, result.rpc || 'rpc', correlationId, { status: result.status });
+  }
   const code = result && result.data && result.data.message;
   if (code && FRIENDLY[code]) return json(res, 400, { error: FRIENDLY[code], code, correlationId });
   return json(res, 500, { error: 'Something went wrong with the session. Try again in a moment.', correlationId });
@@ -377,8 +454,11 @@ export default async function handler(req, res) {
   } catch (e) { /* ignore header error */ }
 
   const userToken = token(req);
-  const user = await authenticatedUser(req);
-  if (!user || !(await hasEeeAccess(userToken))) {
+  const user = await memberFor(userToken);
+  if (user === 'unreachable') return unreachable(res, 'auth', correlationId);
+  const access = user ? await hasEeeAccess(userToken) : false;
+  if (access === 'unreachable') return unreachable(res, 'access', correlationId);
+  if (!user || access !== true) {
     if (user) {
       await recordEvent(userToken, 'certainty_denied', {
         schema: 1, outcome: 'denied', reason: 'no-eee-access'
@@ -565,7 +645,7 @@ export default async function handler(req, res) {
       try {
         calendar = await writeToCalendarWithRetry(session, join);
       } catch (error) {
-        calendar = { connected: true, status: 'failed', attempts: 1, lastError: error && error.message };
+        calendar = { connected: true, status: 'failed', attempts: 1, lastError: error && error.message, destination: process.env.GOOGLE_CALENDAR_ID || 'primary' };
       }
 
       const calRpc = await rpc('certainty_set_calendar', {
@@ -583,6 +663,8 @@ export default async function handler(req, res) {
       // Outbound calendar write outcome event (Developer 23, 24, 27, 77)
       await recordEvent(userToken, 'certainty_calendar', {
         schema: 1,
+        sessionId: session.id,
+        destination: calendar.destination || null,
         status: calendar.status,
         connected: Boolean(calendar.connected),
         attempts: calendar.attempts,
@@ -595,6 +677,7 @@ export default async function handler(req, res) {
           schema: 1,
           alert: 'calendar_sync_failed',
           sessionId: session.id,
+          destination: calendar.destination || null,
           attempts: calendar.attempts,
           lastError: calendar.lastError || null,
           severity: 'warning'
@@ -729,6 +812,7 @@ export default async function handler(req, res) {
 
       // Fetch member state to get session
       const stateRes = await rpc('certainty_state', { p_days: 21 }, userToken);
+      if (stateRes.unreachable) return fail(res, stateRes, correlationId);
       const upcoming = stateRes.ok && stateRes.data && stateRes.data.upcoming;
       if (!upcoming || String(upcoming.id) !== sessionId) {
         return json(res, 404, { error: 'Upcoming session not found.', code: 'NOT_FOUND', correlationId });
@@ -746,7 +830,8 @@ export default async function handler(req, res) {
         schema: 1,
         status: calendar.status,
         attempts: calendar.attempts,
-        sessionId
+        sessionId,
+        destination: calendar.destination || null
       }, correlationId);
 
       const enriched = enrichSessionWithSyncState({ ...upcoming, calendar_status: calendar.status, join });
