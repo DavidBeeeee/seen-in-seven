@@ -449,6 +449,7 @@ function renderScriptPanel() {
 const LENGTH_GUIDE = { title: 'Choose your length', note: 'About 3 spoken words per second. Tap one or type your own.', replies: ['30 seconds', '60 seconds', '75 seconds', '90 seconds', '2 minutes'] };
 const DRAFT_GUIDE = { title: 'Your first draft', note: 'Change anything you like, or move on to the hooks when it feels right.', actions: [['Write the hooks', 'Looks good, go for the hooks'], ['Revise the draft', null]] };
 const HOOK_GUIDE = { title: 'Choose your hook', note: 'The first line people hear. It has one job: stop the scroll.', choices: true };
+const ESCALATE_GUIDE = { title: 'Make your chosen hook stronger', note: 'Same idea, sharper delivery. Choose a version or keep your original.', choices: true, replies: ['Keep the original hook'] };
 const LOOP_GUIDE = { title: 'Choose your open loop', note: 'The sentence right after your hook that makes people stay to hear the rest.', choices: true };
 // 2026-10-12 steps: length, draft (then wait), hooks, open loops, finished
 // script. "Regenerate" on any of these replaces the old "Give me 3 different".
@@ -458,6 +459,7 @@ const STEP_GUIDE = {
   R4: { title: 'Choose your tone', note: 'One of the 5 E\'s. Tap one, or type your own style.', replies: ['Entertainment', 'Enragement', 'Epiphany', 'Empathy', 'Education'] },
   B4: DRAFT_GUIDE, M4: DRAFT_GUIDE, R5: DRAFT_GUIDE,
   B5: HOOK_GUIDE, M5: HOOK_GUIDE, R6: HOOK_GUIDE,
+  'B5.5': ESCALATE_GUIDE, 'M5.5': ESCALATE_GUIDE, 'R6.5': ESCALATE_GUIDE,
   B6: LOOP_GUIDE, M6: LOOP_GUIDE, R7: LOOP_GUIDE
 };
 

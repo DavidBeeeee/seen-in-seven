@@ -1,20 +1,19 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 
-// 2026-10-12: every format asks for a length, shows its draft and waits, then
-// hooks, then open loops, then the assembled script. The Rant hook-escalation
-// round (old R7) is gone; Bold and Mini no longer fold hooks into the draft.
+// Keep saved labels stable. The inserted .5 turn refines the chosen hook;
+// existing R7/B6/M6 chats still mean open loops, not an unrelated new step.
 export const STEP_LABELS = [
-  'B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7',
-  'M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7',
-  'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8',
+  'B1', 'B2', 'B3', 'B4', 'B5', 'B5.5', 'B6', 'B7',
+  'M1', 'M2', 'M3', 'M4', 'M5', 'M5.5', 'M6', 'M7',
+  'R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R6.5', 'R7', 'R8',
   'F1', 'F2'
 ];
 
 export const MODE_STEPS = {
-  bold: ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7'],
-  mini: ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7'],
-  rant: ['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8'],
+  bold: ['B1', 'B2', 'B3', 'B4', 'B5', 'B5.5', 'B6', 'B7'],
+  mini: ['M1', 'M2', 'M3', 'M4', 'M5', 'M5.5', 'M6', 'M7'],
+  rant: ['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R6.5', 'R7', 'R8'],
   fix: ['F1', 'F2']
 };
 
@@ -408,19 +407,77 @@ export function checkGenericYou(scriptText) {
   return { ok: true };
 }
 
-// What a turn's own text asks for, read from the file rather than a label list,
-// so an edit to instructions.txt moves the checks with it.
+// Creative contracts are keyed by stable step IDs, not a magic sentence in
+// prose. Rewording the prompt must not silently turn off quality checks.
 export function turnKind(stepLabel, turnText = '') {
   const t = String(turnText);
+  const hook = ['B5', 'M5', 'R6'].includes(stepLabel);
+  const escalation = ['B5.5', 'M5.5', 'R6.5'].includes(stepLabel);
+  const openLoop = ['B6', 'M6', 'R7'].includes(stepLabel);
   return {
-    hooks: /\bhooks?\b/i.test(t) && /\b(generate|rewrite|write)\b/i.test(t) && !/open loop sentences/i.test(t) && !/Script Draft/i.test(t),
-    evidenceRule: /words from the evidence/i.test(t),
-    escalation: /increasingly extreme/i.test(t),
-    threeOptions: /\b(?:3|three)\b[^\n]*(?:hooks|open loop|directions|angles|options|lessons)/i.test(t) || /increasingly extreme/i.test(t),
-    final: /^[BMR]\d+:\s*Output the full script/m.test(t) || /^F\d$/.test(stepLabel || ''),
-    draft: /Script Draft/i.test(t),
+    hooks: hook || escalation || (/\bhooks?\b/i.test(t) && /\b(generate|rewrite|write)\b/i.test(t) && !/open loop sentences/i.test(t) && !/Script Draft/i.test(t)),
+    hookCraft: hook || escalation,
+    openLoop,
+    evidenceRule: !hook && !escalation && /words from the evidence/i.test(t),
+    escalation,
+    threeOptions: hook || escalation || openLoop || /\b(?:3|three)\b[^\n]*(?:hooks|open loop|directions|angles|options|lessons)/i.test(t),
+    final: ['B7', 'M7', 'R8', 'F1', 'F2'].includes(stepLabel) || /^[BMR]\d+:\s*Output the full script/m.test(t),
+    draft: ['B4', 'M4', 'R5'].includes(stepLabel) || /Script Draft/i.test(t),
     question: /\bask\b/i.test(t) && !/\b(draft|generate|rewrite|output|identify 3)\b/i.test(t)
   };
+}
+
+// Catch extraction and near-extraction, not shared topic nouns. A fresh hook
+// about an AI clone can say "AI clone"; banning every evidence word killed sense.
+export function checkHookCraft(options, messages = []) {
+  const last = String(messages.filter(m => m.role === 'user').at(-1)?.content || '');
+  const keepExact = !/\b(?:don't|do not|never)\s+(?:keep|use|copy|preserve)\b/i.test(last) && /\b(?:keep|use|preserve)\b.{0,60}\b(?:exact|verbatim|word for word|original (?:line|hook))\b/i.test(last);
+  const source = messages.map(m => String(m.content || '')).join('\n');
+  const sentences = source.split(/(?<=[.!?])\s+|\n+/).map(normWords).filter(words => words.length >= 4);
+  for (let i = 0; i < options.length; i++) {
+    const words = normWords(options[i]);
+    if (!keepExact && words.length >= 4 && sentences.some(original => {
+      const a = words.join(' '), b = original.join(' ');
+      return b.includes(a) || (Math.min(words.length, original.length) / Math.max(words.length, original.length) > 0.75 && coverage(options[i], original) >= 0.88);
+    })) return { ok: false, issue: `hook-extracted: option ${i + 1} lifts or lightly paraphrases an existing sentence. Build a fresh verdict, visual comparison or contradiction from the story instead` };
+    for (let j = 0; j < i; j++) {
+      if (coverage(options[i], normWords(options[j])) > 0.85 && coverage(options[j], words) > 0.85) return { ok: false, issue: 'hook-duplicates: the options need different creative mechanisms, not cosmetic rewordings' };
+    }
+  }
+  return { ok: true };
+}
+
+export function checkOpenLoopCraft(options, messages = []) {
+  const hook = chosenOptions(messages).hook;
+  for (const option of options) {
+    if (hook && coverage(hook, normWords(option)) >= 0.8) return { ok: false, issue: 'loop-repeats-hook: open a new question that the story answers, rather than repeating the chosen hook' };
+    if (/^(?:and |but |because |which is why )?(?:that(?:'s| is| was) when (?:it all|everything) changed|you (?:won'?t|will not) believe what happened next|wait (?:for|until) (?:it|the end))[.!?]*$/i.test(option.trim())) return { ok: false, issue: 'loop-generic: replace the empty teaser with a specific unresolved contrast or reveal in this story' };
+  }
+  for (let i=0;i<options.length;i++) for(let j=0;j<i;j++) {
+    if (coverage(options[i],normWords(options[j]))>0.85 && coverage(options[j],normWords(options[i]))>0.85) return {ok:false,issue:'loop-duplicates: offer three different unanswered questions or reveals, not repeated versions of one sentence'};
+  }
+  return { ok: true };
+}
+
+// These checks detect missing parts; they are not a claim that a regex can
+// judge humor or prove a promised payoff. Real generation comparisons test craft.
+export function checkScriptCompleteness({ content, stepLabel, turnText = '', memberMessages = [] }) {
+  const kind = turnKind(stepLabel, turnText);
+  if (!kind.draft && !kind.final) return { ok: true };
+  // A closing question/CTA may be its own short paragraph. The length
+  // extractor deliberately keeps only long draft paragraphs; do not use it
+  // to decide whether those short spoken parts exist.
+  let body = kind.final ? scriptBody(content, true) : String(content || '').replace(/^(?:NEXT QUESTION|FINAL SCRIPT):\s*/i, '');
+  if (kind.draft && countWords(body) < 40) return { ok: true };
+  if (!body) return { ok: true };
+  body = body.replace(/(?:How does this (?:sound|feel)\?|Would you like to (?:change|revise)[\s\S]*$|Should I (?:move on|continue)[\s\S]*$)/gi, '').trim();
+  const last = String(memberMessages.filter(m => m.role === 'user').at(-1)?.content || '');
+  const omit = part => !/\b(?:don't|do not|never)\s+(?:remove|omit|drop|skip|exclude)\b/i.test(last) && new RegExp(`\\b(?:remove|omit|drop|skip|exclude|without|no|don't include|do not include)\\s+(?:(?:the|an?|any|spoken|closing)\\s+)*(?:${part})`, 'i').test(last);
+  const questions = body.match(/[^.!?\n]*\?/g) || [];
+  if (!omit('audience (?:question|engagement)|engagement question|questions?') && !questions.some(q => /\b(?:you|your|anyone else|anybody else|who else|am i the only)\b/i.test(q))) return { ok: false, issue: 'missing-audience-question: include a genuine spoken question about the story inviting the viewer to answer, not a rhetorical reflection or the app approval question' };
+  const closing = body.split(/\s+/).slice(-65).join(' ');
+  if (!omit('cta|call to action') && !/\b(?:follow|comment|tell me|let me know|share|save|subscribe|join me|stick around|come back|drop (?:a|your)|send (?:me|this))\b/i.test(closing)) return { ok: false, issue: 'missing-cta: include a natural closing invitation to respond or follow, with a story-specific reason' };
+  return { ok: true };
 }
 
 // Backstop for THE ALLY RULE, not the fix itself: the fix is that drafts are
@@ -461,10 +518,18 @@ export function checkDeterministic({ content, stepLabel, turnText = '', memberMe
 
   if (kind.threeOptions && !isFinal) {
     const options = extractOptions(content);
-    if (options.length < 3) return { ok: false, issue: 'three-options: step requires 3 options, found ' + options.length };
-    if (kind.evidenceRule || kind.escalation) {
+    if (options.length < 3 || ((kind.hookCraft || kind.openLoop) && options.length !== 3)) return { ok: false, issue: 'three-options: step requires exactly 3 options, found ' + options.length };
+    if (kind.evidenceRule && !kind.hookCraft) {
       const evidenceCheck = checkHookEvidence(options.slice(-3), memberMessages);
       if (!evidenceCheck.ok) return evidenceCheck;
+    }
+    if (kind.hookCraft) {
+      const craft = checkHookCraft(options.slice(0, 3), memberMessages);
+      if (!craft.ok) return craft;
+    }
+    if (kind.openLoop) {
+      const craft = checkOpenLoopCraft(options.slice(0, 3), memberMessages);
+      if (!craft.ok) return craft;
     }
   }
 
@@ -473,7 +538,7 @@ export function checkDeterministic({ content, stepLabel, turnText = '', memberMe
     if (!allyCheck.ok) return allyCheck;
   }
 
-  return { ok: true };
+  return checkScriptCompleteness({ content, stepLabel, turnText, memberMessages });
 }
 
 // ── Script fidelity (2026-10-12) ───────────────────────────────────────────

@@ -40,7 +40,7 @@ for (const label of STEP_LABELS) {
   assert.ok(parsed.steps[label], `Step label ${label} must be present`);
   assert.ok(parsed.steps[label].length > 30, `Step label ${label} must not be empty`);
 }
-assert.equal(Object.keys(parsed.steps).length, 24, 'Exactly 24 steps parsed (2026-10-12: length ask in every format, draft and hooks split, no escalation round, F2 revise)');
+assert.equal(Object.keys(parsed.steps).length, 27, '27 steps, including stable-ID chosen-hook refinement turns');
 
 // (b) Global text contains required sections
 assert.ok(parsed.globalText.includes('THE SEAMLESS RULE'), 'Global text must include THE SEAMLESS RULE');
@@ -63,13 +63,13 @@ for (let i = 0; i < STEP_LABELS.length; i++) {
     assert.ok(!prompt.includes(`\n${laterHeader}`), `Prompt for ${label} must not contain later step ${laterLabel}`);
   }
 }
-console.log('PASS: Step parsing and prompt isolation verified across all 24 steps.');
+console.log('PASS: Step parsing and prompt isolation verified across all 27 steps.');
 
 console.log('2. Turns follow the file\'s own STOP and WAIT boundaries...');
 const turns = parseTurns(instructionsText);
-assert.deepEqual(turns.rant.turns.map(t => t.label), ['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R7', 'R8'], 'no hook-escalation round');
-assert.deepEqual(turns.bold.turns.map(t => t.label), ['B1', 'B2', 'B3', 'B4', 'B5', 'B6', 'B7']);
-assert.deepEqual(turns.mini.turns.map(t => t.label), ['M1', 'M2', 'M3', 'M4', 'M5', 'M6', 'M7']);
+assert.deepEqual(turns.rant.turns.map(t => t.label), MODE_STEPS.rant);
+assert.deepEqual(turns.bold.turns.map(t => t.label), MODE_STEPS.bold);
+assert.deepEqual(turns.mini.turns.map(t => t.label), MODE_STEPS.mini);
 for (const [mode, draft, hooks] of [['bold', 3, 4], ['mini', 3, 4], ['rant', 4, 5]]) {
   const list = turns[mode].turns;
   assert.ok(turnKind(list[draft].label, list[draft].text).draft && !turnKind(list[draft].label, list[draft].text).hooks, mode + ': the draft turn shows the draft and waits, no hooks');
@@ -99,7 +99,7 @@ const montage = checkDeterministic({ content: 'NEXT QUESTION: Pick.\n1. The mont
 assert.equal(montage.ok, false, 'the 2026-10-08 02:30 hooks are refused');
 assert.match(montage.issue, /banned-term|evidence/, "the old hooks broke the banned list (sold, nobody) as well as R6");
 
-const r7 = turns.rant.turns[6].text;
+const r7 = turns.rant.turns.find(turn => turn.label === 'R7').text;
 assert.equal(checkDeterministic({ content: 'NEXT QUESTION: Which?\n1. Which is why I stopped.\n2. And that is when it broke.', stepLabel: 'R7', turnText: r7, memberMessages: thread, bannedTerms }).ok, false, 'the open loop step needs three options');
 assert.equal(checkDeterministic({ content: 'NEXT QUESTION: Which?\n1. Which is why I stopped pretending.\n2. And that is when it broke open.\n3. Because the quiet was the real cost.', stepLabel: 'R7', turnText: r7, memberMessages: thread, bannedTerms }).ok, true);
 console.log('PASS: hook and open loop checks match the file as written.');
@@ -127,7 +127,9 @@ assert.equal(t('R5', 'I love it but the ending is weak'), 'R5');
 assert.equal(t('R5', 'Looks good, go for the hooks'), 'R6', 'the approval button still moves on');
 assert.equal(t('R5', 'perfect'), 'R6');
 assert.equal(t('B4', 'too repetitive', 'bold', turns.bold.turns), 'B4', 'Bold drafts revise on plain feedback too');
-assert.equal(t('R6', '1'), 'R7', 'choosing a hook goes straight to the open loops');
+assert.equal(t('R6', '1'), 'R6.5', 'choosing a hook refines that hook');
+assert.equal(t('R6.5', '2'), 'R7');
+assert.equal(t('R6.5', 'Keep the original hook'), 'R7');
 assert.equal(t('R6', 'give me three more'), 'R6');
 assert.equal(t('R7', '2'), 'R8', 'choosing an open loop assembles the script');
 assert.equal(t('R3', 'skip to the hook'), 'R6');
@@ -135,8 +137,10 @@ assert.equal(t('B2', 'option 2', 'bold', turns.bold.turns), 'B3', 'Bold asks for
 assert.equal(t('B3', '60 seconds', 'bold', turns.bold.turns), 'B4');
 assert.equal(t('B4', 'Looks good, go for the hooks', 'bold', turns.bold.turns), 'B5', 'the draft waits for approval, then hooks');
 assert.equal(t('B4', 'Please revise the script above. Keep what works and change this: shorter', 'bold', turns.bold.turns), 'B4');
-assert.equal(t('B5', '1', 'bold', turns.bold.turns), 'B6', 'after choosing a Bold hook, the open loops come next');
-assert.equal(t('M5', '3', 'mini', turns.mini.turns), 'M6');
+assert.equal(t('B5', '1', 'bold', turns.bold.turns), 'B5.5');
+assert.equal(t('B5.5', '2', 'bold', turns.bold.turns), 'B6');
+assert.equal(t('M5', '3', 'mini', turns.mini.turns), 'M5.5');
+assert.equal(t('M5.5', 'Keep the original hook', 'mini', turns.mini.turns), 'M6');
 assert.equal(t('M6', '2', 'mini', turns.mini.turns), 'M7');
 assert.equal(resolveStep({ mode: 'rant', messages: [{ role: 'assistant', content: 'Type the raw rant' }, { role: 'user', content: davidRant }], currentStep: null, turns: rantTurns }), 'R2', 'a counted position starts after the browser\'s own first question');
 assert.equal(resolveStep({ mode: 'bold', intent: 'refine', messages: [] }), 'F2');
@@ -267,20 +271,26 @@ console.log('5. Replaying David\'s 2026-10-08 17:45 /rant through the real handl
     assert.ok(deepSeekCalls[1].messages.at(-1).content.includes('RETRY'), 'the retry says what failed');
     assert.ok(out.content.includes('A mask cannot bleed.') && out.content.includes('coffin'), 'three hooks are shown');
 
-    // Every open loop attempt fails: the member still sees options, never a bare question.
     out = await send('1', [
-      'NEXT QUESTION: Which open loop?\n1. Which is why the stand-in never shows up for the hard part.\n2. And that is when I saw who it was protecting.',
-      'NEXT QUESTION: Which open loop?\n1. Which is why the stand-in never shows up for the hard part.\n2. And that is when I saw who it was protecting.',
-      'NEXT QUESTION: Which open loop?\n1. Which is why the stand-in never shows up for the hard part.\n2. And that is when I saw who it was protecting.'
+      'NEXT QUESTION: Stronger hooks\n1. A velvet mask still muffles the only voice worth hearing.\n2. The stand-in faces the room while the person disappears backstage.\n3. A rented face leaves its owner waiting outside their own life.\nWhich hook version should we use, or keep the original?'
     ]);
-    assert.equal(out.step, 'R7', 'choosing a hook goes straight to the open loops (no escalation round)');
+    assert.equal(out.step, 'R6.5');
+    assert.ok(lastMessage().includes('THE CHOSEN HOOK TO REFINE: A mask cannot bleed.'));
+
+    // Two incomplete attempts are repaired; never advance on an incomplete set.
+    out = await send('Keep the original hook', [
+      'NEXT QUESTION: Which open loop?\n1. Which is why the stand-in never shows up for the hard part.\n2. And that is when I saw who it was protecting.',
+      'NEXT QUESTION: Which open loop?\n1. Which is why the stand-in never shows up for the hard part.\n2. And that is when I saw who it was protecting.',
+      'NEXT QUESTION: Which open loop?\n1. Which is why the stand-in never shows up for the hard part.\n2. And that is when I saw who it was protecting.\n3. Because the offer came with somewhere to put the fear, not a way through it.'
+    ]);
+    assert.equal(out.step, 'R7', 'refinement preserves the original-hook option, then offers open loops');
     assert.ok(lastMessage().includes('open loop sentences'));
     assert.equal(deepSeekCalls.length, 3, 'two retries at most');
     assert.ok(out.content.includes('1. Which is why the stand-in'), 'the best attempt is shown with its options');
     const r7Event = events.at(-1).p_detail;
     assert.equal(r7Event.step, 'R7');
     assert.equal(r7Event.attempts, 3);
-    assert.equal(r7Event.checkFailed, 'three-options', 'a failed check is logged, not counted as a clean success');
+    assert.equal(r7Event.checkFailed, undefined, 'the final complete set passes; incomplete sets are not silently delivered');
     assert.equal(storedIntake.current_step, 'R7', 'the step survives the save');
 
     // R8: the assembled script. The first attempt rewords the hook, runs long
@@ -369,3 +379,4 @@ console.log('6. Fidelity checks against David\'s real 2026-10-12 scripts...');
 console.log('PASS: length, every listed item, no invented topic, hook and open loop first, nothing said twice.');
 
 console.log('ALL StorySculpt step engine checks PASSED.');
+await import('./check-storysculpt-hook-craft.mjs');

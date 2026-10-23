@@ -23,6 +23,7 @@ import {
   targetWords,
   memberListItems,
   chosenOptions,
+  checkScriptCompleteness,
   detectCrisis,
   crisisResponse
 } from './_lib/storysculpt-steps.js';
@@ -146,7 +147,7 @@ export function turnFor(mode, label) {
 // generation. The blueprint sources are hashed automatically; this tag covers
 // the wrapper the sources are assembled into, so the recorded prompt version
 // moves whenever the real prompt does. Developer I.89.
-const PROMPT_TEMPLATE_TAG = 'v3';
+const PROMPT_TEMPLATE_TAG = 'v4-hook-craft';
 const PROMPT_VERSION = promptVersion(
   CORE_INSTRUCTIONS,
   PARSED_INSTRUCTIONS.globalText,
@@ -344,7 +345,7 @@ export function stepDirective(mode, stepLabel, stepText, memberMessages = [], re
   if (kind.draft && reaimed) {
     lines.push('', 'THE MEMBER\'S ORIGINAL INPUT, RE-AIMED UNDER THE ALLY RULE. Wherever this step says to use the member\'s original input, use this version, not the raw message above:', reaimed);
   }
-  if (kind.evidenceRule || kind.escalation) {
+  if (kind.evidenceRule && !kind.hookCraft) {
     const words = [...evidenceWords(memberMessages).values()];
     if (words.length) {
       lines.push('', 'EVIDENCE WORDS (the member\'s raw text). No option may contain any of these words or a form of them: ' + words.join(', ') + '.');
@@ -356,8 +357,22 @@ export function stepDirective(mode, stepLabel, stepText, memberMessages = [], re
       lines.push('Each option is only the new open loop sentence. Do not repeat the chosen hook inside it; the member already has the hook.');
     }
   }
+  if (kind.hookCraft) {
+    lines.push('', 'CREATIVE CONTRACT: three genuinely different fresh openings, not sentences extracted or lightly paraphrased from the draft. Each numbered option contains only the spoken hook, not an explanation or a mechanism label. Necessary topic words are allowed. Apply the supplied hook examples and chosen 5E tone, but invent no facts. Before showing them, replace generic summaries with a specific contradiction, visual comparison or verdict.');
+    if (kind.escalation) {
+      const chosen = chosenOptions(memberMessages).hook;
+      lines.push('Start the options with the heading "Stronger hooks". These are stronger versions of ONE chosen hook, not three new topics. The member may keep the original.');
+      if (chosen) lines.push('THE CHOSEN HOOK TO REFINE: ' + chosen);
+    } else lines.push('Use the heading "Hook options" so the member\'s choice stays unambiguous.');
+  }
+  if (kind.openLoop) {
+    lines.push('', 'Use the heading "Open loops". Create story-specific unanswered curiosity beyond the hook, with a payoff present in the approved draft. Do not repeat the hook or offer a generic "everything changed" teaser.');
+    const chosen = chosenOptions(memberMessages).hook;
+    if (chosen) lines.push('CONNECT THIS CHOSEN HOOK TO ITS PAYOFF: ' + chosen);
+  }
   // Fidelity, stated up front so the checks rarely need a retry (2026-10-12).
   if (kind.draft || kind.final) {
+    lines.push('', 'COMPLETENESS: keep a genuine audience-facing question inviting an answer inside the spoken script, and a natural closing CTA with a reason to respond or follow, unless the latest member note explicitly asks to omit one. The interview approval question does not count. Silently check the body pays off the curiosity promised by the hook and loop.');
     const { seconds, words } = targetWords(memberMessages);
     lines.push('', `TARGET LENGTH: about ${words} words${seconds ? ' (the member chose ' + seconds + ' seconds; 3 spoken words per second)' : ''}, which is about ${Math.round(words / 15)} sentences of ordinary length. Stay within 15 percent. Scripts most often run long, so count before you answer, and do not state a word count in your reply.`);
     const items = mode === 'bold' ? [] : memberListItems(memberMessages);
@@ -875,7 +890,7 @@ export default async function handler(req, res) {
       content,
       stepLabel: activeStep,
       turnText: stepText,
-      memberMessages: input.messages,
+      memberMessages: input.regenerateNote ? [...input.messages, { role: 'user', content: input.regenerateNote }] : input.messages,
       bannedTerms: BANNED_TERMS,
       mode: input.mode,
       memberText: memberOwnText(input)
@@ -923,6 +938,16 @@ export default async function handler(req, res) {
         stepLog.fallback = true;
         verdict = classifyOutput(fallback, { source: memberSource(input) });
       }
+    }
+
+    // Missing essential spoken parts must not be marked finished after the
+    // bounded repair loop. Leave the saved project/step untouched for retry.
+    const completeness = checkScriptCompleteness(checkArgs(result.content));
+    const creativeFailure = !detCheck.ok && /^(?:hook-extracted|hook-duplicates|loop-repeats-hook|loop-generic|loop-duplicates|three-options):/.test(detCheck.issue);
+    if ((turnKind(activeStep, stepText).final && !completeness.ok) || creativeFailure) {
+      const reason = (creativeFailure ? detCheck.issue : completeness.issue).split(':')[0];
+      await emit('output_rejected', { ...stepLog, failureClass: classifyFailure('output'), violations: [reason], usage: result.usage });
+      return json(res, 502, { error: creativeFailure ? 'StorySculpt could not produce three distinct, useful options on this pass. Your saved choices are unchanged; please retry.' : 'StorySculpt could not finish the audience question and closing invitation on this pass. Your saved script is unchanged; please retry.', rejected: reason, trace });
     }
 
     const updatedIntake = { ...(project.intake || {}), current_step: activeStep };
