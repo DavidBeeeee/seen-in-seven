@@ -43,7 +43,7 @@
     "check:certainty-server-cluster": "node scripts/check-certainty-server-cluster.mjs",
     "check:certainty-server-gaps": "node scripts/check-certainty-server-gaps.mjs",
     "check:certainty-edit-and-history": "node scripts/check-certainty-edit-and-history.mjs",
-    "check:certainty-history-heartbeat": "node scripts/check-certainty-history-heartbeat.mjs",
+    "check:certainty-history-heartbeat": "node scripts/check-certainty-history-heartbeat.mjs && node scripts/check-reminder-heartbeat-watch.mjs",
     "check:storysculpt-incident-signal": "node scripts/check-storysculpt-incident-signal.mjs",
     "check:storysculpt-integrity": "node scripts/check-storysculpt-integrity.mjs",
     "check:storysculpt-release": "node scripts/check-storysculpt-release.mjs",
