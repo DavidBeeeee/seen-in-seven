@@ -199,7 +199,7 @@ function cleanText(value, maximum) {
   return clean;
 }
 
-function validateBody(body) {
+export function validateBody(body) {
   const mode = String(body && body.mode || '').toLowerCase();
   if (!MODES.has(mode)) throw new Error('Choose a StorySculpt format first.');
   const projectId = String(body && body.projectId || '');
