@@ -74,6 +74,66 @@
     .cs-hist-page-info { font-size: .84rem; color: var(--studio-muted); font-weight: 600; }
     .cs-hist-page-controls { display: flex; align-items: center; gap: 8px; }
     .cs-hist-toggle-wrap { margin-top: 12px; }
+    /* Progression & Milestones (Stranger 52, 54; UX 11, 12, 43, 44, 45) */
+    .cs-milestone-row {
+      border-color: rgba(212, 175, 55, 0.45);
+      background: linear-gradient(90deg, rgba(212, 175, 55, 0.08) 0%, var(--studio-surface-2) 60%);
+    }
+    .cs-milestone-cal {
+      background: rgba(212, 175, 55, 0.15) !important;
+      color: var(--studio-gold) !important;
+    }
+    .cs-milestone-tag {
+      display: inline-flex; align-items: center; gap: 4px; margin-left: 8px; font-size: .72rem; font-weight: 700;
+      color: var(--studio-gold); background: rgba(212, 175, 55, 0.12); border: 1px solid rgba(212, 175, 55, 0.35);
+      padding: 2px 8px; border-radius: 999px; text-transform: uppercase; letter-spacing: .03em;
+    }
+    .cs-milestone-tag i { width: 11px; height: 11px; }
+    .cs-milestone-callout {
+      margin: 10px 0 14px; padding: 12px 14px; border-radius: 10px;
+      background: rgba(212, 175, 55, 0.08); border: 1px solid rgba(212, 175, 55, 0.3);
+    }
+    .cs-milestone-badge {
+      display: inline-flex; align-items: center; gap: 6px; font-size: .82rem; font-weight: 700;
+      color: var(--studio-gold); text-transform: uppercase; letter-spacing: .04em;
+    }
+    .cs-milestone-badge i { width: 14px; height: 14px; }
+    .cs-milestone-desc { font-size: .84rem; color: var(--studio-soft); margin: 4px 0 0; }
+    /* Change over a longer period */
+    .cs-hist-change {
+      margin: 10px 0 14px; padding: 12px 14px; border-radius: 10px;
+      background: var(--studio-surface-2); border: 1px solid var(--studio-border);
+    }
+    .cs-hist-change-stats {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 10px; margin-bottom: 8px;
+    }
+    .cs-stat-box { display: flex; flex-direction: column; gap: 2px; }
+    .cs-stat-num { font-family: 'Oswald', sans-serif; font-size: 1.35rem; line-height: 1.1; color: var(--studio-gold); }
+    .cs-stat-lbl { font-size: .76rem; color: var(--studio-muted); text-transform: uppercase; letter-spacing: .03em; }
+    .cs-hist-topics { margin-top: 10px; padding-top: 8px; border-top: 1px solid var(--studio-border); }
+    .cs-hist-topics-title { font-size: .78rem; font-weight: 700; color: var(--studio-soft); margin: 0 0 6px; }
+    .cs-topic-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+    .cs-topic-tag {
+      font-size: .76rem; padding: 3px 8px; border-radius: 6px;
+      background: var(--studio-surface); border: 1px solid var(--studio-border); color: var(--studio-soft);
+    }
+    /* Weekly reset disclosure in booking */
+    .cs-weekly-reset {
+      display: flex; align-items: center; gap: 8px; margin: 10px 0 16px; padding: 8px 12px;
+      background: var(--studio-surface-2); border: 1px solid var(--studio-border); border-radius: 8px;
+      font-size: .82rem; color: var(--studio-muted);
+    }
+    .cs-weekly-reset i { width: 15px; height: 15px; color: var(--studio-teal); flex: none; }
+    /* Continuity in booking (UX 53, 59, 60) */
+    .cs-book-last-held { margin-bottom: 14px; }
+    .cs-continuity-box {
+      display: flex; align-items: flex-start; gap: 10px; padding: 10px 12px; border-radius: 8px;
+      background: rgba(14, 165, 233, 0.08); border: 1px solid rgba(14, 165, 233, 0.25);
+    }
+    .cs-continuity-icon { color: var(--studio-teal); margin-top: 2px; }
+    .cs-continuity-icon i { width: 16px; height: 16px; }
+    .cs-continuity-text { font-size: .86rem; color: var(--studio-text); }
+    .cs-continuity-sub { font-size: .78rem; color: var(--studio-muted); margin-top: 2px; }
     .cs-missed-week {
       display: flex; align-items: center; gap: 10px; padding: 12px 14px; margin-top: 12px;
       background: var(--studio-surface-2); border: 1px solid var(--studio-border); border-radius: 12px;
@@ -315,6 +375,15 @@
               <div><p class="cs-eyebrow">Book a session</p><h2 id="cs-book-title">Choose your time</h2></div>
               <button class="secondary-button" type="button" id="cs-book-close"><i data-lucide="x"></i><span>Close</span></button>
             </div>
+
+            <!-- Weekly reset rule stated where the member books (Stranger 54, UX 11) -->
+            <div class="cs-weekly-reset" data-cs-weekly-reset="true">
+              <i data-lucide="info"></i>
+              <span>One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday.</span>
+            </div>
+
+            <!-- Booking continuity: last held session date and topic (UX 53, 59, 60) -->
+            <div class="cs-book-last-held cs-hide" id="cs-book-last-held" data-cs-continuity="true"></div>
 
             <div class="cs-step-label"><span class="cs-step-num">1</span>Pick a day</div>
             <div class="cs-days" id="cs-days"></div>
@@ -728,7 +797,7 @@
       // Cancellations and no-shows are not in history, so they stay first-timers.
       function isFirstTimer() {
         if (!state) return false;
-        var count = Number(state.historyCount || 0) || ((state.history || []).length);
+        var count = Number(state.historyTotal != null ? state.historyTotal : (state.historyCount || 0)) || ((state.history || []).length);
         return !count && !state.lastHeld;
       }
 
@@ -768,6 +837,36 @@
 
       var editingSession = null;
 
+      function renderBookingContinuity() {
+        var host = el('cs-book-last-held');
+        if (!host) return;
+        var last = (state && state.lastHeld) || null;
+        if (!last && state && Array.isArray(state.history) && state.history.length > 0) {
+          last = state.history[0];
+        }
+        if (isFirstTimer() || !last) {
+          host.classList.add('cs-hide');
+          host.innerHTML = '';
+          return;
+        }
+        var dateStr = last.label_day || (last.starts_at ? new Date(last.starts_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '');
+        var topicStr = last.topic ? escapeHtml(last.topic) : '';
+        var inner = '<div class="cs-continuity-box" data-cs-continuity-box="true">' +
+          '<span class="cs-continuity-icon"><i data-lucide="history"></i></span>' +
+          '<div>' +
+            '<div class="cs-continuity-text">' +
+              (topicStr
+                ? 'Last time' + (dateStr ? ' (' + escapeHtml(dateStr) + ')' : '') + ' you brought: <strong>' + topicStr + '</strong>'
+                : 'Last time' + (dateStr ? ' was ' + escapeHtml(dateStr) : '') + '.') +
+            '</div>' +
+            '<div class="cs-continuity-sub">Pick up where you left off or bring something new.</div>' +
+          '</div>' +
+        '</div>';
+        host.innerHTML = inner;
+        host.classList.remove('cs-hide');
+        icons();
+      }
+
       function openEdit(u) {
         editingSession = u;
         var p = etParts(new Date(u.starts_at));
@@ -778,6 +877,7 @@
         pick = { date: iso, hour: hour, mode: curMode };
         el('cs-book').classList.add('open');
         el('cs-book-title').textContent = 'Edit your session';
+        renderBookingContinuity();
         renderDays();
         renderTimes();
         setMode(curMode);
@@ -796,6 +896,7 @@
         el('cs-book').classList.add('open');
         el('cs-book-title').textContent = 'Choose your time';
         el('cs-confirm-text').textContent = 'Confirm session';
+        renderBookingContinuity();
         renderDays();
         renderTimes();
         setMode(defaultMode);
@@ -1023,10 +1124,44 @@
       var historyPage = 1;
       var HISTORY_PAGE_SIZE = 25;
 
+      // Paged session history loader (UX 71, 72)
+      function loadPagedHistory(offset) {
+        var off = typeof offset === 'number' ? offset : 50;
+        return api('history', { offset: off, limit: 50 }).then(function (r) {
+          if (!r.ok || !r.data) return;
+          var d = r.data;
+          if (typeof d.total === 'number') {
+            state.historyTotal = d.total;
+            state.historyCount = d.total;
+          }
+          if (Array.isArray(d.history) && d.history.length > 0) {
+            var existingIds = {};
+            (state.history || []).forEach(function (h) { if (h.id) existingIds[h.id] = true; });
+            var added = false;
+            d.history.forEach(function (h) {
+              if (!h.id || !existingIds[h.id]) {
+                state.history.push(h);
+                if (h.id) existingIds[h.id] = true;
+                added = true;
+              }
+            });
+            if (added) {
+              renderHistory();
+              renderBookingContinuity();
+            }
+          }
+          if (d.nextOffset) {
+            return loadPagedHistory(d.nextOffset);
+          }
+        }).catch(function (err) {
+          console.warn('Paged history load:', err);
+        });
+      }
+
       function renderHistory() {
         var host = el('cs-history');
         var items = (state && state.history) || [];
-        var count = (state && state.historyCount) || items.length;
+        var count = (state && (state.historyTotal != null ? state.historyTotal : state.historyCount)) || items.length;
         if (!items.length) { host.classList.add('cs-hide'); host.innerHTML = ''; return; }
 
         var totalPages = Math.ceil(items.length / HISTORY_PAGE_SIZE);
@@ -1040,12 +1175,29 @@
           displayItems = items.slice(startIdx, startIdx + HISTORY_PAGE_SIZE);
         }
 
-        var rows = displayItems.map(function (h) {
+        var rows = displayItems.map(function (h, idx) {
           var icon = h.mode === 'zoom' ? 'video' : 'phone';
           var meta = (h.mode === 'zoom' ? 'On Zoom' : 'By phone') + (h.topic ? ' &middot; ' + escapeHtml(h.topic) : '');
-          return '<li class="cs-hist-row">' +
-            '<span class="cs-hist-cal"><i data-lucide="calendar-check"></i></span>' +
-            '<div><div class="cs-hist-day">' + escapeHtml(h.label_day || '') + '</div>' +
+          var startIdx = historyExpanded ? (historyPage - 1) * HISTORY_PAGE_SIZE : 0;
+          var sessionNum = count - (startIdx + idx);
+          var isMilestone = (sessionNum === 1 || sessionNum === 5 || sessionNum === 10 || sessionNum === 25 || sessionNum === 50 || sessionNum === 75 || sessionNum === 100);
+          var milestoneLabel = '';
+          if (sessionNum === 1) milestoneLabel = 'First session milestone';
+          else if (sessionNum === 5) milestoneLabel = '5th session milestone';
+          else if (sessionNum === 10) milestoneLabel = '10th session milestone';
+          else if (sessionNum === 25) milestoneLabel = '25th session milestone';
+          else if (sessionNum === 50) milestoneLabel = '50th session milestone';
+          else if (sessionNum > 1 && isMilestone) milestoneLabel = sessionNum + 'th session milestone';
+
+          var rowClass = 'cs-hist-row' + (isMilestone ? ' cs-milestone-row' : '');
+          var calIcon = isMilestone ? 'sparkles' : 'calendar-check';
+          var calClass = 'cs-hist-cal' + (isMilestone ? ' cs-milestone-cal' : '');
+          var milestoneTag = isMilestone ? '<span class="cs-milestone-tag" data-cs-milestone-tag="true"><i data-lucide="award"></i>' + escapeHtml(milestoneLabel) + '</span>' : '';
+          var milestoneAttr = isMilestone ? ' data-cs-milestone="true" data-cs-milestone-num="' + sessionNum + '"' : '';
+
+          return '<li class="' + rowClass + '"' + milestoneAttr + '>' +
+            '<span class="' + calClass + '"><i data-lucide="' + calIcon + '"></i></span>' +
+            '<div><div class="cs-hist-day">' + escapeHtml(h.label_day || '') + milestoneTag + '</div>' +
             '<div class="cs-hist-meta"><i data-lucide="' + icon + '"></i>' + meta + '</div></div>' +
             '<span class="cs-hist-time">' + escapeHtml(h.label_start || '') + ' &ndash; ' + escapeHtml(h.label_end || '') + ' ET</span>' +
             '</li>';
@@ -1074,11 +1226,71 @@
           '</div>';
         }
 
+        var milestoneCalloutHtml = '';
+        if (count >= 5) {
+          var currentMilestoneNum = count >= 50 ? 50 : count >= 25 ? 25 : count >= 10 ? 10 : 5;
+          var milestoneName = currentMilestoneNum === 5 ? '5th session milestone' : (currentMilestoneNum + 'th session milestone');
+          milestoneCalloutHtml = '<div class="cs-milestone-callout" data-cs-milestone="' + currentMilestoneNum + '" data-cs-milestone-treatment="true">' +
+            '<div class="cs-milestone-badge"><i data-lucide="award"></i><span>' + milestoneName + ' reached</span></div>' +
+            '<p class="cs-milestone-desc">You and David have held ' + count + ' sessions together. Visible progress adds up week by week.</p>' +
+          '</div>';
+        }
+
+        var nowEt = etParts(new Date());
+        var thisMonthCount = 0;
+        items.forEach(function (h) {
+          if (h.starts_at) {
+            var p = etParts(new Date(h.starts_at));
+            if (p.year === nowEt.year && p.month === nowEt.month) {
+              thisMonthCount++;
+            }
+          }
+        });
+
+        var oldest = items[items.length - 1];
+        var oldestParts = oldest && oldest.starts_at ? etParts(new Date(oldest.starts_at)) : null;
+        var monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+        var joinMonthLabel = oldestParts ? monthNames[Number(oldestParts.month) - 1] + ' ' + oldestParts.year : '';
+        var monthsTogether = 1;
+        if (oldest && oldest.starts_at) {
+          var diffMs = Date.now() - new Date(oldest.starts_at).getTime();
+          var daysTogether = Math.max(0, Math.floor(diffMs / 86400000));
+          monthsTogether = Math.max(1, Math.floor(daysTogether / 30));
+        }
+
+        var seenTopics = {};
+        var topicsList = [];
+        items.forEach(function (h) {
+          var t = (h.topic || '').trim();
+          if (t && !seenTopics[t.toLowerCase()]) {
+            seenTopics[t.toLowerCase()] = true;
+            topicsList.push(t);
+          }
+        });
+
+        var changeOverTimeHtml = '<div class="cs-hist-change" data-cs-change-card="true">' +
+          '<div class="cs-hist-change-stats">' +
+            '<div class="cs-stat-box"><span class="cs-stat-num">' + thisMonthCount + '</span><span class="cs-stat-lbl">' + (thisMonthCount === 1 ? 'session this month' : 'sessions this month') + '</span></div>' +
+            '<div class="cs-stat-box"><span class="cs-stat-num">' + count + '</span><span class="cs-stat-lbl">' + (count === 1 ? 'session' : 'sessions') + ' since joining' + (joinMonthLabel ? ' (' + escapeHtml(joinMonthLabel) + ')' : '') + '</span></div>' +
+            (monthsTogether > 1 ? '<div class="cs-stat-box"><span class="cs-stat-num">' + monthsTogether + '</span><span class="cs-stat-lbl">months together</span></div>' : '') +
+          '</div>' +
+          (topicsList.length > 0
+            ? '<div class="cs-hist-topics" data-cs-topics="true">' +
+                '<span class="cs-hist-topics-title">Topics brought over time:</span> ' +
+                '<div class="cs-topic-tags">' +
+                  topicsList.map(function (t) { return '<span class="cs-topic-tag">' + escapeHtml(t) + '</span>'; }).join('') +
+                '</div>' +
+              '</div>'
+            : '') +
+        '</div>';
+
         host.innerHTML =
           '<p class="cs-eyebrow">Your sessions so far</p>' +
           '<h2 style="font-family:\'Oswald\',sans-serif;font-size:1.15rem;margin:2px 0 2px">' +
             count + ' session' + (count === 1 ? '' : 's') + ' with David</h2>' +
           '<p style="color:var(--studio-muted);font-size:.82rem;margin:0 0 12px">Every week your membership includes is one of these.</p>' +
+          milestoneCalloutHtml +
+          changeOverTimeHtml +
           '<ul class="cs-hist-list">' + rows + '</ul>' +
           paginationHtml +
           toggleHtml;
@@ -1206,7 +1418,12 @@
           renderPrimary();
           renderPostSession();
           renderHistory();
+          renderBookingContinuity();
           if (el('cs-book').classList.contains('open')) { renderDays(); renderTimes(); }
+
+          if (state && state.history && state.history.length >= 50) {
+            loadPagedHistory(50);
+          }
         }).catch(function (err) {
           var errStr = String(err && (err.message || err) || '').toLowerCase();
           if (errStr.includes('ended') || errStr.includes('churned')) {
