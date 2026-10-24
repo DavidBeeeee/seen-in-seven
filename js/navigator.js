@@ -19,6 +19,7 @@
   // Reused across a retry of the same submission so a resubmit cannot duplicate
   // the move; cleared once a submission's write lands. WBR-005.
   let pendingIdempotencyKey = null;
+  const pendingCompletionKeys = new Map();
 
   // The move write and its idempotency key live in js/navigator-moves-store.mjs,
   // a module the page loads as window.NavigatorMovesStore so the logic is unit
@@ -378,17 +379,23 @@
     const moveId = button.dataset.moveId;
     if (!moveId) return;
     button.disabled = true;
+    const key = pendingCompletionKeys.get(moveId) || makeIdempotencyKey();
+    pendingCompletionKeys.set(moveId, key);
     try {
-      const { error } = await ctx.sb.from('navigator_moves')
-        .update({ status: 'completed', completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
-        .eq('id', moveId)
-        .eq('user_id', ctx.profile.id);
+      const s = store();
+      const { error } = s && s.markMoveComplete
+        ? await s.markMoveComplete(ctx.sb, moveId, key)
+        : await ctx.sb.from('navigator_moves')
+          .update({ status: 'completed', completed_at: new Date().toISOString(), updated_at: new Date().toISOString() })
+          .eq('id', moveId)
+          .eq('user_id', ctx.profile.id);
       if (error) throw error;
+      pendingCompletionKeys.delete(moveId);
       await loadMoves();
       render();
       setMessage('Marked complete. That is real progress, saved.', 'success');
     } catch (error) {
-      setMessage(error.message || 'Could not mark that complete.', 'error');
+      setMessage(error.message || 'Could not mark that complete. Your completion key is kept so a retry will not duplicate it.', 'error');
     } finally {
       button.disabled = false;
     }

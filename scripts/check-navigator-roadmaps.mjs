@@ -19,6 +19,7 @@ const check = (ok, message) => { if (!ok) failures.push(message); };
 
 // One shared table; each client sees it through its own member id (RLS).
 const table = [];
+const receipts = [];
 let seq = 0;
 
 function client(memberId) {
@@ -26,6 +27,33 @@ function client(memberId) {
     from(name) {
       if (name !== 'navigator_roadmaps') throw new Error('unexpected table ' + name);
       return query(memberId);
+    },
+    async rpc(name, args) {
+      if (name !== 'save_navigator_roadmap') throw new Error('unexpected rpc ' + name);
+      const receipt = receipts.find(r => r.user_id === memberId && r.key === args.p_idempotency_key);
+      if (receipt) return { data: table.find(r => r.id === receipt.roadmapId), error: null };
+      let current = table.find(r => r.user_id === memberId && r.is_current);
+      if (current) {
+        if (args.p_expected_version != null && args.p_expected_version !== current.version) {
+          return { data: null, error: { message: 'STALE_VERSION' } };
+        }
+        Object.assign(current, {
+          profile: args.p_profile,
+          profile_updated_at: args.p_profile_updated_at,
+          status: args.p_status,
+          version: current.version + 1,
+          updated_at: new Date().toISOString()
+        });
+      } else {
+        current = {
+          id: 'r' + (++seq), user_id: memberId, profile: args.p_profile,
+          profile_updated_at: args.p_profile_updated_at, status: args.p_status,
+          version: 1, is_current: true, archived_at: null, created_at: new Date().toISOString()
+        };
+        table.push(current);
+      }
+      receipts.push({ user_id: memberId, key: args.p_idempotency_key, roadmapId: current.id });
+      return { data: current, error: null };
     }
   };
 }

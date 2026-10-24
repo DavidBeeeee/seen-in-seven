@@ -62,6 +62,16 @@ export async function saveMove(sb, row) {
   });
 }
 
+// The server locks the caller's own move and returns an already-completed row
+// unchanged. A double tap therefore writes one completion and one trail row.
+export async function markMoveComplete(sb, moveId, idempotencyKey) {
+  const { data, error } = await sb.rpc('complete_navigator_move', {
+    p_move_id: moveId,
+    p_idempotency_key: idempotencyKey || newIdempotencyKey()
+  });
+  return { data: data || null, error: error || null };
+}
+
 if (typeof window !== 'undefined') {
-  window.NavigatorMovesStore = { newIdempotencyKey, buildMoveRow, saveMove };
+  window.NavigatorMovesStore = { newIdempotencyKey, buildMoveRow, saveMove, markMoveComplete };
 }

@@ -78,6 +78,7 @@
                     <button class="secondary-button nav-subtab-btn" type="button" onclick="showRoadmap()"><i data-lucide="map"></i><span>Roadmap</span></button>
                     <button class="secondary-button nav-subtab-btn" type="button" onclick="showScreen('screen-nextmove')"><i data-lucide="play"></i><span>Next Move</span></button>
                     <button class="secondary-button nav-subtab-btn" type="button" onclick="showScreen('screen-assets')"><i data-lucide="user"></i><span>Profile</span></button>
+                    <button class="secondary-button nav-subtab-btn" type="button" onclick="showScreen('screen-settings')"><i data-lucide="settings"></i><span>Settings &amp; data</span></button>
                 </nav>
 
         <!-- WIZARD -->
@@ -308,6 +309,33 @@
                 </div>
 
                 <div id="navigator-history" class="nav-history"></div>
+            </div>
+        </div>
+
+        <!-- SETTINGS / MEMBER DATA CONTROL. WBR-459. -->
+        <div class="screen" id="screen-settings">
+            <div class="wizard-card assets-card">
+                <div class="tagline">Settings &amp; data</div>
+                <h2 class="assets-heading">Your Navigator data is yours</h2>
+                <p class="desc">See what Navigator keeps, take a copy with you, or erase it. You do not need to ask anyone to do this for you.</p>
+                <div class="roadmap-intro-box">
+                    <strong>What is saved, and where</strong>
+                    <ul>
+                        <li>Your current and past roadmaps live in your Navigator account: your name, topic, audit answers, progress, daily wins and business profile.</li>
+                        <li>Your Next Moves live in your Navigator account: what you asked for, the action, and whether it is open, finished or let go.</li>
+                        <li>A small amount of Navigator app state lives in your account. A working copy of your current roadmap also stays in this browser so a connection failure does not take your work away.</li>
+                    </ul>
+                    <p id="navigator-data-summary" role="status">Your saved data will be counted when this page opens.</p>
+                </div>
+                <div class="assets-action-row">
+                    <button class="btn-secondary" id="navigator-download-data" type="button" onclick="downloadNavigatorData()">Download my data (JSON)</button>
+                </div>
+                <div class="reset-audit-wrap">
+                    <h3>Erase my Navigator data</h3>
+                    <p>This permanently removes your current and past roadmaps, every Next Move, Navigator app state from your account, and the working copy in this browser. It does not touch your Studio membership or any other app. Download a copy first if you want one.</p>
+                    <button class="btn-tiny-reset" id="navigator-erase-data" type="button" onclick="eraseMyNavigatorData()">Erase my Navigator data</button>
+                </div>
+                <p id="navigator-settings-message" class="eee-message" role="status" aria-live="polite"></p>
             </div>
         </div>
 
@@ -600,12 +628,17 @@
             updateLastUpdated();
         }
 
-        // WBR-373: the roadmap is saved to the member's account (navigator_roadmaps),
-        // with localStorage as the offline fallback. js/navigator-roadmap-store.mjs.
+        // WBR-373 / WBR-459: account saves are versioned and keyed; localStorage
+        // remains the member's working copy through a failed connection.
         let roadmapCtx = null;
+        let roadmapRow = null;
         let roadmapAccountLoaded = false;
         let roadmapSyncTimer = null;
         let roadmapSyncFailed = false;
+        let roadmapSaveKey = null;
+        let roadmapSyncPromise = null;
+        let roadmapSyncQueued = false;
+        let roadmapErased = false;
 
         function roadmapStore() {
             if (window.NavigatorRoadmapStore) return Promise.resolve(window.NavigatorRoadmapStore);
@@ -628,24 +661,97 @@
             const store = window.NavigatorRoadmapStore;
             const when = userProfile.updatedAt && store ? store.formatUpdated(userProfile.updatedAt) : '';
             if (!when) { el.hidden = true; return; }
-            el.textContent = roadmapCtx && !roadmapSyncFailed
-                ? 'Last updated ' + when + '. Your plan is saved to your account, so it follows you to any device.'
+            el.textContent = roadmapCtx
+                ? (roadmapSyncFailed
+                    ? 'Last updated ' + when + '. Saved on this device only, will sync. Your work is still here.'
+                    : 'Last updated ' + when + '. Your plan is saved to your account, so it follows you to any device.')
                 : 'Last updated ' + when + '. Saved on this device; it will copy to your account when you are signed in and online.';
             el.hidden = false;
         }
 
+        function newRoadmapSaveKey() {
+            if (window.NavigatorMovesStore) return window.NavigatorMovesStore.newIdempotencyKey();
+            return window.crypto.randomUUID();
+        }
+
+        function currentRoadmapStatus() {
+            const evaluation = roadmapEvaluation();
+            return evaluation && evaluation.isComplete ? 'complete' : 'in_progress';
+        }
+
         function scheduleRoadmapSync() {
-            if (!roadmapCtx) return;
+            if (!roadmapCtx || roadmapErased) return;
+            if (!roadmapSaveKey) roadmapSaveKey = newRoadmapSaveKey();
             clearTimeout(roadmapSyncTimer);
             roadmapSyncTimer = setTimeout(syncRoadmapNow, 800);
         }
+        window.addEventListener('online', () => {
+            if (roadmapSyncFailed) scheduleRoadmapSync();
+        });
+
+        async function handleStaleRoadmap(snapshot, store) {
+            // Keep the older screen's work as a separate local backup, then show
+            // the newer account copy instead of letting the old screen overwrite it.
+            try { localStorage.setItem(STORAGE_KEY + '_older_screen_backup', JSON.stringify(snapshot)); } catch (e) {}
+            const { row, error } = await store.loadCurrent(roadmapCtx.sb, roadmapCtx.profile.id);
+            if (error || !row) {
+                roadmapSyncFailed = true;
+                setSyncNote('A newer copy was saved on another screen, but it could not be loaded just now. This screen’s copy is still saved on this device.');
+                updateLastUpdated();
+                return;
+            }
+            roadmapRow = row;
+            roadmapSaveKey = null;
+            roadmapSyncFailed = false;
+            userProfile = row.profile;
+            roadmapAccountLoaded = true;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(userProfile));
+            showResume();
+            setSyncNote('A newer copy was saved on another screen. I loaded it here and kept this screen’s older copy on this device.');
+            updateLastUpdated();
+            renderPastVersions();
+        }
 
         async function syncRoadmapNow() {
-            const store = await roadmapStore();
-            if (!store || !roadmapCtx || !userProfile.name) return;
-            const { error } = await store.saveCurrent(roadmapCtx.sb, roadmapCtx.profile.id, userProfile);
-            roadmapSyncFailed = !!error;
-            updateLastUpdated();
+            if (roadmapErased) return;
+            if (roadmapSyncPromise) {
+                roadmapSyncQueued = true;
+                return roadmapSyncPromise;
+            }
+            roadmapSyncPromise = (async () => {
+                const store = await roadmapStore();
+                if (roadmapErased || !store || !roadmapCtx || !userProfile.name) return;
+                if (!roadmapSaveKey) roadmapSaveKey = newRoadmapSaveKey();
+                const snapshot = JSON.parse(JSON.stringify(userProfile));
+                const key = roadmapSaveKey;
+                const result = await store.saveCurrentWithRetry(roadmapCtx.sb, roadmapCtx.profile.id, snapshot, {
+                    expectedVersion: roadmapRow ? roadmapRow.version : null,
+                    idempotencyKey: key,
+                    status: currentRoadmapStatus()
+                });
+                if (result.error && store.isStaleVersion(result.error)) {
+                    await handleStaleRoadmap(snapshot, store);
+                    return;
+                }
+                roadmapSyncFailed = !!result.error;
+                if (result.error) {
+                    setSyncNote('Saved on this device only, will sync. We tried again, but your account could not be reached. Your work is still here.');
+                } else {
+                    roadmapRow = result.row;
+                    if (roadmapSaveKey === key) roadmapSaveKey = null;
+                    setSyncNote('Saved to your account. Your roadmap follows you to any device.');
+                    if (userProfile.updatedAt !== snapshot.updatedAt) roadmapSyncQueued = true;
+                }
+                updateLastUpdated();
+            })();
+            try { await roadmapSyncPromise; }
+            finally {
+                roadmapSyncPromise = null;
+                if (roadmapSyncQueued) {
+                    roadmapSyncQueued = false;
+                    scheduleRoadmapSync();
+                }
+            }
         }
 
         async function mountRoadmapSync(context) {
@@ -660,6 +766,7 @@
                 updateLastUpdated();
                 return;
             }
+            roadmapRow = row;
             const choice = store.chooseNewer(local, row);
             if (choice.profile) {
                 userProfile = choice.profile;
@@ -704,10 +811,20 @@
             const store = window.NavigatorRoadmapStore;
             if (!store || !roadmapCtx) return;
             if (userProfile.name && !confirm('Bring back your previous roadmap? The one you have now is kept as a past version.')) return;
-            if (userProfile.name) await store.archiveCurrent(roadmapCtx.sb, roadmapCtx.profile.id);
+            if (userProfile.name) {
+                await syncRoadmapNow();
+                if (roadmapSyncFailed) { setSyncNote('Your current roadmap is still only on this device. Nothing was replaced; try again when your account is reachable.'); return; }
+                const archived = await store.archiveCurrent(roadmapCtx.sb, roadmapCtx.profile.id, { expectedVersion: roadmapRow && roadmapRow.version });
+                if (archived.error) { setSyncNote('Your current roadmap was not replaced. Please reload and try again.'); return; }
+            }
+            roadmapRow = null;
+            roadmapSaveKey = null;
             userProfile = Object.assign({}, version.profile, { updatedAt: new Date().toISOString() });
             localStorage.setItem(STORAGE_KEY, JSON.stringify(userProfile));
-            await store.saveCurrent(roadmapCtx.sb, roadmapCtx.profile.id, userProfile);
+            const saved = await store.saveCurrentWithRetry(roadmapCtx.sb, roadmapCtx.profile.id, userProfile, {
+                expectedVersion: null, idempotencyKey: newRoadmapSaveKey(), status: 'in_progress'
+            });
+            if (saved.error) { roadmapSyncFailed = true; updateLastUpdated(); setSyncNote('Saved on this device only, will sync. Your past roadmaps are still in your account.'); return; }
             location.reload();
         }
 
@@ -1354,6 +1471,7 @@
         function saveData() {
             userProfile.updatedAt = new Date().toISOString();
             localStorage.setItem(STORAGE_KEY, JSON.stringify(userProfile));
+            roadmapSaveKey = newRoadmapSaveKey();
             updateLastUpdated();
             scheduleRoadmapSync();
         }
@@ -1362,6 +1480,7 @@
             document.getElementById(id).classList.add('active');
             if (id === 'screen-audit') renderAudit(); // Added for the new screen
             if (id === 'screen-assets') renderProfile();
+            if (id === 'screen-settings') refreshNavigatorSettings();
             window.scrollTo(0, 0);
         } function copyText(id) { const el = document.getElementById(id); if (!el) return; navigator.clipboard.writeText(el.textContent).then(() => { const b = event.target; b.innerText = "COPIED"; setTimeout(() => b.innerText = "COPY", 2000); }); }
         function showTooltip(e, text) { if (window.innerWidth < 768) return; tooltip.textContent = text; tooltip.style.display = 'block'; tooltip.style.left = (e.pageX + 10) + 'px'; tooltip.style.top = (e.pageY + 10) + 'px'; }
@@ -1487,14 +1606,82 @@
         }
         window.openNavigatorOverTime = openNavigatorOverTime;
         window.closeNavigatorOverTime = closeNavigatorOverTime;
+        let navigatorDataCache = null;
+        function settingsMessage(text, kind) {
+            const node = document.getElementById('navigator-settings-message');
+            if (node) { node.textContent = text || ''; node.className = 'eee-message' + (kind ? ' ' + kind : ''); }
+        }
+
+        async function refreshNavigatorSettings() {
+            const store = window.NavigatorRoadmapStore;
+            if (!store || !roadmapCtx) { settingsMessage('Sign in to see and control the data in your Navigator account.', 'error'); return; }
+            const summary = document.getElementById('navigator-data-summary');
+            if (summary) summary.textContent = 'Counting your saved Navigator data...';
+            const result = await store.exportNavigatorData(roadmapCtx.sb, roadmapCtx.profile.id);
+            if (result.error) { settingsMessage('Your data could not be counted just now. Nothing was changed.', 'error'); return; }
+            navigatorDataCache = result.data;
+            const past = result.data.roadmaps.filter(r => !r.is_current).length;
+            if (summary) summary.textContent = 'In your account: ' + result.data.roadmaps.length + ' roadmap' + (result.data.roadmaps.length === 1 ? '' : 's') +
+                ' (' + past + ' past), ' + result.data.moves.length + ' Next Move' + (result.data.moves.length === 1 ? '' : 's') +
+                ', and ' + result.data.states.length + ' app state record' + (result.data.states.length === 1 ? '' : 's') + '. This browser also has ' + (readLocalProfile() ? 'a working roadmap copy.' : 'no working roadmap copy.');
+            settingsMessage('');
+        }
+
+        async function downloadNavigatorData() {
+            if (!navigatorDataCache) await refreshNavigatorSettings();
+            if (!navigatorDataCache) return;
+            const payload = Object.assign({}, navigatorDataCache, { deviceWorkingCopy: readLocalProfile() });
+            const blob = new Blob([JSON.stringify(payload, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = 'next-step-navigator-data-' + new Date().toISOString().slice(0, 10) + '.json';
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(url);
+            settingsMessage('Downloaded. That file includes your account data and this browser’s working copy.', 'success');
+        }
+
+        async function eraseMyNavigatorData() {
+            const store = window.NavigatorRoadmapStore;
+            if (!store || !roadmapCtx) return;
+            if (!confirm('Permanently erase every current and past Navigator roadmap, every Next Move, and Navigator app state from your account, plus the working copy in this browser? This cannot be undone. Your Studio membership and other apps are not affected.')) return;
+            const button = document.getElementById('navigator-erase-data');
+            if (button) button.disabled = true;
+            roadmapErased = true;
+            clearTimeout(roadmapSyncTimer);
+            // Let an already-started save settle before the delete; queued saves
+            // are blocked by roadmapErased so nothing is recreated afterwards.
+            if (roadmapSyncPromise) await roadmapSyncPromise;
+            const result = await store.eraseNavigatorData(roadmapCtx.sb);
+            if (result.error) {
+                roadmapErased = false;
+                settingsMessage('Nothing was erased. Your account could not complete the request; please try again.', 'error');
+                if (button) button.disabled = false;
+                return;
+            }
+            clearTimeout(roadmapSyncTimer);
+            localStorage.removeItem(STORAGE_KEY);
+            localStorage.removeItem(STORAGE_KEY + '_older_screen_backup');
+            roadmapRow = null;
+            roadmapSaveKey = null;
+            navigatorDataCache = null;
+            location.reload();
+        }
+
         // Start Fresh keeps the current roadmap as a past version in the account.
         async function resetApp() {
             const store = window.NavigatorRoadmapStore;
             clearTimeout(roadmapSyncTimer);
             if (store && roadmapCtx) {
-                if (userProfile.name) await store.saveCurrent(roadmapCtx.sb, roadmapCtx.profile.id, userProfile);
-                await store.archiveCurrent(roadmapCtx.sb, roadmapCtx.profile.id);
+                if (userProfile.name) await syncRoadmapNow();
+                if (roadmapSyncFailed) { setSyncNote('Your roadmap is still saved on this device. Nothing was cleared; try again when your account is reachable.'); return; }
+                const archived = await store.archiveCurrent(roadmapCtx.sb, roadmapCtx.profile.id, { expectedVersion: roadmapRow && roadmapRow.version });
+                if (archived.error) { setSyncNote('Your roadmap was not cleared. Please reload to get the newest account copy, then try again.'); return; }
             }
+            roadmapRow = null;
+            roadmapSaveKey = null;
             localStorage.removeItem(STORAGE_KEY);
             location.reload();
         }
@@ -1969,8 +2156,8 @@
     <script src="/js/eee-common.js?v=per-app-access-v1"></script>
     <!-- The idempotent move write, loaded as a module so it is unit-testable under
          node; it hangs window.NavigatorMovesStore before mount() runs. WBR-005. -->
-    <script type="module" src="/js/navigator-moves-store.mjs?v=wbr005-1"></script>
-    <script type="module" src="/js/navigator-roadmap-store.mjs?v=wbr373-1"></script>
+    <script type="module" src="/js/navigator-moves-store.mjs?v=wbr459-1"></script>
+    <script type="module" src="/js/navigator-roadmap-store.mjs?v=wbr459-1"></script>
     <script type="module" src="/js/navigator-milestones.mjs?v=wo1018-1"></script>
     <script type="module" src="/js/navigator-history.mjs?v=wo1018-1"></script>
     <script src="/js/navigator.js?v=token-refresh-v1"></script>
