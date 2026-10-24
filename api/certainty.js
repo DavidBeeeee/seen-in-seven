@@ -545,6 +545,26 @@ export default async function handler(req, res) {
       });
     }
 
+    // Paged session history (WBR-458, UX 71, 72). The state read above still
+    // returns its first fifty rows unchanged; this pages past them and gives
+    // the true total. offset defaults to 0, limit to 50 (at most 100).
+    if (action === 'history') {
+      const offset = Math.max(0, Math.floor(Number(req.body && req.body.offset) || 0));
+      const limit = Math.min(100, Math.max(1, Math.floor(Number(req.body && req.body.limit) || 50)));
+      const result = await rpc('certainty_history', { p_offset: offset, p_limit: limit }, userToken);
+      if (!result.ok) {
+        await recordEvent(userToken, 'certainty_history', {
+          schema: 1, outcome: 'error', code: resultCode(result), offset, limit, latencyMs: Date.now() - startedAt
+        }, correlationId);
+        return fail(res, result, correlationId);
+      }
+      const page = result.data || {};
+      await recordEvent(userToken, 'certainty_history', {
+        schema: 1, outcome: 'ok', offset, limit, total: Number(page.total || 0), latencyMs: Date.now() - startedAt
+      }, correlationId);
+      return json(res, 200, { ...page, correlationId });
+    }
+
     if (action === 'settings') {
       const settingsRes = await rpc('certainty_get_settings', {}, userToken);
       if (!settingsRes.ok) {

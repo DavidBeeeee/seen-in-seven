@@ -55,11 +55,40 @@ function sendJson(res, status, body) {
 // CRON_SECRET as a bearer token; a request without it is refused so the endpoint
 // is not a public send button. If CRON_SECRET is not configured the endpoint
 // fails closed rather than running wide open.
-function authorized(req) {
+function cronAuthorized(req) {
   const secret = process.env.CRON_SECRET || '';
   if (!secret) return false;
   const header = String(req.headers.authorization || '');
   return header === 'Bearer ' + secret;
+}
+
+// The hourly tick (WBR-458, Developer 84). Vercel Hobby runs the cron above at
+// most once a day, so pg_cron calls this job every hour carrying a single-use
+// nonce the database minted a moment earlier. The job consumes it with the
+// service key; it is accepted once and only within ten minutes, so the header
+// is no standing credential and no secret was copied into the database.
+const TICK_HEADER = 'x-certainty-tick';
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export function tickNonce(req) {
+  const value = String((req.headers && req.headers[TICK_HEADER]) || '').trim();
+  return UUID_RE.test(value) ? value : null;
+}
+
+// A run is missed when the last heartbeat is older than this. The daily cron
+// alone would leave 24 hours between runs; 26 gives it two hours of slack.
+export const MISSED_AFTER_HOURS = 26;
+
+// What David reads when a run was missed. Pure, so the check can exercise it.
+export function missedRunAlert(run) {
+  if (!run || !run.missed) return null;
+  const last = run.previousRanAt ? new Date(run.previousRanAt).toISOString().replace('T', ' ').slice(0, 16) + ' UTC' : 'unknown';
+  const line = 'Reminder job gap: the last run before this one was ' + run.gapHours + ' hours ago (' + last + '), past the ' + (run.thresholdHours || MISSED_AFTER_HOURS) + '-hour limit. Reminders due in that gap may not have gone out.';
+  return {
+    line,
+    subject: 'Certainty reminders: a run was missed',
+    text: [line, '', 'Check the Vercel cron for /api/certainty-reminders and the hourly pg_cron job certainty-reminders-hourly.'].join('\n')
+  };
 }
 
 async function rpc(name, args) {
@@ -134,7 +163,7 @@ export function memberMessage(item) {
 // he sees what is coming without opening the operator view.
 // Flagged sessions lead, labelled, and say that no automated reminder went to
 // the member, so David knows the reach-out is his.
-export function operatorMessage(items) {
+export function operatorMessage(items, alert = null) {
   const ordered = items.slice().sort((a, b) => Number(Boolean(b.safety_flag)) - Number(Boolean(a.safety_flag)));
   const lines = ordered.map((it) => {
     const who = it.member_name ? it.member_name + ' (' + it.member_email + ')' : it.member_email;
@@ -145,7 +174,7 @@ export function operatorMessage(items) {
   });
   return {
     subject: 'Certainty sessions coming up (' + items.length + ')',
-    text: ['Upcoming Certainty sessions just reminded:', '', ...lines].join('\n')
+    text: [...(alert ? [alert.line, ''] : []), 'Upcoming Certainty sessions just reminded:', '', ...lines].join('\n')
   };
 }
 
@@ -164,7 +193,8 @@ export default async function handler(req, res) {
   if (req.method !== 'GET' && req.method !== 'POST') {
     return sendJson(res, 405, { error: 'Method not allowed.' });
   }
-  if (!authorized(req)) {
+  const nonce = cronAuthorized(req) ? null : tickNonce(req);
+  if (!cronAuthorized(req) && !nonce) {
     // No DB event here: with no member and possibly no service key, there is
     // nothing to attribute an event to. Fail closed and say why in the response
     // and the function log.
@@ -176,11 +206,37 @@ export default async function handler(req, res) {
     console.error('certainty-reminders: service key not configured');
     return sendJson(res, 503, { ok: false, error: 'service-key-not-configured' });
   }
+  if (nonce) {
+    const consumed = await rpc('certainty_consume_tick', { p_nonce: nonce });
+    if (!consumed.ok || consumed.data !== true) {
+      console.error('certainty-reminders refused: tick-not-accepted', consumed.status);
+      return sendJson(res, 401, { ok: false, error: 'tick-not-accepted' });
+    }
+  }
+  const trigger = nonce ? 'hourly-tick' : (req.query && req.query.trigger === 'manual' ? 'manual' : 'vercel-cron');
+
+  // The heartbeat comes first, before any query that could fail, so a run that
+  // happened is always on record and the gap to the previous one is known.
+  const channel = channelState();
+  const beat = await rpc('certainty_record_reminder_run', {
+    p_trigger: trigger,
+    p_detail: { channel: channel.name },
+    p_missed_after_hours: MISSED_AFTER_HOURS
+  });
+  const run = beat.ok && beat.data ? beat.data : null;
+  if (!run) console.error('certainty-reminders: heartbeat write failed', beat.status);
+  const alert = missedRunAlert(run);
+  if (alert) console.error('certainty-reminders: missed run', JSON.stringify({ gapHours: run.gapHours, previousRanAt: run.previousRanAt }));
+
+  const finishRun = async (detail, alertOutcome) => {
+    if (run && run.id) await rpc('certainty_finish_reminder_run', { p_id: run.id, p_detail: detail, p_alert_outcome: alertOutcome });
+  };
 
   const now = new Date().toISOString();
   const due = await rpc('certainty_due_reminders', { p_now: now });
   if (!due.ok) {
     console.error('certainty-reminders: due query failed', due.status, due.data);
+    await finishRun({ outcome: 'due-query-failed', status: due.status }, alert ? 'held' : null);
     return sendJson(res, 502, { ok: false, error: 'due-query-failed', status: due.status });
   }
   const items = Array.isArray(due.data) ? due.data : [];
@@ -188,7 +244,6 @@ export default async function handler(req, res) {
   // Claim each due reminder first, so an overlapping run cannot also send it.
   const claimed = [];
   for (const item of items) {
-    const channel = channelState();
     const claim = await rpc('certainty_claim_reminder', {
       p_session_id: item.session_id,
       p_lead_window: item.lead_window,
@@ -197,18 +252,14 @@ export default async function handler(req, res) {
     if (claim.ok && claim.data === true) claimed.push(item);
   }
 
-  if (!claimed.length) {
-    return sendJson(res, 200, { ok: true, due: items.length, claimed: 0, sent: 0, held: 0, failed: 0 });
-  }
-
-  const channel = channelState();
-
-  // David's digest once per run, covering the sessions reminded this run. Its
-  // outcome is recorded on each session's reminder row as the operator side.
+  // David's digest once per run, covering the sessions reminded this run, led
+  // by the missed-run alert when there is one. With nothing to remind, a missed
+  // run still reaches him on its own. The digest outcome is recorded on each
+  // session's reminder row as the operator side.
   let operatorOutcome = 'held';
-  if (channel.active && OPERATOR_EMAIL) {
+  if ((claimed.length || alert) && channel.active && OPERATOR_EMAIL) {
     try {
-      const msg = operatorMessage(claimed);
+      const msg = claimed.length ? operatorMessage(claimed, alert) : alert;
       await sendEmail({ to: OPERATOR_EMAIL, subject: msg.subject, text: msg.text });
       operatorOutcome = 'sent';
     } catch (error) {
@@ -216,6 +267,7 @@ export default async function handler(req, res) {
       operatorOutcome = 'failed';
     }
   }
+  const alertOutcome = alert ? operatorOutcome : null;
 
   const counts = { sent: 0, held: 0, failed: 0, safetyHeld: 0 };
   for (const item of claimed) {
@@ -243,13 +295,17 @@ export default async function handler(req, res) {
     if (plan.holdReason) counts.safetyHeld = (counts.safetyHeld || 0) + 1;
   }
 
-  return sendJson(res, 200, {
+  const summary = {
     ok: true,
+    trigger,
     channel: channel.name,
     channelReason: channel.reason,
     due: items.length,
     claimed: claimed.length,
     ...counts,
-    operatorOutcome
-  });
+    operatorOutcome: claimed.length || alert ? operatorOutcome : null,
+    heartbeat: run ? { gapHours: run.gapHours, missed: run.missed, alertOutcome } : null
+  };
+  await finishRun({ outcome: 'ok', due: items.length, claimed: claimed.length, ...counts }, alertOutcome);
+  return sendJson(res, 200, summary);
 }
