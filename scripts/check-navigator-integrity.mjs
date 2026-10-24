@@ -291,6 +291,26 @@ const profile = (name, niche, updatedAt) => ({
   assert.equal(db.states.length, 1, 'the other member state is untouched');
 }
 
+// A server commit followed by a lost response reuses the auto-generated key.
+{
+  const db = database();
+  const sb = client(db, A);
+  const rpc = sb.rpc.bind(sb);
+  const keys = [];
+  sb.rpc = async (name, args) => {
+    keys.push(args.p_idempotency_key);
+    const saved = await rpc(name, args);
+    if (keys.length === 1) throw new Error('response lost after commit');
+    return saved;
+  };
+  const saved = await saveCurrentWithRetry(sb, A, profile('Ana', 'Offline', '2026-10-24T19:00:00Z'), { sleep: async () => {} });
+  assert.equal(saved.error, null);
+  assert.equal(saved.attempts, 2);
+  assert.equal(keys[0], keys[1]);
+  assert.equal(db.receipts.length, 1);
+  assert.equal(db.roadmaps[0].version, 1);
+}
+
 // The page carries the recovery and member-control behavior, not only the store.
 {
   const page = readFileSync(new URL('../api/_hub/navigator.html', import.meta.url), 'utf8');

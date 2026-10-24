@@ -1,4 +1,5 @@
 import { randomUUID } from 'node:crypto';
+import { readReminderHeartbeat } from './_lib/reminder-heartbeat.js';
 import { consumeQuota, json } from './_lib/security.js';
 import { detectCrisis } from './_lib/navigator-core.js';
 
@@ -444,6 +445,11 @@ function fail(res, result, correlationId = null) {
 }
 
 export default async function handler(req, res) {
+  if (req.method === 'GET' && req.query?.action === 'heartbeat') {
+    res.setHeader('Cache-Control', 'no-store');
+    try { return json(res, 200, await readReminderHeartbeat()); }
+    catch { return json(res, 503, { ageHours: null }); }
+  }
   if (req.method !== 'POST') return json(res, 405, { error: 'Method not allowed.' });
 
   // Request correlation id (Developer 22, 25, 72, 76, 80, 100)

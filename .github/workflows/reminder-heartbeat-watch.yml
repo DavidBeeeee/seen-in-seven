@@ -1,0 +1,21 @@
+name: Reminder heartbeat watch
+on:
+  schedule:
+    - cron: '17 */3 * * *'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  watch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 2
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
+        with:
+          persist-credentials: false
+      - name: Check heartbeat outside the reminder job
+        env:
+          # Hourly pg_cron tick is live. Set to 26 only for a deliberate
+          # daily vercel-cron configuration, never to hide a failed hourly tick.
+          REMINDER_MAX_HOURS: ${{ vars.REMINDER_MAX_HOURS || '3' }}
+        run: node scripts/reminder-heartbeat-watch.mjs

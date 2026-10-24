@@ -50,6 +50,9 @@ export async function saveCurrent(sb, profileId, profile, options = {}) {
 }
 
 export async function saveCurrentWithRetry(sb, profileId, profile, options = {}) {
+  // Mint once even when the caller did not supply a key. A lost successful
+  // response must not turn the retry into a second logical save.
+  options = { ...options, idempotencyKey: options.idempotencyKey || newIdempotencyKey() };
   const wait = options.sleep || sleep;
   const delay = Number.isInteger(options.retryDelayMs) ? options.retryDelayMs : 400;
   let result;

@@ -1,0 +1,34 @@
+import assert from 'node:assert/strict';
+import { heartbeatAge, readReminderHeartbeat } from '../api/_lib/reminder-heartbeat.js';
+import { assessHeartbeat, watchHeartbeat } from './reminder-heartbeat-watch.mjs';
+import handler from '../api/certainty.js';
+
+assert.throws(() => assessHeartbeat({ ageHours: 30 }), /stale/);
+assert.throws(() => assessHeartbeat({ ageHours: 30 }, 26), /stale/);
+assert.equal(typeof assessHeartbeat({ ageHours: 2.9 }), 'string');
+assert.equal(typeof assessHeartbeat({ ageHours: 25 }, 26), 'string');
+for (const value of [null, undefined, '1', -1, Infinity]) assert.throws(() => assessHeartbeat({ ageHours: value }));
+assert.throws(() => assessHeartbeat({ ageHours: 1 }, 100));
+assert.equal(heartbeatAge([]), null);
+const now = Date.parse('2026-10-24T19:00:00Z');
+assert.equal(heartbeatAge([{ ran_at: '2026-10-24T18:00:00Z' }], now), 1);
+assert.equal(heartbeatAge([{ ran_at: '2026-10-25T18:00:00Z' }], now), null);
+const oldKey = process.env.SUPABASE_SECRET_KEY;
+process.env.SUPABASE_SECRET_KEY = 'fixture-not-a-secret';
+const oldFetch = globalThis.fetch;
+const calls = [];
+globalThis.fetch = async (url, init) => {
+  calls.push({ url, init });
+  return { ok: true, json: async () => [{ ran_at: new Date(Date.now() - 3600000).toISOString(), member_email: 'must-not-leak' }] };
+};
+assert.deepEqual(Object.keys(await readReminderHeartbeat()), ['ageHours']);
+const res = { headers: {}, setHeader(k, v) { this.headers[k] = v; }, status(code) { this.statusCode = code; return this; }, json(body) { this.body = body; return this; } };
+await handler({ method: 'GET', query: { action: 'heartbeat' }, headers: {} }, res);
+assert.equal(res.statusCode, 200);
+assert.deepEqual(Object.keys(res.body), ['ageHours']);
+assert.equal(res.headers['Cache-Control'], 'no-store');
+assert.ok(calls.every(c => /select=ran_at&order=ran_at.desc&limit=1$/.test(c.url) && !c.init.method));
+globalThis.fetch = oldFetch;
+if (oldKey === undefined) delete process.env.SUPABASE_SECRET_KEY; else process.env.SUPABASE_SECRET_KEY = oldKey;
+await assert.rejects(watchHeartbeat('https://fixture.invalid', 3, async () => ({ ok: false, status: 503 })), /503/);
+console.log('PASS reminder-heartbeat-watch: 30-hour fixture fails; hourly/daily limits; null/future/HTTP failure; GET returns only uncached age; no writes.');
