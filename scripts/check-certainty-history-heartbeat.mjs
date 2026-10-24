@@ -17,7 +17,7 @@ process.env.CERTAINTY_REMINDER_FROM = 'Certainty <reminders@example.invalid>';
 process.env.CERTAINTY_OPERATOR_EMAIL = 'operator@example.invalid';
 
 const mod = await import('../api/certainty-reminders.js');
-const { default: handler, missedRunAlert, tickNonce, operatorMessage, MISSED_AFTER_HOURS } = mod;
+const { default: handler, missedRunAlert, tickNonce, operatorMessage, hourlyTickQuiet, MISSED_AFTER_HOURS } = mod;
 
 const failures = [];
 const check = (ok, message) => { if (!ok) failures.push(message); };
@@ -41,8 +41,9 @@ function harness({ run, due = [], consume = true }) {
     const body = init && init.body ? JSON.parse(init.body) : null;
     calls.push({ url: String(url), body });
     const name = String(url).split('/rpc/')[1];
-    const reply = (data) => ({ ok: true, status: 200, text: async () => JSON.stringify(data) });
+    const reply = (data) => ({ ok: true, status: 200, text: async () => JSON.stringify(data), json: async () => data });
     if (String(url).includes('api.resend.com')) return reply({ id: 'email' });
+    if (String(url).includes('/rest/v1/logs')) return reply([]);
     if (name === 'certainty_consume_tick') return reply(consume);
     if (name === 'certainty_record_reminder_run') return reply(run);
     if (name === 'certainty_due_reminders') return reply(due);
@@ -59,13 +60,22 @@ async function invoke(headers, query = {}) {
 const rpcNames = (calls) => calls.filter(c => c.url.includes('/rpc/')).map(c => c.url.split('/rpc/')[1]);
 
 // 1. Daily cron, nothing due, no gap: heartbeat written first, no email.
-let calls = harness({ run: { id: 'r1', missed: false, gapHours: 1 } });
+const recentTick = new Date(Date.now() - 30 * 60000).toISOString();
+let calls = harness({ run: { id: 'r1', missed: false, gapHours: 1, previousHourlyAt: recentTick } });
 let res = await invoke({ authorization: 'Bearer test-cron-secret' });
 check(res.statusCode === 200 && res.body.trigger === 'vercel-cron', 'daily cron run succeeds as vercel-cron');
 check(rpcNames(calls)[0] === 'certainty_record_reminder_run', 'the heartbeat is the first write of every run');
 check(calls.find(c => c.url.includes('certainty_record_reminder_run')).body.p_missed_after_hours === 26, 'heartbeat carries the 26-hour threshold');
 check(rpcNames(calls).includes('certainty_finish_reminder_run'), 'the run records its counts when it finishes');
 check(!calls.some(c => c.url.includes('resend')), 'no email when nothing is due and no run was missed');
+check(!calls.some(c => c.url.includes('/rest/v1/logs')), 'the daily run leaves the StorySculpt check to the hourly tick');
+
+// 1b. Daily cron finds the hourly tick quiet for over three hours: David hears.
+calls = harness({ run: { id: 'r1b', missed: false, gapHours: 23, previousHourlyAt: new Date(Date.now() - 5 * 3600000).toISOString() } });
+res = await invoke({ authorization: 'Bearer test-cron-secret' });
+const quiet = calls.filter(c => c.url.includes('resend'));
+check(quiet.length === 1 && /hourly run stopped/.test(quiet[0].body.subject), 'a stopped hourly tick emails David from the daily run');
+check(hourlyTickQuiet({ previousHourlyAt: recentTick }, 'vercel-cron') === false && hourlyTickQuiet({ previousHourlyAt: null }, 'hourly-tick') === false, 'only the daily run judges the hourly tick, and a recent tick is not quiet');
 
 // 2. A 27-hour gap with nothing due: David still gets the alert.
 calls = harness({ run: { id: 'r2', missed: true, gapHours: 27, previousRanAt: '2026-10-22T12:00:00Z', thresholdHours: 26 } });
@@ -80,6 +90,7 @@ check(finish && finish.body.p_alert_outcome === 'sent', 'the alert outcome is wr
 calls = harness({ run: { id: 'r3', missed: false, gapHours: 1 } });
 res = await invoke({ 'x-certainty-tick': nonce });
 check(res.statusCode === 200 && res.body.trigger === 'hourly-tick', 'a valid tick runs the job as hourly-tick');
+check(calls.some(c => c.url.includes('/rest/v1/logs?select=event_type')) && res.body.storysculpt && res.body.storysculpt.level === 'ok', 'the hourly tick runs the StorySculpt incident check');
 check(rpcNames(calls)[0] === 'certainty_consume_tick' && calls[0].body.p_nonce === nonce, 'the tick nonce is consumed before the run');
 
 // 4. Replayed or forged tick: refused, nothing recorded, nothing sent.

@@ -535,7 +535,7 @@ async function updateProjectUgcResearch(token, projectId, currentIntake, researc
   });
 }
 
-export async function handleResearchRequest(req, res, { token, user } = {}) {
+export async function handleResearchRequest(req, res, { token, user, onFailure = null } = {}) {
   const activeToken = token || bearerToken(req);
   const activeUser = user || (await authenticatedUser(req));
   if (!activeUser) return json(res, 401, { error: 'Sign in to research products.' });
@@ -584,6 +584,9 @@ export async function handleResearchRequest(req, res, { token, user } = {}) {
       research
     });
   } catch (error) {
+    // A product page that would not load is its own provider failure, told
+    // apart from DeepSeek and Supabase in the incident signal (Developer 83).
+    if (onFailure) await onFailure({ status: Number(error && error.status) || undefined });
     return json(res, 500, {
       ok: false,
       error: error.message || 'Product research could not be completed.'

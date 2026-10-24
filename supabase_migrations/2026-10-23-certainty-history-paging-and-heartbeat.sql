@@ -101,7 +101,9 @@ drop policy if exists certainty_reminder_runs_no_direct on public.certainty_remi
 create policy certainty_reminder_runs_no_direct on public.certainty_reminder_runs
   for all to anon, authenticated using (false) with check (false);
 
--- Records this run and returns it with the previous run's time and the gap.
+-- Records this run and returns it with the previous run's time and the gap,
+-- plus the last hourly tick, so the daily run can tell that pg_cron stopped
+-- even though its own daily heartbeat keeps the overall gap under 26 hours.
 -- p_missed_after_hours is the alert threshold (26 by default: a daily job that
 -- slipped by more than two hours, or any hourly gap past a full day).
 create or replace function public.certainty_record_reminder_run(
@@ -116,6 +118,7 @@ set search_path = ''
 as $$
 declare
   v_previous timestamptz;
+  v_previous_hourly timestamptz;
   v_gap numeric;
   v_missed boolean;
   v_id uuid;
@@ -131,6 +134,10 @@ begin
   order by r.ran_at desc
   limit 1;
 
+  select max(r.ran_at) into v_previous_hourly
+  from public.certainty_reminder_runs r
+  where r.trigger = 'hourly-tick';
+
   v_gap := case when v_previous is null then null
     else round((extract(epoch from (now() - v_previous)) / 3600.0)::numeric, 2) end;
   v_missed := v_gap is not null and v_gap > coalesce(p_missed_after_hours, 26);
@@ -142,6 +149,7 @@ begin
   return jsonb_build_object(
     'id', v_id,
     'previousRanAt', v_previous,
+    'previousHourlyAt', v_previous_hourly,
     'gapHours', v_gap,
     'missed', v_missed,
     'thresholdHours', coalesce(p_missed_after_hours, 26)

@@ -706,7 +706,13 @@ export default async function handler(req, res) {
     (req.body && (req.body.action === 'research' || req.body.mode === 'research'))
   );
   if (isResearch) {
-    return handleResearchRequest(req, res, { token, user });
+    return handleResearchRequest(req, res, {
+      token,
+      user,
+      onFailure: (extra) => recordEvent(token, user.id, 'storysculpt_error', buildEventDetail({
+        outcome: 'error', mode: 'ugc', failureClass: classifyFailure('research'), status: extra && extra.status
+      }))
+    });
   }
 
   const trace = randomUUID();

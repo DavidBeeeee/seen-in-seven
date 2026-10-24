@@ -21,6 +21,8 @@
 // each due reminder is recorded as 'held' and nothing is sent: a held reminder
 // is visible and honest; a reminder sent to a guessed address is not.
 
+import { checkStorySculptIncidents } from './_lib/storysculpt-incidents.js';
+
 export const config = { maxDuration: 60 };
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
@@ -79,8 +81,26 @@ export function tickNonce(req) {
 // alone would leave 24 hours between runs; 26 gives it two hours of slack.
 export const MISSED_AFTER_HOURS = 26;
 
+// The hourly tick is quiet when the daily run finds no tick in this long.
+export const HOURLY_QUIET_AFTER_HOURS = 3;
+
+export function hourlyTickQuiet(run, trigger, now = Date.now()) {
+  if (!run || trigger !== 'vercel-cron') return false;
+  if (!run.previousHourlyAt) return true;
+  return now - Date.parse(run.previousHourlyAt) > HOURLY_QUIET_AFTER_HOURS * 3600000;
+}
+
 // What David reads when a run was missed. Pure, so the check can exercise it.
-export function missedRunAlert(run) {
+export function missedRunAlert(run, { hourlyQuiet = false } = {}) {
+  if (run && !run.missed && hourlyQuiet) {
+    const last = run.previousHourlyAt ? new Date(run.previousHourlyAt).toISOString().replace('T', ' ').slice(0, 16) + ' UTC' : 'never';
+    const line = 'Reminder job gap: the hourly run has not fired since ' + last + '. The daily run still works, but 1h reminders and the StorySculpt check depend on the hourly one.';
+    return {
+      line,
+      subject: 'Certainty reminders: the hourly run stopped',
+      text: [line, '', 'Check the pg_cron job certainty-reminders-hourly in Supabase (cron.job_run_details and net._http_response).'].join('\n')
+    };
+  }
   if (!run || !run.missed) return null;
   const last = run.previousRanAt ? new Date(run.previousRanAt).toISOString().replace('T', ' ').slice(0, 16) + ' UTC' : 'unknown';
   const line = 'Reminder job gap: the last run before this one was ' + run.gapHours + ' hours ago (' + last + '), past the ' + (run.thresholdHours || MISSED_AFTER_HOURS) + '-hour limit. Reminders due in that gap may not have gone out.';
@@ -225,8 +245,8 @@ export default async function handler(req, res) {
   });
   const run = beat.ok && beat.data ? beat.data : null;
   if (!run) console.error('certainty-reminders: heartbeat write failed', beat.status);
-  const alert = missedRunAlert(run);
-  if (alert) console.error('certainty-reminders: missed run', JSON.stringify({ gapHours: run.gapHours, previousRanAt: run.previousRanAt }));
+  const alert = missedRunAlert(run, { hourlyQuiet: hourlyTickQuiet(run, trigger) });
+  if (alert) console.error('certainty-reminders: missed run', JSON.stringify({ gapHours: run.gapHours, previousRanAt: run.previousRanAt, previousHourlyAt: run.previousHourlyAt || null }));
 
   const finishRun = async (detail, alertOutcome) => {
     if (run && run.id) await rpc('certainty_finish_reminder_run', { p_id: run.id, p_detail: detail, p_alert_outcome: alertOutcome });
@@ -295,6 +315,25 @@ export default async function handler(req, res) {
     if (plan.holdReason) counts.safetyHeld = (counts.safetyHeld || 0) + 1;
   }
 
+  // StorySculpt's incident check rides the hourly tick (WBR-458, Developer 76
+  // to 80), the one hourly schedule the project has. It looks back over the
+  // hour since the last tick, so each window alerts David at most once; the
+  // daily Vercel run skips it so 12:00 and 12:05 do not report the same hour.
+  // Its own failure never fails the reminders.
+  let storysculpt = null;
+  if (trigger !== 'vercel-cron') {
+    try {
+      const sendAlert = channel.active && OPERATOR_EMAIL
+        ? (msg) => sendEmail({ to: OPERATOR_EMAIL, subject: msg.subject, text: msg.text })
+        : null;
+      const check = await checkStorySculptIncidents({ supabaseUrl: SUPABASE_URL, serviceKey: SERVICE_KEY, minutes: 60, send: sendAlert });
+      storysculpt = { level: check.signal.level, kinds: check.signal.kinds, tripped: check.signal.tripped, alertOutcome: check.alertOutcome };
+    } catch (error) {
+      console.error('certainty-reminders: storysculpt incident check failed', String(error));
+      storysculpt = { level: 'unknown', error: 'check-failed' };
+    }
+  }
+
   const summary = {
     ok: true,
     trigger,
@@ -304,8 +343,9 @@ export default async function handler(req, res) {
     claimed: claimed.length,
     ...counts,
     operatorOutcome: claimed.length || alert ? operatorOutcome : null,
-    heartbeat: run ? { gapHours: run.gapHours, missed: run.missed, alertOutcome } : null
+    heartbeat: run ? { gapHours: run.gapHours, missed: run.missed, alertOutcome } : null,
+    storysculpt
   };
-  await finishRun({ outcome: 'ok', due: items.length, claimed: claimed.length, ...counts }, alertOutcome);
+  await finishRun({ outcome: 'ok', due: items.length, claimed: claimed.length, ...counts, storysculpt }, alertOutcome);
   return sendJson(res, 200, summary);
 }

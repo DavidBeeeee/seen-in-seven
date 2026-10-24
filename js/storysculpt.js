@@ -1593,6 +1593,7 @@ function initUgcListeners() {
 function showProject(project) {
   hideThinkingIndicator();
   hideErrorInConversation();
+  const restoredUnsaved = restoreUnsavedStory(project);
   activeStory = project;
   viewingVersionIndex = -1;
   ensureVersions(project);
@@ -1635,6 +1636,10 @@ function showProject(project) {
     } else {
       storyEl('story-answer').focus();
     }
+  }
+
+  if (restoredUnsaved) {
+    saveActiveStory('Changes kept on this device after a failed save are back and saved.').catch(() => {});
   }
 
   EEEStudio.refreshIcons();
@@ -1719,6 +1724,57 @@ function storyTurnKey() {
 // (STALE_VERSION) instead of letting the older copy win.
 let storySaveChain = Promise.resolve();
 
+// Unsaved work survives a failed database write (WBR-458, Developer 82). A
+// failed save is retried once after a short pause; if it still fails, the
+// exact update is kept on this device, keyed by project, and saved again when
+// the connection returns, the chat is reopened, or the next save succeeds. It
+// is only restored over the server copy when that copy is still the version
+// the draft was written against, so a newer save from another device always
+// wins. Stale-version refusals are never retried: they mean someone else saved.
+const UNSAVED_PREFIX = 'storysculpt-unsaved:';
+const SAVE_RETRY_DELAY_MS = 1200;
+
+function keepUnsavedStory(projectId, updates) {
+  try {
+    localStorage.setItem(UNSAVED_PREFIX + projectId, JSON.stringify({ ...updates, keptAt: new Date().toISOString() }));
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
+function readUnsavedStory(projectId) {
+  try {
+    const raw = localStorage.getItem(UNSAVED_PREFIX + projectId);
+    return raw ? JSON.parse(raw) : null;
+  } catch (_) {
+    return null;
+  }
+}
+
+function clearUnsavedStory(projectId) {
+  try { localStorage.removeItem(UNSAVED_PREFIX + projectId); } catch (_) { /* nothing kept */ }
+}
+
+// Called as a project opens: puts kept work back into it when the server copy
+// has not moved on since, and saves it. Returns true when work was restored.
+function restoreUnsavedStory(project) {
+  const kept = project && readUnsavedStory(project.id);
+  if (!kept) return false;
+  if (Number(kept.expected_version) !== (Number(project.version) || 1)) {
+    clearUnsavedStory(project.id);
+    return false;
+  }
+  for (const field of ['title', 'intake', 'conversation', 'output']) {
+    if (field in kept) project[field] = kept[field];
+  }
+  return true;
+}
+
+function isStaleVersionError(error) {
+  return String(error && error.message || '').includes('STALE_VERSION');
+}
+
 function saveActiveStory(message) {
   const run = storySaveChain.then(() => saveActiveStoryNow(message));
   storySaveChain = run.catch(() => {});
@@ -1743,14 +1799,27 @@ async function saveActiveStoryNow(message) {
     updated_at: new Date().toISOString()
   };
   const saving = activeStory;
-  const { data, error } = await storyContext.sb.from('storysculpt_projects').update(updates).eq('id', saving.id).select('status,version,conversation').single();
+  let data = null;
+  let error = null;
+  for (let attempt = 0; attempt < 2; attempt++) {
+    if (attempt) await new Promise(resolve => setTimeout(resolve, SAVE_RETRY_DELAY_MS));
+    ({ data, error } = await storyContext.sb.from('storysculpt_projects').update(updates).eq('id', saving.id).select('status,version,conversation').single());
+    if (!error || isStaleVersionError(error)) break;
+  }
   if (error) {
-    if (String(error.message || '').includes('STALE_VERSION')) {
+    if (isStaleVersionError(error)) {
+      // STALE_VERSION: another tab or device saved first.
       storyEl('story-save-status').textContent = 'A newer copy of this chat was saved from another tab or device. Reload to see it. Nothing newer was overwritten.';
       storyEl('story-save-status').className = 'eee-message error';
+      clearUnsavedStory(saving.id);
+    } else if (keepUnsavedStory(saving.id, updates)) {
+      storyEl('story-save-status').textContent = 'Your latest changes are kept on this device. StorySculpt will save them as soon as it can reach your account.';
+      storyEl('story-save-status').className = 'eee-message error';
+      error.keptLocally = true;
     }
     throw error;
   }
+  clearUnsavedStory(saving.id);
   delete updates.expected_version;
   Object.assign(saving, updates, data);
   renderProjectList();
@@ -1762,11 +1831,20 @@ async function saveActiveStoryNow(message) {
 
 function queueStorySave() {
   clearTimeout(storySaveTimer);
-  storySaveTimer = setTimeout(() => { storySaveTimer = null; return saveActiveStory().catch(() => {
+  storySaveTimer = setTimeout(() => { storySaveTimer = null; return saveActiveStory().catch((error) => {
+    if (error && error.keptLocally) return;
+    if (isStaleVersionError(error)) return;
     storyEl('story-save-status').textContent = 'This change could not be saved yet.';
     storyEl('story-save-status').className = 'eee-message error';
   }); }, 500);
 }
+
+// The connection came back: save whatever a failed write left on this device.
+window.addEventListener('online', () => {
+  if (activeStory && readUnsavedStory(activeStory.id)) {
+    saveActiveStory('Your kept changes are saved.').catch(() => {});
+  }
+});
 
 // The browser half of the receipt-to-outcome trail. The server logs every
 // request under a trace id; this records the two failures only the browser can
