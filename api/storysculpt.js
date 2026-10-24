@@ -36,6 +36,7 @@ import {
   ugcSystemPrompt
 } from './_lib/storysculpt-ugc.js';
 import { handleResearchRequest } from './_lib/storysculpt-research.js';
+import { stripTransportNoise, normalizeStoredProject, projectPhase, pausedInputDecision, PAUSED_MESSAGE } from './_lib/storysculpt-integrity.js';
 import { checkPoints, cleanPoints, pointsMessages } from './_lib/storysculpt-points.js';
 
 export const config = { maxDuration: 90 };
@@ -228,11 +229,26 @@ function validateBody(body) {
     projectTitle: String(body && body.projectTitle || '').trim().slice(0, 160),
     context: cleanText(body && body.context, 12000),
     ugc: body && typeof body.ugc === 'object' ? body.ugc : null,
-    messages: messages.map(message => ({
-      role: message && message.role === 'assistant' ? 'assistant' : 'user',
-      content: cleanText(message && message.content, 8000)
-    })).filter(message => message.content)
+    // A member's answer is read without its transport noise (Developer 39):
+    // a pasted email's signature, quoted history or phone footer is not part
+    // of what they meant. StorySculpt's own turns pass through untouched.
+    ...cleanMessages(messages)
   };
+}
+
+function cleanMessages(messages) {
+  const noise = new Set();
+  const cleaned = messages.map(message => {
+    const role = message && message.role === 'assistant' ? 'assistant' : 'user';
+    let content = cleanText(message && message.content, 8000);
+    if (role === 'user') {
+      const stripped = stripTransportNoise(content);
+      stripped.removed.forEach(label => noise.add(label));
+      content = stripped.text;
+    }
+    return { role, content };
+  }).filter(message => message.content);
+  return { messages: cleaned, noiseStripped: [...noise] };
 }
 
 async function loadOwnedProject(token, projectId) {
@@ -241,7 +257,7 @@ async function loadOwnedProject(token, projectId) {
   // A failure here is the database layer, not an application bug, and it is
   // tagged so the event says so. Developer H.74 to H.78: an operator must be
   // able to tell Supabase being down from DeepSeek being down from our code.
-  const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=eq.' + projectId + '&select=id,output,content_type,intake,conversation,status,version&limit=1';
+  const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=eq.' + projectId + '&select=id,output,content_type,intake,conversation,status,version,updated_at&limit=1';
   let rows;
   try {
     const response = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token } });
@@ -721,6 +737,9 @@ export default async function handler(req, res) {
   // One terminal event per request, carrying the request's own outcome. A short
   // helper so every exit path records the same shape and never forgets the
   // versions. WBR-384 (H.71 to H.80), Developer I.89.
+  // Integrity facts learned along the way (repairs, phase, stripped noise)
+  // ride on whichever terminal event the request ends with.
+  const facts = {};
   const emit = (outcome, extra = {}) => recordEvent(token, user.id, 'storysculpt_' + outcome, buildEventDetail({
     trace,
     outcome,
@@ -728,6 +747,7 @@ export default async function handler(req, res) {
     promptVersion: PROMPT_VERSION,
     model: MODEL_VERSION,
     latencyMs: Date.now() - started,
+    ...facts,
     ...extra
   }));
 
@@ -743,13 +763,22 @@ export default async function handler(req, res) {
   let input;
   try {
     input = validateBody(req.body);
+    if (input.noiseStripped.length) facts.noiseStripped = input.noiseStripped;
   } catch (error) {
     await emit('error', { failureClass: classifyFailure('input') });
     return fail(400, error && error.message ? error.message : 'StorySculpt could not read that request.');
   }
 
   try {
-    const project = await loadOwnedProject(token, input.projectId);
+    const stored = await loadOwnedProject(token, input.projectId);
+    // A malformed stored chat is repaired explicitly and the repair recorded
+    // (Developer 10). The repaired copy is what this request reads; the next
+    // save writes it back in the repaired shape.
+    const { project, repairs } = normalizeStoredProject(stored);
+    if (repairs.length) {
+      facts.stateRepairs = repairs;
+      console.error('storysculpt: stored state repaired', input.projectId, repairs.join(','));
+    }
     if (!project) {
       await emit('denied', { failureClass: classifyFailure('input') });
       return fail(404, 'That saved StorySculpt chat was not found in your account.');
@@ -773,6 +802,15 @@ export default async function handler(req, res) {
       await emit('denied', { failureClass: classifyFailure('input') });
       return fail(409, 'This script is already finished. Use Refine with a note to change it.');
     }
+    // Paused is a named state (Developer 37). Only a new answer resumes it.
+    const phase = projectPhase(project);
+    facts.phase = phase.phase;
+    const paused = pausedInputDecision(phase, input);
+    if (!paused.allow) {
+      await emit('denied', { failureClass: classifyFailure('input') });
+      return fail(409, PAUSED_MESSAGE);
+    }
+    if (paused.resumed) facts.resumedFromPause = true;
     if (!project.output && input.intent === 'points') {
       await emit('denied', { failureClass: classifyFailure('input') });
       return fail(409, 'Finish a script before turning it into bullet points.');
