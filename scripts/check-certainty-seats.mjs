@@ -34,7 +34,7 @@ let heldCalled=false;
 await deliverSeatAlerts({active:false,rpc:async()=>{heldCalled=true;},to:'operator@example.test'});
 assert.equal(heldCalled,false);
 const sql=fs.readFileSync('supabase_migrations/2026-10-25-certainty-seat-status.sql','utf8');
-assert.match(sql,/app_key = 'certainty' and status = 'active'/);
+assert.match(sql,/app_key in \('certainty','eee'\) and status = 'active'/);
 assert.match(sql,/expires_at > now\(\)/);
 assert.match(sql,/count\(distinct user_id\)/);
 assert.match(sql,/if not public.is_admin\(\)/);

@@ -4,11 +4,14 @@
 create or replace function public.certainty_seat_totals()
 returns jsonb language sql stable security definer set search_path = '' as $$
   with members as (
-    select count(distinct user_id)::int n from public.studio_entitlements
-    where app_key = 'certainty' and status = 'active'
+    -- Match book_certainty_session: bundled Hub grants also consume a seat.
+    select count(distinct user_id)::int n,
+      count(distinct user_id) filter (where app_key = 'certainty')::int direct_members
+    from public.studio_entitlements
+    where app_key in ('certainty','eee') and status = 'active'
       and (expires_at is null or expires_at > now())
   ), bookable_window as (select 10 first_hour, 22 last_hour, 2 duration_hours, 7 days)
-  select jsonb_build_object('activeMembers', m.n,
+  select jsonb_build_object('activeMembers', m.n, 'directCertaintyMembers', m.direct_members,
     'weeklyCapacity', ((w.last_hour + w.duration_hours - w.first_hour) / w.duration_hours) * w.days,
     'seatsLeft', greatest(0, ((w.last_hour + w.duration_hours - w.first_hour) / w.duration_hours) * w.days - m.n))
   from members m cross join bookable_window w;
