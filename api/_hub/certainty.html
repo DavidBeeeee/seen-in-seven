@@ -252,6 +252,33 @@
     .cs-skeleton { height: 120px; border-radius: 20px; background: linear-gradient(90deg, var(--studio-surface) 25%, var(--studio-surface-2) 50%, var(--studio-surface) 75%); background-size: 200% 100%; animation: cs-shimmer 1.3s infinite; }
     @keyframes cs-shimmer { to { background-position: -200% 0; } }
     .cs-hide { display: none !important; }
+    @media (prefers-reduced-motion: reduce) { .cs-skeleton { animation: none; } }
+    [tabindex="-1"]:focus { outline: none; }
+    /* Contrast at WCAG AA in both themes on this page (UX 97; the 2026-10-24
+       rendered walk measured 3.4 to 4.3 on the shared Studio tokens here). */
+    html:not(.studio-light) .studio-mark { color: #5cd0d0; }
+    .cs-david-mark { color: #e2c56a; }
+    html.studio-light { --muted: #2f6b6b; --teal: #147373; }
+    html.studio-light .cs-day.sel, html.studio-light .cs-time.sel { color: #ffffff; }
+    html.studio-light .cs-day.sel .cs-day-dow, html.studio-light .cs-day.sel .cs-day-mon { opacity: 1; }
+    html.studio-light .studio-mark { color: #0f6464; }
+    html.studio-light .studio-brand small { color: #8a6410; }
+    html.studio-light .nav-item.active { color: #136a6a; }
+    html.studio-light .primary-button { background: #147373; border-color: #147373; }
+    html.studio-light .cs-david-mark { color: #6b4e0c; }
+    html.studio-light .eee-member-chip { color: #1f6b47; }
+    html.studio-light .cs-milestone-badge { color: #6b4e0c; }
+    /* A member's own default font size reaches the shared shell text too
+       (UX 95, 96): the same sizes as the Studio CSS at 16px, in rem. */
+    body { font-size: 1rem; }
+    .studio-brand { font-size: 1rem; }
+    .studio-mark { font-size: .875rem; }
+    .studio-brand small { font-size: .6875rem; }
+    .eyebrow { font-size: .75rem; }
+    .intro-copy { font-size: 1rem; }
+    .primary-button, .secondary-button { font-size: .875rem; }
+    .account-avatar { font-size: .75rem; }
+    .eee-member-chip { font-size: .6875rem; }
     .cs-rhythm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 14px; }
     .cs-rhythm-grid h3 { font-family: 'Oswald', sans-serif; font-size: 1rem; margin: 0 0 4px; letter-spacing: .2px; }
     .cs-rhythm-grid p { color: var(--studio-soft); font-size: .9rem; line-height: 1.5; margin: 0; }
@@ -345,6 +372,9 @@
           <!-- Crisis safety line banner -->
           <div class="cs-msg err cs-hide" id="cs-crisis-banner" role="alert" style="margin-top:0;"></div>
 
+          <!-- Cancel and reschedule outcomes (UX 78): a release that did not go through is said, never silent -->
+          <div class="cs-msg" id="cs-session-msg" role="alert" style="margin-top:0;"></div>
+
           <!-- Lapsed membership ending card for within-app churn/ended state -->
           <article class="cs-card cs-hide" id="cs-membership-ended" data-cs-copy="membership-ended" data-cs-ended="true">
             <p class="cs-eyebrow">Membership ended</p>
@@ -372,7 +402,7 @@
           <!-- Booking panel -->
           <section class="cs-card cs-book" id="cs-book">
             <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
-              <div><p class="cs-eyebrow">Book a session</p><h2 id="cs-book-title">Choose your time</h2></div>
+              <div><p class="cs-eyebrow">Book a session</p><h2 id="cs-book-title" tabindex="-1">Choose your time</h2></div>
               <button class="secondary-button" type="button" id="cs-book-close"><i data-lucide="x"></i><span>Close</span></button>
             </div>
 
@@ -521,7 +551,7 @@
     </div>
   </div>
 
-  <script src="/js/eee-common.js?v=per-app-access-v1"></script>
+  <script src="/js/eee-common.js?v=gate-hook-v1"></script>
   <script>
     (function () {
       var accessToken = null;
@@ -867,6 +897,37 @@
         icons();
       }
 
+      // Keyboard focus (UX 98, 99). Re-rendering a list replaces the button that
+      // had focus, which drops a keyboard member back to the top of the page;
+      // put focus on the replacement. Opening the panel moves focus into it,
+      // and closing it returns focus to whatever opened it.
+      var bookOpener = null;
+      function keepFocus(selector) {
+        var target = document.querySelector(selector);
+        if (target) target.focus({ preventScroll: true });
+      }
+      function focusInto(node) {
+        if (!node) return;
+        if (!node.hasAttribute('tabindex')) node.setAttribute('tabindex', '-1');
+        node.focus({ preventScroll: true });
+      }
+      function focusPrimary() {
+        var host = el('cs-primary');
+        focusInto(host && (host.querySelector('.cs-next-when') || host.querySelector('h2')));
+      }
+      function openPanel() {
+        var active = document.activeElement;
+        bookOpener = active && active !== document.body && !active.closest('#cs-book') ? active : bookOpener;
+        el('cs-book').classList.add('open');
+      }
+      function closePanel() {
+        editingSession = null;
+        el('cs-book').classList.remove('open');
+        var back = bookOpener && document.contains(bookOpener) ? bookOpener : el('cs-open-book') || el('cs-edit');
+        bookOpener = null;
+        if (back) back.focus({ preventScroll: true }); else focusPrimary();
+      }
+
       function openEdit(u) {
         editingSession = u;
         var p = etParts(new Date(u.starts_at));
@@ -875,7 +936,7 @@
         var curMode = (u.join && u.join.mode) || 'zoom';
         var curPhone = (u.join && u.join.phone) || (settings && settings.phone) || '';
         pick = { date: iso, hour: hour, mode: curMode };
-        el('cs-book').classList.add('open');
+        openPanel();
         el('cs-book-title').textContent = 'Edit your session';
         renderBookingContinuity();
         renderDays();
@@ -886,6 +947,7 @@
         el('cs-confirm-text').textContent = 'Save changes';
         showMsg('', null);
         el('cs-book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        focusInto(el('cs-book-title'));
       }
 
       function openBooking() {
@@ -893,7 +955,7 @@
         var defaultMode = (settings && settings.default_mode) || 'zoom';
         var defaultPhone = (settings && settings.phone) || '';
         pick = { date: null, hour: null, mode: defaultMode };
-        el('cs-book').classList.add('open');
+        openPanel();
         el('cs-book-title').textContent = 'Choose your time';
         el('cs-confirm-text').textContent = 'Confirm session';
         renderBookingContinuity();
@@ -904,6 +966,7 @@
         el('cs-topic').value = '';
         showMsg('', null);
         el('cs-book').scrollIntoView({ behavior: 'smooth', block: 'start' });
+        focusInto(el('cs-book-title'));
       }
 
       function renderDays() {
@@ -915,10 +978,9 @@
           b.className = 'cs-day' + (isSel ? ' sel' : '');
           b.type = 'button';
           b.setAttribute('aria-pressed', isSel ? 'true' : 'false');
-          b.setAttribute('aria-label', d.dow + ', ' + d.mon + ' ' + d.num + (isSel ? ', selected' : ''));
           b.innerHTML = '<div class="cs-day-dow">' + d.dow + '</div><div class="cs-day-num">' + d.num + '</div><div class="cs-day-mon">' + d.mon + '</div>' +
             (isSel ? '<span class="cs-day-check" aria-hidden="true">✓</span>' : '');
-          b.onclick = function () { pick.date = d.iso; pick.hour = null; renderDays(); renderTimes(); };
+          b.onclick = function () { pick.date = d.iso; pick.hour = null; renderDays(); renderTimes(); keepFocus('#cs-days .cs-day.sel'); };
           host.appendChild(b);
         });
       }
@@ -942,10 +1004,12 @@
           b.setAttribute('aria-pressed', isSel ? 'true' : 'false');
           b.setAttribute('aria-label', labelText + (isSel ? ', selected' : ''));
           b.innerHTML = '<span>' + escapeHtml(labelText) + '</span>' + (isSel ? ' <span class="cs-time-check" aria-hidden="true">✓</span>' : '');
-          var isTaken = taken[pick.date + ':' + h];
+          // Sessions run two hours, so a booking at h-1 or h+1 also blocks h:
+          // David cannot be in two at once (the database refuses it too).
+          var isTaken = taken[pick.date + ':' + h] || taken[pick.date + ':' + (h - 1)] || taken[pick.date + ':' + (h + 1)];
           var isPast = isToday && h <= curHour;
           if (isTaken || isPast) { b.disabled = true; if (isTaken) b.title = 'Already booked'; }
-          else { any = true; b.onclick = (function (hh) { return function () { pick.hour = hh; renderTimes(); }; })(h); }
+          else { any = true; b.onclick = (function (hh) { return function () { pick.hour = hh; renderTimes(); keepFocus('#cs-times .cs-time.sel'); }; })(h); }
           host.appendChild(b);
         }
         if (!any) { host.innerHTML = '<p class="cs-times-empty">No open times left that day. Try another.</p>'; }
@@ -1023,8 +1087,9 @@
           }
 
           editingSession = null;
+          bookOpener = null;
           el('cs-book').classList.remove('open');
-          refresh();
+          refresh().then(focusPrimary);
         }).catch(function () {
           btn.disabled = false;
           el('cs-confirm-text').textContent = isEdit ? 'Save changes' : 'Confirm session';
@@ -1068,14 +1133,39 @@
         });
       }
 
+      function showSessionMsg(text) {
+        var m = el('cs-session-msg');
+        m.textContent = text || '';
+        m.className = 'cs-msg' + (text ? ' show err' : '');
+      }
+
+      // Release a session and resolve true only once the server confirms the
+      // time is free (UX 78). A dropped or refused cancel re-reads the state:
+      // if the session is gone after all, that is a release; if it is still
+      // there, the member is told it is still booked.
+      function releaseSession(id) {
+        showSessionMsg('');
+        return api('cancel', { id: id }).then(function (r) {
+          if (r.ok) return refresh().then(function () { return true; });
+          return Promise.reject(new Error((r.data && r.data.error) || ''));
+        }).catch(function (err) {
+          return refresh().then(function () {
+            if (!(state && state.upcoming && state.upcoming.id === id)) return true;
+            var said = err && err.message && !/fetch|network|load failed/i.test(err.message) ? err.message + ' ' : '';
+            showSessionMsg(said + 'Your session is still booked. Try again in a moment, or email David at email@davidbee.me.');
+            return false;
+          });
+        });
+      }
+
       function cancelSession(id) {
         if (!window.confirm('Cancel this session? The time opens back up for you or someone else.')) return;
-        api('cancel', { id: id }).then(function () { refresh(); });
+        releaseSession(id).then(function (released) { if (released) focusPrimary(); });
       }
 
       function reschedule(id) {
         if (!window.confirm('Reschedule? This releases your current time first, and someone else can book it before you pick a new one.')) return;
-        api('cancel', { id: id }).then(function () { refresh().then(openBooking); });
+        releaseSession(id).then(function (released) { if (released) openBooking(); });
       }
 
       function escapeHtml(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -1446,16 +1536,24 @@
         setMode(next);
         document.querySelector('.cs-mode[data-mode="' + next + '"]').focus();
       });
-      el('cs-book-close').onclick = function () {
-        editingSession = null;
-        el('cs-book').classList.remove('open');
-      };
+      el('cs-book-close').onclick = closePanel;
+      el('cs-book').addEventListener('keydown', function (e) {
+        if (e.key === 'Escape' && el('cs-book').classList.contains('open')) { e.preventDefault(); closePanel(); }
+      });
       el('cs-confirm').onclick = confirmBooking;
       el('cs-save-settings').onclick = saveSettings;
       el('cs-delete-data').onclick = deleteData;
       el('cs-setting-tz').onchange = function () {
         if (el('cs-book').classList.contains('open')) { renderTimes(); }
         renderPrimary();
+      };
+
+      // The shared shell's own gate says "EEE"; this page's gate names
+      // Certainty Sessions and sends sign-in back here.
+      window.EEEStudioGate = function (kind) {
+        el('cs-state-skeleton').classList.add('cs-hide');
+        showGateScreen(kind === 'sign-in' ? 'sign-in' : 'no-access');
+        return true;
       };
 
       window.EEEStudio.initialize(function (ctx) {

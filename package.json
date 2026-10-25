@@ -61,6 +61,7 @@
     "check:certainty-upfront": "node scripts/check-certainty-upfront.mjs",
     "check:vault-gift-landing": "node scripts/check-vault-gift-landing.mjs",
     "check:certainty-fixed-dates": "node scripts/check-certainty-fixed-dates.mjs",
-    "check:certainty-progression": "node scripts/check-certainty-progression.mjs"
+    "check:certainty-progression": "node scripts/check-certainty-progression.mjs",
+    "sim:certainty-walk": "node scripts/sim/certainty-walk.mjs"
   }
 }

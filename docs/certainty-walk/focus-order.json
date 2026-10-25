@@ -1,0 +1,346 @@
+[
+ {
+  "tag": "a",
+  "id": null,
+  "cls": "studio-brand",
+  "label": "CSCertainty SessionsColorado Mastermind Studio",
+  "visible": true,
+  "inBook": false
+ },
+ {
+  "tag": "a",
+  "id": null,
+  "cls": "secondary-button",
+  "label": "My Studio",
+  "visible": true,
+  "inBook": false
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "icon-button",
+  "label": "Change color theme",
+  "visible": true,
+  "inBook": false
+ },
+ {
+  "tag": "button",
+  "id": "eee-account-button",
+  "cls": "account-button",
+  "label": "W walk.member@example.invalid",
+  "visible": true,
+  "inBook": false
+ },
+ {
+  "tag": "a",
+  "id": null,
+  "cls": "nav-item",
+  "label": "My Studio",
+  "visible": true,
+  "inBook": false
+ },
+ {
+  "tag": "a",
+  "id": null,
+  "cls": "nav-item",
+  "label": "SeenInSeven",
+  "visible": true,
+  "inBook": false
+ },
+ {
+  "tag": "summary",
+  "id": null,
+  "cls": "nav-item",
+  "label": "Momentum Hub",
+  "visible": true,
+  "inBook": false
+ },
+ {
+  "tag": "a",
+  "id": null,
+  "cls": "nav-item active",
+  "label": "Certainty Sessions",
+  "visible": true,
+  "inBook": false
+ },
+ {
+  "tag": "a",
+  "id": null,
+  "cls": "nav-item",
+  "label": "Solution Vault",
+  "visible": true,
+  "inBook": false
+ },
+ {
+  "tag": "a",
+  "id": null,
+  "cls": "sidebar-sublink",
+  "label": "Terms & FAQ",
+  "visible": true,
+  "inBook": false
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "nav-item",
+  "label": "Sign out",
+  "visible": true,
+  "inBook": false
+ },
+ {
+  "tag": "button",
+  "id": "cs-open-book",
+  "cls": "primary-button",
+  "label": "Book my first session",
+  "visible": true,
+  "inBook": false
+ },
+ {
+  "tag": "button",
+  "id": "cs-book-close",
+  "cls": "secondary-button",
+  "label": "Close",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Sat24Oct",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Mon26Oct",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Tue27Oct",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Wed28Oct",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Thu29Oct",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Fri30Oct",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Sat31Oct",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Sun1Nov",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Mon2Nov",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Tue3Nov",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Wed4Nov",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Thu5Nov",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Fri6Nov",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-time",
+  "label": "10:00 AM ET",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-time",
+  "label": "11:00 AM ET",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-time",
+  "label": "12:00 PM ET",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-time",
+  "label": "1:00 PM ET",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-time",
+  "label": "2:00 PM ET",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-time",
+  "label": "3:00 PM ET",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-time",
+  "label": "4:00 PM ET",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-time",
+  "label": "5:00 PM ET",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-time",
+  "label": "6:00 PM ET",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-time",
+  "label": "7:00 PM ET",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-time",
+  "label": "8:00 PM ET",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-time",
+  "label": "9:00 PM ET",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-time",
+  "label": "10:00 PM ET",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-mode sel",
+  "label": "ZoomJoin from anywhere",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "input",
+  "id": "cs-phone",
+  "cls": "cs-input",
+  "label": "cs-phone",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "input",
+  "id": "cs-topic",
+  "cls": "cs-input",
+  "label": "cs-topic",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": "cs-confirm",
+  "cls": "primary-button",
+  "label": "Confirm session",
+  "visible": true,
+  "inBook": true
+ }
+]

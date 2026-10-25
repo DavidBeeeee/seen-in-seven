@@ -1,0 +1,11 @@
+{
+  "note": "Member states for scripts/sim/certainty-walk.mjs. held rows are [n, daysAgo, topic], newest first; dates are relative to the run so the weekly and lapse rules always see the same picture.",
+  "states": {
+    "first": {},
+    "booked": { "upcoming": { "inDays": 2, "hour": 14, "mode": "zoom", "topic": "Launch email sequence" } },
+    "returning": { "held": [[5, 8, "Rewriting my sales page headline so it says who it is for"], [4, 15, "Email automation"], [3, 22, "Offer pricing"], [2, 29, "Content calendar"], [1, 36, "First session: where to start"]], "phone": "(555) 010-2030" },
+    "lapsed": { "engagement": "lapsed", "held": [[2, 30, "Pricing page rewrite"], [1, 37, "Getting started"]] },
+    "ended": { "membership_ended": true, "engagement": "churned", "held": [[1, 40, "Last topic"]] },
+    "paged": { "upcoming": { "inDays": 3, "hour": 19, "mode": "phone", "phone": "+44 20 7946 0958", "topic": "A very long topic that a member typed to see whether the card wraps it properly instead of pushing the page sideways at large text" }, "held": [[12, 7, "Supercalifragilisticexpialidocious-automation-workflow-for-onboarding"], [11, 14, "Webinar funnel"], [10, 21, "Testimonials"], [9, 28, "Lead magnet"], [8, 35, "Pricing"], [7, 42, "Email list"], [6, 49, "Podcast pitch"], [5, 56, "Course outline"], [4, 63, "Brand story"], [3, 70, "Website copy"], [2, 77, "Offer"], [1, 84, "Start"]] }
+  }
+}

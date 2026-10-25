@@ -1,0 +1,132 @@
+{
+ "at": "2026-10-25T03:07:25.858Z",
+ "checks": [
+  {
+   "name": "first visit greets a first-timer",
+   "pass": true,
+   "evidence": "first-session heading 1"
+  },
+  {
+   "name": "book: the next session shows with its topic",
+   "pass": true,
+   "evidence": "Your first sessionSunday, October 2510:00 AM – 12:00 PM ETOn Zoom · Fix my funnelJoin on Z"
+  },
+  {
+   "name": "edit: update sent with the session id and the new topic shows",
+   "pass": true,
+   "evidence": "update id=upcoming-2"
+  },
+  {
+   "name": "cancel: the session is gone and booking is offered again",
+   "pass": true,
+   "evidence": "Your first sessionStart with one thing you are stuck on.This is two hours, one-o"
+  },
+  {
+   "name": "rebook after cancel",
+   "pass": true,
+   "evidence": "2 book requests"
+  },
+  {
+   "name": "lapsed member is welcomed back with their last topic",
+   "pass": true,
+   "evidence": "Welcome backYour seat with David is still here.Your last session was September 24, about 4"
+  },
+  {
+   "name": "ended membership closes booking and says how to come back",
+   "pass": true,
+   "evidence": "Your Certainty Sessions membership has ended."
+  },
+  {
+   "name": "sign-in failure shows the sign-in gate",
+   "pass": true,
+   "evidence": "Sign in to enter Certainty Sessions."
+  },
+  {
+   "name": "server unreachable on load shows a retry, not a blank page",
+   "pass": true,
+   "evidence": "We could not reach the server just now."
+  },
+  {
+   "name": "Try again recovers once the server answers",
+   "pass": true,
+   "evidence": ""
+  },
+  {
+   "name": "network drop mid-booking: says so, keeps the choice, button usable",
+   "pass": true,
+   "evidence": "Something interrupted the booking. Try again."
+  },
+  {
+   "name": "slot taken by someone else: plain message and a fresh pick",
+   "pass": true,
+   "evidence": "Someone just took that time. Pick another open slot."
+  },
+  {
+   "name": "double submit sends exactly one booking",
+   "pass": true,
+   "evidence": "1 book requests"
+  },
+  {
+   "name": "a neighbour's two-hour session blocks the overlapping hours",
+   "pass": true,
+   "evidence": "disabled hours 13,14,15"
+  },
+  {
+   "name": "cancel network drop is reported to the member",
+   "pass": true,
+   "evidence": "Your session is still booked. Try again in a moment, or email David at email@davidbee.me."
+  },
+  {
+   "name": "cancel server error is reported to the member",
+   "pass": true,
+   "evidence": "Could not cancel that session. Your session is still booked. Try again in a moment, or email David at email@davidbee.me."
+  },
+  {
+   "name": "reschedule stops and says so when the old time cannot be released",
+   "pass": true,
+   "evidence": "Could not cancel that session. Your session is still booked. Try again in a moment, or email David at email@davidbee.me."
+  },
+  {
+   "name": "keyboard-only booking dark 1280px",
+   "pass": true,
+   "evidence": "booked 2026-10-25 10:00 phone, 43 stops, 0 without visible focus"
+  },
+  {
+   "name": "keyboard-only booking dark 375px",
+   "pass": true,
+   "evidence": "booked 2026-10-25 10:00 phone, 36 stops, 0 without visible focus"
+  },
+  {
+   "name": "keyboard-only booking light 1280px",
+   "pass": true,
+   "evidence": "booked 2026-10-25 10:00 phone, 43 stops, 0 without visible focus"
+  },
+  {
+   "name": "keyboard-only booking light 375px",
+   "pass": true,
+   "evidence": "booked 2026-10-25 10:00 phone, 36 stops, 0 without visible focus"
+  },
+  {
+   "name": "Escape closes the booking panel and returns focus to the Book button",
+   "pass": true,
+   "evidence": "focus on Book my first session"
+  },
+  {
+   "name": "zero serious or critical axe-core violations (WCAG 2.1 A/AA) on every state, light and dark",
+   "pass": true,
+   "evidence": "0 serious/critical"
+  },
+  {
+   "name": "layout holds at 375/1280, 200% zoom, 24px font, light and dark across 6 screens",
+   "pass": true,
+   "evidence": "0 layout faults"
+  },
+  {
+   "name": "no request left the machine except font and icon GETs; zero POSTs to production",
+   "pass": true,
+   "evidence": "0 refused, 0 non-benign"
+  }
+ ],
+ "findings": [],
+ "refused": []
+}

@@ -33,7 +33,8 @@ const common = read('js', 'eee-common.js');
 assert.ok(common.includes("target_app_key: eeePageAccessKey()"));
 assert.ok(common.includes("rpc('my_hub_apps')") && common.includes('await eeeApplyAppAccess();'), 'the Hub hides apps a person does not have');
 for (const html of ['eee', 'storysculpt', 'navigator', 'vault', 'certainty']) {
-  assert.ok(read('api', '_hub', html + '.html').includes('eee-common.js?v=per-app-access-v1'), html + '.html loads the new shared script');
+  // gate-hook-v1 (Certainty, WBR-458) is a later build of the same shared script.
+  assert.ok(/eee-common\.js\?v=(per-app-access-v1|gate-hook-v1)/.test(read('api', '_hub', html + '.html')), html + '.html loads the new shared script');
 }
 
 // 3. Studio home opens the Hub card for any one app, Boardroom for the bundle.

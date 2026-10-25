@@ -59,6 +59,8 @@ async function eeeApplyAppAccess() {
 }
 
 function eeeShowGate(kind) {
+  // A page may name itself on its gate (Certainty, WBR-458).
+  if (typeof window.EEEStudioGate === 'function' && window.EEEStudioGate(kind) === true) return;
   const gate = eeeElement('eee-access-gate');
   const app = eeeElement('eee-app');
   if (app) app.hidden = true;
