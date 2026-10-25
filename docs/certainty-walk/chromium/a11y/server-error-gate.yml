@@ -1,0 +1,6 @@
+- main:
+  - text: CS
+  - heading "We could not reach the server just now." [level=1]
+  - paragraph: There was a problem reaching Certainty Sessions. Check your connection and try again.
+  - link "Try again":
+    - /url: "#"

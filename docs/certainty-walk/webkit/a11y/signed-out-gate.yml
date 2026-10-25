@@ -1,0 +1,6 @@
+- main:
+  - text: CS
+  - heading "Sign in to enter Certainty Sessions." [level=1]
+  - paragraph: Use the Studio email connected to your membership.
+  - link "Go to Studio sign in":
+    - /url: /?access=certainty

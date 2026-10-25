@@ -1,0 +1,2669 @@
+{
+ "at": "2026-10-25T17:15:15.463Z",
+ "browser": "chromium",
+ "checks": [
+  {
+   "browser": "chromium",
+   "name": "first visit greets a first-timer",
+   "pass": true,
+   "evidence": "first-session heading 1"
+  },
+  {
+   "browser": "chromium",
+   "name": "book: the next session shows with its topic",
+   "pass": true,
+   "evidence": "Your first sessionMonday, October 2610:00 AM – 12:00 PM ETOn Zoom · Fix my funnelJoin on Z"
+  },
+  {
+   "browser": "chromium",
+   "name": "edit: update sent with the session id and the new topic shows",
+   "pass": true,
+   "evidence": "update id=upcoming-2"
+  },
+  {
+   "browser": "chromium",
+   "name": "cancel: the session is gone and booking is offered again",
+   "pass": true,
+   "evidence": "Your first sessionStart with one thing you are stuck on.This is two hours, one-o"
+  },
+  {
+   "browser": "chromium",
+   "name": "rebook after cancel",
+   "pass": true,
+   "evidence": "2 book requests"
+  },
+  {
+   "browser": "chromium",
+   "name": "lapsed member is welcomed back with their last topic",
+   "pass": true,
+   "evidence": "Welcome backYour seat with David is still here.Your last session was September 25, about 4"
+  },
+  {
+   "browser": "chromium",
+   "name": "ended membership closes booking and says how to come back",
+   "pass": true,
+   "evidence": "Your Certainty Sessions membership has ended."
+  },
+  {
+   "browser": "chromium",
+   "name": "sign-in failure shows the sign-in gate",
+   "pass": true,
+   "evidence": "Sign in to enter Certainty Sessions."
+  },
+  {
+   "browser": "chromium",
+   "name": "server unreachable on load shows a retry, not a blank page",
+   "pass": true,
+   "evidence": "We could not reach the server just now."
+  },
+  {
+   "browser": "chromium",
+   "name": "Try again recovers once the server answers",
+   "pass": true,
+   "evidence": ""
+  },
+  {
+   "browser": "chromium",
+   "name": "network drop mid-booking: says so, keeps the choice, button usable",
+   "pass": true,
+   "evidence": "Something interrupted the booking. Try again."
+  },
+  {
+   "browser": "chromium",
+   "name": "slot taken by someone else: plain message and a fresh pick",
+   "pass": true,
+   "evidence": "Someone just took that time. Pick another open slot."
+  },
+  {
+   "browser": "chromium",
+   "name": "double submit sends exactly one booking",
+   "pass": true,
+   "evidence": "1 book requests"
+  },
+  {
+   "browser": "chromium",
+   "name": "a neighbour's two-hour session blocks the overlapping hours",
+   "pass": true,
+   "evidence": "disabled hours 13,14,15"
+  },
+  {
+   "browser": "chromium",
+   "name": "cancel network drop is reported to the member",
+   "pass": true,
+   "evidence": "Your session is still booked. Try again in a moment, or email David at email@davidbee.me."
+  },
+  {
+   "browser": "chromium",
+   "name": "cancel server error is reported to the member",
+   "pass": true,
+   "evidence": "Could not cancel that session. Your session is still booked. Try again in a moment, or email David at email@davidbee.me."
+  },
+  {
+   "browser": "chromium",
+   "name": "reschedule stops and says so when the old time cannot be released",
+   "pass": true,
+   "evidence": "Could not cancel that session. Your session is still booked. Try again in a moment, or email David at email@davidbee.me."
+  },
+  {
+   "browser": "chromium",
+   "name": "keyboard-only booking dark 1280px",
+   "pass": true,
+   "evidence": "booked 2026-10-26 10:00 phone via Tab, 43 stops, 0 without visible focus"
+  },
+  {
+   "browser": "chromium",
+   "name": "keyboard-only booking dark 375px",
+   "pass": true,
+   "evidence": "booked 2026-10-26 10:00 phone via Tab, 36 stops, 0 without visible focus"
+  },
+  {
+   "browser": "chromium",
+   "name": "keyboard-only booking light 1280px",
+   "pass": true,
+   "evidence": "booked 2026-10-26 10:00 phone via Tab, 43 stops, 0 without visible focus"
+  },
+  {
+   "browser": "chromium",
+   "name": "keyboard-only booking light 375px",
+   "pass": true,
+   "evidence": "booked 2026-10-26 10:00 phone via Tab, 36 stops, 0 without visible focus"
+  },
+  {
+   "browser": "chromium",
+   "name": "Escape closes the booking panel and returns focus to the Book button",
+   "pass": true,
+   "evidence": "focus on Book my first session"
+  },
+  {
+   "browser": "chromium",
+   "name": "zero serious or critical axe-core violations (WCAG 2.1 A/AA) on every state, light and dark",
+   "pass": true,
+   "evidence": "0 serious/critical"
+  },
+  {
+   "browser": "chromium",
+   "name": "layout holds at 375/1280, 200% zoom, 24px font, light and dark across 6 screens",
+   "pass": true,
+   "evidence": "0 layout faults"
+  },
+  {
+   "browser": "chromium",
+   "name": "screen-reader first-visit: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 11 controls, 8 headings"
+  },
+  {
+   "browser": "chromium",
+   "name": "screen-reader picker: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 30 controls, 9 headings"
+  },
+  {
+   "browser": "chromium",
+   "name": "screen-reader mode-choice: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 43 controls, 9 headings"
+  },
+  {
+   "browser": "chromium",
+   "name": "selected day and time are announced as selected",
+   "pass": true,
+   "evidence": "[{\"selector\":\".cs-day.sel\",\"pressed\":\"true\",\"name\":\"Mon26Oct✓\"},{\"selector\":\".cs-time.sel\",\"pressed\":\"true\",\"name\":\"10:00 AM ET, selected\"}]"
+  },
+  {
+   "browser": "chromium",
+   "name": "screen-reader confirm: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 44 controls, 9 headings"
+  },
+  {
+   "browser": "chromium",
+   "name": "screen-reader booked: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 14 controls, 7 headings"
+  },
+  {
+   "browser": "chromium",
+   "name": "booked confirmation is announced",
+   "pass": true,
+   "evidence": "{\"focused\":\"Monday, October 2610:00 AM – 12:00 PM ETBy phone · Screen reader booking\",\"live\":\"\"}"
+  },
+  {
+   "browser": "chromium",
+   "name": "screen-reader edit: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 47 controls, 8 headings"
+  },
+  {
+   "browser": "chromium",
+   "name": "screen-reader cancel: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 11 controls, 8 headings"
+  },
+  {
+   "browser": "chromium",
+   "name": "screen-reader lapsed: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 11 controls, 10 headings"
+  },
+  {
+   "browser": "chromium",
+   "name": "screen-reader ended: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 2 controls, 1 headings"
+  },
+  {
+   "browser": "chromium",
+   "name": "screen-reader signed-out-gate: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 1 controls, 1 headings"
+  },
+  {
+   "browser": "chromium",
+   "name": "screen-reader server-error-gate: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 1 controls, 1 headings"
+  },
+  {
+   "browser": "chromium",
+   "name": "screen-reader network-error: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 43 controls, 9 headings"
+  },
+  {
+   "browser": "chromium",
+   "name": "live announcement network-error",
+   "pass": true,
+   "evidence": "{\"text\":\"Something interrupted the booking. Try again.\",\"live\":\"polite\"}"
+  },
+  {
+   "browser": "chromium",
+   "name": "screen-reader slot-taken: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 43 controls, 9 headings"
+  },
+  {
+   "browser": "chromium",
+   "name": "live announcement slot-taken",
+   "pass": true,
+   "evidence": "{\"text\":\"Someone just took that time. Pick another open slot.\",\"live\":\"polite\"}"
+  },
+  {
+   "browser": "chromium",
+   "name": "no request left the machine except font and icon GETs; zero POSTs to production",
+   "pass": true,
+   "evidence": "224 refused, 0 non-benign"
+  }
+ ],
+ "findings": [],
+ "refused": [
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://fonts.googleapis.com/css2",
+   "benign": true
+  },
+  {
+   "method": "GET",
+   "url": "https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js",
+   "benign": true
+  }
+ ],
+ "layoutResults": [
+  {
+   "browser": "chromium",
+   "screen": "first",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "first",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/012-first-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "chromium",
+   "screen": "first",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/013-first-375-dark-font24.jpg"
+  },
+  {
+   "browser": "chromium",
+   "screen": "first",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "first",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "first",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "first",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "first",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "first",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "first",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "first",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "first",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "booked",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "booked",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/014-booked-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "chromium",
+   "screen": "booked",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/015-booked-375-dark-font24.jpg"
+  },
+  {
+   "browser": "chromium",
+   "screen": "booked",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "booked",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "booked",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "booked",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "booked",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "booked",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "booked",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "booked",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "booked",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "returning",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "returning",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/016-returning-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "chromium",
+   "screen": "returning",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/017-returning-375-dark-font24.jpg"
+  },
+  {
+   "browser": "chromium",
+   "screen": "returning",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "returning",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "returning",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "returning",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "returning",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "returning",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "returning",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "returning",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "returning",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "lapsed",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "lapsed",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/018-lapsed-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "chromium",
+   "screen": "lapsed",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/019-lapsed-375-dark-font24.jpg"
+  },
+  {
+   "browser": "chromium",
+   "screen": "lapsed",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "lapsed",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "lapsed",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "lapsed",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "lapsed",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "lapsed",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "lapsed",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "lapsed",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "lapsed",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "ended",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "ended",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/020-ended-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "chromium",
+   "screen": "ended",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/021-ended-375-dark-font24.jpg"
+  },
+  {
+   "browser": "chromium",
+   "screen": "ended",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "ended",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "ended",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "ended",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "ended",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "ended",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "ended",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "ended",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "ended",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "paged",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "paged",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/022-paged-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "chromium",
+   "screen": "paged",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/023-paged-375-dark-font24.jpg"
+  },
+  {
+   "browser": "chromium",
+   "screen": "paged",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "paged",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "paged",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "paged",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "paged",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "paged",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "paged",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "paged",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": null
+  },
+  {
+   "browser": "chromium",
+   "screen": "paged",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": null
+  }
+ ],
+ "keyboardResults": [
+  {
+   "browser": "chromium",
+   "navigationKey": "Tab",
+   "theme": "dark",
+   "width": 1280,
+   "pass": true,
+   "stops": 43,
+   "invisibleFocusStops": 0,
+   "booking": {
+    "action": "book",
+    "date": "2026-10-26",
+    "hour": 10,
+    "mode": "phone",
+    "phone": "(555) 010-2030",
+    "topic": "Keyboard walk topic"
+   },
+   "focusOrder": "focus-order.json",
+   "shot": "docs/certainty-walk/chromium/shots/008-keyboard-booked-dark-1280.jpg"
+  },
+  {
+   "browser": "chromium",
+   "navigationKey": "Tab",
+   "theme": "dark",
+   "width": 375,
+   "pass": true,
+   "stops": 36,
+   "invisibleFocusStops": 0,
+   "booking": {
+    "action": "book",
+    "date": "2026-10-26",
+    "hour": 10,
+    "mode": "phone",
+    "phone": "(555) 010-2030",
+    "topic": "Keyboard walk topic"
+   },
+   "focusOrder": null,
+   "shot": "docs/certainty-walk/chromium/shots/009-keyboard-booked-dark-375.jpg"
+  },
+  {
+   "browser": "chromium",
+   "navigationKey": "Tab",
+   "theme": "light",
+   "width": 1280,
+   "pass": true,
+   "stops": 43,
+   "invisibleFocusStops": 0,
+   "booking": {
+    "action": "book",
+    "date": "2026-10-26",
+    "hour": 10,
+    "mode": "phone",
+    "phone": "(555) 010-2030",
+    "topic": "Keyboard walk topic"
+   },
+   "focusOrder": null,
+   "shot": "docs/certainty-walk/chromium/shots/010-keyboard-booked-light-1280.jpg"
+  },
+  {
+   "browser": "chromium",
+   "navigationKey": "Tab",
+   "theme": "light",
+   "width": 375,
+   "pass": true,
+   "stops": 36,
+   "invisibleFocusStops": 0,
+   "booking": {
+    "action": "book",
+    "date": "2026-10-26",
+    "hour": 10,
+    "mode": "phone",
+    "phone": "(555) 010-2030",
+    "topic": "Keyboard walk topic"
+   },
+   "focusOrder": null,
+   "shot": "docs/certainty-walk/chromium/shots/011-keyboard-booked-light-375.jpg"
+  }
+ ],
+ "accessibilityResults": [
+  {
+   "browser": "chromium",
+   "screen": "first-visit",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/024-a11y-first-visit.jpg",
+   "transcript": "a11y/first-visit.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "One private working session with David, every week."
+    },
+    {
+     "level": 2,
+     "text": "Start with one thing you are stuck on."
+    },
+    {
+     "level": 2,
+     "text": "Your settings"
+    },
+    {
+     "level": 2,
+     "text": "What happens if you miss a week, drift off, or leave."
+    },
+    {
+     "level": 3,
+     "text": "You miss a week"
+    },
+    {
+     "level": 3,
+     "text": "You stop booking for a while"
+    },
+    {
+     "level": 3,
+     "text": "You need a different time"
+    },
+    {
+     "level": 3,
+     "text": "Your membership ends"
+    }
+   ],
+   "controls": 11
+  },
+  {
+   "browser": "chromium",
+   "screen": "picker",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/025-a11y-picker.jpg",
+   "transcript": "a11y/picker.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "One private working session with David, every week."
+    },
+    {
+     "level": 2,
+     "text": "Start with one thing you are stuck on."
+    },
+    {
+     "level": 2,
+     "text": "Choose your time"
+    },
+    {
+     "level": 2,
+     "text": "Your settings"
+    },
+    {
+     "level": 2,
+     "text": "What happens if you miss a week, drift off, or leave."
+    },
+    {
+     "level": 3,
+     "text": "You miss a week"
+    },
+    {
+     "level": 3,
+     "text": "You stop booking for a while"
+    },
+    {
+     "level": 3,
+     "text": "You need a different time"
+    },
+    {
+     "level": 3,
+     "text": "Your membership ends"
+    }
+   ],
+   "controls": 30
+  },
+  {
+   "browser": "chromium",
+   "screen": "mode-choice",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/026-a11y-mode-choice.jpg",
+   "transcript": "a11y/mode-choice.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "One private working session with David, every week."
+    },
+    {
+     "level": 2,
+     "text": "Start with one thing you are stuck on."
+    },
+    {
+     "level": 2,
+     "text": "Choose your time"
+    },
+    {
+     "level": 2,
+     "text": "Your settings"
+    },
+    {
+     "level": 2,
+     "text": "What happens if you miss a week, drift off, or leave."
+    },
+    {
+     "level": 3,
+     "text": "You miss a week"
+    },
+    {
+     "level": 3,
+     "text": "You stop booking for a while"
+    },
+    {
+     "level": 3,
+     "text": "You need a different time"
+    },
+    {
+     "level": 3,
+     "text": "Your membership ends"
+    }
+   ],
+   "controls": 43
+  },
+  {
+   "browser": "chromium",
+   "screen": "confirm",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/027-a11y-confirm.jpg",
+   "transcript": "a11y/confirm.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "One private working session with David, every week."
+    },
+    {
+     "level": 2,
+     "text": "Start with one thing you are stuck on."
+    },
+    {
+     "level": 2,
+     "text": "Choose your time"
+    },
+    {
+     "level": 2,
+     "text": "Your settings"
+    },
+    {
+     "level": 2,
+     "text": "What happens if you miss a week, drift off, or leave."
+    },
+    {
+     "level": 3,
+     "text": "You miss a week"
+    },
+    {
+     "level": 3,
+     "text": "You stop booking for a while"
+    },
+    {
+     "level": 3,
+     "text": "You need a different time"
+    },
+    {
+     "level": 3,
+     "text": "Your membership ends"
+    }
+   ],
+   "controls": 44
+  },
+  {
+   "browser": "chromium",
+   "screen": "booked",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/028-a11y-booked.jpg",
+   "transcript": "a11y/booked.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "One private working session with David, every week."
+    },
+    {
+     "level": 2,
+     "text": "Your settings"
+    },
+    {
+     "level": 2,
+     "text": "What happens if you miss a week, drift off, or leave."
+    },
+    {
+     "level": 3,
+     "text": "You miss a week"
+    },
+    {
+     "level": 3,
+     "text": "You stop booking for a while"
+    },
+    {
+     "level": 3,
+     "text": "You need a different time"
+    },
+    {
+     "level": 3,
+     "text": "Your membership ends"
+    }
+   ],
+   "controls": 14
+  },
+  {
+   "browser": "chromium",
+   "screen": "edit",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/029-a11y-edit.jpg",
+   "transcript": "a11y/edit.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "One private working session with David, every week."
+    },
+    {
+     "level": 2,
+     "text": "Edit your session"
+    },
+    {
+     "level": 2,
+     "text": "Your settings"
+    },
+    {
+     "level": 2,
+     "text": "What happens if you miss a week, drift off, or leave."
+    },
+    {
+     "level": 3,
+     "text": "You miss a week"
+    },
+    {
+     "level": 3,
+     "text": "You stop booking for a while"
+    },
+    {
+     "level": 3,
+     "text": "You need a different time"
+    },
+    {
+     "level": 3,
+     "text": "Your membership ends"
+    }
+   ],
+   "controls": 47
+  },
+  {
+   "browser": "chromium",
+   "screen": "cancel",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/030-a11y-cancel.jpg",
+   "transcript": "a11y/cancel.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "One private working session with David, every week."
+    },
+    {
+     "level": 2,
+     "text": "Start with one thing you are stuck on."
+    },
+    {
+     "level": 2,
+     "text": "Your settings"
+    },
+    {
+     "level": 2,
+     "text": "What happens if you miss a week, drift off, or leave."
+    },
+    {
+     "level": 3,
+     "text": "You miss a week"
+    },
+    {
+     "level": 3,
+     "text": "You stop booking for a while"
+    },
+    {
+     "level": 3,
+     "text": "You need a different time"
+    },
+    {
+     "level": 3,
+     "text": "Your membership ends"
+    }
+   ],
+   "controls": 11
+  },
+  {
+   "browser": "chromium",
+   "screen": "lapsed",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/031-a11y-lapsed.jpg",
+   "transcript": "a11y/lapsed.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "One private working session with David, every week."
+    },
+    {
+     "level": 2,
+     "text": "Your seat with David is still here."
+    },
+    {
+     "level": 2,
+     "text": "Your session on Friday, September 25, 2026 is complete."
+    },
+    {
+     "level": 2,
+     "text": "2 sessions with David"
+    },
+    {
+     "level": 2,
+     "text": "Your settings"
+    },
+    {
+     "level": 2,
+     "text": "What happens if you miss a week, drift off, or leave."
+    },
+    {
+     "level": 3,
+     "text": "You miss a week"
+    },
+    {
+     "level": 3,
+     "text": "You stop booking for a while"
+    },
+    {
+     "level": 3,
+     "text": "You need a different time"
+    },
+    {
+     "level": 3,
+     "text": "Your membership ends"
+    }
+   ],
+   "controls": 11
+  },
+  {
+   "browser": "chromium",
+   "screen": "ended",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/032-a11y-ended.jpg",
+   "transcript": "a11y/ended.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "Your Certainty Sessions membership has ended."
+    }
+   ],
+   "controls": 2
+  },
+  {
+   "browser": "chromium",
+   "screen": "signed-out-gate",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/033-a11y-signed-out-gate.jpg",
+   "transcript": "a11y/signed-out-gate.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "Sign in to enter Certainty Sessions."
+    }
+   ],
+   "controls": 1
+  },
+  {
+   "browser": "chromium",
+   "screen": "server-error-gate",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/034-a11y-server-error-gate.jpg",
+   "transcript": "a11y/server-error-gate.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "We could not reach the server just now."
+    }
+   ],
+   "controls": 1
+  },
+  {
+   "browser": "chromium",
+   "screen": "network-error",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/035-a11y-network-error.jpg",
+   "transcript": "a11y/network-error.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "One private working session with David, every week."
+    },
+    {
+     "level": 2,
+     "text": "Start with one thing you are stuck on."
+    },
+    {
+     "level": 2,
+     "text": "Choose your time"
+    },
+    {
+     "level": 2,
+     "text": "Your settings"
+    },
+    {
+     "level": 2,
+     "text": "What happens if you miss a week, drift off, or leave."
+    },
+    {
+     "level": 3,
+     "text": "You miss a week"
+    },
+    {
+     "level": 3,
+     "text": "You stop booking for a while"
+    },
+    {
+     "level": 3,
+     "text": "You need a different time"
+    },
+    {
+     "level": 3,
+     "text": "Your membership ends"
+    }
+   ],
+   "controls": 43
+  },
+  {
+   "browser": "chromium",
+   "screen": "slot-taken",
+   "pass": true,
+   "shot": "docs/certainty-walk/chromium/shots/036-a11y-slot-taken.jpg",
+   "transcript": "a11y/slot-taken.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "One private working session with David, every week."
+    },
+    {
+     "level": 2,
+     "text": "Start with one thing you are stuck on."
+    },
+    {
+     "level": 2,
+     "text": "Choose your time"
+    },
+    {
+     "level": 2,
+     "text": "Your settings"
+    },
+    {
+     "level": 2,
+     "text": "What happens if you miss a week, drift off, or leave."
+    },
+    {
+     "level": 3,
+     "text": "You miss a week"
+    },
+    {
+     "level": 3,
+     "text": "You stop booking for a while"
+    },
+    {
+     "level": 3,
+     "text": "You need a different time"
+    },
+    {
+     "level": 3,
+     "text": "Your membership ends"
+    }
+   ],
+   "controls": 43
+  }
+ ]
+}
