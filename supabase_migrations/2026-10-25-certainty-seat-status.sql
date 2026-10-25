@@ -45,7 +45,7 @@ grant select, insert, update on public.certainty_seat_alerts to service_role;
 
 create or replace function public.certainty_claim_seat_alerts()
 returns jsonb language plpgsql security definer set search_path = '' as $$
-declare v jsonb := public.certainty_seat_totals(); t int; claimed int; result jsonb := '[]'::jsonb;
+declare v jsonb := public.certainty_seat_totals(); t int; claimed int; claimed_members int; claimed_capacity int; result jsonb := '[]'::jsonb;
 begin
   foreach t in array array[35,42,47] loop
     if (v->>'activeMembers')::int >= t then
@@ -55,8 +55,12 @@ begin
       where certainty_seat_alerts.outcome <> 'sent'
         and certainty_seat_alerts.claimed_at < now() - interval '5 minutes'
         and certainty_seat_alerts.first_claimed_at > now() - interval '23 hours'
-      returning threshold into claimed;
-      if found then result := result || jsonb_build_array(v || jsonb_build_object('threshold',claimed)); end if;
+      returning threshold,members,capacity into claimed,claimed_members,claimed_capacity;
+      -- Resend requires an identical payload for the same idempotency key.
+      -- Keep the original milestone snapshot, even if membership changed.
+      if found then result := result || jsonb_build_array(jsonb_build_object(
+        'threshold',claimed,'activeMembers',claimed_members,'weeklyCapacity',claimed_capacity,
+        'seatsLeft',greatest(0,claimed_capacity-claimed_members))); end if;
     end if;
   end loop;
   return result;

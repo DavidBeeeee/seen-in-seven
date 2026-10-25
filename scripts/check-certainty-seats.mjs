@@ -42,5 +42,6 @@ assert.match(sql,/on conflict \(threshold\) do update/);
 assert.match(sql,/outcome <> 'sent'/);
 assert.match(sql,/enable row level security/);
 assert.match(sql,/interval '23 hours'/);
+assert.match(sql,/returning threshold,members,capacity into claimed,claimed_members,claimed_capacity/);
 assert.match(fs.readFileSync('js/workerbee.js','utf8'),/of \$\{seat.weeklyCapacity\} weekly seats used/);
 console.log('PASS certainty seats: 34/35/42/47, overlapping/repeated ticks, held channel, expiry/status/admin boundaries and 49-seat display');
