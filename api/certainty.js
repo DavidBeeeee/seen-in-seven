@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { readReminderHeartbeat } from './_lib/reminder-heartbeat.js';
 import { consumeQuota, json } from './_lib/security.js';
 import { detectCrisis } from './_lib/navigator-core.js';
+import { sendCertaintyInviteEmails, buildCertaintyIcs } from './_lib/certainty-ics.js';
 
 export const config = { maxDuration: 30 };
 
@@ -444,7 +445,8 @@ function fail(res, result, correlationId = null) {
   return json(res, 500, { error: 'Something went wrong with the session. Try again in a moment.', correlationId });
 }
 
-export default async function handler(req, res) {
+export default async function handler(req, res, options = {}) {
+  const fetchFn = (options && options.fetchFn) || (req && req.fetchFn) || fetch;
   if (req.method === 'GET' && req.query?.action === 'heartbeat') {
     res.setHeader('Cache-Control', 'no-store');
     try { return json(res, 200, await readReminderHeartbeat()); }
@@ -716,6 +718,42 @@ export default async function handler(req, res) {
         safetyTripped: safetyAssessment.tripped
       }, correlationId);
 
+      // Calendar invite delivery via Resend (WBR-458 / WO-20261025-latemorning)
+      const memberIcs = buildCertaintyIcs(session, {
+        method: 'REQUEST',
+        sequence: 0,
+        forDavid: false,
+        zoomUrl: join && join.joinUrl
+      });
+      let inviteResult = null;
+      try {
+        inviteResult = await sendCertaintyInviteEmails({
+          session: {
+            ...session,
+            member_email: session.member_email || (user && user.email),
+            member_name: session.member_name || (user && user.user_metadata && user.user_metadata.name) || 'Member'
+          },
+          action: 'book',
+          sequence: 0,
+          zoomUrl: join && join.joinUrl,
+          fetchFn
+        });
+        await recordEvent(userToken, 'certainty_invite_sent', {
+          schema: 1,
+          action: 'book',
+          sessionId: session.id,
+          memberMessageId: inviteResult.memberMessageId,
+          davidMessageId: inviteResult.davidMessageId
+        }, correlationId);
+      } catch (inviteErr) {
+        await recordEvent(userToken, 'certainty_invite_failed', {
+          schema: 1,
+          action: 'book',
+          sessionId: session.id,
+          reason: (inviteErr && inviteErr.message) || 'invite-send-failed'
+        }, correlationId);
+      }
+
       const crisisPayload = safetyAssessment.tripped ? {
         tripped: true,
         line: safetyAssessment.line,
@@ -725,7 +763,9 @@ export default async function handler(req, res) {
       const enrichedSession = enrichSessionWithSyncState({
         ...session,
         calendar_status: calendar.status,
-        join
+        join,
+        ics: memberIcs,
+        ics_download: `data:text/calendar;charset=utf8,${encodeURIComponent(memberIcs)}`
       });
 
       return json(res, 200, {
@@ -733,12 +773,17 @@ export default async function handler(req, res) {
         calendar,
         crisis: crisisPayload,
         safety: safetyAssessment.tripped ? true : undefined,
+        invites: inviteResult ? {
+          memberMessageId: inviteResult.memberMessageId,
+          davidMessageId: inviteResult.davidMessageId
+        } : null,
         correlationId
       });
     }
 
     if (action === 'cancel') {
-      const cancelled = await rpc('cancel_certainty_session', { p_id: String(req.body && req.body.id || '') }, userToken);
+      const sessionId = String(req.body && req.body.id || '');
+      const cancelled = await rpc('cancel_certainty_session', { p_id: sessionId }, userToken);
       if (!cancelled.ok) {
         await recordEvent(userToken, 'certainty_cancel', {
           schema: 1, outcome: 'error', code: resultCode(cancelled), latencyMs: Date.now() - startedAt
@@ -748,7 +793,50 @@ export default async function handler(req, res) {
       await recordEvent(userToken, 'certainty_cancel', {
         schema: 1, outcome: 'ok', latencyMs: Date.now() - startedAt
       }, correlationId);
-      return json(res, 200, { cancelled: true, correlationId });
+
+      const session = cancelled.data;
+      let inviteResult = null;
+      if (session) {
+        const join = joinFor(session);
+        const cancelSeq = req.body && req.body.sequence != null ? Number(req.body.sequence) : 1;
+        try {
+          inviteResult = await sendCertaintyInviteEmails({
+            session: {
+              ...session,
+              member_email: session.member_email || (user && user.email),
+              member_name: session.member_name || (user && user.user_metadata && user.user_metadata.name) || 'Member'
+            },
+            action: 'cancel',
+            method: 'CANCEL',
+            sequence: cancelSeq,
+            zoomUrl: join && join.joinUrl,
+            fetchFn
+          });
+          await recordEvent(userToken, 'certainty_invite_sent', {
+            schema: 1,
+            action: 'cancel',
+            sessionId: session.id,
+            memberMessageId: inviteResult.memberMessageId,
+            davidMessageId: inviteResult.davidMessageId
+          }, correlationId);
+        } catch (inviteErr) {
+          await recordEvent(userToken, 'certainty_invite_failed', {
+            schema: 1,
+            action: 'cancel',
+            sessionId: session.id || sessionId,
+            reason: (inviteErr && inviteErr.message) || 'invite-cancel-failed'
+          }, correlationId);
+        }
+      }
+
+      return json(res, 200, {
+        cancelled: true,
+        invites: inviteResult ? {
+          memberMessageId: inviteResult.memberMessageId,
+          davidMessageId: inviteResult.davidMessageId
+        } : null,
+        correlationId
+      });
     }
 
     // Member-initiated hard-delete of their own past sessions and phone (Developer 98)
@@ -816,15 +904,61 @@ export default async function handler(req, res) {
 
       const session = updated.data;
       const join = joinFor(session);
-      const enriched = enrichSessionWithSyncState({ ...session, join });
+      const editSeq = body.sequence != null ? Number(body.sequence) : 1;
+      const memberIcs = buildCertaintyIcs(session, {
+        method: 'REQUEST',
+        sequence: editSeq,
+        forDavid: false,
+        zoomUrl: join && join.joinUrl
+      });
+      const enriched = enrichSessionWithSyncState({
+        ...session,
+        join,
+        ics: memberIcs,
+        ics_download: `data:text/calendar;charset=utf8,${encodeURIComponent(memberIcs)}`
+      });
 
       await recordEvent(userToken, 'certainty_update', {
         schema: 1, outcome: 'ok', mode: String(session.mode || ''), latencyMs: Date.now() - startedAt
       }, correlationId);
 
+      let updateInviteResult = null;
+      try {
+        updateInviteResult = await sendCertaintyInviteEmails({
+          session: {
+            ...session,
+            member_email: session.member_email || (user && user.email),
+            member_name: session.member_name || (user && user.user_metadata && user.user_metadata.name) || 'Member'
+          },
+          action: 'update',
+          method: 'REQUEST',
+          sequence: editSeq,
+          zoomUrl: join && join.joinUrl,
+          fetchFn
+        });
+        await recordEvent(userToken, 'certainty_invite_sent', {
+          schema: 1,
+          action: 'update',
+          sessionId: session.id,
+          memberMessageId: updateInviteResult.memberMessageId,
+          davidMessageId: updateInviteResult.davidMessageId
+        }, correlationId);
+      } catch (inviteErr) {
+        await recordEvent(userToken, 'certainty_invite_failed', {
+          schema: 1,
+          action: 'update',
+          sessionId: session.id,
+          reason: (inviteErr && inviteErr.message) || 'invite-update-failed'
+        }, correlationId);
+      }
+
       return json(res, 200, {
         ok: true,
         session: enriched,
+        invites: updateInviteResult ? {
+          memberMessageId: updateInviteResult.memberMessageId,
+          davidMessageId: updateInviteResult.davidMessageId
+        } : null,
         correlationId
       });
     }
