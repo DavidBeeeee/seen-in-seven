@@ -4,9 +4,9 @@ Written 2026-10-24 (evening, WBR-458; Stranger 100, Developer 100) from the code
 
 ## What breaks first
 
-**1. There are not enough hours. This is the binding limit, and it is a business decision, not a bug.**
-Sessions run two hours. They can start on any hour from 10:00 to 22:00 Eastern, and there is one David. As of tonight no two sessions can overlap, so the most that fit is 7 a day (10, 12, 14, 16, 18, 20, 22), which is **49 a week**. Every member is promised one session a week. At 49 members the week is full. At a thousand, 951 members a week find no open time, and the page tells each of them "No open times left that day. Try another." on every day. Nothing in the code stops more people from joining than there are seats.
-Options for David: cap membership at the number of weekly seats, turn the weekly promise into "book when a seat is open", add hosts, or shorten sessions. Until he picks one, Certainty should not be sold past about 40 members.
+**1. There are not enough hours. This is the binding limit.**
+Every member gets one two-hour session with David every week (David, 2026-10-25: that offer is not changing). Sessions can start on any hour from 10:00 to 22:00 Eastern, and there is one David. As of tonight no two sessions can overlap, so the most that fit is 7 a day (10, 12, 14, 16, 18, 20, 22), which is **49 a week**. At 49 active members the week is full, and member 50 cannot be given the session they paid for. Nothing in the code stops more people from joining than there are seats.
+Keeping the guarantee means keeping active members under the weekly seat count, or adding hours or hosts as membership grows. Until one of those is in place, Certainty should not be sold past about 40 members, which leaves room for reschedules.
 
 **2. Double booking: fixed tonight.**
 Before tonight the database refused only a second booking at the *same* start time. One member at 10:00 and another at 11:00 both landed, so David was booked into two sessions at once for an hour. With one member this never happened (0 overlapping pairs on read-back). With two or more it would have. Fixed:
