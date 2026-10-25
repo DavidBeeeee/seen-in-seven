@@ -779,6 +779,10 @@ function renderThisWeek() {
   const day = iso => new Date(iso).toLocaleString(undefined, { weekday: 'short', month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
 
   const certainty = weekBlock('Certainty sessions', certaintyWeekCache?.checkedAt, 1);
+  if (certaintyWeekCache?.seats) {
+    const seat = certaintyWeekCache.seats;
+    weekLine(certainty.list, `${seat.activeMembers} of ${seat.weeklyCapacity} weekly seats used · ${seat.seatsLeft} left`);
+  }
   if (!certaintyWeekCache) weekLine(certainty.list, 'Reading bookings…');
   else if (!certaintyWeekCache.ok) weekLine(certainty.list, `Could not read bookings (${certaintyWeekCache.error}).`);
   else if (!certaintyWeekCache.sessions.length) weekLine(certainty.list, 'Nobody is booked in the next seven days.');

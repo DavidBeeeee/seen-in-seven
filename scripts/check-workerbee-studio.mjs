@@ -27,7 +27,8 @@ try {
     };
     const res = { setHeader() {}, status(code) { assert.equal(code,200); return this; }, json(body) { return body; } };
     await workerbeeHandler({ method:'GET', query:{view}, headers:{'x-workerbee-secret':process.env.WORKERBEE_STUDIO_SECRET} },res);
-    assert.equal(calls.length,1);
+    assert.equal(calls.length,view === 'certainty-week' ? 2 : 1);
+    if (view === 'certainty-week') assert.ok(calls[1].url.endsWith('/rpc/certainty_seat_status'));
     assert.ok(calls[0].url.endsWith(`/rpc/${expected}`));
     if (view === 'hub-scores') assert.equal(calls[0].body.p_profile,'hub-scores');
   }

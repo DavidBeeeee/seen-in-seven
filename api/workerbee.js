@@ -226,7 +226,8 @@ async function certaintyWeek(token) {
   // returns only when, how, a first name and the calendar state.
   try {
     const sessions = await rpc('certainty_admin_week', {}, token);
-    return { ok: true, checkedAt: new Date().toISOString(), sessions: Array.isArray(sessions) ? sessions : [] };
+    const seats = await rpc('certainty_seat_status', {}, token);
+    return { ok: true, checkedAt: new Date().toISOString(), seats, sessions: Array.isArray(sessions) ? sessions : [] };
   } catch (error) {
     return { ok: false, error: String(error.message || error).slice(0, 160), sessions: [] };
   }

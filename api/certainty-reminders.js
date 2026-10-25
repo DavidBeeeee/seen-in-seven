@@ -140,17 +140,44 @@ function channelState() {
   return { active: true, name: 'email', reason: null };
 }
 
-async function sendEmail({ to, subject, text }) {
+async function sendEmail({ to, subject, text, idempotencyKey }) {
   const response = await fetch('https://api.resend.com/emails', {
     method: 'POST',
-    headers: { Authorization: 'Bearer ' + RESEND_API_KEY, 'Content-Type': 'application/json' },
+    headers: { Authorization: 'Bearer ' + RESEND_API_KEY, 'Content-Type': 'application/json', ...(idempotencyKey ? { 'Idempotency-Key': idempotencyKey } : {}) },
     body: JSON.stringify({ from: REMINDER_FROM, to: [to], subject, text })
   });
   if (!response.ok) {
     const detail = await response.text().catch(() => '');
     throw new Error('resend ' + response.status + (detail ? ': ' + detail.slice(0, 200) : ''));
   }
-  return true;
+  return (await response.json()).id;
+}
+
+export function seatAlertMessage(seat) {
+  return {
+    subject: 'Certainty: ' + seat.activeMembers + ' of ' + seat.weeklyCapacity + ' weekly seats',
+    text: 'Certainty has reached the ' + seat.threshold + '-member warning. ' + seat.activeMembers + ' active members of ' + seat.weeklyCapacity + ' weekly seats; ' + seat.seatsLeft + ' seats left. Each member still receives one two-hour session per week. This warning changes no access or purchase flow.'
+  };
+}
+
+export async function deliverSeatAlerts({ active, rpc: call = rpc, send = sendEmail, to = OPERATOR_EMAIL }) {
+  if (!active || !to) return { outcome: 'held', sent: 0 };
+  const claims = await call('certainty_claim_seat_alerts', {});
+  if (!claims.ok || !Array.isArray(claims.data)) return { outcome: 'claim-failed', sent: 0 };
+  let sent = 0;
+  let failed = 0;
+  for (const seat of claims.data) {
+    let outcome = 'failed';
+    let providerId = null;
+    try {
+      providerId = await send({ to, ...seatAlertMessage(seat), idempotencyKey: 'certainty-seat-milestone-' + seat.threshold });
+      outcome = 'sent';
+    } catch { failed += 1; }
+    const saved = await call('certainty_finish_seat_alert', { p_threshold: seat.threshold, p_outcome: outcome, p_provider_id: providerId });
+    if (!saved.ok) failed += 1;
+    if (outcome === 'sent') sent += 1;
+  }
+  return { outcome: failed ? 'failed' : 'ok', sent, failed };
 }
 
 // What the member reads. Warm, specific, and short: the exact day and time, how
@@ -253,6 +280,9 @@ export default async function handler(req, res) {
   };
 
   const now = new Date().toISOString();
+  // Seat warnings are independent of bookings being due. Receipts prevent
+  // overlapping ticks from repeating the same milestone email.
+  const seats = await deliverSeatAlerts({ active: channel.active });
   const due = await rpc('certainty_due_reminders', { p_now: now });
   if (!due.ok) {
     console.error('certainty-reminders: due query failed', due.status, due.data);
@@ -344,8 +374,9 @@ export default async function handler(req, res) {
     ...counts,
     operatorOutcome: claimed.length || alert ? operatorOutcome : null,
     heartbeat: run ? { gapHours: run.gapHours, missed: run.missed, alertOutcome } : null,
-    storysculpt
+    storysculpt,
+    seats
   };
-  await finishRun({ outcome: 'ok', due: items.length, claimed: claimed.length, ...counts, storysculpt }, alertOutcome);
+  await finishRun({ outcome: 'ok', due: items.length, claimed: claimed.length, ...counts, storysculpt, seats }, alertOutcome);
   return sendJson(res, 200, summary);
 }
