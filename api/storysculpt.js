@@ -38,6 +38,7 @@ import {
 import { handleResearchRequest } from './_lib/storysculpt-research.js';
 import { stripTransportNoise, normalizeStoredProject, projectPhase, pausedInputDecision, PAUSED_MESSAGE } from './_lib/storysculpt-integrity.js';
 import { checkPoints, cleanPoints, pointsMessages } from './_lib/storysculpt-points.js';
+import { checkFidelity, fidelityScore, fidelityRetryDirective, fidelityNote } from './_lib/storysculpt-fidelity.js';
 
 export const config = { maxDuration: 90 };
 
@@ -996,6 +997,45 @@ export default async function handler(req, res) {
       return json(res, 502, { error: creativeFailure ? 'StorySculpt could not produce three distinct, useful options on this pass. Your saved choices are unchanged; please retry.' : 'StorySculpt could not finish the audience question and closing invitation on this pass. Your saved script is unchanged; please retry.', rejected: reason, trace });
     }
 
+    // Fidelity (WBR-458): a finished script is checked against what the member
+    // actually said. A flagged script is rewritten once with the flags named;
+    // if the rewrite is still flagged, the less-flagged draft is shown with a
+    // plain note and storysculpt_output_rejected records the kinds. Kinds and
+    // counts only, never the member's words.
+    let fidelity = null;
+    if (verdict.final) {
+      const fidelityArgs = { source: memberSource(input), memberText: memberOwnText(input) };
+      fidelity = checkFidelity(verdict.content, fidelityArgs);
+      if (!fidelity.ok) {
+        stepLog.fidelityRetry = true;
+        stepLog.attempts++;
+        try {
+          const retryResult = await callStorySculpt(input, activeStep, stepText, refDocs, fidelityRetryDirective(fidelity));
+          const retryVerdict = classifyOutput(retryResult.content, { source: memberSource(input) });
+          if (retryVerdict.ok && retryVerdict.final) {
+            const retryFidelity = checkFidelity(retryVerdict.content, fidelityArgs);
+            if (fidelityScore(retryFidelity) < fidelityScore(fidelity)) {
+              result = retryResult;
+              verdict = retryVerdict;
+              fidelity = retryFidelity;
+            }
+          }
+        } catch (_) {
+          // The first draft still stands; it is shown with its note below.
+        }
+        if (!fidelity.ok) {
+          await emit('output_rejected', {
+            ...stepLog,
+            failureClass: classifyFailure('output'),
+            violations: fidelity.kinds.map(k => 'fidelity-' + k),
+            delivered: true,
+            voiceShare: fidelity.voiceShare,
+            usage: result.usage
+          });
+        }
+      }
+    }
+
     const updatedIntake = { ...(project.intake || {}), current_step: activeStep };
     await updateProjectIntake(token, input.projectId, updatedIntake);
 
@@ -1014,7 +1054,7 @@ export default async function handler(req, res) {
     let title = '';
     let content = verdict.content;
     if (verdict.final) ({ title, body: content } = splitTitle(verdict.content));
-    return json(res, 200, { final: verdict.final, content, title: title || undefined, step: activeStep, idempotencyKey: input.idempotencyKey || undefined, promptVersion: PROMPT_VERSION, model: MODEL_VERSION, trace });
+    return json(res, 200, { final: verdict.final, content, title: title || undefined, fidelityNote: fidelity && !fidelity.ok ? fidelityNote(fidelity) : undefined, step: activeStep, idempotencyKey: input.idempotencyKey || undefined, promptVersion: PROMPT_VERSION, model: MODEL_VERSION, trace });
   } catch (error) {
     const failureClass = classifyFailure(error && error.stage === 'database' ? 'database' : 'internal', error);
     await emit('error', { failureClass });

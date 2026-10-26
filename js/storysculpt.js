@@ -424,6 +424,12 @@ function renderScriptPanel() {
       copyEl.value = contentToShow;
     }
     copyEl.readOnly = viewingVersionIndex !== -1;
+    const fidelityEl = storyEl('story-fidelity-note');
+    if (fidelityEl) {
+      const note = viewingVersionIndex === -1 && activeStory.intake && activeStory.intake.fidelity_note;
+      fidelityEl.textContent = note || '';
+      fidelityEl.hidden = !note;
+    }
     const eyebrow = storyEl('story-output-eyebrow');
     if (eyebrow) eyebrow.textContent = activeStory.content_type === 'ugc' ? 'Product video script' : 'Talking-head script';
     updateWordCount(contentToShow);
@@ -2053,6 +2059,9 @@ async function runGeneration(intent = 'interview', options = {}) {
   // Keep the server's position in David's steps. The save below rewrites the
   // whole intake, and until 2026-10-08 it dropped current_step every turn.
   if (data.step) activeStory.intake = Object.assign({}, activeStory.intake, { current_step: data.step });
+  // A finished script still flagged by the server's fidelity check arrives with
+  // a plain note; it belongs to this draft and clears with the next one.
+  if (data.final) activeStory.intake = Object.assign({}, activeStory.intake, { fidelity_note: data.fidelityNote || null });
   try {
     await saveActiveStory(data.final ? 'Finished draft saved' : null);
   } catch (error) {
