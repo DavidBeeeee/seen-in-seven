@@ -327,7 +327,7 @@ function reportDayLabel(reportDate) {
 // morning. Whatever he opens or closes by hand is remembered per lane per day.
 function laneOpenState(reportDate, label, defaultOpen) {
   try {
-    const saved = localStorage.getItem(`wb-lane:${reportDate}:${label}`);
+    const saved = localStorage.getItem(`wb-lane2:${reportDate}:${label}`);
     if (saved === 'open') return true;
     if (saved === 'closed') return false;
   } catch (error) { /* storage unavailable: fall back to the default */ }
@@ -338,10 +338,20 @@ function renderReportPeriod(label, period, reportDate, defaultOpen = true) {
   const card = document.createElement('details');
   card.className = 'report-period';
   card.open = laneOpenState(reportDate, label, defaultOpen);
-  card.addEventListener('toggle', () => {
-    try { localStorage.setItem(`wb-lane:${reportDate}:${label}`, card.open ? 'open' : 'closed'); } catch (error) { /* not remembered */ }
-  });
+  // 2026-10-26: yesterday's lanes stayed open this morning. Setting card.open
+  // above queues a 'toggle' event, so the old listener saved every lane as
+  // 'open' the first time it rendered as today's, and that saved choice beat
+  // the fold the next morning. Only a real click or key on the header is
+  // David's choice, so only that is remembered. The key moved to wb-lane2 so
+  // the auto-saved 'open' values from before this fix are ignored.
+  let byHand = false;
   const header = document.createElement('summary');
+  header.addEventListener('click', () => { byHand = true; });
+  card.addEventListener('toggle', () => {
+    if (!byHand) return;
+    byHand = false;
+    try { localStorage.setItem(`wb-lane2:${reportDate}:${label}`, card.open ? 'open' : 'closed'); } catch (error) { /* not remembered */ }
+  });
   const title = document.createElement('h3');
   title.textContent = label;
   const status = document.createElement('span');
