@@ -499,7 +499,8 @@ async function lifecycle(browser) {
     await page.reload();
     await page.waitForSelector('#cs-hero:not(.cs-hide)');
     await page.click('#cs-open-book');
-    await page.locator('.cs-day').nth(1).click();
+    // By date, not position: after 10 PM Eastern today is no longer offered.
+    await page.locator('.cs-day[data-date="' + etDatePlus(1) + '"]').click();
     const disabled = await page.evaluate(() => [...document.querySelectorAll('.cs-time')].map((b, i) => b.disabled ? 10 + i : null).filter(x => x != null));
     check('a neighbour\'s two-hour session blocks the overlapping hours', [13, 14, 15].every(h => disabled.includes(h)) && !disabled.includes(12) && !disabled.includes(16), 'disabled hours ' + disabled.join(','));
     await context.close();

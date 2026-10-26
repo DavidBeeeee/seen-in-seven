@@ -7,6 +7,7 @@ Written 2026-10-24 (evening, WBR-458; Stranger 100, Developer 100) from the code
 **1. There are not enough hours. This is the binding limit.**
 Every member gets one two-hour session with David every week (David, 2026-10-25: that offer is not changing). Sessions can start on any hour from 10:00 to 22:00 Eastern, and there is one David. As of tonight no two sessions can overlap, so the most that fit is 7 a day (10, 12, 14, 16, 18, 20, 22), which is **49 a week**. At 49 active members the week is full, and member 50 cannot be given the session they paid for. Nothing in the code stops more people from joining than there are seats.
 Keeping the guarantee means keeping active members under the weekly seat count, or adding hours or hosts as membership grows. Until one of those is in place, Certainty should not be sold past about 40 members, which leaves room for reschedules.
+Since 2026-10-25 the system sees this coming: `certainty_seat_status()` counts every member who can book (direct Certainty and bundled Hub access, deduplicated), the operator Dashboard shows seats used of 49, and the reminder job emails David once each at 35, 42 and 47. Live on 2026-10-25: 5 of 49 used. Nothing blocks a purchase; the weekly guarantee is unchanged.
 
 **2. Double booking: fixed tonight.**
 Before tonight the database refused only a second booking at the *same* start time. One member at 10:00 and another at 11:00 both landed, so David was booked into two sessions at once for an hour. With one member this never happened (0 overlapping pairs on read-back). With two or more it would have. Fixed:
@@ -33,8 +34,18 @@ Before tonight the database refused only a second booking at the *same* start ti
 
 The walk ends 25 of 25 checks green, with zero serious or critical axe-core violations and no request leaving the machine.
 
-## Not verified tonight
+## 2026-10-25 evening: last walk and invite repair
 
-- Real screen-reader output (VoiceOver or NVDA). The walk checks focus and accessible names, not speech.
-- Emailed calendar invites. That is the overnight Antigravity order (WO-20261024-agnight).
+- Kimi's two-browser walk (commit 472f71e) was rerun here: 84/84, Chromium 42/42 and WebKit 42/42, zero production POSTs. The afternoon's seat build (b2273b9) passes `check:certainty-seats`.
+- Calendar invites (built 2026-10-25, eea6812) had two failures from the afternoon review, both fixed in bf6315b: every edit was `SEQUENCE:1`, so a second edit could be ignored by a calendar app; it now strictly increases on every edit and cancel. And a failed send was never retried; the next hourly reminder tick now retries it once, to the recipient that did not get it, with a per-recipient Resend idempotency key so no one gets a duplicate. `check:certainty-invite-retry` proves both through the real handler.
+- A phone booking with no number on file would have put the literal text `<phone on file>` in the invite. It now says "the phone number on your account".
+- The header's My Studio link had no spoken name on a phone, and the account button was announced as a single letter. Both now have names.
+- After the last 10 PM start has passed, today is no longer offered as a day that only says "no open times".
+- Walked live in Chrome at studio.coloradomastermind.com/certainty on 2026-10-25 at about 23:00 ET, signed in, up to the confirm button: day, time and phone mode behave as the walk says. No booking was made.
+
+## Not verified
+
+- Real screen-reader speech (VoiceOver or NVDA). The walk proves roles, names, selected state, live regions and headings from the accessibility tree, not what a particular reader says.
+- The invite retry against real Resend. It is proven with fixtures through the real handler and the service-role grants it needs were read back live; it runs for real only when an invite actually fails.
 - Load: no load test was run against production, and none should be without David's say-so.
+- Supabase bandwidth: the free-plan organization was past its egress quota on 2026-10-25 (12.2 GB of 5 GB, billing reset 2026-10-27). The reads were cut that afternoon; whether Supabase restricts the project before the reset is Supabase's call or a plan decision for David, not code.

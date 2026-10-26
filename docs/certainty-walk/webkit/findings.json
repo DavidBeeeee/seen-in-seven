@@ -1,5 +1,5 @@
 {
- "at": "2026-10-26T03:01:41.232Z",
+ "at": "2026-10-26T03:14:28.530Z",
  "browser": "webkit",
  "checks": [
   {
@@ -12,7 +12,7 @@
    "browser": "webkit",
    "name": "book: the next session shows with its topic",
    "pass": true,
-   "evidence": "Your first sessionMonday, October 2610:00 AM – 12:00 PM ETOn Zoom · Fix my funnelJoin on Z"
+   "evidence": "Your first sessionTuesday, October 2710:00 AM – 12:00 PM ETOn Zoom · Fix my funnelJoin on "
   },
   {
    "browser": "webkit",
@@ -108,25 +108,25 @@
    "browser": "webkit",
    "name": "keyboard-only booking dark 1280px",
    "pass": true,
-   "evidence": "booked 2026-10-26 10:00 phone via Alt+Tab, 43 stops, 0 without visible focus"
+   "evidence": "booked 2026-10-27 10:00 phone via Alt+Tab, 42 stops, 0 without visible focus"
   },
   {
    "browser": "webkit",
    "name": "keyboard-only booking dark 375px",
    "pass": true,
-   "evidence": "booked 2026-10-26 10:00 phone via Alt+Tab, 36 stops, 0 without visible focus"
+   "evidence": "booked 2026-10-27 10:00 phone via Alt+Tab, 35 stops, 0 without visible focus"
   },
   {
    "browser": "webkit",
    "name": "keyboard-only booking light 1280px",
    "pass": true,
-   "evidence": "booked 2026-10-26 10:00 phone via Alt+Tab, 43 stops, 0 without visible focus"
+   "evidence": "booked 2026-10-27 10:00 phone via Alt+Tab, 42 stops, 0 without visible focus"
   },
   {
    "browser": "webkit",
    "name": "keyboard-only booking light 375px",
    "pass": true,
-   "evidence": "booked 2026-10-26 10:00 phone via Alt+Tab, 36 stops, 0 without visible focus"
+   "evidence": "booked 2026-10-27 10:00 phone via Alt+Tab, 35 stops, 0 without visible focus"
   },
   {
    "browser": "webkit",
@@ -156,25 +156,25 @@
    "browser": "webkit",
    "name": "screen-reader picker: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 30 controls, 9 headings"
+   "evidence": "0 faults, 29 controls, 9 headings"
   },
   {
    "browser": "webkit",
    "name": "screen-reader mode-choice: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 43 controls, 9 headings"
+   "evidence": "0 faults, 42 controls, 9 headings"
   },
   {
    "browser": "webkit",
    "name": "selected day and time are announced as selected",
    "pass": true,
-   "evidence": "[{\"selector\":\".cs-day.sel\",\"pressed\":\"true\",\"name\":\"Mon26Oct✓\"},{\"selector\":\".cs-time.sel\",\"pressed\":\"true\",\"name\":\"10:00 AM ET, selected\"}]"
+   "evidence": "[{\"selector\":\".cs-day.sel\",\"pressed\":\"true\",\"name\":\"Tue27Oct✓\"},{\"selector\":\".cs-time.sel\",\"pressed\":\"true\",\"name\":\"10:00 AM ET, selected\"}]"
   },
   {
    "browser": "webkit",
    "name": "screen-reader confirm: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 44 controls, 9 headings"
+   "evidence": "0 faults, 43 controls, 9 headings"
   },
   {
    "browser": "webkit",
@@ -186,13 +186,13 @@
    "browser": "webkit",
    "name": "booked confirmation is announced",
    "pass": true,
-   "evidence": "{\"focused\":\"Monday, October 2610:00 AM – 12:00 PM ETBy phone · Screen reader booking\",\"live\":\"\"}"
+   "evidence": "{\"focused\":\"Tuesday, October 2710:00 AM – 12:00 PM ETBy phone · Screen reader booking\",\"live\":\"\"}"
   },
   {
    "browser": "webkit",
    "name": "screen-reader edit: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 47 controls, 8 headings"
+   "evidence": "0 faults, 46 controls, 8 headings"
   },
   {
    "browser": "webkit",
@@ -228,7 +228,7 @@
    "browser": "webkit",
    "name": "screen-reader network-error: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 43 controls, 9 headings"
+   "evidence": "0 faults, 42 controls, 9 headings"
   },
   {
    "browser": "webkit",
@@ -240,7 +240,7 @@
    "browser": "webkit",
    "name": "screen-reader slot-taken: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 43 controls, 9 headings"
+   "evidence": "0 faults, 42 controls, 9 headings"
   },
   {
    "browser": "webkit",
@@ -986,11 +986,11 @@
    "theme": "dark",
    "width": 1280,
    "pass": true,
-   "stops": 43,
+   "stops": 42,
    "invisibleFocusStops": 0,
    "booking": {
     "action": "book",
-    "date": "2026-10-26",
+    "date": "2026-10-27",
     "hour": 10,
     "mode": "phone",
     "phone": "(555) 010-2030",
@@ -1005,11 +1005,11 @@
    "theme": "dark",
    "width": 375,
    "pass": true,
-   "stops": 36,
+   "stops": 35,
    "invisibleFocusStops": 0,
    "booking": {
     "action": "book",
-    "date": "2026-10-26",
+    "date": "2026-10-27",
     "hour": 10,
     "mode": "phone",
     "phone": "(555) 010-2030",
@@ -1024,11 +1024,11 @@
    "theme": "light",
    "width": 1280,
    "pass": true,
-   "stops": 43,
+   "stops": 42,
    "invisibleFocusStops": 0,
    "booking": {
     "action": "book",
-    "date": "2026-10-26",
+    "date": "2026-10-27",
     "hour": 10,
     "mode": "phone",
     "phone": "(555) 010-2030",
@@ -1043,11 +1043,11 @@
    "theme": "light",
    "width": 375,
    "pass": true,
-   "stops": 36,
+   "stops": 35,
    "invisibleFocusStops": 0,
    "booking": {
     "action": "book",
-    "date": "2026-10-26",
+    "date": "2026-10-27",
     "hour": 10,
     "mode": "phone",
     "phone": "(555) 010-2030",
@@ -1144,7 +1144,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 30
+   "controls": 29
   },
   {
    "browser": "webkit",
@@ -1190,7 +1190,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 43
+   "controls": 42
   },
   {
    "browser": "webkit",
@@ -1236,7 +1236,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 44
+   "controls": 43
   },
   {
    "browser": "webkit",
@@ -1316,7 +1316,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 47
+   "controls": 46
   },
   {
    "browser": "webkit",
@@ -1496,7 +1496,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 43
+   "controls": 42
   },
   {
    "browser": "webkit",
@@ -1542,7 +1542,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 43
+   "controls": 42
   }
  ]
 }

@@ -1,6 +1,6 @@
 # Certainty rendered walk: Chromium and WebKit
 
-Run 2026-10-26T03:01:41.285Z against the real rendered `api/_hub/certainty.html`. Both browsers ran the same lifecycle, keyboard, axe, responsive-layout and accessibility-tree passes. Every network call was stubbed.
+Run 2026-10-26T03:14:28.599Z against the real rendered `api/_hub/certainty.html`. Both browsers ran the same lifecycle, keyboard, axe, responsive-layout and accessibility-tree passes. Every network call was stubbed.
 
 **84 of 84 checks pass across both browsers. 0 findings.**
 
@@ -161,14 +161,14 @@ No pass/fail differences between Chromium and WebKit were observed.
 
 | Browser | Navigation key | Theme | Width | Result | Focus stops | Invisible focus stops | Focus order | Screenshot |
 |---|---|---|---:|---|---:|---:|---|---|
-| chromium | Tab | dark | 1280 | PASS | 43 | 0 | chromium/focus-order.json | docs/certainty-walk/chromium/shots/008-keyboard-booked-dark-1280.jpg |
-| chromium | Tab | dark | 375 | PASS | 36 | 0 |  | docs/certainty-walk/chromium/shots/009-keyboard-booked-dark-375.jpg |
-| chromium | Tab | light | 1280 | PASS | 43 | 0 |  | docs/certainty-walk/chromium/shots/010-keyboard-booked-light-1280.jpg |
-| chromium | Tab | light | 375 | PASS | 36 | 0 |  | docs/certainty-walk/chromium/shots/011-keyboard-booked-light-375.jpg |
-| webkit | Alt+Tab | dark | 1280 | PASS | 43 | 0 | webkit/focus-order.json | docs/certainty-walk/webkit/shots/008-keyboard-booked-dark-1280.jpg |
-| webkit | Alt+Tab | dark | 375 | PASS | 36 | 0 |  | docs/certainty-walk/webkit/shots/009-keyboard-booked-dark-375.jpg |
-| webkit | Alt+Tab | light | 1280 | PASS | 43 | 0 |  | docs/certainty-walk/webkit/shots/010-keyboard-booked-light-1280.jpg |
-| webkit | Alt+Tab | light | 375 | PASS | 36 | 0 |  | docs/certainty-walk/webkit/shots/011-keyboard-booked-light-375.jpg |
+| chromium | Tab | dark | 1280 | PASS | 42 | 0 | chromium/focus-order.json | docs/certainty-walk/chromium/shots/008-keyboard-booked-dark-1280.jpg |
+| chromium | Tab | dark | 375 | PASS | 35 | 0 |  | docs/certainty-walk/chromium/shots/009-keyboard-booked-dark-375.jpg |
+| chromium | Tab | light | 1280 | PASS | 42 | 0 |  | docs/certainty-walk/chromium/shots/010-keyboard-booked-light-1280.jpg |
+| chromium | Tab | light | 375 | PASS | 35 | 0 |  | docs/certainty-walk/chromium/shots/011-keyboard-booked-light-375.jpg |
+| webkit | Alt+Tab | dark | 1280 | PASS | 42 | 0 | webkit/focus-order.json | docs/certainty-walk/webkit/shots/008-keyboard-booked-dark-1280.jpg |
+| webkit | Alt+Tab | dark | 375 | PASS | 35 | 0 |  | docs/certainty-walk/webkit/shots/009-keyboard-booked-dark-375.jpg |
+| webkit | Alt+Tab | light | 1280 | PASS | 42 | 0 |  | docs/certainty-walk/webkit/shots/010-keyboard-booked-light-1280.jpg |
+| webkit | Alt+Tab | light | 375 | PASS | 35 | 0 |  | docs/certainty-walk/webkit/shots/011-keyboard-booked-light-375.jpg |
 
 ## Screen reader
 
@@ -177,7 +177,7 @@ Readable per-screen transcripts are in `docs/certainty-walk/screen-reader.md`; r
 ## Checks
 
 - PASS [chromium] first visit greets a first-timer: first-session heading 1
-- PASS [chromium] book: the next session shows with its topic: Your first sessionMonday, October 2610:00 AM – 12:00 PM ETOn Zoom · Fix my funnelJoin on Z
+- PASS [chromium] book: the next session shows with its topic: Your first sessionTuesday, October 2710:00 AM – 12:00 PM ETOn Zoom · Fix my funnelJoin on 
 - PASS [chromium] edit: update sent with the session id and the new topic shows: update id=upcoming-2
 - PASS [chromium] cancel: the session is gone and booking is offered again: Your first sessionStart with one thing you are stuck on.This is two hours, one-o
 - PASS [chromium] rebook after cancel: 2 book requests
@@ -193,33 +193,33 @@ Readable per-screen transcripts are in `docs/certainty-walk/screen-reader.md`; r
 - PASS [chromium] cancel network drop is reported to the member: Your session is still booked. Try again in a moment, or email David at email@davidbee.me.
 - PASS [chromium] cancel server error is reported to the member: Could not cancel that session. Your session is still booked. Try again in a moment, or email David at email@davidbee.me.
 - PASS [chromium] reschedule stops and says so when the old time cannot be released: Could not cancel that session. Your session is still booked. Try again in a moment, or email David at email@davidbee.me.
-- PASS [chromium] keyboard-only booking dark 1280px: booked 2026-10-26 10:00 phone via Tab, 43 stops, 0 without visible focus
-- PASS [chromium] keyboard-only booking dark 375px: booked 2026-10-26 10:00 phone via Tab, 36 stops, 0 without visible focus
-- PASS [chromium] keyboard-only booking light 1280px: booked 2026-10-26 10:00 phone via Tab, 43 stops, 0 without visible focus
-- PASS [chromium] keyboard-only booking light 375px: booked 2026-10-26 10:00 phone via Tab, 36 stops, 0 without visible focus
+- PASS [chromium] keyboard-only booking dark 1280px: booked 2026-10-27 10:00 phone via Tab, 42 stops, 0 without visible focus
+- PASS [chromium] keyboard-only booking dark 375px: booked 2026-10-27 10:00 phone via Tab, 35 stops, 0 without visible focus
+- PASS [chromium] keyboard-only booking light 1280px: booked 2026-10-27 10:00 phone via Tab, 42 stops, 0 without visible focus
+- PASS [chromium] keyboard-only booking light 375px: booked 2026-10-27 10:00 phone via Tab, 35 stops, 0 without visible focus
 - PASS [chromium] Escape closes the booking panel and returns focus to the Book button: focus on Book my first session
 - PASS [chromium] zero serious or critical axe-core violations (WCAG 2.1 A/AA) on every state, light and dark: 0 serious/critical
 - PASS [chromium] layout holds at 375/1280, 200% zoom, 24px font, light and dark across 6 screens: 0 layout faults
 - PASS [chromium] screen-reader first-visit: every control is named and headings form an outline: 0 faults, 11 controls, 8 headings
-- PASS [chromium] screen-reader picker: every control is named and headings form an outline: 0 faults, 30 controls, 9 headings
-- PASS [chromium] screen-reader mode-choice: every control is named and headings form an outline: 0 faults, 43 controls, 9 headings
-- PASS [chromium] selected day and time are announced as selected: [{"selector":".cs-day.sel","pressed":"true","name":"Mon26Oct✓"},{"selector":".cs-time.sel","pressed":"true","name":"10:00 AM ET, selected"}]
-- PASS [chromium] screen-reader confirm: every control is named and headings form an outline: 0 faults, 44 controls, 9 headings
+- PASS [chromium] screen-reader picker: every control is named and headings form an outline: 0 faults, 29 controls, 9 headings
+- PASS [chromium] screen-reader mode-choice: every control is named and headings form an outline: 0 faults, 42 controls, 9 headings
+- PASS [chromium] selected day and time are announced as selected: [{"selector":".cs-day.sel","pressed":"true","name":"Tue27Oct✓"},{"selector":".cs-time.sel","pressed":"true","name":"10:00 AM ET, selected"}]
+- PASS [chromium] screen-reader confirm: every control is named and headings form an outline: 0 faults, 43 controls, 9 headings
 - PASS [chromium] screen-reader booked: every control is named and headings form an outline: 0 faults, 14 controls, 7 headings
-- PASS [chromium] booked confirmation is announced: {"focused":"Monday, October 2610:00 AM – 12:00 PM ETBy phone · Screen reader booking","live":""}
-- PASS [chromium] screen-reader edit: every control is named and headings form an outline: 0 faults, 47 controls, 8 headings
+- PASS [chromium] booked confirmation is announced: {"focused":"Tuesday, October 2710:00 AM – 12:00 PM ETBy phone · Screen reader booking","live":""}
+- PASS [chromium] screen-reader edit: every control is named and headings form an outline: 0 faults, 46 controls, 8 headings
 - PASS [chromium] screen-reader cancel: every control is named and headings form an outline: 0 faults, 11 controls, 8 headings
 - PASS [chromium] screen-reader lapsed: every control is named and headings form an outline: 0 faults, 11 controls, 10 headings
 - PASS [chromium] screen-reader ended: every control is named and headings form an outline: 0 faults, 2 controls, 1 headings
 - PASS [chromium] screen-reader signed-out-gate: every control is named and headings form an outline: 0 faults, 1 controls, 1 headings
 - PASS [chromium] screen-reader server-error-gate: every control is named and headings form an outline: 0 faults, 1 controls, 1 headings
-- PASS [chromium] screen-reader network-error: every control is named and headings form an outline: 0 faults, 43 controls, 9 headings
+- PASS [chromium] screen-reader network-error: every control is named and headings form an outline: 0 faults, 42 controls, 9 headings
 - PASS [chromium] live announcement network-error: {"text":"Something interrupted the booking. Try again.","live":"polite"}
-- PASS [chromium] screen-reader slot-taken: every control is named and headings form an outline: 0 faults, 43 controls, 9 headings
+- PASS [chromium] screen-reader slot-taken: every control is named and headings form an outline: 0 faults, 42 controls, 9 headings
 - PASS [chromium] live announcement slot-taken: {"text":"Someone just took that time. Pick another open slot.","live":"polite"}
 - PASS [chromium] no request left the machine except font and icon GETs; zero POSTs to production: 0 refused, 0 non-benign
 - PASS [webkit] first visit greets a first-timer: first-session heading 1
-- PASS [webkit] book: the next session shows with its topic: Your first sessionMonday, October 2610:00 AM – 12:00 PM ETOn Zoom · Fix my funnelJoin on Z
+- PASS [webkit] book: the next session shows with its topic: Your first sessionTuesday, October 2710:00 AM – 12:00 PM ETOn Zoom · Fix my funnelJoin on 
 - PASS [webkit] edit: update sent with the session id and the new topic shows: update id=upcoming-2
 - PASS [webkit] cancel: the session is gone and booking is offered again: Your first sessionStart with one thing you are stuck on.This is two hours, one-o
 - PASS [webkit] rebook after cancel: 2 book requests
@@ -235,29 +235,29 @@ Readable per-screen transcripts are in `docs/certainty-walk/screen-reader.md`; r
 - PASS [webkit] cancel network drop is reported to the member: Your session is still booked. Try again in a moment, or email David at email@davidbee.me.
 - PASS [webkit] cancel server error is reported to the member: Could not cancel that session. Your session is still booked. Try again in a moment, or email David at email@davidbee.me.
 - PASS [webkit] reschedule stops and says so when the old time cannot be released: Could not cancel that session. Your session is still booked. Try again in a moment, or email David at email@davidbee.me.
-- PASS [webkit] keyboard-only booking dark 1280px: booked 2026-10-26 10:00 phone via Alt+Tab, 43 stops, 0 without visible focus
-- PASS [webkit] keyboard-only booking dark 375px: booked 2026-10-26 10:00 phone via Alt+Tab, 36 stops, 0 without visible focus
-- PASS [webkit] keyboard-only booking light 1280px: booked 2026-10-26 10:00 phone via Alt+Tab, 43 stops, 0 without visible focus
-- PASS [webkit] keyboard-only booking light 375px: booked 2026-10-26 10:00 phone via Alt+Tab, 36 stops, 0 without visible focus
+- PASS [webkit] keyboard-only booking dark 1280px: booked 2026-10-27 10:00 phone via Alt+Tab, 42 stops, 0 without visible focus
+- PASS [webkit] keyboard-only booking dark 375px: booked 2026-10-27 10:00 phone via Alt+Tab, 35 stops, 0 without visible focus
+- PASS [webkit] keyboard-only booking light 1280px: booked 2026-10-27 10:00 phone via Alt+Tab, 42 stops, 0 without visible focus
+- PASS [webkit] keyboard-only booking light 375px: booked 2026-10-27 10:00 phone via Alt+Tab, 35 stops, 0 without visible focus
 - PASS [webkit] Escape closes the booking panel and returns focus to the Book button: focus on Book my first session
 - PASS [webkit] zero serious or critical axe-core violations (WCAG 2.1 A/AA) on every state, light and dark: 0 serious/critical
 - PASS [webkit] layout holds at 375/1280, 200% zoom, 24px font, light and dark across 6 screens: 0 layout faults
 - PASS [webkit] screen-reader first-visit: every control is named and headings form an outline: 0 faults, 11 controls, 8 headings
-- PASS [webkit] screen-reader picker: every control is named and headings form an outline: 0 faults, 30 controls, 9 headings
-- PASS [webkit] screen-reader mode-choice: every control is named and headings form an outline: 0 faults, 43 controls, 9 headings
-- PASS [webkit] selected day and time are announced as selected: [{"selector":".cs-day.sel","pressed":"true","name":"Mon26Oct✓"},{"selector":".cs-time.sel","pressed":"true","name":"10:00 AM ET, selected"}]
-- PASS [webkit] screen-reader confirm: every control is named and headings form an outline: 0 faults, 44 controls, 9 headings
+- PASS [webkit] screen-reader picker: every control is named and headings form an outline: 0 faults, 29 controls, 9 headings
+- PASS [webkit] screen-reader mode-choice: every control is named and headings form an outline: 0 faults, 42 controls, 9 headings
+- PASS [webkit] selected day and time are announced as selected: [{"selector":".cs-day.sel","pressed":"true","name":"Tue27Oct✓"},{"selector":".cs-time.sel","pressed":"true","name":"10:00 AM ET, selected"}]
+- PASS [webkit] screen-reader confirm: every control is named and headings form an outline: 0 faults, 43 controls, 9 headings
 - PASS [webkit] screen-reader booked: every control is named and headings form an outline: 0 faults, 14 controls, 7 headings
-- PASS [webkit] booked confirmation is announced: {"focused":"Monday, October 2610:00 AM – 12:00 PM ETBy phone · Screen reader booking","live":""}
-- PASS [webkit] screen-reader edit: every control is named and headings form an outline: 0 faults, 47 controls, 8 headings
+- PASS [webkit] booked confirmation is announced: {"focused":"Tuesday, October 2710:00 AM – 12:00 PM ETBy phone · Screen reader booking","live":""}
+- PASS [webkit] screen-reader edit: every control is named and headings form an outline: 0 faults, 46 controls, 8 headings
 - PASS [webkit] screen-reader cancel: every control is named and headings form an outline: 0 faults, 11 controls, 8 headings
 - PASS [webkit] screen-reader lapsed: every control is named and headings form an outline: 0 faults, 11 controls, 10 headings
 - PASS [webkit] screen-reader ended: every control is named and headings form an outline: 0 faults, 2 controls, 1 headings
 - PASS [webkit] screen-reader signed-out-gate: every control is named and headings form an outline: 0 faults, 1 controls, 1 headings
 - PASS [webkit] screen-reader server-error-gate: every control is named and headings form an outline: 0 faults, 1 controls, 1 headings
-- PASS [webkit] screen-reader network-error: every control is named and headings form an outline: 0 faults, 43 controls, 9 headings
+- PASS [webkit] screen-reader network-error: every control is named and headings form an outline: 0 faults, 42 controls, 9 headings
 - PASS [webkit] live announcement network-error: {"text":"Something interrupted the booking. Try again.","live":"polite"}
-- PASS [webkit] screen-reader slot-taken: every control is named and headings form an outline: 0 faults, 43 controls, 9 headings
+- PASS [webkit] screen-reader slot-taken: every control is named and headings form an outline: 0 faults, 42 controls, 9 headings
 - PASS [webkit] live announcement slot-taken: {"text":"Someone just took that time. Pick another open slot.","live":"polite"}
 - PASS [webkit] no request left the machine except font and icon GETs; zero POSTs to production: 0 refused, 0 non-benign
 

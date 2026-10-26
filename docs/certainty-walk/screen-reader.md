@@ -212,7 +212,6 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Sun 25 Oct"
   - button "Mon 26 Oct"
   - button "Tue 27 Oct"
   - button "Wed 28 Oct"
@@ -395,9 +394,8 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Sun 25 Oct"
-  - button "Mon 26 Oct" [pressed]
-  - button "Tue 27 Oct"
+  - button "Mon 26 Oct"
+  - button "Tue 27 Oct" [pressed]
   - button "Wed 28 Oct"
   - button "Thu 29 Oct"
   - button "Fri 30 Oct"
@@ -590,9 +588,8 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Sun 25 Oct"
-  - button "Mon 26 Oct" [pressed]
-  - button "Tue 27 Oct"
+  - button "Mon 26 Oct"
+  - button "Tue 27 Oct" [pressed]
   - button "Wed 28 Oct"
   - button "Thu 29 Oct"
   - button "Fri 30 Oct"
@@ -761,7 +758,7 @@ Heading outline: h1 “One private working session with David, every week.” �
   - article:
     - paragraph: Your first session
     - img
-    - text: Monday, October 26 10:00 AM – 12:00 PM ET
+    - text: Tuesday, October 27 10:00 AM – 12:00 PM ET
     - img
     - text: By phone · Screen reader booking
     - img
@@ -919,7 +916,7 @@ Heading outline: h1 “One private working session with David, every week.” �
   - article:
     - paragraph: Your first session
     - img
-    - text: Monday, October 26 10:00 AM – 12:00 PM ET
+    - text: Tuesday, October 27 10:00 AM – 12:00 PM ET
     - img
     - text: By phone · Screen reader booking
     - img
@@ -963,9 +960,8 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Sun 25 Oct"
-  - button "Mon 26 Oct" [pressed]
-  - button "Tue 27 Oct"
+  - button "Mon 26 Oct"
+  - button "Tue 27 Oct" [pressed]
   - button "Wed 28 Oct"
   - button "Thu 29 Oct"
   - button "Fri 30 Oct"
@@ -1304,14 +1300,14 @@ Heading outline: h1 “One private working session with David, every week.” �
       - img
       - text: Friday, September 25, 2026
       - img
-      - text: By phone · Pricing page rewrite 10:00 PM – 12:00 AM ET
+      - text: By phone · Pricing page rewrite 11:00 PM – 1:00 AM ET
     - listitem:
       - img
       - text: Friday, September 18, 2026
       - img
       - text: First session milestone
       - img
-      - text: On Zoom · Getting started 10:00 PM – 12:00 AM ET
+      - text: On Zoom · Getting started 11:00 PM – 1:00 AM ET
   - paragraph: Preferences
   - heading "Your settings" [level=2]
   - paragraph: Save your session preferences once so booking is faster each week.
@@ -1521,9 +1517,8 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Sun 25 Oct"
-  - button "Mon 26 Oct" [pressed]
-  - button "Tue 27 Oct"
+  - button "Mon 26 Oct"
+  - button "Tue 27 Oct" [pressed]
   - button "Wed 28 Oct"
   - button "Thu 29 Oct"
   - button "Fri 30 Oct"
@@ -1717,9 +1712,8 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Sun 25 Oct"
-  - button "Mon 26 Oct" [pressed]
-  - button "Tue 27 Oct"
+  - button "Mon 26 Oct"
+  - button "Tue 27 Oct" [pressed]
   - button "Wed 28 Oct"
   - button "Thu 29 Oct"
   - button "Fri 30 Oct"
@@ -2066,7 +2060,6 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Sun 25 Oct"
   - button "Mon 26 Oct"
   - button "Tue 27 Oct"
   - button "Wed 28 Oct"
@@ -2249,9 +2242,8 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Sun 25 Oct"
-  - button "Mon 26 Oct" [pressed]
-  - button "Tue 27 Oct"
+  - button "Mon 26 Oct"
+  - button "Tue 27 Oct" [pressed]
   - button "Wed 28 Oct"
   - button "Thu 29 Oct"
   - button "Fri 30 Oct"
@@ -2444,9 +2436,8 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Sun 25 Oct"
-  - button "Mon 26 Oct" [pressed]
-  - button "Tue 27 Oct"
+  - button "Mon 26 Oct"
+  - button "Tue 27 Oct" [pressed]
   - button "Wed 28 Oct"
   - button "Thu 29 Oct"
   - button "Fri 30 Oct"
@@ -2615,7 +2606,7 @@ Heading outline: h1 “One private working session with David, every week.” �
   - article:
     - paragraph: Your first session
     - img
-    - text: Monday, October 26 10:00 AM – 12:00 PM ET
+    - text: Tuesday, October 27 10:00 AM – 12:00 PM ET
     - img
     - text: By phone · Screen reader booking
     - img
@@ -2773,7 +2764,7 @@ Heading outline: h1 “One private working session with David, every week.” �
   - article:
     - paragraph: Your first session
     - img
-    - text: Monday, October 26 10:00 AM – 12:00 PM ET
+    - text: Tuesday, October 27 10:00 AM – 12:00 PM ET
     - img
     - text: By phone · Screen reader booking
     - img
@@ -2817,9 +2808,8 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Sun 25 Oct"
-  - button "Mon 26 Oct" [pressed]
-  - button "Tue 27 Oct"
+  - button "Mon 26 Oct"
+  - button "Tue 27 Oct" [pressed]
   - button "Wed 28 Oct"
   - button "Thu 29 Oct"
   - button "Fri 30 Oct"
@@ -3375,9 +3365,8 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Sun 25 Oct"
-  - button "Mon 26 Oct" [pressed]
-  - button "Tue 27 Oct"
+  - button "Mon 26 Oct"
+  - button "Tue 27 Oct" [pressed]
   - button "Wed 28 Oct"
   - button "Thu 29 Oct"
   - button "Fri 30 Oct"
@@ -3571,9 +3560,8 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Sun 25 Oct"
-  - button "Mon 26 Oct" [pressed]
-  - button "Tue 27 Oct"
+  - button "Mon 26 Oct"
+  - button "Tue 27 Oct" [pressed]
   - button "Wed 28 Oct"
   - button "Thu 29 Oct"
   - button "Fri 30 Oct"

@@ -974,11 +974,18 @@
       function renderDays() {
         var host = el('cs-days');
         host.innerHTML = '';
+        // After the last 10 PM start has passed, today has nothing left to
+        // book, so it is not offered as a day that only says "no times".
+        var now = etParts(new Date());
+        var todayIso = now.year + '-' + now.month + '-' + now.day;
+        var todayDone = Number(now.hour) >= 22;
         upcomingDays().forEach(function (d) {
+          if (todayDone && d.iso === todayIso && pick.date !== d.iso) return;
           var isSel = pick.date === d.iso;
           var b = document.createElement('button');
           b.className = 'cs-day' + (isSel ? ' sel' : '');
           b.type = 'button';
+          b.setAttribute('data-date', d.iso);
           b.setAttribute('aria-pressed', isSel ? 'true' : 'false');
           b.innerHTML = '<div class="cs-day-dow">' + d.dow + '</div><div class="cs-day-num">' + d.num + '</div><div class="cs-day-mon">' + d.mon + '</div>' +
             (isSel ? '<span class="cs-day-check" aria-hidden="true">✓</span>' : '');
