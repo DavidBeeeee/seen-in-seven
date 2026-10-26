@@ -9,6 +9,18 @@ const jsonResponse = (body, status = 200) => new Response(JSON.stringify(body), 
 test('missing key is an honest configuration failure, never a fake connection', async () => {
   assert.equal((await mailchimpRequest({}, { key: '' })).status, 503);
 });
+test('the exact mixed-case Production variable saved by David is accepted', async () => {
+  const priorUpper = process.env.MAILCHIMP_API_KEY;
+  const priorMixed = process.env.Mailchimp_api_key;
+  delete process.env.MAILCHIMP_API_KEY;
+  process.env.Mailchimp_api_key = key;
+  try {
+    assert.equal((await mailchimpRequest({}, { fetchImpl: async () => jsonResponse({ account_id: 'fixture' }) })).body.ok, true);
+  } finally {
+    if (priorUpper === undefined) delete process.env.MAILCHIMP_API_KEY; else process.env.MAILCHIMP_API_KEY = priorUpper;
+    if (priorMixed === undefined) delete process.env.Mailchimp_api_key; else process.env.Mailchimp_api_key = priorMixed;
+  }
+});
 test('all methods use only the account datacenter; writes require intentional authorization', async () => {
   for (const method of ['GET', 'POST', 'PUT', 'PATCH', 'DELETE']) {
     let called = false;

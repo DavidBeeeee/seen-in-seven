@@ -1,6 +1,6 @@
 // The credential lives only on the server. Callers select a Marketing API
 // resource, never an origin, header, redirect policy or executable.
-export async function mailchimpRequest(input, { key = process.env.MAILCHIMP_API_KEY, fetchImpl = fetch } = {}) {
+export async function mailchimpRequest(input, { key = process.env.MAILCHIMP_API_KEY || process.env.Mailchimp_api_key, fetchImpl = fetch } = {}) {
   const fail = (status, error) => ({ status, body: { ok: false, error } });
   if (!key || !/^[a-zA-Z0-9]+-us\d+$/.test(key)) return fail(503, 'Mailchimp key is not configured correctly in Production.');
   if (!input || typeof input !== 'object' || Array.isArray(input)) return fail(400, 'A request object is required.');
