@@ -15,6 +15,10 @@
   ],
   "rewrites": [
     {
+      "source": "/api/workerbee-mailchimp",
+      "destination": "/api/workerbee?channel=mailchimp"
+    },
+    {
       "source": "/api/storysculpt-research",
       "destination": "/api/storysculpt?action=research"
     },

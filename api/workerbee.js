@@ -1,5 +1,6 @@
 import { timingSafeEqual } from 'node:crypto';
 import { authenticatedAdmin, json } from './_lib/security.js';
+import { mailchimpRequest } from './_lib/workerbee-mailchimp.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
@@ -238,6 +239,11 @@ export default async function handler(req, res) {
   const auth = await authorize(req);
   if (!auth) return json(res, 403, { error: 'This private workspace is only available to David.' });
   try {
+    if (req.query?.channel === 'mailchimp') {
+      const input = req.method === 'GET' ? { method: 'GET', path: '/' } : req.body;
+      const response = await mailchimpRequest(input);
+      return json(res, response.status, response.body);
+    }
     if (req.method === 'GET') {
       // Same admin authorization, only four score summaries cross the wire.
       // Never send private client plans, journal entries, or the 1,200 rows to
