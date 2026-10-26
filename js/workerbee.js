@@ -287,6 +287,7 @@ function statusLabel(status) {
   const delivery = {
     'built-awaiting-integration': 'Built, awaiting integration',
     'ready-for-review': 'Built, awaiting review',
+    'handed-off': 'Waiting on review',
     verified: 'Verified',
   };
   if (delivery[status]) return delivery[status];
@@ -306,6 +307,63 @@ function dailyReportUpdates() {
     .filter(item => item.kind === 'summary' && item.status === 'active' && item.metadata && item.metadata.source === 'daily-report')
     .sort((a, b) => String(b.metadata.report_date || '').localeCompare(String(a.metadata.report_date || '')))
     .slice(0, 2);
+}
+
+const LANE_NAMES = {
+  morning: 'Morning',
+  latemorning: 'Late morning · Antigravity',
+  kimi: 'Kimi build',
+  afternoon: 'Afternoon',
+  social: 'Moltbook',
+  evening: 'Evening · Claude Code',
+  agnight: 'Overnight · Antigravity',
+  kiminight: 'Overnight · Kimi',
+  lateNight: 'Late night',
+};
+const REPORT_SLOT_LANES = {
+  morning: 'morning',
+  lateMorning: 'latemorning',
+  kimi: 'kimi',
+  afternoon: 'afternoon',
+  moltbook: 'social',
+  evening: 'evening',
+  agnight: 'agnight',
+  kiminight: 'kiminight',
+  lateNight: 'lateNight',
+};
+
+function laneName(lane) {
+  return LANE_NAMES[lane] || String(lane || 'the named review lane');
+}
+
+function runStatusFeed() {
+  const record = dailyReportUpdates().find(item => item.metadata.run_status && Array.isArray(item.metadata.run_status.runs));
+  return record ? record.metadata.run_status : { since: null, runs: [] };
+}
+
+function selectLaneRun(runs) {
+  const live = runs.filter(run => ['unresolved', 'started-never'].includes(run.status));
+  if (live.length) return live[live.length - 1];
+  const completed = runs.filter(run => run.status === 'completed');
+  if (completed.length) return completed[completed.length - 1];
+  const handedOff = runs.filter(run => run.status === 'handed-off');
+  if (handedOff.length) return handedOff[handedOff.length - 1];
+  return runs[runs.length - 1] || null;
+}
+
+function runForReportLane(reportDate, slot) {
+  const lane = REPORT_SLOT_LANES[slot];
+  return selectLaneRun(runStatusFeed().runs.filter(run => run.date === reportDate && run.lane === lane));
+}
+
+function hasPeriodContent(period) {
+  return Boolean(period && (
+    period.status !== 'not-run'
+    || period.updatedAt
+    || period.summary
+    || (period.completed || []).length
+    || (period.passes || []).length
+  ));
 }
 
 function localDateKey(date) {
@@ -334,9 +392,15 @@ function laneOpenState(reportDate, label, defaultOpen) {
   return defaultOpen;
 }
 
-function renderReportPeriod(label, period, reportDate, defaultOpen = true) {
+function renderReportPeriod(label, period, reportDate, defaultOpen = true, run = null) {
   const card = document.createElement('details');
-  card.className = 'report-period';
+  const handedOff = run?.status === 'handed-off';
+  card.className = `report-period${handedOff ? ' handed-off' : ''}`;
+  if (run) {
+    card.dataset.lane = run.lane;
+    card.dataset.runStatus = run.status;
+    card.dataset.runId = run.runId;
+  }
   card.open = laneOpenState(reportDate, label, defaultOpen);
   // 2026-10-26: yesterday's lanes stayed open this morning. Setting card.open
   // above queues a 'toggle' event, so the old listener saved every lane as
@@ -355,8 +419,8 @@ function renderReportPeriod(label, period, reportDate, defaultOpen = true) {
   const title = document.createElement('h3');
   title.textContent = label;
   const status = document.createElement('span');
-  status.className = 'status-chip';
-  status.textContent = statusLabel(period && period.status);
+  status.className = `status-chip${handedOff ? ' handed-off' : ''}`;
+  status.textContent = handedOff ? `Waiting on review by ${laneName(run.reviewLane)}` : statusLabel(period && period.status);
   const periodMeta = document.createElement('div');
   periodMeta.className = 'report-period-meta';
   periodMeta.append(status);
@@ -368,6 +432,12 @@ function renderReportPeriod(label, period, reportDate, defaultOpen = true) {
   }
   header.append(title, periodMeta);
   card.append(header);
+  if (handedOff) {
+    const receipt = document.createElement('p');
+    receipt.className = 'report-handoff';
+    receipt.textContent = `${run.orderId || 'Work order unavailable'} · commit ${run.commit || run.endCommit || 'unavailable'}`;
+    card.append(receipt);
+  }
   if (period && period.summary) {
     const summary = document.createElement('p');
     summary.textContent = period.summary;
@@ -575,10 +645,20 @@ function renderDailyReport() {
   const newestDate = records.map(record => String(record.metadata.report_date)).sort().pop();
   const newest = records.find(record => String(record.metadata.report_date) === newestDate);
   const morningRan = Boolean(newest?.metadata?.morning?.updatedAt) && !['not-run', 'pending', ''].includes(String(newest?.metadata?.morning?.status || ''));
+  const nightCards = new Set(['Late night', 'Evening · Claude Code', 'Overnight · Antigravity', 'Overnight · Kimi']);
   records.forEach(record => {
     const older = String(record.metadata.report_date) !== newestDate;
-    const fold = laneLabel => !(older && morningRan && laneLabel !== 'Late night');
+    const fold = laneLabel => !(older && morningRan && !nightCards.has(laneLabel));
     const reportDate = record.metadata.report_date;
+    const separated = Number(record.metadata.lane_slots_version || 0) >= 2
+      || ['evening', 'agnight', 'kiminight'].some(key => Object.hasOwn(record.metadata, key));
+    const renderLane = (label, slot, metadataKey = slot) => renderReportPeriod(
+      label,
+      record.metadata[metadataKey],
+      reportDate,
+      fold(label),
+      runForReportLane(reportDate, slot),
+    );
     const day = document.createElement('section');
     day.className = 'daily-report-day';
     const heading = document.createElement('div');
@@ -592,15 +672,24 @@ function renderDailyReport() {
     const grid = document.createElement('div');
     grid.className = 'daily-report-grid';
     grid.append(
-      renderReportPeriod('Morning', record.metadata.morning, reportDate, fold('Morning')),
-      // 2026-10-06: Antigravity's 10:00 build lane (David). Older reports have no
-      // late_morning period and render as not run.
-      renderReportPeriod('Late morning · Antigravity', record.metadata.late_morning, reportDate, fold('Late morning · Antigravity')),
-      renderReportPeriod('Kimi build', record.metadata.kimi, reportDate, fold('Kimi build')),
-      renderReportPeriod('Afternoon', record.metadata.afternoon, reportDate, fold('Afternoon')),
-      renderReportPeriod('Moltbook', record.metadata.moltbook, reportDate, fold('Moltbook')),
-      renderReportPeriod('Late night', record.metadata.late_night, reportDate, fold('Late night'))
+      renderLane('Morning', 'morning'),
+      renderLane('Late morning · Antigravity', 'lateMorning', 'late_morning'),
+      renderLane('Kimi build', 'kimi'),
+      renderLane('Afternoon', 'afternoon'),
+      renderReportPeriod('Moltbook', record.metadata.moltbook, reportDate, fold('Moltbook'), runForReportLane(reportDate, 'moltbook')),
     );
+    if (separated) {
+      grid.append(
+        renderLane('Evening · Claude Code', 'evening'),
+        renderLane('Overnight · Antigravity', 'agnight'),
+        renderLane('Overnight · Kimi', 'kiminight'),
+      );
+    }
+    // Reports written before the lanes separated keep their original card. A
+    // meaningful legacy card also survives beside the new slots during migration.
+    if (!separated || hasPeriodContent(record.metadata.late_night)) {
+      grid.append(renderReportPeriod('Late night', record.metadata.late_night, reportDate, fold('Late night'), runForReportLane(reportDate, 'evening')));
+    }
     day.append(heading, grid);
     root.append(day);
   });
@@ -1001,6 +1090,47 @@ function statCard(label, value, note) {
   return card;
 }
 
+function renderRunReview(feed) {
+  const panel = el('run-review-panel');
+  const list = el('run-review-list');
+  const note = el('run-review-note');
+  if (!panel || !list || !note) return;
+  panel.hidden = !feed.since;
+  list.replaceChildren();
+  if (!feed.since) {
+    note.textContent = '';
+    return;
+  }
+  const waiting = feed.runs.filter(run => run.status === 'handed-off');
+  note.textContent = `${waiting.length} handed-off run${waiting.length === 1 ? '' : 's'} since ${formatDate(feed.since)}. Delivered, pending review; counted separately from failed and completed.`;
+  if (!waiting.length) {
+    list.append(empty('No lane run is waiting on review in this reporting window.'));
+    return;
+  }
+  waiting.slice().reverse().forEach(run => {
+    const card = document.createElement('article');
+    card.className = 'run-review-item handed-off';
+    card.dataset.runStatus = run.status;
+    card.dataset.runId = run.runId;
+    const title = document.createElement('h3');
+    title.textContent = laneName(run.lane);
+    const status = document.createElement('p');
+    status.className = 'run-review-status';
+    status.textContent = `Waiting on review by ${laneName(run.reviewLane)}`;
+    const receipt = document.createElement('p');
+    receipt.className = 'run-review-commit';
+    receipt.textContent = `${run.orderId || 'Work order unavailable'} · commit ${run.commit || run.endCommit || 'unavailable'}`;
+    card.append(title, status, receipt);
+    if (run.finishedAt) {
+      const time = document.createElement('time');
+      time.dateTime = run.finishedAt;
+      time.textContent = `Handed off ${formatDateTime(run.finishedAt)}`;
+      card.append(time);
+    }
+    list.append(card);
+  });
+}
+
 function shortAnalyticsLabel(label) {
   const date = /^(\d{4})-(\d{2})-(\d{2})$/.exec(label);
   if (date) return `${date[2]}/${date[3]}`;
@@ -1094,6 +1224,22 @@ function renderAnalytics() {
     statCard('Inbox', (workerbee.inbox || 0) + (david.inbox || 0), 'Captured and not yet routed. Empty is the target.'),
     statCard('Stalled past 21 days', (workerbee.stalledOver21 || 0) + (david.stalledOver21 || 0), `Oldest untouched item is ${Math.max(workerbee.oldestStillDays || 0, david.oldestStillDays || 0)} days still.`)
   );
+
+  const runFeed = runStatusFeed();
+  const runCounts = { completed: 0, handedOff: 0, failed: 0 };
+  for (const run of runFeed.runs) {
+    if (run.status === 'completed') runCounts.completed += 1;
+    else if (run.status === 'handed-off') runCounts.handedOff += 1;
+    else if (run.status === 'failed') runCounts.failed += 1;
+  }
+  if (runFeed.since) {
+    cards.append(
+      statCard('Completed lane runs', runCounts.completed, `Since ${formatDate(runFeed.since)}; handed-off runs are excluded.`),
+      statCard('Waiting on review', runCounts.handedOff, `Handed off since ${formatDate(runFeed.since)}; neither failed nor completed.`),
+      statCard('Failed lane runs', runCounts.failed, `Since ${formatDate(runFeed.since)}; handed-off runs are excluded.`),
+    );
+  }
+  renderRunReview(runFeed);
 
   const score = latest.score || {};
   const series = score[analyticsPeriod === 'day' ? 'byDay' : analyticsPeriod === 'week' ? 'byWeek' : 'byMonth'] || {};
