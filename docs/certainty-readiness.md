@@ -43,9 +43,16 @@ The walk ends 25 of 25 checks green, with zero serious or critical axe-core viol
 - After the last 10 PM start has passed, today is no longer offered as a day that only says "no open times".
 - Walked live in Chrome at studio.coloradomastermind.com/certainty on 2026-10-25 at about 23:00 ET, signed in, up to the confirm button: day, time and phone mode behave as the walk says. No booking was made.
 
+## 2026-10-26 afternoon: real provider retry acceptance
+
+- Used only `momentum-hub-test@ancientcosmic.com`. Booked test session `2f4a2152-72e1-4d73-a7b0-6c4f61aa0a3c` through the existing member booking RPC, without invoking the handler that emails both parties. Inserted one explicitly synthetic failure receipt `d9f79322-5432-46f9-be9a-b04e5a41ecc8`, REQUEST / sequence 0, `failedRecipients: ['member']`. This proves replay of a failed receipt, not an actual provider outage.
+- Triggered the deployed hourly path with the database's single-use tick, pg_net request 66. HTTP 200: one due invite, one retried, zero failures; zero due reminders, no operator email, no seat alert and no StorySculpt alert.
+- Production `certainty_invite_retried` row `0caad27d-2090-4b6e-b997-c67bc48d3460` carries Resend member message `01a179a4-8f80-7a31-acec-42e54cd033a3`, recipients `['member']`, and `davidMessageId: null`.
+- Read the received message in the test inbox: Gmail `1a179a4b9ba583d6`, “Your Certainty Session is booked”, 2026-10-26 19:16:30Z, correct November 23 / 2–4 PM Eastern and an `invite.ics` attachment. No live member or David test email was requested.
+- Cancelled that exact test session through the existing member cancellation RPC at 19:16:58Z, without sending an operator cancellation email. Historical fixture tests remain 8/8 retry and 11/11 invites at exact `bf6315b`.
+
 ## Not verified
 
 - Real screen-reader speech (VoiceOver or NVDA). The walk proves roles, names, selected state, live regions and headings from the accessibility tree, not what a particular reader says.
-- The invite retry against real Resend. It is proven with fixtures through the real handler and the service-role grants it needs were read back live; it runs for real only when an invite actually fails.
 - Load: no load test was run against production, and none should be without David's say-so.
 - Supabase bandwidth: the free-plan organization was past its egress quota on 2026-10-25 (12.2 GB of 5 GB, billing reset 2026-10-27). The reads were cut that afternoon; whether Supabase restricts the project before the reset is Supabase's call or a plan decision for David, not code.
