@@ -3,31 +3,51 @@
     - /url: /
     - text: CS
     - strong: Certainty Sessions
-  - link:
+  - link "My Studio":
     - /url: /
-  - button "Change color theme"
-  - button "W"
+    - img
+  - button "Change color theme":
+    - img
+  - button "Account menu"
 - main:
   - paragraph: Certainty Sessions
   - heading "One private working session with David, every week." [level=1]
   - paragraph: Pick a time, bring whatever you are stuck on, and stay with it until it clears. Two hours, one-on-one, on Zoom or by phone.
+  - img
   - text: Membership active
   - article:
     - paragraph: Your first session
-    - text: Monday, October 26 10:00 AM – 12:00 PM ET By phone · Screen reader booking David calls (555) 010-2030
-    - button "Edit session"
-    - button "Reschedule"
-    - button "Add to my calendar"
-    - button "Cancel"
+    - img
+    - text: Monday, October 26 10:00 AM – 12:00 PM ET
+    - img
+    - text: By phone · Screen reader booking
+    - img
+    - text: David calls (555) 010-2030
+    - button "Edit session":
+      - img
+      - text: Edit session
+    - button "Reschedule":
+      - img
+      - text: Reschedule
+    - button "Add to my calendar":
+      - img
+      - text: Add to my calendar
+    - button "Cancel":
+      - img
+      - text: Cancel
+    - img
     - text: Your time is held for you. David has not confirmed it on his calendar yet, and he will confirm with you before the session.
     - list:
       - listitem:
+        - img
         - strong: Before.
         - text: Pick a time and write one line about what is stuck. That is all the preparation there is.
       - listitem:
+        - img
         - strong: During.
         - text: Two hours with David. You work the thing together until it moves.
       - listitem:
+        - img
         - strong: After.
         - text: You leave with one next step, and this page asks what you will put into practice before next week.
   - article:
@@ -63,7 +83,9 @@
     - /placeholder: (555) 123-4567
   - paragraph: Remembered and prefilled when you choose phone sessions so you do not have to type it every time.
   - paragraph: David uses this number only to call you for phone sessions. It stays with your account, is never used for marketing or shared with anyone else, and clearing this field and saving removes it.
-  - button "Save settings"
+  - button "Save settings":
+    - img
+    - text: Save settings
   - region "What happens if you miss a week, drift off, or leave.":
     - paragraph: When life gets in the way
     - heading "What happens if you miss a week, drift off, or leave." [level=2]
@@ -75,17 +97,31 @@
     - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
     - heading "Your membership ends" [level=3]
     - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number"
+    - button "Delete my past sessions and phone number":
+      - img
+      - text: Delete my past sessions and phone number
     - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
   - article:
     - paragraph: Common session topics
     - list:
-      - listitem: Fixing a tech issue that is blocking you
-      - listitem: Setting up a funnel or an offer
-      - listitem: Improving your content
-      - listitem: Clarifying your next step
-      - listitem: Looking at your numbers together
-      - listitem: Anything else on your plate
+      - listitem:
+        - img
+        - text: Fixing a tech issue that is blocking you
+      - listitem:
+        - img
+        - text: Setting up a funnel or an offer
+      - listitem:
+        - img
+        - text: Improving your content
+      - listitem:
+        - img
+        - text: Clarifying your next step
+      - listitem:
+        - img
+        - text: Looking at your numbers together
+      - listitem:
+        - img
+        - text: Anything else on your plate
   - article:
     - paragraph: How it works
     - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
@@ -95,7 +131,9 @@
     - paragraph:
       - strong: "What counts:"
       - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph: One session per week is included with your membership.
+    - paragraph:
+      - img
+      - text: One session per week is included with your membership.
     - paragraph:
       - strong: "Private by default:"
       - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email

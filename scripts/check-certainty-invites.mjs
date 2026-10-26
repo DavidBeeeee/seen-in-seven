@@ -150,7 +150,8 @@ assert.ok(phoneIcs.includes('DESCRIPTION:David calls you at (555) 321-9876'), 'P
 
 const phoneNoNum = { ...phoneSession, phone: null };
 const phoneNoNumIcs = buildCertaintyIcs(phoneNoNum, { method: 'REQUEST', sequence: 0, forDavid: false });
-assert.ok(phoneNoNumIcs.includes('David calls you at <phone on file>'), 'Missing phone number falls back to <phone on file>');
+assert.ok(phoneNoNumIcs.includes('David calls you at the phone number on your account'), 'Missing phone number falls back to plain words, never a <placeholder>');
+assert.ok(!phoneNoNumIcs.includes('<phone'), 'No angle-bracket placeholder reaches a member');
 pass('Phone mode sets LOCATION and DESCRIPTION to phone call lines with fallback');
 
 // ── 2. Testing DST Transition 2026-11-01 ────────────────────────────────────
@@ -393,7 +394,7 @@ function makeReqRes(body, headers = {}) {
 
     const memberCall = harness.resendCalls.find(c => c.to.includes('test@example.com'));
     const memberIcsText = Buffer.from(memberCall.attachments[0].content, 'base64').toString('utf8');
-    assert.ok(memberIcsText.includes('SEQUENCE:1'), 'Edit .ics must carry SEQUENCE:1');
+    assert.ok(Number((memberIcsText.match(/SEQUENCE:(\d+)/) || [])[1]) > 0, 'Edit .ics must carry a SEQUENCE above the booking\'s 0');
     assert.ok(memberIcsText.includes('DTSTART;TZID=America/New_York:20261102T140000') || memberIcsText.includes('20261102T130000') || memberIcsText.includes('20261102T'), 'Edit .ics must carry updated time');
 
     const sentEvent = harness.events.find(e => e.type === 'certainty_invite_sent');
@@ -477,7 +478,9 @@ console.log('4. Verifying zero em dashes across new and edited files...');
 const filesToCheck = [
   'api/_lib/certainty-ics.js',
   'api/certainty.js',
-  'scripts/check-certainty-invites.mjs'
+  'api/_lib/certainty-invite-retry.js',
+  'scripts/check-certainty-invites.mjs',
+  'scripts/check-certainty-invite-retry.mjs'
 ];
 
 for (const file of filesToCheck) {

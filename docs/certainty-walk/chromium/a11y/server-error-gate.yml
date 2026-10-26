@@ -4,3 +4,5 @@
   - paragraph: There was a problem reaching Certainty Sessions. Check your connection and try again.
   - link "Try again":
     - /url: "#"
+    - text: Try again
+    - img

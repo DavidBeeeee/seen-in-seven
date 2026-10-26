@@ -4,3 +4,5 @@
   - paragraph: Use the Studio email connected to your membership.
   - link "Go to Studio sign in":
     - /url: /?access=certainty
+    - text: Go to Studio sign in
+    - img

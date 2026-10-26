@@ -16,6 +16,24 @@ export const CERTAINTY_TZID = 'America/New_York';
 export const CERTAINTY_SENDER_EMAIL = 'sessions@coloradomastermind.com';
 export const CERTAINTY_OPERATOR_EMAIL = 'email@davidbee.me';
 
+// SEQUENCE for an edit or cancel (RFC 5545 3.8.7.4: it only has to increase).
+// The member page never knows how many times a session has been edited, so the
+// server derives it from the clock: whole seconds since 2026-01-01Z. A booking
+// is 0; every later edit or cancel is larger than the one before it, and it
+// fits a 32-bit integer until 2094. Before this every edit was SEQUENCE:1
+// (WO-20261025-afternoon review: book/edit/edit read 0,1,1).
+const SEQUENCE_EPOCH_MS = Date.UTC(2026, 0, 1);
+export function certaintyInviteSequence(action, now = Date.now()) {
+  if (action === 'book') return 0;
+  return Math.max(1, Math.floor((Number(now) - SEQUENCE_EPOCH_MS) / 1000));
+}
+
+// One Resend idempotency key per recipient, per invite version, so a retry
+// never duplicates the half that already went out.
+export function certaintyInviteIdempotencyKey(sessionId, method, sequence, recipient) {
+  return `certainty-invite/${sessionId}/${String(method).toUpperCase()}/${Number(sequence) || 0}/${recipient}`;
+}
+
 export function getCertaintyUid(sessionId) {
   return `certainty-${sessionId}@coloradomastermind.com`;
 }
@@ -115,14 +133,14 @@ export function buildCertaintyIcs(session, options = {}) {
   if (isZoom) {
     locationText = zoomLink || 'Zoom';
   } else {
-    locationText = session.phone ? `David calls you at ${session.phone}` : 'David calls you at <phone on file>';
+    locationText = session.phone ? `David calls you at ${session.phone}` : 'David calls you at the phone number on your account';
   }
 
   const descriptionLines = [];
   if (isZoom) {
     descriptionLines.push(zoomLink ? `Join on Zoom: ${zoomLink}` : 'David will send the Zoom link before the session.');
   } else {
-    descriptionLines.push(session.phone ? `David calls you at ${session.phone}` : 'David calls you at <phone on file>');
+    descriptionLines.push(session.phone ? `David calls you at ${session.phone}` : 'David calls you at the phone number on your account');
   }
 
   if (forDavid) {
@@ -304,6 +322,7 @@ export async function sendCertaintyInviteEmails({
   sequence = 0,
   method = (action === 'cancel' ? 'CANCEL' : 'REQUEST'),
   zoomUrl = null,
+  recipients = ['member', 'david'],
   fetchFn = fetch
 }) {
   const apiKey = typeof process !== 'undefined' && process.env ? process.env.RESEND_API_KEY : '';
@@ -363,35 +382,36 @@ export async function sendCertaintyInviteEmails({
     ]
   };
 
-  const memberRes = await fetchFn('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: 'Bearer ' + apiKey,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(memberPayload)
-  });
-
-  if (!memberRes.ok) {
-    const detail = await memberRes.text().catch(() => '');
-    throw new Error(`resend member send ${memberRes.status}: ${detail.slice(0, 200)}`);
+  // Member first, then David. If David's half fails after the member's went
+  // out, the error carries the member's message id so the retry on the next
+  // reminder tick sends only the missing half.
+  const sent = { member: null, david: null };
+  const plan = [
+    ['member', memberPayload],
+    ['david', davidPayload]
+  ].filter(([recipient]) => recipients.includes(recipient));
+  for (const [recipient, payload] of plan) {
+    const response = await fetchFn('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: 'Bearer ' + apiKey,
+        'Content-Type': 'application/json',
+        'Idempotency-Key': certaintyInviteIdempotencyKey(session.id, method, sequence, recipient)
+      },
+      body: JSON.stringify(payload)
+    });
+    if (!response.ok) {
+      const detail = await response.text().catch(() => '');
+      const error = new Error(`resend ${recipient} send ${response.status}: ${detail.slice(0, 200)}`);
+      error.sent = { memberMessageId: sent.member, davidMessageId: sent.david };
+      error.failedRecipients = plan.map(([r]) => r).filter(r => !sent[r]);
+      throw error;
+    }
+    const data = await response.json().catch(() => ({}));
+    sent[recipient] = data.id || 'sent';
   }
-  const memberData = await memberRes.json().catch(() => ({}));
-
-  const davidRes = await fetchFn('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: 'Bearer ' + apiKey,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(davidPayload)
-  });
-
-  if (!davidRes.ok) {
-    const detail = await davidRes.text().catch(() => '');
-    throw new Error(`resend david send ${davidRes.status}: ${detail.slice(0, 200)}`);
-  }
-  const davidData = await davidRes.json().catch(() => ({}));
+  const memberData = { id: sent.member === 'sent' ? null : sent.member };
+  const davidData = { id: sent.david === 'sent' ? null : sent.david };
 
   return {
     ok: true,

@@ -1,6 +1,6 @@
 # Certainty rendered walk: Chromium and WebKit
 
-Run 2026-10-25T17:17:22.271Z against the real rendered `api/_hub/certainty.html`. Both browsers ran the same lifecycle, keyboard, axe, responsive-layout and accessibility-tree passes. Every network call was stubbed.
+Run 2026-10-26T03:01:41.285Z against the real rendered `api/_hub/certainty.html`. Both browsers ran the same lifecycle, keyboard, axe, responsive-layout and accessibility-tree passes. Every network call was stubbed.
 
 **84 of 84 checks pass across both browsers. 0 findings.**
 
@@ -217,7 +217,7 @@ Readable per-screen transcripts are in `docs/certainty-walk/screen-reader.md`; r
 - PASS [chromium] live announcement network-error: {"text":"Something interrupted the booking. Try again.","live":"polite"}
 - PASS [chromium] screen-reader slot-taken: every control is named and headings form an outline: 0 faults, 43 controls, 9 headings
 - PASS [chromium] live announcement slot-taken: {"text":"Someone just took that time. Pick another open slot.","live":"polite"}
-- PASS [chromium] no request left the machine except font and icon GETs; zero POSTs to production: 224 refused, 0 non-benign
+- PASS [chromium] no request left the machine except font and icon GETs; zero POSTs to production: 0 refused, 0 non-benign
 - PASS [webkit] first visit greets a first-timer: first-session heading 1
 - PASS [webkit] book: the next session shows with its topic: Your first sessionMonday, October 2610:00 AM – 12:00 PM ETOn Zoom · Fix my funnelJoin on Z
 - PASS [webkit] edit: update sent with the session id and the new topic shows: update id=upcoming-2
@@ -259,7 +259,7 @@ Readable per-screen transcripts are in `docs/certainty-walk/screen-reader.md`; r
 - PASS [webkit] live announcement network-error: {"text":"Something interrupted the booking. Try again.","live":"polite"}
 - PASS [webkit] screen-reader slot-taken: every control is named and headings form an outline: 0 faults, 43 controls, 9 headings
 - PASS [webkit] live announcement slot-taken: {"text":"Someone just took that time. Pick another open slot.","live":"polite"}
-- PASS [webkit] no request left the machine except font and icon GETs; zero POSTs to production: 224 refused, 0 non-benign
+- PASS [webkit] no request left the machine except font and icon GETs; zero POSTs to production: 0 refused, 0 non-benign
 
 ## Findings
 

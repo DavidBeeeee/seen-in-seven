@@ -22,6 +22,7 @@
 // is visible and honest; a reminder sent to a guessed address is not.
 
 import { checkStorySculptIncidents } from './_lib/storysculpt-incidents.js';
+import { retryFailedInvites } from './_lib/certainty-invite-retry.js';
 
 export const config = { maxDuration: 60 };
 
@@ -364,6 +365,19 @@ export default async function handler(req, res) {
     }
   }
 
+  // A calendar invite that failed at booking, edit or cancel is retried once
+  // here, on the hourly tick only, so the 12:00 and 12:05 daily runs cannot
+  // race it. Its own failure never fails the reminders.
+  let invites = null;
+  if (trigger !== 'vercel-cron' && RESEND_API_KEY) {
+    try {
+      invites = await retryFailedInvites({ supabaseUrl: SUPABASE_URL, serviceKey: SERVICE_KEY });
+    } catch (error) {
+      console.error('certainty-reminders: invite retry failed', String(error));
+      invites = { error: 'retry-check-failed' };
+    }
+  }
+
   const summary = {
     ok: true,
     trigger,
@@ -375,8 +389,9 @@ export default async function handler(req, res) {
     operatorOutcome: claimed.length || alert ? operatorOutcome : null,
     heartbeat: run ? { gapHours: run.gapHours, missed: run.missed, alertOutcome } : null,
     storysculpt,
-    seats
+    seats,
+    invites
   };
-  await finishRun({ outcome: 'ok', due: items.length, claimed: claimed.length, ...counts, storysculpt, seats }, alertOutcome);
+  await finishRun({ outcome: 'ok', due: items.length, claimed: claimed.length, ...counts, storysculpt, seats, invites }, alertOutcome);
   return sendJson(res, 200, summary);
 }

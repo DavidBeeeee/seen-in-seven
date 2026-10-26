@@ -2,7 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { readReminderHeartbeat } from './_lib/reminder-heartbeat.js';
 import { consumeQuota, json } from './_lib/security.js';
 import { detectCrisis } from './_lib/navigator-core.js';
-import { sendCertaintyInviteEmails, buildCertaintyIcs } from './_lib/certainty-ics.js';
+import { sendCertaintyInviteEmails, buildCertaintyIcs, certaintyInviteSequence } from './_lib/certainty-ics.js';
 
 export const config = { maxDuration: 30 };
 
@@ -219,6 +219,23 @@ async function rpc(name, args, userToken) {
 // It goes through the record_log_event RPC, not a direct POST to /rest/v1/logs.
 // An event NEVER carries member content: no topic, no phone, no email, only
 // outcomes, modes, codes, timings, and correlation IDs.
+// What the next reminder tick needs to retry a failed invite exactly once
+// (api/_lib/certainty-invite-retry.js): the version that failed and which
+// recipients still lack it. Never member content.
+export function inviteFailureDetail(action, sessionId, method, sequence, error, fallbackReason) {
+  const sent = (error && error.sent) || {};
+  return {
+    schema: 2,
+    action,
+    sessionId,
+    method,
+    sequence,
+    failedRecipients: Array.isArray(error && error.failedRecipients) ? error.failedRecipients : ['member', 'david'],
+    memberMessageId: sent.memberMessageId && sent.memberMessageId !== 'sent' ? sent.memberMessageId : null,
+    reason: (error && error.message) || fallbackReason
+  };
+}
+
 export async function recordEvent(userToken, eventType, detail, correlationId = null) {
   if (!userToken) return;
   try {
@@ -742,16 +759,14 @@ export default async function handler(req, res, options = {}) {
           schema: 1,
           action: 'book',
           sessionId: session.id,
+          method: 'REQUEST',
+          sequence: 0,
           memberMessageId: inviteResult.memberMessageId,
           davidMessageId: inviteResult.davidMessageId
         }, correlationId);
       } catch (inviteErr) {
-        await recordEvent(userToken, 'certainty_invite_failed', {
-          schema: 1,
-          action: 'book',
-          sessionId: session.id,
-          reason: (inviteErr && inviteErr.message) || 'invite-send-failed'
-        }, correlationId);
+        await recordEvent(userToken, 'certainty_invite_failed',
+          inviteFailureDetail('book', session.id, 'REQUEST', 0, inviteErr, 'invite-send-failed'), correlationId);
       }
 
       const crisisPayload = safetyAssessment.tripped ? {
@@ -798,7 +813,7 @@ export default async function handler(req, res, options = {}) {
       let inviteResult = null;
       if (session) {
         const join = joinFor(session);
-        const cancelSeq = req.body && req.body.sequence != null ? Number(req.body.sequence) : 1;
+        const cancelSeq = certaintyInviteSequence('cancel');
         try {
           inviteResult = await sendCertaintyInviteEmails({
             session: {
@@ -816,16 +831,14 @@ export default async function handler(req, res, options = {}) {
             schema: 1,
             action: 'cancel',
             sessionId: session.id,
+            method: 'CANCEL',
+            sequence: cancelSeq,
             memberMessageId: inviteResult.memberMessageId,
             davidMessageId: inviteResult.davidMessageId
           }, correlationId);
         } catch (inviteErr) {
-          await recordEvent(userToken, 'certainty_invite_failed', {
-            schema: 1,
-            action: 'cancel',
-            sessionId: session.id || sessionId,
-            reason: (inviteErr && inviteErr.message) || 'invite-cancel-failed'
-          }, correlationId);
+          await recordEvent(userToken, 'certainty_invite_failed',
+            inviteFailureDetail('cancel', session.id || sessionId, 'CANCEL', cancelSeq, inviteErr, 'invite-cancel-failed'), correlationId);
         }
       }
 
@@ -904,7 +917,7 @@ export default async function handler(req, res, options = {}) {
 
       const session = updated.data;
       const join = joinFor(session);
-      const editSeq = body.sequence != null ? Number(body.sequence) : 1;
+      const editSeq = certaintyInviteSequence('update');
       const memberIcs = buildCertaintyIcs(session, {
         method: 'REQUEST',
         sequence: editSeq,
@@ -940,16 +953,14 @@ export default async function handler(req, res, options = {}) {
           schema: 1,
           action: 'update',
           sessionId: session.id,
+          method: 'REQUEST',
+          sequence: editSeq,
           memberMessageId: updateInviteResult.memberMessageId,
           davidMessageId: updateInviteResult.davidMessageId
         }, correlationId);
       } catch (inviteErr) {
-        await recordEvent(userToken, 'certainty_invite_failed', {
-          schema: 1,
-          action: 'update',
-          sessionId: session.id,
-          reason: (inviteErr && inviteErr.message) || 'invite-update-failed'
-        }, correlationId);
+        await recordEvent(userToken, 'certainty_invite_failed',
+          inviteFailureDetail('update', session.id, 'REQUEST', editSeq, inviteErr, 'invite-update-failed'), correlationId);
       }
 
       return json(res, 200, {

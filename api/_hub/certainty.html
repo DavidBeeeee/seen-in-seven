@@ -278,6 +278,7 @@
     .intro-copy { font-size: 1rem; }
     .primary-button, .secondary-button { font-size: .875rem; }
     .account-avatar { font-size: .75rem; }
+    .eee-sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
     .eee-member-chip { font-size: .6875rem; }
     .cs-rhythm-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 16px; margin-top: 14px; }
     .cs-rhythm-grid h3 { font-family: 'Oswald', sans-serif; font-size: 1rem; margin: 0 0 4px; letter-spacing: .2px; }
@@ -318,10 +319,11 @@
     <header class="studio-header eee-header">
       <a class="studio-brand" href="/"><span class="studio-mark">CS</span><span><strong>Certainty Sessions</strong><small>Colorado Mastermind Studio</small></span></a>
       <div class="header-actions">
-        <a class="secondary-button" href="/"><i data-lucide="layout-grid"></i><span>My Studio</span></a>
+        <a class="secondary-button" href="/" aria-label="My Studio"><i data-lucide="layout-grid"></i><span>My Studio</span></a>
         <button class="icon-button" data-eee-theme type="button" title="Change color theme" aria-label="Change color theme"><i data-lucide="sun" class="theme-sun-icon"></i><i data-lucide="moon" class="theme-moon-icon"></i></button>
         <button class="account-button" id="eee-account-button" type="button" aria-expanded="false" aria-haspopup="menu">
-          <span class="account-avatar" id="eee-account-avatar">C</span>
+          <span class="eee-sr-only">Account menu</span>
+          <span class="account-avatar" id="eee-account-avatar" aria-hidden="true">C</span>
           <span class="eee-account-email" id="eee-account-email"></span>
           <i data-lucide="chevron-down"></i>
         </button>

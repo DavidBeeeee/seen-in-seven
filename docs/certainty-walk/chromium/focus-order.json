@@ -27,7 +27,7 @@
   "tag": "button",
   "id": "eee-account-button",
   "cls": "account-button",
-  "label": "W walk.member@example.invalid",
+  "label": "Account menu W walk.member@example.invalid",
   "visible": true,
   "inBook": false
  },

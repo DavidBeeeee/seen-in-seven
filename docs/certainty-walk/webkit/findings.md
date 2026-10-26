@@ -1,8 +1,8 @@
 # Certainty rendered walk: webkit
 
-Run 2026-10-25T17:17:21.805Z in 126s against `api/_hub/certainty.html` in webkit with every network call stubbed.
+Run 2026-10-26T03:01:41.232Z in 152s against `api/_hub/certainty.html` in webkit with every network call stubbed.
 
-**42 of 42 checks pass. 0 findings.** Requests refused: 224 (0 that could have reached production).
+**42 of 42 checks pass. 0 findings.** Requests refused: 0 (0 that could have reached production).
 
 ## Checks
 
@@ -47,7 +47,7 @@ Run 2026-10-25T17:17:21.805Z in 126s against `api/_hub/certainty.html` in webkit
 - PASS live announcement network-error: {"text":"Something interrupted the booking. Try again.","live":"polite"}
 - PASS screen-reader slot-taken: every control is named and headings form an outline: 0 faults, 43 controls, 9 headings
 - PASS live announcement slot-taken: {"text":"Someone just took that time. Pick another open slot.","live":"polite"}
-- PASS no request left the machine except font and icon GETs; zero POSTs to production: 224 refused, 0 non-benign
+- PASS no request left the machine except font and icon GETs; zero POSTs to production: 0 refused, 0 non-benign
 
 ## Findings
 

@@ -1,8 +1,8 @@
 # Certainty rendered walk: chromium
 
-Run 2026-10-25T17:15:15.463Z in 87s against `api/_hub/certainty.html` in chromium with every network call stubbed.
+Run 2026-10-26T02:59:08.474Z in 152s against `api/_hub/certainty.html` in chromium with every network call stubbed.
 
-**42 of 42 checks pass. 0 findings.** Requests refused: 224 (0 that could have reached production).
+**42 of 42 checks pass. 0 findings.** Requests refused: 0 (0 that could have reached production).
 
 ## Checks
 
@@ -47,7 +47,7 @@ Run 2026-10-25T17:15:15.463Z in 87s against `api/_hub/certainty.html` in chromiu
 - PASS live announcement network-error: {"text":"Something interrupted the booking. Try again.","live":"polite"}
 - PASS screen-reader slot-taken: every control is named and headings form an outline: 0 faults, 43 controls, 9 headings
 - PASS live announcement slot-taken: {"text":"Someone just took that time. Pick another open slot.","live":"polite"}
-- PASS no request left the machine except font and icon GETs; zero POSTs to production: 224 refused, 0 non-benign
+- PASS no request left the machine except font and icon GETs; zero POSTs to production: 0 refused, 0 non-benign
 
 ## Findings
 

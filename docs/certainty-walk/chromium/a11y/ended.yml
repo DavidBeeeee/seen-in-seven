@@ -8,3 +8,5 @@
     - text: or return to My Studio.
   - link "Return to My Studio":
     - /url: /
+    - text: Return to My Studio
+    - img
