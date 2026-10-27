@@ -106,7 +106,7 @@ console.log('PASS: the endpoint replays a known key and refuses an archived chat
 // ── Browser: one save at a time, naming the version it read ────────────────
 assert.match(client, /let storySaveChain = Promise\.resolve\(\);/, 'saves are serialized');
 assert.match(client, /storySaveChain = run\.catch\(\(\) => \{\}\);/, 'a failed save does not wedge the chain');
-assert.match(client, /expected_version: Number\(activeStory\.version\) \|\| 1/, 'save names the version it read');
+assert.match(client, /updates\.expected_version = Number\(saving\.version\) \|\| 1/, 'queued save names its captured project version at execution');
 assert.match(client, /STALE_VERSION[\s\S]{0,200}Nothing newer was overwritten/, 'stale refusal is explained to the member');
 assert.match(client, /\{ role: 'user', content: answer, key: turnKey \}/, 'each sent turn carries a key');
 assert.match(client, /if \(!activeStory \|\| !answer \|\| storySending\) return;/, 'a double send is ignored while one is in flight');

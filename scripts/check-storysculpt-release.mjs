@@ -18,7 +18,7 @@ const project = { conversation: [{ role: 'user', content: 'idea' }, { role: 'ass
 const replay = replayFor(project, { intent: 'interview', idempotencyKey: 'k-123' });
 check(replay && replay.replayed === true && replay.content === 'saved reply', 'a request retried after an interrupted deploy is served the saved reply');
 const client = readFileSync('js/storysculpt.js', 'utf8');
-check(/expected_version: Number\(activeStory\.version\) \|\| 1/.test(client) && /keepUnsavedStory\(saving\.id, updates\)/.test(client), 'saves name their version and a failed save is kept on the device');
+check(/updates\.expected_version = Number\(saving\.version\) \|\| 1/.test(client) && /keepUnsavedStory\(saving\.id, updates\)/.test(client), 'saves name their captured project version and work is kept on the device before submission');
 
 // 88: StorySculpt migrations are additive.
 for (const file of readdirSync('supabase_migrations').filter(f => /storysculpt/.test(f))) {

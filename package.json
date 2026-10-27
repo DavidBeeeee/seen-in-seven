@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "pretest": "node --test scripts/check-workerbee-mailchimp.test.mjs",
+    "pretest": "node --test scripts/check-workerbee-mailchimp.test.mjs && node scripts/check-storysculpt-save-status.mjs",
     "ensure:momentum-hub-test-member": "node scripts/ensure-momentum-hub-test-account.mjs",
     "check:prompt-style": "node scripts/check-prompt-style-guide.mjs",
     "check:story-architecture": "node scripts/check-story-architecture.mjs",

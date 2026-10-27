@@ -1597,6 +1597,11 @@ function initUgcListeners() {
 }
 
 function showProject(project) {
+  if (activeStory && activeStory !== project && storySaveTimer) {
+    clearTimeout(storySaveTimer);
+    storySaveTimer = null;
+    saveActiveStory().catch(() => {});
+  }
   hideThinkingIndicator();
   hideErrorInConversation();
   const restoredUnsaved = restoreUnsavedStory(project);
@@ -1660,8 +1665,11 @@ function showStart() {
   const leftNote = storyEl('story-left-note');
   if (leaving) {
     recordStoryWalkaway(leaving);
+    const pending = storySaveTimer || readUnsavedStory(leaving.id);
     if (storySaveTimer) { clearTimeout(storySaveTimer); storySaveTimer = null; saveActiveStory().catch(() => {}); }
-    leftNote.textContent = 'Saved. "' + ((storyEl('story-title').value || '').trim() || leaving.title || 'Untitled script') + '" is in your chats whenever you want it.';
+    leftNote.textContent = pending
+      ? 'Your chat is in the list. Changes are still saving; reopen it to check their status.'
+      : 'Saved. "' + ((storyEl('story-title').value || '').trim() || leaving.title || 'Untitled script') + '" is in your chats whenever you want it.';
     leftNote.hidden = false;
   } else {
     leftNote.hidden = true;
@@ -1752,6 +1760,24 @@ function storyTurnKey() {
 // save can never land after a newer one: the database refuses a stale version
 // (STALE_VERSION) instead of letting the older copy win.
 let storySaveChain = Promise.resolve();
+const storySaveRevisions = new Map();
+
+function setStorySaveStatus(project, revision, text, error = false) {
+  if (activeStory !== project || storySaveRevisions.get(project.id) !== revision) return;
+  storyEl('story-save-status').textContent = text;
+  storyEl('story-save-status').className = 'eee-message ' + (error ? 'error' : 'success');
+}
+
+function captureStorySave(project) {
+  return JSON.parse(JSON.stringify({
+    title: storyEl('story-title').value.trim() || 'Untitled script',
+    intake: { ...(project.intake || {}), context: storyEl('story-context').value.trim() },
+    conversation: project.conversation || [],
+    output: project.output || null,
+    expected_version: Number(project.version) || 1,
+    updated_at: new Date().toISOString()
+  }));
+}
 
 // Unsaved work survives a failed database write (WBR-458, Developer 82). A
 // failed save is retried once after a short pause; if it still fails, the
@@ -1805,67 +1831,74 @@ function isStaleVersionError(error) {
 }
 
 function saveActiveStory(message) {
-  const run = storySaveChain.then(() => saveActiveStoryNow(message));
+  if (!activeStory) return Promise.resolve();
+  // Capture the owner and fields now, not after a queued write or navigation.
+  const saving = activeStory;
+  const updates = captureStorySave(saving);
+  const revision = (storySaveRevisions.get(saving.id) || 0) + 1;
+  storySaveRevisions.set(saving.id, revision);
+  keepUnsavedStory(saving.id, updates);
+  setStorySaveStatus(saving, revision, 'Saving');
+  const run = storySaveChain.then(() => saveActiveStoryNow(message, saving, updates, revision));
   storySaveChain = run.catch(() => {});
   return run;
 }
 
-async function saveActiveStoryNow(message) {
-  if (!activeStory) return;
-  const currentIntake = activeStory.intake || {};
-  const updates = {
-    title: storyEl('story-title').value.trim() || 'Untitled script',
-    intake: {
-      ...currentIntake,
-      context: storyEl('story-context').value.trim(),
-      versions: currentIntake.versions || [],
-      filmed: Boolean(currentIntake.filmed),
-      ...(currentIntake.current_step ? { current_step: currentIntake.current_step } : {})
-    },
-    conversation: activeStory.conversation || [],
-    output: activeStory.output || null,
-    expected_version: Number(activeStory.version) || 1,
-    updated_at: new Date().toISOString()
-  };
-  const saving = activeStory;
+async function saveActiveStoryNow(message, saving, updates, revision) {
+  // An earlier write in this queue may have advanced this same project's version.
+  updates.expected_version = Number(saving.version) || 1;
   let data = null;
   let error = null;
   for (let attempt = 0; attempt < 2; attempt++) {
-    if (attempt) await new Promise(resolve => setTimeout(resolve, SAVE_RETRY_DELAY_MS));
-    ({ data, error } = await storyContext.sb.from('storysculpt_projects').update(updates).eq('id', saving.id).select('status,version,conversation').single());
+    if (attempt) {
+      setStorySaveStatus(saving, revision, 'Not saved, retrying', true);
+      await new Promise(resolve => setTimeout(resolve, SAVE_RETRY_DELAY_MS));
+      setStorySaveStatus(saving, revision, 'Saving');
+    }
+    try {
+      ({ data, error } = await storyContext.sb.from('storysculpt_projects').update(updates).eq('id', saving.id).select('status,version,conversation').single());
+    } catch (failure) { error = failure; }
     if (!error || isStaleVersionError(error)) break;
   }
   if (error) {
     if (isStaleVersionError(error)) {
       // STALE_VERSION: another tab or device saved first.
-      storyEl('story-save-status').textContent = 'A newer copy of this chat was saved from another tab or device. Reload to see it. Nothing newer was overwritten.';
-      storyEl('story-save-status').className = 'eee-message error';
+      setStorySaveStatus(saving, revision, 'A newer copy of this chat was saved from another tab or device. Reload to see it. Nothing newer was overwritten.', true);
       clearUnsavedStory(saving.id);
-    } else if (keepUnsavedStory(saving.id, updates)) {
-      storyEl('story-save-status').textContent = 'Your latest changes are kept on this device. StorySculpt will save them as soon as it can reach your account.';
-      storyEl('story-save-status').className = 'eee-message error';
+    } else if (readUnsavedStory(saving.id)) {
+      setStorySaveStatus(saving, revision, 'Not saved, retrying. Your latest changes are kept on this device; retry when your connection returns or you reopen this chat.', true);
       error.keptLocally = true;
+    } else {
+      setStorySaveStatus(saving, revision, 'Not saved. Keep this page open and try again.', true);
     }
     throw error;
   }
-  clearUnsavedStory(saving.id);
-  delete updates.expected_version;
-  Object.assign(saving, updates, data);
-  renderProjectList();
-  if (message) {
-    storyEl('story-save-status').textContent = message;
-    storyEl('story-save-status').className = 'eee-message success';
+  const latest = storySaveRevisions.get(saving.id) === revision;
+  if (latest) clearUnsavedStory(saving.id);
+  else {
+    const kept = readUnsavedStory(saving.id);
+    if (kept) keepUnsavedStory(saving.id, { ...kept, expected_version: data.version });
   }
+  delete updates.expected_version;
+  if (latest) Object.assign(saving, updates, data);
+  else Object.assign(saving, { status: data.status, version: data.version });
+  renderProjectList();
+  setStorySaveStatus(saving, revision, message || 'Saved');
 }
 
 function queueStorySave() {
+  if (!activeStory) return;
   clearTimeout(storySaveTimer);
-  storySaveTimer = setTimeout(() => { storySaveTimer = null; return saveActiveStory().catch((error) => {
-    if (error && error.keptLocally) return;
-    if (isStaleVersionError(error)) return;
-    storyEl('story-save-status').textContent = 'This change could not be saved yet.';
-    storyEl('story-save-status').className = 'eee-message error';
-  }); }, 500);
+  const revision = (storySaveRevisions.get(activeStory.id) || 0) + 1;
+  storySaveRevisions.set(activeStory.id, revision);
+  // Even a reload before the debounce fires can restore this device's edit.
+  keepUnsavedStory(activeStory.id, captureStorySave(activeStory));
+  setStorySaveStatus(activeStory, revision, 'Saving');
+  storySaveTimer = setTimeout(() => {
+    storySaveTimer = null;
+    // The save owns its project-scoped error display, including navigation.
+    return saveActiveStory().catch(() => {});
+  }, 500);
 }
 
 // The connection came back: save whatever a failed write left on this device.
