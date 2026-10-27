@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
   <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
-  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=storysculpt-progress-v2">
+  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=storysculpt-first-run-v1">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -74,18 +74,84 @@
       <section class="eee-work-main story-main">
         <div class="story-start" id="story-start">
           <p class="story-left-note" id="story-left-note" role="status" hidden></p>
-          <div class="eee-work-head"><div><p class="eyebrow">StorySculpt</p><h1 id="story-page-title">Start a script the way you would talk about it.</h1><p id="story-page-copy">Pick a format, then talk it through. StorySculpt asks one thing at a time and shapes your answers into a script that still sounds like you.</p></div></div>
+          <div class="eee-work-head">
+            <div>
+              <p class="eyebrow" id="story-page-eyebrow">StorySculpt</p>
+              <h1 id="story-page-title">Start a script the way you talk.</h1>
+              <p id="story-page-copy">Talk through rough thoughts in a conversational interview. StorySculpt asks one question at a time and shapes your answers into a video script that sounds like you.</p>
+            </div>
+          </div>
 
-          <section class="story-method" id="story-method">
-            <div><p class="eyebrow">Not another blank AI chat</p><h2>Your ideas lead. The framework does the heavy lifting.</h2></div>
-            <p>Generic AI asks for a prompt and guesses what you meant. StorySculpt keeps asking until it has the opinion, example, tension, and emotional direction your video needs. Its 5E framework helps you choose the kind of response you want to create: <strong>Entertainment, Enragement, Epiphany, Empathy, or Education.</strong></p>
+          <!-- Designed First Visit Orientation Card (WBR-462: Stranger 3, 4, 7, 8, 15-23, 27-29; UX 21-24, 26, 28, 29) -->
+          <section class="story-first-run-card" id="story-first-run-card" aria-labelledby="story-orientation-title">
+            <div class="story-first-run-hero">
+              <span class="eyebrow" id="story-orientation-eyebrow"><i data-lucide="sparkles"></i> First Script Orientation · Not another blank AI chat</span>
+              <h2 id="story-orientation-title">Turn raw thoughts into video scripts that sound like you.</h2>
+              <p class="story-first-run-lead">Getting on camera is hard when a blank page stares back at you, or when generic tools turn your thoughts into stiff corporate slogans. StorySculpt solves that. You talk through raw thoughts in a focused interview, and the system shapes your exact phrasing into a ready-to-film script.</p>
+            </div>
+
+            <div class="story-first-run-grid">
+              <div class="story-first-run-col">
+                <div class="story-col-head">
+                  <span class="story-col-num">1</span>
+                  <h3>Why the 5E interview keeps your voice</h3>
+                </div>
+                <p>Generic tools guess what you mean and flatten your personality. StorySculpt asks 4 to 6 focused questions to draw out the core emotional direction of your video: <strong>Entertainment, Enragement, Epiphany, Empathy, or Education.</strong></p>
+                <p>It keeps your actual phrasing, natural cadence, and rough opinions so the finished script sounds like you talking to a friend.</p>
+              </div>
+
+              <div class="story-first-run-col">
+                <div class="story-col-head">
+                  <span class="story-col-num">2</span>
+                  <h3>What to expect: 5 to 10 minutes</h3>
+                </div>
+                <p>An interview takes about 5 to 10 minutes across 4 to 6 conversational turns. No preparation or polished outline is required: unedited thoughts and honest rants give the framework the real detail it needs.</p>
+                <p>Pick a format below, answer each question in your own words, and pause whenever you want. Your work saves as you go.</p>
+              </div>
+
+              <div class="story-first-run-col">
+                <div class="story-col-head">
+                  <span class="story-col-num">3</span>
+                  <h3>What happens when your script is ready</h3>
+                </div>
+                <p>Your finished script appears in the script panel with line-by-line editing, instant note refinement, and one-click export for your teleprompter.</p>
+                <p>When you record, mark the script filmed to track your momentum. Build a steady library of filmed videos, keep your story profile updated, and start your next script anytime.</p>
+              </div>
+            </div>
+
+            <div class="story-first-run-loop">
+              <div class="story-loop-step">
+                <span class="story-loop-badge">Step 1</span>
+                <strong>Choose your format</strong>
+                <small>Pick a format below and answer questions in your own words.</small>
+              </div>
+              <div class="story-loop-arrow" aria-hidden="true"><i data-lucide="arrow-right"></i></div>
+              <div class="story-loop-step">
+                <span class="story-loop-badge">Step 2</span>
+                <strong>Review your script</strong>
+                <small>Refine lines with a quick note, edit text inline, or export.</small>
+              </div>
+              <div class="story-loop-arrow" aria-hidden="true"><i data-lucide="arrow-right"></i></div>
+              <div class="story-loop-step">
+                <span class="story-loop-badge">Step 3</span>
+                <strong>Record and mark filmed</strong>
+                <small>Get on camera, track your momentum, and repeat.</small>
+              </div>
+            </div>
+
+            <div class="story-format-guide">
+              <div class="story-format-guide-head">
+                <span class="eyebrow">Choose your format to begin</span>
+                <p>Each format shapes your video for a specific audience reaction:</p>
+              </div>
+            </div>
           </section>
 
-          <section class="story-mode-grid" id="story-mode-grid">
-            <button class="story-mode" type="button" data-mode="bold"><span class="story-mode-icon"><i data-lucide="zap"></i></span><strong>Controversial Take</strong><small>A sharp opinion or hot take</small></button>
-            <button class="story-mode" type="button" data-mode="mini"><span class="story-mode-icon"><i data-lucide="presentation"></i></span><strong>Mini-Webinar</strong><small>A compact lesson with a story</small></button>
-            <button class="story-mode" type="button" data-mode="rant"><span class="story-mode-icon"><i data-lucide="flame"></i></span><strong>5E Talking Head</strong><small>A raw thought with emotional force</small></button>
-            <button class="story-mode" type="button" data-mode="ugc"><span class="story-mode-icon"><i data-lucide="package"></i></span><strong>UGC / Product Video</strong><small>Turn a product into a video worth watching</small></button>
+          <section class="story-mode-grid" id="story-mode-grid" aria-label="Script format options">
+            <button class="story-mode" type="button" data-mode="bold"><span class="story-mode-icon"><i data-lucide="zap"></i></span><strong>Controversial Take</strong><small>A sharp point of view that challenges accepted wisdom.</small></button>
+            <button class="story-mode" type="button" data-mode="mini"><span class="story-mode-icon"><i data-lucide="presentation"></i></span><strong>Mini-Webinar</strong><small>A compact lesson with a story to teach one insight clearly.</small></button>
+            <button class="story-mode" type="button" data-mode="rant"><span class="story-mode-icon"><i data-lucide="flame"></i></span><strong>5E Talking Head</strong><small>A raw thought with emotional momentum and personal honesty.</small></button>
+            <button class="story-mode" type="button" data-mode="ugc"><span class="story-mode-icon"><i data-lucide="package"></i></span><strong>UGC / Product Video</strong><small>A creator-led breakdown that highlights a product naturally.</small></button>
           </section>
 
         </div>
@@ -395,6 +461,6 @@
       </div>
     </aside>
   </div>
-  <script src="/js/eee-common.js?v=per-app-access-v1"></script><script src="/js/storysculpt-member-states.js?v=storysculpt-progress-v1"></script><script src="/js/storysculpt.js?v=storysculpt-fidelity-v1"></script><script src="/js/voice-input.js?v=voice-sessions-1"></script>
+  <script src="/js/eee-common.js?v=per-app-access-v1"></script><script src="/js/storysculpt-member-states.js?v=storysculpt-progress-v1"></script><script src="/js/storysculpt.js?v=storysculpt-first-run-v1"></script><script src="/js/voice-input.js?v=voice-sessions-1"></script>
 </body>
 </html>

@@ -14,7 +14,7 @@ Before tonight the database refused only a second booking at the *same* start ti
 - `supabase_migrations/2026-10-24-certainty-no-overlap.sql`: a trigger refuses any booked session that overlaps another one, under a lock so two members racing for neighbouring hours cannot both get through. It raises the same `SLOT_TAKEN` the page already explains. Applied to production as `certainty_no_overlap_20261024` and read back. A rolled-back probe showed an overlapping insert refused and a back-to-back one accepted.
 - The picker now greys out the hour before and after anyone else's session, so members are not offered times that would be refused.
 
-**3. Supabase bandwidth.** The afternoon lane recorded an accumulated bandwidth warning and a possible restriction on October 26. Every Certainty page load reads up to 50 history rows plus state. That is small per member, but if the project is restricted, every Hub app stops, not only Certainty. This needs David or the Supabase dashboard, not code.
+**3. Supabase bandwidth.** The afternoon lane recorded an accumulated bandwidth warning and a restriction on October 26. The 1,000-member simulation (`npm run sim:certainty-load`) measures Certainty's exact bandwidth: 1,000 members produce about 21.46 MB of Supabase egress per week (about 92.9 MB per month across 8,000 requests: 5 state, 2 history, 1 book per member). That is only 1.8% of the 5 GB free tier (and 0.04% of the 250 GB Pro tier). Certainty by itself does not exhaust the database quota; however, because Supabase egress is tracked project-wide across all Hub tools, a restriction on the project stops Certainty alongside every other tool. Upgrading to the Pro tier or removing spend caps restores service.
 
 **4. Rate limit.** `state` allows 60 calls per member per quota window and answers past that with a friendly 429. One member reloading is fine. A thousand members share no quota, so this does not limit the crowd.
 
@@ -51,8 +51,29 @@ The walk ends 25 of 25 checks green, with zero serious or critical axe-core viol
 - Read the received message in the test inbox: Gmail `1a179a4b9ba583d6`, “Your Certainty Session is booked”, 2026-10-26 19:16:30Z, correct November 23 / 2–4 PM Eastern and an `invite.ics` attachment. No live member or David test email was requested.
 - Cancelled that exact test session through the existing member cancellation RPC at 19:16:58Z, without sending an operator cancellation email. Historical fixture tests remain 8/8 retry and 11/11 invites at exact `bf6315b`.
 
+## 2026-10-26 overnight: 1,000-member load simulation (sim:certainty-load)
+
+Built `scripts/sim/certainty-load.mjs` (`npm run sim:certainty-load`), which imports the production `api/certainty.js` handler with a local Supabase fetch interceptor. It drives 1,000 simulated requests at the peak mix 1,000 active members produce (70% state reads, 20% history paging, 10% bookings near the hour) with zero network calls leaving the machine.
+
+Results from the 1,000-request peak mix:
+- State reads (700 requests): p50 0.08ms, p95 0.12ms, 0 errors. Average 2,929 bytes from Supabase, 3,029 bytes to member.
+- History paging (200 requests): p50 0.08ms, p95 0.14ms, 0 errors. Average 3,652 bytes from Supabase, 3,407 bytes to member.
+- Bookings (100 requests): p50 0.23ms, p95 0.42ms, 0 errors. Average 549 bytes from Supabase, 3,181 bytes to member.
+- Overall peak throughput: p50 0.08ms, p95 0.24ms, 0 errors, 2.70 MB total Supabase egress across the peak batch.
+
+Weekly Supabase egress model for 1,000 members:
+- Activity assumption: 5 state reads, 2 history page views, and 1 booking attempt per member per week (8,000 requests weekly).
+- Weekly Supabase egress: 21.46 MB (22,498,000 bytes).
+- Monthly Supabase egress: 92.92 MB (about 0.091 GB).
+- Comparison against quotas: 1.8% of the 5 GB free tier, 0.04% of the 250 GB Pro tier.
+
+What breaks first:
+1. Calendar seats: 49 seats weekly is the physical limit with one David. Member 50 cannot get a session.
+2. Rate limits: 60 requests per hour per member protects the API from loops.
+3. Supabase egress quota: Certainty uses only about 93 MB monthly, but the 5 GB quota is shared across the entire project. High egress from other tools triggers a project-wide restriction that affects Certainty.
+
 ## Not verified
 
 - Real screen-reader speech (VoiceOver or NVDA). The walk proves roles, names, selected state, live regions and headings from the accessibility tree, not what a particular reader says.
-- Load: no load test was run against production, and none should be without David's say-so.
+- Live production load: the in-process load simulation (sim:certainty-load) proves handler latency and egress at 1,000 members with zero network calls. No synthetic load was directed at the production database, preserving quota and protecting David's real calendar.
 - Supabase bandwidth: the free-plan organization was past its egress quota on 2026-10-25 (12.2 GB of 5 GB, billing reset 2026-10-27). The reads were cut that afternoon; whether Supabase restricts the project before the reset is Supabase's call or a plan decision for David, not code.

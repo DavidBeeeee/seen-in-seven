@@ -1185,7 +1185,7 @@ async function runUgcGeneration() {
     renderUgcProject(activeStory);
     if (window.innerWidth <= 820) switchMobileTab('script');
   } catch (error) {
-    outcome = { ok: false, message: (error && error.message) || 'Script generation could not be completed. Please try again.' };
+    outcome = { ok: false, message: (error && error.message) || 'Script generation could not be completed. Your notes and project are saved, so please try again.' };
   } finally {
     finish(outcome);
   }
@@ -1235,7 +1235,7 @@ async function runUgcRevision(note, button) {
     renderUgcProject(activeStory);
     if (window.innerWidth <= 820) switchMobileTab('script');
   } catch (error) {
-    outcome = { ok: false, message: (error && error.message) || 'Revision could not be completed. Please try again.' };
+    outcome = { ok: false, message: (error && error.message) || 'Revision could not be completed. Your draft is saved, so please try again.' };
   } finally {
     finish(outcome);
   }
@@ -1668,6 +1668,29 @@ function showStart() {
   }
   activeStory = null;
   viewingVersionIndex = -1;
+  const isFirstVisit = !storyProjects || storyProjects.length === 0;
+  const startEl = storyEl('story-start');
+  if (startEl) startEl.dataset.firstVisit = isFirstVisit ? 'true' : 'false';
+  const orientationEyebrow = storyEl('story-orientation-eyebrow');
+  if (orientationEyebrow) {
+    orientationEyebrow.innerHTML = isFirstVisit
+      ? '<i data-lucide="sparkles"></i> First Script Orientation'
+      : '<i data-lucide="sparkles"></i> Scriptwriting Framework';
+  }
+  const pageEyebrow = storyEl('story-page-eyebrow');
+  const pageTitle = storyEl('story-page-title');
+  const pageCopy = storyEl('story-page-copy');
+  if (pageEyebrow && pageTitle && pageCopy) {
+    if (isFirstVisit) {
+      pageEyebrow.textContent = 'StorySculpt · First Script Orientation';
+      pageTitle.textContent = 'Start a script the way you talk.';
+      pageCopy.textContent = 'Talk through rough thoughts in a conversational interview. StorySculpt asks one question at a time and shapes your answers into a video script that sounds like you.';
+    } else {
+      pageEyebrow.textContent = 'StorySculpt';
+      pageTitle.textContent = 'Start a new script.';
+      pageCopy.textContent = 'Pick a format, then talk it through. StorySculpt asks one question at a time and shapes your answers into a script that still sounds like you.';
+    }
+  }
   storyEl('story-start').hidden = false;
   storyEl('story-editor').hidden = true;
   setStoryEditing(false);
@@ -2038,7 +2061,7 @@ async function runGeneration(intent = 'interview', options = {}) {
     recordStoryFailure('delivery-error', '', response.status);
     throw new Error('StorySculpt\'s reply did not arrive in one piece. Your answers are still saved, so please try again.');
   }
-  if (!response.ok) throw new Error(data.error || 'StorySculpt could not complete this step.');
+  if (!response.ok) throw new Error(data.error || 'StorySculpt could not complete this step. Your project is saved, so please try this step again.');
   if (data.final) {
     activeStory.output = data.content;
     adoptScriptTitle(data.title);
@@ -2238,6 +2261,11 @@ async function executeInterviewGeneration() {
 async function sendStoryAnswer(event) {
   if (event && event.preventDefault) event.preventDefault();
   const answer = storyEl('story-answer').value.trim();
+  if (!answer && activeStory && !storySending) {
+    storyEl('story-answer').focus();
+    const status = storyEl('story-composer-status');
+    if (status) status.textContent = 'Type a rough answer or position before sending. Unedited thoughts work best.';
+  }
   if (!activeStory || !answer || storySending) return;
   if (activeStory.output) {
     storyEl('story-refine-status').textContent = STATES.FINISHED_LINE;
