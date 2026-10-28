@@ -34,7 +34,11 @@
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+  - article:
+    - text: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Tell me about a specific time a client had all the features they thought they wanted and still failed.
     - button "Copy":
@@ -43,7 +47,11 @@
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+  - article:
+    - text: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt What was the one realization that turned it around for them?
     - button "Regenerate":

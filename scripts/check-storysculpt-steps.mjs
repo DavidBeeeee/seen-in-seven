@@ -207,6 +207,7 @@ console.log('5. Replaying David\'s 2026-10-08 17:45 /rant through the real handl
     if (path.endsWith('/rest/v1/rpc/has_studio_app_access')) return reply(true);
     if (path.includes('/rest/v1/storysculpt_projects?') && (!init.method || init.method === 'GET')) return reply([{ id: projectId, output: null, content_type: 'rant', intake: storedIntake }]);
     if (path.includes('/rest/v1/storysculpt_projects?') && init.method === 'PATCH') { storedIntake = JSON.parse(init.body).intake; return reply(null); }
+    if (path.includes('/rest/v1/storysculpt_context_versions?')) return reply([]);
     if (path.endsWith('/rest/v1/rpc/record_log_event')) { events.push(JSON.parse(init.body)); return reply(null); }
     if (path.includes('quota')) return reply(true);
     if (path.includes('deepseek.com')) {

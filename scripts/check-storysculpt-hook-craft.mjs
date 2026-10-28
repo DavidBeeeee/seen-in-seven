@@ -75,6 +75,7 @@ try {
       if(u.includes('/auth/v1/user'))data={id:'fixture'};
       else if(u.includes('has_studio_app_access')||u.includes('quota'))data=true;
       else if(u.includes('storysculpt_projects')){if(init.method==='PATCH')writes++;data=[{id:'22222222-2222-4222-8222-222222222222',content_type:'rant',output:null,intake:{current_step:scene.step}}];}
+      else if(u.includes('storysculpt_context_versions'))data=[];
       else if(u.includes('record_log_event')){events.push(JSON.parse(init.body));data=null;}
       else if(u.includes('deepseek.com')){calls++;data={choices:[{message:{content:scene.reply}}]};}
       else throw Error('Unexpected fixture request');

@@ -40,7 +40,11 @@
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You Stop pitching features. Pitch certainty.
+  - article:
+    - text: You Stop pitching features. Pitch certainty.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Tell me about a time that proved this.
     - button "Copy":
@@ -49,7 +53,11 @@
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You When we stopped listing features and focused on the outcome, conversion doubled in two weeks.
+  - article:
+    - text: You When we stopped listing features and focused on the outcome, conversion doubled in two weeks.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Your script is assembled and ready to film below.
     - button "Copy":

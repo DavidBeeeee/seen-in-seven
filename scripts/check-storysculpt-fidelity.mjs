@@ -109,6 +109,7 @@ globalThis.fetch = async (url, options = {}) => {
     if (options.method === 'PATCH') return reply(null);
     return reply([{ id: PROJECT, output: GOOD, content_type: 'bold', intake: { current_step: 'F1' }, conversation: [] }]);
   }
+  if (path.includes('/rest/v1/storysculpt_context_versions?')) return reply([]);
   if (path.includes('quota')) return reply(true);
   if (path.includes('deepseek.com')) {
     // Answer by what was asked: the fidelity retry carries its own directive.

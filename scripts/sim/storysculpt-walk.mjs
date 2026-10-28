@@ -555,6 +555,25 @@ async function lifecyclePass(browser) {
     await context.close();
   }
 
+  // Selective exclusion keeps the answer visible and saves both states.
+  {
+    const { context, page, world } = await open(browser, 'interview', { width: 1280 });
+    const toggle = page.locator('[data-action="toggle-context-message"]').first();
+    await toggle.click();
+    await page.waitForTimeout(250);
+    const excluded = await page.locator('#story-conversation .story-message-excluded').count();
+    const pressed = await page.locator('[data-action="toggle-context-message"][aria-pressed="true"]').count();
+    const excludedSaved = world.projects.some(project => (project.conversation || []).some(message => message.excludeFromGeneration === true));
+    await shot(page, 'lifecycle-answer-excluded');
+    await page.locator('[data-action="toggle-context-message"]').first().click();
+    await page.waitForTimeout(250);
+    const restored = await page.locator('#story-conversation .story-message-excluded').count() === 0;
+    const restoredSaved = world.projects.every(project => (project.conversation || []).every(message => message.excludeFromGeneration !== true));
+    check('answer exclusion is visible, saved and reversible', excluded === 1 && pressed === 1 && excludedSaved && restored && restoredSaved,
+      'excluded=' + excluded + ', pressed=' + pressed + ', saved=' + excludedSaved + ', restored=' + restored + ', restoredSaved=' + restoredSaved);
+    await context.close();
+  }
+
   // /rant step path
   {
     const { context, page } = await open(browser, 'rant', { width: 1280 });
@@ -696,7 +715,7 @@ async function accessibilityPass(browser) {
     '**Limit:** this is an accessibility-tree inspection, not a real VoiceOver session. It proves roles, names, selected state, live-region wiring and heading structure, not every spoken behavior of a particular screen reader.', ''
   ];
   for (const t of transcripts) {
-    lines.push('## ' + t.screen, '', 'Screenshot: `' + (t.shot || 'not captured') + '`  ', 'Transcript: `' + t.transcript + '`', '', 'Heading outline: ' + t.headings.map(h => 'h' + h.level + ' “' + h.text + '”').join(' → '), '', '```yaml', t.tree, '```', '');
+    lines.push('## ' + t.screen, '', 'Screenshot: `' + (t.shot || 'not captured') + '`', 'Transcript: `' + t.transcript + '`', '', 'Heading outline: ' + t.headings.map(h => 'h' + h.level + ' “' + h.text + '”').join(' → '), '', '```yaml', t.tree, '```', '');
   }
   writeFileSync(join(outDir, 'screen-reader.md'), lines.join('\n'));
 }

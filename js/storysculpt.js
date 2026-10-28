@@ -515,9 +515,16 @@ function renderConversation() {
           '<div class="story-message-body"><span class="story-refine-badge"><i data-lucide="wand-sparkles"></i> Revision note</span><p class="story-refine-text">' + storyEscape(note) + '</p></div>' +
         '</article>';
       }
-      return '<article class="story-message user">' +
+      const excluded = message.excludeFromGeneration === true;
+      return '<article class="story-message user' + (excluded ? ' story-message-excluded' : '') + '">' +
         '<span class="story-message-role">You</span>' +
         '<div class="story-message-body">' + storyEscape(message.content) + '</div>' +
+        '<div class="story-message-actions">' +
+          (excluded ? '<span class="story-refine-badge">Not used in future drafts</span>' : '') +
+          '<button class="story-msg-btn" type="button" data-action="toggle-context-message" data-msg-index="' + index + '" aria-pressed="' + excluded + '" title="' + (excluded ? 'Use this answer in future drafts' : 'Do not use this answer in future drafts') + '">' +
+            '<i data-lucide="' + (excluded ? 'rotate-ccw' : 'eye-off') + '"></i><span>' + (excluded ? 'Use this again' : 'Don’t use this') + '</span>' +
+          '</button>' +
+        '</div>' +
       '</article>';
     }
 
@@ -638,6 +645,19 @@ async function dismissReturnNotice() {
     await storyContext.sb.from('storysculpt_projects').update({ intake: project.intake }).eq('id', project.id);
   } catch (err) {
     console.error('Failed to save the dismissed notice', err);
+  }
+}
+
+async function toggleMessageContext(msgIndex) {
+  if (!activeStory || !Array.isArray(activeStory.conversation)) return;
+  const message = activeStory.conversation[msgIndex];
+  if (!message || message.role !== 'user') return;
+  message.excludeFromGeneration = message.excludeFromGeneration !== true;
+  renderConversation();
+  try {
+    await saveActiveStory(message.excludeFromGeneration ? 'Answer excluded from future drafts' : 'Answer included in future drafts');
+  } catch (_) {
+    // saveActiveStory keeps the exact change locally and shows its own retry state.
   }
 }
 
@@ -2705,6 +2725,11 @@ storyEl('story-version-pills').addEventListener('click', event => {
 storyEl('story-version-restore-btn').addEventListener('click', restoreOlderVersion);
 
 storyEl('story-conversation').addEventListener('click', event => {
+  const contextBtn = event.target.closest('[data-action="toggle-context-message"]');
+  if (contextBtn) {
+    toggleMessageContext(Number(contextBtn.dataset.msgIndex));
+    return;
+  }
   const btn = event.target.closest('[data-view-script]');
   if (btn) {
     if (window.innerWidth <= 820) switchMobileTab('script');

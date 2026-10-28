@@ -228,7 +228,9 @@ export function validateBody(body) {
     // a reason to refuse the step: a 222-character Amazon page title blocked a
     // whole chat on 2026-10-14 (WBR-441).
     projectTitle: String(body && body.projectTitle || '').trim().slice(0, 160),
-    context: cleanText(body && body.context, 12000),
+    // Request context is legacy transport only. The saved member-owned version
+    // is loaded after project authorization; even malformed posted context is ignored.
+    context: '',
     ugc: body && typeof body.ugc === 'object' ? body.ugc : null,
     // A member's answer is read without its transport noise (Developer 39):
     // a pasted email's signature, quoted history or phone footer is not part
@@ -239,7 +241,7 @@ export function validateBody(body) {
 
 function cleanMessages(messages) {
   const noise = new Set();
-  const cleaned = messages.map(message => {
+  const cleaned = messages.filter(message => !(message && message.role === 'user' && message.excludeFromGeneration === true)).map(message => {
     const role = message && message.role === 'assistant' ? 'assistant' : 'user';
     let content = cleanText(message && message.content, 8000);
     if (role === 'user') {
@@ -271,6 +273,50 @@ async function loadOwnedProject(token, projectId) {
     throw error;
   }
   return Array.isArray(rows) ? rows[0] || null : null;
+}
+
+const STORY_PROFILE_FIELDS = [
+  ['name', 'Name'],
+  ['role', 'What they do'],
+  ['audience', 'Who their videos are for'],
+  ['voice', 'Voice and phrasing'],
+  ['offers', 'Offers and recurring calls to action'],
+  ['facts', 'Facts and results to reuse'],
+  ['notes', 'Other notes']
+];
+
+export function composeVersionedContext(projectVersion, profileVersion) {
+  const profile = profileVersion && profileVersion.context && typeof profileVersion.context === 'object'
+    ? profileVersion.context : {};
+  const lines = STORY_PROFILE_FIELDS.map(([key, label]) => {
+    const value = String(profile[key] || '').trim();
+    return value ? label + ': ' + value : '';
+  }).filter(Boolean);
+  const standing = lines.length
+    ? 'MEMBER STORY PROFILE (standing facts the member set once):\n' + lines.join('\n') : '';
+  const notes = projectVersion && typeof projectVersion.context === 'string' ? projectVersion.context.trim() : '';
+  return [standing, notes].filter(Boolean).join('\n\n');
+}
+
+async function loadLatestContext(token, projectId) {
+  const headers = { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token };
+  const base = SUPABASE_URL + '/rest/v1/storysculpt_context_versions?select=scope,context,created_at,id&order=created_at.desc,id.desc&limit=1&';
+  try {
+    const [projectResponse, profileResponse] = await Promise.all([
+      fetch(base + 'scope=eq.project&project_id=eq.' + projectId, { headers }),
+      fetch(base + 'scope=eq.profile&project_id=is.null', { headers })
+    ]);
+    if (!projectResponse.ok || !profileResponse.ok) throw new Error('context version read failed');
+    const [projectRows, profileRows] = await Promise.all([projectResponse.json(), profileResponse.json()]);
+    const projectVersion = Array.isArray(projectRows) ? projectRows[0] || null : null;
+    const profileVersion = Array.isArray(profileRows) ? profileRows[0] || null : null;
+    return composeVersionedContext(projectVersion, profileVersion);
+  } catch (cause) {
+    const error = new Error('StorySculpt could not read your latest saved context. Please try again.');
+    error.stage = 'database';
+    error.cause = cause;
+    throw error;
+  }
 }
 
 // The saved reply for an interview generation key, if the project already has
@@ -820,6 +866,10 @@ export default async function handler(req, res) {
       await emit('denied', { failureClass: classifyFailure('input') });
       return fail(409, 'Finish a script before asking for a revision.');
     }
+
+    // Context is member-owned saved state, not request input. Read after the
+    // project check so an edit committed immediately before this request wins.
+    input.context = await loadLatestContext(token, input.projectId);
 
     // Safety pre-check: crisis or self-harm language skips generation
     const userMessages = input.messages.filter(m => m.role === 'user');

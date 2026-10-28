@@ -16,6 +16,7 @@ globalThis.fetch = async (url) => {
   if (path.endsWith('/auth/v1/user')) return reply({ id: 'member-auth-id' });
   if (path.endsWith('/rest/v1/rpc/has_studio_app_access')) return reply(true);
   if (path.includes('/rest/v1/storysculpt_projects?')) return reply([{ id: projectId, output: savedOutput, content_type: 'bold' }]);
+  if (path.includes('/rest/v1/storysculpt_context_versions?')) return reply([]);
   if (path.endsWith('/rest/v1/rpc/record_log_event')) return reply(null);
   if (path.includes('quota')) { quotaCalls += 1; return reply(true); }
   if (path.includes('deepseek.com')) { deepSeekCalls += 1; return reply({ choices: [{ message: { content: 'FINAL SCRIPT: Revised.' } }] }); }

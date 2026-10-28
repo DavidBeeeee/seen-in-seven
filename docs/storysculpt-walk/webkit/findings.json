@@ -1,5 +1,5 @@
 {
- "at": "2026-10-28T05:24:54.845Z",
+ "at": "2026-10-28T12:10:44.020Z",
  "browser": "webkit",
  "checks": [
   {
@@ -64,6 +64,12 @@
   },
   {
    "browser": "webkit",
+   "name": "answer exclusion is visible, saved and reversible",
+   "pass": true,
+   "evidence": "excluded=1, pressed=1, saved=true, restored=true, restoredSaved=true"
+  },
+  {
+   "browser": "webkit",
    "name": "/rant step path loads with 5E Talking Head mode",
    "pass": true,
    "evidence": "5E Talking Head"
@@ -96,25 +102,25 @@
    "browser": "webkit",
    "name": "screen-reader interview: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 18 controls, 3 headings"
+   "evidence": "0 faults, 20 controls, 3 headings"
   },
   {
    "browser": "webkit",
    "name": "screen-reader finished: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 22 controls, 3 headings"
+   "evidence": "0 faults, 24 controls, 3 headings"
   },
   {
    "browser": "webkit",
    "name": "screen-reader story-profile: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 27 controls, 4 headings"
+   "evidence": "0 faults, 29 controls, 4 headings"
   },
   {
    "browser": "webkit",
    "name": "screen-reader help-dialog: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 23 controls, 12 headings"
+   "evidence": "0 faults, 25 controls, 12 headings"
   },
   {
    "browser": "webkit",
@@ -1378,7 +1384,7 @@
    "browser": "webkit",
    "screen": "first-visit",
    "pass": true,
-   "shot": "docs/storysculpt-walk/webkit/shots/132-a11y-first-visit.jpg",
+   "shot": "docs/storysculpt-walk/webkit/shots/133-a11y-first-visit.jpg",
    "transcript": "a11y/first-visit.yml",
    "headings": [
     {
@@ -1416,7 +1422,7 @@
    "browser": "webkit",
    "screen": "interview",
    "pass": true,
-   "shot": "docs/storysculpt-walk/webkit/shots/133-a11y-interview.jpg",
+   "shot": "docs/storysculpt-walk/webkit/shots/134-a11y-interview.jpg",
    "transcript": "a11y/interview.yml",
    "headings": [
     {
@@ -1432,13 +1438,13 @@
      "text": "Script Editor"
     }
    ],
-   "controls": 18
+   "controls": 20
   },
   {
    "browser": "webkit",
    "screen": "finished",
    "pass": true,
-   "shot": "docs/storysculpt-walk/webkit/shots/134-a11y-finished.jpg",
+   "shot": "docs/storysculpt-walk/webkit/shots/135-a11y-finished.jpg",
    "transcript": "a11y/finished.yml",
    "headings": [
     {
@@ -1454,13 +1460,13 @@
      "text": "Script Editor"
     }
    ],
-   "controls": 22
+   "controls": 24
   },
   {
    "browser": "webkit",
    "screen": "story-profile",
    "pass": true,
-   "shot": "docs/storysculpt-walk/webkit/shots/135-a11y-story-profile.jpg",
+   "shot": "docs/storysculpt-walk/webkit/shots/136-a11y-story-profile.jpg",
    "transcript": "a11y/story-profile.yml",
    "headings": [
     {
@@ -1480,13 +1486,13 @@
      "text": "Set this once. Every chat reads it."
     }
    ],
-   "controls": 27
+   "controls": 29
   },
   {
    "browser": "webkit",
    "screen": "help-dialog",
    "pass": true,
-   "shot": "docs/storysculpt-walk/webkit/shots/136-a11y-help-dialog.jpg",
+   "shot": "docs/storysculpt-walk/webkit/shots/137-a11y-help-dialog.jpg",
    "transcript": "a11y/help-dialog.yml",
    "headings": [
     {
@@ -1538,7 +1544,7 @@
      "text": "Where do I get help?"
     }
    ],
-   "controls": 23
+   "controls": 25
   }
  ]
 }

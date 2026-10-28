@@ -6,7 +6,7 @@ Browser: `webkit`. Captured from the rendered accessibility tree; every network 
 
 ## first-visit
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/132-a11y-first-visit.jpg`  
+Screenshot: `docs/storysculpt-walk/webkit/shots/133-a11y-first-visit.jpg`
 Transcript: `a11y/first-visit.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a script the way you talk.” → h3 “Turn raw thoughts into video scripts that sound like you.” → h4 “Why the 5E interview keeps your voice” → h4 “What to expect: 5 to 10 minutes” → h4 “What happens when your script is ready”
@@ -84,7 +84,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a scrip
 
 ## interview
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/133-a11y-interview.jpg`  
+Screenshot: `docs/storysculpt-walk/webkit/shots/134-a11y-interview.jpg`
 Transcript: `a11y/interview.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor”
@@ -126,7 +126,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+  - article:
+    - text: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Tell me about a specific time a client had all the features they thought they wanted and still failed.
     - button "Copy":
@@ -135,7 +139,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+  - article:
+    - text: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt What was the one realization that turned it around for them?
     - button "Regenerate":
@@ -157,7 +165,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## finished
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/134-a11y-finished.jpg`  
+Screenshot: `docs/storysculpt-walk/webkit/shots/135-a11y-finished.jpg`
 Transcript: `a11y/finished.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor”
@@ -205,7 +213,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You Stop pitching features. Pitch certainty.
+  - article:
+    - text: You Stop pitching features. Pitch certainty.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Tell me about a time that proved this.
     - button "Copy":
@@ -214,7 +226,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You When we stopped listing features and focused on the outcome, conversion doubled in two weeks.
+  - article:
+    - text: You When we stopped listing features and focused on the outcome, conversion doubled in two weeks.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Your script is assembled and ready to film below.
     - button "Copy":
@@ -245,7 +261,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## story-profile
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/135-a11y-story-profile.jpg`  
+Screenshot: `docs/storysculpt-walk/webkit/shots/136-a11y-story-profile.jpg`
 Transcript: `a11y/story-profile.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Set this once. Every chat reads it.”
@@ -287,7 +303,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+  - article:
+    - text: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Tell me about a specific time a client had all the features they thought they wanted and still failed.
     - button "Copy":
@@ -296,7 +316,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+  - article:
+    - text: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt What was the one realization that turned it around for them?
     - button "Regenerate":
@@ -356,7 +380,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## help-dialog
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/136-a11y-help-dialog.jpg`  
+Screenshot: `docs/storysculpt-walk/webkit/shots/137-a11y-help-dialog.jpg`
 Transcript: `a11y/help-dialog.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Help & privacy” → h3 “Who makes this?” → h3 “What happens to my work?” → h3 “Can I change the format?” → h3 “Can I pause and come back?” → h3 “What does finishing a script mean?” → h3 “Can I archive or delete a chat?” → h3 “What should I do next?” → h3 “Where do I get help?”
@@ -398,7 +422,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+  - article:
+    - text: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Tell me about a specific time a client had all the features they thought they wanted and still failed.
     - button "Copy":
@@ -407,7 +435,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+  - article:
+    - text: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt What was the one realization that turned it around for them?
     - button "Regenerate":
