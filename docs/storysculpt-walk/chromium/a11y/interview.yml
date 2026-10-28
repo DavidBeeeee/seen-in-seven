@@ -1,0 +1,64 @@
+- banner:
+  - link "SS StorySculpt":
+    - /url: /
+    - text: SS
+    - heading "StorySculpt" [level=1]
+  - link "My Studio":
+    - /url: /
+    - img
+    - text: My Studio
+  - button "Change color theme":
+    - img
+  - button "W"
+- main:
+  - complementary:
+    - heading "Chats 1" [level=2]:
+      - button "Chats 1":
+        - text: Chats 1
+        - img
+    - button "Start a new StorySculpt chat":
+      - img
+  - heading "Script Editor" [level=2]
+  - textbox "Chat title": Stop selling features
+  - button "Notes":
+    - img
+    - text: Notes
+  - button "Delete":
+    - img
+    - text: Delete
+  - article:
+    - text: StorySculpt What is the core thought or frustration on your mind today?
+    - button "Copy":
+      - img
+      - text: Copy
+    - button "Use as Script":
+      - img
+      - text: Use as Script
+  - article: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+  - article:
+    - text: StorySculpt Tell me about a specific time a client had all the features they thought they wanted and still failed.
+    - button "Copy":
+      - img
+      - text: Copy
+    - button "Use as Script":
+      - img
+      - text: Use as Script
+  - article: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+  - article:
+    - text: StorySculpt What was the one realization that turned it around for them?
+    - button "Regenerate":
+      - img
+      - text: Regenerate
+    - button "Copy":
+      - img
+      - text: Copy
+    - button "Use as Script":
+      - img
+      - text: Use as Script
+  - status
+  - textbox "Your answer":
+    - /placeholder: Write it the way you would say it. Rough is useful.
+  - button "Speak instead of typing": 🎤
+  - button "Send":
+    - img
+  - paragraph: StorySculpt saves your chat as you go.

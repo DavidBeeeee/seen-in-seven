@@ -1,0 +1,1544 @@
+{
+ "at": "2026-10-28T05:24:54.845Z",
+ "browser": "webkit",
+ "checks": [
+  {
+   "browser": "webkit",
+   "name": "layout holds at 375/1280, 200% zoom, 24px font, light and dark across 10 screens",
+   "pass": true,
+   "evidence": "0 layout faults"
+  },
+  {
+   "browser": "webkit",
+   "name": "zero serious or critical axe-core violations (WCAG 2.1 A/AA) on every state, light and dark",
+   "pass": true,
+   "evidence": "0 serious/critical"
+  },
+  {
+   "browser": "webkit",
+   "name": "keyboard-only walk dark 1280px",
+   "pass": true,
+   "evidence": "25 stops via Alt+Tab, 0 without visible focus"
+  },
+  {
+   "browser": "webkit",
+   "name": "keyboard-only walk dark 375px",
+   "pass": true,
+   "evidence": "25 stops via Alt+Tab, 0 without visible focus"
+  },
+  {
+   "browser": "webkit",
+   "name": "keyboard-only walk light 1280px",
+   "pass": true,
+   "evidence": "25 stops via Alt+Tab, 0 without visible focus"
+  },
+  {
+   "browser": "webkit",
+   "name": "keyboard-only walk light 375px",
+   "pass": true,
+   "evidence": "25 stops via Alt+Tab, 0 without visible focus"
+  },
+  {
+   "browser": "webkit",
+   "name": "Escape closes the help dialog",
+   "pass": true,
+   "evidence": "closed"
+  },
+  {
+   "browser": "webkit",
+   "name": "first visit greets member with clear start",
+   "pass": true,
+   "evidence": "Start a script the way you talk."
+  },
+  {
+   "browser": "webkit",
+   "name": "60-turn fixture collapses earlier turns",
+   "pass": true,
+   "evidence": "12 visible messages before expand"
+  },
+  {
+   "browser": "webkit",
+   "name": "expanding 60-turn fixture renders all turns without fault",
+   "pass": true,
+   "evidence": "60 messages rendered"
+  },
+  {
+   "browser": "webkit",
+   "name": "/rant step path loads with 5E Talking Head mode",
+   "pass": true,
+   "evidence": "5E Talking Head"
+  },
+  {
+   "browser": "webkit",
+   "name": "finished script renders script text and refine box",
+   "pass": true,
+   "evidence": "Here is why your product is not selling.\n\nYou keep"
+  },
+  {
+   "browser": "webkit",
+   "name": "network drop mid-generation: reports error and keeps composer usable",
+   "pass": true,
+   "evidence": "send button enabled=true"
+  },
+  {
+   "browser": "webkit",
+   "name": "signed-out member meets the access gate",
+   "pass": true,
+   "evidence": "gate visible=true"
+  },
+  {
+   "browser": "webkit",
+   "name": "screen-reader first-visit: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 10 controls, 7 headings"
+  },
+  {
+   "browser": "webkit",
+   "name": "screen-reader interview: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 18 controls, 3 headings"
+  },
+  {
+   "browser": "webkit",
+   "name": "screen-reader finished: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 22 controls, 3 headings"
+  },
+  {
+   "browser": "webkit",
+   "name": "screen-reader story-profile: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 27 controls, 4 headings"
+  },
+  {
+   "browser": "webkit",
+   "name": "screen-reader help-dialog: every control is named and headings form an outline",
+   "pass": true,
+   "evidence": "0 faults, 23 controls, 12 headings"
+  },
+  {
+   "browser": "webkit",
+   "name": "no request left the machine except font and icon GETs; zero POSTs to production",
+   "pass": true,
+   "evidence": "0 refused, 0 non-benign"
+  }
+ ],
+ "findings": [],
+ "refused": [],
+ "layoutResults": [
+  {
+   "browser": "webkit",
+   "screen": "first",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/001-first-375-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "first",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/002-first-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "first",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/003-first-375-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "first",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/004-first-375-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "first",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/005-first-375-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "first",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/006-first-375-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "first",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/007-first-1280-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "first",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/008-first-1280-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "first",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/009-first-1280-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "first",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/010-first-1280-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "first",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/011-first-1280-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "first",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/012-first-1280-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "interview",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/013-interview-375-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "interview",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/014-interview-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "interview",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/015-interview-375-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "interview",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/016-interview-375-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "interview",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/017-interview-375-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "interview",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/018-interview-375-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "interview",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/019-interview-1280-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "interview",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/020-interview-1280-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "interview",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/021-interview-1280-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "interview",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/022-interview-1280-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "interview",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/023-interview-1280-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "interview",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/024-interview-1280-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "sixtyTurn",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/025-sixtyTurn-375-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "sixtyTurn",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/026-sixtyTurn-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "sixtyTurn",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/027-sixtyTurn-375-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "sixtyTurn",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/028-sixtyTurn-375-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "sixtyTurn",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/029-sixtyTurn-375-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "sixtyTurn",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/030-sixtyTurn-375-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "sixtyTurn",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/031-sixtyTurn-1280-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "sixtyTurn",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/032-sixtyTurn-1280-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "sixtyTurn",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/033-sixtyTurn-1280-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "sixtyTurn",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/034-sixtyTurn-1280-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "sixtyTurn",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/035-sixtyTurn-1280-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "sixtyTurn",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/036-sixtyTurn-1280-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "rant",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/037-rant-375-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "rant",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/038-rant-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "rant",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/039-rant-375-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "rant",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/040-rant-375-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "rant",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/041-rant-375-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "rant",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/042-rant-375-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "rant",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/043-rant-1280-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "rant",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/044-rant-1280-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "rant",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/045-rant-1280-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "rant",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/046-rant-1280-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "rant",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/047-rant-1280-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "rant",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/048-rant-1280-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "finished",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/049-finished-375-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "finished",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/050-finished-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "finished",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/051-finished-375-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "finished",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/052-finished-375-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "finished",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/053-finished-375-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "finished",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/054-finished-375-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "finished",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/055-finished-1280-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "finished",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/056-finished-1280-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "finished",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/057-finished-1280-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "finished",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/058-finished-1280-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "finished",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/059-finished-1280-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "finished",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/060-finished-1280-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "refine",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/061-refine-375-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "refine",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/062-refine-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "refine",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/063-refine-375-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "refine",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/064-refine-375-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "refine",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/065-refine-375-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "refine",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/066-refine-375-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "refine",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/067-refine-1280-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "refine",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/068-refine-1280-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "refine",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/069-refine-1280-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "refine",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/070-refine-1280-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "refine",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/071-refine-1280-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "refine",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/072-refine-1280-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "ugc",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/073-ugc-375-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "ugc",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/074-ugc-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "ugc",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/075-ugc-375-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "ugc",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/076-ugc-375-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "ugc",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/077-ugc-375-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "ugc",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/078-ugc-375-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "ugc",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/079-ugc-1280-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "ugc",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/080-ugc-1280-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "ugc",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/081-ugc-1280-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "ugc",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/082-ugc-1280-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "ugc",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/083-ugc-1280-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "ugc",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/084-ugc-1280-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "memory",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/085-memory-375-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "memory",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/086-memory-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "memory",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/087-memory-375-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "memory",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/088-memory-375-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "memory",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/089-memory-375-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "memory",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/090-memory-375-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "memory",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/091-memory-1280-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "memory",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/092-memory-1280-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "memory",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/093-memory-1280-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "memory",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/094-memory-1280-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "memory",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/095-memory-1280-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "memory",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/096-memory-1280-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "help",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/097-help-375-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "help",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/098-help-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "help",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/099-help-375-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "help",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/100-help-375-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "help",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/101-help-375-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "help",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/102-help-375-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "help",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/103-help-1280-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "help",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/104-help-1280-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "help",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/105-help-1280-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "help",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/106-help-1280-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "help",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/107-help-1280-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "help",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/108-help-1280-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "signedout",
+   "width": 375,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/109-signedout-375-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "signedout",
+   "width": 375,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/110-signedout-375-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "signedout",
+   "width": 375,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/111-signedout-375-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "signedout",
+   "width": 375,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/112-signedout-375-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "signedout",
+   "width": 375,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/113-signedout-375-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "signedout",
+   "width": 375,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/114-signedout-375-light-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "signedout",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/115-signedout-1280-dark-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "signedout",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/116-signedout-1280-dark-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "signedout",
+   "width": 1280,
+   "theme": "dark",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/117-signedout-1280-dark-font24.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "signedout",
+   "width": 1280,
+   "theme": "light",
+   "mode": "normal",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/118-signedout-1280-light-normal.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "signedout",
+   "width": 1280,
+   "theme": "light",
+   "mode": "zoom200",
+   "rootFont": "16px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/119-signedout-1280-light-zoom200.jpg"
+  },
+  {
+   "browser": "webkit",
+   "screen": "signedout",
+   "width": 1280,
+   "theme": "light",
+   "mode": "font24",
+   "rootFont": "24px",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/120-signedout-1280-light-font24.jpg"
+  }
+ ],
+ "keyboardResults": [
+  {
+   "browser": "webkit",
+   "navigationKey": "Alt+Tab",
+   "theme": "dark",
+   "width": 1280,
+   "pass": true,
+   "stops": 25,
+   "invisibleFocusStops": 0,
+   "focusOrder": "focus-order.json",
+   "shot": "docs/storysculpt-walk/webkit/shots/121-keyboard-journey-dark-1280.jpg"
+  },
+  {
+   "browser": "webkit",
+   "navigationKey": "Alt+Tab",
+   "theme": "dark",
+   "width": 375,
+   "pass": true,
+   "stops": 25,
+   "invisibleFocusStops": 0,
+   "focusOrder": null,
+   "shot": "docs/storysculpt-walk/webkit/shots/122-keyboard-journey-dark-375.jpg"
+  },
+  {
+   "browser": "webkit",
+   "navigationKey": "Alt+Tab",
+   "theme": "light",
+   "width": 1280,
+   "pass": true,
+   "stops": 25,
+   "invisibleFocusStops": 0,
+   "focusOrder": null,
+   "shot": "docs/storysculpt-walk/webkit/shots/123-keyboard-journey-light-1280.jpg"
+  },
+  {
+   "browser": "webkit",
+   "navigationKey": "Alt+Tab",
+   "theme": "light",
+   "width": 375,
+   "pass": true,
+   "stops": 25,
+   "invisibleFocusStops": 0,
+   "focusOrder": null,
+   "shot": "docs/storysculpt-walk/webkit/shots/124-keyboard-journey-light-375.jpg"
+  }
+ ],
+ "accessibilityResults": [
+  {
+   "browser": "webkit",
+   "screen": "first-visit",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/132-a11y-first-visit.jpg",
+   "transcript": "a11y/first-visit.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "StorySculpt"
+    },
+    {
+     "level": 2,
+     "text": "Chats"
+    },
+    {
+     "level": 2,
+     "text": "Start a script the way you talk."
+    },
+    {
+     "level": 3,
+     "text": "Turn raw thoughts into video scripts that sound like you."
+    },
+    {
+     "level": 4,
+     "text": "Why the 5E interview keeps your voice"
+    },
+    {
+     "level": 4,
+     "text": "What to expect: 5 to 10 minutes"
+    },
+    {
+     "level": 4,
+     "text": "What happens when your script is ready"
+    }
+   ],
+   "controls": 10
+  },
+  {
+   "browser": "webkit",
+   "screen": "interview",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/133-a11y-interview.jpg",
+   "transcript": "a11y/interview.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "StorySculpt"
+    },
+    {
+     "level": 2,
+     "text": "Chats1"
+    },
+    {
+     "level": 2,
+     "text": "Script Editor"
+    }
+   ],
+   "controls": 18
+  },
+  {
+   "browser": "webkit",
+   "screen": "finished",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/134-a11y-finished.jpg",
+   "transcript": "a11y/finished.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "StorySculpt"
+    },
+    {
+     "level": 2,
+     "text": "Chats1"
+    },
+    {
+     "level": 2,
+     "text": "Script Editor"
+    }
+   ],
+   "controls": 22
+  },
+  {
+   "browser": "webkit",
+   "screen": "story-profile",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/135-a11y-story-profile.jpg",
+   "transcript": "a11y/story-profile.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "StorySculpt"
+    },
+    {
+     "level": 2,
+     "text": "Chats1"
+    },
+    {
+     "level": 2,
+     "text": "Script Editor"
+    },
+    {
+     "level": 2,
+     "text": "Set this once. Every chat reads it."
+    }
+   ],
+   "controls": 27
+  },
+  {
+   "browser": "webkit",
+   "screen": "help-dialog",
+   "pass": true,
+   "shot": "docs/storysculpt-walk/webkit/shots/136-a11y-help-dialog.jpg",
+   "transcript": "a11y/help-dialog.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "StorySculpt"
+    },
+    {
+     "level": 2,
+     "text": "Chats1"
+    },
+    {
+     "level": 2,
+     "text": "Script Editor"
+    },
+    {
+     "level": 2,
+     "text": "Help & privacy"
+    },
+    {
+     "level": 3,
+     "text": "Who makes this?"
+    },
+    {
+     "level": 3,
+     "text": "What happens to my work?"
+    },
+    {
+     "level": 3,
+     "text": "Can I change the format?"
+    },
+    {
+     "level": 3,
+     "text": "Can I pause and come back?"
+    },
+    {
+     "level": 3,
+     "text": "What does finishing a script mean?"
+    },
+    {
+     "level": 3,
+     "text": "Can I archive or delete a chat?"
+    },
+    {
+     "level": 3,
+     "text": "What should I do next?"
+    },
+    {
+     "level": 3,
+     "text": "Where do I get help?"
+    }
+   ],
+   "controls": 23
+  }
+ ]
+}

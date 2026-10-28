@@ -69,6 +69,7 @@
     "check:certainty-invite-retry": "node scripts/check-certainty-invite-retry.mjs",
     "check:storysculpt-fidelity": "node scripts/check-storysculpt-fidelity.mjs",
     "sim:certainty-load": "node scripts/sim/certainty-load.mjs",
-    "sim:certainty-walk": "node scripts/sim/certainty-walk.mjs"
+    "sim:certainty-walk": "node scripts/sim/certainty-walk.mjs",
+    "sim:storysculpt-walk": "node scripts/sim/storysculpt-walk.mjs"
   }
 }

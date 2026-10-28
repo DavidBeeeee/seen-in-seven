@@ -1,0 +1,68 @@
+- banner:
+  - link "SS StorySculpt":
+    - /url: /
+    - text: SS
+    - heading "StorySculpt" [level=1]
+  - link "My Studio":
+    - /url: /
+    - img
+    - text: My Studio
+  - button "Change color theme":
+    - img
+  - button "W"
+- main:
+  - complementary:
+    - heading "Chats" [level=2]:
+      - button "Chats":
+        - text: Chats
+        - img
+    - button "Start a new StorySculpt chat":
+      - img
+  - paragraph: StorySculpt · First Script Orientation
+  - heading "Start a script the way you talk." [level=2]
+  - paragraph: Talk through rough thoughts in a conversational interview. StorySculpt asks one question at a time and shapes your answers into a video script that sounds like you.
+  - region "Turn raw thoughts into video scripts that sound like you.":
+    - img
+    - text: First Script Orientation
+    - heading "Turn raw thoughts into video scripts that sound like you." [level=3]
+    - paragraph: Getting on camera is hard when a blank page stares back at you, or when generic tools turn your thoughts into stiff corporate slogans. StorySculpt solves that. You talk through raw thoughts in a focused interview, and the system shapes your exact phrasing into a ready-to-film script.
+    - text: "1"
+    - heading "Why the 5E interview keeps your voice" [level=4]
+    - paragraph:
+      - text: "Generic tools guess what you mean and flatten your personality. StorySculpt asks 4 to 6 focused questions to draw out the core emotional direction of your video:"
+      - strong: Entertainment, Enragement, Epiphany, Empathy, or Education.
+    - paragraph: It keeps your actual phrasing, natural cadence, and rough opinions so the finished script sounds like you talking to a friend.
+    - text: "2"
+    - 'heading "What to expect: 5 to 10 minutes" [level=4]'
+    - paragraph: "An interview takes about 5 to 10 minutes across 4 to 6 conversational turns. No preparation or polished outline is required: unedited thoughts and honest rants give the framework the real detail it needs."
+    - paragraph: Pick a format below, answer each question in your own words, and pause whenever you want. Your work saves as you go.
+    - text: "3"
+    - heading "What happens when your script is ready" [level=4]
+    - paragraph: Your finished script appears in the script panel with line-by-line editing, instant note refinement, and one-click export for your teleprompter.
+    - paragraph: When you record, mark the script filmed to track your momentum. Build a steady library of filmed videos, keep your story profile updated, and start your next script anytime.
+    - text: Step 1
+    - strong: Choose your format
+    - text: Pick a format below and answer questions in your own words. Step 2
+    - strong: Review your script
+    - text: Refine lines with a quick note, edit text inline, or export. Step 3
+    - strong: Record and mark filmed
+    - text: Get on camera, track your momentum, and repeat. Choose your format to begin
+    - paragraph: "Each format shapes your video for a specific audience reaction:"
+    - paragraph: You can't change this later; start a new script for a different format.
+  - region "Script format options":
+    - button "Controversial Take A sharp point of view that challenges accepted wisdom.":
+      - img
+      - strong: Controversial Take
+      - text: A sharp point of view that challenges accepted wisdom.
+    - button "Mini-Webinar A compact lesson with a story to teach one insight clearly.":
+      - img
+      - strong: Mini-Webinar
+      - text: A compact lesson with a story to teach one insight clearly.
+    - button "5E Talking Head A raw thought with emotional momentum and personal honesty.":
+      - img
+      - strong: 5E Talking Head
+      - text: A raw thought with emotional momentum and personal honesty.
+    - button "UGC / Product Video A creator-led breakdown that highlights a product naturally.":
+      - img
+      - strong: UGC / Product Video
+      - text: A creator-led breakdown that highlights a product naturally.

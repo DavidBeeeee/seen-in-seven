@@ -1,0 +1,277 @@
+{
+  "note": "Member and project states for scripts/sim/storysculpt-walk.mjs.",
+  "states": {
+    "first": {
+      "projects": [],
+      "memory": {}
+    },
+    "interview": {
+      "projects": [
+        {
+          "id": "proj-interview-1",
+          "user_id": "walk-user",
+          "title": "Stop selling features",
+          "content_type": "rant",
+          "status": "draft",
+          "version": 2,
+          "conversation": [
+            { "role": "assistant", "content": "What is the core thought or frustration on your mind today?", "step": "hook", "key": "turn:init" },
+            { "role": "user", "content": "Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.", "key": "turn:u1" },
+            { "role": "assistant", "content": "Tell me about a specific time a client had all the features they thought they wanted and still failed.", "step": "evidence", "key": "turn:a1" },
+            { "role": "user", "content": "A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.", "key": "turn:u2" },
+            { "role": "assistant", "content": "What was the one realization that turned it around for them?", "step": "epiphany", "key": "turn:a2" }
+          ],
+          "intake": {
+            "context": "Focus on high-ticket B2B founders.",
+            "versions": [],
+            "current_step": "epiphany"
+          },
+          "output": null,
+          "created_at": "2026-10-27T10:00:00.000Z",
+          "updated_at": "2026-10-27T10:08:00.000Z"
+        }
+      ],
+      "memory": {
+        "name": "Alex",
+        "role": "Founder and positioning coach",
+        "audience": "Bootstrapped B2B founders selling high-ticket services",
+        "voice": "Direct, calm, practical, no hype words",
+        "offers": "Quarterly positioning sprint",
+        "facts": "Built three profitable micro-SaaS companies; 12 years consulting",
+        "notes": "Prefers short sentences and concrete examples"
+      }
+    },
+    "sixtyTurn": {
+      "projects": [
+        {
+          "id": "proj-sixty-turn",
+          "user_id": "walk-user",
+          "title": "Deep dive into product positioning and offer structure",
+          "content_type": "rant",
+          "status": "draft",
+          "version": 30,
+          "conversation": [
+            { "role": "assistant", "content": "Turn 1: What is the core topic we should unpack today?", "step": "hook", "key": "turn:a1" },
+            { "role": "user", "content": "Turn 2: We need to explain why founders resist narrowing their target audience.", "key": "turn:u1" },
+            { "role": "assistant", "content": "Turn 3: What fear comes up first when someone considers picking one niche?", "step": "evidence", "key": "turn:a2" },
+            { "role": "user", "content": "Turn 4: They worry about missing out on revenue from other sectors.", "key": "turn:u2" },
+            { "role": "assistant", "content": "Turn 5: What actually happens when an offer tries to speak to everyone?", "step": "evidence", "key": "turn:a3" },
+            { "role": "user", "content": "Turn 6: Nobody feels understood, and conversion rates drop to near zero.", "key": "turn:u3" },
+            { "role": "assistant", "content": "Turn 7: Give me an example of an offer that gained traction after cutting 80% of its target market.", "step": "evidence", "key": "turn:a4" },
+            { "role": "user", "content": "Turn 8: A CRM that stopped selling to all businesses and focused purely on dental clinics.", "key": "turn:u4" },
+            { "role": "assistant", "content": "Turn 9: What specific problem did dental clinics have that general software ignored?", "step": "evidence", "key": "turn:a5" },
+            { "role": "user", "content": "Turn 10: Automatic insurance verification workflows integrated into their scheduling.", "key": "turn:u5" },
+            { "role": "assistant", "content": "Turn 11: How did the founder feel right before making that narrowing decision?", "step": "epiphany", "key": "turn:a6" },
+            { "role": "user", "content": "Turn 12: Terrified of losing current inquiries, but exhausted from custom work.", "key": "turn:u6" },
+            { "role": "assistant", "content": "Turn 13: What was the first positive indicator after the switch?", "step": "epiphany", "key": "turn:a7" },
+            { "role": "user", "content": "Turn 14: Inquiries dropped by half, but closed deals tripled in the first thirty days.", "key": "turn:u7" },
+            { "role": "assistant", "content": "Turn 15: Why did the close rate triple so rapidly?", "step": "epiphany", "key": "turn:a8" },
+            { "role": "user", "content": "Turn 16: Because the website spoke their exact terminology and solved their top daily headache.", "key": "turn:u8" },
+            { "role": "assistant", "content": "Turn 17: How did pricing change once they were specialized?", "step": "action", "key": "turn:a9" },
+            { "role": "user", "content": "Turn 18: They doubled the monthly subscription and charged a five-thousand-dollar setup fee.", "key": "turn:u9" },
+            { "role": "assistant", "content": "Turn 19: Did prospective clients push back on that higher fee?", "step": "action", "key": "turn:a10" },
+            { "role": "user", "content": "Turn 20: Almost never, because the ROI was obvious from day one.", "key": "turn:u10" },
+            { "role": "assistant", "content": "Turn 21: What is the main mistake founders make when announcing a niche switch?", "step": "action", "key": "turn:a11" },
+            { "role": "user", "content": "Turn 22: Apologizing for it instead of owning it as a commitment to excellence.", "key": "turn:u11" },
+            { "role": "assistant", "content": "Turn 23: How should an existing customer who is outside the new niche be handled?", "step": "action", "key": "turn:a12" },
+            { "role": "user", "content": "Turn 24: Grandfather their plan, give them great care, but stop building custom features for them.", "key": "turn:u12" },
+            { "role": "assistant", "content": "Turn 25: What advice would you give to someone on the fence today?", "step": "action", "key": "turn:a13" },
+            { "role": "user", "content": "Turn 26: Test the narrower message on one landing page before touching your core product.", "key": "turn:u13" },
+            { "role": "assistant", "content": "Turn 27: How long should that landing page test run?", "step": "action", "key": "turn:a14" },
+            { "role": "user", "content": "Turn 28: Two weeks or twenty qualified conversations, whichever comes first.", "key": "turn:u14" },
+            { "role": "assistant", "content": "Turn 29: What metric tells you the test succeeded?", "step": "result", "key": "turn:a15" },
+            { "role": "user", "content": "Turn 30: When people ask 'how soon can we start' instead of 'can it also do X'.", "key": "turn:u15" },
+            { "role": "assistant", "content": "Turn 31: What role does personal content play in validating this niche?", "step": "hook", "key": "turn:a16" },
+            { "role": "user", "content": "Turn 32: Short videos addressing one specific mistake per clip build immediate trust.", "key": "turn:u16" },
+            { "role": "assistant", "content": "Turn 33: Where should founders post these short videos?", "step": "evidence", "key": "turn:a17" },
+            { "role": "user", "content": "Turn 34: Wherever their target buyers already spend downtime: LinkedIn and YouTube.", "key": "turn:u17" },
+            { "role": "assistant", "content": "Turn 35: How often should they publish during the testing phase?", "step": "evidence", "key": "turn:a18" },
+            { "role": "user", "content": "Turn 36: Three times a week is plenty if the insights are genuine.", "key": "turn:u18" },
+            { "role": "assistant", "content": "Turn 37: What is the most common reason a video fails to connect?", "step": "evidence", "key": "turn:a19" },
+            { "role": "user", "content": "Turn 38: Taking forty seconds of throat-clearing before getting to the point.", "key": "turn:u19" },
+            { "role": "assistant", "content": "Turn 39: How do you hook the viewer in the first three seconds?", "step": "epiphany", "key": "turn:a20" },
+            { "role": "user", "content": "Turn 40: State an uncomfortable truth or counter-intuitive observation immediately.", "key": "turn:u20" },
+            { "role": "assistant", "content": "Turn 41: Give an example of an opening line that stops the scroll.", "step": "epiphany", "key": "turn:a21" },
+            { "role": "user", "content": "Turn 42: Most business advice tells you to scale, but staying small made me three times more profit.", "key": "turn:u21" },
+            { "role": "assistant", "content": "Turn 43: How do you support that claim without bragging?", "step": "epiphany", "key": "turn:a22" },
+            { "role": "user", "content": "Turn 44: Share the overhead numbers and the margin breakdown openly.", "key": "turn:u22" },
+            { "role": "assistant", "content": "Turn 45: What is the takeaway message for the viewer?", "step": "action", "key": "turn:a23" },
+            { "role": "user", "content": "Turn 46: Profit per client matters vastly more than total client count.", "key": "turn:u23" },
+            { "role": "assistant", "content": "Turn 47: What clear next step should the video invite them to take?", "step": "action", "key": "turn:a24" },
+            { "role": "user", "content": "Turn 48: Audit their customer list and find the top twenty percent that generates eighty percent of margin.", "key": "turn:u24" },
+            { "role": "assistant", "content": "Turn 49: What should they do with that top twenty percent list?", "step": "action", "key": "turn:a25" },
+            { "role": "user", "content": "Turn 50: Interview those clients to find the common patterns in why they bought.", "key": "turn:u25" },
+            { "role": "assistant", "content": "Turn 51: How does that interview inform their messaging?", "step": "result", "key": "turn:a26" },
+            { "role": "user", "content": "Turn 52: Use their exact phrases on your homepage and in your video hooks.", "key": "turn:u26" },
+            { "role": "assistant", "content": "Turn 53: What happens when prospective buyers read their own thoughts on your page?", "step": "result", "key": "turn:a27" },
+            { "role": "user", "content": "Turn 54: The sales conversation is practically over before it begins.", "key": "turn:u27" },
+            { "role": "assistant", "content": "Turn 55: What final reminder do founders need about this journey?", "step": "result", "key": "turn:a28" },
+            { "role": "user", "content": "Turn 56: Clarity is an outcome of doing, not thinking. Ship the video and listen to the responses.", "key": "turn:u28" },
+            { "role": "assistant", "content": "Turn 57: What is the single biggest sign of momentum in week one?", "step": "result", "key": "turn:a29" },
+            { "role": "user", "content": "Turn 58: A direct message from a stranger saying that video felt like it was made specifically for them.", "key": "turn:u29" },
+            { "role": "assistant", "content": "Turn 59: That is the complete narrative arc. Ready to generate the script?", "step": "final", "key": "turn:a30" },
+            { "role": "user", "content": "Turn 60: Yes, assemble the complete talking-head script now.", "key": "turn:u30" }
+          ],
+          "intake": {
+            "context": "Extended deep-dive on niche positioning",
+            "versions": [],
+            "current_step": "final"
+          },
+          "output": null,
+          "created_at": "2026-10-27T08:00:00.000Z",
+          "updated_at": "2026-10-27T10:30:00.000Z"
+        }
+      ],
+      "memory": {
+        "name": "Alex",
+        "role": "Founder and positioning coach"
+      }
+    },
+    "rant": {
+      "projects": [
+        {
+          "id": "proj-rant-step-path",
+          "user_id": "walk-user",
+          "title": "5E Talking Head: The Authenticity Trap",
+          "content_type": "rant",
+          "status": "draft",
+          "version": 4,
+          "conversation": [
+            { "role": "assistant", "content": "What is the raw thought or hot take you want to share?", "step": "hook", "key": "turn:r1" },
+            { "role": "user", "content": "People use 'authenticity' as an excuse for being disorganized and lazy on camera.", "key": "turn:ru1" },
+            { "role": "assistant", "content": "What does genuine authenticity look like instead of disorganized rambling?", "step": "evidence", "key": "turn:r2" },
+            { "role": "user", "content": "Authenticity is having the courage to share an unvarnished truth, but respecting your viewer enough to structure it clearly.", "key": "turn:ru2" },
+            { "role": "assistant", "content": "What epiphany did you experience when you learned this distinction?", "step": "epiphany", "key": "turn:r3" },
+            { "role": "user", "content": "I realized editing is an act of empathy. Cutting fluff is how you honor someone's time.", "key": "turn:ru3" },
+            { "role": "assistant", "content": "What action should a creator take before hitting record?", "step": "action", "key": "turn:r4" }
+          ],
+          "intake": {
+            "context": "Video creation advice",
+            "versions": [],
+            "current_step": "action"
+          },
+          "output": null,
+          "created_at": "2026-10-27T09:00:00.000Z",
+          "updated_at": "2026-10-27T09:20:00.000Z"
+        }
+      ],
+      "memory": {
+        "name": "Alex",
+        "role": "Video educator"
+      }
+    },
+    "finished": {
+      "projects": [
+        {
+          "id": "proj-finished-1",
+          "user_id": "walk-user",
+          "title": "The Outcome-First Method",
+          "content_type": "rant",
+          "status": "completed",
+          "version": 5,
+          "conversation": [
+            { "role": "assistant", "content": "What is the core thought on your mind today?", "step": "hook", "key": "turn:init" },
+            { "role": "user", "content": "Stop pitching features. Pitch certainty.", "key": "turn:u1" },
+            { "role": "assistant", "content": "Tell me about a time that proved this.", "step": "evidence", "key": "turn:a1" },
+            { "role": "user", "content": "When we stopped listing features and focused on the outcome, conversion doubled in two weeks.", "key": "turn:u2" },
+            { "role": "assistant", "content": "Your script is assembled and ready to film below.", "step": "final", "key": "turn:final" }
+          ],
+          "output": "Here is why your product is not selling.\n\nYou keep listing features: faster sync, dark mode, thirty integrations.\n\nNobody cares about your feature list until they believe you understand their pain.\n\nWhen we switched our messaging from what it does to what changes for you tomorrow, conversions doubled in fourteen days.\n\nStop selling your machinery. Sell the outcome.",
+          "intake": {
+            "context": "Focus on high-ticket B2B founders.",
+            "versions": [
+              {
+                "version": 1,
+                "note": "First draft from interview",
+                "content": "Here is why your product is not selling.\n\nYou keep listing features: faster sync, dark mode, thirty integrations.\n\nNobody cares about your feature list until they believe you understand their pain.\n\nWhen we switched our messaging from what it does to what changes for you tomorrow, conversions doubled in fourteen days.\n\nStop selling your machinery. Sell the outcome.",
+                "createdAt": "2026-10-27T10:15:00.000Z"
+              }
+            ],
+            "current_step": "final"
+          },
+          "created_at": "2026-10-27T10:00:00.000Z",
+          "updated_at": "2026-10-27T10:15:00.000Z"
+        }
+      ],
+      "memory": {
+        "name": "Alex",
+        "role": "Founder"
+      }
+    },
+    "refine": {
+      "projects": [
+        {
+          "id": "proj-refine-1",
+          "user_id": "walk-user",
+          "title": "The Outcome-First Method",
+          "content_type": "rant",
+          "status": "completed",
+          "version": 6,
+          "conversation": [
+            { "role": "assistant", "content": "What is the core thought on your mind today?", "step": "hook", "key": "turn:init" },
+            { "role": "user", "content": "Stop pitching features. Pitch certainty.", "key": "turn:u1" },
+            { "role": "assistant", "content": "Your script is assembled and ready to film below.", "step": "final", "key": "turn:final" }
+          ],
+          "output": "Here is the real reason your product is not selling.\n\nYou keep talking about features: faster sync, dark mode, thirty integrations.\n\nNobody buys code. People buy certainty.\n\nWhen we shifted our headline to what changes for you by Friday, conversions doubled in two weeks.\n\nSell the relief, not the plumbing.",
+          "intake": {
+            "context": "Focus on high-ticket B2B founders.",
+            "versions": [
+              {
+                "version": 1,
+                "note": "First draft from interview",
+                "content": "Here is why your product is not selling.\n\nYou keep listing features: faster sync, dark mode, thirty integrations.\n\nNobody cares about your feature list until they believe you understand their pain.\n\nWhen we switched our messaging from what it does to what changes for you tomorrow, conversions doubled in fourteen days.\n\nStop selling your machinery. Sell the outcome.",
+                "createdAt": "2026-10-27T10:15:00.000Z"
+              },
+              {
+                "version": 2,
+                "note": "Make the hook punchier and emphasize relief",
+                "content": "Here is the real reason your product is not selling.\n\nYou keep talking about features: faster sync, dark mode, thirty integrations.\n\nNobody buys code. People buy certainty.\n\nWhen we shifted our headline to what changes for you by Friday, conversions doubled in two weeks.\n\nSell the relief, not the plumbing.",
+                "createdAt": "2026-10-27T10:25:00.000Z"
+              }
+            ],
+            "current_step": "final"
+          },
+          "created_at": "2026-10-27T10:00:00.000Z",
+          "updated_at": "2026-10-27T10:25:00.000Z"
+        }
+      ],
+      "memory": {
+        "name": "Alex",
+        "role": "Founder"
+      }
+    },
+    "ugc": {
+      "projects": [
+        {
+          "id": "proj-ugc-1",
+          "user_id": "walk-user",
+          "title": "Minimalist Desk Lamp Breakdown",
+          "content_type": "ugc",
+          "status": "draft",
+          "version": 1,
+          "conversation": [
+            { "role": "assistant", "content": "UGC creator interview initiated.", "step": "entry", "key": "turn:uinit" }
+          ],
+          "intake": {
+            "context": "",
+            "versions": [],
+            "ugc": {
+              "schemaVersion": 1,
+              "currentStep": "entry",
+              "salesApproach": "help-decide",
+              "creatorExperience": { "used": "used", "observations": "Warm light, compact base, solid aluminum body." },
+              "filming": { "enabled": true, "format": "talking-head", "plan": [], "stale": false }
+            }
+          },
+          "output": null,
+          "created_at": "2026-10-27T11:00:00.000Z",
+          "updated_at": "2026-10-27T11:05:00.000Z"
+        }
+      ],
+      "memory": {
+        "name": "Alex",
+        "role": "Tech reviewer"
+      }
+    }
+  }
+}

@@ -8,6 +8,182 @@
    - Version history tracking with teleprompter-friendly reading.
 */
 
+/* ── Accessibility & Typography (WBR-462: UX 74, 76, 78, 95, 97) ────────── */
+:root {
+  --studio-teal: #3de0e0;
+  --studio-gold: #f5cb5c;
+}
+
+.studio-brand-title {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 700;
+  display: inline;
+  line-height: inherit;
+  color: inherit;
+}
+
+.story-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible,
+.story-mode:focus-visible,
+.story-filter-btn:focus-visible,
+.story-quick-btn:focus-visible,
+.story-bulk-toggle:focus-visible,
+.story-bulk-link:focus-visible,
+.story-bulk-delete:focus-visible,
+.story-memory-link:focus-visible,
+.story-show-earlier:focus-visible {
+  outline: 3px solid var(--studio-gold) !important;
+  outline-offset: 2px !important;
+}
+[tabindex="-1"]:focus { outline: none !important; }
+
+/* Responsive font scaling for 24px member preference */
+#eee-app p,
+#eee-app li,
+#eee-gate-copy,
+.story-first-run-lead {
+  font-size: 0.94rem;
+}
+.story-first-run-col p,
+.story-format-guide p,
+.story-help-content p,
+.story-consequence-note p,
+.story-rail-keep,
+.story-memory-intro {
+  font-size: 0.84rem;
+}
+.story-mode small,
+.story-loop-step small,
+.story-memory-link small {
+  font-size: 0.8rem;
+}
+
+/* Dark theme contrast enhancements */
+.studio-brand .studio-mark {
+  color: #3de8e8;
+}
+.story-loop-step .story-loop-badge {
+  background: rgba(245, 203, 92, 0.22);
+  color: #fce8a6;
+  border: 1px solid rgba(245, 203, 92, 0.45);
+}
+.ugc-pill-btn[data-approach="help-decide"].active {
+  background: #0f3d3d;
+  color: #4df0f0;
+  border-color: #3de0e0;
+}
+.eee-gate-box .studio-mark {
+  color: #3de8e8;
+}
+
+/* Light theme contrast enhancements */
+html.studio-light,
+body.light-mode {
+  --teal: #0d5f5f;
+  --muted: #205c5c;
+  --soft: #164646;
+  --gold: #634600;
+  --studio-teal: #0d5f5f;
+  --studio-muted: #205c5c;
+  --studio-soft: #164646;
+  --studio-gold: #634600;
+}
+html.studio-light .studio-brand .studio-mark {
+  color: #0b4e4e;
+  background: #d8eded;
+}
+html.studio-light .studio-brand small {
+  color: #634600;
+  font-weight: 700;
+}
+html.studio-light .story-loop-step .story-loop-badge {
+  background: rgba(115, 81, 0, 0.12);
+  color: #634600;
+  border: 1px solid rgba(115, 81, 0, 0.35);
+}
+html.studio-light .story-progress-head,
+html.studio-light .story-progress-line,
+html.studio-light .story-progress-stat,
+html.studio-light #story-inactivity-line > span,
+html.studio-light #story-open-memory small,
+html.studio-light #story-page-eyebrow,
+html.studio-light #story-page-copy,
+html.studio-light .assistant .story-message-role,
+html.studio-light .user .story-message-role,
+html.studio-light button[data-action="copy-msg"] > span,
+html.studio-light .promote[data-action="promote-msg"] > span,
+html.studio-light #ugc-step-entry .ugc-step-head .eyebrow,
+html.studio-light #ugc-toggle-details-btn,
+html.studio-light #eee-gate-copy,
+html.studio-light #story-project-list > .eee-message,
+html.studio-light #story-word-count,
+html.studio-light .story-version-label,
+html.studio-light #story-script-save-status,
+html.studio-light #story-consequence-note > p,
+html.studio-light button[data-action="regen-open"] > span,
+html.studio-light #story-generation-status {
+  color: #205c5c;
+}
+html.studio-light .story-mode small,
+html.studio-light .story-help-content p {
+  color: #164646;
+}
+html.studio-light #story-orientation-eyebrow,
+html.studio-light .story-format-guide-head > .eyebrow,
+html.studio-light #story-memory > .story-memory-head > div > .eyebrow,
+html.studio-light #story-help > .story-memory-head > div > .eyebrow,
+html.studio-light #story-output-eyebrow {
+  color: #0d5f5f;
+}
+html.studio-light #story-refine-send,
+html.studio-light #ugc-start-research-btn,
+html.studio-light #mem-save,
+html.studio-light .story-send,
+html.studio-light .story-version-pill.active {
+  background: #0d5f5f;
+  color: #ffffff;
+  border-color: #0d5f5f;
+}
+html.studio-light .story-filter-btn {
+  color: #205c5c;
+}
+html.studio-light .story-filter-btn.active {
+  color: #0b4e4e;
+  background: #ffffff;
+  font-weight: 800;
+}
+html.studio-light #story-format-badge {
+  color: #634600;
+  background: #f7edd4;
+  border-color: #d6af4b;
+}
+html.studio-light #eee-gate-button {
+  background: #0d5f5f;
+  color: #ffffff;
+}
+html.studio-light .eee-gate-box .studio-mark {
+  color: #0b4e4e;
+  background: #d8eded;
+}
+
+
 .story-rail-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; width: 100%; box-sizing: border-box; }
 .story-rail-head h2 { margin: 0; font-family: var(--font-display, 'Oswald'), sans-serif; font-size: 20px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .story-rail-head .icon-button { width: 34px; height: 34px; flex-shrink: 0; }
@@ -459,15 +635,15 @@
 .story-progress-stats { display: flex; gap: 10px; }
 .story-progress-stat { font-size: 12px; color: var(--studio-muted); }
 .story-progress-stat strong { font-size: 14px; color: var(--studio-text, inherit); margin-right: 3px; }
-.story-progress-line { flex-basis: 100%; margin: 0; font-size: 12px; line-height: 1.4; color: var(--studio-muted); overflow-wrap: anywhere; }
+.story-progress-line { flex-basis: 100%; margin: 0; font-size: 0.8125rem; line-height: 1.4; color: var(--studio-muted); overflow-wrap: anywhere; }
 .story-next-slot { flex-shrink: 0; }
 #story-next-step-rail { padding: 6px 0 0; }
 #story-next-step-footer { padding: 4px 0 8px; }
 .story-next-step { display: flex; align-items: center; gap: 8px 10px; flex-wrap: wrap; }
-.story-next-step p { margin: 0; flex: 1 1 140px; min-width: 0; font-size: 13px; line-height: 1.45; overflow-wrap: anywhere; }
+.story-next-step p { margin: 0; flex: 1 1 140px; min-width: 0; font-size: 0.875rem; line-height: 1.45; overflow-wrap: anywhere; }
 .story-next-step-btn { flex-shrink: 0; }
-#story-next-step-rail .story-next-step p { font-size: 12px; }
-#story-next-step-rail .story-next-step-btn { padding: 3px 10px; min-height: 0; font-size: 12px; }
+#story-next-step-rail .story-next-step p { font-size: 0.8125rem; }
+#story-next-step-rail .story-next-step-btn { padding: 3px 10px; min-height: 0; font-size: 0.8125rem; }
 .story-projects .eee-rail-list { min-height: 120px; }
 .story-return-notice { display: flex; align-items: flex-start; gap: 8px; padding: 10px 12px; border-left: 3px solid var(--studio-teal); border-radius: 8px; background: color-mix(in srgb, var(--studio-teal) 8%, var(--studio-surface)); }
 .story-return-notice.quiet { border-left-color: var(--studio-border); background: var(--studio-surface); }

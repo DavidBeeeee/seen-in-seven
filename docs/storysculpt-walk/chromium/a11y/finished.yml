@@ -1,0 +1,79 @@
+- banner:
+  - link "SS StorySculpt":
+    - /url: /
+    - text: SS
+    - heading "StorySculpt" [level=1]
+  - link "My Studio":
+    - /url: /
+    - img
+    - text: My Studio
+  - button "Change color theme":
+    - img
+  - button "W"
+- main:
+  - complementary:
+    - heading "Chats 1" [level=2]:
+      - button "Chats 1":
+        - text: Chats 1
+        - img
+    - button "Start a new StorySculpt chat":
+      - img
+  - heading "Script Editor" [level=2]
+  - textbox "Chat title": The Outcome-First Method
+  - button "Notes":
+    - img
+    - text: Notes
+  - button "Delete":
+    - img
+    - text: Delete
+  - button "Chat":
+    - img
+    - text: Chat
+  - button "Script v1":
+    - img
+    - text: Script v1
+  - article:
+    - text: StorySculpt What is the core thought on your mind today?
+    - button "Copy":
+      - img
+      - text: Copy
+    - button "Use as Script":
+      - img
+      - text: Use as Script
+  - article: You Stop pitching features. Pitch certainty.
+  - article:
+    - text: StorySculpt Tell me about a time that proved this.
+    - button "Copy":
+      - img
+      - text: Copy
+    - button "Use as Script":
+      - img
+      - text: Use as Script
+  - article: You When we stopped listing features and focused on the outcome, conversion doubled in two weeks.
+  - article:
+    - text: StorySculpt Your script is assembled and ready to film below.
+    - button "Copy":
+      - img
+      - text: Copy
+    - button "Use as Script":
+      - img
+      - text: Use as Script
+  - status
+  - img
+  - paragraph: This script is finished. Refine it with a note or start a new chat.
+  - button "New chat":
+    - img
+    - text: New chat
+  - paragraph:
+    - strong: "Next:"
+    - text: Film this script, then mark it Filmed.
+  - button "Mark filmed"
+  - textbox "What to change in the script":
+    - /placeholder: What should change? e.g. make it shorter, cut the repeated lesson, give it a warmer ending.
+  - button "Speak instead of typing": 🎤
+  - button "Revise":
+    - text: Revise
+    - img
+  - button "Regenerate the script":
+    - img
+    - text: Regenerate

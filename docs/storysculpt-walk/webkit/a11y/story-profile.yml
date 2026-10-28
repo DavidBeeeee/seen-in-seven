@@ -1,0 +1,101 @@
+- banner:
+  - link "SS StorySculpt":
+    - /url: /
+    - text: SS
+    - heading "StorySculpt" [level=1]
+  - link "My Studio":
+    - /url: /
+    - img
+    - text: My Studio
+  - button "Change color theme":
+    - img
+  - button "W"
+- main:
+  - complementary:
+    - heading "Chats 1" [level=2]:
+      - button "Chats 1":
+        - text: Chats 1
+        - img
+    - button "Start a new StorySculpt chat":
+      - img
+  - heading "Script Editor" [level=2]
+  - textbox "Chat title": Stop selling features
+  - button "Notes":
+    - img
+    - text: Notes
+  - button "Delete":
+    - img
+    - text: Delete
+  - article:
+    - text: StorySculpt What is the core thought or frustration on your mind today?
+    - button "Copy":
+      - img
+      - text: Copy
+    - button "Use as Script":
+      - img
+      - text: Use as Script
+  - article: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+  - article:
+    - text: StorySculpt Tell me about a specific time a client had all the features they thought they wanted and still failed.
+    - button "Copy":
+      - img
+      - text: Copy
+    - button "Use as Script":
+      - img
+      - text: Use as Script
+  - article: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+  - article:
+    - text: StorySculpt What was the one realization that turned it around for them?
+    - button "Regenerate":
+      - img
+      - text: Regenerate
+    - button "Copy":
+      - img
+      - text: Copy
+    - button "Use as Script":
+      - img
+      - text: Use as Script
+  - status
+  - textbox "Your answer":
+    - /placeholder: Write it the way you would say it. Rough is useful.
+  - button "Send":
+    - img
+  - paragraph: StorySculpt saves your chat as you go.
+- complementary "Your story profile":
+  - paragraph: Your story profile
+  - heading "Set this once. Every chat reads it." [level=2]
+  - button "Close story profile":
+    - img
+  - paragraph: These are the standing facts about you and your work. StorySculpt keeps them in mind on every script, so you never re-explain who you are.
+  - text: What should StorySculpt call you?
+  - textbox "What should StorySculpt call you?":
+    - /placeholder: Your name
+    - text: Alex
+  - text: What do you do?
+  - textbox "What do you do?":
+    - /placeholder: Coach, founder, creator, consultant
+    - text: Founder and positioning coach
+  - text: Who are your videos for?
+  - textbox "Who are your videos for?":
+    - /placeholder: The people you are talking to and what they care about.
+    - text: Bootstrapped B2B founders selling high-ticket services
+  - text: Your voice and phrasing
+  - textbox "Your voice and phrasing":
+    - /placeholder: How you sound, words and phrases you use, and anything you never want to say.
+    - text: Direct, calm, practical, no hype words
+  - text: Offers and recurring calls to action
+  - textbox "Offers and recurring calls to action":
+    - /placeholder: What you sell or point people to, and the call to action you come back to.
+    - text: Quarterly positioning sprint
+  - text: Facts and results to reuse
+  - textbox "Facts and results to reuse":
+    - /placeholder: True details, numbers, credentials, or stories you reuse. StorySculpt will not invent these.
+    - text: Built three profitable micro-SaaS companies; 12 years consulting
+  - text: Anything else
+  - textbox "Anything else":
+    - /placeholder: Anything else StorySculpt should keep in mind.
+    - text: Prefers short sentences and concrete examples
+  - paragraph
+  - button "Save profile":
+    - img
+    - text: Save profile

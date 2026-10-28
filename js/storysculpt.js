@@ -1664,7 +1664,7 @@ function showProject(project) {
     if (project.output) {
       if (window.innerWidth > 820) storyEl('story-refine-note').focus();
     } else {
-      storyEl('story-answer').focus();
+      if (window.innerWidth > 820) storyEl('story-answer').focus();
     }
   }
 
@@ -2287,11 +2287,11 @@ async function executeInterviewGeneration() {
       viewingVersionIndex = -1;
       await saveActiveStory('Initial draft saved');
       renderScriptPanel();
-      if (window.innerWidth <= 820) {
-        switchMobileTab('script');
-      } else {
-        storyEl('story-output-copy').focus();
-      }
+      const refineNote = storyEl('story-refine-note');
+      if (refineNote) refineNote.focus();
+    } else {
+      const ans = storyEl('story-answer');
+      if (ans) ans.focus();
     }
   } catch (error) {
     failed = true;

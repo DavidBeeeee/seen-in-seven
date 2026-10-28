@@ -1,0 +1,100 @@
+- banner:
+  - link "SS StorySculpt":
+    - /url: /
+    - text: SS
+    - heading "StorySculpt" [level=1]
+  - link "My Studio":
+    - /url: /
+    - img
+    - text: My Studio
+  - button "Change color theme":
+    - img
+  - button "W"
+- main:
+  - complementary:
+    - heading "Chats 1" [level=2]:
+      - button "Chats 1":
+        - text: Chats 1
+        - img
+    - button "Start a new StorySculpt chat":
+      - img
+  - heading "Script Editor" [level=2]
+  - textbox "Chat title": Stop selling features
+  - button "Notes":
+    - img
+    - text: Notes
+  - button "Delete":
+    - img
+    - text: Delete
+  - article:
+    - text: StorySculpt What is the core thought or frustration on your mind today?
+    - button "Copy":
+      - img
+      - text: Copy
+    - button "Use as Script":
+      - img
+      - text: Use as Script
+  - article: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+  - article:
+    - text: StorySculpt Tell me about a specific time a client had all the features they thought they wanted and still failed.
+    - button "Copy":
+      - img
+      - text: Copy
+    - button "Use as Script":
+      - img
+      - text: Use as Script
+  - article: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+  - article:
+    - text: StorySculpt What was the one realization that turned it around for them?
+    - button "Regenerate":
+      - img
+      - text: Regenerate
+    - button "Copy":
+      - img
+      - text: Copy
+    - button "Use as Script":
+      - img
+      - text: Use as Script
+  - status
+  - textbox "Your answer":
+    - /placeholder: Write it the way you would say it. Rough is useful.
+  - button "Send":
+    - img
+  - paragraph: StorySculpt saves your chat as you go.
+- dialog "Help & privacy":
+  - paragraph: StorySculpt
+  - heading "Help & privacy" [level=2]
+  - button "Close help":
+    - img
+  - heading "Who makes this?" [level=3]
+  - paragraph: Built and supported by David Bee. StorySculpt is part of The Momentum Hub, and every step of it follows David's own scriptwriting method.
+  - heading "What happens to my work?" [level=3]
+  - paragraph: Your chats, project titles, notes, finished scripts, and story profile are saved to your Studio account so you can return to them. When you ask StorySculpt to continue or revise, your title, profile, notes, and recent messages are processed by the AI model that writes your next question or draft, guided by David's method and your own words. Do not enter anything you do not want processed by an AI service.
+  - paragraph: "Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them. You can delete a chat and its saved script with the Delete button inside that chat. Your standing story profile is separate and can be edited from Story profile."
+  - heading "Can I change the format?" [level=3]
+  - paragraph: The format is locked after creation. Start a new script to use a different format; your existing chat stays in your list.
+  - heading "Can I pause and come back?" [level=3]
+  - paragraph: "Yes. Leaving does not delete your project. Reopen the chat to resume the interview where you stopped. Check the save indicator before closing the browser: Saving means a write is pending, Saved means it was acknowledged, and Not saved means the latest change has not reached your account yet. Changes kept only on this device are not available on another device until saved."
+  - heading "What does finishing a script mean?" [level=3]
+  - paragraph: Finishing closes the interview to new turns and assembles your answers into a script you can record. Use Refine to revise the finished script. Copy it or download the text file when you are ready to film. Your saved script does not expire; it stays in your account until you delete it.
+  - heading "Can I archive or delete a chat?" [level=3]
+  - paragraph: "Archive is not available yet. Delete is the one irreversible step: after you confirm, it removes the chat and its saved script. Leaving or pausing does not delete anything."
+  - heading "What should I do next?" [level=3]
+  - paragraph:
+    - strong: "Next:"
+    - text: Answer the next question to finish this script.
+  - button "Continue"
+  - heading "Where do I get help?" [level=3]
+  - paragraph:
+    - text: For a question about a script, chat, or your story profile, email
+    - link "email@davidbee.me":
+      - /url: mailto:email@davidbee.me?subject=StorySculpt%20support
+    - text: and say what you were doing. For Studio sign-in, access, or billing, use the
+    - link "Studio home":
+      - /url: /eee
+    - text: and its account support options, or email the same address with “Studio account” in the subject.
+  - paragraph:
+    - text: Review our
+    - link "Terms of Service, AI usage, and FAQ":
+      - /url: /terms
+    - text: .

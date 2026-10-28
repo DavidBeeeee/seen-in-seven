@@ -1,0 +1,10528 @@
+{
+ "nodes": [
+  {
+   "nodeId": "9",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "RootWebArea"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 144
+   },
+   "name": {
+    "type": "computedString",
+    "value": "StorySculpt | Talking-head script builder",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label",
+      "superseded": true
+     },
+     {
+      "type": "relatedElement",
+      "value": {
+       "type": "computedString",
+       "value": "StorySculpt | Talking-head script builder"
+      },
+      "nativeSource": "title"
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "focusable",
+     "value": {
+      "type": "booleanOrUndefined",
+      "value": true
+     }
+    },
+    {
+     "name": "focused",
+     "value": {
+      "type": "booleanOrUndefined",
+      "value": true
+     }
+    },
+    {
+     "name": "url",
+     "value": {
+      "type": "string",
+      "value": "http://storysculpt.walk.test/storysculpt"
+     }
+    }
+   ],
+   "childIds": [
+    "108"
+   ],
+   "backendDOMNodeId": 9,
+   "frameId": "A765CAF18CA1ADE64CD571FEA71A0BA6"
+  },
+  {
+   "nodeId": "108",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "9",
+   "childIds": [
+    "163",
+    "544",
+    "547",
+    "550",
+    "554",
+    "558",
+    "562",
+    "566",
+    "576"
+   ],
+   "backendDOMNodeId": 108
+  },
+  {
+   "nodeId": "163",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "108",
+   "childIds": [
+    "212",
+    "277"
+   ],
+   "backendDOMNodeId": 163
+  },
+  {
+   "nodeId": "212",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "163",
+   "childIds": [
+    "640"
+   ],
+   "backendDOMNodeId": 212
+  },
+  {
+   "nodeId": "640",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "212",
+   "childIds": [],
+   "backendDOMNodeId": 640
+  },
+  {
+   "nodeId": "277",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "163",
+   "childIds": [
+    "281",
+    "291",
+    "297",
+    "1632",
+    "1631",
+    "334",
+    "335",
+    "336",
+    "339",
+    "19",
+    "21",
+    "345",
+    "347",
+    "104",
+    "360",
+    "377",
+    "33",
+    "35",
+    "105",
+    "387",
+    "40",
+    "42",
+    "402",
+    "404",
+    "106",
+    "107",
+    "421",
+    "444",
+    "47",
+    "49",
+    "54",
+    "56",
+    "500",
+    "501"
+   ],
+   "backendDOMNodeId": 277
+  },
+  {
+   "nodeId": "281",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 281
+  },
+  {
+   "nodeId": "291",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "679",
+    "292"
+   ],
+   "backendDOMNodeId": 291
+  },
+  {
+   "nodeId": "679",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "291",
+   "childIds": [],
+   "backendDOMNodeId": 679
+  },
+  {
+   "nodeId": "292",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "291",
+   "childIds": [
+    "10",
+    "293",
+    "294"
+   ],
+   "backendDOMNodeId": 292
+  },
+  {
+   "nodeId": "10",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "292",
+   "childIds": [
+    "12",
+    "14"
+   ],
+   "backendDOMNodeId": 10
+  },
+  {
+   "nodeId": "12",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "10",
+   "childIds": [],
+   "backendDOMNodeId": 12
+  },
+  {
+   "nodeId": "14",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "10",
+   "childIds": [
+    "2162"
+   ],
+   "backendDOMNodeId": 14
+  },
+  {
+   "nodeId": "2162",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "14",
+   "childIds": [],
+   "backendDOMNodeId": 2162
+  },
+  {
+   "nodeId": "293",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "292",
+   "childIds": [
+    "15",
+    "681",
+    "16"
+   ],
+   "backendDOMNodeId": 293
+  },
+  {
+   "nodeId": "15",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "293",
+   "childIds": [
+    "680"
+   ],
+   "backendDOMNodeId": 15
+  },
+  {
+   "nodeId": "680",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "15",
+   "childIds": [],
+   "backendDOMNodeId": 680
+  },
+  {
+   "nodeId": "681",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "293",
+   "childIds": [],
+   "backendDOMNodeId": 681
+  },
+  {
+   "nodeId": "16",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "293",
+   "childIds": [
+    "682"
+   ],
+   "backendDOMNodeId": 16
+  },
+  {
+   "nodeId": "682",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "16",
+   "childIds": [],
+   "backendDOMNodeId": 682
+  },
+  {
+   "nodeId": "294",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "292",
+   "childIds": [
+    "683"
+   ],
+   "backendDOMNodeId": 294
+  },
+  {
+   "nodeId": "683",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "294",
+   "childIds": [],
+   "backendDOMNodeId": 683
+  },
+  {
+   "nodeId": "297",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "301",
+    "304",
+    "307",
+    "310"
+   ],
+   "backendDOMNodeId": 297
+  },
+  {
+   "nodeId": "301",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "297",
+   "childIds": [],
+   "backendDOMNodeId": 301
+  },
+  {
+   "nodeId": "304",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "297",
+   "childIds": [],
+   "backendDOMNodeId": 304
+  },
+  {
+   "nodeId": "307",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "297",
+   "childIds": [],
+   "backendDOMNodeId": 307
+  },
+  {
+   "nodeId": "310",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "297",
+   "childIds": [],
+   "backendDOMNodeId": 310
+  },
+  {
+   "nodeId": "1632",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 1632
+  },
+  {
+   "nodeId": "1631",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 1631
+  },
+  {
+   "nodeId": "334",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "690"
+   ],
+   "backendDOMNodeId": 334
+  },
+  {
+   "nodeId": "690",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "334",
+   "childIds": [],
+   "backendDOMNodeId": 690
+  },
+  {
+   "nodeId": "335",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 335
+  },
+  {
+   "nodeId": "336",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 336
+  },
+  {
+   "nodeId": "339",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "692"
+   ],
+   "backendDOMNodeId": 339
+  },
+  {
+   "nodeId": "692",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "339",
+   "childIds": [],
+   "backendDOMNodeId": 692
+  },
+  {
+   "nodeId": "19",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 19
+  },
+  {
+   "nodeId": "21",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 21
+  },
+  {
+   "nodeId": "345",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "349"
+   ],
+   "backendDOMNodeId": 345
+  },
+  {
+   "nodeId": "349",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "345",
+   "childIds": [],
+   "backendDOMNodeId": 349
+  },
+  {
+   "nodeId": "347",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "350"
+   ],
+   "backendDOMNodeId": 347
+  },
+  {
+   "nodeId": "350",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "347",
+   "childIds": [
+    "26",
+    "28"
+   ],
+   "backendDOMNodeId": 350
+  },
+  {
+   "nodeId": "26",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "350",
+   "childIds": [],
+   "backendDOMNodeId": 26
+  },
+  {
+   "nodeId": "28",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "350",
+   "childIds": [],
+   "backendDOMNodeId": 28
+  },
+  {
+   "nodeId": "104",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "703"
+   ],
+   "backendDOMNodeId": 104
+  },
+  {
+   "nodeId": "703",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "104",
+   "childIds": [],
+   "backendDOMNodeId": 703
+  },
+  {
+   "nodeId": "360",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "96",
+    "361",
+    "362"
+   ],
+   "backendDOMNodeId": 360
+  },
+  {
+   "nodeId": "96",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "360",
+   "childIds": [],
+   "backendDOMNodeId": 96
+  },
+  {
+   "nodeId": "361",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "360",
+   "childIds": [],
+   "backendDOMNodeId": 361
+  },
+  {
+   "nodeId": "362",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "360",
+   "childIds": [
+    "707"
+   ],
+   "backendDOMNodeId": 362
+  },
+  {
+   "nodeId": "707",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "362",
+   "childIds": [],
+   "backendDOMNodeId": 707
+  },
+  {
+   "nodeId": "377",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "713"
+   ],
+   "backendDOMNodeId": 377
+  },
+  {
+   "nodeId": "713",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "377",
+   "childIds": [],
+   "backendDOMNodeId": 713
+  },
+  {
+   "nodeId": "33",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 33
+  },
+  {
+   "nodeId": "35",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 35
+  },
+  {
+   "nodeId": "105",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "718"
+   ],
+   "backendDOMNodeId": 105
+  },
+  {
+   "nodeId": "718",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "105",
+   "childIds": [],
+   "backendDOMNodeId": 718
+  },
+  {
+   "nodeId": "387",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "722"
+   ],
+   "backendDOMNodeId": 387
+  },
+  {
+   "nodeId": "722",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "387",
+   "childIds": [],
+   "backendDOMNodeId": 722
+  },
+  {
+   "nodeId": "40",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 40
+  },
+  {
+   "nodeId": "42",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 42
+  },
+  {
+   "nodeId": "402",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "406"
+   ],
+   "backendDOMNodeId": 402
+  },
+  {
+   "nodeId": "406",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "402",
+   "childIds": [],
+   "backendDOMNodeId": 406
+  },
+  {
+   "nodeId": "404",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "409"
+   ],
+   "backendDOMNodeId": 404
+  },
+  {
+   "nodeId": "409",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "404",
+   "childIds": [],
+   "backendDOMNodeId": 409
+  },
+  {
+   "nodeId": "106",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "732"
+   ],
+   "backendDOMNodeId": 106
+  },
+  {
+   "nodeId": "732",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "106",
+   "childIds": [],
+   "backendDOMNodeId": 732
+  },
+  {
+   "nodeId": "107",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "735"
+   ],
+   "backendDOMNodeId": 107
+  },
+  {
+   "nodeId": "735",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "107",
+   "childIds": [],
+   "backendDOMNodeId": 735
+  },
+  {
+   "nodeId": "421",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "97",
+    "422",
+    "423"
+   ],
+   "backendDOMNodeId": 421
+  },
+  {
+   "nodeId": "97",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "421",
+   "childIds": [],
+   "backendDOMNodeId": 97
+  },
+  {
+   "nodeId": "422",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "421",
+   "childIds": [],
+   "backendDOMNodeId": 422
+  },
+  {
+   "nodeId": "423",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "421",
+   "childIds": [
+    "739"
+   ],
+   "backendDOMNodeId": 423
+  },
+  {
+   "nodeId": "739",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "423",
+   "childIds": [],
+   "backendDOMNodeId": 739
+  },
+  {
+   "nodeId": "444",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [
+    "98",
+    "445",
+    "446"
+   ],
+   "backendDOMNodeId": 444
+  },
+  {
+   "nodeId": "98",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "444",
+   "childIds": [],
+   "backendDOMNodeId": 98
+  },
+  {
+   "nodeId": "445",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "444",
+   "childIds": [],
+   "backendDOMNodeId": 445
+  },
+  {
+   "nodeId": "446",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "444",
+   "childIds": [
+    "748"
+   ],
+   "backendDOMNodeId": 446
+  },
+  {
+   "nodeId": "748",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "446",
+   "childIds": [],
+   "backendDOMNodeId": 748
+  },
+  {
+   "nodeId": "47",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 47
+  },
+  {
+   "nodeId": "49",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 49
+  },
+  {
+   "nodeId": "54",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 54
+  },
+  {
+   "nodeId": "56",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 56
+  },
+  {
+   "nodeId": "500",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 500
+  },
+  {
+   "nodeId": "501",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "277",
+   "childIds": [],
+   "backendDOMNodeId": 501
+  },
+  {
+   "nodeId": "544",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "108",
+   "childIds": [
+    "785",
+    "99"
+   ],
+   "backendDOMNodeId": 544
+  },
+  {
+   "nodeId": "785",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "544",
+   "childIds": [],
+   "backendDOMNodeId": 785
+  },
+  {
+   "nodeId": "99",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "544",
+   "childIds": [
+    "545",
+    "546"
+   ],
+   "backendDOMNodeId": 99
+  },
+  {
+   "nodeId": "545",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "99",
+   "childIds": [],
+   "backendDOMNodeId": 545
+  },
+  {
+   "nodeId": "546",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "99",
+   "childIds": [
+    "2171"
+   ],
+   "backendDOMNodeId": 546
+  },
+  {
+   "nodeId": "2171",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "546",
+   "childIds": [],
+   "backendDOMNodeId": 2171
+  },
+  {
+   "nodeId": "547",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "108",
+   "childIds": [
+    "786",
+    "100"
+   ],
+   "backendDOMNodeId": 547
+  },
+  {
+   "nodeId": "786",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "547",
+   "childIds": [],
+   "backendDOMNodeId": 786
+  },
+  {
+   "nodeId": "100",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "547",
+   "childIds": [
+    "548",
+    "549"
+   ],
+   "backendDOMNodeId": 100
+  },
+  {
+   "nodeId": "548",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "100",
+   "childIds": [],
+   "backendDOMNodeId": 548
+  },
+  {
+   "nodeId": "549",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "100",
+   "childIds": [
+    "2172"
+   ],
+   "backendDOMNodeId": 549
+  },
+  {
+   "nodeId": "2172",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "549",
+   "childIds": [],
+   "backendDOMNodeId": 2172
+  },
+  {
+   "nodeId": "550",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "108",
+   "childIds": [
+    "787",
+    "551"
+   ],
+   "backendDOMNodeId": 550
+  },
+  {
+   "nodeId": "787",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "550",
+   "childIds": [],
+   "backendDOMNodeId": 787
+  },
+  {
+   "nodeId": "551",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "550",
+   "childIds": [
+    "59",
+    "552",
+    "553"
+   ],
+   "backendDOMNodeId": 551
+  },
+  {
+   "nodeId": "59",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "551",
+   "childIds": [
+    "61",
+    "63"
+   ],
+   "backendDOMNodeId": 59
+  },
+  {
+   "nodeId": "61",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "59",
+   "childIds": [],
+   "backendDOMNodeId": 61
+  },
+  {
+   "nodeId": "63",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "59",
+   "childIds": [
+    "2173"
+   ],
+   "backendDOMNodeId": 63
+  },
+  {
+   "nodeId": "2173",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "63",
+   "childIds": [],
+   "backendDOMNodeId": 2173
+  },
+  {
+   "nodeId": "552",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "551",
+   "childIds": [
+    "64",
+    "789",
+    "65"
+   ],
+   "backendDOMNodeId": 552
+  },
+  {
+   "nodeId": "64",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "552",
+   "childIds": [
+    "788"
+   ],
+   "backendDOMNodeId": 64
+  },
+  {
+   "nodeId": "788",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "64",
+   "childIds": [],
+   "backendDOMNodeId": 788
+  },
+  {
+   "nodeId": "789",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "552",
+   "childIds": [],
+   "backendDOMNodeId": 789
+  },
+  {
+   "nodeId": "65",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "552",
+   "childIds": [
+    "790"
+   ],
+   "backendDOMNodeId": 65
+  },
+  {
+   "nodeId": "790",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "65",
+   "childIds": [],
+   "backendDOMNodeId": 790
+  },
+  {
+   "nodeId": "553",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "551",
+   "childIds": [
+    "791"
+   ],
+   "backendDOMNodeId": 553
+  },
+  {
+   "nodeId": "791",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "553",
+   "childIds": [],
+   "backendDOMNodeId": 791
+  },
+  {
+   "nodeId": "554",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "108",
+   "childIds": [
+    "792",
+    "555"
+   ],
+   "backendDOMNodeId": 554
+  },
+  {
+   "nodeId": "792",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "554",
+   "childIds": [],
+   "backendDOMNodeId": 792
+  },
+  {
+   "nodeId": "555",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "554",
+   "childIds": [
+    "66",
+    "556",
+    "557"
+   ],
+   "backendDOMNodeId": 555
+  },
+  {
+   "nodeId": "66",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "555",
+   "childIds": [
+    "68",
+    "70"
+   ],
+   "backendDOMNodeId": 66
+  },
+  {
+   "nodeId": "68",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "66",
+   "childIds": [],
+   "backendDOMNodeId": 68
+  },
+  {
+   "nodeId": "70",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "66",
+   "childIds": [
+    "2174"
+   ],
+   "backendDOMNodeId": 70
+  },
+  {
+   "nodeId": "2174",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "70",
+   "childIds": [],
+   "backendDOMNodeId": 2174
+  },
+  {
+   "nodeId": "556",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "555",
+   "childIds": [
+    "71",
+    "794",
+    "72"
+   ],
+   "backendDOMNodeId": 556
+  },
+  {
+   "nodeId": "71",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "556",
+   "childIds": [
+    "793"
+   ],
+   "backendDOMNodeId": 71
+  },
+  {
+   "nodeId": "793",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "71",
+   "childIds": [],
+   "backendDOMNodeId": 793
+  },
+  {
+   "nodeId": "794",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "556",
+   "childIds": [],
+   "backendDOMNodeId": 794
+  },
+  {
+   "nodeId": "72",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "556",
+   "childIds": [
+    "795"
+   ],
+   "backendDOMNodeId": 72
+  },
+  {
+   "nodeId": "795",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "72",
+   "childIds": [],
+   "backendDOMNodeId": 795
+  },
+  {
+   "nodeId": "557",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "555",
+   "childIds": [
+    "796"
+   ],
+   "backendDOMNodeId": 557
+  },
+  {
+   "nodeId": "796",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "557",
+   "childIds": [],
+   "backendDOMNodeId": 796
+  },
+  {
+   "nodeId": "558",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "108",
+   "childIds": [
+    "797",
+    "559"
+   ],
+   "backendDOMNodeId": 558
+  },
+  {
+   "nodeId": "797",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "558",
+   "childIds": [],
+   "backendDOMNodeId": 797
+  },
+  {
+   "nodeId": "559",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "558",
+   "childIds": [
+    "73",
+    "560",
+    "561"
+   ],
+   "backendDOMNodeId": 559
+  },
+  {
+   "nodeId": "73",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "559",
+   "childIds": [
+    "75",
+    "77"
+   ],
+   "backendDOMNodeId": 73
+  },
+  {
+   "nodeId": "75",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "73",
+   "childIds": [],
+   "backendDOMNodeId": 75
+  },
+  {
+   "nodeId": "77",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "73",
+   "childIds": [
+    "2175"
+   ],
+   "backendDOMNodeId": 77
+  },
+  {
+   "nodeId": "2175",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "77",
+   "childIds": [],
+   "backendDOMNodeId": 2175
+  },
+  {
+   "nodeId": "560",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "559",
+   "childIds": [
+    "78",
+    "799",
+    "79"
+   ],
+   "backendDOMNodeId": 560
+  },
+  {
+   "nodeId": "78",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "560",
+   "childIds": [
+    "798"
+   ],
+   "backendDOMNodeId": 78
+  },
+  {
+   "nodeId": "798",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "78",
+   "childIds": [],
+   "backendDOMNodeId": 798
+  },
+  {
+   "nodeId": "799",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "560",
+   "childIds": [],
+   "backendDOMNodeId": 799
+  },
+  {
+   "nodeId": "79",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "560",
+   "childIds": [
+    "800"
+   ],
+   "backendDOMNodeId": 79
+  },
+  {
+   "nodeId": "800",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "79",
+   "childIds": [],
+   "backendDOMNodeId": 800
+  },
+  {
+   "nodeId": "561",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "559",
+   "childIds": [
+    "801"
+   ],
+   "backendDOMNodeId": 561
+  },
+  {
+   "nodeId": "801",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "561",
+   "childIds": [],
+   "backendDOMNodeId": 801
+  },
+  {
+   "nodeId": "562",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "108",
+   "childIds": [
+    "802",
+    "563"
+   ],
+   "backendDOMNodeId": 562
+  },
+  {
+   "nodeId": "802",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "562",
+   "childIds": [],
+   "backendDOMNodeId": 802
+  },
+  {
+   "nodeId": "563",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "562",
+   "childIds": [
+    "80",
+    "564",
+    "565"
+   ],
+   "backendDOMNodeId": 563
+  },
+  {
+   "nodeId": "80",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "563",
+   "childIds": [
+    "82",
+    "84"
+   ],
+   "backendDOMNodeId": 80
+  },
+  {
+   "nodeId": "82",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "80",
+   "childIds": [],
+   "backendDOMNodeId": 82
+  },
+  {
+   "nodeId": "84",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "80",
+   "childIds": [
+    "2176"
+   ],
+   "backendDOMNodeId": 84
+  },
+  {
+   "nodeId": "2176",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "84",
+   "childIds": [],
+   "backendDOMNodeId": 2176
+  },
+  {
+   "nodeId": "564",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "563",
+   "childIds": [
+    "85",
+    "804",
+    "86"
+   ],
+   "backendDOMNodeId": 564
+  },
+  {
+   "nodeId": "85",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "564",
+   "childIds": [
+    "803"
+   ],
+   "backendDOMNodeId": 85
+  },
+  {
+   "nodeId": "803",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "85",
+   "childIds": [],
+   "backendDOMNodeId": 803
+  },
+  {
+   "nodeId": "804",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "564",
+   "childIds": [],
+   "backendDOMNodeId": 804
+  },
+  {
+   "nodeId": "86",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "564",
+   "childIds": [
+    "805"
+   ],
+   "backendDOMNodeId": 86
+  },
+  {
+   "nodeId": "805",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "86",
+   "childIds": [],
+   "backendDOMNodeId": 805
+  },
+  {
+   "nodeId": "565",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "563",
+   "childIds": [
+    "806"
+   ],
+   "backendDOMNodeId": 565
+  },
+  {
+   "nodeId": "806",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "565",
+   "childIds": [],
+   "backendDOMNodeId": 806
+  },
+  {
+   "nodeId": "566",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "108",
+   "childIds": [
+    "807",
+    "567"
+   ],
+   "backendDOMNodeId": 566
+  },
+  {
+   "nodeId": "807",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "566",
+   "childIds": [],
+   "backendDOMNodeId": 807
+  },
+  {
+   "nodeId": "567",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "566",
+   "childIds": [
+    "87",
+    "568",
+    "569"
+   ],
+   "backendDOMNodeId": 567
+  },
+  {
+   "nodeId": "87",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "567",
+   "childIds": [
+    "89",
+    "91"
+   ],
+   "backendDOMNodeId": 87
+  },
+  {
+   "nodeId": "89",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "87",
+   "childIds": [],
+   "backendDOMNodeId": 89
+  },
+  {
+   "nodeId": "91",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "87",
+   "childIds": [
+    "2177"
+   ],
+   "backendDOMNodeId": 91
+  },
+  {
+   "nodeId": "2177",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "91",
+   "childIds": [],
+   "backendDOMNodeId": 2177
+  },
+  {
+   "nodeId": "568",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "567",
+   "childIds": [
+    "92",
+    "809",
+    "93"
+   ],
+   "backendDOMNodeId": 568
+  },
+  {
+   "nodeId": "92",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "568",
+   "childIds": [
+    "808"
+   ],
+   "backendDOMNodeId": 92
+  },
+  {
+   "nodeId": "808",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "92",
+   "childIds": [],
+   "backendDOMNodeId": 808
+  },
+  {
+   "nodeId": "809",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "568",
+   "childIds": [],
+   "backendDOMNodeId": 809
+  },
+  {
+   "nodeId": "93",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "568",
+   "childIds": [
+    "810"
+   ],
+   "backendDOMNodeId": 93
+  },
+  {
+   "nodeId": "810",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "93",
+   "childIds": [],
+   "backendDOMNodeId": 810
+  },
+  {
+   "nodeId": "569",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "567",
+   "childIds": [
+    "811"
+   ],
+   "backendDOMNodeId": 569
+  },
+  {
+   "nodeId": "811",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 576,
+        "idref": "story-help"
+       }
+      ]
+     }
+    },
+    {
+     "name": "activeAriaModalDialog",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "569",
+   "childIds": [],
+   "backendDOMNodeId": 811
+  },
+  {
+   "nodeId": "576",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "dialog"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 35
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Help & privacy",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "value": {
+       "type": "computedString",
+       "value": "Help & privacy"
+      },
+      "attribute": "aria-labelledby",
+      "attributeValue": {
+       "type": "idrefList",
+       "value": "story-help-title",
+       "relatedNodes": [
+        {
+         "backendDOMNodeId": 580,
+         "idref": "story-help-title",
+         "text": "Help & privacy"
+        }
+       ]
+      }
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label",
+      "superseded": true
+     },
+     {
+      "type": "attribute",
+      "attribute": "title",
+      "superseded": true
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "modal",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    },
+    {
+     "name": "labelledby",
+     "value": {
+      "type": "nodeList",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 580,
+        "idref": "story-help-title",
+        "text": "Help & privacy"
+       }
+      ]
+     }
+    }
+   ],
+   "parentId": "108",
+   "childIds": [
+    "577",
+    "583"
+   ],
+   "backendDOMNodeId": 576
+  },
+  {
+   "nodeId": "577",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "uninteresting",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "576",
+   "childIds": [
+    "578",
+    "581"
+   ],
+   "backendDOMNodeId": 577
+  },
+  {
+   "nodeId": "578",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "uninteresting",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "577",
+   "childIds": [
+    "579",
+    "580"
+   ],
+   "backendDOMNodeId": 578
+  },
+  {
+   "nodeId": "579",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "paragraph"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 133
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "578",
+   "childIds": [
+    "813"
+   ],
+   "backendDOMNodeId": 579
+  },
+  {
+   "nodeId": "580",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "heading"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 96
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Help & privacy",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Help & privacy"
+      }
+     },
+     {
+      "type": "attribute",
+      "attribute": "title",
+      "superseded": true
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "level",
+     "value": {
+      "type": "integer",
+      "value": 2
+     }
+    }
+   ],
+   "parentId": "578",
+   "childIds": [
+    "814"
+   ],
+   "backendDOMNodeId": 580
+  },
+  {
+   "nodeId": "581",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "button"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 9
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Close help",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "value": {
+       "type": "computedString",
+       "value": "Close help"
+      },
+      "attribute": "aria-label",
+      "attributeValue": {
+       "type": "string",
+       "value": "Close help"
+      }
+     },
+     {
+      "type": "relatedElement",
+      "superseded": true,
+      "nativeSource": "label"
+     },
+     {
+      "type": "contents",
+      "superseded": true
+     },
+     {
+      "type": "attribute",
+      "attribute": "title",
+      "superseded": true
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "invalid",
+     "value": {
+      "type": "token",
+      "value": "false"
+     }
+    },
+    {
+     "name": "focusable",
+     "value": {
+      "type": "booleanOrUndefined",
+      "value": true
+     }
+    },
+    {
+     "name": "focused",
+     "value": {
+      "type": "booleanOrUndefined",
+      "value": true
+     }
+    }
+   ],
+   "parentId": "577",
+   "childIds": [
+    "2428"
+   ],
+   "backendDOMNodeId": 581
+  },
+  {
+   "nodeId": "583",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "generic"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 88
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "576",
+   "childIds": [
+    "584",
+    "587",
+    "591",
+    "594",
+    "597",
+    "600",
+    "603",
+    "606"
+   ],
+   "backendDOMNodeId": 583
+  },
+  {
+   "nodeId": "813",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "STORYSCULPT",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "STORYSCULPT"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "579",
+   "childIds": [
+    "-1000000226"
+   ],
+   "backendDOMNodeId": 813
+  },
+  {
+   "nodeId": "814",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Help & privacy",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Help & privacy"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "580",
+   "childIds": [
+    "-1000000227"
+   ],
+   "backendDOMNodeId": 814
+  },
+  {
+   "nodeId": "2428",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "image"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 99
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "relatedElement",
+      "nativeSource": "title"
+     },
+     {
+      "type": "attribute",
+      "attribute": "title"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "581",
+   "childIds": [],
+   "backendDOMNodeId": 2428
+  },
+  {
+   "nodeId": "584",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "generic"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 211
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "attribute",
+      "attribute": "title"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "583",
+   "childIds": [
+    "585",
+    "586"
+   ],
+   "backendDOMNodeId": 584
+  },
+  {
+   "nodeId": "587",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "generic"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 211
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "attribute",
+      "attribute": "title"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "583",
+   "childIds": [
+    "588",
+    "589",
+    "590"
+   ],
+   "backendDOMNodeId": 587
+  },
+  {
+   "nodeId": "591",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "generic"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 211
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "attribute",
+      "attribute": "title"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "583",
+   "childIds": [
+    "592",
+    "593"
+   ],
+   "backendDOMNodeId": 591
+  },
+  {
+   "nodeId": "594",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "generic"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 211
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "attribute",
+      "attribute": "title"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "583",
+   "childIds": [
+    "595",
+    "596"
+   ],
+   "backendDOMNodeId": 594
+  },
+  {
+   "nodeId": "597",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "generic"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 211
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "attribute",
+      "attribute": "title"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "583",
+   "childIds": [
+    "598",
+    "599"
+   ],
+   "backendDOMNodeId": 597
+  },
+  {
+   "nodeId": "600",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "generic"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 211
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "attribute",
+      "attribute": "title"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "583",
+   "childIds": [
+    "601",
+    "602"
+   ],
+   "backendDOMNodeId": 600
+  },
+  {
+   "nodeId": "603",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "generic"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 211
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "attribute",
+      "attribute": "title"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "583",
+   "childIds": [
+    "604",
+    "605"
+   ],
+   "backendDOMNodeId": 603
+  },
+  {
+   "nodeId": "606",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "generic"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 211
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "attribute",
+      "attribute": "title"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "583",
+   "childIds": [
+    "607",
+    "608",
+    "611"
+   ],
+   "backendDOMNodeId": 606
+  },
+  {
+   "nodeId": "-1000000226",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "STORYSCULPT"
+   },
+   "properties": [],
+   "parentId": "813",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000227",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Help & privacy"
+   },
+   "properties": [],
+   "parentId": "814",
+   "childIds": []
+  },
+  {
+   "nodeId": "585",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "heading"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 96
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Who makes this?",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Who makes this?"
+      }
+     },
+     {
+      "type": "attribute",
+      "attribute": "title",
+      "superseded": true
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "level",
+     "value": {
+      "type": "integer",
+      "value": 3
+     }
+    }
+   ],
+   "parentId": "584",
+   "childIds": [
+    "815"
+   ],
+   "backendDOMNodeId": 585
+  },
+  {
+   "nodeId": "586",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "paragraph"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 133
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "584",
+   "childIds": [
+    "816"
+   ],
+   "backendDOMNodeId": 586
+  },
+  {
+   "nodeId": "588",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "heading"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 96
+   },
+   "name": {
+    "type": "computedString",
+    "value": "What happens to my work?",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "What happens to my work?"
+      }
+     },
+     {
+      "type": "attribute",
+      "attribute": "title",
+      "superseded": true
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "level",
+     "value": {
+      "type": "integer",
+      "value": 3
+     }
+    }
+   ],
+   "parentId": "587",
+   "childIds": [
+    "817"
+   ],
+   "backendDOMNodeId": 588
+  },
+  {
+   "nodeId": "589",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "paragraph"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 133
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "587",
+   "childIds": [
+    "818"
+   ],
+   "backendDOMNodeId": 589
+  },
+  {
+   "nodeId": "590",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "paragraph"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 133
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "587",
+   "childIds": [
+    "819"
+   ],
+   "backendDOMNodeId": 590
+  },
+  {
+   "nodeId": "592",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "heading"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 96
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Can I change the format?",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Can I change the format?"
+      }
+     },
+     {
+      "type": "attribute",
+      "attribute": "title",
+      "superseded": true
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "level",
+     "value": {
+      "type": "integer",
+      "value": 3
+     }
+    }
+   ],
+   "parentId": "591",
+   "childIds": [
+    "820"
+   ],
+   "backendDOMNodeId": 592
+  },
+  {
+   "nodeId": "593",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "paragraph"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 133
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "591",
+   "childIds": [
+    "821"
+   ],
+   "backendDOMNodeId": 593
+  },
+  {
+   "nodeId": "595",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "heading"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 96
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Can I pause and come back?",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Can I pause and come back?"
+      }
+     },
+     {
+      "type": "attribute",
+      "attribute": "title",
+      "superseded": true
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "level",
+     "value": {
+      "type": "integer",
+      "value": 3
+     }
+    }
+   ],
+   "parentId": "594",
+   "childIds": [
+    "822"
+   ],
+   "backendDOMNodeId": 595
+  },
+  {
+   "nodeId": "596",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "paragraph"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 133
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "594",
+   "childIds": [
+    "823"
+   ],
+   "backendDOMNodeId": 596
+  },
+  {
+   "nodeId": "598",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "heading"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 96
+   },
+   "name": {
+    "type": "computedString",
+    "value": "What does finishing a script mean?",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "What does finishing a script mean?"
+      }
+     },
+     {
+      "type": "attribute",
+      "attribute": "title",
+      "superseded": true
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "level",
+     "value": {
+      "type": "integer",
+      "value": 3
+     }
+    }
+   ],
+   "parentId": "597",
+   "childIds": [
+    "824"
+   ],
+   "backendDOMNodeId": 598
+  },
+  {
+   "nodeId": "599",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "paragraph"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 133
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "597",
+   "childIds": [
+    "825"
+   ],
+   "backendDOMNodeId": 599
+  },
+  {
+   "nodeId": "601",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "heading"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 96
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Can I archive or delete a chat?",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Can I archive or delete a chat?"
+      }
+     },
+     {
+      "type": "attribute",
+      "attribute": "title",
+      "superseded": true
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "level",
+     "value": {
+      "type": "integer",
+      "value": 3
+     }
+    }
+   ],
+   "parentId": "600",
+   "childIds": [
+    "826"
+   ],
+   "backendDOMNodeId": 601
+  },
+  {
+   "nodeId": "602",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "paragraph"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 133
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "600",
+   "childIds": [
+    "827"
+   ],
+   "backendDOMNodeId": 602
+  },
+  {
+   "nodeId": "604",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "heading"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 96
+   },
+   "name": {
+    "type": "computedString",
+    "value": "What should I do next?",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "What should I do next?"
+      }
+     },
+     {
+      "type": "attribute",
+      "attribute": "title",
+      "superseded": true
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "level",
+     "value": {
+      "type": "integer",
+      "value": 3
+     }
+    }
+   ],
+   "parentId": "603",
+   "childIds": [
+    "828"
+   ],
+   "backendDOMNodeId": 604
+  },
+  {
+   "nodeId": "605",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "generic"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 88
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "603",
+   "childIds": [
+    "1626"
+   ],
+   "backendDOMNodeId": 605
+  },
+  {
+   "nodeId": "607",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "heading"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 96
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Where do I get help?",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Where do I get help?"
+      }
+     },
+     {
+      "type": "attribute",
+      "attribute": "title",
+      "superseded": true
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "level",
+     "value": {
+      "type": "integer",
+      "value": 3
+     }
+    }
+   ],
+   "parentId": "606",
+   "childIds": [
+    "829"
+   ],
+   "backendDOMNodeId": 607
+  },
+  {
+   "nodeId": "608",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "paragraph"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 133
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "606",
+   "childIds": [
+    "830",
+    "609",
+    "832",
+    "610",
+    "834"
+   ],
+   "backendDOMNodeId": 608
+  },
+  {
+   "nodeId": "611",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "paragraph"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 133
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "606",
+   "childIds": [
+    "835",
+    "612",
+    "837"
+   ],
+   "backendDOMNodeId": 611
+  },
+  {
+   "nodeId": "815",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Who makes this?",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Who makes this?"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "585",
+   "childIds": [
+    "-1000000228"
+   ],
+   "backendDOMNodeId": 815
+  },
+  {
+   "nodeId": "816",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Built and supported by David Bee. StorySculpt is part of The Momentum Hub, and every step of it follows David's own scriptwriting method.",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Built and supported by David Bee. StorySculpt is part of The Momentum Hub, and every step of it follows David's own scriptwriting method."
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "586",
+   "childIds": [
+    "-1000000229",
+    "-1000000230",
+    "-1000000231",
+    "-1000000232"
+   ],
+   "backendDOMNodeId": 816
+  },
+  {
+   "nodeId": "817",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "What happens to my work?",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "What happens to my work?"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "588",
+   "childIds": [
+    "-1000000233"
+   ],
+   "backendDOMNodeId": 817
+  },
+  {
+   "nodeId": "818",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Your chats, project titles, notes, finished scripts, and story profile are saved to your Studio account so you can return to them. When you ask StorySculpt to continue or revise, your title, profile, notes, and recent messages are processed by the AI model that writes your next question or draft, guided by David's method and your own words. Do not enter anything you do not want processed by an AI service.",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Your chats, project titles, notes, finished scripts, and story profile are saved to your Studio account so you can return to them. When you ask StorySculpt to continue or revise, your title, profile, notes, and recent messages are processed by the AI model that writes your next question or draft, guided by David's method and your own words. Do not enter anything you do not want processed by an AI service."
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "589",
+   "childIds": [
+    "-1000000234",
+    "-1000000235",
+    "-1000000236",
+    "-1000000237",
+    "-1000000238",
+    "-1000000239",
+    "-1000000240",
+    "-1000000241",
+    "-1000000242",
+    "-1000000243"
+   ],
+   "backendDOMNodeId": 818
+  },
+  {
+   "nodeId": "819",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them. You can delete a chat and its saved script with the Delete button inside that chat. Your standing story profile is separate and can be edited from Story profile.",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them. You can delete a chat and its saved script with the Delete button inside that chat. Your standing story profile is separate and can be edited from Story profile."
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "590",
+   "childIds": [
+    "-1000000244",
+    "-1000000245",
+    "-1000000246",
+    "-1000000247",
+    "-1000000248",
+    "-1000000249",
+    "-1000000250"
+   ],
+   "backendDOMNodeId": 819
+  },
+  {
+   "nodeId": "820",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Can I change the format?",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Can I change the format?"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "592",
+   "childIds": [
+    "-1000000251"
+   ],
+   "backendDOMNodeId": 820
+  },
+  {
+   "nodeId": "821",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "The format is locked after creation. Start a new script to use a different format; your existing chat stays in your list.",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "The format is locked after creation. Start a new script to use a different format; your existing chat stays in your list."
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "593",
+   "childIds": [
+    "-1000000252",
+    "-1000000253",
+    "-1000000254"
+   ],
+   "backendDOMNodeId": 821
+  },
+  {
+   "nodeId": "822",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Can I pause and come back?",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Can I pause and come back?"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "595",
+   "childIds": [
+    "-1000000255"
+   ],
+   "backendDOMNodeId": 822
+  },
+  {
+   "nodeId": "823",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Yes. Leaving does not delete your project. Reopen the chat to resume the interview where you stopped. Check the save indicator before closing the browser: Saving means a write is pending, Saved means it was acknowledged, and Not saved means the latest change has not reached your account yet. Changes kept only on this device are not available on another device until saved.",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Yes. Leaving does not delete your project. Reopen the chat to resume the interview where you stopped. Check the save indicator before closing the browser: Saving means a write is pending, Saved means it was acknowledged, and Not saved means the latest change has not reached your account yet. Changes kept only on this device are not available on another device until saved."
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "596",
+   "childIds": [
+    "-1000000256",
+    "-1000000257",
+    "-1000000258",
+    "-1000000259",
+    "-1000000260",
+    "-1000000261",
+    "-1000000262",
+    "-1000000263",
+    "-1000000264"
+   ],
+   "backendDOMNodeId": 823
+  },
+  {
+   "nodeId": "824",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "What does finishing a script mean?",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "What does finishing a script mean?"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "598",
+   "childIds": [
+    "-1000000265"
+   ],
+   "backendDOMNodeId": 824
+  },
+  {
+   "nodeId": "825",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Finishing closes the interview to new turns and assembles your answers into a script you can record. Use Refine to revise the finished script. Copy it or download the text file when you are ready to film. Your saved script does not expire; it stays in your account until you delete it.",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Finishing closes the interview to new turns and assembles your answers into a script you can record. Use Refine to revise the finished script. Copy it or download the text file when you are ready to film. Your saved script does not expire; it stays in your account until you delete it."
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "599",
+   "childIds": [
+    "-1000000266",
+    "-1000000267",
+    "-1000000268",
+    "-1000000269",
+    "-1000000270",
+    "-1000000271",
+    "-1000000272"
+   ],
+   "backendDOMNodeId": 825
+  },
+  {
+   "nodeId": "826",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Can I archive or delete a chat?",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Can I archive or delete a chat?"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "601",
+   "childIds": [
+    "-1000000273"
+   ],
+   "backendDOMNodeId": 826
+  },
+  {
+   "nodeId": "827",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Archive is not available yet. Delete is the one irreversible step: after you confirm, it removes the chat and its saved script. Leaving or pausing does not delete anything.",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Archive is not available yet. Delete is the one irreversible step: after you confirm, it removes the chat and its saved script. Leaving or pausing does not delete anything."
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "602",
+   "childIds": [
+    "-1000000274",
+    "-1000000275",
+    "-1000000276",
+    "-1000000277"
+   ],
+   "backendDOMNodeId": 827
+  },
+  {
+   "nodeId": "828",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "What should I do next?",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "What should I do next?"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "604",
+   "childIds": [
+    "-1000000278"
+   ],
+   "backendDOMNodeId": 828
+  },
+  {
+   "nodeId": "1626",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "uninteresting",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "605",
+   "childIds": [
+    "1627",
+    "1630"
+   ],
+   "backendDOMNodeId": 1626
+  },
+  {
+   "nodeId": "1627",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "paragraph"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 133
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "1626",
+   "childIds": [
+    "1628",
+    "2182",
+    "2179"
+   ],
+   "backendDOMNodeId": 1627
+  },
+  {
+   "nodeId": "1630",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "button"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 9
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Continue",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "relatedElement",
+      "nativeSource": "label"
+     },
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Continue"
+      }
+     },
+     {
+      "type": "attribute",
+      "attribute": "title",
+      "superseded": true
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "invalid",
+     "value": {
+      "type": "token",
+      "value": "false"
+     }
+    },
+    {
+     "name": "focusable",
+     "value": {
+      "type": "booleanOrUndefined",
+      "value": true
+     }
+    }
+   ],
+   "parentId": "1626",
+   "childIds": [
+    "2180"
+   ],
+   "backendDOMNodeId": 1630
+  },
+  {
+   "nodeId": "829",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Where do I get help?",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Where do I get help?"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "607",
+   "childIds": [
+    "-1000000284"
+   ],
+   "backendDOMNodeId": 829
+  },
+  {
+   "nodeId": "830",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "For a question about a script, chat, or your story profile, email ",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "For a question about a script, chat, or your story profile, email "
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "608",
+   "childIds": [
+    "-1000000285",
+    "-1000000286"
+   ],
+   "backendDOMNodeId": 830
+  },
+  {
+   "nodeId": "609",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "link"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 110
+   },
+   "name": {
+    "type": "computedString",
+    "value": "email@davidbee.me",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "email@davidbee.me"
+      }
+     },
+     {
+      "type": "attribute",
+      "attribute": "title",
+      "superseded": true
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "focusable",
+     "value": {
+      "type": "booleanOrUndefined",
+      "value": true
+     }
+    },
+    {
+     "name": "url",
+     "value": {
+      "type": "string",
+      "value": "mailto:email@davidbee.me?subject=StorySculpt%20support"
+     }
+    }
+   ],
+   "parentId": "608",
+   "childIds": [
+    "831"
+   ],
+   "backendDOMNodeId": 609
+  },
+  {
+   "nodeId": "832",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": " and say what you were doing. For Studio sign-in, access, or billing, use the ",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": " and say what you were doing. For Studio sign-in, access, or billing, use the "
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "608",
+   "childIds": [
+    "-1000000288",
+    "-1000000289",
+    "-1000000290"
+   ],
+   "backendDOMNodeId": 832
+  },
+  {
+   "nodeId": "610",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "link"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 110
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Studio home",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Studio home"
+      }
+     },
+     {
+      "type": "attribute",
+      "attribute": "title",
+      "superseded": true
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "focusable",
+     "value": {
+      "type": "booleanOrUndefined",
+      "value": true
+     }
+    },
+    {
+     "name": "url",
+     "value": {
+      "type": "string",
+      "value": "http://storysculpt.walk.test/eee"
+     }
+    }
+   ],
+   "parentId": "608",
+   "childIds": [
+    "833"
+   ],
+   "backendDOMNodeId": 610
+  },
+  {
+   "nodeId": "834",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": " and its account support options, or email the same address with “Studio account” in the subject.",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": " and its account support options, or email the same address with “Studio account” in the subject."
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "608",
+   "childIds": [
+    "-1000000292",
+    "-1000000293",
+    "-1000000294",
+    "-1000000295"
+   ],
+   "backendDOMNodeId": 834
+  },
+  {
+   "nodeId": "835",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Review our ",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Review our "
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "611",
+   "childIds": [
+    "-1000000296"
+   ],
+   "backendDOMNodeId": 835
+  },
+  {
+   "nodeId": "612",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "link"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 110
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Terms of Service, AI usage, and FAQ",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Terms of Service, AI usage, and FAQ"
+      }
+     },
+     {
+      "type": "attribute",
+      "attribute": "title",
+      "superseded": true
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "focusable",
+     "value": {
+      "type": "booleanOrUndefined",
+      "value": true
+     }
+    },
+    {
+     "name": "url",
+     "value": {
+      "type": "string",
+      "value": "http://storysculpt.walk.test/terms"
+     }
+    }
+   ],
+   "parentId": "611",
+   "childIds": [
+    "836"
+   ],
+   "backendDOMNodeId": 612
+  },
+  {
+   "nodeId": "837",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": ".",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "."
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "611",
+   "childIds": [
+    "-1000000299"
+   ],
+   "backendDOMNodeId": 837
+  },
+  {
+   "nodeId": "-1000000228",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Who makes this?"
+   },
+   "properties": [],
+   "parentId": "815",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000229",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Built and supported by David Bee. "
+   },
+   "properties": [],
+   "parentId": "816",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000230",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "StorySculpt is part of The Momentum Hub, "
+   },
+   "properties": [],
+   "parentId": "816",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000231",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "and every step of it follows David's own "
+   },
+   "properties": [],
+   "parentId": "816",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000232",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "scriptwriting method."
+   },
+   "properties": [],
+   "parentId": "816",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000233",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "What happens to my work?"
+   },
+   "properties": [],
+   "parentId": "817",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000234",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Your chats, project titles, notes, finished "
+   },
+   "properties": [],
+   "parentId": "818",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000235",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "scripts, and story profile are saved to your "
+   },
+   "properties": [],
+   "parentId": "818",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000236",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Studio account so you can return to them. "
+   },
+   "properties": [],
+   "parentId": "818",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000237",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "When you ask StorySculpt to continue or "
+   },
+   "properties": [],
+   "parentId": "818",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000238",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "revise, your title, profile, notes, and recent "
+   },
+   "properties": [],
+   "parentId": "818",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000239",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "messages are processed by the AI model "
+   },
+   "properties": [],
+   "parentId": "818",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000240",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "that writes your next question or draft, "
+   },
+   "properties": [],
+   "parentId": "818",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000241",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "guided by David's method and your own "
+   },
+   "properties": [],
+   "parentId": "818",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000242",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "words. Do not enter anything you do not "
+   },
+   "properties": [],
+   "parentId": "818",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000243",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "want processed by an AI service."
+   },
+   "properties": [],
+   "parentId": "818",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000244",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Step away whenever you like. Nothing is "
+   },
+   "properties": [],
+   "parentId": "819",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000245",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "deleted when you stop: your chats and "
+   },
+   "properties": [],
+   "parentId": "819",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000246",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "scripts stay in your account until you delete "
+   },
+   "properties": [],
+   "parentId": "819",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000247",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "them. You can delete a chat and its saved "
+   },
+   "properties": [],
+   "parentId": "819",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000248",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "script with the Delete button inside that "
+   },
+   "properties": [],
+   "parentId": "819",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000249",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "chat. Your standing story profile is separate "
+   },
+   "properties": [],
+   "parentId": "819",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000250",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "and can be edited from Story profile."
+   },
+   "properties": [],
+   "parentId": "819",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000251",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Can I change the format?"
+   },
+   "properties": [],
+   "parentId": "820",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000252",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "The format is locked after creation. Start a "
+   },
+   "properties": [],
+   "parentId": "821",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000253",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "new script to use a different format; your "
+   },
+   "properties": [],
+   "parentId": "821",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000254",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "existing chat stays in your list."
+   },
+   "properties": [],
+   "parentId": "821",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000255",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Can I pause and come back?"
+   },
+   "properties": [],
+   "parentId": "822",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000256",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Yes. Leaving does not delete your project. "
+   },
+   "properties": [],
+   "parentId": "823",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000257",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Reopen the chat to resume the interview "
+   },
+   "properties": [],
+   "parentId": "823",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000258",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "where you stopped. Check the save indicator "
+   },
+   "properties": [],
+   "parentId": "823",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000259",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "before closing the browser: Saving means a "
+   },
+   "properties": [],
+   "parentId": "823",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000260",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "write is pending, Saved means it was "
+   },
+   "properties": [],
+   "parentId": "823",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000261",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "acknowledged, and Not saved means the "
+   },
+   "properties": [],
+   "parentId": "823",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000262",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "latest change has not reached your account "
+   },
+   "properties": [],
+   "parentId": "823",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000263",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "yet. Changes kept only on this device are not "
+   },
+   "properties": [],
+   "parentId": "823",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000264",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "available on another device until saved."
+   },
+   "properties": [],
+   "parentId": "823",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000265",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "What does finishing a script mean?"
+   },
+   "properties": [],
+   "parentId": "824",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000266",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Finishing closes the interview to new turns "
+   },
+   "properties": [],
+   "parentId": "825",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000267",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "and assembles your answers into a script "
+   },
+   "properties": [],
+   "parentId": "825",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000268",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "you can record. Use Refine to revise the "
+   },
+   "properties": [],
+   "parentId": "825",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000269",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "finished script. Copy it or download the text "
+   },
+   "properties": [],
+   "parentId": "825",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000270",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "file when you are ready to film. Your saved "
+   },
+   "properties": [],
+   "parentId": "825",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000271",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "script does not expire; it stays in your "
+   },
+   "properties": [],
+   "parentId": "825",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000272",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "account until you delete it."
+   },
+   "properties": [],
+   "parentId": "825",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000273",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Can I archive or delete a chat?"
+   },
+   "properties": [],
+   "parentId": "826",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000274",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Archive is not available yet. Delete is the one "
+   },
+   "properties": [],
+   "parentId": "827",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000275",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "irreversible step: after you confirm, it "
+   },
+   "properties": [],
+   "parentId": "827",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000276",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "removes the chat and its saved script. "
+   },
+   "properties": [],
+   "parentId": "827",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000277",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Leaving or pausing does not delete anything."
+   },
+   "properties": [],
+   "parentId": "827",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000278",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "What should I do next?"
+   },
+   "properties": [],
+   "parentId": "828",
+   "childIds": []
+  },
+  {
+   "nodeId": "1628",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "strong"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 160
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "1627",
+   "childIds": [
+    "2178"
+   ],
+   "backendDOMNodeId": 1628
+  },
+  {
+   "nodeId": "2182",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": " ",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": " "
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "1627",
+   "childIds": [
+    "-1000000280"
+   ],
+   "backendDOMNodeId": 2182
+  },
+  {
+   "nodeId": "2179",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Answer the next question to finish this script.",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Answer the next question to finish this script."
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "1627",
+   "childIds": [
+    "-1000000281",
+    "-1000000282"
+   ],
+   "backendDOMNodeId": 2179
+  },
+  {
+   "nodeId": "2180",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Continue",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Continue"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "1630",
+   "childIds": [
+    "-1000000283"
+   ],
+   "backendDOMNodeId": 2180
+  },
+  {
+   "nodeId": "-1000000284",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Where do I get help?"
+   },
+   "properties": [],
+   "parentId": "829",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000285",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "For a question about a script, chat, or your "
+   },
+   "properties": [],
+   "parentId": "830",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000286",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "story profile, email "
+   },
+   "properties": [],
+   "parentId": "830",
+   "childIds": []
+  },
+  {
+   "nodeId": "831",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "email@davidbee.me",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "email@davidbee.me"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "609",
+   "childIds": [
+    "-1000000287"
+   ],
+   "backendDOMNodeId": 831
+  },
+  {
+   "nodeId": "-1000000288",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": " and "
+   },
+   "properties": [],
+   "parentId": "832",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000289",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "say what you were doing. For Studio sign-in, "
+   },
+   "properties": [],
+   "parentId": "832",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000290",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "access, or billing, use the "
+   },
+   "properties": [],
+   "parentId": "832",
+   "childIds": []
+  },
+  {
+   "nodeId": "833",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Studio home",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Studio home"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "610",
+   "childIds": [
+    "-1000000291"
+   ],
+   "backendDOMNodeId": 833
+  },
+  {
+   "nodeId": "-1000000292",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": " and "
+   },
+   "properties": [],
+   "parentId": "834",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000293",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "its account support options, or email the "
+   },
+   "properties": [],
+   "parentId": "834",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000294",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "same address with “Studio account” in the "
+   },
+   "properties": [],
+   "parentId": "834",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000295",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "subject."
+   },
+   "properties": [],
+   "parentId": "834",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000296",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Review our "
+   },
+   "properties": [],
+   "parentId": "835",
+   "childIds": []
+  },
+  {
+   "nodeId": "836",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Terms of Service, AI usage, and FAQ",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Terms of Service, AI usage, and FAQ"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "612",
+   "childIds": [
+    "-1000000297",
+    "-1000000298"
+   ],
+   "backendDOMNodeId": 836
+  },
+  {
+   "nodeId": "-1000000299",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "."
+   },
+   "properties": [],
+   "parentId": "837",
+   "childIds": []
+  },
+  {
+   "nodeId": "2178",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Next:",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Next:"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "1628",
+   "childIds": [
+    "-1000000279"
+   ],
+   "backendDOMNodeId": 2178
+  },
+  {
+   "nodeId": "-1000000280",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": " "
+   },
+   "properties": [],
+   "parentId": "2182",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000281",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Answer the next question to finish this "
+   },
+   "properties": [],
+   "parentId": "2179",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000282",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "script."
+   },
+   "properties": [],
+   "parentId": "2179",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000283",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Continue"
+   },
+   "properties": [],
+   "parentId": "2180",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000287",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "email@davidbee.me"
+   },
+   "properties": [],
+   "parentId": "831",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000291",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Studio home"
+   },
+   "properties": [],
+   "parentId": "833",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000297",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Terms of Service, AI usage, and "
+   },
+   "properties": [],
+   "parentId": "836",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000298",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "FAQ"
+   },
+   "properties": [],
+   "parentId": "836",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000279",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Next:"
+   },
+   "properties": [],
+   "parentId": "2178",
+   "childIds": []
+  }
+ ]
+}

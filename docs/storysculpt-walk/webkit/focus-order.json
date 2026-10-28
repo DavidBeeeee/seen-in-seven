@@ -1,0 +1,175 @@
+[
+ {
+  "tag": "a",
+  "id": null,
+  "cls": "studio-brand",
+  "label": "SSStorySculptThe 5E Script Builder",
+  "visible": true
+ },
+ {
+  "tag": "a",
+  "id": null,
+  "cls": "secondary-button",
+  "label": "My Studio",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "icon-button",
+  "label": "Change color theme",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": "eee-account-button",
+  "cls": "account-button",
+  "label": "W walk.member@example.invalid",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": "story-rail-toggle",
+  "cls": "story-rail-toggle",
+  "label": "Chats",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": "new-project-button",
+  "cls": "icon-button",
+  "label": "Start a new StorySculpt chat",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "secondary-button story-next-step-btn",
+  "label": "Start a script",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "story-filter-btn active",
+  "label": "All",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "story-filter-btn",
+  "label": "Active",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "story-filter-btn",
+  "label": "Filmed",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": "story-open-memory",
+  "cls": "story-memory-link",
+  "label": "Your story profileVoice, facts and offers StoryScu",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "story-mode",
+  "label": "Controversial TakeA sharp point of view that chall",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "story-mode",
+  "label": "Mini-WebinarA compact lesson with a story to teach",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "story-mode",
+  "label": "5E Talking HeadA raw thought with emotional moment",
+  "visible": true
+ },
+ {
+  "tag": "textarea",
+  "id": "story-answer",
+  "cls": "",
+  "label": "Your answer",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": "story-send",
+  "cls": "story-send",
+  "label": "Send",
+  "visible": true
+ },
+ {
+  "tag": "textarea",
+  "id": "story-answer",
+  "cls": "",
+  "label": "Your answer",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": "story-send",
+  "cls": "story-send",
+  "label": "Send",
+  "visible": true
+ },
+ {
+  "tag": "textarea",
+  "id": "story-refine-note",
+  "cls": "",
+  "label": "What to change in the script",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": "story-refine-send",
+  "cls": "primary-button",
+  "label": "Revise",
+  "visible": true
+ },
+ {
+  "tag": "body",
+  "visible": false,
+  "label": "(nothing focused)"
+ },
+ {
+  "tag": "button",
+  "id": "story-regenerate-script",
+  "cls": "secondary-button",
+  "label": "Regenerate the script",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "story-version-pill active",
+  "label": "v1 (latest)",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": "points-story-output",
+  "cls": "secondary-button",
+  "label": "Turn the script into bullet points",
+  "visible": true
+ },
+ {
+  "tag": "button",
+  "id": "copy-story-output",
+  "cls": "secondary-button",
+  "label": "Copy script",
+  "visible": true
+ }
+]
