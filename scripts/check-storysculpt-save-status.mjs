@@ -105,3 +105,16 @@ for (const text of [html.slice(html.indexOf('id="story-help"')), terms.slice(ter
 }
 assert.match(html, /You can't change this later; start a new script for a different format\./);
 console.log('PASS Help, shared FAQ and format-lock hint');
+const help = html.slice(html.indexOf('id="story-help"'));
+const membershipFaq = terms.slice(terms.indexOf('id="storysculpt-membership-faq"'), terms.indexOf('id="certainty-faq"'));
+for (const text of [help, membershipFaq]) {
+  assert.match(text, /\$250 USD monthly membership/);
+  assert.match(text, /renews automatically each month until cancelled/);
+  assert.match(text, /applicable tax/);
+  assert.match(text, /without an automatic wait until/);
+  assert.match(text, /not automatically delete|not automatically deleted/);
+  assert.match(text, /before access ends/);
+  assert.match(text, /pricing-cancellation/);
+}
+assert(!html.slice(0,html.indexOf('id="story-help"')).includes('$250 USD'), 'Membership detail stays in Help, not another main-screen card');
+console.log('PASS membership Help and FAQ: current monthly amount, renewal, cancellation, retained work, and terms links');
