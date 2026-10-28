@@ -289,6 +289,31 @@
     .cs-arc li i { width: 17px; height: 17px; color: var(--studio-teal); flex: none; margin-top: 2px; }
     .cs-cal-note[data-sync="failed"] { color: var(--studio-gold); }
 
+    /* One place for the detail that helps after booking, not a wall of cards
+       before it. Native details keeps the content one tap or Enter away. */
+    .cs-how { padding: 0; }
+    .cs-how > summary {
+      display: flex; align-items: center; justify-content: space-between; gap: 16px;
+      padding: 22px 26px; cursor: pointer; list-style: none; border-radius: 20px;
+    }
+    .cs-how > summary::-webkit-details-marker { display: none; }
+    .cs-how > summary::after {
+      content: '+'; flex: none; width: 28px; height: 28px; border-radius: 50%;
+      display: grid; place-items: center; color: var(--studio-teal);
+      background: color-mix(in srgb, var(--studio-teal) 14%, transparent);
+      font-size: 1.2rem; font-weight: 800;
+    }
+    .cs-how[open] > summary { border-bottom: 1px solid var(--studio-border); border-radius: 20px 20px 0 0; }
+    .cs-how[open] > summary::after { content: '−'; }
+    .cs-how-summary { display: grid; gap: 5px; }
+    .cs-how-summary strong { font-family: 'Oswald', sans-serif; font-size: 1.25rem; letter-spacing: .2px; }
+    .cs-how-summary span { color: var(--studio-muted); font-size: .86rem; line-height: 1.45; }
+    .cs-how-body { padding: 24px 26px 26px; }
+    .cs-how-body .cs-rhythm-grid { margin-top: 18px; }
+    .cs-how-body .cs-support { margin-top: 24px; }
+    .cs-how-faq { margin-top: 18px; }
+    summary:focus-visible { outline: 3px solid var(--studio-gold) !important; outline-offset: 2px !important; }
+
     /* Keep the shared Hub header from overflowing on a phone: drop the
        secondary labels rather than push the page wide. */
     html, body { max-width: 100%; overflow-x: hidden; }
@@ -491,63 +516,73 @@
             </div>
           </section>
 
-          <!-- When life gets in the way: said before it happens, not after -->
-          <section class="cs-card" id="cs-rhythm" aria-labelledby="cs-rhythm-title">
-            <p class="cs-eyebrow">When life gets in the way</p>
-            <h2 id="cs-rhythm-title">What happens if you miss a week, drift off, or leave.</h2>
-            <div class="cs-rhythm-grid">
-              <div data-cs-copy="missed-week">
-                <h3>You miss a week</h3>
-                <p>Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.</p>
-              </div>
-              <div data-cs-copy="stop-booking">
-                <h3>You stop booking for a while</h3>
-                <p>Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.</p>
-              </div>
-              <div data-cs-copy="reschedule">
-                <h3>You need a different time</h3>
-                <p>Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.</p>
-              </div>
-              <div data-cs-copy="membership-ends">
-                <h3>Your membership ends</h3>
-                <p>Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.</p>
-              </div>
-            </div>
-            <div class="cs-actions" style="margin-top:18px">
-              <button class="secondary-button" type="button" id="cs-delete-data" data-cs-copy="delete-data"><i data-lucide="trash-2"></i><span>Delete my past sessions and phone number</span></button>
-            </div>
-            <p class="cs-privacy">This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.</p>
-            <div class="cs-msg" id="cs-delete-msg" role="status" aria-live="polite"></div>
-          </section>
+          <!-- Secondary detail stays one tap away instead of competing with booking. -->
+          <details class="cs-card cs-how" id="cs-how">
+            <summary>
+              <span class="cs-how-summary">
+                <strong>How this works</strong>
+                <span>Missed weeks, rescheduling, privacy, and what happens when membership ends.</span>
+              </span>
+            </summary>
+            <div class="cs-how-body">
+              <section id="cs-rhythm" aria-labelledby="cs-rhythm-title">
+                <p class="cs-eyebrow">When life gets in the way</p>
+                <h2 id="cs-rhythm-title">What happens if you miss a week, drift off, or leave.</h2>
+                <div class="cs-rhythm-grid">
+                  <div data-cs-copy="missed-week">
+                    <h3>You miss a week</h3>
+                    <p>Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.</p>
+                  </div>
+                  <div data-cs-copy="stop-booking">
+                    <h3>You stop booking for a while</h3>
+                    <p>Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.</p>
+                  </div>
+                  <div data-cs-copy="reschedule">
+                    <h3>You need a different time</h3>
+                    <p>Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.</p>
+                  </div>
+                  <div data-cs-copy="membership-ends">
+                    <h3>Your membership ends</h3>
+                    <p>Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.</p>
+                  </div>
+                </div>
+                <div class="cs-actions" style="margin-top:18px">
+                  <button class="secondary-button" type="button" id="cs-delete-data" data-cs-copy="delete-data"><i data-lucide="trash-2"></i><span>Delete my past sessions and phone number</span></button>
+                </div>
+                <p class="cs-privacy">This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.</p>
+                <div class="cs-msg" id="cs-delete-msg" role="status" aria-live="polite"></div>
+              </section>
 
-          <!-- Supporting content -->
-          <section class="cs-support">
-            <article class="cs-card">
-              <p class="cs-eyebrow">Common session topics</p>
-              <ul class="cs-list">
-                <li><i data-lucide="wrench"></i>Fixing a tech issue that is blocking you</li>
-                <li><i data-lucide="git-branch-plus"></i>Setting up a funnel or an offer</li>
-                <li><i data-lucide="pen-line"></i>Improving your content</li>
-                <li><i data-lucide="compass"></i>Clarifying your next step</li>
-                <li><i data-lucide="bar-chart-3"></i>Looking at your numbers together</li>
-                <li><i data-lucide="sparkles"></i>Anything else on your plate</li>
-              </ul>
-            </article>
-            <article class="cs-card">
-              <p class="cs-eyebrow">How it works</p>
-              <div class="cs-steps">
-                <div>Book your weekly session at a time that works for you.</div>
-                <div>Bring the real thing you are working on or stuck on.</div>
-                <div>We make progress on it together, live, in the session.</div>
-              </div>
-              <p class="cs-privacy" data-cs-copy="not-a-scheduler"><strong>Not a calendar link.</strong> A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before.</p>
-              <p class="cs-privacy" data-cs-copy="held-outcome"><strong>What counts:</strong> a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.</p>
-              <p style="margin-top:16px;color:var(--studio-muted);font-size:.82rem"><i data-lucide="info" style="width:14px;height:14px;vertical-align:-2px"></i> One session per week is included with your membership.</p>
-              <p class="cs-privacy"><strong>Private by default:</strong> your booking details are saved to your Studio account and are not visible to other members. Need help? Email <a href="mailto:email@davidbee.me?subject=Certainty%20Sessions%20support">email@davidbee.me</a>.</p>
-              <p class="cs-privacy" data-cs-copy="topic-reader"><strong>Who reads your topic:</strong> only David. It is there so he knows what you are walking in with. Other members never see it.</p>
-              <p class="cs-privacy" data-cs-copy="not-for"><strong>What sessions are not for:</strong> they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.</p>
-            </article>
-          </section>
+              <section class="cs-support" aria-label="Topics, privacy, and session details">
+                <article class="cs-card">
+                  <p class="cs-eyebrow">Common session topics</p>
+                  <ul class="cs-list">
+                    <li><i data-lucide="wrench"></i>Fixing a tech issue that is blocking you</li>
+                    <li><i data-lucide="git-branch-plus"></i>Setting up a funnel or an offer</li>
+                    <li><i data-lucide="pen-line"></i>Improving your content</li>
+                    <li><i data-lucide="compass"></i>Clarifying your next step</li>
+                    <li><i data-lucide="bar-chart-3"></i>Looking at your numbers together</li>
+                    <li><i data-lucide="sparkles"></i>Anything else on your plate</li>
+                  </ul>
+                </article>
+                <article class="cs-card">
+                  <p class="cs-eyebrow">The weekly session</p>
+                  <div class="cs-steps">
+                    <div>Book your weekly session at a time that works for you.</div>
+                    <div>Bring the real thing you are working on or stuck on.</div>
+                    <div>We make progress on it together, live, in the session.</div>
+                  </div>
+                  <p class="cs-privacy" data-cs-copy="not-a-scheduler"><strong>Not a calendar link.</strong> A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before.</p>
+                  <p class="cs-privacy" data-cs-copy="held-outcome"><strong>What counts:</strong> a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.</p>
+                  <p style="margin-top:16px;color:var(--studio-muted);font-size:.82rem"><i data-lucide="info" style="width:14px;height:14px;vertical-align:-2px"></i> One session per week is included with your membership.</p>
+                  <p class="cs-privacy"><strong>Private by default:</strong> your booking details are saved to your Studio account and are not visible to other members. Need help? Email <a href="mailto:email@davidbee.me?subject=Certainty%20Sessions%20support">email@davidbee.me</a>.</p>
+                  <p class="cs-privacy" data-cs-copy="topic-reader"><strong>Who reads your topic:</strong> only David. It is there so he knows what you are walking in with. Other members never see it.</p>
+                  <p class="cs-privacy" data-cs-copy="not-for"><strong>What sessions are not for:</strong> they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.</p>
+                </article>
+              </section>
+              <p class="cs-privacy cs-how-faq"><a href="/terms#certainty-faq">Read the Certainty FAQ in Terms &amp; FAQ</a></p>
+            </div>
+          </details>
         </div>
       </main>
     </div>
