@@ -36,6 +36,7 @@ let storySelectMode = false;
 const storySelected = new Set();
 let storyReturnNotice = null; // WBR-373: the lapse or quiet-week line shown on reopen
 const expandedThreads = new Set(); // chats whose earlier turns the member chose to show
+let announcedTurn = null; // UX 72: '<chat id>:<length>' of the reply last spoken
 const STATES = window.StorySculptStates;
 
 const storyEl = id => document.getElementById(id);
@@ -581,8 +582,26 @@ function renderConversation() {
     '</article>';
   }).join('');
 
+  announceNewestTurn(conversation);
   renderScriptPanel();
   EEEStudio.refreshIcons();
+}
+
+// UX 72 (WBR-462). The thread is rewritten on every render, so a live region on
+// it re-read the whole chat to a screen reader, two hundred turns at a time.
+// One status line speaks only a reply that arrived in the chat already open;
+// opening a chat or showing earlier answers says nothing new.
+function announceNewestTurn(conversation) {
+  const live = storyEl('story-latest-live');
+  if (!live || !activeStory) return;
+  const key = activeStory.id + ':' + conversation.length;
+  const sameChat = announcedTurn && announcedTurn.split(':')[0] === String(activeStory.id);
+  const grew = sameChat && conversation.length > Number(announcedTurn.split(':')[1]);
+  announcedTurn = key;
+  const newest = conversation[conversation.length - 1];
+  if (!grew || !newest || newest.role !== 'assistant') return;
+  const text = newest.isScriptDraft ? 'StorySculpt wrote a new draft. It is in the script panel.' : 'StorySculpt: ' + String(newest.content || '');
+  live.textContent = text.length > 600 ? text.slice(0, 600) + '...' : text;
 }
 
 function showEarlierTurns() {

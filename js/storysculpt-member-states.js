@@ -9,9 +9,11 @@
   const QUIET_AFTER_DAYS = 8;
   const LAPSE_AFTER_DAYS = 21;
   // A long thread opens on the latest exchange. Above COLLAPSE_AFTER messages,
-  // everything but the last KEEP_VISIBLE sits behind "Show earlier".
+  // everything but the last KEEP_VISIBLE sits behind "Show earlier answers".
+  // UX 70, 71 (WBR-462): the last 12 stay, so the current state is readable
+  // without opening anything.
   const COLLAPSE_AFTER = 12;
-  const KEEP_VISIBLE = 6;
+  const KEEP_VISIBLE = 12;
 
   const INACTIVITY_LINE = 'Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them.';
   const FINISHED_LINE = 'This script is finished. Refine it with a note or start a new chat.';
@@ -89,8 +91,8 @@
 
   function showEarlierMarkup(hidden) {
     if (!hidden) return '';
-    const label = hidden === 1 ? 'Show earlier (1 message)' : 'Show earlier (' + hidden + ' messages)';
-    return '<div class="story-show-earlier-wrap"><button class="story-show-earlier" type="button" data-show-earlier="true" aria-expanded="false">' +
+    const label = hidden === 1 ? 'Show earlier answers (1 message)' : 'Show earlier answers (' + hidden + ' messages)';
+    return '<div class="story-show-earlier-wrap"><button class="story-show-earlier" type="button" data-show-earlier="true" aria-expanded="false" aria-controls="story-conversation">' +
       '<i data-lucide="chevrons-up"></i><span>' + escapeHtml(label) + '</span></button></div>';
   }
 

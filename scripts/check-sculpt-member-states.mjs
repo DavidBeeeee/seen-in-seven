@@ -117,17 +117,17 @@ function longThread(turns) {
   check(S.engagement([], NOW).state === 'new' && S.returnNotice([], NOW) === null, 'a new member gets no return line');
 }
 
-// 5. A 40-turn chat opens on the latest exchange with earlier turns behind "Show earlier".
+// 5. A 40-turn chat opens on the latest 12 messages with earlier turns behind "Show earlier answers".
 {
   const app = boot([project('p-long', 'Long Chat', 1, longThread(40))]);
   await app.run();
   const thread = app.document.getElementById('story-conversation').innerHTML;
   const shown = (thread.match(/Turn \d+ marker/g) || []);
-  console.log('40-turn chat   -> rendered ' + shown.join(', ') + ' | control: ' + ((thread.match(/Show earlier \([^)]*\)/) || ['none'])[0]));
+  console.log('40-turn chat   -> rendered ' + shown.join(', ') + ' | control: ' + ((thread.match(/Show earlier answers \([^)]*\)/) || ['none'])[0]));
   check(/data-show-earlier="true"/.test(thread), '40 turns: the Show earlier control must render');
-  check(thread.includes('Show earlier (34 messages)'), '40 turns: the control must count the hidden turns');
-  check(thread.includes('Turn 40 marker') && !thread.includes('Turn 1 marker') && !thread.includes('Turn 34 marker'), '40 turns: only the latest turns may render');
-  check(thread.indexOf('data-show-earlier') < thread.indexOf('Turn 35 marker'), '40 turns: the control must sit above the latest exchange');
+  check(thread.includes('Show earlier answers (28 messages)'), '40 turns: the control must count the hidden turns');
+  check(thread.includes('Turn 40 marker') && !thread.includes('Turn 1 marker') && !thread.includes('Turn 28 marker') && thread.includes('Turn 29 marker'), '40 turns: only the latest 12 messages may render');
+  check(thread.indexOf('data-show-earlier') < thread.indexOf('Turn 29 marker'), '40 turns: the control must sit above the latest exchange');
   check(/data-msg-index="38"/.test(thread), '40 turns: message actions must keep absolute indices');
   // Expand through the real click handler.
   const conv = app.document.getElementById('story-conversation');
@@ -178,4 +178,4 @@ if (failures.length) {
   console.error('check-sculpt-member-states FAIL\n- ' + failures.join('\n- '));
   process.exit(1);
 }
-console.log('PASS: check-sculpt-member-states: 22-day lapse names the chat, 5-day renders nothing, 10-day is quiet, 40-turn chat collapses behind Show earlier.');
+console.log('PASS: check-sculpt-member-states: 22-day lapse names the chat, 5-day renders nothing, 10-day is quiet, 40-turn chat collapses behind Show earlier answers.');
