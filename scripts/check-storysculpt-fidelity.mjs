@@ -171,7 +171,11 @@ try {
     assert.deepEqual(ev.p_detail.violations.sort(), ['fidelity-date', 'fidelity-number']);
     assert.equal(ev.p_detail.delivered, true);
     assert.ok(Number.isFinite(ev.p_detail.voiceShare));
-    assert.ok(!JSON.stringify(ev.p_detail).includes('600') && !JSON.stringify(ev.p_detail).includes('2019'), 'the event carries kinds, never the script');
+    // The trace id is a random UUID and promptVersion a hash; their hex
+    // contained 600 or 2019 about one run in ten and failed this check without
+    // the script ever reaching the event. Judge every other field.
+    const { trace, promptVersion, ...detail } = ev.p_detail;
+    assert.ok(!/600|2019|loaves/.test(JSON.stringify(detail)), 'the event carries kinds, never the script');
     assert.ok(types().includes('storysculpt_generation'));
     pass('still flagged after its retry: shown with a plain note, logged storysculpt_output_rejected with kinds and delivered');
   }
