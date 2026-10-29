@@ -90,11 +90,21 @@ const samples = [];
 for (let i = 0; i < 20; i++) { const t = performance.now(); render(); samples.push(performance.now() - t); }
 samples.sort((a, b) => a - b);
 const median = samples[10];
-const shown = conv.innerHTML.match(/Turn \d+ marker/g) || [];
+const shown = conv.innerHTML.replace(/<p class="story-earlier-summary">[\s\S]*?<\/p>/g, '').match(/Turn \d+ marker/g) || [];
 console.log(`200 turns collapsed -> ${shown.length} rendered (${shown[0]} to ${shown[shown.length - 1]}), median render ${median.toFixed(2)} ms, ${conv.innerHTML.length} bytes`);
 check(median < RENDER_BUDGET_MS, `collapsed render must stay under ${RENDER_BUDGET_MS} ms (median ${median.toFixed(2)})`);
 check(shown.length === 12 && shown[0] === 'Turn 189 marker' && shown[11] === 'Turn 200 marker', 'the last 12 messages render and nothing earlier');
 check(conv.innerHTML.includes('Show earlier answers (188 messages)'), 'the control names how many are hidden');
+check(conv.innerHTML.includes('Last earlier answer: “Turn 188 marker'), 'collapsed history includes an actual earlier answer, not a generated fact');
+const excerpt = (messages, hidden) => app.context.StorySculptStates.earlierAnswerExcerpt(messages, hidden);
+check(excerpt([{role:'user',content:'Keep this'}, {role:'user',content:'Do not recap this',excludeFromGeneration:true}], 2) === 'Keep this', 'excluded answers never enter the recap');
+check(excerpt([{role:'assistant',content:'Not a member fact'}],1) === '', 'assistant output is not presented as the member answer');
+check(excerpt([{role:'user',content:'Old answer'}, {role:'user',content:'Still visible'}],1) === 'Old answer', 'visible turns are outside the earlier-answer recap');
+check(excerpt([{role:'user',content:'  My\n  actual words  '}],1) === 'My actual words', 'only whitespace is normalized');
+check(Array.from(excerpt([{role:'user',content:'😀'.repeat(141)}],1)).length === 141, 'long excerpts are bounded without splitting surrogate pairs');
+const escapedRecap = app.context.StorySculptStates.showEarlierMarkup(1,[{role:'user',content:'<img src=x onerror=alert(1)>'}]);
+check(escapedRecap.includes('&lt;img') && !escapedRecap.includes('<img'), 'recap text is escaped');
+check(app.context.StorySculptStates.showEarlierMarkup(0,[{role:'user',content:'No hidden history'}]) === '', 'short and expanded threads have no recap');
 check(conv.innerHTML.indexOf('data-show-earlier') < conv.innerHTML.indexOf('Turn 189 marker'), 'the control sits above the visible answers');
 check(/data-msg-index="198"/.test(conv.innerHTML), 'actions keep absolute indices');
 

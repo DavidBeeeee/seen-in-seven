@@ -89,11 +89,28 @@
     return { start, hidden: start };
   }
 
-  function showEarlierMarkup(hidden) {
+  // UX 82: quote the last usable earlier answer instead of inventing a recap.
+  // Excluded answers stay available behind the control, not in the reminder.
+  function earlierAnswerExcerpt(conversation, hidden) {
+    const earlier = Array.isArray(conversation) ? conversation.slice(0, hidden) : [];
+    for (let i = earlier.length - 1; i >= 0; i--) {
+      const message = earlier[i];
+      if (!message || message.role !== 'user' || message.excludeFromGeneration === true || typeof message.content !== 'string') continue;
+      const text = message.content.replace(/\s+/g, ' ').trim();
+      if (!text) continue;
+      const characters = Array.from(text);
+      return characters.slice(0, 140).join('') + (characters.length > 140 ? '…' : '');
+    }
+    return '';
+  }
+
+  function showEarlierMarkup(hidden, conversation) {
     if (!hidden) return '';
     const label = hidden === 1 ? 'Show earlier answers (1 message)' : 'Show earlier answers (' + hidden + ' messages)';
+    const excerpt = earlierAnswerExcerpt(conversation, hidden);
     return '<div class="story-show-earlier-wrap"><button class="story-show-earlier" type="button" data-show-earlier="true" aria-expanded="false" aria-controls="story-conversation">' +
-      '<i data-lucide="chevrons-up"></i><span>' + escapeHtml(label) + '</span></button></div>';
+      '<i data-lucide="chevrons-up"></i><span>' + escapeHtml(label) + '</span></button></div>' +
+      (excerpt ? '<p class="story-earlier-summary">Last earlier answer: “' + escapeHtml(excerpt) + '”</p>' : '');
   }
 
   // UX 54: a dismissed return notice stays dismissed for that chat. The chat
@@ -236,7 +253,7 @@
   const api = {
     DAY_MS, QUIET_AFTER_DAYS, LAPSE_AFTER_DAYS, COLLAPSE_AFTER, KEEP_VISIBLE,
     INACTIVITY_LINE, FINISHED_LINE,
-    engagement, returnNotice, exportFileName, returnNoticeMarkup, threadWindow, showEarlierMarkup,
+    engagement, returnNotice, exportFileName, returnNoticeMarkup, threadWindow, showEarlierMarkup, earlierAnswerExcerpt,
     returnNoticeFor, dismissalStamp, isFinished, isFilmed, finishedTime, progress, progressLine, progressMarkup,
     memberStep, nextStep, nextStepMarkup, versionView
   };

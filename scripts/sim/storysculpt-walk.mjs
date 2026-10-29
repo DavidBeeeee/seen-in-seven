@@ -544,12 +544,17 @@ async function lifecyclePass(browser) {
     const toggleCount = await toggle.count();
     const visibleBubblesBefore = await page.locator('#story-conversation .story-message').count();
     check('60-turn fixture collapses earlier turns', toggleCount > 0 && visibleBubblesBefore <= 14, visibleBubblesBefore + ' visible messages before expand');
+    const earlier = fixtures.states.sixtyTurn.projects[0].conversation.slice(0, -12);
+    const lastEarlier = earlier.filter(message => message.role === 'user' && !message.excludeFromGeneration).at(-1);
+    const recap = await page.locator('.story-earlier-summary').textContent();
+    check('collapsed thread includes a bounded earlier-answer excerpt, not a new card', recap.startsWith('Last earlier answer:') && recap.includes(lastEarlier.content.replace(/\s+/g, ' ').trim().slice(0, 40)) && recap.length < 180, recap);
     await shot(page, 'lifecycle-60turn-collapsed');
     if (toggleCount > 0) {
       await toggle.first().click();
       await page.waitForTimeout(200);
       const visibleBubblesAfter = await page.locator('#story-conversation .story-message').count();
       check('expanding 60-turn fixture renders all turns without fault', visibleBubblesAfter >= 60, visibleBubblesAfter + ' messages rendered');
+      check('earlier-answer recap disappears when the actual history is open', await page.locator('.story-earlier-summary').count() === 0, 'expanded history replaces the excerpt');
       await shot(page, 'lifecycle-60turn-expanded');
     }
     await context.close();

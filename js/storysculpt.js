@@ -504,7 +504,7 @@ function renderConversation() {
   const windowed = STATES.threadWindow(conversation.length, activeStory && expandedThreads.has(activeStory.id));
   const lastAssistant = conversation.map(m => m.role).lastIndexOf('assistant');
 
-  storyEl('story-conversation').innerHTML = STATES.showEarlierMarkup(windowed.hidden) + conversation.map((message, index) => {
+  storyEl('story-conversation').innerHTML = STATES.showEarlierMarkup(windowed.hidden, conversation) + conversation.map((message, index) => {
     if (index < windowed.start) return '';
     if (message.role === 'user') {
       const isRefine = message.refineNote || (typeof message.content === 'string' && message.content.startsWith('Please revise the script above. Keep what works and change this: '));

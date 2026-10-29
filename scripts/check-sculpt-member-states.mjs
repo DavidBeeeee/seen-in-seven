@@ -122,11 +122,13 @@ function longThread(turns) {
   const app = boot([project('p-long', 'Long Chat', 1, longThread(40))]);
   await app.run();
   const thread = app.document.getElementById('story-conversation').innerHTML;
-  const shown = (thread.match(/Turn \d+ marker/g) || []);
+  const visibleTurns = thread.replace(/<p class="story-earlier-summary">[\s\S]*?<\/p>/g, '');
+  const shown = (visibleTurns.match(/Turn \d+ marker/g) || []);
   console.log('40-turn chat   -> rendered ' + shown.join(', ') + ' | control: ' + ((thread.match(/Show earlier answers \([^)]*\)/) || ['none'])[0]));
   check(/data-show-earlier="true"/.test(thread), '40 turns: the Show earlier control must render');
   check(thread.includes('Show earlier answers (28 messages)'), '40 turns: the control must count the hidden turns');
-  check(thread.includes('Turn 40 marker') && !thread.includes('Turn 1 marker') && !thread.includes('Turn 28 marker') && thread.includes('Turn 29 marker'), '40 turns: only the latest 12 messages may render');
+  check(visibleTurns.includes('Turn 40 marker') && !visibleTurns.includes('Turn 1 marker') && !visibleTurns.includes('Turn 28 marker') && visibleTurns.includes('Turn 29 marker'), '40 turns: only the latest 12 message bodies may render');
+  check(thread.includes('Last earlier answer:'), '40 turns: one earlier-answer excerpt orients the member without opening history');
   check(thread.indexOf('data-show-earlier') < thread.indexOf('Turn 29 marker'), '40 turns: the control must sit above the latest exchange');
   check(/data-msg-index="38"/.test(thread), '40 turns: message actions must keep absolute indices');
   // Expand through the real click handler.
