@@ -1,13 +1,13 @@
 #!/usr/bin/env node
 
-// StorySculpt output fidelity eval (WBR-458; Momentum 300 StorySculpt
-// Developer 41-47, 63, 64, 68, 78, Stranger 77, 78).
+// StorySculpt output fidelity eval (WBR-458 and WBR-462; Momentum 300
+// StorySculpt Developer 41-47, 63, 64, 68, 78, Stranger 77, 78).
 //
 // Part 1 grades api/_lib/storysculpt-fidelity.js on its own: every planted
-// invention (credential, result, testimonial, number, date, diagnosis, memory,
-// overconfident promise, lost voice) must be flagged with its kind, and every
-// good script, including ones that use the member's own figures, dates and
-// credentials, must pass untouched.
+// invention (credential, result, testimonial, inference, history, number, date,
+// diagnosis, memory, overconfident promise, lost voice) must be flagged with its
+// kind, and every good script, including ones that use the member's own figures,
+// dates, credentials, feelings and history, must pass untouched.
 //
 // Part 2 runs the real api/storysculpt.js handler with DeepSeek replaced by a
 // scripted reply per attempt: a clean script is delivered with no retry; a
@@ -41,6 +41,9 @@ const INVENTED = [
   ['invented result', plant('That week I doubled my sales.'), 'result'],
   ['invented result, six figures', plant('Now the bakery does six figures.'), 'result'],
   ['invented testimonial', plant('One customer told me they were the best buns in Colorado.'), 'testimonial'],
+  ['inference presented as fact', plant('I was terrified of being judged.'), 'inference'],
+  ['invented personal history', plant('I grew up in a family of bakers.'), 'history'],
+  ['unsupported universal certainty', plant('This always works.'), 'overconfident'],
   ['invented number', plant('I sell 600 loaves a week.'), 'number'],
   ['invented spelled number', plant('Fifteen years in, I still do the dishes.'), 'number'],
   ['invented year', plant('Back in 2019 it was worse.'), 'date'],
@@ -61,7 +64,8 @@ const GOOD_CASES = [
   ['a credential the member stated', 'I am a licensed electrician and I hate when people say a breaker is just a switch. A breaker is the one thing standing between your toaster and a fire. Respect the breaker. Call a licensed electrician. What is the scariest thing you have seen in a fuse box?', 'I am a licensed electrician and people treat the breaker like it is just a switch. It is the thing between your toaster and a fire.'],
   ['"may" as a verb, not a month', GOOD.replace('Then buy the bun.', 'You may think a sample is harmless. Then buy the bun.'), MEMBER],
   ['an overconfident word the member used themself', 'My dad said a cast iron pan is guaranteed to outlive you. He was right. I still cook in his pan every morning, guaranteed to outlive me too. Treat it like family. What pan in your kitchen will outlive you?', 'My dad always said a cast iron pan is guaranteed to outlive you. I still cook in his pan every morning.'],
-  ['a date and weekday the member gave', 'I quit drinking on a Tuesday in 2021. Not a Monday, not New Year, a Tuesday. Nothing special happened. I just poured it out. What ordinary day changed something for you?', 'I quit drinking on a random Tuesday in 2021. Nothing special happened that day, I just poured it out.']
+  ['a date and weekday the member gave', 'I quit drinking on a Tuesday in 2021. Not a Monday, not New Year, a Tuesday. Nothing special happened. I just poured it out. What ordinary day changed something for you?', 'I quit drinking on a random Tuesday in 2021. Nothing special happened that day, I just poured it out.'],
+  ['an inference and history the member stated themselves', plant('I grew up in a family of bakers. I was terrified of being judged.'), MEMBER + ' I grew up in a family of bakers. I was terrified of being judged.']
 ];
 
 console.log('--- StorySculpt fidelity eval (WBR-458) ---');
@@ -99,6 +103,7 @@ const originalFetch = globalThis.fetch;
 let replies;
 let modelCalls;
 let events;
+let retryRequests;
 const reply = (value, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => value, text: async () => JSON.stringify(value) });
 globalThis.fetch = async (url, options = {}) => {
   const path = String(url);
@@ -115,7 +120,7 @@ globalThis.fetch = async (url, options = {}) => {
     // Answer by what was asked: the fidelity retry carries its own directive.
     // Other calls (re-aiming the answers, style retries) get the first draft.
     const isRetry = String(options.body || '').includes('put things in the member');
-    if (isRetry) modelCalls += 1;
+    if (isRetry) { modelCalls += 1; retryRequests.push(String(options.body)); }
     const next = isRetry ? replies.retry : replies.first;
     return reply({ choices: [{ message: { content: next } }], usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 } });
   }
@@ -127,6 +132,7 @@ async function refine(scripts) {
   replies = { first, retry };
   modelCalls = 0;
   events = [];
+  retryRequests = [];
   const req = {
     method: 'POST',
     headers: { authorization: 'Bearer fidelity-token' },
@@ -152,13 +158,14 @@ try {
     pass('a clean finished script is delivered as written, no fidelity retry, no note');
   }
   {
-    const res = await refine([plant('I sell 600 loaves a week.'), GOOD]);
+    const res = await refine([plant('I was terrified of being judged.'), GOOD]);
     assert.equal(res.code, 200);
-    assert.equal(modelCalls, 1, 'a flagged script is retried once');
-    assert.ok(!/600/.test(res.body.content), 'the clean retry replaces the flagged draft');
+    assert.equal(modelCalls, 1, 'an unsupported inference is retried once');
+    assert.ok(retryRequests[0].includes('guessed feeling, motive or meaning'), 'the retry names the inference refusal');
+    assert.ok(!/terrified/.test(res.body.content), 'the clean retry replaces the flagged draft');
     assert.equal(res.body.fidelityNote, undefined);
     assert.ok(!rejected(), 'nothing is logged as rejected when the retry is clean');
-    pass('a flagged script is retried once and the clean retry is shown, no note');
+    pass('an unsupported inference is retried with its reason named and the clean retry is shown');
   }
   {
     const flagged = plant('Back in 2019 I sold 600 loaves a week.');

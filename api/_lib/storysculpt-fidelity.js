@@ -1,5 +1,5 @@
 // StorySculpt output fidelity: a deterministic check of every finished script
-// against what the member actually said (WBR-458 overflow, Momentum 300
+// against what the member actually said (WBR-458 and WBR-462, Momentum 300
 // StorySculpt Developer 41-47, 63, 64, 68, 78 and Stranger 77, 78).
 //
 // classifyOutput() in storysculpt-observability.js already refuses an invented
@@ -9,11 +9,13 @@
 //   - credential:   a qualification, title or authority marker
 //   - result:       an outcome claim (doubled, six figures, quit my job)
 //   - testimonial:  someone else praising them, quoted or reported
+//   - inference:    an unstated feeling, motive or meaning asserted as fact
+//   - history:      an unstated place, event or earlier personal history
 //   - number:       a figure, digits or spelled out from three upward
 //   - date:         a month, a year, a weekday
 //   - diagnosis:    a medical or psychological condition
 //   - memory:       a claim that StorySculpt remembers them or a past talk
-//   - overconfident: guarantee words the member never used
+//   - overconfident: guarantee or universal-certainty words the member never used
 //   - voice:        too little of the script is in the member's own words
 //
 // Pure and synchronous. It never sees the prompt and never changes it; the
@@ -23,12 +25,11 @@
 // Flags carry kinds and counts to the event, never the member's words.
 
 // Lowest share of a script's content words that must come from the member's
-// own words. Set from production on 2026-10-25: the 18 stored talking-head
-// scripts measured 0.10, 0.21, 0.22, 0.24, 0.24, 0.30 and then 0.34 to 0.83
-// (median about 0.42), counts only, computed in SQL. A good hook brings fresh
-// imagery, so 0.25 would have flagged five of eighteen real scripts. 0.15
-// flags only the one that had clearly stopped sounding like its member, and
-// the eval's lost-voice cases sit below it.
+// own words. Set from production on 2026-10-25 and rechecked on 2026-10-29:
+// the latest 20 stored scripts had median share 0.415 and two below 0.15,
+// counts only, computed in SQL. See docs/storysculpt-fidelity-report.md. A
+// good hook brings fresh imagery, so 0.25 would flag substantially more real
+// scripts; 0.15 remains the conservative lost-voice boundary.
 export const VOICE_SHARE_MIN = 0.15;
 
 // Too short to judge voice: a ten-word script cannot "lose" anything.
@@ -78,11 +79,31 @@ const MEMORY = [
   /\bwhen\s+we\s+(?:first\s+)?(?:met|talked|spoke)\b/i
 ];
 
+// WBR-462: high-confidence first-person claims, not a general semantic guess.
+// Each expression includes the whole claim through its punctuation. The exact
+// claim must occur in the member's material, so a sourced statement passes while
+// a new motive, wound, place or personal history is named for the retry.
+const INFERENCE = [
+  /\b(?:i|we)\s+(?:was|were|am|are|felt|feel)\s+(?:so\s+|really\s+|very\s+)?(?:afraid|scared|terrified|ashamed|embarrassed|insecure|unworthy|not good enough)\b[^.;!?\n]{0,80}/gi,
+  /\b(?:i|we)\s+(?:just\s+)?(?:wanted|needed|was trying|were trying)\s+to\s+(?:prove|please|impress|fit in|be liked|be accepted)\b[^.;!?\n]{0,80}/gi,
+  /\b(?:i|we)\s+(?:did|do)\s+(?:it|this|that)\s+because\s+(?:i|we)\s+(?:was|were|am|are|felt|feel)\b[^.;!?\n]{0,80}/gi
+];
+
+const HISTORY = [
+  /\b(?:i|we)\s+(?:grew up|was raised|were raised)\s+[^.;!?\n]{2,100}/gi,
+  /\b(?:i|we)\s+(?:started|founded|launched|opened|attended|graduated from|moved to|worked at|worked for)\s+[^.;!?\n]{2,100}/gi,
+  /\bwhen\s+(?:i|we)\s+(?:was|were)\s+(?:a\s+)?(?:child|kid|teenager|younger)\b[^.;!?\n]{0,100}/gi,
+  /\b(?:my|our)\s+(?:first|childhood|early)\s+(?:job|business|company|career|home|school|memory)\s+[^.;!?\n]{2,100}/gi
+];
+
 const OVERCONFIDENT = [
   /\bguarantee[ds]?\b/i, /\bguaranteed\b/i, /\bfoolproof\b/i, /\bfail[- ]?proof\b/i, /\bnever\s+fails?\b/i,
   /\b100\s?%|\bhundred\s+percent\b/i, /\bproven\b/i, /\bscientifically\b/i, /\bthe\s+only\s+way\b/i,
   /\bovernight\b/i, /\binstantly\b/i, /\beffortless(?:ly)?\b/i, /\bwill\s+change\s+your\s+life\b/i,
-  /\bwithout\s+fail\b/i, /\bevery\s+single\s+time\b/i, /\bnothing\s+else\s+works\b/i
+  /\bwithout\s+fail\b/i, /\bevery\s+single\s+time\b/i, /\bnothing\s+else\s+works\b/i,
+  /\b(?:always|never)\s+(?:works?|happens?|fails?|wins?)\b/i,
+  /\b(?:everyone|everybody|no one|nobody)\s+(?:always|never|will|can|must|should)\b/i,
+  /\bwill\s+(?:always|never)\b/i
 ];
 
 const MONTHS = ['january', 'february', 'march', 'april', 'may', 'june', 'july', 'august', 'september', 'october', 'november', 'december'];
@@ -209,6 +230,8 @@ export function checkFidelity(script, { source = '', memberText = '' } = {}) {
     ...patternFlags('credential', CREDENTIAL, body, haystack),
     ...patternFlags('result', RESULT, body, haystack),
     ...patternFlags('testimonial', TESTIMONIAL, body, haystack),
+    ...patternFlags('inference', INFERENCE, body, own),
+    ...patternFlags('history', HISTORY, body, own),
     ...patternFlags('diagnosis', DIAGNOSIS, body, haystack),
     ...patternFlags('memory', MEMORY, body, haystack),
     ...patternFlags('overconfident', OVERCONFIDENT, body, own),
@@ -233,6 +256,8 @@ const RETRY_LINES = {
   credential: 'Remove any title, qualification or authority the member did not state.',
   result: 'Remove any outcome or result the member did not state.',
   testimonial: 'Remove anything other people said about the member that the member did not report.',
+  inference: 'Do not turn a guessed feeling, motive or meaning into a fact about the member.',
+  history: 'Remove any personal history, place or earlier event the member did not state.',
   number: 'Use only numbers the member gave; drop any other figure.',
   date: 'Use only dates, months, years or days the member gave.',
   diagnosis: 'Do not name any medical or psychological condition the member did not name.',
@@ -249,6 +274,8 @@ const NOTE_PARTS = {
   credential: 'a title or qualification',
   result: 'a result',
   testimonial: 'something someone said about you',
+  inference: 'a guessed feeling or motive',
+  history: 'personal history',
   number: 'a number',
   date: 'a date',
   diagnosis: 'a health condition',
