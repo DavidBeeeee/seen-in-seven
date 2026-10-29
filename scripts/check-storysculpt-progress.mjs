@@ -154,7 +154,7 @@ const readStep = markup => {
 // A server-added escalation step must have working client choices, including
 // when an existing saved conversation is reopened. Version the script URL so
 // a reload does not reuse the pre-escalation client.
-check(html.includes('/js/storysculpt.js?v=wbr462-archive-v1'), 'page must load the current client version (archive and finished state, WBR-462)');
+check(html.includes('/js/storysculpt.js?v=wbr462-archive-v2'), 'page must load the current client version (archive and finished state, WBR-462)');
 for (const step of ['B5.5', 'M5.5', 'R6.5']) {
   const app = boot([]);
   app.context.choiceProject = { id: 'choices', output: null, intake: { current_step: step }, conversation: [{ role: 'assistant', step, content: 'Stronger hooks\n1. First.\n2. Second.\n3. Third.' }] };

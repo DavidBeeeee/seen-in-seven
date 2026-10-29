@@ -595,11 +595,16 @@ async function lifecyclePass(browser) {
 
   // Help answers how long an interview takes and what happens after
   {
-    const { context, page } = await open(browser, 'first', { width: 1280, openHelp: true });
+    const { context, page } = await open(browser, 'first', { width: 1280 });
+    await page.locator('#eee-account-button').click();
+    await page.locator('#story-help-open').click();
+    check('opening Help closes the account menu instead of covering its answers', await page.locator('#eee-account-menu').isHidden() && await page.locator('#eee-account-button').getAttribute('aria-expanded') === 'false', 'launcher menu closed');
     const helpText = await page.locator('#story-help').textContent();
     const answersHowLong = /5 to 10 minutes/i.test(helpText) && /How long does an interview take/i.test(helpText);
     const answersWhatHappensAfter = /What happens after my first script/i.test(helpText);
     check('Help answers how long and what happens after', answersHowLong && answersWhatHappensAfter, 'how long=' + answersHowLong + ', what after=' + answersWhatHappensAfter);
+    await page.keyboard.press('Escape');
+    check('Help close returns focus to the visible account button', await page.evaluate(() => document.activeElement.id) === 'eee-account-button', 'not a hidden menu item');
     await context.close();
   }
 

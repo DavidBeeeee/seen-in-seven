@@ -2689,6 +2689,15 @@ function closeMemory() {
 
 function openHelp() {
   helpReturnFocus = document.activeElement;
+  const accountMenu = storyEl('eee-account-menu');
+  const accountButton = storyEl('eee-account-button');
+  if (accountMenu && !accountMenu.hidden) {
+    accountMenu.hidden = true;
+    if (accountButton) {
+      accountButton.setAttribute('aria-expanded', 'false');
+      helpReturnFocus = accountButton;
+    }
+  }
   storyEl('story-help').hidden = false;
   storyEl('story-help-scrim').hidden = false;
   storyEl('story-help-close').focus();
