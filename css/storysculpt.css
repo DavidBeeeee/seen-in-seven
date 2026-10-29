@@ -204,6 +204,10 @@ html.studio-light .eee-gate-box .studio-mark {
 #story-start { padding: 28px 34px 60px; overflow-y: auto; }
 
 /* Start screen: format picker and method note on Hub tokens */
+#story-start[data-first-visit="false"] .story-first-run-card,
+.story-first-run-card[hidden] {
+  display: none !important;
+}
 .story-first-run-card {
   margin-bottom: 24px;
   padding: 26px 30px;

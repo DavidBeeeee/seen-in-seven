@@ -1,8 +1,8 @@
 # StorySculpt rendered walk: chromium
 
-Run 2026-10-28T12:05:09.113Z in 158s against `api/_hub/storysculpt.html` in chromium with every network call stubbed.
+Run 2026-10-29T04:54:34.072Z in 164s against `api/_hub/storysculpt.html` in chromium with every network call stubbed.
 
-**21 of 21 checks pass. 0 findings.** Requests refused: 0 (0 that could have reached production).
+**26 of 26 checks pass. 0 findings.** Requests refused: 0 (0 that could have reached production).
 
 ## Checks
 
@@ -14,8 +14,13 @@ Run 2026-10-28T12:05:09.113Z in 158s against `api/_hub/storysculpt.html` in chro
 - PASS keyboard-only walk light 375px: 28 stops via Tab, 0 without visible focus
 - PASS Escape closes the help dialog: closed
 - PASS first visit greets member with clear start: Start a script the way you talk.
+- PASS first visit explains 5E and voice in one place: card visible=true, 5E/voice=true
+- PASS return visit does not repeat the orientation: card visible=false, title=Start a new script.
+- PASS Help answers how long and what happens after: how long=true, what after=true
 - PASS 60-turn fixture collapses earlier turns: 12 visible messages before expand
+- PASS collapsed thread includes a bounded earlier-answer excerpt, not a new card: Last earlier answer: “Turn 48: Audit their customer list and find the top twenty percent that generates eighty percent of margin.”
 - PASS expanding 60-turn fixture renders all turns without fault: 60 messages rendered
+- PASS earlier-answer recap disappears when the actual history is open: expanded history replaces the excerpt
 - PASS answer exclusion is visible, saved and reversible: excluded=1, pressed=1, saved=true, restored=true, restoredSaved=true
 - PASS /rant step path loads with 5E Talking Head mode: 5E Talking Head
 - PASS finished script renders script text and refine box: Here is why your product is not selling.
@@ -27,7 +32,7 @@ You keep
 - PASS screen-reader interview: every control is named and headings form an outline: 0 faults, 21 controls, 3 headings
 - PASS screen-reader finished: every control is named and headings form an outline: 0 faults, 25 controls, 3 headings
 - PASS screen-reader story-profile: every control is named and headings form an outline: 0 faults, 35 controls, 4 headings
-- PASS screen-reader help-dialog: every control is named and headings form an outline: 0 faults, 26 controls, 12 headings
+- PASS screen-reader help-dialog: every control is named and headings form an outline: 0 faults, 28 controls, 15 headings
 - PASS no request left the machine except font and icon GETs; zero POSTs to production: 0 refused, 0 non-benign
 
 ## Findings

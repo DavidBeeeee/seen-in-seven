@@ -12,7 +12,7 @@ Browser: `chromium`. Captured from the rendered accessibility tree; every networ
 
 ## first-visit
 
-Screenshot: `docs/storysculpt-walk/chromium/shots/032-a11y-first-visit.jpg`  
+Screenshot: `docs/storysculpt-walk/chromium/shots/034-a11y-first-visit.jpg`
 Transcript: `a11y/first-visit.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a script the way you talk.” → h3 “Turn raw thoughts into video scripts that sound like you.” → h4 “Why the 5E interview keeps your voice” → h4 “What to expect: 5 to 10 minutes” → h4 “What happens when your script is ready”
@@ -90,7 +90,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a scrip
 
 ## interview
 
-Screenshot: `docs/storysculpt-walk/chromium/shots/033-a11y-interview.jpg`  
+Screenshot: `docs/storysculpt-walk/chromium/shots/035-a11y-interview.jpg`
 Transcript: `a11y/interview.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor”
@@ -132,7 +132,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+  - article:
+    - text: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Tell me about a specific time a client had all the features they thought they wanted and still failed.
     - button "Copy":
@@ -141,7 +145,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+  - article:
+    - text: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt What was the one realization that turned it around for them?
     - button "Regenerate":
@@ -164,7 +172,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## finished
 
-Screenshot: `docs/storysculpt-walk/chromium/shots/034-a11y-finished.jpg`  
+Screenshot: `docs/storysculpt-walk/chromium/shots/036-a11y-finished.jpg`
 Transcript: `a11y/finished.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor”
@@ -212,7 +220,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You Stop pitching features. Pitch certainty.
+  - article:
+    - text: You Stop pitching features. Pitch certainty.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Tell me about a time that proved this.
     - button "Copy":
@@ -221,7 +233,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You When we stopped listing features and focused on the outcome, conversion doubled in two weeks.
+  - article:
+    - text: You When we stopped listing features and focused on the outcome, conversion doubled in two weeks.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Your script is assembled and ready to film below.
     - button "Copy":
@@ -253,7 +269,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## story-profile
 
-Screenshot: `docs/storysculpt-walk/chromium/shots/035-a11y-story-profile.jpg`  
+Screenshot: `docs/storysculpt-walk/chromium/shots/037-a11y-story-profile.jpg`
 Transcript: `a11y/story-profile.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Set this once. Every chat reads it.”
@@ -295,7 +311,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+  - article:
+    - text: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Tell me about a specific time a client had all the features they thought they wanted and still failed.
     - button "Copy":
@@ -304,7 +324,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+  - article:
+    - text: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt What was the one realization that turned it around for them?
     - button "Regenerate":
@@ -370,10 +394,10 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## help-dialog
 
-Screenshot: `docs/storysculpt-walk/chromium/shots/036-a11y-help-dialog.jpg`  
+Screenshot: `docs/storysculpt-walk/chromium/shots/038-a11y-help-dialog.jpg`
 Transcript: `a11y/help-dialog.yml`
 
-Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Help & privacy” → h3 “Who makes this?” → h3 “What happens to my work?” → h3 “Can I change the format?” → h3 “Can I pause and come back?” → h3 “What does finishing a script mean?” → h3 “Can I archive or delete a chat?” → h3 “What should I do next?” → h3 “Where do I get help?”
+Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Help & privacy” → h3 “Who makes this?” → h3 “What does membership include, and how does it renew?” → h3 “What happens to my work?” → h3 “Can I change the format?” → h3 “Can I pause and come back?” → h3 “What does finishing a script mean?” → h3 “How long does an interview take?” → h3 “What happens after my first script?” → h3 “Can I archive or delete a chat?” → h3 “What should I do next?” → h3 “Where do I get help?”
 
 ```yaml
 - banner:
@@ -412,7 +436,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+  - article:
+    - text: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Tell me about a specific time a client had all the features they thought they wanted and still failed.
     - button "Copy":
@@ -421,7 +449,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+  - article:
+    - text: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt What was the one realization that turned it around for them?
     - button "Regenerate":
@@ -447,6 +479,16 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - img
   - heading "Who makes this?" [level=3]
   - paragraph: Built and supported by David Bee. StorySculpt is part of The Momentum Hub, and every step of it follows David's own scriptwriting method.
+  - heading "What does membership include, and how does it renew?" [level=3]
+  - paragraph: StorySculpt is included with The Momentum Hub's $250 USD monthly membership, plus any applicable tax. It renews automatically each month until cancelled. Your checkout states the terms for your purchase; a separate program or manual access grant can have different terms.
+  - paragraph:
+    - text: For cancellation, contact
+    - link "email@davidbee.me":
+      - /url: mailto:email@davidbee.me?subject=Momentum%20Hub%20membership
+    - text: . When Studio processes a cancellation, access from that purchase ends without an automatic wait until the billing period ends. Another active grant can still provide access. Cancellation does not automatically delete your saved work, but keeping records does not guarantee continued access or permanent storage. Copy or download scripts you want to keep before access ends. Read the
+    - link "billing, access, and cancellation terms":
+      - /url: /terms#pricing-cancellation
+    - text: .
   - heading "What happens to my work?" [level=3]
   - paragraph: Your chats, project titles, notes, finished scripts, and story profile are saved to your Studio account so you can return to them. When you ask StorySculpt to continue or revise, your title, profile, notes, and recent messages are processed by the AI model that writes your next question or draft, guided by David's method and your own words. Do not enter anything you do not want processed by an AI service.
   - paragraph: "Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them. You can delete a chat and its saved script with the Delete button inside that chat. Your standing story profile is separate and can be edited from Story profile."
@@ -456,6 +498,10 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
   - paragraph: "Yes. Leaving does not delete your project. Reopen the chat to resume the interview where you stopped. Check the save indicator before closing the browser: Saving means a write is pending, Saved means it was acknowledged, and Not saved means the latest change has not reached your account yet. Changes kept only on this device are not available on another device until saved."
   - heading "What does finishing a script mean?" [level=3]
   - paragraph: Finishing closes the interview to new turns and assembles your answers into a script you can record. Use Refine to revise the finished script. Copy it or download the text file when you are ready to film. Your saved script does not expire; it stays in your account until you delete it.
+  - heading "How long does an interview take?" [level=3]
+  - paragraph: An interview takes about 5 to 10 minutes across 4 to 6 conversational turns. You talk through raw, unedited thoughts one question at a time in your natural phrasing, without needing an outline, slide deck, or prepared notes. Rough answers give the 5E framework the real emotional tension and personal perspective your video needs.
+  - heading "What happens after my first script?" [level=3]
+  - paragraph: When your first script is finished, it is ready to record. You can copy it directly to your teleprompter or download the text file to film your video. Once you film, mark it filmed or start your next script to build momentum. Your saved scripts stay in your library and your standing story profile carries forward what StorySculpt learned about your voice and audience into every new script you create.
   - heading "Can I archive or delete a chat?" [level=3]
   - paragraph: "Archive is not available yet. Delete is the one irreversible step: after you confirm, it removes the chat and its saved script. Leaving or pausing does not delete anything."
   - heading "What should I do next?" [level=3]
@@ -490,7 +536,7 @@ Browser: `webkit`. Captured from the rendered accessibility tree; every network 
 
 ## first-visit
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/132-a11y-first-visit.jpg`  
+Screenshot: `docs/storysculpt-walk/webkit/shots/134-a11y-first-visit.jpg`
 Transcript: `a11y/first-visit.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a script the way you talk.” → h3 “Turn raw thoughts into video scripts that sound like you.” → h4 “Why the 5E interview keeps your voice” → h4 “What to expect: 5 to 10 minutes” → h4 “What happens when your script is ready”
@@ -568,7 +614,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a scrip
 
 ## interview
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/133-a11y-interview.jpg`  
+Screenshot: `docs/storysculpt-walk/webkit/shots/135-a11y-interview.jpg`
 Transcript: `a11y/interview.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor”
@@ -610,7 +656,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+  - article:
+    - text: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Tell me about a specific time a client had all the features they thought they wanted and still failed.
     - button "Copy":
@@ -619,7 +669,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+  - article:
+    - text: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt What was the one realization that turned it around for them?
     - button "Regenerate":
@@ -641,7 +695,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## finished
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/134-a11y-finished.jpg`  
+Screenshot: `docs/storysculpt-walk/webkit/shots/136-a11y-finished.jpg`
 Transcript: `a11y/finished.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor”
@@ -689,7 +743,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You Stop pitching features. Pitch certainty.
+  - article:
+    - text: You Stop pitching features. Pitch certainty.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Tell me about a time that proved this.
     - button "Copy":
@@ -698,7 +756,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You When we stopped listing features and focused on the outcome, conversion doubled in two weeks.
+  - article:
+    - text: You When we stopped listing features and focused on the outcome, conversion doubled in two weeks.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Your script is assembled and ready to film below.
     - button "Copy":
@@ -729,7 +791,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## story-profile
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/135-a11y-story-profile.jpg`  
+Screenshot: `docs/storysculpt-walk/webkit/shots/137-a11y-story-profile.jpg`
 Transcript: `a11y/story-profile.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Set this once. Every chat reads it.”
@@ -771,7 +833,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+  - article:
+    - text: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Tell me about a specific time a client had all the features they thought they wanted and still failed.
     - button "Copy":
@@ -780,7 +846,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+  - article:
+    - text: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt What was the one realization that turned it around for them?
     - button "Regenerate":
@@ -840,10 +910,10 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## help-dialog
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/136-a11y-help-dialog.jpg`  
+Screenshot: `docs/storysculpt-walk/webkit/shots/138-a11y-help-dialog.jpg`
 Transcript: `a11y/help-dialog.yml`
 
-Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Help & privacy” → h3 “Who makes this?” → h3 “What happens to my work?” → h3 “Can I change the format?” → h3 “Can I pause and come back?” → h3 “What does finishing a script mean?” → h3 “Can I archive or delete a chat?” → h3 “What should I do next?” → h3 “Where do I get help?”
+Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Help & privacy” → h3 “Who makes this?” → h3 “What does membership include, and how does it renew?” → h3 “What happens to my work?” → h3 “Can I change the format?” → h3 “Can I pause and come back?” → h3 “What does finishing a script mean?” → h3 “How long does an interview take?” → h3 “What happens after my first script?” → h3 “Can I archive or delete a chat?” → h3 “What should I do next?” → h3 “Where do I get help?”
 
 ```yaml
 - banner:
@@ -882,7 +952,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+  - article:
+    - text: You Everyone in SaaS keeps pitching features instead of outcomes. People do not buy code, they buy certainty.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt Tell me about a specific time a client had all the features they thought they wanted and still failed.
     - button "Copy":
@@ -891,7 +965,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Use as Script":
       - img
       - text: Use as Script
-  - article: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+  - article:
+    - text: You A founder spent nine months building twenty-four integrations. Zero users because nobody understood what problem it actually solved.
+    - button "Don’t use this":
+      - img
+      - text: Don’t use this
   - article:
     - text: StorySculpt What was the one realization that turned it around for them?
     - button "Regenerate":
@@ -916,6 +994,16 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - img
   - heading "Who makes this?" [level=3]
   - paragraph: Built and supported by David Bee. StorySculpt is part of The Momentum Hub, and every step of it follows David's own scriptwriting method.
+  - heading "What does membership include, and how does it renew?" [level=3]
+  - paragraph: StorySculpt is included with The Momentum Hub's $250 USD monthly membership, plus any applicable tax. It renews automatically each month until cancelled. Your checkout states the terms for your purchase; a separate program or manual access grant can have different terms.
+  - paragraph:
+    - text: For cancellation, contact
+    - link "email@davidbee.me":
+      - /url: mailto:email@davidbee.me?subject=Momentum%20Hub%20membership
+    - text: . When Studio processes a cancellation, access from that purchase ends without an automatic wait until the billing period ends. Another active grant can still provide access. Cancellation does not automatically delete your saved work, but keeping records does not guarantee continued access or permanent storage. Copy or download scripts you want to keep before access ends. Read the
+    - link "billing, access, and cancellation terms":
+      - /url: /terms#pricing-cancellation
+    - text: .
   - heading "What happens to my work?" [level=3]
   - paragraph: Your chats, project titles, notes, finished scripts, and story profile are saved to your Studio account so you can return to them. When you ask StorySculpt to continue or revise, your title, profile, notes, and recent messages are processed by the AI model that writes your next question or draft, guided by David's method and your own words. Do not enter anything you do not want processed by an AI service.
   - paragraph: "Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them. You can delete a chat and its saved script with the Delete button inside that chat. Your standing story profile is separate and can be edited from Story profile."
@@ -925,6 +1013,10 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
   - paragraph: "Yes. Leaving does not delete your project. Reopen the chat to resume the interview where you stopped. Check the save indicator before closing the browser: Saving means a write is pending, Saved means it was acknowledged, and Not saved means the latest change has not reached your account yet. Changes kept only on this device are not available on another device until saved."
   - heading "What does finishing a script mean?" [level=3]
   - paragraph: Finishing closes the interview to new turns and assembles your answers into a script you can record. Use Refine to revise the finished script. Copy it or download the text file when you are ready to film. Your saved script does not expire; it stays in your account until you delete it.
+  - heading "How long does an interview take?" [level=3]
+  - paragraph: An interview takes about 5 to 10 minutes across 4 to 6 conversational turns. You talk through raw, unedited thoughts one question at a time in your natural phrasing, without needing an outline, slide deck, or prepared notes. Rough answers give the 5E framework the real emotional tension and personal perspective your video needs.
+  - heading "What happens after my first script?" [level=3]
+  - paragraph: When your first script is finished, it is ready to record. You can copy it directly to your teleprompter or download the text file to film your video. Once you film, mark it filmed or start your next script to build momentum. Your saved scripts stay in your library and your standing story profile carries forward what StorySculpt learned about your voice and audience into every new script you create.
   - heading "Can I archive or delete a chat?" [level=3]
   - paragraph: "Archive is not available yet. Delete is the one irreversible step: after you confirm, it removes the chat and its saved script. Leaving or pausing does not delete anything."
   - heading "What should I do next?" [level=3]

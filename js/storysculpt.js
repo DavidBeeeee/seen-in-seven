@@ -1718,6 +1718,8 @@ function showStart() {
   const isFirstVisit = !storyProjects || storyProjects.length === 0;
   const startEl = storyEl('story-start');
   if (startEl) startEl.dataset.firstVisit = isFirstVisit ? 'true' : 'false';
+  const firstRunCard = storyEl('story-first-run-card');
+  if (firstRunCard) firstRunCard.hidden = !isFirstVisit;
   const orientationEyebrow = storyEl('story-orientation-eyebrow');
   if (orientationEyebrow) {
     orientationEyebrow.innerHTML = isFirstVisit

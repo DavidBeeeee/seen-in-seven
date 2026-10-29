@@ -1,8 +1,8 @@
 # StorySculpt rendered walk: Chromium and WebKit
 
-Run 2026-10-28T05:24:54.887Z against the real rendered `api/_hub/storysculpt.html`. Both browsers ran the same lifecycle, keyboard, axe, responsive-layout and accessibility-tree passes. Every network call was stubbed.
+Run 2026-10-29T04:57:13.430Z against the real rendered `api/_hub/storysculpt.html`. Both browsers ran the same lifecycle, keyboard, axe, responsive-layout and accessibility-tree passes. Every network call was stubbed.
 
-**40 of 40 checks pass across both browsers. 0 findings.**
+**52 of 52 checks pass across both browsers. 0 findings.**
 
 ## Browser differences
 
@@ -280,8 +280,14 @@ Readable per-screen transcripts are in `docs/storysculpt-walk/screen-reader.md`;
 - PASS [chromium] keyboard-only walk light 375px: 28 stops via Tab, 0 without visible focus
 - PASS [chromium] Escape closes the help dialog: closed
 - PASS [chromium] first visit greets member with clear start: Start a script the way you talk.
+- PASS [chromium] first visit explains 5E and voice in one place: card visible=true, 5E/voice=true
+- PASS [chromium] return visit does not repeat the orientation: card visible=false, title=Start a new script.
+- PASS [chromium] Help answers how long and what happens after: how long=true, what after=true
 - PASS [chromium] 60-turn fixture collapses earlier turns: 12 visible messages before expand
+- PASS [chromium] collapsed thread includes a bounded earlier-answer excerpt, not a new card: Last earlier answer: “Turn 48: Audit their customer list and find the top twenty percent that generates eighty percent of margin.”
 - PASS [chromium] expanding 60-turn fixture renders all turns without fault: 60 messages rendered
+- PASS [chromium] earlier-answer recap disappears when the actual history is open: expanded history replaces the excerpt
+- PASS [chromium] answer exclusion is visible, saved and reversible: excluded=1, pressed=1, saved=true, restored=true, restoredSaved=true
 - PASS [chromium] /rant step path loads with 5E Talking Head mode: 5E Talking Head
 - PASS [chromium] finished script renders script text and refine box: Here is why your product is not selling.
 
@@ -289,10 +295,10 @@ You keep
 - PASS [chromium] network drop mid-generation: reports error and keeps composer usable: send button enabled=true
 - PASS [chromium] signed-out member meets the access gate: gate visible=true
 - PASS [chromium] screen-reader first-visit: every control is named and headings form an outline: 0 faults, 10 controls, 7 headings
-- PASS [chromium] screen-reader interview: every control is named and headings form an outline: 0 faults, 19 controls, 3 headings
-- PASS [chromium] screen-reader finished: every control is named and headings form an outline: 0 faults, 23 controls, 3 headings
-- PASS [chromium] screen-reader story-profile: every control is named and headings form an outline: 0 faults, 33 controls, 4 headings
-- PASS [chromium] screen-reader help-dialog: every control is named and headings form an outline: 0 faults, 24 controls, 12 headings
+- PASS [chromium] screen-reader interview: every control is named and headings form an outline: 0 faults, 21 controls, 3 headings
+- PASS [chromium] screen-reader finished: every control is named and headings form an outline: 0 faults, 25 controls, 3 headings
+- PASS [chromium] screen-reader story-profile: every control is named and headings form an outline: 0 faults, 35 controls, 4 headings
+- PASS [chromium] screen-reader help-dialog: every control is named and headings form an outline: 0 faults, 28 controls, 15 headings
 - PASS [chromium] no request left the machine except font and icon GETs; zero POSTs to production: 0 refused, 0 non-benign
 - PASS [webkit] layout holds at 375/1280, 200% zoom, 24px font, light and dark across 10 screens: 0 layout faults
 - PASS [webkit] zero serious or critical axe-core violations (WCAG 2.1 A/AA) on every state, light and dark: 0 serious/critical
@@ -302,8 +308,14 @@ You keep
 - PASS [webkit] keyboard-only walk light 375px: 25 stops via Alt+Tab, 0 without visible focus
 - PASS [webkit] Escape closes the help dialog: closed
 - PASS [webkit] first visit greets member with clear start: Start a script the way you talk.
+- PASS [webkit] first visit explains 5E and voice in one place: card visible=true, 5E/voice=true
+- PASS [webkit] return visit does not repeat the orientation: card visible=false, title=Start a new script.
+- PASS [webkit] Help answers how long and what happens after: how long=true, what after=true
 - PASS [webkit] 60-turn fixture collapses earlier turns: 12 visible messages before expand
+- PASS [webkit] collapsed thread includes a bounded earlier-answer excerpt, not a new card: Last earlier answer: “Turn 48: Audit their customer list and find the top twenty percent that generates eighty percent of margin.”
 - PASS [webkit] expanding 60-turn fixture renders all turns without fault: 60 messages rendered
+- PASS [webkit] earlier-answer recap disappears when the actual history is open: expanded history replaces the excerpt
+- PASS [webkit] answer exclusion is visible, saved and reversible: excluded=1, pressed=1, saved=true, restored=true, restoredSaved=true
 - PASS [webkit] /rant step path loads with 5E Talking Head mode: 5E Talking Head
 - PASS [webkit] finished script renders script text and refine box: Here is why your product is not selling.
 
@@ -311,10 +323,10 @@ You keep
 - PASS [webkit] network drop mid-generation: reports error and keeps composer usable: send button enabled=true
 - PASS [webkit] signed-out member meets the access gate: gate visible=true
 - PASS [webkit] screen-reader first-visit: every control is named and headings form an outline: 0 faults, 10 controls, 7 headings
-- PASS [webkit] screen-reader interview: every control is named and headings form an outline: 0 faults, 18 controls, 3 headings
-- PASS [webkit] screen-reader finished: every control is named and headings form an outline: 0 faults, 22 controls, 3 headings
-- PASS [webkit] screen-reader story-profile: every control is named and headings form an outline: 0 faults, 27 controls, 4 headings
-- PASS [webkit] screen-reader help-dialog: every control is named and headings form an outline: 0 faults, 23 controls, 12 headings
+- PASS [webkit] screen-reader interview: every control is named and headings form an outline: 0 faults, 20 controls, 3 headings
+- PASS [webkit] screen-reader finished: every control is named and headings form an outline: 0 faults, 24 controls, 3 headings
+- PASS [webkit] screen-reader story-profile: every control is named and headings form an outline: 0 faults, 29 controls, 4 headings
+- PASS [webkit] screen-reader help-dialog: every control is named and headings form an outline: 0 faults, 27 controls, 15 headings
 - PASS [webkit] no request left the machine except font and icon GETs; zero POSTs to production: 0 refused, 0 non-benign
 
 ## Findings

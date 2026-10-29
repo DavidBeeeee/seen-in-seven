@@ -1,5 +1,5 @@
 {
- "at": "2026-10-28T12:10:44.020Z",
+ "at": "2026-10-29T04:57:13.402Z",
  "browser": "webkit",
  "checks": [
   {
@@ -52,15 +52,45 @@
   },
   {
    "browser": "webkit",
+   "name": "first visit explains 5E and voice in one place",
+   "pass": true,
+   "evidence": "card visible=true, 5E/voice=true"
+  },
+  {
+   "browser": "webkit",
+   "name": "return visit does not repeat the orientation",
+   "pass": true,
+   "evidence": "card visible=false, title=Start a new script."
+  },
+  {
+   "browser": "webkit",
+   "name": "Help answers how long and what happens after",
+   "pass": true,
+   "evidence": "how long=true, what after=true"
+  },
+  {
+   "browser": "webkit",
    "name": "60-turn fixture collapses earlier turns",
    "pass": true,
    "evidence": "12 visible messages before expand"
   },
   {
    "browser": "webkit",
+   "name": "collapsed thread includes a bounded earlier-answer excerpt, not a new card",
+   "pass": true,
+   "evidence": "Last earlier answer: “Turn 48: Audit their customer list and find the top twenty percent that generates eighty percent of margin.”"
+  },
+  {
+   "browser": "webkit",
    "name": "expanding 60-turn fixture renders all turns without fault",
    "pass": true,
    "evidence": "60 messages rendered"
+  },
+  {
+   "browser": "webkit",
+   "name": "earlier-answer recap disappears when the actual history is open",
+   "pass": true,
+   "evidence": "expanded history replaces the excerpt"
   },
   {
    "browser": "webkit",
@@ -120,7 +150,7 @@
    "browser": "webkit",
    "name": "screen-reader help-dialog: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 25 controls, 12 headings"
+   "evidence": "0 faults, 27 controls, 15 headings"
   },
   {
    "browser": "webkit",
@@ -1384,7 +1414,7 @@
    "browser": "webkit",
    "screen": "first-visit",
    "pass": true,
-   "shot": "docs/storysculpt-walk/webkit/shots/133-a11y-first-visit.jpg",
+   "shot": "docs/storysculpt-walk/webkit/shots/134-a11y-first-visit.jpg",
    "transcript": "a11y/first-visit.yml",
    "headings": [
     {
@@ -1422,7 +1452,7 @@
    "browser": "webkit",
    "screen": "interview",
    "pass": true,
-   "shot": "docs/storysculpt-walk/webkit/shots/134-a11y-interview.jpg",
+   "shot": "docs/storysculpt-walk/webkit/shots/135-a11y-interview.jpg",
    "transcript": "a11y/interview.yml",
    "headings": [
     {
@@ -1444,7 +1474,7 @@
    "browser": "webkit",
    "screen": "finished",
    "pass": true,
-   "shot": "docs/storysculpt-walk/webkit/shots/135-a11y-finished.jpg",
+   "shot": "docs/storysculpt-walk/webkit/shots/136-a11y-finished.jpg",
    "transcript": "a11y/finished.yml",
    "headings": [
     {
@@ -1466,7 +1496,7 @@
    "browser": "webkit",
    "screen": "story-profile",
    "pass": true,
-   "shot": "docs/storysculpt-walk/webkit/shots/136-a11y-story-profile.jpg",
+   "shot": "docs/storysculpt-walk/webkit/shots/137-a11y-story-profile.jpg",
    "transcript": "a11y/story-profile.yml",
    "headings": [
     {
@@ -1492,7 +1522,7 @@
    "browser": "webkit",
    "screen": "help-dialog",
    "pass": true,
-   "shot": "docs/storysculpt-walk/webkit/shots/137-a11y-help-dialog.jpg",
+   "shot": "docs/storysculpt-walk/webkit/shots/138-a11y-help-dialog.jpg",
    "transcript": "a11y/help-dialog.yml",
    "headings": [
     {
@@ -1517,6 +1547,10 @@
     },
     {
      "level": 3,
+     "text": "What does membership include, and how does it renew?"
+    },
+    {
+     "level": 3,
      "text": "What happens to my work?"
     },
     {
@@ -1533,6 +1567,14 @@
     },
     {
      "level": 3,
+     "text": "How long does an interview take?"
+    },
+    {
+     "level": 3,
+     "text": "What happens after my first script?"
+    },
+    {
+     "level": 3,
      "text": "Can I archive or delete a chat?"
     },
     {
@@ -1544,7 +1586,7 @@
      "text": "Where do I get help?"
     }
    ],
-   "controls": 25
+   "controls": 27
   }
  ]
 }

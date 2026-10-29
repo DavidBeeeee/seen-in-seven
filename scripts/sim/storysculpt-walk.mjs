@@ -528,12 +528,39 @@ async function keyboardWalk(browser) {
 
 // ── 4. Lifecycle & Feature Coverage ────────────────────────────────────────
 async function lifecyclePass(browser) {
-  // First visit greeting
+  // First visit greeting and orientation card (WBR-462: Stranger 3, 4, 7, 8, 15-22, 27-29; UX 21-24, 26, 28, 29)
   {
     const { context, page } = await open(browser, 'first', { width: 1280 });
     const title = await page.locator('#story-page-title').textContent();
     check('first visit greets member with clear start', /Start a script/i.test(title), title);
+    const card = page.locator('#story-first-run-card');
+    const cardVisible = await card.isVisible();
+    const cardText = await card.textContent();
+    const explains5EAndVoice = /5E/i.test(cardText) && /voice/i.test(cardText);
+    check('first visit explains 5E and voice in one place', cardVisible && explains5EAndVoice, 'card visible=' + cardVisible + ', 5E/voice=' + explains5EAndVoice);
     await shot(page, 'lifecycle-first-visit');
+    await context.close();
+  }
+
+  // Return visit does not repeat orientation card
+  {
+    const { context, page } = await open(browser, 'interview', { width: 1280 });
+    await page.evaluate(() => { if (typeof showStart === 'function') showStart(); });
+    await page.waitForTimeout(100);
+    const cardVisible = await page.locator('#story-first-run-card').isVisible();
+    const returnTitle = await page.locator('#story-page-title').textContent();
+    check('return visit does not repeat the orientation', !cardVisible && /Start a new script/i.test(returnTitle), 'card visible=' + cardVisible + ', title=' + returnTitle);
+    await shot(page, 'lifecycle-return-visit');
+    await context.close();
+  }
+
+  // Help answers how long an interview takes and what happens after
+  {
+    const { context, page } = await open(browser, 'first', { width: 1280, openHelp: true });
+    const helpText = await page.locator('#story-help').textContent();
+    const answersHowLong = /5 to 10 minutes/i.test(helpText) && /How long does an interview take/i.test(helpText);
+    const answersWhatHappensAfter = /What happens after my first script/i.test(helpText);
+    check('Help answers how long and what happens after', answersHowLong && answersWhatHappensAfter, 'how long=' + answersHowLong + ', what after=' + answersWhatHappensAfter);
     await context.close();
   }
 
