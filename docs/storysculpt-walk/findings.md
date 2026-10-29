@@ -1,8 +1,8 @@
 # StorySculpt rendered walk: Chromium and WebKit
 
-Run 2026-10-29T04:57:13.430Z against the real rendered `api/_hub/storysculpt.html`. Both browsers ran the same lifecycle, keyboard, axe, responsive-layout and accessibility-tree passes. Every network call was stubbed.
+Run 2026-10-29T14:42:22.150Z against the real rendered `api/_hub/storysculpt.html`. Both browsers ran the same lifecycle, keyboard, axe, responsive-layout and accessibility-tree passes. Every network call was stubbed.
 
-**52 of 52 checks pass across both browsers. 0 findings.**
+**58 of 58 checks pass across both browsers. 0 findings.**
 
 ## Browser differences
 
@@ -257,14 +257,14 @@ No pass/fail differences between Chromium and WebKit were observed.
 
 | Browser | Navigation key | Theme | Width | Result | Focus stops | Invisible focus stops | Focus order | Screenshot |
 |---|---|---|---:|---|---:|---:|---|---|
-| chromium | Tab | dark | 1280 | PASS | 28 | 0 | chromium/focus-order.json | docs/storysculpt-walk/chromium/shots/021-keyboard-journey-dark-1280.jpg |
-| chromium | Tab | dark | 375 | PASS | 28 | 0 |  | docs/storysculpt-walk/chromium/shots/022-keyboard-journey-dark-375.jpg |
-| chromium | Tab | light | 1280 | PASS | 28 | 0 |  | docs/storysculpt-walk/chromium/shots/023-keyboard-journey-light-1280.jpg |
-| chromium | Tab | light | 375 | PASS | 28 | 0 |  | docs/storysculpt-walk/chromium/shots/024-keyboard-journey-light-375.jpg |
-| webkit | Alt+Tab | dark | 1280 | PASS | 25 | 0 | webkit/focus-order.json | docs/storysculpt-walk/webkit/shots/121-keyboard-journey-dark-1280.jpg |
-| webkit | Alt+Tab | dark | 375 | PASS | 25 | 0 |  | docs/storysculpt-walk/webkit/shots/122-keyboard-journey-dark-375.jpg |
-| webkit | Alt+Tab | light | 1280 | PASS | 25 | 0 |  | docs/storysculpt-walk/webkit/shots/123-keyboard-journey-light-1280.jpg |
-| webkit | Alt+Tab | light | 375 | PASS | 25 | 0 |  | docs/storysculpt-walk/webkit/shots/124-keyboard-journey-light-375.jpg |
+| chromium | Tab | dark | 1280 | PASS | 29 | 0 | chromium/focus-order.json | docs/storysculpt-walk/chromium/shots/021-keyboard-journey-dark-1280.jpg |
+| chromium | Tab | dark | 375 | PASS | 29 | 0 |  | docs/storysculpt-walk/chromium/shots/022-keyboard-journey-dark-375.jpg |
+| chromium | Tab | light | 1280 | PASS | 29 | 0 |  | docs/storysculpt-walk/chromium/shots/023-keyboard-journey-light-1280.jpg |
+| chromium | Tab | light | 375 | PASS | 29 | 0 |  | docs/storysculpt-walk/chromium/shots/024-keyboard-journey-light-375.jpg |
+| webkit | Alt+Tab | dark | 1280 | PASS | 26 | 0 | webkit/focus-order.json | docs/storysculpt-walk/webkit/shots/121-keyboard-journey-dark-1280.jpg |
+| webkit | Alt+Tab | dark | 375 | PASS | 26 | 0 |  | docs/storysculpt-walk/webkit/shots/122-keyboard-journey-dark-375.jpg |
+| webkit | Alt+Tab | light | 1280 | PASS | 26 | 0 |  | docs/storysculpt-walk/webkit/shots/123-keyboard-journey-light-1280.jpg |
+| webkit | Alt+Tab | light | 375 | PASS | 26 | 0 |  | docs/storysculpt-walk/webkit/shots/124-keyboard-journey-light-375.jpg |
 
 ## Screen reader
 
@@ -274,10 +274,10 @@ Readable per-screen transcripts are in `docs/storysculpt-walk/screen-reader.md`;
 
 - PASS [chromium] layout holds at 375/1280, 200% zoom, 24px font, light and dark across 10 screens: 0 layout faults
 - PASS [chromium] zero serious or critical axe-core violations (WCAG 2.1 A/AA) on every state, light and dark: 0 serious/critical
-- PASS [chromium] keyboard-only walk dark 1280px: 28 stops via Tab, 0 without visible focus
-- PASS [chromium] keyboard-only walk dark 375px: 28 stops via Tab, 0 without visible focus
-- PASS [chromium] keyboard-only walk light 1280px: 28 stops via Tab, 0 without visible focus
-- PASS [chromium] keyboard-only walk light 375px: 28 stops via Tab, 0 without visible focus
+- PASS [chromium] keyboard-only walk dark 1280px: 29 stops via Tab, 0 without visible focus
+- PASS [chromium] keyboard-only walk dark 375px: 29 stops via Tab, 0 without visible focus
+- PASS [chromium] keyboard-only walk light 1280px: 29 stops via Tab, 0 without visible focus
+- PASS [chromium] keyboard-only walk light 375px: 29 stops via Tab, 0 without visible focus
 - PASS [chromium] Escape closes the help dialog: closed
 - PASS [chromium] first visit greets member with clear start: Start a script the way you talk.
 - PASS [chromium] first visit explains 5E and voice in one place: card visible=true, 5E/voice=true
@@ -292,6 +292,9 @@ Readable per-screen transcripts are in `docs/storysculpt-walk/screen-reader.md`;
 - PASS [chromium] finished script renders script text and refine box: Here is why your product is not selling.
 
 You keep
+- PASS [chromium] finished interview says it is finished and shows one next action: finishedLine=Interview finished. This script is finished. Refine it with a note or start a new chat.New chat; nextStep=Film this script, then mark it Filmed.
+- PASS [chromium] Refine reopens the script and the walk proves it: revised script active with v2 (latest)
+- PASS [chromium] a new turn after finish is explained, not a raw 409: This script is already finished. Use Refine with a note to change it.
 - PASS [chromium] network drop mid-generation: reports error and keeps composer usable: send button enabled=true
 - PASS [chromium] signed-out member meets the access gate: gate visible=true
 - PASS [chromium] screen-reader first-visit: every control is named and headings form an outline: 0 faults, 10 controls, 7 headings
@@ -302,10 +305,10 @@ You keep
 - PASS [chromium] no request left the machine except font and icon GETs; zero POSTs to production: 0 refused, 0 non-benign
 - PASS [webkit] layout holds at 375/1280, 200% zoom, 24px font, light and dark across 10 screens: 0 layout faults
 - PASS [webkit] zero serious or critical axe-core violations (WCAG 2.1 A/AA) on every state, light and dark: 0 serious/critical
-- PASS [webkit] keyboard-only walk dark 1280px: 25 stops via Alt+Tab, 0 without visible focus
-- PASS [webkit] keyboard-only walk dark 375px: 25 stops via Alt+Tab, 0 without visible focus
-- PASS [webkit] keyboard-only walk light 1280px: 25 stops via Alt+Tab, 0 without visible focus
-- PASS [webkit] keyboard-only walk light 375px: 25 stops via Alt+Tab, 0 without visible focus
+- PASS [webkit] keyboard-only walk dark 1280px: 26 stops via Alt+Tab, 0 without visible focus
+- PASS [webkit] keyboard-only walk dark 375px: 26 stops via Alt+Tab, 0 without visible focus
+- PASS [webkit] keyboard-only walk light 1280px: 26 stops via Alt+Tab, 0 without visible focus
+- PASS [webkit] keyboard-only walk light 375px: 26 stops via Alt+Tab, 0 without visible focus
 - PASS [webkit] Escape closes the help dialog: closed
 - PASS [webkit] first visit greets member with clear start: Start a script the way you talk.
 - PASS [webkit] first visit explains 5E and voice in one place: card visible=true, 5E/voice=true
@@ -320,6 +323,9 @@ You keep
 - PASS [webkit] finished script renders script text and refine box: Here is why your product is not selling.
 
 You keep
+- PASS [webkit] finished interview says it is finished and shows one next action: finishedLine=Interview finished. This script is finished. Refine it with a note or start a new chat.New chat; nextStep=Film this script, then mark it Filmed.
+- PASS [webkit] Refine reopens the script and the walk proves it: revised script active with v2 (latest)
+- PASS [webkit] a new turn after finish is explained, not a raw 409: This script is already finished. Use Refine with a note to change it.
 - PASS [webkit] network drop mid-generation: reports error and keeps composer usable: send button enabled=true
 - PASS [webkit] signed-out member meets the access gate: gate visible=true
 - PASS [webkit] screen-reader first-visit: every control is named and headings form an outline: 0 faults, 10 controls, 7 headings

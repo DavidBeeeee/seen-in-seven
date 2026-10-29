@@ -2066,7 +2066,8 @@ async function regenerateScript() {
     const data = await runGeneration('regenerate', { target: 'final', note, previous: activeStory.output, messages: interviewMessages() });
     hideThinkingIndicator();
     if (data.final) {
-      versions.push({ version: versions.length + 1, note: note ? 'Regenerated: ' + note : 'Regenerated', content: data.content, createdAt: new Date().toISOString() });
+      const currentVersions = ensureVersions(activeStory);
+      currentVersions.push({ version: currentVersions.length + 1, note: note ? 'Regenerated: ' + note : 'Regenerated', content: data.content, createdAt: new Date().toISOString() });
       viewingVersionIndex = -1;
       noteEl.value = '';
       autoGrow(noteEl);
@@ -2135,7 +2136,12 @@ async function runGeneration(intent = 'interview', options = {}) {
     recordStoryFailure('delivery-error', '', response.status);
     throw new Error('StorySculpt\'s reply did not arrive in one piece. Your answers are still saved, so please try again.');
   }
-  if (!response.ok) throw new Error(data.error || 'StorySculpt could not complete this step. Your project is saved, so please try this step again.');
+  if (!response.ok) {
+    if (response.status === 409) {
+      throw new Error((data && data.error) || 'This script is already finished. Use Refine with a note to change it.');
+    }
+    throw new Error(data.error || 'StorySculpt could not complete this step. Your project is saved, so please try this step again.');
+  }
   if (data.final) {
     activeStory.output = data.content;
     adoptScriptTitle(data.title);
@@ -2321,7 +2327,14 @@ async function executeInterviewGeneration() {
     const cleanMsg = (error && error.message) || 'This step did not finish. Your answers are still saved.';
     status.textContent = cleanMsg;
     status.classList.add('error');
-    showErrorInConversation(cleanMsg, () => retryInterviewGeneration());
+    const isFinished = /already finished|locked|Refine/i.test(cleanMsg);
+    showErrorInConversation(cleanMsg, isFinished ? null : () => retryInterviewGeneration());
+    if (isFinished) {
+      const refineBox = storyEl('story-refine-box');
+      if (refineBox) refineBox.hidden = false;
+      const refineNote = storyEl('story-refine-note');
+      if (refineNote) refineNote.focus();
+    }
   } finally {
     if (button) button.disabled = false;
     if (!failed && !activeStory.output) {
@@ -2342,8 +2355,14 @@ async function sendStoryAnswer(event) {
   }
   if (!activeStory || !answer || storySending) return;
   if (activeStory.output) {
-    storyEl('story-refine-status').textContent = STATES.FINISHED_LINE;
-    storyEl('story-refine-note').focus();
+    const status = storyEl('story-refine-status');
+    if (status) {
+      status.textContent = STATES.FINISHED_LINE;
+      status.className = 'eee-message story-refine-status';
+    }
+    showErrorInConversation('Interview finished. ' + STATES.FINISHED_LINE);
+    const refineNote = storyEl('story-refine-note');
+    if (refineNote) refineNote.focus();
     return;
   }
 
@@ -2389,7 +2408,7 @@ async function executeRefineGeneration(note) {
   const status = storyEl('story-refine-status');
   status.textContent = 'Revising your script with that note.';
   status.className = 'eee-message story-refine-status';
-  const versions = ensureVersions(activeStory);
+  let versions = ensureVersions(activeStory);
 
   try {
     await saveActiveStory();
@@ -2400,6 +2419,7 @@ async function executeRefineGeneration(note) {
       status.textContent = 'Script revised.';
       status.className = 'eee-message story-refine-status success';
 
+      versions = ensureVersions(activeStory);
       const nextVerNum = versions.length + 1;
       activeStory.output = data.content;
       versions.push({
@@ -2481,7 +2501,7 @@ async function convertToPoints() {
   if (!activeStory || !activeStory.output) return;
   const button = storyEl('points-story-output');
   const status = storyEl('story-refine-status');
-  const versions = ensureVersions(activeStory);
+  let versions = ensureVersions(activeStory);
   if (viewingVersionIndex !== -1 && viewingVersionIndex < versions.length - 1) {
     status.textContent = 'Bullet points are made from your latest version. Open it first, or restore this one as the active draft.';
     status.className = 'eee-message story-refine-status error';
@@ -2501,6 +2521,7 @@ async function convertToPoints() {
     await saveActiveStory();
     const data = await runGeneration('points');
     if (!data || !data.final) throw new Error('StorySculpt could not make your bullet points just now. Your script is unchanged, so please try again.');
+    versions = ensureVersions(activeStory);
     versions.push({
       version: versions.length + 1,
       note: 'Bullet points',

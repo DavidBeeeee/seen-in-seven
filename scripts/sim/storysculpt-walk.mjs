@@ -186,6 +186,15 @@ function makeWorld(stateName) {
       }
 
       // Interview intent
+      const proj = w.projects.find(p => p.id === body.projectId) || w.projects[0];
+      if (proj && proj.output && !w.mode.forceFinal) {
+        return route.fulfill({
+          status: 409,
+          contentType: 'application/json',
+          body: JSON.stringify({ ok: false, error: 'This script is already finished. Use Refine with a note to change it.' })
+        });
+      }
+
       const msgCount = Array.isArray(body.messages) ? body.messages.length : 0;
       if (w.mode.forceFinal || msgCount >= 4) {
         return ok({
@@ -615,12 +624,44 @@ async function lifecyclePass(browser) {
     await context.close();
   }
 
-  // Finished script and versions
+  // Finished script, ending cues, refine, and new turn guard (WBR-462)
   {
     const { context, page } = await open(browser, 'finished', { width: 1280 });
     const outputText = await page.locator('#story-output-copy').inputValue();
     const refineBoxVisible = await page.locator('#story-refine-box').isVisible();
     check('finished script renders script text and refine box', outputText.length > 50 && refineBoxVisible, outputText.slice(0, 50));
+
+    // 1. Finished interview is named as finished and shows one specific next action
+    const finishedLineText = (await page.locator('#story-finished-line').textContent()).trim().replace(/\s+/g, ' ');
+    const nextStepText = (await page.locator('#story-next-step-footer .story-next-step-text').textContent()).trim().replace(/\s+/g, ' ');
+    const namesFinished = /Interview finished/i.test(finishedLineText);
+    const hasNextStep = /Film this script|Mark filmed/i.test(nextStepText);
+    check('finished interview says it is finished and shows one next action', namesFinished && hasNextStep, 'finishedLine=' + finishedLineText + '; nextStep=' + nextStepText);
+
+    // 2. Refine reopens the script and the walk proves it
+    await page.fill('#story-refine-note', 'Make the hook punchier and emphasize relief.');
+    await page.click('#story-refine-send');
+    await page.waitForFunction(() => {
+      const val = document.getElementById('story-output-copy')?.value || '';
+      return val.includes('Line 1: Hook the viewer immediately');
+    }, null, { timeout: 8000 });
+    const revisedOutput = await page.locator('#story-output-copy').inputValue();
+    const v2Pill = await page.locator('#story-version-pills .story-version-pill.active').textContent();
+    check('Refine reopens the script and the walk proves it', revisedOutput.includes('Line 1: Hook the viewer immediately') && /v2/i.test(v2Pill), 'revised script active with ' + v2Pill);
+
+    // 3. A new turn after finish is explained, not a raw 409
+    const newTurnAttempt = await page.evaluate(async () => {
+      try {
+        await runGeneration('interview');
+        return { ok: true, message: '' };
+      } catch (err) {
+        return { ok: false, message: String(err && err.message) };
+      }
+    });
+    const noRaw409 = !newTurnAttempt.message.includes('409');
+    const explainsFinish = /already finished|Refine/i.test(newTurnAttempt.message);
+    check('a new turn after finish is explained, not a raw 409', !newTurnAttempt.ok && noRaw409 && explainsFinish, newTurnAttempt.message);
+
     await shot(page, 'lifecycle-finished');
     await context.close();
   }

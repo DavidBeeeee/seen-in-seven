@@ -35,7 +35,9 @@ async function request(intent, id = projectId) {
 try {
   const continued = await request('interview');
   assert.equal(continued.code, 409);
+  assert.match(continued.body.error, /already finished/i);
   assert.match(continued.body.error, /Refine/);
+  assert.doesNotMatch(continued.body.error, /\b409\b/);
   assert.equal(deepSeekCalls, 0);
   assert.equal(quotaCalls, 0);
 
@@ -46,6 +48,7 @@ try {
   savedOutput = null;
   const prematureRefine = await request('refine');
   assert.equal(prematureRefine.code, 409);
+  assert.doesNotMatch(prematureRefine.body.error, /\b409\b/);
   assert.equal(deepSeekCalls, 0);
   // WBR-428: the history DeepSeek reads carries the contract prefixes the
   // browser strips, so the model is not taught to drop them.

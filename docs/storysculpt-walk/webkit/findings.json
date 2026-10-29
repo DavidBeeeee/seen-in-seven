@@ -1,5 +1,5 @@
 {
- "at": "2026-10-29T04:57:13.402Z",
+ "at": "2026-10-29T14:42:22.092Z",
  "browser": "webkit",
  "checks": [
   {
@@ -18,25 +18,25 @@
    "browser": "webkit",
    "name": "keyboard-only walk dark 1280px",
    "pass": true,
-   "evidence": "25 stops via Alt+Tab, 0 without visible focus"
+   "evidence": "26 stops via Alt+Tab, 0 without visible focus"
   },
   {
    "browser": "webkit",
    "name": "keyboard-only walk dark 375px",
    "pass": true,
-   "evidence": "25 stops via Alt+Tab, 0 without visible focus"
+   "evidence": "26 stops via Alt+Tab, 0 without visible focus"
   },
   {
    "browser": "webkit",
    "name": "keyboard-only walk light 1280px",
    "pass": true,
-   "evidence": "25 stops via Alt+Tab, 0 without visible focus"
+   "evidence": "26 stops via Alt+Tab, 0 without visible focus"
   },
   {
    "browser": "webkit",
    "name": "keyboard-only walk light 375px",
    "pass": true,
-   "evidence": "25 stops via Alt+Tab, 0 without visible focus"
+   "evidence": "26 stops via Alt+Tab, 0 without visible focus"
   },
   {
    "browser": "webkit",
@@ -109,6 +109,24 @@
    "name": "finished script renders script text and refine box",
    "pass": true,
    "evidence": "Here is why your product is not selling.\n\nYou keep"
+  },
+  {
+   "browser": "webkit",
+   "name": "finished interview says it is finished and shows one next action",
+   "pass": true,
+   "evidence": "finishedLine=Interview finished. This script is finished. Refine it with a note or start a new chat.New chat; nextStep=Film this script, then mark it Filmed."
+  },
+  {
+   "browser": "webkit",
+   "name": "Refine reopens the script and the walk proves it",
+   "pass": true,
+   "evidence": "revised script active with v2 (latest)"
+  },
+  {
+   "browser": "webkit",
+   "name": "a new turn after finish is explained, not a raw 409",
+   "pass": true,
+   "evidence": "This script is already finished. Use Refine with a note to change it."
   },
   {
    "browser": "webkit",
@@ -1370,7 +1388,7 @@
    "theme": "dark",
    "width": 1280,
    "pass": true,
-   "stops": 25,
+   "stops": 26,
    "invisibleFocusStops": 0,
    "focusOrder": "focus-order.json",
    "shot": "docs/storysculpt-walk/webkit/shots/121-keyboard-journey-dark-1280.jpg"
@@ -1381,7 +1399,7 @@
    "theme": "dark",
    "width": 375,
    "pass": true,
-   "stops": 25,
+   "stops": 26,
    "invisibleFocusStops": 0,
    "focusOrder": null,
    "shot": "docs/storysculpt-walk/webkit/shots/122-keyboard-journey-dark-375.jpg"
@@ -1392,7 +1410,7 @@
    "theme": "light",
    "width": 1280,
    "pass": true,
-   "stops": 25,
+   "stops": 26,
    "invisibleFocusStops": 0,
    "focusOrder": null,
    "shot": "docs/storysculpt-walk/webkit/shots/123-keyboard-journey-light-1280.jpg"
@@ -1403,7 +1421,7 @@
    "theme": "light",
    "width": 375,
    "pass": true,
-   "stops": 25,
+   "stops": 26,
    "invisibleFocusStops": 0,
    "focusOrder": null,
    "shot": "docs/storysculpt-walk/webkit/shots/124-keyboard-journey-light-375.jpg"

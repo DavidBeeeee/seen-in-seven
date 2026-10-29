@@ -68,7 +68,9 @@
       - text: Use as Script
   - status
   - img
-  - paragraph: This script is finished. Refine it with a note or start a new chat.
+  - paragraph:
+    - strong: Interview finished.
+    - text: This script is finished. Refine it with a note or start a new chat.
   - button "New chat":
     - img
     - text: New chat

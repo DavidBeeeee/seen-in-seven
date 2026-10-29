@@ -94,7 +94,7 @@
   - heading "Can I pause and come back?" [level=3]
   - paragraph: "Yes. Leaving does not delete your project. Reopen the chat to resume the interview where you stopped. Check the save indicator before closing the browser: Saving means a write is pending, Saved means it was acknowledged, and Not saved means the latest change has not reached your account yet. Changes kept only on this device are not available on another device until saved."
   - heading "What does finishing a script mean?" [level=3]
-  - paragraph: Finishing closes the interview to new turns and assembles your answers into a script you can record. Use Refine to revise the finished script. Copy it or download the text file when you are ready to film. Your saved script does not expire; it stays in your account until you delete it.
+  - paragraph: Finishing closes the interview to new turns and assembles your answers into a script you can record. Once a script is finished, the interview is locked so your script stays stable. A new answer cannot be added to a finished interview; use Refine with a note to change the script, or start a new chat for your next script. Copy it or download the text file when you are ready to film. Your saved script does not expire; it stays in your account until you delete it.
   - heading "How long does an interview take?" [level=3]
   - paragraph: An interview takes about 5 to 10 minutes across 4 to 6 conversational turns. You talk through raw, unedited thoughts one question at a time in your natural phrasing, without needing an outline, slide deck, or prepared notes. Rough answers give the 5E framework the real emotional tension and personal perspective your video needs.
   - heading "What happens after my first script?" [level=3]

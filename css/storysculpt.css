@@ -659,6 +659,7 @@ html.studio-light .eee-gate-box .studio-mark {
 .story-finished-line { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-bottom: 4px; }
 .story-finished-line > svg { width: 17px; height: 17px; color: var(--studio-teal); flex-shrink: 0; }
 .story-finished-line p { margin: 0; flex: 1; min-width: 180px; font-size: 14px; font-weight: 700; }
+.story-finished-line p strong { color: var(--studio-teal); }
 .story-finished-line .secondary-button { min-height: 34px; padding: 0 12px; font-size: 13px; }
 .story-show-earlier-wrap { display: flex; justify-content: center; }
 .story-earlier-summary { margin: 0; color: var(--studio-muted); font-size: 13px; line-height: 1.5; overflow-wrap: anywhere; }

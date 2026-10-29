@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
   <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
-  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=wbr462-first-run-v2">
+  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=wbr462-finished-state-v1">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -353,7 +353,7 @@
               <p class="story-composer-status" id="story-generation-status">StorySculpt saves your chat as you go.</p>
 
               <div class="story-refine-box" id="story-refine-box" hidden>
-                <div class="story-finished-line" id="story-finished-line"><i data-lucide="circle-check"></i><p>This script is finished. Refine it with a note or start a new chat.</p><button class="secondary-button" id="story-finished-new" type="button"><i data-lucide="plus"></i><span>New chat</span></button></div>
+                <div class="story-finished-line" id="story-finished-line"><i data-lucide="circle-check"></i><p><strong>Interview finished.</strong> This script is finished. Refine it with a note or start a new chat.</p><button class="secondary-button" id="story-finished-new" type="button"><i data-lucide="plus"></i><span>New chat</span></button></div>
                 <div class="story-next-slot" id="story-next-step-footer"></div>
                 <div class="story-refine-inner">
                   <textarea id="story-refine-note" rows="2" aria-label="What to change in the script" placeholder="What should change? e.g. make it shorter, cut the repeated lesson, give it a warmer ending."></textarea>
@@ -461,7 +461,7 @@
         <section><h3>What happens to my work?</h3><p>Your chats, project titles, notes, finished scripts, and story profile are saved to your Studio account so you can return to them. When you ask StorySculpt to continue or revise, your title, profile, notes, and recent messages are processed by the AI model that writes your next question or draft, guided by David's method and your own words. Do not enter anything you do not want processed by an AI service.</p><p>Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them. You can delete a chat and its saved script with the Delete button inside that chat. Your standing story profile is separate and can be edited from Story profile.</p></section>
         <section><h3>Can I change the format?</h3><p>The format is locked after creation. Start a new script to use a different format; your existing chat stays in your list.</p></section>
         <section><h3>Can I pause and come back?</h3><p>Yes. Leaving does not delete your project. Reopen the chat to resume the interview where you stopped. Check the save indicator before closing the browser: Saving means a write is pending, Saved means it was acknowledged, and Not saved means the latest change has not reached your account yet. Changes kept only on this device are not available on another device until saved.</p></section>
-        <section><h3>What does finishing a script mean?</h3><p>Finishing closes the interview to new turns and assembles your answers into a script you can record. Use Refine to revise the finished script. Copy it or download the text file when you are ready to film. Your saved script does not expire; it stays in your account until you delete it.</p></section>
+        <section><h3>What does finishing a script mean?</h3><p>Finishing closes the interview to new turns and assembles your answers into a script you can record. Once a script is finished, the interview is locked so your script stays stable. A new answer cannot be added to a finished interview; use Refine with a note to change the script, or start a new chat for your next script. Copy it or download the text file when you are ready to film. Your saved script does not expire; it stays in your account until you delete it.</p></section>
         <section><h3>How long does an interview take?</h3><p>An interview takes about 5 to 10 minutes across 4 to 6 conversational turns. You talk through raw, unedited thoughts one question at a time in your natural phrasing, without needing an outline, slide deck, or prepared notes. Rough answers give the 5E framework the real emotional tension and personal perspective your video needs.</p></section>
         <section><h3>What happens after my first script?</h3><p>When your first script is finished, it is ready to record. You can copy it directly to your teleprompter or download the text file to film your video. Once you film, mark it filmed or start your next script to build momentum. Your saved scripts stay in your library and your standing story profile carries forward what StorySculpt learned about your voice and audience into every new script you create.</p></section>
         <section><h3>Can I archive or delete a chat?</h3><p>Archive is not available yet. Delete is the one irreversible step: after you confirm, it removes the chat and its saved script. Leaving or pausing does not delete anything.</p></section>
@@ -470,6 +470,6 @@
       </div>
     </aside>
   </div>
-  <script src="/js/eee-common.js?v=per-app-access-v1"></script><script src="/js/storysculpt-member-states.js?v=wbr462-earlier-answer-v1"></script><script src="/js/storysculpt.js?v=wbr462-first-run-v2"></script><script src="/js/voice-input.js?v=voice-sessions-1"></script>
+  <script src="/js/eee-common.js?v=per-app-access-v1"></script><script src="/js/storysculpt-member-states.js?v=wbr462-earlier-answer-v1"></script><script src="/js/storysculpt.js?v=wbr462-finished-state-v1"></script><script src="/js/voice-input.js?v=voice-sessions-1"></script>
 </body>
 </html>
