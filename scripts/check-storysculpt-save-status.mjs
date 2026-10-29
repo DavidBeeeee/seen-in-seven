@@ -101,7 +101,7 @@ function boot() {
 const html = fs.readFileSync(new URL('../api/_hub/storysculpt.html', import.meta.url), 'utf8');
 const terms = fs.readFileSync(new URL('../terms.html', import.meta.url), 'utf8');
 for (const text of [html.slice(html.indexOf('id="story-help"')), terms.slice(terms.indexOf('id="storysculpt-faq"'))]) {
-  for (const pattern of [/format is locked/, /resume/, /clos(?:ed|es).*to new turns/, /Refine/, /Archive is not available yet/, /irreversible/]) assert.match(text, pattern);
+  for (const pattern of [/format is locked/, /resume/, /clos(?:ed|es).*to new turns/, /Refine/, /Archive/, /Restore chat/, /irreversible|permanently/]) assert.match(text, pattern);
 }
 assert.match(html, /You can't change this later; start a new script for a different format\./);
 console.log('PASS Help, shared FAQ and format-lock hint');

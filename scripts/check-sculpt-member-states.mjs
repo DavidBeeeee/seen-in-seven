@@ -155,7 +155,7 @@ function longThread(turns) {
   check(/id="story-finished-line"[\s\S]*id="story-refine-note"/.test(page), 'the finished line must sit with the refine box, where a finished script locks the composer');
   check(page.indexOf('storysculpt-member-states.js') > 0 && page.indexOf('storysculpt-member-states.js') < page.indexOf('/js/storysculpt.js'), 'the states script must load before storysculpt.js');
   check(/STATES\.FINISHED_LINE/.test(appSrc), 'sending into a finished script must say the finished line');
-  check(/is in your chats whenever you want it/.test(appSrc), 'leaving a chat must say it is saved');
+  check(/Paused and saved/.test(appSrc) && /Nothing is deleted when you leave/.test(appSrc), 'leaving a chat must say it is paused and saved without deletion');
 }
 
 // 8. A finished script exports as a text file named for its chat (UX 37).

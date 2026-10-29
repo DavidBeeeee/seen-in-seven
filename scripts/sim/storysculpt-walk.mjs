@@ -147,6 +147,8 @@ function makeWorld(stateName) {
         if (op.opType === 'update') {
           const idFlt = op.filters.find(f => f.col === 'id');
           const target = idFlt ? w.projects.find(p => p.id === idFlt.val) : w.projects[0];
+          if ('archived' in op.updateData && w.mode.archiveError) return { data: null, error: { message: w.mode.archiveError } };
+          if (target && op.updateData.expected_version != null && op.updateData.expected_version !== (target.version || 1)) return { data: null, error: { message: 'STALE_VERSION' } };
           if (target) {
             Object.assign(target, op.updateData, { updated_at: new Date().toISOString(), version: (target.version || 1) + 1 });
             return { data: target, error: null };
@@ -537,6 +539,34 @@ async function keyboardWalk(browser) {
 
 // ── 4. Lifecycle & Feature Coverage ────────────────────────────────────────
 async function lifecyclePass(browser) {
+  // Archive is reversible, content-preserving, and never hides an unconfirmed
+  // write. With only archived chats, this is still a returning member.
+  {
+    const { context, page, world } = await open(browser, 'interview', { width: 1280 });
+    const id = world.projects[0].id;
+    const before = JSON.stringify({ conversation: world.projects[0].conversation, output: world.projects[0].output });
+    await page.locator('#story-title').fill('Archive queue saved title');
+    await page.getByRole('button', { name: 'Archive chat', exact: true }).first().click();
+    await page.waitForFunction(() => document.querySelector('#story-left-note').textContent.includes('Archived.'));
+    check('archive acknowledged: active rail hides chat without deleting content', world.projects[0].archived === true && await page.locator('.story-project-select').count() === 0 && JSON.stringify({ conversation: world.projects[0].conversation, output: world.projects[0].output }) === before, id);
+    check('archive flushes the pending title before hiding the chat', world.projects[0].title === 'Archive queue saved title', 'debounce and archive share the save queue');
+    check('all archived is not a first visit', await page.locator('#story-first-run-card').isHidden(), 'orientation stays hidden');
+    await page.getByRole('tab', { name: 'Archived', exact: true }).click();
+    check('Archived filter exposes restore and selected state', await page.getByRole('button', { name: 'Restore chat', exact: true }).isVisible() && await page.getByRole('tab', { name: 'Archived', exact: true }).getAttribute('aria-selected') === 'true', 'recoverable');
+    await page.getByRole('button', { name: 'Restore chat', exact: true }).click();
+    await page.waitForFunction(() => document.querySelector('#story-left-note').textContent.includes('Restored.'));
+    await page.getByRole('tab', { name: 'All', exact: true }).click();
+    check('restore returns original chat and content to All', !world.projects[0].archived && await page.locator('.story-project-select').count() === 1 && JSON.stringify({ conversation: world.projects[0].conversation, output: world.projects[0].output }) === before, 'no content change');
+    world.mode.archiveError = 'network unavailable';
+    await page.getByRole('button', { name: 'Archive chat', exact: true }).click();
+    await page.waitForFunction(() => document.querySelector('#story-rail-status').textContent.includes('Could not archive'));
+    check('failed archive keeps chat visible and names recovery', !world.projects[0].archived && await page.locator('.story-project-select').count() === 1, 'not deleted, retry available');
+    world.mode.archiveError = 'STALE_VERSION';
+    await page.getByRole('button', { name: 'Archive chat', exact: true }).click();
+    await page.waitForFunction(() => document.querySelector('#story-rail-status').textContent.includes('Nothing was overwritten'));
+    check('stale archive is refused without hiding chat', !world.projects[0].archived && await page.locator('.story-project-select').count() === 1, 'reload before retry');
+    await context.close();
+  }
   // First visit greeting and orientation card (WBR-462: Stranger 3, 4, 7, 8, 15-22, 27-29; UX 21-24, 26, 28, 29)
   {
     const { context, page } = await open(browser, 'first', { width: 1280 });

@@ -57,7 +57,9 @@
           <button class="story-filter-btn active" data-filter="all" type="button" role="tab" aria-selected="true">All</button>
           <button class="story-filter-btn" data-filter="active" type="button" role="tab" aria-selected="false">Active</button>
           <button class="story-filter-btn" data-filter="filmed" type="button" role="tab" aria-selected="false">Filmed</button>
+          <button class="story-filter-btn" data-filter="archived" type="button" role="tab" aria-selected="false">Archived</button>
         </div>
+        <p class="eee-message" id="story-rail-status" role="status" aria-live="polite"></p>
         <div class="story-bulk-bar" id="story-bulk-bar">
           <button class="story-bulk-toggle" id="story-bulk-toggle" type="button" aria-pressed="false"><i data-lucide="list-checks"></i><span id="story-bulk-toggle-label">Select</span></button>
           <div class="story-bulk-actions" id="story-bulk-actions" hidden>
@@ -464,12 +466,12 @@
         <section><h3>What does finishing a script mean?</h3><p>Finishing closes the interview to new turns and assembles your answers into a script you can record. Once a script is finished, the interview is locked so your script stays stable. A new answer cannot be added to a finished interview; use Refine with a note to change the script, or start a new chat for your next script. Copy it or download the text file when you are ready to film. Your saved script does not expire; it stays in your account until you delete it.</p></section>
         <section><h3>How long does an interview take?</h3><p>An interview takes about 5 to 10 minutes across 4 to 6 conversational turns. You talk through raw, unedited thoughts one question at a time in your natural phrasing, without needing an outline, slide deck, or prepared notes. Rough answers give the 5E framework the real emotional tension and personal perspective your video needs.</p></section>
         <section><h3>What happens after my first script?</h3><p>When your first script is finished, it is ready to record. You can copy it directly to your teleprompter or download the text file to film your video. Once you film, mark it filmed or start your next script to build momentum. Your saved scripts stay in your library and your standing story profile carries forward what StorySculpt learned about your voice and audience into every new script you create.</p></section>
-        <section><h3>Can I archive or delete a chat?</h3><p>Archive is not available yet. Delete is the one irreversible step: after you confirm, it removes the chat and its saved script. Leaving or pausing does not delete anything.</p></section>
+        <section><h3>Can I archive or delete a chat?</h3><p>Leaving pauses your chat; it does not delete anything. Check that your changes say Saved before closing the browser. Archive puts a chat away without deleting its notes, answers or script. Use the Archive button beside its title, then open Archived and choose Restore chat to bring it back to All. Delete is different: after you confirm, it permanently removes the chat and its saved script.</p></section>
         <section><h3>What should I do next?</h3><div class="story-next-slot" id="story-next-step-help"></div></section>
         <section><h3>Where do I get help?</h3><p>For a question about a script, chat, or your story profile, email <a href="mailto:email@davidbee.me?subject=StorySculpt%20support">email@davidbee.me</a> and say what you were doing. For Studio sign-in, access, or billing, use the <a href="/eee">Studio home</a> and its account support options, or email the same address with “Studio account” in the subject.</p><p>Review our <a href="/terms">Terms of Service, AI usage, and FAQ</a>.</p></section>
       </div>
     </aside>
   </div>
-  <script src="/js/eee-common.js?v=per-app-access-v1"></script><script src="/js/storysculpt-member-states.js?v=wbr462-earlier-answer-v1"></script><script src="/js/storysculpt.js?v=wbr462-finished-state-v1"></script><script src="/js/voice-input.js?v=voice-sessions-1"></script>
+  <script src="/js/eee-common.js?v=per-app-access-v1"></script><script src="/js/storysculpt-member-states.js?v=wbr462-earlier-answer-v1"></script><script src="/js/storysculpt.js?v=wbr462-archive-v1"></script><script src="/js/voice-input.js?v=voice-sessions-1"></script>
 </body>
 </html>

@@ -30,7 +30,8 @@ let helpReturnFocus = null;
 let viewingVersionIndex = -1; // -1 means viewing active/latest draft
 let viewingSeenLength = 0; // how many versions existed when an older one was chosen
 let mobileActiveTab = 'chat'; // 'chat' or 'script'
-let storyRailFilter = 'all'; // 'all' | 'active' | 'filmed'
+let storyRailFilter = 'all'; // 'all' | 'active' | 'filmed' | 'archived'
+const storyArchivePending = new Set();
 // Select mode for deleting several chats at once (David, 2026-10-14).
 let storySelectMode = false;
 const storySelected = new Set();
@@ -189,21 +190,31 @@ function runNextStep(action) {
   }
 }
 
+function visibleStoryProjects() {
+  return storyProjects.filter(project => {
+    if (storyRailFilter === 'archived') return Boolean(project.archived);
+    if (project.archived) return false;
+    const filmed = Boolean(project.intake && project.intake.filmed);
+    return storyRailFilter === 'active' ? !filmed : storyRailFilter === 'filmed' ? filmed : true;
+  });
+}
+
+function showNextUnarchivedStory() {
+  const next = storyProjects.find(project => !project.archived);
+  if (next) showProject(next); else showStart();
+}
+
 function renderProjectList() {
   renderMemberProgress();
   const list = storyEl('story-project-list');
   const count = storyEl('story-rail-count');
-  if (count) count.textContent = storyProjects.length ? String(storyProjects.length) : '';
-  const filtered = storyProjects.filter(project => {
-    const isFilmed = Boolean(project.intake && project.intake.filmed);
-    if (storyRailFilter === 'active') return !isFilmed;
-    if (storyRailFilter === 'filmed') return isFilmed;
-    return true;
-  });
+  const currentCount = storyProjects.filter(project => !project.archived).length;
+  if (count) count.textContent = currentCount ? String(currentCount) : '';
+  const filtered = visibleStoryProjects();
 
   renderBulkBar(filtered);
   if (!filtered.length) {
-    const emptyMsg = storyRailFilter === 'filmed' ? 'No filmed scripts yet.' : (storyRailFilter === 'active' ? 'No active chats.' : 'No chats yet.');
+    const emptyMsg = storyRailFilter === 'archived' ? 'No archived chats. Archive puts a chat away without deleting it.' : storyRailFilter === 'filmed' ? 'No filmed scripts yet.' : (storyRailFilter === 'active' ? 'No active chats.' : 'No chats here. Check Archived for chats you put away.');
     list.innerHTML = '<p class="eee-message">' + emptyMsg + '</p>';
     return;
   }
@@ -229,6 +240,7 @@ function renderProjectList() {
         '<button class="story-action-btn story-film-btn' + (isFilmed ? ' is-filmed' : '') + '" type="button" data-action="toggle-filmed" data-project-id="' + storyEscape(project.id) + '" title="' + (isFilmed ? 'Mark as not filmed' : 'Mark as filmed') + '" aria-label="' + (isFilmed ? 'Mark as not filmed' : 'Mark as filmed') + '">' +
           '<i data-lucide="' + (isFilmed ? 'check-circle-2' : 'check') + '"></i>' +
         '</button>' +
+        '<button class="story-action-btn" type="button" data-action="toggle-archive" data-project-id="' + storyEscape(project.id) + '" title="' + (project.archived ? 'Restore chat' : 'Archive chat') + '" aria-label="' + (project.archived ? 'Restore chat' : 'Archive chat') + '"' + (storyArchivePending.has(project.id) ? ' disabled' : '') + '><i data-lucide="' + (project.archived ? 'archive-restore' : 'archive') + '"></i></button>' +
         '<button class="story-action-btn story-delete-btn" type="button" data-action="delete-project" data-project-id="' + storyEscape(project.id) + '" title="Delete chat" aria-label="Delete chat">' +
           '<i data-lucide="trash-2"></i>' +
         '</button>' +
@@ -284,7 +296,7 @@ async function deleteSelectedStories() {
     storySelected.clear();
     if (activeGone) {
       clearTimeout(storySaveTimer); storySaveTimer = null; activeStory = null;
-      if (storyProjects.length) showProject(storyProjects[0]); else showStart();
+      showNextUnarchivedStory();
     } else {
       renderProjectList();
     }
@@ -300,6 +312,65 @@ async function deleteSelectedStories() {
     button.disabled = false;
   } finally {
     storyEl('story-bulk-delete-label').textContent = 'Delete';
+  }
+}
+
+// Archive is metadata, never a content save or delete. Flush any active draft
+// and join the save queue. Hide a chat only after its conditional write succeeds.
+async function toggleStoryArchive(projectId) {
+  const project = storyProjects.find(item => item.id === projectId);
+  if (!project || storyArchivePending.has(projectId)) return;
+  if (activeStory === project && (storySending || storyEl('story-thinking-indicator'))) {
+    storyEl('story-rail-status').textContent = 'Wait for this reply to finish before archiving the chat.';
+    storyEl('story-rail-status').className = 'eee-message';
+    return;
+  }
+  storyArchivePending.add(projectId);
+  renderProjectList();
+  const archiving = !project.archived;
+  try {
+    if (activeStory === project && (storySaveTimer || readUnsavedStory(project.id))) {
+      clearTimeout(storySaveTimer); storySaveTimer = null;
+      await saveActiveStory();
+    }
+    const run = storySaveChain.then(async () => {
+      const { data, error } = await storyContext.sb.from('storysculpt_projects').update({
+        archived: archiving, expected_version: Number(project.version) || 1
+      }).eq('id', project.id).select('archived,version').single();
+      if (error) throw error;
+      if (!data || data.archived !== archiving) throw new Error('Archive was not confirmed');
+      Object.assign(project, data);
+    });
+    storySaveChain = run.catch(() => {});
+    await run;
+    if (archiving && activeStory === project) {
+      // An edit made while the archive acknowledgement was travelling must
+      // also settle before navigation. A failed save leaves this chat open.
+      if (storySaveTimer || readUnsavedStory(project.id)) {
+        clearTimeout(storySaveTimer); storySaveTimer = null;
+        await saveActiveStory();
+      }
+      activeStory = null;
+      showStart();
+    }
+    const status = storyEl('story-rail-status');
+    status.textContent = archiving ? 'Archived. Find this chat in Archived to restore it.' : 'Restored. This chat is back in All.';
+    status.className = 'eee-message success';
+    const note = storyEl('story-left-note');
+    if (!activeStory && note) { note.textContent = status.textContent; note.hidden = false; }
+  } catch (error) {
+    const status = storyEl('story-rail-status');
+    status.textContent = Boolean(project.archived) === archiving
+      ? (archiving ? 'Archived' : 'Restored') + ', but the latest edits are not saved yet. Keep this chat open and check the save indicator before leaving.'
+      : isStaleVersionError(error)
+      ? 'This chat changed in another tab. Reload before archiving or restoring it. Nothing was overwritten.'
+      : 'Could not ' + (archiving ? 'archive' : 'restore') + ' this chat. It has not been deleted. Check your connection and try again.';
+    status.className = 'eee-message error';
+    const note = storyEl('story-left-note');
+    if (!activeStory && note) { note.textContent = status.textContent; note.hidden = false; }
+  } finally {
+    storyArchivePending.delete(projectId);
+    renderProjectList();
   }
 }
 
@@ -351,7 +422,7 @@ async function deleteStoryProjectById(projectId) {
     storyProjects = storyProjects.filter(p => p.id !== projectId);
     if (activeStory && activeStory.id === projectId) {
       clearTimeout(storySaveTimer); storySaveTimer = null; activeStory = null;
-      if (storyProjects.length) showProject(storyProjects[0]); else showStart();
+      showNextUnarchivedStory();
     } else {
       renderProjectList();
     }
@@ -1708,7 +1779,7 @@ function showStart() {
     if (storySaveTimer) { clearTimeout(storySaveTimer); storySaveTimer = null; saveActiveStory().catch(() => {}); }
     leftNote.textContent = pending
       ? 'Your chat is in the list. Changes are still saving; reopen it to check their status.'
-      : 'Saved. "' + ((storyEl('story-title').value || '').trim() || leaving.title || 'Untitled script') + '" is in your chats whenever you want it.';
+      : 'Paused and saved. "' + ((storyEl('story-title').value || '').trim() || leaving.title || 'Untitled script') + '" is in your chats. Nothing is deleted when you leave.';
     leftNote.hidden = false;
   } else {
     leftNote.hidden = true;
@@ -1757,10 +1828,11 @@ async function loadStoryProjects() {
   if (error) throw error;
   storyProjects = data || [];
   // Measured from the saved timestamps before this visit writes anything.
-  storyReturnNotice = STATES.returnNoticeFor(storyProjects);
+  const available = storyProjects.filter(project => !project.archived);
+  storyReturnNotice = STATES.returnNoticeFor(available);
   renderReturnNotice();
-  const resume = storyReturnNotice && storyProjects.find(project => project.id === storyReturnNotice.projectId);
-  if (resume) showProject(resume); else if (storyProjects.length) showProject(storyProjects[0]); else showStart();
+  const resume = storyReturnNotice && available.find(project => project.id === storyReturnNotice.projectId);
+  if (resume) showProject(resume); else if (available.length) showProject(available[0]); else showStart();
 }
 
 async function createStoryProject(mode, initialIntakeOverrides = null) {
@@ -1786,6 +1858,15 @@ async function createStoryProject(mode, initialIntakeOverrides = null) {
   }).select().single();
   if (error) throw error;
   storyProjects.unshift(data);
+  if (storyRailFilter === 'archived') {
+    storyRailFilter = 'all';
+    storySelected.clear();
+    const filters = storyEl('story-rail-filter');
+    if (filters) filters.querySelectorAll('.story-filter-btn').forEach(button => {
+      button.classList.toggle('active', button.dataset.filter === 'all');
+      button.setAttribute('aria-selected', String(button.dataset.filter === 'all'));
+    });
+  }
   showProject(data);
   return data;
 }
@@ -2582,7 +2663,7 @@ async function deleteActiveStory() {
   if (error) return;
   storyProjects = storyProjects.filter(project => project.id !== id);
   clearTimeout(storySaveTimer); storySaveTimer = null; activeStory = null;
-  if (storyProjects.length) showProject(storyProjects[0]); else showStart();
+  showNextUnarchivedStory();
 }
 
 // Story profile (member memory) panel.
@@ -2657,6 +2738,12 @@ storyEl('story-project-list').addEventListener('click', event => {
     if (project) showProject(project);
     return;
   }
+  const archiveBtn = event.target.closest('[data-action="toggle-archive"]');
+  if (archiveBtn) {
+    event.stopPropagation();
+    toggleStoryArchive(archiveBtn.dataset.projectId);
+    return;
+  }
   const filmBtn = event.target.closest('[data-action="toggle-filmed"]');
   if (filmBtn) {
     event.stopPropagation();
@@ -2683,10 +2770,7 @@ storyEl('story-project-list').addEventListener('change', event => {
 });
 storyEl('story-bulk-toggle').addEventListener('click', () => setStorySelectMode(!storySelectMode));
 storyEl('story-bulk-all').addEventListener('click', () => {
-  const visible = storyProjects.filter(project => {
-    const isFilmed = Boolean(project.intake && project.intake.filmed);
-    return storyRailFilter === 'active' ? !isFilmed : storyRailFilter === 'filmed' ? isFilmed : true;
-  });
+  const visible = visibleStoryProjects();
   const allChosen = visible.length > 0 && visible.every(project => storySelected.has(project.id));
   visible.forEach(project => { if (allChosen) storySelected.delete(project.id); else storySelected.add(project.id); });
   renderProjectList();
@@ -2699,8 +2783,10 @@ if (railFilterEl) {
     const btn = event.target.closest('[data-filter]');
     if (!btn) return;
     storyRailFilter = btn.dataset.filter;
+    storySelected.clear();
     railFilterEl.querySelectorAll('.story-filter-btn').forEach(b => {
       b.classList.toggle('active', b.dataset.filter === storyRailFilter);
+      b.setAttribute('aria-selected', String(b.dataset.filter === storyRailFilter));
     });
     renderProjectList();
   });
