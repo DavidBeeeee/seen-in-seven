@@ -1,8 +1,8 @@
 # StorySculpt rendered walk: Chromium and WebKit
 
-Run 2026-10-29T14:42:22.150Z against the real rendered `api/_hub/storysculpt.html`. Both browsers ran the same lifecycle, keyboard, axe, responsive-layout and accessibility-tree passes. Every network call was stubbed.
+Run 2026-10-30T05:03:40.460Z against the real rendered `api/_hub/storysculpt.html`. Both browsers ran the same lifecycle, keyboard, axe, responsive-layout and accessibility-tree passes. Every network call was stubbed.
 
-**58 of 58 checks pass across both browsers. 0 findings.**
+**80 of 80 checks pass across both browsers. 0 findings.**
 
 ## Browser differences
 
@@ -257,13 +257,13 @@ No pass/fail differences between Chromium and WebKit were observed.
 
 | Browser | Navigation key | Theme | Width | Result | Focus stops | Invisible focus stops | Focus order | Screenshot |
 |---|---|---|---:|---|---:|---:|---|---|
-| chromium | Tab | dark | 1280 | PASS | 29 | 0 | chromium/focus-order.json | docs/storysculpt-walk/chromium/shots/021-keyboard-journey-dark-1280.jpg |
+| chromium | Tab | dark | 1280 | PASS | 30 | 0 | chromium/focus-order.json | docs/storysculpt-walk/chromium/shots/021-keyboard-journey-dark-1280.jpg |
 | chromium | Tab | dark | 375 | PASS | 29 | 0 |  | docs/storysculpt-walk/chromium/shots/022-keyboard-journey-dark-375.jpg |
-| chromium | Tab | light | 1280 | PASS | 29 | 0 |  | docs/storysculpt-walk/chromium/shots/023-keyboard-journey-light-1280.jpg |
+| chromium | Tab | light | 1280 | PASS | 30 | 0 |  | docs/storysculpt-walk/chromium/shots/023-keyboard-journey-light-1280.jpg |
 | chromium | Tab | light | 375 | PASS | 29 | 0 |  | docs/storysculpt-walk/chromium/shots/024-keyboard-journey-light-375.jpg |
-| webkit | Alt+Tab | dark | 1280 | PASS | 26 | 0 | webkit/focus-order.json | docs/storysculpt-walk/webkit/shots/121-keyboard-journey-dark-1280.jpg |
+| webkit | Alt+Tab | dark | 1280 | PASS | 27 | 0 | webkit/focus-order.json | docs/storysculpt-walk/webkit/shots/121-keyboard-journey-dark-1280.jpg |
 | webkit | Alt+Tab | dark | 375 | PASS | 26 | 0 |  | docs/storysculpt-walk/webkit/shots/122-keyboard-journey-dark-375.jpg |
-| webkit | Alt+Tab | light | 1280 | PASS | 26 | 0 |  | docs/storysculpt-walk/webkit/shots/123-keyboard-journey-light-1280.jpg |
+| webkit | Alt+Tab | light | 1280 | PASS | 27 | 0 |  | docs/storysculpt-walk/webkit/shots/123-keyboard-journey-light-1280.jpg |
 | webkit | Alt+Tab | light | 375 | PASS | 26 | 0 |  | docs/storysculpt-walk/webkit/shots/124-keyboard-journey-light-375.jpg |
 
 ## Screen reader
@@ -274,15 +274,26 @@ Readable per-screen transcripts are in `docs/storysculpt-walk/screen-reader.md`;
 
 - PASS [chromium] layout holds at 375/1280, 200% zoom, 24px font, light and dark across 10 screens: 0 layout faults
 - PASS [chromium] zero serious or critical axe-core violations (WCAG 2.1 A/AA) on every state, light and dark: 0 serious/critical
-- PASS [chromium] keyboard-only walk dark 1280px: 29 stops via Tab, 0 without visible focus
+- PASS [chromium] keyboard-only walk dark 1280px: 30 stops via Tab, 0 without visible focus
 - PASS [chromium] keyboard-only walk dark 375px: 29 stops via Tab, 0 without visible focus
-- PASS [chromium] keyboard-only walk light 1280px: 29 stops via Tab, 0 without visible focus
+- PASS [chromium] keyboard-only walk light 1280px: 30 stops via Tab, 0 without visible focus
 - PASS [chromium] keyboard-only walk light 375px: 29 stops via Tab, 0 without visible focus
 - PASS [chromium] Escape closes the help dialog: closed
+- PASS [chromium] archive acknowledged: active rail hides chat without deleting content: proj-interview-1
+- PASS [chromium] archive flushes the pending title before hiding the chat: debounce and archive share the save queue
+- PASS [chromium] all archived is not a first visit: orientation stays hidden
+- PASS [chromium] Archived filter exposes restore and selected state: recoverable
+- PASS [chromium] restore returns original chat and content to All: no content change
+- PASS [chromium] failed archive keeps chat visible and names recovery: not deleted, retry available
+- PASS [chromium] stale archive is refused without hiding chat: reload before retry
 - PASS [chromium] first visit greets member with clear start: Start a script the way you talk.
 - PASS [chromium] first visit explains 5E and voice in one place: card visible=true, 5E/voice=true
 - PASS [chromium] return visit does not repeat the orientation: card visible=false, title=Start a new script.
+- PASS [chromium] return visit names where member left off and what next script could build on: You left off on “Stop selling features”. Pick up that interview where you stopped, or start your next script to test a different hook.
+- PASS [chromium] rail shows finished and filmed counts across projects: finished=1, filmed=0
+- PASS [chromium] opening Help closes the account menu instead of covering its answers: launcher menu closed
 - PASS [chromium] Help answers how long and what happens after: how long=true, what after=true
+- PASS [chromium] Help close returns focus to the visible account button: not a hidden menu item
 - PASS [chromium] 60-turn fixture collapses earlier turns: 12 visible messages before expand
 - PASS [chromium] collapsed thread includes a bounded earlier-answer excerpt, not a new card: Last earlier answer: “Turn 48: Audit their customer list and find the top twenty percent that generates eighty percent of margin.”
 - PASS [chromium] expanding 60-turn fixture renders all turns without fault: 60 messages rendered
@@ -305,15 +316,26 @@ You keep
 - PASS [chromium] no request left the machine except font and icon GETs; zero POSTs to production: 0 refused, 0 non-benign
 - PASS [webkit] layout holds at 375/1280, 200% zoom, 24px font, light and dark across 10 screens: 0 layout faults
 - PASS [webkit] zero serious or critical axe-core violations (WCAG 2.1 A/AA) on every state, light and dark: 0 serious/critical
-- PASS [webkit] keyboard-only walk dark 1280px: 26 stops via Alt+Tab, 0 without visible focus
+- PASS [webkit] keyboard-only walk dark 1280px: 27 stops via Alt+Tab, 0 without visible focus
 - PASS [webkit] keyboard-only walk dark 375px: 26 stops via Alt+Tab, 0 without visible focus
-- PASS [webkit] keyboard-only walk light 1280px: 26 stops via Alt+Tab, 0 without visible focus
+- PASS [webkit] keyboard-only walk light 1280px: 27 stops via Alt+Tab, 0 without visible focus
 - PASS [webkit] keyboard-only walk light 375px: 26 stops via Alt+Tab, 0 without visible focus
 - PASS [webkit] Escape closes the help dialog: closed
+- PASS [webkit] archive acknowledged: active rail hides chat without deleting content: proj-interview-1
+- PASS [webkit] archive flushes the pending title before hiding the chat: debounce and archive share the save queue
+- PASS [webkit] all archived is not a first visit: orientation stays hidden
+- PASS [webkit] Archived filter exposes restore and selected state: recoverable
+- PASS [webkit] restore returns original chat and content to All: no content change
+- PASS [webkit] failed archive keeps chat visible and names recovery: not deleted, retry available
+- PASS [webkit] stale archive is refused without hiding chat: reload before retry
 - PASS [webkit] first visit greets member with clear start: Start a script the way you talk.
 - PASS [webkit] first visit explains 5E and voice in one place: card visible=true, 5E/voice=true
 - PASS [webkit] return visit does not repeat the orientation: card visible=false, title=Start a new script.
+- PASS [webkit] return visit names where member left off and what next script could build on: You left off on “Stop selling features”. Pick up that interview where you stopped, or start your next script to test a different hook.
+- PASS [webkit] rail shows finished and filmed counts across projects: finished=1, filmed=0
+- PASS [webkit] opening Help closes the account menu instead of covering its answers: launcher menu closed
 - PASS [webkit] Help answers how long and what happens after: how long=true, what after=true
+- PASS [webkit] Help close returns focus to the visible account button: not a hidden menu item
 - PASS [webkit] 60-turn fixture collapses earlier turns: 12 visible messages before expand
 - PASS [webkit] collapsed thread includes a bounded earlier-answer excerpt, not a new card: Last earlier answer: “Turn 48: Audit their customer list and find the top twenty percent that generates eighty percent of margin.”
 - PASS [webkit] expanding 60-turn fixture renders all turns without fault: 60 messages rendered
@@ -350,3 +372,5 @@ None remaining (0 defects).
 | UX-96 | layout | Next-step text stayed at 12px when root font was 24px | Replaced hardcoded px with relative rem units (`0.8125rem`, `0.875rem`) in `#story-next-step-rail` and progress lines | 0 font-ignored layout faults across 10 screens |
 | UX-96 | layout | Screen-reader only heading flagged as clipped text | Updated layout fault detection to respect `.story-sr-only` accessibility helper classes | 0 layout faults across all zoom, font, and viewport combinations |
 | UX-97 | contrast | 9 serious color-contrast violations in light mode (loop badges 1.03:1, version pills 2.53:1, muted copy 3.76-4.06:1, buttons 4.16:1) | Enhanced light theme contrast variables (`--studio-teal: #0d5f5f`, `--studio-muted: #205c5c`, `--studio-gold: #634600`), added dark gold loop badges and white button text | 0 serious or critical axe violations across all states in light and dark modes |
+| Stranger-56 | progress | No progress view across scripts in the rail | Added quiet count of finished and filmed scripts across projects in the rail | Passed in Chromium and WebKit with accurate data attributes and stat markup |
+| Stranger-26 | return | Return visit repeated generic copy and did not name where the member left off | Added plain return line naming previous script and suggesting what next script could build on, with zero new cards | Passed in Chromium and WebKit with no em dashes |

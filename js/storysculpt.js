@@ -222,17 +222,18 @@ function renderProjectList() {
   list.innerHTML = filtered.map(project => {
     const isActive = activeStory && activeStory.id === project.id;
     const isFilmed = Boolean(project.intake && project.intake.filmed);
+    const isFinished = STATES.isFinished(project);
     const title = project.title || 'Untitled script';
     if (storySelectMode) {
       const checked = storySelected.has(project.id);
-      return '<div class="story-project-item is-selecting' + (checked ? ' is-checked' : '') + (isFilmed ? ' filmed' : '') + '">' +
+      return '<div class="story-project-item is-selecting' + (checked ? ' is-checked' : '') + (isFilmed ? ' filmed' : '') + (isFinished ? ' is-finished' : '') + '"' + (isFinished ? ' data-finished="true"' : '') + (isFilmed ? ' data-filmed="true"' : '') + '>' +
         '<label class="story-project-check" title="' + storyEscape(title) + '">' +
           '<input type="checkbox" data-select-project="' + storyEscape(project.id) + '"' + (checked ? ' checked' : '') + '>' +
           '<span class="story-project-title">' + storyEscape(title) + '</span>' +
         '</label>' +
       '</div>';
     }
-    return '<div class="story-project-item' + (isActive ? ' active' : '') + (isFilmed ? ' filmed' : '') + '">' +
+    return '<div class="story-project-item' + (isActive ? ' active' : '') + (isFilmed ? ' filmed' : '') + (isFinished ? ' is-finished' : '') + '"' + (isFinished ? ' data-finished="true"' : '') + (isFilmed ? ' data-filmed="true"' : '') + '>' +
       '<button class="story-project-select" type="button" data-project-id="' + storyEscape(project.id) + '" title="' + storyEscape(title) + '">' +
         '<span class="story-project-title">' + storyEscape(title) + '</span>' +
       '</button>' +
@@ -1800,6 +1801,17 @@ function showStart() {
   const pageEyebrow = storyEl('story-page-eyebrow');
   const pageTitle = storyEl('story-page-title');
   const pageCopy = storyEl('story-page-copy');
+  const returnLineEl = storyEl('story-return-line');
+  const returnText = isFirstVisit ? null : (STATES && typeof STATES.returnVisitLine === 'function' ? STATES.returnVisitLine(storyProjects) : null);
+  if (returnLineEl) {
+    if (returnText) {
+      returnLineEl.textContent = returnText;
+      returnLineEl.hidden = false;
+    } else {
+      returnLineEl.textContent = '';
+      returnLineEl.hidden = true;
+    }
+  }
   if (pageEyebrow && pageTitle && pageCopy) {
     if (isFirstVisit) {
       pageEyebrow.textContent = 'StorySculpt · First Script Orientation';
@@ -1808,7 +1820,7 @@ function showStart() {
     } else {
       pageEyebrow.textContent = 'StorySculpt';
       pageTitle.textContent = 'Start a new script.';
-      pageCopy.textContent = 'Pick a format, then talk it through. StorySculpt asks one question at a time and shapes your answers into a script that still sounds like you.';
+      pageCopy.textContent = 'Pick a format below, then talk it through. StorySculpt asks one question at a time and shapes your answers into a script that still sounds like you.';
     }
   }
   storyEl('story-start').hidden = false;

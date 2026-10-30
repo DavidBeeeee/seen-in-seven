@@ -121,6 +121,7 @@ html.studio-light .story-loop-step .story-loop-badge {
 html.studio-light .story-progress-head,
 html.studio-light .story-progress-line,
 html.studio-light .story-progress-stat,
+html.studio-light .story-return-line,
 html.studio-light #story-inactivity-line > span,
 html.studio-light #story-open-memory small,
 html.studio-light #story-page-eyebrow,
@@ -656,6 +657,8 @@ html.studio-light .eee-gate-box .studio-mark {
 .story-return-dismiss { flex-shrink: 0; width: 24px; height: 24px; }
 .story-left-note { margin: 0 0 16px; padding: 10px 14px; border-radius: 10px; border: 1px solid var(--studio-border); background: var(--studio-surface); color: var(--studio-soft); font-size: 14px; overflow-wrap: anywhere; }
 .story-left-note[hidden] { display: none; }
+.story-return-line { margin: 6px 0 14px; font-size: 0.9375rem; line-height: 1.5; color: var(--studio-soft, var(--studio-text)); overflow-wrap: anywhere; }
+.story-return-line[hidden] { display: none; }
 .story-finished-line { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; padding-bottom: 4px; }
 .story-finished-line > svg { width: 17px; height: 17px; color: var(--studio-teal); flex-shrink: 0; }
 .story-finished-line p { margin: 0; flex: 1; min-width: 180px; font-size: 14px; font-weight: 700; }

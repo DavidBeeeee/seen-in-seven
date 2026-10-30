@@ -71,6 +71,13 @@
  },
  {
   "tag": "button",
+  "id": null,
+  "cls": "story-filter-btn",
+  "label": "Archived",
+  "visible": true
+ },
+ {
+  "tag": "button",
   "id": "story-open-memory",
   "cls": "story-memory-link",
   "label": "Your story profileVoice, facts and offers StoryScu",

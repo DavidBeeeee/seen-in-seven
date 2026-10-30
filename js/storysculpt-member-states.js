@@ -183,13 +183,13 @@
   }
 
   function progressMarkup(p) {
-    const stats = p && p.finished
-      ? '<span class="story-progress-stat"><strong>' + p.finished + '</strong> finished</span>' +
-        '<span class="story-progress-stat"><strong>' + p.filmed + '</strong> filmed</span>'
-      : '';
-    return '<div class="story-progress" data-finished="' + (p ? p.finished : 0) + '" data-filmed="' + (p ? p.filmed : 0) + '">' +
+    const finishedCount = p ? p.finished : 0;
+    const filmedCount = p ? p.filmed : 0;
+    const stats = '<span class="story-progress-stat"><strong>' + finishedCount + '</strong> finished</span>' +
+      '<span class="story-progress-stat"><strong>' + filmedCount + '</strong> filmed</span>';
+    return '<div class="story-progress" data-finished="' + finishedCount + '" data-filmed="' + filmedCount + '">' +
       '<p class="story-progress-head">Your scripts</p>' +
-      (stats ? '<div class="story-progress-stats">' + stats + '</div>' : '') +
+      '<div class="story-progress-stats">' + stats + '</div>' +
       '<p class="story-progress-line">' + escapeHtml(progressLine(p)) + '</p>' +
     '</div>';
   }
@@ -250,12 +250,32 @@
     return (base || 'storysculpt-script') + '.txt';
   }
 
+  // WBR-462 (Stranger 26, 45, 57, 65; UX 11, 41, 44): on a return visit, name
+  // where the member left off and what the next script could build on.
+  // Plain sentences, coworker register, zero em dashes.
+  function returnVisitLine(projects) {
+    const list = Array.isArray(projects) ? projects.filter(p => !p.archived) : [];
+    if (!list.length) return null;
+    const recent = list[0];
+    const rawTitle = (recent && recent.title || '').trim();
+    const title = rawTitle || 'Untitled script';
+    const finished = isFinished(recent);
+    const filmed = isFilmed(recent);
+    if (filmed) {
+      return 'You filmed “' + title + '”. Start your next script to explore another angle or answer the next question from your audience.';
+    }
+    if (finished) {
+      return 'You finished “' + title + '”. Record and mark it filmed, or start your next script to build on that proof with a new story.';
+    }
+    return 'You left off on “' + title + '”. Pick up that interview where you stopped, or start your next script to test a different hook.';
+  }
+
   const api = {
     DAY_MS, QUIET_AFTER_DAYS, LAPSE_AFTER_DAYS, COLLAPSE_AFTER, KEEP_VISIBLE,
     INACTIVITY_LINE, FINISHED_LINE,
     engagement, returnNotice, exportFileName, returnNoticeMarkup, threadWindow, showEarlierMarkup, earlierAnswerExcerpt,
     returnNoticeFor, dismissalStamp, isFinished, isFilmed, finishedTime, progress, progressLine, progressMarkup,
-    memberStep, nextStep, nextStepMarkup, versionView
+    memberStep, nextStep, nextStepMarkup, versionView, returnVisitLine
   };
   root.StorySculptStates = api;
 })(typeof window !== 'undefined' ? window : globalThis);

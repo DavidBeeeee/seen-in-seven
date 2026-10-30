@@ -581,7 +581,7 @@ async function lifecyclePass(browser) {
     await context.close();
   }
 
-  // Return visit does not repeat orientation card
+  // Return visit does not repeat orientation card, and names where member left off
   {
     const { context, page } = await open(browser, 'interview', { width: 1280 });
     await page.evaluate(() => { if (typeof showStart === 'function') showStart(); });
@@ -589,7 +589,26 @@ async function lifecyclePass(browser) {
     const cardVisible = await page.locator('#story-first-run-card').isVisible();
     const returnTitle = await page.locator('#story-page-title').textContent();
     check('return visit does not repeat the orientation', !cardVisible && /Start a new script/i.test(returnTitle), 'card visible=' + cardVisible + ', title=' + returnTitle);
+    const returnLine = page.locator('#story-return-line');
+    const returnLineVisible = await returnLine.isVisible();
+    const returnLineText = await returnLine.textContent();
+    const namesLeftOff = returnLineText.includes('Stop selling features');
+    const buildsOnNext = /next script|pick up/i.test(returnLineText);
+    check('return visit names where member left off and what next script could build on', returnLineVisible && namesLeftOff && buildsOnNext && !returnLineText.includes('—'), returnLineText);
     await shot(page, 'lifecycle-return-visit');
+    await context.close();
+  }
+
+  // Progress across projects in the rail (WBR-462: Stranger 56; UX 41, 44)
+  {
+    const { context, page } = await open(browser, 'finished', { width: 1280 });
+    const progressEl = page.locator('#story-progress .story-progress');
+    const hasProgress = await progressEl.isVisible();
+    const finishedCount = await progressEl.getAttribute('data-finished');
+    const filmedCount = await progressEl.getAttribute('data-filmed');
+    const progressText = await progressEl.textContent();
+    const countsShown = /1\s*finished/i.test(progressText) && /0\s*filmed/i.test(progressText);
+    check('rail shows finished and filmed counts across projects', hasProgress && finishedCount === '1' && filmedCount === '0' && countsShown, 'finished=' + finishedCount + ', filmed=' + filmedCount);
     await context.close();
   }
 
@@ -921,7 +940,9 @@ function runBothBrowsers() {
     '| UX-95 | a11y | Rail filter button group lacked tab roles | Added `role="tab"` and `aria-selected` to filter buttons under `role="tablist"` | Screen reader audits clean in Chromium and WebKit |',
     '| UX-96 | layout | Next-step text stayed at 12px when root font was 24px | Replaced hardcoded px with relative rem units (`0.8125rem`, `0.875rem`) in `#story-next-step-rail` and progress lines | 0 font-ignored layout faults across 10 screens |',
     '| UX-96 | layout | Screen-reader only heading flagged as clipped text | Updated layout fault detection to respect `.story-sr-only` accessibility helper classes | 0 layout faults across all zoom, font, and viewport combinations |',
-    '| UX-97 | contrast | 9 serious color-contrast violations in light mode (loop badges 1.03:1, version pills 2.53:1, muted copy 3.76-4.06:1, buttons 4.16:1) | Enhanced light theme contrast variables (`--studio-teal: #0d5f5f`, `--studio-muted: #205c5c`, `--studio-gold: #634600`), added dark gold loop badges and white button text | 0 serious or critical axe violations across all states in light and dark modes |'
+    '| UX-97 | contrast | 9 serious color-contrast violations in light mode (loop badges 1.03:1, version pills 2.53:1, muted copy 3.76-4.06:1, buttons 4.16:1) | Enhanced light theme contrast variables (`--studio-teal: #0d5f5f`, `--studio-muted: #205c5c`, `--studio-gold: #634600`), added dark gold loop badges and white button text | 0 serious or critical axe violations across all states in light and dark modes |',
+    '| Stranger-56 | progress | No progress view across scripts in the rail | Added quiet count of finished and filmed scripts across projects in the rail | Passed in Chromium and WebKit with accurate data attributes and stat markup |',
+    '| Stranger-26 | return | Return visit repeated generic copy and did not name where the member left off | Added plain return line naming previous script and suggesting what next script could build on, with zero new cards | Passed in Chromium and WebKit with no em dashes |'
   ];
 
   writeFileSync(join(outDir, 'findings.md'), lines.join('\n'));

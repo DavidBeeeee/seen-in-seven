@@ -101,7 +101,7 @@
   - heading "What happens after my first script?" [level=3]
   - paragraph: When your first script is finished, it is ready to record. You can copy it directly to your teleprompter or download the text file to film your video. Once you film, mark it filmed or start your next script to build momentum. Your saved scripts stay in your library and your standing story profile carries forward what StorySculpt learned about your voice and audience into every new script you create.
   - heading "Can I archive or delete a chat?" [level=3]
-  - paragraph: "Archive is not available yet. Delete is the one irreversible step: after you confirm, it removes the chat and its saved script. Leaving or pausing does not delete anything."
+  - paragraph: "Leaving pauses your chat; it does not delete anything. Check that your changes say Saved before closing the browser. Archive puts a chat away without deleting its notes, answers or script. Use the Archive button beside its title, then open Archived and choose Restore chat to bring it back to All. Delete is different: after you confirm, it permanently removes the chat and its saved script."
   - heading "What should I do next?" [level=3]
   - paragraph:
     - strong: "Next:"

@@ -1,5 +1,5 @@
 {
- "at": "2026-10-29T14:42:22.167Z",
+ "at": "2026-10-30T05:03:40.476Z",
  "checks": [
   {
    "browser": "chromium",
@@ -17,7 +17,7 @@
    "browser": "chromium",
    "name": "keyboard-only walk dark 1280px",
    "pass": true,
-   "evidence": "29 stops via Tab, 0 without visible focus"
+   "evidence": "30 stops via Tab, 0 without visible focus"
   },
   {
    "browser": "chromium",
@@ -29,7 +29,7 @@
    "browser": "chromium",
    "name": "keyboard-only walk light 1280px",
    "pass": true,
-   "evidence": "29 stops via Tab, 0 without visible focus"
+   "evidence": "30 stops via Tab, 0 without visible focus"
   },
   {
    "browser": "chromium",
@@ -42,6 +42,48 @@
    "name": "Escape closes the help dialog",
    "pass": true,
    "evidence": "closed"
+  },
+  {
+   "browser": "chromium",
+   "name": "archive acknowledged: active rail hides chat without deleting content",
+   "pass": true,
+   "evidence": "proj-interview-1"
+  },
+  {
+   "browser": "chromium",
+   "name": "archive flushes the pending title before hiding the chat",
+   "pass": true,
+   "evidence": "debounce and archive share the save queue"
+  },
+  {
+   "browser": "chromium",
+   "name": "all archived is not a first visit",
+   "pass": true,
+   "evidence": "orientation stays hidden"
+  },
+  {
+   "browser": "chromium",
+   "name": "Archived filter exposes restore and selected state",
+   "pass": true,
+   "evidence": "recoverable"
+  },
+  {
+   "browser": "chromium",
+   "name": "restore returns original chat and content to All",
+   "pass": true,
+   "evidence": "no content change"
+  },
+  {
+   "browser": "chromium",
+   "name": "failed archive keeps chat visible and names recovery",
+   "pass": true,
+   "evidence": "not deleted, retry available"
+  },
+  {
+   "browser": "chromium",
+   "name": "stale archive is refused without hiding chat",
+   "pass": true,
+   "evidence": "reload before retry"
   },
   {
    "browser": "chromium",
@@ -63,9 +105,33 @@
   },
   {
    "browser": "chromium",
+   "name": "return visit names where member left off and what next script could build on",
+   "pass": true,
+   "evidence": "You left off on “Stop selling features”. Pick up that interview where you stopped, or start your next script to test a different hook."
+  },
+  {
+   "browser": "chromium",
+   "name": "rail shows finished and filmed counts across projects",
+   "pass": true,
+   "evidence": "finished=1, filmed=0"
+  },
+  {
+   "browser": "chromium",
+   "name": "opening Help closes the account menu instead of covering its answers",
+   "pass": true,
+   "evidence": "launcher menu closed"
+  },
+  {
+   "browser": "chromium",
    "name": "Help answers how long and what happens after",
    "pass": true,
    "evidence": "how long=true, what after=true"
+  },
+  {
+   "browser": "chromium",
+   "name": "Help close returns focus to the visible account button",
+   "pass": true,
+   "evidence": "not a hidden menu item"
   },
   {
    "browser": "chromium",
@@ -191,7 +257,7 @@
    "browser": "webkit",
    "name": "keyboard-only walk dark 1280px",
    "pass": true,
-   "evidence": "26 stops via Alt+Tab, 0 without visible focus"
+   "evidence": "27 stops via Alt+Tab, 0 without visible focus"
   },
   {
    "browser": "webkit",
@@ -203,7 +269,7 @@
    "browser": "webkit",
    "name": "keyboard-only walk light 1280px",
    "pass": true,
-   "evidence": "26 stops via Alt+Tab, 0 without visible focus"
+   "evidence": "27 stops via Alt+Tab, 0 without visible focus"
   },
   {
    "browser": "webkit",
@@ -216,6 +282,48 @@
    "name": "Escape closes the help dialog",
    "pass": true,
    "evidence": "closed"
+  },
+  {
+   "browser": "webkit",
+   "name": "archive acknowledged: active rail hides chat without deleting content",
+   "pass": true,
+   "evidence": "proj-interview-1"
+  },
+  {
+   "browser": "webkit",
+   "name": "archive flushes the pending title before hiding the chat",
+   "pass": true,
+   "evidence": "debounce and archive share the save queue"
+  },
+  {
+   "browser": "webkit",
+   "name": "all archived is not a first visit",
+   "pass": true,
+   "evidence": "orientation stays hidden"
+  },
+  {
+   "browser": "webkit",
+   "name": "Archived filter exposes restore and selected state",
+   "pass": true,
+   "evidence": "recoverable"
+  },
+  {
+   "browser": "webkit",
+   "name": "restore returns original chat and content to All",
+   "pass": true,
+   "evidence": "no content change"
+  },
+  {
+   "browser": "webkit",
+   "name": "failed archive keeps chat visible and names recovery",
+   "pass": true,
+   "evidence": "not deleted, retry available"
+  },
+  {
+   "browser": "webkit",
+   "name": "stale archive is refused without hiding chat",
+   "pass": true,
+   "evidence": "reload before retry"
   },
   {
    "browser": "webkit",
@@ -237,9 +345,33 @@
   },
   {
    "browser": "webkit",
+   "name": "return visit names where member left off and what next script could build on",
+   "pass": true,
+   "evidence": "You left off on “Stop selling features”. Pick up that interview where you stopped, or start your next script to test a different hook."
+  },
+  {
+   "browser": "webkit",
+   "name": "rail shows finished and filmed counts across projects",
+   "pass": true,
+   "evidence": "finished=1, filmed=0"
+  },
+  {
+   "browser": "webkit",
+   "name": "opening Help closes the account menu instead of covering its answers",
+   "pass": true,
+   "evidence": "launcher menu closed"
+  },
+  {
+   "browser": "webkit",
    "name": "Help answers how long and what happens after",
    "pass": true,
    "evidence": "how long=true, what after=true"
+  },
+  {
+   "browser": "webkit",
+   "name": "Help close returns focus to the visible account button",
+   "pass": true,
+   "evidence": "not a hidden menu item"
   },
   {
    "browser": "webkit",
@@ -354,7 +486,7 @@
  "differences": [],
  "browsers": [
   {
-   "at": "2026-10-29T14:39:51.056Z",
+   "at": "2026-10-30T05:00:47.471Z",
    "browser": "chromium",
    "checks": [
     {
@@ -373,7 +505,7 @@
      "browser": "chromium",
      "name": "keyboard-only walk dark 1280px",
      "pass": true,
-     "evidence": "29 stops via Tab, 0 without visible focus"
+     "evidence": "30 stops via Tab, 0 without visible focus"
     },
     {
      "browser": "chromium",
@@ -385,7 +517,7 @@
      "browser": "chromium",
      "name": "keyboard-only walk light 1280px",
      "pass": true,
-     "evidence": "29 stops via Tab, 0 without visible focus"
+     "evidence": "30 stops via Tab, 0 without visible focus"
     },
     {
      "browser": "chromium",
@@ -398,6 +530,48 @@
      "name": "Escape closes the help dialog",
      "pass": true,
      "evidence": "closed"
+    },
+    {
+     "browser": "chromium",
+     "name": "archive acknowledged: active rail hides chat without deleting content",
+     "pass": true,
+     "evidence": "proj-interview-1"
+    },
+    {
+     "browser": "chromium",
+     "name": "archive flushes the pending title before hiding the chat",
+     "pass": true,
+     "evidence": "debounce and archive share the save queue"
+    },
+    {
+     "browser": "chromium",
+     "name": "all archived is not a first visit",
+     "pass": true,
+     "evidence": "orientation stays hidden"
+    },
+    {
+     "browser": "chromium",
+     "name": "Archived filter exposes restore and selected state",
+     "pass": true,
+     "evidence": "recoverable"
+    },
+    {
+     "browser": "chromium",
+     "name": "restore returns original chat and content to All",
+     "pass": true,
+     "evidence": "no content change"
+    },
+    {
+     "browser": "chromium",
+     "name": "failed archive keeps chat visible and names recovery",
+     "pass": true,
+     "evidence": "not deleted, retry available"
+    },
+    {
+     "browser": "chromium",
+     "name": "stale archive is refused without hiding chat",
+     "pass": true,
+     "evidence": "reload before retry"
     },
     {
      "browser": "chromium",
@@ -419,9 +593,33 @@
     },
     {
      "browser": "chromium",
+     "name": "return visit names where member left off and what next script could build on",
+     "pass": true,
+     "evidence": "You left off on “Stop selling features”. Pick up that interview where you stopped, or start your next script to test a different hook."
+    },
+    {
+     "browser": "chromium",
+     "name": "rail shows finished and filmed counts across projects",
+     "pass": true,
+     "evidence": "finished=1, filmed=0"
+    },
+    {
+     "browser": "chromium",
+     "name": "opening Help closes the account menu instead of covering its answers",
+     "pass": true,
+     "evidence": "launcher menu closed"
+    },
+    {
+     "browser": "chromium",
      "name": "Help answers how long and what happens after",
      "pass": true,
      "evidence": "how long=true, what after=true"
+    },
+    {
+     "browser": "chromium",
+     "name": "Help close returns focus to the visible account button",
+     "pass": true,
+     "evidence": "not a hidden menu item"
     },
     {
      "browser": "chromium",
@@ -1743,7 +1941,7 @@
      "theme": "dark",
      "width": 1280,
      "pass": true,
-     "stops": 29,
+     "stops": 30,
      "invisibleFocusStops": 0,
      "focusOrder": "focus-order.json",
      "shot": "docs/storysculpt-walk/chromium/shots/021-keyboard-journey-dark-1280.jpg"
@@ -1765,7 +1963,7 @@
      "theme": "light",
      "width": 1280,
      "pass": true,
-     "stops": 29,
+     "stops": 30,
      "invisibleFocusStops": 0,
      "focusOrder": null,
      "shot": "docs/storysculpt-walk/chromium/shots/023-keyboard-journey-light-1280.jpg"
@@ -1965,7 +2163,7 @@
    "exitCode": 0
   },
   {
-   "at": "2026-10-29T14:42:22.092Z",
+   "at": "2026-10-30T05:03:40.399Z",
    "browser": "webkit",
    "checks": [
     {
@@ -1984,7 +2182,7 @@
      "browser": "webkit",
      "name": "keyboard-only walk dark 1280px",
      "pass": true,
-     "evidence": "26 stops via Alt+Tab, 0 without visible focus"
+     "evidence": "27 stops via Alt+Tab, 0 without visible focus"
     },
     {
      "browser": "webkit",
@@ -1996,7 +2194,7 @@
      "browser": "webkit",
      "name": "keyboard-only walk light 1280px",
      "pass": true,
-     "evidence": "26 stops via Alt+Tab, 0 without visible focus"
+     "evidence": "27 stops via Alt+Tab, 0 without visible focus"
     },
     {
      "browser": "webkit",
@@ -2009,6 +2207,48 @@
      "name": "Escape closes the help dialog",
      "pass": true,
      "evidence": "closed"
+    },
+    {
+     "browser": "webkit",
+     "name": "archive acknowledged: active rail hides chat without deleting content",
+     "pass": true,
+     "evidence": "proj-interview-1"
+    },
+    {
+     "browser": "webkit",
+     "name": "archive flushes the pending title before hiding the chat",
+     "pass": true,
+     "evidence": "debounce and archive share the save queue"
+    },
+    {
+     "browser": "webkit",
+     "name": "all archived is not a first visit",
+     "pass": true,
+     "evidence": "orientation stays hidden"
+    },
+    {
+     "browser": "webkit",
+     "name": "Archived filter exposes restore and selected state",
+     "pass": true,
+     "evidence": "recoverable"
+    },
+    {
+     "browser": "webkit",
+     "name": "restore returns original chat and content to All",
+     "pass": true,
+     "evidence": "no content change"
+    },
+    {
+     "browser": "webkit",
+     "name": "failed archive keeps chat visible and names recovery",
+     "pass": true,
+     "evidence": "not deleted, retry available"
+    },
+    {
+     "browser": "webkit",
+     "name": "stale archive is refused without hiding chat",
+     "pass": true,
+     "evidence": "reload before retry"
     },
     {
      "browser": "webkit",
@@ -2030,9 +2270,33 @@
     },
     {
      "browser": "webkit",
+     "name": "return visit names where member left off and what next script could build on",
+     "pass": true,
+     "evidence": "You left off on “Stop selling features”. Pick up that interview where you stopped, or start your next script to test a different hook."
+    },
+    {
+     "browser": "webkit",
+     "name": "rail shows finished and filmed counts across projects",
+     "pass": true,
+     "evidence": "finished=1, filmed=0"
+    },
+    {
+     "browser": "webkit",
+     "name": "opening Help closes the account menu instead of covering its answers",
+     "pass": true,
+     "evidence": "launcher menu closed"
+    },
+    {
+     "browser": "webkit",
      "name": "Help answers how long and what happens after",
      "pass": true,
      "evidence": "how long=true, what after=true"
+    },
+    {
+     "browser": "webkit",
+     "name": "Help close returns focus to the visible account button",
+     "pass": true,
+     "evidence": "not a hidden menu item"
     },
     {
      "browser": "webkit",
@@ -3354,7 +3618,7 @@
      "theme": "dark",
      "width": 1280,
      "pass": true,
-     "stops": 26,
+     "stops": 27,
      "invisibleFocusStops": 0,
      "focusOrder": "focus-order.json",
      "shot": "docs/storysculpt-walk/webkit/shots/121-keyboard-journey-dark-1280.jpg"
@@ -3376,7 +3640,7 @@
      "theme": "light",
      "width": 1280,
      "pass": true,
-     "stops": 26,
+     "stops": 27,
      "invisibleFocusStops": 0,
      "focusOrder": null,
      "shot": "docs/storysculpt-walk/webkit/shots/123-keyboard-journey-light-1280.jpg"

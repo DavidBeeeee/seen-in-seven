@@ -117,6 +117,20 @@ function longThread(turns) {
   check(S.engagement([], NOW).state === 'new' && S.returnNotice([], NOW) === null, 'a new member gets no return line');
 }
 
+// 4b. On a return visit, returnVisitLine names where the member left off and what next script could build on.
+{
+  const ctx = {}; vm.createContext(ctx); vm.runInContext(statesSrc, ctx);
+  const S = ctx.StorySculptStates;
+  check(S.returnVisitLine([]) === null, 'first visit (0 projects) returns no return line');
+  const draft = [project('p-1', 'Draft Hook Idea', 1, null, null)];
+  check(S.returnVisitLine(draft) === 'You left off on “Draft Hook Idea”. Pick up that interview where you stopped, or start your next script to test a different hook.', 'draft chat return line names where left off');
+  const finished = [project('p-2', 'Finished Rant', 2, null, 'The finished script body')];
+  check(S.returnVisitLine(finished) === 'You finished “Finished Rant”. Record and mark it filmed, or start your next script to build on that proof with a new story.', 'finished chat return line names where left off');
+  const filmed = [{ id: 'p-3', title: 'Filmed Story', updated_at: new Date(NOW - DAY).toISOString(), output: 'Final script', intake: { filmed: true } }];
+  check(S.returnVisitLine(filmed) === 'You filmed “Filmed Story”. Start your next script to explore another angle or answer the next question from your audience.', 'filmed chat return line names where left off');
+  check(!/—/.test(S.returnVisitLine(draft) + S.returnVisitLine(finished) + S.returnVisitLine(filmed)), 'return visit lines contain no em dashes');
+}
+
 // 5. A 40-turn chat opens on the latest 12 messages with earlier turns behind "Show earlier answers".
 {
   const app = boot([project('p-long', 'Long Chat', 1, longThread(40))]);
