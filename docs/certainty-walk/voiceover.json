@@ -1,0 +1,270 @@
+{
+  "at": "2026-10-30T03:12:18.030Z",
+  "reader": "VoiceOver (macOS 26.2)",
+  "browser": "WebKit 27.2",
+  "refused": [],
+  "transcript": [
+    {
+      "screen": "first-visit",
+      "step": "focus lands on the primary action",
+      "heard": [
+        "Book my first session button Start with one thing you are stuck on. article"
+      ]
+    },
+    {
+      "screen": "first-visit",
+      "step": "VO to the first item",
+      "heard": [
+        "YOUR FIRST SESSION",
+        "You are currently on a selectable text."
+      ]
+    },
+    {
+      "screen": "first-visit",
+      "step": "VO-Right through the first-visit screen",
+      "heard": [
+        "heading level 2 Start with one thing you are stuck on.",
+        "This is two hours, one-on-one with David, on Zoom or by phone. Bring the problem that keeps stalling you, a page, a launch, a decision, and you work on it together until it moves. Nothing to prepare beyond that.",
+        "One session is included every week. Pick any open time below.",
+        "Before. Pick a time and write one line about what is stuck. That is all the preparation there is.",
+        "During. Two hours with David. You work the thing together until it moves.",
+        "After. You leave with one next step, and this page asks what you will put into practice before next week.",
+        "Book my first session button"
+      ]
+    },
+    {
+      "screen": "first-visit",
+      "step": "focus the primary action",
+      "heard": [
+        "Book my first session button",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "book",
+      "step": "VO-Space on \"Book my first session\"",
+      "heard": [
+        "heading level 2 Choose your time main",
+        "You are currently on a heading level 2."
+      ]
+    },
+    {
+      "screen": "book",
+      "step": "VO-Right through the picker",
+      "heard": [
+        "Close button",
+        "One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday.",
+        "You are currently on a selectable text.",
+        "Pick a day",
+        "FRI 30 Oct toggle button",
+        "SAT 31 Oct toggle button",
+        "SUN 1 Nov toggle button",
+        "MON 2 Nov toggle button",
+        "TUE 3 Nov toggle button",
+        "WED 4 Nov toggle button",
+        "THU 5 Nov toggle button",
+        "FRI 6 Nov toggle button",
+        "SAT 7 Nov toggle button",
+        "SUN 8 Nov toggle button"
+      ]
+    },
+    {
+      "screen": "book",
+      "step": "focus the second day",
+      "heard": [
+        "SAT 31 Oct toggle button",
+        "You are currently on a toggle button. To select or deselect this checkbox, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "book",
+      "step": "VO-Space on that day",
+      "heard": [
+        "SAT 31 Oct selected toggle button",
+        "You are currently on a toggle button. To select or deselect this checkbox, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "book",
+      "step": "focus the first open time",
+      "heard": [
+        "10:00 AM ET toggle button",
+        "You are currently on a toggle button. To select or deselect this checkbox, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "book",
+      "step": "VO-Space on that time",
+      "heard": [
+        "10:00 AM ET, selected selected toggle button",
+        "You are currently on a toggle button. To select or deselect this checkbox, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "book",
+      "step": "type a topic",
+      "heard": [
+        "l",
+        "funnel"
+      ]
+    },
+    {
+      "screen": "book",
+      "step": "focus Confirm",
+      "heard": [
+        "Confirm session button",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "book",
+      "step": "VO-Space on Confirm: what is announced after booking",
+      "heard": [
+        "Booked. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Fix my funnel. article Booked. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Fix my funnel. group"
+      ]
+    },
+    {
+      "screen": "booked",
+      "step": "focus Edit session on the booked card",
+      "heard": [
+        "Edit session button",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "booked",
+      "step": "VO-Right after the booked card actions",
+      "heard": [
+        "Reschedule button",
+        "Add to my calendar button",
+        "Cancel button",
+        "Your time is held for you. David has not confirmed it on his calendar yet, and he will confirm with you before the session.",
+        "Before. Pick a time and write one line about what is stuck. That is all the preparation there is.",
+        "During. Two hours with David. You work the thing together until it moves.",
+        "After. You leave with one next step, and this page asks what you will put into practice before next week.",
+        "end of article"
+      ]
+    },
+    {
+      "screen": "edit",
+      "step": "focus Edit session",
+      "heard": [
+        "Edit session button Edit session article",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "edit",
+      "step": "VO-Space on Edit session",
+      "heard": [
+        "heading level 2 Edit your session main",
+        "You are currently on a heading level 2."
+      ]
+    },
+    {
+      "screen": "edit",
+      "step": "retype the topic",
+      "heard": [
+        "o",
+        "two"
+      ]
+    },
+    {
+      "screen": "edit",
+      "step": "focus the save button",
+      "heard": [
+        "Save changes button",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "edit",
+      "step": "VO-Space on save: what is announced after the edit",
+      "heard": [
+        "Saved. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Fix my funnel, part two. article Saved. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Fix my funnel, part two. group"
+      ]
+    },
+    {
+      "screen": "cancel",
+      "step": "focus Cancel",
+      "heard": [
+        "Cancel button",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "cancel",
+      "step": "VO-Space on Cancel (the confirm dialog is accepted by the harness)",
+      "heard": [
+        "Session cancelled. That time is open again. application status main",
+        "You are currently in a window."
+      ]
+    },
+    {
+      "screen": "errors",
+      "step": "focus Confirm with the network about to drop",
+      "heard": [
+        "Confirm session button",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "errors",
+      "step": "VO-Space on Confirm: network drop",
+      "heard": [
+        "Something interrupted the booking. Try again."
+      ]
+    },
+    {
+      "screen": "errors",
+      "step": "focus Confirm again",
+      "heard": [
+        "Confirm session button"
+      ]
+    },
+    {
+      "screen": "errors",
+      "step": "VO-Space on Confirm: someone took the time",
+      "heard": [
+        "Someone just took that time. Pick another open slot."
+      ]
+    },
+    {
+      "screen": "cancel-error",
+      "step": "focus Cancel on a booked session",
+      "heard": [
+        "Cancel button Cancel article",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "cancel-error",
+      "step": "VO-Space on Cancel: the server refuses",
+      "heard": [
+        "Could not cancel that session. Your session is still booked. Try again in a moment, or email David at email@davidbee.me. alert main"
+      ]
+    },
+    {
+      "screen": "load-error",
+      "step": "focus the retry button on a failed load",
+      "heard": [
+        "You are currently on a link. To click this link, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "load-error",
+      "step": "VO-Left from the retry button",
+      "heard": [
+        "There was a problem reaching Certainty Sessions. Check your connection and try again."
+      ]
+    },
+    {
+      "screen": "load-error",
+      "step": "Try again (clicked by the harness) with the server back",
+      "heard": [
+        "There was a problem reaching Certainty Sessions. Check your connection and try again.",
+        "You are currently on a selectable text."
+      ]
+    }
+  ]
+}

@@ -948,9 +948,18 @@
         if (!node.hasAttribute('tabindex')) node.setAttribute('tabindex', '-1');
         node.focus({ preventScroll: true });
       }
-      function focusPrimary() {
+      // `outcome` ("Booked.", "Saved.") leads the session card's spoken name. A
+      // real VoiceOver pass (WBR-458) heard only "Saturday, October 31 and 2
+      // more items" after Confirm: the date, never that the booking went through.
+      function focusPrimary(outcome) {
         var host = el('cs-primary');
-        focusInto(host && (host.querySelector('.cs-next-when') || host.querySelector('h2')));
+        var when = host && host.querySelector('.cs-next-when');
+        if (when && typeof outcome === 'string') {
+          when.setAttribute('role', 'group');
+          var parts = [].map.call(when.querySelectorAll('.cs-next-day, .cs-next-time, .cs-next-meta'), function (n) { return n.textContent.replace(/\s+/g, ' ').trim(); }).filter(Boolean);
+          when.setAttribute('aria-label', outcome + ' ' + parts.join(', ') + '.');
+        }
+        focusInto(when || (host && host.querySelector('h2')));
       }
       function openPanel() {
         var active = document.activeElement;
@@ -1133,7 +1142,8 @@
           editingSession = null;
           bookOpener = null;
           el('cs-book').classList.remove('open');
-          refresh().then(focusPrimary);
+          showSessionMsg('');
+          refresh().then(function () { focusPrimary(isEdit ? 'Saved.' : 'Booked.'); });
         }).catch(function () {
           btn.disabled = false;
           el('cs-confirm-text').textContent = isEdit ? 'Save changes' : 'Confirm session';
@@ -1177,10 +1187,16 @@
         });
       }
 
-      function showSessionMsg(text) {
+      // The outcome of a cancel takes focus. The Cancel button that started it
+      // is re-rendered away, and under real VoiceOver (WBR-458) the role=alert
+      // text was lost behind "You are currently in a window": a refused cancel
+      // was silent. A focused message is always read.
+      function showSessionMsg(text, kind) {
         var m = el('cs-session-msg');
         m.textContent = text || '';
-        m.className = 'cs-msg' + (text ? ' show err' : '');
+        m.className = 'cs-msg' + (text ? ' show ' + (kind || 'err') : '');
+        m.setAttribute('role', kind === 'ok' ? 'status' : 'alert');
+        if (text) focusInto(m);
       }
 
       // Release a session and resolve true only once the server confirms the
@@ -1204,7 +1220,7 @@
 
       function cancelSession(id) {
         if (!window.confirm('Cancel this session? The time opens back up for you or someone else.')) return;
-        releaseSession(id).then(function (released) { if (released) focusPrimary(); });
+        releaseSession(id).then(function (released) { if (released) showSessionMsg('Session cancelled. That time is open again.', 'ok'); });
       }
 
       function reschedule(id) {
@@ -1489,7 +1505,9 @@
               e.preventDefault();
               el('eee-access-gate').hidden = true;
               el('cs-state-skeleton').classList.remove('cs-hide');
-              refresh();
+              // Hiding the gate drops focus; a VoiceOver pass (WBR-458) heard
+              // nothing at all on recovery. Land on the loaded page instead.
+              Promise.resolve(refresh()).then(function () { if (el('eee-access-gate').hidden) focusPrimary(); });
             };
           }
         } else if (type === 'sign-in') {

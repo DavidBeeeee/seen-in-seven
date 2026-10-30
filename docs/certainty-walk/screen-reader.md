@@ -1,6 +1,185 @@
 # Certainty screen-reader transcripts
 
-Chromium uses the CDP Accessibility tree and an ARIA snapshot; WebKit uses its rendered ARIA snapshot. Neither is a substitute for a real VoiceOver session.
+Chromium uses the CDP Accessibility tree and an ARIA snapshot; WebKit uses its rendered ARIA snapshot. Neither is a substitute for a real VoiceOver session, so the real VoiceOver pass comes first.
+
+## Real VoiceOver pass (2026-10-29, evening Eastern)
+
+Reader: VoiceOver (macOS 26.2). Browser: WebKit 27.2, a visible window driven by `scripts/sim/certainty-voiceover.mjs`. VoiceOver was driven over AppleScript (VO-Right to read, VO-Space to activate, keyboard focus moved by the harness), and every line below is VoiceOver's own `last phrase`, sampled every 200 ms. Same stubbed world as the walk: 0 requests refused, none reached David's calendar or inbox. Raw record: `docs/certainty-walk/voiceover.json`.
+
+### What VoiceOver tripped on, and what changed
+
+From the run before the fixes, the same night:
+
+1. **A refused cancel was silent.** VO-Space on Cancel, server refuses: VoiceOver said only "Certainty Sessions | The Momentum Hub web content. You are currently in a window." The Cancel button is re-rendered away and the role=alert text was lost behind the focus drop. Fixed: the outcome message takes focus. Now: "Could not cancel that session. Your session is still booked. Try again in a moment, or email David at email@davidbee.me. alert".
+2. **A booking never said it was booked.** After Confirm VoiceOver said "Saturday, October 31 and 2 more items group article": a date, not an outcome. Fixed: the focused session card is named with the outcome. Now: "Booked. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Fix my funnel." Saving an edit now says "Saved. …".
+3. **A cancel never said it was cancelled.** Focus went to the first-session heading. Now: "Session cancelled. That time is open again."
+4. **The first fix read the date run together** ("October 3110:00 AM") because the label used raw textContent. Fixed by joining day, time and mode with commas; the rerun confirms it.
+5. **Load-error recovery** hid the gate under focus and put focus nowhere. Focus now returns to the session card once the page loads. Not confirmed by ear: in this harness VoiceOver stayed on the gate paragraph instead of following focus to the retry link, and said nothing new after recovery.
+
+### Transcript after the fixes
+
+#### first-visit
+
+- *focus lands on the primary action*
+  - “Book my first session button Start with one thing you are stuck on. article”
+
+- *VO to the first item*
+  - “YOUR FIRST SESSION”
+  - “You are currently on a selectable text.”
+
+- *VO-Right through the first-visit screen*
+  - “heading level 2 Start with one thing you are stuck on.”
+  - “This is two hours, one-on-one with David, on Zoom or by phone. Bring the problem that keeps stalling you, a page, a launch, a decision, and you work on it together until it moves. Nothing to prepare beyond that.”
+  - “One session is included every week. Pick any open time below.”
+  - “Before. Pick a time and write one line about what is stuck. That is all the preparation there is.”
+  - “During. Two hours with David. You work the thing together until it moves.”
+  - “After. You leave with one next step, and this page asks what you will put into practice before next week.”
+  - “Book my first session button”
+
+- *focus the primary action*
+  - “Book my first session button”
+  - “You are currently on a button. To click this button, press Control-Option-Space.”
+
+#### book
+
+- *VO-Space on "Book my first session"*
+  - “heading level 2 Choose your time main”
+  - “You are currently on a heading level 2.”
+
+- *VO-Right through the picker*
+  - “Close button”
+  - “One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday.”
+  - “You are currently on a selectable text.”
+  - “Pick a day”
+  - “FRI 30 Oct toggle button”
+  - “SAT 31 Oct toggle button”
+  - “SUN 1 Nov toggle button”
+  - “MON 2 Nov toggle button”
+  - “TUE 3 Nov toggle button”
+  - “WED 4 Nov toggle button”
+  - “THU 5 Nov toggle button”
+  - “FRI 6 Nov toggle button”
+  - “SAT 7 Nov toggle button”
+  - “SUN 8 Nov toggle button”
+
+- *focus the second day*
+  - “SAT 31 Oct toggle button”
+  - “You are currently on a toggle button. To select or deselect this checkbox, press Control-Option-Space.”
+
+- *VO-Space on that day*
+  - “SAT 31 Oct selected toggle button”
+  - “You are currently on a toggle button. To select or deselect this checkbox, press Control-Option-Space.”
+
+- *focus the first open time*
+  - “10:00 AM ET toggle button”
+  - “You are currently on a toggle button. To select or deselect this checkbox, press Control-Option-Space.”
+
+- *VO-Space on that time*
+  - “10:00 AM ET, selected selected toggle button”
+  - “You are currently on a toggle button. To select or deselect this checkbox, press Control-Option-Space.”
+
+- *type a topic*
+  - “l”
+  - “funnel”
+
+- *focus Confirm*
+  - “Confirm session button”
+  - “You are currently on a button. To click this button, press Control-Option-Space.”
+
+- *VO-Space on Confirm: what is announced after booking*
+  - “Booked. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Fix my funnel. article Booked. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Fix my funnel. group”
+
+#### booked
+
+- *focus Edit session on the booked card*
+  - “Edit session button”
+  - “You are currently on a button. To click this button, press Control-Option-Space.”
+
+- *VO-Right after the booked card actions*
+  - “Reschedule button”
+  - “Add to my calendar button”
+  - “Cancel button”
+  - “Your time is held for you. David has not confirmed it on his calendar yet, and he will confirm with you before the session.”
+  - “Before. Pick a time and write one line about what is stuck. That is all the preparation there is.”
+  - “During. Two hours with David. You work the thing together until it moves.”
+  - “After. You leave with one next step, and this page asks what you will put into practice before next week.”
+  - “end of article”
+
+#### edit
+
+- *focus Edit session*
+  - “Edit session button Edit session article”
+  - “You are currently on a button. To click this button, press Control-Option-Space.”
+
+- *VO-Space on Edit session*
+  - “heading level 2 Edit your session main”
+  - “You are currently on a heading level 2.”
+
+- *retype the topic*
+  - “o”
+  - “two”
+
+- *focus the save button*
+  - “Save changes button”
+  - “You are currently on a button. To click this button, press Control-Option-Space.”
+
+- *VO-Space on save: what is announced after the edit*
+  - “Saved. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Fix my funnel, part two. article Saved. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Fix my funnel, part two. group”
+
+#### cancel
+
+- *focus Cancel*
+  - “Cancel button”
+  - “You are currently on a button. To click this button, press Control-Option-Space.”
+
+- *VO-Space on Cancel (the confirm dialog is accepted by the harness)*
+  - “Session cancelled. That time is open again. application status main”
+  - “You are currently in a window.”
+
+#### errors
+
+- *focus Confirm with the network about to drop*
+  - “Confirm session button”
+  - “You are currently on a button. To click this button, press Control-Option-Space.”
+
+- *VO-Space on Confirm: network drop*
+  - “Something interrupted the booking. Try again.”
+
+- *focus Confirm again*
+  - “Confirm session button”
+
+- *VO-Space on Confirm: someone took the time*
+  - “Someone just took that time. Pick another open slot.”
+
+#### cancel-error
+
+- *focus Cancel on a booked session*
+  - “Cancel button Cancel article”
+  - “You are currently on a button. To click this button, press Control-Option-Space.”
+
+- *VO-Space on Cancel: the server refuses*
+  - “Could not cancel that session. Your session is still booked. Try again in a moment, or email David at email@davidbee.me. alert main”
+
+#### load-error
+
+- *focus the retry button on a failed load*
+  - “You are currently on a link. To click this link, press Control-Option-Space.”
+
+- *VO-Left from the retry button*
+  - “There was a problem reaching Certainty Sessions. Check your connection and try again.”
+
+- *Try again (clicked by the harness) with the server back*
+  - “There was a problem reaching Certainty Sessions. Check your connection and try again.”
+  - “You are currently on a selectable text.”
+
+### Limits
+
+- The native confirm() dialogs for Cancel and Reschedule are accepted by the harness, so what VoiceOver says on those dialogs was not heard.
+- Typed characters were echoed only in part (“l”, “funnel”) because the harness types faster than VoiceOver speaks.
+- One VoiceOver build, one WebKit build, desktop width, light theme. NVDA and iOS VoiceOver were not run.
+
+---
+
 
 ---
 
