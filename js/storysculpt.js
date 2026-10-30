@@ -205,6 +205,7 @@ function showNextUnarchivedStory() {
 }
 
 function renderProjectList() {
+  renderReturnNotice();
   renderMemberProgress();
   const list = storyEl('story-project-list');
   const count = storyEl('story-rail-count');
@@ -696,6 +697,7 @@ function showEarlierTurns() {
 function renderReturnNotice() {
   const slot = storyEl('story-return-notice');
   if (!slot) return;
+  storyReturnNotice = STATES.refreshReturnNotice(storyReturnNotice, storyProjects);
   slot.innerHTML = STATES.returnNoticeMarkup(storyReturnNotice);
   slot.hidden = !storyReturnNotice;
   EEEStudio.refreshIcons();
@@ -1841,7 +1843,9 @@ async function loadStoryProjects() {
   storyProjects = data || [];
   // Measured from the saved timestamps before this visit writes anything.
   const available = storyProjects.filter(project => !project.archived);
-  storyReturnNotice = STATES.returnNoticeFor(available);
+  let returnStorage = null;
+  try { returnStorage = window.localStorage; } catch (_) { /* Storage can be disabled. */ }
+  storyReturnNotice = STATES.returnNoticeFor(available, Date.now(), { owner: storyContext.profile.id, storage: returnStorage });
   renderReturnNotice();
   const resume = storyReturnNotice && available.find(project => project.id === storyReturnNotice.projectId);
   if (resume) showProject(resume); else if (available.length) showProject(available[0]); else showStart();
