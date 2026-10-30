@@ -1,7 +1,7 @@
 {
  "nodes": [
   {
-   "nodeId": "2",
+   "nodeId": "17",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -62,13 +62,13 @@
     }
    ],
    "childIds": [
-    "27"
+    "20"
    ],
-   "backendDOMNodeId": 2,
-   "frameId": "A2CF249E516D4805836711042D4C2392"
+   "backendDOMNodeId": 17,
+   "frameId": "EF234F76677D2B8FCCF44629C22CF6EE"
   },
   {
-   "nodeId": "27",
+   "nodeId": "20",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -87,14 +87,14 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "2",
+   "parentId": "17",
    "childIds": [
-    "44"
+    "37"
    ],
-   "backendDOMNodeId": 27
+   "backendDOMNodeId": 20
   },
   {
-   "nodeId": "44",
+   "nodeId": "37",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -113,14 +113,14 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "27",
+   "parentId": "20",
    "childIds": [
-    "57"
+    "48"
    ],
-   "backendDOMNodeId": 44
+   "backendDOMNodeId": 37
   },
   {
-   "nodeId": "57",
+   "nodeId": "48",
    "ignored": false,
    "role": {
     "type": "role",
@@ -145,15 +145,15 @@
     ]
    },
    "properties": [],
-   "parentId": "44",
+   "parentId": "37",
    "childIds": [
-    "58",
-    "94"
+    "49",
+    "72"
    ],
-   "backendDOMNodeId": 57
+   "backendDOMNodeId": 48
   },
   {
-   "nodeId": "58",
+   "nodeId": "49",
    "ignored": false,
    "role": {
     "type": "role",
@@ -182,15 +182,15 @@
     ]
    },
    "properties": [],
-   "parentId": "57",
+   "parentId": "48",
    "childIds": [
-    "14",
-    "10"
+    "50",
+    "55"
    ],
-   "backendDOMNodeId": 58
+   "backendDOMNodeId": 49
   },
   {
-   "nodeId": "94",
+   "nodeId": "72",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -209,20 +209,20 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "57",
+   "parentId": "48",
    "childIds": [
-    "110",
-    "112",
-    "161"
+    "82",
+    "84",
+    "111"
    ],
-   "backendDOMNodeId": 94
+   "backendDOMNodeId": 72
   },
   {
-   "nodeId": "110",
+   "nodeId": "82",
    "ignored": true,
    "ignoredReasons": [
     {
-     "name": "notRendered",
+     "name": "inertElement",
      "value": {
       "type": "boolean",
       "value": true
@@ -237,18 +237,18 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "94",
+   "parentId": "72",
    "childIds": [
-    "114"
+    "86"
    ],
-   "backendDOMNodeId": 110
+   "backendDOMNodeId": 82
   },
   {
-   "nodeId": "114",
+   "nodeId": "86",
    "ignored": true,
    "ignoredReasons": [
     {
-     "name": "notRendered",
+     "name": "inertElement",
      "value": {
       "type": "boolean",
       "value": true
@@ -263,16 +263,16 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "110",
+   "parentId": "82",
    "childIds": [],
-   "backendDOMNodeId": 114
+   "backendDOMNodeId": 86
   },
   {
-   "nodeId": "112",
+   "nodeId": "84",
    "ignored": true,
    "ignoredReasons": [
     {
-     "name": "notRendered",
+     "name": "inertElement",
      "value": {
       "type": "boolean",
       "value": true
@@ -287,18 +287,18 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "94",
+   "parentId": "72",
    "childIds": [
-    "122"
+    "89"
    ],
-   "backendDOMNodeId": 112
+   "backendDOMNodeId": 84
   },
   {
-   "nodeId": "122",
+   "nodeId": "89",
    "ignored": true,
    "ignoredReasons": [
     {
-     "name": "notRendered",
+     "name": "inertElement",
      "value": {
       "type": "boolean",
       "value": true
@@ -313,12 +313,12 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "112",
+   "parentId": "84",
    "childIds": [],
-   "backendDOMNodeId": 122
+   "backendDOMNodeId": 89
   },
   {
-   "nodeId": "161",
+   "nodeId": "111",
    "ignored": false,
    "role": {
     "type": "role",
@@ -347,15 +347,15 @@
     ]
    },
    "properties": [],
-   "parentId": "94",
+   "parentId": "72",
    "childIds": [
-    "162",
-    "12"
+    "112",
+    "119"
    ],
-   "backendDOMNodeId": 161
+   "backendDOMNodeId": 111
   },
   {
-   "nodeId": "14",
+   "nodeId": "50",
    "ignored": false,
    "role": {
     "type": "role",
@@ -407,15 +407,15 @@
      }
     }
    ],
-   "parentId": "58",
+   "parentId": "49",
    "childIds": [
-    "59",
-    "60"
+    "51",
+    "52"
    ],
-   "backendDOMNodeId": 14
+   "backendDOMNodeId": 50
   },
   {
-   "nodeId": "10",
+   "nodeId": "55",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -434,16 +434,16 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "58",
+   "parentId": "49",
    "childIds": [
-    "63",
-    "69",
-    "11"
+    "56",
+    "59",
+    "62"
    ],
-   "backendDOMNodeId": 10
+   "backendDOMNodeId": 55
   },
   {
-   "nodeId": "63",
+   "nodeId": "56",
    "ignored": false,
    "role": {
     "type": "role",
@@ -500,14 +500,14 @@
      }
     }
    ],
-   "parentId": "10",
+   "parentId": "55",
    "childIds": [
-    "16"
+    "693"
    ],
-   "backendDOMNodeId": 63
+   "backendDOMNodeId": 56
   },
   {
-   "nodeId": "69",
+   "nodeId": "59",
    "ignored": false,
    "role": {
     "type": "role",
@@ -581,14 +581,14 @@
      }
     }
    ],
-   "parentId": "10",
+   "parentId": "55",
    "childIds": [
-    "17"
+    "703"
    ],
-   "backendDOMNodeId": 69
+   "backendDOMNodeId": 59
   },
   {
-   "nodeId": "11",
+   "nodeId": "62",
    "ignored": false,
    "role": {
     "type": "role",
@@ -658,14 +658,14 @@
      }
     }
    ],
-   "parentId": "10",
+   "parentId": "55",
    "childIds": [
-    "81"
+    "63"
    ],
-   "backendDOMNodeId": 11
+   "backendDOMNodeId": 62
   },
   {
-   "nodeId": "162",
+   "nodeId": "112",
    "ignored": false,
    "role": {
     "type": "role",
@@ -694,15 +694,15 @@
     ]
    },
    "properties": [],
-   "parentId": "161",
+   "parentId": "111",
    "childIds": [
-    "163",
-    "167"
+    "113",
+    "117"
    ],
-   "backendDOMNodeId": 162
+   "backendDOMNodeId": 112
   },
   {
-   "nodeId": "12",
+   "nodeId": "119",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -721,23 +721,24 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "161",
+   "parentId": "111",
    "childIds": [
-    "187",
-    "273",
-    "274",
-    "275",
-    "278",
-    "280",
-    "281",
-    "290",
-    "13",
-    "399"
+    "132",
+    "174",
+    "176",
+    "177",
+    "180",
+    "183",
+    "184",
+    "192",
+    "239",
+    "310",
+    "311"
    ],
-   "backendDOMNodeId": 12
+   "backendDOMNodeId": 119
   },
   {
-   "nodeId": "187",
+   "nodeId": "132",
    "ignored": false,
    "role": {
     "type": "role",
@@ -766,19 +767,19 @@
     ]
    },
    "properties": [],
-   "parentId": "12",
+   "parentId": "119",
    "childIds": [
-    "188",
-    "225"
+    "133",
+    "134"
    ],
-   "backendDOMNodeId": 187
+   "backendDOMNodeId": 132
   },
   {
-   "nodeId": "273",
+   "nodeId": "174",
    "ignored": true,
    "ignoredReasons": [
     {
-     "name": "notRendered",
+     "name": "inertElement",
      "value": {
       "type": "boolean",
       "value": true
@@ -793,18 +794,18 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "12",
+   "parentId": "119",
    "childIds": [
-    "524"
+    "366"
    ],
-   "backendDOMNodeId": 273
+   "backendDOMNodeId": 174
   },
   {
-   "nodeId": "524",
+   "nodeId": "366",
    "ignored": true,
    "ignoredReasons": [
     {
-     "name": "notRendered",
+     "name": "inertElement",
      "value": {
       "type": "boolean",
       "value": true
@@ -819,16 +820,16 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "273",
+   "parentId": "174",
    "childIds": [],
-   "backendDOMNodeId": 524
+   "backendDOMNodeId": 366
   },
   {
-   "nodeId": "274",
+   "nodeId": "176",
    "ignored": true,
    "ignoredReasons": [
     {
-     "name": "notRendered",
+     "name": "inertElement",
      "value": {
       "type": "boolean",
       "value": true
@@ -843,16 +844,16 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "12",
+   "parentId": "119",
    "childIds": [],
-   "backendDOMNodeId": 274
+   "backendDOMNodeId": 176
   },
   {
-   "nodeId": "275",
+   "nodeId": "177",
    "ignored": true,
    "ignoredReasons": [
     {
-     "name": "notRendered",
+     "name": "inertElement",
      "value": {
       "type": "boolean",
       "value": true
@@ -867,16 +868,16 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "12",
+   "parentId": "119",
    "childIds": [],
-   "backendDOMNodeId": 275
+   "backendDOMNodeId": 177
   },
   {
-   "nodeId": "278",
+   "nodeId": "180",
    "ignored": true,
    "ignoredReasons": [
     {
-     "name": "notRendered",
+     "name": "inertElement",
      "value": {
       "type": "boolean",
       "value": true
@@ -891,19 +892,19 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "12",
+   "parentId": "119",
    "childIds": [
-    "526",
-    "279"
+    "368",
+    "181"
    ],
-   "backendDOMNodeId": 278
+   "backendDOMNodeId": 180
   },
   {
-   "nodeId": "526",
+   "nodeId": "368",
    "ignored": true,
    "ignoredReasons": [
     {
-     "name": "notRendered",
+     "name": "inertElement",
      "value": {
       "type": "boolean",
       "value": true
@@ -918,16 +919,16 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "278",
+   "parentId": "180",
    "childIds": [],
-   "backendDOMNodeId": 526
+   "backendDOMNodeId": 368
   },
   {
-   "nodeId": "279",
+   "nodeId": "181",
    "ignored": true,
    "ignoredReasons": [
     {
-     "name": "notRendered",
+     "name": "inertElement",
      "value": {
       "type": "boolean",
       "value": true
@@ -942,18 +943,18 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "278",
+   "parentId": "180",
    "childIds": [
-    "527"
+    "369"
    ],
-   "backendDOMNodeId": 279
+   "backendDOMNodeId": 181
   },
   {
-   "nodeId": "527",
+   "nodeId": "369",
    "ignored": true,
    "ignoredReasons": [
     {
-     "name": "notRendered",
+     "name": "inertElement",
      "value": {
       "type": "boolean",
       "value": true
@@ -968,16 +969,16 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "279",
+   "parentId": "181",
    "childIds": [],
-   "backendDOMNodeId": 527
+   "backendDOMNodeId": 369
   },
   {
-   "nodeId": "280",
+   "nodeId": "183",
    "ignored": true,
    "ignoredReasons": [
     {
-     "name": "notRendered",
+     "name": "inertElement",
      "value": {
       "type": "boolean",
       "value": true
@@ -992,16 +993,16 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "12",
+   "parentId": "119",
    "childIds": [],
-   "backendDOMNodeId": 280
+   "backendDOMNodeId": 183
   },
   {
-   "nodeId": "281",
+   "nodeId": "184",
    "ignored": true,
    "ignoredReasons": [
     {
-     "name": "notRendered",
+     "name": "inertElement",
      "value": {
       "type": "boolean",
       "value": true
@@ -1016,12 +1017,12 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "12",
+   "parentId": "119",
    "childIds": [],
-   "backendDOMNodeId": 281
+   "backendDOMNodeId": 184
   },
   {
-   "nodeId": "290",
+   "nodeId": "192",
    "ignored": false,
    "role": {
     "type": "role",
@@ -1050,124 +1051,142 @@
     ]
    },
    "properties": [],
-   "parentId": "12",
+   "parentId": "119",
    "childIds": [
-    "291",
-    "295",
-    "296"
+    "193",
+    "197",
+    "198"
    ],
-   "backendDOMNodeId": 290
+   "backendDOMNodeId": 192
   },
   {
-   "nodeId": "13",
+   "nodeId": "239",
    "ignored": false,
    "role": {
     "type": "role",
-    "value": "region"
+    "value": "group"
    },
    "chromeRole": {
     "type": "internalRole",
-    "value": 143
+    "value": 34
    },
    "name": {
     "type": "computedString",
-    "value": "What happens if you miss a week, drift off, or leave.",
+    "value": "",
     "sources": [
      {
       "type": "relatedElement",
-      "value": {
-       "type": "computedString",
-       "value": "What happens if you miss a week, drift off, or leave."
-      },
-      "attribute": "aria-labelledby",
-      "attributeValue": {
-       "type": "idrefList",
-       "value": "cs-rhythm-title",
-       "relatedNodes": [
-        {
-         "backendDOMNodeId": 374,
-         "idref": "cs-rhythm-title",
-         "text": "What happens if you miss a week, drift off, or leave."
-        }
-       ]
-      }
+      "attribute": "aria-labelledby"
      },
      {
       "type": "attribute",
-      "attribute": "aria-label",
-      "superseded": true
+      "attribute": "aria-label"
      },
      {
       "type": "attribute",
-      "attribute": "title",
-      "superseded": true
+      "attribute": "title"
      }
     ]
    },
-   "properties": [
+   "properties": [],
+   "parentId": "119",
+   "childIds": [
+    "240",
+    "242"
+   ],
+   "backendDOMNodeId": 239
+  },
+  {
+   "nodeId": "310",
+   "ignored": true,
+   "ignoredReasons": [
     {
-     "name": "labelledby",
+     "name": "ariaHiddenSubtree",
      "value": {
-      "type": "nodeList",
+      "type": "idref",
       "relatedNodes": [
        {
-        "backendDOMNodeId": 374,
-        "idref": "cs-rhythm-title",
-        "text": "What happens if you miss a week, drift off, or leave."
+        "backendDOMNodeId": 308,
+        "idref": "cs-confirm-dialog-backdrop"
        }
       ]
      }
     }
    ],
-   "parentId": "12",
-   "childIds": [
-    "373",
-    "374",
-    "375",
-    "388",
-    "397"
-   ],
-   "backendDOMNodeId": 13
-  },
-  {
-   "nodeId": "399",
-   "ignored": false,
    "role": {
     "type": "role",
-    "value": "generic"
+    "value": "none"
    },
    "chromeRole": {
     "type": "internalRole",
-    "value": 211
+    "value": 0
    },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "12",
+   "parentId": "119",
    "childIds": [
-    "400",
-    "435"
+    "479"
    ],
-   "backendDOMNodeId": 399
+   "backendDOMNodeId": 310
   },
   {
-   "nodeId": "59",
+   "nodeId": "479",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "ariaHiddenSubtree",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 308,
+        "idref": "cs-confirm-dialog-backdrop"
+       }
+      ]
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "310",
+   "childIds": [],
+   "backendDOMNodeId": 479
+  },
+  {
+   "nodeId": "311",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "ariaHiddenSubtree",
+     "value": {
+      "type": "idref",
+      "relatedNodes": [
+       {
+        "backendDOMNodeId": 308,
+        "idref": "cs-confirm-dialog-backdrop"
+       }
+      ]
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "119",
+   "childIds": [],
+   "backendDOMNodeId": 311
+  },
+  {
+   "nodeId": "51",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -1186,14 +1205,14 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "14",
+   "parentId": "50",
    "childIds": [
-    "466"
+    "13"
    ],
-   "backendDOMNodeId": 59
+   "backendDOMNodeId": 51
   },
   {
-   "nodeId": "466",
+   "nodeId": "13",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -1217,14 +1236,14 @@
     ]
    },
    "properties": [],
-   "parentId": "59",
+   "parentId": "51",
    "childIds": [
-    "-1000000002"
+    "-1000000340"
    ],
-   "backendDOMNodeId": 466
+   "backendDOMNodeId": 13
   },
   {
-   "nodeId": "60",
+   "nodeId": "52",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -1243,14 +1262,14 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "14",
+   "parentId": "50",
    "childIds": [
-    "61"
+    "53"
    ],
-   "backendDOMNodeId": 60
+   "backendDOMNodeId": 52
   },
   {
-   "nodeId": "61",
+   "nodeId": "53",
    "ignored": false,
    "role": {
     "type": "role",
@@ -1275,14 +1294,14 @@
     ]
    },
    "properties": [],
-   "parentId": "60",
+   "parentId": "52",
    "childIds": [
-    "15"
+    "14"
    ],
-   "backendDOMNodeId": 61
+   "backendDOMNodeId": 53
   },
   {
-   "nodeId": "16",
+   "nodeId": "693",
    "ignored": false,
    "role": {
     "type": "role",
@@ -1315,12 +1334,12 @@
     ]
    },
    "properties": [],
-   "parentId": "63",
+   "parentId": "56",
    "childIds": [],
-   "backendDOMNodeId": 16
+   "backendDOMNodeId": 693
   },
   {
-   "nodeId": "17",
+   "nodeId": "703",
    "ignored": false,
    "role": {
     "type": "role",
@@ -1353,12 +1372,12 @@
     ]
    },
    "properties": [],
-   "parentId": "69",
+   "parentId": "59",
    "childIds": [],
-   "backendDOMNodeId": 17
+   "backendDOMNodeId": 703
   },
   {
-   "nodeId": "81",
+   "nodeId": "63",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -1377,14 +1396,14 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "11",
+   "parentId": "62",
    "childIds": [
-    "469"
+    "16"
    ],
-   "backendDOMNodeId": 81
+   "backendDOMNodeId": 63
   },
   {
-   "nodeId": "469",
+   "nodeId": "16",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -1408,14 +1427,14 @@
     ]
    },
    "properties": [],
-   "parentId": "81",
+   "parentId": "63",
    "childIds": [
-    "-1000000004"
+    "-1000000342"
    ],
-   "backendDOMNodeId": 469
+   "backendDOMNodeId": 16
   },
   {
-   "nodeId": "163",
+   "nodeId": "113",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -1434,16 +1453,16 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "162",
+   "parentId": "112",
    "childIds": [
-    "164",
-    "165",
-    "166"
+    "114",
+    "115",
+    "116"
    ],
-   "backendDOMNodeId": 163
+   "backendDOMNodeId": 113
   },
   {
-   "nodeId": "164",
+   "nodeId": "114",
    "ignored": false,
    "role": {
     "type": "role",
@@ -1468,14 +1487,14 @@
     ]
    },
    "properties": [],
-   "parentId": "163",
+   "parentId": "113",
    "childIds": [
-    "485"
+    "6"
    ],
-   "backendDOMNodeId": 164
+   "backendDOMNodeId": 114
   },
   {
-   "nodeId": "165",
+   "nodeId": "115",
    "ignored": false,
    "role": {
     "type": "role",
@@ -1520,14 +1539,14 @@
      }
     }
    ],
-   "parentId": "163",
+   "parentId": "113",
    "childIds": [
-    "18"
+    "8"
    ],
-   "backendDOMNodeId": 165
+   "backendDOMNodeId": 115
   },
   {
-   "nodeId": "166",
+   "nodeId": "116",
    "ignored": false,
    "role": {
     "type": "role",
@@ -1552,14 +1571,14 @@
     ]
    },
    "properties": [],
-   "parentId": "163",
+   "parentId": "113",
    "childIds": [
-    "486"
+    "9"
    ],
-   "backendDOMNodeId": 166
+   "backendDOMNodeId": 116
   },
   {
-   "nodeId": "167",
+   "nodeId": "117",
    "ignored": false,
    "role": {
     "type": "role",
@@ -1584,15 +1603,15 @@
     ]
    },
    "properties": [],
-   "parentId": "162",
+   "parentId": "112",
    "childIds": [
-    "168",
-    "487"
+    "749",
+    "7"
    ],
-   "backendDOMNodeId": 167
+   "backendDOMNodeId": 117
   },
   {
-   "nodeId": "188",
+   "nodeId": "133",
    "ignored": false,
    "role": {
     "type": "role",
@@ -1621,19 +1640,19 @@
     ]
    },
    "properties": [],
-   "parentId": "187",
+   "parentId": "132",
    "childIds": [
-    "189",
-    "20",
-    "190",
-    "191",
-    "21",
-    "215"
+    "518",
+    "519",
+    "520",
+    "521",
+    "522",
+    "535"
    ],
-   "backendDOMNodeId": 188
+   "backendDOMNodeId": 133
   },
   {
-   "nodeId": "225",
+   "nodeId": "134",
    "ignored": false,
    "role": {
     "type": "role",
@@ -1662,16 +1681,16 @@
     ]
    },
    "properties": [],
-   "parentId": "187",
+   "parentId": "132",
    "childIds": [
-    "226",
-    "230",
-    "231"
+    "135",
+    "139",
+    "140"
    ],
-   "backendDOMNodeId": 225
+   "backendDOMNodeId": 134
   },
   {
-   "nodeId": "291",
+   "nodeId": "193",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -1690,14 +1709,14 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "290",
+   "parentId": "192",
    "childIds": [
-    "292"
+    "194"
    ],
-   "backendDOMNodeId": 291
+   "backendDOMNodeId": 193
   },
   {
-   "nodeId": "292",
+   "nodeId": "194",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -1716,15 +1735,15 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "291",
+   "parentId": "193",
    "childIds": [
-    "293",
-    "294"
+    "195",
+    "196"
    ],
-   "backendDOMNodeId": 292
+   "backendDOMNodeId": 194
   },
   {
-   "nodeId": "293",
+   "nodeId": "195",
    "ignored": false,
    "role": {
     "type": "role",
@@ -1749,14 +1768,14 @@
     ]
    },
    "properties": [],
-   "parentId": "292",
+   "parentId": "194",
    "childIds": [
-    "529"
+    "371"
    ],
-   "backendDOMNodeId": 293
+   "backendDOMNodeId": 195
   },
   {
-   "nodeId": "294",
+   "nodeId": "196",
    "ignored": false,
    "role": {
     "type": "role",
@@ -1801,14 +1820,14 @@
      }
     }
    ],
-   "parentId": "292",
+   "parentId": "194",
    "childIds": [
-    "530"
+    "372"
    ],
-   "backendDOMNodeId": 294
+   "backendDOMNodeId": 196
   },
   {
-   "nodeId": "295",
+   "nodeId": "197",
    "ignored": false,
    "role": {
     "type": "role",
@@ -1833,14 +1852,14 @@
     ]
    },
    "properties": [],
-   "parentId": "290",
+   "parentId": "192",
    "childIds": [
-    "531"
+    "373"
    ],
-   "backendDOMNodeId": 295
+   "backendDOMNodeId": 197
   },
   {
-   "nodeId": "296",
+   "nodeId": "198",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -1859,17 +1878,17 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "290",
+   "parentId": "192",
    "childIds": [
-    "297",
-    "342",
-    "357",
-    "365"
+    "199",
+    "209",
+    "225",
+    "234"
    ],
-   "backendDOMNodeId": 296
+   "backendDOMNodeId": 198
   },
   {
-   "nodeId": "297",
+   "nodeId": "199",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -1888,16 +1907,16 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "296",
+   "parentId": "198",
    "childIds": [
-    "298",
-    "7",
-    "341"
+    "200",
+    "201",
+    "208"
    ],
-   "backendDOMNodeId": 297
+   "backendDOMNodeId": 199
   },
   {
-   "nodeId": "298",
+   "nodeId": "200",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -1926,14 +1945,14 @@
     ]
    },
    "properties": [],
-   "parentId": "297",
+   "parentId": "199",
    "childIds": [
-    "532"
+    "374"
    ],
-   "backendDOMNodeId": 298
+   "backendDOMNodeId": 200
   },
   {
-   "nodeId": "7",
+   "nodeId": "201",
    "ignored": false,
    "role": {
     "type": "role",
@@ -1966,7 +1985,7 @@
        "type": "nodeList",
        "relatedNodes": [
         {
-         "backendDOMNodeId": 298,
+         "backendDOMNodeId": 200,
          "text": "Time zone"
         }
        ]
@@ -2018,21 +2037,21 @@
       "type": "nodeList",
       "relatedNodes": [
        {
-        "backendDOMNodeId": 298,
+        "backendDOMNodeId": 200,
         "text": "Time zone"
        }
       ]
      }
     }
    ],
-   "parentId": "297",
+   "parentId": "199",
    "childIds": [
-    "301"
+    "204"
    ],
-   "backendDOMNodeId": 7
+   "backendDOMNodeId": 201
   },
   {
-   "nodeId": "341",
+   "nodeId": "208",
    "ignored": false,
    "role": {
     "type": "role",
@@ -2057,14 +2076,14 @@
     ]
    },
    "properties": [],
-   "parentId": "297",
+   "parentId": "199",
    "childIds": [
-    "533"
+    "375"
    ],
-   "backendDOMNodeId": 341
+   "backendDOMNodeId": 208
   },
   {
-   "nodeId": "342",
+   "nodeId": "209",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -2083,16 +2102,16 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "296",
+   "parentId": "198",
    "childIds": [
-    "343",
-    "8",
-    "356"
+    "210",
+    "211",
+    "224"
    ],
-   "backendDOMNodeId": 342
+   "backendDOMNodeId": 209
   },
   {
-   "nodeId": "343",
+   "nodeId": "210",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -2121,14 +2140,14 @@
     ]
    },
    "properties": [],
-   "parentId": "342",
+   "parentId": "209",
    "childIds": [
-    "534"
+    "376"
    ],
-   "backendDOMNodeId": 343
+   "backendDOMNodeId": 210
   },
   {
-   "nodeId": "8",
+   "nodeId": "211",
    "ignored": false,
    "role": {
     "type": "role",
@@ -2161,7 +2180,7 @@
        "type": "nodeList",
        "relatedNodes": [
         {
-         "backendDOMNodeId": 343,
+         "backendDOMNodeId": 210,
          "text": "Default meeting format"
         }
        ]
@@ -2213,21 +2232,21 @@
       "type": "nodeList",
       "relatedNodes": [
        {
-        "backendDOMNodeId": 343,
+        "backendDOMNodeId": 210,
         "text": "Default meeting format"
        }
       ]
      }
     }
    ],
-   "parentId": "342",
+   "parentId": "209",
    "childIds": [
-    "346"
+    "214"
    ],
-   "backendDOMNodeId": 8
+   "backendDOMNodeId": 211
   },
   {
-   "nodeId": "356",
+   "nodeId": "224",
    "ignored": false,
    "role": {
     "type": "role",
@@ -2252,14 +2271,14 @@
     ]
    },
    "properties": [],
-   "parentId": "342",
+   "parentId": "209",
    "childIds": [
-    "535"
+    "377"
    ],
-   "backendDOMNodeId": 356
+   "backendDOMNodeId": 224
   },
   {
-   "nodeId": "357",
+   "nodeId": "225",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -2278,18 +2297,18 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "296",
+   "parentId": "198",
    "childIds": [
-    "358",
-    "360",
-    "9",
-    "363",
-    "364"
+    "226",
+    "228",
+    "229",
+    "232",
+    "233"
    ],
-   "backendDOMNodeId": 357
+   "backendDOMNodeId": 225
   },
   {
-   "nodeId": "358",
+   "nodeId": "226",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -2318,15 +2337,15 @@
     ]
    },
    "properties": [],
-   "parentId": "357",
+   "parentId": "225",
    "childIds": [
-    "536",
-    "537"
+    "378",
+    "379"
    ],
-   "backendDOMNodeId": 358
+   "backendDOMNodeId": 226
   },
   {
-   "nodeId": "360",
+   "nodeId": "228",
    "ignored": false,
    "role": {
     "type": "role",
@@ -2351,14 +2370,14 @@
     ]
    },
    "properties": [],
-   "parentId": "357",
+   "parentId": "225",
    "childIds": [
-    "538"
+    "845"
    ],
-   "backendDOMNodeId": 360
+   "backendDOMNodeId": 228
   },
   {
-   "nodeId": "9",
+   "nodeId": "229",
    "ignored": false,
    "role": {
     "type": "role",
@@ -2391,7 +2410,7 @@
        "type": "nodeList",
        "relatedNodes": [
         {
-         "backendDOMNodeId": 358,
+         "backendDOMNodeId": 226,
          "text": "Remembered phone number (for phone sessions)"
         }
        ]
@@ -2483,22 +2502,22 @@
       "type": "nodeList",
       "relatedNodes": [
        {
-        "backendDOMNodeId": 358,
+        "backendDOMNodeId": 226,
         "text": "Remembered phone number (for phone sessions)"
        }
       ]
      }
     }
    ],
-   "parentId": "357",
+   "parentId": "225",
    "childIds": [
-    "361",
-    "362"
+    "230",
+    "231"
    ],
-   "backendDOMNodeId": 9
+   "backendDOMNodeId": 229
   },
   {
-   "nodeId": "363",
+   "nodeId": "232",
    "ignored": false,
    "role": {
     "type": "role",
@@ -2523,14 +2542,14 @@
     ]
    },
    "properties": [],
-   "parentId": "357",
+   "parentId": "225",
    "childIds": [
-    "539"
+    "380"
    ],
-   "backendDOMNodeId": 363
+   "backendDOMNodeId": 232
   },
   {
-   "nodeId": "364",
+   "nodeId": "233",
    "ignored": false,
    "role": {
     "type": "role",
@@ -2555,14 +2574,14 @@
     ]
    },
    "properties": [],
-   "parentId": "357",
+   "parentId": "225",
    "childIds": [
-    "540"
+    "381"
    ],
-   "backendDOMNodeId": 364
+   "backendDOMNodeId": 233
   },
   {
-   "nodeId": "365",
+   "nodeId": "234",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -2581,14 +2600,14 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "296",
+   "parentId": "198",
    "childIds": [
-    "366"
+    "235"
    ],
-   "backendDOMNodeId": 365
+   "backendDOMNodeId": 234
   },
   {
-   "nodeId": "366",
+   "nodeId": "235",
    "ignored": false,
    "role": {
     "type": "role",
@@ -2644,99 +2663,15 @@
      }
     }
    ],
-   "parentId": "365",
+   "parentId": "234",
    "childIds": [
-    "367",
-    "371"
+    "793",
+    "237"
    ],
-   "backendDOMNodeId": 366
+   "backendDOMNodeId": 235
   },
   {
-   "nodeId": "373",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "paragraph"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 133
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "13",
-   "childIds": [
-    "542"
-   ],
-   "backendDOMNodeId": 373
-  },
-  {
-   "nodeId": "374",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "heading"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 96
-   },
-   "name": {
-    "type": "computedString",
-    "value": "What happens if you miss a week, drift off, or leave.",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "What happens if you miss a week, drift off, or leave."
-      }
-     },
-     {
-      "type": "attribute",
-      "attribute": "title",
-      "superseded": true
-     }
-    ]
-   },
-   "properties": [
-    {
-     "name": "level",
-     "value": {
-      "type": "integer",
-      "value": 2
-     }
-    }
-   ],
-   "parentId": "13",
-   "childIds": [
-    "543"
-   ],
-   "backendDOMNodeId": 374
-  },
-  {
-   "nodeId": "375",
+   "nodeId": "240",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -2755,56 +2690,26 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "13",
+   "parentId": "239",
    "childIds": [
-    "376",
-    "379",
-    "382",
-    "385"
+    "244"
    ],
-   "backendDOMNodeId": 375
+   "backendDOMNodeId": 240
   },
   {
-   "nodeId": "376",
-   "ignored": true,
-   "ignoredReasons": [
-    {
-     "name": "uninteresting",
-     "value": {
-      "type": "boolean",
-      "value": true
-     }
-    }
-   ],
-   "role": {
-    "type": "role",
-    "value": "none"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 0
-   },
-   "parentId": "375",
-   "childIds": [
-    "377",
-    "378"
-   ],
-   "backendDOMNodeId": 376
-  },
-  {
-   "nodeId": "377",
+   "nodeId": "244",
    "ignored": false,
    "role": {
-    "type": "role",
-    "value": "heading"
+    "type": "internalRole",
+    "value": "DisclosureTriangle"
    },
    "chromeRole": {
     "type": "internalRole",
-    "value": 96
+    "value": 37
    },
    "name": {
     "type": "computedString",
-    "value": "You miss a week",
+    "value": "How this works Missed weeks, rescheduling, privacy, and what happens when membership ends. +",
     "sources": [
      {
       "type": "relatedElement",
@@ -2818,7 +2723,7 @@
       "type": "contents",
       "value": {
        "type": "computedString",
-       "value": "You miss a week"
+       "value": "How this works Missed weeks, rescheduling, privacy, and what happens when membership ends. +"
       }
      },
      {
@@ -2829,589 +2734,360 @@
     ]
    },
    "properties": [
-    {
-     "name": "level",
-     "value": {
-      "type": "integer",
-      "value": 3
-     }
-    }
-   ],
-   "parentId": "376",
-   "childIds": [
-    "544"
-   ],
-   "backendDOMNodeId": 377
-  },
-  {
-   "nodeId": "378",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "paragraph"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 133
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "376",
-   "childIds": [
-    "545"
-   ],
-   "backendDOMNodeId": 378
-  },
-  {
-   "nodeId": "379",
-   "ignored": true,
-   "ignoredReasons": [
-    {
-     "name": "uninteresting",
-     "value": {
-      "type": "boolean",
-      "value": true
-     }
-    }
-   ],
-   "role": {
-    "type": "role",
-    "value": "none"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 0
-   },
-   "parentId": "375",
-   "childIds": [
-    "380",
-    "381"
-   ],
-   "backendDOMNodeId": 379
-  },
-  {
-   "nodeId": "380",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "heading"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 96
-   },
-   "name": {
-    "type": "computedString",
-    "value": "You stop booking for a while",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "You stop booking for a while"
-      }
-     },
-     {
-      "type": "attribute",
-      "attribute": "title",
-      "superseded": true
-     }
-    ]
-   },
-   "properties": [
-    {
-     "name": "level",
-     "value": {
-      "type": "integer",
-      "value": 3
-     }
-    }
-   ],
-   "parentId": "379",
-   "childIds": [
-    "546"
-   ],
-   "backendDOMNodeId": 380
-  },
-  {
-   "nodeId": "381",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "paragraph"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 133
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "379",
-   "childIds": [
-    "547"
-   ],
-   "backendDOMNodeId": 381
-  },
-  {
-   "nodeId": "382",
-   "ignored": true,
-   "ignoredReasons": [
-    {
-     "name": "uninteresting",
-     "value": {
-      "type": "boolean",
-      "value": true
-     }
-    }
-   ],
-   "role": {
-    "type": "role",
-    "value": "none"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 0
-   },
-   "parentId": "375",
-   "childIds": [
-    "383",
-    "384"
-   ],
-   "backendDOMNodeId": 382
-  },
-  {
-   "nodeId": "383",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "heading"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 96
-   },
-   "name": {
-    "type": "computedString",
-    "value": "You need a different time",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "You need a different time"
-      }
-     },
-     {
-      "type": "attribute",
-      "attribute": "title",
-      "superseded": true
-     }
-    ]
-   },
-   "properties": [
-    {
-     "name": "level",
-     "value": {
-      "type": "integer",
-      "value": 3
-     }
-    }
-   ],
-   "parentId": "382",
-   "childIds": [
-    "548"
-   ],
-   "backendDOMNodeId": 383
-  },
-  {
-   "nodeId": "384",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "paragraph"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 133
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "382",
-   "childIds": [
-    "549"
-   ],
-   "backendDOMNodeId": 384
-  },
-  {
-   "nodeId": "385",
-   "ignored": true,
-   "ignoredReasons": [
-    {
-     "name": "uninteresting",
-     "value": {
-      "type": "boolean",
-      "value": true
-     }
-    }
-   ],
-   "role": {
-    "type": "role",
-    "value": "none"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 0
-   },
-   "parentId": "375",
-   "childIds": [
-    "386",
-    "387"
-   ],
-   "backendDOMNodeId": 385
-  },
-  {
-   "nodeId": "386",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "heading"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 96
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Your membership ends",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Your membership ends"
-      }
-     },
-     {
-      "type": "attribute",
-      "attribute": "title",
-      "superseded": true
-     }
-    ]
-   },
-   "properties": [
-    {
-     "name": "level",
-     "value": {
-      "type": "integer",
-      "value": 3
-     }
-    }
-   ],
-   "parentId": "385",
-   "childIds": [
-    "550"
-   ],
-   "backendDOMNodeId": 386
-  },
-  {
-   "nodeId": "387",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "paragraph"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 133
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "385",
-   "childIds": [
-    "551"
-   ],
-   "backendDOMNodeId": 387
-  },
-  {
-   "nodeId": "388",
-   "ignored": true,
-   "ignoredReasons": [
-    {
-     "name": "uninteresting",
-     "value": {
-      "type": "boolean",
-      "value": true
-     }
-    }
-   ],
-   "role": {
-    "type": "role",
-    "value": "none"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 0
-   },
-   "parentId": "13",
-   "childIds": [
-    "389"
-   ],
-   "backendDOMNodeId": 388
-  },
-  {
-   "nodeId": "389",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "button"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 9
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Delete my past sessions and phone number",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "relatedElement",
-      "nativeSource": "label"
-     },
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Delete my past sessions and phone number"
-      }
-     },
-     {
-      "type": "attribute",
-      "attribute": "title",
-      "superseded": true
-     }
-    ]
-   },
-   "properties": [
-    {
-     "name": "invalid",
-     "value": {
-      "type": "token",
-      "value": "false"
-     }
-    },
     {
      "name": "focusable",
      "value": {
       "type": "booleanOrUndefined",
       "value": true
      }
+    },
+    {
+     "name": "expanded",
+     "value": {
+      "type": "booleanOrUndefined",
+      "value": false
+     }
     }
    ],
-   "parentId": "388",
+   "parentId": "240",
    "childIds": [
-    "390",
-    "396"
+    "245",
+    "12"
    ],
+   "backendDOMNodeId": 244
+  },
+  {
+   "nodeId": "242",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "uninteresting",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "239",
+   "childIds": [
+    "383",
+    "384",
+    "248",
+    "478"
+   ],
+   "backendDOMNodeId": 242
+  },
+  {
+   "nodeId": "383",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "notRendered",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "242",
+   "childIds": [],
+   "backendDOMNodeId": 383
+  },
+  {
+   "nodeId": "384",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "notRendered",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "242",
+   "childIds": [],
+   "backendDOMNodeId": 384
+  },
+  {
+   "nodeId": "248",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "notRendered",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "242",
+   "childIds": [
+    "251",
+    "290",
+    "291",
+    "292"
+   ],
+   "backendDOMNodeId": 248
+  },
+  {
+   "nodeId": "251",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "notRendered",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "248",
+   "childIds": [
+    "389"
+   ],
+   "backendDOMNodeId": 251
+  },
+  {
+   "nodeId": "389",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "notRendered",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "251",
+   "childIds": [],
    "backendDOMNodeId": 389
   },
   {
-   "nodeId": "397",
-   "ignored": false,
+   "nodeId": "290",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "notRendered",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
    "role": {
     "type": "role",
-    "value": "paragraph"
+    "value": "none"
    },
    "chromeRole": {
     "type": "internalRole",
-    "value": 133
+    "value": 0
    },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "13",
+   "parentId": "248",
    "childIds": [
-    "553"
+    "848"
    ],
-   "backendDOMNodeId": 397
+   "backendDOMNodeId": 290
   },
   {
-   "nodeId": "400",
-   "ignored": false,
+   "nodeId": "848",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "notRendered",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
    "role": {
     "type": "role",
-    "value": "article"
+    "value": "none"
    },
    "chromeRole": {
     "type": "internalRole",
-    "value": 5
+    "value": 0
    },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "399",
-   "childIds": [
-    "401",
-    "402"
-   ],
-   "backendDOMNodeId": 400
+   "parentId": "290",
+   "childIds": [],
+   "backendDOMNodeId": 848
   },
   {
-   "nodeId": "435",
-   "ignored": false,
+   "nodeId": "291",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "notRendered",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
    "role": {
     "type": "role",
-    "value": "article"
+    "value": "none"
    },
    "chromeRole": {
     "type": "internalRole",
-    "value": 5
+    "value": 0
    },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "399",
+   "parentId": "248",
    "childIds": [
-    "436",
-    "437",
-    "441",
-    "443",
-    "445",
-    "450",
-    "453",
-    "455"
+    "849"
    ],
-   "backendDOMNodeId": 435
+   "backendDOMNodeId": 291
   },
   {
-   "nodeId": "-1000000002",
+   "nodeId": "849",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "notRendered",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "291",
+   "childIds": [],
+   "backendDOMNodeId": 849
+  },
+  {
+   "nodeId": "292",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "notRendered",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "248",
+   "childIds": [
+    "850"
+   ],
+   "backendDOMNodeId": 292
+  },
+  {
+   "nodeId": "850",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "notRendered",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "292",
+   "childIds": [],
+   "backendDOMNodeId": 850
+  },
+  {
+   "nodeId": "478",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "notRendered",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "242",
+   "childIds": [],
+   "backendDOMNodeId": 478
+  },
+  {
+   "nodeId": "-1000000340",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -3426,11 +3102,11 @@
     "value": "CS"
    },
    "properties": [],
-   "parentId": "466",
+   "parentId": "13",
    "childIds": []
   },
   {
-   "nodeId": "15",
+   "nodeId": "14",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -3454,14 +3130,14 @@
     ]
    },
    "properties": [],
-   "parentId": "61",
+   "parentId": "53",
    "childIds": [
-    "-1000000003"
+    "-1000000341"
    ],
-   "backendDOMNodeId": 15
+   "backendDOMNodeId": 14
   },
   {
-   "nodeId": "-1000000004",
+   "nodeId": "-1000000342",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -3476,11 +3152,11 @@
     "value": "Account menu"
    },
    "properties": [],
-   "parentId": "469",
+   "parentId": "16",
    "childIds": []
   },
   {
-   "nodeId": "485",
+   "nodeId": "6",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -3504,14 +3180,14 @@
     ]
    },
    "properties": [],
-   "parentId": "164",
+   "parentId": "114",
    "childIds": [
-    "-1000000005"
+    "-1000000343"
    ],
-   "backendDOMNodeId": 485
+   "backendDOMNodeId": 6
   },
   {
-   "nodeId": "18",
+   "nodeId": "8",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -3535,15 +3211,15 @@
     ]
    },
    "properties": [],
-   "parentId": "165",
+   "parentId": "115",
    "childIds": [
-    "-1000000006",
-    "-1000000007"
+    "-1000000344",
+    "-1000000345"
    ],
-   "backendDOMNodeId": 18
+   "backendDOMNodeId": 8
   },
   {
-   "nodeId": "486",
+   "nodeId": "9",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -3567,16 +3243,16 @@
     ]
    },
    "properties": [],
-   "parentId": "166",
+   "parentId": "116",
    "childIds": [
-    "-1000000008",
-    "-1000000009",
-    "-1000000010"
+    "-1000000346",
+    "-1000000347",
+    "-1000000348"
    ],
-   "backendDOMNodeId": 486
+   "backendDOMNodeId": 9
   },
   {
-   "nodeId": "168",
+   "nodeId": "749",
    "ignored": false,
    "role": {
     "type": "role",
@@ -3609,12 +3285,12 @@
     ]
    },
    "properties": [],
-   "parentId": "167",
+   "parentId": "117",
    "childIds": [],
-   "backendDOMNodeId": 168
+   "backendDOMNodeId": 749
   },
   {
-   "nodeId": "487",
+   "nodeId": "7",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -3638,14 +3314,14 @@
     ]
    },
    "properties": [],
-   "parentId": "167",
+   "parentId": "117",
    "childIds": [
-    "-1000000011"
+    "-1000000283"
    ],
-   "backendDOMNodeId": 487
+   "backendDOMNodeId": 7
   },
   {
-   "nodeId": "189",
+   "nodeId": "518",
    "ignored": false,
    "role": {
     "type": "role",
@@ -3670,14 +3346,14 @@
     ]
    },
    "properties": [],
-   "parentId": "188",
+   "parentId": "133",
    "childIds": [
-    "495"
+    "832"
    ],
-   "backendDOMNodeId": 189
+   "backendDOMNodeId": 518
   },
   {
-   "nodeId": "20",
+   "nodeId": "519",
    "ignored": false,
    "role": {
     "type": "role",
@@ -3722,14 +3398,14 @@
      }
     }
    ],
-   "parentId": "188",
+   "parentId": "133",
    "childIds": [
-    "19"
+    "833"
    ],
-   "backendDOMNodeId": 20
+   "backendDOMNodeId": 519
   },
   {
-   "nodeId": "190",
+   "nodeId": "520",
    "ignored": false,
    "role": {
     "type": "role",
@@ -3754,14 +3430,14 @@
     ]
    },
    "properties": [],
-   "parentId": "188",
+   "parentId": "133",
    "childIds": [
-    "496"
+    "834"
    ],
-   "backendDOMNodeId": 190
+   "backendDOMNodeId": 520
   },
   {
-   "nodeId": "191",
+   "nodeId": "521",
    "ignored": false,
    "role": {
     "type": "role",
@@ -3786,14 +3462,14 @@
     ]
    },
    "properties": [],
-   "parentId": "188",
+   "parentId": "133",
    "childIds": [
-    "497"
+    "835"
    ],
-   "backendDOMNodeId": 191
+   "backendDOMNodeId": 521
   },
   {
-   "nodeId": "21",
+   "nodeId": "522",
    "ignored": false,
    "role": {
     "type": "role",
@@ -3822,16 +3498,16 @@
     ]
    },
    "properties": [],
-   "parentId": "188",
+   "parentId": "133",
    "childIds": [
-    "192",
-    "199",
-    "207"
+    "523",
+    "527",
+    "531"
    ],
-   "backendDOMNodeId": 21
+   "backendDOMNodeId": 522
   },
   {
-   "nodeId": "215",
+   "nodeId": "535",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -3850,14 +3526,14 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "188",
+   "parentId": "133",
    "childIds": [
-    "216"
+    "536"
    ],
-   "backendDOMNodeId": 215
+   "backendDOMNodeId": 535
   },
   {
-   "nodeId": "216",
+   "nodeId": "536",
    "ignored": false,
    "role": {
     "type": "role",
@@ -3913,15 +3589,15 @@
      }
     }
    ],
-   "parentId": "215",
+   "parentId": "535",
    "childIds": [
-    "217",
-    "224"
+    "775",
+    "538"
    ],
-   "backendDOMNodeId": 216
+   "backendDOMNodeId": 536
   },
   {
-   "nodeId": "226",
+   "nodeId": "135",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -3940,15 +3616,15 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "225",
+   "parentId": "134",
    "childIds": [
-    "227",
-    "228"
+    "136",
+    "137"
    ],
-   "backendDOMNodeId": 226
+   "backendDOMNodeId": 135
   },
   {
-   "nodeId": "227",
+   "nodeId": "136",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -3967,14 +3643,14 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "226",
+   "parentId": "135",
    "childIds": [
-    "505"
+    "347"
    ],
-   "backendDOMNodeId": 227
+   "backendDOMNodeId": 136
   },
   {
-   "nodeId": "505",
+   "nodeId": "347",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -3998,14 +3674,14 @@
     ]
    },
    "properties": [],
-   "parentId": "227",
+   "parentId": "136",
    "childIds": [
-    "-1000000035"
+    "-1000000307"
    ],
-   "backendDOMNodeId": 505
+   "backendDOMNodeId": 347
   },
   {
-   "nodeId": "228",
+   "nodeId": "137",
    "ignored": false,
    "role": {
     "type": "role",
@@ -4030,14 +3706,14 @@
     ]
    },
    "properties": [],
-   "parentId": "226",
+   "parentId": "135",
    "childIds": [
-    "229"
+    "138"
    ],
-   "backendDOMNodeId": 228
+   "backendDOMNodeId": 137
   },
   {
-   "nodeId": "230",
+   "nodeId": "139",
    "ignored": false,
    "role": {
     "type": "role",
@@ -4062,14 +3738,14 @@
     ]
    },
    "properties": [],
-   "parentId": "225",
+   "parentId": "134",
    "childIds": [
-    "507"
+    "349"
    ],
-   "backendDOMNodeId": 230
+   "backendDOMNodeId": 139
   },
   {
-   "nodeId": "231",
+   "nodeId": "140",
    "ignored": false,
    "role": {
     "type": "role",
@@ -4094,14 +3770,14 @@
     ]
    },
    "properties": [],
-   "parentId": "225",
+   "parentId": "134",
    "childIds": [
-    "508"
+    "350"
    ],
-   "backendDOMNodeId": 231
+   "backendDOMNodeId": 140
   },
   {
-   "nodeId": "529",
+   "nodeId": "371",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -4125,14 +3801,14 @@
     ]
    },
    "properties": [],
-   "parentId": "293",
+   "parentId": "195",
    "childIds": [
-    "-1000000043"
+    "-1000000379"
    ],
-   "backendDOMNodeId": 529
+   "backendDOMNodeId": 371
   },
   {
-   "nodeId": "530",
+   "nodeId": "372",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -4156,14 +3832,14 @@
     ]
    },
    "properties": [],
-   "parentId": "294",
+   "parentId": "196",
    "childIds": [
-    "-1000000044"
+    "-1000000380"
    ],
-   "backendDOMNodeId": 530
+   "backendDOMNodeId": 372
   },
   {
-   "nodeId": "531",
+   "nodeId": "373",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -4187,15 +3863,15 @@
     ]
    },
    "properties": [],
-   "parentId": "295",
+   "parentId": "197",
    "childIds": [
-    "-1000000045",
-    "-1000000046"
+    "-1000000381",
+    "-1000000382"
    ],
-   "backendDOMNodeId": 531
+   "backendDOMNodeId": 373
   },
   {
-   "nodeId": "532",
+   "nodeId": "374",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -4219,14 +3895,14 @@
     ]
    },
    "properties": [],
-   "parentId": "298",
+   "parentId": "200",
    "childIds": [
-    "-1000000047"
+    "-1000000383"
    ],
-   "backendDOMNodeId": 532
+   "backendDOMNodeId": 374
   },
   {
-   "nodeId": "301",
+   "nodeId": "204",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -4255,25 +3931,25 @@
     ]
    },
    "properties": [],
-   "parentId": "7",
+   "parentId": "201",
    "childIds": [
-    "305",
-    "308",
-    "311",
-    "314",
-    "317",
-    "320",
-    "323",
-    "326",
-    "329",
-    "332",
-    "335",
-    "338"
+    "484",
+    "487",
+    "490",
+    "493",
+    "496",
+    "499",
+    "502",
+    "505",
+    "508",
+    "511",
+    "514",
+    "517"
    ],
-   "backendDOMNodeId": 301
+   "backendDOMNodeId": 204
   },
   {
-   "nodeId": "533",
+   "nodeId": "375",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -4297,15 +3973,15 @@
     ]
    },
    "properties": [],
-   "parentId": "341",
+   "parentId": "208",
    "childIds": [
-    "-1000000048",
-    "-1000000049"
+    "-1000000384",
+    "-1000000385"
    ],
-   "backendDOMNodeId": 533
+   "backendDOMNodeId": 375
   },
   {
-   "nodeId": "534",
+   "nodeId": "376",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -4329,14 +4005,14 @@
     ]
    },
    "properties": [],
-   "parentId": "343",
+   "parentId": "210",
    "childIds": [
-    "-1000000050"
+    "-1000000386"
    ],
-   "backendDOMNodeId": 534
+   "backendDOMNodeId": 376
   },
   {
-   "nodeId": "346",
+   "nodeId": "214",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -4365,15 +4041,15 @@
     ]
    },
    "properties": [],
-   "parentId": "8",
+   "parentId": "211",
    "childIds": [
-    "350",
-    "353"
+    "218",
+    "221"
    ],
-   "backendDOMNodeId": 346
+   "backendDOMNodeId": 214
   },
   {
-   "nodeId": "535",
+   "nodeId": "377",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -4397,15 +4073,15 @@
     ]
    },
    "properties": [],
-   "parentId": "356",
+   "parentId": "224",
    "childIds": [
-    "-1000000051",
-    "-1000000052"
+    "-1000000387",
+    "-1000000388"
    ],
-   "backendDOMNodeId": 535
+   "backendDOMNodeId": 377
   },
   {
-   "nodeId": "536",
+   "nodeId": "378",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -4429,14 +4105,14 @@
     ]
    },
    "properties": [],
-   "parentId": "358",
+   "parentId": "226",
    "childIds": [
-    "-1000000053"
+    "-1000000389"
    ],
-   "backendDOMNodeId": 536
+   "backendDOMNodeId": 378
   },
   {
-   "nodeId": "537",
+   "nodeId": "379",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -4460,14 +4136,14 @@
     ]
    },
    "properties": [],
-   "parentId": "358",
+   "parentId": "226",
    "childIds": [
-    "-1000000054"
+    "-1000000390"
    ],
-   "backendDOMNodeId": 537
+   "backendDOMNodeId": 379
   },
   {
-   "nodeId": "538",
+   "nodeId": "845",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -4491,14 +4167,14 @@
     ]
    },
    "properties": [],
-   "parentId": "360",
+   "parentId": "228",
    "childIds": [
-    "-1000000055"
+    "-1000000391"
    ],
-   "backendDOMNodeId": 538
+   "backendDOMNodeId": 845
   },
   {
-   "nodeId": "361",
+   "nodeId": "230",
    "ignored": true,
    "ignoredReasons": [],
    "role": {
@@ -4509,12 +4185,12 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "9",
+   "parentId": "229",
    "childIds": [],
-   "backendDOMNodeId": 361
+   "backendDOMNodeId": 230
   },
   {
-   "nodeId": "362",
+   "nodeId": "231",
    "ignored": false,
    "role": {
     "type": "role",
@@ -4547,12 +4223,12 @@
      }
     }
    ],
-   "parentId": "9",
+   "parentId": "229",
    "childIds": [],
-   "backendDOMNodeId": 362
+   "backendDOMNodeId": 231
   },
   {
-   "nodeId": "539",
+   "nodeId": "380",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -4576,16 +4252,16 @@
     ]
    },
    "properties": [],
-   "parentId": "363",
+   "parentId": "232",
    "childIds": [
-    "-1000000056",
-    "-1000000057",
-    "-1000000058"
+    "-1000000392",
+    "-1000000393",
+    "-1000000394"
    ],
-   "backendDOMNodeId": 539
+   "backendDOMNodeId": 380
   },
   {
-   "nodeId": "540",
+   "nodeId": "381",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -4609,17 +4285,17 @@
     ]
    },
    "properties": [],
-   "parentId": "364",
+   "parentId": "233",
    "childIds": [
-    "-1000000059",
-    "-1000000060",
-    "-1000000061",
-    "-1000000062"
+    "-1000000395",
+    "-1000000396",
+    "-1000000397",
+    "-1000000398"
    ],
-   "backendDOMNodeId": 540
+   "backendDOMNodeId": 381
   },
   {
-   "nodeId": "367",
+   "nodeId": "793",
    "ignored": false,
    "role": {
     "type": "role",
@@ -4652,12 +4328,12 @@
     ]
    },
    "properties": [],
-   "parentId": "366",
+   "parentId": "235",
    "childIds": [],
-   "backendDOMNodeId": 367
+   "backendDOMNodeId": 793
   },
   {
-   "nodeId": "371",
+   "nodeId": "237",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -4676,14 +4352,14 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "366",
+   "parentId": "235",
    "childIds": [
-    "541"
+    "382"
    ],
-   "backendDOMNodeId": 371
+   "backendDOMNodeId": 237
   },
   {
-   "nodeId": "541",
+   "nodeId": "382",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -4707,377 +4383,14 @@
     ]
    },
    "properties": [],
-   "parentId": "371",
+   "parentId": "237",
    "childIds": [
-    "-1000000063"
+    "-1000000399"
    ],
-   "backendDOMNodeId": 541
+   "backendDOMNodeId": 382
   },
   {
-   "nodeId": "542",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "WHEN LIFE GETS IN THE WAY",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "WHEN LIFE GETS IN THE WAY"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "373",
-   "childIds": [
-    "-1000000064"
-   ],
-   "backendDOMNodeId": 542
-  },
-  {
-   "nodeId": "543",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "What happens if you miss a week, drift off, or leave.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "What happens if you miss a week, drift off, or leave."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "374",
-   "childIds": [
-    "-1000000065",
-    "-1000000066"
-   ],
-   "backendDOMNodeId": 543
-  },
-  {
-   "nodeId": "544",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "You miss a week",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "You miss a week"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "377",
-   "childIds": [
-    "-1000000067"
-   ],
-   "backendDOMNodeId": 544
-  },
-  {
-   "nodeId": "545",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "378",
-   "childIds": [
-    "-1000000068",
-    "-1000000069",
-    "-1000000070",
-    "-1000000071"
-   ],
-   "backendDOMNodeId": 545
-  },
-  {
-   "nodeId": "546",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "You stop booking for a while",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "You stop booking for a while"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "380",
-   "childIds": [
-    "-1000000072"
-   ],
-   "backendDOMNodeId": 546
-  },
-  {
-   "nodeId": "547",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "381",
-   "childIds": [
-    "-1000000073",
-    "-1000000074",
-    "-1000000075",
-    "-1000000076",
-    "-1000000077"
-   ],
-   "backendDOMNodeId": 547
-  },
-  {
-   "nodeId": "548",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "You need a different time",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "You need a different time"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "383",
-   "childIds": [
-    "-1000000078"
-   ],
-   "backendDOMNodeId": 548
-  },
-  {
-   "nodeId": "549",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "384",
-   "childIds": [
-    "-1000000079",
-    "-1000000080",
-    "-1000000081",
-    "-1000000082"
-   ],
-   "backendDOMNodeId": 549
-  },
-  {
-   "nodeId": "550",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Your membership ends",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Your membership ends"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "386",
-   "childIds": [
-    "-1000000083"
-   ],
-   "backendDOMNodeId": 550
-  },
-  {
-   "nodeId": "551",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "387",
-   "childIds": [
-    "-1000000084",
-    "-1000000085",
-    "-1000000086",
-    "-1000000087",
-    "-1000000088"
-   ],
-   "backendDOMNodeId": 551
-  },
-  {
-   "nodeId": "390",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "image"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 99
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "relatedElement",
-      "nativeSource": "title"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "389",
-   "childIds": [],
-   "backendDOMNodeId": 390
-  },
-  {
-   "nodeId": "396",
+   "nodeId": "245",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -5096,1440 +4409,15 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "389",
+   "parentId": "244",
    "childIds": [
-    "552"
+    "246",
+    "247"
    ],
-   "backendDOMNodeId": 396
+   "backendDOMNodeId": 245
   },
   {
-   "nodeId": "552",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Delete my past sessions and phone number",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Delete my past sessions and phone number"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "396",
-   "childIds": [
-    "-1000000089",
-    "-1000000090"
-   ],
-   "backendDOMNodeId": 552
-  },
-  {
-   "nodeId": "553",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "397",
-   "childIds": [
-    "-1000000091",
-    "-1000000092",
-    "-1000000093",
-    "-1000000094"
-   ],
-   "backendDOMNodeId": 553
-  },
-  {
-   "nodeId": "401",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "paragraph"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 133
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "400",
-   "childIds": [
-    "554"
-   ],
-   "backendDOMNodeId": 401
-  },
-  {
-   "nodeId": "402",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "list"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 111
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "400",
-   "childIds": [
-    "403",
-    "406",
-    "414",
-    "418",
-    "422",
-    "428"
-   ],
-   "backendDOMNodeId": 402
-  },
-  {
-   "nodeId": "436",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "paragraph"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 133
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "435",
-   "childIds": [
-    "561"
-   ],
-   "backendDOMNodeId": 436
-  },
-  {
-   "nodeId": "437",
-   "ignored": true,
-   "ignoredReasons": [
-    {
-     "name": "uninteresting",
-     "value": {
-      "type": "boolean",
-      "value": true
-     }
-    }
-   ],
-   "role": {
-    "type": "role",
-    "value": "none"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 0
-   },
-   "parentId": "435",
-   "childIds": [
-    "438",
-    "439",
-    "440"
-   ],
-   "backendDOMNodeId": 437
-  },
-  {
-   "nodeId": "438",
-   "ignored": true,
-   "ignoredReasons": [
-    {
-     "name": "uninteresting",
-     "value": {
-      "type": "boolean",
-      "value": true
-     }
-    }
-   ],
-   "role": {
-    "type": "role",
-    "value": "none"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 0
-   },
-   "parentId": "437",
-   "childIds": [
-    "562",
-    "563"
-   ],
-   "backendDOMNodeId": 438
-  },
-  {
-   "nodeId": "562",
-   "ignored": true,
-   "ignoredReasons": [
-    {
-     "name": "uninteresting",
-     "value": {
-      "type": "boolean",
-      "value": true
-     }
-    }
-   ],
-   "role": {
-    "type": "role",
-    "value": "none"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 0
-   },
-   "parentId": "438",
-   "childIds": [
-    "-1000000103"
-   ],
-   "backendDOMNodeId": 562
-  },
-  {
-   "nodeId": "-1000000103",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "generic"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 88
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "562",
-   "childIds": [
-    "-1000000104"
-   ]
-  },
-  {
-   "nodeId": "-1000000104",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "1",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "1"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "-1000000103",
-   "childIds": [
-    "-1000000105"
-   ]
-  },
-  {
-   "nodeId": "-1000000105",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "1"
-   },
-   "properties": [],
-   "parentId": "-1000000104",
-   "childIds": []
-  },
-  {
-   "nodeId": "563",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Book your weekly session at a time that works for you.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Book your weekly session at a time that works for you."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "438",
-   "childIds": [
-    "-1000000106",
-    "-1000000107"
-   ],
-   "backendDOMNodeId": 563
-  },
-  {
-   "nodeId": "439",
-   "ignored": true,
-   "ignoredReasons": [
-    {
-     "name": "uninteresting",
-     "value": {
-      "type": "boolean",
-      "value": true
-     }
-    }
-   ],
-   "role": {
-    "type": "role",
-    "value": "none"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 0
-   },
-   "parentId": "437",
-   "childIds": [
-    "564",
-    "565"
-   ],
-   "backendDOMNodeId": 439
-  },
-  {
-   "nodeId": "564",
-   "ignored": true,
-   "ignoredReasons": [
-    {
-     "name": "uninteresting",
-     "value": {
-      "type": "boolean",
-      "value": true
-     }
-    }
-   ],
-   "role": {
-    "type": "role",
-    "value": "none"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 0
-   },
-   "parentId": "439",
-   "childIds": [
-    "-1000000108"
-   ],
-   "backendDOMNodeId": 564
-  },
-  {
-   "nodeId": "-1000000108",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "generic"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 88
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "564",
-   "childIds": [
-    "-1000000109"
-   ]
-  },
-  {
-   "nodeId": "-1000000109",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "2",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "2"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "-1000000108",
-   "childIds": [
-    "-1000000110"
-   ]
-  },
-  {
-   "nodeId": "-1000000110",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "2"
-   },
-   "properties": [],
-   "parentId": "-1000000109",
-   "childIds": []
-  },
-  {
-   "nodeId": "565",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Bring the real thing you are working on or stuck on.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Bring the real thing you are working on or stuck on."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "439",
-   "childIds": [
-    "-1000000111",
-    "-1000000112"
-   ],
-   "backendDOMNodeId": 565
-  },
-  {
-   "nodeId": "440",
-   "ignored": true,
-   "ignoredReasons": [
-    {
-     "name": "uninteresting",
-     "value": {
-      "type": "boolean",
-      "value": true
-     }
-    }
-   ],
-   "role": {
-    "type": "role",
-    "value": "none"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 0
-   },
-   "parentId": "437",
-   "childIds": [
-    "566",
-    "567"
-   ],
-   "backendDOMNodeId": 440
-  },
-  {
-   "nodeId": "566",
-   "ignored": true,
-   "ignoredReasons": [
-    {
-     "name": "uninteresting",
-     "value": {
-      "type": "boolean",
-      "value": true
-     }
-    }
-   ],
-   "role": {
-    "type": "role",
-    "value": "none"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 0
-   },
-   "parentId": "440",
-   "childIds": [
-    "-1000000113"
-   ],
-   "backendDOMNodeId": 566
-  },
-  {
-   "nodeId": "-1000000113",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "generic"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 88
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "566",
-   "childIds": [
-    "-1000000114"
-   ]
-  },
-  {
-   "nodeId": "-1000000114",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "3",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "3"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "-1000000113",
-   "childIds": [
-    "-1000000115"
-   ]
-  },
-  {
-   "nodeId": "-1000000115",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "3"
-   },
-   "properties": [],
-   "parentId": "-1000000114",
-   "childIds": []
-  },
-  {
-   "nodeId": "567",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "We make progress on it together, live, in the session.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "We make progress on it together, live, in the session."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "440",
-   "childIds": [
-    "-1000000116",
-    "-1000000117"
-   ],
-   "backendDOMNodeId": 567
-  },
-  {
-   "nodeId": "441",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "paragraph"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 133
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "435",
-   "childIds": [
-    "442",
-    "569"
-   ],
-   "backendDOMNodeId": 441
-  },
-  {
-   "nodeId": "443",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "paragraph"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 133
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "435",
-   "childIds": [
-    "444",
-    "571"
-   ],
-   "backendDOMNodeId": 443
-  },
-  {
-   "nodeId": "445",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "paragraph"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 133
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "435",
-   "childIds": [
-    "446",
-    "572"
-   ],
-   "backendDOMNodeId": 445
-  },
-  {
-   "nodeId": "450",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "paragraph"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 133
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "435",
-   "childIds": [
-    "451",
-    "574",
-    "452",
-    "576"
-   ],
-   "backendDOMNodeId": 450
-  },
-  {
-   "nodeId": "453",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "paragraph"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 133
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "435",
-   "childIds": [
-    "454",
-    "578"
-   ],
-   "backendDOMNodeId": 453
-  },
-  {
-   "nodeId": "455",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "paragraph"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 133
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "435",
-   "childIds": [
-    "456",
-    "580"
-   ],
-   "backendDOMNodeId": 455
-  },
-  {
-   "nodeId": "-1000000003",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Certainty Sessions"
-   },
-   "properties": [],
-   "parentId": "15",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000005",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "CERTAINTY SESSIONS"
-   },
-   "properties": [],
-   "parentId": "485",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000006",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "One private working session with "
-   },
-   "properties": [],
-   "parentId": "18",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000007",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "David, every week."
-   },
-   "properties": [],
-   "parentId": "18",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000008",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Pick a time, bring whatever you are stuck on, "
-   },
-   "properties": [],
-   "parentId": "486",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000009",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "and stay with it until it clears. Two hours, one-"
-   },
-   "properties": [],
-   "parentId": "486",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000010",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "on-one, on Zoom or by phone."
-   },
-   "properties": [],
-   "parentId": "486",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000011",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "MEMBERSHIP ACTIVE"
-   },
-   "properties": [],
-   "parentId": "487",
-   "childIds": []
-  },
-  {
-   "nodeId": "495",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "YOUR FIRST SESSION",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "YOUR FIRST SESSION"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "189",
-   "childIds": [
-    "-1000000012"
-   ],
-   "backendDOMNodeId": 495
-  },
-  {
-   "nodeId": "19",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Start with one thing you are stuck on.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Start with one thing you are stuck on."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "20",
-   "childIds": [
-    "-1000000013",
-    "-1000000014"
-   ],
-   "backendDOMNodeId": 19
-  },
-  {
-   "nodeId": "496",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "This is two hours, one-on-one with David, on Zoom or by phone. Bring the problem that keeps stalling you, a page, a launch, a decision, and you work on it together until it moves. Nothing to prepare beyond that.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "This is two hours, one-on-one with David, on Zoom or by phone. Bring the problem that keeps stalling you, a page, a launch, a decision, and you work on it together until it moves. Nothing to prepare beyond that."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "190",
-   "childIds": [
-    "-1000000015",
-    "-1000000016",
-    "-1000000017",
-    "-1000000018",
-    "-1000000019",
-    "-1000000020"
-   ],
-   "backendDOMNodeId": 496
-  },
-  {
-   "nodeId": "497",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "One session is included every week. Pick any open time below.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "One session is included every week. Pick any open time below."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "191",
-   "childIds": [
-    "-1000000021",
-    "-1000000022"
-   ],
-   "backendDOMNodeId": 497
-  },
-  {
-   "nodeId": "192",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "listitem"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 115
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [
-    {
-     "name": "level",
-     "value": {
-      "type": "integer",
-      "value": 1
-     }
-    }
-   ],
-   "parentId": "21",
-   "childIds": [
-    "193",
-    "197"
-   ],
-   "backendDOMNodeId": 192
-  },
-  {
-   "nodeId": "199",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "listitem"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 115
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [
-    {
-     "name": "level",
-     "value": {
-      "type": "integer",
-      "value": 1
-     }
-    }
-   ],
-   "parentId": "21",
-   "childIds": [
-    "200",
-    "205"
-   ],
-   "backendDOMNodeId": 199
-  },
-  {
-   "nodeId": "207",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "listitem"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 115
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [
-    {
-     "name": "level",
-     "value": {
-      "type": "integer",
-      "value": 1
-     }
-    }
-   ],
-   "parentId": "21",
-   "childIds": [
-    "208",
-    "213"
-   ],
-   "backendDOMNodeId": 207
-  },
-  {
-   "nodeId": "217",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "image"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 99
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "relatedElement",
-      "nativeSource": "title"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "216",
-   "childIds": [],
-   "backendDOMNodeId": 217
-  },
-  {
-   "nodeId": "224",
-   "ignored": true,
-   "ignoredReasons": [
-    {
-     "name": "uninteresting",
-     "value": {
-      "type": "boolean",
-      "value": true
-     }
-    }
-   ],
-   "role": {
-    "type": "role",
-    "value": "none"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 0
-   },
-   "parentId": "216",
-   "childIds": [
-    "504"
-   ],
-   "backendDOMNodeId": 224
-  },
-  {
-   "nodeId": "504",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Book my first session",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Book my first session"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "224",
-   "childIds": [
-    "-1000000034"
-   ],
-   "backendDOMNodeId": 504
-  },
-  {
-   "nodeId": "-1000000035",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "DB"
-   },
-   "properties": [],
-   "parentId": "505",
-   "childIds": []
-  },
-  {
-   "nodeId": "229",
+   "nodeId": "246",
    "ignored": false,
    "role": {
     "type": "role",
@@ -6554,14 +4442,743 @@
     ]
    },
    "properties": [],
-   "parentId": "228",
+   "parentId": "245",
    "childIds": [
-    "506"
+    "10"
    ],
-   "backendDOMNodeId": 229
+   "backendDOMNodeId": 246
   },
   {
-   "nodeId": "507",
+   "nodeId": "247",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "uninteresting",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "245",
+   "childIds": [
+    "11"
+   ],
+   "backendDOMNodeId": 247
+  },
+  {
+   "nodeId": "11",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Missed weeks, rescheduling, privacy, and what happens when membership ends.",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Missed weeks, rescheduling, privacy, and what happens when membership ends."
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "247",
+   "childIds": [
+    "-1000000401",
+    "-1000000402",
+    "-1000000403"
+   ],
+   "backendDOMNodeId": 11
+  },
+  {
+   "nodeId": "12",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "uninteresting",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "244",
+   "childIds": [
+    "-1000000274"
+   ],
+   "backendDOMNodeId": 12
+  },
+  {
+   "nodeId": "-1000000274",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "generic"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 88
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "12",
+   "childIds": [
+    "-1000000275"
+   ]
+  },
+  {
+   "nodeId": "-1000000275",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "+",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "+"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "-1000000274",
+   "childIds": [
+    "-1000000276"
+   ]
+  },
+  {
+   "nodeId": "-1000000276",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "+"
+   },
+   "properties": [],
+   "parentId": "-1000000275",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000341",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Certainty Sessions"
+   },
+   "properties": [],
+   "parentId": "14",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000343",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "CERTAINTY SESSIONS"
+   },
+   "properties": [],
+   "parentId": "6",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000344",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "One private working session with "
+   },
+   "properties": [],
+   "parentId": "8",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000345",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "David, every week."
+   },
+   "properties": [],
+   "parentId": "8",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000346",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Pick a time, bring whatever you are stuck on, "
+   },
+   "properties": [],
+   "parentId": "9",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000347",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "and stay with it until it clears. Two hours, one-"
+   },
+   "properties": [],
+   "parentId": "9",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000348",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "on-one, on Zoom or by phone."
+   },
+   "properties": [],
+   "parentId": "9",
+   "childIds": []
+  },
+  {
+   "nodeId": "-1000000283",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "MEMBERSHIP ACTIVE"
+   },
+   "properties": [],
+   "parentId": "7",
+   "childIds": []
+  },
+  {
+   "nodeId": "832",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "YOUR FIRST SESSION",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "YOUR FIRST SESSION"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "518",
+   "childIds": [
+    "-1000000349"
+   ],
+   "backendDOMNodeId": 832
+  },
+  {
+   "nodeId": "833",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Start with one thing you are stuck on.",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Start with one thing you are stuck on."
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "519",
+   "childIds": [
+    "-1000000350",
+    "-1000000351"
+   ],
+   "backendDOMNodeId": 833
+  },
+  {
+   "nodeId": "834",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "This is two hours, one-on-one with David, on Zoom or by phone. Bring the problem that keeps stalling you, a page, a launch, a decision, and you work on it together until it moves. Nothing to prepare beyond that.",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "This is two hours, one-on-one with David, on Zoom or by phone. Bring the problem that keeps stalling you, a page, a launch, a decision, and you work on it together until it moves. Nothing to prepare beyond that."
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "520",
+   "childIds": [
+    "-1000000352",
+    "-1000000353",
+    "-1000000354",
+    "-1000000355",
+    "-1000000356",
+    "-1000000357"
+   ],
+   "backendDOMNodeId": 834
+  },
+  {
+   "nodeId": "835",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "One session is included every week. Pick any open time below.",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "One session is included every week. Pick any open time below."
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "521",
+   "childIds": [
+    "-1000000358",
+    "-1000000359"
+   ],
+   "backendDOMNodeId": 835
+  },
+  {
+   "nodeId": "523",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "listitem"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 115
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "attribute",
+      "attribute": "title"
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "level",
+     "value": {
+      "type": "integer",
+      "value": 1
+     }
+    }
+   ],
+   "parentId": "522",
+   "childIds": [
+    "758",
+    "525"
+   ],
+   "backendDOMNodeId": 523
+  },
+  {
+   "nodeId": "527",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "listitem"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 115
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "attribute",
+      "attribute": "title"
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "level",
+     "value": {
+      "type": "integer",
+      "value": 1
+     }
+    }
+   ],
+   "parentId": "522",
+   "childIds": [
+    "763",
+    "529"
+   ],
+   "backendDOMNodeId": 527
+  },
+  {
+   "nodeId": "531",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "listitem"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 115
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "attribute",
+      "attribute": "title"
+     }
+    ]
+   },
+   "properties": [
+    {
+     "name": "level",
+     "value": {
+      "type": "integer",
+      "value": 1
+     }
+    }
+   ],
+   "parentId": "522",
+   "childIds": [
+    "768",
+    "533"
+   ],
+   "backendDOMNodeId": 531
+  },
+  {
+   "nodeId": "775",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "image"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 99
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     },
+     {
+      "type": "relatedElement",
+      "nativeSource": "title"
+     },
+     {
+      "type": "attribute",
+      "attribute": "title"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "536",
+   "childIds": [],
+   "backendDOMNodeId": 775
+  },
+  {
+   "nodeId": "538",
+   "ignored": true,
+   "ignoredReasons": [
+    {
+     "name": "uninteresting",
+     "value": {
+      "type": "boolean",
+      "value": true
+     }
+    }
+   ],
+   "role": {
+    "type": "role",
+    "value": "none"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 0
+   },
+   "parentId": "536",
+   "childIds": [
+    "842"
+   ],
+   "backendDOMNodeId": 538
+  },
+  {
+   "nodeId": "842",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "StaticText"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 158
+   },
+   "name": {
+    "type": "computedString",
+    "value": "Book my first session",
+    "sources": [
+     {
+      "type": "contents",
+      "value": {
+       "type": "computedString",
+       "value": "Book my first session"
+      }
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "538",
+   "childIds": [
+    "-1000000371"
+   ],
+   "backendDOMNodeId": 842
+  },
+  {
+   "nodeId": "-1000000307",
+   "ignored": false,
+   "role": {
+    "type": "internalRole",
+    "value": "InlineTextBox"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 101
+   },
+   "name": {
+    "type": "computedString",
+    "value": "DB"
+   },
+   "properties": [],
+   "parentId": "347",
+   "childIds": []
+  },
+  {
+   "nodeId": "138",
+   "ignored": false,
+   "role": {
+    "type": "role",
+    "value": "strong"
+   },
+   "chromeRole": {
+    "type": "internalRole",
+    "value": 160
+   },
+   "name": {
+    "type": "computedString",
+    "value": "",
+    "sources": [
+     {
+      "type": "relatedElement",
+      "attribute": "aria-labelledby"
+     },
+     {
+      "type": "attribute",
+      "attribute": "aria-label"
+     }
+    ]
+   },
+   "properties": [],
+   "parentId": "137",
+   "childIds": [
+    "348"
+   ],
+   "backendDOMNodeId": 138
+  },
+  {
+   "nodeId": "349",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -6585,18 +5202,18 @@
     ]
    },
    "properties": [],
-   "parentId": "230",
+   "parentId": "139",
    "childIds": [
-    "-1000000037",
-    "-1000000038",
-    "-1000000039",
-    "-1000000040",
-    "-1000000041"
+    "-1000000373",
+    "-1000000374",
+    "-1000000375",
+    "-1000000376",
+    "-1000000377"
    ],
-   "backendDOMNodeId": 507
+   "backendDOMNodeId": 349
   },
   {
-   "nodeId": "508",
+   "nodeId": "350",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -6620,14 +5237,14 @@
     ]
    },
    "properties": [],
-   "parentId": "231",
+   "parentId": "140",
    "childIds": [
-    "-1000000042"
+    "-1000000378"
    ],
-   "backendDOMNodeId": 508
+   "backendDOMNodeId": 350
   },
   {
-   "nodeId": "-1000000043",
+   "nodeId": "-1000000379",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -6642,11 +5259,11 @@
     "value": "PREFERENCES"
    },
    "properties": [],
-   "parentId": "529",
+   "parentId": "371",
    "childIds": []
   },
   {
-   "nodeId": "-1000000044",
+   "nodeId": "-1000000380",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -6661,11 +5278,11 @@
     "value": "Your settings"
    },
    "properties": [],
-   "parentId": "530",
+   "parentId": "372",
    "childIds": []
   },
   {
-   "nodeId": "-1000000045",
+   "nodeId": "-1000000381",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -6680,11 +5297,11 @@
     "value": "Save your session preferences once so "
    },
    "properties": [],
-   "parentId": "531",
+   "parentId": "373",
    "childIds": []
   },
   {
-   "nodeId": "-1000000046",
+   "nodeId": "-1000000382",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -6699,11 +5316,11 @@
     "value": "booking is faster each week."
    },
    "properties": [],
-   "parentId": "531",
+   "parentId": "373",
    "childIds": []
   },
   {
-   "nodeId": "-1000000047",
+   "nodeId": "-1000000383",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -6718,11 +5335,11 @@
     "value": "Time zone"
    },
    "properties": [],
-   "parentId": "532",
+   "parentId": "374",
    "childIds": []
   },
   {
-   "nodeId": "305",
+   "nodeId": "484",
    "ignored": false,
    "role": {
     "type": "role",
@@ -6774,12 +5391,12 @@
      }
     }
    ],
-   "parentId": "301",
+   "parentId": "204",
    "childIds": [],
-   "backendDOMNodeId": 305
+   "backendDOMNodeId": 484
   },
   {
-   "nodeId": "308",
+   "nodeId": "487",
    "ignored": false,
    "role": {
     "type": "role",
@@ -6831,12 +5448,12 @@
      }
     }
    ],
-   "parentId": "301",
+   "parentId": "204",
    "childIds": [],
-   "backendDOMNodeId": 308
+   "backendDOMNodeId": 487
   },
   {
-   "nodeId": "311",
+   "nodeId": "490",
    "ignored": false,
    "role": {
     "type": "role",
@@ -6888,12 +5505,12 @@
      }
     }
    ],
-   "parentId": "301",
+   "parentId": "204",
    "childIds": [],
-   "backendDOMNodeId": 311
+   "backendDOMNodeId": 490
   },
   {
-   "nodeId": "314",
+   "nodeId": "493",
    "ignored": false,
    "role": {
     "type": "role",
@@ -6945,12 +5562,12 @@
      }
     }
    ],
-   "parentId": "301",
+   "parentId": "204",
    "childIds": [],
-   "backendDOMNodeId": 314
+   "backendDOMNodeId": 493
   },
   {
-   "nodeId": "317",
+   "nodeId": "496",
    "ignored": false,
    "role": {
     "type": "role",
@@ -7002,12 +5619,12 @@
      }
     }
    ],
-   "parentId": "301",
+   "parentId": "204",
    "childIds": [],
-   "backendDOMNodeId": 317
+   "backendDOMNodeId": 496
   },
   {
-   "nodeId": "320",
+   "nodeId": "499",
    "ignored": false,
    "role": {
     "type": "role",
@@ -7059,12 +5676,12 @@
      }
     }
    ],
-   "parentId": "301",
+   "parentId": "204",
    "childIds": [],
-   "backendDOMNodeId": 320
+   "backendDOMNodeId": 499
   },
   {
-   "nodeId": "323",
+   "nodeId": "502",
    "ignored": false,
    "role": {
     "type": "role",
@@ -7116,12 +5733,12 @@
      }
     }
    ],
-   "parentId": "301",
+   "parentId": "204",
    "childIds": [],
-   "backendDOMNodeId": 323
+   "backendDOMNodeId": 502
   },
   {
-   "nodeId": "326",
+   "nodeId": "505",
    "ignored": false,
    "role": {
     "type": "role",
@@ -7173,12 +5790,12 @@
      }
     }
    ],
-   "parentId": "301",
+   "parentId": "204",
    "childIds": [],
-   "backendDOMNodeId": 326
+   "backendDOMNodeId": 505
   },
   {
-   "nodeId": "329",
+   "nodeId": "508",
    "ignored": false,
    "role": {
     "type": "role",
@@ -7230,12 +5847,12 @@
      }
     }
    ],
-   "parentId": "301",
+   "parentId": "204",
    "childIds": [],
-   "backendDOMNodeId": 329
+   "backendDOMNodeId": 508
   },
   {
-   "nodeId": "332",
+   "nodeId": "511",
    "ignored": false,
    "role": {
     "type": "role",
@@ -7287,12 +5904,12 @@
      }
     }
    ],
-   "parentId": "301",
+   "parentId": "204",
    "childIds": [],
-   "backendDOMNodeId": 332
+   "backendDOMNodeId": 511
   },
   {
-   "nodeId": "335",
+   "nodeId": "514",
    "ignored": false,
    "role": {
     "type": "role",
@@ -7344,12 +5961,12 @@
      }
     }
    ],
-   "parentId": "301",
+   "parentId": "204",
    "childIds": [],
-   "backendDOMNodeId": 335
+   "backendDOMNodeId": 514
   },
   {
-   "nodeId": "338",
+   "nodeId": "517",
    "ignored": false,
    "role": {
     "type": "role",
@@ -7401,12 +6018,12 @@
      }
     }
    ],
-   "parentId": "301",
+   "parentId": "204",
    "childIds": [],
-   "backendDOMNodeId": 338
+   "backendDOMNodeId": 517
   },
   {
-   "nodeId": "-1000000048",
+   "nodeId": "-1000000384",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7421,11 +6038,11 @@
     "value": "Shows session times in your local time zone while "
    },
    "properties": [],
-   "parentId": "533",
+   "parentId": "375",
    "childIds": []
   },
   {
-   "nodeId": "-1000000049",
+   "nodeId": "-1000000385",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7440,11 +6057,11 @@
     "value": "keeping David's Eastern time visible alongside."
    },
    "properties": [],
-   "parentId": "533",
+   "parentId": "375",
    "childIds": []
   },
   {
-   "nodeId": "-1000000050",
+   "nodeId": "-1000000386",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7459,11 +6076,11 @@
     "value": "Default meeting format"
    },
    "properties": [],
-   "parentId": "534",
+   "parentId": "376",
    "childIds": []
   },
   {
-   "nodeId": "350",
+   "nodeId": "218",
    "ignored": false,
    "role": {
     "type": "role",
@@ -7515,12 +6132,12 @@
      }
     }
    ],
-   "parentId": "346",
+   "parentId": "214",
    "childIds": [],
-   "backendDOMNodeId": 350
+   "backendDOMNodeId": 218
   },
   {
-   "nodeId": "353",
+   "nodeId": "221",
    "ignored": false,
    "role": {
     "type": "role",
@@ -7572,12 +6189,12 @@
      }
     }
    ],
-   "parentId": "346",
+   "parentId": "214",
    "childIds": [],
-   "backendDOMNodeId": 353
+   "backendDOMNodeId": 221
   },
   {
-   "nodeId": "-1000000051",
+   "nodeId": "-1000000387",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7592,11 +6209,11 @@
     "value": "Prefills whether you usually meet on Zoom or by "
    },
    "properties": [],
-   "parentId": "535",
+   "parentId": "377",
    "childIds": []
   },
   {
-   "nodeId": "-1000000052",
+   "nodeId": "-1000000388",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7611,11 +6228,11 @@
     "value": "phone on new bookings."
    },
    "properties": [],
-   "parentId": "535",
+   "parentId": "377",
    "childIds": []
   },
   {
-   "nodeId": "-1000000053",
+   "nodeId": "-1000000389",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7630,11 +6247,11 @@
     "value": "Remembered phone number "
    },
    "properties": [],
-   "parentId": "536",
+   "parentId": "378",
    "childIds": []
   },
   {
-   "nodeId": "-1000000054",
+   "nodeId": "-1000000390",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7649,11 +6266,11 @@
     "value": "(for phone sessions)"
    },
    "properties": [],
-   "parentId": "537",
+   "parentId": "379",
    "childIds": []
   },
   {
-   "nodeId": "-1000000055",
+   "nodeId": "-1000000391",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7668,11 +6285,11 @@
     "value": "No phone number on file yet."
    },
    "properties": [],
-   "parentId": "538",
+   "parentId": "845",
    "childIds": []
   },
   {
-   "nodeId": "-1000000056",
+   "nodeId": "-1000000392",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7687,11 +6304,11 @@
     "value": "Remembered and prefilled when you choose "
    },
    "properties": [],
-   "parentId": "539",
+   "parentId": "380",
    "childIds": []
   },
   {
-   "nodeId": "-1000000057",
+   "nodeId": "-1000000393",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7706,11 +6323,11 @@
     "value": "phone sessions so you do not have to type it every "
    },
    "properties": [],
-   "parentId": "539",
+   "parentId": "380",
    "childIds": []
   },
   {
-   "nodeId": "-1000000058",
+   "nodeId": "-1000000394",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7725,11 +6342,11 @@
     "value": "time."
    },
    "properties": [],
-   "parentId": "539",
+   "parentId": "380",
    "childIds": []
   },
   {
-   "nodeId": "-1000000059",
+   "nodeId": "-1000000395",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7744,11 +6361,11 @@
     "value": "David uses this number only to call you for phone "
    },
    "properties": [],
-   "parentId": "540",
+   "parentId": "381",
    "childIds": []
   },
   {
-   "nodeId": "-1000000060",
+   "nodeId": "-1000000396",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7763,11 +6380,11 @@
     "value": "sessions. It stays with your account, is never used "
    },
    "properties": [],
-   "parentId": "540",
+   "parentId": "381",
    "childIds": []
   },
   {
-   "nodeId": "-1000000061",
+   "nodeId": "-1000000397",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7782,11 +6399,11 @@
     "value": "for marketing or shared with anyone else, and "
    },
    "properties": [],
-   "parentId": "540",
+   "parentId": "381",
    "childIds": []
   },
   {
-   "nodeId": "-1000000062",
+   "nodeId": "-1000000398",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7801,11 +6418,11 @@
     "value": "clearing this field and saving removes it."
    },
    "properties": [],
-   "parentId": "540",
+   "parentId": "381",
    "childIds": []
   },
   {
-   "nodeId": "-1000000063",
+   "nodeId": "-1000000399",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -7820,600 +6437,11 @@
     "value": "Save settings"
    },
    "properties": [],
-   "parentId": "541",
+   "parentId": "382",
    "childIds": []
   },
   {
-   "nodeId": "-1000000064",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "WHEN LIFE GETS IN THE WAY"
-   },
-   "properties": [],
-   "parentId": "542",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000065",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "What happens if you miss a "
-   },
-   "properties": [],
-   "parentId": "543",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000066",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "week, drift off, or leave."
-   },
-   "properties": [],
-   "parentId": "543",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000067",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "You miss a week"
-   },
-   "properties": [],
-   "parentId": "544",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000068",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Each week runs Monday to Sunday, Eastern "
-   },
-   "properties": [],
-   "parentId": "545",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000069",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "time. A week you do not use does not roll "
-   },
-   "properties": [],
-   "parentId": "545",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000070",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "over, and nothing else happens. Next week's "
-   },
-   "properties": [],
-   "parentId": "545",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000071",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "session is waiting, same as always."
-   },
-   "properties": [],
-   "parentId": "545",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000072",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "You stop booking for a while"
-   },
-   "properties": [],
-   "parentId": "546",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000073",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Once three weeks go by without a session, "
-   },
-   "properties": [],
-   "parentId": "547",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000074",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "this page opens with a welcome back, "
-   },
-   "properties": [],
-   "parentId": "547",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000075",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "shows where you left off, and your weekly "
-   },
-   "properties": [],
-   "parentId": "547",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000076",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "session is still included. There is no penalty "
-   },
-   "properties": [],
-   "parentId": "547",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000077",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "and nothing to make up."
-   },
-   "properties": [],
-   "parentId": "547",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000078",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "You need a different time"
-   },
-   "properties": [],
-   "parentId": "548",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000079",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Rescheduling releases your current time "
-   },
-   "properties": [],
-   "parentId": "549",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000080",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "first, so someone else can book it before you "
-   },
-   "properties": [],
-   "parentId": "549",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000081",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "pick a new one. Pick the new time right "
-   },
-   "properties": [],
-   "parentId": "549",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000082",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "away if you want to keep this week."
-   },
-   "properties": [],
-   "parentId": "549",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000083",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Your membership ends"
-   },
-   "properties": [],
-   "parentId": "550",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000084",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Booking closes with it. Cancel any upcoming "
-   },
-   "properties": [],
-   "parentId": "551",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000085",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "session you will not keep before then, so the "
-   },
-   "properties": [],
-   "parentId": "551",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000086",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "time goes to someone else. Your past "
-   },
-   "properties": [],
-   "parentId": "551",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000087",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "sessions stay on your account, so if you "
-   },
-   "properties": [],
-   "parentId": "551",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000088",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "come back they are still here."
-   },
-   "properties": [],
-   "parentId": "551",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000089",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Delete my past sessions and "
-   },
-   "properties": [],
-   "parentId": "552",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000090",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "phone number"
-   },
-   "properties": [],
-   "parentId": "552",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000091",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "This permanently removes your past and "
-   },
-   "properties": [],
-   "parentId": "553",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000092",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "cancelled sessions, their topics, and your "
-   },
-   "properties": [],
-   "parentId": "553",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000093",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "remembered phone number. An upcoming session "
-   },
-   "properties": [],
-   "parentId": "553",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000094",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "stays booked."
-   },
-   "properties": [],
-   "parentId": "553",
-   "childIds": []
-  },
-  {
-   "nodeId": "554",
+   "nodeId": "10",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -8425,296 +6453,83 @@
    },
    "name": {
     "type": "computedString",
-    "value": "COMMON SESSION TOPICS",
+    "value": "How this works",
     "sources": [
      {
       "type": "contents",
       "value": {
        "type": "computedString",
-       "value": "COMMON SESSION TOPICS"
+       "value": "How this works"
       }
      }
     ]
    },
    "properties": [],
-   "parentId": "401",
+   "parentId": "246",
    "childIds": [
-    "-1000000095"
+    "-1000000400"
    ],
-   "backendDOMNodeId": 554
+   "backendDOMNodeId": 10
   },
   {
-   "nodeId": "403",
+   "nodeId": "-1000000401",
    "ignored": false,
    "role": {
-    "type": "role",
-    "value": "listitem"
+    "type": "internalRole",
+    "value": "InlineTextBox"
    },
    "chromeRole": {
     "type": "internalRole",
-    "value": 115
+    "value": 101
    },
    "name": {
     "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
+    "value": "Missed weeks, rescheduling, privacy, "
    },
-   "properties": [
-    {
-     "name": "level",
-     "value": {
-      "type": "integer",
-      "value": 1
-     }
-    }
-   ],
-   "parentId": "402",
-   "childIds": [
-    "404",
-    "555"
-   ],
-   "backendDOMNodeId": 403
+   "properties": [],
+   "parentId": "11",
+   "childIds": []
   },
   {
-   "nodeId": "406",
+   "nodeId": "-1000000402",
    "ignored": false,
    "role": {
-    "type": "role",
-    "value": "listitem"
+    "type": "internalRole",
+    "value": "InlineTextBox"
    },
    "chromeRole": {
     "type": "internalRole",
-    "value": 115
+    "value": 101
    },
    "name": {
     "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
+    "value": "and what happens when membership "
    },
-   "properties": [
-    {
-     "name": "level",
-     "value": {
-      "type": "integer",
-      "value": 1
-     }
-    }
-   ],
-   "parentId": "402",
-   "childIds": [
-    "407",
-    "556"
-   ],
-   "backendDOMNodeId": 406
+   "properties": [],
+   "parentId": "11",
+   "childIds": []
   },
   {
-   "nodeId": "414",
+   "nodeId": "-1000000403",
    "ignored": false,
    "role": {
-    "type": "role",
-    "value": "listitem"
+    "type": "internalRole",
+    "value": "InlineTextBox"
    },
    "chromeRole": {
     "type": "internalRole",
-    "value": 115
+    "value": 101
    },
    "name": {
     "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
+    "value": "ends."
    },
-   "properties": [
-    {
-     "name": "level",
-     "value": {
-      "type": "integer",
-      "value": 1
-     }
-    }
-   ],
-   "parentId": "402",
-   "childIds": [
-    "415",
-    "557"
-   ],
-   "backendDOMNodeId": 414
+   "properties": [],
+   "parentId": "11",
+   "childIds": []
   },
   {
-   "nodeId": "418",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "listitem"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 115
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [
-    {
-     "name": "level",
-     "value": {
-      "type": "integer",
-      "value": 1
-     }
-    }
-   ],
-   "parentId": "402",
-   "childIds": [
-    "419",
-    "558"
-   ],
-   "backendDOMNodeId": 418
-  },
-  {
-   "nodeId": "422",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "listitem"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 115
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [
-    {
-     "name": "level",
-     "value": {
-      "type": "integer",
-      "value": 1
-     }
-    }
-   ],
-   "parentId": "402",
-   "childIds": [
-    "423",
-    "559"
-   ],
-   "backendDOMNodeId": 422
-  },
-  {
-   "nodeId": "428",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "listitem"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 115
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [
-    {
-     "name": "level",
-     "value": {
-      "type": "integer",
-      "value": 1
-     }
-    }
-   ],
-   "parentId": "402",
-   "childIds": [
-    "429",
-    "560"
-   ],
-   "backendDOMNodeId": 428
-  },
-  {
-   "nodeId": "561",
+   "nodeId": "-1000000275",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -8726,56 +6541,25 @@
    },
    "name": {
     "type": "computedString",
-    "value": "HOW IT WORKS",
+    "value": "+",
     "sources": [
      {
       "type": "contents",
       "value": {
        "type": "computedString",
-       "value": "HOW IT WORKS"
+       "value": "+"
       }
      }
     ]
    },
    "properties": [],
-   "parentId": "436",
+   "parentId": "-1000000274",
    "childIds": [
-    "-1000000102"
-   ],
-   "backendDOMNodeId": 561
-  },
-  {
-   "nodeId": "-1000000104",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "1",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "1"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "-1000000103",
-   "childIds": [
-    "-1000000105"
+    "-1000000276"
    ]
   },
   {
-   "nodeId": "-1000000105",
+   "nodeId": "-1000000276",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -8787,717 +6571,14 @@
    },
    "name": {
     "type": "computedString",
-    "value": "1"
+    "value": "+"
    },
    "properties": [],
-   "parentId": "-1000000104",
+   "parentId": "-1000000275",
    "childIds": []
   },
   {
-   "nodeId": "-1000000106",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Book your weekly session at a time "
-   },
-   "properties": [],
-   "parentId": "563",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000107",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "that works for you."
-   },
-   "properties": [],
-   "parentId": "563",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000109",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "2",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "2"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "-1000000108",
-   "childIds": [
-    "-1000000110"
-   ]
-  },
-  {
-   "nodeId": "-1000000110",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "2"
-   },
-   "properties": [],
-   "parentId": "-1000000109",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000111",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Bring the real thing you are working "
-   },
-   "properties": [],
-   "parentId": "565",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000112",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "on or stuck on."
-   },
-   "properties": [],
-   "parentId": "565",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000114",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "3",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "3"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "-1000000113",
-   "childIds": [
-    "-1000000115"
-   ]
-  },
-  {
-   "nodeId": "-1000000115",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "3"
-   },
-   "properties": [],
-   "parentId": "-1000000114",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000116",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "We make progress on it together, live, "
-   },
-   "properties": [],
-   "parentId": "567",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000117",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "in the session."
-   },
-   "properties": [],
-   "parentId": "567",
-   "childIds": []
-  },
-  {
-   "nodeId": "442",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "strong"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 160
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "441",
-   "childIds": [
-    "568"
-   ],
-   "backendDOMNodeId": 442
-  },
-  {
-   "nodeId": "569",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": " A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": " A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "441",
-   "childIds": [
-    "-1000000119",
-    "-1000000120",
-    "-1000000121",
-    "-1000000122",
-    "-1000000123",
-    "-1000000124"
-   ],
-   "backendDOMNodeId": 569
-  },
-  {
-   "nodeId": "444",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "strong"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 160
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "443",
-   "childIds": [
-    "570"
-   ],
-   "backendDOMNodeId": 444
-  },
-  {
-   "nodeId": "571",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": " a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": " a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "443",
-   "childIds": [
-    "-1000000126",
-    "-1000000127",
-    "-1000000128",
-    "-1000000129"
-   ],
-   "backendDOMNodeId": 571
-  },
-  {
-   "nodeId": "446",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "image"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 99
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "relatedElement",
-      "nativeSource": "title"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "445",
-   "childIds": [],
-   "backendDOMNodeId": 446
-  },
-  {
-   "nodeId": "572",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": " One session per week is included with your membership.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": " One session per week is included with your membership."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "445",
-   "childIds": [
-    "-1000000130",
-    "-1000000131"
-   ],
-   "backendDOMNodeId": 572
-  },
-  {
-   "nodeId": "451",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "strong"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 160
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "450",
-   "childIds": [
-    "573"
-   ],
-   "backendDOMNodeId": 451
-  },
-  {
-   "nodeId": "574",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": " your booking details are saved to your Studio account and are not visible to other members. Need help? Email ",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": " your booking details are saved to your Studio account and are not visible to other members. Need help? Email "
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "450",
-   "childIds": [
-    "-1000000133",
-    "-1000000134",
-    "-1000000135"
-   ],
-   "backendDOMNodeId": 574
-  },
-  {
-   "nodeId": "452",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "link"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 110
-   },
-   "name": {
-    "type": "computedString",
-    "value": "email@davidbee.me",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "email@davidbee.me"
-      }
-     },
-     {
-      "type": "attribute",
-      "attribute": "title",
-      "superseded": true
-     }
-    ]
-   },
-   "properties": [
-    {
-     "name": "focusable",
-     "value": {
-      "type": "booleanOrUndefined",
-      "value": true
-     }
-    },
-    {
-     "name": "url",
-     "value": {
-      "type": "string",
-      "value": "mailto:email@davidbee.me?subject=Certainty%20Sessions%20support"
-     }
-    }
-   ],
-   "parentId": "450",
-   "childIds": [
-    "575"
-   ],
-   "backendDOMNodeId": 452
-  },
-  {
-   "nodeId": "576",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": ".",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "450",
-   "childIds": [
-    "-1000000137"
-   ],
-   "backendDOMNodeId": 576
-  },
-  {
-   "nodeId": "454",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "strong"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 160
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "453",
-   "childIds": [
-    "577"
-   ],
-   "backendDOMNodeId": 454
-  },
-  {
-   "nodeId": "578",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": " only David. It is there so he knows what you are walking in with. Other members never see it.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": " only David. It is there so he knows what you are walking in with. Other members never see it."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "453",
-   "childIds": [
-    "-1000000139",
-    "-1000000140",
-    "-1000000141"
-   ],
-   "backendDOMNodeId": 578
-  },
-  {
-   "nodeId": "456",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "strong"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 160
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "455",
-   "childIds": [
-    "579"
-   ],
-   "backendDOMNodeId": 456
-  },
-  {
-   "nodeId": "580",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": " they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": " they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "455",
-   "childIds": [
-    "-1000000143",
-    "-1000000144",
-    "-1000000145",
-    "-1000000146",
-    "-1000000147"
-   ],
-   "backendDOMNodeId": 580
-  },
-  {
-   "nodeId": "-1000000012",
+   "nodeId": "-1000000349",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -9512,11 +6593,11 @@
     "value": "YOUR FIRST SESSION"
    },
    "properties": [],
-   "parentId": "495",
+   "parentId": "832",
    "childIds": []
   },
   {
-   "nodeId": "-1000000013",
+   "nodeId": "-1000000350",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -9531,11 +6612,11 @@
     "value": "Start with one thing you are "
    },
    "properties": [],
-   "parentId": "19",
+   "parentId": "833",
    "childIds": []
   },
   {
-   "nodeId": "-1000000014",
+   "nodeId": "-1000000351",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -9550,11 +6631,11 @@
     "value": "stuck on."
    },
    "properties": [],
-   "parentId": "19",
+   "parentId": "833",
    "childIds": []
   },
   {
-   "nodeId": "-1000000015",
+   "nodeId": "-1000000352",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -9569,11 +6650,11 @@
     "value": "This is two hours, one-on-one with "
    },
    "properties": [],
-   "parentId": "496",
+   "parentId": "834",
    "childIds": []
   },
   {
-   "nodeId": "-1000000016",
+   "nodeId": "-1000000353",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -9588,11 +6669,11 @@
     "value": "David, on Zoom or by phone. Bring the "
    },
    "properties": [],
-   "parentId": "496",
+   "parentId": "834",
    "childIds": []
   },
   {
-   "nodeId": "-1000000017",
+   "nodeId": "-1000000354",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -9607,11 +6688,11 @@
     "value": "problem that keeps stalling you, a page, "
    },
    "properties": [],
-   "parentId": "496",
+   "parentId": "834",
    "childIds": []
   },
   {
-   "nodeId": "-1000000018",
+   "nodeId": "-1000000355",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -9626,11 +6707,11 @@
     "value": "a launch, a decision, and you work on it "
    },
    "properties": [],
-   "parentId": "496",
+   "parentId": "834",
    "childIds": []
   },
   {
-   "nodeId": "-1000000019",
+   "nodeId": "-1000000356",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -9645,11 +6726,11 @@
     "value": "together until it moves. Nothing to "
    },
    "properties": [],
-   "parentId": "496",
+   "parentId": "834",
    "childIds": []
   },
   {
-   "nodeId": "-1000000020",
+   "nodeId": "-1000000357",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -9664,11 +6745,11 @@
     "value": "prepare beyond that."
    },
    "properties": [],
-   "parentId": "496",
+   "parentId": "834",
    "childIds": []
   },
   {
-   "nodeId": "-1000000021",
+   "nodeId": "-1000000358",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -9683,11 +6764,11 @@
     "value": "One session is included every week. Pick any "
    },
    "properties": [],
-   "parentId": "497",
+   "parentId": "835",
    "childIds": []
   },
   {
-   "nodeId": "-1000000022",
+   "nodeId": "-1000000359",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -9702,11 +6783,11 @@
     "value": "open time below."
    },
    "properties": [],
-   "parentId": "497",
+   "parentId": "835",
    "childIds": []
   },
   {
-   "nodeId": "193",
+   "nodeId": "758",
    "ignored": false,
    "role": {
     "type": "role",
@@ -9739,12 +6820,12 @@
     ]
    },
    "properties": [],
-   "parentId": "192",
+   "parentId": "523",
    "childIds": [],
-   "backendDOMNodeId": 193
+   "backendDOMNodeId": 758
   },
   {
-   "nodeId": "197",
+   "nodeId": "525",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -9763,15 +6844,15 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "192",
+   "parentId": "523",
    "childIds": [
-    "198",
-    "499"
+    "526",
+    "837"
    ],
-   "backendDOMNodeId": 197
+   "backendDOMNodeId": 525
   },
   {
-   "nodeId": "198",
+   "nodeId": "526",
    "ignored": false,
    "role": {
     "type": "role",
@@ -9796,14 +6877,14 @@
     ]
    },
    "properties": [],
-   "parentId": "197",
+   "parentId": "525",
    "childIds": [
-    "498"
+    "836"
    ],
-   "backendDOMNodeId": 198
+   "backendDOMNodeId": 526
   },
   {
-   "nodeId": "499",
+   "nodeId": "837",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -9827,16 +6908,16 @@
     ]
    },
    "properties": [],
-   "parentId": "197",
+   "parentId": "525",
    "childIds": [
-    "-1000000024",
-    "-1000000025",
-    "-1000000026"
+    "-1000000361",
+    "-1000000362",
+    "-1000000363"
    ],
-   "backendDOMNodeId": 499
+   "backendDOMNodeId": 837
   },
   {
-   "nodeId": "200",
+   "nodeId": "763",
    "ignored": false,
    "role": {
     "type": "role",
@@ -9869,12 +6950,12 @@
     ]
    },
    "properties": [],
-   "parentId": "199",
+   "parentId": "527",
    "childIds": [],
-   "backendDOMNodeId": 200
+   "backendDOMNodeId": 763
   },
   {
-   "nodeId": "205",
+   "nodeId": "529",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -9893,15 +6974,15 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "199",
+   "parentId": "527",
    "childIds": [
-    "206",
-    "501"
+    "530",
+    "839"
    ],
-   "backendDOMNodeId": 205
+   "backendDOMNodeId": 529
   },
   {
-   "nodeId": "206",
+   "nodeId": "530",
    "ignored": false,
    "role": {
     "type": "role",
@@ -9926,14 +7007,14 @@
     ]
    },
    "properties": [],
-   "parentId": "205",
+   "parentId": "529",
    "childIds": [
-    "500"
+    "838"
    ],
-   "backendDOMNodeId": 206
+   "backendDOMNodeId": 530
   },
   {
-   "nodeId": "501",
+   "nodeId": "839",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -9957,15 +7038,15 @@
     ]
    },
    "properties": [],
-   "parentId": "205",
+   "parentId": "529",
    "childIds": [
-    "-1000000028",
-    "-1000000029"
+    "-1000000365",
+    "-1000000366"
    ],
-   "backendDOMNodeId": 501
+   "backendDOMNodeId": 839
   },
   {
-   "nodeId": "208",
+   "nodeId": "768",
    "ignored": false,
    "role": {
     "type": "role",
@@ -9998,12 +7079,12 @@
     ]
    },
    "properties": [],
-   "parentId": "207",
+   "parentId": "531",
    "childIds": [],
-   "backendDOMNodeId": 208
+   "backendDOMNodeId": 768
   },
   {
-   "nodeId": "213",
+   "nodeId": "533",
    "ignored": true,
    "ignoredReasons": [
     {
@@ -10022,15 +7103,15 @@
     "type": "internalRole",
     "value": 0
    },
-   "parentId": "207",
+   "parentId": "531",
    "childIds": [
-    "214",
-    "503"
+    "534",
+    "841"
    ],
-   "backendDOMNodeId": 213
+   "backendDOMNodeId": 533
   },
   {
-   "nodeId": "214",
+   "nodeId": "534",
    "ignored": false,
    "role": {
     "type": "role",
@@ -10055,14 +7136,14 @@
     ]
    },
    "properties": [],
-   "parentId": "213",
+   "parentId": "533",
    "childIds": [
-    "502"
+    "840"
    ],
-   "backendDOMNodeId": 214
+   "backendDOMNodeId": 534
   },
   {
-   "nodeId": "503",
+   "nodeId": "841",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -10086,16 +7167,16 @@
     ]
    },
    "properties": [],
-   "parentId": "213",
+   "parentId": "533",
    "childIds": [
-    "-1000000031",
-    "-1000000032",
-    "-1000000033"
+    "-1000000368",
+    "-1000000369",
+    "-1000000370"
    ],
-   "backendDOMNodeId": 503
+   "backendDOMNodeId": 841
   },
   {
-   "nodeId": "-1000000034",
+   "nodeId": "-1000000371",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -10110,11 +7191,11 @@
     "value": "Book my first session"
    },
    "properties": [],
-   "parentId": "504",
+   "parentId": "842",
    "childIds": []
   },
   {
-   "nodeId": "506",
+   "nodeId": "348",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -10138,14 +7219,14 @@
     ]
    },
    "properties": [],
-   "parentId": "229",
+   "parentId": "138",
    "childIds": [
-    "-1000000036"
+    "-1000000372"
    ],
-   "backendDOMNodeId": 506
+   "backendDOMNodeId": 348
   },
   {
-   "nodeId": "-1000000037",
+   "nodeId": "-1000000373",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -10160,11 +7241,11 @@
     "value": "We open it up, work through it together, "
    },
    "properties": [],
-   "parentId": "507",
+   "parentId": "349",
    "childIds": []
   },
   {
-   "nodeId": "-1000000038",
+   "nodeId": "-1000000374",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -10179,11 +7260,11 @@
     "value": "and make real progress on whatever "
    },
    "properties": [],
-   "parentId": "507",
+   "parentId": "349",
    "childIds": []
   },
   {
-   "nodeId": "-1000000039",
+   "nodeId": "-1000000375",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -10198,11 +7279,11 @@
     "value": "you are stuck on. No prep deck, no "
    },
    "properties": [],
-   "parentId": "507",
+   "parentId": "349",
    "childIds": []
   },
   {
-   "nodeId": "-1000000040",
+   "nodeId": "-1000000376",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -10217,11 +7298,11 @@
     "value": "polish. Just the thing that is actually in "
    },
    "properties": [],
-   "parentId": "507",
+   "parentId": "349",
    "childIds": []
   },
   {
-   "nodeId": "-1000000041",
+   "nodeId": "-1000000377",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -10236,11 +7317,11 @@
     "value": "your way."
    },
    "properties": [],
-   "parentId": "507",
+   "parentId": "349",
    "childIds": []
   },
   {
-   "nodeId": "-1000000042",
+   "nodeId": "-1000000378",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -10255,11 +7336,11 @@
     "value": "David Bee"
    },
    "properties": [],
-   "parentId": "508",
+   "parentId": "350",
    "childIds": []
   },
   {
-   "nodeId": "-1000000095",
+   "nodeId": "-1000000400",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -10271,428 +7352,14 @@
    },
    "name": {
     "type": "computedString",
-    "value": "COMMON SESSION TOPICS"
+    "value": "How this works"
    },
    "properties": [],
-   "parentId": "554",
+   "parentId": "10",
    "childIds": []
   },
   {
-   "nodeId": "404",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "image"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 99
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "relatedElement",
-      "nativeSource": "title"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "403",
-   "childIds": [],
-   "backendDOMNodeId": 404
-  },
-  {
-   "nodeId": "555",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Fixing a tech issue that is blocking you",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Fixing a tech issue that is blocking you"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "403",
-   "childIds": [
-    "-1000000096"
-   ],
-   "backendDOMNodeId": 555
-  },
-  {
-   "nodeId": "407",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "image"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 99
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "relatedElement",
-      "nativeSource": "title"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "406",
-   "childIds": [],
-   "backendDOMNodeId": 407
-  },
-  {
-   "nodeId": "556",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Setting up a funnel or an offer",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Setting up a funnel or an offer"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "406",
-   "childIds": [
-    "-1000000097"
-   ],
-   "backendDOMNodeId": 556
-  },
-  {
-   "nodeId": "415",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "image"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 99
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "relatedElement",
-      "nativeSource": "title"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "414",
-   "childIds": [],
-   "backendDOMNodeId": 415
-  },
-  {
-   "nodeId": "557",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Improving your content",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Improving your content"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "414",
-   "childIds": [
-    "-1000000098"
-   ],
-   "backendDOMNodeId": 557
-  },
-  {
-   "nodeId": "419",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "image"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 99
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "relatedElement",
-      "nativeSource": "title"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "418",
-   "childIds": [],
-   "backendDOMNodeId": 419
-  },
-  {
-   "nodeId": "558",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Clarifying your next step",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Clarifying your next step"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "418",
-   "childIds": [
-    "-1000000099"
-   ],
-   "backendDOMNodeId": 558
-  },
-  {
-   "nodeId": "423",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "image"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 99
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "relatedElement",
-      "nativeSource": "title"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "422",
-   "childIds": [],
-   "backendDOMNodeId": 423
-  },
-  {
-   "nodeId": "559",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Looking at your numbers together",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Looking at your numbers together"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "422",
-   "childIds": [
-    "-1000000100"
-   ],
-   "backendDOMNodeId": 559
-  },
-  {
-   "nodeId": "429",
-   "ignored": false,
-   "role": {
-    "type": "role",
-    "value": "image"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 99
-   },
-   "name": {
-    "type": "computedString",
-    "value": "",
-    "sources": [
-     {
-      "type": "relatedElement",
-      "attribute": "aria-labelledby"
-     },
-     {
-      "type": "attribute",
-      "attribute": "aria-label"
-     },
-     {
-      "type": "relatedElement",
-      "nativeSource": "title"
-     },
-     {
-      "type": "attribute",
-      "attribute": "title"
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "428",
-   "childIds": [],
-   "backendDOMNodeId": 429
-  },
-  {
-   "nodeId": "560",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Anything else on your plate",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Anything else on your plate"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "428",
-   "childIds": [
-    "-1000000101"
-   ],
-   "backendDOMNodeId": 560
-  },
-  {
-   "nodeId": "-1000000102",
+   "nodeId": "-1000000276",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -10704,713 +7371,14 @@
    },
    "name": {
     "type": "computedString",
-    "value": "HOW IT WORKS"
+    "value": "+"
    },
    "properties": [],
-   "parentId": "561",
+   "parentId": "-1000000275",
    "childIds": []
   },
   {
-   "nodeId": "-1000000105",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "1"
-   },
-   "properties": [],
-   "parentId": "-1000000104",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000110",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "2"
-   },
-   "properties": [],
-   "parentId": "-1000000109",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000115",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "3"
-   },
-   "properties": [],
-   "parentId": "-1000000114",
-   "childIds": []
-  },
-  {
-   "nodeId": "568",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Not a calendar link.",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Not a calendar link."
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "442",
-   "childIds": [
-    "-1000000118"
-   ],
-   "backendDOMNodeId": 568
-  },
-  {
-   "nodeId": "-1000000119",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": " A scheduler books you a "
-   },
-   "properties": [],
-   "parentId": "569",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000120",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "meeting with whoever is free. This is your "
-   },
-   "properties": [],
-   "parentId": "569",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000121",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "standing weekly seat with David: one two-hour "
-   },
-   "properties": [],
-   "parentId": "569",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000122",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "working session every week of your membership, "
-   },
-   "properties": [],
-   "parentId": "569",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000123",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "and this page remembers what you brought "
-   },
-   "properties": [],
-   "parentId": "569",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000124",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "before."
-   },
-   "properties": [],
-   "parentId": "569",
-   "childIds": []
-  },
-  {
-   "nodeId": "570",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "What counts:",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "What counts:"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "444",
-   "childIds": [
-    "-1000000125"
-   ],
-   "backendDOMNodeId": 570
-  },
-  {
-   "nodeId": "-1000000126",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": " a session is a success when it is "
-   },
-   "properties": [],
-   "parentId": "571",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000127",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "held, meaning you and David sat down and "
-   },
-   "properties": [],
-   "parentId": "571",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000128",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "worked on your thing. Those are the sessions your "
-   },
-   "properties": [],
-   "parentId": "571",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000129",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "history counts."
-   },
-   "properties": [],
-   "parentId": "571",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000130",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": " One session per week is included with your "
-   },
-   "properties": [],
-   "parentId": "572",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000131",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "membership."
-   },
-   "properties": [],
-   "parentId": "572",
-   "childIds": []
-  },
-  {
-   "nodeId": "573",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Private by default:",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Private by default:"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "451",
-   "childIds": [
-    "-1000000132"
-   ],
-   "backendDOMNodeId": 573
-  },
-  {
-   "nodeId": "-1000000133",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": " your booking details are saved "
-   },
-   "properties": [],
-   "parentId": "574",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000134",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "to your Studio account and are not visible to other "
-   },
-   "properties": [],
-   "parentId": "574",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000135",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "members. Need help? Email "
-   },
-   "properties": [],
-   "parentId": "574",
-   "childIds": []
-  },
-  {
-   "nodeId": "575",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "email@davidbee.me",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "email@davidbee.me"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "452",
-   "childIds": [
-    "-1000000136"
-   ],
-   "backendDOMNodeId": 575
-  },
-  {
-   "nodeId": "-1000000137",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "."
-   },
-   "properties": [],
-   "parentId": "576",
-   "childIds": []
-  },
-  {
-   "nodeId": "577",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Who reads your topic:",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "Who reads your topic:"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "454",
-   "childIds": [
-    "-1000000138"
-   ],
-   "backendDOMNodeId": 577
-  },
-  {
-   "nodeId": "-1000000139",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": " only David. It is there so "
-   },
-   "properties": [],
-   "parentId": "578",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000140",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "he knows what you are walking in with. Other "
-   },
-   "properties": [],
-   "parentId": "578",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000141",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "members never see it."
-   },
-   "properties": [],
-   "parentId": "578",
-   "childIds": []
-  },
-  {
-   "nodeId": "579",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "StaticText"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 158
-   },
-   "name": {
-    "type": "computedString",
-    "value": "What sessions are not for:",
-    "sources": [
-     {
-      "type": "contents",
-      "value": {
-       "type": "computedString",
-       "value": "What sessions are not for:"
-      }
-     }
-    ]
-   },
-   "properties": [],
-   "parentId": "456",
-   "childIds": [
-    "-1000000142"
-   ],
-   "backendDOMNodeId": 579
-  },
-  {
-   "nodeId": "-1000000143",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": " they are working "
-   },
-   "properties": [],
-   "parentId": "580",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000144",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "sessions for you and your business. They are not "
-   },
-   "properties": [],
-   "parentId": "580",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000145",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "therapy or crisis support, and they are not "
-   },
-   "properties": [],
-   "parentId": "580",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000146",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "medical, legal or financial advice. If you are in "
-   },
-   "properties": [],
-   "parentId": "580",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000147",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "distress, call or text 988."
-   },
-   "properties": [],
-   "parentId": "580",
-   "childIds": []
-  },
-  {
-   "nodeId": "498",
+   "nodeId": "836",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -11434,14 +7402,14 @@
     ]
    },
    "properties": [],
-   "parentId": "198",
+   "parentId": "526",
    "childIds": [
-    "-1000000023"
+    "-1000000360"
    ],
-   "backendDOMNodeId": 498
+   "backendDOMNodeId": 836
   },
   {
-   "nodeId": "-1000000024",
+   "nodeId": "-1000000361",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -11456,11 +7424,11 @@
     "value": " Pick a time and write one line "
    },
    "properties": [],
-   "parentId": "499",
+   "parentId": "837",
    "childIds": []
   },
   {
-   "nodeId": "-1000000025",
+   "nodeId": "-1000000362",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -11475,11 +7443,11 @@
     "value": "about what is stuck. That is all the "
    },
    "properties": [],
-   "parentId": "499",
+   "parentId": "837",
    "childIds": []
   },
   {
-   "nodeId": "-1000000026",
+   "nodeId": "-1000000363",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -11494,11 +7462,11 @@
     "value": "preparation there is."
    },
    "properties": [],
-   "parentId": "499",
+   "parentId": "837",
    "childIds": []
   },
   {
-   "nodeId": "500",
+   "nodeId": "838",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -11522,14 +7490,14 @@
     ]
    },
    "properties": [],
-   "parentId": "206",
+   "parentId": "530",
    "childIds": [
-    "-1000000027"
+    "-1000000364"
    ],
-   "backendDOMNodeId": 500
+   "backendDOMNodeId": 838
   },
   {
-   "nodeId": "-1000000028",
+   "nodeId": "-1000000365",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -11544,11 +7512,11 @@
     "value": " Two hours with David. You work "
    },
    "properties": [],
-   "parentId": "501",
+   "parentId": "839",
    "childIds": []
   },
   {
-   "nodeId": "-1000000029",
+   "nodeId": "-1000000366",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -11563,11 +7531,11 @@
     "value": "the thing together until it moves."
    },
    "properties": [],
-   "parentId": "501",
+   "parentId": "839",
    "childIds": []
   },
   {
-   "nodeId": "502",
+   "nodeId": "840",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -11591,14 +7559,14 @@
     ]
    },
    "properties": [],
-   "parentId": "214",
+   "parentId": "534",
    "childIds": [
-    "-1000000030"
+    "-1000000367"
    ],
-   "backendDOMNodeId": 502
+   "backendDOMNodeId": 840
   },
   {
-   "nodeId": "-1000000031",
+   "nodeId": "-1000000368",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -11613,11 +7581,11 @@
     "value": " You leave with one next step, and "
    },
    "properties": [],
-   "parentId": "503",
+   "parentId": "841",
    "childIds": []
   },
   {
-   "nodeId": "-1000000032",
+   "nodeId": "-1000000369",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -11632,11 +7600,11 @@
     "value": "this page asks what you will put into "
    },
    "properties": [],
-   "parentId": "503",
+   "parentId": "841",
    "childIds": []
   },
   {
-   "nodeId": "-1000000033",
+   "nodeId": "-1000000370",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -11651,11 +7619,11 @@
     "value": "practice before next week."
    },
    "properties": [],
-   "parentId": "503",
+   "parentId": "841",
    "childIds": []
   },
   {
-   "nodeId": "-1000000036",
+   "nodeId": "-1000000372",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -11670,239 +7638,11 @@
     "value": "Bring your real stuff."
    },
    "properties": [],
-   "parentId": "506",
+   "parentId": "348",
    "childIds": []
   },
   {
-   "nodeId": "-1000000096",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Fixing a tech issue that is blocking you"
-   },
-   "properties": [],
-   "parentId": "555",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000097",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Setting up a funnel or an offer"
-   },
-   "properties": [],
-   "parentId": "556",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000098",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Improving your content"
-   },
-   "properties": [],
-   "parentId": "557",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000099",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Clarifying your next step"
-   },
-   "properties": [],
-   "parentId": "558",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000100",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Looking at your numbers together"
-   },
-   "properties": [],
-   "parentId": "559",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000101",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Anything else on your plate"
-   },
-   "properties": [],
-   "parentId": "560",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000118",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Not a calendar link."
-   },
-   "properties": [],
-   "parentId": "568",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000125",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "What counts:"
-   },
-   "properties": [],
-   "parentId": "570",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000132",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Private by default:"
-   },
-   "properties": [],
-   "parentId": "573",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000136",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "email@davidbee.me"
-   },
-   "properties": [],
-   "parentId": "575",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000138",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "Who reads your topic:"
-   },
-   "properties": [],
-   "parentId": "577",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000142",
-   "ignored": false,
-   "role": {
-    "type": "internalRole",
-    "value": "InlineTextBox"
-   },
-   "chromeRole": {
-    "type": "internalRole",
-    "value": 101
-   },
-   "name": {
-    "type": "computedString",
-    "value": "What sessions are not for:"
-   },
-   "properties": [],
-   "parentId": "579",
-   "childIds": []
-  },
-  {
-   "nodeId": "-1000000023",
+   "nodeId": "-1000000360",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -11917,11 +7657,11 @@
     "value": "Before."
    },
    "properties": [],
-   "parentId": "498",
+   "parentId": "836",
    "childIds": []
   },
   {
-   "nodeId": "-1000000027",
+   "nodeId": "-1000000364",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -11936,11 +7676,11 @@
     "value": "During."
    },
    "properties": [],
-   "parentId": "500",
+   "parentId": "838",
    "childIds": []
   },
   {
-   "nodeId": "-1000000030",
+   "nodeId": "-1000000367",
    "ignored": false,
    "role": {
     "type": "internalRole",
@@ -11955,7 +7695,7 @@
     "value": "After."
    },
    "properties": [],
-   "parentId": "502",
+   "parentId": "840",
    "childIds": []
   }
  ]

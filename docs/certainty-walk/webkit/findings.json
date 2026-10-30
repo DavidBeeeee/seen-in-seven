@@ -1,5 +1,5 @@
 {
- "at": "2026-10-26T03:14:28.530Z",
+ "at": "2026-10-30T14:32:38.707Z",
  "browser": "webkit",
  "checks": [
   {
@@ -12,7 +12,7 @@
    "browser": "webkit",
    "name": "book: the next session shows with its topic",
    "pass": true,
-   "evidence": "Your first sessionTuesday, October 2710:00 AM – 12:00 PM ETOn Zoom · Fix my funnelJoin on "
+   "evidence": "Your first sessionSaturday, October 3110:00 AM – 12:00 PM ETOn Zoom · Fix my funnelJoin on"
   },
   {
    "browser": "webkit",
@@ -36,7 +36,7 @@
    "browser": "webkit",
    "name": "lapsed member is welcomed back with their last topic",
    "pass": true,
-   "evidence": "Welcome backYour seat with David is still here.Your last session was September 25, about 4"
+   "evidence": "Welcome backYour seat with David is still here.Your last session was September 30, about 4"
   },
   {
    "browser": "webkit",
@@ -61,6 +61,12 @@
    "name": "Try again recovers once the server answers",
    "pass": true,
    "evidence": ""
+  },
+  {
+   "browser": "webkit",
+   "name": "Try again after a failed load announces the loaded state and moves focus",
+   "pass": true,
+   "evidence": "{\"text\":\"Certainty Sessions loaded.\",\"role\":\"status\",\"live\":\"polite\",\"focusedTag\":\"button\",\"focusedId\":\"cs-open-book\"}"
   },
   {
    "browser": "webkit",
@@ -106,27 +112,39 @@
   },
   {
    "browser": "webkit",
+   "name": "Cancel asks in an in-page dialog; Escape keeps the session and returns focus",
+   "pass": true,
+   "evidence": "{\"dialogState\":{\"open\":true,\"role\":\"alertdialog\",\"modal\":\"true\",\"title\":\"Cancel this session?\",\"desc\":\"The time opens back up for you or someone else.\",\"activeId\":\"cs-dialog-cancel\"},\"afterEscape\":{\"closed\":true,\"activeId\":\"cs-cancel\"},\"cancelSent\":false}"
+  },
+  {
+   "browser": "webkit",
+   "name": "Reschedule confirm is labelled and focus-trapped",
+   "pass": true,
+   "evidence": "{\"reschedDialog\":{\"labelled\":true,\"described\":true,\"titleText\":\"Reschedule this session?\",\"descText\":\"This releases your current time first, and someone else can book it before you pick a new one.\",\"activeId\":\"cs-dialog-cancel\"},\"focusWrappedBack\":\"cs-dialog-confirm\",\"focusWrappedForward\":\"cs-dialog-cancel\"}"
+  },
+  {
+   "browser": "webkit",
    "name": "keyboard-only booking dark 1280px",
    "pass": true,
-   "evidence": "booked 2026-10-27 10:00 phone via Alt+Tab, 42 stops, 0 without visible focus"
+   "evidence": "booked 2026-10-31 10:00 phone via Alt+Tab, 43 stops, 0 without visible focus"
   },
   {
    "browser": "webkit",
    "name": "keyboard-only booking dark 375px",
    "pass": true,
-   "evidence": "booked 2026-10-27 10:00 phone via Alt+Tab, 35 stops, 0 without visible focus"
+   "evidence": "booked 2026-10-31 10:00 phone via Alt+Tab, 36 stops, 0 without visible focus"
   },
   {
    "browser": "webkit",
    "name": "keyboard-only booking light 1280px",
    "pass": true,
-   "evidence": "booked 2026-10-27 10:00 phone via Alt+Tab, 42 stops, 0 without visible focus"
+   "evidence": "booked 2026-10-31 10:00 phone via Alt+Tab, 43 stops, 0 without visible focus"
   },
   {
    "browser": "webkit",
    "name": "keyboard-only booking light 375px",
    "pass": true,
-   "evidence": "booked 2026-10-27 10:00 phone via Alt+Tab, 35 stops, 0 without visible focus"
+   "evidence": "booked 2026-10-31 10:00 phone via Alt+Tab, 36 stops, 0 without visible focus"
   },
   {
    "browser": "webkit",
@@ -150,61 +168,61 @@
    "browser": "webkit",
    "name": "screen-reader first-visit: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 11 controls, 8 headings"
+   "evidence": "0 faults, 12 controls, 8 headings"
   },
   {
    "browser": "webkit",
    "name": "screen-reader picker: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 29 controls, 9 headings"
+   "evidence": "0 faults, 31 controls, 9 headings"
   },
   {
    "browser": "webkit",
    "name": "screen-reader mode-choice: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 42 controls, 9 headings"
+   "evidence": "0 faults, 44 controls, 9 headings"
   },
   {
    "browser": "webkit",
    "name": "selected day and time are announced as selected",
    "pass": true,
-   "evidence": "[{\"selector\":\".cs-day.sel\",\"pressed\":\"true\",\"name\":\"Tue27Oct✓\"},{\"selector\":\".cs-time.sel\",\"pressed\":\"true\",\"name\":\"10:00 AM ET, selected\"}]"
+   "evidence": "[{\"selector\":\".cs-day.sel\",\"pressed\":\"true\",\"name\":\"Sat31Oct✓\"},{\"selector\":\".cs-time.sel\",\"pressed\":\"true\",\"name\":\"10:00 AM ET, selected\"}]"
   },
   {
    "browser": "webkit",
    "name": "screen-reader confirm: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 43 controls, 9 headings"
+   "evidence": "0 faults, 45 controls, 9 headings"
   },
   {
    "browser": "webkit",
    "name": "screen-reader booked: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 14 controls, 7 headings"
+   "evidence": "0 faults, 15 controls, 7 headings"
   },
   {
    "browser": "webkit",
    "name": "booked confirmation is announced",
    "pass": true,
-   "evidence": "{\"focused\":\"Tuesday, October 2710:00 AM – 12:00 PM ETBy phone · Screen reader booking\",\"live\":\"\"}"
+   "evidence": "{\"focused\":\"Saturday, October 3110:00 AM – 12:00 PM ETBy phone · Screen reader booking\",\"live\":\"\"}"
   },
   {
    "browser": "webkit",
    "name": "screen-reader edit: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 46 controls, 8 headings"
+   "evidence": "0 faults, 48 controls, 8 headings"
   },
   {
    "browser": "webkit",
    "name": "screen-reader cancel: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 11 controls, 8 headings"
+   "evidence": "0 faults, 12 controls, 8 headings"
   },
   {
    "browser": "webkit",
    "name": "screen-reader lapsed: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 11 controls, 10 headings"
+   "evidence": "0 faults, 12 controls, 10 headings"
   },
   {
    "browser": "webkit",
@@ -228,7 +246,7 @@
    "browser": "webkit",
    "name": "screen-reader network-error: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 42 controls, 9 headings"
+   "evidence": "0 faults, 44 controls, 9 headings"
   },
   {
    "browser": "webkit",
@@ -240,7 +258,7 @@
    "browser": "webkit",
    "name": "screen-reader slot-taken: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 42 controls, 9 headings"
+   "evidence": "0 faults, 44 controls, 9 headings"
   },
   {
    "browser": "webkit",
@@ -986,11 +1004,11 @@
    "theme": "dark",
    "width": 1280,
    "pass": true,
-   "stops": 42,
+   "stops": 43,
    "invisibleFocusStops": 0,
    "booking": {
     "action": "book",
-    "date": "2026-10-27",
+    "date": "2026-10-31",
     "hour": 10,
     "mode": "phone",
     "phone": "(555) 010-2030",
@@ -1005,11 +1023,11 @@
    "theme": "dark",
    "width": 375,
    "pass": true,
-   "stops": 35,
+   "stops": 36,
    "invisibleFocusStops": 0,
    "booking": {
     "action": "book",
-    "date": "2026-10-27",
+    "date": "2026-10-31",
     "hour": 10,
     "mode": "phone",
     "phone": "(555) 010-2030",
@@ -1024,11 +1042,11 @@
    "theme": "light",
    "width": 1280,
    "pass": true,
-   "stops": 42,
+   "stops": 43,
    "invisibleFocusStops": 0,
    "booking": {
     "action": "book",
-    "date": "2026-10-27",
+    "date": "2026-10-31",
     "hour": 10,
     "mode": "phone",
     "phone": "(555) 010-2030",
@@ -1043,11 +1061,11 @@
    "theme": "light",
    "width": 375,
    "pass": true,
-   "stops": 35,
+   "stops": 36,
    "invisibleFocusStops": 0,
    "booking": {
     "action": "book",
-    "date": "2026-10-27",
+    "date": "2026-10-31",
     "hour": 10,
     "mode": "phone",
     "phone": "(555) 010-2030",
@@ -1098,7 +1116,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 11
+   "controls": 12
   },
   {
    "browser": "webkit",
@@ -1144,7 +1162,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 29
+   "controls": 31
   },
   {
    "browser": "webkit",
@@ -1190,7 +1208,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 42
+   "controls": 44
   },
   {
    "browser": "webkit",
@@ -1236,7 +1254,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 43
+   "controls": 45
   },
   {
    "browser": "webkit",
@@ -1274,7 +1292,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 14
+   "controls": 15
   },
   {
    "browser": "webkit",
@@ -1316,7 +1334,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 46
+   "controls": 48
   },
   {
    "browser": "webkit",
@@ -1358,7 +1376,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 11
+   "controls": 12
   },
   {
    "browser": "webkit",
@@ -1377,7 +1395,7 @@
     },
     {
      "level": 2,
-     "text": "Your session on Friday, September 25, 2026 is complete."
+     "text": "Your session on Wednesday, September 30, 2026 is complete."
     },
     {
      "level": 2,
@@ -1408,7 +1426,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 11
+   "controls": 12
   },
   {
    "browser": "webkit",
@@ -1496,7 +1514,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 42
+   "controls": 44
   },
   {
    "browser": "webkit",
@@ -1542,7 +1560,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 42
+   "controls": 44
   }
  ]
 }

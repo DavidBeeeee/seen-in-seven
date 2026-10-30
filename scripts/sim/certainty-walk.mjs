@@ -420,6 +420,7 @@ async function lifecycle(browser) {
     const edited = await page.locator('#cs-primary').textContent();
     check('edit: update sent with the session id and the new topic shows', upd && upd.id && /part two/.test(edited), upd ? 'update id=' + upd.id : 'no update');
     await page.click('#cs-cancel');
+    await page.click('#cs-dialog-confirm');
     await page.waitForTimeout(300);
     const afterCancel = await page.locator('#cs-primary').textContent();
     check('cancel: the session is gone and booking is offered again', world.posts.some(p => p.action === 'cancel') && /Book my/.test(afterCancel), afterCancel.replace(/\s+/g, ' ').slice(0, 80));
@@ -462,7 +463,22 @@ async function lifecycle(browser) {
     world.mode.state = null;
     await page.click('#eee-gate-button');
     await page.waitForSelector('#cs-hero:not(.cs-hide)', { timeout: 5000 }).catch(() => null);
+    await page.waitForTimeout(300);
     check('Try again recovers once the server answers', await page.locator('#cs-hero:not(.cs-hide)').count() === 1, '');
+    const recoveryAnnouncement = await page.evaluate(() => {
+      const el = document.getElementById('cs-session-msg');
+      return {
+        text: el ? el.textContent.trim() : '',
+        role: el ? el.getAttribute('role') : null,
+        live: el ? el.getAttribute('aria-live') : null,
+        focusedTag: document.activeElement ? document.activeElement.tagName.toLowerCase() : '',
+        focusedId: document.activeElement ? document.activeElement.id : ''
+      };
+    });
+    const recoveryPass = /loaded/i.test(recoveryAnnouncement.text) &&
+      (recoveryAnnouncement.role === 'status' || recoveryAnnouncement.live === 'polite') &&
+      Boolean(recoveryAnnouncement.focusedTag && recoveryAnnouncement.focusedTag !== 'body');
+    check('Try again after a failed load announces the loaded state and moves focus', recoveryPass, JSON.stringify(recoveryAnnouncement));
     await ctx.close();
   }
   // network drop mid-booking, slot taken, double submit
@@ -508,9 +524,9 @@ async function lifecycle(browser) {
   // cancel failures
   for (const [label, behave] of [['network drop', 'drop'], ['server error', { status: 500, body: { error: 'Could not cancel that session.' } }]]) {
     const { context, page, world, errors } = await open(browser, 'booked', { width: 375 });
-    page.on('dialog', d => d.accept());
     world.mode.cancel = behave;
     await page.click('#cs-cancel');
+    await page.click('#cs-dialog-confirm');
     await page.waitForTimeout(400);
     const shown = await page.evaluate(() => [...document.querySelectorAll('.cs-msg.show.err, [role=alert]')].map(n => n.textContent.trim()).filter(Boolean).join(' | '));
     const file = await shot(page, 'lifecycle-cancel-' + (behave.status ? 'error' : 'drop'));
@@ -521,14 +537,97 @@ async function lifecycle(browser) {
   // reschedule failure must not open a second booking
   {
     const { context, page, world } = await open(browser, 'booked', { width: 375 });
-    page.on('dialog', d => d.accept());
     world.mode.cancel = { status: 500, body: { error: 'Could not cancel that session.' } };
     await page.click('#cs-reschedule');
+    await page.click('#cs-dialog-confirm');
     await page.waitForTimeout(400);
     const opened = await page.locator('#cs-book.open').count();
     const shown = await page.evaluate(() => [...document.querySelectorAll('.cs-msg.show.err, [role=alert]')].map(n => n.textContent.trim()).filter(Boolean).join(' | '));
     if (opened || !shown) finding('lifecycle', 'booked', 'Reschedule when releasing the old time fails', 'UX 78', (opened ? 'the booking panel opened anyway, inviting a second booking while the first still stands; ' : '') + (shown ? '' : 'no error shown'));
     check('reschedule stops and says so when the old time cannot be released', !opened && Boolean(shown), (opened ? 'panel opened; ' : '') + (shown || 'silent'));
+    await context.close();
+  }
+  // in-page dialog tests (WBR-458): Cancel Escape keeps session, Reschedule labelled and focus-trapped
+  {
+    const { context, page, world } = await open(browser, 'booked', { width: 1280 });
+    // Cancel asks in an in-page dialog; Escape keeps the session and returns focus
+    await page.click('#cs-cancel');
+    await page.waitForTimeout(200);
+    const dialogState = await page.evaluate(() => {
+      const backdrop = document.getElementById('cs-confirm-dialog-backdrop');
+      const dialog = document.getElementById('cs-confirm-dialog');
+      const title = document.getElementById('cs-dialog-title');
+      const desc = document.getElementById('cs-dialog-desc');
+      const active = document.activeElement;
+      return {
+        open: backdrop && !backdrop.classList.contains('cs-hide'),
+        role: dialog ? dialog.getAttribute('role') : null,
+        modal: dialog ? dialog.getAttribute('aria-modal') : null,
+        title: title ? title.textContent.trim() : '',
+        desc: desc ? desc.textContent.trim() : '',
+        activeId: active ? active.id : null
+      };
+    });
+    const asksInDialog = dialogState.open &&
+      (dialogState.role === 'alertdialog' || dialogState.role === 'dialog') &&
+      dialogState.modal === 'true' &&
+      /Cancel/i.test(dialogState.title) &&
+      dialogState.activeId === 'cs-dialog-cancel';
+
+    // Press Escape to cancel the dialog
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(200);
+    const afterEscape = await page.evaluate(() => {
+      const backdrop = document.getElementById('cs-confirm-dialog-backdrop');
+      const active = document.activeElement;
+      return {
+        closed: backdrop && backdrop.classList.contains('cs-hide'),
+        activeId: active ? active.id : null
+      };
+    });
+    const cancelSent = world.posts.some(p => p.action === 'cancel');
+    const cancelEscapePass = asksInDialog && afterEscape.closed && !cancelSent && afterEscape.activeId === 'cs-cancel';
+    check('Cancel asks in an in-page dialog; Escape keeps the session and returns focus', cancelEscapePass,
+      JSON.stringify({ dialogState, afterEscape, cancelSent }));
+
+    // Reschedule confirm is labelled and focus-trapped
+    await page.click('#cs-reschedule');
+    await page.waitForTimeout(200);
+    const reschedDialog = await page.evaluate(() => {
+      const dialog = document.getElementById('cs-confirm-dialog');
+      const title = document.getElementById('cs-dialog-title');
+      const desc = document.getElementById('cs-dialog-desc');
+      const labelledby = dialog ? dialog.getAttribute('aria-labelledby') : null;
+      const describedby = dialog ? dialog.getAttribute('aria-describedby') : null;
+      return {
+        labelled: labelledby === 'cs-dialog-title' && Boolean(title && title.textContent.trim()),
+        described: describedby === 'cs-dialog-desc' && Boolean(desc && desc.textContent.trim()),
+        titleText: title ? title.textContent.trim() : '',
+        descText: desc ? desc.textContent.trim() : '',
+        activeId: document.activeElement ? document.activeElement.id : null
+      };
+    });
+
+    // Test focus trapping: Tab from confirm wraps to cancel, Shift+Tab from cancel wraps to confirm
+    const isWebKit = (browserName === 'webkit');
+    const tabKey = isWebKit ? 'Alt+Tab' : 'Tab';
+
+    // Currently focused on cs-dialog-cancel. Shift+Tab should wrap to cs-dialog-confirm
+    await page.keyboard.press(isWebKit ? 'Alt+Shift+Tab' : 'Shift+Tab');
+    const focusWrappedBack = await page.evaluate(() => document.activeElement ? document.activeElement.id : null);
+
+    // Tab from cs-dialog-confirm should wrap to cs-dialog-cancel
+    await page.keyboard.press(tabKey);
+    const focusWrappedForward = await page.evaluate(() => document.activeElement ? document.activeElement.id : null);
+
+    const trapPass = (focusWrappedBack === 'cs-dialog-confirm') && (focusWrappedForward === 'cs-dialog-cancel');
+    const reschedPass = reschedDialog.labelled && reschedDialog.described && /Reschedule/i.test(reschedDialog.titleText) && trapPass;
+
+    check('Reschedule confirm is labelled and focus-trapped', reschedPass,
+      JSON.stringify({ reschedDialog, focusWrappedBack, focusWrappedForward }));
+
+    // Dismiss reschedule dialog
+    await page.keyboard.press('Escape');
     await context.close();
   }
 }
@@ -638,9 +737,9 @@ async function accessibilityPass(browser) {
     check('booked confirmation is announced', bookedPass, JSON.stringify(announced));
     await page.click('#cs-edit');
     await capture(page, 'edit');
-    page.on('dialog', d => d.accept());
     await page.keyboard.press('Escape');
     await page.click('#cs-cancel');
+    await page.click('#cs-dialog-confirm');
     await page.waitForTimeout(350);
     await capture(page, 'cancel');
     await context.close();

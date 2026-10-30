@@ -252,6 +252,54 @@
     .cs-skeleton { height: 120px; border-radius: 20px; background: linear-gradient(90deg, var(--studio-surface) 25%, var(--studio-surface-2) 50%, var(--studio-surface) 75%); background-size: 200% 100%; animation: cs-shimmer 1.3s infinite; }
     @keyframes cs-shimmer { to { background-position: -200% 0; } }
     .cs-hide { display: none !important; }
+
+    /* Accessible Confirm Dialog (WBR-458: replaces native confirm()) */
+    .cs-dialog-backdrop {
+      position: fixed; inset: 0; z-index: 10000;
+      background: rgba(0, 0, 0, 0.75);
+      display: flex; align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .cs-dialog {
+      background: var(--studio-surface);
+      border: 1px solid var(--studio-border);
+      border-radius: 16px;
+      padding: 24px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+    }
+    .cs-dialog-title {
+      font-family: 'Oswald', sans-serif;
+      font-size: 1.25rem;
+      margin: 0 0 10px;
+      color: var(--studio-text);
+    }
+    .cs-dialog-desc {
+      color: var(--studio-soft);
+      font-size: .94rem;
+      line-height: 1.5;
+      margin: 0 0 20px;
+    }
+    .cs-dialog-actions {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+    .cs-dialog-actions button {
+      min-height: 42px;
+      padding: 9px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: .9rem;
+      cursor: pointer;
+    }
+    .cs-btn-danger {
+      background: var(--studio-danger) !important;
+      border-color: var(--studio-danger) !important;
+      color: #ffffff !important;
+    }
     @media (prefers-reduced-motion: reduce) { .cs-skeleton { animation: none; } }
     [tabindex="-1"]:focus { outline: none; }
     /* Contrast at WCAG AA in both themes on this page (UX 97; the 2026-10-24
@@ -400,7 +448,7 @@
           <div class="cs-msg err cs-hide" id="cs-crisis-banner" role="alert" style="margin-top:0;"></div>
 
           <!-- Cancel and reschedule outcomes (UX 78): a release that did not go through is said, never silent -->
-          <div class="cs-msg" id="cs-session-msg" role="alert" style="margin-top:0;"></div>
+          <div class="cs-msg" id="cs-session-msg" role="status" aria-live="polite" aria-atomic="true" style="margin-top:0;"></div>
 
           <!-- Lapsed membership ending card for within-app churn/ended state -->
           <article class="cs-card cs-hide" id="cs-membership-ended" data-cs-copy="membership-ended" data-cs-ended="true">
@@ -583,6 +631,18 @@
               <p class="cs-privacy cs-how-faq"><a href="/terms#certainty-faq">Read the Certainty FAQ in Terms &amp; FAQ</a></p>
             </div>
           </details>
+
+          <!-- Accessible Confirm Dialog (WBR-458: replaces native confirm()) -->
+          <div class="cs-dialog-backdrop cs-hide" id="cs-confirm-dialog-backdrop" aria-hidden="true">
+            <div class="cs-dialog" id="cs-confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="cs-dialog-title" aria-describedby="cs-dialog-desc" tabindex="-1">
+              <h2 class="cs-dialog-title" id="cs-dialog-title">Confirm</h2>
+              <p class="cs-dialog-desc" id="cs-dialog-desc"></p>
+              <div class="cs-dialog-actions">
+                <button type="button" class="secondary-button" id="cs-dialog-cancel">Keep session</button>
+                <button type="button" class="primary-button" id="cs-dialog-confirm">Confirm</button>
+              </div>
+            </div>
+          </div>
         </div>
       </main>
     </div>
@@ -889,17 +949,26 @@
       }
 
       function deleteData() {
-        if (!window.confirm('Delete your past sessions, their topics and your remembered phone number? This cannot be undone. An upcoming session stays booked.')) return;
-        var m = el('cs-delete-msg');
-        api('delete_data').then(function (r) {
-          if (!r.ok) { m.textContent = (r.data && r.data.error) || 'That did not go through. Try again.'; m.className = 'cs-msg show err'; return; }
-          var n = Number(r.data && (r.data.deleted_sessions != null ? r.data.deleted_sessions : r.data.deletedSessions)) || 0;
-          m.textContent = 'Done. ' + n + ' past session' + (n === 1 ? '' : 's') + ' and your phone number are gone.';
-          m.className = 'cs-msg show ok';
-          el('cs-setting-phone').value = '';
-          updatePhoneOnFileDisplay('');
-          refresh();
-        }).catch(function () { m.textContent = 'Something interrupted that. Try again.'; m.className = 'cs-msg show err'; });
+        showConfirmDialog({
+          title: 'Delete past sessions and phone number?',
+          desc: 'Delete your past sessions, their topics and your remembered phone number? This cannot be undone. An upcoming session stays booked.',
+          confirmText: 'Delete past sessions',
+          cancelText: 'Keep past sessions',
+          danger: true,
+          opener: el('cs-delete-data')
+        }).then(function (confirmed) {
+          if (!confirmed) return;
+          var m = el('cs-delete-msg');
+          api('delete_data').then(function (r) {
+            if (!r.ok) { m.textContent = (r.data && r.data.error) || 'That did not go through. Try again.'; m.className = 'cs-msg show err'; return; }
+            var n = Number(r.data && (r.data.deleted_sessions != null ? r.data.deleted_sessions : r.data.deletedSessions)) || 0;
+            m.textContent = 'Done. ' + n + ' past session' + (n === 1 ? '' : 's') + ' and your phone number are gone.';
+            m.className = 'cs-msg show ok';
+            el('cs-setting-phone').value = '';
+            updatePhoneOnFileDisplay('');
+            refresh();
+          }).catch(function () { m.textContent = 'Something interrupted that. Try again.'; m.className = 'cs-msg show err'; });
+        });
       }
 
       var editingSession = null;
@@ -959,7 +1028,8 @@
           var parts = [].map.call(when.querySelectorAll('.cs-next-day, .cs-next-time, .cs-next-meta'), function (n) { return n.textContent.replace(/\s+/g, ' ').trim(); }).filter(Boolean);
           when.setAttribute('aria-label', outcome + ' ' + parts.join(', ') + '.');
         }
-        focusInto(when || (host && host.querySelector('h2')));
+        var target = when || (host && (host.querySelector('#cs-open-book') || host.querySelector('.primary-button') || host.querySelector('h2')));
+        focusInto(target);
       }
       function openPanel() {
         var active = document.activeElement;
@@ -1191,12 +1261,14 @@
       // is re-rendered away, and under real VoiceOver (WBR-458) the role=alert
       // text was lost behind "You are currently in a window": a refused cancel
       // was silent. A focused message is always read.
-      function showSessionMsg(text, kind) {
+      function showSessionMsg(text, kind, noFocus) {
         var m = el('cs-session-msg');
+        if (!m) return;
         m.textContent = text || '';
         m.className = 'cs-msg' + (text ? ' show ' + (kind || 'err') : '');
         m.setAttribute('role', kind === 'ok' ? 'status' : 'alert');
-        if (text) focusInto(m);
+        m.setAttribute('aria-live', kind === 'err' ? 'assertive' : 'polite');
+        if (text && !noFocus) focusInto(m);
       }
 
       // Release a session and resolve true only once the server confirms the
@@ -1218,14 +1290,89 @@
         });
       }
 
+      var confirmDialogOpener = null;
+      var confirmDialogResolver = null;
+
+      function closeConfirmDialog(confirmed) {
+        var backdrop = el('cs-confirm-dialog-backdrop');
+        if (!backdrop || backdrop.classList.contains('cs-hide')) return;
+        backdrop.classList.add('cs-hide');
+        backdrop.setAttribute('aria-hidden', 'true');
+        var resolver = confirmDialogResolver;
+        confirmDialogResolver = null;
+        var opener = confirmDialogOpener;
+        confirmDialogOpener = null;
+        if (resolver) resolver(Boolean(confirmed));
+        if (!confirmed && opener && document.contains(opener)) {
+          opener.focus({ preventScroll: true });
+        }
+      }
+
+      function showConfirmDialog(opts) {
+        opts = opts || {};
+        var active = document.activeElement;
+        confirmDialogOpener = opts.opener || (active && active !== document.body ? active : null);
+        var backdrop = el('cs-confirm-dialog-backdrop');
+        var dialog = el('cs-confirm-dialog');
+        var title = el('cs-dialog-title');
+        var desc = el('cs-dialog-desc');
+        var cancelBtn = el('cs-dialog-cancel');
+        var confirmBtn = el('cs-dialog-confirm');
+
+        if (title) title.textContent = opts.title || 'Confirm';
+        if (desc) desc.textContent = opts.desc || '';
+        if (cancelBtn) cancelBtn.textContent = opts.cancelText || 'Keep session';
+        if (confirmBtn) {
+          confirmBtn.textContent = opts.confirmText || 'Confirm';
+          if (opts.danger) confirmBtn.classList.add('cs-btn-danger');
+          else confirmBtn.classList.remove('cs-btn-danger');
+        }
+
+        backdrop.classList.remove('cs-hide');
+        backdrop.removeAttribute('aria-hidden');
+
+        // Focus moved in
+        if (cancelBtn) {
+          cancelBtn.focus({ preventScroll: true });
+        } else if (dialog) {
+          dialog.focus({ preventScroll: true });
+        }
+
+        return new Promise(function (resolve) {
+          confirmDialogResolver = resolve;
+        });
+      }
+
       function cancelSession(id) {
-        if (!window.confirm('Cancel this session? The time opens back up for you or someone else.')) return;
-        releaseSession(id).then(function (released) { if (released) showSessionMsg('Session cancelled. That time is open again.', 'ok'); });
+        showConfirmDialog({
+          title: 'Cancel this session?',
+          desc: 'The time opens back up for you or someone else.',
+          confirmText: 'Cancel session',
+          cancelText: 'Keep session',
+          danger: true,
+          opener: el('cs-cancel')
+        }).then(function (confirmed) {
+          if (!confirmed) return;
+          releaseSession(id).then(function (released) {
+            if (released) showSessionMsg('Session cancelled. That time is open again.', 'ok');
+          });
+        });
       }
 
       function reschedule(id) {
-        if (!window.confirm('Reschedule? This releases your current time first, and someone else can book it before you pick a new one.')) return;
-        releaseSession(id).then(function (released) { if (released) openBooking(); });
+        showConfirmDialog({
+          title: 'Reschedule this session?',
+          desc: 'This releases your current time first, and someone else can book it before you pick a new one.',
+          confirmText: 'Reschedule',
+          cancelText: 'Keep session',
+          danger: false,
+          opener: el('cs-reschedule')
+        }).then(function (confirmed) {
+          if (!confirmed) return;
+          releaseSession(id).then(function (released) {
+            if (released) openBooking();
+          });
+        });
       }
 
       function escapeHtml(s) { return String(s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
@@ -1504,10 +1651,17 @@
             button.onclick = function (e) {
               e.preventDefault();
               el('eee-access-gate').hidden = true;
+              var app = el('eee-app');
+              if (app) app.hidden = false;
               el('cs-state-skeleton').classList.remove('cs-hide');
-              // Hiding the gate drops focus; a VoiceOver pass (WBR-458) heard
-              // nothing at all on recovery. Land on the loaded page instead.
-              Promise.resolve(refresh()).then(function () { if (el('eee-access-gate').hidden) focusPrimary(); });
+              // Recovery after failed load (WBR-458): announce the loaded state
+              // through the live region and move focus to the retry outcome.
+              Promise.resolve(refresh()).then(function () {
+                if (el('eee-access-gate').hidden) {
+                  showSessionMsg('Certainty Sessions loaded.', 'ok', true);
+                  focusPrimary();
+                }
+              });
             };
           }
         } else if (type === 'sign-in') {
@@ -1609,6 +1763,42 @@
         if (el('cs-book').classList.contains('open')) { renderTimes(); }
         renderPrimary();
       };
+
+      // Accessible confirm dialog wiring (WBR-458)
+      el('cs-dialog-cancel').onclick = function () { closeConfirmDialog(false); };
+      el('cs-dialog-confirm').onclick = function () { closeConfirmDialog(true); };
+      el('cs-confirm-dialog-backdrop').addEventListener('click', function (e) {
+        if (e.target === el('cs-confirm-dialog-backdrop')) closeConfirmDialog(false);
+      });
+      document.addEventListener('keydown', function (e) {
+        var backdrop = el('cs-confirm-dialog-backdrop');
+        if (!backdrop || backdrop.classList.contains('cs-hide')) return;
+        if (e.key === 'Escape') {
+          e.preventDefault();
+          e.stopPropagation();
+          closeConfirmDialog(false);
+          return;
+        }
+        if (e.key === 'Tab') {
+          var dialog = el('cs-confirm-dialog');
+          if (!dialog) return;
+          var focusable = dialog.querySelectorAll('button:not([disabled])');
+          if (focusable.length < 2) return;
+          var first = focusable[0];
+          var last = focusable[focusable.length - 1];
+          if (e.shiftKey) {
+            if (document.activeElement === first || !dialog.contains(document.activeElement)) {
+              e.preventDefault();
+              last.focus();
+            }
+          } else {
+            if (document.activeElement === last || !dialog.contains(document.activeElement)) {
+              e.preventDefault();
+              first.focus();
+            }
+          }
+        }
+      });
 
       // The shared shell's own gate says "EEE"; this page's gate names
       // Certainty Sessions and sends sign-in back here.

@@ -107,39 +107,7 @@
   "tag": "button",
   "id": null,
   "cls": "cs-day",
-  "label": "Mon26Oct",
-  "visible": true,
-  "inBook": true
- },
- {
-  "tag": "button",
-  "id": null,
-  "cls": "cs-day",
-  "label": "Wed28Oct",
-  "visible": true,
-  "inBook": true
- },
- {
-  "tag": "button",
-  "id": null,
-  "cls": "cs-day",
-  "label": "Thu29Oct",
-  "visible": true,
-  "inBook": true
- },
- {
-  "tag": "button",
-  "id": null,
-  "cls": "cs-day",
   "label": "Fri30Oct",
-  "visible": true,
-  "inBook": true
- },
- {
-  "tag": "button",
-  "id": null,
-  "cls": "cs-day",
-  "label": "Sat31Oct",
   "visible": true,
   "inBook": true
  },
@@ -196,6 +164,46 @@
   "id": null,
   "cls": "cs-day",
   "label": "Sat7Nov",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Sun8Nov",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Mon9Nov",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Tue10Nov",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Wed11Nov",
+  "visible": true,
+  "inBook": true
+ },
+ {
+  "tag": "button",
+  "id": null,
+  "cls": "cs-day",
+  "label": "Thu12Nov",
   "visible": true,
   "inBook": true
  },

@@ -31,7 +31,7 @@ assert.match(block('membership-ends'), /Booking closes/);
 assert.match(block('membership-ends'), /past sessions stay on your account/);
 // Stranger 26: the freed slot can be taken.
 assert.match(block('reschedule'), /someone else can book it/);
-assert.match(html, /window\.confirm\('Reschedule\? This releases your current time first, and someone else can book it/);
+assert.match(html, /This releases your current time first, and someone else can book it/);
 // Stranger 18, 19: not a generic scheduler.
 assert.match(block('not-a-scheduler'), /Not a calendar link/);
 // Stranger 91: a held session is the outcome.
