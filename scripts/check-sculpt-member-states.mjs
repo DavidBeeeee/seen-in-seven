@@ -164,6 +164,8 @@ function longThread(turns) {
   vm.runInContext('storyReturnNotice = StorySculptStates.returnNotice([renamed], Date.now() + 50 * StorySculptStates.DAY_MS, true); renamed.title = "Fresh pottery title"; renderProjectList(); showStart();', app.context);
   check(app.document.getElementById('story-return-notice').innerHTML.includes('Fresh pottery title'), 'real render path refreshes the return notice after rename');
   check(app.document.getElementById('story-return-line').textContent.includes('Fresh pottery title'), 'start screen return line uses renamed title');
+  vm.runInContext('renamed.title = "Saved after navigation"; renderProjectList();', app.context);
+  check(app.document.getElementById('story-return-line').textContent.includes('Saved after navigation'), 'a save completing after navigation refreshes the already visible return line');
 }
 
 // 5. A 40-turn chat opens on the latest 12 messages with earlier turns behind "Show earlier answers".

@@ -206,6 +206,7 @@ function showNextUnarchivedStory() {
 
 function renderProjectList() {
   renderReturnNotice();
+  renderReturnLine();
   renderMemberProgress();
   const list = storyEl('story-project-list');
   const count = storyEl('story-rail-count');
@@ -701,6 +702,14 @@ function renderReturnNotice() {
   slot.innerHTML = STATES.returnNoticeMarkup(storyReturnNotice);
   slot.hidden = !storyReturnNotice;
   EEEStudio.refreshIcons();
+}
+
+function renderReturnLine() {
+  const line = storyEl('story-return-line');
+  if (!line) return;
+  const text = STATES.returnVisitLine(storyProjects);
+  line.textContent = text || '';
+  line.hidden = !text;
 }
 
 // UX 54: the dismissal is saved on the chat it named, for the timestamp it was
@@ -1803,17 +1812,7 @@ function showStart() {
   const pageEyebrow = storyEl('story-page-eyebrow');
   const pageTitle = storyEl('story-page-title');
   const pageCopy = storyEl('story-page-copy');
-  const returnLineEl = storyEl('story-return-line');
-  const returnText = isFirstVisit ? null : (STATES && typeof STATES.returnVisitLine === 'function' ? STATES.returnVisitLine(storyProjects) : null);
-  if (returnLineEl) {
-    if (returnText) {
-      returnLineEl.textContent = returnText;
-      returnLineEl.hidden = false;
-    } else {
-      returnLineEl.textContent = '';
-      returnLineEl.hidden = true;
-    }
-  }
+  renderReturnLine();
   if (pageEyebrow && pageTitle && pageCopy) {
     if (isFirstVisit) {
       pageEyebrow.textContent = 'StorySculpt · First Script Orientation';
