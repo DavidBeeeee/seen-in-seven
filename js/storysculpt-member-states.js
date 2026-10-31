@@ -52,7 +52,7 @@
   // The line shown on reopen. A lapse names the member's last chat and welcomes
   // them back; a quiet stretch is a gentle pointer and is never called a lapse;
   // a current member sees nothing.
-  function returnNotice(projects, now) {
+  function returnNotice(projects, now, repeated = false) {
     const e = engagement(projects, now);
     if (e.state !== 'lapsed' && e.state !== 'quiet') return null;
     const title = (e.lastChat.title || '').trim() || 'Untitled script';
@@ -61,7 +61,8 @@
         state: 'lapsed',
         projectId: e.lastChat.id,
         title: 'Welcome back.',
-        text: 'Your last chat, "' + title + '", is right where you left it. Pick it up or start something new.'
+        repeated,
+        text: (repeated ? 'Another stretch away is okay. ' : '') + 'Your last chat, "' + title + '", is right where you left it. Pick it up or start something new.'
       };
     }
     return {
@@ -116,15 +117,41 @@
   // UX 54: a dismissed return notice stays dismissed for that chat. The chat
   // remembers which last-touched timestamp it was dismissed for, so it only
   // comes back after the member touches a chat again and a new gap opens.
-  function returnNoticeFor(projects, now) {
-    const notice = returnNotice(projects, now);
-    if (!notice) return null;
+  function returnNoticeFor(projects, now, history = {}) {
     const e = engagement(projects, now);
+    const at = now == null ? Date.now() : now;
+    let repeated = false;
+    // Device-local, account-scoped observations, not an invented history of
+    // visits we cannot see. Reloading the same gap never counts it twice.
+    if (e.state === 'lapsed' && history.owner && history.storage) {
+      try {
+        const key = 'storysculpt-return-gaps:' + history.owner;
+        const prior = JSON.parse(history.storage.getItem(key) || 'null');
+        const lastActivity = projectTime(e.lastChat);
+        const valid = prior && Number.isFinite(prior.returnedAt) && prior.returnedAt <= at && Number.isFinite(prior.lastActivity) && prior.lastActivity <= lastActivity && [1, 2].includes(prior.count);
+        const count = valid ? (lastActivity > prior.returnedAt ? 2 : prior.count) : 1;
+        repeated = count === 2;
+        history.storage.setItem(key, JSON.stringify({ count, returnedAt: valid && lastActivity <= prior.returnedAt ? prior.returnedAt : at, lastActivity }));
+      } catch (_) { /* Unavailable storage must not block returning to a chat. */ }
+    }
+    const notice = returnNotice(projects, now, repeated);
+    if (!notice) return null;
     const chat = e.lastChat;
     const touched = chat && (chat.updated_at || chat.created_at);
     const dismissed = chat && chat.intake && chat.intake.returnDismissedFor;
     if (dismissed && touched && dismissed === touched) return null;
     return notice;
+  }
+
+  function refreshReturnNotice(notice, projects) {
+    if (!notice) return null;
+    const project = projects.find(p => p.id === notice.projectId && !p.archived);
+    if (!project) return null;
+    // Keep the measured gap and dismissal state, but never a stale chat name.
+    const title = (project.title || '').trim() || 'Untitled script';
+    return { ...notice, text: notice.state === 'lapsed'
+      ? (notice.repeated ? 'Another stretch away is okay. ' : '') + 'Your last chat, "' + title + '", is right where you left it. Pick it up or start something new.'
+      : '"' + title + '" is open where you left off.' };
   }
 
   // The value stored on the chat when its notice is dismissed.
@@ -256,7 +283,7 @@
   function returnVisitLine(projects) {
     const list = Array.isArray(projects) ? projects.filter(p => !p.archived) : [];
     if (!list.length) return null;
-    const recent = list[0];
+    const recent = engagement(list).lastChat || list[0];
     const rawTitle = (recent && recent.title || '').trim();
     const title = rawTitle || 'Untitled script';
     const finished = isFinished(recent);
@@ -274,7 +301,7 @@
     DAY_MS, QUIET_AFTER_DAYS, LAPSE_AFTER_DAYS, COLLAPSE_AFTER, KEEP_VISIBLE,
     INACTIVITY_LINE, FINISHED_LINE,
     engagement, returnNotice, exportFileName, returnNoticeMarkup, threadWindow, showEarlierMarkup, earlierAnswerExcerpt,
-    returnNoticeFor, dismissalStamp, isFinished, isFilmed, finishedTime, progress, progressLine, progressMarkup,
+    returnNoticeFor, refreshReturnNotice, dismissalStamp, isFinished, isFilmed, finishedTime, progress, progressLine, progressMarkup,
     memberStep, nextStep, nextStepMarkup, versionView, returnVisitLine
   };
   root.StorySculptStates = api;

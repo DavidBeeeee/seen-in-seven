@@ -131,6 +131,43 @@ function longThread(turns) {
   check(!/—/.test(S.returnVisitLine(draft) + S.returnVisitLine(finished) + S.returnVisitLine(filmed)), 'return visit lines contain no em dashes');
 }
 
+// UX 47/49/56: count observed long gaps, not reloads; keep account privacy,
+// progress and corrected titles. Nothing depends on browser storage working.
+{
+  const ctx = {}; vm.createContext(ctx); vm.runInContext(statesSrc, ctx);
+  const S = ctx.StorySculptStates;
+  const values = new Map();
+  const storage = { getItem: key => values.get(key) || null, setItem: (key, value) => values.set(key, value) };
+  const history = { owner: 'member-a', storage };
+  const old = project('return', 'Before rename', 22, null, 'Kept finished script');
+  old.intake.versions = [{ content: 'Original version' }];
+  const before = JSON.stringify(old);
+  check(!S.returnNoticeFor([old], NOW, history).repeated, 'first observed gap is not a pattern');
+  check(!S.returnNoticeFor([old], NOW + DAY, history).repeated, 'a reload during the same gap is not another lapse');
+  old.updated_at = new Date(NOW + 2 * DAY).toISOString();
+  old.title = 'Pottery, not bakery';
+  const second = S.returnNoticeFor([old], NOW + 24 * DAY, history);
+  check(second.repeated && second.text.startsWith('Another stretch away is okay.'), 'second separate gap is noticed kindly');
+  check(second.text.includes('Pottery, not bakery'), 'second gap uses the saved current title');
+  check(S.returnNoticeFor([old], NOW + 25 * DAY, history).repeated, 'same second gap remains a pattern without growing a counter');
+  check(!S.returnNoticeFor([old], NOW + 25 * DAY, { owner: 'member-b', storage }).repeated, 'another account never inherits this account history');
+  check(!S.returnNoticeFor([old], NOW + 25 * DAY, { owner: 'member-a', storage: { getItem() { throw Error('storage disabled'); } } }).repeated, 'blocked storage gives a truthful first-return fallback');
+  const refreshed = S.refreshReturnNotice(second, [{ ...old, title: 'New <title>' }]);
+  check(refreshed.text.includes('New <title>') && !refreshed.text.includes('Pottery'), 'renaming updates the measured return notice');
+  check(S.returnNoticeMarkup(refreshed).includes('New &lt;title&gt;'), 'renamed title is escaped in markup');
+  check(S.refreshReturnNotice(second, [{ ...old, archived: true }]) === null, 'archived chat is not resurfaced');
+  check(S.returnVisitLine([project('older', 'Old title', 30), old]).includes('Pottery, not bakery'), 'return line chooses the latest touched chat even if list order is stale');
+  check(old.output === 'Kept finished script' && old.intake.versions[0].content === 'Original version', 'returning preserves output and version history');
+  check(!/missed|behind|failed|—/.test(second.text), 'return copy contains no blame or em dash');
+  const app = boot([old]); await app.run();
+  app.context.renamed = old;
+  vm.runInContext('storyReturnNotice = StorySculptStates.returnNotice([renamed], Date.now() + 50 * StorySculptStates.DAY_MS, true); renamed.title = "Fresh pottery title"; renderProjectList(); showStart();', app.context);
+  check(app.document.getElementById('story-return-notice').innerHTML.includes('Fresh pottery title'), 'real render path refreshes the return notice after rename');
+  check(app.document.getElementById('story-return-line').textContent.includes('Fresh pottery title'), 'start screen return line uses renamed title');
+  vm.runInContext('renamed.title = "Saved after navigation"; renderProjectList();', app.context);
+  check(app.document.getElementById('story-return-line').textContent.includes('Saved after navigation'), 'a save completing after navigation refreshes the already visible return line');
+}
+
 // 5. A 40-turn chat opens on the latest 12 messages with earlier turns behind "Show earlier answers".
 {
   const app = boot([project('p-long', 'Long Chat', 1, longThread(40))]);
