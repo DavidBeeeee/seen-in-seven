@@ -872,7 +872,13 @@ function runBothBrowsers() {
   ];
   writeFileSync(join(outDir, 'findings.md'), lines.join('\n'));
   writeFileSync(join(outDir, 'findings.json'), JSON.stringify({ at: new Date().toISOString(), checks, findings, differences, browsers: results }, null, 1));
-  const reader = ['# Certainty screen-reader transcripts', '', 'Chromium uses the CDP Accessibility tree and an ARIA snapshot; WebKit uses its rendered ARIA snapshot. Neither is a substitute for a real VoiceOver session.', ''];
+  const reader = ['# Certainty screen-reader transcripts', '', 'Chromium uses the CDP Accessibility tree and an ARIA snapshot; WebKit uses its rendered ARIA snapshot. Neither is a substitute for a real VoiceOver session, so the real VoiceOver pass comes first.', ''];
+  // The real VoiceOver sections are written by hand from certainty-voiceover.mjs
+  // runs and sit above the generated part. Keep them: on 2026-10-30 a walk
+  // rerun silently dropped the 10-29 VoiceOver transcript.
+  const combined = join(outDir, 'screen-reader.md');
+  const kept = existsSync(combined) ? readFileSync(combined, 'utf8').split('\n---\n')[0].split('\n').slice(4).join('\n').trim() : '';
+  if (/^## .*VoiceOver/m.test(kept)) reader.push(kept, '');
   for (const name of ['chromium', 'webkit']) {
     const file = join(outDir, name, 'screen-reader.md');
     reader.push('---', '', existsSync(file) ? readFileSync(file, 'utf8').replace('# Certainty: what a screen reader hears', '## ' + name) : '## ' + name + '\n\nNot captured.', '');

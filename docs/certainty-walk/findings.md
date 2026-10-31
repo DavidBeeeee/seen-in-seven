@@ -1,6 +1,6 @@
 # Certainty rendered walk: Chromium and WebKit
 
-Run 2026-10-31T02:57:44.850Z against the real rendered `api/_hub/certainty.html`. Both browsers ran the same lifecycle, keyboard, axe, responsive-layout and accessibility-tree passes. Every network call was stubbed.
+Run 2026-10-31T03:12:49.663Z against the real rendered `api/_hub/certainty.html`. Both browsers ran the same lifecycle, keyboard, axe, responsive-layout and accessibility-tree passes. Every network call was stubbed.
 
 **90 of 90 checks pass across both browsers. 0 findings.**
 
