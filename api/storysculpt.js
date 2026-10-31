@@ -482,6 +482,90 @@ function memberSource(input) {
   return [input.projectTitle, input.context, ...input.messages.map((message) => message.content)].join('\n');
 }
 
+// WBR-462: the step checker recognises the common social CTAs. A finished
+// script can also end in a natural invitation to visit, buy, book or watch;
+// those still have to be explicit audience actions in the closing 65 words.
+// Keeping this adapter in the output path leaves the frozen prompts and the
+// shared step contract untouched.
+export function hasNaturalClosingInvitation(content) {
+  const closing = splitTitle(String(content || '').replace(/^FINAL SCRIPT:\s*/i, '')).body.split(/\s+/).slice(-65).join(' ');
+  return /\b(?:come|stop|drop)\s+(?:by|in)\b|\b(?:visit|buy|order|book|call|email|message|dm|watch|read|listen|download|shop|check out|sign up|try)\b/i.test(closing);
+}
+
+export function checkOutputCompleteness(args) {
+  const check = checkScriptCompleteness(args);
+  if (!check.ok && String(check.issue).startsWith('missing-cta:') && hasNaturalClosingInvitation(args.content)) return { ok: true };
+  return check;
+}
+
+function checkOutputDeterministic(args) {
+  const check = checkDeterministic(args);
+  if (!check.ok && String(check.issue).startsWith('missing-cta:') && checkOutputCompleteness(args).ok) return { ok: true };
+  return check;
+}
+
+// Counts only cross the logging boundary. Inference is detected independently
+// of whether the member supplied it: a sourced inference is still an inference,
+// not a sourced fact. Facts need strong wording overlap with member material;
+// fresh connective language and imagery remain generated, never promoted to fact.
+function normalMaterial(text) {
+  return String(text || '').toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z0-9%$'\s]/g, ' ').replace(/\s+/g, ' ').trim();
+}
+
+const MATERIAL_STOP = new Set('a an and are as at be been but by can could did do does for from get got had has have he her him his how i if in into is it its just me my no not of on or our she so that the their them then there they this to too up was we were what when where which who why will with would you your'.split(' '));
+
+export function categorizeOutputMaterial(script, { source = '', memberText = '' } = {}) {
+  const counts = { fact: 0, inference: 0, generated: 0 };
+  const body = splitTitle(String(script || '').replace(/^FINAL SCRIPT:\s*/i, '')).body;
+  const sentences = body.match(/[^.!?\n]+[.!?]+|[^.!?\n]+$/g) || [];
+  const ownWords = new Set(normalMaterial(memberText).split(' ').filter(word => word.length > 2 && !MATERIAL_STOP.has(word)));
+  const sourceText = normalMaterial(source + '\n' + memberText);
+  for (const raw of sentences) {
+    const sentence = raw.trim();
+    if (!sentence) continue;
+    const inference = checkFidelity(sentence, { source: '', memberText: '' }).kinds.includes('inference');
+    const words = normalMaterial(sentence).split(' ').filter(word => word.length > 2 && !MATERIAL_STOP.has(word));
+    const sourcedWords = words.filter(word => ownWords.has(word)).length;
+    const fact = words.length > 0 && (sourceText.includes(normalMaterial(sentence)) || sourcedWords / words.length >= 0.7);
+    counts[inference ? 'inference' : fact ? 'fact' : 'generated'] += 1;
+  }
+  return { sentences: sentences.filter(sentence => sentence.trim()).length, counts };
+}
+
+// High-confidence overheated phrasing, not a ban on emotion. If the member used
+// the exact phrase, it remains their voice; otherwise it is retried by kind.
+const INTENSITY = [
+  /\b(?:soul[- ]crushing|heart[- ]shattering|life[- ]destroying|mind[- ]blowing|jaw[- ]dropping)\b/gi,
+  /\b(?:devastating|devastated|catastrophic|cataclysmic|shattered|destroyed me|broke me)\b/gi,
+  /\b(?:rock bottom|life or death|changed everything forever|never be the same|worst moment of (?:my|our) (?:life|lives))\b/gi
+];
+
+export function checkOutputFidelity(script, args = {}) {
+  const base = checkFidelity(script, args);
+  const own = normalMaterial(args.memberText);
+  let intense = 0;
+  for (const pattern of INTENSITY) {
+    for (const match of String(script || '').matchAll(pattern)) {
+      if (!own.includes(normalMaterial(match[0]))) intense += 1;
+    }
+  }
+  const counts = { ...base.counts };
+  const kinds = [...base.kinds];
+  if (intense) { counts.intensity = intense; kinds.push('intensity'); kinds.sort(); }
+  return { ...base, ok: kinds.length === 0, kinds, counts, material: categorizeOutputMaterial(script, args) };
+}
+
+function outputFidelityRetryDirective(result) {
+  const others = result.kinds.filter(kind => kind !== 'intensity');
+  const base = fidelityRetryDirective({ ...result, kinds: others });
+  return base + (result.kinds.includes('intensity') ? ' Remove dramatic or emotionally intense language the member did not use; keep the story specific and grounded.' : '');
+}
+
+function outputFidelityNote(result) {
+  if (!result.kinds.includes('intensity')) return fidelityNote(result);
+  return 'Check this draft before you film it: it may include language that is too dramatic or emotionally intense. Change or remove anything that does not sound like you.';
+}
+
 // The thread exactly as the contract says it was spoken. WBR-428.
 //
 // The browser stores each assistant turn with its NEXT QUESTION: / FINAL
@@ -787,16 +871,32 @@ export default async function handler(req, res) {
   // Integrity facts learned along the way (repairs, phase, stripped noise)
   // ride on whichever terminal event the request ends with.
   const facts = {};
-  const emit = (outcome, extra = {}) => recordEvent(token, user.id, 'storysculpt_' + outcome, buildEventDetail({
-    trace,
-    outcome,
-    mode,
-    promptVersion: PROMPT_VERSION,
-    model: MODEL_VERSION,
-    latencyMs: Date.now() - started,
-    ...facts,
-    ...extra
-  }));
+  const emit = (outcome, extra = {}) => {
+    const detail = buildEventDetail({
+      trace,
+      outcome,
+      mode,
+      promptVersion: PROMPT_VERSION,
+      model: MODEL_VERSION,
+      latencyMs: Date.now() - started,
+      ...facts,
+      ...extra
+    });
+    // buildEventDetail owns the common schema; this lane's material summary is
+    // deliberately reconstructed as integers so no source wording can leak.
+    if (extra.material) {
+      const counts = extra.material.counts || {};
+      detail.material = {
+        sentences: Number.isFinite(extra.material.sentences) ? extra.material.sentences : 0,
+        counts: {
+          fact: Number.isFinite(counts.fact) ? counts.fact : 0,
+          inference: Number.isFinite(counts.inference) ? counts.inference : 0,
+          generated: Number.isFinite(counts.generated) ? counts.generated : 0
+        }
+      };
+    }
+    return recordEvent(token, user.id, 'storysculpt_' + outcome, detail);
+  };
 
   // Every error body carries the trace, so a member's browser can report a
   // delivery or save failure against the same id the server logged.
@@ -992,7 +1092,7 @@ export default async function handler(req, res) {
       mode: input.mode,
       memberText: memberOwnText(input)
     });
-    let detCheck = checkDeterministic(checkArgs(result.content));
+    let detCheck = checkOutputDeterministic(checkArgs(result.content));
 
     // Up to two retries, each told exactly what failed (for hooks, the member's
     // own words it used). Keep the attempt with the fewest failures, so a choice
@@ -1008,7 +1108,7 @@ export default async function handler(req, res) {
         const retryResult = await callStorySculpt(input, activeStep, stepText, refDocs, retryDirective);
         const retryVerdict = classifyOutput(retryResult.content, { source: memberSource(input) });
         if (!retryVerdict.ok) continue;
-        const retryDetCheck = checkDeterministic(checkArgs(retryResult.content));
+        const retryDetCheck = checkOutputDeterministic(checkArgs(retryResult.content));
         const score = failureScore(retryResult.content, retryDetCheck);
         if (score < best.score) best = { result: retryResult, verdict: retryVerdict, detCheck: retryDetCheck, score };
         result = retryResult;
@@ -1039,31 +1139,30 @@ export default async function handler(req, res) {
 
     // Missing essential spoken parts must not be marked finished after the
     // bounded repair loop. Leave the saved project/step untouched for retry.
-    const completeness = checkScriptCompleteness(checkArgs(result.content));
+    const completeness = checkOutputCompleteness(checkArgs(result.content));
     const creativeFailure = !detCheck.ok && /^(?:hook-extracted|hook-duplicates|loop-repeats-hook|loop-generic|loop-duplicates|three-options):/.test(detCheck.issue);
     if ((turnKind(activeStep, stepText).final && !completeness.ok) || creativeFailure) {
       const reason = (creativeFailure ? detCheck.issue : completeness.issue).split(':')[0];
-      await emit('output_rejected', { ...stepLog, failureClass: classifyFailure('output'), violations: [reason], usage: result.usage });
+      await emit('output_rejected', { ...stepLog, failureClass: classifyFailure('output'), violations: [reason], material: categorizeOutputMaterial(result.content, { source: memberSource(input), memberText: memberOwnText(input) }), usage: result.usage });
       return json(res, 502, { error: creativeFailure ? 'StorySculpt could not produce three distinct, useful options on this pass. Your saved choices are unchanged; please retry.' : 'StorySculpt could not finish the audience question and closing invitation on this pass. Your saved script is unchanged; please retry.', rejected: reason, trace });
     }
 
-    // Fidelity (WBR-458): a finished script is checked against what the member
-    // actually said. A flagged script is rewritten once with the flags named;
-    // if the rewrite is still flagged, the less-flagged draft is shown with a
-    // plain note and storysculpt_output_rejected records the kinds. Kinds and
-    // counts only, never the member's words.
+    // Fidelity (WBR-458) and output material (WBR-462): fact, inference and
+    // generated counts stay distinct; intensity is a named, retried violation.
+    // Kinds and counts only, never the member's words.
     let fidelity = null;
     if (verdict.final) {
       const fidelityArgs = { source: memberSource(input), memberText: memberOwnText(input) };
-      fidelity = checkFidelity(verdict.content, fidelityArgs);
+      fidelity = checkOutputFidelity(verdict.content, fidelityArgs);
       if (!fidelity.ok) {
         stepLog.fidelityRetry = true;
         stepLog.attempts++;
         try {
-          const retryResult = await callStorySculpt(input, activeStep, stepText, refDocs, fidelityRetryDirective(fidelity));
+          const retryResult = await callStorySculpt(input, activeStep, stepText, refDocs, outputFidelityRetryDirective(fidelity));
           const retryVerdict = classifyOutput(retryResult.content, { source: memberSource(input) });
-          if (retryVerdict.ok && retryVerdict.final) {
-            const retryFidelity = checkFidelity(retryVerdict.content, fidelityArgs);
+          const retryCompleteness = checkOutputCompleteness(checkArgs(retryResult.content));
+          if (retryVerdict.ok && retryVerdict.final && retryCompleteness.ok) {
+            const retryFidelity = checkOutputFidelity(retryVerdict.content, fidelityArgs);
             if (fidelityScore(retryFidelity) < fidelityScore(fidelity)) {
               result = retryResult;
               verdict = retryVerdict;
@@ -1080,6 +1179,7 @@ export default async function handler(req, res) {
             violations: fidelity.kinds.map(k => 'fidelity-' + k),
             delivered: true,
             voiceShare: fidelity.voiceShare,
+            material: fidelity.material,
             usage: result.usage
           });
         }
@@ -1095,6 +1195,7 @@ export default async function handler(req, res) {
       final: verdict.final,
       sanitized: verdict.sanitized,
       violations: verdict.violations,
+      material: fidelity && fidelity.material,
       messageCount: input.messages.length,
       contextChars: input.context.length,
       usage: result.usage
@@ -1104,7 +1205,7 @@ export default async function handler(req, res) {
     let title = '';
     let content = verdict.content;
     if (verdict.final) ({ title, body: content } = splitTitle(verdict.content));
-    return json(res, 200, { final: verdict.final, content, title: title || undefined, fidelityNote: fidelity && !fidelity.ok ? fidelityNote(fidelity) : undefined, step: activeStep, idempotencyKey: input.idempotencyKey || undefined, promptVersion: PROMPT_VERSION, model: MODEL_VERSION, trace });
+    return json(res, 200, { final: verdict.final, content, title: title || undefined, fidelityNote: fidelity && !fidelity.ok ? outputFidelityNote(fidelity) : undefined, step: activeStep, idempotencyKey: input.idempotencyKey || undefined, promptVersion: PROMPT_VERSION, model: MODEL_VERSION, trace });
   } catch (error) {
     const failureClass = classifyFailure(error && error.stage === 'database' ? 'database' : 'internal', error);
     await emit('error', { failureClass });

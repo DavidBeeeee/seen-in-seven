@@ -91,12 +91,30 @@ for (const [name, script, member] of GOOD_CASES) {
   pass('the member\'s note is plain and repeats none of the script\'s words');
 }
 
-console.log('Part 2: through the real handler');
-
 process.env.RATE_LIMIT_SECRET = process.env.RATE_LIMIT_SECRET || 'storysculpt-fidelity-'.padEnd(40, 'x');
 process.env.GUEST_SESSION_SECRET = process.env.GUEST_SESSION_SECRET || 'storysculpt-fidelity-'.padEnd(40, 'y');
 process.env.DEEPSEEK_API_KEY = 'storysculpt-fidelity-placeholder';
-const { default: handler } = await import('../api/storysculpt.js');
+const { default: handler, categorizeOutputMaterial, checkOutputFidelity } = await import('../api/storysculpt.js');
+
+console.log('Part 2: output material categories and intensity');
+{
+  const sourced = MEMBER + ' I was terrified of being judged.';
+  const material = categorizeOutputMaterial('I wake up at 4am every day. I was terrified of being judged. A warm bun can start a conversation.', { source: sourced, memberText: sourced });
+  assert.deepEqual(material.counts, { fact: 1, inference: 1, generated: 1 });
+  assert.equal(material.sentences, 3);
+  assert.ok(!JSON.stringify(material).includes('terrified'), 'category logs carry counts, not member wording');
+  pass('fact, sourced inference and generated connective text remain distinct count-only categories');
+}
+{
+  const intense = checkOutputFidelity(plant('It was a soul-crushing, devastating moment.'), { source: MEMBER, memberText: MEMBER });
+  assert.ok(!intense.ok && intense.kinds.includes('intensity'));
+  assert.ok(intense.material && intense.material.counts.generated > 0);
+  const sourced = checkOutputFidelity(plant('It was soul-crushing.'), { source: MEMBER + ' It was soul-crushing.', memberText: MEMBER + ' It was soul-crushing.' });
+  assert.ok(!sourced.kinds.includes('intensity'), 'the member\'s own intense wording is not overheated generation');
+  pass('unsourced overheated language is flagged while the member\'s own intense wording stays allowed');
+}
+
+console.log('Part 3: through the real handler');
 
 const PROJECT = '33333333-3333-4333-8333-333333333333';
 const originalFetch = globalThis.fetch;
@@ -155,7 +173,9 @@ try {
     assert.equal(modelCalls, 0, 'a clean script is not retried');
     assert.equal(res.body.fidelityNote, undefined);
     assert.ok(!rejected());
-    pass('a clean finished script is delivered as written, no fidelity retry, no note');
+    const material = events.find(e => e.p_event_type === 'storysculpt_generation').p_detail.material;
+    assert.equal(material.counts.fact + material.counts.inference + material.counts.generated, material.sentences);
+    pass('a clean finished script is delivered with distinct material counts, no retry, no note');
   }
   {
     const res = await refine([plant('I was terrified of being judged.'), GOOD]);
@@ -166,6 +186,15 @@ try {
     assert.equal(res.body.fidelityNote, undefined);
     assert.ok(!rejected(), 'nothing is logged as rejected when the retry is clean');
     pass('an unsupported inference is retried with its reason named and the clean retry is shown');
+  }
+  {
+    const res = await refine([plant('It was a soul-crushing moment.'), GOOD]);
+    assert.equal(res.code, 200, JSON.stringify(res.body));
+    assert.equal(modelCalls, 1, 'overheated language is retried once');
+    assert.ok(retryRequests[0].includes('dramatic or emotionally intense'), 'the retry names the intensity refusal');
+    assert.ok(!/soul-crushing/.test(res.body.content), 'the grounded retry replaces the overheated draft');
+    assert.ok(!rejected(), 'nothing is rejected when the intensity retry is clean');
+    pass('overheated output is retried with intensity named and the grounded retry is shown');
   }
   {
     const flagged = plant('Back in 2019 I sold 600 loaves a week.');
