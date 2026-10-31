@@ -192,6 +192,16 @@ try {
   assert.equal(intakeWrites, 1);
 
   // A repeated hook is repaired in the option step, before a final exists.
+  // Fidelity repair is another model response. It must not reintroduce the
+  // repeated opening after the earlier deterministic guard has already passed.
+  res = await run({
+    step: 'R7',
+    replies: [finalWith('The bucket upstaged the actor.').replace('Then the bucket overflowed.', 'Then the bucket overflowed. I was terrified of being judged.'), finalWith(REPEATED_OPENING)]
+  });
+  assert.equal(res.code, 200, JSON.stringify(res.body));
+  assert.equal(modelCalls.length, 2, 'one fidelity repair was attempted');
+  assert.ok(!res.body.content.startsWith(REPEATED_OPENING), 'fidelity repair cannot bypass repetition');
+
   res = await run({ step: 'R5', replies: [repeatedHooks, freshHooks] });
   assert.equal(res.code, 200, JSON.stringify(res.body));
   assert.ok(!res.body.content.includes(REPEATED_OPENING));

@@ -2024,6 +2024,7 @@ async function saveActiveStoryNow(message, saving, updates, revision) {
     } else {
       setStorySaveStatus(saving, revision, 'Not saved. Keep this page open and try again.', true);
     }
+    if (!isStaleVersionError(error)) error.storyFailureKind = 'save';
     throw error;
   }
   const latest = storySaveRevisions.get(saving.id) === revision;
@@ -2151,7 +2152,7 @@ async function regenerateStep(index, note) {
     status.classList.remove('error');
   } catch (error) {
     hideThinkingIndicator();
-    const cleanMsg = (error && error.message) || 'That version did not finish. The earlier one is still here.';
+    const cleanMsg = storyRecoveryMessage(error, 'That version did not finish. The earlier one is still here.');
     status.textContent = cleanMsg;
     status.classList.add('error');
     showErrorInConversation(cleanMsg, () => regenerateStep(index, note));
@@ -2192,7 +2193,7 @@ async function regenerateScript() {
     }
   } catch (error) {
     hideThinkingIndicator();
-    const cleanMsg = (error && error.message) || 'The fresh script did not finish. Your current script is unchanged.';
+    const cleanMsg = storyRecoveryMessage(error, 'The fresh script did not finish. Your current script is unchanged.');
     status.textContent = cleanMsg;
     status.className = 'eee-message story-refine-status error';
     showErrorInConversation(cleanMsg, () => regenerateScript());
@@ -2215,6 +2216,18 @@ function showVariant(index, step) {
 // One request path for both a fresh answer and a refine note. It posts the
 // current conversation (plus the member's standing profile as context) to the
 // unchanged /api/storysculpt endpoint and folds the response back in.
+function storyRecoveryMessage(error, fallback) {
+  const kind = error && error.storyFailureKind;
+  if (kind === 'connection') return 'Connection lost. Your saved chat is safe. Reconnect, then choose Try again; you do not need to retype your answer.';
+  if (kind === 'save') return error.keptLocally
+    ? 'Your latest changes are kept on this device, but are not saved to your account yet. Reconnect or reopen this chat to retry saving. Your last saved chat is safe.'
+    : 'Your latest changes could not be saved. Keep this page open and try again. Your last saved chat is safe.';
+  if (kind === 'generation') return String(error.message || 'That attempt did not finish.') + ' Your saved chat is safe. Choose Try again to continue from the same answer.';
+  // Overnight Kimi owns slow-provider progress in the pending state. Keep it
+  // separate from terminal recovery: a slow reply is not a lost connection.
+  return (error && error.message) || fallback;
+}
+
 async function runGeneration(intent = 'interview', options = {}) {
   let response;
   // An interview reply is keyed to the member turn it answers, so a retry of the
@@ -2241,18 +2254,24 @@ async function runGeneration(intent = 'interview', options = {}) {
     });
   } catch (error) {
     recordStoryFailure('delivery-error', '', 0);
-    throw new Error('StorySculpt could not be reached. Check your connection. Your answers are still saved.');
+    const failure = new Error('StorySculpt could not be reached.');
+    failure.storyFailureKind = 'connection';
+    throw failure;
   }
   const data = await response.json().catch(() => null);
   if (!data) {
     recordStoryFailure('delivery-error', '', response.status);
-    throw new Error('StorySculpt\'s reply did not arrive in one piece. Your answers are still saved, so please try again.');
+    const failure = new Error('StorySculpt\'s reply did not arrive in one piece.');
+    failure.storyFailureKind = 'generation';
+    throw failure;
   }
   if (!response.ok) {
     if (response.status === 409) {
       throw new Error((data && data.error) || 'This script is already finished. Use Refine with a note to change it.');
     }
-    throw new Error(data.error || 'StorySculpt could not complete this step. Your project is saved, so please try this step again.');
+    const failure = new Error(data.error || 'StorySculpt could not complete this step.');
+    if (response.status >= 500) failure.storyFailureKind = 'generation';
+    throw failure;
   }
   if (data.final) {
     activeStory.output = data.content;
@@ -2282,7 +2301,10 @@ async function runGeneration(intent = 'interview', options = {}) {
   } catch (error) {
     recordStoryFailure('save-error', data.trace, 0);
     renderConversation();
-    throw new Error('StorySculpt answered, but it could not be saved to your account yet. Keep this page open and try again.');
+    const failure = new Error('StorySculpt answered, but it could not be saved to your account yet.');
+    failure.storyFailureKind = 'save';
+    failure.keptLocally = Boolean(error && error.keptLocally);
+    throw failure;
   }
   renderConversation();
   scrollThread();
@@ -2436,7 +2458,7 @@ async function executeInterviewGeneration() {
   } catch (error) {
     failed = true;
     hideThinkingIndicator();
-    const cleanMsg = (error && error.message) || 'This step did not finish. Your answers are still saved.';
+    const cleanMsg = storyRecoveryMessage(error, 'This step did not finish. Your answers are still saved.');
     status.textContent = cleanMsg;
     status.classList.add('error');
     const isFinished = /already finished|locked|Refine/i.test(cleanMsg);
@@ -2556,7 +2578,7 @@ async function executeRefineGeneration(note) {
     }
   } catch (error) {
     hideThinkingIndicator();
-    const cleanMsg = (error && error.message) || 'That revision did not finish. Your script is still saved.';
+    const cleanMsg = storyRecoveryMessage(error, 'That revision did not finish. Your script is still saved.');
     status.textContent = cleanMsg;
     status.className = 'eee-message story-refine-status error';
     showErrorInConversation(cleanMsg, () => retryRefineGeneration(note));

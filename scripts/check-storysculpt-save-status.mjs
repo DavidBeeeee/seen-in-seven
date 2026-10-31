@@ -6,6 +6,45 @@ import vm from 'node:vm';
 const source = fs.readFileSync(new URL('../js/storysculpt.js', import.meta.url), 'utf8');
 const saveSource = source.slice(source.indexOf('let storySaveChain = Promise.resolve();'), source.indexOf('// The connection came back:'));
 const drain = async () => { for (let i = 0; i < 30; i++) await Promise.resolve(); };
+// Run the actual generation transport and recovery formatter, not copied prose.
+// The save and fetch boundaries are isolated; no production request is made.
+{
+  const project = { id: 'recovery', content_type: 'rant', intake: {}, conversation: [{ role: 'user', content: 'My pottery answer', key: 'turn:recovery' }], output: null };
+  let transport = 'offline', saveFails = false;
+  const c = vm.createContext({
+    project,
+    EEEStudio: {}, storyContext: { session: { access_token: 'fixture' } },
+    storyEl: () => ({ value: 'Recovery fixture' }), composeContext: () => '',
+    storyTurnKey: () => 'turn:recovery', recordStoryFailure() {}, adoptScriptTitle() {},
+    renderConversation() {}, scrollThread() {},
+    saveActiveStory: async () => { if (saveFails) { const e = new Error('fixture save failed'); e.keptLocally = true; throw e; } },
+    fetch: async () => {
+      if (transport === 'offline') throw new TypeError('Failed to fetch');
+      if (transport === 'generation') return { ok: false, status: 502, json: async () => ({ error: 'The writing attempt did not finish.' }) };
+      if (transport === 'locked') return { ok: false, status: 409, json: async () => ({ error: 'This script is already finished. Use Refine.' }) };
+      return { ok: true, json: async () => ({ final: true, content: 'A recovered script.', trace: 'fixture' }) };
+    }
+  });
+  vm.runInContext('let activeStory = project;', c);
+  vm.runInContext(source.slice(source.indexOf('function storyRecoveryMessage('), source.indexOf('let thinkingInterval = null;')), c);
+  const fail = async () => {
+    try { await vm.runInContext('runGeneration()', c); assert.fail('expected failure'); }
+    catch (e) { c.failure = e; return vm.runInContext('storyRecoveryMessage(failure, "Fallback")', c); }
+  };
+  assert.match(await fail(), /^Connection lost\.[\s\S]*Reconnect[\s\S]*Try again/);
+  assert.equal(project.conversation[0].content, 'My pottery answer');
+  transport = 'generation';
+  assert.match(await fail(), /writing attempt[\s\S]*saved chat is safe[\s\S]*same answer/);
+  transport = 'locked';
+  assert.equal(await fail(), 'This script is already finished. Use Refine.', 'lock instructions are not replaced by a retry');
+  transport = 'ok'; saveFails = true;
+  assert.match(await fail(), /kept on this device[\s\S]*not saved to your account/);
+  assert.equal(project.output, 'A recovered script.', 'unsaved generated output stays in the current page');
+  saveFails = false;
+  await vm.runInContext('runGeneration()', c);
+  assert.equal(project.conversation.filter(m => m.role === 'user').length, 1, 'retry does not duplicate the member answer');
+  console.log('PASS real transport: connection, generation, lock, local-only save and successful retry recovery');
+}
 function boot() {
   let now = 0, next = 0;
   const timers = new Map(), storage = new Map(), writes = [];

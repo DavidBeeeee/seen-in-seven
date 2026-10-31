@@ -1254,7 +1254,8 @@ export default async function handler(req, res) {
           const retryResult = await callStorySculpt(input, activeStep, stepText, refDocs, outputFidelityRetryDirective(fidelity));
           const retryVerdict = classifyOutput(retryResult.content, { source: memberSource(input) });
           const retryCompleteness = checkOutputCompleteness(checkArgs(retryResult.content));
-          if (retryVerdict.ok && retryVerdict.final && retryCompleteness.ok) {
+          const retryRepetition = checkCrossProjectRepetition(retryResult.content, recentFinished);
+          if (retryVerdict.ok && retryVerdict.final && retryCompleteness.ok && retryRepetition.ok) {
             const retryFidelity = checkOutputFidelity(retryVerdict.content, fidelityArgs);
             if (fidelityScore(retryFidelity) < fidelityScore(fidelity)) {
               result = retryResult;
