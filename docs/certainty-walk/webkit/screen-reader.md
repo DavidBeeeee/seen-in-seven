@@ -6,7 +6,7 @@ Browser: `webkit`. Captured from the rendered accessibility tree; every network 
 
 ## first-visit
 
-Screenshot: `docs/certainty-walk/webkit/shots/084-a11y-first-visit.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/first-visit.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -93,7 +93,7 @@ Heading outline: h1 “One private working session with David, every week.” �
 
 ## picker
 
-Screenshot: `docs/certainty-walk/webkit/shots/085-a11y-picker.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/picker.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Choose your time” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -149,7 +149,6 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Fri 30 Oct"
   - button "Sat 31 Oct"
   - button "Sun 1 Nov"
   - button "Mon 2 Nov"
@@ -219,7 +218,7 @@ Heading outline: h1 “One private working session with David, every week.” �
 
 ## mode-choice
 
-Screenshot: `docs/certainty-walk/webkit/shots/086-a11y-mode-choice.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/mode-choice.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Choose your time” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -275,9 +274,8 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Fri 30 Oct"
-  - button "Sat 31 Oct" [pressed]
-  - button "Sun 1 Nov"
+  - button "Sat 31 Oct"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"
@@ -357,7 +355,7 @@ Heading outline: h1 “One private working session with David, every week.” �
 
 ## confirm
 
-Screenshot: `docs/certainty-walk/webkit/shots/087-a11y-confirm.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/confirm.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Choose your time” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -413,9 +411,8 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Fri 30 Oct"
-  - button "Sat 31 Oct" [pressed]
-  - button "Sun 1 Nov"
+  - button "Sat 31 Oct"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"
@@ -501,7 +498,7 @@ Heading outline: h1 “One private working session with David, every week.” �
 
 ## booked
 
-Screenshot: `docs/certainty-walk/webkit/shots/088-a11y-booked.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/booked.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -526,9 +523,9 @@ Heading outline: h1 “One private working session with David, every week.” �
   - text: Membership active
   - article:
     - paragraph: Your first session
-    - group "Booked. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Screen reader booking.":
+    - group "Booked. Sunday, November 1, 9:00 AM – 11:00 AM ET, By phone · Screen reader booking.":
       - img
-      - text: Saturday, October 31 10:00 AM – 12:00 PM ET
+      - text: Sunday, November 1 9:00 AM – 11:00 AM ET
       - img
       - text: By phone · Screen reader booking
     - img
@@ -603,7 +600,7 @@ Heading outline: h1 “One private working session with David, every week.” �
 
 ## edit
 
-Screenshot: `docs/certainty-walk/webkit/shots/089-a11y-edit.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/edit.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Edit your session” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -628,9 +625,9 @@ Heading outline: h1 “One private working session with David, every week.” �
   - text: Membership active
   - article:
     - paragraph: Your first session
-    - group "Booked. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Screen reader booking.":
+    - group "Booked. Sunday, November 1, 9:00 AM – 11:00 AM ET, By phone · Screen reader booking.":
       - img
-      - text: Saturday, October 31 10:00 AM – 12:00 PM ET
+      - text: Sunday, November 1 9:00 AM – 11:00 AM ET
       - img
       - text: By phone · Screen reader booking
     - img
@@ -674,9 +671,8 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Fri 30 Oct"
-  - button "Sat 31 Oct" [pressed]
-  - button "Sun 1 Nov"
+  - button "Sat 31 Oct"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"
@@ -689,7 +685,7 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Wed 11 Nov"
   - button "Thu 12 Nov"
   - text: 2 Pick a time (2 hours, with Eastern time alongside)
-  - button "10:00 AM ET, selected" [pressed]: 10:00 AM ET
+  - button "10:00 AM ET"
   - button "11:00 AM ET"
   - button "12:00 PM ET"
   - button "1:00 PM ET"
@@ -762,7 +758,7 @@ Heading outline: h1 “One private working session with David, every week.” �
 
 ## cancel
 
-Screenshot: `docs/certainty-walk/webkit/shots/090-a11y-cancel.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/cancel.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -850,7 +846,7 @@ Heading outline: h1 “One private working session with David, every week.” �
 
 ## lapsed
 
-Screenshot: `docs/certainty-walk/webkit/shots/091-a11y-lapsed.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/lapsed.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Your seat with David is still here.” → h2 “Your session on Wednesday, September 30, 2026 is complete.” → h2 “2 sessions with David” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -902,14 +898,14 @@ Heading outline: h1 “One private working session with David, every week.” �
       - img
       - text: Wednesday, September 30, 2026
       - img
-      - text: By phone · Pricing page rewrite 10:00 AM – 12:00 PM ET
+      - text: By phone · Pricing page rewrite 10:00 PM – 12:00 AM ET
     - listitem:
       - img
       - text: Wednesday, September 23, 2026
       - img
       - text: First session milestone
       - img
-      - text: On Zoom · Getting started 10:00 AM – 12:00 PM ET
+      - text: On Zoom · Getting started 10:00 PM – 12:00 AM ET
   - paragraph: Preferences
   - heading "Your settings" [level=2]
   - paragraph: Save your session preferences once so booking is faster each week.
@@ -948,7 +944,7 @@ Heading outline: h1 “One private working session with David, every week.” �
 
 ## ended
 
-Screenshot: `docs/certainty-walk/webkit/shots/092-a11y-ended.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/ended.yml`
 
 Heading outline: h1 “Your Certainty Sessions membership has ended.”
@@ -970,7 +966,7 @@ Heading outline: h1 “Your Certainty Sessions membership has ended.”
 
 ## signed-out-gate
 
-Screenshot: `docs/certainty-walk/webkit/shots/093-a11y-signed-out-gate.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/signed-out-gate.yml`
 
 Heading outline: h1 “Sign in to enter Certainty Sessions.”
@@ -988,7 +984,7 @@ Heading outline: h1 “Sign in to enter Certainty Sessions.”
 
 ## server-error-gate
 
-Screenshot: `docs/certainty-walk/webkit/shots/094-a11y-server-error-gate.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/server-error-gate.yml`
 
 Heading outline: h1 “We could not reach the server just now.”
@@ -1006,7 +1002,7 @@ Heading outline: h1 “We could not reach the server just now.”
 
 ## network-error
 
-Screenshot: `docs/certainty-walk/webkit/shots/095-a11y-network-error.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/network-error.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Choose your time” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -1062,9 +1058,8 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Fri 30 Oct"
-  - button "Sat 31 Oct" [pressed]
-  - button "Sun 1 Nov"
+  - button "Sat 31 Oct"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"
@@ -1145,7 +1140,7 @@ Heading outline: h1 “One private working session with David, every week.” �
 
 ## slot-taken
 
-Screenshot: `docs/certainty-walk/webkit/shots/096-a11y-slot-taken.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/slot-taken.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Choose your time” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -1201,9 +1196,8 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Fri 30 Oct"
-  - button "Sat 31 Oct" [pressed]
-  - button "Sun 1 Nov"
+  - button "Sat 31 Oct"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"

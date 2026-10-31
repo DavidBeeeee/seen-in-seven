@@ -1,0 +1,238 @@
+{
+  "at": "2026-10-31T02:52:19.258Z",
+  "reader": "VoiceOver (macOS 26.2)",
+  "browser": "WebKit 26.5",
+  "refused": [],
+  "transcript": [
+    {
+      "screen": "cancel-confirm",
+      "step": "focus Cancel on a booked session",
+      "heard": [
+        "Cancel button Cancel article",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "cancel-confirm",
+      "step": "VO-Space on Cancel: the dialog opens",
+      "heard": [
+        "Keep session button Cancel this session? The time opens back up for you or someone else. web alert dialog",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "cancel-confirm",
+      "step": "keyboard focus is inside the dialog",
+      "heard": [
+        "true"
+      ]
+    },
+    {
+      "screen": "cancel-confirm",
+      "step": "VO-Right through the dialog",
+      "heard": [
+        "Cancel session button",
+        "end of Cancel this session? The time opens back up for you or someone else. web alert dialog",
+        ""
+      ]
+    },
+    {
+      "screen": "cancel-confirm",
+      "step": "Escape: what is announced",
+      "heard": [
+        "Cancel button Cancel article",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ],
+      "dialogOpen": false,
+      "focusAfter": "cs-cancel",
+      "cancelPosts": 0
+    },
+    {
+      "screen": "cancel-confirm",
+      "step": "focus Cancel again",
+      "heard": [
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "cancel-confirm",
+      "step": "VO-Space on Cancel again",
+      "heard": [
+        "Keep session button Cancel this session? The time opens back up for you or someone else. web alert dialog",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "cancel-confirm",
+      "step": "focus \"Cancel session\" in the dialog",
+      "heard": [
+        "Cancel session button",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "cancel-confirm",
+      "step": "VO-Space on \"Cancel session\": what is announced",
+      "heard": [
+        "Session cancelled. That time is open again. application status main",
+        "You are currently on a selectable text."
+      ]
+    },
+    {
+      "screen": "cancel-confirm",
+      "step": "after confirming",
+      "heard": [],
+      "cancelPosts": 1,
+      "bookOpen": false
+    },
+    {
+      "screen": "reschedule-confirm",
+      "step": "focus Reschedule on a booked session",
+      "heard": [
+        "Reschedule button Reschedule article",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "reschedule-confirm",
+      "step": "VO-Space on Reschedule: the dialog opens",
+      "heard": [
+        "Keep session button Reschedule this session? This releases your current time first, and someone else can book it before you pick a new one. web alert dialog",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "reschedule-confirm",
+      "step": "keyboard focus is inside the dialog",
+      "heard": [
+        "true"
+      ]
+    },
+    {
+      "screen": "reschedule-confirm",
+      "step": "VO-Right through the dialog",
+      "heard": [
+        "Reschedule button",
+        "end of Reschedule this session? This releases your current time first, and someone else can book it before you pick a new one. web alert dialog",
+        ""
+      ]
+    },
+    {
+      "screen": "reschedule-confirm",
+      "step": "Escape: what is announced",
+      "heard": [
+        "Reschedule button Reschedule article",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ],
+      "dialogOpen": false,
+      "focusAfter": "cs-reschedule",
+      "cancelPosts": 0
+    },
+    {
+      "screen": "reschedule-confirm",
+      "step": "focus Reschedule again",
+      "heard": [
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "reschedule-confirm",
+      "step": "VO-Space on Reschedule again",
+      "heard": [
+        "Keep session button Reschedule this session? This releases your current time first, and someone else can book it before you pick a new one. web alert dialog"
+      ]
+    },
+    {
+      "screen": "reschedule-confirm",
+      "step": "focus \"Reschedule\" in the dialog",
+      "heard": [
+        "Reschedule button",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "reschedule-confirm",
+      "step": "VO-Space on \"Reschedule\": what is announced",
+      "heard": [
+        "heading level 2 Choose your time main",
+        "You are currently on a heading level 2."
+      ]
+    },
+    {
+      "screen": "reschedule-confirm",
+      "step": "after confirming",
+      "heard": [],
+      "cancelPosts": 1,
+      "bookOpen": true
+    },
+    {
+      "screen": "load-error-booked",
+      "step": "VO-Right through the failed-load screen",
+      "heard": [
+        "heading level 1 We could not reach the server just now.",
+        "There was a problem reaching Certainty Sessions. Check your connection and try again.",
+        "link Try again"
+      ]
+    },
+    {
+      "screen": "load-error-booked",
+      "step": "VO-Space on Try again with the server back",
+      "heard": [
+        "Loaded. Sunday, November 1, 1:00 PM – 3:00 PM ET, By phone · Launch email sequence. article Loaded. Sunday, November 1, 1:00 PM – 3:00 PM ET, By phone · Launch email sequence. group"
+      ]
+    },
+    {
+      "screen": "load-error-booked",
+      "step": "after recovery",
+      "heard": [],
+      "activatedBy": "VoiceOver",
+      "focusAfter": "cs-next-when",
+      "status": "Certainty Sessions loaded."
+    },
+    {
+      "screen": "load-error-booked",
+      "step": "VO-Right after recovery",
+      "heard": [
+        "Sunday, November 1",
+        "1:00 PM – 3:00 PM ET",
+        "By phone · Launch email sequence",
+        "end of Loaded. Sunday, November 1, 1:00 PM – 3:00 PM ET, By phone · Launch email sequence. group"
+      ]
+    },
+    {
+      "screen": "load-error-first",
+      "step": "VO-Right through the failed-load screen",
+      "heard": [
+        "heading level 1 We could not reach the server just now.",
+        "There was a problem reaching Certainty Sessions. Check your connection and try again.",
+        "link Try again"
+      ]
+    },
+    {
+      "screen": "load-error-first",
+      "step": "VO-Space on Try again with the server back",
+      "heard": [
+        "Certainty Sessions loaded. application status main",
+        "You are currently on a selectable text."
+      ]
+    },
+    {
+      "screen": "load-error-first",
+      "step": "after recovery",
+      "heard": [],
+      "activatedBy": "VoiceOver",
+      "focusAfter": "cs-session-msg",
+      "status": "Certainty Sessions loaded."
+    },
+    {
+      "screen": "load-error-first",
+      "step": "VO-Right after recovery",
+      "heard": [
+        "Start with one thing you are stuck on. article",
+        "YOUR FIRST SESSION",
+        "heading level 2 Start with one thing you are stuck on.",
+        "This is two hours, one-on-one with David, on Zoom or by phone. Bring the problem that keeps stalling you, a page, a launch, a decision, and you work on it together until it moves. Nothing to prepare beyond that."
+      ]
+    }
+  ]
+}

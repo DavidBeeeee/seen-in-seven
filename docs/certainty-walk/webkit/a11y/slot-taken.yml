@@ -48,9 +48,8 @@
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Fri 30 Oct"
-  - button "Sat 31 Oct" [pressed]
-  - button "Sun 1 Nov"
+  - button "Sat 31 Oct"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"

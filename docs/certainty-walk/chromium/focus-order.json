@@ -107,15 +107,7 @@
   "tag": "button",
   "id": null,
   "cls": "cs-day",
-  "label": "Fri30Oct",
-  "visible": true,
-  "inBook": true
- },
- {
-  "tag": "button",
-  "id": null,
-  "cls": "cs-day",
-  "label": "Sun1Nov",
+  "label": "Sat31Oct",
   "visible": true,
   "inBook": true
  },

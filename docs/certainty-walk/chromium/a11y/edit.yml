@@ -17,9 +17,9 @@
   - text: Membership active
   - article:
     - paragraph: Your first session
-    - group "Booked. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Screen reader booking.":
+    - group "Booked. Sunday, November 1, 9:00 AM – 11:00 AM ET, By phone · Screen reader booking.":
       - img
-      - text: Saturday, October 31 10:00 AM – 12:00 PM ET
+      - text: Sunday, November 1 9:00 AM – 11:00 AM ET
       - img
       - text: By phone · Screen reader booking
     - img
@@ -63,9 +63,8 @@
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Fri 30 Oct"
-  - button "Sat 31 Oct" [pressed]
-  - button "Sun 1 Nov"
+  - button "Sat 31 Oct"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"
@@ -78,7 +77,7 @@
   - button "Wed 11 Nov"
   - button "Thu 12 Nov"
   - text: 2 Pick a time (2 hours, with Eastern time alongside)
-  - button "10:00 AM ET, selected" [pressed]: 10:00 AM ET
+  - button "10:00 AM ET"
   - button "11:00 AM ET"
   - button "12:00 PM ET"
   - button "1:00 PM ET"

@@ -1658,8 +1658,16 @@
               // through the live region and move focus to the retry outcome.
               Promise.resolve(refresh()).then(function () {
                 if (el('eee-access-gate').hidden) {
-                  showSessionMsg('Certainty Sessions loaded.', 'ok', true);
-                  focusPrimary();
+                  // VoiceOver (2026-10-30) read only the date when focus went
+                  // to the session card, and never the polite status. Name the
+                  // card with the outcome, as Booked and Saved do; with no
+                  // session, the status message itself takes focus.
+                  if (state && state.upcoming) {
+                    showSessionMsg('Certainty Sessions loaded.', 'ok', true);
+                    focusPrimary('Loaded.');
+                  } else {
+                    showSessionMsg('Certainty Sessions loaded.', 'ok');
+                  }
                 }
               });
             };

@@ -233,14 +233,78 @@ async function typeInto(page, selector, text, step) {
   log(step, await listen(1200));
 }
 
+// WBR-458, 2026-10-30: the in-page confirm dialogs that replaced the native
+// confirm(), heard by VoiceOver. Open, read inside, Escape keeps the session,
+// and the confirm choice still does what it says.
+async function runDialogs(browser) {
+  for (const which of [
+    { name: 'cancel-confirm', opener: '#cs-cancel', label: 'Cancel', confirm: 'Cancel session' },
+    { name: 'reschedule-confirm', opener: '#cs-reschedule', label: 'Reschedule', confirm: 'Reschedule' }
+  ]) {
+    screen = which.name;
+    const { context, page, world } = await open(browser, 'booked');
+    await focus(page, which.opener, 'focus ' + which.label + ' on a booked session');
+    await activate('VO-Space on ' + which.label + ': the dialog opens', 3000);
+    const inDialog = await page.evaluate(() => Boolean(document.activeElement && document.activeElement.closest('#cs-confirm-dialog')));
+    log('keyboard focus is inside the dialog', [String(inDialog)]);
+    await readOn('VO-Right through the dialog', 8);
+    await page.focus('#cs-dialog-cancel');
+    await listen(900);
+    await page.keyboard.press('Escape');
+    log('Escape: what is announced', await listen(2400), {
+      dialogOpen: await page.evaluate(() => !document.getElementById('cs-confirm-dialog-backdrop').classList.contains('cs-hide')),
+      focusAfter: await page.evaluate(() => document.activeElement && document.activeElement.id),
+      cancelPosts: world.posts.filter(b => b.action === 'cancel').length
+    });
+    await focus(page, which.opener, 'focus ' + which.label + ' again');
+    await activate('VO-Space on ' + which.label + ' again', 2400);
+    await focus(page, '#cs-dialog-confirm', 'focus "' + which.confirm + '" in the dialog');
+    await activate('VO-Space on "' + which.confirm + '": what is announced', 3200);
+    log('after confirming', [], { cancelPosts: world.posts.filter(b => b.action === 'cancel').length, bookOpen: await page.evaluate(() => document.getElementById('cs-book').classList.contains('open')) });
+    await context.close();
+  }
+}
+
+// Failed load, then Try again, with VoiceOver doing the activating where it
+// can. The 10-29 pass found VoiceOver parked on the gate paragraph; this
+// records whether VO-Space reaches the link and what it hears after recovery.
+async function runLoadRecovery(browser) {
+  for (const stateName of ['booked', 'first']) {
+  screen = 'load-error-' + stateName;
+  const ctx = await browser.newContext({ viewport: { width: 1100, height: 860 }, colorScheme: 'light', reducedMotion: 'reduce' });
+  const p = await ctx.newPage();
+  const w = makeWorld(stateName); w.mode.state = 'drop';
+  await wire(p, w);
+  await p.goto(ORIGIN + '/certainty');
+  await p.waitForFunction(() => /could not reach/.test(document.getElementById('eee-gate-title').textContent), null, { timeout: 8000 }).catch(() => null);
+  await p.bringToFront();
+  bringForward();
+  await sleep(800);
+  await enterPage(p, '#eee-gate-button');
+  vo('tell vo cursor to move to first item'); await sleep(600);
+  await readOn('VO-Right through the failed-load screen', 8, /Try again/);
+  w.mode.state = null;
+  await activate('VO-Space on Try again with the server back', 3600);
+  let by = 'VoiceOver';
+  if (!(await p.evaluate(() => document.getElementById('eee-access-gate').hidden))) {
+    by = 'harness click';
+    await p.click('#eee-gate-button');
+    log('Try again (clicked by the harness, VO-Space did not reach it)', await listen(3600));
+  }
+  log('after recovery', [], { activatedBy: by, focusAfter: await p.evaluate(() => document.activeElement && (document.activeElement.id || document.activeElement.className)), status: await p.evaluate(() => document.getElementById('cs-session-msg').textContent) });
+  await readOn('VO-Right after recovery', 4);
+  await ctx.close();
+  }
+}
+
 async function run() {
   preflight();
+  if (process.argv.includes('--dialogs')) return runOnly(['dialogs']);
   const browser = await webkit.launch({ headless: false });
   try {
     // First visit, read top to bottom, then book.
     screen = 'first-visit';
     let { context, page, world } = await open(browser, 'first');
-    page.on('dialog', d => d.accept());
     await focus(page, '#cs-open-book', 'focus lands on the primary action');
     vo('tell vo cursor to move to first item');
     log('VO to the first item', await listen(900));
@@ -268,7 +332,9 @@ async function run() {
     await activate('VO-Space on save: what is announced after the edit', 3200);
     screen = 'cancel';
     await focus(page, '#cs-cancel', 'focus Cancel');
-    await activate('VO-Space on Cancel (the confirm dialog is accepted by the harness)', 3200);
+    await activate('VO-Space on Cancel: the in-page confirm dialog opens');
+    await focus(page, '#cs-dialog-confirm', 'focus "Cancel session" in the dialog');
+    await activate('VO-Space on "Cancel session": what is announced after cancelling', 3200);
     await context.close();
 
     // Errors: network drop mid-booking, then the slot taken.
@@ -288,41 +354,36 @@ async function run() {
 
     screen = 'cancel-error';
     ({ context, page, world } = await open(browser, 'booked'));
-    page.on('dialog', d => d.accept());
     world.mode.cancel = { status: 500, body: { error: 'Could not cancel that session.' } };
     await focus(page, '#cs-cancel', 'focus Cancel on a booked session');
-    await activate('VO-Space on Cancel: the server refuses', 3200);
+    await activate('VO-Space on Cancel: the dialog opens');
+    await focus(page, '#cs-dialog-confirm', 'focus "Cancel session"');
+    await activate('VO-Space on "Cancel session": the server refuses', 3200);
     await context.close();
 
-    screen = 'load-error';
-    {
-      const ctx = await browser.newContext({ viewport: { width: 1100, height: 860 }, colorScheme: 'light' });
-      const p = await ctx.newPage();
-      const w = makeWorld('first'); w.mode.state = 'drop';
-      await wire(p, w);
-      await p.goto(ORIGIN + '/certainty');
-      await p.waitForFunction(() => /could not reach/.test(document.getElementById('eee-gate-title').textContent), null, { timeout: 8000 }).catch(() => null);
-      await p.bringToFront();
-      bringForward();
-      await sleep(800);
-      await enterPage(p, '#eee-gate-button');
-      await focus(p, '#eee-gate-button', 'focus the retry button on a failed load');
-      vo('tell vo cursor to move left'); await sleep(600);
-      log('VO-Left from the retry button', [lastPhrase()]);
-      w.mode.state = null;
-      // VoiceOver stays on the paragraph here rather than following focus to
-      // the link, so VO-Space would act on text. The harness clicks the link
-      // and records what VoiceOver says once the page recovers.
-      await p.click('#eee-gate-button');
-      log('Try again (clicked by the harness) with the server back', await listen(3200));
-      await ctx.close();
-    }
+    // The in-page confirm dialogs (WBR-458).
+    await runDialogs(browser);
+
+    await runLoadRecovery(browser);
   } finally {
     await browser.close();
     vo('output "Certainty screen reader pass finished"');
   }
   writeFileSync(outFile, JSON.stringify({ at: new Date().toISOString(), reader: 'VoiceOver (macOS ' + osVersion() + ')', browser: 'WebKit ' + browser.version(), refused, transcript }, null, 2) + '\n');
   console.log('wrote ' + outFile + (refused.length ? '; refused ' + refused.length + ' requests' : ''));
+}
+async function runOnly() {
+  const browser = await webkit.launch({ headless: false });
+  try {
+    await runDialogs(browser);
+    await runLoadRecovery(browser);
+  } finally {
+    await browser.close();
+    vo('output "Certainty screen reader pass finished"');
+  }
+  const file = outFile.replace(/\.json$/, '-dialogs.json');
+  writeFileSync(file, JSON.stringify({ at: new Date().toISOString(), reader: 'VoiceOver (macOS ' + osVersion() + ')', browser: 'WebKit ' + browser.version(), refused, transcript }, null, 2) + '\n');
+  console.log('wrote ' + file + (refused.length ? '; refused ' + refused.length + ' requests' : ''));
 }
 function osVersion() { return (spawnSync('sw_vers', ['-productVersion'], { encoding: 'utf8' }).stdout || '').trim(); }
 

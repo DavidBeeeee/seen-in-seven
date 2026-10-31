@@ -1,5 +1,5 @@
 {
- "at": "2026-10-30T14:27:09.189Z",
+ "at": "2026-10-31T02:55:18.252Z",
  "browser": "chromium",
  "checks": [
   {
@@ -12,7 +12,7 @@
    "browser": "chromium",
    "name": "book: the next session shows with its topic",
    "pass": true,
-   "evidence": "Your first sessionSaturday, October 3110:00 AM – 12:00 PM ETOn Zoom · Fix my funnelJoin on"
+   "evidence": "Your first sessionSunday, November 19:00 AM – 11:00 AM ETOn Zoom · Fix my funnelJoin on Zo"
   },
   {
    "browser": "chromium",
@@ -66,7 +66,7 @@
    "browser": "chromium",
    "name": "Try again after a failed load announces the loaded state and moves focus",
    "pass": true,
-   "evidence": "{\"text\":\"Certainty Sessions loaded.\",\"role\":\"status\",\"live\":\"polite\",\"focusedTag\":\"button\",\"focusedId\":\"cs-open-book\"}"
+   "evidence": "{\"text\":\"Certainty Sessions loaded.\",\"role\":\"status\",\"live\":\"polite\",\"focusedTag\":\"div\",\"focusedId\":\"cs-session-msg\"}"
   },
   {
    "browser": "chromium",
@@ -126,25 +126,25 @@
    "browser": "chromium",
    "name": "keyboard-only booking dark 1280px",
    "pass": true,
-   "evidence": "booked 2026-10-31 10:00 phone via Tab, 43 stops, 0 without visible focus"
+   "evidence": "booked 2026-11-01 10:00 phone via Tab, 42 stops, 0 without visible focus"
   },
   {
    "browser": "chromium",
    "name": "keyboard-only booking dark 375px",
    "pass": true,
-   "evidence": "booked 2026-10-31 10:00 phone via Tab, 36 stops, 0 without visible focus"
+   "evidence": "booked 2026-11-01 10:00 phone via Tab, 35 stops, 0 without visible focus"
   },
   {
    "browser": "chromium",
    "name": "keyboard-only booking light 1280px",
    "pass": true,
-   "evidence": "booked 2026-10-31 10:00 phone via Tab, 43 stops, 0 without visible focus"
+   "evidence": "booked 2026-11-01 10:00 phone via Tab, 42 stops, 0 without visible focus"
   },
   {
    "browser": "chromium",
    "name": "keyboard-only booking light 375px",
    "pass": true,
-   "evidence": "booked 2026-10-31 10:00 phone via Tab, 36 stops, 0 without visible focus"
+   "evidence": "booked 2026-11-01 10:00 phone via Tab, 35 stops, 0 without visible focus"
   },
   {
    "browser": "chromium",
@@ -174,25 +174,25 @@
    "browser": "chromium",
    "name": "screen-reader picker: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 31 controls, 9 headings"
+   "evidence": "0 faults, 30 controls, 9 headings"
   },
   {
    "browser": "chromium",
    "name": "screen-reader mode-choice: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 44 controls, 9 headings"
+   "evidence": "0 faults, 43 controls, 9 headings"
   },
   {
    "browser": "chromium",
    "name": "selected day and time are announced as selected",
    "pass": true,
-   "evidence": "[{\"selector\":\".cs-day.sel\",\"pressed\":\"true\",\"name\":\"Sat31Oct✓\"},{\"selector\":\".cs-time.sel\",\"pressed\":\"true\",\"name\":\"10:00 AM ET, selected\"}]"
+   "evidence": "[{\"selector\":\".cs-day.sel\",\"pressed\":\"true\",\"name\":\"Sun1Nov✓\"},{\"selector\":\".cs-time.sel\",\"pressed\":\"true\",\"name\":\"10:00 AM ET, selected\"}]"
   },
   {
    "browser": "chromium",
    "name": "screen-reader confirm: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 45 controls, 9 headings"
+   "evidence": "0 faults, 44 controls, 9 headings"
   },
   {
    "browser": "chromium",
@@ -204,13 +204,13 @@
    "browser": "chromium",
    "name": "booked confirmation is announced",
    "pass": true,
-   "evidence": "{\"focused\":\"Saturday, October 3110:00 AM – 12:00 PM ETBy phone · Screen reader booking\",\"live\":\"\"}"
+   "evidence": "{\"focused\":\"Sunday, November 19:00 AM – 11:00 AM ETBy phone · Screen reader booking\",\"live\":\"\"}"
   },
   {
    "browser": "chromium",
    "name": "screen-reader edit: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 48 controls, 8 headings"
+   "evidence": "0 faults, 47 controls, 8 headings"
   },
   {
    "browser": "chromium",
@@ -246,7 +246,7 @@
    "browser": "chromium",
    "name": "screen-reader network-error: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 44 controls, 9 headings"
+   "evidence": "0 faults, 43 controls, 9 headings"
   },
   {
    "browser": "chromium",
@@ -258,7 +258,7 @@
    "browser": "chromium",
    "name": "screen-reader slot-taken: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 44 controls, 9 headings"
+   "evidence": "0 faults, 43 controls, 9 headings"
   },
   {
    "browser": "chromium",
@@ -294,7 +294,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/012-first-375-dark-zoom200.jpg"
+   "shot": null
   },
   {
    "browser": "chromium",
@@ -304,7 +304,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/013-first-375-dark-font24.jpg"
+   "shot": null
   },
   {
    "browser": "chromium",
@@ -414,7 +414,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/014-booked-375-dark-zoom200.jpg"
+   "shot": null
   },
   {
    "browser": "chromium",
@@ -424,7 +424,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/015-booked-375-dark-font24.jpg"
+   "shot": null
   },
   {
    "browser": "chromium",
@@ -534,7 +534,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/016-returning-375-dark-zoom200.jpg"
+   "shot": null
   },
   {
    "browser": "chromium",
@@ -544,7 +544,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/017-returning-375-dark-font24.jpg"
+   "shot": null
   },
   {
    "browser": "chromium",
@@ -654,7 +654,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/018-lapsed-375-dark-zoom200.jpg"
+   "shot": null
   },
   {
    "browser": "chromium",
@@ -664,7 +664,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/019-lapsed-375-dark-font24.jpg"
+   "shot": null
   },
   {
    "browser": "chromium",
@@ -774,7 +774,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/020-ended-375-dark-zoom200.jpg"
+   "shot": null
   },
   {
    "browser": "chromium",
@@ -784,7 +784,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/021-ended-375-dark-font24.jpg"
+   "shot": null
   },
   {
    "browser": "chromium",
@@ -894,7 +894,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/022-paged-375-dark-zoom200.jpg"
+   "shot": null
   },
   {
    "browser": "chromium",
@@ -904,7 +904,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/023-paged-375-dark-font24.jpg"
+   "shot": null
   },
   {
    "browser": "chromium",
@@ -1004,18 +1004,18 @@
    "theme": "dark",
    "width": 1280,
    "pass": true,
-   "stops": 43,
+   "stops": 42,
    "invisibleFocusStops": 0,
    "booking": {
     "action": "book",
-    "date": "2026-10-31",
+    "date": "2026-11-01",
     "hour": 10,
     "mode": "phone",
     "phone": "(555) 010-2030",
     "topic": "Keyboard walk topic"
    },
    "focusOrder": "focus-order.json",
-   "shot": "docs/certainty-walk/chromium/shots/008-keyboard-booked-dark-1280.jpg"
+   "shot": null
   },
   {
    "browser": "chromium",
@@ -1023,18 +1023,18 @@
    "theme": "dark",
    "width": 375,
    "pass": true,
-   "stops": 36,
+   "stops": 35,
    "invisibleFocusStops": 0,
    "booking": {
     "action": "book",
-    "date": "2026-10-31",
+    "date": "2026-11-01",
     "hour": 10,
     "mode": "phone",
     "phone": "(555) 010-2030",
     "topic": "Keyboard walk topic"
    },
    "focusOrder": null,
-   "shot": "docs/certainty-walk/chromium/shots/009-keyboard-booked-dark-375.jpg"
+   "shot": null
   },
   {
    "browser": "chromium",
@@ -1042,18 +1042,18 @@
    "theme": "light",
    "width": 1280,
    "pass": true,
-   "stops": 43,
+   "stops": 42,
    "invisibleFocusStops": 0,
    "booking": {
     "action": "book",
-    "date": "2026-10-31",
+    "date": "2026-11-01",
     "hour": 10,
     "mode": "phone",
     "phone": "(555) 010-2030",
     "topic": "Keyboard walk topic"
    },
    "focusOrder": null,
-   "shot": "docs/certainty-walk/chromium/shots/010-keyboard-booked-light-1280.jpg"
+   "shot": null
   },
   {
    "browser": "chromium",
@@ -1061,18 +1061,18 @@
    "theme": "light",
    "width": 375,
    "pass": true,
-   "stops": 36,
+   "stops": 35,
    "invisibleFocusStops": 0,
    "booking": {
     "action": "book",
-    "date": "2026-10-31",
+    "date": "2026-11-01",
     "hour": 10,
     "mode": "phone",
     "phone": "(555) 010-2030",
     "topic": "Keyboard walk topic"
    },
    "focusOrder": null,
-   "shot": "docs/certainty-walk/chromium/shots/011-keyboard-booked-light-375.jpg"
+   "shot": null
   }
  ],
  "accessibilityResults": [
@@ -1080,7 +1080,7 @@
    "browser": "chromium",
    "screen": "first-visit",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/024-a11y-first-visit.jpg",
+   "shot": null,
    "transcript": "a11y/first-visit.yml",
    "headings": [
     {
@@ -1122,7 +1122,7 @@
    "browser": "chromium",
    "screen": "picker",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/025-a11y-picker.jpg",
+   "shot": null,
    "transcript": "a11y/picker.yml",
    "headings": [
     {
@@ -1162,14 +1162,60 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 31
+   "controls": 30
   },
   {
    "browser": "chromium",
    "screen": "mode-choice",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/026-a11y-mode-choice.jpg",
+   "shot": null,
    "transcript": "a11y/mode-choice.yml",
+   "headings": [
+    {
+     "level": 1,
+     "text": "One private working session with David, every week."
+    },
+    {
+     "level": 2,
+     "text": "Start with one thing you are stuck on."
+    },
+    {
+     "level": 2,
+     "text": "Choose your time"
+    },
+    {
+     "level": 2,
+     "text": "Your settings"
+    },
+    {
+     "level": 2,
+     "text": "What happens if you miss a week, drift off, or leave."
+    },
+    {
+     "level": 3,
+     "text": "You miss a week"
+    },
+    {
+     "level": 3,
+     "text": "You stop booking for a while"
+    },
+    {
+     "level": 3,
+     "text": "You need a different time"
+    },
+    {
+     "level": 3,
+     "text": "Your membership ends"
+    }
+   ],
+   "controls": 43
+  },
+  {
+   "browser": "chromium",
+   "screen": "confirm",
+   "pass": true,
+   "shot": null,
+   "transcript": "a11y/confirm.yml",
    "headings": [
     {
      "level": 1,
@@ -1212,55 +1258,9 @@
   },
   {
    "browser": "chromium",
-   "screen": "confirm",
-   "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/027-a11y-confirm.jpg",
-   "transcript": "a11y/confirm.yml",
-   "headings": [
-    {
-     "level": 1,
-     "text": "One private working session with David, every week."
-    },
-    {
-     "level": 2,
-     "text": "Start with one thing you are stuck on."
-    },
-    {
-     "level": 2,
-     "text": "Choose your time"
-    },
-    {
-     "level": 2,
-     "text": "Your settings"
-    },
-    {
-     "level": 2,
-     "text": "What happens if you miss a week, drift off, or leave."
-    },
-    {
-     "level": 3,
-     "text": "You miss a week"
-    },
-    {
-     "level": 3,
-     "text": "You stop booking for a while"
-    },
-    {
-     "level": 3,
-     "text": "You need a different time"
-    },
-    {
-     "level": 3,
-     "text": "Your membership ends"
-    }
-   ],
-   "controls": 45
-  },
-  {
-   "browser": "chromium",
    "screen": "booked",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/028-a11y-booked.jpg",
+   "shot": null,
    "transcript": "a11y/booked.yml",
    "headings": [
     {
@@ -1298,7 +1298,7 @@
    "browser": "chromium",
    "screen": "edit",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/029-a11y-edit.jpg",
+   "shot": null,
    "transcript": "a11y/edit.yml",
    "headings": [
     {
@@ -1334,13 +1334,13 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 48
+   "controls": 47
   },
   {
    "browser": "chromium",
    "screen": "cancel",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/030-a11y-cancel.jpg",
+   "shot": null,
    "transcript": "a11y/cancel.yml",
    "headings": [
     {
@@ -1382,7 +1382,7 @@
    "browser": "chromium",
    "screen": "lapsed",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/031-a11y-lapsed.jpg",
+   "shot": null,
    "transcript": "a11y/lapsed.yml",
    "headings": [
     {
@@ -1432,7 +1432,7 @@
    "browser": "chromium",
    "screen": "ended",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/032-a11y-ended.jpg",
+   "shot": null,
    "transcript": "a11y/ended.yml",
    "headings": [
     {
@@ -1446,7 +1446,7 @@
    "browser": "chromium",
    "screen": "signed-out-gate",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/033-a11y-signed-out-gate.jpg",
+   "shot": null,
    "transcript": "a11y/signed-out-gate.yml",
    "headings": [
     {
@@ -1460,7 +1460,7 @@
    "browser": "chromium",
    "screen": "server-error-gate",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/034-a11y-server-error-gate.jpg",
+   "shot": null,
    "transcript": "a11y/server-error-gate.yml",
    "headings": [
     {
@@ -1474,7 +1474,7 @@
    "browser": "chromium",
    "screen": "network-error",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/035-a11y-network-error.jpg",
+   "shot": null,
    "transcript": "a11y/network-error.yml",
    "headings": [
     {
@@ -1514,13 +1514,13 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 44
+   "controls": 43
   },
   {
    "browser": "chromium",
    "screen": "slot-taken",
    "pass": true,
-   "shot": "docs/certainty-walk/chromium/shots/036-a11y-slot-taken.jpg",
+   "shot": null,
    "transcript": "a11y/slot-taken.yml",
    "headings": [
     {
@@ -1560,7 +1560,7 @@
      "text": "Your membership ends"
     }
    ],
-   "controls": 44
+   "controls": 43
   }
  ]
 }

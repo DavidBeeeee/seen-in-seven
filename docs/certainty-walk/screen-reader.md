@@ -1,185 +1,6 @@
 # Certainty screen-reader transcripts
 
-Chromium uses the CDP Accessibility tree and an ARIA snapshot; WebKit uses its rendered ARIA snapshot. Neither is a substitute for a real VoiceOver session, so the real VoiceOver pass comes first.
-
-## Real VoiceOver pass (2026-10-29, evening Eastern)
-
-Reader: VoiceOver (macOS 26.2). Browser: WebKit 27.2, a visible window driven by `scripts/sim/certainty-voiceover.mjs`. VoiceOver was driven over AppleScript (VO-Right to read, VO-Space to activate, keyboard focus moved by the harness), and every line below is VoiceOver's own `last phrase`, sampled every 200 ms. Same stubbed world as the walk: 0 requests refused, none reached David's calendar or inbox. Raw record: `docs/certainty-walk/voiceover.json`.
-
-### What VoiceOver tripped on, and what changed
-
-From the run before the fixes, the same night:
-
-1. **A refused cancel was silent.** VO-Space on Cancel, server refuses: VoiceOver said only "Certainty Sessions | The Momentum Hub web content. You are currently in a window." The Cancel button is re-rendered away and the role=alert text was lost behind the focus drop. Fixed: the outcome message takes focus. Now: "Could not cancel that session. Your session is still booked. Try again in a moment, or email David at email@davidbee.me. alert".
-2. **A booking never said it was booked.** After Confirm VoiceOver said "Saturday, October 31 and 2 more items group article": a date, not an outcome. Fixed: the focused session card is named with the outcome. Now: "Booked. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Fix my funnel." Saving an edit now says "Saved. …".
-3. **A cancel never said it was cancelled.** Focus went to the first-session heading. Now: "Session cancelled. That time is open again."
-4. **The first fix read the date run together** ("October 3110:00 AM") because the label used raw textContent. Fixed by joining day, time and mode with commas; the rerun confirms it.
-5. **Load-error recovery** hid the gate under focus and put focus nowhere. Focus now returns to the session card once the page loads. Not confirmed by ear: in this harness VoiceOver stayed on the gate paragraph instead of following focus to the retry link, and said nothing new after recovery.
-
-### Transcript after the fixes
-
-#### first-visit
-
-- *focus lands on the primary action*
-  - “Book my first session button Start with one thing you are stuck on. article”
-
-- *VO to the first item*
-  - “YOUR FIRST SESSION”
-  - “You are currently on a selectable text.”
-
-- *VO-Right through the first-visit screen*
-  - “heading level 2 Start with one thing you are stuck on.”
-  - “This is two hours, one-on-one with David, on Zoom or by phone. Bring the problem that keeps stalling you, a page, a launch, a decision, and you work on it together until it moves. Nothing to prepare beyond that.”
-  - “One session is included every week. Pick any open time below.”
-  - “Before. Pick a time and write one line about what is stuck. That is all the preparation there is.”
-  - “During. Two hours with David. You work the thing together until it moves.”
-  - “After. You leave with one next step, and this page asks what you will put into practice before next week.”
-  - “Book my first session button”
-
-- *focus the primary action*
-  - “Book my first session button”
-  - “You are currently on a button. To click this button, press Control-Option-Space.”
-
-#### book
-
-- *VO-Space on "Book my first session"*
-  - “heading level 2 Choose your time main”
-  - “You are currently on a heading level 2.”
-
-- *VO-Right through the picker*
-  - “Close button”
-  - “One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday.”
-  - “You are currently on a selectable text.”
-  - “Pick a day”
-  - “FRI 30 Oct toggle button”
-  - “SAT 31 Oct toggle button”
-  - “SUN 1 Nov toggle button”
-  - “MON 2 Nov toggle button”
-  - “TUE 3 Nov toggle button”
-  - “WED 4 Nov toggle button”
-  - “THU 5 Nov toggle button”
-  - “FRI 6 Nov toggle button”
-  - “SAT 7 Nov toggle button”
-  - “SUN 8 Nov toggle button”
-
-- *focus the second day*
-  - “SAT 31 Oct toggle button”
-  - “You are currently on a toggle button. To select or deselect this checkbox, press Control-Option-Space.”
-
-- *VO-Space on that day*
-  - “SAT 31 Oct selected toggle button”
-  - “You are currently on a toggle button. To select or deselect this checkbox, press Control-Option-Space.”
-
-- *focus the first open time*
-  - “10:00 AM ET toggle button”
-  - “You are currently on a toggle button. To select or deselect this checkbox, press Control-Option-Space.”
-
-- *VO-Space on that time*
-  - “10:00 AM ET, selected selected toggle button”
-  - “You are currently on a toggle button. To select or deselect this checkbox, press Control-Option-Space.”
-
-- *type a topic*
-  - “l”
-  - “funnel”
-
-- *focus Confirm*
-  - “Confirm session button”
-  - “You are currently on a button. To click this button, press Control-Option-Space.”
-
-- *VO-Space on Confirm: what is announced after booking*
-  - “Booked. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Fix my funnel. article Booked. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Fix my funnel. group”
-
-#### booked
-
-- *focus Edit session on the booked card*
-  - “Edit session button”
-  - “You are currently on a button. To click this button, press Control-Option-Space.”
-
-- *VO-Right after the booked card actions*
-  - “Reschedule button”
-  - “Add to my calendar button”
-  - “Cancel button”
-  - “Your time is held for you. David has not confirmed it on his calendar yet, and he will confirm with you before the session.”
-  - “Before. Pick a time and write one line about what is stuck. That is all the preparation there is.”
-  - “During. Two hours with David. You work the thing together until it moves.”
-  - “After. You leave with one next step, and this page asks what you will put into practice before next week.”
-  - “end of article”
-
-#### edit
-
-- *focus Edit session*
-  - “Edit session button Edit session article”
-  - “You are currently on a button. To click this button, press Control-Option-Space.”
-
-- *VO-Space on Edit session*
-  - “heading level 2 Edit your session main”
-  - “You are currently on a heading level 2.”
-
-- *retype the topic*
-  - “o”
-  - “two”
-
-- *focus the save button*
-  - “Save changes button”
-  - “You are currently on a button. To click this button, press Control-Option-Space.”
-
-- *VO-Space on save: what is announced after the edit*
-  - “Saved. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Fix my funnel, part two. article Saved. Saturday, October 31, 10:00 AM – 12:00 PM ET, By phone · Fix my funnel, part two. group”
-
-#### cancel
-
-- *focus Cancel*
-  - “Cancel button”
-  - “You are currently on a button. To click this button, press Control-Option-Space.”
-
-- *VO-Space on Cancel (the confirm dialog is accepted by the harness)*
-  - “Session cancelled. That time is open again. application status main”
-  - “You are currently in a window.”
-
-#### errors
-
-- *focus Confirm with the network about to drop*
-  - “Confirm session button”
-  - “You are currently on a button. To click this button, press Control-Option-Space.”
-
-- *VO-Space on Confirm: network drop*
-  - “Something interrupted the booking. Try again.”
-
-- *focus Confirm again*
-  - “Confirm session button”
-
-- *VO-Space on Confirm: someone took the time*
-  - “Someone just took that time. Pick another open slot.”
-
-#### cancel-error
-
-- *focus Cancel on a booked session*
-  - “Cancel button Cancel article”
-  - “You are currently on a button. To click this button, press Control-Option-Space.”
-
-- *VO-Space on Cancel: the server refuses*
-  - “Could not cancel that session. Your session is still booked. Try again in a moment, or email David at email@davidbee.me. alert main”
-
-#### load-error
-
-- *focus the retry button on a failed load*
-  - “You are currently on a link. To click this link, press Control-Option-Space.”
-
-- *VO-Left from the retry button*
-  - “There was a problem reaching Certainty Sessions. Check your connection and try again.”
-
-- *Try again (clicked by the harness) with the server back*
-  - “There was a problem reaching Certainty Sessions. Check your connection and try again.”
-  - “You are currently on a selectable text.”
-
-### Limits
-
-- The native confirm() dialogs for Cancel and Reschedule are accepted by the harness, so what VoiceOver says on those dialogs was not heard.
-- Typed characters were echoed only in part (“l”, “funnel”) because the harness types faster than VoiceOver speaks.
-- One VoiceOver build, one WebKit build, desktop width, light theme. NVDA and iOS VoiceOver were not run.
-
----
-
+Chromium uses the CDP Accessibility tree and an ARIA snapshot; WebKit uses its rendered ARIA snapshot. Neither is a substitute for a real VoiceOver session.
 
 ---
 
@@ -191,7 +12,7 @@ Browser: `chromium`. Captured from the rendered accessibility tree; every networ
 
 ## first-visit
 
-Screenshot: `docs/certainty-walk/chromium/shots/024-a11y-first-visit.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/first-visit.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -271,71 +92,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## picker
 
-Screenshot: `docs/certainty-walk/chromium/shots/025-a11y-picker.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/picker.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Choose your time” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -391,11 +155,6 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Mon 26 Oct"
-  - button "Tue 27 Oct"
-  - button "Wed 28 Oct"
-  - button "Thu 29 Oct"
-  - button "Fri 30 Oct"
   - button "Sat 31 Oct"
   - button "Sun 1 Nov"
   - button "Mon 2 Nov"
@@ -404,6 +163,11 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Thu 5 Nov"
   - button "Fri 6 Nov"
   - button "Sat 7 Nov"
+  - button "Sun 8 Nov"
+  - button "Mon 9 Nov"
+  - button "Tue 10 Nov"
+  - button "Wed 11 Nov"
+  - button "Thu 12 Nov"
   - text: 2 Pick a time (2 hours, with Eastern time alongside)
   - paragraph: Pick a day to see open times.
   - text: 3 How do you want to meet?
@@ -453,71 +217,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## mode-choice
 
-Screenshot: `docs/certainty-walk/chromium/shots/026-a11y-mode-choice.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/mode-choice.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Choose your time” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -573,19 +280,19 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Mon 26 Oct"
-  - button "Tue 27 Oct" [pressed]
-  - button "Wed 28 Oct"
-  - button "Thu 29 Oct"
-  - button "Fri 30 Oct"
   - button "Sat 31 Oct"
-  - button "Sun 1 Nov"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"
   - button "Thu 5 Nov"
   - button "Fri 6 Nov"
   - button "Sat 7 Nov"
+  - button "Sun 8 Nov"
+  - button "Mon 9 Nov"
+  - button "Tue 10 Nov"
+  - button "Wed 11 Nov"
+  - button "Thu 12 Nov"
   - text: 2 Pick a time (2 hours, with Eastern time alongside)
   - button "10:00 AM ET, selected" [pressed]: 10:00 AM ET
   - button "11:00 AM ET"
@@ -647,71 +354,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## confirm
 
-Screenshot: `docs/certainty-walk/chromium/shots/027-a11y-confirm.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/confirm.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Choose your time” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -767,19 +417,19 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Mon 26 Oct"
-  - button "Tue 27 Oct" [pressed]
-  - button "Wed 28 Oct"
-  - button "Thu 29 Oct"
-  - button "Fri 30 Oct"
   - button "Sat 31 Oct"
-  - button "Sun 1 Nov"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"
   - button "Thu 5 Nov"
   - button "Fri 6 Nov"
   - button "Sat 7 Nov"
+  - button "Sun 8 Nov"
+  - button "Mon 9 Nov"
+  - button "Tue 10 Nov"
+  - button "Wed 11 Nov"
+  - button "Thu 12 Nov"
   - text: 2 Pick a time (2 hours, with Eastern time alongside)
   - button "10:00 AM ET, selected" [pressed]: 10:00 AM ET
   - button "11:00 AM ET"
@@ -847,71 +497,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## booked
 
-Screenshot: `docs/certainty-walk/chromium/shots/028-a11y-booked.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/booked.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -936,10 +529,11 @@ Heading outline: h1 “One private working session with David, every week.” �
   - text: Membership active
   - article:
     - paragraph: Your first session
-    - img
-    - text: Tuesday, October 27 10:00 AM – 12:00 PM ET
-    - img
-    - text: By phone · Screen reader booking
+    - group "Booked. Sunday, November 1, 9:00 AM – 11:00 AM ET, By phone · Screen reader booking.":
+      - img
+      - text: Sunday, November 1 9:00 AM – 11:00 AM ET
+      - img
+      - text: By phone · Screen reader booking
     - img
     - text: David calls (555) 010-2030
     - button "Edit session":
@@ -1005,71 +599,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## edit
 
-Screenshot: `docs/certainty-walk/chromium/shots/029-a11y-edit.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/edit.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Edit your session” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -1094,10 +631,11 @@ Heading outline: h1 “One private working session with David, every week.” �
   - text: Membership active
   - article:
     - paragraph: Your first session
-    - img
-    - text: Tuesday, October 27 10:00 AM – 12:00 PM ET
-    - img
-    - text: By phone · Screen reader booking
+    - group "Booked. Sunday, November 1, 9:00 AM – 11:00 AM ET, By phone · Screen reader booking.":
+      - img
+      - text: Sunday, November 1 9:00 AM – 11:00 AM ET
+      - img
+      - text: By phone · Screen reader booking
     - img
     - text: David calls (555) 010-2030
     - button "Edit session":
@@ -1139,21 +677,21 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Mon 26 Oct"
-  - button "Tue 27 Oct" [pressed]
-  - button "Wed 28 Oct"
-  - button "Thu 29 Oct"
-  - button "Fri 30 Oct"
   - button "Sat 31 Oct"
-  - button "Sun 1 Nov"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"
   - button "Thu 5 Nov"
   - button "Fri 6 Nov"
   - button "Sat 7 Nov"
+  - button "Sun 8 Nov"
+  - button "Mon 9 Nov"
+  - button "Tue 10 Nov"
+  - button "Wed 11 Nov"
+  - button "Thu 12 Nov"
   - text: 2 Pick a time (2 hours, with Eastern time alongside)
-  - button "10:00 AM ET, selected" [pressed]: 10:00 AM ET
+  - button "10:00 AM ET"
   - button "11:00 AM ET"
   - button "12:00 PM ET"
   - button "1:00 PM ET"
@@ -1219,71 +757,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## cancel
 
-Screenshot: `docs/certainty-walk/chromium/shots/030-a11y-cancel.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/cancel.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -1306,6 +787,7 @@ Heading outline: h1 “One private working session with David, every week.” �
   - paragraph: Pick a time, bring whatever you are stuck on, and stay with it until it clears. Two hours, one-on-one, on Zoom or by phone.
   - img
   - text: Membership active
+  - status: Session cancelled. That time is open again.
   - article:
     - paragraph: Your first session
     - heading "Start with one thing you are stuck on." [level=2]
@@ -1363,74 +845,17 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## lapsed
 
-Screenshot: `docs/certainty-walk/chromium/shots/031-a11y-lapsed.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/lapsed.yml`
 
-Heading outline: h1 “One private working session with David, every week.” → h2 “Your seat with David is still here.” → h2 “Your session on Friday, September 25, 2026 is complete.” → h2 “2 sessions with David” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
+Heading outline: h1 “One private working session with David, every week.” → h2 “Your seat with David is still here.” → h2 “Your session on Wednesday, September 30, 2026 is complete.” → h2 “2 sessions with David” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
 
 ```yaml
 - banner:
@@ -1454,7 +879,7 @@ Heading outline: h1 “One private working session with David, every week.” �
     - paragraph: Welcome back
     - heading "Your seat with David is still here." [level=2]
     - paragraph:
-      - text: Your last session was September 25, about 4 weeks ago, when you brought
+      - text: Your last session was September 30, about 4 weeks ago, when you brought
       - strong: Pricing page rewrite
       - text: . However those weeks went, that is a fine place to pick back up. Bring where it landed, or whatever is in the way now.
     - paragraph: Your weekly session is still included, and this week's is open.
@@ -1468,7 +893,7 @@ Heading outline: h1 “One private working session with David, every week.” �
     - paragraph: David Bee
   - region "After your session":
     - paragraph: After your session
-    - heading "Your session on Friday, September 25, 2026 is complete." [level=2]
+    - heading "Your session on Wednesday, September 30, 2026 is complete." [level=2]
     - paragraph: What is one thing you want to put into practice before your next session?
   - paragraph: Your sessions so far
   - heading "2 sessions with David" [level=2]
@@ -1477,16 +902,16 @@ Heading outline: h1 “One private working session with David, every week.” �
   - list:
     - listitem:
       - img
-      - text: Friday, September 25, 2026
+      - text: Wednesday, September 30, 2026
       - img
-      - text: By phone · Pricing page rewrite 11:00 PM – 1:00 AM ET
+      - text: By phone · Pricing page rewrite 10:00 PM – 12:00 AM ET
     - listitem:
       - img
-      - text: Friday, September 18, 2026
+      - text: Wednesday, September 23, 2026
       - img
       - text: First session milestone
       - img
-      - text: On Zoom · Getting started 11:00 PM – 1:00 AM ET
+      - text: On Zoom · Getting started 10:00 PM – 12:00 AM ET
   - paragraph: Preferences
   - heading "Your settings" [level=2]
   - paragraph: Save your session preferences once so booking is faster each week.
@@ -1518,71 +943,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## ended
 
-Screenshot: `docs/certainty-walk/chromium/shots/032-a11y-ended.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/ended.yml`
 
 Heading outline: h1 “Your Certainty Sessions membership has ended.”
@@ -1604,7 +972,7 @@ Heading outline: h1 “Your Certainty Sessions membership has ended.”
 
 ## signed-out-gate
 
-Screenshot: `docs/certainty-walk/chromium/shots/033-a11y-signed-out-gate.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/signed-out-gate.yml`
 
 Heading outline: h1 “Sign in to enter Certainty Sessions.”
@@ -1622,7 +990,7 @@ Heading outline: h1 “Sign in to enter Certainty Sessions.”
 
 ## server-error-gate
 
-Screenshot: `docs/certainty-walk/chromium/shots/034-a11y-server-error-gate.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/server-error-gate.yml`
 
 Heading outline: h1 “We could not reach the server just now.”
@@ -1640,7 +1008,7 @@ Heading outline: h1 “We could not reach the server just now.”
 
 ## network-error
 
-Screenshot: `docs/certainty-walk/chromium/shots/035-a11y-network-error.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/network-error.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Choose your time” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -1696,19 +1064,19 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Mon 26 Oct"
-  - button "Tue 27 Oct" [pressed]
-  - button "Wed 28 Oct"
-  - button "Thu 29 Oct"
-  - button "Fri 30 Oct"
   - button "Sat 31 Oct"
-  - button "Sun 1 Nov"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"
   - button "Thu 5 Nov"
   - button "Fri 6 Nov"
   - button "Sat 7 Nov"
+  - button "Sun 8 Nov"
+  - button "Mon 9 Nov"
+  - button "Tue 10 Nov"
+  - button "Wed 11 Nov"
+  - button "Thu 12 Nov"
   - text: 2 Pick a time (2 hours, with Eastern time alongside)
   - button "10:00 AM ET, selected" [pressed]: 10:00 AM ET
   - button "11:00 AM ET"
@@ -1771,71 +1139,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## slot-taken
 
-Screenshot: `docs/certainty-walk/chromium/shots/036-a11y-slot-taken.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/slot-taken.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Choose your time” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -1891,19 +1202,19 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Mon 26 Oct"
-  - button "Tue 27 Oct" [pressed]
-  - button "Wed 28 Oct"
-  - button "Thu 29 Oct"
-  - button "Fri 30 Oct"
   - button "Sat 31 Oct"
-  - button "Sun 1 Nov"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"
   - button "Thu 5 Nov"
   - button "Fri 6 Nov"
   - button "Sat 7 Nov"
+  - button "Sun 8 Nov"
+  - button "Mon 9 Nov"
+  - button "Tue 10 Nov"
+  - button "Wed 11 Nov"
+  - button "Thu 12 Nov"
   - text: 2 Pick a time (2 hours, with Eastern time alongside)
   - button "10:00 AM ET, selected" [pressed]: 10:00 AM ET
   - button "11:00 AM ET"
@@ -1966,66 +1277,9 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 
@@ -2039,7 +1293,7 @@ Browser: `webkit`. Captured from the rendered accessibility tree; every network 
 
 ## first-visit
 
-Screenshot: `docs/certainty-walk/webkit/shots/084-a11y-first-visit.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/first-visit.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -2119,71 +1373,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## picker
 
-Screenshot: `docs/certainty-walk/webkit/shots/085-a11y-picker.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/picker.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Choose your time” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -2239,11 +1436,6 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Mon 26 Oct"
-  - button "Tue 27 Oct"
-  - button "Wed 28 Oct"
-  - button "Thu 29 Oct"
-  - button "Fri 30 Oct"
   - button "Sat 31 Oct"
   - button "Sun 1 Nov"
   - button "Mon 2 Nov"
@@ -2252,6 +1444,11 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Thu 5 Nov"
   - button "Fri 6 Nov"
   - button "Sat 7 Nov"
+  - button "Sun 8 Nov"
+  - button "Mon 9 Nov"
+  - button "Tue 10 Nov"
+  - button "Wed 11 Nov"
+  - button "Thu 12 Nov"
   - text: 2 Pick a time (2 hours, with Eastern time alongside)
   - paragraph: Pick a day to see open times.
   - text: 3 How do you want to meet?
@@ -2301,71 +1498,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## mode-choice
 
-Screenshot: `docs/certainty-walk/webkit/shots/086-a11y-mode-choice.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/mode-choice.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Choose your time” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -2421,19 +1561,19 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Mon 26 Oct"
-  - button "Tue 27 Oct" [pressed]
-  - button "Wed 28 Oct"
-  - button "Thu 29 Oct"
-  - button "Fri 30 Oct"
   - button "Sat 31 Oct"
-  - button "Sun 1 Nov"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"
   - button "Thu 5 Nov"
   - button "Fri 6 Nov"
   - button "Sat 7 Nov"
+  - button "Sun 8 Nov"
+  - button "Mon 9 Nov"
+  - button "Tue 10 Nov"
+  - button "Wed 11 Nov"
+  - button "Thu 12 Nov"
   - text: 2 Pick a time (2 hours, with Eastern time alongside)
   - button "10:00 AM ET, selected" [pressed]: 10:00 AM ET
   - button "11:00 AM ET"
@@ -2495,71 +1635,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## confirm
 
-Screenshot: `docs/certainty-walk/webkit/shots/087-a11y-confirm.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/confirm.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Choose your time” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -2615,19 +1698,19 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Mon 26 Oct"
-  - button "Tue 27 Oct" [pressed]
-  - button "Wed 28 Oct"
-  - button "Thu 29 Oct"
-  - button "Fri 30 Oct"
   - button "Sat 31 Oct"
-  - button "Sun 1 Nov"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"
   - button "Thu 5 Nov"
   - button "Fri 6 Nov"
   - button "Sat 7 Nov"
+  - button "Sun 8 Nov"
+  - button "Mon 9 Nov"
+  - button "Tue 10 Nov"
+  - button "Wed 11 Nov"
+  - button "Thu 12 Nov"
   - text: 2 Pick a time (2 hours, with Eastern time alongside)
   - button "10:00 AM ET, selected" [pressed]: 10:00 AM ET
   - button "11:00 AM ET"
@@ -2695,71 +1778,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## booked
 
-Screenshot: `docs/certainty-walk/webkit/shots/088-a11y-booked.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/booked.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -2784,10 +1810,11 @@ Heading outline: h1 “One private working session with David, every week.” �
   - text: Membership active
   - article:
     - paragraph: Your first session
-    - img
-    - text: Tuesday, October 27 10:00 AM – 12:00 PM ET
-    - img
-    - text: By phone · Screen reader booking
+    - group "Booked. Sunday, November 1, 9:00 AM – 11:00 AM ET, By phone · Screen reader booking.":
+      - img
+      - text: Sunday, November 1 9:00 AM – 11:00 AM ET
+      - img
+      - text: By phone · Screen reader booking
     - img
     - text: David calls (555) 010-2030
     - button "Edit session":
@@ -2853,71 +1880,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## edit
 
-Screenshot: `docs/certainty-walk/webkit/shots/089-a11y-edit.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/edit.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Edit your session” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -2942,10 +1912,11 @@ Heading outline: h1 “One private working session with David, every week.” �
   - text: Membership active
   - article:
     - paragraph: Your first session
-    - img
-    - text: Tuesday, October 27 10:00 AM – 12:00 PM ET
-    - img
-    - text: By phone · Screen reader booking
+    - group "Booked. Sunday, November 1, 9:00 AM – 11:00 AM ET, By phone · Screen reader booking.":
+      - img
+      - text: Sunday, November 1 9:00 AM – 11:00 AM ET
+      - img
+      - text: By phone · Screen reader booking
     - img
     - text: David calls (555) 010-2030
     - button "Edit session":
@@ -2987,21 +1958,21 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Mon 26 Oct"
-  - button "Tue 27 Oct" [pressed]
-  - button "Wed 28 Oct"
-  - button "Thu 29 Oct"
-  - button "Fri 30 Oct"
   - button "Sat 31 Oct"
-  - button "Sun 1 Nov"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"
   - button "Thu 5 Nov"
   - button "Fri 6 Nov"
   - button "Sat 7 Nov"
+  - button "Sun 8 Nov"
+  - button "Mon 9 Nov"
+  - button "Tue 10 Nov"
+  - button "Wed 11 Nov"
+  - button "Thu 12 Nov"
   - text: 2 Pick a time (2 hours, with Eastern time alongside)
-  - button "10:00 AM ET, selected" [pressed]: 10:00 AM ET
+  - button "10:00 AM ET"
   - button "11:00 AM ET"
   - button "12:00 PM ET"
   - button "1:00 PM ET"
@@ -3067,71 +2038,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## cancel
 
-Screenshot: `docs/certainty-walk/webkit/shots/090-a11y-cancel.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/cancel.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -3154,6 +2068,7 @@ Heading outline: h1 “One private working session with David, every week.” �
   - paragraph: Pick a time, bring whatever you are stuck on, and stay with it until it clears. Two hours, one-on-one, on Zoom or by phone.
   - img
   - text: Membership active
+  - status: Session cancelled. That time is open again.
   - article:
     - paragraph: Your first session
     - heading "Start with one thing you are stuck on." [level=2]
@@ -3211,74 +2126,17 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## lapsed
 
-Screenshot: `docs/certainty-walk/webkit/shots/091-a11y-lapsed.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/lapsed.yml`
 
-Heading outline: h1 “One private working session with David, every week.” → h2 “Your seat with David is still here.” → h2 “Your session on Friday, September 25, 2026 is complete.” → h2 “2 sessions with David” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
+Heading outline: h1 “One private working session with David, every week.” → h2 “Your seat with David is still here.” → h2 “Your session on Wednesday, September 30, 2026 is complete.” → h2 “2 sessions with David” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
 
 ```yaml
 - banner:
@@ -3302,7 +2160,7 @@ Heading outline: h1 “One private working session with David, every week.” �
     - paragraph: Welcome back
     - heading "Your seat with David is still here." [level=2]
     - paragraph:
-      - text: Your last session was September 25, about 4 weeks ago, when you brought
+      - text: Your last session was September 30, about 4 weeks ago, when you brought
       - strong: Pricing page rewrite
       - text: . However those weeks went, that is a fine place to pick back up. Bring where it landed, or whatever is in the way now.
     - paragraph: Your weekly session is still included, and this week's is open.
@@ -3316,7 +2174,7 @@ Heading outline: h1 “One private working session with David, every week.” �
     - paragraph: David Bee
   - region "After your session":
     - paragraph: After your session
-    - heading "Your session on Friday, September 25, 2026 is complete." [level=2]
+    - heading "Your session on Wednesday, September 30, 2026 is complete." [level=2]
     - paragraph: What is one thing you want to put into practice before your next session?
   - paragraph: Your sessions so far
   - heading "2 sessions with David" [level=2]
@@ -3325,16 +2183,16 @@ Heading outline: h1 “One private working session with David, every week.” �
   - list:
     - listitem:
       - img
-      - text: Friday, September 25, 2026
+      - text: Wednesday, September 30, 2026
       - img
-      - text: By phone · Pricing page rewrite 11:00 PM – 1:00 AM ET
+      - text: By phone · Pricing page rewrite 10:00 PM – 12:00 AM ET
     - listitem:
       - img
-      - text: Friday, September 18, 2026
+      - text: Wednesday, September 23, 2026
       - img
       - text: First session milestone
       - img
-      - text: On Zoom · Getting started 11:00 PM – 1:00 AM ET
+      - text: On Zoom · Getting started 10:00 PM – 12:00 AM ET
   - paragraph: Preferences
   - heading "Your settings" [level=2]
   - paragraph: Save your session preferences once so booking is faster each week.
@@ -3366,71 +2224,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## ended
 
-Screenshot: `docs/certainty-walk/webkit/shots/092-a11y-ended.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/ended.yml`
 
 Heading outline: h1 “Your Certainty Sessions membership has ended.”
@@ -3452,7 +2253,7 @@ Heading outline: h1 “Your Certainty Sessions membership has ended.”
 
 ## signed-out-gate
 
-Screenshot: `docs/certainty-walk/webkit/shots/093-a11y-signed-out-gate.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/signed-out-gate.yml`
 
 Heading outline: h1 “Sign in to enter Certainty Sessions.”
@@ -3470,7 +2271,7 @@ Heading outline: h1 “Sign in to enter Certainty Sessions.”
 
 ## server-error-gate
 
-Screenshot: `docs/certainty-walk/webkit/shots/094-a11y-server-error-gate.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/server-error-gate.yml`
 
 Heading outline: h1 “We could not reach the server just now.”
@@ -3488,7 +2289,7 @@ Heading outline: h1 “We could not reach the server just now.”
 
 ## network-error
 
-Screenshot: `docs/certainty-walk/webkit/shots/095-a11y-network-error.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/network-error.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Choose your time” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -3544,19 +2345,19 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Mon 26 Oct"
-  - button "Tue 27 Oct" [pressed]
-  - button "Wed 28 Oct"
-  - button "Thu 29 Oct"
-  - button "Fri 30 Oct"
   - button "Sat 31 Oct"
-  - button "Sun 1 Nov"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"
   - button "Thu 5 Nov"
   - button "Fri 6 Nov"
   - button "Sat 7 Nov"
+  - button "Sun 8 Nov"
+  - button "Mon 9 Nov"
+  - button "Tue 10 Nov"
+  - button "Wed 11 Nov"
+  - button "Thu 12 Nov"
   - text: 2 Pick a time (2 hours, with Eastern time alongside)
   - button "10:00 AM ET, selected" [pressed]: 10:00 AM ET
   - button "11:00 AM ET"
@@ -3619,71 +2420,14 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
 ## slot-taken
 
-Screenshot: `docs/certainty-walk/webkit/shots/096-a11y-slot-taken.jpg`  
+Screenshot: `not captured`  
 Transcript: `a11y/slot-taken.yml`
 
 Heading outline: h1 “One private working session with David, every week.” → h2 “Start with one thing you are stuck on.” → h2 “Choose your time” → h2 “Your settings” → h2 “What happens if you miss a week, drift off, or leave.” → h3 “You miss a week” → h3 “You stop booking for a while” → h3 “You need a different time” → h3 “Your membership ends”
@@ -3739,19 +2483,19 @@ Heading outline: h1 “One private working session with David, every week.” �
     - text: Close
   - img
   - text: One session per calendar week, Monday to Sunday Eastern. Sessions reset every Monday. 1 Pick a day
-  - button "Mon 26 Oct"
-  - button "Tue 27 Oct" [pressed]
-  - button "Wed 28 Oct"
-  - button "Thu 29 Oct"
-  - button "Fri 30 Oct"
   - button "Sat 31 Oct"
-  - button "Sun 1 Nov"
+  - button "Sun 1 Nov" [pressed]
   - button "Mon 2 Nov"
   - button "Tue 3 Nov"
   - button "Wed 4 Nov"
   - button "Thu 5 Nov"
   - button "Fri 6 Nov"
   - button "Sat 7 Nov"
+  - button "Sun 8 Nov"
+  - button "Mon 9 Nov"
+  - button "Tue 10 Nov"
+  - button "Wed 11 Nov"
+  - button "Thu 12 Nov"
   - text: 2 Pick a time (2 hours, with Eastern time alongside)
   - button "10:00 AM ET, selected" [pressed]: 10:00 AM ET
   - button "11:00 AM ET"
@@ -3814,65 +2558,8 @@ Heading outline: h1 “One private working session with David, every week.” �
   - button "Save settings":
     - img
     - text: Save settings
-  - region "What happens if you miss a week, drift off, or leave.":
-    - paragraph: When life gets in the way
-    - heading "What happens if you miss a week, drift off, or leave." [level=2]
-    - heading "You miss a week" [level=3]
-    - paragraph: Each week runs Monday to Sunday, Eastern time. A week you do not use does not roll over, and nothing else happens. Next week's session is waiting, same as always.
-    - heading "You stop booking for a while" [level=3]
-    - paragraph: Once three weeks go by without a session, this page opens with a welcome back, shows where you left off, and your weekly session is still included. There is no penalty and nothing to make up.
-    - heading "You need a different time" [level=3]
-    - paragraph: Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.
-    - heading "Your membership ends" [level=3]
-    - paragraph: Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.
-    - button "Delete my past sessions and phone number":
-      - img
-      - text: Delete my past sessions and phone number
-    - paragraph: This permanently removes your past and cancelled sessions, their topics, and your remembered phone number. An upcoming session stays booked.
-  - article:
-    - paragraph: Common session topics
-    - list:
-      - listitem:
-        - img
-        - text: Fixing a tech issue that is blocking you
-      - listitem:
-        - img
-        - text: Setting up a funnel or an offer
-      - listitem:
-        - img
-        - text: Improving your content
-      - listitem:
-        - img
-        - text: Clarifying your next step
-      - listitem:
-        - img
-        - text: Looking at your numbers together
-      - listitem:
-        - img
-        - text: Anything else on your plate
-  - article:
-    - paragraph: How it works
-    - text: Book your weekly session at a time that works for you. Bring the real thing you are working on or stuck on. We make progress on it together, live, in the session.
-    - paragraph:
-      - strong: Not a calendar link.
-      - text: "A scheduler books you a meeting with whoever is free. This is your standing weekly seat with David: one two-hour working session every week of your membership, and this page remembers what you brought before."
-    - paragraph:
-      - strong: "What counts:"
-      - text: a session is a success when it is held, meaning you and David sat down and worked on your thing. Those are the sessions your history counts.
-    - paragraph:
-      - img
-      - text: One session per week is included with your membership.
-    - paragraph:
-      - strong: "Private by default:"
-      - text: your booking details are saved to your Studio account and are not visible to other members. Need help? Email
-      - link "email@davidbee.me":
-        - /url: mailto:email@davidbee.me?subject=Certainty%20Sessions%20support
-      - text: .
-    - paragraph:
-      - strong: "Who reads your topic:"
-      - text: only David. It is there so he knows what you are walking in with. Other members never see it.
-    - paragraph:
-      - strong: "What sessions are not for:"
-      - text: they are working sessions for you and your business. They are not therapy or crisis support, and they are not medical, legal or financial advice. If you are in distress, call or text 988.
+  - group:
+    - strong: How this works
+    - text: Missed weeks, rescheduling, privacy, and what happens when membership ends. +
 ```
 
