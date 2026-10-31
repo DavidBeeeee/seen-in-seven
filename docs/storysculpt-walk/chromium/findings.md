@@ -1,8 +1,8 @@
 # StorySculpt rendered walk: chromium
 
-Run 2026-10-30T05:00:47.471Z in 168s against `api/_hub/storysculpt.html` in chromium with every network call stubbed.
+Run 2026-10-31T05:00:46.100Z in 169s against `api/_hub/storysculpt.html` in chromium with every network call stubbed.
 
-**40 of 40 checks pass. 0 findings.** Requests refused: 0 (0 that could have reached production).
+**44 of 44 checks pass. 0 findings.** Requests refused: 0 (0 that could have reached production).
 
 ## Checks
 
@@ -27,6 +27,7 @@ Run 2026-10-30T05:00:47.471Z in 168s against `api/_hub/storysculpt.html` in chro
 - PASS rail shows finished and filmed counts across projects: finished=1, filmed=0
 - PASS opening Help closes the account menu instead of covering its answers: launcher menu closed
 - PASS Help answers how long and what happens after: how long=true, what after=true
+- PASS Help answers what finishing locks and what a lapsed membership pauses: locks=true, pauses=true
 - PASS Help close returns focus to the visible account button: not a hidden menu item
 - PASS 60-turn fixture collapses earlier turns: 12 visible messages before expand
 - PASS collapsed thread includes a bounded earlier-answer excerpt, not a new card: Last earlier answer: “Turn 48: Audit their customer list and find the top twenty percent that generates eighty percent of margin.”
@@ -40,12 +41,15 @@ You keep
 - PASS finished interview says it is finished and shows one next action: finishedLine=Interview finished. This script is finished. Refine it with a note or start a new chat.New chat; nextStep=Film this script, then mark it Filmed.
 - PASS Refine reopens the script and the walk proves it: revised script active with v2 (latest)
 - PASS a new turn after finish is explained, not a raw 409: This script is already finished. Use Refine with a note to change it.
+- PASS Finishing warns once that the interview locks: Choose your open loopThe sentence right after your hook that makes people stay to hear the rest. Finishing locks the interview so your script stays stable; you can refine the finished script with a note anytime.
+- PASS An old story profile shows its age and a refresh offer: Story profile updated 76 days ago. Review your audience, offers, or facts to keep future scripts current.Review details
+- PASS A member back after a long gap lands on their last chat with a kind line: Welcome back. Your last chat, "Old Pottery Lesson", is right where you left it. Pick it up or start something new.
 - PASS network drop mid-generation: reports error and keeps composer usable: send button enabled=true
 - PASS signed-out member meets the access gate: gate visible=true
 - PASS screen-reader first-visit: every control is named and headings form an outline: 0 faults, 10 controls, 7 headings
 - PASS screen-reader interview: every control is named and headings form an outline: 0 faults, 21 controls, 3 headings
 - PASS screen-reader finished: every control is named and headings form an outline: 0 faults, 25 controls, 3 headings
-- PASS screen-reader story-profile: every control is named and headings form an outline: 0 faults, 35 controls, 4 headings
+- PASS screen-reader story-profile: every control is named and headings form an outline: 0 faults, 36 controls, 4 headings
 - PASS screen-reader help-dialog: every control is named and headings form an outline: 0 faults, 28 controls, 15 headings
 - PASS no request left the machine except font and icon GETs; zero POSTs to production: 0 refused, 0 non-benign
 

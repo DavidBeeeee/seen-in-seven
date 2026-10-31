@@ -76,6 +76,11 @@
   - button "Close story profile":
     - img
   - paragraph: These are the standing facts about you and your work. StorySculpt keeps them in mind on every script, so you never re-explain who you are.
+  - status:
+    - paragraph:
+      - strong: Story profile updated 76 days ago.
+      - text: Review your audience, offers, or facts to keep future scripts current.
+    - button "Review details"
   - text: What should StorySculpt call you?
   - textbox "What should StorySculpt call you?":
     - /placeholder: Your name

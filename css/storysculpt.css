@@ -508,6 +508,12 @@ html.studio-light .eee-gate-box .studio-mark {
 .story-memory-head { display: flex; align-items: start; justify-content: space-between; gap: 14px; padding: 22px 24px 16px; border-bottom: 1px solid var(--studio-border); }
 .story-memory-head h2 { margin: 4px 0 0; font-family: var(--font-display, 'Oswald'), sans-serif; font-size: 23px; font-weight: 600; line-height: 1.12; }
 .story-memory-intro { margin: 0; padding: 16px 24px 0; color: var(--studio-muted); font-size: 13px; line-height: 1.6; font-family: var(--font-body, 'Nunito'), sans-serif; }
+.story-memory-freshness { margin: 12px 24px 0; padding: 10px 14px; border-radius: var(--radius-md, 8px); border: 1px solid var(--studio-border); background: color-mix(in srgb, var(--studio-surface) 60%, var(--studio-bg)); font-size: 13px; line-height: 1.5; font-family: var(--font-body, 'Nunito'), sans-serif; }
+.story-memory-freshness.is-stale { border-color: color-mix(in srgb, var(--studio-gold) 45%, var(--studio-border)); background: color-mix(in srgb, var(--studio-gold) 10%, var(--studio-bg)); }
+.story-memory-freshness p { margin: 0; color: var(--studio-text); }
+.story-memory-freshness.is-stale p strong { color: var(--studio-gold); }
+.story-refresh-profile-btn { margin-top: 8px; padding: 4px 10px; font-size: 11px; font-weight: 700; border-radius: var(--radius-sm, 6px); border: 1px solid var(--studio-gold); background: transparent; color: var(--studio-gold); cursor: pointer; transition: all 0.15s ease; }
+.story-refresh-profile-btn:hover { background: var(--studio-gold); color: #071313; }
 .story-help-content { padding: 8px 24px 28px; overflow-y: auto; line-height: 1.6; }
 .story-help-content section { padding: 12px 0; border-bottom: 1px solid var(--studio-border); }
 .story-help-content h3 { margin: 0 0 8px; font-size: 16px; font-family: var(--font-display, 'Oswald'), sans-serif; }

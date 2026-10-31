@@ -102,10 +102,21 @@ function check(name, pass, evidence) {
 }
 
 function makeWorld(stateName) {
-  const f = fixtures.states[stateName] || { projects: [], memory: {} };
+  let f = fixtures.states[stateName] || { projects: [], memory: {} };
+  if (stateName === 'lapsed') {
+    const base = JSON.parse(JSON.stringify(fixtures.states.interview.projects[0]));
+    base.id = 'proj-lapsed-1';
+    base.title = 'Old Pottery Lesson';
+    base.updated_at = new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString();
+    f = {
+      projects: [base],
+      memory: JSON.parse(JSON.stringify(fixtures.states.interview.memory || {}))
+    };
+  }
   const w = {
     projects: JSON.parse(JSON.stringify(f.projects || [])),
     memory: JSON.parse(JSON.stringify(f.memory || {})),
+    memory_updated_at: '2026-08-15T12:00:00.000Z',
     posts: [],
     mode: {},
     async handleDb(op) {
@@ -116,9 +127,10 @@ function makeWorld(stateName) {
       if (op.table === 'storysculpt_member_context') {
         if (op.opType === 'upsert') {
           w.memory = Object.assign({}, w.memory, op.updateData.profile || {});
-          return { data: { profile: w.memory }, error: null };
+          w.memory_updated_at = new Date().toISOString();
+          return { data: { profile: w.memory, updated_at: w.memory_updated_at }, error: null };
         }
-        return { data: { profile: w.memory }, error: null };
+        return { data: { profile: w.memory, updated_at: w.memory_updated_at }, error: null };
       }
       if (op.table === 'storysculpt_projects') {
         if (op.opType === 'select') {
@@ -622,6 +634,9 @@ async function lifecyclePass(browser) {
     const answersHowLong = /5 to 10 minutes/i.test(helpText) && /How long does an interview take/i.test(helpText);
     const answersWhatHappensAfter = /What happens after my first script/i.test(helpText);
     check('Help answers how long and what happens after', answersHowLong && answersWhatHappensAfter, 'how long=' + answersHowLong + ', what after=' + answersWhatHappensAfter);
+    const answersFinishingLocks = /interview is locked/i.test(helpText);
+    const answersLapsedPauses = /lapsed membership pauses/i.test(helpText);
+    check('Help answers what finishing locks and what a lapsed membership pauses', answersFinishingLocks && answersLapsedPauses, 'locks=' + answersFinishingLocks + ', pauses=' + answersLapsedPauses);
     await page.keyboard.press('Escape');
     check('Help close returns focus to the visible account button', await page.evaluate(() => document.activeElement.id) === 'eee-account-button', 'not a hidden menu item');
     await context.close();
@@ -717,6 +732,48 @@ async function lifecyclePass(browser) {
     check('a new turn after finish is explained, not a raw 409', !newTurnAttempt.ok && noRaw409 && explainsFinish, newTurnAttempt.message);
 
     await shot(page, 'lifecycle-finished');
+    await context.close();
+  }
+
+  // Consequence warnings before action (WBR-462)
+  {
+    const { context, page } = await open(browser, 'interview', { width: 1280 });
+    const bannerWarning = await page.evaluate(() => {
+      if (typeof activeStory !== 'undefined' && activeStory) {
+        activeStory.conversation.push({ role: 'assistant', content: 'Choose your open loop:', step: 'R7' });
+        renderConversation();
+        const banner = document.querySelector('.story-step-banner');
+        return banner ? banner.textContent : '';
+      }
+      return '';
+    });
+    const warnsLock = /Finishing locks the interview/i.test(bannerWarning);
+    check('Finishing warns once that the interview locks', warnsLock, bannerWarning);
+    await shot(page, 'lifecycle-finishing-warning');
+    await context.close();
+  }
+
+  // Story profile freshness and refresh offer (WBR-462)
+  {
+    const { context, page } = await open(browser, 'interview', { width: 1280, openMemory: true });
+    const freshnessText = (await page.locator('#mem-freshness').textContent() || '').trim();
+    const hasAge = /updated \d+ days ago/i.test(freshnessText);
+    const hasRefreshBtn = await page.locator('#mem-freshness .story-refresh-profile-btn').isVisible();
+    check('An old story profile shows its age and a refresh offer', hasAge && hasRefreshBtn, freshnessText);
+    await shot(page, 'lifecycle-profile-freshness');
+    await context.close();
+  }
+
+  // Kind recovery after membership lapse (WBR-462)
+  {
+    const { context, page } = await open(browser, 'lapsed', { width: 1280 });
+    const editorVisible = await page.locator('#story-editor').isVisible();
+    const noticeText = (await page.locator('#story-return-notice').textContent() || '').trim();
+    const welcomesBack = /Welcome back/i.test(noticeText);
+    const noEmDash = !noticeText.includes('—');
+    const noGuilt = !/abandoned|forgot|lazy|missed out|slacking|catch up/i.test(noticeText);
+    check('A member back after a long gap lands on their last chat with a kind line', editorVisible && welcomesBack && noEmDash && noGuilt, noticeText);
+    await shot(page, 'lifecycle-return-recovery');
     await context.close();
   }
 

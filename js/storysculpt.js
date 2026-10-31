@@ -531,7 +531,7 @@ const LENGTH_GUIDE = { title: 'Choose your length', note: 'About 3 spoken words 
 const DRAFT_GUIDE = { title: 'Your first draft', note: 'Change anything you like, or move on to the hooks when it feels right.', actions: [['Write the hooks', 'Looks good, go for the hooks'], ['Revise the draft', null]] };
 const HOOK_GUIDE = { title: 'Choose your hook', note: 'The first line people hear. It has one job: stop the scroll.', choices: true };
 const ESCALATE_GUIDE = { title: 'Make your chosen hook stronger', note: 'Same idea, sharper delivery. Choose a version or keep your original.', choices: true, replies: ['Keep the original hook'] };
-const LOOP_GUIDE = { title: 'Choose your open loop', note: 'The sentence right after your hook that makes people stay to hear the rest.', choices: true };
+const LOOP_GUIDE = { title: 'Choose your open loop', note: 'The sentence right after your hook that makes people stay to hear the rest. ' + STATES.FINISHING_LOCK_LINE, choices: true };
 // 2026-10-12 steps: length, draft (then wait), hooks, open loops, finished
 // script. "Regenerate" on any of these replaces the old "Give me 3 different".
 const STEP_GUIDE = {
@@ -662,6 +662,13 @@ function renderConversation() {
       '</div>' +
     '</article>';
   }).join('');
+
+  const genStatus = storyEl('story-generation-status');
+  if (genStatus && !genStatus.classList.contains('error')) {
+    const lastMsg = conversation[conversation.length - 1];
+    const isPreFinal = lastMsg && ['B6', 'M6', 'R7'].includes(lastMsg.step);
+    genStatus.textContent = isPreFinal ? STATES.FINISHING_LOCK_LINE : 'StorySculpt saves your chat as you go.';
+  }
 
   announceNewestTurn(conversation);
   renderScriptPanel();
@@ -2682,15 +2689,34 @@ async function deleteActiveStory() {
 }
 
 // Story profile (member memory) panel.
+let memoryUpdatedAt = null;
+
 async function loadMemory() {
-  const { data, error } = await storyContext.sb.from('storysculpt_member_context').select('profile').eq('user_id', storyContext.profile.id).maybeSingle();
+  const { data, error } = await storyContext.sb.from('storysculpt_member_context').select('profile, updated_at').eq('user_id', storyContext.profile.id).maybeSingle();
   if (error) throw error;
   memoryProfile = (data && data.profile) || {};
+  memoryUpdatedAt = (data && data.updated_at) || null;
   MEMORY_FIELDS.forEach(([key, id]) => { storyEl(id).value = memoryProfile[key] || ''; });
+}
+
+function renderMemoryFreshness() {
+  const slot = storyEl('mem-freshness');
+  if (!slot) return;
+  const freshness = STATES.profileFreshness(memoryUpdatedAt, Date.now());
+  slot.innerHTML = STATES.profileFreshnessMarkup(freshness);
+  slot.hidden = !freshness || freshness.state === 'new';
+  const offerBtn = storyEl('mem-refresh-offer');
+  if (offerBtn) {
+    offerBtn.addEventListener('click', () => {
+      const field = storyEl('mem-role');
+      if (field) field.focus();
+    });
+  }
 }
 
 function openMemory() {
   MEMORY_FIELDS.forEach(([key, id]) => { storyEl(id).value = memoryProfile[key] || ''; });
+  renderMemoryFreshness();
   storyEl('mem-status').textContent = '';
   storyEl('story-memory').hidden = false;
   storyEl('story-memory-scrim').hidden = false;
@@ -2741,6 +2767,8 @@ async function saveMemory() {
     }, { onConflict: 'user_id' });
     if (error) throw error;
     memoryProfile = draft;
+    memoryUpdatedAt = new Date().toISOString();
+    renderMemoryFreshness();
     status.textContent = 'Saved. StorySculpt will use this on every chat.';
     status.className = 'eee-message success';
   } catch (error) {

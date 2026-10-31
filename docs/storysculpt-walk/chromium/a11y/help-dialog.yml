@@ -87,6 +87,7 @@
     - link "billing, access, and cancellation terms":
       - /url: /terms#pricing-cancellation
     - text: .
+  - paragraph: A lapsed membership pauses new scripts, interview generation, and revisions while keeping your saved chats, scripts, and story profile intact.
   - heading "What happens to my work?" [level=3]
   - paragraph: Your chats, project titles, notes, finished scripts, and story profile are saved to your Studio account so you can return to them. When you ask StorySculpt to continue or revise, your title, profile, notes, and recent messages are processed by the AI model that writes your next question or draft, guided by David's method and your own words. Do not enter anything you do not want processed by an AI service.
   - paragraph: "Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them. You can delete a chat and its saved script with the Delete button inside that chat. Your standing story profile is separate and can be edited from Story profile."

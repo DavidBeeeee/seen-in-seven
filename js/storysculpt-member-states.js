@@ -17,6 +17,9 @@
 
   const INACTIVITY_LINE = 'Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them.';
   const FINISHED_LINE = 'This script is finished. Refine it with a note or start a new chat.';
+  const FINISHING_LOCK_LINE = 'Finishing locks the interview so your script stays stable; you can refine the finished script with a note anytime.';
+  const MEMBERSHIP_LAPSE_LINE = 'A lapsed membership pauses new scripts, interview generation, and revisions while keeping your saved chats, scripts, and story profile intact.';
+  const PROFILE_STALE_DAYS = 30;
 
   function escapeHtml(value) {
     return String(value == null ? '' : value)
@@ -297,12 +300,67 @@
     return 'You left off on “' + title + '”. Pick up that interview where you stopped, or start your next script to test a different hook.';
   }
 
+  // WBR-462: story profile freshness and refresh offer (Stranger 45).
+  function profileFreshness(updatedAt, now) {
+    if (!updatedAt) {
+      return {
+        state: 'new',
+        days: null,
+        stale: false,
+        line: 'Set your story profile once so every chat remembers your standing facts, audience, and voice.',
+        offer: null
+      };
+    }
+    const at = now == null ? Date.now() : now;
+    const t = typeof updatedAt === 'string' ? Date.parse(updatedAt) : Number(updatedAt);
+    if (!Number.isFinite(t)) {
+      return {
+        state: 'new',
+        days: null,
+        stale: false,
+        line: 'Set your story profile once so every chat remembers your standing facts, audience, and voice.',
+        offer: null
+      };
+    }
+    const days = Math.floor(Math.max(0, at - t) / DAY_MS);
+    if (days >= PROFILE_STALE_DAYS) {
+      return {
+        state: 'stale',
+        days,
+        stale: true,
+        line: 'Story profile updated ' + days + ' days ago.',
+        offer: 'Review your audience, offers, or facts to keep future scripts current.'
+      };
+    }
+    return {
+      state: 'fresh',
+      days,
+      stale: false,
+      line: days === 0 ? 'Story profile updated today.' : 'Story profile updated ' + countWord(days, 'day', 'days') + ' ago.',
+      offer: null
+    };
+  }
+
+  function profileFreshnessMarkup(freshness) {
+    if (!freshness || freshness.state === 'new') return '';
+    if (freshness.stale) {
+      return '<div class="story-memory-freshness is-stale" role="status" data-stale="true" data-days="' + freshness.days + '">' +
+        '<p><strong>' + escapeHtml(freshness.line) + '</strong> ' + escapeHtml(freshness.offer) + '</p>' +
+        '<button class="subtle-button story-refresh-profile-btn" id="mem-refresh-offer" type="button">Review details</button>' +
+      '</div>';
+    }
+    return '<div class="story-memory-freshness is-fresh" role="status" data-stale="false" data-days="' + freshness.days + '">' +
+      '<p>' + escapeHtml(freshness.line) + '</p>' +
+    '</div>';
+  }
+
   const api = {
     DAY_MS, QUIET_AFTER_DAYS, LAPSE_AFTER_DAYS, COLLAPSE_AFTER, KEEP_VISIBLE,
-    INACTIVITY_LINE, FINISHED_LINE,
+    INACTIVITY_LINE, FINISHED_LINE, FINISHING_LOCK_LINE, MEMBERSHIP_LAPSE_LINE, PROFILE_STALE_DAYS,
     engagement, returnNotice, exportFileName, returnNoticeMarkup, threadWindow, showEarlierMarkup, earlierAnswerExcerpt,
     returnNoticeFor, refreshReturnNotice, dismissalStamp, isFinished, isFilmed, finishedTime, progress, progressLine, progressMarkup,
-    memberStep, nextStep, nextStepMarkup, versionView, returnVisitLine
+    memberStep, nextStep, nextStepMarkup, versionView, returnVisitLine,
+    profileFreshness, profileFreshnessMarkup
   };
   root.StorySculptStates = api;
 })(typeof window !== 'undefined' ? window : globalThis);

@@ -227,6 +227,24 @@ function longThread(turns) {
   check(!auth || !/await/.test(auth[1]), 'no await inside onAuthStateChange');
 }
 
+// 10. Consequence warnings and story profile freshness (WBR-462: Stranger 26, 45).
+{
+  const ctx = {}; vm.createContext(ctx); vm.runInContext(statesSrc, ctx);
+  const S = ctx.StorySculptStates;
+  check(page.includes(S.MEMBERSHIP_LAPSE_LINE), 'served page Help must carry the membership lapse consequence line');
+  check(page.includes(S.FINISHING_LOCK_LINE) || appSrc.includes('STATES.FINISHING_LOCK_LINE'), 'client or page must warn that finishing locks the interview');
+  check(/LOOP_GUIDE[\s\S]*FINISHING_LOCK_LINE/.test(appSrc), 'open loop step guide warns that finishing locks the interview');
+  const fresh = S.profileFreshness(NOW - 5 * DAY, NOW);
+  check(!fresh.stale && fresh.line.includes('5 days ago') && fresh.offer === null, 'recent profile is fresh');
+  const stale = S.profileFreshness(NOW - 45 * DAY, NOW);
+  check(stale.stale && stale.line.includes('45 days ago') && stale.offer && stale.offer.includes('Review your audience'), 'profile over 30 days is stale and offers refresh');
+  const markup = S.profileFreshnessMarkup(stale);
+  check(markup.includes('is-stale') && markup.includes('45 days ago') && markup.includes('Review details'), 'stale markup carries status and refresh button');
+  const freshMarkup = S.profileFreshnessMarkup(fresh);
+  check(freshMarkup.includes('is-fresh') && !freshMarkup.includes('Review details'), 'fresh markup renders cleanly');
+  check(!/—/.test(markup + freshMarkup), 'profile freshness copy contains no em dashes');
+}
+
 if (failures.length) {
   console.error('check-sculpt-member-states FAIL\n- ' + failures.join('\n- '));
   process.exit(1);

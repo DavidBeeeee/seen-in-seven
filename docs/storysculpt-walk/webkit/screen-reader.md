@@ -6,7 +6,7 @@ Browser: `webkit`. Captured from the rendered accessibility tree; every network 
 
 ## first-visit
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/134-a11y-first-visit.jpg`
+Screenshot: `y-first-visit.jpg`
 Transcript: `a11y/first-visit.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a script the way you talk.” → h3 “Turn raw thoughts into video scripts that sound like you.” → h4 “Why the 5E interview keeps your voice” → h4 “What to expect: 5 to 10 minutes” → h4 “What happens when your script is ready”
@@ -84,7 +84,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a scrip
 
 ## interview
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/135-a11y-interview.jpg`
+Screenshot: `y-interview.jpg`
 Transcript: `a11y/interview.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor”
@@ -165,7 +165,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## finished
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/136-a11y-finished.jpg`
+Screenshot: `y-finished.jpg`
 Transcript: `a11y/finished.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor”
@@ -263,7 +263,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## story-profile
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/137-a11y-story-profile.jpg`
+Screenshot: `y-story-profile.jpg`
 Transcript: `a11y/story-profile.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Set this once. Every chat reads it.”
@@ -346,6 +346,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
   - button "Close story profile":
     - img
   - paragraph: These are the standing facts about you and your work. StorySculpt keeps them in mind on every script, so you never re-explain who you are.
+  - status:
+    - paragraph:
+      - strong: Story profile updated 76 days ago.
+      - text: Review your audience, offers, or facts to keep future scripts current.
+    - button "Review details"
   - text: What should StorySculpt call you?
   - textbox "What should StorySculpt call you?":
     - /placeholder: Your name
@@ -382,7 +387,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## help-dialog
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/138-a11y-help-dialog.jpg`
+Screenshot: `y-help-dialog.jpg`
 Transcript: `a11y/help-dialog.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Help & privacy” → h3 “Who makes this?” → h3 “What does membership include, and how does it renew?” → h3 “What happens to my work?” → h3 “Can I change the format?” → h3 “Can I pause and come back?” → h3 “What does finishing a script mean?” → h3 “How long does an interview take?” → h3 “What happens after my first script?” → h3 “Can I archive or delete a chat?” → h3 “What should I do next?” → h3 “Where do I get help?”
@@ -476,6 +481,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - link "billing, access, and cancellation terms":
       - /url: /terms#pricing-cancellation
     - text: .
+  - paragraph: A lapsed membership pauses new scripts, interview generation, and revisions while keeping your saved chats, scripts, and story profile intact.
   - heading "What happens to my work?" [level=3]
   - paragraph: Your chats, project titles, notes, finished scripts, and story profile are saved to your Studio account so you can return to them. When you ask StorySculpt to continue or revise, your title, profile, notes, and recent messages are processed by the AI model that writes your next question or draft, guided by David's method and your own words. Do not enter anything you do not want processed by an AI service.
   - paragraph: "Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them. You can delete a chat and its saved script with the Delete button inside that chat. Your standing story profile is separate and can be edited from Story profile."
