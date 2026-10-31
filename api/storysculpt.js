@@ -23,6 +23,7 @@ import {
   targetWords,
   memberListItems,
   chosenOptions,
+  extractOptions,
   checkScriptCompleteness,
   detectCrisis,
   crisisResponse
@@ -273,6 +274,77 @@ async function loadOwnedProject(token, projectId) {
     throw error;
   }
   return Array.isArray(rows) ? rows[0] || null : null;
+}
+
+// Cross-project repetition is checked with the member's own token, so RLS is
+// the membership boundary. The current project is excluded: refining a script
+// must not make that script collide with itself. Filmed scripts still count as
+// finished work whose opening should not be handed back under a new title.
+const RECENT_FINISHED_LIMIT = 6;
+
+async function loadRecentFinishedScripts(token, projectId) {
+  const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=neq.' + projectId
+    + '&status=in.(finished,filmed)&output=not.is.null&select=id,output,updated_at'
+    + '&order=updated_at.desc&limit=' + RECENT_FINISHED_LIMIT;
+  try {
+    const response = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token } });
+    if (!response.ok) throw new Error('status ' + response.status);
+    const rows = await response.json();
+    if (!Array.isArray(rows)) throw new Error('unexpected project list');
+    return rows.filter(row => row && row.id !== projectId && typeof row.output === 'string' && row.output.trim());
+  } catch (cause) {
+    const error = new Error('StorySculpt could not check your recent scripts. Please try again.');
+    error.stage = 'database';
+    error.cause = cause;
+    throw error;
+  }
+}
+
+function openingForRepetition(text) {
+  const body = splitTitle(text).body;
+  const firstParagraph = body.split(/\n\s*\n/).map(part => part.trim()).find(Boolean) || '';
+  const sentence = firstParagraph.match(/^[\s\S]*?[.!?](?:["'’”)\]]+)?(?=\s|$)/);
+  return String(sentence ? sentence[0] : firstParagraph.split('\n')[0]).trim().slice(0, 500);
+}
+
+function repetitionWords(text) {
+  return openingForRepetition(text).toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+}
+
+function repetitionCoverage(needle, haystack) {
+  const pool = haystack.slice();
+  let found = 0;
+  for (const word of needle) {
+    const at = pool.indexOf(word);
+    if (at !== -1) { found++; pool.splice(at, 1); }
+  }
+  return needle.length ? found / needle.length : 0;
+}
+
+function sameOpening(a, b) {
+  const left = repetitionWords(a);
+  const right = repetitionWords(b);
+  if (left.length < 3 || right.length < 3) return false;
+  if (left.join(' ') === right.join(' ')) return true;
+  // Punctuation and one small wording change must not evade the guard, but a
+  // shared topic noun or two is not a repeated hook.
+  return Math.min(left.length, right.length) >= 6
+    && repetitionCoverage(left, right) >= 0.85
+    && repetitionCoverage(right, left) >= 0.85;
+}
+
+export function checkCrossProjectRepetition(content, recentProjects, hooks = false) {
+  const recent = recentProjects.map(project => openingForRepetition(project.output)).filter(Boolean);
+  const candidates = hooks ? extractOptions(content) : [openingForRepetition(content)];
+  for (let i = 0; i < candidates.length; i++) {
+    if (recent.some(opening => sameOpening(candidates[i], opening))) {
+      return {
+        ok: false,
+        issue: `repeated-opening: ${hooks ? 'hook option ' + (i + 1) : 'the script opening'} matches another recent finished script`
+      };
+    }
+  }
+  return { ok: true };
 }
 
 const STORY_PROFILE_FIELDS = [
@@ -939,10 +1011,17 @@ export default async function handler(req, res) {
     }
     const activeTurn = turnFor(input.mode, activeStep);
     const stepText = activeTurn.text;
+    const activeKind = turnKind(activeStep, stepText);
     const refDocs = referenceDocsForTurn(input.mode, activeTurn);
     const stepLog = { step: activeStep, stepSource: currentStepInDb ? 'stored' : 'counted', attempts: 1 };
+    // Hooks and finished openings are checked against other recent work before
+    // anything is returned. A failed history read fails closed as a database
+    // error instead of silently turning this guard off.
+    const recentFinished = activeKind.hookCraft || activeKind.final
+      ? await loadRecentFinishedScripts(token, input.projectId)
+      : [];
 
-    if (turnKind(activeStep, stepText).draft) {
+    if (activeKind.draft) {
       try {
         input.reaimed = await reaimMemberInput(input);
         stepLog.reaimed = Boolean(input.reaimed);
@@ -992,7 +1071,15 @@ export default async function handler(req, res) {
       mode: input.mode,
       memberText: memberOwnText(input)
     });
-    let detCheck = checkDeterministic(checkArgs(result.content));
+    const checkOutput = (content) => {
+      const deterministic = checkDeterministic(checkArgs(content));
+      if (!activeKind.hookCraft && !activeKind.final) return deterministic;
+      const repetition = checkCrossProjectRepetition(content, recentFinished, activeKind.hookCraft);
+      // Repetition stays visible even when another check fails too. Otherwise a
+      // length or assembly problem could mask a duplicate and let it ship.
+      return repetition.ok ? deterministic : repetition;
+    };
+    let detCheck = checkOutput(result.content);
 
     // Up to two retries, each told exactly what failed (for hooks, the member's
     // own words it used). Keep the attempt with the fewest failures, so a choice
@@ -1008,7 +1095,7 @@ export default async function handler(req, res) {
         const retryResult = await callStorySculpt(input, activeStep, stepText, refDocs, retryDirective);
         const retryVerdict = classifyOutput(retryResult.content, { source: memberSource(input) });
         if (!retryVerdict.ok) continue;
-        const retryDetCheck = checkDeterministic(checkArgs(retryResult.content));
+        const retryDetCheck = checkOutput(retryResult.content);
         const score = failureScore(retryResult.content, retryDetCheck);
         if (score < best.score) best = { result: retryResult, verdict: retryVerdict, detCheck: retryDetCheck, score };
         result = retryResult;
@@ -1040,11 +1127,17 @@ export default async function handler(req, res) {
     // Missing essential spoken parts must not be marked finished after the
     // bounded repair loop. Leave the saved project/step untouched for retry.
     const completeness = checkScriptCompleteness(checkArgs(result.content));
-    const creativeFailure = !detCheck.ok && /^(?:hook-extracted|hook-duplicates|loop-repeats-hook|loop-generic|loop-duplicates|three-options):/.test(detCheck.issue);
+    const repeatedOpening = !detCheck.ok && /^repeated-opening:/.test(detCheck.issue);
+    const creativeFailure = !detCheck.ok && /^(?:hook-extracted|hook-duplicates|loop-repeats-hook|loop-generic|loop-duplicates|three-options|repeated-opening):/.test(detCheck.issue);
     if ((turnKind(activeStep, stepText).final && !completeness.ok) || creativeFailure) {
       const reason = (creativeFailure ? detCheck.issue : completeness.issue).split(':')[0];
       await emit('output_rejected', { ...stepLog, failureClass: classifyFailure('output'), violations: [reason], usage: result.usage });
-      return json(res, 502, { error: creativeFailure ? 'StorySculpt could not produce three distinct, useful options on this pass. Your saved choices are unchanged; please retry.' : 'StorySculpt could not finish the audience question and closing invitation on this pass. Your saved script is unchanged; please retry.', rejected: reason, trace });
+      const message = repeatedOpening
+        ? 'StorySculpt kept repeating an opening from one of your recent scripts, so this pass was not saved. Please retry for a fresh opening.'
+        : creativeFailure
+          ? 'StorySculpt could not produce three distinct, useful options on this pass. Your saved choices are unchanged; please retry.'
+          : 'StorySculpt could not finish the audience question and closing invitation on this pass. Your saved script is unchanged; please retry.';
+      return json(res, 502, { error: message, rejected: reason, trace });
     }
 
     // Fidelity (WBR-458): a finished script is checked against what the member

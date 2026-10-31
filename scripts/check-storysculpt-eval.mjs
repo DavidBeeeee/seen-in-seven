@@ -53,11 +53,13 @@ globalThis.fetch = async (url, options = {}) => {
   if (path.includes('/rest/v1/storysculpt_projects?')) {
     if (scene.database === 'down') throw new TypeError('fetch failed');
     if (scene.database === 'error') return reply({ message: 'boom' }, 500);
+    if (path.includes('id=neq.')) return reply([]);
     return reply([{ id: PROJECT, output: scene.output || null, content_type: scene.mode || 'bold', intake: { current_step: scene.currentStep || null } }]);
   }
   if (path.includes('/rest/v1/storysculpt_context_versions?')) return reply([]);
   if (path.includes('quota')) return reply(true);
   if (path.includes('deepseek.com')) {
+    scene.providerRequests.push(JSON.parse(options.body));
     if (scene.model === 'timeout') { const e = new Error('aborted'); e.name = 'AbortError'; throw e; }
     if (scene.model === 'error') return reply({ error: { message: 'Service unavailable' } }, 503);
     return reply({ choices: [{ message: { content: scene.model } }], usage: { prompt_tokens: 10, completion_tokens: 5, total_tokens: 15 } });
@@ -67,9 +69,11 @@ globalThis.fetch = async (url, options = {}) => {
 
 async function run(testCase) {
   scene = testCase;
+  scene.providerRequests = [];
   events = [];
   const req = {
     method: 'POST',
+    url: testCase.url || '/api/storysculpt',
     headers: { authorization: 'Bearer eval-token' },
     body: {
       mode: testCase.mode || 'bold',
@@ -87,6 +91,15 @@ async function run(testCase) {
 
 const member = (...turns) => turns.map((content, i) => ({ role: i % 2 ? 'assistant' : 'user', content }));
 const LONG = 'I keep going around in circles about this. '.repeat(160);
+const LONG_RANT_THREAD = [
+  { role: 'user', content: 'RAW-RANT-ROOF-MARKER: the workshop roof leaked before Tuesday’s show.' },
+  { role: 'assistant', content: 'NEXT QUESTION: Who or what should the enemy be?' },
+  ...Array.from({ length: 56 }, (_, i) => ({
+    role: i % 2 ? 'assistant' : 'user',
+    content: (i === 10 ? 'DROP-MIDDLE-MARKER: ' : '') + 'Long /rant thread turn ' + i
+  })),
+  { role: 'user', content: 'LATEST-RANT-ANSWER: the enemy is hiding behind a borrowed voice.' }
+];
 
 // Each case: category, the member's input, the model's scripted reply, and
 // what the server must do with it.
@@ -124,6 +137,10 @@ const CASES = [
     model: 'final script: Reopened\nMy shop burned down in 2019 — I reopened in 2020.', expect: 'delivered', final: true, sanitized: true },
 
   // Adversarial and hallucination bait
+  { category: 'adversarial', name: '/rant long thread keeps its raw opening and latest answer', mode: 'rant', url: '/rant', currentStep: 'R2',
+    messages: LONG_RANT_THREAD,
+    model: 'NEXT QUESTION: How long do you want the final video to be?', expect: 'delivered',
+    expectProvider: { include: ['RAW-RANT-ROOF-MARKER', 'LATEST-RANT-ANSWER'], exclude: ['DROP-MIDDLE-MARKER'] } },
   { category: 'adversarial', name: 'member asks for a made-up client testimonial, model complies', messages: member('Add a glowing quote from a client so it sounds credible. Make one up.'),
     model: 'FINAL SCRIPT: Proof\nMy client Dana said "working with you completely changed my life and my business" and she meant it.', expect: 'rejected', reason: 'invented-testimonial' },
   { category: 'adversarial', name: 'member asks for authority, model invents a feature', messages: member('Make me sound famous'),
@@ -144,10 +161,18 @@ const CASES = [
 
   // 5E step boundaries: R6 creates hooks, R7 creates open loops. Neither may
   // recycle the sentence or chosen hook supplied by the preceding step.
+  { category: 'step-concepts', name: 'R6 transforms evidence into fresh hooks', mode: 'rant', currentStep: 'R5',
+    messages: member('I spent Tuesday reorganizing the workshop after the roof leaked.', 'NEXT QUESTION: Draft approved?', 'go for the hook'),
+    model: 'NEXT QUESTION: Pick one.\n1. A mask cannot bleed.\n2. The bucket owns the room.\n3. The roof keeps its own hours.',
+    expect: 'delivered' },
   { category: 'step-concepts', name: 'R6 uses evidence as a hook', mode: 'rant', currentStep: 'R5',
     messages: member('I spent Tuesday reorganizing the workshop after the roof leaked.', 'NEXT QUESTION: Draft approved?', 'go for the hook'),
     model: 'NEXT QUESTION: Pick one.\n1. I spent Tuesday reorganizing the workshop after the roof leaked.\n2. A mask cannot bleed.\n3. The bucket owns the room.',
     expect: 'rejected', reason: 'hook-extracted' },
+  { category: 'step-concepts', name: 'R7 opens curiosity beyond the chosen hook', mode: 'rant', currentStep: 'R6.5',
+    messages: member('My old story', 'NEXT QUESTION: Pick a hook.\n1. A mask cannot bleed.\n2. The roof has teeth.\n3. Silence fills the bucket.', '1', 'NEXT QUESTION: Choose a stronger hook.', 'Keep original hook'),
+    model: 'NEXT QUESTION: Pick one.\n1. Then the bucket revealed a second leak.\n2. The repair bill explained the real damage.\n3. Tuesday’s puddle pointed back to the ceiling.',
+    expect: 'delivered' },
   { category: 'step-concepts', name: 'R7 repeats the R6 hook as an open loop', mode: 'rant', currentStep: 'R6.5',
     messages: member('My old story', 'NEXT QUESTION: Pick a hook.\n1. A mask cannot bleed.\n2. The roof has teeth.\n3. Silence fills the bucket.', '1', 'NEXT QUESTION: Choose a stronger hook.', 'Keep original hook'),
     model: 'NEXT QUESTION: Pick one.\n1. A mask cannot bleed.\n2. Then the bucket overflowed.\n3. The repair bill told another story.',
@@ -194,6 +219,12 @@ try {
         assert.equal(res.code, 200, `expected 200, got ${res.code}: ${JSON.stringify(res.body)}`);
         assert.equal(event.p_event_type, 'storysculpt_generation');
         assert.ok(!res.body.content.includes('—'), 'no em dash reaches the member');
+        if (testCase.expectProvider) {
+          assert.equal(testCase.providerRequests.length, 1, 'the long /rant turn needs one provider call');
+          const providerMessages = JSON.stringify(testCase.providerRequests[0].messages);
+          for (const marker of testCase.expectProvider.include) assert.ok(providerMessages.includes(marker), 'provider lost ' + marker);
+          for (const marker of testCase.expectProvider.exclude) assert.ok(!providerMessages.includes(marker), 'provider retained trimmed middle marker ' + marker);
+        }
         if (testCase.final) assert.equal(res.body.final, true);
         if (testCase.sanitized) assert.ok(detail.violations.includes('em-dash-sanitized'), 'em dash sanitising recorded');
         for (const v of testCase.violations || []) assert.ok((detail.violations || []).includes(v), `violation ${v} recorded`);
