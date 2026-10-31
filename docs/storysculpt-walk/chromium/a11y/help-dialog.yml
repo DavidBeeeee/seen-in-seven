@@ -102,7 +102,15 @@
   - heading "What happens after my first script?" [level=3]
   - paragraph: When your first script is finished, it is ready to record. You can copy it directly to your teleprompter or download the text file to film your video. Once you film, mark it filmed or start your next script to build momentum. Your saved scripts stay in your library and your standing story profile carries forward what StorySculpt learned about your voice and audience into every new script you create.
   - heading "Can I archive or delete a chat?" [level=3]
-  - paragraph: "Leaving pauses your chat; it does not delete anything. Check that your changes say Saved before closing the browser. Archive puts a chat away without deleting its notes, answers or script. Use the Archive button beside its title, then open Archived and choose Restore chat to bring it back to All. Delete is different: after you confirm, it permanently removes the chat and its saved script."
+  - paragraph: "Leaving pauses your chat; it does not delete anything. Check that your changes say Saved before closing the browser. Archive puts a chat away without deleting its notes, answers or script. Use the Archive button beside its title, then open Archived and choose Restore chat to bring it back to All. Delete is different: after you confirm, it permanently removes the chat, its versions, and its saved script."
+  - heading "What happens when I delete a project?" [level=3]
+  - paragraph: Deleting a project permanently removes the chat, its recorded versions, and the finished script. When you delete a chat, you get a short undo window of about ten seconds where the row shows Deleted and an Undo button to restore it immediately. After that window lapses, the server delete runs and the work is permanently gone. Returning after a delete shows your remaining active chats, or the clean start screen if you have no other chats.
+  - heading "How do I request full account deletion?" [level=3]
+  - paragraph:
+    - text: Full account deletion is a Studio-level request to David. To have your entire account, all projects, scripts, and standing story profile permanently removed from the system, email David Bee at
+    - link "email@davidbee.me":
+      - /url: mailto:email@davidbee.me?subject=Studio%20account%20deletion
+    - text: with “Studio account deletion” in the subject. David handles account deletion requests directly.
   - heading "What should I do next?" [level=3]
   - paragraph:
     - strong: "Next:"

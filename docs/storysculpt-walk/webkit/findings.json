@@ -1,5 +1,5 @@
 {
- "at": "2026-10-31T05:03:58.095Z",
+ "at": "2026-10-31T14:43:24.677Z",
  "browser": "webkit",
  "checks": [
   {
@@ -88,6 +88,18 @@
   },
   {
    "browser": "webkit",
+   "name": "Delete names what is lost in an in-page dialog; Escape keeps the project",
+   "pass": true,
+   "evidence": "{\"dialogState\":{\"open\":true,\"role\":\"alertdialog\",\"modal\":\"true\",\"title\":\"Delete \\\"Stop selling features\\\"?\",\"desc\":\"This permanently removes the chat, its recorded versions, and the finished script. This cannot be undone once completed.\",\"activeId\":\"story-delete-dialog-cancel\"},\"afterEscape\":{\"closed\":true,\"activeAction\":\"delete-project\"},\"trapPass\":true}"
+  },
+  {
+   "browser": "webkit",
+   "name": "Undo within the window restores the project with nothing lost",
+   "pass": true,
+   "evidence": "rowDeleted=true, hasUndo=true, restored=true, contentIntact=true"
+  },
+  {
+   "browser": "webkit",
    "name": "first visit greets member with clear start",
    "pass": true,
    "evidence": "Start a script the way you talk."
@@ -133,6 +145,12 @@
    "name": "Help answers what finishing locks and what a lapsed membership pauses",
    "pass": true,
    "evidence": "locks=true, pauses=true"
+  },
+  {
+   "browser": "webkit",
+   "name": "Help answers what deleting does and how to ask for a full account deletion",
+   "pass": true,
+   "evidence": "deleting=true, accountDeletion=true"
   },
   {
    "browser": "webkit",
@@ -210,7 +228,7 @@
    "browser": "webkit",
    "name": "An old story profile shows its age and a refresh offer",
    "pass": true,
-   "evidence": "Story profile updated 76 days ago. Review your audience, offers, or facts to keep future scripts current.Review details"
+   "evidence": "Story profile updated 77 days ago. Review your audience, offers, or facts to keep future scripts current.Review details"
   },
   {
    "browser": "webkit",
@@ -258,7 +276,7 @@
    "browser": "webkit",
    "name": "screen-reader help-dialog: every control is named and headings form an outline",
    "pass": true,
-   "evidence": "0 faults, 27 controls, 15 headings"
+   "evidence": "0 faults, 28 controls, 17 headings"
   },
   {
    "browser": "webkit",
@@ -278,7 +296,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "st-375-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/001-first-375-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -288,7 +306,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "st-375-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/002-first-375-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -298,7 +316,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "st-375-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/003-first-375-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -308,7 +326,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "st-375-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/004-first-375-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -318,7 +336,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "st-375-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/005-first-375-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -328,7 +346,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "st-375-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/006-first-375-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -338,7 +356,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "st-1280-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/007-first-1280-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -348,7 +366,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "st-1280-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/008-first-1280-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -358,7 +376,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "st-1280-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/009-first-1280-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -368,7 +386,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "st-1280-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/010-first-1280-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -378,7 +396,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "st-1280-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/011-first-1280-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -388,7 +406,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "st-1280-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/012-first-1280-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -398,7 +416,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "erview-375-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/013-interview-375-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -408,7 +426,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "erview-375-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/014-interview-375-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -418,7 +436,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "erview-375-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/015-interview-375-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -428,7 +446,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "erview-375-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/016-interview-375-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -438,7 +456,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "erview-375-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/017-interview-375-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -448,7 +466,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "erview-375-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/018-interview-375-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -458,7 +476,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "erview-1280-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/019-interview-1280-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -468,7 +486,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "erview-1280-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/020-interview-1280-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -478,7 +496,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "erview-1280-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/021-interview-1280-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -488,7 +506,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "erview-1280-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/022-interview-1280-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -498,7 +516,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "erview-1280-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/023-interview-1280-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -508,7 +526,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "erview-1280-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/024-interview-1280-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -518,7 +536,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "tyTurn-375-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/025-sixtyTurn-375-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -528,7 +546,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "tyTurn-375-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/026-sixtyTurn-375-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -538,7 +556,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "tyTurn-375-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/027-sixtyTurn-375-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -548,7 +566,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "tyTurn-375-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/028-sixtyTurn-375-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -558,7 +576,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "tyTurn-375-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/029-sixtyTurn-375-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -568,7 +586,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "tyTurn-375-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/030-sixtyTurn-375-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -578,7 +596,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "tyTurn-1280-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/031-sixtyTurn-1280-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -588,7 +606,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "tyTurn-1280-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/032-sixtyTurn-1280-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -598,7 +616,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "tyTurn-1280-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/033-sixtyTurn-1280-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -608,7 +626,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "tyTurn-1280-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/034-sixtyTurn-1280-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -618,7 +636,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "tyTurn-1280-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/035-sixtyTurn-1280-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -628,7 +646,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "tyTurn-1280-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/036-sixtyTurn-1280-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -638,7 +656,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "t-375-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/037-rant-375-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -648,7 +666,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "t-375-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/038-rant-375-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -658,7 +676,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "t-375-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/039-rant-375-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -668,7 +686,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "t-375-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/040-rant-375-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -678,7 +696,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "t-375-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/041-rant-375-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -688,7 +706,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "t-375-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/042-rant-375-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -698,7 +716,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "t-1280-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/043-rant-1280-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -708,7 +726,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "t-1280-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/044-rant-1280-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -718,7 +736,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "t-1280-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/045-rant-1280-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -728,7 +746,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "t-1280-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/046-rant-1280-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -738,7 +756,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "t-1280-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/047-rant-1280-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -748,7 +766,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "t-1280-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/048-rant-1280-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -758,7 +776,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ished-375-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/049-finished-375-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -768,7 +786,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ished-375-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/050-finished-375-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -778,7 +796,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "ished-375-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/051-finished-375-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -788,7 +806,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ished-375-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/052-finished-375-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -798,7 +816,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ished-375-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/053-finished-375-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -808,7 +826,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "ished-375-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/054-finished-375-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -818,7 +836,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ished-1280-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/055-finished-1280-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -828,7 +846,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ished-1280-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/056-finished-1280-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -838,7 +856,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "ished-1280-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/057-finished-1280-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -848,7 +866,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ished-1280-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/058-finished-1280-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -858,7 +876,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ished-1280-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/059-finished-1280-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -868,7 +886,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "ished-1280-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/060-finished-1280-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -878,7 +896,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ine-375-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/061-refine-375-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -888,7 +906,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ine-375-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/062-refine-375-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -898,7 +916,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "ine-375-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/063-refine-375-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -908,7 +926,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ine-375-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/064-refine-375-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -918,7 +936,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ine-375-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/065-refine-375-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -928,7 +946,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "ine-375-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/066-refine-375-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -938,7 +956,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ine-1280-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/067-refine-1280-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -948,7 +966,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ine-1280-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/068-refine-1280-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -958,7 +976,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "ine-1280-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/069-refine-1280-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -968,7 +986,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ine-1280-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/070-refine-1280-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -978,7 +996,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ine-1280-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/071-refine-1280-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -988,7 +1006,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "ine-1280-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/072-refine-1280-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -998,7 +1016,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "-375-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/073-ugc-375-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1008,7 +1026,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "-375-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/074-ugc-375-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1018,7 +1036,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "-375-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/075-ugc-375-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -1028,7 +1046,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "-375-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/076-ugc-375-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1038,7 +1056,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "-375-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/077-ugc-375-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1048,7 +1066,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "-375-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/078-ugc-375-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -1058,7 +1076,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "-1280-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/079-ugc-1280-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1068,7 +1086,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "-1280-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/080-ugc-1280-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1078,7 +1096,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "-1280-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/081-ugc-1280-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -1088,7 +1106,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "-1280-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/082-ugc-1280-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1098,7 +1116,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "-1280-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/083-ugc-1280-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1108,7 +1126,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "-1280-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/084-ugc-1280-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -1118,7 +1136,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ory-375-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/085-memory-375-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1128,7 +1146,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ory-375-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/086-memory-375-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1138,7 +1156,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "ory-375-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/087-memory-375-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -1148,7 +1166,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ory-375-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/088-memory-375-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1158,7 +1176,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ory-375-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/089-memory-375-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1168,7 +1186,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "ory-375-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/090-memory-375-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -1178,7 +1196,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ory-1280-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/091-memory-1280-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1188,7 +1206,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ory-1280-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/092-memory-1280-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1198,7 +1216,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "ory-1280-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/093-memory-1280-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -1208,7 +1226,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ory-1280-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/094-memory-1280-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1218,7 +1236,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "ory-1280-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/095-memory-1280-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1228,7 +1246,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "ory-1280-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/096-memory-1280-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -1238,7 +1256,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "p-375-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/097-help-375-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1248,7 +1266,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "p-375-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/098-help-375-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1258,7 +1276,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "p-375-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/099-help-375-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -1268,7 +1286,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "p-375-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/100-help-375-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1278,7 +1296,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "p-375-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/101-help-375-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1288,7 +1306,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "p-375-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/102-help-375-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -1298,7 +1316,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "p-1280-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/103-help-1280-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1308,7 +1326,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "p-1280-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/104-help-1280-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1318,7 +1336,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "p-1280-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/105-help-1280-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -1328,7 +1346,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "p-1280-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/106-help-1280-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1338,7 +1356,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "p-1280-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/107-help-1280-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1348,7 +1366,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "p-1280-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/108-help-1280-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -1358,7 +1376,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "nedout-375-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/109-signedout-375-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1368,7 +1386,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "nedout-375-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/110-signedout-375-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1378,7 +1396,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "nedout-375-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/111-signedout-375-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -1388,7 +1406,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "nedout-375-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/112-signedout-375-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1398,7 +1416,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "nedout-375-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/113-signedout-375-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1408,7 +1426,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "nedout-375-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/114-signedout-375-light-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -1418,7 +1436,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "nedout-1280-dark-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/115-signedout-1280-dark-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1428,7 +1446,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "nedout-1280-dark-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/116-signedout-1280-dark-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1438,7 +1456,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "nedout-1280-dark-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/117-signedout-1280-dark-font24.jpg"
   },
   {
    "browser": "webkit",
@@ -1448,7 +1466,7 @@
    "mode": "normal",
    "rootFont": "16px",
    "pass": true,
-   "shot": "nedout-1280-light-normal.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/118-signedout-1280-light-normal.jpg"
   },
   {
    "browser": "webkit",
@@ -1458,7 +1476,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": "nedout-1280-light-zoom200.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/119-signedout-1280-light-zoom200.jpg"
   },
   {
    "browser": "webkit",
@@ -1468,7 +1486,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": "nedout-1280-light-font24.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/120-signedout-1280-light-font24.jpg"
   }
  ],
  "keyboardResults": [
@@ -1481,7 +1499,7 @@
    "stops": 27,
    "invisibleFocusStops": 0,
    "focusOrder": "focus-order.json",
-   "shot": "board-journey-dark-1280.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/121-keyboard-journey-dark-1280.jpg"
   },
   {
    "browser": "webkit",
@@ -1492,7 +1510,7 @@
    "stops": 26,
    "invisibleFocusStops": 0,
    "focusOrder": null,
-   "shot": "board-journey-dark-375.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/122-keyboard-journey-dark-375.jpg"
   },
   {
    "browser": "webkit",
@@ -1503,7 +1521,7 @@
    "stops": 27,
    "invisibleFocusStops": 0,
    "focusOrder": null,
-   "shot": "board-journey-light-1280.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/123-keyboard-journey-light-1280.jpg"
   },
   {
    "browser": "webkit",
@@ -1514,7 +1532,7 @@
    "stops": 26,
    "invisibleFocusStops": 0,
    "focusOrder": null,
-   "shot": "board-journey-light-375.jpg"
+   "shot": "docs/storysculpt-walk/webkit/shots/124-keyboard-journey-light-375.jpg"
   }
  ],
  "accessibilityResults": [
@@ -1522,7 +1540,7 @@
    "browser": "webkit",
    "screen": "first-visit",
    "pass": true,
-   "shot": "y-first-visit.jpg",
+   "shot": "docs/storysculpt-walk/webkit/shots/137-a11y-first-visit.jpg",
    "transcript": "a11y/first-visit.yml",
    "headings": [
     {
@@ -1560,7 +1578,7 @@
    "browser": "webkit",
    "screen": "interview",
    "pass": true,
-   "shot": "y-interview.jpg",
+   "shot": "docs/storysculpt-walk/webkit/shots/138-a11y-interview.jpg",
    "transcript": "a11y/interview.yml",
    "headings": [
     {
@@ -1582,7 +1600,7 @@
    "browser": "webkit",
    "screen": "finished",
    "pass": true,
-   "shot": "y-finished.jpg",
+   "shot": "docs/storysculpt-walk/webkit/shots/139-a11y-finished.jpg",
    "transcript": "a11y/finished.yml",
    "headings": [
     {
@@ -1604,7 +1622,7 @@
    "browser": "webkit",
    "screen": "story-profile",
    "pass": true,
-   "shot": "y-story-profile.jpg",
+   "shot": "docs/storysculpt-walk/webkit/shots/140-a11y-story-profile.jpg",
    "transcript": "a11y/story-profile.yml",
    "headings": [
     {
@@ -1630,7 +1648,7 @@
    "browser": "webkit",
    "screen": "help-dialog",
    "pass": true,
-   "shot": "y-help-dialog.jpg",
+   "shot": "docs/storysculpt-walk/webkit/shots/141-a11y-help-dialog.jpg",
    "transcript": "a11y/help-dialog.yml",
    "headings": [
     {
@@ -1687,6 +1705,14 @@
     },
     {
      "level": 3,
+     "text": "What happens when I delete a project?"
+    },
+    {
+     "level": 3,
+     "text": "How do I request full account deletion?"
+    },
+    {
+     "level": 3,
      "text": "What should I do next?"
     },
     {
@@ -1694,7 +1720,7 @@
      "text": "Where do I get help?"
     }
    ],
-   "controls": 27
+   "controls": 28
   }
  ]
 }

@@ -579,6 +579,92 @@ async function lifecyclePass(browser) {
     check('stale archive is refused without hiding chat', !world.projects[0].archived && await page.locator('.story-project-select').count() === 1, 'reload before retry');
     await context.close();
   }
+
+  // Delete confirm dialog and undo window (WBR-462: Stranger 69, 72, 73; UX 10, 87, 90; Developer 98)
+  {
+    const { context, page, world } = await open(browser, 'interview', { width: 1280 });
+    const before = JSON.stringify({ conversation: world.projects[0].conversation, output: world.projects[0].output });
+
+    // 1. Delete names what is lost in an in-page dialog; Escape keeps the project
+    await page.getByRole('button', { name: 'Delete chat', exact: true }).first().click();
+    await page.waitForSelector('#story-delete-dialog-backdrop:not([hidden])');
+
+    const dialogState = await page.evaluate(() => {
+      const backdrop = document.getElementById('story-delete-dialog-backdrop');
+      const dialog = document.getElementById('story-delete-dialog');
+      const title = document.getElementById('story-delete-dialog-title');
+      const desc = document.getElementById('story-delete-dialog-desc');
+      const active = document.activeElement;
+      return {
+        open: backdrop && !backdrop.hidden,
+        role: dialog ? dialog.getAttribute('role') : null,
+        modal: dialog ? dialog.getAttribute('aria-modal') : null,
+        title: title ? title.textContent.trim() : '',
+        desc: desc ? desc.textContent.trim() : '',
+        activeId: active ? active.id : null
+      };
+    });
+
+    const isWebKit = (browserName === 'webkit');
+    const tabKey = isWebKit ? 'Alt+Tab' : 'Tab';
+
+    // Verify Tab wrapping
+    await page.keyboard.press(tabKey);
+    const focusConfirm = await page.evaluate(() => document.activeElement ? document.activeElement.id : null);
+    await page.keyboard.press(tabKey);
+    const focusWrappedBack = await page.evaluate(() => document.activeElement ? document.activeElement.id : null);
+    const trapPass = (focusConfirm === 'story-delete-dialog-confirm') && (focusWrappedBack === 'story-delete-dialog-cancel');
+
+    // Press Escape to cancel the dialog
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(200);
+
+    const afterEscape = await page.evaluate(() => {
+      const backdrop = document.getElementById('story-delete-dialog-backdrop');
+      return {
+        closed: backdrop && backdrop.hidden,
+        activeAction: document.activeElement ? document.activeElement.getAttribute('data-action') : null
+      };
+    });
+
+    const namesLost = /chat/i.test(dialogState.desc) && /version/i.test(dialogState.desc) && /script/i.test(dialogState.desc);
+    const dialogPass = dialogState.open &&
+      (dialogState.role === 'alertdialog' || dialogState.role === 'dialog') &&
+      dialogState.modal === 'true' &&
+      namesLost &&
+      afterEscape.closed &&
+      afterEscape.activeAction === 'delete-project' &&
+      trapPass &&
+      await page.locator('.story-project-select').count() === 1;
+
+    check('Delete names what is lost in an in-page dialog; Escape keeps the project', dialogPass,
+      JSON.stringify({ dialogState, afterEscape, trapPass }));
+
+    // 2. Undo within the window restores the project with nothing lost
+    await page.getByRole('button', { name: 'Delete chat', exact: true }).first().click();
+    await page.waitForSelector('#story-delete-dialog-backdrop:not([hidden])');
+    await page.click('#story-delete-dialog-confirm');
+    await page.waitForTimeout(200);
+
+    // Row shows "Deleted." and "Undo"
+    const rowDeleted = await page.locator('.story-project-item.is-deleted').isVisible();
+    const rowText = await page.locator('.story-project-item.is-deleted').textContent();
+    const hasUndoBtn = await page.locator('[data-action="undo-delete"]').isVisible();
+
+    // Click Undo
+    await page.click('[data-action="undo-delete"]');
+    await page.waitForTimeout(200);
+
+    const restoredRow = await page.locator('.story-project-select').count() === 1;
+    const isDeletedRowGone = await page.locator('.story-project-item.is-deleted').count() === 0;
+    const contentIntact = JSON.stringify({ conversation: world.projects[0].conversation, output: world.projects[0].output }) === before;
+
+    const undoPass = rowDeleted && /Deleted/i.test(rowText) && hasUndoBtn && restoredRow && isDeletedRowGone && contentIntact;
+    check('Undo within the window restores the project with nothing lost', undoPass,
+      'rowDeleted=' + rowDeleted + ', hasUndo=' + hasUndoBtn + ', restored=' + restoredRow + ', contentIntact=' + contentIntact);
+
+    await context.close();
+  }
   // First visit greeting and orientation card (WBR-462: Stranger 3, 4, 7, 8, 15-22, 27-29; UX 21-24, 26, 28, 29)
   {
     const { context, page } = await open(browser, 'first', { width: 1280 });
@@ -637,6 +723,9 @@ async function lifecyclePass(browser) {
     const answersFinishingLocks = /interview is locked/i.test(helpText);
     const answersLapsedPauses = /lapsed membership pauses/i.test(helpText);
     check('Help answers what finishing locks and what a lapsed membership pauses', answersFinishingLocks && answersLapsedPauses, 'locks=' + answersFinishingLocks + ', pauses=' + answersLapsedPauses);
+    const answersDeletingDoes = /permanently removes the chat/i.test(helpText) && /versions/i.test(helpText) && /undo/i.test(helpText);
+    const answersAccountDeletion = /Studio-level request/i.test(helpText) && /email@davidbee\.me/i.test(helpText);
+    check('Help answers what deleting does and how to ask for a full account deletion', answersDeletingDoes && answersAccountDeletion, 'deleting=' + answersDeletingDoes + ', accountDeletion=' + answersAccountDeletion);
     await page.keyboard.press('Escape');
     check('Help close returns focus to the visible account button', await page.evaluate(() => document.activeElement.id) === 'eee-account-button', 'not a hidden menu item');
     await context.close();

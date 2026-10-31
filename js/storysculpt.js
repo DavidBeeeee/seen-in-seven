@@ -32,6 +32,9 @@ let viewingSeenLength = 0; // how many versions existed when an older one was ch
 let mobileActiveTab = 'chat'; // 'chat' or 'script'
 let storyRailFilter = 'all'; // 'all' | 'active' | 'filmed' | 'archived'
 const storyArchivePending = new Set();
+const storyPendingDeletes = new Map();
+let deleteDialogResolver = null;
+let deleteDialogOpener = null;
 // Select mode for deleting several chats at once (David, 2026-10-14).
 let storySelectMode = false;
 const storySelected = new Set();
@@ -192,6 +195,7 @@ function runNextStep(action) {
 
 function visibleStoryProjects() {
   return storyProjects.filter(project => {
+    if (storyPendingDeletes.has(project.id)) return true;
     if (storyRailFilter === 'archived') return Boolean(project.archived);
     if (project.archived) return false;
     const filmed = Boolean(project.intake && project.intake.filmed);
@@ -200,7 +204,7 @@ function visibleStoryProjects() {
 }
 
 function showNextUnarchivedStory() {
-  const next = storyProjects.find(project => !project.archived);
+  const next = storyProjects.find(project => !project.archived && !storyPendingDeletes.has(project.id));
   if (next) showProject(next); else showStart();
 }
 
@@ -210,7 +214,7 @@ function renderProjectList() {
   renderMemberProgress();
   const list = storyEl('story-project-list');
   const count = storyEl('story-rail-count');
-  const currentCount = storyProjects.filter(project => !project.archived).length;
+  const currentCount = storyProjects.filter(project => !project.archived && !storyPendingDeletes.has(project.id)).length;
   if (count) count.textContent = currentCount ? String(currentCount) : '';
   const filtered = visibleStoryProjects();
 
@@ -222,6 +226,13 @@ function renderProjectList() {
   }
 
   list.innerHTML = filtered.map(project => {
+    if (storyPendingDeletes.has(project.id)) {
+      const title = project.title || 'Untitled script';
+      return '<div class="story-project-item is-deleted" data-pending-delete="' + storyEscape(project.id) + '">' +
+        '<span class="story-deleted-text">Deleted.</span>' +
+        '<button class="story-undo-btn" type="button" data-action="undo-delete" data-project-id="' + storyEscape(project.id) + '" aria-label="' + storyEscape('Undo delete ' + title) + '">Undo</button>' +
+      '</div>';
+    }
     const isActive = activeStory && activeStory.id === project.id;
     const isFilmed = Boolean(project.intake && project.intake.filmed);
     const isFinished = STATES.isFinished(project);
@@ -416,22 +427,20 @@ async function toggleFilmed(projectId) {
   }
 }
 
-async function deleteStoryProjectById(projectId) {
+async function deleteStoryProjectById(projectId, opener = null) {
   const project = storyProjects.find(p => p.id === projectId);
-  if (!project || !window.confirm('Delete "' + (project.title || 'this chat') + '"?')) return;
-  try {
-    const { error } = await storyContext.sb.from('storysculpt_projects').delete().eq('id', projectId);
-    if (error) throw error;
-    storyProjects = storyProjects.filter(p => p.id !== projectId);
-    if (activeStory && activeStory.id === projectId) {
-      clearTimeout(storySaveTimer); storySaveTimer = null; activeStory = null;
-      showNextUnarchivedStory();
-    } else {
-      renderProjectList();
-    }
-  } catch (err) {
-    console.error('Failed to delete project', err);
-  }
+  if (!project) return;
+  const title = project.title || 'Untitled script';
+  const confirmed = await showDeleteConfirmDialog({
+    title: 'Delete "' + title + '"?',
+    desc: 'This permanently removes the chat, its recorded versions, and the finished script. This cannot be undone once completed.',
+    confirmText: 'Delete project',
+    cancelText: 'Keep project',
+    danger: true,
+    opener: opener || document.querySelector('[data-action="delete-project"][data-project-id="' + projectId + '"]')
+  });
+  if (!confirmed) return;
+  queueStoryProjectDelete(projectId);
 }
 
 // UX 57: a choice to view an older version lapses once a newer one is saved, so
@@ -2679,13 +2688,20 @@ function queueOutputSave() {
 }
 
 async function deleteActiveStory() {
-  if (!activeStory || !window.confirm('Delete this StorySculpt chat?')) return;
-  const id = activeStory.id;
-  const { error } = await storyContext.sb.from('storysculpt_projects').delete().eq('id', id);
-  if (error) return;
-  storyProjects = storyProjects.filter(project => project.id !== id);
-  clearTimeout(storySaveTimer); storySaveTimer = null; activeStory = null;
-  showNextUnarchivedStory();
+  if (!activeStory) return;
+  const project = activeStory;
+  const title = project.title || 'Untitled script';
+  const opener = storyEl('delete-project-button');
+  const confirmed = await showDeleteConfirmDialog({
+    title: 'Delete "' + title + '"?',
+    desc: 'This permanently removes the chat, its recorded versions, and the finished script. This cannot be undone once completed.',
+    confirmText: 'Delete project',
+    cancelText: 'Keep project',
+    danger: true,
+    opener
+  });
+  if (!confirmed) return;
+  queueStoryProjectDelete(project.id);
 }
 
 // Story profile (member memory) panel.
@@ -2805,7 +2821,13 @@ storyEl('story-project-list').addEventListener('click', event => {
   const delBtn = event.target.closest('[data-action="delete-project"]');
   if (delBtn) {
     event.stopPropagation();
-    deleteStoryProjectById(delBtn.dataset.projectId);
+    deleteStoryProjectById(delBtn.dataset.projectId, delBtn);
+    return;
+  }
+  const undoBtn = event.target.closest('[data-action="undo-delete"]');
+  if (undoBtn) {
+    event.stopPropagation();
+    undoStoryDelete(undoBtn.dataset.projectId);
     return;
   }
   const button = event.target.closest('[data-project-id]');
@@ -3069,6 +3091,141 @@ for (const id of ['story-next-step-rail', 'story-next-step-footer', 'story-next-
 window.addEventListener('pagehide', () => {
   if (storySaveTimer && activeStory) { clearTimeout(storySaveTimer); storySaveTimer = null; saveActiveStory().catch(() => {}); }
 });
+
+// Accessible Delete Confirm Dialog & Undo Window (WBR-462)
+function showDeleteConfirmDialog({ title, desc, confirmText, cancelText, danger = true, opener = null }) {
+  const backdrop = storyEl('story-delete-dialog-backdrop');
+  const dialog = storyEl('story-delete-dialog');
+  const titleEl = storyEl('story-delete-dialog-title');
+  const descEl = storyEl('story-delete-dialog-desc');
+  const confirmBtn = storyEl('story-delete-dialog-confirm');
+  const cancelBtn = storyEl('story-delete-dialog-cancel');
+
+  if (!backdrop || !dialog) return Promise.resolve(false);
+
+  if (titleEl) titleEl.textContent = title || 'Delete project?';
+  if (descEl) descEl.textContent = desc || 'This permanently removes the chat, its recorded versions, and the finished script. This cannot be undone once completed.';
+  if (confirmBtn) confirmBtn.textContent = confirmText || 'Delete project';
+  if (cancelBtn) cancelBtn.textContent = cancelText || 'Keep project';
+
+  deleteDialogOpener = opener || document.activeElement;
+  backdrop.hidden = false;
+
+  if (cancelBtn) {
+    cancelBtn.focus({ preventScroll: true });
+  } else if (dialog) {
+    dialog.focus({ preventScroll: true });
+  }
+
+  return new Promise(resolve => {
+    deleteDialogResolver = resolve;
+  });
+}
+
+function closeDeleteConfirmDialog(confirmed) {
+  const backdrop = storyEl('story-delete-dialog-backdrop');
+  if (backdrop) backdrop.hidden = true;
+  const resolve = deleteDialogResolver;
+  deleteDialogResolver = null;
+  if (resolve) resolve(Boolean(confirmed));
+  if (deleteDialogOpener && typeof deleteDialogOpener.focus === 'function') {
+    try { deleteDialogOpener.focus({ preventScroll: true }); } catch (err) {}
+  }
+  deleteDialogOpener = null;
+}
+
+function queueStoryProjectDelete(projectId) {
+  const project = storyProjects.find(p => p.id === projectId);
+  if (!project) return;
+  const activeGone = activeStory && activeStory.id === projectId;
+  if (activeGone) {
+    clearTimeout(storySaveTimer);
+    storySaveTimer = null;
+    activeStory = null;
+    showNextUnarchivedStory();
+  }
+  const timer = setTimeout(async () => {
+    storyPendingDeletes.delete(projectId);
+    storyProjects = storyProjects.filter(p => p.id !== projectId);
+    renderProjectList();
+    try {
+      const { error } = await storyContext.sb.from('storysculpt_projects').delete().eq('id', projectId);
+      if (error) console.error('Failed to delete project on server', error);
+    } catch (err) {
+      console.error('Failed to delete project on server', err);
+    }
+  }, 10000);
+
+  storyPendingDeletes.set(projectId, { timer, project });
+  renderProjectList();
+
+  const saveStatus = storyEl('story-save-status');
+  if (saveStatus) {
+    saveStatus.textContent = 'Project deleted. Undo available for 10s.';
+    saveStatus.className = 'eee-message';
+  }
+}
+
+function undoStoryDelete(projectId) {
+  const pending = storyPendingDeletes.get(projectId);
+  if (!pending) return;
+  clearTimeout(pending.timer);
+  storyPendingDeletes.delete(projectId);
+  if (!activeStory) {
+    showProject(pending.project);
+  } else {
+    renderProjectList();
+  }
+  const saveStatus = storyEl('story-save-status');
+  if (saveStatus) {
+    saveStatus.textContent = 'Restored "' + (pending.project.title || 'Untitled script') + '".';
+    saveStatus.className = 'eee-message success';
+  }
+}
+
+const deleteBackdrop = storyEl('story-delete-dialog-backdrop');
+const deleteCancel = storyEl('story-delete-dialog-cancel');
+const deleteConfirm = storyEl('story-delete-dialog-confirm');
+
+if (deleteCancel) deleteCancel.onclick = () => closeDeleteConfirmDialog(false);
+if (deleteConfirm) deleteConfirm.onclick = () => closeDeleteConfirmDialog(true);
+if (deleteBackdrop && typeof deleteBackdrop.addEventListener === 'function') {
+  deleteBackdrop.addEventListener('click', e => {
+    if (e.target === deleteBackdrop) closeDeleteConfirmDialog(false);
+  });
+}
+
+if (typeof document !== 'undefined' && typeof document.addEventListener === 'function') {
+  document.addEventListener('keydown', e => {
+    const backdrop = storyEl('story-delete-dialog-backdrop');
+    if (!backdrop || backdrop.hidden) return;
+    if (e.key === 'Escape') {
+      e.preventDefault();
+      e.stopPropagation();
+      closeDeleteConfirmDialog(false);
+      return;
+    }
+    if (e.key === 'Tab') {
+      const dialog = storyEl('story-delete-dialog');
+      if (!dialog) return;
+      const focusable = dialog.querySelectorAll('button:not([disabled])');
+      if (focusable.length < 2) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey) {
+        if (document.activeElement === first || !dialog.contains(document.activeElement)) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else {
+        if (document.activeElement === last || !dialog.contains(document.activeElement)) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+  });
+}
 
 EEEStudio.initialize(async context => {
   storyContext = context;

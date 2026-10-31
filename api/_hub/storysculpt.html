@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
   <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
-  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=wbr462-consequences-v1">
+  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=wbr462-delete-undo-v1">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -468,12 +468,29 @@
         <section><h3>What does finishing a script mean?</h3><p>Finishing closes the interview to new turns and assembles your answers into a script you can record. Once a script is finished, the interview is locked so your script stays stable. A new answer cannot be added to a finished interview; use Refine with a note to change the script, or start a new chat for your next script. Copy it or download the text file when you are ready to film. Your saved script does not expire; it stays in your account until you delete it.</p></section>
         <section><h3>How long does an interview take?</h3><p>An interview takes about 5 to 10 minutes across 4 to 6 conversational turns. You talk through raw, unedited thoughts one question at a time in your natural phrasing, without needing an outline, slide deck, or prepared notes. Rough answers give the 5E framework the real emotional tension and personal perspective your video needs.</p></section>
         <section><h3>What happens after my first script?</h3><p>When your first script is finished, it is ready to record. You can copy it directly to your teleprompter or download the text file to film your video. Once you film, mark it filmed or start your next script to build momentum. Your saved scripts stay in your library and your standing story profile carries forward what StorySculpt learned about your voice and audience into every new script you create.</p></section>
-        <section><h3>Can I archive or delete a chat?</h3><p>Leaving pauses your chat; it does not delete anything. Check that your changes say Saved before closing the browser. Archive puts a chat away without deleting its notes, answers or script. Use the Archive button beside its title, then open Archived and choose Restore chat to bring it back to All. Delete is different: after you confirm, it permanently removes the chat and its saved script.</p></section>
+        <section><h3>Can I archive or delete a chat?</h3><p>Leaving pauses your chat; it does not delete anything. Check that your changes say Saved before closing the browser. Archive puts a chat away without deleting its notes, answers or script. Use the Archive button beside its title, then open Archived and choose Restore chat to bring it back to All. Delete is different: after you confirm, it permanently removes the chat, its versions, and its saved script.</p></section>
+        <section><h3>What happens when I delete a project?</h3><p>Deleting a project permanently removes the chat, its recorded versions, and the finished script. When you delete a chat, you get a short undo window of about ten seconds where the row shows Deleted and an Undo button to restore it immediately. After that window lapses, the server delete runs and the work is permanently gone. Returning after a delete shows your remaining active chats, or the clean start screen if you have no other chats.</p></section>
+        <section><h3>How do I request full account deletion?</h3><p>Full account deletion is a Studio-level request to David. To have your entire account, all projects, scripts, and standing story profile permanently removed from the system, email David Bee at <a href="mailto:email@davidbee.me?subject=Studio%20account%20deletion">email@davidbee.me</a> with “Studio account deletion” in the subject. David handles account deletion requests directly.</p></section>
         <section><h3>What should I do next?</h3><div class="story-next-slot" id="story-next-step-help"></div></section>
         <section><h3>Where do I get help?</h3><p>For a question about a script, chat, or your story profile, email <a href="mailto:email@davidbee.me?subject=StorySculpt%20support">email@davidbee.me</a> and say what you were doing. For Studio sign-in, access, or billing, use the <a href="/eee">Studio home</a> and its account support options, or email the same address with “Studio account” in the subject.</p><p>Review our <a href="/terms">Terms of Service, AI usage, and FAQ</a>.</p></section>
       </div>
     </aside>
+
+    <!-- Accessible Delete Confirm Dialog (WBR-462: replaces native confirm()) -->
+    <div class="story-dialog-backdrop" id="story-delete-dialog-backdrop" hidden>
+      <div class="story-dialog story-dialog-danger" id="story-delete-dialog" role="alertdialog" aria-modal="true" aria-labelledby="story-delete-dialog-title" aria-describedby="story-delete-dialog-desc" tabindex="-1">
+        <div class="story-dialog-head">
+          <div class="story-dialog-danger-icon" aria-hidden="true"><i data-lucide="alert-triangle"></i></div>
+          <h2 class="story-dialog-title" id="story-delete-dialog-title">Delete project?</h2>
+        </div>
+        <p class="story-dialog-desc" id="story-delete-dialog-desc">This permanently removes the chat, its recorded versions, and the finished script. This cannot be undone once completed.</p>
+        <div class="story-dialog-actions">
+          <button type="button" class="secondary-button" id="story-delete-dialog-cancel">Keep project</button>
+          <button type="button" class="primary-button danger" id="story-delete-dialog-confirm">Delete project</button>
+        </div>
+      </div>
+    </div>
   </div>
-  <script src="/js/eee-common.js?v=per-app-access-v1"></script><script src="/js/storysculpt-member-states.js?v=wbr462-consequences-v1"></script><script src="/js/storysculpt.js?v=wbr462-consequences-v1"></script><script src="/js/voice-input.js?v=voice-sessions-1"></script>
+  <script src="/js/eee-common.js?v=per-app-access-v1"></script><script src="/js/storysculpt-member-states.js?v=wbr462-consequences-v1"></script><script src="/js/storysculpt.js?v=wbr462-delete-undo-v1"></script><script src="/js/voice-input.js?v=voice-sessions-1"></script>
 </body>
 </html>
