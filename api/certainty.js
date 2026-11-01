@@ -3,6 +3,8 @@ import { readReminderHeartbeat } from './_lib/reminder-heartbeat.js';
 import { consumeQuota, json } from './_lib/security.js';
 import { detectCrisis } from './_lib/navigator-core.js';
 import { sendCertaintyInviteEmails, buildCertaintyIcs, certaintyInviteSequence } from './_lib/certainty-ics.js';
+import { byteLength, createReadCache, recordResponseBytes } from './_lib/egress-budget.js';
+import { createHash } from 'node:crypto';
 
 export const config = { maxDuration: 30 };
 
@@ -41,7 +43,22 @@ export const SESSIONS_UNREACHABLE = {
   code: 'SESSIONS_UNREACHABLE',
   error: 'We could not reach your sessions just now. Your bookings are safe. Give it a minute and try again.'
 };
+export const SESSIONS_PAUSED = {
+  code: 'SESSIONS_PAUSED',
+  error: 'Booking is paused for a few hours, your session is safe'
+};
 export const SUPABASE_TIMEOUT_MS = 6000;
+
+function paused(res, where, correlationId, detail = {}) {
+  console.error(JSON.stringify({
+    event: 'certainty_quota_paused', where, correlationId, appVersion: CERTAINTY_APP_VERSION, ...detail
+  }));
+  return json(res, 503, {
+    ...SESSIONS_PAUSED,
+    retryAfter: new Date(Date.now() + 3 * 3600000).toISOString(),
+    correlationId
+  });
+}
 
 function unreachable(res, where, correlationId, detail = {}) {
   // recordEvent goes through Supabase too and is likely down with it, so the
@@ -171,6 +188,7 @@ async function memberFor(userToken) {
     const response = await supabaseFetch(SUPABASE_URL + '/auth/v1/user', {
       headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + userToken }
     });
+    if (response.status === 402) return 'paused';
     if (isOutageStatus(response.status)) return 'unreachable';
     if (!response.ok) return null;
     const user = await response.json().catch(() => null);
@@ -187,6 +205,7 @@ async function hasEeeAccess(userToken) {
       headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + userToken, 'Content-Type': 'application/json' },
       body: JSON.stringify({ target_app_key: 'certainty' }) // its own key, or the Momentum Hub bundle (WBR-442)
     });
+    if (response.status === 402) return 'paused';
     if (isOutageStatus(response.status)) return 'unreachable';
     return response.ok && (await response.json().catch(() => false)) === true;
   } catch (error) {
@@ -208,7 +227,18 @@ async function rpc(name, args, userToken) {
   const raw = await response.text().catch(() => '');
   let data = null;
   try { data = raw ? JSON.parse(raw) : null; } catch (error) { data = raw; }
-  return { ok: response.ok, status: response.status, data, unreachable: isOutageStatus(response.status), rpc: name };
+  await recordResponseBytes({
+    supabaseUrl: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY, userToken,
+    route: 'certainty', reader: name, bytes: byteLength(raw)
+  });
+  const quotaPaused = response.status === 402 || Boolean(data && data.code === 'exceed_egress_quota');
+  return { ok: response.ok, status: response.status, data, paused: quotaPaused, unreachable: !quotaPaused && isOutageStatus(response.status), rpc: name };
+}
+
+const certaintyStateCache = createReadCache({ ttlMs: 15000, maxEntries: 1000 });
+const certaintySettingsCache = createReadCache({ ttlMs: 60000, maxEntries: 1000 });
+function certaintyCacheKey(userToken, reader) {
+  return createHash('sha256').update(reader + ':' + userToken).digest('hex');
 }
 
 // Observability. Every book, cancel, state read, and calendar write records an
@@ -454,6 +484,9 @@ export async function writeToCalendarWithRetry(session, join, options = {}) {
 export const writeToCalendar = writeToCalendarWithRetry;
 
 function fail(res, result, correlationId = null) {
+  if (result && result.paused) {
+    return paused(res, result.rpc || 'rpc', correlationId, { status: result.status });
+  }
   if (result && result.unreachable) {
     return unreachable(res, result.rpc || 'rpc', correlationId, { status: result.status });
   }
@@ -480,8 +513,10 @@ export default async function handler(req, res, options = {}) {
 
   const userToken = token(req);
   const user = await memberFor(userToken);
+  if (user === 'paused') return paused(res, 'auth', correlationId, { status: 402 });
   if (user === 'unreachable') return unreachable(res, 'auth', correlationId);
   const access = user ? await hasEeeAccess(userToken) : false;
+  if (access === 'paused') return paused(res, 'access', correlationId, { status: 402 });
   if (access === 'unreachable') return unreachable(res, 'access', correlationId);
   if (!user || access !== true) {
     if (user) {
@@ -493,6 +528,9 @@ export default async function handler(req, res, options = {}) {
   }
 
   const action = String(req.body && req.body.action || 'state');
+  if (action !== 'state' && action !== 'history') {
+    certaintyStateCache.delete(certaintyCacheKey(userToken, 'state'));
+  }
   const startedAt = Date.now();
 
   try {
@@ -526,7 +564,10 @@ export default async function handler(req, res, options = {}) {
         });
       }
 
-      const result = await rpc('certainty_state', { p_days: 21 }, userToken);
+      const result = await certaintyStateCache.getOrCreate(
+        certaintyCacheKey(userToken, 'state'),
+        () => rpc('certainty_state', { p_days: 21 }, userToken)
+      );
       if (!result.ok) {
         await recordEvent(userToken, 'certainty_state', {
           schema: 1, outcome: 'error', code: resultCode(result), latencyMs: Date.now() - startedAt

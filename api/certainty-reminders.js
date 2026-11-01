@@ -23,6 +23,7 @@
 
 import { checkStorySculptIncidents } from './_lib/storysculpt-incidents.js';
 import { retryFailedInvites } from './_lib/certainty-invite-retry.js';
+import { checkAndWarnEgress } from './_lib/egress-budget.js';
 
 export const config = { maxDuration: 60 };
 
@@ -378,6 +379,23 @@ export default async function handler(req, res) {
     }
   }
 
+  // The hourly tick also totals Studio-served response bytes. The daily Vercel
+  // run skips this so two close runs cannot race the same warning receipt.
+  let egress = null;
+  if (trigger !== 'vercel-cron') {
+    try {
+      const sendWarning = channel.active && OPERATOR_EMAIL
+        ? (msg) => sendEmail({ to: OPERATOR_EMAIL, subject: msg.subject, text: msg.text, idempotencyKey: msg.idempotencyKey })
+        : null;
+      egress = await checkAndWarnEgress({
+        supabaseUrl: SUPABASE_URL, serviceKey: SERVICE_KEY, send: sendWarning, to: OPERATOR_EMAIL
+      });
+    } catch (error) {
+      console.error('certainty-reminders: egress budget check failed', String(error));
+      egress = { ok: false, error: 'check-failed' };
+    }
+  }
+
   const summary = {
     ok: true,
     trigger,
@@ -390,8 +408,9 @@ export default async function handler(req, res) {
     heartbeat: run ? { gapHours: run.gapHours, missed: run.missed, alertOutcome } : null,
     storysculpt,
     seats,
-    invites
+    invites,
+    egress
   };
-  await finishRun({ outcome: 'ok', due: items.length, claimed: claimed.length, ...counts, storysculpt, seats, invites }, alertOutcome);
+  await finishRun({ outcome: 'ok', due: items.length, claimed: claimed.length, ...counts, storysculpt, seats, invites, egress }, alertOutcome);
   return sendJson(res, 200, summary);
 }

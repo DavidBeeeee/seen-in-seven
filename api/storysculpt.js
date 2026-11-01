@@ -1,7 +1,8 @@
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { randomUUID } from 'node:crypto';
+import { randomUUID, createHash } from 'node:crypto';
 import { authenticatedUser, consumeQuota, json } from './_lib/security.js';
+import { createReadCache, readJsonWithBytes, recordResponseBytes } from './_lib/egress-budget.js';
 import {
   MODEL_VERSION,
   promptVersion,
@@ -281,23 +282,32 @@ async function loadOwnedProject(token, projectId) {
 // must not make that script collide with itself. Filmed scripts still count as
 // finished work whose opening should not be handed back under a new title.
 const RECENT_FINISHED_LIMIT = 6;
+const recentFinishedCache = createReadCache({ ttlMs: 30000, maxEntries: 200 });
 
 async function loadRecentFinishedScripts(token, projectId) {
-  const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=neq.' + projectId
-    + '&status=in.(finished,filmed)&output=not.is.null&select=id,output,updated_at'
-    + '&order=updated_at.desc&limit=' + RECENT_FINISHED_LIMIT;
-  try {
-    const response = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token } });
-    if (!response.ok) throw new Error('status ' + response.status);
-    const rows = await response.json();
-    if (!Array.isArray(rows)) throw new Error('unexpected project list');
-    return rows.filter(row => row && row.id !== projectId && typeof row.output === 'string' && row.output.trim());
-  } catch (cause) {
-    const error = new Error('StorySculpt could not check your recent scripts. Please try again.');
-    error.stage = 'database';
-    error.cause = cause;
-    throw error;
-  }
+  const cacheKey = createHash('sha256').update(token + ':' + projectId).digest('hex');
+  return recentFinishedCache.getOrCreate(cacheKey, async () => {
+    const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=neq.' + projectId
+      + '&status=in.(finished,filmed)&output=not.is.null&select=id,output,updated_at'
+      + '&order=updated_at.desc&limit=' + RECENT_FINISHED_LIMIT;
+    try {
+      const response = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token } });
+      if (!response.ok) throw new Error('status ' + response.status);
+      const measured = await readJsonWithBytes(response);
+      await recordResponseBytes({
+        supabaseUrl: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY, userToken: token,
+        route: 'storysculpt', reader: 'recent_finished', bytes: measured.bytes
+      });
+      const rows = measured.data;
+      if (!Array.isArray(rows)) throw new Error('unexpected project list');
+      return rows.filter(row => row && row.id !== projectId && typeof row.output === 'string' && row.output.trim());
+    } catch (cause) {
+      const error = new Error('StorySculpt could not check your recent scripts. Please try again.');
+      error.stage = 'database';
+      error.cause = cause;
+      throw error;
+    }
+  });
 }
 
 function openingForRepetition(text) {

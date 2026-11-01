@@ -589,6 +589,10 @@
                     <h3>You need a different time</h3>
                     <p>Rescheduling releases your current time first, so someone else can book it before you pick a new one. Pick the new time right away if you want to keep this week.</p>
                   </div>
+                  <div data-cs-copy="quota-pause">
+                    <h3>Booking pauses when the shared database is over its bandwidth limit</h3>
+                    <p>Your confirmed session stays safe and visible from the last good load. Booking is expected back within a few hours; the pause notice names the recovery time. Nothing is cancelled and your weekly session is still included.</p>
+                  </div>
                   <div data-cs-copy="membership-ends">
                     <h3>Your membership ends</h3>
                     <p>Booking closes with it. Cancel any upcoming session you will not keep before then, so the time goes to someone else. Your past sessions stay on your account, so if you come back they are still here.</p>
@@ -649,6 +653,7 @@
   </div>
 
   <script src="/js/eee-common.js?v=gate-hook-v1"></script>
+  <script src="/js/certainty-egress.js?v=wbr-458-v1"></script>
   <script>
     (function () {
       var accessToken = null;
@@ -1700,6 +1705,16 @@
         return api('state').then(function (r) {
           if (!r.ok) {
             var errStr = String(r.data && (r.data.error || r.data.code) || '').toLowerCase();
+            if (window.CertaintyEgress && window.CertaintyEgress.isPaused(r.data)) {
+              var cachedUpcoming = window.CertaintyEgress.lastGood(window.sessionStorage);
+              var pausedUpcoming = state && state.upcoming ? state.upcoming : cachedUpcoming;
+              if (pausedUpcoming) {
+                state = Object.assign({ held: [], history: [], taken: [] }, state || {}, { upcoming: pausedUpcoming });
+                renderPrimary();
+              }
+              window.CertaintyEgress.showPaused(document, pausedUpcoming, r.data.retryAfter, Date.now(), refresh);
+              return;
+            }
             if (errStr.includes('ended') || errStr.includes('churned')) {
               applyCertaintyEndedState();
               return;
@@ -1712,6 +1727,7 @@
             }
           }
           state = r.ok ? r.data : { upcoming: null, taken: [] };
+          if (window.CertaintyEgress) window.CertaintyEgress.saveLastGood(window.sessionStorage, state);
           if (state && (state.engagement === 'churned' || state.membership_ended)) {
             applyCertaintyEndedState();
             return;

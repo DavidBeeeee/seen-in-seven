@@ -128,6 +128,19 @@ function makeBookPayload(id, date, hour, mode, topic) {
   });
 }
 
+// The 24-hour api_usage ledger names StorySculpt as the active neighbour. Measure
+// the same six full scripts its repetition guard reads, then model the new
+// 30-second server cache at one hit per two closely spaced generation reads.
+function storySculptRecentFinishedBytes() {
+  const paragraph = 'A practical opening about fixing the offer, followed by specific customer language and a useful next step for the business. ';
+  const rows = Array.from({ length: 6 }, (_, index) => ({
+    id: `script-${index}`,
+    updated_at: '2026-11-01T17:00:00.000Z',
+    output: (paragraph.repeat(120) + `\n\nScript ${index}`).slice(0, 12000)
+  }));
+  return Buffer.byteLength(JSON.stringify(rows), 'utf8');
+}
+
 // Network intercepter and byte measurement
 let networkCallsLeaked = 0;
 let currentSupabaseBytes = 0;
@@ -353,11 +366,20 @@ export async function runLoadSimulation(options = {}) {
   const monthlySupabaseMB = Number((weeklySupabaseMB * 4.33).toFixed(2));
   const monthlySupabaseGB = Number((monthlySupabaseMB / 1024).toFixed(3));
 
-  // Quotas
+  // Quotas and the heaviest measured neighbouring reader. Four generation reads
+  // per member per week form two close pairs; the 30-second cache serves one of
+  // each pair, a deliberately simple 50% hit model.
   const freeTierGB = 5.0;
   const proTierGB = 250.0;
+  const neighbourBytesPerUncachedRead = storySculptRecentFinishedBytes();
+  const weeklyNeighbourReads = 1000 * 4;
+  const neighbourCacheHitRate = 0.5;
+  const weeklyNeighbourBytes = Math.round(weeklyNeighbourReads * (1 - neighbourCacheHitRate) * neighbourBytesPerUncachedRead);
+  const combinedWeeklyBytes = weeklySupabaseBytes + weeklyNeighbourBytes;
+  const combinedMonthlyGB = combinedWeeklyBytes * 4.33 / (1024 ** 3);
   const freeTierUsedPercent = Number(((monthlySupabaseGB / freeTierGB) * 100).toFixed(1));
   const proTierUsedPercent = Number(((monthlySupabaseGB / proTierGB) * 100).toFixed(2));
+  const combinedFreeTierUsedPercent = Number((combinedMonthlyGB / freeTierGB * 100).toFixed(1));
 
   return {
     summary,
@@ -371,7 +393,19 @@ export async function runLoadSimulation(options = {}) {
       freeTierGB,
       proTierGB,
       freeTierUsedPercent,
-      proTierUsedPercent
+      proTierUsedPercent,
+      neighbour: {
+        route: 'storysculpt',
+        reader: 'recent_finished',
+        bytesPerUncachedRead: neighbourBytesPerUncachedRead,
+        weeklyReads: weeklyNeighbourReads,
+        cacheHitRate: neighbourCacheHitRate,
+        weeklyBytes: weeklyNeighbourBytes
+      },
+      combinedWeeklyBytes,
+      combinedMonthlyGB: Number(combinedMonthlyGB.toFixed(3)),
+      combinedFreeTierUsedPercent,
+      thousandMembersInsideBudget: combinedMonthlyGB < freeTierGB && networkCallsLeaked === 0 && summary.total.errors === 0
     }
   };
 }
@@ -423,7 +457,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   console.log(`- Weekly Supabase Egress: ${egress.weeklySupabaseMB} MB (${(egress.weeklySupabaseBytes).toLocaleString()} bytes)`);
   console.log(`- Monthly Supabase Egress: ${egress.monthlySupabaseMB} MB (~${egress.monthlySupabaseGB} GB)`);
   console.log(`- Free Tier (5 GB): ${egress.freeTierUsedPercent}% of monthly quota used`);
-  console.log(`- Pro Tier (250 GB): ${egress.proTierUsedPercent}% of monthly quota used\n`);
+  console.log(`- Pro Tier (250 GB): ${egress.proTierUsedPercent}% of monthly quota used`);
+  console.log(`- StorySculpt recent_finished: ${egress.neighbour.bytesPerUncachedRead.toLocaleString()} bytes/read, ${egress.neighbour.weeklyReads.toLocaleString()} reads/week, ${egress.neighbour.cacheHitRate * 100}% cached`);
+  console.log(`- Combined Certainty + trimmed StorySculpt: ${egress.combinedMonthlyGB} GB/month (${egress.combinedFreeTierUsedPercent}% of 5 GB)`);
+  console.log(`- Thousand-member budget assertion: ${egress.thousandMembersInsideBudget ? 'PASS' : 'FAIL'}\n`);
+  if (!egress.thousandMembersInsideBudget) throw new Error('Thousand-member model exceeds budget or leaked calls/errors.');
 
   console.log('WHAT BREAKS FIRST:');
   console.log('1. Calendar Capacity: 49 seats/week maximum with 1 host (David). Member 50 cannot get a session.');
