@@ -657,6 +657,7 @@
   <script>
     (function () {
       var accessToken = null;
+      var cacheMemberId = null;
       var state = null;
       var settings = { time_zone: null, phone: '', default_mode: 'zoom' };
       var pick = { date: null, hour: null, mode: 'zoom' };
@@ -1706,7 +1707,7 @@
           if (!r.ok) {
             var errStr = String(r.data && (r.data.error || r.data.code) || '').toLowerCase();
             if (window.CertaintyEgress && window.CertaintyEgress.isPaused(r.data)) {
-              var cachedUpcoming = window.CertaintyEgress.lastGood(window.sessionStorage);
+              var cachedUpcoming = window.CertaintyEgress.lastGood(window.sessionStorage, cacheMemberId);
               var pausedUpcoming = state && state.upcoming ? state.upcoming : cachedUpcoming;
               if (pausedUpcoming) {
                 state = Object.assign({ held: [], history: [], taken: [] }, state || {}, { upcoming: pausedUpcoming });
@@ -1727,7 +1728,7 @@
             }
           }
           state = r.ok ? r.data : { upcoming: null, taken: [] };
-          if (window.CertaintyEgress) window.CertaintyEgress.saveLastGood(window.sessionStorage, state);
+          if (window.CertaintyEgress) window.CertaintyEgress.saveLastGood(window.sessionStorage, state, cacheMemberId);
           if (state && (state.engagement === 'churned' || state.membership_ended)) {
             applyCertaintyEndedState();
             return;
@@ -1834,6 +1835,7 @@
 
       window.EEEStudio.initialize(function (ctx) {
         accessToken = ctx.session.access_token;
+        cacheMemberId = ctx.session.user && ctx.session.user.id;
         return refresh();
       }).catch(function (err) {
         el('cs-state-skeleton').classList.add('cs-hide');

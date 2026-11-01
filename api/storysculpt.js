@@ -283,9 +283,10 @@ async function loadOwnedProject(token, projectId) {
 // finished work whose opening should not be handed back under a new title.
 const RECENT_FINISHED_LIMIT = 6;
 const recentFinishedCache = createReadCache({ ttlMs: 30000, maxEntries: 200 });
+let recentFinishedRevision = 0;
 
 async function loadRecentFinishedScripts(token, projectId, onMeasured) {
-  const cacheKey = createHash('sha256').update(token + ':' + projectId).digest('hex');
+  const cacheKey = createHash('sha256').update(token + ':' + projectId + ':' + recentFinishedRevision).digest('hex');
   return recentFinishedCache.getOrCreate(cacheKey, async () => {
     const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=neq.' + projectId
       + '&status=in.(finished,filmed)&output=not.is.null&select=id,output,updated_at'
@@ -925,6 +926,32 @@ export default async function handler(req, res) {
   const token = bearerToken(req);
   const user = await authenticatedUser(req);
   if (!user) return json(res, 401, { error: 'Please sign in again to continue.' });
+
+  // Delete only with the member's token. RLS owns authorization and the live
+  // project foreign key cascades its context history in the same transaction.
+  // Intake, conversation, script and script revisions live on that parent row.
+  if (req.body && req.body.action === 'delete-project') {
+    const projectId = req.body.projectId;
+    if (typeof projectId !== 'string' || !PROJECT_ID.test(projectId)) {
+      return json(res, 400, { error: 'Choose a saved project to delete.' });
+    }
+    try {
+      const response = await fetch(SUPABASE_URL + '/rest/v1/storysculpt_projects?id=eq.' + projectId + '&select=id', {
+        method: 'DELETE',
+        headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token, Prefer: 'return=representation' },
+        signal: AbortSignal.timeout(12000)
+      });
+      if (!response.ok) return json(res, 503, { error: 'Deletion was not confirmed. Reload to check your saved projects before trying again.' });
+      const rows = await response.json();
+      if (!Array.isArray(rows) || !rows.some(row => row.id === projectId)) {
+        return json(res, 404, { error: 'That project was not found in your available saved work. Reload to check your projects.' });
+      }
+      recentFinishedRevision += 1;
+      return json(res, 200, { deleted: true, projectId });
+    } catch {
+      return json(res, 503, { error: 'Deletion was not confirmed. Reload to check your saved projects before trying again.' });
+    }
+  }
 
   const isResearch = (
     (req.url && req.url.includes('research')) ||

@@ -228,6 +228,9 @@ function renderProjectList() {
   list.innerHTML = filtered.map(project => {
     if (storyPendingDeletes.has(project.id)) {
       const title = project.title || 'Untitled script';
+      if (storyPendingDeletes.get(project.id).deleting) {
+        return '<div class="story-project-item is-deleted" role="status"><span class="story-deleted-text">Deleting ' + storyEscape(title) + '...</span></div>';
+      }
       return '<div class="story-project-item is-deleted" data-pending-delete="' + storyEscape(project.id) + '">' +
         '<span class="story-deleted-text">Deleted.</span>' +
         '<button class="story-undo-btn" type="button" data-action="undo-delete" data-project-id="' + storyEscape(project.id) + '" aria-label="' + storyEscape('Undo delete ' + title) + '">Undo</button>' +
@@ -3187,14 +3190,27 @@ function queueStoryProjectDelete(projectId) {
     showNextUnarchivedStory();
   }
   const timer = setTimeout(async () => {
-    storyPendingDeletes.delete(projectId);
-    storyProjects = storyProjects.filter(p => p.id !== projectId);
+    const pending = storyPendingDeletes.get(projectId);
+    if (!pending) return;
+    pending.deleting = true;
     renderProjectList();
     try {
-      const { error } = await storyContext.sb.from('storysculpt_projects').delete().eq('id', projectId);
-      if (error) console.error('Failed to delete project on server', error);
+      const token = EEEStudio.accessToken ? await EEEStudio.accessToken(storyContext.session.access_token) : storyContext.session.access_token;
+      const response = await fetch('/api/storysculpt', {
+        method: 'POST', headers: { Authorization: 'Bearer ' + token, 'Content-Type': 'application/json' },
+        body: JSON.stringify({ action: 'delete-project', projectId })
+      });
+      const result = await response.json();
+      if (!response.ok || !result.deleted || result.projectId !== projectId) throw new Error(result.error || 'Deletion was not confirmed. Reload to check your saved projects.');
+      storyProjects = storyProjects.filter(p => p.id !== projectId);
+      const status = storyEl('story-save-status');
+      if (status) { status.textContent = 'Project and its saved work deleted.'; status.className = 'eee-message success'; }
     } catch (err) {
-      console.error('Failed to delete project on server', err);
+      const status = storyEl('story-save-status');
+      if (status) { status.textContent = 'Deletion was not confirmed. Reload to check your saved projects before trying again.'; status.className = 'eee-message error'; }
+    } finally {
+      storyPendingDeletes.delete(projectId);
+      renderProjectList();
     }
   }, 10000);
 
@@ -3210,7 +3226,7 @@ function queueStoryProjectDelete(projectId) {
 
 function undoStoryDelete(projectId) {
   const pending = storyPendingDeletes.get(projectId);
-  if (!pending) return;
+  if (!pending || pending.deleting) return;
   clearTimeout(pending.timer);
   storyPendingDeletes.delete(projectId);
   if (!activeStory) {

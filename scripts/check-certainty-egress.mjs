@@ -150,7 +150,11 @@ try {
 
   const values = new Map();
   const storage = { setItem: (key, value) => values.set(key, value), getItem: (key) => values.get(key) || null };
-  browser.saveLastGood(storage, good.result.body);
+  browser.saveLastGood(storage, good.result.body, 'member-1');
+  assert.equal(browser.lastGood(storage, 'different-member'), null, 'a switched account cannot inherit another member booking');
+  browser.saveLastGood(storage, { upcoming: null }, 'member-1');
+  assert.equal(browser.lastGood(storage, 'member-1'), null, 'a confirmed cancellation clears the prior booking');
+  browser.saveLastGood(storage, good.result.body, 'member-1');
   quotaPaused = true;
   const pausedReq = { method: 'POST', headers: { authorization: 'Bearer paused-member' }, body: { action: 'history', offset: 0, limit: 20 } };
   const paused = mockRes();
@@ -180,7 +184,7 @@ try {
     'cs-primary': node({ '.cs-next-day': day, '.cs-next-time': time }),
     'cs-session-msg': node()
   };
-  const rendered = browser.showPaused({ getElementById: id => nodes[id] || null }, browser.lastGood(storage), paused.result.body.retryAfter, NOW, () => {});
+  const rendered = browser.showPaused({ getElementById: id => nodes[id] || null }, browser.lastGood(storage, 'member-1'), paused.result.body.retryAfter, NOW, () => {});
   assert.equal(rendered.visible, 'session-and-pause');
   assert.equal(day.textContent, upcoming.label_day);
   assert.match(time.textContent, /2:00 PM/);

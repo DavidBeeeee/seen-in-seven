@@ -10,18 +10,19 @@
     return Boolean(data && (data.code === 'SESSIONS_PAUSED' || data.code === 'exceed_egress_quota'));
   }
 
-  function saveLastGood(storage, state) {
-    if (!storage || !state || !state.upcoming) return;
+  function saveLastGood(storage, state, memberId) {
+    if (!storage || !state || !memberId) return;
     try {
-      storage.setItem(CACHE_KEY, JSON.stringify({ savedAt: new Date().toISOString(), upcoming: state.upcoming }));
+      // A confirmed empty state must replace a cancelled or old booking too.
+      storage.setItem(CACHE_KEY, JSON.stringify({ memberId: memberId, savedAt: new Date().toISOString(), upcoming: state.upcoming || null }));
     } catch (e) { /* A full or blocked store never breaks booking. */ }
   }
 
-  function lastGood(storage) {
-    if (!storage) return null;
+  function lastGood(storage, memberId) {
+    if (!storage || !memberId) return null;
     try {
       var saved = JSON.parse(storage.getItem(CACHE_KEY) || 'null');
-      return saved && saved.upcoming ? saved.upcoming : null;
+      return saved && saved.memberId === memberId && saved.upcoming ? saved.upcoming : null;
     } catch (e) { return null; }
   }
 
