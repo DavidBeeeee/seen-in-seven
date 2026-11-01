@@ -2,6 +2,26 @@
 
 Chromium uses the CDP Accessibility tree and an ARIA snapshot; WebKit uses its rendered ARIA snapshot. Neither is a substitute for a real VoiceOver session.
 
+
+<!-- voiceover:start -->
+
+## VoiceOver
+
+**Not recorded yet.** `scripts/sim/storysculpt-voiceover.mjs` drives real VoiceOver over the interview (start, answer, generate, finish, refine, delete with undo, and a send that loses the network) and replaces this section with what VoiceOver spoke. On 2026-11-01 the evening built it but did not run it live: the Mac was in active use (HID idle 0 s at 12:05 and 12:23 ET), and VoiceOver takes the front window and speaks over whoever is there. The script now refuses to start unless the Mac has been idle five minutes, or `--attended` says the person running it is watching.
+
+What the same steps found in a headless WebKit run (`--dry`, real page, stubbed world, no speech), before and after the fix in this commit:
+
+| Moment | Before | After |
+| --- | --- | --- |
+| Send loses the network | "Connection lost..." went only to `#story-generation-status`, which is not a live region, so nothing was spoken; keyboard focus fell to the page body | The status line (`#story-latest-live`) says "Could not finish this step. Connection lost. Your saved chat is safe..."; focus lands on Try Again |
+| Interview finishes | Focus moved to the refine box in silence; the live line still held the last interview question | The status line says "Interview finished. Your script is ready in the script panel. Refine it with a note, or start a new chat."; focus stays on the refine box |
+| Refine (and Bullet points) completes | The button disabled itself during the request and focus fell to the page body | Focus returns to the button; "Script revised." is spoken by the refine status as before |
+| Delete, Escape, confirm, Undo | Dialog takes focus, Escape returns focus to Delete chat, Undo restores the chat | Unchanged; works |
+
+Checks: `check-sculpt-member-states` now covers the spoken failure and the focus return; `storysculpt-walk --browser webkit` 47/47 with zero findings after the change; `npm test` exit 0.
+
+<!-- voiceover:end -->
+
 ---
 
 ## chromium

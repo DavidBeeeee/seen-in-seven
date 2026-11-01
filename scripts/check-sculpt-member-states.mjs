@@ -245,6 +245,27 @@ function longThread(turns) {
   check(!/—/.test(markup + freshMarkup), 'profile freshness copy contains no em dashes');
 }
 
+// UX 95 (WBR-462, 11-01 screen-reader pass). What VoiceOver could not hear is
+// spoken by the status line, and a control that disables itself hands focus back.
+{
+  const app = boot([project('p-sr', 'Screen reader chat', 1)]);
+  await app.run();
+  const live = app.document.getElementById('story-latest-live');
+  vm.runInContext('showErrorInConversation(storyRecoveryMessage({ storyFailureKind: "connection" }, "x"), () => {});', app.context);
+  check(live.textContent.startsWith('Could not finish this step. Connection lost.'), 'a failed step is spoken by the live status line');
+  let focused = null;
+  const button = app.document.getElementById('story-refine-send');
+  button.focus = () => { focused = 'refine'; };
+  app.document.activeElement = app.context.document.body = { tagName: 'BODY' };
+  vm.runInContext('returnFocusIfLost(storyEl("story-refine-send"));', app.context);
+  check(focused === 'refine', 'focus dropped to the page returns to the refine button');
+  focused = null;
+  app.document.activeElement = { tagName: 'TEXTAREA' };
+  vm.runInContext('returnFocusIfLost(storyEl("story-refine-send"));', app.context);
+  check(focused === null, 'focus the member moved elsewhere is left alone');
+  check(/announceToReader\('Interview finished\./.test(appSrc), 'a finished script is announced, not only focused');
+}
+
 if (failures.length) {
   console.error('check-sculpt-member-states FAIL\n- ' + failures.join('\n- '));
   process.exit(1);

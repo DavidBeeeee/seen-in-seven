@@ -701,6 +701,21 @@ function announceNewestTurn(conversation) {
   live.textContent = text.length > 600 ? text.slice(0, 600) + '...' : text;
 }
 
+// UX 95 (WBR-462). The 11-01 screen-reader pass found three moments VoiceOver
+// could not hear: a failed step (the composer status is not a live region), a
+// finished script (focus moved to the refine box in silence), and the end of a
+// refine (the disabled button dropped focus to the page). The same status line
+// speaks them, and focus returns to a real control.
+function announceToReader(text) {
+  const live = storyEl('story-latest-live');
+  if (live) live.textContent = String(text || '').replace(/[—–]/g, ', ');
+}
+
+function returnFocusIfLost(control) {
+  const lost = !document.activeElement || document.activeElement === document.body;
+  if (lost && control && !control.disabled && !control.hidden) control.focus();
+}
+
 function showEarlierTurns() {
   if (!activeStory) return;
   const scroller = storyEl('story-scroll');
@@ -2409,8 +2424,10 @@ function showErrorInConversation(message, retryCallback) {
     '</div>';
 
   thread.appendChild(errArticle);
+  announceToReader('Could not finish this step. ' + cleanMsg);
   if (typeof retryCallback === 'function') {
     const btn = errArticle.querySelector('#story-retry-btn');
+    if (btn) btn.focus();
     if (btn) {
       btn.addEventListener('click', () => {
         hideErrorInConversation();
@@ -2449,6 +2466,7 @@ async function executeInterviewGeneration() {
       viewingVersionIndex = -1;
       await saveActiveStory('Initial draft saved');
       renderScriptPanel();
+      announceToReader('Interview finished. Your script is ready in the script panel. Refine it with a note, or start a new chat.');
       const refineNote = storyEl('story-refine-note');
       if (refineNote) refineNote.focus();
     } else {
@@ -2584,6 +2602,7 @@ async function executeRefineGeneration(note) {
     showErrorInConversation(cleanMsg, () => retryRefineGeneration(note));
   } finally {
     if (button) button.disabled = false;
+    returnFocusIfLost(button);
     EEEStudio.refreshIcons();
   }
 }
@@ -2678,6 +2697,7 @@ async function convertToPoints() {
     status.className = 'eee-message story-refine-status error';
   } finally {
     if (button) button.disabled = false;
+    returnFocusIfLost(button);
     if (buttonLabel) buttonLabel.textContent = 'Bullet points';
     EEEStudio.refreshIcons();
   }
