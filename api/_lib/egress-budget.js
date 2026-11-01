@@ -12,6 +12,11 @@ export function byteLength(raw) {
 }
 
 export async function readJsonWithBytes(response) {
+  if (typeof response.text !== 'function') {
+    const data = await response.json();
+    const raw = data == null ? '' : JSON.stringify(data);
+    return { data, bytes: byteLength(raw) };
+  }
   const raw = await response.text();
   let data = null;
   try { data = raw ? JSON.parse(raw) : null; } catch { data = raw; }
@@ -72,12 +77,13 @@ export function summarizeEgress(rows, now = new Date()) {
       warnings.add(Number(detail.threshold));
       continue;
     }
-    if (row.event_type !== EGRESS_RESPONSE_EVENT || monthKey(created) !== currentMonth) continue;
-    const bytes = Number(detail.bytes);
+    const measurement = row.event_type === EGRESS_RESPONSE_EVENT ? detail : detail.egress;
+    if (!measurement || monthKey(created) !== currentMonth) continue;
+    const bytes = Number(measurement.bytes);
     if (!Number.isFinite(bytes) || bytes < 0) continue;
     monthlyBytes += bytes;
     if (dayKey(created) === currentDay) dailyBytes += bytes;
-    const route = String(detail.route || 'unknown');
+    const route = String(measurement.route || 'unknown');
     if (!byRoute[route]) byRoute[route] = { route, requests: 0, bytes: 0 };
     byRoute[route].requests += 1;
     byRoute[route].bytes += bytes;
@@ -152,7 +158,7 @@ export async function checkAndWarnEgress({
   const query = new URLSearchParams({
     select: 'event_type,detail,created_at',
     'created_at': 'gte.' + monthStart,
-    or: `(event_type.eq.${EGRESS_RESPONSE_EVENT},event_type.eq.${EGRESS_WARNING_EVENT})`,
+    or: `(event_type.eq.${EGRESS_RESPONSE_EVENT},event_type.eq.${EGRESS_WARNING_EVENT},event_type.like.storysculpt_*)`,
     limit: '50000'
   });
   const response = await fetchFn(String(supabaseUrl).replace(/\/$/, '') + '/rest/v1/logs?' + query, {

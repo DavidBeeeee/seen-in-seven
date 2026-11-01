@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { randomUUID, createHash } from 'node:crypto';
 import { authenticatedUser, consumeQuota, json } from './_lib/security.js';
-import { createReadCache, readJsonWithBytes, recordResponseBytes } from './_lib/egress-budget.js';
+import { createReadCache, readJsonWithBytes } from './_lib/egress-budget.js';
 import {
   MODEL_VERSION,
   promptVersion,
@@ -284,7 +284,7 @@ async function loadOwnedProject(token, projectId) {
 const RECENT_FINISHED_LIMIT = 6;
 const recentFinishedCache = createReadCache({ ttlMs: 30000, maxEntries: 200 });
 
-async function loadRecentFinishedScripts(token, projectId) {
+async function loadRecentFinishedScripts(token, projectId, onMeasured) {
   const cacheKey = createHash('sha256').update(token + ':' + projectId).digest('hex');
   return recentFinishedCache.getOrCreate(cacheKey, async () => {
     const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=neq.' + projectId
@@ -294,10 +294,7 @@ async function loadRecentFinishedScripts(token, projectId) {
       const response = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token } });
       if (!response.ok) throw new Error('status ' + response.status);
       const measured = await readJsonWithBytes(response);
-      await recordResponseBytes({
-        supabaseUrl: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY, userToken: token,
-        route: 'storysculpt', reader: 'recent_finished', bytes: measured.bytes
-      });
+      if (onMeasured) onMeasured(measured.bytes);
       const rows = measured.data;
       if (!Array.isArray(rows)) throw new Error('unexpected project list');
       return rows.filter(row => row && row.id !== projectId && typeof row.output === 'string' && row.output.trim());
@@ -977,6 +974,9 @@ export default async function handler(req, res) {
         }
       };
     }
+    if (Number.isFinite(facts.egressBytes)) {
+      detail.egress = { route: 'storysculpt', reader: 'recent_finished', bytes: facts.egressBytes };
+    }
     return recordEvent(token, user.id, 'storysculpt_' + outcome, detail);
   };
 
@@ -1128,7 +1128,7 @@ export default async function handler(req, res) {
     // anything is returned. A failed history read fails closed as a database
     // error instead of silently turning this guard off.
     const recentFinished = activeKind.hookCraft || activeKind.final
-      ? await loadRecentFinishedScripts(token, input.projectId)
+      ? await loadRecentFinishedScripts(token, input.projectId, bytes => { facts.egressBytes = bytes; })
       : [];
 
     if (activeKind.draft) {
