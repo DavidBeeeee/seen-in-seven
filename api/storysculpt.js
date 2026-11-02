@@ -792,6 +792,24 @@ export function ugcKnowsProduct(ugcState = {}) {
   );
 }
 
+// Everything the member wrote for this request is read for crisis language
+// before generation (UX 91, Stranger 100): the latest answer, a Refine or
+// regenerate note, the chat title, and their own UGC experience notes. Product
+// listings and research are not the member's words (a label's "do not
+// overdose" warning is not a crisis), so they are not scanned.
+export function crisisScanText(input) {
+  const users = (input.messages || []).filter(m => m.role === 'user');
+  const parts = [users.length ? users[users.length - 1].content : '', input.regenerateNote, input.projectTitle];
+  const experience = input.ugc && input.ugc.creatorExperience;
+  const collect = value => {
+    if (typeof value === 'string') parts.push(value);
+    else if (Array.isArray(value)) value.forEach(collect);
+    else if (value && typeof value === 'object') Object.values(value).forEach(collect);
+  };
+  collect(experience);
+  return parts.filter(Boolean).join('\n');
+}
+
 async function handleUgcTurn({ input, project, token, user, trace, emit, fail, res }) {
   const ugcState = input.ugc || (project.intake && project.intake.ugc) || {};
   const product = ugcState.product || {};
@@ -1054,9 +1072,7 @@ export default async function handler(req, res) {
     input.context = await loadLatestContext(token, input.projectId);
 
     // Safety pre-check: crisis or self-harm language skips generation
-    const userMessages = input.messages.filter(m => m.role === 'user');
-    const latestUserMessage = userMessages.length ? userMessages[userMessages.length - 1].content : '';
-    const crisis = detectCrisis(latestUserMessage + (input.regenerateNote ? '\n' + input.regenerateNote : ''));
+    const crisis = detectCrisis(crisisScanText(input));
     if (crisis.tripped) {
       await recordEvent(token, user.id, 'storysculpt_safety', buildEventDetail({
         trace,
@@ -1070,6 +1086,7 @@ export default async function handler(req, res) {
       return json(res, 200, {
         final: false,
         content: crisisResponse(user.name || ''),
+        safety: true,
         promptVersion: PROMPT_VERSION,
         model: MODEL_VERSION,
         trace
