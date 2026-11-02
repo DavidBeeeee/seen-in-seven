@@ -151,8 +151,12 @@ function ensureVersions(project) {
 }
 
 // Build the standing story-profile block. Empty when the member has set nothing,
-// so a blank profile adds nothing to the context.
+// so a blank profile adds nothing to the context. Respects per-chat leave-out
+// and never resurfaces superseded details or lines already used in this chat.
 function composeMemory() {
+  if (typeof STATES !== 'undefined' && STATES && typeof STATES.composeChatMemory === 'function') {
+    return STATES.composeChatMemory(memoryProfile, activeStory, { omitUsedOnce: true });
+  }
   const lines = MEMORY_FIELDS
     .map(([key, , label]) => {
       const value = String(memoryProfile[key] || '').trim();
@@ -160,6 +164,66 @@ function composeMemory() {
     })
     .filter(Boolean);
   return lines.length ? 'MEMBER STORY PROFILE (standing facts the member set once):\n' + lines.join('\n') : '';
+}
+
+function currentStoryTheme() {
+  if (typeof document !== 'undefined' && document.documentElement && document.documentElement.classList && document.documentElement.classList.contains('studio-light')) {
+    return 'light';
+  }
+  try {
+    if (typeof localStorage !== 'undefined' && localStorage.getItem('sis_theme_v1') === 'light') return 'light';
+  } catch (_) {}
+  return 'dark';
+}
+
+function renderSettingsSummary() {
+  const slot = storyEl('story-settings-overview');
+  if (!slot || typeof STATES === 'undefined' || !STATES || typeof STATES.settingsSummaryMarkup !== 'function') return;
+  slot.innerHTML = STATES.settingsSummaryMarkup({
+    activeStory,
+    memoryProfile,
+    modeLabels: STORY_MODE_LABELS,
+    theme: currentStoryTheme()
+  });
+}
+
+function renderNewChatMemoryPreview() {
+  const slot = storyEl('story-memory-preview');
+  if (!slot) return;
+  if (!activeStory || activeStory.content_type === 'ugc' || typeof STATES === 'undefined' || !STATES || typeof STATES.newChatMemoryPreviewMarkup !== 'function') {
+    slot.innerHTML = '';
+    slot.hidden = true;
+    return;
+  }
+  const markup = STATES.newChatMemoryPreviewMarkup(memoryProfile, activeStory);
+  slot.innerHTML = markup;
+  slot.hidden = !markup;
+}
+
+async function toggleChatMemoryFact(key) {
+  if (!activeStory || !key) return;
+  if (!activeStory.intake || typeof activeStory.intake !== 'object') activeStory.intake = {};
+  const current = Array.isArray(activeStory.intake.excludedMemoryKeys) ? [...activeStory.intake.excludedMemoryKeys] : [];
+  const at = current.indexOf(key);
+  const excluded = at === -1;
+  if (excluded) current.push(key);
+  else current.splice(at, 1);
+  activeStory.intake.excludedMemoryKeys = current;
+  const statusMsg = excluded
+    ? 'Left that saved fact out for this chat. Your standing story profile is unchanged.'
+    : 'Using that saved fact in this chat again.';
+  activeStory.intake.lastStatusReason = statusMsg;
+  renderNewChatMemoryPreview();
+  const genStatus = storyEl('story-generation-status');
+  if (genStatus) {
+    genStatus.textContent = statusMsg;
+    genStatus.classList.remove('error');
+  }
+  try {
+    await saveActiveStory(excluded ? 'Saved fact left out of this chat' : 'Saved fact included in this chat');
+  } catch (_) {
+    // saveActiveStory keeps the change locally and reports its own retry state.
+  }
 }
 
 // The context sent to StorySculpt: the standing story profile first, then any
@@ -579,6 +643,7 @@ function sendQuickReply(text) {
 }
 
 function renderConversation() {
+  renderNewChatMemoryPreview();
   const conversation = Array.isArray(activeStory && activeStory.conversation) ? activeStory.conversation : [];
   const versions = (activeStory && activeStory.intake && activeStory.intake.versions) || [];
 
@@ -676,7 +741,21 @@ function renderConversation() {
   if (genStatus && !genStatus.classList.contains('error')) {
     const lastMsg = conversation[conversation.length - 1];
     const isPreFinal = lastMsg && ['B6', 'M6', 'R7'].includes(lastMsg.step);
-    genStatus.textContent = isPreFinal ? STATES.FINISHING_LOCK_LINE : 'StorySculpt saves your chat as you go.';
+    const interrupted = (!storySending && activeStory && !activeStory.output && typeof STATES !== 'undefined' && STATES && typeof STATES.interruptedStepInfo === 'function')
+      ? STATES.interruptedStepInfo(activeStory, STEP_GUIDE)
+      : null;
+    const savedReason = activeStory && activeStory.intake && typeof activeStory.intake.lastStatusReason === 'string'
+      ? activeStory.intake.lastStatusReason.trim()
+      : '';
+    if (interrupted && interrupted.statusLine) {
+      genStatus.textContent = interrupted.statusLine;
+    } else if (savedReason) {
+      genStatus.textContent = (isPreFinal && !savedReason.includes(STATES.FINISHING_LOCK_LINE))
+        ? savedReason + ' ' + STATES.FINISHING_LOCK_LINE
+        : savedReason;
+    } else {
+      genStatus.textContent = isPreFinal ? STATES.FINISHING_LOCK_LINE : 'StorySculpt saves your chat as you go.';
+    }
   }
 
   announceNewestTurn(conversation);
@@ -1795,12 +1874,21 @@ function showProject(project) {
     renderConversation();
     renderScriptPanel();
     scrollThread();
+    if (!storySending && !project.output && typeof STATES !== 'undefined' && STATES && typeof STATES.interruptedStepInfo === 'function') {
+      const interrupted = STATES.interruptedStepInfo(project, STEP_GUIDE);
+      if (interrupted) {
+        const genStatus = storyEl('story-generation-status');
+        if (genStatus) genStatus.textContent = interrupted.statusLine;
+        showErrorInConversation(interrupted.statusLine, () => retryInterviewGeneration(), { silent: true });
+      }
+    }
     if (project.output) {
       if (window.innerWidth > 820) storyEl('story-refine-note').focus();
     } else {
       if (window.innerWidth > 820) storyEl('story-answer').focus();
     }
   }
+  renderSettingsSummary();
 
   if (restoredUnsaved) {
     saveActiveStory('Changes kept on this device after a failed save are back and saved.').catch(() => {});
@@ -2386,7 +2474,7 @@ function hideErrorInConversation() {
   }
 }
 
-function showErrorInConversation(message, retryCallback) {
+function showErrorInConversation(message, retryCallback, options = {}) {
   hideThinkingIndicator();
   hideErrorInConversation();
   const thread = storyEl('story-conversation');
@@ -2424,10 +2512,12 @@ function showErrorInConversation(message, retryCallback) {
     '</div>';
 
   thread.appendChild(errArticle);
-  announceToReader('Could not finish this step. ' + cleanMsg);
+  if (!options || !options.silent) {
+    announceToReader('Could not finish this step. ' + cleanMsg);
+  }
   if (typeof retryCallback === 'function') {
     const btn = errArticle.querySelector('#story-retry-btn');
-    if (btn) btn.focus();
+    if (btn && (!options || !options.silent)) btn.focus();
     if (btn) {
       btn.addEventListener('click', () => {
         hideErrorInConversation();
@@ -2453,6 +2543,38 @@ async function executeInterviewGeneration() {
     await saveActiveStory();
     const data = await runGeneration('interview');
     hideThinkingIndicator();
+    if (!activeStory.intake || typeof activeStory.intake !== 'object') activeStory.intake = {};
+    activeStory.intake.interruptedStep = null;
+
+    if (!data.final && typeof STATES !== 'undefined' && STATES && typeof STATES.sanitizeRememberedLinesInTurn === 'function') {
+      const conv = Array.isArray(activeStory.conversation) ? activeStory.conversation : [];
+      const lastIdx = conv.length - 1;
+      if (lastIdx >= 0 && conv[lastIdx] && conv[lastIdx].role === 'assistant') {
+        const priorProject = { ...activeStory, conversation: conv.slice(0, lastIdx) };
+        const sanitized = STATES.sanitizeRememberedLinesInTurn(conv[lastIdx].content, memoryProfile, priorProject);
+        if (sanitized && typeof sanitized.content === 'string') {
+          conv[lastIdx].content = sanitized.content;
+        }
+        if (sanitized && Array.isArray(sanitized.newlyUsedKeys) && sanitized.newlyUsedKeys.length) {
+          const used = new Set(Array.isArray(activeStory.intake.usedMemoryKeys) ? activeStory.intake.usedMemoryKeys : []);
+          sanitized.newlyUsedKeys.forEach(k => used.add(k));
+          activeStory.intake.usedMemoryKeys = [...used];
+        }
+      }
+    }
+
+    const activeStep = data.step || (activeStory.intake && activeStory.intake.current_step) || '';
+    const isPreFinal = ['B6', 'M6', 'R7'].includes(activeStep);
+    const statusReason = (typeof STATES !== 'undefined' && STATES && typeof STATES.generationStatusLine === 'function')
+      ? STATES.generationStatusLine(activeStory, {
+          isFinal: Boolean(data.final),
+          step: activeStep,
+          stepGuides: STEP_GUIDE,
+          isPreFinal
+        })
+      : (isPreFinal ? STATES.FINISHING_LOCK_LINE : 'StorySculpt saves your chat as you go.');
+    activeStory.intake.lastStatusReason = statusReason;
+
     if (data.final) {
       ensureVersions(activeStory);
       if (activeStory.intake.versions.length === 0) {
@@ -2465,11 +2587,18 @@ async function executeInterviewGeneration() {
       }
       viewingVersionIndex = -1;
       await saveActiveStory('Initial draft saved');
+      const refineStatus = storyEl('story-refine-status');
+      if (refineStatus) {
+        refineStatus.textContent = statusReason;
+        refineStatus.className = 'eee-message story-refine-status success';
+      }
       renderScriptPanel();
       announceToReader('Interview finished. Your script is ready in the script panel. Refine it with a note, or start a new chat.');
       const refineNote = storyEl('story-refine-note');
       if (refineNote) refineNote.focus();
     } else {
+      await saveActiveStory();
+      renderConversation();
       const ans = storyEl('story-answer');
       if (ans) ans.focus();
     }
@@ -2477,10 +2606,25 @@ async function executeInterviewGeneration() {
     failed = true;
     hideThinkingIndicator();
     const cleanMsg = storyRecoveryMessage(error, 'This step did not finish. Your answers are still saved.');
-    status.textContent = cleanMsg;
+    if (activeStory) {
+      if (!activeStory.intake || typeof activeStory.intake !== 'object') activeStory.intake = {};
+      const lastUser = [...(activeStory.conversation || [])].reverse().find(m => m && m.role === 'user');
+      activeStory.intake.interruptedStep = {
+        step: activeStory.intake.current_step || '',
+        lastAnswer: (lastUser && lastUser.content) || '',
+        turnKey: (lastUser && lastUser.key) || '',
+        reason: cleanMsg,
+        at: new Date().toISOString()
+      };
+    }
+    const interrupted = (activeStory && typeof STATES !== 'undefined' && STATES && typeof STATES.interruptedStepInfo === 'function')
+      ? STATES.interruptedStepInfo(activeStory, STEP_GUIDE)
+      : null;
+    const combinedStatus = interrupted ? (cleanMsg + ' ' + interrupted.statusLine) : cleanMsg;
+    status.textContent = combinedStatus;
     status.classList.add('error');
     const isFinished = /already finished|locked|Refine/i.test(cleanMsg);
-    showErrorInConversation(cleanMsg, isFinished ? null : () => retryInterviewGeneration());
+    showErrorInConversation(combinedStatus, isFinished ? null : () => retryInterviewGeneration());
     if (isFinished) {
       const refineBox = storyEl('story-refine-box');
       if (refineBox) refineBox.hidden = false;
@@ -2489,8 +2633,8 @@ async function executeInterviewGeneration() {
     }
   } finally {
     if (button) button.disabled = false;
-    if (!failed && !activeStory.output) {
-      status.textContent = 'StorySculpt saves your chat as you go.';
+    if (!failed && activeStory && !activeStory.output) {
+      status.textContent = (activeStory.intake && activeStory.intake.lastStatusReason) || 'StorySculpt saves your chat as you go.';
       status.classList.remove('error');
     }
     EEEStudio.refreshIcons();
@@ -2529,12 +2673,57 @@ async function sendStoryAnswer(event) {
   }
 
   if (storyReturnNotice) dismissReturnNotice();
+  const priorConversation = Array.isArray(activeStory.conversation) ? [...activeStory.conversation] : [];
+  const currentStep = (activeStory.intake && activeStory.intake.current_step) || '';
+  const broadCheck = (typeof STATES !== 'undefined' && STATES && typeof STATES.broadAnswerCheck === 'function')
+    ? STATES.broadAnswerCheck(answer, priorConversation, currentStep)
+    : { broad: false };
+
   const button = storyEl('story-send');
   button.disabled = true;
-  storyEl('story-generation-status').textContent = 'Reading the full thread and finding the next useful move.';
   storySending = true;
   const turnKey = storyTurnKey();
-  activeStory.conversation = [...(activeStory.conversation || []), { role: 'user', content: answer, key: turnKey }];
+
+  if (broadCheck && broadCheck.broad) {
+    const narrowTurn = {
+      role: 'assistant',
+      content: broadCheck.question,
+      step: 'narrow',
+      narrowingQuestion: true,
+      forStep: currentStep || 'start',
+      key: 'narrow:' + turnKey.replace(/^turn:/, '')
+    };
+    if (!activeStory.intake || typeof activeStory.intake !== 'object') activeStory.intake = {};
+    activeStory.intake.lastStatusReason = broadCheck.statusLine;
+    activeStory.intake.interruptedStep = null;
+    activeStory.conversation = [...priorConversation, { role: 'user', content: answer, key: turnKey }, narrowTurn];
+    storyEl('story-answer').value = '';
+    autoGrow(storyEl('story-answer'));
+    renderConversation();
+    const genStatus = storyEl('story-generation-status');
+    if (genStatus) {
+      genStatus.textContent = broadCheck.statusLine;
+      genStatus.classList.remove('error');
+    }
+    scrollThread();
+    try {
+      await saveActiveStory('Narrowing question saved');
+    } catch (_) {}
+    button.disabled = false;
+    storySending = false;
+    storyEl('story-answer').focus();
+    return;
+  }
+
+  if (!activeStory.intake || typeof activeStory.intake !== 'object') activeStory.intake = {};
+  activeStory.intake.interruptedStep = {
+    step: currentStep,
+    lastAnswer: answer,
+    turnKey,
+    at: new Date().toISOString()
+  };
+  storyEl('story-generation-status').textContent = 'Reading the full thread and finding the next useful move.';
+  activeStory.conversation = [...priorConversation, { role: 'user', content: answer, key: turnKey }];
   storyEl('story-answer').value = '';
   autoGrow(storyEl('story-answer'));
   renderConversation();
@@ -2773,7 +2962,14 @@ function renderMemoryFreshness() {
 }
 
 function openMemory() {
+  const accountMenu = storyEl('eee-account-menu');
+  const accountButton = storyEl('eee-account-button');
+  if (accountMenu && !accountMenu.hidden) {
+    accountMenu.hidden = true;
+    if (accountButton) accountButton.setAttribute('aria-expanded', 'false');
+  }
   MEMORY_FIELDS.forEach(([key, id]) => { storyEl(id).value = memoryProfile[key] || ''; });
+  renderSettingsSummary();
   renderMemoryFreshness();
   storyEl('mem-status').textContent = '';
   storyEl('story-memory').hidden = false;
@@ -2811,7 +3007,13 @@ function closeHelp() {
 
 async function saveMemory() {
   const draft = {};
-  MEMORY_FIELDS.forEach(([key, id]) => { draft[key] = storyEl(id).value.trim(); });
+  const replaced = [];
+  MEMORY_FIELDS.forEach(([key, id]) => {
+    const nextVal = storyEl(id).value.trim();
+    const prevVal = String((memoryProfile && memoryProfile[key]) || '').trim();
+    if (prevVal && prevVal !== nextVal) replaced.push(prevVal);
+    draft[key] = nextVal;
+  });
   const button = storyEl('mem-save');
   button.disabled = true;
   const status = storyEl('mem-status');
@@ -2826,7 +3028,15 @@ async function saveMemory() {
     if (error) throw error;
     memoryProfile = draft;
     memoryUpdatedAt = new Date().toISOString();
+    if (replaced.length && activeStory) {
+      if (!activeStory.intake || typeof activeStory.intake !== 'object') activeStory.intake = {};
+      const sup = new Set(Array.isArray(activeStory.intake.supersededDetails) ? activeStory.intake.supersededDetails : []);
+      replaced.forEach(val => sup.add(val));
+      activeStory.intake.supersededDetails = [...sup];
+    }
+    renderSettingsSummary();
     renderMemoryFreshness();
+    renderNewChatMemoryPreview();
     status.textContent = 'Saved. StorySculpt will use this on every chat.';
     status.className = 'eee-message success';
   } catch (error) {
@@ -2835,6 +3045,33 @@ async function saveMemory() {
   } finally {
     button.disabled = false;
   }
+}
+
+const memoryPreviewEl = storyEl('story-memory-preview');
+if (memoryPreviewEl && typeof memoryPreviewEl.addEventListener === 'function') {
+  memoryPreviewEl.addEventListener('click', event => {
+    const btn = event.target && event.target.closest && event.target.closest('[data-action="toggle-chat-memory-fact"]');
+    if (btn && btn.dataset && btn.dataset.memKey) {
+      toggleChatMemoryFact(btn.dataset.memKey);
+    }
+  });
+}
+
+const memoryPanelEl = storyEl('story-memory');
+if (memoryPanelEl && typeof memoryPanelEl.addEventListener === 'function') {
+  memoryPanelEl.addEventListener('click', event => {
+    const btn = event.target && event.target.closest && event.target.closest('[data-action="toggle-settings-theme"]');
+    if (!btn) return;
+    const isLight = currentStoryTheme() === 'light';
+    const next = isLight ? 'dark' : 'light';
+    if (typeof document !== 'undefined' && document.documentElement && document.documentElement.classList) {
+      document.documentElement.classList.toggle('studio-light', next === 'light');
+    }
+    try {
+      if (typeof localStorage !== 'undefined') localStorage.setItem('sis_theme_v1', next);
+    } catch (_) {}
+    renderSettingsSummary();
+  });
 }
 
 storyEl('story-mode-grid').addEventListener('click', event => {

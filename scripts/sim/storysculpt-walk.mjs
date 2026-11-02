@@ -880,6 +880,165 @@ async function lifecyclePass(browser) {
     await context.close();
   }
 
+  // WBR-462 (WO-20261101-latemorning):
+  // 1. A five-topic broad answer gets one narrowing question before moving on, bounded in code with a fixture.
+  // 2. A step that fails mid-generation resumes at that exact step with the answer kept and the status line naming what happened and what to do.
+  // 3. After a generation, the status line names why the screen changed, and the strongest praise is kept for the finished script.
+  {
+    const { context, page, world } = await open(browser, 'interview', { width: 1280 });
+    const broadResult = await page.evaluate(async () => {
+      const fixture = window.StorySculptStates.BROAD_ANSWER_FIXTURE;
+      // Reset to opening step so broad-answer check runs on an opening answer
+      activeStory.intake.current_step = 'B1';
+      activeStory.conversation = [{ role: 'assistant', content: 'Share one specific insight.' }];
+      renderConversation();
+      document.getElementById('story-answer').value = fixture.fiveTopics;
+      await sendStoryAnswer();
+      const afterFirst = {
+        turnCount: activeStory.conversation.length,
+        lastTurn: activeStory.conversation[activeStory.conversation.length - 1],
+        statusLine: document.getElementById('story-generation-status').textContent,
+        secondCheck: window.StorySculptStates.broadAnswerCheck(fixture.lifeStory, activeStory.conversation, 'B1')
+      };
+      return afterFirst;
+    });
+    const narrowPass = broadResult.turnCount === 3 &&
+      broadResult.lastTurn &&
+      broadResult.lastTurn.step === 'narrow' &&
+      /several distinct stories|single moment/i.test(broadResult.lastTurn.content) &&
+      /narrowing question/i.test(broadResult.statusLine) &&
+      broadResult.secondCheck.broad === false &&
+      broadResult.secondCheck.reason === 'already-narrowed';
+    check('A five-topic answer gets one narrowing question (bounded in code)', narrowPass, JSON.stringify(broadResult));
+
+    // Exact-step resume on mid-generation failure with last answer kept
+    await page.evaluate(() => {
+      activeStory.intake.current_step = 'B1';
+      activeStory.conversation = [{ role: 'assistant', content: 'Share one specific insight.' }];
+      renderConversation();
+    });
+    world.mode.interview = { status: 502, body: { error: 'The writing attempt did not finish.' } };
+    await page.fill('#story-answer', 'Let us focus on pricing my first coaching offer too low.');
+    await page.click('#story-send');
+    await page.waitForSelector('#story-retry-btn', { timeout: 5000 });
+    const failedStepState = await page.evaluate(() => {
+      const statusText = document.getElementById('story-generation-status')?.textContent || '';
+      const lastUser = [...(activeStory.conversation || [])].reverse().find(m => m.role === 'user');
+      return {
+        step: activeStory.intake?.current_step || 'B1',
+        interruptedStep: activeStory.intake?.interruptedStep || null,
+        keptAnswer: lastUser ? lastUser.content : '',
+        statusText,
+        hasRetry: Boolean(document.getElementById('story-retry-btn'))
+      };
+    });
+    const resumeReady = failedStepState.keptAnswer === 'Let us focus on pricing my first coaching offer too low.' &&
+      failedStepState.interruptedStep &&
+      /Step paused on|Try again|Resume this step/i.test(failedStepState.statusText) &&
+      failedStepState.hasRetry;
+
+    // Now recover by clicking Try Again and verify it resumes from that exact step and updates the status line with why the screen changed
+    world.mode.interview = 'ok';
+    await page.click('#story-retry-btn');
+    await page.waitForTimeout(350);
+    const resumedState = await page.evaluate(() => {
+      const statusText = document.getElementById('story-generation-status')?.textContent || '';
+      const praiseCheck = window.StorySculptStates.generationStatusLine(activeStory, { isFinal: true });
+      return {
+        interruptedCleared: activeStory.intake?.interruptedStep === null,
+        stepAfter: activeStory.intake?.current_step || '',
+        statusText,
+        finalStatusLine: praiseCheck,
+        userCountForAnswer: activeStory.conversation.filter(m => m.role === 'user' && m.content.includes('pricing my first coaching offer')).length
+      };
+    });
+    const stepResumePass = resumeReady &&
+      resumedState.interruptedCleared &&
+      resumedState.stepAfter === 'evidence' &&
+      resumedState.userCountForAnswer === 1;
+    check('A step that fails mid-generation resumes at that step with the answer kept', stepResumePass, JSON.stringify({ failedStepState, resumedState }));
+
+    const statusReasonPass = /Screen updated to.*shaped this question/i.test(resumedState.statusText) &&
+      !/Strong work/i.test(resumedState.statusText) &&
+      /Screen changed to your finished script.*Strong work/i.test(resumedState.finalStatusLine);
+    check('The status line names why the screen changed and keeps strongest praise for the finished script', statusReasonPass, JSON.stringify({ stepStatus: resumedState.statusText, finalStatus: resumedState.finalStatusLine }));
+    await context.close();
+  }
+
+  // WBR-462 (WO-20261101-agnight):
+  // 1. A new chat lists the saved facts it will use and one can be left out for this chat.
+  // 2. Status line names when an earlier answer shaped a question; a remembered line is never resurfaced twice in one chat; a corrected emotional detail never comes back.
+  // 3. Settings show format, theme, and story profile together in one place.
+  {
+    const { context, page } = await open(browser, 'interview', { width: 1280 });
+    const previewVisible = await page.locator('#story-memory-preview [data-memory-preview="true"]').isVisible();
+    const previewItemsBefore = await page.locator('#story-memory-preview [data-mem-item]').count();
+    await page.locator('#story-memory-preview [data-action="toggle-chat-memory-fact"][data-mem-key="facts"]').click();
+    await page.waitForTimeout(200);
+    const memoryState = await page.evaluate(() => {
+      const composed = composeMemory();
+      const standingStillHasFacts = Boolean(memoryProfile && memoryProfile.facts);
+      const excludedInChat = Array.isArray(activeStory.intake?.excludedMemoryKeys) && activeStory.intake.excludedMemoryKeys.includes('facts');
+      const previewText = document.getElementById('story-memory-preview')?.textContent || '';
+      return { composed, standingStillHasFacts, excludedInChat, previewText };
+    });
+    const leaveOutPass = previewVisible &&
+      previewItemsBefore >= 4 &&
+      memoryState.excludedInChat &&
+      memoryState.standingStillHasFacts &&
+      !memoryState.composed.includes('140 founders coached') &&
+      /1 left out/i.test(memoryState.previewText);
+    check('A new chat lists the saved facts it will use and one can be left out', leaveOutPass, JSON.stringify(memoryState));
+
+    // Verify a remembered line is never resurfaced twice in one chat, and a corrected emotional detail never comes back
+    const hygieneState = await page.evaluate(() => {
+      const S = window.StorySculptStates;
+      const proj = {
+        content_type: 'rant',
+        intake: { usedMemoryKeys: [], supersededDetails: [] },
+        conversation: [
+          { role: 'user', content: 'At first I thought I was ashamed of my pricing.' },
+          { role: 'assistant', content: 'As a Founder and positioning coach, what happened next?' },
+          { role: 'user', content: "I wasn't ashamed, I was angry at the bad advice." }
+        ]
+      };
+      const secondTurn = S.sanitizeRememberedLinesInTurn(
+        'Since you are a Founder and positioning coach, let us dig in. You mentioned you were ashamed of your pricing. Which direction fits best?',
+        memoryProfile,
+        proj
+      );
+      return {
+        cleaned: secondTurn.content,
+        repeatedRoleGone: !/Founder and positioning coach/i.test(secondTurn.content),
+        staleEmotionGone: !/\bashamed\b/i.test(secondTurn.content),
+        keptQuestion: /Which direction fits best\?/i.test(secondTurn.content)
+      };
+    });
+    check('A remembered line is never resurfaced twice and a corrected emotional detail never comes back',
+      hygieneState.repeatedRoleGone && hygieneState.staleEmotionGone && hygieneState.keptQuestion,
+      JSON.stringify(hygieneState));
+
+    // Verify Settings show format, theme, and story profile together in one place
+    await page.click('#story-open-memory');
+    await page.waitForSelector('#story-memory:not([hidden])');
+    const settingsBefore = await page.evaluate(() => ({
+      formatText: document.getElementById('settings-format-value')?.textContent || '',
+      themeText: document.getElementById('settings-theme-value')?.textContent || '',
+      profileSummary: document.getElementById('settings-profile-summary')?.textContent || '',
+      roleInputVal: document.getElementById('mem-role')?.value || ''
+    }));
+    await page.click('#settings-theme-toggle');
+    await page.waitForTimeout(100);
+    const themeAfter = await page.locator('#settings-theme-value').textContent();
+    const settingsPass = /5E Talking Head|Controversial Take/i.test(settingsBefore.formatText) &&
+      /mode active/i.test(settingsBefore.themeText) &&
+      themeAfter !== settingsBefore.themeText &&
+      /standing fields saved/i.test(settingsBefore.profileSummary) &&
+      settingsBefore.roleInputVal.includes('Founder and positioning coach');
+    check('Settings show format, theme and story profile together', settingsPass, JSON.stringify({ settingsBefore, themeAfter }));
+    await context.close();
+  }
+
   // Signed out gate
   {
     const { context, page } = await open(browser, 'first', { width: 1280, signedOut: true });

@@ -354,13 +354,446 @@
     '</div>';
   }
 
+  // WBR-462 (WO-20261101-latemorning & WO-20261101-agnight):
+  // 1. Broad-answer narrowing question, bounded in code with a canonical fixture.
+  // 2. Interrupted step resume at the exact step with the member's last answer kept.
+  // 3. Status-line reasons naming why the screen changed, when an earlier answer
+  //    shaped a question, and reserving strongest praise for the finished script.
+  // 4. New-chat memory preview, per-chat leave-out, one-time remembered-line
+  //    surfacing, and suppression of stale details the member has corrected.
+  // 5. Settings summary showing format, color theme, and story profile in one place.
+
+  const BROAD_ANSWER_FIXTURE = Object.freeze({
+    fiveTopics: 'I want to talk about 1) how I priced my first coaching offer too low, 2) why hiring a virtual assistant too early burned me out, 3) moving my studio to Denver after college, 4) my daily morning walk routine, and 5) how I onboard new clients on Mondays.',
+    lifeStory: 'Here is my whole life story from growing up in Ohio to college, my first corporate job in accounting, starting a photography side hustle in 2016, burning out during the pandemic, switching to coaching, and launching three different courses over the last decade.',
+    focusedFollowup: 'Let us focus on pricing my first coaching offer too low.'
+  });
+
+  const NARROW_ELIGIBLE_STEPS = new Set(['', 'start', 'B1', 'M1', 'R1', 'R2']);
+  const LIFE_STAGE_PATTERNS = [
+    /\bwhole life story\b/i,
+    /\bgrowing up\b/i,
+    /\bchildhood\b/i,
+    /\bhigh school\b/i,
+    /\bcollege\b/i,
+    /\bfirst (?:corporate )?job\b/i,
+    /\bside hustle\b/i,
+    /\bpandemic\b/i,
+    /\bover the last decade\b/i
+  ];
+
+  function extractBroadTopics(text) {
+    const clean = String(text || '').replace(/\s+/g, ' ').trim();
+    if (!clean) return [];
+    const numbered = [];
+    const numRe = /(?:^|\s)(?:\d+[.)]|[-*•])\s*([^;\n]+?)(?=(?:\s+\d+[.)]|\s+[-*•]|;|\n|$))/g;
+    let m;
+    while ((m = numRe.exec(clean)) !== null) {
+      const item = m[1].replace(/^(?:and\s+)/i, '').replace(/[,.]+$/, '').trim();
+      if (item.length >= 4) numbered.push(item.slice(0, 70));
+    }
+    if (numbered.length >= 3) return numbered.slice(0, 6);
+
+    const clauses = clean
+      .split(/(?:;|,\s+and\s+|\s+and also\s+|\s+plus\s+|,\s*(?=(?:how|why|when|moving|starting|burning|switching|launching|my|hiring|pricing)\b))/i)
+      .map(part => part.replace(/^(?:i want to talk about|here is my whole life story from|about)\s+/i, '').replace(/[,.]+$/, '').trim())
+      .filter(part => part.split(/\s+/).length >= 3);
+    if (clauses.length >= 4) return clauses.slice(0, 6);
+    return [];
+  }
+
+  function broadAnswerCheck(answer, conversation, currentStep) {
+    const text = String(answer || '').replace(/\s+/g, ' ').trim();
+    const step = String(currentStep || '').trim();
+    const list = Array.isArray(conversation) ? conversation : [];
+    if (!text || text.split(/\s+/).length < 18) return { broad: false, reason: 'short' };
+    if (step && !NARROW_ELIGIBLE_STEPS.has(step)) return { broad: false, reason: 'step-ineligible' };
+    const alreadyNarrowed = list.some(turn => turn && turn.role === 'assistant' && (turn.step === 'narrow' || turn.narrowingQuestion === true));
+    if (alreadyNarrowed) return { broad: false, reason: 'already-narrowed' };
+
+    const topics = extractBroadTopics(text);
+    const lifeHits = LIFE_STAGE_PATTERNS.filter(re => re.test(text)).length;
+    const isLifeStory = /\bwhole life story\b/i.test(text) || lifeHits >= 3;
+    if (topics.length < 4 && !isLifeStory) {
+      return { broad: false, reason: 'focused' };
+    }
+    const named = topics.slice(0, 3).map(t => t.length > 48 ? t.slice(0, 45).trim() + '...' : t);
+    const question = named.length >= 2
+      ? 'You named several distinct stories here (' + named.join('; ') + '). One short video lands best when it turns on a single moment. Which one of those should we build this script around first?'
+      : 'That spans a whole life story across several chapters. One short video lands best when it turns on a single moment. Which one moment or topic from what you shared should we build this script around first?';
+    const statusLine = 'Screen stayed on this step to ask one narrowing question because your answer covered several topics at once.';
+    return {
+      broad: true,
+      topics: topics.length ? topics : ['multiple life chapters'],
+      question,
+      statusLine
+    };
+  }
+
+  function defaultStepForMode(mode) {
+    const m = String(mode || '').toLowerCase();
+    if (m === 'bold') return 'B1';
+    if (m === 'mini') return 'M1';
+    return 'R1';
+  }
+
+  function shortPhrase(text, maxChars = 54) {
+    const clean = String(text || '').replace(/\s+/g, ' ').trim();
+    if (!clean) return '';
+    const chars = Array.from(clean);
+    if (chars.length <= maxChars) return clean;
+    return chars.slice(0, maxChars - 1).join('').trimEnd() + '…';
+  }
+
+  function interruptedStepInfo(project, stepGuides) {
+    if (!project || isFinished(project)) return null;
+    const intake = project.intake && typeof project.intake === 'object' ? project.intake : {};
+    const list = Array.isArray(project.conversation) ? project.conversation : [];
+    const lastTurn = list.length ? list[list.length - 1] : null;
+    const savedInterrupt = intake.interruptedStep && typeof intake.interruptedStep === 'object' ? intake.interruptedStep : null;
+    const hasTrailingUserTurn = Boolean(lastTurn && lastTurn.role === 'user' && (lastTurn.key || lastTurn.interrupted) && String(lastTurn.content || '').trim());
+    if (!savedInterrupt && !hasTrailingUserTurn) return null;
+
+    const step = String((savedInterrupt && savedInterrupt.step) || intake.current_step || defaultStepForMode(project.content_type)).trim();
+    const guide = stepGuides && stepGuides[step] ? stepGuides[step] : null;
+    const stepTitle = (guide && guide.title) || ('Step ' + step);
+    const lastUser = [...list].reverse().find(m => m && m.role === 'user' && String(m.content || '').trim());
+    const lastAnswer = String((savedInterrupt && savedInterrupt.lastAnswer) || (lastUser && lastUser.content) || '').trim();
+    const excerpt = shortPhrase(lastAnswer, 48);
+    const answerPart = excerpt ? 'Your last answer (“' + excerpt + '”) is kept.' : 'Your last answer is kept.';
+    const statusLine = 'Step paused on ' + stepTitle + ' before StorySculpt finished replying. ' + answerPart + ' Press Resume this step to continue from ' + stepTitle + '.';
+    return {
+      interrupted: true,
+      step,
+      stepTitle,
+      lastAnswer,
+      statusLine
+    };
+  }
+
+  function shapedByPhrase(conversation) {
+    const list = Array.isArray(conversation) ? conversation : [];
+    const candidates = list.filter(m => {
+      if (!m || m.role !== 'user' || m.excludeFromGeneration === true) return false;
+      const text = String(m.content || '').replace(/\s+/g, ' ').trim();
+      if (!text || /^(?:\d+|option\s*\d+|\d+\s*(?:seconds|sec|minutes|min)|epiphany|enragement|entertainment|empathy|education)$/i.test(text)) return false;
+      return text.split(/\s+/).length >= 3;
+    });
+    if (!candidates.length) return '';
+    // Prefer an earlier substantive answer when multiple answers exist so the
+    // member sees how their earlier story detail shaped the new question.
+    const chosen = candidates.length >= 2 ? candidates[candidates.length - 2] : candidates[0];
+    const firstClause = String(chosen.content || '').split(/(?:[.!?\n]|,\s+)/)[0].trim();
+    return shortPhrase(firstClause || chosen.content, 44);
+  }
+
+  function generationStatusLine(project, opts = {}) {
+    const isFinal = Boolean(opts.isFinal || (project && isFinished(project)));
+    if (isFinal) {
+      return 'Screen changed to your finished script because every interview step is complete. Strong work bringing this story together, your script is ready to film.';
+    }
+    const intake = project && project.intake && typeof project.intake === 'object' ? project.intake : {};
+    const step = String(opts.step || intake.current_step || '').trim();
+    const guides = opts.stepGuides || {};
+    const stepTitle = (guides[step] && guides[step].title) || (step ? 'Step ' + step : 'the next question');
+    const earlier = shapedByPhrase(project && project.conversation);
+    const base = earlier
+      ? 'Screen updated to ' + stepTitle + ' because your earlier answer (“' + earlier + '”) shaped this question.'
+      : 'Screen updated to ' + stepTitle + ' after your answer.';
+    if (opts.isPreFinal) {
+      return base + ' ' + FINISHING_LOCK_LINE;
+    }
+    return base;
+  }
+
+  const MEMORY_FIELD_LIST = [
+    ['name', 'Name'],
+    ['role', 'What they do'],
+    ['audience', 'Who their videos are for'],
+    ['voice', 'Voice and phrasing'],
+    ['offers', 'Offers and recurring calls to action'],
+    ['facts', 'Facts and results to reuse'],
+    ['notes', 'Other notes']
+  ];
+
+  const EMOTION_WORDS = [
+    'ashamed', 'terrified', 'anxious', 'embarrassed', 'depressed', 'panicked',
+    'heartbroken', 'guilty', 'humiliated', 'afraid', 'scared', 'overwhelmed',
+    'burned out', 'burnout', 'furious', 'bitter', 'resentful', 'insecure', 'lonely'
+  ];
+
+  function extractCorrections(conversation, intake) {
+    const list = Array.isArray(conversation) ? conversation : [];
+    const safeIntake = intake && typeof intake === 'object' ? intake : {};
+    const supersededPhrases = new Set(
+      Array.isArray(safeIntake.supersededDetails)
+        ? safeIntake.supersededDetails.map(s => String(s || '').trim()).filter(Boolean)
+        : []
+    );
+    const correctedEmotions = new Set();
+    let replacementEmotion = '';
+
+    for (const msg of list) {
+      if (!msg || msg.role !== 'user') continue;
+      const text = String(msg.content || '').trim();
+      if (!text) continue;
+      if (msg.excludeFromGeneration === true) {
+        supersededPhrases.add(text);
+        for (const emo of EMOTION_WORDS) {
+          if (new RegExp('\\b' + emo + '\\b', 'i').test(text)) correctedEmotions.add(emo.toLowerCase());
+        }
+        continue;
+      }
+      // Explicit negation or correction of an earlier emotion or detail:
+      // e.g. "I wasn't ashamed, I was angry", "not terrified, actually relieved", "Correction: ..."
+      for (const emo of EMOTION_WORDS) {
+        const negRe = new RegExp('\\b(?:not|never|wasn[\'’]?t|weren[\'’]?t|no longer|instead of(?: feeling| being)?|stop saying i was)\\s+(?:feeling\\s+|being\\s+|so\\s+)?' + emo + '\\b', 'i');
+        if (negRe.test(text)) {
+          correctedEmotions.add(emo.toLowerCase());
+        }
+      }
+      const notXButY = text.match(/\b(?:i\s+was(?:n['’]?t|\s+not)|not|instead\s+of)\s+([a-z][a-z\s]{2,28}?)\s*(?:,|but|i\s+was|actually)\s+(?:i\s+was\s+|actually\s+|i\s+felt\s+)?([a-z][a-z\s]{2,28})/i);
+      if (notXButY) {
+        const stale = notXButY[1].trim().toLowerCase();
+        const fresh = notXButY[2].trim();
+        if (stale.length >= 3) {
+          supersededPhrases.add(stale);
+          for (const emo of EMOTION_WORDS) {
+            if (stale.includes(emo)) correctedEmotions.add(emo.toLowerCase());
+          }
+        }
+        if (fresh) replacementEmotion = fresh;
+      }
+    }
+
+    // Also check if an earlier user turn stated an emotion that a later user turn corrected
+    if (correctedEmotions.size > 0) {
+      for (const msg of list) {
+        if (!msg || msg.role !== 'user') continue;
+        const text = String(msg.content || '').trim();
+        for (const emo of correctedEmotions) {
+          if (new RegExp('\\b' + emo + '\\b', 'i').test(text) && !new RegExp('\\b(?:not|never|wasn[\'’]?t)\\s+' + emo + '\\b', 'i').test(text)) {
+            supersededPhrases.add(text);
+          }
+        }
+      }
+    }
+
+    return {
+      supersededPhrases: [...supersededPhrases],
+      correctedEmotions: [...correctedEmotions],
+      replacementEmotion
+    };
+  }
+
+  function activeMemoryFacts(memoryProfile, project) {
+    const profile = memoryProfile && typeof memoryProfile === 'object' ? memoryProfile : {};
+    const intake = project && project.intake && typeof project.intake === 'object' ? project.intake : {};
+    const excludedSet = new Set(Array.isArray(intake.excludedMemoryKeys) ? intake.excludedMemoryKeys : []);
+    const usedSet = new Set(Array.isArray(intake.usedMemoryKeys) ? intake.usedMemoryKeys : []);
+    const corrections = extractCorrections(project && project.conversation, intake);
+
+    const facts = [];
+    for (const [key, label] of MEMORY_FIELD_LIST) {
+      let value = String(profile[key] || '').trim();
+      if (!value) continue;
+      let superseded = false;
+      for (const emo of corrections.correctedEmotions) {
+        if (new RegExp('\\b' + emo + '\\b', 'i').test(value)) {
+          superseded = true;
+        }
+      }
+      for (const phrase of corrections.supersededPhrases) {
+        if (phrase.length >= 4 && value.toLowerCase().includes(phrase.toLowerCase())) {
+          superseded = true;
+        }
+      }
+      facts.push({
+        key,
+        label,
+        value,
+        excluded: excludedSet.has(key),
+        usedOnce: usedSet.has(key),
+        superseded
+      });
+    }
+    return facts;
+  }
+
+  function newChatMemoryPreviewMarkup(memoryProfile, project) {
+    const facts = activeMemoryFacts(memoryProfile, project).filter(f => !f.superseded);
+    if (!facts.length) return '';
+    const activeCount = facts.filter(f => !f.excluded).length;
+    const excludedCount = facts.length - activeCount;
+    const summary = excludedCount > 0
+      ? 'Using ' + activeCount + ' of ' + facts.length + ' saved facts for this chat (' + excludedCount + ' left out)'
+      : 'Saved facts StorySculpt will use in this chat (' + facts.length + ')';
+
+    const itemsHtml = facts.map(item => {
+      const stateClass = item.excluded ? ' is-excluded' : '';
+      const noteHtml = item.excluded
+        ? '<span class="story-msg-excluded-note">Left out of this chat</span>'
+        : (item.usedOnce ? '<span class="story-memory-used-note">Used once in this chat</span>' : '');
+      const btnLabel = item.excluded ? 'Use in this chat' : 'Leave out of this chat';
+      return '<div class="story-memory-preview-item' + stateClass + '" data-mem-item="' + escapeHtml(item.key) + '">' +
+        '<div class="story-memory-preview-copy">' +
+          '<strong class="story-memory-preview-label">' + escapeHtml(item.label) + ':</strong> ' +
+          '<span class="story-memory-preview-value">' + escapeHtml(item.value) + '</span> ' +
+          noteHtml +
+        '</div>' +
+        '<button type="button" class="story-msg-action story-memory-fact-toggle" data-action="toggle-chat-memory-fact" data-mem-key="' + escapeHtml(item.key) + '" aria-pressed="' + (item.excluded ? 'true' : 'false') + '">' + btnLabel + '</button>' +
+      '</div>';
+    }).join('');
+
+    return '<div class="story-memory-preview-box" data-memory-preview="true">' +
+      '<div class="story-memory-preview-head">' +
+        '<strong>' + escapeHtml(summary) + '</strong>' +
+        '<span>From your story profile. Leave any fact out for this chat without removing it from your standing profile.</span>' +
+      '</div>' +
+      '<div class="story-memory-preview-list">' + itemsHtml + '</div>' +
+    '</div>';
+  }
+
+  function composeChatMemory(memoryProfile, project, opts = {}) {
+    const facts = activeMemoryFacts(memoryProfile, project);
+    const active = facts.filter(item => {
+      if (item.excluded || item.superseded) return false;
+      if (opts.omitUsedOnce && item.usedOnce) return false;
+      return true;
+    });
+    if (!active.length) return '';
+    return 'MEMBER STORY PROFILE (standing facts the member set once):\n' +
+      active.map(item => item.label + ': ' + item.value).join('\n');
+  }
+
+  function sanitizeRememberedLinesInTurn(content, memoryProfile, project) {
+    const raw = String(content || '');
+    if (!raw.trim()) return { content: raw, newlyUsedKeys: [] };
+    const facts = activeMemoryFacts(memoryProfile, project);
+    const intake = project && project.intake && typeof project.intake === 'object' ? project.intake : {};
+    const alreadyUsed = new Set(Array.isArray(intake.usedMemoryKeys) ? intake.usedMemoryKeys : []);
+    const corrections = extractCorrections(project && project.conversation, intake);
+
+    // Also detect any fact that already appeared in an earlier assistant turn in this chat
+    const list = Array.isArray(project && project.conversation) ? project.conversation : [];
+    for (const msg of list) {
+      if (!msg || msg.role !== 'assistant') continue;
+      const prevText = String(msg.content || '').toLowerCase();
+      for (const f of facts) {
+        const snippet = f.value.toLowerCase().trim();
+        if (snippet.length >= 5 && prevText.includes(snippet)) {
+          alreadyUsed.add(f.key);
+        }
+      }
+    }
+
+    const newlyUsedKeys = [];
+    const lines = raw.split('\n');
+    const cleanedLines = lines.map(line => {
+      // Preserve numbered option lines (1. / 2. / 3.) unless they contain a corrected stale emotion
+      const isOptionLine = /^\s*(?:\*\*)?\d+[.)]/.test(line);
+      const sentences = line.split(/(?<=[.!?])\s+/);
+      const keptSentences = [];
+      for (let s of sentences) {
+        const lower = s.toLowerCase();
+        let drop = false;
+
+        // 1. Never resurface a fact the member left out for this chat or a superseded fact
+        for (const f of facts) {
+          const valLower = f.value.toLowerCase().trim();
+          if (valLower.length < 4) continue;
+          if ((f.excluded || f.superseded) && lower.includes(valLower)) {
+            drop = true;
+            break;
+          }
+          // 2. Never resurface the same remembered line twice in one chat
+          if (!f.excluded && !f.superseded && lower.includes(valLower)) {
+            if (alreadyUsed.has(f.key)) {
+              drop = true;
+              break;
+            } else {
+              alreadyUsed.add(f.key);
+              if (!newlyUsedKeys.includes(f.key)) newlyUsedKeys.push(f.key);
+            }
+          }
+        }
+
+        // 3. Never resurface a stale emotional detail the member has since corrected
+        if (!drop) {
+          for (const emo of corrections.correctedEmotions) {
+            if (new RegExp('\\b' + emo + '\\b', 'i').test(s)) {
+              if (corrections.replacementEmotion && isOptionLine) {
+                s = s.replace(new RegExp('\\b' + emo + '\\b', 'gi'), corrections.replacementEmotion);
+              } else {
+                drop = true;
+              }
+              break;
+            }
+          }
+        }
+        if (!drop) {
+          for (const phrase of corrections.supersededPhrases) {
+            const pLower = String(phrase || '').toLowerCase().trim();
+            if (pLower.length >= 6 && lower.includes(pLower)) {
+              drop = true;
+              break;
+            }
+          }
+        }
+
+        if (!drop) keptSentences.push(s);
+      }
+      return keptSentences.join(' ').trim();
+    }).filter((line, idx) => line.length > 0 || lines[idx].trim() === '');
+
+    const out = cleanedLines.join('\n').replace(/\n{3,}/g, '\n\n').trim();
+    return {
+      content: out || raw,
+      newlyUsedKeys
+    };
+  }
+
+  function settingsSummaryMarkup(opts = {}) {
+    const story = opts.activeStory || null;
+    const modeLabels = opts.modeLabels || { bold: 'Controversial Take', mini: 'Mini-Webinar', rant: '5E Talking Head', ugc: 'UGC / Product Video' };
+    const formatName = story && story.content_type
+      ? (modeLabels[story.content_type] || story.content_type)
+      : 'Chosen per script when you start a chat';
+    const formatRule = story && story.content_type
+      ? formatName + ' (locked for this chat; start a new chat for a different format)'
+      : 'Chosen when you start a chat (locked per chat once started)';
+    const theme = String(opts.theme || 'dark').toLowerCase() === 'light' ? 'Light' : 'Dark';
+    const nextTheme = theme === 'Light' ? 'Dark' : 'Light';
+    const profile = opts.memoryProfile && typeof opts.memoryProfile === 'object' ? opts.memoryProfile : {};
+    const savedCount = MEMORY_FIELD_LIST.filter(([k]) => String(profile[k] || '').trim().length > 0).length;
+    const profileSummary = savedCount > 0
+      ? savedCount + ' of ' + MEMORY_FIELD_LIST.length + ' standing fields saved below (reused across chats unless left out for a chat)'
+      : '0 of ' + MEMORY_FIELD_LIST.length + ' standing fields saved yet (fill in any fields below to reuse across chats)';
+
+    return '<div class="story-settings-card" data-settings-summary="true">' +
+      '<div class="story-settings-row" id="settings-format-row">' +
+        '<div><strong>Script format</strong><p id="settings-format-value">' + escapeHtml(formatRule) + '</p></div>' +
+      '</div>' +
+      '<div class="story-settings-row" id="settings-theme-row">' +
+        '<div><strong>Color theme</strong><p id="settings-theme-value">' + escapeHtml(theme) + ' mode active</p></div>' +
+        '<button class="secondary-button" id="settings-theme-toggle" data-action="toggle-settings-theme" type="button">Switch to ' + escapeHtml(nextTheme) + '</button>' +
+      '</div>' +
+      '<div class="story-settings-row" id="settings-profile-row">' +
+        '<div><strong>Story profile</strong><p id="settings-profile-summary">' + escapeHtml(profileSummary) + '</p></div>' +
+      '</div>' +
+    '</div>';
+  }
+
   const api = {
     DAY_MS, QUIET_AFTER_DAYS, LAPSE_AFTER_DAYS, COLLAPSE_AFTER, KEEP_VISIBLE,
     INACTIVITY_LINE, FINISHED_LINE, FINISHING_LOCK_LINE, MEMBERSHIP_LAPSE_LINE, PROFILE_STALE_DAYS,
+    BROAD_ANSWER_FIXTURE, MEMORY_FIELD_LIST,
     engagement, returnNotice, exportFileName, returnNoticeMarkup, threadWindow, showEarlierMarkup, earlierAnswerExcerpt,
     returnNoticeFor, refreshReturnNotice, dismissalStamp, isFinished, isFilmed, finishedTime, progress, progressLine, progressMarkup,
     memberStep, nextStep, nextStepMarkup, versionView, returnVisitLine,
-    profileFreshness, profileFreshnessMarkup
+    profileFreshness, profileFreshnessMarkup,
+    broadAnswerCheck, interruptedStepInfo, generationStatusLine,
+    extractCorrections, activeMemoryFacts, newChatMemoryPreviewMarkup, composeChatMemory, sanitizeRememberedLinesInTurn, settingsSummaryMarkup
   };
   root.StorySculptStates = api;
 })(typeof window !== 'undefined' ? window : globalThis);
