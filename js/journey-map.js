@@ -99,8 +99,9 @@ Give me three distinct core story seeds, each with:
 
 Do not write the full seven-part map yet. Let me choose one, combine them, or explain what feels wrong. Once I choose, ask up to three selection-specific questions only if necessary.
 
-After I answer, create the finished map in exactly this format so I can paste it into SeenInSeven:
+After I answer, give me the finished map inside one plain-text code block so I can copy it with the copy button and paste it straight into SeenInSeven. The block must contain exactly seven lines and nothing else:
 
+\`\`\`
 1. [one or two first-person sentences]
 2. [one or two first-person sentences]
 3. [one or two first-person sentences]
@@ -108,6 +109,13 @@ After I answer, create the finished map in exactly this format so I can paste it
 5. [one or two first-person sentences]
 6. [one or two first-person sentences]
 7. [one or two first-person sentences]
+\`\`\`
+
+Format rules for that block, because the SeenInSeven box reads it by its numbers:
+- Each line starts with its number and a period (1. through 7.), then the sentences on the same line.
+- No titles, part names, headings, bold, italics, bullets or emoji, and no extra line breaks inside a part.
+- No other line inside the block starts with a number.
+- Nothing before 1. or after 7. inside the block. Put any note to me outside the block.
 
 Keep my language patterns, vocabulary, rhythm, bluntness, humor, and emotional temperature. Make strong connections when warranted, but never invent concrete facts. Do not turn this into generic coaching, a sales pitch, a polished script, or a motivational speech.
 
@@ -235,18 +243,53 @@ ${String(onboardingContext || '').trim() || 'I have not shared much yet.'}
 ${prior ? `\nEARLIER PARTS OF MY STORY\n${prior}` : ''}`.trim();
   }
 
+  // A pasted map is read in order, 1 through 7. A heading line can be plain
+  // ("1. ..."), bold ("**1. Title**", "**Part 1: Title**"), a markdown heading
+  // or list item, or start with Part, Step, Answer, Chapter, Video, Stage or Act,
+  // with any of . ) : - and the en or em dash. Only the next expected number
+  // starts a part, so "3: that year" inside Part 5 stays in Part 5. A bare
+  // "1 Text" with no punctuation is tried only if nothing else finds seven.
+  const IMPORT_HEADING = /^[ \t]*(?:[#>]+[ \t]*|[-*+][ \t]+)*(?:\*\*|__)?[ \t]*(?:(?:part|step|answer|chapter|video|stage|act)[ \t]+)?([1-7])[ \t]*(?:\*\*|__)?[ \t]*(?:[.):\-\u2013\u2014](?!\d)[ \t]*(?:\*\*|__)?|(?=\n|$))/gim;
+  const IMPORT_HEADING_LOOSE = /^[ \t]*(?:[#>]+[ \t]*|[-*+][ \t]+)*(?:\*\*|__)?[ \t]*(?:(?:part|step|answer|chapter|video|stage|act)[ \t]+)?([1-7])[ \t]*(?:\*\*|__)?[ \t]*(?:[.):\-\u2013\u2014](?!\d)[ \t]*(?:\*\*|__)?|[ \t]+(?=\S)|(?=\n|$))/gim;
+
+  function readImportedParts(text, heading) {
+    const marks = Array.from(text.matchAll(heading));
+    const picked = [];
+    let next = 1;
+    for (const mark of marks) {
+      if (Number(mark[1]) !== next) continue;
+      picked.push(mark);
+      next += 1;
+      if (next > 7) break;
+    }
+    return picked.map((mark, index) => {
+      const from = mark.index + mark[0].length;
+      const to = index + 1 < picked.length ? picked[index + 1].index : text.length;
+      const answer = text.slice(from, to)
+        .replace(/\*\*|__/g, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 600);
+      return { number: Number(mark[1]), answer };
+    });
+  }
+
+  function parseImportedMapDetail(value) {
+    const text = String(value || '').replace(/\r/g, '').replace(/^[ \t]*(?:```|~~~)[^\n]*$/gm, '').trim();
+    if (!text) return { answers: null, found: [], empty: [], blank: true };
+    let parts = readImportedParts(text, IMPORT_HEADING);
+    if (parts.length < 7) {
+      const loose = readImportedParts(text, IMPORT_HEADING_LOOSE);
+      if (loose.length > parts.length) parts = loose;
+    }
+    const found = parts.map(part => part.number);
+    const empty = parts.filter(part => !part.answer).map(part => part.number);
+    const answers = parts.length === 7 && !empty.length ? parts.map(part => part.answer) : null;
+    return { answers, found, empty, blank: false };
+  }
+
   function parseImportedMap(value) {
-    const text = String(value || '')
-      .replace(/\r/g, '')
-      .replace(/^\s*#{1,6}\s*/gm, '')
-      .replace(/^\s*\*\*\s*([1-7])\s*[.)\-:]?\s*\*\*\s*/gm, '$1. ')
-      .replace(/^\s*(?:part|step|answer|chapter)\s+([1-7])\s*[.)\-:]\s*/gim, '$1. ')
-      .trim();
-    if (!text) return null;
-    const matches = Array.from(text.matchAll(/(?:^|\n)\s*([1-7])\s*[.)\-:]\s*([\s\S]*?)(?=\n\s*[1-7]\s*[.)\-:]|$)/g));
-    if (matches.length !== 7) return null;
-    const answers = matches.map(match => String(match[2] || '').trim().replace(/\s+/g, ' ').slice(0, 600));
-    return answers.every(Boolean) ? answers : null;
+    return parseImportedMapDetail(value).answers;
   }
 
   function formatJourney(level, answers) {
@@ -265,6 +308,7 @@ ${prior ? `\nEARLIER PARTS OF MY STORY\n${prior}` : ''}`.trim();
     buildHelperPrompt,
     buildPartHelperPrompt,
     parseImportedMap,
+    parseImportedMapDetail,
     formatJourney,
     copyText
   };

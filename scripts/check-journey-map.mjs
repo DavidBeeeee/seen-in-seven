@@ -54,4 +54,38 @@ if (!html.includes('id="screen-journey-map"') || !html.includes('id="screen-jour
   throw new Error('Journey Map onboarding, review, or Settings entry is missing.');
 }
 
-console.log('Journey Map checks passed for both levels, current-video prompt isolation, onboarding order, and Settings access.');
+// A pasted seven-part map is read whatever heading style the member's AI used,
+// and a paste that cannot be read says why on the page (2026-11-02).
+const seven = make => [1, 2, 3, 4, 5, 6, 7].map(make).join('\n\n');
+const IMPORT_FORMATS = {
+  'plain': seven(n => `${n}. Story part ${n}.`),
+  'intro line first': 'Here is your map:\n\n' + seven(n => `${n}. Story part ${n}.`),
+  'title then text': seven(n => `${n}. The Ordinary World\nStory part ${n}.`),
+  'Part with em dash': seven(n => `Part ${n} \u2014 The Call\nStory part ${n}.`),
+  'bold Part heading': seven(n => `**Part ${n}: The Call**\nStory part ${n}.`),
+  'bold number heading': seven(n => `**${n}. The Call**\nStory part ${n}.`),
+  'markdown heading': seven(n => `### ${n}. The Call\nStory part ${n}.`),
+  'Video label': seven(n => `Video ${n}: Story part ${n}.`),
+  'bare number': seven(n => `${n} Story part ${n}.`),
+  'code fence': '```text\n' + seven(n => `${n}. Story part ${n}.`) + '\n```',
+  'number inside a part': seven(n => n === 5 ? '5. We drove all night.\n3: that was the year.\n6:00 pm we stopped.' : `${n}. Story part ${n}.`)
+};
+for (const [name, text] of Object.entries(IMPORT_FORMATS)) {
+  const answers = map.parseImportedMap(text);
+  if (!answers || answers.length !== 7) throw new Error(`Seven-part paste not read: ${name}.`);
+  if (answers.some(answer => /\*\*|```/.test(answer))) throw new Error(`Formatting marks left in the answers: ${name}.`);
+  if (!answers[6].includes('Story part 7')) throw new Error(`Part 7 lost its text: ${name}.`);
+}
+const fifth = map.parseImportedMap(IMPORT_FORMATS['number inside a part'])[4];
+if (!fifth.includes('3: that was the year') || !fifth.includes('6:00 pm')) throw new Error('A number inside Part 5 was read as a new part.');
+const short = map.parseImportedMapDetail('1. a\n2. b\n3. c');
+if (short.answers || short.found.length !== 3) throw new Error('A three-part paste must report three parts found.');
+const guide = map.buildHelperPrompt(1, '', '');
+if (!guide.includes('plain-text code block') || !guide.includes('Each line starts with its number and a period') || !guide.includes('No titles, part names, headings, bold')) {
+  throw new Error('The Story Discovery guide does not ask for the exact format the paste box reads.');
+}
+if (!/id="journey-import-error" role="alert"/.test(appSource) || !appSource.includes('function journeyImportProblem(') || /field\.placeholder = 'Please paste all seven/.test(appSource)) {
+  throw new Error('An unreadable paste must show a visible error, not only change the placeholder.');
+}
+
+console.log('Journey Map checks passed for both levels, eleven paste formats, the visible paste error, the guide output format, current-video prompt isolation, onboarding order, and Settings access.');

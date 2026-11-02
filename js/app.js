@@ -1445,7 +1445,8 @@ function renderJourneyMap() {
       '<div class="journey-question-top" style="margin-top:24px;"><span class="journey-step">Step 3</span></div>' +
       '<h3>Paste the seven numbered answers below.</h3>' +
       '<label for="journey-import" style="margin-top:24px;display:block;">Paste your finished seven-part map</label>' +
-      '<textarea class="journey-answer-input" id="journey-import" rows="10" placeholder="1. ...\n\n2. ...\n\n3. ...\n\nPaste all seven numbered answers here."></textarea>' +
+      '<textarea class="journey-answer-input" id="journey-import" rows="10" aria-describedby="journey-import-error" placeholder="1. ...\n\n2. ...\n\n3. ...\n\nPaste all seven numbered answers here."></textarea>' +
+      '<p class="journey-import-error" id="journey-import-error" role="alert" hidden style="margin-top:10px;color:#e8705a;font-size:14px;line-height:1.5;"></p>' +
       '<button class="btn-primary" style="margin-top:14px;" type="button" onclick="importJourneyMap()">Review My Story →</button>' +
       '</section>';
     return;
@@ -1530,13 +1531,30 @@ function finishJourneyReview() {
   goNext();
 }
 
+// A paste that cannot be read says why, in the box's own terms, instead of
+// changing a placeholder nobody can see behind the pasted text.
+function journeyImportProblem(detail) {
+  const how = ' Start each part on its own line with its number and a period, like 1. through 7. Asking your AI to "put the seven lines in a plain code block" and using its copy button usually fixes this.';
+  if (!detail || detail.blank) return 'Paste your seven numbered answers first.';
+  if (detail.empty && detail.empty.length) return 'Part ' + detail.empty.join(', ') + ' has a number but no words yet.' + how;
+  const found = detail.found || [];
+  if (!found.length) return 'I could not find any numbered parts in what you pasted.' + how;
+  const next = found.length + 1;
+  return 'I found ' + found.length + ' of 7 parts, then could not find a line starting with ' + next + '.' + how;
+}
+
 function importJourneyMap() {
   const field = document.getElementById('journey-import');
-  const parsed = window.SISJourneyMap && SISJourneyMap.parseImportedMap(field && field.value);
+  const error = document.getElementById('journey-import-error');
+  const detail = window.SISJourneyMap && SISJourneyMap.parseImportedMapDetail(field && field.value);
+  const parsed = detail && detail.answers;
   if (!parsed || parsed.length !== 7) {
-    if (field) { field.focus(); field.placeholder = 'Please paste all seven numbered answers, one through seven.'; }
+    if (error) { error.textContent = journeyImportProblem(detail); error.hidden = false; }
+    if (field) field.focus();
+    if (typeof logEvent === 'function') logEvent('story_map_import_unread', { found: detail ? detail.found.length : 0 });
     return;
   }
+  if (error) { error.textContent = ''; error.hidden = true; }
   const answers = journeyAnswersForLevel(journeyMapLevel);
   parsed.forEach((answer, index) => { answers[index] = answer; });
   const p2 = ensurePhase2();
