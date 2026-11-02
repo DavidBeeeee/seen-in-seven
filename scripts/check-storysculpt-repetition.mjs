@@ -50,7 +50,8 @@ let recentRequests;
 let intakeWrites;
 
 function reply(value, status = 200) {
-  return { ok: status >= 200 && status < 300, status, json: async () => value };
+  const raw = value === undefined ? '' : JSON.stringify(value);
+  return { ok: status >= 200 && status < 300, status, json: async () => value, text: async () => raw };
 }
 
 globalThis.fetch = async (url, options = {}) => {
@@ -142,7 +143,9 @@ const freshVerdict = classifyOutput(finalWith('The bucket upstaged the actor.'),
 });
 assert.equal(freshVerdict.ok, true, 'fresh final output contract: ' + JSON.stringify(freshVerdict));
 
+let runSeq = 0;
 async function run(nextScene) {
+  runSeq++;
   scene = nextScene;
   events = [];
   modelCalls = [];
@@ -151,7 +154,7 @@ async function run(nextScene) {
   const req = {
     method: 'POST',
     url: '/rant',
-    headers: { authorization: 'Bearer repetition-token' },
+    headers: { authorization: 'Bearer repetition-token-' + runSeq },
     body: {
       mode: 'rant',
       projectId: PROJECT,
@@ -234,7 +237,7 @@ try {
   assert.ok(path.includes('output=not.is.null'));
   assert.ok(path.includes('order=updated_at.desc'));
   assert.ok(path.includes('limit=6'));
-  assert.equal(options.headers.Authorization, 'Bearer repetition-token');
+  assert.match(options.headers.Authorization, /^Bearer repetition-token-\d+$/);
 } finally {
   globalThis.fetch = originalFetch;
 }
