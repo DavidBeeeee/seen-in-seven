@@ -1559,10 +1559,11 @@ function importJourneyMap() {
   parsed.forEach((answer, index) => { answers[index] = answer; });
   const p2 = ensurePhase2();
   p2.storyMapImportedAt = new Date().toISOString();
+  // saveProgress replaces state.phase2, so anything set on p2 after it is lost.
+  p2.storyDiscoveryMode = 'imported';
   saveProgress();
   if (typeof logEvent === 'function') logEvent('story_map_imported', { level: journeyMapLevel, parts: parsed.length });
   journeyOnboardingIndex = 0;
-  p2.storyDiscoveryMode = 'imported';
   renderJourneyMap();
 }
 

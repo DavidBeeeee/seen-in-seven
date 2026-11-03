@@ -68,6 +68,8 @@ const IMPORT_FORMATS = {
   'Video label': seven(n => `Video ${n}: Story part ${n}.`),
   'bare number': seven(n => `${n} Story part ${n}.`),
   'code fence': '```text\n' + seven(n => `${n}. Story part ${n}.`) + '\n```',
+  'escaped markdown': seven(n => `${n}\\. Story part ${n}.`),
+  'escaped bold heading': seven(n => `\\*\\*Part ${n}\\*\\*\nStory part ${n}.`),
   'number inside a part': seven(n => n === 5 ? '5. We drove all night.\n3: that was the year.\n6:00 pm we stopped.' : `${n}. Story part ${n}.`)
 };
 for (const [name, text] of Object.entries(IMPORT_FORMATS)) {
@@ -84,8 +86,29 @@ const guide = map.buildHelperPrompt(1, '', '');
 if (!guide.includes('plain-text code block') || !guide.includes('Each line starts with its number and a period') || !guide.includes('No titles, part names, headings, bold')) {
   throw new Error('The Story Discovery guide does not ask for the exact format the paste box reads.');
 }
+// A good paste must leave the paste screen. saveProgress replaces state.phase2,
+// so the imported mode set after it was lost and the box silently reset (2026-11-03).
+const importBody = appSource.slice(appSource.indexOf('function importJourneyMap('), appSource.indexOf('function openJourneyPartHelp('));
+if (importBody.indexOf("p2.storyDiscoveryMode = 'imported'") === -1 || importBody.indexOf("p2.storyDiscoveryMode = 'imported'") > importBody.indexOf('saveProgress()')) {
+  throw new Error('importJourneyMap must set the imported mode before saveProgress.');
+}
+
+// The map must come back as seven separate story bases, not one idea in seven
+// parts (2026-11-03): every part keeps its own job in both guides, on both levels.
+for (const level of [1, 2]) {
+  const fullGuide = map.buildHelperPrompt(level, '', '');
+  if (!fullGuide.includes('seven different stories, not one idea explained seven ways') || !fullGuide.includes('WHAT EACH PART MUST DO')) {
+    throw new Error(`The Level ${level} guide lost the separate-stories rule.`);
+  }
+  for (const [index, label] of ['The decision', 'The ordinary life', 'The first realization', 'The test', 'The fall', 'The larger truth', 'The return'].entries()) {
+    if (!fullGuide.includes(`${index + 1}. ${label}:`)) throw new Error(`The Level ${level} guide lost the job for Part ${index + 1}.`);
+    const partGuide = map.buildPartHelperPrompt(level, index, '', []);
+    if (!partGuide.includes(`WHAT THIS PART MUST DO\n${label}:`)) throw new Error(`The Level ${level} helper for Part ${index + 1} lost its job.`);
+  }
+}
+
 if (!/id="journey-import-error" role="alert"/.test(appSource) || !appSource.includes('function journeyImportProblem(') || /field\.placeholder = 'Please paste all seven/.test(appSource)) {
   throw new Error('An unreadable paste must show a visible error, not only change the placeholder.');
 }
 
-console.log('Journey Map checks passed for both levels, eleven paste formats, the visible paste error, the guide output format, current-video prompt isolation, onboarding order, and Settings access.');
+console.log('Journey Map checks passed for both levels, thirteen paste formats, the visible paste error, the guide output format, per-part story jobs, current-video prompt isolation, onboarding order, and Settings access.');

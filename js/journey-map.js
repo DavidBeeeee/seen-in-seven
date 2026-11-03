@@ -3,7 +3,7 @@
 
   const QUESTIONS = {
     1: [
-      'What have I overcome, who am I now, and what transformation led me here?',
+      'What am I finally ready to be seen for, who am I doing this for, and what has kept me quiet until now?',
       'Before those events, what did my life look like and what did I have in common with someone who has not had this transformation yet?',
       'Before the main event, what did I incorrectly believe, and what do people still believe that I now know is not true?',
       'Once that belief changed, what did I do differently and what new thing opened up in my life?',
@@ -14,10 +14,10 @@
     2: [
       'What needs to be said from my experience, and who needs to hear it?',
       'Where did this work or perspective actually start for me?',
-      'What do I see differently from most people in my field, and what taught me that?',
-      'What is the problem with people in my field who still believe this? What is it costing them, and what was it costing me?',
+      'What did I used to believe about this work that I no longer believe, and what moment or pattern showed me it was wrong?',
+      'When I first acted on that new view before I had proof, what did I actually do, what made going back to the old way tempting, and what happened?',
       'What is the absolute biggest failure I have experienced in my business or life that relates to this subject, how did my choices contribute, and what did it cost?',
-      'What was the biggest lesson I learned from my biggest failure? What is the number one thing I would share to help others avoid that mistake?',
+      'What do I do now that most people would call wrong or backwards, what showed me it works, and where can someone see me doing it?',
       'What makes me different, what human struggle am I still working through, and what am I working toward in the future?'
     ]
   };
@@ -29,7 +29,7 @@
 
   const EXPLANATIONS = {
     1: [
-      'Start with the change at the center of your story. A rough answer is enough.',
+      'Say what you are ready to stop hiding and what has been holding you back. Save the rest of the story for later parts. A rough answer is enough.',
       'Think about who you were before things changed. This helps another person see themselves in you.',
       'Name an old belief that no longer feels true. This gives your story a clear turning point.',
       'Describe what changed after that realization. Focus on one choice, action, or new possibility.',
@@ -40,11 +40,34 @@
     2: [
       'Start with the idea or experience you feel called to share, and the person who may need it.',
       'Go back to where this work really started for you, before it looked like expertise.',
-      'Name a belief in your field that your own experience taught you to question.',
-      'Explain the real cost of that belief. A specific example is more useful than a perfect answer.',
-      'Share the failure or hard lesson that changed how you work. You control how personal you want to be.',
-      'Name the lesson you earned and what you wish another person knew sooner.',
+      'Name something you once believed yourself, then the moment that stopped making sense. This is your realization, not a complaint about other people.',
+      'Pick one real situation where you tried something new before you knew it would work. A small result is enough.',
+      'Share the failure that hit hardest. Stop before what it taught you. You control how personal you want to be.',
+      'Name something you do that most people would disagree with, and the real experience behind it. This should be new, not Part 3 again.',
       'Bring the story to today. Share what makes your view different and what you are still working toward.'
+    ]
+  };
+
+  // What each map part must carry so its video's chapter has its own story to
+  // tell. Mirrors the chapter jobs in api/generate.js EPISODE_STAGE_SCHEMAS.
+  const PART_JOBS = {
+    1: [
+      'The decision: what I am finally ready to be seen for, who it is for, and the specific thing that has kept me quiet. It is happening now. Leave out my history, my realizations, my failure, and how this turns out.',
+      'The ordinary life: a real period, place, or routine from before things changed, what made it feel normal, and one thing I did or avoided that kept it that way. Answer from who I was then, with no wisdom from later.',
+      'The first realization: one thing I personally believed and acted on, then one specific moment or pattern that it could not explain. It must be my own old belief, not a complaint about other people.',
+      'The test: one real situation where I first lived by that new understanding, the moment the old way looked easier, what I chose, and the partial win or confidence it gave me. Things can still be recovered here. Stop before the fall.',
+      'The fall: one real failure, loss, or collapse. What I had that mattered, the part that was my fault, what it cost, and what I believed was over. Leave me inside it, with no lesson, recovery, or silver lining.',
+      'The larger truth: what I could only understand after the fall, the aftermath that showed it to me, and one thing I now visibly do differently. It must be new, not Part 3 again.',
+      'The return: one thing someone could see me doing now that the person in Part 2 would not have done, what is honestly still unfinished, and where I am heading. No recap, no new lesson, no pitch.'
+    ],
+    2: [
+      'The decision: what I am committing to say publicly, who it is for, and the specific thing that has kept me quiet. It is happening now. State the subject, not the answer. Leave out my history, my realizations, my failure, and my main lesson.',
+      'The ordinary life: the real job, place, or period where this began, the ability that kept showing up, and one thing I did or avoided that kept me from taking it seriously. Answer from who I was then. I am not an expert yet.',
+      'The first realization: one thing I personally believed and acted on, then one specific moment or pattern that it could not explain. It must be my own old belief. An opinion about my industry does not count unless a real experience of mine broke it.',
+      'The test: one real situation where I acted on that new view before I had proof, the moment the old way looked better, what I chose, and the small real result. Things can still be recovered here. A general habit or confession does not count. Stop before the fall.',
+      'The fall: one real failure or collapse. What I had built or hoped for, the choices that were mine, what it cost, and what I believed was over. Leave me inside it, with no lesson, recovery, or silver lining.',
+      'The larger truth: one thing I do now that most people would call wrong or backwards, the experience or repeated evidence behind it, and one place someone can see me doing it. It must be a different idea from Part 3, and more than the reverse of the mistake in Part 5.',
+      'The return: one thing someone could see me doing now that the person in Part 2 would not have done, what makes my way of working different, what is honestly still unfinished, and where I am heading. No recap, no new lesson, no pitch.'
     ]
   };
 
@@ -93,13 +116,27 @@ Then say: "Here are three things you could talk about. Which one feels right?"
 
 Give me three distinct core story seeds, each with:
 - a short name
-- the transformation or tension at its center
-- why it could carry seven connected videos
+- the tension at its center, stated as an open question rather than the answer
+- the real events from my life that could carry it: the moment an old belief broke, the first test, the fall, and the larger truth
 - a sentence in language close to the way I speak
 
-Do not write the full seven-part map yet. Let me choose one, combine them, or explain what feels wrong. Once I choose, ask up to three selection-specific questions only if necessary.
+Do not write the full seven-part map yet. Let me choose one, combine them, or explain what feels wrong. Once I choose, ask up to three selection-specific questions only if necessary, and use them on any part where you cannot find a real event.
 
-After I answer, give me the finished map inside one plain-text code block so I can copy it with the copy button and paste it straight into SeenInSeven. The block must contain exactly seven lines and nothing else:
+THE MOST IMPORTANT RULE
+
+The map is seven different stories, not one idea explained seven ways. Each part is the private story base for its own short video, and a stranger may see that video first. So:
+- Each part has its own subject: a different event, period, person, or decision. One thread connects them, but every part takes the story somewhere new.
+- Start from what happened. Apart from Part 1, which is a decision being made now, each part needs something real that happened or something I visibly do. A present-tense opinion or reflection about myself cannot carry a part.
+- Do not state the main lesson early and then repeat it. Each part knows only what I knew at that point in the story. The biggest truth does not appear until Part 6.
+- Each part must make sense on its own. Name the job, person, project, or period instead of saying "that job" or "what happened."
+
+WHAT EACH PART MUST DO
+
+${PART_JOBS[number].map((job, index) => `${index + 1}. ${job}`).join('\n\n')}
+
+Before you show me the map, privately write one short sentence naming the subject of each part. If two parts have the same subject or the same point, rebuild one of them using a different real event. Do not show me this check. If you truly cannot find a real event for a part, write your best plausible version and tell me which part it is, outside the block, so I can correct it.
+
+After I answer, give me the finished map inside one plain-text code block so I can copy it with the copy button and paste it straight into SeenInSeven. These are private planning notes for a later writer, not narration, so say plainly what happened. No more than 60 words per part. The block must contain exactly seven lines and nothing else:
 
 \`\`\`
 1. [one or two first-person sentences]
@@ -117,7 +154,7 @@ Format rules for that block, because the SeenInSeven box reads it by its numbers
 - No other line inside the block starts with a number.
 - Nothing before 1. or after 7. inside the block. Put any note to me outside the block.
 
-Keep my language patterns, vocabulary, rhythm, bluntness, humor, and emotional temperature. Make strong connections when warranted, but never invent concrete facts. Do not turn this into generic coaching, a sales pitch, a polished script, or a motivational speech.
+Keep my language patterns, vocabulary, rhythm, bluntness, humor, and emotional temperature, but let the facts carry each part rather than the phrasing. Make strong connections when warranted, but never invent concrete facts. Do not turn this into generic coaching, a sales pitch, a polished script, or a motivational speech.
 
 LEVEL ${number} MAP QUESTIONS
 
@@ -230,13 +267,15 @@ ${sourceContext ? `CONTEXT I HAVE ALREADY PROVIDED TO SEENINSEVEN\n\n${sourceCon
 
 Match my actual language patterns, favorite words, sentence length, speaking cadence, rhythm, bluntness, humor, emotional tone, and the way I naturally tell stories. The answer should sound spoken by me, not polished by a copywriter. Do not turn it into marketing copy.
 
-Ask no more than two short follow-up questions, and only if you truly need them. Then give me one first-person answer of one to three sentences that I can paste into SeenInSeven. Keep it natural, specific, and easy to say out loud.
+Ask no more than two short follow-up questions, and only if you truly need them. Then give me one first-person answer of one or two sentences, no more than 60 words, that I can paste into SeenInSeven. Keep it natural, specific, and easy to say out loud. Anchor it in something that really happened, never invent facts, and make sure it stands on its own for a stranger.
+
+This part is the story base for one separate video in a seven-part series. It needs its own subject. Do not repeat the point of an earlier part, and do not give away a later part.
 
 CURRENT QUESTION
 Part ${index + 1}: ${QUESTIONS[number][index]}
 
-WHAT THIS QUESTION IS LOOKING FOR
-${EXPLANATIONS[number][index]}
+WHAT THIS PART MUST DO
+${PART_JOBS[number][index]}
 
 WHAT I HAVE ALREADY SHARED
 ${String(onboardingContext || '').trim() || 'I have not shared much yet.'}
@@ -275,7 +314,12 @@ ${prior ? `\nEARLIER PARTS OF MY STORY\n${prior}` : ''}`.trim();
   }
 
   function parseImportedMapDetail(value) {
-    const text = String(value || '').replace(/\r/g, '').replace(/^[ \t]*(?:```|~~~)[^\n]*$/gm, '').trim();
+    // Copying from a chat app can escape markdown, so "1." arrives as "1\.".
+    const text = String(value || '')
+      .replace(/\r/g, '')
+      .replace(/\\([.)\-:*_#>~`])/g, '$1')
+      .replace(/^[ \t]*(?:```|~~~)[^\n]*$/gm, '')
+      .trim();
     if (!text) return { answers: null, found: [], empty: [], blank: true };
     let parts = readImportedParts(text, IMPORT_HEADING);
     if (parts.length < 7) {
