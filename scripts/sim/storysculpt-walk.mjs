@@ -726,6 +726,9 @@ async function lifecyclePass(browser) {
     const answersDeletingDoes = /permanently removes the chat/i.test(helpText) && /versions/i.test(helpText) && /undo/i.test(helpText);
     const answersAccountDeletion = /Studio-level request/i.test(helpText) && /email@davidbee\.me/i.test(helpText);
     check('Help answers what deleting does and how to ask for a full account deletion', answersDeletingDoes && answersAccountDeletion, 'deleting=' + answersDeletingDoes + ', accountDeletion=' + answersAccountDeletion);
+    // WBR-462 (UX 91, Stranger 100): the crisis answer is in the Help a member opens.
+    const answersHardMoment = /What if something hard comes up while I write\?/.test(helpText) && /988/.test(helpText) && /findahelpline\.com/i.test(helpText);
+    check('Help answers what happens if something hard comes up, with 988 and findahelpline.com', answersHardMoment, 'hardMoment=' + answersHardMoment);
     await page.keyboard.press('Escape');
     check('Help close returns focus to the visible account button', await page.evaluate(() => document.activeElement.id) === 'eee-account-button', 'not a hidden menu item');
     await context.close();
@@ -876,6 +879,12 @@ async function lifecyclePass(browser) {
     const errorBubble = await page.locator('.story-message.error, .story-error-message, .eee-message.error').count();
     const sendEnabled = await page.locator('#story-send').isEnabled();
     check('network drop mid-generation: reports error and keeps composer usable', sendEnabled, 'send button enabled=' + sendEnabled);
+    // WBR-462 (Stranger 39, 40, 51, 58, 67): the recovery line names the kind of
+    // failure and what to do, rendered where the member reads it.
+    const recoveryText = await page.evaluate(() => document.body.innerText);
+    const namesConnection = /Connection lost\. Your saved chat is safe\./.test(recoveryText);
+    const saysNoRetype = /do not need to retype/.test(recoveryText);
+    check('network drop names the connection and says the answer does not need retyping', namesConnection && saysNoRetype, 'connection=' + namesConnection + ', noRetype=' + saysNoRetype + ', errorBubbles=' + errorBubble);
     await shot(page, 'lifecycle-network-error');
     await context.close();
   }
