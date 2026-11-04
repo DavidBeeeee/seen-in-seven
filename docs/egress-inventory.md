@@ -29,10 +29,38 @@ The Studio ledger (`api/_lib/egress-budget.js`, event `studio_egress_response`) 
 | admin-seeninseven.html:418-427, 557 | RPCs `admin_get_users`, `admin_get_scripts`, `admin_get_progress`, `admin_get_onboarding`, `admin_get_logs`, `admin_get_preauth_events`, `admin_get_points`, `admin_get_studio_entitlements`, `admin_get_certainty_sessions`, `admin_get_certainty_engagement` | every SeenInSeven admin load | Heavy, the same uncapped pattern, and it re-downloads scripts and logs already pulled by the Studio admin. |
 | js/admin-boardroom.js:64 | RPCs `admin_get_users`, `admin_get_studio_entitlements`, `admin_get_boardroom_activity` | Boardroom admin load | Medium. |
 | js/admin-studio.js:1439, 1467 | `solution_vault_claim_links`, RPC `admin_book_answer_stats` | opening a book editor | Light. |
+| js/app.js:664, 740 | RPC `check_email_exists` | sign-up and sign-in email step | Light. Added by the evening review. |
+| js/vault.js:128 | Storage, public `solution-vault-covers` image for 5e-framework | each Vault shelf render, first fetch per browser | **Measured 2,681,644 bytes.** Added by the evening review. |
+| js/vault.js:168 | Storage, signed URL into `solution-vault-books` | opening or downloading a book | Measured, largest file 505,492 bytes. Added by the evening review. |
+| js/admin-studio.js:1026, 1185 | Storage download from `solution-vault-books` | replacing or creating a book in the admin | Measured, up to 505,492 bytes. David only. Added by the evening review. |
 
-Not in this list: `js/workerbee.js` (the Dashboard and Todo go through `/api/workerbee`, so the server already sees those responses) and every write-only call (insert, update, upsert, writer RPCs).
+Not in this list: the Boardroom app (repository `boardroom2`). It runs on this same Supabase project with about 49 table and RPC calls of its own, including a browser client at `lib/supabase/client.ts` and reads from the private `boardroom-documents` bucket, and none of it reports to this ledger. Its call sites still need their own rows here. Also not in this list: `js/workerbee.js` (the Dashboard and Todo go through `/api/workerbee`, so the server already sees those responses) and every write-only call (insert, update, upsert, writer RPCs).
 
-## What the read suggests for part 2
+## Measured sizes (evening review, 2026-11-04)
+
+Read from production with an aggregate-only query at 17:20Z. Storage sizes are object metadata. Table sizes are `pg_column_size` per row, which is close to but not the same as JSON bytes on the wire.
+
+| What | Rows or files | Total | Largest single |
+|---|---|---|---|
+| Storage `solution-vault-covers` | 1 | 2,681,644 | 2,681,644 |
+| Storage `solution-vault-books` | 2 | 1,010,984 | 505,492 |
+| Storage `boardroom-documents` | 2 | 86,585 | 73,345 |
+| Table `logs` | 3,032 | 517,837 | 704 |
+| Table `scripts` | 47 | 156,278 | 6,136 |
+| Table `storysculpt_projects` | 42 | 152,834 | 9,177 |
+| Table `onboarding` | 14 | 49,089 | 20,470 |
+| Table `solution_vault_items` | 13 | 4,368 | 360 |
+
+The public cover answers `cache-control: private, no-cache` and `cf-cache-status: DYNAMIC`, so the CDN never serves it from cache. A repeat with its ETag answers 304 and zero bytes, so the cost is one full download per browser that has not kept it. That is about 2,000 first fetches to the 5 GB quota, so 1,000 members who are each shown it once take half the quota. The load model puts Certainty and StorySculpt together at 13.5%.
+
+The month-to-date ledger holds 4 `studio_egress_response` rows totalling 1,221 bytes, so one view of this cover is over 2,000 times everything the warning has counted this month.
+
+Reachable today: the project is small, so this is a cost at member scale and not a problem at current traffic. The cover can be replaced with a smaller file through the existing book editor, which keeps the previous one. `js/admin-studio.js` accepts covers up to 5 MB with no resize, so a new upload can bring it back.
+
+## What the read suggested for part 2
+
+**Superseded by the measurements above.** The first item below is wrong for today's data: both admin RPCs together are about a quarter of one cover. They do grow with the data, and the cover does not. Kept as written so the correction is visible.
+
 
 1. The two admin pages are the likeliest dominant readers: uncapped `admin_get_scripts` and `admin_get_logs` repeated on every load, once per admin page. They are cheap to meter because they are single RPCs.
 2. Among member readers, `storysculpt_projects` select * is the biggest, then the SeenInSeven `scripts` select * at js/supabase.js:746.
