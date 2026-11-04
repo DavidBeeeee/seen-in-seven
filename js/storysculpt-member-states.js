@@ -601,7 +601,17 @@
     };
   }
 
-  function activeMemoryFacts(memoryProfile, project) {
+  function memoryIsSuperseded(value, corrections) {
+    for (const emo of corrections.correctedEmotions) {
+      if (new RegExp('\\b' + emo + '\\b', 'i').test(value)) return true;
+    }
+    for (const phrase of corrections.supersededPhrases) {
+      if (phrase.length >= 4 && value.toLowerCase().includes(phrase.toLowerCase())) return true;
+    }
+    return false;
+  }
+
+  function activeMemoryFacts(memoryProfile, project, now = Date.now()) {
     const profile = memoryProfile && typeof memoryProfile === 'object' ? memoryProfile : {};
     const intake = project && project.intake && typeof project.intake === 'object' ? project.intake : {};
     const excludedSet = new Set(Array.isArray(intake.excludedMemoryKeys) ? intake.excludedMemoryKeys : []);
@@ -610,26 +620,43 @@
 
     const facts = [];
     for (const [key, label] of MEMORY_FIELD_LIST) {
-      let value = String(profile[key] || '').trim();
+      const value = String(profile[key] || '').trim();
       if (!value) continue;
-      let superseded = false;
-      for (const emo of corrections.correctedEmotions) {
-        if (new RegExp('\\b' + emo + '\\b', 'i').test(value)) {
-          superseded = true;
-        }
-      }
-      for (const phrase of corrections.supersededPhrases) {
-        if (phrase.length >= 4 && value.toLowerCase().includes(phrase.toLowerCase())) {
-          superseded = true;
-        }
-      }
       facts.push({
         key,
         label,
         value,
         excluded: excludedSet.has(key),
         usedOnce: usedSet.has(key),
-        superseded
+        superseded: memoryIsSuperseded(value, corrections),
+        confirmed: false
+      });
+    }
+
+    const memories = Array.isArray(profile.confirmedMemories) ? profile.confirmedMemories : [];
+    const seen = new Set();
+    for (const entry of memories) {
+      if (!entry || typeof entry !== 'object') continue;
+      const id = String(entry.id || '');
+      const value = String(entry.text || '').trim().slice(0, 1600);
+      const confirmedAt = Date.parse(entry.confirmedAt || '');
+      const age = now - confirmedAt;
+      if (!id || seen.has(id) || !value || !['fact', 'voice'].includes(entry.category)) continue;
+      if (!Number.isInteger(entry.sourceMessageIndex) || entry.sourceMessageIndex < 0 || !entry.sourceProjectId) continue;
+      if (!Number.isFinite(confirmedAt) || age < 0 || age > 90 * DAY_MS) continue;
+      seen.add(id);
+      const ageDays = Math.floor(age / DAY_MS);
+      const ageText = ageDays === 0 ? 'today' : (ageDays + ' days ago');
+      facts.push({
+        key: 'confirmed:' + id,
+        label: entry.category === 'voice' ? 'Confirmed voice note' : 'Confirmed fact',
+        value,
+        excluded: excludedSet.has('confirmed:' + id),
+        usedOnce: usedSet.has('confirmed:' + id),
+        superseded: memoryIsSuperseded(value, corrections),
+        confirmed: true,
+        confirmedAt: entry.confirmedAt,
+        origin: 'Finished project ' + entry.sourceProjectId + ', answer ' + (entry.sourceMessageIndex + 1) + '; confirmed ' + ageText
       });
     }
     return facts;
@@ -641,20 +668,22 @@
     const activeCount = facts.filter(f => !f.excluded).length;
     const excludedCount = facts.length - activeCount;
     const summary = excludedCount > 0
-      ? 'Using ' + activeCount + ' of ' + facts.length + ' saved facts for this chat (' + excludedCount + ' left out)'
-      : 'Saved facts StorySculpt will use in this chat (' + facts.length + ')';
+      ? 'Using ' + activeCount + ' of ' + facts.length + ' saved entries for this chat (' + excludedCount + ' left out)'
+      : 'Saved entries StorySculpt will use in this chat (' + facts.length + ')';
 
     const itemsHtml = facts.map(item => {
       const stateClass = item.excluded ? ' is-excluded' : '';
       const noteHtml = item.excluded
         ? '<span class="story-msg-excluded-note">Left out of this chat</span>'
         : (item.usedOnce ? '<span class="story-memory-used-note">Used once in this chat</span>' : '');
+      const originHtml = item.confirmed
+        ? '<small class="story-memory-preview-origin">' + escapeHtml(item.origin) + '</small>' : '';
       const btnLabel = item.excluded ? 'Use in this chat' : 'Leave out of this chat';
       return '<div class="story-memory-preview-item' + stateClass + '" data-mem-item="' + escapeHtml(item.key) + '">' +
         '<div class="story-memory-preview-copy">' +
           '<strong class="story-memory-preview-label">' + escapeHtml(item.label) + ':</strong> ' +
           '<span class="story-memory-preview-value">' + escapeHtml(item.value) + '</span> ' +
-          noteHtml +
+          originHtml + noteHtml +
         '</div>' +
         '<button type="button" class="story-msg-action story-memory-fact-toggle" data-action="toggle-chat-memory-fact" data-mem-key="' + escapeHtml(item.key) + '" aria-pressed="' + (item.excluded ? 'true' : 'false') + '">' + btnLabel + '</button>' +
       '</div>';
@@ -663,7 +692,7 @@
     return '<div class="story-memory-preview-box" data-memory-preview="true">' +
       '<div class="story-memory-preview-head">' +
         '<strong>' + escapeHtml(summary) + '</strong>' +
-        '<span>From your story profile. Leave any fact out for this chat without removing it from your standing profile.</span>' +
+        '<span>From your story profile and answers you confirmed in finished projects. Leave any entry out for this chat without deleting it.</span>' +
       '</div>' +
       '<div class="story-memory-preview-list">' + itemsHtml + '</div>' +
     '</div>';
@@ -676,9 +705,12 @@
       if (opts.omitUsedOnce && item.usedOnce) return false;
       return true;
     });
-    if (!active.length) return '';
-    return 'MEMBER STORY PROFILE (standing facts the member set once):\n' +
-      active.map(item => item.label + ': ' + item.value).join('\n');
+    const standing = active.filter(item => !item.confirmed);
+    const confirmed = active.filter(item => item.confirmed);
+    const blocks = [];
+    if (standing.length) blocks.push('MEMBER STORY PROFILE (standing facts the member set once):\n' + standing.map(item => item.label + ': ' + item.value).join('\n'));
+    if (confirmed.length) blocks.push('MEMBER-CONFIRMED PROJECT MEMORY:\n' + confirmed.map(item => item.label + ' [' + item.origin + ']: ' + item.value).join('\n'));
+    return blocks.join('\n\n');
   }
 
   function sanitizeRememberedLinesInTurn(content, memoryProfile, project) {

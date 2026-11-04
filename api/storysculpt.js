@@ -279,6 +279,88 @@ async function loadOwnedProject(token, projectId) {
   return Array.isArray(rows) ? rows[0] || null : null;
 }
 
+function memoryConfirmationError(status, message, failureClass = 'input') {
+  const error = new Error(message);
+  error.status = status;
+  error.failureClass = failureClass;
+  return error;
+}
+
+async function confirmMemory(token, user, body) {
+  const projectId = String(body && body.projectId || '');
+  const messageIndex = body && body.messageIndex;
+  const category = String(body && body.category || '');
+  if (!PROJECT_ID.test(projectId) || !Number.isInteger(messageIndex) || messageIndex < 0 || !['fact', 'voice'].includes(category)) {
+    throw memoryConfirmationError(400, 'Choose a finished-project answer to remember.');
+  }
+  const project = await loadOwnedProject(token, projectId);
+  if (!project) throw memoryConfirmationError(404, 'That saved StorySculpt chat was not found in your account.');
+  const finished = typeof project.output === 'string' && project.output.trim()
+    && (project.status === 'finished' || project.status === 'filmed');
+  if (!finished) throw memoryConfirmationError(409, 'Finish this project before carrying an answer into new projects.');
+  const answer = Array.isArray(project.conversation) ? project.conversation[messageIndex] : null;
+  if (!answer || answer.role !== 'user' || answer.excludeFromGeneration === true || !String(answer.content || '').trim()) {
+    throw memoryConfirmationError(400, 'That answer is not available to remember. Choose an included answer from your finished project.');
+  }
+  const sourceText = String(answer.content).trim();
+  if (detectCrisis(sourceText).tripped) {
+    throw memoryConfirmationError(422, 'This answer cannot be carried into new projects.', 'safety');
+  }
+  const text = sourceText.slice(0, CONFIRMED_MEMORY_TEXT_LIMIT);
+
+  const headers = { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token };
+  let rows;
+  try {
+    const response = await fetch(SUPABASE_URL + '/rest/v1/storysculpt_member_context?select=profile&limit=1', { headers });
+    if (!response.ok) throw new Error('profile read failed');
+    rows = await response.json();
+  } catch (cause) {
+    const error = new Error('StorySculpt could not read your story profile. Please try again.');
+    error.stage = 'database';
+    error.cause = cause;
+    throw error;
+  }
+  const current = Array.isArray(rows) && rows[0] && rows[0].profile && typeof rows[0].profile === 'object' && !Array.isArray(rows[0].profile)
+    ? rows[0].profile : {};
+  const confirmedAt = new Date().toISOString();
+  const entry = {
+    id: projectId + ':' + messageIndex,
+    text,
+    sourceProjectId: projectId,
+    sourceMessageIndex: messageIndex,
+    confirmedAt,
+    category
+  };
+  const existing = Array.isArray(current.confirmedMemories) ? current.confirmedMemories : [];
+  const confirmedMemories = [entry, ...existing.filter(item => item && item.id !== entry.id)]
+    .sort((a, b) => (Date.parse(b.confirmedAt || '') || 0) - (Date.parse(a.confirmedAt || '') || 0))
+    .slice(0, CONFIRMED_MEMORY_LIMIT);
+  const profile = { ...current, confirmedMemories };
+  let savedProfile = profile;
+  try {
+    const response = await fetch(SUPABASE_URL + '/rest/v1/storysculpt_member_context?on_conflict=user_id', {
+      method: 'POST',
+      headers: {
+        ...headers,
+        'Content-Type': 'application/json',
+        Prefer: 'resolution=merge-duplicates,return=representation'
+      },
+      body: JSON.stringify({ user_id: user.id, profile, updated_at: confirmedAt })
+    });
+    if (!response.ok) throw new Error('profile save failed');
+    const savedRows = await response.json();
+    if (Array.isArray(savedRows) && savedRows[0] && savedRows[0].profile && typeof savedRows[0].profile === 'object') {
+      savedProfile = savedRows[0].profile;
+    }
+  } catch (cause) {
+    const error = new Error('StorySculpt could not save that confirmed memory. Please try again.');
+    error.stage = 'database';
+    error.cause = cause;
+    throw error;
+  }
+  return { profile: savedProfile, memory: entry, updatedAt: confirmedAt };
+}
+
 // Cross-project repetition is checked with the member's own token, so RLS is
 // the membership boundary. The current project is excluded: refining a script
 // must not make that script collide with itself. Filmed scripts still count as
@@ -366,20 +448,49 @@ const STORY_PROFILE_FIELDS = [
   ['notes', 'Other notes']
 ];
 
-export function composeVersionedContext(projectVersion, profileVersion) {
+const CONFIRMED_MEMORY_MAX_AGE_MS = 90 * 24 * 60 * 60 * 1000;
+const CONFIRMED_MEMORY_LIMIT = 20;
+const CONFIRMED_MEMORY_TEXT_LIMIT = 1600;
+
+export function composeVersionedContext(projectVersion, profileVersion, projectIntake = {}, now = Date.now()) {
   const profile = profileVersion && profileVersion.context && typeof profileVersion.context === 'object'
     ? profileVersion.context : {};
+  const intake = projectIntake && typeof projectIntake === 'object' ? projectIntake : {};
+  const excluded = new Set(Array.isArray(intake.excludedMemoryKeys) ? intake.excludedMemoryKeys : []);
   const lines = STORY_PROFILE_FIELDS.map(([key, label]) => {
     const value = String(profile[key] || '').trim();
-    return value ? label + ': ' + value : '';
+    return value && !excluded.has(key) ? label + ': ' + value : '';
   }).filter(Boolean);
   const standing = lines.length
     ? 'MEMBER STORY PROFILE (standing facts the member set once):\n' + lines.join('\n') : '';
+
+  // Confirmation is server-authored, but screen stored JSON again at the trust
+  // boundary. A direct profile write must not bypass the crisis or age rules.
+  const confirmedLines = [];
+  const seen = new Set();
+  const memories = Array.isArray(profile.confirmedMemories) ? profile.confirmedMemories : [];
+  for (const entry of memories) {
+    if (!entry || typeof entry !== 'object') continue;
+    const id = String(entry.id || '');
+    const text = String(entry.text || '').trim().slice(0, CONFIRMED_MEMORY_TEXT_LIMIT);
+    const confirmedAt = Date.parse(entry.confirmedAt || '');
+    const age = now - confirmedAt;
+    if (!id || seen.has(id) || !text || !PROJECT_ID.test(String(entry.sourceProjectId || ''))) continue;
+    if (!Number.isInteger(entry.sourceMessageIndex) || entry.sourceMessageIndex < 0) continue;
+    if (!['fact', 'voice'].includes(entry.category) || !Number.isFinite(confirmedAt) || age < 0 || age > CONFIRMED_MEMORY_MAX_AGE_MS) continue;
+    if (excluded.has('confirmed:' + id) || detectCrisis(text).tripped) continue;
+    seen.add(id);
+    const label = entry.category === 'voice' ? 'Voice note' : 'Confirmed fact';
+    confirmedLines.push(label + ' [finished project ' + entry.sourceProjectId + ', answer ' + (entry.sourceMessageIndex + 1) + ', confirmed ' + new Date(confirmedAt).toISOString() + ']: ' + text);
+    if (confirmedLines.length >= CONFIRMED_MEMORY_LIMIT) break;
+  }
+  const confirmed = confirmedLines.length
+    ? 'MEMBER-CONFIRMED PROJECT MEMORY (explicitly confirmed in finished projects; reused for 90 days):\n' + confirmedLines.join('\n') : '';
   const notes = projectVersion && typeof projectVersion.context === 'string' ? projectVersion.context.trim() : '';
-  return [standing, notes].filter(Boolean).join('\n\n');
+  return [standing, confirmed, notes].filter(Boolean).join('\n\n');
 }
 
-async function loadLatestContext(token, projectId) {
+async function loadLatestContext(token, projectId, projectIntake = {}, now = Date.now()) {
   const headers = { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token };
   const base = SUPABASE_URL + '/rest/v1/storysculpt_context_versions?select=scope,context,created_at,id&order=created_at.desc,id.desc&limit=1&';
   try {
@@ -391,7 +502,7 @@ async function loadLatestContext(token, projectId) {
     const [projectRows, profileRows] = await Promise.all([projectResponse.json(), profileResponse.json()]);
     const projectVersion = Array.isArray(projectRows) ? projectRows[0] || null : null;
     const profileVersion = Array.isArray(profileRows) ? profileRows[0] || null : null;
-    return composeVersionedContext(projectVersion, profileVersion);
+    return composeVersionedContext(projectVersion, profileVersion, projectIntake, now);
   } catch (cause) {
     const error = new Error('StorySculpt could not read your latest saved context. Please try again.');
     error.stage = 'database';
@@ -1009,6 +1120,20 @@ export default async function handler(req, res) {
     return fail(403, 'StorySculpt is not included in your Studio access.');
   }
 
+  if (req.body && req.body.action === 'confirm-memory') {
+    try {
+      const result = await confirmMemory(token, user, req.body);
+      await emit('memory_confirmed', { failureClass: undefined });
+      return json(res, 200, { ...result, trace });
+    } catch (error) {
+      const failureClass = error && error.failureClass
+        ? error.failureClass : classifyFailure(error && error.stage === 'database' ? 'database' : 'internal', error);
+      await emit(error && error.status < 500 ? 'denied' : 'error', { failureClass });
+      const status = error && error.status ? error.status : (failureLayer(failureClass) === 'database' ? 503 : 500);
+      return fail(status, error && error.message ? error.message : 'StorySculpt could not save that confirmed memory.');
+    }
+  }
+
   let input;
   try {
     input = validateBody(req.body);
@@ -1074,7 +1199,7 @@ export default async function handler(req, res) {
 
     // Context is member-owned saved state, not request input. Read after the
     // project check so an edit committed immediately before this request wins.
-    input.context = await loadLatestContext(token, input.projectId);
+    input.context = await loadLatestContext(token, input.projectId, project.intake);
 
     // Safety pre-check: crisis or self-harm language skips generation
     const crisis = detectCrisis(crisisScanText(input));

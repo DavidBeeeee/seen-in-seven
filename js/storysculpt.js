@@ -190,7 +190,7 @@ function renderSettingsSummary() {
 function renderNewChatMemoryPreview() {
   const slot = storyEl('story-memory-preview');
   if (!slot) return;
-  if (!activeStory || activeStory.content_type === 'ugc' || typeof STATES === 'undefined' || !STATES || typeof STATES.newChatMemoryPreviewMarkup !== 'function') {
+  if (!activeStory || typeof STATES === 'undefined' || !STATES || typeof STATES.newChatMemoryPreviewMarkup !== 'function') {
     slot.innerHTML = '';
     slot.hidden = true;
     return;
@@ -223,6 +223,33 @@ async function toggleChatMemoryFact(key) {
     await saveActiveStory(excluded ? 'Saved fact left out of this chat' : 'Saved fact included in this chat');
   } catch (_) {
     // saveActiveStory keeps the change locally and reports its own retry state.
+  }
+}
+
+async function confirmMemory(messageIndex, category) {
+  const status = storyEl('story-generation-status');
+  const answer = activeStory && Array.isArray(activeStory.conversation) ? activeStory.conversation[messageIndex] : null;
+  if (!activeStory || !activeStory.output || !answer || answer.role !== 'user' || answer.excludeFromGeneration === true || !['fact', 'voice'].includes(category)) return;
+  try {
+    if (status) { status.textContent = 'Saving this confirmed memory for new projects.'; status.classList.remove('error'); }
+    const token = EEEStudio.accessToken ? await EEEStudio.accessToken(storyContext.session.access_token) : storyContext.session.access_token;
+    const response = await fetch('/api/storysculpt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ action: 'confirm-memory', projectId: activeStory.id, messageIndex, category })
+    });
+    const data = await response.json().catch(() => null);
+    if (!response.ok || !data || !data.profile || typeof data.profile !== 'object') {
+      throw new Error(data && data.error ? data.error : 'That memory could not be saved. Please try again.');
+    }
+    memoryProfile = data.profile;
+    memoryUpdatedAt = data.updatedAt || new Date().toISOString();
+    renderConversation();
+    if (status) status.textContent = category === 'voice'
+      ? 'Voice note confirmed for new projects. It will stop resurfacing after 90 days.'
+      : 'Fact confirmed for new projects. It will stop resurfacing after 90 days.';
+  } catch (error) {
+    if (status) { status.textContent = error.message || 'That memory could not be saved. Please try again.'; status.classList.add('error'); }
   }
 }
 
@@ -664,6 +691,13 @@ function renderConversation() {
         '</article>';
       }
       const excluded = message.excludeFromGeneration === true;
+      const memoryId = activeStory.id + ':' + index;
+      const confirmedMemory = (Array.isArray(memoryProfile.confirmedMemories) ? memoryProfile.confirmedMemories : []).find(item => item && item.id === memoryId);
+      const confirmActions = !excluded && activeStory.output ? ['fact', 'voice'].map(category => {
+        const saved = confirmedMemory && confirmedMemory.category === category;
+        const label = saved ? (category === 'fact' ? 'Remembered as fact' : 'Remembered as voice') : (category === 'fact' ? 'Remember as fact' : 'Remember as voice');
+        return '<button class="story-msg-btn" type="button" data-action="confirm-memory" data-msg-index="' + index + '" data-memory-category="' + category + '"' + (saved ? ' disabled' : '') + '><span>' + label + '</span></button>';
+      }).join('') : '';
       return '<article class="story-message user' + (excluded ? ' story-message-excluded' : '') + '">' +
         '<span class="story-message-role">You</span>' +
         '<div class="story-message-body">' + storyEscape(message.content) + '</div>' +
@@ -671,7 +705,7 @@ function renderConversation() {
           (excluded ? '<span class="story-refine-badge">Not used in future drafts</span>' : '') +
           '<button class="story-msg-btn" type="button" data-action="toggle-context-message" data-msg-index="' + index + '" aria-pressed="' + excluded + '" title="' + (excluded ? 'Use this answer in future drafts' : 'Do not use this answer in future drafts') + '">' +
             '<i data-lucide="' + (excluded ? 'rotate-ccw' : 'eye-off') + '"></i><span>' + (excluded ? 'Use this again' : 'Don’t use this') + '</span>' +
-          '</button>' +
+          '</button>' + confirmActions +
         '</div>' +
       '</article>';
     }
@@ -3006,7 +3040,7 @@ function closeHelp() {
 }
 
 async function saveMemory() {
-  const draft = {};
+  const draft = memoryProfile && typeof memoryProfile === 'object' ? { ...memoryProfile } : {};
   const replaced = [];
   MEMORY_FIELDS.forEach(([key, id]) => {
     const nextVal = storyEl(id).value.trim();
@@ -3187,6 +3221,11 @@ storyEl('story-version-pills').addEventListener('click', event => {
 storyEl('story-version-restore-btn').addEventListener('click', restoreOlderVersion);
 
 storyEl('story-conversation').addEventListener('click', event => {
+  const confirmBtn = event.target.closest('[data-action="confirm-memory"]');
+  if (confirmBtn) {
+    confirmMemory(Number(confirmBtn.dataset.msgIndex), confirmBtn.dataset.memoryCategory);
+    return;
+  }
   const contextBtn = event.target.closest('[data-action="toggle-context-message"]');
   if (contextBtn) {
     toggleMessageContext(Number(contextBtn.dataset.msgIndex));
