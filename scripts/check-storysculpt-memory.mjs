@@ -13,6 +13,7 @@ const originalFetch = globalThis.fetch;
 const reply = (value, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => value });
 const project = {
   id: PROJECT,
+  user_id: 'memory-member-internal',
   output: 'A finished script',
   status: 'finished',
   content_type: 'bold',
@@ -40,7 +41,7 @@ globalThis.fetch = async (url, options = {}) => {
     assert.equal(options.headers.Authorization, 'Bearer memory-token');
     if (options.method === 'POST') {
       const body = JSON.parse(options.body);
-      assert.equal(body.user_id, 'memory-member');
+      assert.equal(body.user_id, 'memory-member-internal', 'profile writes use public.users.id, not the Auth id');
       assert.match(options.headers.Prefer, /resolution=merge-duplicates/);
       writes.push(body);
       profileRow = { profile: body.profile };

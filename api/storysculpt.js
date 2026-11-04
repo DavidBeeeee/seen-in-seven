@@ -264,7 +264,7 @@ async function loadOwnedProject(token, projectId) {
   // A failure here is the database layer, not an application bug, and it is
   // tagged so the event says so. Developer H.74 to H.78: an operator must be
   // able to tell Supabase being down from DeepSeek being down from our code.
-  const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=eq.' + projectId + '&select=id,output,content_type,intake,conversation,status,version,updated_at&limit=1';
+  const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=eq.' + projectId + '&select=id,user_id,output,content_type,intake,conversation,status,version,updated_at&limit=1';
   let rows;
   try {
     const response = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token } });
@@ -345,7 +345,10 @@ async function confirmMemory(token, user, body) {
         'Content-Type': 'application/json',
         Prefer: 'resolution=merge-duplicates,return=representation'
       },
-      body: JSON.stringify({ user_id: user.id, profile, updated_at: confirmedAt })
+      // The table and RLS key on public.users.id, not auth.users.id. The
+      // member-owned project read supplies that internal id without trusting
+      // a client-posted profile id.
+      body: JSON.stringify({ user_id: project.user_id, profile, updated_at: confirmedAt })
     });
     if (!response.ok) throw new Error('profile save failed');
     const savedRows = await response.json();
