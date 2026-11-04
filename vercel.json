@@ -1,4 +1,15 @@
 {
+  "headers": [
+    {
+      "source": "/assets/vault/the-5e-framework-cover-751ce4e2.jpg",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    }
+  ],
   "functions": {
     "api/hub-page.js": {
       "includeFiles": "api/_hub/**"
