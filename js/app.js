@@ -433,6 +433,9 @@ function ensurePhase2() {
   state.phase2.custom = Object.assign({}, state.phase2.custom || {});
   state.phase2.commitmentReasons = Array.isArray(state.phase2.commitmentReasons) ? state.phase2.commitmentReasons : [];
   state.phase2.skippedJourneyParts = Array.isArray(state.phase2.skippedJourneyParts) ? state.phase2.skippedJourneyParts : [];
+  // A map saved before journey-import-2 kept the ai mode, which reopens an empty
+  // paste box over seven saved answers. Choosing AI again clears the timestamp.
+  if (state.phase2.storyDiscoveryMode === 'ai' && state.phase2.storyMapImportedAt) state.phase2.storyDiscoveryMode = 'imported';
   return state.phase2;
 }
 
@@ -1076,6 +1079,7 @@ function selectStoryDirection(el, direction) {
 
 function chooseStoryDiscovery(el, mode) {
   const p2 = ensurePhase2();
+  p2.storyMapImportedAt = '';
   p2.storyDiscoveryMode = mode === 'ai' ? 'ai' : 'self';
   if (el) el.classList.add('selecting');
   saveProgress();
@@ -1451,8 +1455,11 @@ function renderJourneyMap() {
       '</section>';
     return;
   }
-  if (title) title.innerHTML = journeyMapMode === 'onboarding' ? 'Build your <span class="accent">seven-part story.</span>' : 'Edit your <span class="accent">seven-part story.</span>';
-  if (subtitle) subtitle.textContent = journeyMapMode === 'onboarding'
+  const reviewingImport = journeyMapMode === 'onboarding' && p2.storyDiscoveryMode === 'imported';
+  if (title) title.innerHTML = reviewingImport ? 'Here is your <span class="accent">seven-part story.</span>' : journeyMapMode === 'onboarding' ? 'Build your <span class="accent">seven-part story.</span>' : 'Edit your <span class="accent">seven-part story.</span>';
+  if (subtitle) subtitle.textContent = reviewingImport
+    ? 'Your seven answers are saved.'
+    : journeyMapMode === 'onboarding'
     ? 'We will ask one small question at a time. Short, imperfect answers are welcome.'
     : 'These private directions guide future scripts. They are not finished scripts.';
   if (note) note.textContent = journeyMapMode === 'onboarding'
@@ -1565,6 +1572,7 @@ function importJourneyMap() {
   if (typeof logEvent === 'function') logEvent('story_map_imported', { level: journeyMapLevel, parts: parsed.length });
   journeyOnboardingIndex = 0;
   renderJourneyMap();
+  window.scrollTo(0, 0);
 }
 
 function openJourneyPartHelp(index) {

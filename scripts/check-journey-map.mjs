@@ -92,6 +92,16 @@ const importBody = appSource.slice(appSource.indexOf('function importJourneyMap(
 if (importBody.indexOf("p2.storyDiscoveryMode = 'imported'") === -1 || importBody.indexOf("p2.storyDiscoveryMode = 'imported'") > importBody.indexOf('saveProgress()')) {
   throw new Error('importJourneyMap must set the imported mode before saveProgress.');
 }
+// A map saved under the old ordering has a timestamp and the ai mode. It must
+// open on its seven answers, and choosing AI again must still reach the box (2026-11-03).
+const phase2Body = appSource.slice(appSource.indexOf('function ensurePhase2('), appSource.indexOf('function escapeHTML('));
+if (!phase2Body.includes("state.phase2.storyDiscoveryMode === 'ai' && state.phase2.storyMapImportedAt")) {
+  throw new Error('ensurePhase2 must reopen a saved import on its answers, not on an empty paste box.');
+}
+const chooseBody = appSource.slice(appSource.indexOf('function chooseStoryDiscovery('), appSource.indexOf('function selectCardAnswer('));
+if (!chooseBody.includes("p2.storyMapImportedAt = ''") || chooseBody.indexOf("p2.storyMapImportedAt = ''") > chooseBody.indexOf('saveProgress()')) {
+  throw new Error('chooseStoryDiscovery must clear the import timestamp before saving, or a member can never paste a new map.');
+}
 
 // The map must come back as seven separate story bases, not one idea in seven
 // parts (2026-11-03): every part keeps its own job in both guides, on both levels.
