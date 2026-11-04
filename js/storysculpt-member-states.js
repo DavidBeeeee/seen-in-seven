@@ -37,19 +37,33 @@
 
   // The member's most recent chat and how long ago they last touched any chat.
   // Read on page load, before this visit saves anything, so the visit itself
-  // never resets the gap it is measuring.
+  // never resets the gap it is measuring. UX 47 (WBR-462): also count separate
+  // 21-day gaps between the member's saved chats so a repeated lapse across
+  // chats is distinguished from a single long one using the 21-day threshold.
   function engagement(projects, now) {
     const list = Array.isArray(projects) ? projects : [];
     let last = null;
     let lastTime = null;
+    const stamps = [];
     for (const project of list) {
       const t = projectTime(project);
-      if (t != null && (lastTime == null || t > lastTime)) { last = project; lastTime = t; }
+      if (t != null) {
+        stamps.push(t);
+        if (lastTime == null || t > lastTime) { last = project; lastTime = t; }
+      }
     }
-    if (!last) return { state: 'new', days: null, lastChat: null };
-    const days = Math.floor(Math.max(0, (now == null ? Date.now() : now) - lastTime) / DAY_MS);
+    if (!last) return { state: 'new', days: null, lastChat: null, repeated: false, lapseCount: 0 };
+    const at = now == null ? Date.now() : now;
+    const days = Math.floor(Math.max(0, at - lastTime) / DAY_MS);
     const state = days >= LAPSE_AFTER_DAYS ? 'lapsed' : (days >= QUIET_AFTER_DAYS ? 'quiet' : 'current');
-    return { state, days, lastChat: last };
+    stamps.sort((a, b) => a - b);
+    let priorLapses = 0;
+    for (let i = 1; i < stamps.length; i++) {
+      if (stamps[i] - stamps[i - 1] >= LAPSE_AFTER_DAYS * DAY_MS) priorLapses += 1;
+    }
+    const lapseCount = (state === 'lapsed' ? 1 : 0) + priorLapses;
+    const repeated = state === 'lapsed' && lapseCount >= 2;
+    return { state, days, lastChat: last, repeated, lapseCount };
   }
 
   // The line shown on reopen. A lapse names the member's last chat and welcomes
@@ -59,13 +73,14 @@
     const e = engagement(projects, now);
     if (e.state !== 'lapsed' && e.state !== 'quiet') return null;
     const title = (e.lastChat.title || '').trim() || 'Untitled script';
+    const isRepeated = Boolean(repeated || e.repeated);
     if (e.state === 'lapsed') {
       return {
         state: 'lapsed',
         projectId: e.lastChat.id,
         title: 'Welcome back.',
-        repeated,
-        text: (repeated ? 'Another stretch away is okay. ' : '') + 'Your last chat, "' + title + '", is right where you left it. Pick it up or start something new.'
+        repeated: isRepeated,
+        text: (isRepeated ? 'Another stretch away is okay. ' : '') + 'Your last chat, "' + title + '", is right where you left it. Pick it up or start something new.'
       };
     }
     return {

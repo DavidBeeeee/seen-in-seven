@@ -113,6 +113,20 @@ function makeWorld(stateName) {
       memory: JSON.parse(JSON.stringify(fixtures.states.interview.memory || {}))
     };
   }
+  if (stateName === 'repeatedLapse') {
+    const first = JSON.parse(JSON.stringify(fixtures.states.interview.projects[0]));
+    first.id = 'proj-lapsed-older';
+    first.title = 'Earlier Studio Lesson';
+    first.updated_at = new Date(Date.now() - 55 * 24 * 60 * 60 * 1000).toISOString();
+    const second = JSON.parse(JSON.stringify(fixtures.states.interview.projects[0]));
+    second.id = 'proj-lapsed-latest';
+    second.title = 'Second Stretch Pottery Lesson';
+    second.updated_at = new Date(Date.now() - 25 * 24 * 60 * 60 * 1000).toISOString();
+    f = {
+      projects: [second, first],
+      memory: JSON.parse(JSON.stringify(fixtures.states.interview.memory || {}))
+    };
+  }
   const w = {
     projects: JSON.parse(JSON.stringify(f.projects || [])),
     memory: JSON.parse(JSON.stringify(f.memory || {})),
@@ -160,9 +174,13 @@ function makeWorld(stateName) {
           const idFlt = op.filters.find(f => f.col === 'id');
           const target = idFlt ? w.projects.find(p => p.id === idFlt.val) : w.projects[0];
           if ('archived' in op.updateData && w.mode.archiveError) return { data: null, error: { message: w.mode.archiveError } };
-          if (target && op.updateData.expected_version != null && op.updateData.expected_version !== (target.version || 1)) return { data: null, error: { message: 'STALE_VERSION' } };
+          const hasExpected = op.updateData.expected_version != null;
+          if (target && hasExpected && op.updateData.expected_version !== (target.version || 1)) return { data: null, error: { message: 'STALE_VERSION' } };
           if (target) {
-            Object.assign(target, op.updateData, { updated_at: new Date().toISOString(), version: (target.version || 1) + 1 });
+            const payload = { ...op.updateData };
+            delete payload.expected_version;
+            const nextVersion = hasExpected ? (target.version || 1) + 1 : (target.version || 1);
+            Object.assign(target, payload, { updated_at: new Date().toISOString(), version: nextVersion });
             return { data: target, error: null };
           }
           return { data: null, error: { message: 'Project not found' } };
@@ -256,10 +274,11 @@ async function wire(page, world) {
 }
 
 async function open(browser, stateName, cfg = {}) {
-  const width = cfg.zoom ? Math.round(cfg.width / 2) : cfg.width || 1280;
+  const zoomFactor = cfg.zoom === 400 ? 4 : (cfg.zoom ? 2 : 1);
+  const width = zoomFactor > 1 ? Math.round((cfg.width || 1280) / zoomFactor) : (cfg.width || 1280);
   const context = await browser.newContext({
     viewport: { width, height: cfg.height || 900 },
-    deviceScaleFactor: cfg.zoom ? 2 : 1,
+    deviceScaleFactor: zoomFactor,
     colorScheme: cfg.theme === 'light' ? 'light' : 'dark',
     reducedMotion: 'reduce'
   });
@@ -402,28 +421,64 @@ async function tabUntil(page, predicate, max, log) {
 async function renderMatrix(browser) {
   const configs = [];
   for (const width of [375, 1280]) for (const theme of ['dark', 'light']) for (const mode of ['normal', 'zoom200', 'font24']) configs.push({ width, theme, mode });
+  for (const theme of ['dark', 'light']) configs.push({ width: 1280, theme, mode: 'zoom400' });
   const screens = ['first', 'interview', 'sixtyTurn', 'rant', 'finished', 'refine', 'ugc', 'memory', 'help', 'signedout'];
   let faultCount = 0;
+  let zoom400FaultCount = 0;
   for (const name of screens) {
     for (const c of configs) {
-      const cfg = { width: c.width, theme: c.theme, zoom: c.mode === 'zoom200', font: c.mode === 'font24' ? 24 : null, signedOut: name === 'signedout', openMemory: name === 'memory', openHelp: name === 'help' };
+      const zoom = c.mode === 'zoom400' ? 400 : (c.mode === 'zoom200' ? 200 : false);
+      const cfg = { width: c.width, theme: c.theme, zoom, font: c.mode === 'font24' ? 24 : null, signedOut: name === 'signedout', openMemory: name === 'memory', openHelp: name === 'help' };
       const stateKey = (name === 'memory' || name === 'help' || name === 'signedout') ? 'interview' : name;
       const { context, page, errors } = await open(browser, stateKey, cfg);
       const tag = name + '-' + c.width + '-' + c.theme + '-' + c.mode;
       const { faults, rootFont } = await layoutFaults(page);
+      if (c.mode === 'zoom400') {
+        const overlapFaults = await page.evaluate(() => {
+          const vis = el => {
+            if (!el || el.hidden || el.closest('[hidden]') || el.closest('details:not([open])')) return false;
+            for (let p = el; p && p !== document.documentElement; p = p.parentElement) {
+              const cs = getComputedStyle(p);
+              if (cs.display === 'none' || cs.visibility === 'hidden' || parseFloat(cs.opacity) === 0 || p.classList.contains('story-sr-only')) return false;
+            }
+            const r = el.getBoundingClientRect();
+            return r.width > 1 && r.height > 1;
+          };
+          const controls = [...document.querySelectorAll('button, a[href], input:not([type="hidden"]), select, textarea')].filter(vis);
+          const out = [];
+          for (let i = 0; i < controls.length; i++) {
+            for (let j = i + 1; j < controls.length; j++) {
+              const a = controls[i], b = controls[j];
+              if (a.contains(b) || b.contains(a)) continue;
+              const aModal = a.closest('.story-memory-panel, .story-dialog-backdrop');
+              const bModal = b.closest('.story-memory-panel, .story-dialog-backdrop');
+              if (Boolean(aModal) !== Boolean(bModal)) continue;
+              if (a.classList.contains('voice-btn') || b.classList.contains('voice-btn')) continue;
+              const ra = a.getBoundingClientRect(), rb = b.getBoundingClientRect();
+              const xo = Math.max(0, Math.min(ra.right, rb.right) - Math.max(ra.left, rb.left));
+              const yo = Math.max(0, Math.min(ra.bottom, rb.bottom) - Math.max(ra.top, rb.top));
+              if (xo > 2 && yo > 2) out.push({ kind: 'overlap-400', detail: (a.id || a.tagName) + ' overlaps ' + (b.id || b.tagName) });
+            }
+          }
+          return out;
+        });
+        faults.push(...overlapFaults);
+        zoom400FaultCount += faults.length;
+      }
       let file = null;
-      const representative = browserName === 'webkit' || (c.mode !== 'normal' && c.width === 375 && c.theme === 'dark') || faults.length;
+      const representative = browserName === 'webkit' || (c.mode !== 'normal' && c.width === 375 && c.theme === 'dark') || (c.mode === 'zoom400' && c.theme === 'dark' && name === 'first') || faults.length;
       if (representative) file = await shot(page, tag);
       layoutResults.push({ browser: browserName || 'chromium', screen: name, width: c.width, theme: c.theme, mode: c.mode, rootFont, pass: faults.length === 0, shot: file });
       for (const f of faults) {
         faultCount++;
-        finding('layout', name, c.width + 'px ' + c.theme + ' ' + c.mode + ' (root font ' + rootFont + ')', 'UX 95, 96', f.kind + ': ' + f.detail, file);
+        finding('layout', name, c.width + 'px ' + c.theme + ' ' + c.mode + ' (root font ' + rootFont + ')', 'UX 74, 76, 95, 96', f.kind + ': ' + f.detail, file);
       }
       for (const e of errors) finding('script', name, tag, 'UX 78', 'page error: ' + e, file);
       await context.close();
     }
   }
-  check('layout holds at 375/1280, 200% zoom, 24px font, light and dark across ' + screens.length + ' screens', faultCount === 0, faultCount + ' layout faults');
+  check('layout holds at 375/1280, 200% zoom, 400% zoom, 24px font, light and dark across ' + screens.length + ' screens', faultCount === 0, faultCount + ' layout faults');
+  check('At 400 percent zoom nothing overlaps or hides across ' + screens.length + ' screens', zoom400FaultCount === 0, zoom400FaultCount + ' zoom-400 faults (320px CSS width)');
 }
 
 // ── 2. axe-core ────────────────────────────────────────────────────────────
@@ -862,10 +917,101 @@ async function lifecyclePass(browser) {
     const editorVisible = await page.locator('#story-editor').isVisible();
     const noticeText = (await page.locator('#story-return-notice').textContent() || '').trim();
     const welcomesBack = /Welcome back/i.test(noticeText);
+    const notRepeated = !/Another stretch away is okay/i.test(noticeText);
     const noEmDash = !noticeText.includes('—');
     const noGuilt = !/abandoned|forgot|lazy|missed out|slacking|catch up/i.test(noticeText);
-    check('A member back after a long gap lands on their last chat with a kind line', editorVisible && welcomesBack && noEmDash && noGuilt, noticeText);
+    check('A member back after a long gap lands on their last chat with a kind line', editorVisible && welcomesBack && notRepeated && noEmDash && noGuilt, noticeText);
     await shot(page, 'lifecycle-return-recovery');
+    await context.close();
+  }
+
+  // UX 47 (WBR-462): a second lapse past 21 days is distinguished from a single long one and gets its own kind line
+  {
+    const { context, page } = await open(browser, 'repeatedLapse', { width: 1280 });
+    const noticeText = (await page.locator('#story-return-notice').textContent() || '').trim();
+    const stateCheck = await page.evaluate(() => {
+      const S = window.StorySculptStates;
+      const now = Date.now();
+      const single = S.returnNotice([{ id: 'p-1', title: 'Single Long Gap', updated_at: new Date(now - 25 * S.DAY_MS).toISOString() }], now);
+      const repeated = S.returnNotice([
+        { id: 'p-2', title: 'Second Stretch Pottery Lesson', updated_at: new Date(now - 25 * S.DAY_MS).toISOString() },
+        { id: 'p-1', title: 'Earlier Studio Lesson', updated_at: new Date(now - 55 * S.DAY_MS).toISOString() }
+      ], now);
+      return { single, repeated };
+    });
+    const repeatedPass = /Another stretch away is okay\./.test(noticeText) &&
+      noticeText.includes('Second Stretch Pottery Lesson') &&
+      !noticeText.includes('—') &&
+      stateCheck.single && stateCheck.single.repeated === false &&
+      stateCheck.repeated && stateCheck.repeated.repeated === true &&
+      stateCheck.repeated.text !== stateCheck.single.text;
+    check('A second lapse past 21 days gets its own kind line', repeatedPass, noticeText);
+    await context.close();
+  }
+
+  // UX 74, UX 76 (WBR-462): designed text-only path with CSS off (headings and step list read in order, nothing carries meaning by layout alone)
+  {
+    const { context, page } = await open(browser, 'first', { width: 1280 });
+    await page.evaluate(() => {
+      document.querySelectorAll('link[rel="stylesheet"], style').forEach(el => { el.disabled = true; });
+    });
+    const cssOffFirst = await page.evaluate(() => {
+      const visible = el => el && !el.hidden && !el.closest('[hidden]') && !el.closest('[aria-hidden="true"]');
+      const headings = [...document.querySelectorAll('#eee-app h1, #eee-app h2, #eee-app h3, #eee-app h4')]
+        .filter(visible)
+        .map(h => ({ tag: h.tagName.toLowerCase(), text: h.textContent.replace(/\s+/g, ' ').trim(), top: h.getBoundingClientRect().top }));
+      const loopEl = document.querySelector('.story-first-run-loop');
+      const steps = [...document.querySelectorAll('.story-first-run-loop > li.story-loop-step')]
+        .filter(visible)
+        .map(li => ({ text: li.textContent.replace(/\s+/g, ' ').trim(), top: li.getBoundingClientRect().top }));
+      const modes = [...document.querySelectorAll('#story-mode-grid .story-mode')]
+        .filter(visible)
+        .map(btn => ({ text: btn.textContent.replace(/\s+/g, ' ').trim(), top: btn.getBoundingClientRect().top }));
+      const tabsHaveSelected = [...document.querySelectorAll('#story-rail-filter [role="tab"]')].every(b => b.hasAttribute('aria-selected'));
+      const pillsHavePressed = [...document.querySelectorAll('.ugc-pill-btn')].every(b => b.hasAttribute('aria-pressed'));
+      const headingsInDomOrder = headings.every((h, idx) => idx === 0 || h.top >= headings[idx - 1].top);
+      const stepsInOrder = steps.length === 3 &&
+        /^Step 1\b.*Choose your format/i.test(steps[0].text) &&
+        /^Step 2\b.*Review your script/i.test(steps[1].text) &&
+        /^Step 3\b.*Record and mark filmed/i.test(steps[2].text) &&
+        steps[0].top < steps[1].top &&
+        steps[1].top < steps[2].top;
+      const orientationColsOrdered = headings.some(h => /^1\. Why the 5E interview keeps your voice/.test(h.text)) &&
+        headings.some(h => /^2\. What to expect: 5 to 10 minutes/.test(h.text)) &&
+        headings.some(h => /^3\. What happens when your script is ready/.test(h.text));
+      return {
+        isOrderedList: Boolean(loopEl && loopEl.tagName === 'OL'),
+        headings: headings.map(h => h.tag + ':' + h.text),
+        steps: steps.map(s => s.text),
+        modesCount: modes.length,
+        headingsInDomOrder,
+        stepsInOrder,
+        orientationColsOrdered,
+        tabsHaveSelected,
+        pillsHavePressed
+      };
+    });
+    // Also exercise the text-only path with CSS off: click 5E Talking Head, answer a question, and verify conversation order
+    await page.click('.story-mode[data-mode="rant"]');
+    await page.waitForSelector('#story-editor:not([hidden])');
+    await page.fill('#story-answer', 'Text-only path test answer.');
+    await page.click('#story-send');
+    await page.waitForTimeout(300);
+    const cssOffInterview = await page.evaluate(() => {
+      const editorVisible = !document.getElementById('story-editor').hidden;
+      const turns = [...document.querySelectorAll('#story-conversation .story-message')].map(m => m.textContent.replace(/\s+/g, ' ').trim());
+      return { editorVisible, turnCount: turns.length };
+    });
+    const cssOffPass = cssOffFirst.isOrderedList &&
+      cssOffFirst.headingsInDomOrder &&
+      cssOffFirst.stepsInOrder &&
+      cssOffFirst.orientationColsOrdered &&
+      cssOffFirst.tabsHaveSelected &&
+      cssOffFirst.pillsHavePressed &&
+      cssOffFirst.modesCount === 4 &&
+      cssOffInterview.editorVisible &&
+      cssOffInterview.turnCount >= 3;
+    check('With CSS off the step list reads in order and the text-only path works without layout-only meaning', cssOffPass, JSON.stringify({ cssOffFirst, cssOffInterview }));
     await context.close();
   }
 
