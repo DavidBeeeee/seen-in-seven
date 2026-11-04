@@ -354,15 +354,27 @@ export default async function handler(req, res) {
   // Its own failure never fails the reminders.
   let storysculpt = null;
   if (trigger !== 'vercel-cron') {
+    const sendAlert = channel.active && OPERATOR_EMAIL
+      ? (msg) => sendEmail({ to: OPERATOR_EMAIL, subject: msg.subject, text: msg.text })
+      : null;
     try {
-      const sendAlert = channel.active && OPERATOR_EMAIL
-        ? (msg) => sendEmail({ to: OPERATOR_EMAIL, subject: msg.subject, text: msg.text })
-        : null;
       const check = await checkStorySculptIncidents({ supabaseUrl: SUPABASE_URL, serviceKey: SERVICE_KEY, minutes: 60, send: sendAlert });
       storysculpt = { level: check.signal.level, kinds: check.signal.kinds, tripped: check.signal.tripped, alertOutcome: check.alertOutcome };
     } catch (error) {
       console.error('certainty-reminders: storysculpt incident check failed', String(error));
       storysculpt = { level: 'unknown', error: 'check-failed' };
+      // The outside watcher sees this job stop, not this one check going blind.
+      // Every six hours, so a broken check is heard without an hourly email.
+      if (sendAlert && new Date().getUTCHours() % 6 === 0) {
+        try {
+          await sendAlert({
+            subject: 'StorySculpt alert: the incident check could not run',
+            text: 'The hourly StorySculpt incident check failed, so a real problem would not be noticed right now.\n\nWhat to do:\n- Open the Vercel runtime logs for /api/certainty-reminders and search for "storysculpt incident check failed".'
+          });
+        } catch (alertError) {
+          console.error('certainty-reminders: storysculpt check-failed alert failed', String(alertError));
+        }
+      }
     }
   }
 

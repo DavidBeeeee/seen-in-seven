@@ -9,7 +9,9 @@ import {
   classifyOutput,
   classifyFailure,
   buildEventDetail,
-  failureLayer
+  failureLayer,
+  isPoorOutputSignal,
+  priorRevisions
 } from './_lib/storysculpt-observability.js';
 import {
   extractBannedTerms,
@@ -1065,6 +1067,9 @@ export default async function handler(req, res) {
     if (!project.output && input.intent === 'refine') {
       await emit('denied', { failureClass: classifyFailure('input') });
       return fail(409, 'Finish a script before asking for a revision.');
+    }
+    if (isPoorOutputSignal(input.intent, project)) {
+      await emit('poor_output', { failureClass: 'poor-output', revisions: priorRevisions(project) });
     }
 
     // Context is member-owned saved state, not request input. Read after the

@@ -6,7 +6,7 @@
 // recorded as its own provider, not as DeepSeek.
 import { readFileSync } from 'node:fs';
 import {
-  incidentSignal, incidentKind, providerFor, incidentAlertMessage, buildEventDetail, classifyFailure, INCIDENT_THRESHOLDS
+  isPoorOutputSignal, incidentSignal, incidentKind, providerFor, incidentAlertMessage, buildEventDetail, classifyFailure, INCIDENT_THRESHOLDS
 } from '../api/_lib/storysculpt-observability.js';
 import { checkStorySculptIncidents } from '../api/_lib/storysculpt-incidents.js';
 
@@ -70,10 +70,34 @@ check(run.alertOutcome === 'held' && sent.length === 0, 'with no channel the ale
 run = await checkStorySculptIncidents({ supabaseUrl: 'https://x.invalid', serviceKey: 'k', send, fetchFn: rowsFetch([]) });
 check(run.alertOutcome === null && sent.length === 0, 'a quiet window sends nothing');
 
+// Developer 78: a passing script members keep rejecting, told apart from normal use.
+const revised = (n) => ({ intake: { versions: Array.from({ length: n + 1 }, () => ({})) } });
+check(!isPoorOutputSignal('refine', revised(0)) && !isPoorOutputSignal('refine', revised(1)), 'a first or second revision is normal use');
+check(isPoorOutputSignal('refine', revised(2)), 'a third revision of one script is the signal');
+check(!isPoorOutputSignal('interview', revised(5)) && !isPoorOutputSignal('refine', {}), 'only a revision of a real script counts');
+check(incidentKind('poor-output', 'poor_output', 'storysculpt_poor_output') === 'poor', 'a poor output is its own kind');
+const poorDetail = buildEventDetail({ outcome: 'poor_output', failureClass: 'poor-output', revisions: 2, regenerateNote: 'member words' });
+check(poorDetail.layer === 'quality' && poorDetail.revisions === 2 && !JSON.stringify(poorDetail).includes('member words'), 'the event carries a count, never the note');
+const poorEvents = (n) => [...busy, ...Array.from({ length: n }, (_, i) => ev('poor_output', 'poor-output', 10 + i))];
+const poorBelow = incidentSignal(poorEvents(2), { now });
+check(poorBelow.level === 'ok' && poorBelow.kinds.poor === 2, 'two in an hour stays quiet');
+const poorAt = incidentSignal(poorEvents(3), { now });
+check(poorAt.level === 'incident' && poorAt.tripped.includes('poor') && poorAt.failures === 0 && poorAt.failureRate === 0, 'three trips the signal without counting as failures');
+
+// Developer 80: every kind's alert says what to do.
+for (const [kind, make] of [...Object.entries(cases), ['poor', (n) => poorEvents(n)]]) {
+  const message = incidentAlertMessage(incidentSignal(make(INCIDENT_THRESHOLDS[kind]), { now }));
+  const action = message && message.text.split('What to do:')[1];
+  check(action && action.split('\n').filter((line) => line.startsWith('- ')).length >= 2, `the ${kind} alert names an action of its own`);
+  check(message && !/—|undefined/.test(message.text), `the ${kind} alert reads clean`);
+}
+
 // Wiring.
 const reminders = readFileSync('api/certainty-reminders.js', 'utf8');
+check(/the incident check could not run/.test(reminders) && /getUTCHours\(\) % 6 === 0/.test(reminders), 'a check that cannot run alerts David, at most every six hours');
 check(/checkStorySculptIncidents\(/.test(reminders) && /trigger !== 'vercel-cron'/.test(reminders), 'the check rides the hourly tick, not the daily run');
 const api = readFileSync('api/storysculpt.js', 'utf8');
+check(/isPoorOutputSignal\(input\.intent, project\)/.test(api) && /emit\('poor_output'/.test(api), 'the handler records the signal on a real revision');
 check(/onFailure: \(extra\) => recordEvent\(token, user\.id, 'storysculpt_error'/.test(api) && /classifyFailure\('research'\)/.test(api), 'a research failure is recorded as its own event');
 const client = readFileSync('js/storysculpt.js', 'utf8');
 check(/for \(let attempt = 0; attempt < 2; attempt\+\+\)/.test(client) && /SAVE_RETRY_DELAY_MS/.test(client), 'a failed save is retried once');
@@ -85,4 +109,4 @@ if (failures.length) {
   console.error('check-storysculpt-incident-signal FAIL\n- ' + failures.join('\n- '));
   process.exit(1);
 }
-console.log('PASS check-storysculpt-incident-signal: four kinds apart, providers named, per-kind thresholds alert David, hourly wiring, save retry with on-device keep.');
+console.log('PASS check-storysculpt-incident-signal: five kinds apart, every alert says what to do, providers named, per-kind thresholds alert David, hourly wiring, save retry with on-device keep.');
