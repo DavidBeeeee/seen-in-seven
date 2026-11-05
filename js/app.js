@@ -1442,7 +1442,7 @@ function renderJourneyMap() {
   });
   if (journeyMapMode === 'onboarding' && p2.storyDiscoveryMode === 'ai') {
     if (title) title.innerHTML = 'Use AI to help find <span class="accent">your story.</span>';
-    if (subtitle) subtitle.textContent = 'Copy the guide, talk it through with the AI you already use, then paste the finished seven-part answer here.';
+    if (subtitle) subtitle.textContent = 'Copy the guide into the AI you already use, pick a story, then paste the finished seven-part answer here.';
     if (note) note.textContent = 'The AI only knows what you share in that conversation. You can change every answer before we use it.';
     if (confirm) confirm.style.display = 'none';
     list.innerHTML = '<section class="journey-ai-workflow">' +
@@ -1450,7 +1450,7 @@ function renderJourneyMap() {
       '<h3>Copy your Story Discovery guide.</h3><p>It includes the answers you already gave us, so you do not have to start over.</p>' +
       '<button class="btn-secondary" type="button" onclick="openJourneyHelp()">Open And Copy My Guide</button>' +
       '<div class="journey-question-top" style="margin-top:24px;"><span class="journey-step">Step 2</span></div>' +
-      '<h3>Use it with your favorite AI.</h3><p>Pick the story that feels most true to you. Then it will ask you one short question at a time. Messy answers are fine, and you can say &quot;write it&quot; whenever you are ready.</p>' +
+      '<h3>Paste it into your favorite AI.</h3><p>Pick the story that feels most true to you. It writes the seven parts for you.</p>' +
       '<div class="journey-question-top" style="margin-top:24px;"><span class="journey-step">Step 3</span></div>' +
       '<h3>Paste the seven numbered answers below.</h3>' +
       '<label for="journey-import" style="margin-top:24px;display:block;">Paste your finished seven-part map</label>' +
@@ -1594,7 +1594,7 @@ function openJourneyPartHelp(index) {
   const field = document.getElementById('journey-help-prompt');
   const overlay = document.getElementById('journey-help-overlay');
   if (title) title.textContent = 'Get help with Part ' + (Number(index) + 1) + '.';
-  if (description) description.textContent = 'Copy this into the AI you already use. It will ask a few short questions, one at a time, then give you one paragraph to paste here.';
+  if (description) description.textContent = 'Copy this into the AI you already use. It will give you one paragraph to paste here.';
   if (field) field.value = prompt;
   if (overlay) overlay.hidden = false;
   if (typeof logEvent === 'function') logEvent('journey_part_help_opened', { level: journeyMapLevel, part: Number(index) + 1 });

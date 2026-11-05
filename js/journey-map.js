@@ -112,13 +112,10 @@ Do not ask me to repeat information you can already find or reasonably connect. 
 
 HOW TO TALK TO ME
 
-This has to feel easy. A long message makes me want to quit, so these rules apply to every message you send me until the finished map:
-- Keep it under 60 words, in plain sentences. No headings, lists, or bold. The only exception is the three story ideas below.
-- Ask one question per message, and only one I can answer in a sentence or two. Never stack questions.
-- Do not explain your reasoning, your process, or what you are about to do. Do your thinking privately. No notes about your method.
-- Share a theory only as one short guess inside a question.
-
-First, review my context privately. Ask me at most two short questions before the story ideas, and only if you truly need them.
+Do the work yourself. Do not interview me. Never ask me anything you already know, could look up, could connect, or could imagine. Figuring this out is your job, not mine.
+- Do your research and thinking privately. Do not explain your reasoning, your process, or what you are about to do.
+- Keep every message short and plain, with no headings or long explanations.
+- The only exception: if you have almost nothing about me beyond this message, ask me once for a short paragraph about my life and work, then continue.
 
 Then say: "Here are three things you could talk about. Which one feels right?"
 
@@ -128,17 +125,11 @@ Give me three distinct core story seeds, about 40 words each, with:
 - the events that could carry it: the moment an old belief broke, the first test, the fall, and the larger truth
 - a sentence in language close to the way I speak
 
-Do not write the full seven-part map yet. Let me choose one, combine them, or explain what feels wrong.
+Do not write the full seven-part map yet. Let me choose one, combine them, or tell you what feels wrong. That choice is the only thing you need from me.
 
-ONCE I CHOOSE, FIND THE STORIES
+ONCE I CHOOSE, WRITE THE MAP
 
-Go through WHAT EACH PART MUST DO below and see what you have for each part. Where it is thin, ask me, one short question per message. Choose the questions that will surface the most. After about eight questions, write the map, imagining whatever is still thin. If I say "write it" at any point, write it right away. Do not wait until you feel certain. I can correct the map, and you can ask me more after I see it.
-- Start with the parts that are hardest to find: the test, the fall, and the larger truth.
-- Ask what happened, not what I learned: where I was, who was there, what I did, what I said, what happened next, and what it cost.
-- Use plain everyday words, like a curious friend. Do not use story terms or the part names.
-- Short, messy answers are fine. I talk, and you do the organizing. When an answer is thin, ask about that one moment before moving on.
-- Do not only ask. Turn a suspicion into one short guess I can answer with yes, no, or not quite, including things I have never said. Being wrong in an interesting way often gets me to the true thing.
-- If I do not remember something or do not want to share it, do not stop and do not go generic. Imagine the most compelling plausible version and keep going.
+Write the full map right away, in your next message, with no questions first. Use WHAT EACH PART MUST DO below. Look for the events that fit each part in everything you know about me. Imagine the most compelling plausible version of anything you cannot find. Include things I would never think to say about myself. I will read it and tell you what feels off.
 
 THE MOST IMPORTANT RULE
 
@@ -157,11 +148,11 @@ Before you show me the map, check every part privately. Do not show me this chec
 - Name its subject in one short sentence. If two parts have the same subject or the same point, rebuild one of them using a different event.
 - It holds one event. If it lists several, keep the one that fits its job best and leave the others out.
 - A stranger could picture it: a place or period, a person or project, and what happened in order. If it reads like a summary or a description of my work, it is not finished.
-- It contains every piece its job asks for. If a piece is missing, ask me or imagine it.
+- It contains every piece its job asks for. If a piece is missing, imagine it.
 
 Never leave a part thin. Do not explain which details you inferred or invented. I will read the map and change anything that does not feel right.
 
-After I answer, give me the finished map inside one plain-text code block so I can copy it with the copy button and paste it straight into SeenInSeven. These are private story notes for a later writer, not narration, so say plainly what happened, in the order it happened, with the names and details that make it real. Write each part as one full paragraph. Use as much space as each part needs to hold everything its job asks for, usually 100 to 200 words. Never compress a story into a summary to make it shorter. The block must contain exactly seven lines and nothing else:
+Give me the finished map inside one plain-text code block so I can copy it with the copy button and paste it straight into SeenInSeven. These are private story notes for a later writer, not narration, so say plainly what happened, in the order it happened, with the names and details that make it real. Write each part as one full paragraph. Use as much space as each part needs to hold everything its job asks for, usually 100 to 200 words. Never compress a story into a summary to make it shorter. The block must contain exactly seven lines and nothing else:
 
 \`\`\`
 1. [the full story of this part, in first person, as one paragraph]
@@ -181,11 +172,11 @@ Format rules for that block, because the SeenInSeven box reads it by its numbers
 
 Keep my language patterns, vocabulary, rhythm, bluntness, humor, and emotional temperature, but let the events carry each part rather than the phrasing. Do not turn this into generic coaching, a sales pitch, a polished script, or a motivational speech.
 
-LEVEL ${number} MAP QUESTIONS
+LEVEL ${number} MAP QUESTIONS (for you to answer yourself, not to ask me)
 
 ${questions.map((question, index) => `${index + 1}. ${question}`).join('\n\n')}
 
-${sourceContext ? `MY CURRENT CONTEXT\n\n${sourceContext}` : 'MY CURRENT CONTEXT\n\nI have not added much context yet. Start by asking what you need.'}`.trim();
+${sourceContext ? `MY CURRENT CONTEXT\n\n${sourceContext}` : 'MY CURRENT CONTEXT\n\nI have not added much here. Use what you already know about me.'}`.trim();
 
     /* Legacy helper prompt retained below as historical reference.
     return `Using everything you already know about me, create three possible seven-part Hero's Journeys from my life.
@@ -292,7 +283,7 @@ ${sourceContext ? `CONTEXT I HAVE ALREADY PROVIDED TO SEENINSEVEN\n\n${sourceCon
 
 Match my actual language patterns, favorite words, sentence length, speaking cadence, rhythm, bluntness, humor, emotional tone, and the way I naturally tell stories. The answer should sound spoken by me, not polished by a copywriter. Do not turn it into marketing copy.
 
-Ask me what you need to know, one short question per message and at most three in all, about what happened: where I was, who was there, what I did, and what it led to. Then give me one first-person paragraph that I can paste into SeenInSeven. Use as much space as it takes to hold everything this part must do, usually 100 to 200 words, and never compress it into a summary. Keep it natural and specific. Go past what I tell you: infer, connect, and invent plausible details when the material is thin, and do not explain what you invented. Make sure it stands on its own for a stranger.
+Do not ask me questions. Work out where I was, who was there, what I did, and what it led to from what you know about me, and imagine the rest. Give me one first-person paragraph right away that I can paste into SeenInSeven. Use as much space as it takes to hold everything this part must do, usually 100 to 200 words, and never compress it into a summary. Keep it natural and specific. Go past what I tell you: infer, connect, and invent plausible details when the material is thin, and do not explain what you invented. Make sure it stands on its own for a stranger.
 
 This part is the story base for one separate video in a seven-part series. It needs its own subject. Do not repeat the point of an earlier part, and do not give away a later part.
 
