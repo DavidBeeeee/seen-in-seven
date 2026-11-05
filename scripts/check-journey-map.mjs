@@ -121,15 +121,17 @@ for (const level of [1, 2]) {
 // every part at 600 characters. David, 2026-11-05: the AI keeps its leeway to
 // infer and invent. Holding it to what was said wrecks the process, because the
 // point is to uncover what would otherwise never be said or thought of.
+// David, same day: the interview cannot overwhelm. One short question per message,
+// about eight in all, and "write it" always works.
 const longStory = 'word '.repeat(330).trim();
 const longParts = map.parseImportedMap(seven(n => `${n}. ${longStory}`));
 if (!longParts || longParts.some(part => part !== longStory)) throw new Error('The paste box cut a full-length story part.');
 for (const level of [1, 2]) {
   const fullGuide = map.buildHelperPrompt(level, '', '');
-  for (const value of ['no more than 60', 'one or two', 'up to three', 'never invent', 'made up', 'only what is true', 'real event']) {
+  for (const value of ['no more than 60', 'one or two', 'up to three', 'no limit on these questions', 'maximum of five', 'never invent', 'made up', 'only what is true', 'real event']) {
     if (fullGuide.toLowerCase().includes(value)) throw new Error(`The Level ${level} guide still says: ${value}`);
   }
-  for (const value of ['ONCE I CHOOSE, FIND THE STORIES', 'Ask what happened, not what I learned', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version']) {
+  for (const value of ['ONCE I CHOOSE, FIND THE STORIES', 'Ask what happened, not what I learned', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version', 'HOW TO TALK TO ME', 'Keep it under 60 words', 'Ask one question per message', 'Never stack questions', 'After about eight questions, write the map', 'say "write it"']) {
     if (!fullGuide.includes(value)) throw new Error(`The Level ${level} guide lost: ${value}`);
   }
   const partGuide = map.buildPartHelperPrompt(level, 3, '', []);
