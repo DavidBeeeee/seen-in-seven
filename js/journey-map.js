@@ -56,7 +56,7 @@
       'The ordinary life: a period, place, or routine from before things changed, what made it feel normal, and one thing I did or avoided that kept it that way. Answer from who I was then, with no wisdom from later.',
       'The first realization: one thing I personally believed and acted on, then one specific moment or pattern that it could not explain. It must be my own old belief, not a complaint about other people.',
       'The test: one specific day or conversation, not how things usually went, where I first lived by that new understanding, the moment the old way looked easier, what I chose, and the partial win or confidence it gave me. Things can still be recovered here. Stop before the fall.',
-      'The fall: one failure, loss, or collapse. What I had that mattered, the part that was my fault even if other people played a part, what it cost in plain terms that cannot be taken back, and what I believed was over. Leave me inside it, with no lesson, recovery, way back, or silver lining.',
+      'The fall: one failure, loss, or collapse. What I had that mattered, the part that was my fault even if other people played a part, what it cost in plain terms that cannot be taken back, the moment it hit me hardest, and what I believed was over. Leave me inside it, with no lesson, recovery, way back, or silver lining.',
       'The larger truth: what I could only understand after the fall, the aftermath that showed it to me, and one thing I now visibly do differently. It must be new, not Part 3 again.',
       'The return: one thing someone could see me doing now that the person in Part 2 would not have done, what is honestly still unfinished, and where I am heading. No recap, no new lesson, no pitch.'
     ],
@@ -65,8 +65,8 @@
       'The ordinary life: the job, place, or period where this began, the ability that kept showing up, and one thing I did or avoided that kept me from taking it seriously. Answer from who I was then. I am not an expert yet.',
       'The first realization: one thing I personally believed and acted on, then one specific moment or pattern that it could not explain. It must be my own old belief. An opinion about my industry does not count unless an experience of mine broke it.',
       'The test: one specific day or conversation, not how things usually went, where I acted on that new view before I had proof, the moment the old way looked better, what I chose, and the small result. Things can still be recovered here. A general habit or confession does not count. Stop before the fall.',
-      'The fall: one failure or collapse. What I had built or hoped for, the choices that were mine even if other people played a part, what it cost in plain terms that cannot be taken back, and what I believed was over. Leave me inside it, with no lesson, recovery, way back, or silver lining.',
-      'The larger truth: one thing I do now that most people would call wrong or backwards, the experience or repeated evidence behind it, and one place someone can see me doing it. Describing what I offer does not count, a realization about myself does not count, and a second failure does not count. A sensible person should be able to argue with it. Open the part with what I do, in the present tense, not with the moment I realized it. It must be a different idea from Part 3, and more than the reverse of the mistake in Part 5.',
+      'The fall: one failure or collapse. What I had built or hoped for, the choices that were mine even if other people played a part, what it cost in plain terms that cannot be taken back, the moment it hit me hardest, and what I believed was over. Leave me inside it, with no lesson, recovery, way back, or silver lining.',
+      'The larger truth: one thing I do now that most people would call wrong or backwards, the experience or repeated evidence behind it, and one place someone can see me doing it. Describing what I offer does not count, a realization about myself does not count, and a second failure does not count. A sensible person should be able to argue with it. Open the part with what I do, in the present tense, not with the moment I realized it, and say plainly what most people would tell me I am doing wrong. It must be a different idea from Part 3, and more than the reverse of the mistake in Part 5.',
       'The return: one thing someone could see me doing now that the person in Part 2 would not have done, what makes my way of working different, what is honestly still unfinished, and where I am heading. No recap, no new lesson, no pitch.'
     ]
   };
@@ -148,10 +148,14 @@ WHAT EACH PART MUST DO
 
 ${PART_JOBS[number].map((job, index) => `${index + 1}. ${job}`).join('\n\n')}
 
+ONE DEVELOPING STORY
+
+Before you write the map, privately write the chain: one sentence for each step, saying how that part makes the next one possible, necessary, or more meaningful. The realization in Part 3 leads to the test in Part 4. What Part 4 starts is usually what falls apart in Part 5. Part 6 comes out of that wreckage, and Part 7 is where it has brought me. Parts 2 through 7 run in time order, so nothing in a part happens before the part ahead of it. If two interesting events do not connect, replace one instead of inventing a reason they belong together. A connected story beats a surprising event every time.
+
 Before you show me the map, check every part privately. Do not show me this check.
 - Name its subject in one short sentence. If two parts have the same subject or the same point, rebuild one of them using a different event.
 - It holds one event. If it lists several, keep the one that fits its job best and leave the others out.
-- Compare its event with your private list. If it uses an obvious milestone and a smaller, stranger moment on the list could do the job, use the smaller moment.
+- Compare its event with your private list. If it uses an obvious milestone and a smaller, stranger moment on the list could do the job and the chain still holds, use the smaller moment.
 - A stranger could picture it: a place or period, a person or project, and what happened in order. If it reads like a summary or a description of my work, it is not finished.
 - It contains every piece its job asks for. If a piece is missing, imagine it.
 - Part 4: name the day or conversation it happens in, who was there, and one thing someone said. If you cannot, it is still describing how things usually went, so rebuild it around one.${number === 2 ? `
