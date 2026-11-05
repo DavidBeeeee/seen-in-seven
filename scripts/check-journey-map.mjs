@@ -122,7 +122,7 @@ for (const level of [1, 2]) {
 // infer and invent. Holding it to what was said wrecks the process, because the
 // point is to uncover what would otherwise never be said or thought of.
 // David, same day: no interview. The AI works it out, the member only picks a story,
-// and it never asks what it already knows.
+// and it never asks what it already knows. It may ask only for genuine clarification.
 const longStory = 'word '.repeat(330).trim();
 const longParts = map.parseImportedMap(seven(n => `${n}. ${longStory}`));
 if (!longParts || longParts.some(part => part !== longStory)) throw new Error('The paste box cut a full-length story part.');
@@ -131,7 +131,7 @@ for (const level of [1, 2]) {
   for (const value of ['no more than 60', 'one or two', 'up to three', 'no limit on these questions', 'maximum of five', 'start by asking', 'one short question per message', 'about eight questions', 'ask me for it', 'never invent', 'made up', 'only what is true', 'real event']) {
     if (fullGuide.toLowerCase().includes(value)) throw new Error(`The Level ${level} guide still says: ${value}`);
   }
-  for (const value of ['ONCE I CHOOSE, WRITE THE MAP', 'with no questions first', 'Never ask me anything you already know', 'That choice is the only thing you need from me', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version', 'HOW TO TALK TO ME']) {
+  for (const value of ['ONCE I CHOOSE, WRITE THE MAP', 'with no questions first', 'Never ask me anything you already know', 'That choice is usually the only thing you need from me', 'never more than two in all', 'The map itself gets all the space it needs', 'follow the job', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version', 'HOW TO TALK TO ME']) {
     if (!fullGuide.includes(value)) throw new Error(`The Level ${level} guide lost: ${value}`);
   }
   const partGuide = map.buildPartHelperPrompt(level, 3, '', []);

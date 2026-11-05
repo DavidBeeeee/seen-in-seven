@@ -114,8 +114,9 @@ HOW TO TALK TO ME
 
 Do the work yourself. Do not interview me. Never ask me anything you already know, could look up, could connect, or could imagine. Figuring this out is your job, not mine.
 - Do your research and thinking privately. Do not explain your reasoning, your process, or what you are about to do.
-- Keep every message short and plain, with no headings or long explanations.
-- The only exception: if you have almost nothing about me beyond this message, ask me once for a short paragraph about my life and work, then continue.
+- Until the finished map, keep your messages short and plain, with no headings or long explanations. The map itself gets all the space it needs.
+- You may ask me a question only when you genuinely need clarification: the answer would change the story and you cannot work it out or imagine it well. Most of the time you will not need one. Ask one short question at a time, never more than two in all, and never one you could answer yourself.
+- If you have almost nothing about me beyond this message, ask me once for a short paragraph about my life and work, then continue.
 
 Then say: "Here are three things you could talk about. Which one feels right?"
 
@@ -125,11 +126,11 @@ Give me three distinct core story seeds, about 40 words each, with:
 - the events that could carry it: the moment an old belief broke, the first test, the fall, and the larger truth
 - a sentence in language close to the way I speak
 
-Do not write the full seven-part map yet. Let me choose one, combine them, or tell you what feels wrong. That choice is the only thing you need from me.
+Do not write the full seven-part map yet. Let me choose one, combine them, or tell you what feels wrong. That choice is usually the only thing you need from me.
 
 ONCE I CHOOSE, WRITE THE MAP
 
-Write the full map right away, in your next message, with no questions first. Use WHAT EACH PART MUST DO below. Look for the events that fit each part in everything you know about me. Imagine the most compelling plausible version of anything you cannot find. Include things I would never think to say about myself. I will read it and tell you what feels off.
+Write the full map in your next message, with no questions first unless you genuinely need clarification. Use WHAT EACH PART MUST DO below. Look for the events that fit each part in everything you know about me. Imagine the most compelling plausible version of anything you cannot find. Include things I would never think to say about myself. I will read it and tell you what feels off.
 
 THE MOST IMPORTANT RULE
 
@@ -172,7 +173,7 @@ Format rules for that block, because the SeenInSeven box reads it by its numbers
 
 Keep my language patterns, vocabulary, rhythm, bluntness, humor, and emotional temperature, but let the events carry each part rather than the phrasing. Do not turn this into generic coaching, a sales pitch, a polished script, or a motivational speech.
 
-LEVEL ${number} MAP QUESTIONS (for you to answer yourself, not to ask me)
+LEVEL ${number} MAP QUESTIONS (for you to answer yourself, not to ask me. If a question and a part's job differ, follow the job.)
 
 ${questions.map((question, index) => `${index + 1}. ${question}`).join('\n\n')}
 
@@ -283,7 +284,7 @@ ${sourceContext ? `CONTEXT I HAVE ALREADY PROVIDED TO SEENINSEVEN\n\n${sourceCon
 
 Match my actual language patterns, favorite words, sentence length, speaking cadence, rhythm, bluntness, humor, emotional tone, and the way I naturally tell stories. The answer should sound spoken by me, not polished by a copywriter. Do not turn it into marketing copy.
 
-Do not ask me questions. Work out where I was, who was there, what I did, and what it led to from what you know about me, and imagine the rest. Give me one first-person paragraph right away that I can paste into SeenInSeven. Use as much space as it takes to hold everything this part must do, usually 100 to 200 words, and never compress it into a summary. Keep it natural and specific. Go past what I tell you: infer, connect, and invent plausible details when the material is thin, and do not explain what you invented. Make sure it stands on its own for a stranger.
+Do not ask me questions unless you genuinely need clarification, and then ask only one. Work out where I was, who was there, what I did, and what it led to from what you know about me, and imagine the rest. Give me one first-person paragraph that I can paste into SeenInSeven. Use as much space as it takes to hold everything this part must do, usually 100 to 200 words, and never compress it into a summary. Keep it natural and specific. Go past what I tell you: infer, connect, and invent plausible details when the material is thin, and do not explain what you invented. Make sure it stands on its own for a stranger.
 
 This part is the story base for one separate video in a seven-part series. It needs its own subject. Do not repeat the point of an earlier part, and do not give away a later part.
 
