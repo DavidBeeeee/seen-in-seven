@@ -178,6 +178,15 @@ await cache.getOrCreate('member-hash', read);
 assert.equal(reads, 2);
 pass('short-lived read cache', 'two repeat hits use one read; invalidation forces a fresh read');
 
+// WorkerBee's own scripts reach the ledger through one narrow secret-checked function.
+const toolingSql = readFileSync(new URL('../supabase_migrations/2026-11-04-workerbee-record-egress.sql', import.meta.url), 'utf8');
+assert.match(toolingSql, /if not public\.workerbee_authorized\(p_server_secret\)/);
+assert.match(toolingSql, /'route', 'workerbee-tooling'/);
+assert.match(toolingSql, /least\(p_bytes, 67108864\)/);
+assert.equal(67108864, REPORTED_EVENT_MAX_BYTES);
+assert.doesNotMatch(toolingSql, /\b(select|update|delete)\b[^;]*\bfrom\b/i, 'it can only append');
+pass('WorkerBee tooling report', 'the migration checks the server secret, writes one capped ledger row, and reads nothing');
+
 // Drive the real Certainty handler. First load a booking, then return the exact
 // Supabase quota response on history and render the actual browser pause helper.
 const { default: certaintyHandler } = await import('../api/certainty.js');
