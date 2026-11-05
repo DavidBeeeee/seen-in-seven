@@ -57,6 +57,10 @@ The month-to-date ledger holds 4 `studio_egress_response` rows totalling 1,221 b
 
 Reachable today: the project is small, so this is a cost at member scale and not a problem at current traffic. The cover can be replaced with a smaller file through the existing book editor, which keeps the previous one. `js/admin-studio.js` accepts covers up to 5 MB with no resize, so a new upload can bring it back.
 
+## Update, evening 2026-11-04
+
+The cover is fixed: 171,518 bytes, served from this site with immutable caching. The bigger reader was missing from this list altogether. WorkerBee's own scripts read `workerbee_read` with the server secret: measured before tonight's cuts, one closeout took about 36 MB decompressed, about 7 MB on the wire, and `publish-execution-queue` read the 4.4 MB `updates` profile four times. It now reads it twice. All of this is counted now; see docs/certainty-readiness.md, section 3a, and `npm run sim:studio-egress`.
+
 ## What the read suggested for part 2
 
 **Superseded by the measurements above.** The first item below is wrong for today's data: both admin RPCs together are about a quarter of one cover. They do grow with the data, and the cover does not. Kept as written so the correction is visible.
@@ -67,28 +71,3 @@ Reachable today: the project is small, so this is a cost at member scale and not
 3. The Hub pages' small guard reads in `eee-common.js` are tiny each, but multiply by every page load.
 
 This needs real byte counts before anyone picks a winner. The ranking above is a guess from the code, not a measurement.
-
-## Cover follow-up, Afternoon November 4
-
-The inventory above was imported, without the branch's unrelated code, from
-6246b1e33d35ec654e875059770b5b9be9cbc711. At 20:02:55Z the same public PNG
-still measured 2,681,644 bytes, but its headers now read `public, max-age=3600`
-and `cf-cache-status: HIT`. The earlier no-cache measurement is historical,
-not the current state. No claim is made that caching was absent all day.
-
-The byte-identical source PNG (SHA-256 dbdb465cae0c6256d522491f3b12e0729e99a2d688e1d180fbe68ee7e8187646)
-was resampled proportionally from 1024 x 1536 to 768 x 1152 and JPEG-encoded
-at quality 75. The derived public asset is 171,518 bytes, 93.60 percent smaller:
-`/assets/vault/the-5e-framework-cover-751ce4e2.jpg`. Its full SHA-256 is
-751ce4e2b98f15d83b71a8bfe3dde69c0fe21ab81d73388630b927e2faa08483.
-Both images were visually inspected: same title, subtitle, colors, shapes and
-icons, with no crop. The original PNG and Storage object remain untouched.
-
-The content-addressed static path has `Cache-Control: public, max-age=31536000, immutable`.
-Only after deployment is READY and the live asset's bytes and cache header
-are verified may the existing 5e-framework book's cover_url switch to it.
-This is a data change to an existing book, not a migration or entitlement change.
-Future artwork changes must use a new content-addressed filename. Rollback is
-the previous cover_url; keep the old object so rollback does not need a reupload.
-This removes this shelf image from Supabase egress, not the remaining direct
-database readers or the project-wide warning gap assigned to Evening.

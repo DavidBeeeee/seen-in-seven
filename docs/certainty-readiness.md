@@ -16,6 +16,25 @@ Before tonight the database refused only a second booking at the *same* start ti
 
 **3. Supabase bandwidth.** The afternoon lane recorded an accumulated bandwidth warning and a restriction on October 26. The 1,000-member simulation (`npm run sim:certainty-load`) measures Certainty's exact bandwidth: 1,000 members produce about 21.46 MB of Supabase egress per week (about 92.9 MB per month across 8,000 requests: 5 state, 2 history, 1 book per member). That is only 1.8% of the 5 GB free tier (and 0.04% of the 250 GB Pro tier). Certainty by itself does not exhaust the database quota; however, because Supabase egress is tracked project-wide across all Hub tools, a restriction on the project stops Certainty alongside every other tool. Upgrading to the Pro tier or removing spend caps restores service.
 
+**3a. The bandwidth warnings now see the whole project (WBR-458, Developer 100).** They used to count only `/api/certainty` and `/api/storysculpt`: 1,221 bytes this month, on a project whose biggest reader is WorkerBee itself.
+
+What is counted now:
+- Browser reads: `js/egress-report.js` wraps every Supabase client. One page load in ten for members, every load for admin pages; bytes are scaled up by the sample rate and sent as `studio_egress_response` with route `client:<page>`. An unsampled page adds no request.
+- Book files: a signed URL the browser opens itself counts at the largest book's measured size.
+- The Dashboard: `/api/workerbee` records reads made with David's own token, route `workerbee-api`.
+- WorkerBee's scripts: **not yet.** `scripts/workerbee-studio.mjs` reports its gzip size to the database function `workerbee_record_egress`, route `workerbee-tooling`. That function is a migration on branch `wbr-458-evening-20261104`, not applied. Until it is, the biggest reader in the project stays uncounted and the warnings fire late. Secret-authenticated reads through `/api/workerbee` are in the same position.
+- The warning check's own read, which now runs every six hours and skips StorySculpt events with no measurement.
+
+What is not counted, and what the margin covers: sign-in before a member token exists, guard reads in `api/hub-page` and `api/navigator`, the Boardroom app, and the hourly StorySculpt incident check. `npm run sim:studio-egress` models them at 0.1% of counted today and 3.5% at a thousand members. The ledger adds 25%, so the warnings fire early:
+
+| Warning | Fires at counted | What David gets |
+|---|---|---|
+| 60% | 2.40 GiB (48%) | One email for the month with the heaviest routes. Nothing urgent; if `workerbee-tooling` leads, check for a run looping on a publish. |
+| 80% | 3.20 GiB (64%) | One email: cut the heaviest route today. Members are not affected yet. |
+| 95% | 3.80 GiB (76%) | One email: stop non-essential WorkerBee publishing now. If the quota runs out, every Hub app that reads Supabase stops until the monthly reset, and Certainty shows its calm paused screen. |
+
+The model puts the whole project at about 26% of 5 GiB today and 62% at a thousand members, and most of today's is WorkerBee: about 5 MB on the wire per closeout. Frequencies in the model are assumptions and it has not been compared against Supabase's own usage page, which is the check that would calibrate it. Reported bytes are capped at 64 MiB per event, so one bad report cannot trip every warning. A member could still inflate the count by reporting repeatedly; the worst case is an early email.
+
 **4. Rate limit.** `state` allows 60 calls per member per quota window and answers past that with a friendly 429. One member reloading is fine. A thousand members share no quota, so this does not limit the crowd.
 
 **5. Reminder email volume.** Reminders go through Resend from `sessions@coloradomastermind.com`, sent one by one inside a 60-second job. Because of item 1 there are at most 49 sessions a week, which is about 100 reminder emails a week plus invites. That fits any Resend plan. If item 1 is solved with more hosts, check the Resend plan's daily cap before going past a few hundred sessions a week.

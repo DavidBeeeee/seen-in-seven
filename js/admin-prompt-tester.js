@@ -3,7 +3,7 @@ const PROMPT_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdX
 const PROMPT_ADMIN_EMAILS = new Set(['contact@davidbee.me', 'davidkamau.t@gmail.com', 'davidkamau@live.com']);
 const PROMPT_DRAFT_KEY = 'sis_prompt_tester_draft_v1';
 const PROMPT_WORKSPACE_KEY = 'sis_prompt_tester_workspace_v1';
-const promptSb = supabase.createClient(PROMPT_SUPABASE_URL, PROMPT_SUPABASE_KEY);
+const promptSb = supabase.createClient(PROMPT_SUPABASE_URL, PROMPT_SUPABASE_KEY, window.StudioEgress ? StudioEgress.clientOptions() : undefined);
 
 const promptState = {
   session: null,

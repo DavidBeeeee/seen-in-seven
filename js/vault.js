@@ -162,11 +162,15 @@ async function loadBooks() {
   return booksState === 'ready';
 }
 
+const BOOK_FILE_BYTES = 505492;
+
 async function signedBookUrl(book, download) {
   if (!book || !book.content_path) throw new Error('This book has no file yet.');
   const options = download ? { download: book.download_filename || true } : undefined;
   const { data, error } = await vaultContext.sb.storage.from(BOOK_BUCKET).createSignedUrl(book.content_path, 120, options);
   if (error || !data || !data.signedUrl) throw error || new Error('No file link');
+  // The browser opens this URL itself, so count the largest book's measured size.
+  if (window.StudioEgress) StudioEgress.note('storage-book', BOOK_FILE_BYTES);
   return data.signedUrl;
 }
 

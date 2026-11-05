@@ -1,6 +1,6 @@
 const EEE_SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const EEE_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
-const eeeSb = supabase.createClient(EEE_SUPABASE_URL, EEE_SUPABASE_KEY);
+const eeeSb = supabase.createClient(EEE_SUPABASE_URL, EEE_SUPABASE_KEY, window.StudioEgress ? StudioEgress.clientOptions() : undefined);
 
 function eeeElement(id) {
   return document.getElementById(id);

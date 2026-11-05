@@ -394,7 +394,9 @@ export default async function handler(req, res) {
   // The hourly tick also totals Studio-served response bytes. The daily Vercel
   // run skips this so two close runs cannot race the same warning receipt.
   let egress = null;
-  if (trigger !== 'vercel-cron') {
+  // Every six hours: the check reads the month's ledger, and reading it hourly
+  // would cost more than most of what it measures at a thousand members.
+  if (trigger !== 'vercel-cron' && new Date().getUTCHours() % 6 === 0) {
     try {
       const sendWarning = channel.active && OPERATOR_EMAIL
         ? (msg) => sendEmail({ to: OPERATOR_EMAIL, subject: msg.subject, text: msg.text, idempotencyKey: msg.idempotencyKey })

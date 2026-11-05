@@ -1,7 +1,7 @@
 const STUDIO_SUPABASE_URL = 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const STUDIO_SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
 const STUDIO_THEME_KEY = 'sis_theme_v1';
-const studioSb = supabase.createClient(STUDIO_SUPABASE_URL, STUDIO_SUPABASE_KEY);
+const studioSb = supabase.createClient(STUDIO_SUPABASE_URL, STUDIO_SUPABASE_KEY, window.StudioEgress ? StudioEgress.clientOptions() : undefined);
 
 let studioSession = null;
 let studioProfile = null;

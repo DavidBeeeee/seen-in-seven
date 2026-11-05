@@ -1,9 +1,12 @@
 import { timingSafeEqual } from 'node:crypto';
 import { authenticatedAdmin, json } from './_lib/security.js';
 import { mailchimpRequest } from './_lib/workerbee-mailchimp.js';
+import { readJsonWithBytes, recordResponseBytes } from './_lib/egress-budget.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
+
+const EGRESS_MIN_RECORDED_BYTES = 1024;
 
 function safeEqual(left, right) {
   const a = Buffer.from(String(left || ''));
@@ -44,7 +47,13 @@ async function rpc(name, body, token) {
     const detail = await response.text().catch(() => '');
     throw new Error(`WorkerBee database request failed (${response.status}): ${detail.slice(0, 240)}`);
   }
-  return response.json();
+  const { data, bytes } = await readJsonWithBytes(response);
+  // WBR-458: the Dashboard's reads are among the biggest in the project, so they
+  // count. David's own token carries the event; the anon key is not a member.
+  if (bytes >= EGRESS_MIN_RECORDED_BYTES && token !== SUPABASE_ANON_KEY) {
+    await recordResponseBytes({ supabaseUrl: SUPABASE_URL, anonKey: SUPABASE_ANON_KEY, userToken: token, route: 'workerbee-api', reader: name, bytes });
+  }
+  return data;
 }
 
 function cleanText(value, max = 500, required = false) {

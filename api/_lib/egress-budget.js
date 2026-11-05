@@ -6,6 +6,16 @@ export const MONTHLY_EGRESS_BUDGET_BYTES = 5 * 1024 * 1024 * 1024;
 export const EGRESS_WARNING_THRESHOLDS = [60, 80, 95];
 export const EGRESS_RESPONSE_EVENT = 'studio_egress_response';
 export const EGRESS_WARNING_EVENT = 'studio_egress_warning';
+// What the ledger still cannot count: sign-in before a member token exists, the
+// small guard reads in api/hub-page and api/navigator, the Boardroom app, and
+// sampling noise. scripts/sim/studio-egress.mjs proves this covers the model, so
+// each warning fires early rather than late. docs/certainty-readiness.md has the
+// counted percent where each one fires.
+export const EGRESS_UNMETERED_MARGIN = 0.25;
+// One reported event can only move the month so far. A browser or a script can
+// report anything, so a bad number cannot trip every warning by itself.
+export const REPORTED_EVENT_MAX_BYTES = 64 * 1024 * 1024;
+const REPORTED_ROUTE = /^(client:|workerbee-tooling)/;
 
 export function byteLength(raw) {
   return Buffer.byteLength(String(raw || ''), 'utf8');
@@ -53,6 +63,31 @@ export async function recordResponseBytes({
   }
 }
 
+// A server-side reader with no member token, such as WorkerBee's own tooling. It
+// writes with the service key, the same way the warning receipt does.
+export async function recordServiceBytes({ fetchFn = fetch, supabaseUrl, serviceKey, route, reader, bytes }) {
+  if (!serviceKey || !Number.isFinite(bytes) || bytes < 0) return false;
+  try {
+    const response = await fetchFn(String(supabaseUrl).replace(/\/$/, '') + '/rest/v1/logs', {
+      method: 'POST',
+      headers: {
+        apikey: serviceKey,
+        Authorization: 'Bearer ' + serviceKey,
+        'Content-Type': 'application/json',
+        Prefer: 'return=minimal'
+      },
+      body: JSON.stringify({
+        user_id: null,
+        event_type: EGRESS_RESPONSE_EVENT,
+        detail: { schema: 1, route, reader, bytes: Math.round(bytes) }
+      })
+    });
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
+
 function monthKey(date) {
   return date.toISOString().slice(0, 7);
 }
@@ -79,8 +114,9 @@ export function summarizeEgress(rows, now = new Date()) {
     }
     const measurement = row.event_type === EGRESS_RESPONSE_EVENT ? detail : detail.egress;
     if (!measurement || monthKey(created) !== currentMonth) continue;
-    const bytes = Number(measurement.bytes);
-    if (!Number.isFinite(bytes) || bytes < 0) continue;
+    const reported = Number(measurement.bytes);
+    if (!Number.isFinite(reported) || reported < 0) continue;
+    const bytes = REPORTED_ROUTE.test(String(measurement.route)) ? Math.min(reported, REPORTED_EVENT_MAX_BYTES) : reported;
     monthlyBytes += bytes;
     if (dayKey(created) === currentDay) dailyBytes += bytes;
     const route = String(measurement.route || 'unknown');
@@ -89,12 +125,14 @@ export function summarizeEgress(rows, now = new Date()) {
     byRoute[route].bytes += bytes;
   }
 
-  const percent = monthlyBytes / MONTHLY_EGRESS_BUDGET_BYTES * 100;
+  const estimatedBytes = monthlyBytes * (1 + EGRESS_UNMETERED_MARGIN);
+  const percent = estimatedBytes / MONTHLY_EGRESS_BUDGET_BYTES * 100;
   return {
     period: currentMonth,
     day: currentDay,
     dailyBytes,
     monthlyBytes,
+    estimatedBytes,
     budgetBytes: MONTHLY_EGRESS_BUDGET_BYTES,
     percent,
     over80: percent > 80,
@@ -110,14 +148,22 @@ export function warningsDue(status) {
   );
 }
 
+const EGRESS_WARNING_ACTIONS = {
+  60: 'nothing urgent. Look at the heaviest route below, and if it is workerbee-tooling, check for a run looping on a publish.',
+  80: 'cut the heaviest route below today. Members are not affected yet.',
+  95: 'stop non-essential WorkerBee publishing now. If the quota runs out, every Hub app that reads Supabase stops until the monthly reset.'
+};
+
 export function egressWarningMessage(status, threshold) {
   const usedGiB = (status.monthlyBytes / (1024 ** 3)).toFixed(2);
   return {
     subject: `Studio database bandwidth: ${threshold}% warning`,
     text: [
-      `Studio-served Supabase responses have reached ${usedGiB} GiB of the 5 GiB monthly budget (${status.percent.toFixed(1)}%).`,
+      `Counted Supabase responses have reached ${usedGiB} GiB. With the ${Math.round(EGRESS_UNMETERED_MARGIN * 100)}% margin for what cannot be counted, that is about ${(status.estimatedBytes / (1024 ** 3)).toFixed(2)} GiB of the 5 GiB monthly budget (${status.percent.toFixed(1)}%).`,
       `Today's measured responses: ${(status.dailyBytes / (1024 ** 2)).toFixed(2)} MiB.`,
       `This is the one ${threshold}% warning for ${status.period}. Certainty will show its calm paused screen if Supabase exhausts the shared quota.`,
+      '',
+      `What to do: ${EGRESS_WARNING_ACTIONS[threshold] || EGRESS_WARNING_ACTIONS[95]}`,
       '',
       'Heaviest measured routes:',
       ...(status.byRoute.length
@@ -158,7 +204,8 @@ export async function checkAndWarnEgress({
   const query = new URLSearchParams({
     select: 'event_type,detail,created_at',
     'created_at': 'gte.' + monthStart,
-    or: `(event_type.eq.${EGRESS_RESPONSE_EVENT},event_type.eq.${EGRESS_WARNING_EVENT},event_type.like.storysculpt_*)`,
+    // Only the StorySculpt events that carry a measurement. This read is itself egress.
+    or: `(event_type.eq.${EGRESS_RESPONSE_EVENT},event_type.eq.${EGRESS_WARNING_EVENT},and(event_type.like.storysculpt_*,detail->egress.not.is.null))`,
     limit: '50000'
   });
   const response = await fetchFn(String(supabaseUrl).replace(/\/$/, '') + '/rest/v1/logs?' + query, {
@@ -167,6 +214,8 @@ export async function checkAndWarnEgress({
   if (!response.ok) return { ok: false, error: 'ledger-read-failed', status: response.status };
   const measured = await readJsonWithBytes(response);
   const rows = Array.isArray(measured.data) ? measured.data : [];
+  // This read is itself egress, and it grows with the month.
+  await recordServiceBytes({ fetchFn, supabaseUrl, serviceKey, route: 'certainty-reminders', reader: 'egress-ledger', bytes: measured.bytes });
   const status = summarizeEgress(rows, now);
   const due = warningsDue(status);
   const sent = [];

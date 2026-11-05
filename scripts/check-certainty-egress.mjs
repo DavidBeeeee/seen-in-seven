@@ -3,6 +3,8 @@ import { readFileSync } from 'node:fs';
 import vm from 'node:vm';
 import {
   EGRESS_RESPONSE_EVENT,
+  EGRESS_UNMETERED_MARGIN,
+  REPORTED_EVENT_MAX_BYTES,
   EGRESS_WARNING_EVENT,
   MONTHLY_EGRESS_BUDGET_BYTES,
   assertWithinWarningBudget,
@@ -17,6 +19,8 @@ vm.createContext(browserContext);
 vm.runInContext(readFileSync(new URL('../js/certainty-egress.js', import.meta.url), 'utf8'), browserContext);
 const browser = browserContext.module.exports;
 const NOW = new Date('2026-11-01T18:00:00.000Z');
+// The counted bytes that put the margin-adjusted estimate at this percent.
+const countedFor = (percent) => MONTHLY_EGRESS_BUDGET_BYTES * percent / 100 / (1 + EGRESS_UNMETERED_MARGIN);
 const results = [];
 
 function pass(name, detail) {
@@ -38,7 +42,7 @@ async function warningFixture(threshold) {
   const rows = [{
     event_type: EGRESS_RESPONSE_EVENT,
     created_at: NOW.toISOString(),
-    detail: { route: 'storysculpt', reader: 'recent_finished', bytes: Math.round(MONTHLY_EGRESS_BUDGET_BYTES * threshold / 100) }
+    detail: { route: 'storysculpt', reader: 'recent_finished', bytes: Math.ceil(countedFor(threshold)) }
   }, ...[60, 80, 95].filter(value => value < threshold).map(value => ({
     event_type: EGRESS_WARNING_EVENT,
     created_at: NOW.toISOString(),
@@ -50,7 +54,7 @@ async function warningFixture(threshold) {
     if (String(url).includes('/rest/v1/logs?')) return response(rows);
     if (String(url).endsWith('/rest/v1/logs') && init.method === 'POST') {
       const body = JSON.parse(init.body);
-      receipts.push(body);
+      if (body.event_type === EGRESS_WARNING_EVENT) receipts.push(body);
       rows.push({ ...body, created_at: NOW.toISOString() });
       return response('', 201);
     }
@@ -80,17 +84,88 @@ for (const threshold of [60, 80, 95]) await warningFixture(threshold);
 const at80 = summarizeEgress([{
   event_type: EGRESS_RESPONSE_EVENT,
   created_at: NOW.toISOString(),
-  detail: { route: 'certainty', bytes: MONTHLY_EGRESS_BUDGET_BYTES * 0.8 }
+  detail: { route: 'certainty', bytes: countedFor(80) }
 }], NOW);
-assert.equal(at80.percent, 80);
+assert.ok(Math.abs(at80.percent - 80) < 1e-9);
+assert.ok(at80.monthlyBytes < MONTHLY_EGRESS_BUDGET_BYTES * 0.65, 'the margin fires the 80 percent warning at 64 percent counted');
 assert.equal(assertWithinWarningBudget(at80), true);
 const above80 = summarizeEgress([{
   event_type: EGRESS_RESPONSE_EVENT,
   created_at: NOW.toISOString(),
-  detail: { route: 'certainty', bytes: MONTHLY_EGRESS_BUDGET_BYTES * 0.8001 }
+  detail: { route: 'certainty', bytes: countedFor(80.01) }
 }], NOW);
 assert.throws(() => assertWithinWarningBudget(above80), /above the 80% warning budget/);
 pass('80% check boundary', '80.0% passes; 80.01% fails');
+
+// WBR-458 Developer 100: the browser's direct reads reach the same warning.
+const reportContext = { module: { exports: {} }, URL, TextEncoder };
+vm.createContext(reportContext);
+vm.runInContext(readFileSync(new URL('../js/egress-report.js', import.meta.url), 'utf8'), reportContext);
+const { createMeter, readerFor } = reportContext.module.exports;
+const MEMBER_HEADERS = { apikey: 'anon-key', Authorization: 'Bearer member-token' };
+function browserFetch(calls) {
+  return async (url, init = {}) => {
+    calls.push({ url: String(url), init });
+    return new Response('x'.repeat(1000), { status: 200 });
+  };
+}
+const unsampledCalls = [];
+const unsampled = createMeter({ page: 'vault', sampleEvery: 10, random: () => 0.9, fetchImpl: browserFetch(unsampledCalls) });
+await unsampled.fetch('https://fixture.supabase.co/rest/v1/scripts?select=*', { headers: MEMBER_HEADERS });
+await unsampled.settle();
+assert.equal(unsampled.flush(), null, 'an unsampled page reports nothing');
+assert.equal(unsampledCalls.length, 1, 'an unsampled page adds no request');
+
+const anonCalls = [];
+const anon = createMeter({ page: 'home', sampleEvery: 1, fetchImpl: browserFetch(anonCalls) });
+await anon.fetch('https://fixture.supabase.co/rest/v1/points_config', { headers: { apikey: 'anon-key', Authorization: 'Bearer anon-key' } });
+await anon.settle();
+assert.equal(anon.flush(), null, 'no member token, no event the database would only drop');
+
+const clientCalls = [];
+const meter = createMeter({ page: 'vault', sampleEvery: 10, random: () => 0.01, fetchImpl: browserFetch(clientCalls) });
+const memberResponse = await meter.fetch('https://fixture.supabase.co/rest/v1/rpc/admin_get_scripts', { headers: new Headers(MEMBER_HEADERS) });
+assert.equal((await memberResponse.text()).length, 1000, 'the page still gets its whole response');
+meter.note('storage-book', 500);
+await meter.settle();
+await meter.flush();
+assert.equal(readerFor('https://fixture.supabase.co/storage/v1/object/sign/x'), 'storage');
+const reportCall = clientCalls.find((call) => call.url.endsWith('/rest/v1/rpc/record_log_event'));
+const reported = JSON.parse(reportCall.init.body);
+assert.equal(reported.p_event_type, EGRESS_RESPONSE_EVENT);
+assert.equal(reported.p_detail.bytes, 15000, 'sampled bytes are scaled up by the sample rate');
+assert.equal(reported.p_detail.reader, 'admin_get_scripts');
+assert.equal(reported.p_detail.route, 'client:vault');
+assert.equal(reportCall.init.keepalive, true, 'the report survives the page closing');
+assert.ok(!/x{10}/.test(reportCall.init.body), 'the report carries sizes, never content');
+assert.equal(meter.flush(), null, 'a second flush does not count the same bytes twice');
+
+// The bytes the browser really reported are what move the month total.
+const reportedRow = { event_type: EGRESS_RESPONSE_EVENT, created_at: NOW.toISOString(), detail: reported.p_detail };
+const justUnder80 = { event_type: EGRESS_RESPONSE_EVENT, created_at: NOW.toISOString(), detail: { route: 'certainty', bytes: Math.ceil(countedFor(80)) - 15000 + 1 } };
+const earlierWarning = { event_type: EGRESS_WARNING_EVENT, created_at: NOW.toISOString(), detail: { period: '2026-11', threshold: 60 } };
+const beforeReport = summarizeEgress([justUnder80, earlierWarning], NOW);
+assert.deepEqual(warningsDue(beforeReport), [], 'just under 80 percent nothing is due');
+const clientRows = [justUnder80, earlierWarning, reportedRow];
+const clientSent = [];
+const clientRun = await checkAndWarnEgress({
+  fetchFn: async (url) => (String(url).includes('/rest/v1/logs?') ? response(clientRows) : response('', 201)),
+  supabaseUrl: 'https://fixture.supabase.co',
+  serviceKey: 'fixture-service-key',
+  to: 'david@example.com',
+  now: NOW,
+  send: async (message) => { clientSent.push(message); return 'resend-client'; }
+});
+assert.deepEqual(clientRun.sent, [80], 'the client-reported read trips the 80 percent warning');
+assert.equal(clientRun.status.monthlyBytes - beforeReport.monthlyBytes, 15000);
+assert.match(clientSent[0].text, /client:vault/, 'the warning names the client page');
+assert.match(clientSent[0].text, /What to do: cut the heaviest route/, 'the warning says what to do');
+pass('client-reported read', '15000 sampled bytes moved the month total and tripped the 80% warning; unsampled pages add no request');
+
+const spoofed = summarizeEgress([{ event_type: EGRESS_RESPONSE_EVENT, created_at: NOW.toISOString(), detail: { route: 'client:vault', bytes: 1e15 } }], NOW);
+assert.equal(spoofed.monthlyBytes, REPORTED_EVENT_MAX_BYTES);
+pass('reported bytes are capped', 'one event cannot trip every warning by itself');
+
 
 const cache = createReadCache({ ttlMs: 30000 });
 let reads = 0;
