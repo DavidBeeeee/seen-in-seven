@@ -917,12 +917,20 @@ function scrollThread() {
   if (thread) thread.scrollTop = thread.scrollHeight;
 }
 
+// A pill's pressed state follows its highlight, so a screen reader hears what shows.
+function syncPillsPressed(group) {
+  group.querySelectorAll('.ugc-pill-btn').forEach(pill => pill.setAttribute('aria-pressed', String(pill.classList.contains('active'))));
+}
+
 function switchMobileTab(tab) {
   mobileActiveTab = tab;
   const chatPane = storyEl('story-pane-chat');
   const scriptPane = storyEl('story-output');
   const btnChat = storyEl('tab-btn-chat');
   const btnScript = storyEl('tab-btn-script');
+
+  if (btnChat) btnChat.setAttribute('aria-selected', String(tab === 'chat'));
+  if (btnScript) btnScript.setAttribute('aria-selected', String(tab !== 'chat'));
 
   if (tab === 'chat') {
     if (btnChat) btnChat.classList.add('active');
@@ -1279,6 +1287,7 @@ function renderUgcProject(project) {
 
     const apprBtns = storyEl('ugc-approach-select').querySelectorAll('.ugc-pill-btn');
     apprBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.approach === (ugcState.salesApproach || 'help-decide')));
+    syncPillsPressed(storyEl('ugc-approach-select'));
   } else if (currentStep === 'experience') {
     if (stepEntry) stepEntry.hidden = true;
     if (stepExp) stepExp.hidden = false;
@@ -1287,6 +1296,18 @@ function renderUgcProject(project) {
     const exp = ugcState.creatorExperience || {};
     const expBtns = storyEl('ugc-experience-select').querySelectorAll('.ugc-pill-btn');
     expBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.exp === (exp.used || 'used')));
+    syncPillsPressed(storyEl('ugc-experience-select'));
+    // A reopened project shows the style and length it saved, not the defaults.
+    const styleGroup = storyEl('ugc-style-select');
+    if (styleGroup) {
+      styleGroup.querySelectorAll('.ugc-pill-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.style === (ugcState.outputStyle || 'script')));
+      syncPillsPressed(styleGroup);
+    }
+    const durationGroup = storyEl('ugc-duration-select');
+    if (durationGroup) {
+      durationGroup.querySelectorAll('.ugc-pill-btn').forEach(btn => btn.classList.toggle('active', btn.dataset.duration === String(ugcState.durationSeconds || 60)));
+      syncPillsPressed(durationGroup);
+    }
     storyEl('ugc-creator-notes').value = exp.observations || '';
 
     renderUgcResearchStatus(ugcState);
@@ -1553,6 +1574,7 @@ function initUgcListeners() {
       if (!btn || !activeStory) return;
       approachSelect.querySelectorAll('.ugc-pill-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      syncPillsPressed(approachSelect);
       if (!activeStory.intake.ugc) activeStory.intake.ugc = {};
       activeStory.intake.ugc.salesApproach = btn.dataset.approach;
       queueStorySave();
@@ -1681,6 +1703,7 @@ function initUgcListeners() {
       if (!btn || !activeStory) return;
       expSelect.querySelectorAll('.ugc-pill-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      syncPillsPressed(expSelect);
       if (!activeStory.intake.ugc) activeStory.intake.ugc = {};
       if (!activeStory.intake.ugc.creatorExperience) activeStory.intake.ugc.creatorExperience = {};
       activeStory.intake.ugc.creatorExperience.used = btn.dataset.exp;
@@ -1747,6 +1770,7 @@ function initUgcListeners() {
       if (!btn || !activeStory || !activeStory.intake.ugc) return;
       styleSelect.querySelectorAll('.ugc-pill-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      syncPillsPressed(styleSelect);
       activeStory.intake.ugc.outputStyle = btn.dataset.style;
       queueStorySave();
     });
@@ -1759,6 +1783,7 @@ function initUgcListeners() {
       if (!btn || !activeStory || !activeStory.intake.ugc) return;
       durationSelect.querySelectorAll('.ugc-pill-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
+      syncPillsPressed(durationSelect);
       activeStory.intake.ugc.durationSeconds = parseInt(btn.dataset.duration, 10) || 60;
       queueStorySave();
     });

@@ -606,6 +606,38 @@ async function keyboardWalk(browser) {
 
 // ── 4. Lifecycle & Feature Coverage ────────────────────────────────────────
 async function lifecyclePass(browser) {
+  // WO-20261104-latemorning review: what a screen reader hears follows what shows.
+  {
+    const { context, page } = await open(browser, 'finished', { width: 375 });
+    const selected = () => page.evaluate(() => ['tab-btn-chat', 'tab-btn-script'].map(id => {
+      const tab = document.getElementById(id);
+      return tab.getAttribute('aria-selected') + '/' + tab.classList.contains('active');
+    }).join(' '));
+    await page.locator('#tab-btn-chat').click();
+    const onChat = await selected();
+    await page.locator('#tab-btn-script').click();
+    const onScript = await selected();
+    await page.locator('#tab-btn-chat').click();
+    const backOnChat = await selected();
+    check('Mobile tabs: selection exposed to assistive technology matches Chat, Script, Chat',
+      onChat === 'true/true false/false' && onScript === 'false/false true/true' && backOnChat === onChat, [onChat, onScript, backOnChat].join(' | '));
+    await context.close();
+  }
+  {
+    const { context, page } = await open(browser, 'ugc', { width: 1280 });
+    const pills = await page.evaluate(() => {
+      const state = (selector) => [...document.querySelectorAll(selector + ' .ugc-pill-btn')].map(b => b.getAttribute('aria-pressed') === String(b.classList.contains('active')));
+      document.querySelector('[data-approach="direct"]').click();
+      document.querySelector('[data-exp="not-yet"]').click();
+      document.querySelector('[data-style="points"]').click();
+      document.querySelector('[data-duration="30"]').click();
+      const all = ['#ugc-approach-select', '#ugc-experience-select', '#ugc-style-select', '#ugc-duration-select'].flatMap(state);
+      return { allMatch: all.length > 0 && all.every(Boolean), count: all.length, direct: document.querySelector('[data-approach="direct"]').getAttribute('aria-pressed'), thirty: document.querySelector('[data-duration="30"]').getAttribute('aria-pressed'), sixty: document.querySelector('[data-duration="60"]').getAttribute('aria-pressed') };
+    });
+    check('UGC pills: aria-pressed follows the highlight on every group after a click', pills.allMatch && pills.direct === 'true' && pills.thirty === 'true' && pills.sixty === 'false', JSON.stringify(pills));
+    await context.close();
+  }
+
   // Archive is reversible, content-preserving, and never hides an unconfirmed
   // write. With only archived chats, this is still a returning member.
   {
