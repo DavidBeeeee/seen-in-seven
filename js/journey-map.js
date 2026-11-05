@@ -150,7 +150,7 @@ ${PART_JOBS[number].map((job, index) => `${index + 1}. ${job}`).join('\n\n')}
 
 ONE DEVELOPING STORY
 
-Before you write the map, privately name the one question that connects all seven parts, and how each part changes what a viewer understands about it. The events do not need to cause one another, but each must reveal a different side of the same human struggle, and the stakes should build instead of resetting. Never invent a reason two events are connected. The connection can be emotional, thematic, or chronological, as long as it is believable.
+Before you write the map, privately name the one question that connects all seven parts, and how each part changes what a viewer understands about it. The events do not need to cause one another, but each must reveal a different side of the same human struggle, and the stakes should build instead of resetting. Do not force a connection between two events. It can be emotional, thematic, or chronological, as long as it is believable.
 
 The fall comes before the larger truth and the return. Beyond that, choose the order that builds best, without any part depending on something I had not yet lived through.
 
