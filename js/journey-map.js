@@ -66,7 +66,7 @@
       'The first realization: one thing I personally believed and acted on, then one specific moment or pattern that it could not explain. It must be my own old belief. An opinion about my industry does not count unless an experience of mine broke it.',
       'The test: one specific day or conversation, not how things usually went, where I acted on that new view before I had proof, the moment the old way looked better, what I chose, and the small result. Things can still be recovered here. A general habit or confession does not count. Stop before the fall.',
       'The fall: one failure or collapse. What I had built or hoped for, the choices that were mine even if other people played a part, what it cost in plain terms that cannot be taken back, and what I believed was over. Leave me inside it, with no lesson, recovery, way back, or silver lining.',
-      'The larger truth: one thing I do now that most people would call wrong or backwards, the experience or repeated evidence behind it, and one place someone can see me doing it. Describing what I offer does not count, a realization about myself does not count, and a second failure does not count. A sensible person should be able to argue with it. It must be a different idea from Part 3, and more than the reverse of the mistake in Part 5.',
+      'The larger truth: one thing I do now that most people would call wrong or backwards, the experience or repeated evidence behind it, and one place someone can see me doing it. Describing what I offer does not count, a realization about myself does not count, and a second failure does not count. A sensible person should be able to argue with it. Open the part with what I do, in the present tense, not with the moment I realized it. It must be a different idea from Part 3, and more than the reverse of the mistake in Part 5.',
       'The return: one thing someone could see me doing now that the person in Part 2 would not have done, what makes my way of working different, what is honestly still unfinished, and where I am heading. No recap, no new lesson, no pitch.'
     ]
   };
@@ -108,6 +108,8 @@
 
 Research me as thoroughly as your available tools and access allow. Use everything you already know about me from memory, prior conversations, connected files, projects, notes, previous writing, uploaded materials, and public information you can find about me, my work, or my business. Look for repeated stories, unusual experiences, contradictions, turning points, failures, values, phrases I repeat, vocabulary, sentence patterns, humor, emotional tone, speaking cadence, and the difference between how I describe myself and what my history shows.
 
+Before you offer me anything, privately list at least 20 specific moments from my life: single conversations, named people, odd side projects, small embarrassments, things that happened once, and things I mentioned in passing. The first events you think of are the milestones I have already told everyone, like my jobs, my big decisions, and my best-known projects. Treat those as the least interesting material on the list. Use one only when nothing else on the list does the job better.
+
 Do not ask me to repeat information you can already find or reasonably connect. Make strong connections across the available evidence, then go past it. You have creative freedom: infer motives and moments I never mentioned, connect experiences I have never connected, combine related memories, compress timelines, and invent plausible details when the material is thin. The whole point is to uncover things I would never have said or thought of myself. A vivid guess I can react to is worth more than a safe summary of what I already told you.
 
 HOW TO TALK TO ME
@@ -123,7 +125,7 @@ Then say: "Here are three things you could talk about. Which one feels right?"
 Give me three distinct core story seeds, about 40 words each, with:
 - a short name
 - the tension at its center, stated as an open question rather than the answer
-- the events that could carry it: the moment an old belief broke, the first test, the fall, and the larger truth
+- the events that could carry it, different from the events in the other two ideas: the moment an old belief broke, the first test, the fall, and the larger truth
 - a sentence in language close to the way I speak
 
 Do not write the full seven-part map yet. Let me choose one, combine them, or tell you what feels wrong. That choice is usually the only thing you need from me.
@@ -140,6 +142,7 @@ The map is seven different stories, not one idea explained seven ways. Each part
 - Do not state the main lesson early and then repeat it. Each part knows only what I knew at that point in the story. The biggest truth does not appear until Part 6.
 - Each part must make sense on its own. Name the job, person, project, or period instead of saying "that job" or "what happened."
 - No part describes a product, program, service, or resume. If I built something, tell what happened while I was building it.
+- Only one project, job, or period may appear in more than one part. The thread connects the parts. The same few milestones do not.
 
 WHAT EACH PART MUST DO
 
@@ -148,12 +151,13 @@ ${PART_JOBS[number].map((job, index) => `${index + 1}. ${job}`).join('\n\n')}
 Before you show me the map, check every part privately. Do not show me this check.
 - Name its subject in one short sentence. If two parts have the same subject or the same point, rebuild one of them using a different event.
 - It holds one event. If it lists several, keep the one that fits its job best and leave the others out.
+- Compare its event with your private list. If it uses an obvious milestone and a smaller, stranger moment on the list could do the job, use the smaller moment.
 - A stranger could picture it: a place or period, a person or project, and what happened in order. If it reads like a summary or a description of my work, it is not finished.
 - It contains every piece its job asks for. If a piece is missing, imagine it.
-- Part 4: name the day or conversation it happens in. If you cannot, it is still describing how things usually went, so rebuild it around one.${number === 2 ? `
+- Part 4: name the day or conversation it happens in, who was there, and one thing someone said. If you cannot, it is still describing how things usually went, so rebuild it around one.${number === 2 ? `
 - Part 6: write one sentence saying what I do, then one sentence with the objection a sensible person would raise against it. If there is no real objection, or the sentence describes something I realized instead of something I do, rebuild the part around a practice that has one.` : ''}
 
-Never leave a part thin. Do not explain which details you inferred or invented. I will read the map and change anything that does not feel right.
+Never leave a part thin. Do not explain which details you inferred or invented, and write them as plain events, never as "I can imagine" or "probably." I will read the map and change anything that does not feel right.
 
 Give me the finished map inside one plain-text code block so I can copy it with the copy button and paste it straight into SeenInSeven. These are private story notes for a later writer, not narration, so say plainly what happened, in the order it happened, with the names and details that make it real. Write each part as one full paragraph. Use as much space as each part needs to hold everything its job asks for, usually 100 to 200 words. Never compress a story into a summary to make it shorter. The block must contain exactly seven lines and nothing else:
 
