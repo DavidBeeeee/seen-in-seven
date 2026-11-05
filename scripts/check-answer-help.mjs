@@ -180,10 +180,8 @@ const journeyPrompt = journeyHelper.buildHelperPrompt(
 ].forEach(value => {
   if (!journeyPrompt.includes(value)) throw new Error(`Journey helper prompt is missing: ${value}`);
 });
-if (!appSource.includes("${count} / 60 words") ||
-    !appSource.includes("count > 60") ||
-    appSource.includes("${count} / 25 words")) {
-  throw new Error('Journey direction editing does not match the new 60-word guidance.');
+if (appSource.includes("/ 60 words") || appSource.includes("count > 60") || appSource.includes("/ 25 words")) {
+  throw new Error('Journey direction editing must not show a word limit. Each part holds a full story.');
 }
 
 if (!html.includes('id="answer-help-overlay"') || !/\/js\/answer-help\.js\?v=[^"]+/.test(html)) {

@@ -1399,6 +1399,11 @@ function journeyWordCount(value) {
   return String(value || '').trim().split(/\s+/).filter(Boolean).length;
 }
 
+// A full story part should be readable without scrolling inside its own box.
+function journeyAnswerRows(value) {
+  return Math.max(3, Math.min(14, Math.ceil(journeyWordCount(value) / 13)));
+}
+
 function journeyOnboardingContext() {
   const p2 = ensurePhase2();
   return [
@@ -1445,7 +1450,7 @@ function renderJourneyMap() {
       '<h3>Copy your Story Discovery guide.</h3><p>It includes the answers you already gave us, so you do not have to start over.</p>' +
       '<button class="btn-secondary" type="button" onclick="openJourneyHelp()">Open And Copy My Guide</button>' +
       '<div class="journey-question-top" style="margin-top:24px;"><span class="journey-step">Step 2</span></div>' +
-      '<h3>Use it with your favorite AI.</h3><p>Let it ask a few questions. Pick the story that feels most true to you.</p>' +
+      '<h3>Use it with your favorite AI.</h3><p>Pick the story that feels most true to you. Then it will ask what really happened, for as many rounds as it needs. Short, messy answers are fine.</p>' +
       '<div class="journey-question-top" style="margin-top:24px;"><span class="journey-step">Step 3</span></div>' +
       '<h3>Paste the seven numbered answers below.</h3>' +
       '<label for="journey-import" style="margin-top:24px;display:block;">Paste your finished seven-part map</label>' +
@@ -1476,11 +1481,11 @@ function renderJourneyMap() {
       <article class="journey-question-card">
         <div class="journey-question-top">
           <span class="journey-step">Part ${index + 1} of Your Story</span>
-          <span class="journey-word-count${count > 60 ? ' over' : ''}" id="journey-count-${index}">${count} / 60 words</span>
+          <span class="journey-word-count" id="journey-count-${index}">${count} ${count === 1 ? 'word' : 'words'}</span>
         </div>
         <label for="journey-answer-${index}">${escapeHTML(question)}</label>
         <p class="journey-question-explainer">${escapeHTML((SISJourneyMap.EXPLANATIONS[level] || [])[index] || '')}</p>
-        <textarea class="journey-answer-input" id="journey-answer-${index}" rows="3" placeholder="One or two focused sentences work well."
+        <textarea class="journey-answer-input" id="journey-answer-${index}" rows="${journeyAnswerRows(value)}" placeholder="Say what happened, in your own words."
           oninput="setJourneyMapAnswer(${index}, this.value)">${escapeHTML(value)}</textarea>
         <div class="journey-question-actions">
           <button class="journey-ai-btn" type="button" onclick="openJourneyPartHelp(${index})">Use My AI To Help</button>
@@ -1516,7 +1521,7 @@ function renderJourneyReview() {
     return `<section class="journey-review-item${unfinished ? ' unfinished' : ''}">
       <div class="journey-review-heading"><span>${index + 1}</span><strong>${escapeHTML(label)}</strong></div>
       ${unfinished ? '<p>We’ll help fill this in later.</p>' : ''}
-      <textarea class="journey-answer-input" rows="3" placeholder="You can leave this unfinished for now."
+      <textarea class="journey-answer-input" rows="${journeyAnswerRows(value)}" placeholder="You can leave this unfinished for now."
         oninput="setJourneyMapAnswer(${index}, this.value)">${escapeHTML(value)}</textarea>
     </section>`;
   }).join('');
@@ -1589,7 +1594,7 @@ function openJourneyPartHelp(index) {
   const field = document.getElementById('journey-help-prompt');
   const overlay = document.getElementById('journey-help-overlay');
   if (title) title.textContent = 'Get help with Part ' + (Number(index) + 1) + '.';
-  if (description) description.textContent = 'Copy this into the AI you already use. It will ask at most two short questions, then give you one answer to paste here.';
+  if (description) description.textContent = 'Copy this into the AI you already use. It will ask what really happened, then give you one paragraph to paste here.';
   if (field) field.value = prompt;
   if (overlay) overlay.hidden = false;
   if (typeof logEvent === 'function') logEvent('journey_part_help_opened', { level: journeyMapLevel, part: Number(index) + 1 });
@@ -1601,8 +1606,7 @@ function setJourneyMapAnswer(index, value) {
   const count = journeyWordCount(value);
   const label = document.getElementById('journey-count-' + index);
   if (label) {
-    label.textContent = count + ' / 60 words';
-    label.classList.toggle('over', count > 60);
+    label.textContent = count + (count === 1 ? ' word' : ' words');
   }
   clearTimeout(videoAnswerSaveTimer);
   videoAnswerSaveTimer = setTimeout(saveProgress, 600);

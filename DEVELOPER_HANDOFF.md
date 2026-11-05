@@ -18,6 +18,13 @@ Before planning or implementing roadmap work, read `SEENINSEVEN_ROADMAP.md`.
 
 This handoff remains the source of truth for architecture, stack, debugging history, and current implementation shape. Its older roadmap notes are partially superseded by `SEENINSEVEN_ROADMAP.md`, especially around admin priorities, test-user timing, delayed email nudges, delayed paid access, removed posted-vs-filmed work, and the placeholder-only gamification phase.
 
+## November 5, 2026: Story Discovery asks for full stories
+
+- This replaces the 60-word guidance in the July record below. David's finding: the map came back as summaries because the guide asked the wrong way, so the fix belongs in the guide, not in each member's answers.
+- The guide in `js/journey-map.js` now interviews for real events after a story is chosen, with no question limit, hardest parts first. An AI that has no event must ask or say what is missing. It may no longer write a plausible version.
+- Each part is one paragraph, usually 100 to 200 words. The paste box keeps up to 4,000 characters per part instead of cutting at 600. The on-page counter shows a count with no limit.
+- `api/generate.js` accepts 90,000 characters of story context, and only the active video's part is sent. Existing saved maps are not rewritten.
+
 ## August 11, 2026: WorkerBee Dashboard hides archived completion history
 
 The private `/dashboard` completed-work filter now requires both `kind === 'completed'` and `status === 'completed'`. Previously, a record archived as `deferred` still appeared because the browser filtered only by kind. This is deliberately limited to David's private WorkerBee workspace and does not touch SeenInSeven customer flows, authentication, prompts, access, or data. WorkerBee's portable projection applies the same rule.

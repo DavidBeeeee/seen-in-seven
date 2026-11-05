@@ -117,6 +117,24 @@ for (const level of [1, 2]) {
   }
 }
 
+// A part is a full story (2026-11-05). Sixty words forced a summary, the box cut
+// every part at 600 characters, and "best plausible version" let an outside AI
+// write around a missing event instead of asking the member what happened.
+const longStory = 'word '.repeat(330).trim();
+const longParts = map.parseImportedMap(seven(n => `${n}. ${longStory}`));
+if (!longParts || longParts.some(part => part !== longStory)) throw new Error('The paste box cut a full-length story part.');
+for (const level of [1, 2]) {
+  const fullGuide = map.buildHelperPrompt(level, '', '');
+  for (const value of ['no more than 60', 'one or two', 'plausible', 'up to three']) {
+    if (fullGuide.toLowerCase().includes(value)) throw new Error(`The Level ${level} guide still says: ${value}`);
+  }
+  for (const value of ['ONCE I CHOOSE, GET THE REAL STORIES', 'Ask what happened, not what I learned', 'usually 100 to 200 words', 'It holds one event', 'Never fill the gap']) {
+    if (!fullGuide.includes(value)) throw new Error(`The Level ${level} guide lost: ${value}`);
+  }
+  const partGuide = map.buildPartHelperPrompt(level, 3, '', []);
+  if (partGuide.includes('no more than 60') || !partGuide.includes('usually 100 to 200 words')) throw new Error(`The Level ${level} part helper still asks for a summary.`);
+}
+
 if (!/id="journey-import-error" role="alert"/.test(appSource) || !appSource.includes('function journeyImportProblem(') || /field\.placeholder = 'Please paste all seven/.test(appSource)) {
   throw new Error('An unreadable paste must show a visible error, not only change the placeholder.');
 }
