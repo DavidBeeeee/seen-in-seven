@@ -131,10 +131,11 @@ for (const level of [1, 2]) {
   for (const value of ['no more than 60', 'one or two', 'up to three', 'no limit on these questions', 'maximum of five', 'start by asking', 'one short question per message', 'about eight questions', 'ask me for it', 'never invent', 'made up', 'only what is true', 'real event']) {
     if (fullGuide.toLowerCase().includes(value)) throw new Error(`The Level ${level} guide still says: ${value}`);
   }
-  for (const value of ['ONCE I CHOOSE, WRITE THE MAP', 'with no questions first', 'Never ask me anything you already know', 'That choice is usually the only thing you need from me', 'never more than two in all', 'The map itself gets all the space it needs', 'follow the job', 'one specific day or conversation', 'cannot be taken back', 'way back', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version', 'HOW TO TALK TO ME']) {
+  for (const value of ['ONCE I CHOOSE, WRITE THE MAP', 'with no questions first', 'Never ask me anything you already know', 'That choice is usually the only thing you need from me', 'never more than two in all', 'The map itself gets all the space it needs', 'follow the job', 'name the day or conversation', 'one specific day or conversation', 'cannot be taken back', 'way back', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version', 'HOW TO TALK TO ME']) {
     if (!fullGuide.includes(value)) throw new Error(`The Level ${level} guide lost: ${value}`);
   }
   if (level === 2 && !fullGuide.includes('a realization about myself does not count')) throw new Error('Level 2 Part 6 must stay a way of working someone could argue with.');
+  if ((level === 2) !== fullGuide.includes('the objection a sensible person would raise')) throw new Error('The objection test belongs on Level 2 Part 6 only.');
   const partGuide = map.buildPartHelperPrompt(level, 3, '', []);
   if (partGuide.includes('no more than 60') || !partGuide.includes('Do not ask me questions') || partGuide.includes('never invent') || !partGuide.includes('invent plausible details') || !partGuide.includes('usually 100 to 200 words')) throw new Error(`The Level ${level} part helper still asks for a summary.`);
 }

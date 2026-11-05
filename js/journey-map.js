@@ -150,6 +150,8 @@ Before you show me the map, check every part privately. Do not show me this chec
 - It holds one event. If it lists several, keep the one that fits its job best and leave the others out.
 - A stranger could picture it: a place or period, a person or project, and what happened in order. If it reads like a summary or a description of my work, it is not finished.
 - It contains every piece its job asks for. If a piece is missing, imagine it.
+- Part 4: name the day or conversation it happens in. If you cannot, it is still describing how things usually went, so rebuild it around one.${number === 2 ? `
+- Part 6: write one sentence saying what I do, then one sentence with the objection a sensible person would raise against it. If there is no real objection, or the sentence describes something I realized instead of something I do, rebuild the part around a practice that has one.` : ''}
 
 Never leave a part thin. Do not explain which details you inferred or invented. I will read the map and change anything that does not feel right.
 
