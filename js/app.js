@@ -466,6 +466,9 @@ async function trackSession() {
 let _screenAnimTimers = [];
 let scriptEditSaveTimer = null;
 let suppressResumeTracking = false;
+// False until this page has its real place. A signed-in load saves during its database
+// restore, and saving the default position then would overwrite the saved level and video.
+let resumePositionApplied = false;
 
 function updateAppBackButton(screenId) {
   const button = document.getElementById('app-back-button');
@@ -476,6 +479,7 @@ function updateAppBackButton(screenId) {
 
 function rememberResumeState(screenId) {
   if (suppressResumeTracking || !screenId || screenId === 'screen-script-loading') return;
+  resumePositionApplied = true;
   const p2 = ensurePhase2();
   p2.resume = {
     screenId,
@@ -7325,7 +7329,7 @@ function saveProgress(options = {}) {
   captureVideoAnswersByLevel();
   if (state.level) archiveActiveJourneyLevel(state.level);
   const phase2 = ensurePhase2();
-  if (phase2.resume) {
+  if (phase2.resume && resumePositionApplied) {
     phase2.resume.currentIndex = currentIndex;
     phase2.resume.journeyPart = journeyOnboardingIndex;
     phase2.resume.videoIndex = currentVideoIndex;
@@ -7441,6 +7445,7 @@ function resumeSavedWorkflow() {
   ensureFullOnboardingOrder();
   const resume = ensurePhase2().resume;
   if (!resume || !resume.screenId || resume.screenId === 'screen-script-loading') {
+    resumePositionApplied = true;
     showDashboard({remember:false});
     return 'dashboard';
   }
@@ -7450,7 +7455,9 @@ function resumeSavedWorkflow() {
     currentVideoIndex = Math.max(0, Math.min(6, Number(resume.videoIndex) || 0));
     journeyOnboardingIndex = Math.max(0, Math.min(6, Number(resume.journeyPart) || 0));
     journeyMapMode = resume.journeyMode || 'onboarding';
-    journeyMapLevel = Number(resume.journeyLevel || state.level || 1) === 2 ? 2 : 1;
+    // Onboarding always belongs to the member's own level. A saved 1 may be left from the old overwrite.
+    journeyMapLevel = Number((journeyMapMode === 'onboarding' ? state.level : resume.journeyLevel) || state.level || 1) === 2 ? 2 : 1;
+    resumePositionApplied = true;
     currentIndex = screenOrder.indexOf(resume.screenId);
     if (currentIndex < 0) currentIndex = 0;
 

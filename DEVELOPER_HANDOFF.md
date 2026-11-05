@@ -20,6 +20,7 @@ This handoff remains the source of truth for architecture, stack, debugging hist
 
 ## November 5, 2026: Story Discovery asks for full stories
 
+- Bug found the same day: a signed-in reload saved the default position during `_restoreFromDatabase`, before `resumeSavedWorkflow` read it, resetting the saved level to 1 and video to 0. A Level 2 member then got the Level 1 guide and pasted into the Level 1 map while scripts read Level 2. Signed-out tests skip that path, so they passed. `resumePositionApplied` now gates the save.
 - This replaces the 60-word guidance in the July record below. David's finding: the map came back as summaries because the guide asked the wrong way, so the fix belongs in the guide, not in each member's answers.
 - The guide in `js/journey-map.js` no longer interviews the member. David's rule: figuring this out is the AI's job, and it must not ask what it already knows. It researches, offers three story ideas, and writes the full map as soon as one is chosen. It may ask one short question at a time, at most two, only for genuine clarification, and asks for one short paragraph if it has almost nothing about the member.
 - The AI keeps its leeway to infer, combine, and invent plausible details, and does not label what it invented. David's rule: holding it to what was said wrecks the process, because the point is to uncover what would otherwise never be said or thought of. The member corrects the map on the review screen.

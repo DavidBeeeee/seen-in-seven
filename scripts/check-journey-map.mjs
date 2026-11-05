@@ -103,6 +103,14 @@ if (!chooseBody.includes("p2.storyMapImportedAt = ''") || chooseBody.indexOf("p2
   throw new Error('chooseStoryDiscovery must clear the import timestamp before saving, or a member can never paste a new map.');
 }
 
+// A signed-in load saves during its database restore, before the page has its place.
+// That save wrote the default level over the saved one, so a Level 2 member got the
+// Level 1 guide and their paste went into the Level 1 map (2026-11-05).
+if (!appSource.includes('if (phase2.resume && resumePositionApplied) {') ||
+    !appSource.includes("journeyMapMode === 'onboarding' ? state.level : resume.journeyLevel")) {
+  throw new Error('A signed-in reload must not overwrite the saved place, and onboarding must use the member level.');
+}
+
 // The map must come back as seven separate story bases, not one idea in seven
 // parts (2026-11-03): every part keeps its own job in both guides, on both levels.
 for (const level of [1, 2]) {
