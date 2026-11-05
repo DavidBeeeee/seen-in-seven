@@ -118,21 +118,22 @@ for (const level of [1, 2]) {
 }
 
 // A part is a full story (2026-11-05). Sixty words forced a summary, the box cut
-// every part at 600 characters, and "best plausible version" let an outside AI
-// write around a missing event instead of asking the member what happened.
+// every part at 600 characters. David, 2026-11-05: the AI keeps its leeway to
+// infer and invent. Holding it to what was said wrecks the process, because the
+// point is to uncover what would otherwise never be said or thought of.
 const longStory = 'word '.repeat(330).trim();
 const longParts = map.parseImportedMap(seven(n => `${n}. ${longStory}`));
 if (!longParts || longParts.some(part => part !== longStory)) throw new Error('The paste box cut a full-length story part.');
 for (const level of [1, 2]) {
   const fullGuide = map.buildHelperPrompt(level, '', '');
-  for (const value of ['no more than 60', 'one or two', 'plausible', 'up to three']) {
+  for (const value of ['no more than 60', 'one or two', 'up to three', 'never invent', 'made up', 'only what is true', 'real event']) {
     if (fullGuide.toLowerCase().includes(value)) throw new Error(`The Level ${level} guide still says: ${value}`);
   }
-  for (const value of ['ONCE I CHOOSE, GET THE REAL STORIES', 'Ask what happened, not what I learned', 'usually 100 to 200 words', 'It holds one event', 'Never fill the gap']) {
+  for (const value of ['ONCE I CHOOSE, FIND THE STORIES', 'Ask what happened, not what I learned', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version']) {
     if (!fullGuide.includes(value)) throw new Error(`The Level ${level} guide lost: ${value}`);
   }
   const partGuide = map.buildPartHelperPrompt(level, 3, '', []);
-  if (partGuide.includes('no more than 60') || !partGuide.includes('usually 100 to 200 words')) throw new Error(`The Level ${level} part helper still asks for a summary.`);
+  if (partGuide.includes('no more than 60') || partGuide.includes('never invent') || !partGuide.includes('invent plausible details') || !partGuide.includes('usually 100 to 200 words')) throw new Error(`The Level ${level} part helper still asks for a summary.`);
 }
 
 if (!/id="journey-import-error" role="alert"/.test(appSource) || !appSource.includes('function journeyImportProblem(') || /field\.placeholder = 'Please paste all seven/.test(appSource)) {

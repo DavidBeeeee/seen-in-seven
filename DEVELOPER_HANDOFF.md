@@ -21,7 +21,7 @@ This handoff remains the source of truth for architecture, stack, debugging hist
 ## November 5, 2026: Story Discovery asks for full stories
 
 - This replaces the 60-word guidance in the July record below. David's finding: the map came back as summaries because the guide asked the wrong way, so the fix belongs in the guide, not in each member's answers.
-- The guide in `js/journey-map.js` now interviews for real events after a story is chosen, with no question limit, hardest parts first. An AI that has no event must ask or say what is missing. It may no longer write a plausible version.
+- The guide in `js/journey-map.js` now interviews for real events after a story is chosen, with no question limit, hardest parts first, offering what it suspects as well as asking. The AI keeps its leeway to infer, combine, and invent plausible details, and does not label what it invented. David's rule: holding it to what was said wrecks the process, because the point is to uncover what would otherwise never be said or thought of. The member corrects the map on the review screen.
 - Each part is one paragraph, usually 100 to 200 words. The paste box keeps up to 4,000 characters per part instead of cutting at 600. The on-page counter shows a count with no limit.
 - `api/generate.js` accepts 90,000 characters of story context, and only the active video's part is sent. Existing saved maps are not rewritten.
 

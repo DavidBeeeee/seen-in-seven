@@ -53,19 +53,19 @@
   const PART_JOBS = {
     1: [
       'The decision: what I am finally ready to be seen for, who it is for, and the specific thing that has kept me quiet. It is happening now. Leave out my history, my realizations, my failure, and how this turns out.',
-      'The ordinary life: a real period, place, or routine from before things changed, what made it feel normal, and one thing I did or avoided that kept it that way. Answer from who I was then, with no wisdom from later.',
+      'The ordinary life: a period, place, or routine from before things changed, what made it feel normal, and one thing I did or avoided that kept it that way. Answer from who I was then, with no wisdom from later.',
       'The first realization: one thing I personally believed and acted on, then one specific moment or pattern that it could not explain. It must be my own old belief, not a complaint about other people.',
-      'The test: one real situation where I first lived by that new understanding, the moment the old way looked easier, what I chose, and the partial win or confidence it gave me. Things can still be recovered here. Stop before the fall.',
-      'The fall: one real failure, loss, or collapse. What I had that mattered, the part that was my fault even if other people played a part, what it cost, and what I believed was over. Leave me inside it, with no lesson, recovery, or silver lining.',
+      'The test: one situation where I first lived by that new understanding, the moment the old way looked easier, what I chose, and the partial win or confidence it gave me. Things can still be recovered here. Stop before the fall.',
+      'The fall: one failure, loss, or collapse. What I had that mattered, the part that was my fault even if other people played a part, what it cost, and what I believed was over. Leave me inside it, with no lesson, recovery, or silver lining.',
       'The larger truth: what I could only understand after the fall, the aftermath that showed it to me, and one thing I now visibly do differently. It must be new, not Part 3 again.',
       'The return: one thing someone could see me doing now that the person in Part 2 would not have done, what is honestly still unfinished, and where I am heading. No recap, no new lesson, no pitch.'
     ],
     2: [
       'The decision: what I am committing to say publicly, who it is for, and the specific thing that has kept me quiet. It is happening now. State the subject, not the answer. Leave out my history, my realizations, my failure, and my main lesson.',
-      'The ordinary life: the real job, place, or period where this began, the ability that kept showing up, and one thing I did or avoided that kept me from taking it seriously. Answer from who I was then. I am not an expert yet.',
-      'The first realization: one thing I personally believed and acted on, then one specific moment or pattern that it could not explain. It must be my own old belief. An opinion about my industry does not count unless a real experience of mine broke it.',
-      'The test: one real situation where I acted on that new view before I had proof, the moment the old way looked better, what I chose, and the small real result. Things can still be recovered here. A general habit or confession does not count. Stop before the fall.',
-      'The fall: one real failure or collapse. What I had built or hoped for, the choices that were mine even if other people played a part, what it cost, and what I believed was over. Leave me inside it, with no lesson, recovery, or silver lining.',
+      'The ordinary life: the job, place, or period where this began, the ability that kept showing up, and one thing I did or avoided that kept me from taking it seriously. Answer from who I was then. I am not an expert yet.',
+      'The first realization: one thing I personally believed and acted on, then one specific moment or pattern that it could not explain. It must be my own old belief. An opinion about my industry does not count unless an experience of mine broke it.',
+      'The test: one situation where I acted on that new view before I had proof, the moment the old way looked better, what I chose, and the small result. Things can still be recovered here. A general habit or confession does not count. Stop before the fall.',
+      'The fall: one failure or collapse. What I had built or hoped for, the choices that were mine even if other people played a part, what it cost, and what I believed was over. Leave me inside it, with no lesson, recovery, or silver lining.',
       'The larger truth: one thing I do now that most people would call wrong or backwards, the experience or repeated evidence behind it, and one place someone can see me doing it. Describing what I offer does not count. It must be a different idea from Part 3, and more than the reverse of the mistake in Part 5.',
       'The return: one thing someone could see me doing now that the person in Part 2 would not have done, what makes my way of working different, what is honestly still unfinished, and where I am heading. No recap, no new lesson, no pitch.'
     ]
@@ -108,7 +108,7 @@
 
 Research me as thoroughly as your available tools and access allow. Use everything you already know about me from memory, prior conversations, connected files, projects, notes, previous writing, uploaded materials, and public information you can find about me, my work, or my business. Look for repeated stories, unusual experiences, contradictions, turning points, failures, values, phrases I repeat, vocabulary, sentence patterns, humor, emotional tone, speaking cadence, and the difference between how I describe myself and what my history shows.
 
-Do not ask me to repeat information you can already find or reasonably connect. Make strong connections across the available evidence. You may interpret what real events mean and connect them in ways I never have, but the events themselves must be things you found or things I told you.
+Do not ask me to repeat information you can already find or reasonably connect. Make strong connections across the available evidence, then go past it. You have creative freedom: infer motives and moments I never mentioned, connect experiences I have never connected, combine related memories, compress timelines, and invent plausible details when the material is thin. The whole point is to uncover things I would never have said or thought of myself. A vivid guess I can react to is worth more than a safe summary of what I already told you.
 
 First, review my context. Ask only the questions you genuinely need, with a maximum of five questions total.
 
@@ -117,25 +117,26 @@ Then say: "Here are three things you could talk about. Which one feels right?"
 Give me three distinct core story seeds, each with:
 - a short name
 - the tension at its center, stated as an open question rather than the answer
-- the real events from my life that could carry it: the moment an old belief broke, the first test, the fall, and the larger truth
+- the events that could carry it: the moment an old belief broke, the first test, the fall, and the larger truth
 - a sentence in language close to the way I speak
 
 Do not write the full seven-part map yet. Let me choose one, combine them, or explain what feels wrong.
 
-ONCE I CHOOSE, GET THE REAL STORIES
+ONCE I CHOOSE, FIND THE STORIES
 
-Go through WHAT EACH PART MUST DO below and check what you actually have for each part. Whatever is missing, ask me, a few questions at a time, for as many rounds as it takes. There is no limit on these questions, because the finished story can only be as good as what you find out here.
+Go through WHAT EACH PART MUST DO below and see what you have for each part. Where it is thin, ask me, a few questions at a time, for as many rounds as are useful. There is no limit on these questions, because the best material usually comes out here.
 - Start with the parts that are hardest to find: the test, the fall, and the larger truth.
 - Ask what happened, not what I learned: where I was, who was there, what I did, what I said, what happened next, and what it cost.
 - Use plain everyday words, like a curious friend. Do not use story terms or the part names.
 - Short, messy answers are fine. I talk, and you do the organizing. When an answer is thin, ask about that one moment before moving on.
-- If I do not remember something or do not want to share it, find a different real event. Never fill the gap with something made up.
+- Do not only ask. Offer what you suspect, including things I have never said, and let me react. Being wrong in an interesting way often gets me to the true thing.
+- If I do not remember something or do not want to share it, do not stop and do not go generic. Imagine the most compelling plausible version and keep going.
 
 THE MOST IMPORTANT RULE
 
 The map is seven different stories, not one idea explained seven ways. Each part is the private story base for its own short video, and a stranger may see that video first. So:
 - Each part has its own subject: a different event, period, person, or decision. One thread connects them, but every part takes the story somewhere new.
-- Start from what happened. Apart from Part 1, which is a decision being made now, each part needs something real that happened or something I visibly do. A present-tense opinion or reflection about myself cannot carry a part.
+- Start from what happened. Apart from Part 1, which is a decision being made now, each part needs something that happens or something I visibly do, whether you found it or imagined it. A present-tense opinion or reflection about myself cannot carry a part.
 - Do not state the main lesson early and then repeat it. Each part knows only what I knew at that point in the story. The biggest truth does not appear until Part 6.
 - Each part must make sense on its own. Name the job, person, project, or period instead of saying "that job" or "what happened."
 - No part describes a product, program, service, or resume. If I built something, tell what happened while I was building it.
@@ -145,12 +146,12 @@ WHAT EACH PART MUST DO
 ${PART_JOBS[number].map((job, index) => `${index + 1}. ${job}`).join('\n\n')}
 
 Before you show me the map, check every part privately. Do not show me this check.
-- Name its subject in one short sentence. If two parts have the same subject or the same point, rebuild one of them using a different real event.
+- Name its subject in one short sentence. If two parts have the same subject or the same point, rebuild one of them using a different event.
 - It holds one event. If it lists several, keep the one that fits its job best and leave the others out.
 - A stranger could picture it: a place or period, a person or project, and what happened in order. If it reads like a summary or a description of my work, it is not finished.
-- It contains every piece its job asks for. If a piece is missing, go back and ask me for it.
+- It contains every piece its job asks for. If a piece is missing, ask me or imagine it.
 
-If I truly have no real event for a part after you have asked, write only what is true, say in that part what is still missing, and tell me which part it is, outside the block.
+Never leave a part thin. Do not explain which details you inferred or invented. I will read the map and change anything that does not feel right.
 
 After I answer, give me the finished map inside one plain-text code block so I can copy it with the copy button and paste it straight into SeenInSeven. These are private story notes for a later writer, not narration, so say plainly what happened, in the order it happened, with the names and details that make it real. Write each part as one full paragraph. Use as much space as each part needs to hold everything its job asks for, usually 100 to 200 words. Never compress a story into a summary to make it shorter. The block must contain exactly seven lines and nothing else:
 
@@ -170,7 +171,7 @@ Format rules for that block, because the SeenInSeven box reads it by its numbers
 - No other line inside the block starts with a number.
 - Nothing before 1. or after 7. inside the block. Put any note to me outside the block.
 
-Keep my language patterns, vocabulary, rhythm, bluntness, humor, and emotional temperature, but let the facts carry each part rather than the phrasing. Make strong connections when warranted, but never invent concrete facts. Do not turn this into generic coaching, a sales pitch, a polished script, or a motivational speech.
+Keep my language patterns, vocabulary, rhythm, bluntness, humor, and emotional temperature, but let the events carry each part rather than the phrasing. Do not turn this into generic coaching, a sales pitch, a polished script, or a motivational speech.
 
 LEVEL ${number} MAP QUESTIONS
 
@@ -283,7 +284,7 @@ ${sourceContext ? `CONTEXT I HAVE ALREADY PROVIDED TO SEENINSEVEN\n\n${sourceCon
 
 Match my actual language patterns, favorite words, sentence length, speaking cadence, rhythm, bluntness, humor, emotional tone, and the way I naturally tell stories. The answer should sound spoken by me, not polished by a copywriter. Do not turn it into marketing copy.
 
-Ask me what you need to know, a couple of short questions at a time, about what actually happened: where I was, who was there, what I did, and what it led to. Then give me one first-person paragraph that I can paste into SeenInSeven. Use as much space as it takes to hold everything this part must do, usually 100 to 200 words, and never compress it into a summary. Keep it natural and specific. Use only things that really happened, never invent facts, and make sure it stands on its own for a stranger.
+Ask me what you need to know, a couple of short questions at a time, about what happened: where I was, who was there, what I did, and what it led to. Then give me one first-person paragraph that I can paste into SeenInSeven. Use as much space as it takes to hold everything this part must do, usually 100 to 200 words, and never compress it into a summary. Keep it natural and specific. Go past what I tell you: infer, connect, and invent plausible details when the material is thin, and do not explain what you invented. Make sure it stands on its own for a stranger.
 
 This part is the story base for one separate video in a seven-part series. It needs its own subject. Do not repeat the point of an earlier part, and do not give away a later part.
 
