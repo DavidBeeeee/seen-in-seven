@@ -124,16 +124,17 @@ for (const level of [1, 2]) {
 // David, same day: no interview. The AI works it out, the member only picks a story,
 // and it never asks what it already knows. It may ask only for genuine clarification.
 // Later runs wrote well about the same five milestones, so it must now search past them.
-// The next run gained variety and lost continuity, so the cause-and-effect chain outranks novelty.
+// A strict cause-and-effect chain then pushed it back to those milestones, so the
+// parts share one question and build emotionally without having to cause each other.
 const longStory = 'word '.repeat(330).trim();
 const longParts = map.parseImportedMap(seven(n => `${n}. ${longStory}`));
 if (!longParts || longParts.some(part => part !== longStory)) throw new Error('The paste box cut a full-length story part.');
 for (const level of [1, 2]) {
   const fullGuide = map.buildHelperPrompt(level, '', '');
-  for (const value of ['no more than 60', 'one or two', 'up to three', 'no limit on these questions', 'maximum of five', 'start by asking', 'one short question per message', 'about eight questions', 'ask me for it', 'never invent', 'made up', 'only what is true', 'real event']) {
+  for (const value of ['no more than 60', 'one or two', 'up to three', 'no limit on these questions', 'maximum of five', 'what part 4 starts', 'run in time order', 'start by asking', 'one short question per message', 'about eight questions', 'ask me for it', 'never invent', 'made up', 'only what is true', 'real event']) {
     if (fullGuide.toLowerCase().includes(value)) throw new Error(`The Level ${level} guide still says: ${value}`);
   }
-  for (const value of ['ONCE I CHOOSE, WRITE THE MAP', 'with no questions first', 'Never ask me anything you already know', 'That choice is usually the only thing you need from me', 'never more than two in all', 'The map itself gets all the space it needs', 'follow the job', 'ONE DEVELOPING STORY', 'run in time order', 'A connected story beats a surprising event', 'the moment it hit me hardest', 'privately list at least 20 specific moments', 'Only one project, job, or period', 'use the smaller moment', 'name the day or conversation', 'one specific day or conversation', 'cannot be taken back', 'way back', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version', 'HOW TO TALK TO ME']) {
+  for (const value of ['ONCE I CHOOSE, WRITE THE MAP', 'with no questions first', 'Never ask me anything you already know', 'That choice is usually the only thing you need from me', 'never more than two in all', 'The map itself gets all the space it needs', 'follow the job', 'ONE DEVELOPING STORY', 'the one question that connects all seven parts', 'do not need to cause one another', 'pull you back to the obvious milestones', 'does not pass', 'the moment it hit me hardest', 'privately list at least 20 specific moments', 'Only one project, job, or period', 'use the smaller moment', 'name the day or conversation', 'one specific day or conversation', 'cannot be taken back', 'way back', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version', 'HOW TO TALK TO ME']) {
     if (!fullGuide.includes(value)) throw new Error(`The Level ${level} guide lost: ${value}`);
   }
   if (level === 2 && !fullGuide.includes('a realization about myself does not count')) throw new Error('Level 2 Part 6 must stay a way of working someone could argue with.');

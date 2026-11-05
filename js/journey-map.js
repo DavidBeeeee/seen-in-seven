@@ -150,15 +150,19 @@ ${PART_JOBS[number].map((job, index) => `${index + 1}. ${job}`).join('\n\n')}
 
 ONE DEVELOPING STORY
 
-Before you write the map, privately write the chain: one sentence for each step, saying how that part makes the next one possible, necessary, or more meaningful. The realization in Part 3 leads to the test in Part 4. What Part 4 starts is usually what falls apart in Part 5. Part 6 comes out of that wreckage, and Part 7 is where it has brought me. Parts 2 through 7 run in time order, so nothing in a part happens before the part ahead of it. If two interesting events do not connect, replace one instead of inventing a reason they belong together. A connected story beats a surprising event every time.
+Before you write the map, privately name the one question that connects all seven parts, and how each part changes what a viewer understands about it. The events do not need to cause one another, but each must reveal a different side of the same human struggle, and the stakes should build instead of resetting. Never invent a reason two events are connected. The connection can be emotional, thematic, or chronological, as long as it is believable.
+
+The fall comes before the larger truth and the return. Beyond that, choose the order that builds best, without any part depending on something I had not yet lived through.
+
+A small event that exposes something surprising about me is worth more than a major accomplishment that explains my career. Do not let the need for a connected story pull you back to the obvious milestones.
 
 Before you show me the map, check every part privately. Do not show me this check.
 - Name its subject in one short sentence. If two parts have the same subject or the same point, rebuild one of them using a different event.
 - It holds one event. If it lists several, keep the one that fits its job best and leave the others out.
-- Compare its event with your private list. If it uses an obvious milestone and a smaller, stranger moment on the list could do the job and the chain still holds, use the smaller moment.
+- Compare its event with your private list. If it uses an obvious milestone and a smaller, stranger moment on the list could do the job, use the smaller moment.
 - A stranger could picture it: a place or period, a person or project, and what happened in order. If it reads like a summary or a description of my work, it is not finished.
 - It contains every piece its job asks for. If a piece is missing, imagine it.
-- Part 4: name the day or conversation it happens in, who was there, and one thing someone said. If you cannot, it is still describing how things usually went, so rebuild it around one.${number === 2 ? `
+- Part 4: name the day or conversation it happens in, who was there, and one thing someone said. "One of my meetings" or "an entrepreneur" does not pass. If you cannot, it is still describing how things usually went, so rebuild it around one.${number === 2 ? `
 - Part 6: write one sentence saying what I do, then one sentence with the objection a sensible person would raise against it. If there is no real objection, or the sentence describes something I realized instead of something I do, rebuild the part around a practice that has one.` : ''}
 
 Never leave a part thin. Do not explain which details you inferred or invented, and write them as plain events, never as "I can imagine" or "probably." I will read the map and change anything that does not feel right.
