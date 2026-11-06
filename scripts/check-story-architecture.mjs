@@ -22,6 +22,7 @@ import {
   preserveViewerPremiseSource,
   tightenVideoOneMeat,
   addWriterContract,
+  enforceEpiphanyRule,
   VIDEO_SEVEN_RETURN_ANCHORS,
   VIDEO_SEVEN_RETURN_HEADINGS,
   VIDEO_SEVEN_RETURN_SYSTEM,
@@ -529,6 +530,18 @@ for (const beat of ['DISCOVERY ARC', 'COGNITIVE REFRAME', 'AHA TRANSFER', 'COST 
   assert(addWriterContract('X', 3).includes(beat), 'The 5E contract lost ' + beat + '.');
 }
 assert(promptTestSource.includes('addWriterContract(preserveViewerPremiseSource(userMessage, preparedUserMessage, video), video)'), 'The Prompt Tester must use the same writer contract.');
+
+// The Epiphany rule is gated, and any failed gate keeps the finished script.
+const gateScript = '[HOOK]\nA strange thing happened.\n\n[OPEN LOOP]\nWhy did the room keep working?\n\n[MEAT]\nI ran the room again. People kept coming back. The lesson is that rooms need people. Nobody could explain it.\n\n[CONCLUSION]\nI still have not decided.\n\n[CTA]\nFollow along because the next part of this 7 Video Challenge is next.';
+const gateConfig = { video: 6, level: 2, userMessage: '', systemPrompt: '' };
+const gateReply = JSON.stringify({ pass: false, problems: ['leak'], replacements: { MEAT: 'I ran the room again. People kept coming back. Nobody could explain it.', CONCLUSION: 'Proof comes from people.', HOOK: 'Must be ignored.' } });
+const gated = await enforceEpiphanyRule(gateScript, gateConfig, async () => gateReply);
+assert(!gated.includes('The lesson is') && gated.includes('Proof comes from people.') && gated.includes('A strange thing happened.') && !gated.includes('Must be ignored.'), 'The Epiphany gate must repair only MEAT, CONCLUSION, and CTA.');
+assert(await enforceEpiphanyRule(gateScript, gateConfig, async () => '{"pass":true}') === gateScript, 'A passing Epiphany gate must not change the script.');
+for (const bad of [async () => 'not json', async () => { throw new Error('model down'); }, async () => JSON.stringify({ pass: false, replacements: { MEAT: 'word '.repeat(200).trim() } })]) {
+  assert(await enforceEpiphanyRule(gateScript, gateConfig, bad) === gateScript, 'A failed Epiphany gate must keep the finished script.');
+}
+assert(generationSource.includes("Number(input.video) === 3 || Number(input.video) === 6"), 'The Epiphany gate must run on Videos 3 and 6.');
 
 const preservedPremise = preserveViewerPremiseSource(
   [

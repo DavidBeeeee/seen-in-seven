@@ -9,7 +9,8 @@ import {
   publishedPrompt,
   reviewAndRepairScript,
   reviewAndRepairSection,
-  stripSectionLabels
+  stripSectionLabels,
+  validateOutput
 } from './_lib/prompt-engine.js';
 import {
   authenticatedUser,
@@ -134,13 +135,13 @@ Choose one commitment contradiction. The speaker wants to become visible or reac
   2: `STAGE 2, ORDINARY WORLD AND REFUSAL:
 Choose one ordinary identity bind. Ground the speaker in a recognizable routine, role, pressure, compromise, or expectation; let one unexpected private thread appear; then show one practical choice, delay, dismissal, retreat, or non-choice that kept the familiar life intact. The refusal must occur in behavior and must make sense from who the speaker was then. For Level 1, the private thread is personal. For Level 2, future expertise may be visible to the audience but remains unclaimed by the speaker. Reserve the unresolved assumption that made staying feel sensible. Withhold the first epiphany, mature interpretation, present method, mission, offer, and authority.`,
   3: `STAGE 3, FIRST EPIPHANY:
-Choose one belief collision. Establish one old assumption and how it shaped the speaker's action, then follow one representative moment or repeated pattern that the assumption cannot explain, naming the project, person, or event in plain words. End the progression with both truths still in conflict. Reserve one complete but bounded paradigm shift that resolves the exact contradiction as a lens the viewer can use on their own life, stated in one simple sentence, plus one human consequence showing what the old lens costs. For Level 1, keep the belief personal. For Level 2, keep the professional lens rooted in the speaker's own implication rather than an industry lecture. Withhold the later ordeal, complete method, mature authority, and second epiphany.`,
+Choose one belief collision. Establish one old assumption and how it shaped the speaker's action, then follow one representative moment or repeated pattern that the assumption cannot explain, naming the project, person, or event in plain words. End the progression with both truths still in conflict. STORY PROGRESSION must never state or paraphrase the reserved answer. Reserve one complete but bounded paradigm shift that resolves the exact contradiction as a lens the viewer can use on their own life, stated in one simple sentence, plus one human consequence showing what the old lens costs. For Level 1, keep the belief personal. For Level 2, keep the professional lens rooted in the speaker's own implication rather than an industry lecture. Withhold the later ordeal, complete method, mature authority, and second epiphany.`,
   4: `STAGE 4, ROAD OF TRIALS:
 Choose one recoverable trial. Begin with one changed action after the first epiphany, enter one representative pressure where returning to the familiar approach feels genuinely tempting, show the choice made before proof, and stop before one meaningful human-scale result. Reserve that result and only the immediate possibility it created. For Level 1, do not substitute a challenge progress report for the larger life story. For Level 2, do not convert the result into a case study, market argument, positioning claim, or proof of the complete philosophy. Withhold the coming ordeal, catastrophic loss, later lesson, and second epiphany.`,
   5: `STAGE 5, FALL OR ORDEAL:
 Choose one ordeal nucleus and one causal descent. Establish what had become real enough to lose, identify the speaker's consequential choice, avoidance, blind spot, or overconfidence, trace the ignored warning or escalation, show the collapse, then show the failed attempt to repair it. A gradual collapse or symbolic death qualifies when the speaker believed their identity, calling, relationship, judgment, future, or work might never recover. Reserve the most painful owned lowest-point belief. Withhold recovery, reassurance, gratitude, authority, silver lining, and the second epiphany.`,
   6: `STAGE 6, SECOND EPIPHANY OR ELIXIR:
-Choose one evidence-to-elixir journey. Establish one common-sense model, follow one source experience or repeated pattern that refuses to fit it, include one observable practice or decision proving the speaker lives differently, and end with the contradiction unresolved. Reserve one significant counterintuitive truth and one useful new possibility. For Level 1, the truth must be earned through the Video 5 ordeal and aftermath. For Level 2, the source may be Video 5, Video 3, another experience, or a broader pattern; no earlier chapter is required to cause it. Withhold a complete method, commercial philosophy, offer, and final return.`,
+Choose one evidence-to-elixir journey. Establish one common-sense model, follow one source experience or repeated pattern that refuses to fit it, told as something the viewer can picture and naming who was there, include one observable practice or decision proving the speaker lives differently, and end with the contradiction unresolved. STORY PROGRESSION must never state or paraphrase the reserved truth or connect the evidence to its meaning. Reserve one significant counterintuitive truth as one simple sentence the viewer can use on their own decisions, plus one useful new possibility. The speaker is convicted and resolved about this truth, with no hedging about whether they believe it. For Level 1, the truth must be earned through the Video 5 ordeal and aftermath. For Level 2, the source may be Video 5, Video 3, another experience, or a broader pattern; no earlier chapter is required to cause it. Withhold a complete method, commercial philosophy, offer, and final return.`,
   7: `STAGE 7, RETURN:
 Bring the six-chapter audience canon home through one governing identity transformation. Select the earlier identity and refusal from Videos 1-2, the actual first realization and trial from Videos 3-4, the fall and cost from Video 5, and the second realization and returned self from Video 6 plus current Video 7 evidence. Keep each movement grounded in one lived event, choice, consequence, or observable behavior rather than a lesson or positioning claim. MEAT owns the complete Return, lets the earned identity or professional difference emerge from changed behavior, and ends with the honest unresolved human element. CONCLUSION is only a brief one-to-three-sentence homecoming statement of the one governing meaning, written entirely in I/me/my with no second-person you/your language, event replay, journey recap, viewer diagnosis, added evidence, or second miniature Return. CTA owns the relational horizon and all direct viewer recognition. Let a cold viewer understand the journey and a returning viewer recognize it without hearing an episode-by-episode recap or multiple examples performing the same job. For Level 1, center human identity. For Level 2, preserve professional difference without superiority, positioning, a market manifesto, service promise, or pitch. Withhold a second thesis, new trial, revelation, perfection, offer, manufactured urgency, and any Video 8 promise.`
 };
@@ -594,6 +595,49 @@ An Epiphany is a paradigm-shifting realization that reframes a universal experie
 - COST REVELATION: the one human consequence shows what the old lens costs anyone still looking through it.
 - SIMPLICITY SIGNAL: the reframe is one short sentence someone would screenshot, and it feels obvious once heard.
 - AUTHORITY ANCHOR: never claim authority. The viewer should think, "what else does this person see that I don't?"`;
+
+const EPIPHANY_GATE_SYSTEM = `You are the final 5E editor for an Epiphany video. An AI writer has already finished this script. Find out whether it obeys the rule of an Epiphany, and repair it if it does not.
+
+THE RULE: the viewer receives the answer for the first time in the CONCLUSION. Everything before it makes the old explanation impossible to keep without saying what the new one is.
+
+Check these in order:
+1. Identify the reframe the CONCLUSION delivers. If any sentence in the MEAT states it, paraphrases it, or connects the evidence to its meaning, that is a failure. The MEAT must end with the contradiction visible and unresolved.
+2. The CONCLUSION must deliver one new lens in one simple sentence someone would screenshot, not a claim, an argument, or a summary of the story.
+3. The viewer must be able to use that lens on something in their own life. A conclusion that is only about the speaker's own project fails.
+4. The CONCLUSION must answer the question the OPEN LOOP opened.
+5. For Video 6, the speaker is convicted and resolved. Hedging about whether they believe the truth, in the CONCLUSION or the CTA, fails. A CTA must not promise to resolve it later.
+
+Repair only what fails, and only in MEAT, CONCLUSION, or CTA. In the MEAT, delete sentences rather than rewriting the story, and never make it longer. Keep the speaker's own words and facts. Add no new event, person, result, or number. Use no em dashes and no section labels inside the text.
+
+Return JSON only, in one of these shapes:
+{"pass":true}
+{"pass":false,"problems":["short reason"],"replacements":{"MEAT":"spoken text","CONCLUSION":"spoken text","CTA":"spoken text"}}
+Include a replacement only for a section that fails.`;
+
+// The story editor's concerns do not block a script unless it supplies a repair, so the
+// Epiphany rule gets its own gate. Any failure keeps the finished script as it is.
+export async function enforceEpiphanyRule(script, config, callModelFn) {
+  const sections = parseSections(script);
+  if (!sections || !sections.MEAT || !sections.CONCLUSION) return script;
+  try {
+    const raw = await callModelFn(EPIPHANY_GATE_SYSTEM, 'VIDEO: ' + config.video + '\nLEVEL: ' + config.level + '\n\n' + composeSections(sections), 0.15, 1400);
+    const parsed = JSON.parse(String(raw || '').replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, '').trim());
+    console.log('[generate] Epiphany gate Video ' + config.video + ': ' + (parsed.pass ? 'pass' : 'repair ' + JSON.stringify(parsed.problems || [])));
+    if (parsed.pass || !parsed.replacements) return script;
+    const next = { ...sections };
+    ['MEAT', 'CONCLUSION', 'CTA'].forEach(key => {
+      const value = parsed.replacements[key];
+      if (typeof value === 'string' && value.trim()) next[key] = value.replace(/^\s*\[[A-Z ]+\]\s*/, '').trim();
+    });
+    if (spokenWordCount(next.MEAT) > spokenWordCount(sections.MEAT)) return script;
+    const candidate = composeSections(next);
+    const issues = text => validateOutput(text, config.video, config.level, config.userMessage, config.systemPrompt).issues.length;
+    return issues(candidate) <= issues(script) ? candidate : script;
+  } catch (error) {
+    console.log('[generate] Epiphany gate skipped: ' + error.message);
+    return script;
+  }
+}
 
 // Requirements the writer needs that the planning notes do not carry. Video 7 has
 // its own canon-based context, and Video 1 declares rather than tells a story.
@@ -1313,7 +1357,14 @@ async function generateScriptCore(input, prompt, timings) {
       }));
       const deliveredContent = Number(input.video) === 1
         ? await measureStage(timings, 'video-one-meat' + stageSuffix, () => tightenVideoOneMeat(finalContent, callModel))
-        : finalContent;
+        : Number(input.video) === 3 || Number(input.video) === 6
+          ? await measureStage(timings, 'epiphany-gate' + stageSuffix, () => enforceEpiphanyRule(finalContent, {
+            video: input.video,
+            level: input.level,
+            systemPrompt,
+            userMessage: userMessage + retryNote
+          }, callModel))
+          : finalContent;
       return { content: deliveredContent, promptVersion: prompt.version, generationAttempts: attempt + 1 };
     } catch (error) {
       lastError = error;

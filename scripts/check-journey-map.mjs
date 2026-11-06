@@ -188,7 +188,7 @@ for (const level of [1, 2]) {
   }
   if (level === 2 && !fullGuide.includes('a realization about myself does not count')) throw new Error('Level 2 Part 6 must stay a way of working someone could argue with.');
   if ((level === 2) !== fullGuide.includes('the objection a sensible person would raise')) throw new Error('The objection test belongs on Level 2 Part 6 only.');
-  if (level === 2 && !fullGuide.includes('what most people would tell me I am doing wrong')) throw new Error('Level 2 Part 6 must open with the practice.');
+  if (level === 2 && !fullGuide.includes('Then tell one specific time it happened')) throw new Error('Level 2 Part 6 must open with the practice.');
   const partGuide = map.buildPartHelperPrompt(level, 3, '', []);
   if (partGuide.includes('no more than 60') || !partGuide.includes('Do not ask me questions') || partGuide.includes('never invent') || !partGuide.includes('invent plausible details') || !partGuide.includes('usually 100 to 200 words')) throw new Error(`The Level ${level} part helper still asks for a summary.`);
 }
