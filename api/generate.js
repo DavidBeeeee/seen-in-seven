@@ -553,20 +553,31 @@ function spokenWordCount(text) {
 }
 
 // Holds Video 1 to the blueprint's own Meat length, which nothing else enforces.
-// Any failure keeps the finished script as it is.
+// Models miscount, so it gets a second pass with the real number, and any cut that
+// is an improvement is kept. Any failure keeps the finished script as it is.
 export async function tightenVideoOneMeat(script, callModelFn) {
   const sections = parseSections(script);
-  if (!sections || !sections.MEAT || spokenWordCount(sections.MEAT) <= 140) return script;
+  const startWords = sections && sections.MEAT ? spokenWordCount(sections.MEAT) : 0;
+  if (startWords <= 140) return script;
+  let meat = sections.MEAT;
+  let words = startWords;
   try {
-    const edited = String(await callModelFn(VIDEO_ONE_MEAT_EDITOR_SYSTEM, composeSections(sections), 0.2, 600) || '')
-      .replace(/^\s*\[MEAT\]\s*/i, '')
-      .trim();
-    const words = spokenWordCount(edited);
-    if (words < 100 || words > 145 || /\[(?:HOOK|OPEN LOOP|CONCLUSION|CTA)\]/i.test(edited)) return script;
-    return composeSections({ ...sections, MEAT: edited });
+    for (let attempt = 0; attempt < 2 && words > 140; attempt++) {
+      const request = composeSections({ ...sections, MEAT: meat }) +
+        '\n\nThe MEAT is ' + words + ' words. Delete about ' + (words - 125) + ' words.';
+      const edited = String(await callModelFn(VIDEO_ONE_MEAT_EDITOR_SYSTEM, request, 0.2, 600) || '')
+        .replace(/^\s*\[MEAT\]\s*/i, '')
+        .trim();
+      const editedWords = spokenWordCount(edited);
+      console.log('[generate] Video 1 Meat edit: ' + words + ' -> ' + editedWords + ' words');
+      if (editedWords < 100 || editedWords >= words || /\[(?:HOOK|OPEN LOOP|CONCLUSION|CTA)\]/i.test(edited)) break;
+      meat = edited;
+      words = editedWords;
+    }
   } catch (error) {
-    return script;
+    console.log('[generate] Video 1 Meat edit failed: ' + error.message);
   }
+  return words < startWords ? composeSections({ ...sections, MEAT: meat }) : script;
 }
 
 export function preserveViewerPremiseSource(originalContext, preparedContext, video) {

@@ -487,7 +487,21 @@ assert(
     ['A hook.', 'A loop.', 'A landing.', 'Follow along.'].every(part => editedMeat.includes(part)),
   'The Video 1 Meat edit must replace only the Meat.'
 );
-for (const badEdit of [async () => 'kept '.repeat(40).trim(), async () => 'kept '.repeat(190).trim(), async () => '[CTA] rewritten', async () => { throw new Error('model down'); }]) {
+// A first cut that misses the range gets a second pass told the real number.
+const editorCalls = [];
+const secondPass = await tightenVideoOneMeat(longMeatScript, async (system, request) => {
+  editorCalls.push(request);
+  return 'kept '.repeat(editorCalls.length === 1 ? 165 : 130).trim();
+});
+assert(
+  editorCalls.length === 2 && editorCalls[1].includes('The MEAT is 165 words') &&
+    (secondPass.match(/kept/g) || []).length === 130,
+  'A Video 1 Meat edit that misses the range must get a second pass with the real word count.'
+);
+// A cut that improves but never reaches the range is still better than the original.
+const partialCut = await tightenVideoOneMeat(longMeatScript, async () => 'kept '.repeat(165).trim());
+assert((partialCut.match(/kept/g) || []).length === 165, 'A partial Video 1 Meat cut must be kept.');
+for (const badEdit of [async () => 'kept '.repeat(40).trim(), async () => 'kept '.repeat(205).trim(), async () => '[CTA] rewritten', async () => { throw new Error('model down'); }]) {
   assert(await tightenVideoOneMeat(longMeatScript, badEdit) === longMeatScript, 'A failed Video 1 Meat edit must keep the finished script.');
 }
 const fittingMeatScript = '[HOOK]\nA hook.\n\n[MEAT]\n' + 'word '.repeat(130).trim();
