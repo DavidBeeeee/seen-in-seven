@@ -134,7 +134,7 @@ Choose one commitment contradiction. The speaker wants to become visible or reac
   2: `STAGE 2, ORDINARY WORLD AND REFUSAL:
 Choose one ordinary identity bind. Ground the speaker in a recognizable routine, role, pressure, compromise, or expectation; let one unexpected private thread appear; then show one practical choice, delay, dismissal, retreat, or non-choice that kept the familiar life intact. The refusal must occur in behavior and must make sense from who the speaker was then. For Level 1, the private thread is personal. For Level 2, future expertise may be visible to the audience but remains unclaimed by the speaker. Reserve the unresolved assumption that made staying feel sensible. Withhold the first epiphany, mature interpretation, present method, mission, offer, and authority.`,
   3: `STAGE 3, FIRST EPIPHANY:
-Choose one belief collision. Establish one old assumption and how it shaped the speaker's action, then follow one continuous occurrence or repeated pattern that the assumption cannot explain. End the progression with both truths still in conflict. Reserve one complete but bounded paradigm shift that resolves the exact contradiction and one human consequence. For Level 1, keep the belief personal. For Level 2, keep the professional lens rooted in the speaker's own implication rather than an industry lecture. Withhold the later ordeal, complete method, mature authority, and second epiphany.`,
+Choose one belief collision. Establish one old assumption and how it shaped the speaker's action, then follow one representative moment or repeated pattern that the assumption cannot explain, naming the project, person, or event in plain words. End the progression with both truths still in conflict. Reserve one complete but bounded paradigm shift that resolves the exact contradiction as a lens the viewer can use on their own life, stated in one simple sentence, plus one human consequence showing what the old lens costs. For Level 1, keep the belief personal. For Level 2, keep the professional lens rooted in the speaker's own implication rather than an industry lecture. Withhold the later ordeal, complete method, mature authority, and second epiphany.`,
   4: `STAGE 4, ROAD OF TRIALS:
 Choose one recoverable trial. Begin with one changed action after the first epiphany, enter one representative pressure where returning to the familiar approach feels genuinely tempting, show the choice made before proof, and stop before one meaningful human-scale result. Reserve that result and only the immediate possibility it created. For Level 1, do not substitute a challenge progress report for the larger life story. For Level 2, do not convert the result into a case study, market argument, positioning claim, or proof of the complete philosophy. Withhold the coming ordeal, catastrophic loss, later lesson, and second epiphany.`,
   5: `STAGE 5, FALL OR ORDEAL:
@@ -578,6 +578,32 @@ export async function tightenVideoOneMeat(script, callModelFn) {
     console.log('[generate] Video 1 Meat edit failed: ' + error.message);
   }
   return words < startWords ? composeSections({ ...sections, MEAT: meat }) : script;
+}
+
+const COLD_VIEWER_RULE = `COLD VIEWER RULE (private, never mention it):
+The viewer has never seen the story map, the planning notes, or any other video. Everything they know comes from the words they hear in this script.
+- The first time a project, person, place, or event comes up, say plainly what it is, as in "I started writing a book." Do this before relying on it, including in the OPEN LOOP.
+- Never rely on anything the viewer has not heard. "Those same ideas," "that gap," "the manuscript," and "the event" only work after the script has introduced them in spoken words.
+- Read the finished script as a stranger. If a sentence only makes sense to someone who has read the private material, fix it.`;
+
+const EPIPHANY_5E_CONTRACT = `5E EPIPHANY CONTRACT (private, never mention it):
+An Epiphany is a paradigm-shifting realization that reframes a universal experience and hands the viewer a new intellectual tool. It is not a tip, and it is not only a story about the speaker's own project. These are outcomes to check, not extra spoken beats:
+- DISCOVERY ARC: the MEAT walks through one moment or pattern the viewer can picture, so they reach the contradiction before anyone explains it.
+- COGNITIVE REFRAME: the CONCLUSION snaps one new lens into place. It lands as inevitable, not as an argument.
+- AHA TRANSFER: after the CONCLUSION, the viewer can use this lens on something in their own life. Say the reframe as a truth about how this works, earned by the story, not only as a fact about what happened to the speaker.
+- COST REVELATION: the one human consequence shows what the old lens costs anyone still looking through it.
+- SIMPLICITY SIGNAL: the reframe is one short sentence someone would screenshot, and it feels obvious once heard.
+- AUTHORITY ANCHOR: never claim authority. The viewer should think, "what else does this person see that I don't?"`;
+
+// Requirements the writer needs that the planning notes do not carry. Video 7 has
+// its own canon-based context, and Video 1 declares rather than tells a story.
+export function addWriterContract(preparedContext, video) {
+  const number = Number(video);
+  const prepared = String(preparedContext || '').trim();
+  if (number === 1 || number === 7) return prepared;
+  return [COLD_VIEWER_RULE, number === 3 || number === 6 ? EPIPHANY_5E_CONTRACT : '', prepared]
+    .filter(Boolean)
+    .join('\n\n');
 }
 
 export function preserveViewerPremiseSource(originalContext, preparedContext, video) {
@@ -1241,7 +1267,7 @@ async function generateScriptCore(input, prompt, timings) {
   let preparedContext = await measureStage(timings, 'story-preparation', () =>
     prepareEpisodeArchitectureMaterial(input.userContext, input.level, input.video)
   );
-  preparedContext = preserveViewerPremiseSource(input.userContext, preparedContext, input.video);
+  preparedContext = addWriterContract(preserveViewerPremiseSource(input.userContext, preparedContext, input.video), input.video);
   const userMessage = regenerationMessage({ ...input, userContext: preparedContext });
   let lastError;
 
@@ -1343,7 +1369,7 @@ async function generateSectionCore(input, prompt, timings) {
   let preparedContext = await measureStage(timings, 'story-preparation', () =>
     prepareEpisodeArchitectureMaterial(input.userContext, input.level, input.video, input.existingScript)
   );
-  preparedContext = preserveViewerPremiseSource(input.userContext, preparedContext, input.video);
+  preparedContext = addWriterContract(preserveViewerPremiseSource(input.userContext, preparedContext, input.video), input.video);
   const userMessage = sectionMessage({ ...input, userContext: preparedContext });
   const draft = await measureStage(timings, 'section-draft', () =>
     callModel(systemPrompt, userMessage, 0.8)

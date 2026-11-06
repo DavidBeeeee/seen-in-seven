@@ -21,6 +21,7 @@ import {
   extractCurrentVideoBrief,
   preserveViewerPremiseSource,
   tightenVideoOneMeat,
+  addWriterContract,
   VIDEO_SEVEN_RETURN_ANCHORS,
   VIDEO_SEVEN_RETURN_HEADINGS,
   VIDEO_SEVEN_RETURN_SYSTEM,
@@ -516,6 +517,18 @@ assert(
     videoOneSource.split('MAP SENTINEL').length === 2 && videoOneSource.split('BLANK SENTINEL').length === 2,
   'Video 1 must brief from onboarding answers once, with the map as background once.'
 );
+
+// David, 2026-11-06: scripts assumed the viewer knew the map, and the 5E was not enforced.
+for (const video of [2, 3, 4, 5, 6]) {
+  const contracted = addWriterContract('PACKET SENTINEL', video);
+  assert(contracted.includes('COLD VIEWER RULE') && contracted.endsWith('PACKET SENTINEL'), 'Video ' + video + ' lost the cold viewer rule or its packet.');
+  assert(contracted.includes('5E EPIPHANY CONTRACT') === (video === 3 || video === 6), 'Only Videos 3 and 6 carry the 5E contract.');
+}
+assert(addWriterContract('PACKET SENTINEL', 1) === 'PACKET SENTINEL' && addWriterContract('PACKET SENTINEL', 7) === 'PACKET SENTINEL', 'Videos 1 and 7 must not change.');
+for (const beat of ['DISCOVERY ARC', 'COGNITIVE REFRAME', 'AHA TRANSFER', 'COST REVELATION', 'SIMPLICITY SIGNAL', 'AUTHORITY ANCHOR']) {
+  assert(addWriterContract('X', 3).includes(beat), 'The 5E contract lost ' + beat + '.');
+}
+assert(promptTestSource.includes('addWriterContract(preserveViewerPremiseSource(userMessage, preparedUserMessage, video), video)'), 'The Prompt Tester must use the same writer contract.');
 
 const preservedPremise = preserveViewerPremiseSource(
   [

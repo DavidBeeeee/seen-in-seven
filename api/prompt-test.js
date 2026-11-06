@@ -1,7 +1,8 @@
 import {
   callModel,
   prepareEpisodeArchitectureMaterial,
-  preserveViewerPremiseSource
+  preserveViewerPremiseSource,
+  addWriterContract
 } from './generate.js';
 import {
   buildSystemPrompt,
@@ -57,7 +58,7 @@ export default async function handler(req, res) {
     let preparedUserMessage = await measureStage(timings, 'story-preparation', () =>
       prepareEpisodeArchitectureMaterial(userMessage, level, video)
     );
-    preparedUserMessage = preserveViewerPremiseSource(userMessage, preparedUserMessage, video);
+    preparedUserMessage = addWriterContract(preserveViewerPremiseSource(userMessage, preparedUserMessage, video), video);
     let rawContent = '';
     let content = '';
     let lastError;
