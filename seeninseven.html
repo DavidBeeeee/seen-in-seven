@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,600;0,700;1,400;1,700&family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&family=Permanent+Marker&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/js/egress-report.js?v=1"></script>
 <script src="https://challenges.cloudflare.com/turnstile/v0/api.js?render=explicit" defer></script>
-<link rel="stylesheet" href="/css/app.css?v=tracker-links-1">
+<link rel="stylesheet" href="/css/app.css?v=help-next-2">
 <link rel="stylesheet" href="/css/light.css">
 
 <!-- ── GLOBAL ERROR BOUNDARY ── -->
@@ -653,6 +653,15 @@
     <p id="journey-help-description">Copy this prompt into ChatGPT, Claude, Gemini, or another AI. It will help you find one answer you can paste back here.</p>
     <textarea id="journey-help-prompt" class="journey-help-prompt" readonly></textarea>
     <button class="btn-primary" id="journey-help-copy" type="button" onclick="copyJourneyHelpPrompt(this)">Copy Full Prompt</button>
+    <div class="help-next-step" id="journey-help-next" hidden>
+      <div class="help-next-title">Copied. Here is what to do next:</div>
+      <ol>
+        <li>Paste it into your AI and send it.</li>
+        <li id="journey-help-step">When it gives you your answer, copy it.</li>
+        <li>Come back here and click the button below.</li>
+      </ol>
+      <button class="btn-primary" type="button" onclick="pasteJourneyHelpAnswer()">Paste My AI's Answer →</button>
+    </div>
   </section>
 </div>
 
@@ -669,6 +678,15 @@
     <div class="answer-help-context" id="answer-help-context"></div>
     <textarea id="answer-help-prompt" class="answer-help-prompt" readonly></textarea>
     <button class="btn-primary" id="answer-help-copy" type="button" onclick="copyAnswerHelpPrompt(this)">Copy Full Prompt</button>
+    <div class="help-next-step" id="answer-help-next" hidden>
+      <div class="help-next-title">Copied. Here is what to do next:</div>
+      <ol>
+        <li>Paste it into your AI and send it.</li>
+        <li id="answer-help-step">When it gives you your answer, copy it.</li>
+        <li>Come back here and click the button below.</li>
+      </ol>
+      <button class="btn-primary" type="button" onclick="pasteAnswerHelpAnswer()">Paste My AI's Answer →</button>
+    </div>
   </section>
 </div>
 
@@ -993,7 +1011,7 @@
 <script src="/js/answer-help.js?v=hero-journey-2"></script>
 <script src="/js/supabase.js?v=egress-v1"></script>
 <script src="/js/points.js?v=active-lock-1"></script>
-<script src="/js/app.js?v=journey-import-12"></script>
+<script src="/js/app.js?v=journey-import-15"></script>
 
 <!-- ══ DUAL COMPLETE OVERLAY ══ -->
 <div id="dual-complete-overlay">

@@ -143,6 +143,15 @@ if (html.indexOf('id="start-over-confirm"') > html.search(/class="screen[" ]/)) 
   throw new Error('The start-over popup must live outside every screen.');
 }
 
+// David, 2026-11-06: after copying a prompt, the member sees the next step and a button
+// back to the box their AI's answer goes in.
+for (const piece of ['id="journey-help-next"', 'id="answer-help-next"', 'pasteJourneyHelpAnswer()', 'pasteAnswerHelpAnswer()']) {
+  if (!html.includes(piece)) throw new Error(`The helper next step lost: ${piece}`);
+}
+if (!appSource.includes("journeyHelpTarget = 'journey-import'") || !appSource.includes("journeyHelpTarget = 'journey-answer-' + index")) {
+  throw new Error('Each helper must lead back to its own paste box.');
+}
+
 // The map must come back as seven separate story bases, not one idea in seven
 // parts (2026-11-03): every part keeps its own job in both guides, on both levels.
 for (const level of [1, 2]) {

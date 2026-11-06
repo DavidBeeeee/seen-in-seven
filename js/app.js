@@ -1584,6 +1584,8 @@ function importJourneyMap() {
   window.scrollTo(0, 0);
 }
 
+let journeyHelpTarget = '';
+
 function openJourneyPartHelp(index) {
   if (!window.SISJourneyMap) return;
   const answers = journeyAnswersForLevel(journeyMapLevel);
@@ -1600,6 +1602,8 @@ function openJourneyPartHelp(index) {
   if (title) title.textContent = 'Get help with Part ' + (Number(index) + 1) + '.';
   if (description) description.textContent = 'Copy this into the AI you already use. It will give you one paragraph to paste here.';
   if (field) field.value = prompt;
+  journeyHelpTarget = 'journey-answer-' + index;
+  resetHelpNextStep('journey', 'When it gives you your paragraph, copy it.');
   if (overlay) overlay.hidden = false;
   if (typeof logEvent === 'function') logEvent('journey_part_help_opened', { level: journeyMapLevel, part: Number(index) + 1 });
 }
@@ -1660,8 +1664,72 @@ function openJourneyHelp() {
   if (field) field.value = prompt;
   if (title) title.textContent = 'Find your full seven-part story.';
   if (description) description.textContent = 'Copy this into the AI you already use. It will offer three story ideas, help you choose, then give you seven numbered answers to paste back here.';
+  journeyHelpTarget = 'journey-import';
+  resetHelpNextStep('journey', 'Pick a story. When it writes your seven parts, copy them.');
   if (overlay) overlay.hidden = false;
   if (typeof logEvent === 'function') logEvent('journey_help_opened', { level: journeyMapLevel });
+}
+
+// After a prompt is copied, the helper says what happens next and leads back to the box.
+function resetHelpNextStep(prefix, step) {
+  const box = document.getElementById(prefix + '-help-next');
+  const stepText = document.getElementById(prefix + '-help-step');
+  const copy = document.getElementById(prefix + '-help-copy');
+  if (box) box.hidden = true;
+  if (stepText) stepText.textContent = step;
+  const prompt = document.getElementById(prefix + '-help-prompt');
+  if (copy) { copy.textContent = 'Copy Full Prompt'; copy.className = 'btn-primary'; }
+  if (prompt) prompt.hidden = false;
+}
+
+// A blocked clipboard must not strand the member, so the next step shows either way.
+async function copyHelpPrompt(field, copyText) {
+  try {
+    await copyText(field.value);
+    return true;
+  } catch (e) {
+    field.focus();
+    field.select();
+    try { return document.execCommand('copy'); } catch (err) { return false; }
+  }
+}
+
+function revealHelpNextStep(prefix, button, copied) {
+  const box = document.getElementById(prefix + '-help-next');
+  const title = box && box.querySelector('.help-next-title');
+  if (title) title.textContent = copied ? 'Copied. Here is what to do next:' : 'Your prompt is selected. Copy it, then:';
+  const prompt = document.getElementById(prefix + '-help-prompt');
+  if (prompt) prompt.hidden = copied;
+  if (button) { button.textContent = 'Copy Prompt Again'; button.className = 'btn-secondary'; }
+  if (box) { box.hidden = false; box.scrollIntoView({ block:'nearest' }); }
+}
+
+function focusPasteBox(field) {
+  if (!field) return;
+  const section = field.closest('details');
+  if (section) section.open = true;
+  field.scrollIntoView({ block:'center' });
+  field.focus();
+  field.classList.add('paste-here');
+  setTimeout(() => field.classList.remove('paste-here'), 2500);
+}
+
+function firstAnswerBox() {
+  const screen = document.querySelector('.screen.active');
+  if (!screen) return null;
+  const scope = screen.querySelector('details') || screen;
+  const boxes = Array.from(scope.querySelectorAll('textarea:not([readonly])'));
+  return boxes.find(box => !box.value.trim()) || boxes[0] || null;
+}
+
+function pasteJourneyHelpAnswer() {
+  closeJourneyHelp();
+  focusPasteBox(document.getElementById(journeyHelpTarget) || firstAnswerBox());
+}
+
+function pasteAnswerHelpAnswer() {
+  closeAnswerHelp();
+  focusPasteBox(firstAnswerBox());
 }
 
 function closeJourneyHelp() {
@@ -1672,12 +1740,7 @@ function closeJourneyHelp() {
 async function copyJourneyHelpPrompt(button) {
   const field = document.getElementById('journey-help-prompt');
   if (!field || !window.SISJourneyMap) return;
-  await SISJourneyMap.copyText(field.value);
-  if (button) {
-    const old = button.textContent;
-    button.textContent = 'Copied!';
-    setTimeout(() => { button.textContent = old; }, 1600);
-  }
+  revealHelpNextStep('journey', button, await copyHelpPrompt(field, SISJourneyMap.copyText));
   if (typeof logEvent === 'function') logEvent('journey_help_copied', { level: journeyMapLevel });
 }
 
@@ -1784,6 +1847,7 @@ function openAnswerHelp(videoIdx, mode) {
     field.scrollTop = 0;
   }
   if (copyButton) copyButton.disabled = false;
+  resetHelpNextStep('answer', 'Choose a direction. When it writes your answer, copy it.');
   if (overlay) overlay.hidden = false;
   activeAnswerHelpLogContext = {
     source: 'video_answers',
@@ -1813,6 +1877,7 @@ async function openOverviewAnswerHelp() {
   if (context) context.textContent = 'Onboarding · Overview · Full History';
   if (field) field.value = 'Loading your Overview prompt...';
   if (copyButton) copyButton.disabled = true;
+  resetHelpNextStep('answer', 'When it writes your character bio, copy it.');
   if (overlay) overlay.hidden = false;
   activeAnswerHelpLogContext = {
     source: 'overview_character_bio',
@@ -1867,12 +1932,7 @@ function closeAnswerHelp() {
 async function copyAnswerHelpPrompt(button) {
   const field = document.getElementById('answer-help-prompt');
   if (!field || !window.SISAnswerHelp) return;
-  await SISAnswerHelp.copyText(field.value);
-  if (button) {
-    const old = button.textContent;
-    button.textContent = 'Copied!';
-    setTimeout(() => { button.textContent = old; }, 1600);
-  }
+  revealHelpNextStep('answer', button, await copyHelpPrompt(field, SISAnswerHelp.copyText));
   if (typeof logEvent === 'function') {
     logEvent('answer_help_copied', activeAnswerHelpLogContext || {
       source: 'unknown',

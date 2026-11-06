@@ -2261,6 +2261,11 @@ body::after {
   background:rgba(0,0,0,0.78);
 }
 .journey-help-overlay[hidden] { display:none; }
+.help-next-step { margin-top:16px; padding:16px; border:1px solid var(--border); border-radius:8px; }
+.help-next-step[hidden], .journey-help-prompt[hidden], .answer-help-prompt[hidden] { display:none; }
+.help-next-title { color:var(--cream); font-weight:700; margin-bottom:8px; }
+.help-next-step ol { margin:0 0 14px; padding-left:20px; color:var(--soft); line-height:1.65; }
+.paste-here { outline:2px solid var(--cyan); outline-offset:2px; }
 .journey-help-modal {
   width:min(760px,100%); max-height:90vh; overflow:auto;
   background:#0a1f1f; border:1px solid var(--border); border-radius:8px;
