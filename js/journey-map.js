@@ -53,7 +53,7 @@
   const PART_JOBS = {
     1: [
       'The decision: what I am finally ready to be seen for, who it is for, and the specific thing that has kept me quiet. It is happening now. Leave out my history, my realizations, my failure, and how this turns out.',
-      'The ordinary life: a period, place, or routine from before things changed, what made it feel normal, and one thing I did or avoided that kept it that way. Answer from who I was then, with no wisdom from later.',
+      'The ordinary life: the actual period, place, or routine I was living before things changed, told from who I was then, with no wisdom from later. What made it feel normal, one thing about me people would not expect, what I kept noticing or caring about even then, and one thing I did or avoided that kept my life the way it was.',
       'The first realization: one thing I personally believed and acted on, then one specific moment or pattern that it could not explain. It must be my own old belief, not a complaint about other people.',
       'The test: one specific day or conversation, not how things usually went, where I first lived by that new understanding, the moment the old way looked easier, what I chose, and the partial win or confidence it gave me. Things can still be recovered here. Stop before the fall.',
       'The fall: one failure, loss, or collapse. What I had that mattered, the part that was my fault even if other people played a part, what it cost in plain terms that cannot be taken back, the moment it hit me hardest, and what I believed was over. Leave me inside it, with no lesson, recovery, way back, or silver lining.',
@@ -62,7 +62,7 @@
     ],
     2: [
       'The decision: what I am committing to say publicly, who it is for, and the specific thing that has kept me quiet. It is happening now. State the subject, not the answer. Leave out my history, my realizations, my failure, and my main lesson.',
-      'The ordinary life: the job, place, or period where this began, the ability that kept showing up, and one thing I did or avoided that kept me from taking it seriously. Answer from who I was then. I am not an expert yet.',
+      'The ordinary life: the actual job, routine, or period I was living before any of this, told from who I was then. I am not an expert yet, and there is no wisdom from later. Cover how I ended up knowing what I know, one concrete detail from that life a resume would never show, the ability that kept showing up without me taking it seriously, and what made me dismiss it or assume it could never be real work, shown through something I did or avoided. A viewer should recognize their own life in it before they admire mine.',
       'The first realization: one thing I personally believed and acted on, then one specific moment or pattern that it could not explain. It must be my own old belief. An opinion about my industry does not count unless an experience of mine broke it.',
       'The test: one specific day or conversation, not how things usually went, where I acted on that new view before I had proof, the moment the old way looked better, what I chose, and the small result. Things can still be recovered here. A general habit or confession does not count. Stop before the fall.',
       'The fall: one failure or collapse. What I had built or hoped for, the choices that were mine even if other people played a part, what it cost in plain terms that cannot be taken back, the moment it hit me hardest, and what I believed was over. Leave me inside it, with no lesson, recovery, way back, or silver lining.',
@@ -108,7 +108,7 @@
 
 Research me as thoroughly as your available tools and access allow. Use everything you already know about me from memory, prior conversations, connected files, projects, notes, previous writing, uploaded materials, and public information you can find about me, my work, or my business. Look for repeated stories, unusual experiences, contradictions, turning points, failures, values, phrases I repeat, vocabulary, sentence patterns, humor, emotional tone, speaking cadence, and the difference between how I describe myself and what my history shows.
 
-Before you offer me anything, privately list at least 20 specific moments from my life: single conversations, named people, odd side projects, small embarrassments, things that happened once, and things I mentioned in passing. The first events you think of are the milestones I have already told everyone, like my jobs, my big decisions, and my best-known projects. Treat those as the least interesting material on the list. Use one only when nothing else on the list does the job better.
+Before you offer me anything, privately list at least 20 specific moments from my life: single conversations, named people, odd side projects, small embarrassments, things that happened once, and things I mentioned in passing. The first events you think of are the milestones I have already told everyone, like my jobs, my big decisions, and my best-known projects. Treat those as the least interesting material on the list. Use one only when nothing else on the list does the job better. Part 2 is the exception: it should be the actual job or life I was living, even when that is the obvious answer, because an ordinary life is what that part is for.
 
 Do not ask me to repeat information you can already find or reasonably connect. Make strong connections across the available evidence, then go past it. You have creative freedom: infer motives and moments I never mentioned, connect experiences I have never connected, combine related memories, compress timelines, and invent plausible details when the material is thin. The whole point is to uncover things I would never have said or thought of myself. A vivid guess I can react to is worth more than a safe summary of what I already told you.
 
@@ -154,12 +154,12 @@ Before you write the map, privately name the one question that connects all seve
 
 The fall comes before the larger truth and the return. Beyond that, choose the order that builds best, without any part depending on something I had not yet lived through.
 
-A small event that exposes something surprising about me is worth more than a major accomplishment that explains my career. Do not let the need for a connected story pull you back to the obvious milestones.
+A small event that exposes something surprising about me is worth more than a major accomplishment that explains my career. Do not let the need for a connected story pull you back to the obvious milestones, apart from the ordinary life in Part 2.
 
 Before you show me the map, check every part privately. Do not show me this check.
 - Name its subject in one short sentence. If two parts have the same subject or the same point, rebuild one of them using a different event.
 - It holds one event. If it lists several, keep the one that fits its job best and leave the others out.
-- Compare its event with your private list. If it uses an obvious milestone and a smaller, stranger moment on the list could do the job, use the smaller moment.
+- Compare its event with your private list. If it uses an obvious milestone and a smaller, stranger moment on the list could do the job, use the smaller moment. This does not apply to Part 2.
 - A stranger could picture it: a place or period, a person or project, and what happened in order. If it reads like a summary or a description of my work, it is not finished.
 - It contains every piece its job asks for. If a piece is missing, imagine it.
 - Part 4: name the day or conversation it happens in, who was there, and one thing someone said. "One of my meetings" or "an entrepreneur" does not pass. If you cannot, it is still describing how things usually went, so rebuild it around one.${number === 2 ? `

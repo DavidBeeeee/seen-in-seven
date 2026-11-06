@@ -125,6 +125,13 @@ if (!html.includes('id="video-one-story-part"') || !appSource.includes("storyPar
   throw new Error('Every video must show its map part above the anything-else box.');
 }
 
+// David, 2026-11-06: a quirky Part 2 made a good story that did the wrong job. Part 2 is
+// the ordinary life, and it covers what that level's Video 2 questions ask for.
+if (!map.buildHelperPrompt(2, '', '').includes('what made me dismiss it or assume it could never be real work') ||
+    !map.buildHelperPrompt(1, '', '').includes('one thing about me people would not expect')) {
+  throw new Error('Part 2 must carry what its Video 2 questions ask for on both levels.');
+}
+
 // The map must come back as seven separate story bases, not one idea in seven
 // parts (2026-11-03): every part keeps its own job in both guides, on both levels.
 for (const level of [1, 2]) {
@@ -156,7 +163,7 @@ for (const level of [1, 2]) {
   for (const value of ['no more than 60', 'one or two', 'up to three', 'no limit on these questions', 'maximum of five', 'what part 4 starts', 'run in time order', 'start by asking', 'one short question per message', 'about eight questions', 'ask me for it', 'never invent', 'made up', 'only what is true', 'real event']) {
     if (fullGuide.toLowerCase().includes(value)) throw new Error(`The Level ${level} guide still says: ${value}`);
   }
-  for (const value of ['ONCE I CHOOSE, WRITE THE MAP', 'with no questions first', 'Never ask me anything you already know', 'That choice is usually the only thing you need from me', 'never more than two in all', 'The map itself gets all the space it needs', 'follow the job', 'ONE DEVELOPING STORY', 'the one question that connects all seven parts', 'do not need to cause one another', 'pull you back to the obvious milestones', 'does not pass', 'the moment it hit me hardest', 'privately list at least 20 specific moments', 'Only one project, job, or period', 'use the smaller moment', 'name the day or conversation', 'one specific day or conversation', 'cannot be taken back', 'way back', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version', 'HOW TO TALK TO ME']) {
+  for (const value of ['ONCE I CHOOSE, WRITE THE MAP', 'with no questions first', 'Never ask me anything you already know', 'That choice is usually the only thing you need from me', 'never more than two in all', 'The map itself gets all the space it needs', 'follow the job', 'Part 2 is the exception: it should be the actual job or life I was living', 'This does not apply to Part 2', 'ONE DEVELOPING STORY', 'the one question that connects all seven parts', 'do not need to cause one another', 'pull you back to the obvious milestones', 'does not pass', 'the moment it hit me hardest', 'privately list at least 20 specific moments', 'Only one project, job, or period', 'use the smaller moment', 'name the day or conversation', 'one specific day or conversation', 'cannot be taken back', 'way back', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version', 'HOW TO TALK TO ME']) {
     if (!fullGuide.includes(value)) throw new Error(`The Level ${level} guide lost: ${value}`);
   }
   if (level === 2 && !fullGuide.includes('a realization about myself does not count')) throw new Error('Level 2 Part 6 must stay a way of working someone could argue with.');
