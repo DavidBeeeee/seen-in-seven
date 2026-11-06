@@ -4432,6 +4432,14 @@ function skipFromPreface(idx) {
 }
 
 // ── VIDEO TRACKER ──────────────────────────────────────
+function openTrackerScript(idx) {
+  if (!state.videos['script_v' + idx]) return;
+  saveProgress();
+  currentVideoIndex = idx;
+  _doShowScriptView(idx);
+  window.scrollTo(0, 0);
+}
+
 function renderVideoTracker(context) {
   context = context || 'prompts';
   const videos = getVideos();
@@ -4476,6 +4484,10 @@ function _buildTrackerHTML(videos, context) {
       cls = 'vt-locked'; status = '–';
     }
     const l2Class = Number(state.level) === 2 ? ' vt-l2-item' : '';
+    // A finished script opens from here. Future videos and the script on screen stay plain.
+    if (hasScript && !(context === 'script' && i === currentVideoIndex)) {
+      return `<button type="button" class="vt-item vt-link${l2Class} ${cls}" onclick="openTrackerScript(${i})" aria-label="Open the Video ${i + 1} script"><div class="vt-label">${label}</div><div class="vt-status">${status}</div></button>`;
+    }
     return `<div class="vt-item${l2Class} ${cls}"><div class="vt-label">${label}</div><div class="vt-status">${status}</div></div>`;
   }).join('');
 

@@ -132,6 +132,11 @@ if (!map.buildHelperPrompt(2, '', '').includes('what made me dismiss it or assum
   throw new Error('Part 2 must carry what its Video 2 questions ask for on both levels.');
 }
 
+// David, 2026-11-06: tracker blocks open finished scripts, and future videos stay plain.
+if (!appSource.includes('function openTrackerScript(idx)') || !appSource.includes('if (hasScript && !(context === \'script\' && i === currentVideoIndex))')) {
+  throw new Error('Finished scripts must open from the video tracker.');
+}
+
 // The map must come back as seven separate story bases, not one idea in seven
 // parts (2026-11-03): every part keeps its own job in both guides, on both levels.
 for (const level of [1, 2]) {
