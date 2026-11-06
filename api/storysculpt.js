@@ -217,6 +217,8 @@ export function validateBody(body) {
   // idea and any list, and dropping them (the old slice(-24)) lost both.
   const all = Array.isArray(body && body.messages) ? body.messages : [];
   const messages = all.length > 24 ? [...all.slice(0, 2), ...all.slice(-22)] : all;
+  // The model reads the trimmed thread. Rebuilding a lost step position needs all of it.
+  const threadForStep = all.filter(message => message && typeof message === 'object');
   return {
     mode,
     projectId,
@@ -228,6 +230,7 @@ export function validateBody(body) {
     target: body && body.target === 'final' ? 'final' : 'step',
     regenerateNote: cleanText(body && body.regenerateNote, 1000),
     previous: cleanText(body && body.previous, 8000),
+    threadForStep,
     // The title is a label, not material. An over-long one is shortened, never
     // a reason to refuse the step: a 222-character Amazon page title blocked a
     // whole chat on 2026-10-14 (WBR-441).
@@ -368,14 +371,16 @@ async function confirmMemory(token, user, body) {
 // the membership boundary. The current project is excluded: refining a script
 // must not make that script collide with itself. Filmed scripts still count as
 // finished work whose opening should not be handed back under a new title.
-const RECENT_FINISHED_LIMIT = 6;
+// Twenty rather than six so a hook cannot quietly return a month later. Archived
+// scripts count: archiving puts a chat away, it does not free its opening.
+const RECENT_FINISHED_LIMIT = 20;
 const recentFinishedCache = createReadCache({ ttlMs: 30000, maxEntries: 200 });
 
 async function loadRecentFinishedScripts(token, projectId, onMeasured) {
   const cacheKey = createHash('sha256').update(token + ':' + projectId).digest('hex');
   return recentFinishedCache.getOrCreate(cacheKey, async () => {
     const url = SUPABASE_URL + '/rest/v1/storysculpt_projects?id=neq.' + projectId
-      + '&status=in.(finished,filmed)&output=not.is.null&select=id,output,updated_at'
+      + '&status=in.(finished,filmed,archived)&output=not.is.null&select=id,output,updated_at'
       + '&order=updated_at.desc&limit=' + RECENT_FINISHED_LIMIT;
     try {
       const response = await fetch(url, { headers: { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token } });
@@ -405,6 +410,12 @@ function repetitionWords(text) {
   return openingForRepetition(text).toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
 }
 
+// Short hooks are the house style, so "The mask cannot bleed" and "Masks cannot
+// bleed" are the same hook as "A mask cannot bleed". Three words must survive.
+function repetitionCore(words) {
+  return words.filter(word => !['a', 'an', 'the'].includes(word)).map(word => word.length > 3 ? word.replace(/s$/, '') : word);
+}
+
 function repetitionCoverage(needle, haystack) {
   const pool = haystack.slice();
   let found = 0;
@@ -420,6 +431,8 @@ function sameOpening(a, b) {
   const right = repetitionWords(b);
   if (left.length < 3 || right.length < 3) return false;
   if (left.join(' ') === right.join(' ')) return true;
+  const leftCore = repetitionCore(left);
+  if (leftCore.length >= 3 && leftCore.join(' ') === repetitionCore(right).join(' ')) return true;
   // Punctuation and one small wording change must not evade the guard, but a
   // shared topic noun or two is not a repeated hook.
   return Math.min(left.length, right.length) >= 6
@@ -439,6 +452,34 @@ export function checkCrossProjectRepetition(content, recentProjects, hooks = fal
     }
   }
   return { ok: true };
+}
+
+// Regenerating a choice step is a promise of new options. A note asking to keep
+// one ("keep the first") is the member's call and is obeyed.
+export function checkRegenerateRepeat(content, previous, note = '') {
+  if (!previous || /\b(?:keep|same|again)\b/i.test(note)) return { ok: true };
+  const earlier = extractOptions(previous);
+  const candidates = extractOptions(content);
+  for (let i = 0; i < candidates.length; i++) {
+    if (earlier.some(option => sameOpening(candidates[i], option))) {
+      return { ok: false, issue: `regenerate-repeats: option ${i + 1} is one of the options this was meant to replace` };
+    }
+  }
+  return { ok: true };
+}
+
+// How many of a member's recent scripts open like an earlier one. The count goes
+// on the generation event, so a habit shows before a member has to name it.
+export function repeatedOpeningsInHistory(recentProjects) {
+  const seen = [];
+  let repeats = 0;
+  for (const project of recentProjects) {
+    const opening = openingForRepetition(project.output);
+    if (!opening) continue;
+    if (seen.some(earlier => sameOpening(opening, earlier))) repeats++;
+    else seen.push(opening);
+  }
+  return repeats;
 }
 
 const STORY_PROFILE_FIELDS = [
@@ -1258,7 +1299,7 @@ export default async function handler(req, res) {
       activeStep = resolveStep({
         mode: input.mode,
         intent: input.intent,
-        messages: input.messages,
+        messages: currentStepInDb ? input.messages : input.threadForStep,
         currentStep: currentStepInDb,
         turns: modeTurns
       });
@@ -1280,6 +1321,8 @@ export default async function handler(req, res) {
     const recentFinished = activeKind.hookCraft || activeKind.final
       ? await loadRecentFinishedScripts(token, input.projectId, bytes => { facts.egressBytes = bytes; })
       : [];
+    const repeatsInHistory = repeatedOpeningsInHistory(recentFinished);
+    if (repeatsInHistory) stepLog.repeatsInHistory = repeatsInHistory;
 
     if (activeKind.draft) {
       try {
@@ -1333,10 +1376,15 @@ export default async function handler(req, res) {
     });
     const checkOutput = (content) => {
       const deterministic = checkOutputDeterministic(checkArgs(content));
+      if (input.intent === 'regenerate' && activeKind.threeOptions) {
+        const regenerated = checkRegenerateRepeat(content, input.previous, input.regenerateNote);
+        if (!regenerated.ok) return regenerated;
+      }
       if (!activeKind.hookCraft && !activeKind.final) return deterministic;
       const repetition = checkCrossProjectRepetition(content, recentFinished, activeKind.hookCraft);
       // Repetition stays visible even when another check fails too. Otherwise a
       // length or assembly problem could mask a duplicate and let it ship.
+      if (!repetition.ok) stepLog.repetitionCaught = (stepLog.repetitionCaught || 0) + 1;
       return repetition.ok ? deterministic : repetition;
     };
     let detCheck = checkOutput(result.content);
@@ -1388,7 +1436,7 @@ export default async function handler(req, res) {
     // bounded repair loop. Leave the saved project/step untouched for retry.
     const completeness = checkOutputCompleteness(checkArgs(result.content));
     const repeatedOpening = !detCheck.ok && /^repeated-opening:/.test(detCheck.issue);
-    const creativeFailure = !detCheck.ok && /^(?:hook-extracted|hook-duplicates|loop-repeats-hook|loop-generic|loop-duplicates|three-options|repeated-opening):/.test(detCheck.issue);
+    const creativeFailure = !detCheck.ok && /^(?:hook-extracted|hook-duplicates|loop-repeats-hook|loop-generic|loop-duplicates|three-options|repeated-opening|regenerate-repeats|wrong-step):/.test(detCheck.issue);
     if ((turnKind(activeStep, stepText).final && !completeness.ok) || creativeFailure) {
       const reason = (creativeFailure ? detCheck.issue : completeness.issue).split(':')[0];
       await emit('output_rejected', { ...stepLog, failureClass: classifyFailure('output'), violations: [reason], material: categorizeOutputMaterial(result.content, { source: memberSource(input), memberText: memberOwnText(input) }), usage: result.usage });

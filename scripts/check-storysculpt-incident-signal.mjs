@@ -13,6 +13,15 @@ import { checkStorySculptIncidents } from '../api/_lib/storysculpt-incidents.js'
 const failures = [];
 const check = (ok, message) => { if (!ok) failures.push(message); };
 
+// Repetition is visible to the operator without tripping an alert on its own.
+{
+  const repeats = incidentSignal([
+    { event_type: 'storysculpt_generation', created_at: new Date().toISOString(), detail: { outcome: 'generation', repetitionCaught: 2 } },
+    { event_type: 'storysculpt_generation', created_at: new Date().toISOString(), detail: { outcome: 'generation', repeatsInHistory: 1 } }
+  ], { now: Date.now() });
+  check(repeats.repetition.caught === 2 && repeats.repetition.generationsWithRepeatsInHistory === 1 && repeats.level === 'ok', 'repetition is counted and stays quiet');
+}
+
 // The four kinds and the providers.
 check(incidentKind('deepseek-error') === 'provider' && incidentKind('database-error') === 'provider' && incidentKind('research-error') === 'provider', 'outside services are the provider kind');
 check(incidentKind('internal-error') === 'app', 'our own code is the app kind');

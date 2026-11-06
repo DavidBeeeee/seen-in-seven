@@ -6,7 +6,7 @@ import assert from 'node:assert/strict';
 process.env.RATE_LIMIT_SECRET = process.env.RATE_LIMIT_SECRET || 'storysculpt-repetition-'.padEnd(40, 'x');
 process.env.GUEST_SESSION_SECRET = process.env.GUEST_SESSION_SECRET || 'storysculpt-repetition-'.padEnd(40, 'y');
 process.env.DEEPSEEK_API_KEY = 'storysculpt-repetition-placeholder';
-const { default: handler, checkCrossProjectRepetition } = await import('../api/storysculpt.js');
+const { default: handler, checkCrossProjectRepetition, checkRegenerateRepeat, repeatedOpeningsInHistory } = await import('../api/storysculpt.js');
 
 const PROJECT = '22222222-2222-4222-8222-222222222222';
 const OLD_PROJECT = '33333333-3333-4333-8333-333333333333';
@@ -41,6 +41,32 @@ assert.equal(checkCrossProjectRepetition(
   recent,
   true
 ).ok, true, 'fresh hook options pass');
+
+// A short hook is David's house style, so an article or a plural must not hide it.
+assert.equal(checkCrossProjectRepetition(
+  'NEXT QUESTION: Hook options\n1. The mask cannot bleed.\n2. The curtain ate the applause.\n3. The bucket took a bow.',
+  [{ output: 'FINAL SCRIPT: Old\n\nA mask cannot bleed. The old script.' }],
+  true
+).ok, false, 'the same short hook with another article is the same hook');
+assert.equal(checkCrossProjectRepetition(
+  'FINAL SCRIPT: New\n\nMasks cannot bleed. A new body.',
+  [{ output: 'FINAL SCRIPT: Old\n\nA mask cannot bleed. The old script.' }]
+).ok, false, 'a plural does not hide it');
+assert.equal(checkCrossProjectRepetition(
+  'FINAL SCRIPT: New\n\nA mask cannot sing. A new body.',
+  [{ output: 'FINAL SCRIPT: Old\n\nA mask cannot bleed. The old script.' }]
+).ok, true, 'a different verb is a different hook');
+
+// Regenerating a choice step must really replace it, unless the member asked to keep some.
+const SET = 'NEXT QUESTION: Pick one.\n1. A mask cannot bleed.\n2. The roof has teeth.\n3. Silence fills the bucket.';
+assert.equal(checkRegenerateRepeat('NEXT QUESTION: Fresh.\n1. The roof has teeth!\n2. The curtain ate the applause.\n3. The bucket took a bow.', SET).ok, false, 'one returning option is caught');
+assert.equal(checkRegenerateRepeat('NEXT QUESTION: Fresh.\n1. The spotlight missed its cue.\n2. The curtain ate the applause.\n3. The bucket took a bow.', SET).ok, true, 'a fresh set passes');
+assert.equal(checkRegenerateRepeat(SET, SET, 'keep the first one, change the others').ok, true, 'a note asking to keep one is obeyed');
+assert.equal(checkRegenerateRepeat(SET, '').ok, true, 'nothing to compare against');
+
+// The pattern signal counts scripts sharing an opening without naming the opening.
+assert.equal(repeatedOpeningsInHistory([{ output: 'A mask cannot bleed. One.' }, { output: 'The mask cannot bleed. Two.' }, { output: 'The curtain ate the applause. Three.' }]), 1);
+assert.equal(repeatedOpeningsInHistory([{ output: 'The curtain ate the applause. Three.' }, { output: 'A mask cannot bleed. One.' }]), 0);
 
 const originalFetch = globalThis.fetch;
 let scene;
@@ -222,6 +248,13 @@ try {
   assert.ok(events.at(-1).p_detail.violations.includes('repeated-opening'));
   assert.ok(!JSON.stringify(events).includes('mask cannot bleed'), 'member script text stays out of logs');
 
+  // A repaired repeat stays visible to the operator even though the member never saw it.
+  res = await run({ step: 'R5', replies: [repeatedHooks, freshHooks] });
+  assert.equal(res.code, 200, JSON.stringify(res.body));
+  assert.equal(events.at(-1).p_event_type, 'storysculpt_generation');
+  assert.equal(events.at(-1).p_detail.repetitionCaught, 1, 'the caught repeat is counted on the event');
+  assert.ok(!JSON.stringify(events).includes('mask cannot bleed'), 'the count carries no member text');
+
   // The history read is part of the guard, not an optional best-effort extra.
   res = await run({ step: 'R5', replies: [freshHooks], recentError: true });
   assert.equal(res.code, 503);
@@ -229,14 +262,14 @@ try {
   assert.equal(events.at(-1).p_detail.failureClass, 'database-error');
 
   // Every guarded path uses the member token, excludes this project, and reads
-  // only six recent finished or filmed scripts with a non-null output.
+  // the last twenty finished, filmed or archived scripts with a non-null output.
   assert.ok(recentRequests.length === 1);
   const { path, options } = recentRequests[0];
   assert.ok(path.includes('id=neq.' + PROJECT));
-  assert.ok(path.includes('status=in.(finished,filmed)'));
+  assert.ok(path.includes('status=in.(finished,filmed,archived)'));
   assert.ok(path.includes('output=not.is.null'));
   assert.ok(path.includes('order=updated_at.desc'));
-  assert.ok(path.includes('limit=6'));
+  assert.ok(path.includes('limit=20'));
   assert.match(options.headers.Authorization, /^Bearer repetition-token-\d+$/);
 } finally {
   globalThis.fetch = originalFetch;

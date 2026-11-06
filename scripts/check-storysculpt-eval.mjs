@@ -178,6 +178,20 @@ const CASES = [
     model: 'NEXT QUESTION: Pick one.\n1. A mask cannot bleed.\n2. Then the bucket overflowed.\n3. The repair bill told another story.',
     expect: 'rejected', reason: 'loop-repeats-hook' },
 
+  // An answer from the wrong step is not accepted just because it has three
+  // numbered lines: an open loop continues a hook, a hook stands on its own.
+  { category: 'step-concepts', name: 'R7 open loops offered at R6', mode: 'rant', currentStep: 'R5',
+    messages: member('I spent Tuesday reorganizing the workshop after the roof leaked.', 'NEXT QUESTION: Draft approved?', 'go for the hook'),
+    model: 'NEXT QUESTION: Pick one.\n1. Which is why the bucket never shows up for the hard part.\n2. And that is when I saw who it was protecting.\n3. Then the repair bill told another story.',
+    expect: 'rejected', reason: 'wrong-step' },
+  { category: 'step-concepts', name: 'R6 asks about open loops', mode: 'rant', currentStep: 'R5',
+    messages: member('I spent Tuesday reorganizing the workshop after the roof leaked.', 'NEXT QUESTION: Draft approved?', 'go for the hook'),
+    model: 'NEXT QUESTION: Which of these open loops would you like?\n1. A mask cannot bleed.\n2. The bucket owns the room.\n3. The roof keeps its own hours.',
+    expect: 'rejected', reason: 'wrong-step' },
+  { category: 'step-concepts', name: 'R6 hooks offered at R7', mode: 'rant', currentStep: 'R6.5',
+    messages: member('My old story', 'NEXT QUESTION: Pick a hook.\n1. A mask cannot bleed.\n2. The roof has teeth.\n3. Silence fills the bucket.', '1', 'NEXT QUESTION: Choose a stronger version or keep the original.', 'Keep the original hook'),
+    model: 'NEXT QUESTION: Which of these 3 hooks would you like to use?\n1. The bucket took a bow.\n2. The curtain ate the applause.\n3. The spotlight missed its cue.',
+    expect: 'rejected', reason: 'wrong-step' },
   // Failure classes by layer
   { category: 'layer', name: 'DeepSeek times out', messages: member('hello'),
     model: 'timeout', expect: 'refused', status: 504, failureClass: 'deepseek-timeout', layer: 'generation' },

@@ -71,6 +71,7 @@ else {
   const layers = Object.entries(signal.byLayer).map(([layer, n]) => `${layer}=${n}`).join(' ') || 'none';
   const providers = Object.entries(signal.byProvider).map(([name, n]) => `${name}=${n}`).join(' ') || 'none';
   console.log(`StorySculpt ${signal.level.toUpperCase()}: ${signal.reason}. Last ${minutes}m: ${signal.attempts} attempt(s), ${signal.failures} failure(s), rate ${signal.failureRate}, by layer ${layers}. Provider failures: ${signal.providerFailures}, member walk-aways: ${signal.memberWalkaways}.`);
+  console.log(`Repetition: ${signal.repetition.caught} repeated opening(s) caught before delivery, ${signal.repetition.generationsWithRepeatsInHistory} generation(s) from a member whose saved scripts already repeat`);
   console.log(`Kinds: outside services ${signal.kinds.provider} (${providers}), app errors ${signal.kinds.app}, rejected answers ${signal.kinds.rejected}, walk-aways ${signal.kinds.walkaway}, scripts revised three or more times ${signal.kinds.poor}. Tripped: ${signal.tripped.join(', ') || 'none'}.`);
 }
 

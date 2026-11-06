@@ -351,6 +351,127 @@ console.log('5. Replaying David\'s 2026-10-08 17:45 /rant through the real handl
 }
 console.log('PASS: real-handler replay: R3 asks length, R4 offers the 5 E\'s, revisions stay put, R6 hooks, R7 open loops, R8 assembles the chosen hook and loop at the chosen length, and Regenerate reruns a step or the whole script.');
 
+console.log('5a. Every format walks David\'s file through the real handler, including a long thread that lost its place...');
+{
+  const projectId = '4403a594-65f8-4321-9453-6a1c1b1fd74e';
+  const originalFetch = globalThis.fetch;
+  const reply = (value, status = 200) => ({ ok: status >= 200 && status < 300, status, json: async () => value });
+  let row;
+  let queue = [];
+  let calls = [];
+  globalThis.fetch = async (url, init = {}) => {
+    const path = String(url);
+    if (path.endsWith('/auth/v1/user')) return reply({ id: 'walk-member' });
+    if (path.endsWith('/rest/v1/rpc/has_studio_app_access')) return reply(true);
+    if (path.endsWith('/rest/v1/rpc/record_log_event')) return reply(null);
+    if (path.includes('/rest/v1/storysculpt_context_versions?')) return reply([]);
+    if (path.includes('quota')) return reply(true);
+    if (path.includes('/rest/v1/storysculpt_projects?') && path.includes('id=neq.')) return reply([]);
+    if (path.includes('/rest/v1/storysculpt_projects?') && init.method === 'PATCH') { row.intake = JSON.parse(init.body).intake || row.intake; return reply(null); }
+    if (path.includes('/rest/v1/storysculpt_projects?')) return reply([row]);
+    if (path.includes('deepseek.com')) {
+      const body = JSON.parse(init.body);
+      calls.push(body);
+      return reply({ choices: [{ message: { content: queue.shift() || 'NEXT QUESTION: placeholder' } }] });
+    }
+    throw new Error('Unexpected fetch in step walk: ' + path);
+  };
+  // The shape a saved project really has, not just the fields the code reads.
+  const liveRow = (mode, currentStep) => ({ id: projectId, title: 'Live shaped', status: 'drafting', version: 7, output: null, content_type: mode, conversation: [], updated_at: '2026-11-05T22:00:00Z', intake: currentStep ? { context: '', current_step: currentStep, filmed: false } : { context: '' } });
+  const post = async (mode, messages, replies, url = '/api/storysculpt') => {
+    queue = [...replies];
+    calls = [];
+    const req = { method: 'POST', url, headers: { authorization: 'Bearer walk-token' }, body: { mode, projectId, intent: 'interview', projectTitle: 'Live shaped', context: '', messages } };
+    const res = { setHeader() {}, status(code) { this.code = code; return this; }, json(body) { this.body = body; return this; } };
+    await handler(req, res);
+    return res;
+  };
+  const hooksReply = 'NEXT QUESTION: Which of these 3 hooks would you like to use?\n1. A mask cannot bleed.\n2. The roof keeps its own hours.\n3. Silence fills the bucket.';
+  const refinedReply = 'NEXT QUESTION: Stronger hooks\n1. A velvet curtain still hides the only voice worth hearing.\n2. The stand-in faces the room while the person slips out.\n3. A borrowed face never flinches at the door.';
+  const loopsReply = 'NEXT QUESTION: Which of these open loops would you like to use?\n1. Which is why the stand-in never shows up.\n2. And that is when I saw who it was protecting.\n3. Because the offer was never the problem.';
+  try {
+    // Each turn of each format: the handler answers with that turn, and the
+    // turn's own text is what the model reads last, verbatim, with no later turn.
+    for (const [mode, { turns: list }] of Object.entries(turns)) {
+      const thread = [{ role: 'assistant', content: 'Type it out.' }, { role: 'user', content: 'My workshop roof leaked before Tuesday show and I kept building anyway.' }];
+      for (let i = 1; i < list.length - 1; i++) {
+        row = liveRow(mode, list[i - 1].label);
+        const kind = turnKind(list[i].label, list[i].text);
+        const res = await post(mode, thread, [kind.hookCraft ? (/\.5$/.test(list[i].label) ? refinedReply : hooksReply) : kind.openLoop ? loopsReply : kind.threeOptions ? 'NEXT QUESTION: Pick a direction.\n1. The leak nobody planned for.\n2. The Tuesday show went on anyway.\n3. What the bucket taught me.' : 'NEXT QUESTION: Tell me more about step ' + list[i].label + '.']);
+        assert.equal(res.code, 200, mode + ' ' + list[i].label + ': ' + JSON.stringify(res.body));
+        assert.equal(res.body.step, list[i].label, mode + ' answers with the next turn in the file');
+        const prompt = JSON.stringify(calls.at(-1).messages);
+        assert.ok(prompt.includes(JSON.stringify(list[i].text).slice(1, -1)), mode + ' ' + list[i].label + ': the model reads the turn verbatim');
+        for (const later of list.slice(i + 1)) {
+          assert.ok(!prompt.includes(JSON.stringify(later.text).slice(1, -1)), mode + ' ' + list[i].label + ' must not contain later turn ' + later.label);
+        }
+        thread.push({ role: 'assistant', content: res.body.content }, { role: 'user', content: kind.draft ? 'Looks good, go for the hooks' : '1' });
+      }
+    }
+
+    // A long /rant thread with its place saved: the stored step decides, the
+    // turn count does not, and the raw rant and the chosen hook survive trimming.
+    const LONG = [
+      { role: 'assistant', content: 'Type the raw rant.' },
+      { role: 'user', content: 'RAW-RANT-ROOF-MARKER: the workshop roof leaked before Tuesday show.' },
+      { role: 'assistant', content: 'NEXT QUESTION: Who should the enemy be?' },
+      { role: 'user', content: 'the leak' },
+      { role: 'assistant', content: 'NEXT QUESTION: How long do you want the final video to be?' },
+      { role: 'user', content: '75 seconds' },
+      { role: 'assistant', content: 'NEXT QUESTION: What tone should I use for this script?' },
+      { role: 'user', content: 'epiphany' },
+      ...Array.from({ length: 52 }, (_, i) => ({ role: i % 2 ? 'user' : 'assistant', content: i % 2 ? 'Please revise the script above. Keep what works and change this: round ' + i : 'NEXT QUESTION: Draft ' + i + '. How does this sound?' })),
+      { role: 'assistant', content: 'NEXT QUESTION: Final draft. How does this sound?' },
+      { role: 'user', content: 'Looks good, go for the hooks' },
+      { role: 'assistant', content: hooksReply },
+      { role: 'user', content: '1' },
+      { role: 'assistant', content: 'NEXT QUESTION: Stronger hooks\n1. A velvet mask still cannot bleed.\n2. The stand-in faces the room alone.\n3. A borrowed face never flinches.\n4. Keep the original.' },
+      { role: 'user', content: 'Keep the original hook' }
+    ];
+    row = liveRow('rant', 'R6.5');
+    let res = await post('rant', LONG, [loopsReply], '/rant');
+    assert.equal(res.code, 200, JSON.stringify(res.body));
+    assert.equal(res.body.step, 'R7', 'a 60-turn thread still lands on R7 from the saved step');
+    const longPrompt = JSON.stringify(calls[0].messages);
+    assert.ok(longPrompt.includes('RAW-RANT-ROOF-MARKER'), 'the raw rant survives trimming');
+    assert.ok(calls[0].messages.at(-1).content.includes('open loop sentences'), 'R7 is what the model reads last');
+    assert.equal(row.intake.current_step, 'R7', 'the place is saved');
+
+    // The same thread after a save lost its place. A revision is not a finished
+    // turn, so 30 rounds on the draft cannot throw the member into the final script.
+    row = liveRow('rant', null);
+    res = await post('rant', LONG, [loopsReply], '/rant');
+    assert.equal(res.code, 200, JSON.stringify(res.body));
+    assert.equal(res.body.step, 'R7', 'a lost place is rebuilt by replaying the thread, not by counting replies');
+    assert.ok(!res.body.final, 'and no finished script appears');
+
+    // A short thread with no revisions still counts exactly as it did.
+    assert.equal(resolveStep({ mode: 'rant', messages: LONG.slice(0, 2), currentStep: null, turns: turns.rant.turns }), 'R2');
+    assert.equal(resolveStep({ mode: 'rant', messages: [...LONG.slice(0, 2), { role: 'assistant', content: 'Who?' }, { role: 'user', content: 'cowards' }], currentStep: null, turns: turns.rant.turns }), 'R3');
+    assert.equal(resolveStep({ mode: 'rant', messages: LONG.slice(0, 3), currentStep: null }), 'R3', 'without parsed turns, the count still works');
+
+    // Stranger 81, live-shaped: David's curly apostrophes and the model's own
+    // bold numbering must not let the member's sentence through as a fresh hook.
+    const curly = 'I’ve spent ten years hiding behind other people’s scripts on camera.';
+    row = liveRow('rant', 'R5');
+    res = await post('rant', [
+      { role: 'assistant', content: 'Type the raw rant.' }, { role: 'user', content: curly },
+      { role: 'assistant', content: 'NEXT QUESTION: Here is the draft. How does this sound?' }, { role: 'user', content: 'Looks good, go for the hooks' }
+    ], [
+      'NEXT QUESTION: Which of these 3 hooks would you like to use?\n**1.** I’ve spent ten years hiding behind other people’s scripts on camera.\n**2.** A mask cannot bleed.\n**3.** The roof keeps its own hours.',
+      hooksReply
+    ]);
+    assert.equal(res.code, 200, JSON.stringify(res.body));
+    assert.equal(calls.length, 2, 'the reused sentence is sent back once');
+    assert.ok(calls[1].messages.at(-1).content.includes('hook-extracted'), 'the retry names the failure');
+    assert.ok(!res.body.content.includes('ten years hiding'), 'the member never sees their own sentence offered as a fresh hook');
+    assert.equal(row.intake.current_step, 'R6', 'the step advances only on the clean set');
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+}
+console.log('PASS: Rant, Bold and Mini follow the file turn by turn; a 60-turn /rant lands on R7 saved or lost; reused words are caught on a live-shaped project.');
+
 console.log('6. Fidelity checks against David\'s real 2026-10-12 scripts...');
 {
   const seriesMessage = 'Okay, so I’ve revamped my social media strategy, and I’m going to run a few series concurrently 1) Lessons I Learned This the Hard Way\n2) Apparently, I’m 40 So heres some things you probably don’t know about me\n3) What I Tell My Clients as a Professional Accountability Buddy and Implementation Partner \n4) You Know what Pisses Me Off and You Should Probably Be Mad About Too? \n5) Things I Actually Use That Save Time, Reduce Stress, and Just Work \nI’m also going to be posting my cartoon series, I really like it and it’s both a creative outlet, and I think it’s relevant to my life and what I do.';

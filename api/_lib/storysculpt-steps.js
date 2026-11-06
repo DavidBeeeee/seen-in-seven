@@ -188,9 +188,20 @@ export function resolveStep({ mode, intent, messages = [], currentStep = null, t
   // No stored position (older projects, or a save that lost it): the browser
   // shows the first turn's question itself, so each assistant reply already in
   // the thread is one turn done.
-  const assistantCount = messages.filter(m => m.role === 'assistant').length;
-  const targetIdx = Math.min(Math.max(assistantCount, 0), sequence.length - 1);
-  if (assistantCount > 0 && isRevisionRequest(lastUserMsg)) return sequence[Math.max(targetIdx - 1, 0)];
+  // A reply to a revision note redid the same turn, so it does not count: thirty
+  // rounds on a draft must not land the member on the finished script.
+  let done = 0;
+  messages.forEach((message, index) => {
+    if (message.role !== 'assistant') return;
+    const before = messages[index - 1];
+    const turn = turns && turns[Math.min(done - 1, turns.length - 1)];
+    const stayed = done > 0 && before && before.role === 'user' && (
+      isRevisionRequest(before.content) || (turn && turnKind(turn.label, turn.text).draft && !isApproval(before.content))
+    );
+    if (!stayed) done++;
+  });
+  const targetIdx = Math.min(done, sequence.length - 1);
+  if (done > 0 && isRevisionRequest(lastUserMsg)) return sequence[Math.max(targetIdx - 1, 0)];
   return sequence[targetIdx];
 }
 
@@ -429,12 +440,18 @@ export function turnKind(stepLabel, turnText = '') {
 
 // Catch extraction and near-extraction, not shared topic nouns. A fresh hook
 // about an AI clone can say "AI clone"; banning every evidence word killed sense.
+// An open loop continues a hook, so it reads as the second line of something.
+// A hook has to stand first. Three numbered lines from the wrong step are still
+// the wrong step (StorySculpt Developer 55).
+const CONTINUES_A_HOOK = /^(?:which is why|and (?:that(?:'s| is| was)|then|so)\b|that(?:'s| is| was) (?:when|why)\b|then\b)/i;
+
 export function checkHookCraft(options, messages = []) {
   const last = String(messages.filter(m => m.role === 'user').at(-1)?.content || '');
   const keepExact = !/\b(?:don't|do not|never)\s+(?:keep|use|copy|preserve)\b/i.test(last) && /\b(?:keep|use|preserve)\b.{0,60}\b(?:exact|verbatim|word for word|original (?:line|hook))\b/i.test(last);
   const source = messages.map(m => String(m.content || '')).join('\n');
   const sentences = source.split(/(?<=[.!?])\s+|\n+/).map(normWords).filter(words => words.length >= 4);
   for (let i = 0; i < options.length; i++) {
+    if (CONTINUES_A_HOOK.test(String(options[i]).trim())) return { ok: false, issue: `wrong-step: option ${i + 1} continues a hook instead of opening the video. This step writes hooks, not open loops` };
     const words = normWords(options[i]);
     if (!keepExact && words.length >= 4 && sentences.some(original => {
       const a = words.join(' '), b = original.join(' ');
@@ -517,6 +534,8 @@ export function checkDeterministic({ content, stepLabel, turnText = '', memberMe
   }
 
   if (kind.threeOptions && !isFinal) {
+    if (kind.hookCraft && /\b(?:which|these|pick|choose)\b[^.?!\n]{0,30}\bopen loops?\b/i.test(content)) return { ok: false, issue: 'wrong-step: this step offers hooks, and the reply offers open loops' };
+    if (kind.openLoop && /\b(?:which|these|pick|choose)\b[^.?!\n]{0,30}\bhooks\b/i.test(content)) return { ok: false, issue: 'wrong-step: this step offers open loops, and the reply offers hooks' };
     const options = extractOptions(content);
     if (options.length < 3 || ((kind.hookCraft || kind.openLoop) && options.length !== 3)) return { ok: false, issue: 'three-options: step requires exactly 3 options, found ' + options.length };
     if (kind.evidenceRule && !kind.hookCraft) {
