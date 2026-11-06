@@ -111,10 +111,12 @@ if (!appSource.includes('if (phase2.resume && resumePositionApplied) {') ||
   throw new Error('A signed-in reload must not overwrite the saved place, and onboarding must use the member level.');
 }
 
-// Video 1 receives its map part once, as the Journey Direction. It was also sent as an
-// answer, and the answers control the facts, so the map supplied the script (2026-11-06).
-if (appSource.includes('The story direction behind this video')) {
-  throw new Error('Video 1 must not receive its map part a second time as an answer.');
+// David, 2026-11-06: Video 1 comes from the onboarding answers, and the map is outside
+// research. Part 1 reaches Video 1 only as background, never as its brief or an answer.
+if (appSource.includes('The story direction behind this video') ||
+    !appSource.includes("currentJourneyDirection: videoIdx === 0 ? '' : journeyDirectionFor(videoIdx, level)") ||
+    !appSource.includes('Background from my outside story research')) {
+  throw new Error('Video 1 must be built from onboarding, with the map as background only.');
 }
 
 // The map must come back as seven separate story bases, not one idea in seven
@@ -148,13 +150,12 @@ for (const level of [1, 2]) {
   for (const value of ['no more than 60', 'one or two', 'up to three', 'no limit on these questions', 'maximum of five', 'what part 4 starts', 'run in time order', 'start by asking', 'one short question per message', 'about eight questions', 'ask me for it', 'never invent', 'made up', 'only what is true', 'real event']) {
     if (fullGuide.toLowerCase().includes(value)) throw new Error(`The Level ${level} guide still says: ${value}`);
   }
-  for (const value of ['ONCE I CHOOSE, WRITE THE MAP', 'with no questions first', 'Never ask me anything you already know', 'That choice is usually the only thing you need from me', 'never more than two in all', 'The map itself gets all the space it needs', 'follow the job', 'Part 1 is the exception: it is a short declaration of about 60 words', '1. [my short declaration, in first person, about 60 words]', 'ONE DEVELOPING STORY', 'the one question that connects all seven parts', 'do not need to cause one another', 'pull you back to the obvious milestones', 'does not pass', 'the moment it hit me hardest', 'privately list at least 20 specific moments', 'Only one project, job, or period', 'use the smaller moment', 'name the day or conversation', 'one specific day or conversation', 'cannot be taken back', 'way back', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version', 'HOW TO TALK TO ME']) {
+  for (const value of ['ONCE I CHOOSE, WRITE THE MAP', 'with no questions first', 'Never ask me anything you already know', 'That choice is usually the only thing you need from me', 'never more than two in all', 'The map itself gets all the space it needs', 'follow the job', 'ONE DEVELOPING STORY', 'the one question that connects all seven parts', 'do not need to cause one another', 'pull you back to the obvious milestones', 'does not pass', 'the moment it hit me hardest', 'privately list at least 20 specific moments', 'Only one project, job, or period', 'use the smaller moment', 'name the day or conversation', 'one specific day or conversation', 'cannot be taken back', 'way back', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version', 'HOW TO TALK TO ME']) {
     if (!fullGuide.includes(value)) throw new Error(`The Level ${level} guide lost: ${value}`);
   }
   if (level === 2 && !fullGuide.includes('a realization about myself does not count')) throw new Error('Level 2 Part 6 must stay a way of working someone could argue with.');
   if ((level === 2) !== fullGuide.includes('the objection a sensible person would raise')) throw new Error('The objection test belongs on Level 2 Part 6 only.');
   if (level === 2 && !fullGuide.includes('what most people would tell me I am doing wrong')) throw new Error('Level 2 Part 6 must open with the practice.');
-  if (!map.buildPartHelperPrompt(level, 0, '', []).includes('keep it to about 60 words')) throw new Error(`The Level ${level} Part 1 helper must stay a short declaration.`);
   const partGuide = map.buildPartHelperPrompt(level, 3, '', []);
   if (partGuide.includes('no more than 60') || !partGuide.includes('Do not ask me questions') || partGuide.includes('never invent') || !partGuide.includes('invent plausible details') || !partGuide.includes('usually 100 to 200 words')) throw new Error(`The Level ${level} part helper still asks for a summary.`);
 }

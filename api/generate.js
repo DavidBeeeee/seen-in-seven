@@ -496,6 +496,7 @@ function extractCurrentPromptBlock(userContext, video) {
   const source = String(userContext || '');
   const number = Number(video);
   const markers = [
+    'VIDEO ' + number + ' PREFILLED PROMPTS (user may have edited these):',
     'CURRENT VIDEO ' + number + ' PROMPTS:',
     'CURRENT VIDEO ' + number + ' JOURNAL ENTRY (easy mode; use this to infer all story beats):'
   ];
@@ -594,7 +595,7 @@ function extractOnboardingBlock(userContext) {
   const start = source.indexOf(marker);
   if (start === -1) return '';
   const remainder = source.slice(start);
-  const end = remainder.search(/\n(?:VIDEO \d+ PROMPTS:|VIDEO \d+ JOURNAL ENTRY \(easy mode\):|VIDEO \d+ FINAL SCRIPT)/);
+  const end = remainder.search(/\n(?:VIDEO \d+ PREFILLED PROMPTS|VIDEO \d+ PROMPTS:|VIDEO \d+ JOURNAL ENTRY \(easy mode\):|VIDEO \d+ FINAL SCRIPT)/);
   return remainder.slice(0, end === -1 ? undefined : end).trim();
 }
 

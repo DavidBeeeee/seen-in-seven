@@ -493,6 +493,16 @@ for (const badEdit of [async () => 'kept '.repeat(40).trim(), async () => 'kept 
 const fittingMeatScript = '[HOOK]\nA hook.\n\n[MEAT]\n' + 'word '.repeat(130).trim();
 assert(await tightenVideoOneMeat(fittingMeatScript, async () => { throw new Error('must not be called'); }) === fittingMeatScript, 'A Meat already in range must not be edited.');
 
+// Video 1's brief is its onboarding answers alone, and the map stays in the background once.
+const videoOneMessage = ['Generate Video 1 script.', 'ONBOARDING DATA:', '- Name: Test', '- Background from my outside story research: MAP SENTINEL', '', 'VIDEO 1 PREFILLED PROMPTS (user may have edited these):', '1. Opening declaration (read-only): Hi.', '2. What has been making this hard: BLANK SENTINEL'].join('\n');
+const videoOneBrief = extractCurrentVideoBrief(videoOneMessage, 1);
+const videoOneSource = buildEpisodeArchitectSource(videoOneMessage, 2, 1);
+assert(
+  videoOneBrief.includes('BLANK SENTINEL') && !videoOneBrief.includes('MAP SENTINEL') &&
+    videoOneSource.split('MAP SENTINEL').length === 2 && videoOneSource.split('BLANK SENTINEL').length === 2,
+  'Video 1 must brief from onboarding answers once, with the map as background once.'
+);
+
 const preservedPremise = preserveViewerPremiseSource(
   [
     'CURRENT VIDEO 4 JOURNEY DIRECTION (private planning context only):',

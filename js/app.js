@@ -3202,12 +3202,16 @@ function buildAPIUserMessage(videoIdx) {
   return SISPromptEngine.buildUserMessage({
     level,
     video,
-    onboardingLines,
+    // Video 1 declares from the onboarding answers. The map is outside research, so here
+    // it is background the planner may draw on, not the brief for this video.
+    onboardingLines: videoIdx === 0 && journeyDirectionFor(0, level)
+      ? onboardingLines.concat('- Background from my outside story research (context only, not the subject of this video): ' + journeyDirectionFor(0, level))
+      : onboardingLines,
     previousVideos,
     currentMode,
     currentEasyAnswer: state.videos['videoExtra_v' + videoIdx] || (currentEasy ? state.videos[currentEasy.key] || '' : ''),
     currentAnswers: videoIdx === 0 ? videoOnePromptAnswers(level) : extendedPromptAnswers(currentDefinition),
-    currentJourneyDirection: journeyDirectionFor(videoIdx, level)
+    currentJourneyDirection: videoIdx === 0 ? '' : journeyDirectionFor(videoIdx, level)
   });
 }
 
@@ -3653,7 +3657,7 @@ function _buildPromptsContent(container, v, idx) {
       <div class="video-title-text">${v.title}</div>
     </div>
     <div class="video-note">${v.note}</div>
-    ${journeyDirectionHTML}
+    ${idx === 0 ? '' : journeyDirectionHTML}
     ${promptsHTML}
   `;
   container.appendChild(card);

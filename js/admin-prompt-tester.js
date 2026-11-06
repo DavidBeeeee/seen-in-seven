@@ -675,7 +675,7 @@ function buildTestUserMessage(user, ob, video, level, mode, answers) {
     currentMode:mode,
     currentEasyAnswer:easy ? answers[easy.key] || '' : '',
     currentAnswers:currentQuestions.map(question => ({label:question.label, value:answers[question.key] || ''})),
-    currentJourneyDirection:testJourneyDirection(user, ob, video, level)
+    currentJourneyDirection:Number(video) === 1 ? '' : testJourneyDirection(user, ob, video, level)
   });
 }
 
