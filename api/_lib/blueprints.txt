@@ -157,6 +157,7 @@ cohorts
 build the bridge
 bridge between
 bridge from
+for years
 </banned_script_terms>
 </style_guide>
 </global_voice_rule>

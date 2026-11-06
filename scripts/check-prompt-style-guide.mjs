@@ -162,7 +162,7 @@ assert(
 const inflectedRepetition = findLexicalRepetitionIssues({
   HOOK:'A sharp independent interruption uses help once.',
   'OPEN LOOP':'Why did the help disappear when the work became difficult?',
-  MEAT:'I helped for years. Helping felt natural, so I kept helping after the request had already been answered.',
+  MEAT:'I helped for a decade. Helping felt natural, so I kept helping after the request had already been answered.',
   CONCLUSION:'That help protected my comfort.',
   CTA:'Follow because this seven-video challenge continues with the decision that followed.'
 });
@@ -224,7 +224,7 @@ const validFreshScript = `[HOOK]
 I deleted the recording before breakfast.
 
 [OPEN LOOP]
-The camera exposed a question I couldn't answer yet: why did a ten-minute recording feel heavier than difficult work I had already survived without hesitation for years?
+The camera exposed a question I couldn't answer yet: why did a ten-minute recording feel heavier than difficult work I had already survived without hesitation for a decade?
 
 [MEAT]
 I had spent years handling difficult conversations without rehearsing every sentence. Put a camera in front of me, though, and I checked every word before saying it. I recorded the same opening four times, watched each attempt back, and deleted every file. By breakfast, I had completed the work I feared and erased all evidence that I had tried. The recording took ten minutes. The deleting took the rest of the morning, since each replay gave me another detail to judge. Eventually I closed the camera and returned to the routine that already felt familiar.
