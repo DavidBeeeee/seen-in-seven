@@ -111,6 +111,12 @@ if (!appSource.includes('if (phase2.resume && resumePositionApplied) {') ||
   throw new Error('A signed-in reload must not overwrite the saved place, and onboarding must use the member level.');
 }
 
+// Video 1 receives its map part once, as the Journey Direction. It was also sent as an
+// answer, and the answers control the facts, so the map supplied the script (2026-11-06).
+if (appSource.includes('The story direction behind this video')) {
+  throw new Error('Video 1 must not receive its map part a second time as an answer.');
+}
+
 // The map must come back as seven separate story bases, not one idea in seven
 // parts (2026-11-03): every part keeps its own job in both guides, on both levels.
 for (const level of [1, 2]) {

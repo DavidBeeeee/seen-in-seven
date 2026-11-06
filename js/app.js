@@ -3130,7 +3130,6 @@ function videoOnePromptAnswers(level) {
   const p2 = ensurePhase2();
   const answers = [
     { label:'Opening declaration (read-only)', value:videoOneDeclaration(level) },
-    { label:'The story direction behind this video', value:journeyDirectionFor(0, level) },
     { label:"What has been making this hard", value:p2.commitmentPainText || phase2ValueText('pain', p2.commitmentPain, p2.commitmentPainCustom) || state.blocker || '' },
     { label:"What you are moving toward", value:p2.commitmentDesireText || phase2ValueText('desire', p2.commitmentDesire, p2.commitmentDesireCustom) || p2.commitmentDeclaration || '' }
   ];
