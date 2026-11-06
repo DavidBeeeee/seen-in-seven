@@ -811,8 +811,9 @@ async function lifecyclePass(browser) {
     const answersLapsedPauses = /lapsed membership pauses/i.test(helpText);
     check('Help answers what finishing locks and what a lapsed membership pauses', answersFinishingLocks && answersLapsedPauses, 'locks=' + answersFinishingLocks + ', pauses=' + answersLapsedPauses);
     const answersDeletingDoes = /permanently removes the chat/i.test(helpText) && /versions/i.test(helpText) && /undo/i.test(helpText);
-    const answersAccountDeletion = /Studio-level request/i.test(helpText) && /email@davidbee\.me/i.test(helpText);
-    check('Help answers what deleting does and how to ask for a full account deletion', answersDeletingDoes && answersAccountDeletion, 'deleting=' + answersDeletingDoes + ', accountDeletion=' + answersAccountDeletion);
+    const answersAccountDeletion = /entire Studio login and billing record/i.test(helpText) && /email@davidbee\.me/i.test(helpText);
+    const selfServeStoryDeletion = /self-serve member action/i.test(helpText) && await page.locator('#help-delete-all-data').isVisible();
+    check('Help distinguishes self-serve StorySculpt deletion from full Studio account deletion', answersDeletingDoes && answersAccountDeletion && selfServeStoryDeletion, 'deleting=' + answersDeletingDoes + ', accountDeletion=' + answersAccountDeletion + ', selfServe=' + selfServeStoryDeletion);
     // WBR-462 (UX 91, Stranger 100): the crisis answer is in the Help a member opens.
     const answersHardMoment = /What if something hard comes up while I write\?/.test(helpText) && /988/.test(helpText) && /findahelpline\.com/i.test(helpText);
     check('Help answers what happens if something hard comes up, with 988 and findahelpline.com', answersHardMoment, 'hardMoment=' + answersHardMoment);
