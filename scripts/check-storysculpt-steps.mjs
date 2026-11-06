@@ -21,7 +21,7 @@ import {
   extractStems,
   stem
 } from '../api/_lib/storysculpt-steps.js';
-import handler, { systemPrompt } from '../api/storysculpt.js';
+import handler, { systemPrompt, finalStepError, interviewAnswerError } from '../api/storysculpt.js';
 
 process.env.RATE_LIMIT_SECRET = process.env.RATE_LIMIT_SECRET || 'storysculpt-step-'.padEnd(40, 'x');
 process.env.GUEST_SESSION_SECRET = process.env.GUEST_SESSION_SECRET || 'storysculpt-step-'.padEnd(40, 'y');
@@ -150,6 +150,32 @@ assert.equal(resolveStep({ mode: 'rant', intent: 'refine', messages: [{ role: 'u
 assert.equal(resolveStep({ mode: 'mini', intent: 'refine', messages: [{ role: 'user', content: 'Please revise the script above. Keep what works and change this: /fix' }] }), 'F1');
 assert.equal(resolveStep({ mode: 'bold', messages: [{ role: 'user', content: '/fix make it punchy' }] }), 'F1');
 console.log('PASS: Rant, Bold and Mini advance, stay for revisions, and honour skip and /fix.');
+
+console.log('3c. WBR-462 row-labelled deterministic routing and answer gates...');
+for (const [mode, list, first, second, final] of [
+  ['rant', turns.rant.turns, 'R1', 'R2', 'R8'],
+  ['bold', turns.bold.turns, 'B1', 'B2', 'B7'],
+  ['mini', turns.mini.turns, 'M1', 'M2', 'M7']
+]) {
+  assert.equal(resolveStep({ mode, messages: [{ role: 'user', content: 'My specific story answer' }], currentStep: first, turns: list }), second, 'Stranger 86 / Developer 66: ' + mode + ' routes through its own code path');
+  assert.equal(turnKind(final, list.at(-1).text).final, true, 'Stranger 86: ' + mode + ' has a distinct deterministic final step');
+  assert.match(finalStepError({ mode, step: final, messages: [{ role: 'user', content: '2' }] }), /story answer/, 'Stranger 83 / Developer 65: ' + mode + ' final assembly waits for the required story answer');
+}
+assert.equal(t('R5', 'make it shorter'), 'R5', 'Developer 67: revision feedback stays on the same answer-dependent path');
+assert.equal(t('R5', 'looks good'), 'R6', 'Developer 67: approval routes forward by code');
+assert.equal(t('R6', '2'), 'R6.5', 'Developer 67: a numbered hook answer routes to hook refinement');
+assert.match(interviewAnswerError({ intent: 'interview', messages: [{ role: 'assistant', content: 'Question' }] }), /needs an answer/, 'Developer 65: interview state requires a trailing member answer');
+assert.equal(interviewAnswerError({ intent: 'interview', messages: [{ role: 'user', content: 'Kept answer' }] }), '', 'Developer 59: a retry with the kept answer passes the gate');
+const completeFinalThread = [
+  { role: 'user', content: 'My specific story about a cracked blue bowl' },
+  { role: 'assistant', content: 'Which hook?\n1. The bowl held the crack.\n2. A shelf remembered.\n3. Blue glass waited.' },
+  { role: 'user', content: '1' },
+  { role: 'assistant', content: 'Which open loop?\n1. Which is why I kept it.\n2. And that is when it rang.\n3. Because the repair mattered.' },
+  { role: 'user', content: '2' }
+];
+assert.equal(finalStepError({ mode: 'rant', step: 'R8', messages: completeFinalThread }), '', 'Stranger 83: final assembly runs once the story, hook and open loop answers exist');
+assert.match(finalStepError({ mode: 'rant', step: 'R8', messages: completeFinalThread.slice(0, 3) }), /open loop/, 'Stranger 83: a missing open-loop answer still blocks the final');
+console.log('PASS: every WBR-462 routing row has an executable assertion.');
 
 console.log('4. Testing safety eval cases (19 cases: crisis vs ordinary frustration)...');
 const SAFETY_CASES = [

@@ -683,6 +683,32 @@ export function replayFor(project, input) {
   return { final: false, content: saved.content, step: saved.step || undefined, idempotencyKey: input.idempotencyKey, replayed: true };
 }
 
+// An interview turn needs a new, non-empty member answer. Retries still qualify:
+// their saved trailing answer is sent again with the same generation key.
+export function interviewAnswerError(input) {
+  if (!input || input.intent !== 'interview') return '';
+  const last = Array.isArray(input.messages) ? input.messages[input.messages.length - 1] : null;
+  return last && last.role === 'user' && String(last.content || '').trim()
+    ? ''
+    : 'This step needs an answer before StorySculpt can continue. Your place and earlier answers are unchanged.';
+}
+
+// The final assembly is a code-gated state, not a model choice. A corrupt saved
+// position must not manufacture a script without a substantive story answer.
+// Partial modern selections are incomplete too. Older threads whose options
+// predate parsable choice markers remain governed by their stored step position.
+export function finalStepError({ mode, step, messages = [] }) {
+  const finalLabel = { bold: 'B7', mini: 'M7', rant: 'R8' }[mode];
+  if (step !== finalLabel) return '';
+  const users = messages.filter(message => message && message.role === 'user' && String(message.content || '').trim());
+  const story = users.some(message => String(message.content).trim().split(/\s+/).length >= 3 && !/^Please revise the script above/i.test(String(message.content).trim()));
+  if (!story) return 'Your story answer is still needed before the final script. Answer the current question first; your saved place is unchanged.';
+  const chosen = chosenOptions(messages);
+  if (chosen.openLoop && !chosen.hook) return 'Choose a hook before the final script. Your earlier answers are saved and the hook step is still waiting.';
+  if (chosen.hook && !chosen.openLoop) return 'Choose an open loop before the final script. Your hook and earlier answers are saved.';
+  return '';
+}
+
 async function updateProjectIntake(token, projectId, intake) {
   if (!token || !projectId) return;
   try {
@@ -1524,6 +1550,11 @@ export default async function handler(req, res) {
       await emit('denied', { failureClass: classifyFailure('input') });
       return fail(409, 'This script is already finished. Use Refine with a note to change it.');
     }
+    const answerError = interviewAnswerError(input);
+    if (answerError) {
+      await emit('denied', { failureClass: classifyFailure('input') });
+      return fail(400, answerError);
+    }
     // Paused is a named state (Developer 37). Only a new answer resumes it.
     const phase = projectPhase(project);
     facts.phase = phase.phase;
@@ -1648,6 +1679,11 @@ export default async function handler(req, res) {
     const activeKind = turnKind(activeStep, stepText);
     const refDocs = referenceDocsForTurn(input.mode, activeTurn);
     const stepLog = { step: activeStep, stepSource: currentStepInDb ? 'stored' : 'counted', attempts: 1 };
+    const finalError = finalStepError({ mode: input.mode, step: activeStep, messages: input.messages });
+    if (finalError) {
+      await emit('denied', { ...stepLog, failureClass: classifyFailure('input') });
+      return json(res, 409, { error: finalError, step: activeStep, trace });
+    }
     // Hooks and finished openings are checked against other recent work before
     // anything is returned. A failed history read fails closed as a database
     // error instead of silently turning this guard off.
@@ -1676,7 +1712,7 @@ export default async function handler(req, res) {
       const message = error && error.name === 'AbortError'
         ? 'StorySculpt took too long on this pass. Your project is saved, so please try this step again.'
         : error && error.message ? error.message : 'StorySculpt could not complete this step.';
-      return fail(error && error.name === 'AbortError' ? 504 : 502, message);
+      return json(res, error && error.name === 'AbortError' ? 504 : 502, { error: message, step: activeStep, trace });
     }
 
     // Server-side output validation. Developer F.60: a technically successful
@@ -1694,6 +1730,7 @@ export default async function handler(req, res) {
       return json(res, 502, {
         error: 'StorySculpt drafted something that broke its own rules, so it was not shown to you. Nothing was lost. Please try this step again.',
         rejected: verdict.reason,
+        step: activeStep,
         trace
       });
     }
@@ -1778,7 +1815,7 @@ export default async function handler(req, res) {
         : creativeFailure
           ? 'StorySculpt could not produce three distinct, useful options on this pass. Your saved choices are unchanged; please retry.'
           : 'StorySculpt could not finish the audience question and closing invitation on this pass. Your saved script is unchanged; please retry.';
-      return json(res, 502, { error: message, rejected: reason, trace });
+      return json(res, 502, { error: message, rejected: reason, step: activeStep, trace });
     }
 
     // Fidelity (WBR-458) and output material (WBR-462): fact, inference and
