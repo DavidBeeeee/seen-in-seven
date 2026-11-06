@@ -1451,6 +1451,10 @@ async function runUgcGeneration() {
     if (!response.ok || !data) {
       throw new Error((data && data.error) || 'StorySculpt could not complete the script.');
     }
+    if (data.safety || data.highRisk) {
+      outcome = { ok: false, message: data.content || 'StorySculpt paused before generating this script. Adjust your notes and try again.' };
+      return;
+    }
 
     // Versions before output: ensureVersions backfills a draft from any output
     // it finds, which saved every first UGC draft twice.
@@ -1503,6 +1507,10 @@ async function runUgcRevision(note, button) {
     const data = await response.json().catch(() => null);
     if (!response.ok || !data) {
       throw new Error((data && data.error) || 'StorySculpt could not complete the revision.');
+    }
+    if (data.safety || data.highRisk) {
+      outcome = { ok: false, message: data.content || 'StorySculpt paused before revising this script. Adjust your note and try again.' };
+      return;
     }
 
     activeStory.output = data.content;
@@ -3390,6 +3398,107 @@ storyEl('story-help').addEventListener('keydown', event => {
 });
 storyEl('mem-save').addEventListener('click', saveMemory);
 
+async function deleteAllStorySculptData(opener = null) {
+  const confirmed = await showDeleteConfirmDialog({
+    title: 'Delete all StorySculpt data?',
+    desc: 'This permanently deletes every StorySculpt chat, script, version history, and your standing story profile and confirmed memories. Your Studio login for other Momentum Hub apps is kept. This cannot be undone.',
+    confirmText: 'Delete all StorySculpt data',
+    cancelText: 'Keep my data',
+    danger: true,
+    opener: opener || document.activeElement
+  });
+  if (!confirmed) return;
+
+  const memStatus = storyEl('mem-status');
+  const saveStatus = storyEl('story-save-status');
+  const delBtn = storyEl('mem-delete-all-data');
+  const helpDelBtn = storyEl('help-delete-all-data');
+  if (delBtn) delBtn.disabled = true;
+  if (helpDelBtn) helpDelBtn.disabled = true;
+  if (memStatus) {
+    memStatus.textContent = 'Deleting all of your StorySculpt data...';
+    memStatus.className = 'eee-message';
+  }
+
+  try {
+    for (const pending of storyPendingDeletes.values()) {
+      clearTimeout(pending.timer);
+    }
+    storyPendingDeletes.clear();
+    if (storySaveTimer) {
+      clearTimeout(storySaveTimer);
+      storySaveTimer = null;
+    }
+    const token = EEEStudio.accessToken ? await EEEStudio.accessToken(storyContext.session.access_token) : storyContext.session.access_token;
+    const response = await fetch('/api/storysculpt', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: 'Bearer ' + token },
+      body: JSON.stringify({ action: 'delete-storysculpt-data', confirm: 'DELETE' })
+    });
+    const data = await response.json().catch(() => null);
+    if (!response.ok || !data || !data.deleted) {
+      throw new Error((data && data.error) || 'StorySculpt could not delete all of your saved data yet. Please try again.');
+    }
+
+    try {
+      for (const p of storyProjects) {
+        if (p && p.id) clearUnsavedStory(p.id);
+      }
+      if (typeof localStorage !== 'undefined') {
+        const keys = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const k = localStorage.key(i);
+          if (k && k.startsWith('storysculpt-')) keys.push(k);
+        }
+        keys.forEach(k => localStorage.removeItem(k));
+      }
+    } catch (_) {}
+
+    storyProjects = [];
+    activeStory = null;
+    memoryProfile = {};
+    memoryUpdatedAt = null;
+    storySelected.clear();
+    storySelectMode = false;
+    MEMORY_FIELDS.forEach(([, id]) => {
+      const el = storyEl(id);
+      if (el) el.value = '';
+    });
+    renderSettingsSummary();
+    renderMemoryFreshness();
+    showStart();
+    const doneMsg = 'All StorySculpt data deleted (' + (data.deletedProjects || 0) + ' chats and your standing story profile removed).';
+    if (memStatus) {
+      memStatus.textContent = doneMsg;
+      memStatus.className = 'eee-message success';
+    }
+    if (saveStatus) {
+      saveStatus.textContent = doneMsg;
+      saveStatus.className = 'eee-message success';
+    }
+  } catch (error) {
+    const errMsg = (error && error.message) || 'StorySculpt could not delete all of your saved data yet. Please try again.';
+    if (memStatus) {
+      memStatus.textContent = errMsg;
+      memStatus.className = 'eee-message error';
+    }
+    if (saveStatus) {
+      saveStatus.textContent = errMsg;
+      saveStatus.className = 'eee-message error';
+    }
+  } finally {
+    if (delBtn) delBtn.disabled = false;
+    if (helpDelBtn) helpDelBtn.disabled = false;
+  }
+}
+
+if (storyEl('mem-delete-all-data')) {
+  storyEl('mem-delete-all-data').addEventListener('click', () => deleteAllStorySculptData(storyEl('mem-delete-all-data')));
+}
+if (storyEl('help-delete-all-data')) {
+  storyEl('help-delete-all-data').addEventListener('click', () => deleteAllStorySculptData(storyEl('help-delete-all-data')));
+}
+
 async function copyOutput(button, doneLabel) {
   if (!activeStory || !activeStory.output) return;
   const copyEl = storyEl('story-output-copy');
@@ -3489,6 +3598,7 @@ function queueStoryProjectDelete(projectId) {
   }
   const timer = setTimeout(async () => {
     storyPendingDeletes.delete(projectId);
+    clearUnsavedStory(projectId);
     storyProjects = storyProjects.filter(p => p.id !== projectId);
     renderProjectList();
     try {

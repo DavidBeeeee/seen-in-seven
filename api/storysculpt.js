@@ -306,8 +306,27 @@ async function confirmMemory(token, user, body) {
     throw memoryConfirmationError(400, 'That answer is not available to remember. Choose an included answer from your finished project.');
   }
   const sourceText = String(answer.content).trim();
-  if (detectCrisis(sourceText).tripped) {
+  if (detectCrisis(sourceText).tripped || detectHighRiskText(sourceText).tripped) {
     throw memoryConfirmationError(422, 'This answer cannot be carried into new projects.', 'safety');
+  }
+  const storedCategories = project.intake && project.intake.materialCategories && typeof project.intake.materialCategories === 'object'
+    ? project.intake.materialCategories
+    : null;
+  const inGeneratedOnly = Boolean(
+    storedCategories && Array.isArray(storedCategories.generated) &&
+    storedCategories.generated.some(line => normalMaterial(line) === normalMaterial(sourceText)) &&
+    !(Array.isArray(storedCategories.facts) && storedCategories.facts.some(line => normalMaterial(line) === normalMaterial(sourceText)))
+  );
+  if (inGeneratedOnly) {
+    throw memoryConfirmationError(400, 'Generated script phrasing cannot be saved as a standing member memory.');
+  }
+  const inInferences = Boolean(
+    classifyMaterialSentence(sourceText, { source: sourceText, memberText: sourceText }) === 'inference' ||
+    (storedCategories && Array.isArray(storedCategories.inferences) &&
+      storedCategories.inferences.some(line => normalMaterial(line) === normalMaterial(sourceText)))
+  );
+  if (category === 'fact' && inInferences) {
+    throw memoryConfirmationError(400, 'Guessed feelings and inferences cannot be saved as standing facts. State a concrete fact or confirm it as a voice note instead.');
   }
   const text = sourceText.slice(0, CONFIRMED_MEMORY_TEXT_LIMIT);
 
@@ -365,6 +384,90 @@ async function confirmMemory(token, user, body) {
     throw error;
   }
   return { profile: savedProfile, memory: entry, updatedAt: confirmedAt };
+}
+
+export async function deleteStorySculptData(token, user, body) {
+  if (String(body && body.confirm || '').trim() !== 'DELETE') {
+    throw memoryConfirmationError(400, 'Confirm deletion before erasing all StorySculpt data.');
+  }
+  const headers = { apikey: SUPABASE_ANON_KEY, Authorization: 'Bearer ' + token };
+  const deletedAt = new Date().toISOString();
+  let internalUserId = null;
+  let hadProfile = false;
+  try {
+    const profileResp = await fetch(SUPABASE_URL + '/rest/v1/storysculpt_member_context?select=user_id,profile&limit=1', { headers });
+    if (!profileResp.ok) throw new Error('profile read failed');
+    const profileRows = await profileResp.json();
+    if (Array.isArray(profileRows) && profileRows[0]) {
+      internalUserId = profileRows[0].user_id || null;
+      hadProfile = true;
+    }
+  } catch (cause) {
+    const error = new Error('StorySculpt could not read your story profile to delete it. Please try again.');
+    error.stage = 'database';
+    error.cause = cause;
+    throw error;
+  }
+
+  const profileFilter = internalUserId ? ('user_id=eq.' + internalUserId) : 'user_id=not.is.null';
+  try {
+    if (hadProfile) {
+      // Clear profile JSON first so the storysculpt_version_profile_context
+      // trigger writes an empty {} snapshot as the latest profile version.
+      const clearResp = await fetch(SUPABASE_URL + '/rest/v1/storysculpt_member_context?' + profileFilter, {
+        method: 'PATCH',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/json',
+          Prefer: 'return=minimal'
+        },
+        body: JSON.stringify({ profile: {}, updated_at: deletedAt })
+      });
+      if (!clearResp.ok) throw new Error('profile clear failed');
+    }
+    const delProfileResp = await fetch(SUPABASE_URL + '/rest/v1/storysculpt_member_context?' + profileFilter, {
+      method: 'DELETE',
+      headers: { ...headers, Prefer: 'return=minimal' }
+    });
+    if (!delProfileResp.ok) throw new Error('profile delete failed');
+  } catch (cause) {
+    const error = new Error('StorySculpt could not delete your standing story profile. Please try again.');
+    error.stage = 'database';
+    error.cause = cause;
+    throw error;
+  }
+
+  let deletedProjects = 0;
+  const projectFilter = internalUserId ? ('user_id=eq.' + internalUserId) : 'user_id=not.is.null';
+  try {
+    const delProjectsResp = await fetch(SUPABASE_URL + '/rest/v1/storysculpt_projects?' + projectFilter + '&select=id', {
+      method: 'DELETE',
+      headers: {
+        ...headers,
+        Prefer: 'return=representation'
+      }
+    });
+    if (!delProjectsResp.ok) throw new Error('projects delete failed');
+    const deletedRows = await delProjectsResp.json().catch(() => []);
+    deletedProjects = Array.isArray(deletedRows) ? deletedRows.length : 0;
+  } catch (cause) {
+    const error = new Error('StorySculpt could not delete all of your saved chats. Please try again.');
+    error.stage = 'database';
+    error.cause = cause;
+    throw error;
+  }
+
+  return {
+    deleted: true,
+    deletedProjects,
+    profileDeleted: true,
+    deletedAt,
+    retained: [
+      'storysculpt_context_versions (profile scope cleared to empty {} so no profile text is read back)',
+      'logs (count-only operational telemetry without member words)',
+      'users and studio_entitlements (Studio account login)'
+    ]
+  };
 }
 
 // Cross-project repetition is checked with the member's own token, so RLS is
@@ -441,10 +544,19 @@ function sameOpening(a, b) {
 }
 
 export function checkCrossProjectRepetition(content, recentProjects, hooks = false) {
-  const recent = recentProjects.map(project => openingForRepetition(project.output)).filter(Boolean);
+  const recent = [];
+  for (const project of recentProjects) {
+    const opening = openingForRepetition(project && project.output);
+    if (opening) recent.push(opening);
+    // Stored generated lines are repetition-avoidance candidates; stored facts are never blocked.
+    const generated = project && project.intake && project.intake.materialCategories && Array.isArray(project.intake.materialCategories.generated)
+      ? project.intake.materialCategories.generated : [];
+    if (generated[0]) recent.push(openingForRepetition(generated[0]));
+  }
+  const activeRecent = recent.filter(Boolean);
   const candidates = hooks ? extractOptions(content) : [openingForRepetition(content)];
   for (let i = 0; i < candidates.length; i++) {
-    if (recent.some(opening => sameOpening(candidates[i], opening))) {
+    if (activeRecent.some(opening => sameOpening(candidates[i], opening))) {
       return {
         ok: false,
         issue: `repeated-opening: ${hooks ? 'hook option ' + (i + 1) : 'the script opening'} matches another recent finished script`
@@ -522,7 +634,9 @@ export function composeVersionedContext(projectVersion, profileVersion, projectI
     if (!id || seen.has(id) || !text || !PROJECT_ID.test(String(entry.sourceProjectId || ''))) continue;
     if (!Number.isInteger(entry.sourceMessageIndex) || entry.sourceMessageIndex < 0) continue;
     if (!['fact', 'voice'].includes(entry.category) || !Number.isFinite(confirmedAt) || age < 0 || age > CONFIRMED_MEMORY_MAX_AGE_MS) continue;
-    if (excluded.has('confirmed:' + id) || detectCrisis(text).tripped) continue;
+    if (excluded.has('confirmed:' + id) || detectCrisis(text).tripped || detectHighRiskText(text).tripped) continue;
+    // Inferences and generated lines are never emitted as confirmed standing facts.
+    if (entry.category === 'fact' && classifyMaterialSentence(text, { source: text, memberText: text }) === 'inference') continue;
     seen.add(id);
     const label = entry.category === 'voice' ? 'Voice note' : 'Confirmed fact';
     confirmedLines.push(label + ' [finished project ' + entry.sourceProjectId + ', answer ' + (entry.sourceMessageIndex + 1) + ', confirmed ' + new Date(confirmedAt).toISOString() + ']: ' + text);
@@ -530,8 +644,12 @@ export function composeVersionedContext(projectVersion, profileVersion, projectI
   }
   const confirmed = confirmedLines.length
     ? 'MEMBER-CONFIRMED PROJECT MEMORY (explicitly confirmed in finished projects; reused for 90 days):\n' + confirmedLines.join('\n') : '';
+  const storedCats = intake.materialCategories && typeof intake.materialCategories === 'object' ? intake.materialCategories : null;
+  const projectFactsBlock = intake.includeStoredProjectFacts && storedCats && Array.isArray(storedCats.facts) && storedCats.facts.length
+    ? 'VERIFIED PROJECT FACTS (from the member\'s own words; inferences and generated lines excluded):\n' + storedCats.facts.map(f => '- ' + String(f || '').trim()).filter(Boolean).join('\n')
+    : '';
   const notes = projectVersion && typeof projectVersion.context === 'string' ? projectVersion.context.trim() : '';
-  return [standing, confirmed, notes].filter(Boolean).join('\n\n');
+  return [standing, confirmed, projectFactsBlock, notes].filter(Boolean).join('\n\n');
 }
 
 async function loadLatestContext(token, projectId, projectIntake = {}, now = Date.now()) {
@@ -750,22 +868,86 @@ function normalMaterial(text) {
 
 const MATERIAL_STOP = new Set('a an and are as at be been but by can could did do does for from get got had has have he her him his how i if in into is it its just me my no not of on or our she so that the their them then there they this to too up was we were what when where which who why will with would you your'.split(' '));
 
+export function classifyMaterialSentence(sentence, { source = '', memberText = '' } = {}) {
+  const clean = String(sentence || '').trim();
+  if (!clean) return 'generated';
+  const ownWords = new Set(normalMaterial(memberText).split(' ').filter(word => word.length > 2 && !MATERIAL_STOP.has(word)));
+  const sourceText = normalMaterial(source + '\n' + memberText);
+  const inference = checkFidelity(clean, { source: '', memberText: '' }).kinds.includes('inference');
+  if (inference) return 'inference';
+  const words = normalMaterial(clean).split(' ').filter(word => word.length > 2 && !MATERIAL_STOP.has(word));
+  const sourcedWords = words.filter(word => ownWords.has(word)).length;
+  const fact = words.length > 0 && (sourceText.includes(normalMaterial(clean)) || sourcedWords / words.length >= 0.7);
+  return fact ? 'fact' : 'generated';
+}
+
 export function categorizeOutputMaterial(script, { source = '', memberText = '' } = {}) {
   const counts = { fact: 0, inference: 0, generated: 0 };
   const body = splitTitle(String(script || '').replace(/^FINAL SCRIPT:\s*/i, '')).body;
   const sentences = body.match(/[^.!?\n]+[.!?]+|[^.!?\n]+$/g) || [];
-  const ownWords = new Set(normalMaterial(memberText).split(' ').filter(word => word.length > 2 && !MATERIAL_STOP.has(word)));
-  const sourceText = normalMaterial(source + '\n' + memberText);
   for (const raw of sentences) {
     const sentence = raw.trim();
     if (!sentence) continue;
-    const inference = checkFidelity(sentence, { source: '', memberText: '' }).kinds.includes('inference');
-    const words = normalMaterial(sentence).split(' ').filter(word => word.length > 2 && !MATERIAL_STOP.has(word));
-    const sourcedWords = words.filter(word => ownWords.has(word)).length;
-    const fact = words.length > 0 && (sourceText.includes(normalMaterial(sentence)) || sourcedWords / words.length >= 0.7);
-    counts[inference ? 'inference' : fact ? 'fact' : 'generated'] += 1;
+    const category = classifyMaterialSentence(sentence, { source, memberText });
+    counts[category] += 1;
   }
   return { sentences: sentences.filter(sentence => sentence.trim()).length, counts };
+}
+
+// Developer 41 (WBR-462): store facts, inferences and generated text as
+// separate categories that storage paths treat differently:
+// - facts: verified member-stated facts, preserved across revisions of the
+//   project, eligible for standing-memory confirmation and factual context.
+// - inferences: guessed or interpreted feelings and motives, isolated from
+//   facts, replaced on each draft revision, and never promoted into standing
+//   facts or factual context.
+// - generated: model-written phrasing and hooks, replaced on each draft
+//   revision, never confirmable as member memory, and used only to prevent
+//   cross-project opening repetition.
+export function partitionStoredMaterial(script, { source = '', memberText = '', previousCategories = null } = {}) {
+  const priorFacts = previousCategories && Array.isArray(previousCategories.facts)
+    ? previousCategories.facts.map(s => String(s || '').trim()).filter(Boolean)
+    : [];
+  const facts = [...priorFacts];
+  const factKeys = new Set(facts.map(normalMaterial).filter(Boolean));
+  const inferences = [];
+  const inferenceKeys = new Set();
+  const generated = [];
+  const generatedKeys = new Set();
+
+  const body = splitTitle(String(script || '').replace(/^FINAL SCRIPT:\s*/i, '')).body;
+  const sentences = body.match(/[^.!?\n]+[.!?]+|[^.!?\n]+$/g) || [];
+  for (const raw of sentences) {
+    const sentence = raw.trim();
+    const key = normalMaterial(sentence);
+    if (!sentence || !key) continue;
+    const category = classifyMaterialSentence(sentence, { source, memberText });
+    if (category === 'inference') {
+      if (!inferenceKeys.has(key)) {
+        inferenceKeys.add(key);
+        inferences.push(sentence);
+      }
+    } else if (category === 'fact') {
+      if (!factKeys.has(key)) {
+        factKeys.add(key);
+        facts.push(sentence);
+      }
+    } else if (!generatedKeys.has(key)) {
+      generatedKeys.add(key);
+      generated.push(sentence);
+    }
+  }
+
+  return {
+    facts: facts.slice(0, 40),
+    inferences: inferences.slice(0, 40),
+    generated: generated.slice(0, 40),
+    policy: {
+      facts: { reusableAsFact: true, confirmableAsMemory: true, preserveAcrossRevisions: true, repetitionGuardOnly: false },
+      inferences: { reusableAsFact: false, confirmableAsMemory: false, preserveAcrossRevisions: false, repetitionGuardOnly: false },
+      generated: { reusableAsFact: false, confirmableAsMemory: false, preserveAcrossRevisions: false, repetitionGuardOnly: true }
+    }
+  };
 }
 
 // High-confidence overheated phrasing, not a ban on emotion. If the member used
@@ -967,6 +1149,101 @@ export function crisisScanText(input) {
   return parts.filter(Boolean).join('\n');
 }
 
+// UX 91 (WBR-462): high-risk situations beyond crisis that a script can carry
+// (medical or financial claims in UGC or offer copy, and private disclosures
+// about someone else). Checked before quota and generation, never via a prompt
+// edit, while leaving ordinary difficulty and personal experience untouched.
+const HIGH_RISK_MEDICAL_RE = /\b(?:medically\s+proven|clinically\s+proven\s+to\s+(?:cure|treat|heal|prevent|reverse)|fda[- ]approved\s+to\s+(?:cure|treat|heal)|(?:cures?|heals?|treats?|reverses?|eliminates?)\s+(?:eczema|psoriasis|acne|arthritis|diabetes|cancer|depression|anxiety|adhd|insomnia|migraines?|chronic\s+pain|joint\s+pain|heart\s+disease|high\s+blood\s+pressure|infection|disease|illness|disorder|wrinkles)|prevent(?:s)?\s+(?:disease|cancer|diabetes|infection|alzheimer|stroke)|permanent(?:ly)?\s+removes?\s+(?:wrinkles|scars|pain|disease|symptoms)|replaces?\s+(?:your\s+)?(?:prescription|medication|insulin|antidepressants?|therapy|doctor))\b/i;
+
+const HIGH_RISK_FINANCIAL_RE = /\b(?:guaranteed\s+(?:income|money|sales|revenue|profit|returns?|earnings?)|make\s+\$\d+[\d,]*(?:\s+(?:a|per|every|next|in\s+a)\s+(?:day|week|month|year))?|10x\s+your\s+(?:money|income|revenue|investment)|risk[- ]free\s+(?:profit|returns?|income)|get\s+rich\s+(?:quick|overnight|fast))\b/i;
+
+const THIRD_PARTY_RELATION_NAMED_RE = /\b(?:my|our|a|an|this)\s+(?:client|patient|customer|student|coworker|colleague|employee|boss|manager|neighbor|friend|sister|brother|cousin|ex(?:-wife|-husband|-partner)?|brother-in-law|sister-in-law|roommate|tenant|landlord)\s+[A-Z][a-z]{2,}\b/;
+const THIRD_PARTY_FULL_NAME_RE = /\b(?!(?:Monday|Tuesday|Wednesday|Thursday|Friday|Saturday|Sunday|January|February|March|April|May|June|July|August|September|October|November|December|New|United|North|South|East|West|San|Los|Las|Saint|Colorado|Mastermind|StorySculpt|WorkerBee)\b)[A-Z][a-z]{2,}\s+(?!(?:Street|Avenue|Road|Park|City|County|State|University|College|School|Hospital|Clinic|Center|Studio)\b)[A-Z][a-z]{2,}\b/;
+const THIRD_PARTY_SENSITIVE_FACT_RE = /\b(?:was\s+diagnosed\s+with|is\s+diagnosed\s+with|has\s+(?:bipolar|schizophrenia|cancer|hiv|addiction|ptsd|eating\s+disorder|severe\s+depression|borderline|alzheimer)|went\s+to\s+rehab|is\s+in\s+rehab|relapsed|overdosed|was\s+arrested|got\s+arrested|is\s+under\s+investigation|filed\s+for\s+bankruptcy|is\s+hiding\s+\$?\d+[\w\s,]*debt|hiding\s+\$?\d+[\w\s,]*from\s+(?:his|her|their)|cheated\s+on\s+(?:his|her|their)|having\s+an\s+affair|was\s+fired\s+for|got\s+fired\s+for|medical\s+records?)\b/i;
+const THIRD_PARTY_CONFIDENTIAL_RE = /\b(?:told\s+me\s+in\s+confidence|shared\s+in\s+confidence|doesn'?t\s+know\s+i'?m\s+(?:sharing|telling|posting|making\s+a\s+video)|asked\s+me\s+not\s+to\s+tell\s+anyone|without\s+(?:his|her|their)\s+(?:permission|consent))\b/i;
+
+export function highRiskScanText(input = {}) {
+  const users = (input.messages || []).filter(m => m && m.role === 'user');
+  const ugc = input.ugc && typeof input.ugc === 'object' ? input.ugc : {};
+  const product = ugc.product && typeof ugc.product === 'object' ? ugc.product : {};
+  const exp = ugc.creatorExperience && typeof ugc.creatorExperience === 'object' ? ugc.creatorExperience : {};
+  const findings = ugc.research && ugc.research.findings && typeof ugc.research.findings === 'object' ? ugc.research.findings : {};
+  const ugcText = [
+    product.userDetails,
+    product.brief,
+    exp.observations,
+    ...(Array.isArray(findings.brandClaims) ? findings.brandClaims : [])
+  ].filter(Boolean).join('\n');
+  const generalText = [
+    users.length ? users[users.length - 1].content : '',
+    input.regenerateNote,
+    ugcText
+  ].filter(Boolean).join('\n');
+  return { generalText, ugcText: ugcText || (input.mode === 'ugc' ? generalText : '') };
+}
+
+export function detectHighRiskText(text, { isUgc = false, creatorExperience = {}, research = {} } = {}) {
+  const raw = String(text || '').trim();
+  if (!raw) return { tripped: false };
+  const sentences = raw.split(/(?<=[.!?])\s+|\n+/).map(s => s.trim()).filter(Boolean);
+
+  for (const sentence of sentences) {
+    const personal = /\b(?:I|I'm|I've|my|me|for me)\b/i.test(sentence);
+    if (HIGH_RISK_MEDICAL_RE.test(sentence) && !personal) {
+      return { tripped: true, category: 'medical_claim', patternId: 'medical_cure_or_treatment_claim' };
+    }
+    if (HIGH_RISK_FINANCIAL_RE.test(sentence)) {
+      return { tripped: true, category: 'financial_claim', patternId: 'guaranteed_financial_outcome_claim' };
+    }
+    const selfIntro = /\b(?:i\s+am|i'm|my\s+name\s+is)\s+[A-Z][a-z]{2,}/i.test(sentence);
+    const namesOtherPerson = THIRD_PARTY_RELATION_NAMED_RE.test(sentence) || (!selfIntro && THIRD_PARTY_FULL_NAME_RE.test(sentence));
+    if ((namesOtherPerson && THIRD_PARTY_SENSITIVE_FACT_RE.test(sentence)) || THIRD_PARTY_CONFIDENTIAL_RE.test(sentence)) {
+      return { tripped: true, category: 'third_party_disclosure', patternId: 'identifiable_third_party_disclosure' };
+    }
+  }
+
+  if (isUgc) {
+    const claimIssues = reviewScriptClaims(raw, { creatorExperience, research });
+    const medicalIssue = claimIssues.find(item => /medical/i.test(item.issue));
+    if (medicalIssue) {
+      return { tripped: true, category: 'medical_claim', patternId: 'ugc_medical_claim' };
+    }
+    const financialIssue = claimIssues.find(item => /financial/i.test(item.issue));
+    if (financialIssue) {
+      return { tripped: true, category: 'financial_claim', patternId: 'ugc_financial_claim' };
+    }
+  }
+
+  return { tripped: false };
+}
+
+export function detectHighRiskInput(input = {}) {
+  const { generalText, ugcText } = highRiskScanText(input);
+  const ugc = input.ugc && typeof input.ugc === 'object' ? input.ugc : {};
+  if (ugcText) {
+    const ugcCheck = detectHighRiskText(ugcText, {
+      isUgc: true,
+      creatorExperience: ugc.creatorExperience || {},
+      research: ugc.research || {}
+    });
+    if (ugcCheck.tripped) return ugcCheck;
+  }
+  return detectHighRiskText(generalText, { isUgc: input.mode === 'ugc' });
+}
+
+export function highRiskResponse(highRisk = {}) {
+  if (highRisk.category === 'medical_claim') {
+    return 'StorySculpt paused before generating this script because the input includes a medical or disease treatment claim. Product and creator scripts cannot promise that a product cures, treats, heals, or prevents a medical condition, or claim clinical proof you cannot substantiate. Reframe your details around your own personal experience, comfort, or everyday routine (for example, how it felt for you to use), then generate again. See Help for how StorySculpt handles high-risk claims.';
+  }
+  if (highRisk.category === 'financial_claim') {
+    return 'StorySculpt paused before generating this script because the input includes a guaranteed financial outcome or income claim. Scripts cannot promise guaranteed revenue, risk-free profit, or specific earnings viewers will make. Describe the specific task, workflow, or practical result the product or offer helps with instead of promising money, then generate again. See Help for how StorySculpt handles high-risk claims.';
+  }
+  if (highRisk.category === 'third_party_disclosure') {
+    return 'StorySculpt paused before generating this script because the input shares identifiable private information about another person (such as a named person\'s diagnosis, legal matter, debt, or confidential secret). Remove names and identifying details or focus on your own experience and lesson before generating. See Help for how StorySculpt handles sensitive disclosures.';
+  }
+  return 'StorySculpt paused before generating this script because the input includes a high-risk claim or private disclosure. Adjust the wording in your notes and try again. See Help for details.';
+}
+
 async function handleUgcTurn({ input, project, token, user, trace, emit, fail, res }) {
   const ugcState = input.ugc || (project.intake && project.intake.ugc) || {};
   const product = ugcState.product || {};
@@ -1064,9 +1341,22 @@ async function handleUgcTurn({ input, project, token, user, trace, emit, fail, r
     currentStep: 'final'
   };
 
+  const ugcMemberText = [
+    product.userDetails,
+    product.brief,
+    creatorExperience.observations,
+    input.regenerateNote
+  ].filter(Boolean).join('\n');
+  const materialCategories = partitionStoredMaterial(scriptContent, {
+    source: researchExcerpt,
+    memberText: ugcMemberText,
+    previousCategories: project.intake && project.intake.materialCategories
+  });
+
   const updatedIntake = {
     ...(project.intake || {}),
     ugc: updatedUgc,
+    materialCategories,
     current_step: 'final'
   };
 
@@ -1178,6 +1468,20 @@ export default async function handler(req, res) {
     }
   }
 
+  if (req.body && req.body.action === 'delete-storysculpt-data') {
+    try {
+      const result = await deleteStorySculptData(token, user, req.body);
+      await emit('data_deleted', { failureClass: undefined });
+      return json(res, 200, { ...result, trace });
+    } catch (error) {
+      const failureClass = error && error.failureClass
+        ? error.failureClass : classifyFailure(error && error.stage === 'database' ? 'database' : 'internal', error);
+      await emit(error && error.status < 500 ? 'denied' : 'error', { failureClass });
+      const status = error && error.status ? error.status : (failureLayer(failureClass) === 'database' ? 503 : 500);
+      return fail(status, error && error.message ? error.message : 'StorySculpt could not delete your saved data.');
+    }
+  }
+
   let input;
   try {
     input = validateBody(req.body);
@@ -1261,6 +1565,35 @@ export default async function handler(req, res) {
         final: false,
         content: crisisResponse(user.name || ''),
         safety: true,
+        promptVersion: PROMPT_VERSION,
+        model: MODEL_VERSION,
+        trace
+      });
+    }
+
+    // High-risk pre-check beyond crisis (UX 91): medical or financial claims
+    // in UGC or offer copy, and identifiable private disclosures about another
+    // person. Pauses before quota or model calls with a clear explanation.
+    const highRisk = detectHighRiskInput(input);
+    if (highRisk.tripped) {
+      await recordEvent(token, user.id, 'storysculpt_safety', buildEventDetail({
+        trace,
+        outcome: 'safety',
+        mode,
+        promptVersion: PROMPT_VERSION,
+        model: MODEL_VERSION,
+        category: highRisk.category,
+        patternId: highRisk.patternId
+      }));
+      return json(res, 200, {
+        final: false,
+        content: highRiskResponse(highRisk),
+        safety: true,
+        highRisk: {
+          flagged: true,
+          category: highRisk.category,
+          patternId: highRisk.patternId
+        },
         promptVersion: PROMPT_VERSION,
         model: MODEL_VERSION,
         trace
@@ -1488,7 +1821,19 @@ export default async function handler(req, res) {
       }
     }
 
-    const updatedIntake = { ...(project.intake || {}), current_step: activeStep };
+    const ownText = memberOwnText(input);
+    const materialCategories = verdict.final || activeKind.draft
+      ? partitionStoredMaterial(verdict.content, {
+          source: ownText,
+          memberText: ownText,
+          previousCategories: project.intake && project.intake.materialCategories
+        })
+      : (project.intake && project.intake.materialCategories) || undefined;
+    const updatedIntake = {
+      ...(project.intake || {}),
+      current_step: activeStep,
+      ...(materialCategories ? { materialCategories } : {})
+    };
     await updateProjectIntake(token, input.projectId, updatedIntake);
 
     await emit('generation', {
