@@ -119,6 +119,12 @@ if (appSource.includes('The story direction behind this video') ||
   throw new Error('Video 1 must be built from onboarding, with the map as background only.');
 }
 
+// David, 2026-11-06: the map part shows above the "anything else" box on every video.
+if (!html.includes('id="video-one-story-part"') || !appSource.includes("storyPart.innerHTML = direction") ||
+    !appSource.includes('    ${journeyDirectionHTML}\n')) {
+  throw new Error('Every video must show its map part above the anything-else box.');
+}
+
 // The map must come back as seven separate story bases, not one idea in seven
 // parts (2026-11-03): every part keeps its own job in both guides, on both levels.
 for (const level of [1, 2]) {

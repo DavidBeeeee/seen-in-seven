@@ -3657,7 +3657,7 @@ function _buildPromptsContent(container, v, idx) {
       <div class="video-title-text">${v.title}</div>
     </div>
     <div class="video-note">${v.note}</div>
-    ${idx === 0 ? '' : journeyDirectionHTML}
+    ${journeyDirectionHTML}
     ${promptsHTML}
   `;
   container.appendChild(card);
@@ -7025,6 +7025,14 @@ function setMvoFirstScriptNotes(value) {
 function renderVideoOneBridge() {
   const note = document.getElementById('video-one-note');
   if (note) note.value = ensurePhase2().firstVideoNote || ensurePhase2().firstScriptNotes || '';
+  const storyPart = document.getElementById('video-one-story-part');
+  const direction = journeyDirectionFor(0);
+  if (storyPart) storyPart.innerHTML = direction
+    ? `<section class="journey-direction-card">
+        <div class="journey-direction-label">The story part we are using</div>
+        <div class="journey-direction-copy">${escapeHTML(direction)}</div>
+      </section>`
+    : '';
 }
 
 function mvoAnswerText(qNum, level) {
