@@ -177,15 +177,164 @@
     return project ? (project.updated_at || project.created_at || null) : null;
   }
 
-  // WBR-373 progress (Stranger 52, 55, 57; UX 13, 45). Only a finished script
-  // counts, and only a finished script can be filmed. An empty or abandoned
-  // chat adds nothing. No points, no streaks.
+  // WBR-373 & WBR-462 progress (Stranger 44, 48, 52, 54, 55, 57; UX 13, 17, 18, 19, 45, 46).
+  // Only a finished script counts, and once a script has a saved version in
+  // intake.versions no later mistake erases its finished count (UX 46).
   function isFinished(project) {
-    return Boolean(project && typeof project.output === 'string' && project.output.trim());
+    if (!project) return false;
+    if (typeof project.output === 'string' && project.output.trim()) return true;
+    const versions = project.intake && Array.isArray(project.intake.versions) ? project.intake.versions : [];
+    return versions.some(v => v && typeof v.content === 'string' && v.content.trim());
   }
 
   function isFilmed(project) {
     return isFinished(project) && Boolean(project.intake && project.intake.filmed);
+  }
+
+  function isPosted(project) {
+    return isFilmed(project) && Boolean(project.intake && project.intake.posted);
+  }
+
+  // UX 17, 18, 19: graded feedback scale where finishing, filming, and posting
+  // are distinct events with different weight.
+  const FEEDBACK_SCALE = Object.freeze({
+    drafting: { stage: 'drafting', weight: 0, label: 'In progress', headline: 'Draft in progress.', detail: 'Answer the current step to finish this script.' },
+    finished: { stage: 'finished', weight: 1, label: 'Finished', headline: 'Script finished.', detail: 'The words are ready. Record it on camera to move from draft to filmed.' },
+    filmed: { stage: 'filmed', weight: 2, label: 'Filmed', headline: 'Video filmed.', detail: 'Recording on camera carries more weight than a draft alone. Share it with your audience and mark it posted when it goes live.' },
+    posted: { stage: 'posted', weight: 3, label: 'Posted', headline: 'Video posted.', detail: 'Published to your audience. You took this story all the way from blank page to live video.' }
+  });
+
+  function feedbackScale(project) {
+    if (isPosted(project)) return FEEDBACK_SCALE.posted;
+    if (isFilmed(project)) return FEEDBACK_SCALE.filmed;
+    if (isFinished(project)) return FEEDBACK_SCALE.finished;
+    return FEEDBACK_SCALE.drafting;
+  }
+
+  // Stranger 48: a project that finishes early or in fewer turns says so.
+  const EXPECTED_INTERVIEW_TURNS = Object.freeze({ bold: 6, mini: 6, rant: 7, ugc: 3 });
+
+  function earlyFinishLine(project) {
+    if (!isFinished(project)) return null;
+    const mode = String((project && project.content_type) || 'rant').toLowerCase();
+    const expected = EXPECTED_INTERVIEW_TURNS[mode] || 6;
+    const turns = Array.isArray(project && project.conversation)
+      ? project.conversation.filter(m => m && m.role === 'user' && typeof m.content === 'string' && m.content.trim().length > 0).length
+      : 0;
+    const flaggedEarly = Boolean(project && project.intake && project.intake.finishedEarly);
+    if (!flaggedEarly && (turns === 0 || turns >= expected)) return null;
+    const stepPhrase = turns === 1 ? '1 answer' : (turns + ' answers');
+    return 'Finished early in ' + stepPhrase + ' (instead of the usual ' + expected + ') because your story already carried the hook, proof, and call to action.';
+  }
+
+  // Stranger 52, 54, 55: sincere effort is recognised by what the member did
+  // (answered steps, revised, filmed, posted), never by clicks or empty activity.
+  function effortRecognition(project) {
+    if (!project || typeof project !== 'object') {
+      return { sincere: false, weight: 0, answeredSteps: 0, revisions: 0, filmed: false, posted: false, line: '' };
+    }
+    const conversation = Array.isArray(project.conversation) ? project.conversation : [];
+    const answeredSteps = conversation.filter(m => {
+      if (!m || m.role !== 'user' || typeof m.content !== 'string') return false;
+      const clean = m.content.replace(/\s+/g, ' ').trim();
+      return clean.length >= 2;
+    }).length;
+    const versions = project.intake && Array.isArray(project.intake.versions) ? project.intake.versions : [];
+    const revisions = Math.max(0, versions.length - 1);
+    const filmed = isFilmed(project);
+    const posted = isPosted(project);
+    const finished = isFinished(project);
+    const sincere = answeredSteps > 0 || revisions > 0 || finished || filmed || posted;
+    if (!sincere) {
+      return { sincere: false, weight: 0, answeredSteps: 0, revisions: 0, filmed: false, posted: false, line: '' };
+    }
+    const parts = [];
+    if (answeredSteps > 0) parts.push('answered ' + countWord(answeredSteps, 'interview step', 'interview steps'));
+    if (revisions > 0) parts.push('revised ' + countWord(revisions, 'time', 'times'));
+    if (filmed) parts.push('filmed the script');
+    if (posted) parts.push('posted the video');
+    const scale = feedbackScale(project);
+    const weight = scale.weight + (revisions > 0 ? 1 : 0) + (answeredSteps >= 3 ? 1 : 0);
+    return {
+      sincere: true,
+      weight,
+      answeredSteps,
+      revisions,
+      filmed,
+      posted,
+      line: 'Effort recorded from what you did: you ' + parts.join(', ') + '.'
+    };
+  }
+
+  // UX 13: a member returning to maintain an old script is told apart from one
+  // recovering from a long gap.
+  function returnContext(projects, targetProject, now) {
+    const at = now == null ? Date.now() : now;
+    const overall = engagement(projects, at);
+    const targetTime = projectTime(targetProject);
+    const targetAgeDays = targetTime != null ? Math.floor(Math.max(0, at - targetTime) / DAY_MS) : 0;
+    const title = ((targetProject && targetProject.title) || '').trim() || 'Untitled script';
+    if (targetProject && isFinished(targetProject) && targetAgeDays >= LAPSE_AFTER_DAYS && overall.state !== 'lapsed') {
+      return {
+        kind: 'maintaining',
+        lapsed: false,
+        days: targetAgeDays,
+        title: 'Maintaining an earlier script.',
+        text: 'You are updating "' + title + '" from ' + targetAgeDays + ' days ago while your library stays current. Revise it with a note or save a fresh version.'
+      };
+    }
+    if (overall.state === 'lapsed') {
+      const notice = returnNotice(projects, at, overall.repeated);
+      return {
+        kind: 'recovering',
+        lapsed: true,
+        days: overall.days,
+        title: notice ? notice.title : 'Welcome back.',
+        text: notice ? notice.text : 'Pick up where you left off or start something new.'
+      };
+    }
+    return {
+      kind: 'current',
+      lapsed: false,
+      days: overall.days || 0,
+      title: '',
+      text: ''
+    };
+  }
+
+  // Stranger 44: a script carries a stated objective the member picked (who it
+  // is for and what they should do next) so it can be classified.
+  function scriptObjective(project) {
+    const raw = project && project.intake && project.intake.objective;
+    if (!raw || typeof raw !== 'object') return null;
+    const audience = String(raw.audience || '').replace(/\s+/g, ' ').trim();
+    const nextAction = String(raw.nextAction || '').replace(/\s+/g, ' ').trim();
+    if (!audience && !nextAction) return null;
+    const category = /buy|order|book|apply|shop|sign up|join|client|customer/i.test(nextAction)
+      ? 'conversion'
+      : /comment|reply|share|answer|tell me|dm|message/i.test(nextAction)
+        ? 'conversation'
+        : 'awareness';
+    return {
+      audience: audience || 'General audience',
+      nextAction: nextAction || 'Consider the takeaway',
+      category,
+      summary: 'For ' + (audience || 'your audience') + ' -> Next action: ' + (nextAction || 'consider the takeaway') + ' (' + category + ')'
+    };
+  }
+
+  function withScriptObjective(project, audience, nextAction) {
+    if (!project || typeof project !== 'object') return project;
+    const cleanAudience = String(audience || '').replace(/\s+/g, ' ').trim().slice(0, 200);
+    const cleanAction = String(nextAction || '').replace(/\s+/g, ' ').trim().slice(0, 200);
+    const intake = Object.assign({}, project.intake, {
+      objective: {
+        audience: cleanAudience,
+        nextAction: cleanAction,
+        updatedAt: new Date().toISOString()
+      }
+    });
+    return Object.assign({}, project, { intake });
   }
 
   // When a script was first finished: its first saved version, else the last
@@ -211,7 +360,18 @@
       if (age >= 0 && age < 30 * DAY_MS) last30 += 1;
       else if (age >= 30 * DAY_MS && age < 60 * DAY_MS) prior30 += 1;
     }
-    return { finished: list.length, filmed: list.filter(isFilmed).length, last30, prior30, lastFinished };
+    const filmedCount = list.filter(isFilmed).length;
+    const postedCount = list.filter(isPosted).length;
+    return {
+      finished: list.length,
+      filmed: filmedCount,
+      posted: postedCount,
+      last30,
+      prior30,
+      thisMonth: last30,
+      lastMonth: prior30,
+      lastFinished
+    };
   }
 
   function countWord(n, one, many) {
@@ -227,15 +387,29 @@
     return now + ', ' + (p.last30 > p.prior30 ? 'up from ' : 'down from ') + p.prior30 + ' the 30 days before.';
   }
 
+  // UX 45, 46: long-period change shown as month over month, never erased by a mistake.
+  function monthOverMonthLine(p) {
+    if (!p || !p.finished) return 'Month over month: 0 this month vs 0 last month.';
+    const cur = Number(p.thisMonth ?? p.last30 ?? 0);
+    const prev = Number(p.lastMonth ?? p.prior30 ?? 0);
+    if (!cur && !prev) return 'Month over month: 0 finished this month vs 0 last month. Your ' + countWord(p.finished, 'finished script stays', 'finished scripts stay') + ' on record.';
+    if (cur === prev) return 'Month over month: ' + countWord(cur, 'script', 'scripts') + ' this month, matching ' + prev + ' last month.';
+    const dir = cur > prev ? 'up from ' : 'down from ';
+    return 'Month over month: ' + countWord(cur, 'script', 'scripts') + ' this month, ' + dir + prev + ' last month.';
+  }
+
   function progressMarkup(p) {
     const finishedCount = p ? p.finished : 0;
     const filmedCount = p ? p.filmed : 0;
+    const postedCount = p && typeof p.posted === 'number' ? p.posted : 0;
     const stats = '<span class="story-progress-stat"><strong>' + finishedCount + '</strong> finished</span>' +
-      '<span class="story-progress-stat"><strong>' + filmedCount + '</strong> filmed</span>';
-    return '<div class="story-progress" data-finished="' + finishedCount + '" data-filmed="' + filmedCount + '">' +
+      '<span class="story-progress-stat"><strong>' + filmedCount + '</strong> filmed</span>' +
+      '<span class="story-progress-stat"><strong>' + postedCount + '</strong> posted</span>';
+    return '<div class="story-progress" data-finished="' + finishedCount + '" data-filmed="' + filmedCount + '" data-posted="' + postedCount + '">' +
       '<p class="story-progress-head">Your scripts</p>' +
       '<div class="story-progress-stats">' + stats + '</div>' +
       '<p class="story-progress-line">' + escapeHtml(progressLine(p)) + '</p>' +
+      '<p class="story-progress-mom">' + escapeHtml(monthOverMonthLine(p)) + '</p>' +
     '</div>';
   }
 
@@ -834,9 +1008,11 @@
   const api = {
     DAY_MS, QUIET_AFTER_DAYS, LAPSE_AFTER_DAYS, COLLAPSE_AFTER, KEEP_VISIBLE,
     INACTIVITY_LINE, FINISHED_LINE, FINISHING_LOCK_LINE, MEMBERSHIP_LAPSE_LINE, PROFILE_STALE_DAYS,
-    BROAD_ANSWER_FIXTURE, MEMORY_FIELD_LIST,
+    BROAD_ANSWER_FIXTURE, MEMORY_FIELD_LIST, FEEDBACK_SCALE,
     engagement, returnNotice, exportFileName, returnNoticeMarkup, threadWindow, showEarlierMarkup, earlierAnswerExcerpt,
-    returnNoticeFor, refreshReturnNotice, dismissalStamp, isFinished, isFilmed, finishedTime, progress, progressLine, progressMarkup,
+    returnNoticeFor, refreshReturnNotice, dismissalStamp, isFinished, isFilmed, isPosted,
+    feedbackScale, earlyFinishLine, effortRecognition, returnContext, scriptObjective, withScriptObjective,
+    finishedTime, progress, progressLine, monthOverMonthLine, progressMarkup,
     memberStep, nextStep, nextStepMarkup, versionView, returnVisitLine,
     profileFreshness, profileFreshnessMarkup,
     broadAnswerCheck, interruptedStepInfo, generationStatusLine,

@@ -154,7 +154,7 @@ const readStep = markup => {
 // A server-added escalation step must have working client choices, including
 // when an existing saved conversation is reopened. Version the script URL so
 // a reload does not reuse the pre-escalation client.
-check(html.includes('/js/storysculpt.js?v=wbr462-pressed-20261104-v1'), 'page must load the current client version (archive, progress, return line, recovery, screen-reader announcements and confirmed memory, WBR-462)');
+check(html.includes('/js/storysculpt.js?v=wbr462-safety-progress-20261106-v1'), 'page must load the current client version (archive, progress, return line, recovery, screen-reader announcements, confirmed memory, and self-serve deletion, WBR-462)');
 for (const step of ['B5.5', 'M5.5', 'R6.5']) {
   const app = boot([]);
   app.context.choiceProject = { id: 'choices', output: null, intake: { current_step: step }, conversation: [{ role: 'assistant', step, content: 'Stronger hooks\n1. First.\n2. Second.\n3. Third.' }] };
@@ -267,8 +267,83 @@ for (const step of ['B5.5', 'M5.5', 'R6.5']) {
   check(/id="story-next-step-rail"/.test(html), 'layout: the rail carries the next step');
 }
 
+// 7. WBR-462 graded feedback scale, early finish, sincere effort, maintaining vs recovering, month-over-month, and stated objective (Stranger 44, 48, 52, 54, 55; UX 13, 17, 18, 19, 45, 46)
+{
+  // UX 17, 18, 19: Finishing, filming, and posting have distinct weights (1, 2, 3)
+  const draftProj = project('d0', { touched: 1 });
+  const finProj = project('f1', { finished: 4 });
+  const filmProj = project('f2', { finished: 4, intake: { filmed: true } });
+  const postProj = project('f3', { finished: 4, intake: { filmed: true, posted: true } });
+  check(S.feedbackScale(draftProj).weight === 0, 'scale: drafting weight is 0');
+  check(S.feedbackScale(finProj).weight === 1 && S.feedbackScale(finProj).stage === 'finished', 'scale: finished weight is 1');
+  check(S.feedbackScale(filmProj).weight === 2 && S.feedbackScale(filmProj).stage === 'filmed', 'scale: filmed weight is 2');
+  check(S.feedbackScale(postProj).weight === 3 && S.feedbackScale(postProj).stage === 'posted', 'scale: posted weight is 3');
+  check(S.isPosted(postProj) === true && S.isPosted(filmProj) === false, 'scale: isPosted requires both filmed and posted');
+
+  // Stranger 48: Early finish in fewer turns says so
+  const earlyProj = Object.assign(project('early', { finished: 2 }), {
+    content_type: 'bold',
+    conversation: [
+      { role: 'user', content: 'I stopped discounting my bakery custom cakes and revenue doubled.' },
+      { role: 'assistant', content: 'Next question' },
+      { role: 'user', content: 'DM me CAKE for the pricing worksheet.' }
+    ]
+  });
+  const earlyLine = S.earlyFinishLine(earlyProj);
+  check(typeof earlyLine === 'string' && /Finished early in 2 answers/i.test(earlyLine), 'early finish: names fewer turns');
+  check(!earlyLine.includes(EM), 'early finish: zero em dashes');
+
+  // Stranger 52, 54, 55: Sincere effort recognised by what the member did; empty clicks earn nothing
+  const emptyClicksProj = {
+    id: 'empty-clicks',
+    output: null,
+    conversation: [
+      { role: 'user', content: '   ' },
+      { role: 'assistant', content: 'Question' },
+      { role: 'user', content: '' }
+    ],
+    intake: { clicks: 45,versions: [] }
+  };
+  const emptyEffort = S.effortRecognition(emptyClicksProj);
+  check(emptyEffort.sincere === false && emptyEffort.weight === 0 && emptyEffort.line === '', 'effort: empty clicks and whitespace turns earn nothing');
+
+  const realEffortProj = Object.assign(project('real-effort', { finished: 2, intake: { filmed: true, versions: [{ version: 1, content: 'Draft 1' }, { version: 2, content: 'Draft 2' }] } }), {
+    conversation: [
+      { role: 'user', content: 'First real answer about our workshop.' },
+      { role: 'user', content: 'Second real answer about the result.' },
+      { role: 'user', content: 'Third real answer with the call to action.' }
+    ]
+  });
+  const realEffort = S.effortRecognition(realEffortProj);
+  check(realEffort.sincere === true && realEffort.answeredSteps === 3 && realEffort.revisions === 1 && realEffort.filmed === true, 'effort: counts answered steps, revisions, and filming');
+  check(/answered 3 interview steps/i.test(realEffort.line) && /revised 1 time/i.test(realEffort.line) && /filmed the script/i.test(realEffort.line), 'effort: names what the member actually did');
+
+  // UX 13: Returning to maintain an old script while active is told apart from recovering from a long gap
+  const oldFinished = project('old-script', { finished: 40, touched: 40, title: 'Autumn Launch Script' });
+  const recentActive = project('recent-script', { finished: 2, touched: 2, title: 'This Week Script' });
+  const maintaining = S.returnContext([oldFinished, recentActive], oldFinished, NOW);
+  check(maintaining.kind === 'maintaining' && maintaining.lapsed === false, 'UX 13: active member reopening a 40-day-old script is maintaining, not lapsed');
+  check(/Maintaining an earlier script/i.test(maintaining.title) && !/lapsed/i.test(maintaining.text), 'UX 13: maintaining copy never calls the member lapsed');
+  const recovering = S.returnContext([oldFinished], oldFinished, NOW);
+  check(recovering.kind === 'recovering' && recovering.lapsed === true, 'UX 13: member with only 40-day-old activity is recovering from a gap');
+
+  // UX 45, 46: Month-over-month line on the progress strip, and no mistake erases a finished script with saved versions
+  const accidentallyCleared = Object.assign(project('accidental', { finished: 10 }), { output: '' });
+  check(S.isFinished(accidentallyCleared) === true, 'UX 46: saved version keeps script counted as finished even if output is cleared by mistake');
+  const momProg = S.progress([finProj, filmProj, postProj, project('prev-m', { finished: 45 })], NOW);
+  check(momProg.thisMonth === 3 && momProg.lastMonth === 1 && momProg.posted === 1, 'UX 45: progress tracks thisMonth, lastMonth, and posted');
+  const momLine = S.monthOverMonthLine(momProg);
+  check(/Month over month: 3 scripts this month, up from 1 last month/i.test(momLine) && !momLine.includes(EM), 'UX 45: month-over-month line compares this month against last');
+  check(S.progressMarkup(momProg).includes('data-posted="1"') && S.progressMarkup(momProg).includes(momLine), 'UX 45: progress strip markup includes posted count and month-over-month line');
+
+  // Stranger 44: Stated objective (who it is for and what they should do next) classifies the script
+  const withObj = S.withScriptObjective(finProj, 'Independent bakery owners', 'Book a tasting menu consultation');
+  const obj = S.scriptObjective(withObj);
+  check(obj && obj.audience === 'Independent bakery owners' && obj.category === 'conversion', 'Stranger 44: stated objective classifies script');
+}
+
 if (failures.length) {
   console.error('check-storysculpt-progress FAIL\n- ' + failures.join('\n- '));
   process.exit(1);
 }
-console.log('PASS: check-storysculpt-progress: ' + passed + ' checks (strip counts finished and filmed only, 30-day comparison, one next step on three surfaces in three states, dismissal persists, versions, no em dashes).');
+console.log('PASS: check-storysculpt-progress: ' + passed + ' checks (strip counts finished/filmed/posted, 30-day & month-over-month comparison, graded scale, sincere effort, maintaining vs gap, objective, one next step, dismissal, versions, no em dashes).');
