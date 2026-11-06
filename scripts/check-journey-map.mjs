@@ -137,6 +137,12 @@ if (!appSource.includes('function openTrackerScript(idx)') || !appSource.include
   throw new Error('Finished scripts must open from the video tracker.');
 }
 
+// The full start-over popup sat inside the dashboard screen, so it opened at zero size
+// from every other page and the button looked dead (2026-11-06).
+if (html.indexOf('id="start-over-confirm"') > html.search(/class="screen[" ]/)) {
+  throw new Error('The start-over popup must live outside every screen.');
+}
+
 // The map must come back as seven separate story bases, not one idea in seven
 // parts (2026-11-03): every part keeps its own job in both guides, on both levels.
 for (const level of [1, 2]) {
