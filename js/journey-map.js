@@ -167,10 +167,10 @@ Before you show me the map, check every part privately. Do not show me this chec
 
 Never leave a part thin. Do not explain which details you inferred or invented, and write them as plain events, never as "I can imagine" or "probably." I will read the map and change anything that does not feel right.
 
-Give me the finished map inside one plain-text code block so I can copy it with the copy button and paste it straight into SeenInSeven. These are private story notes for a later writer, not narration, so say plainly what happened, in the order it happened, with the names and details that make it real. Write each part as one full paragraph. Use as much space as each part needs to hold everything its job asks for, usually 100 to 200 words. Never compress a story into a summary to make it shorter. The block must contain exactly seven lines and nothing else:
+Give me the finished map inside one plain-text code block so I can copy it with the copy button and paste it straight into SeenInSeven. These are private story notes for a later writer, not narration, so say plainly what happened, in the order it happened, with the names and details that make it real. Write each part as one full paragraph. Use as much space as each part needs to hold everything its job asks for, usually 100 to 200 words. Never compress a story into a summary to make it shorter. Part 1 is the exception: it is a short declaration of about 60 words, naming only what I am committing to say, who it is for, and what has kept me quiet. The block must contain exactly seven lines and nothing else:
 
 \`\`\`
-1. [the full story of this part, in first person, as one paragraph]
+1. [my short declaration, in first person, about 60 words]
 2. [the full story of this part, in first person, as one paragraph]
 3. [the full story of this part, in first person, as one paragraph]
 4. [the full story of this part, in first person, as one paragraph]
@@ -298,7 +298,7 @@ ${sourceContext ? `CONTEXT I HAVE ALREADY PROVIDED TO SEENINSEVEN\n\n${sourceCon
 
 Match my actual language patterns, favorite words, sentence length, speaking cadence, rhythm, bluntness, humor, emotional tone, and the way I naturally tell stories. The answer should sound spoken by me, not polished by a copywriter. Do not turn it into marketing copy.
 
-Do not ask me questions unless you genuinely need clarification, and then ask only one. Work out where I was, who was there, what I did, and what it led to from what you know about me, and imagine the rest. Give me one first-person paragraph that I can paste into SeenInSeven. Use as much space as it takes to hold everything this part must do, usually 100 to 200 words, and never compress it into a summary. Keep it natural and specific. Go past what I tell you: infer, connect, and invent plausible details when the material is thin, and do not explain what you invented. Make sure it stands on its own for a stranger.
+Do not ask me questions unless you genuinely need clarification, and then ask only one. Work out where I was, who was there, what I did, and what it led to from what you know about me, and imagine the rest. Give me one first-person paragraph that I can paste into SeenInSeven. ${index === 0 ? 'This part is a short declaration, so keep it to about 60 words.' : 'Use as much space as it takes to hold everything this part must do, usually 100 to 200 words, and never compress it into a summary.'} Keep it natural and specific. Go past what I tell you: infer, connect, and invent plausible details when the material is thin, and do not explain what you invented. Make sure it stands on its own for a stranger.
 
 This part is the story base for one separate video in a seven-part series. It needs its own subject. Do not repeat the point of an earlier part, and do not give away a later part.
 

@@ -536,6 +536,38 @@ export function extractCurrentJourneyDirection(userContext, video) {
   return remainder.slice(0, end).trim();
 }
 
+const VIDEO_ONE_MEAT_EDITOR_SYSTEM = `You are the final line editor for Video 1 of a seven-video challenge. Video 1 declares the challenge. It does not tell the speaker's story.
+
+Cut the MEAT to 110-140 words by deleting, not rewriting.
+- Delete any sentence that repeats something the HOOK or OPEN LOOP already said.
+- Delete background and experience the speaker does not need in order to declare.
+- Keep the specific blocker, why now, and who this is for.
+- Keep the surviving sentences in the speaker's exact words. Change a word only to join two sentences.
+- Add no new facts, ideas, or lessons, and do not state what the CONCLUSION says.
+
+Return only the edited MEAT text, with no label or explanation.`;
+
+function spokenWordCount(text) {
+  return (String(text || '').match(/\b[\w’'-]+\b/g) || []).length;
+}
+
+// Holds Video 1 to the blueprint's own Meat length, which nothing else enforces.
+// Any failure keeps the finished script as it is.
+export async function tightenVideoOneMeat(script, callModelFn) {
+  const sections = parseSections(script);
+  if (!sections || !sections.MEAT || spokenWordCount(sections.MEAT) <= 140) return script;
+  try {
+    const edited = String(await callModelFn(VIDEO_ONE_MEAT_EDITOR_SYSTEM, composeSections(sections), 0.2, 600) || '')
+      .replace(/^\s*\[MEAT\]\s*/i, '')
+      .trim();
+    const words = spokenWordCount(edited);
+    if (words < 100 || words > 145 || /\[(?:HOOK|OPEN LOOP|CONCLUSION|CTA)\]/i.test(edited)) return script;
+    return composeSections({ ...sections, MEAT: edited });
+  } catch (error) {
+    return script;
+  }
+}
+
 export function preserveViewerPremiseSource(originalContext, preparedContext, video) {
   const prepared = String(preparedContext || '').trim();
   if (Number(video) === 7) return prepared;
@@ -1241,7 +1273,10 @@ async function generateScriptCore(input, prompt, timings) {
         video: input.video,
         callModel
       }));
-      return { content: finalContent, promptVersion: prompt.version, generationAttempts: attempt + 1 };
+      const deliveredContent = Number(input.video) === 1
+        ? await measureStage(timings, 'video-one-meat' + stageSuffix, () => tightenVideoOneMeat(finalContent, callModel))
+        : finalContent;
+      return { content: deliveredContent, promptVersion: prompt.version, generationAttempts: attempt + 1 };
     } catch (error) {
       lastError = error;
       const message = String(error && error.message || '');

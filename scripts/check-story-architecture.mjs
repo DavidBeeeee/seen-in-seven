@@ -20,6 +20,7 @@ import {
   extractCurrentJourneyDirection,
   extractCurrentVideoBrief,
   preserveViewerPremiseSource,
+  tightenVideoOneMeat,
   VIDEO_SEVEN_RETURN_ANCHORS,
   VIDEO_SEVEN_RETURN_HEADINGS,
   VIDEO_SEVEN_RETURN_SYSTEM,
@@ -478,6 +479,20 @@ assert(
     (architectSource.match(new RegExp(currentDirection.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g')) || []).length === 1,
   'The shared episode architect source loses continuity or duplicates the current Journey Direction inside a prior script.'
 );
+// Video 1 Meat is held to the blueprint's 110-140 words, and any failed edit keeps the script.
+const longMeatScript = '[HOOK]\nA hook.\n\n[OPEN LOOP]\nA loop.\n\n[MEAT]\n' + 'word '.repeat(200).trim() + '\n\n[CONCLUSION]\nA landing.\n\n[CTA]\nFollow along.';
+const editedMeat = await tightenVideoOneMeat(longMeatScript, async () => 'kept '.repeat(125).trim());
+assert(
+  editedMeat.includes('kept kept') && !editedMeat.includes('word word') &&
+    ['A hook.', 'A loop.', 'A landing.', 'Follow along.'].every(part => editedMeat.includes(part)),
+  'The Video 1 Meat edit must replace only the Meat.'
+);
+for (const badEdit of [async () => 'kept '.repeat(40).trim(), async () => 'kept '.repeat(190).trim(), async () => '[CTA] rewritten', async () => { throw new Error('model down'); }]) {
+  assert(await tightenVideoOneMeat(longMeatScript, badEdit) === longMeatScript, 'A failed Video 1 Meat edit must keep the finished script.');
+}
+const fittingMeatScript = '[HOOK]\nA hook.\n\n[MEAT]\n' + 'word '.repeat(130).trim();
+assert(await tightenVideoOneMeat(fittingMeatScript, async () => { throw new Error('must not be called'); }) === fittingMeatScript, 'A Meat already in range must not be edited.');
+
 const preservedPremise = preserveViewerPremiseSource(
   [
     'CURRENT VIDEO 4 JOURNEY DIRECTION (private planning context only):',
