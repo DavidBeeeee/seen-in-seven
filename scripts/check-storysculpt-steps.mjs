@@ -175,6 +175,19 @@ const completeFinalThread = [
 ];
 assert.equal(finalStepError({ mode: 'rant', step: 'R8', messages: completeFinalThread }), '', 'Stranger 83: final assembly runs once the story, hook and open loop answers exist');
 assert.match(finalStepError({ mode: 'rant', step: 'R8', messages: completeFinalThread.slice(0, 3) }), /open loop/, 'Stranger 83: a missing open-loop answer still blocks the final');
+// Found reviewing 438fbd8: a typed reply advances the step, so these reach the final
+// turn in real use. Refusing them left the member stuck with no step to go back to.
+{
+  const proof = [{ role: 'assistant', content: 'What proof?' }, { role: 'user', content: 'Most coaches pitch features before anyone agrees there is a problem.' }];
+  const hookAsk = { role: 'assistant', content: 'Here are three hooks.\n1. Stop pitching.\n2. Nobody agreed yet.\n3. Lead with relief.' };
+  const loopAsk = { role: 'assistant', content: 'Here are three open loops.\n1. Here is what changed.\n2. Then one client called.\n3. It cost me a year.' };
+  const say = content => ({ role: 'user', content });
+  assert.equal(finalStepError({ mode: 'rant', step: 'R8', messages: [...proof, hookAsk, say('Nobody asked for your features, and they never will'), loopAsk, say('1')] }), '', 'a hook the member wrote themselves counts as their hook');
+  assert.equal(finalStepError({ mode: 'rant', step: 'R8', messages: [...proof, hookAsk, say('the second one'), loopAsk, say('1')] }), '', 'a hook chosen in words counts as their hook');
+  assert.equal(finalStepError({ mode: 'rant', step: 'R8', messages: [...proof, hookAsk, say('3'), loopAsk, say('And then one client called me at midnight')] }), '', 'an open loop the member wrote themselves counts as their open loop');
+  assert.match(finalStepError({ mode: 'rant', step: 'R8', messages: [...proof, hookAsk, say('3')] }), /open loop/, 'a loop prompt nobody has answered still holds the script');
+}
+assert.equal(interviewAnswerError({ intent: 'interview', mode: 'ugc', messages: [] }), '', 'UGC carries no chat turns, so the answer rule must never refuse its script');
 console.log('PASS: every WBR-462 routing row has an executable assertion.');
 
 console.log('4. Testing safety eval cases (19 cases: crisis vs ordinary frustration)...');

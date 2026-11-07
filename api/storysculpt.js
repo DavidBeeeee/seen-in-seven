@@ -687,6 +687,8 @@ export function replayFor(project, input) {
 // their saved trailing answer is sent again with the same generation key.
 export function interviewAnswerError(input) {
   if (!input || input.intent !== 'interview') return '';
+  // UGC builds from its saved product form and carries no chat turns at all.
+  if (input.mode === 'ugc') return '';
   const last = Array.isArray(input.messages) ? input.messages[input.messages.length - 1] : null;
   return last && last.role === 'user' && String(last.content || '').trim()
     ? ''
@@ -703,10 +705,24 @@ export function finalStepError({ mode, step, messages = [] }) {
   const users = messages.filter(message => message && message.role === 'user' && String(message.content || '').trim());
   const story = users.some(message => String(message.content).trim().split(/\s+/).length >= 3 && !/^Please revise the script above/i.test(String(message.content).trim()));
   if (!story) return 'Your story answer is still needed before the final script. Answer the current question first; your saved place is unchanged.';
+  // A member may write their own hook or loop instead of picking a number, and a
+  // typed reply advances the step. That reply is their choice, so only a prompt
+  // nobody has answered yet can hold back the script.
   const chosen = chosenOptions(messages);
-  if (chosen.openLoop && !chosen.hook) return 'Choose a hook before the final script. Your earlier answers are saved and the hook step is still waiting.';
-  if (chosen.hook && !chosen.openLoop) return 'Choose an open loop before the final script. Your hook and earlier answers are saved.';
+  if (chosen.openLoop && !chosen.hook && !answeredOptionPrompt(messages, 'hook')) return 'Choose a hook before the final script. Your earlier answers are saved and the hook step is still waiting.';
+  if (chosen.hook && !chosen.openLoop && !answeredOptionPrompt(messages, 'openLoop')) return 'Choose an open loop before the final script. Your hook and earlier answers are saved.';
   return '';
+}
+
+// Classifies an option prompt the way chosenOptions does.
+function answeredOptionPrompt(messages, kind) {
+  return messages.some((message, index) => {
+    const next = messages[index + 1];
+    if (!message || message.role !== 'assistant' || !next || next.role !== 'user' || !String(next.content || '').trim()) return false;
+    const content = String(message.content || '');
+    const isLoop = /open loop/i.test(content);
+    return kind === 'openLoop' ? isLoop : !isLoop && /\bhooks?\b/i.test(content);
+  });
 }
 
 async function updateProjectIntake(token, projectId, intake) {
