@@ -21,6 +21,7 @@ import {
   extractCurrentVideoBrief,
   preserveViewerPremiseSource,
   tightenVideoOneMeat,
+  tightenMeat,
   addWriterContract,
   enforceEpiphanyRule,
   VIDEO_SEVEN_RETURN_ANCHORS,
@@ -542,6 +543,14 @@ for (const bad of [async () => 'not json', async () => { throw new Error('model 
   assert(await enforceEpiphanyRule(gateScript, gateConfig, bad) === gateScript, 'A failed Epiphany gate must keep the finished script.');
 }
 assert(generationSource.includes("Number(input.video) === 3 || Number(input.video) === 6"), 'The Epiphany gate must run on Videos 3 and 6.');
+
+// A thin idea cannot be padded to fill a video: Videos 2-6 are held to the blueprint's range.
+const storyScript = '[HOOK]\nA hook.\n\n[OPEN LOOP]\nA loop.\n\n[MEAT]\n' + 'word '.repeat(330).trim() + '\n\n[CONCLUSION]\nA landing.\n\n[CTA]\nFollow along.';
+const storyEdited = await tightenMeat(storyScript, 2, async () => 'kept '.repeat(280).trim());
+assert((storyEdited.match(/kept/g) || []).length === 280, 'Video 2 must be held to its whole-script range.');
+const storyFitting = '[HOOK]\nA hook.\n\n[MEAT]\n' + 'word '.repeat(250).trim();
+assert(await tightenMeat(storyFitting, 5, async () => { throw new Error('must not be called'); }) === storyFitting, 'A Meat inside the range must not be edited.');
+assert(generationSource.includes("Number(input.video) === 7\n        ? gatedContent"), 'Video 7 must not be cut by the Meat edit.');
 
 const preservedPremise = preserveViewerPremiseSource(
   [
