@@ -1454,7 +1454,7 @@ function renderJourneyMap() {
       '<h3>Copy your Story Discovery guide.</h3><p>It includes the answers you already gave us, so you do not have to start over.</p>' +
       '<button class="btn-secondary" type="button" onclick="openJourneyHelp()">Open And Copy My Guide</button>' +
       '<div class="journey-question-top" style="margin-top:24px;"><span class="journey-step">Step 2</span></div>' +
-      '<h3>Paste it into your favorite AI.</h3><p>Pick the story that feels most true to you. It writes the seven parts for you.</p>' +
+      '<h3>Paste it into your favorite AI.</h3><p>Pick the story that feels most true to you. It writes a draft, then reply revise and it makes it stronger. Copy the final version.</p>' +
       '<div class="journey-question-top" style="margin-top:24px;"><span class="journey-step">Step 3</span></div>' +
       '<h3>Paste the seven numbered answers below.</h3>' +
       '<label for="journey-import" style="margin-top:24px;display:block;">Paste your finished seven-part map</label>' +
@@ -1552,6 +1552,7 @@ function finishJourneyReview() {
 function journeyImportProblem(detail) {
   const how = ' Start each part on its own line with its number and a period, like 1. through 7. Asking your AI to "put the seven lines in a plain code block" and using its copy button usually fixes this.';
   if (!detail || detail.blank) return 'Paste your seven numbered answers first.';
+  if (detail.draft) return 'This looks like the draft. Reply revise to your AI, then copy the final map from the code block it gives you.';
   if (detail.empty && detail.empty.length) return 'Part ' + detail.empty.join(', ') + ' has a number but no words yet.' + how;
   const found = detail.found || [];
   if (!found.length) return 'I could not find any numbered parts in what you pasted.' + how;
@@ -1563,6 +1564,7 @@ function importJourneyMap() {
   const field = document.getElementById('journey-import');
   const error = document.getElementById('journey-import-error');
   const detail = window.SISJourneyMap && SISJourneyMap.parseImportedMapDetail(field && field.value);
+  if (detail && !detail.answers && /draft of part/i.test(field && field.value || '')) detail.draft = true;
   const parsed = detail && detail.answers;
   if (!parsed || parsed.length !== 7) {
     if (error) { error.textContent = journeyImportProblem(detail); error.hidden = false; }
@@ -1663,9 +1665,9 @@ function openJourneyHelp() {
   const overlay = document.getElementById('journey-help-overlay');
   if (field) field.value = prompt;
   if (title) title.textContent = 'Find your full seven-part story.';
-  if (description) description.textContent = 'Copy this into the AI you already use. It will offer three story ideas, help you choose, then give you seven numbered answers to paste back here.';
+  if (description) description.textContent = 'Copy this into the AI you already use. It will offer three story ideas, help you choose, write a draft, revise it once, then give you seven numbered answers to paste back here.';
   journeyHelpTarget = 'journey-import';
-  resetHelpNextStep('journey', 'Pick a story. When it writes your seven parts, copy them.');
+  resetHelpNextStep('journey', 'Pick a story, then reply revise to its draft. Copy the final seven parts.');
   if (overlay) overlay.hidden = false;
   if (typeof logEvent === 'function') logEvent('journey_help_opened', { level: journeyMapLevel });
 }

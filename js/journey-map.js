@@ -138,11 +138,11 @@ Give me three distinct core story seeds, each a different version of that change
 - the events that could carry it, different from the events in the other two ideas: the moment an old belief broke, the first test, the fall, and the larger truth
 - a sentence in language close to the way I speak
 
-Do not write the full seven-part map yet. Let me choose one, combine them, or tell you what feels wrong. That choice is usually the only thing you need from me.
+Do not write the full seven-part map yet. Let me choose one, combine them, or tell you what feels wrong. That choice, and telling you to revise your draft, are usually the only things you need from me.
 
 ONCE I CHOOSE, WRITE THE MAP
 
-Write the full map in your next message, with no questions first unless you genuinely need clarification. Use WHAT EACH PART MUST DO below. Look for the events that fit each part in everything you know about me. Imagine the most compelling plausible version of anything you cannot find. Include things I would never think to say about myself. I will read it and tell you what feels off.
+Write the full draft in your next message, with no questions first unless you genuinely need clarification. It gets one revision before it is final. Use WHAT EACH PART MUST DO below. Look for the events that fit each part in everything you know about me. Imagine the most compelling plausible version of anything you cannot find. Include things I would never think to say about myself. I will read it and tell you what feels off.
 
 THE MOST IMPORTANT RULE
 
@@ -172,9 +172,11 @@ Before you show me the map, check every part privately. Do not show me this chec
 
 Never leave a part thin. Do not explain which details you inferred or invented, and write them as plain events, never as "I can imagine" or "probably." I will read the map and change anything that does not feel right.
 
-REVIEW YOUR WORK BEFORE YOU SHOW ME THE MAP
+DRAFT FIRST, THEN ONE REVISION
 
-Draft all seven parts first. Then review the draft and show me the review above the map, as short lines with no numbers at the start of any line:
+Your message after I choose a story is a draft, not the final map.
+- Show the draft as seven paragraphs, each starting with "Draft of part" and its number, like "Draft of part 3:". Do not put the draft in a code block, and do not start any line of the draft with a number, so it cannot be pasted into SeenInSeven by mistake.
+- Under the draft, show this review as short lines, with no number at the start of any line:
 
 I started out believing: [the old belief]
 I end up believing: [the truth it becomes]
@@ -185,9 +187,20 @@ The thread: [one sentence on how the seven events make one person change]
 
 Then one short line for each of Parts 2 through 7 naming its event, like "The test: the night Dana asked me to take over the room."
 
-If any line is weak, rewrite the draft before you show me anything. The two epiphanies must be different truths. The second must answer the fall, not repeat the first. The elixir must be something I can give to another person, not only something I learned. If the thread sentence only works by repeating one idea, or skips a part, the parts are not connected yet. Revise until every line holds, then show me the review and the finished map, and nothing from the draft.
+- End that message with exactly this: "That's the draft. Reply revise and I'll do one revision pass to make it stronger. Copy the final map, not this draft."
 
-Then give me the finished map inside one plain-text code block so I can copy it with the copy button and paste it straight into SeenInSeven. These are private story notes for a later writer, not narration, so say plainly what happened, in the order it happened, with the names and details that make it real. Write each part as one full paragraph. Use as much space as each part needs to hold everything its job asks for, usually 100 to 200 words. Never compress a story into a summary to make it shorter. The block must contain exactly seven lines and nothing else:
+When I reply, do one revision pass. Read the draft as a strict editor and fix every problem you find, including ones I did not mention:
+- A part gives away a later part's truth, especially Part 3 or Part 4 stating what Part 6 reveals. Cut it from the earlier part.
+- The two epiphanies are the same truth, or the second one does not answer the fall.
+- The elixir is only something I learned, not something I can give to another person.
+- A part describes a product, service, or offer instead of telling what happened. Watch Part 7 especially.
+- A part has no event, or crowds several events together.
+- The same idea or sentence repeats across parts or inside one part.
+- Names, dates, places, or details contradict each other between parts.
+- A part summarizes instead of telling what happened in order.
+Then list what you changed in a few short lines, with no number at the start of any line.
+
+In that revision message, give me the finished map inside one plain-text code block so I can copy it with the copy button and paste it straight into SeenInSeven. This is the only version I should copy. These are private story notes for a later writer, not narration, so say plainly what happened, in the order it happened, with the names and details that make it real. Write each part as one full paragraph. Use as much space as each part needs to hold everything its job asks for, usually 100 to 200 words. Never compress a story into a summary to make it shorter. The block must contain exactly seven lines and nothing else:
 
 \`\`\`
 1. [the full story of this part, in first person, as one paragraph]
