@@ -66,7 +66,7 @@
       'The first realization: one thing I personally believed and acted on, then one specific moment or pattern that it could not explain. It must be my own old belief. An opinion about my industry does not count unless an experience of mine broke it.',
       'The test: one specific day or conversation, not how things usually went, where I acted on that new view before I had proof, the moment the old way looked better, what I chose, and the small result. Things can still be recovered here. A general habit or confession does not count. Stop before the fall.',
       'The fall: one failure or collapse. What I had built or hoped for, the choices that were mine even if other people played a part, what it cost in plain terms that cannot be taken back, the moment it hit me hardest, and what I believed was over. Leave me inside it, with no lesson, recovery, way back, or silver lining.',
-      'The larger truth: one thing I do now that most people would call wrong or backwards, the experience or repeated evidence behind it, and one place someone can see me doing it. Describing what I offer does not count, a realization about myself does not count, and a second failure does not count. A sensible person should be able to argue with it. Open the part with what I do, in the present tense, not with the moment I realized it, and say plainly what most people would tell me I am doing wrong. Then tell one specific time it happened: who was there, what I did, and what came of it, so a viewer can picture it. It must be a different idea from Part 3, and more than the reverse of the mistake in Part 5.',
+      'The larger truth: it must answer the fall in Part 5. One thing the fall made me see or do, that I do now and most people would call wrong or backwards, the experience or repeated evidence behind it, and one place someone can see me doing it. Describing what I offer does not count, a realization about myself does not count, and a second failure does not count. A sensible person should be able to argue with it. Open the part with what I do, in the present tense, not with the moment I realized it, and say plainly what most people would tell me I am doing wrong. Then tell one specific time it happened: who was there, what I did, and what came of it, so a viewer can picture it. It must be a different idea from Part 3, and more than the reverse of the mistake in Part 5.',
       'The return: one thing someone could see me doing now that the person in Part 2 would not have done, what makes my way of working different, what is honestly still unfinished, and where I am heading. No recap, no new lesson, no pitch.'
     ]
   };
@@ -148,11 +148,15 @@ WHAT EACH PART MUST DO
 
 ${PART_JOBS[number].map((job, index) => `${index + 1}. ${job}`).join('\n\n')}
 
-ONE DEVELOPING STORY
+DESIGN THE JOURNEY FIRST
 
-Before you write the map, privately name the one question that connects all seven parts, and how each part changes what a viewer understands about it. The events do not need to cause one another, but each must reveal a different side of the same human struggle, and the stakes should build instead of resetting. Do not force a connection between two events. It can be emotional, thematic, or chronological, as long as it is believable.
+These seven parts are one person changing, so design that change before you choose any event. From everything you know about me, work out:
+- The old belief: what I believed about myself or how things work, which kept my life the way it was.
+- The truth it becomes: what I believe by the end that I could not have believed at the start.
+- The fall: the loss that makes the old belief impossible to keep living by.
+- The rise: what I do differently now because of that fall.
 
-The fall comes before the larger truth and the return. Beyond that, choose the order that builds best, without any part depending on something I had not yet lived through.
+Then choose events that show this change, one step per part. Part 2 shows me living the old belief. Part 3 cracks it. Part 4 is me acting on the crack before I have proof. Part 5 is the fall, and my part in it. Part 6 is the truth that answers the fall. Part 7 is me living it, unfinished. If an event is interesting but does not move this change, leave it out. The events do not need to cause one another, but a viewer should feel one person changing, with the stakes building. Do not force a connection between two events. The fall comes before the larger truth and the return, and no part depends on something I had not yet lived through.
 
 A small event that exposes something surprising about me is worth more than a major accomplishment that explains my career. Do not let the need for a connected story pull you back to the obvious milestones, apart from the ordinary life in Part 2.
 
@@ -168,7 +172,7 @@ Before you show me the map, check every part privately. Do not show me this chec
 
 Never leave a part thin. Do not explain which details you inferred or invented, and write them as plain events, never as "I can imagine" or "probably." I will read the map and change anything that does not feel right.
 
-Above the map, show me one short line for each of Parts 2 through 7 naming its event, with no numbers, like "The test: the night Dana asked me to take over the room." If you cannot name an event in one line, the part is not ready, so go back and find one.
+Above the map, start with two lines, "I started out believing:" and "I end up believing:". Then show me one short line for each of Parts 2 through 7 naming its event, with no numbers, like "The test: the night Dana asked me to take over the room." If you cannot name an event in one line, the part is not ready, so go back and find one.
 
 Then give me the finished map inside one plain-text code block so I can copy it with the copy button and paste it straight into SeenInSeven. These are private story notes for a later writer, not narration, so say plainly what happened, in the order it happened, with the names and details that make it real. Write each part as one full paragraph. Use as much space as each part needs to hold everything its job asks for, usually 100 to 200 words. Never compress a story into a summary to make it shorter. The block must contain exactly seven lines and nothing else:
 
