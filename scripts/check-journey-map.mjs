@@ -154,9 +154,18 @@ if (!appSource.includes("journeyHelpTarget = 'journey-import'") || !appSource.in
 
 // David, 2026-11-06: a part with no event makes a script that repeats itself. The event
 // lines above the map carry no numbers, so a whole-message paste still reads as seven parts.
-const wholeMessage = 'I started out believing: hard work is enough.\nI end up believing: people prove it.\nThe test: the night Dana asked me to take over.\nThe fall: the week the show stopped.\n\n```\n' + seven(n => `${n}. Story part ${n}.`) + '\n```';
+const wholeMessage = 'I started out believing: hard work is enough.\nI end up believing: people prove it.\nFirst epiphany (Part 3): the book stalled.\nSecond epiphany (Part 6): ask one person by name.\nThe elixir (Part 7): I can show someone where to start.\nThe thread: one person learning to be heard.\nThe test: the night Dana asked me to take over.\nThe fall: the week the show stopped.\n\n```\n' + seven(n => `${n}. Story part ${n}.`) + '\n```';
 const wholeParts = map.parseImportedMap(wholeMessage);
 if (!wholeParts || wholeParts[0] !== 'Story part 1.' || !wholeParts[6].includes('Story part 7')) throw new Error('Event lines above the map must not be read as parts.');
+
+// The journey is designed before the story ideas, so the ideas are versions of one change.
+for (const level of [1, 2]) {
+  const guideText = map.buildHelperPrompt(level, '', '');
+  if (guideText.indexOf('DESIGN THE JOURNEY FIRST') > guideText.indexOf('Here are three things you could talk about')) {
+    throw new Error(`The Level ${level} guide must design the journey before offering story ideas.`);
+  }
+  if (!guideText.includes('the elixir I come back with')) throw new Error(`The Level ${level} return lost its elixir.`);
+}
 
 // The map must come back as seven separate story bases, not one idea in seven
 // parts (2026-11-03): every part keeps its own job in both guides, on both levels.
@@ -189,7 +198,7 @@ for (const level of [1, 2]) {
   for (const value of ['no more than 60', 'one or two', 'up to three', 'no limit on these questions', 'maximum of five', 'what part 4 starts', 'run in time order', 'start by asking', 'one short question per message', 'about eight questions', 'ask me for it', 'never invent', 'made up', 'only what is true', 'real event']) {
     if (fullGuide.toLowerCase().includes(value)) throw new Error(`The Level ${level} guide still says: ${value}`);
   }
-  for (const value of ['ONCE I CHOOSE, WRITE THE MAP', 'with no questions first', 'Never ask me anything you already know', 'That choice is usually the only thing you need from me', 'never more than two in all', 'The map itself gets all the space it needs', 'follow the job', 'is built on one event', 'one short line for each of Parts 2 through 7 naming its event', 'choose one event from the list', 'Part 2 is the exception: it should be the actual job or life I was living', 'This does not apply to Part 2', 'DESIGN THE JOURNEY FIRST', 'The old belief:', 'The truth it becomes:', 'I started out believing:', 'do not need to cause one another', 'pull you back to the obvious milestones', 'does not pass', 'the moment it hit me hardest', 'privately list at least 20 specific moments', 'Only one project, job, or period', 'use the smaller moment', 'name the day or conversation', 'one specific day or conversation', 'cannot be taken back', 'way back', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version', 'HOW TO TALK TO ME']) {
+  for (const value of ['ONCE I CHOOSE, WRITE THE MAP', 'with no questions first', 'Never ask me anything you already know', 'That choice is usually the only thing you need from me', 'never more than two in all', 'The map itself gets all the space it needs', 'follow the job', 'is built on one event', 'one short line for each of Parts 2 through 7 naming its event', 'choose one event from the list', 'Part 2 is the exception: it should be the actual job or life I was living', 'This does not apply to Part 2', 'DESIGN THE JOURNEY FIRST', 'The old belief:', 'The truth it becomes:', 'I started out believing:', 'REVIEW YOUR WORK BEFORE YOU SHOW ME THE MAP', 'Second epiphany (Part 6):', 'The elixir (Part 7):', 'The two epiphanies must be different truths', 'do not need to cause one another', 'pull you back to the obvious milestones', 'does not pass', 'the moment it hit me hardest', 'privately list at least 20 specific moments', 'Only one project, job, or period', 'use the smaller moment', 'name the day or conversation', 'one specific day or conversation', 'cannot be taken back', 'way back', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version', 'HOW TO TALK TO ME']) {
     if (!fullGuide.includes(value)) throw new Error(`The Level ${level} guide lost: ${value}`);
   }
   if (level === 2 && !fullGuide.includes('a realization about myself does not count')) throw new Error('Level 2 Part 6 must stay a way of working someone could argue with.');

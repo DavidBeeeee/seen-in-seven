@@ -58,7 +58,7 @@
       'The test: one specific day or conversation, not how things usually went, where I first lived by that new understanding, the moment the old way looked easier, what I chose, and the partial win or confidence it gave me. Things can still be recovered here. Stop before the fall.',
       'The fall: one failure, loss, or collapse. What I had that mattered, the part that was my fault even if other people played a part, what it cost in plain terms that cannot be taken back, the moment it hit me hardest, and what I believed was over. Leave me inside it, with no lesson, recovery, way back, or silver lining.',
       'The larger truth: what I could only understand after the fall, the aftermath that showed it to me, and one thing I now visibly do differently. It must be new, not Part 3 again.',
-      'The return: one thing someone could see me doing now that the person in Part 2 would not have done, what is honestly still unfinished, and where I am heading. No recap, no new lesson, no pitch.'
+      'The return: the elixir I come back with, something I can now give a person who is where I started, and one thing someone could see me doing now that the person in Part 2 would not have done, what is honestly still unfinished, and where I am heading. No recap, no new lesson, no pitch.'
     ],
     2: [
       'The decision: what I am committing to say publicly, who it is for, and the specific thing that has kept me quiet. It is happening now. State the subject, not the answer. Leave out my history, my realizations, my failure, and my main lesson.',
@@ -67,7 +67,7 @@
       'The test: one specific day or conversation, not how things usually went, where I acted on that new view before I had proof, the moment the old way looked better, what I chose, and the small result. Things can still be recovered here. A general habit or confession does not count. Stop before the fall.',
       'The fall: one failure or collapse. What I had built or hoped for, the choices that were mine even if other people played a part, what it cost in plain terms that cannot be taken back, the moment it hit me hardest, and what I believed was over. Leave me inside it, with no lesson, recovery, way back, or silver lining.',
       'The larger truth: it must answer the fall in Part 5. One thing the fall made me see or do, that I do now and most people would call wrong or backwards, the experience or repeated evidence behind it, and one place someone can see me doing it. Describing what I offer does not count, a realization about myself does not count, and a second failure does not count. A sensible person should be able to argue with it. Open the part with what I do, in the present tense, not with the moment I realized it, and say plainly what most people would tell me I am doing wrong. Then tell one specific time it happened: who was there, what I did, and what came of it, so a viewer can picture it. It must be a different idea from Part 3, and more than the reverse of the mistake in Part 5.',
-      'The return: one thing someone could see me doing now that the person in Part 2 would not have done, what makes my way of working different, what is honestly still unfinished, and where I am heading. No recap, no new lesson, no pitch.'
+      'The return: the elixir I come back with, something I can now give a person who is where I started, and one thing someone could see me doing now that the person in Part 2 would not have done, what makes my way of working different, what is honestly still unfinished, and where I am heading. No recap, no new lesson, no pitch.'
     ]
   };
 
@@ -120,9 +120,19 @@ Do the work yourself. Do not interview me. Never ask me anything you already kno
 - You may ask me a question only when you genuinely need clarification: the answer would change the story and you cannot work it out or imagine it well. Most of the time you will not need one. Ask one short question at a time, never more than two in all, and never one you could answer yourself.
 - If you have almost nothing about me beyond this message, ask me once for a short paragraph about my life and work, then continue.
 
+DESIGN THE JOURNEY FIRST
+
+These seven parts are one person changing, so design that change before you choose any event. From everything you know about me, work out:
+- The old belief: what I believed about myself or how things work, which kept my life the way it was.
+- The truth it becomes: what I believe by the end that I could not have believed at the start.
+- The fall: the loss that makes the old belief impossible to keep living by.
+- The rise: what I do differently now because of that fall.
+
+Then choose events that show this change, one step per part. Part 2 shows me living the old belief. Part 3 cracks it. Part 4 is me acting on the crack before I have proof. Part 5 is the fall, and my part in it. Part 6 is the truth that answers the fall. Part 7 is me living it, unfinished. If an event is interesting but does not move this change, leave it out. The events do not need to cause one another, but a viewer should feel one person changing, with the stakes building. Do not force a connection between two events. The fall comes before the larger truth and the return, and no part depends on something I had not yet lived through.
+
 Then say: "Here are three things you could talk about. Which one feels right?"
 
-Give me three distinct core story seeds, about 40 words each, with:
+Give me three distinct core story seeds, each a different version of that change, about 40 words each, with:
 - a short name
 - the tension at its center, stated as an open question rather than the answer
 - the events that could carry it, different from the events in the other two ideas: the moment an old belief broke, the first test, the fall, and the larger truth
@@ -148,16 +158,6 @@ WHAT EACH PART MUST DO
 
 ${PART_JOBS[number].map((job, index) => `${index + 1}. ${job}`).join('\n\n')}
 
-DESIGN THE JOURNEY FIRST
-
-These seven parts are one person changing, so design that change before you choose any event. From everything you know about me, work out:
-- The old belief: what I believed about myself or how things work, which kept my life the way it was.
-- The truth it becomes: what I believe by the end that I could not have believed at the start.
-- The fall: the loss that makes the old belief impossible to keep living by.
-- The rise: what I do differently now because of that fall.
-
-Then choose events that show this change, one step per part. Part 2 shows me living the old belief. Part 3 cracks it. Part 4 is me acting on the crack before I have proof. Part 5 is the fall, and my part in it. Part 6 is the truth that answers the fall. Part 7 is me living it, unfinished. If an event is interesting but does not move this change, leave it out. The events do not need to cause one another, but a viewer should feel one person changing, with the stakes building. Do not force a connection between two events. The fall comes before the larger truth and the return, and no part depends on something I had not yet lived through.
-
 A small event that exposes something surprising about me is worth more than a major accomplishment that explains my career. Do not let the need for a connected story pull you back to the obvious milestones, apart from the ordinary life in Part 2.
 
 Before you show me the map, check every part privately. Do not show me this check.
@@ -172,7 +172,20 @@ Before you show me the map, check every part privately. Do not show me this chec
 
 Never leave a part thin. Do not explain which details you inferred or invented, and write them as plain events, never as "I can imagine" or "probably." I will read the map and change anything that does not feel right.
 
-Above the map, start with two lines, "I started out believing:" and "I end up believing:". Then show me one short line for each of Parts 2 through 7 naming its event, with no numbers, like "The test: the night Dana asked me to take over the room." If you cannot name an event in one line, the part is not ready, so go back and find one.
+REVIEW YOUR WORK BEFORE YOU SHOW ME THE MAP
+
+Draft all seven parts first. Then review the draft and show me the review above the map, as short lines with no numbers at the start of any line:
+
+I started out believing: [the old belief]
+I end up believing: [the truth it becomes]
+First epiphany (Part 3): [the old belief that cracked, and what cracked it]
+Second epiphany (Part 6): [the deeper truth, and how it answers the fall in Part 5]
+The elixir (Part 7): [what I return with that I can now give someone who is where I started]
+The thread: [one sentence on how the seven events make one person change]
+
+Then one short line for each of Parts 2 through 7 naming its event, like "The test: the night Dana asked me to take over the room."
+
+If any line is weak, rewrite the draft before you show me anything. The two epiphanies must be different truths. The second must answer the fall, not repeat the first. The elixir must be something I can give to another person, not only something I learned. If the thread sentence only works by repeating one idea, or skips a part, the parts are not connected yet. Revise until every line holds, then show me the review and the finished map, and nothing from the draft.
 
 Then give me the finished map inside one plain-text code block so I can copy it with the copy button and paste it straight into SeenInSeven. These are private story notes for a later writer, not narration, so say plainly what happened, in the order it happened, with the names and details that make it real. Write each part as one full paragraph. Use as much space as each part needs to hold everything its job asks for, usually 100 to 200 words. Never compress a story into a summary to make it shorter. The block must contain exactly seven lines and nothing else:
 
