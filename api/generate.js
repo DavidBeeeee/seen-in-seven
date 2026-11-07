@@ -538,47 +538,74 @@ export function extractCurrentJourneyDirection(userContext, video) {
   return remainder.slice(0, end).trim();
 }
 
-const VIDEO_ONE_MEAT_EDITOR_SYSTEM = `You are the final line editor for Video 1 of a seven-video challenge. Video 1 declares the challenge. It does not tell the speaker's story.
-
-Cut the MEAT to 110-140 words by deleting, not rewriting.
-- Delete any sentence that repeats something the HOOK or OPEN LOOP already said.
-- Delete background and experience the speaker does not need in order to declare.
-- Keep the specific blocker, why now, and who this is for.
+const MEAT_EDITOR_RULES = `Cut the MEAT to the target length by deleting, not rewriting.
+- Delete any sentence that repeats an idea already said in the HOOK, OPEN LOOP, or MEAT, even in different words. Saying one idea several ways is the main thing to remove.
 - Keep the surviving sentences in the speaker's exact words. Change a word only to join two sentences.
 - Add no new facts, ideas, or lessons, and do not state what the CONCLUSION says.
 
 Return only the edited MEAT text, with no label or explanation.`;
 
+const VIDEO_ONE_MEAT_EDITOR_SYSTEM = `You are the final line editor for Video 1 of a seven-video challenge. Video 1 declares the challenge. It does not tell the speaker's story.
+
+- Delete background and experience the speaker does not need in order to declare.
+- Keep the specific blocker, why now, and who this is for.
+${MEAT_EDITOR_RULES}`;
+
+const STORY_MEAT_EDITOR_SYSTEM = `You are the final line editor for a short video in a seven-video story. A stranger will hear it once, so every sentence has to move the story forward.
+
+- Keep every step of what happened: the events, the choices, and what followed.
+- Delete explanation, commentary, and restated feeling that a viewer has already understood.
+${MEAT_EDITOR_RULES}`;
+
 function spokenWordCount(text) {
   return (String(text || '').match(/\b[\w’'-]+\b/g) || []).length;
 }
 
-// Holds Video 1 to the blueprint's own Meat length, which nothing else enforces.
+// The blueprint's lengths are pacing targets that nothing else enforces, and a thin
+// idea gets padded to fill them. Video 1 uses its own Meat range. The others leave the
+// Meat whatever the top of the whole-script range allows, excluding the declaration.
+function meatLimit(sections, video) {
+  const number = Number(video);
+  if (number === 1) return 140;
+  const scriptLimit = number === 2 || number === 4 ? 300 : 360;
+  const rest = spokenWordCount(sections.HOOK) + spokenWordCount(sections['OPEN LOOP']) +
+    spokenWordCount(sections.CONCLUSION) + spokenWordCount(sections.CTA);
+  return Math.max(120, scriptLimit - rest);
+}
+
 // Models miscount, so it gets a second pass with the real number, and any cut that
 // is an improvement is kept. Any failure keeps the finished script as it is.
-export async function tightenVideoOneMeat(script, callModelFn) {
+export async function tightenMeat(script, video, callModelFn) {
   const sections = parseSections(script);
-  const startWords = sections && sections.MEAT ? spokenWordCount(sections.MEAT) : 0;
-  if (startWords <= 140) return script;
+  if (!sections || !sections.MEAT) return script;
+  const limit = meatLimit(sections, video);
+  const floor = Math.min(100, limit - 40);
+  const startWords = spokenWordCount(sections.MEAT);
+  if (startWords <= limit) return script;
+  const system = Number(video) === 1 ? VIDEO_ONE_MEAT_EDITOR_SYSTEM : STORY_MEAT_EDITOR_SYSTEM;
   let meat = sections.MEAT;
   let words = startWords;
   try {
-    for (let attempt = 0; attempt < 2 && words > 140; attempt++) {
+    for (let attempt = 0; attempt < 2 && words > limit; attempt++) {
       const request = composeSections({ ...sections, MEAT: meat }) +
-        '\n\nThe MEAT is ' + words + ' words. Delete about ' + (words - 125) + ' words.';
-      const edited = String(await callModelFn(VIDEO_ONE_MEAT_EDITOR_SYSTEM, request, 0.2, 600) || '')
+        '\n\nThe target is ' + (limit - 15) + ' to ' + limit + ' words. The MEAT is ' + words + ' words. Delete about ' + (words - limit + 15) + ' words.';
+      const edited = String(await callModelFn(system, request, 0.2, 800) || '')
         .replace(/^\s*\[MEAT\]\s*/i, '')
         .trim();
       const editedWords = spokenWordCount(edited);
-      console.log('[generate] Video 1 Meat edit: ' + words + ' -> ' + editedWords + ' words');
-      if (editedWords < 100 || editedWords >= words || /\[(?:HOOK|OPEN LOOP|CONCLUSION|CTA)\]/i.test(edited)) break;
+      console.log('[generate] Video ' + video + ' Meat edit: ' + words + ' -> ' + editedWords + ' words (limit ' + limit + ')');
+      if (editedWords < floor || editedWords >= words || /\[(?:HOOK|OPEN LOOP|CONCLUSION|CTA)\]/i.test(edited)) break;
       meat = edited;
       words = editedWords;
     }
   } catch (error) {
-    console.log('[generate] Video 1 Meat edit failed: ' + error.message);
+    console.log('[generate] Video ' + video + ' Meat edit failed: ' + error.message);
   }
   return words < startWords ? composeSections({ ...sections, MEAT: meat }) : script;
+}
+
+export function tightenVideoOneMeat(script, callModelFn) {
+  return tightenMeat(script, 1, callModelFn);
 }
 
 const COLD_VIEWER_RULE = `COLD VIEWER RULE (private, never mention it):
@@ -1355,16 +1382,17 @@ async function generateScriptCore(input, prompt, timings) {
         video: input.video,
         callModel
       }));
-      const deliveredContent = Number(input.video) === 1
-        ? await measureStage(timings, 'video-one-meat' + stageSuffix, () => tightenVideoOneMeat(finalContent, callModel))
-        : Number(input.video) === 3 || Number(input.video) === 6
-          ? await measureStage(timings, 'epiphany-gate' + stageSuffix, () => enforceEpiphanyRule(finalContent, {
-            video: input.video,
-            level: input.level,
-            systemPrompt,
-            userMessage: userMessage + retryNote
-          }, callModel))
-          : finalContent;
+      const gatedContent = Number(input.video) === 3 || Number(input.video) === 6
+        ? await measureStage(timings, 'epiphany-gate' + stageSuffix, () => enforceEpiphanyRule(finalContent, {
+          video: input.video,
+          level: input.level,
+          systemPrompt,
+          userMessage: userMessage + retryNote
+        }, callModel))
+        : finalContent;
+      const deliveredContent = Number(input.video) === 7
+        ? gatedContent
+        : await measureStage(timings, 'meat-edit' + stageSuffix, () => tightenMeat(gatedContent, input.video, callModel));
       return { content: deliveredContent, promptVersion: prompt.version, generationAttempts: attempt + 1 };
     } catch (error) {
       lastError = error;
