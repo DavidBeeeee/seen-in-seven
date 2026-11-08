@@ -18,6 +18,25 @@ Before planning or implementing roadmap work, read `SEENINSEVEN_ROADMAP.md`.
 
 This handoff remains the source of truth for architecture, stack, debugging history, and current implementation shape. Its older roadmap notes are partially superseded by `SEENINSEVEN_ROADMAP.md`, especially around admin priorities, test-user timing, delayed email nudges, delayed paid access, removed posted-vs-filmed work, and the placeholder-only gamification phase.
 
+## November 7, 2026: Epiphany scripts are right the first time, not repaired
+
+David's direction: no after-the-fact gates. Server logs for a Video 3 run showed the
+writer leaked the answer into the Meat because it was handed the answer, and the 5E
+repair pass then wrote a banned "was never X. It was Y" Conclusion.
+
+- Videos 3 and 6: the draft writer gets the plan with RESERVED CONCLUSION withheld
+  (`withholdReservedConclusion`). `writeConclusionFromMeat` then writes the Conclusion
+  from the finished Meat and the planned answer. The story review gets the plan without
+  the answer. Live generation and the Prompt Tester share this path.
+- `enforceEpiphanyRule` is now `auditEpiphanyRule`: it logs pass or fail and never edits.
+- `prompt-engine.js` (with David's explicit approval): the false-balance detector also
+  catches "is/was/were never". Tested first against all 51 stored scripts: 5 matches, all
+  the real formula. Open Loop retries and mechanical repairs add tension instead of
+  restating the Meat (`OPEN_LOOP_NO_BORROWING_RULE`).
+- Every story pass opens the Meat on the situation in plain words, and the length trim
+  keeps that sentence. The Video 3 plan shows the old belief through action only.
+- `blueprints.txt` is unchanged.
+
 ## November 5, 2026: Story Discovery asks for full stories
 
 - Bug found the same day: a signed-in reload saved the default position during `_restoreFromDatabase`, before `resumeSavedWorkflow` read it, resetting the saved level to 1 and video to 0. A Level 2 member then got the Level 1 guide and pasted into the Level 1 map while scripts read Level 2. Signed-out tests skip that path, so they passed. `resumePositionApplied` now gates the save.

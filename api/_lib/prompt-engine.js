@@ -336,7 +336,9 @@ function recoverableGenerationError(message, code) {
     if (/\bnot because\b/i.test(normalized)) {
       issues.push('Remove the false-balance setup built around "not because." State the real cause directly through the story.');
     }
-    if (/\b(?:isn't|is not|wasn't|was not)\s+[^.!?]{1,120}?,\s*(?:it|this|that)(?:'s| is| was)\b/i.test(normalized)) {
+    // "never" added 2026-11-07 with David's approval: four Video 3 conclusions used
+    // "was never X. It was Y" and passed; all five database matches were the real formula.
+    if (/\b(?:isn't|is not|wasn't|was not|is never|was never|were never)\s+[^.!?]{1,120}?,\s*(?:it|this|that)(?:'s| is| was)\b/i.test(normalized)) {
       issues.push('Remove the false-balance construction "it is not X, it is Y" and state the actual point directly.');
     }
     if (/\byou(?:'re| are)\s+not\s+[^.!?]{1,80}?,\s*you(?:'re| are)\b/i.test(normalized)) {
@@ -348,7 +350,7 @@ function recoverableGenerationError(message, code) {
     if (/\b(?:that(?:'s| is)|this(?:'s| is)|it(?:'s| is))\s+not\s+[^.!?]{1,100}[,;.]\s*(?:that(?:'s| is)|this(?:'s| is)|it(?:'s| is))\b/i.test(normalized)) {
       issues.push('Remove the disguised false-balance construction and state the chosen point through the story.');
     }
-    if (/\b(?:isn't|is not|wasn't|was not)\b[^.!?]{1,120}[.!?]\s*(?:it|this|that)(?:'s| is| was)\b/i.test(normalized)) {
+    if (/\b(?:isn't|is not|wasn't|was not|is never|was never|were never)\b[^.!?]{1,120}[.!?]\s*(?:it|this|that)(?:'s| is| was)\b/i.test(normalized)) {
       issues.push('Remove the two-sentence false-balance construction and state the chosen point directly.');
     }
     if (/\b(?:the\s+)?(problem|lesson|truth|point|answer)\s+(?:isn't|is not|wasn't|was not)\b[^.!?]{1,120}[.!?]\s*(?:the\s+)?\1\s+(?:is|was)\b/i.test(normalized)) {
@@ -796,6 +798,9 @@ function recoverableGenerationError(message, code) {
     'Return JSON only in this exact shape: {"answer_kind":"EVENT|REFRAME|VERDICT|CONSEQUENCE","retention_question":"one exact question","conclusion_answer":"the answer owned only by the Conclusion","meat_boundary":"what the Meat establishes and must not resolve","known_before_payoff":"the unresolved situation available before the payoff","quarantined_details":["reveal-only detail"]}'
   ].join('\n');
 
+  // David, 2026-11-07: a too-short Open Loop was lengthened with lines from the Meat.
+  const OPEN_LOOP_NO_BORROWING_RULE = 'When a length or wording fix is needed, add tension to the unanswered question itself: what is at stake, what does not add up, or what the speaker could lose. Never restate an event, detail, feeling, or phrase the MEAT already tells.';
+
   const OPEN_LOOP_WRITER_SYSTEM = [
     'You write one final SeenInSeven OPEN LOOP from an approved Zeigarnik contract.',
     'Write 25 to 50 spoken words that make the RETENTION QUESTION urgent without answering it.',
@@ -970,7 +975,7 @@ function recoverableGenerationError(message, code) {
       lastOpenLoop = openLoop;
       const issues = openLoopValidationIssues(config, openLoop);
       if (!issues.length) return openLoop;
-      correction = issues.join(' ');
+      correction = issues.join(' ') + ' ' + OPEN_LOOP_NO_BORROWING_RULE;
       console.warn('[SeenInSeven Open Loop cleanup]', JSON.stringify({
         level:Number(config.level || 1),
         video:Number(config.video || 1),
@@ -1338,6 +1343,7 @@ function recoverableGenerationError(message, code) {
       '',
       'DETERMINISTIC FAILURES:',
       failingSections.map(section => '[' + section + '] ' + sectionIssues[section].join(' ')).join('\n'),
+      failingSections.includes('OPEN LOOP') ? '\nOPEN LOOP REPAIR RULE: ' + OPEN_LOOP_NO_BORROWING_RULE : '',
       '',
       'CURRENT SCRIPT:',
       String(script || '').trim()

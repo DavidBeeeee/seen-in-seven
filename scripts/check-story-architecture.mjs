@@ -23,7 +23,11 @@ import {
   tightenVideoOneMeat,
   tightenMeat,
   addWriterContract,
-  enforceEpiphanyRule,
+  auditEpiphanyRule,
+  withholdReservedConclusion,
+  extractReservedConclusion,
+  writeConclusionFromMeat,
+  writesMeatWithoutAnswer,
   VIDEO_SEVEN_RETURN_ANCHORS,
   VIDEO_SEVEN_RETURN_HEADINGS,
   VIDEO_SEVEN_RETURN_SYSTEM,
@@ -532,17 +536,33 @@ for (const beat of ['DISCOVERY ARC', 'COGNITIVE REFRAME', 'AHA TRANSFER', 'COST 
 }
 assert(promptTestSource.includes('addWriterContract(preserveViewerPremiseSource(userMessage, preparedUserMessage, video), video)'), 'The Prompt Tester must use the same writer contract.');
 
-// The Epiphany rule is gated, and any failed gate keeps the finished script.
+// David, 2026-11-07: no after-the-fact repair. The Epiphany audit only logs.
 const gateScript = '[HOOK]\nA strange thing happened.\n\n[OPEN LOOP]\nWhy did the room keep working?\n\n[MEAT]\nI ran the room again. People kept coming back. The lesson is that rooms need people. Nobody could explain it.\n\n[CONCLUSION]\nI still have not decided.\n\n[CTA]\nFollow along because the next part of this 7 Video Challenge is next.';
 const gateConfig = { video: 6, level: 2, userMessage: '', systemPrompt: '' };
-const gateReply = JSON.stringify({ pass: false, problems: ['leak'], replacements: { MEAT: 'I ran the room again. People kept coming back. Nobody could explain it.', CONCLUSION: 'Proof comes from people.', HOOK: 'Must be ignored.' } });
-const gated = await enforceEpiphanyRule(gateScript, gateConfig, async () => gateReply);
-assert(!gated.includes('The lesson is') && gated.includes('Proof comes from people.') && gated.includes('A strange thing happened.') && !gated.includes('Must be ignored.'), 'The Epiphany gate must repair only MEAT, CONCLUSION, and CTA.');
-assert(await enforceEpiphanyRule(gateScript, gateConfig, async () => '{"pass":true}') === gateScript, 'A passing Epiphany gate must not change the script.');
-for (const bad of [async () => 'not json', async () => { throw new Error('model down'); }, async () => JSON.stringify({ pass: false, replacements: { MEAT: 'word '.repeat(200).trim() } })]) {
-  assert(await enforceEpiphanyRule(gateScript, gateConfig, bad) === gateScript, 'A failed Epiphany gate must keep the finished script.');
+for (const reply of [async () => JSON.stringify({ pass: false, problems: ['leak'], replacements: { MEAT: 'changed' } }), async () => '{"pass":true}', async () => 'not json', async () => { throw new Error('model down'); }]) {
+  assert(await auditEpiphanyRule(gateScript, gateConfig, reply) === gateScript, 'The Epiphany audit must never change the script.');
 }
-assert(generationSource.includes("Number(input.video) === 3 || Number(input.video) === 6"), 'The Epiphany gate must run on Videos 3 and 6.');
+assert(!/replacements/.test(generationSource.slice(generationSource.indexOf('const EPIPHANY_AUDIT_SYSTEM'), generationSource.indexOf('export async function auditEpiphanyRule'))), 'The Epiphany audit must not ask for repairs.');
+
+// The Epiphany Meat writer never sees the planned answer; the Conclusion is written from the finished Meat.
+const plannedPacket = 'STORY PROGRESSION:\nI recorded for two weeks.\nRESERVED CONCLUSION:\nMy skill was reading a person in real time. SECRET ANSWER\nSTAGE FIREWALL:\nNo Video 5 fall.\nVOICE SIGNALS:\nPlain.';
+assert(extractReservedConclusion(plannedPacket).includes('SECRET ANSWER'), 'The planned answer must be readable for the Conclusion step.');
+const blind = withholdReservedConclusion(plannedPacket);
+assert(!blind.includes('SECRET ANSWER') && blind.includes('STAGE FIREWALL:\nNo Video 5 fall.') && blind.includes('ANSWER WITHHELD'), 'The Meat writer must not see the planned answer, and the rest of the plan must survive.');
+const reviewBlind = withholdReservedConclusion(plannedPacket, false);
+assert(!reviewBlind.includes('SECRET ANSWER') && !reviewBlind.includes('ANSWER WITHHELD'), 'The story review must get the plan without the answer or the draft note.');
+for (const source of [generationSource, promptTestSource]) assert(/userMessage: reviewMessage \+ retryNote/.test(source), 'The story review must use the plan without the answer.');
+assert(withholdReservedConclusion('NO PLAN HERE') === 'NO PLAN HERE', 'A packet without an answer must pass through unchanged.');
+assert([3, 6].every(writesMeatWithoutAnswer) && ![1, 2, 4, 5, 7].some(writesMeatWithoutAnswer), 'Only Videos 3 and 6 withhold the answer.');
+let conclusionRequest = '';
+const concluded = await writeConclusionFromMeat(gateScript, plannedPacket, { video: 3, level: 1, systemPrompt: 'BLUEPRINT' }, async (system, request) => { conclusionRequest = request; return '[HOOK]\nx\n\n[OPEN LOOP]\nx\n\n[MEAT]\nx\n\n[CONCLUSION]\nA camera takes the person away.\n\n[CTA]\nx'; });
+assert(concluded.includes('A camera takes the person away.') && concluded.includes('The lesson is that rooms need people.') && conclusionRequest.includes('SECRET ANSWER') && conclusionRequest.includes('FINISHED MEAT:'), 'The Conclusion step must write only the Conclusion from the finished Meat and the planned answer.');
+assert(await writeConclusionFromMeat(gateScript, 'NO PLAN', { video: 3, level: 1, systemPrompt: '' }, async () => { throw new Error('must not be called'); }) === gateScript, 'Without a planned answer the draft must stay as written.');
+for (const source of [generationSource, promptTestSource]) {
+  assert(source.includes('withholdReservedConclusion(') && source.includes('writeConclusionFromMeat('), 'Live generation and the Prompt Tester must both split the Epiphany Meat from its answer.');
+}
+assert(generationSource.includes('never by naming it as an assumption or something they thought'), 'The Video 3 plan must show the old belief through action.');
+assert(generationSource.includes("Number(input.video) === 3 || Number(input.video) === 6"), 'The Epiphany audit must run on Videos 3 and 6.');
 
 // David, 2026-11-07: Video 3 opened on a belief the viewer had no situation for. The
 // writer must get the setup right the first time, from the plan and its final contract.
@@ -551,9 +571,6 @@ assert(generationSource.includes('It begins with the situation a stranger needs 
 assert(generationSource.includes('A starting belief alone does not orient a viewer.') && !generationSource.includes('Translate only the starting belief, situation, action'), 'The premise source must not allow a belief alone.');
 assert((generationSource.match(/Open on the situation in plain words/g) || []).length === 2, 'The Video 3 and 6 stage plans must open on the situation.');
 // The later deleting passes must not undo it.
-let gateSystem = '';
-await enforceEpiphanyRule(gateScript, gateConfig, async system => { gateSystem = system; return '{"pass":true}'; });
-assert(gateSystem.includes('Never delete or blur the sentence that tells a stranger the situation'), 'The Epiphany gate must not delete the setup.');
 for (const video of [1, 3]) {
   let trimSystem = '';
   await tightenMeat('[HOOK]\nA hook.\n\n[MEAT]\n' + 'word '.repeat(400).trim(), video, async system => { trimSystem = system; return 'kept '.repeat(130).trim(); });
@@ -768,3 +785,16 @@ assert(
 );
 
 console.log('Story architecture checks passed for all 14 video paths and both question catalogs.');
+
+// David, 2026-11-07: "was never X. It was Y" slipped past the false-balance detector in
+// four Video 3 conclusions. All five database matches were the real formula.
+{
+  const { validateOutput: validateForNever } = await import('../api/_lib/prompt-engine.js');
+  const engineSource = readFileSync(new URL('../api/_lib/prompt-engine.js', import.meta.url), 'utf8');
+  const neverScript = conclusion => '[HOOK]\nA hook here.\n\n[OPEN LOOP]\nWhy did one video take two weeks?\n\n[MEAT]\nI recorded for two weeks.\n\n[CONCLUSION]\n' + conclusion + '\n\n[CTA]\nFollow along because the next part of my 7 Video Challenge is next.';
+  const falseBalance = text => validateForNever(neverScript(text), 3, 1, '', '').issues.some(issue => /false-balance/i.test(issue));
+  assert(falseBalance('My skill was never in speaking alone. It was in responding to another person.'), 'The detector must catch "was never X. It was Y."');
+  assert(falseBalance('Perfection was never protecting my reputation, it was protecting my fear.'), 'The detector must catch "was never X, it was Y."');
+  assert(!falseBalance('A camera takes the person away. What you know stays in the room.'), 'A direct conclusion must not be flagged.');
+  assert(engineSource.includes('OPEN_LOOP_NO_BORROWING_RULE') && (engineSource.match(/OPEN_LOOP_NO_BORROWING_RULE/g) || []).length >= 3, 'Open Loop retries and repairs must not borrow from the Meat.');
+}

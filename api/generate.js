@@ -135,7 +135,7 @@ Choose one commitment contradiction. The speaker wants to become visible or reac
   2: `STAGE 2, ORDINARY WORLD AND REFUSAL:
 Choose one ordinary identity bind. Ground the speaker in a recognizable routine, role, pressure, compromise, or expectation; let one unexpected private thread appear; then show one practical choice, delay, dismissal, retreat, or non-choice that kept the familiar life intact. The refusal must occur in behavior and must make sense from who the speaker was then. For Level 1, the private thread is personal. For Level 2, future expertise may be visible to the audience but remains unclaimed by the speaker. Reserve the unresolved assumption that made staying feel sensible. Withhold the first epiphany, mature interpretation, present method, mission, offer, and authority.`,
   3: `STAGE 3, FIRST EPIPHANY:
-Choose one belief collision. Open on the situation in plain words, what the speaker was doing and the project, person, or event, then show one old assumption through how it shaped the speaker's action, then follow one representative moment or repeated pattern that the assumption cannot explain, naming the project, person, or event in plain words. End the progression with both truths still in conflict. STORY PROGRESSION must never state or paraphrase the reserved answer. Reserve one complete but bounded paradigm shift that resolves the exact contradiction as a lens the viewer can use on their own life, stated in one simple sentence, plus one human consequence showing what the old lens costs. For Level 1, keep the belief personal. For Level 2, keep the professional lens rooted in the speaker's own implication rather than an industry lecture. Withhold the later ordeal, complete method, mature authority, and second epiphany.`,
+Choose one belief collision. Open on the situation in plain words, what the speaker was doing and the project, person, or event, then show one old belief only through what the speaker did or expected, never by naming it as an assumption or something they thought, then follow one representative moment or repeated pattern that the assumption cannot explain, naming the project, person, or event in plain words. End the progression with both truths still in conflict. STORY PROGRESSION must never state or paraphrase the reserved answer. Reserve one complete but bounded paradigm shift that resolves the exact contradiction as a lens the viewer can use on their own life, stated in one simple sentence, plus one human consequence showing what the old lens costs. For Level 1, keep the belief personal. For Level 2, keep the professional lens rooted in the speaker's own implication rather than an industry lecture. Withhold the later ordeal, complete method, mature authority, and second epiphany.`,
   4: `STAGE 4, ROAD OF TRIALS:
 Choose one recoverable trial. Begin with one changed action after the first epiphany, enter one representative pressure where returning to the familiar approach feels genuinely tempting, show the choice made before proof, and stop before one meaningful human-scale result. Reserve that result and only the immediate possibility it created. For Level 1, do not substitute a challenge progress report for the larger life story. For Level 2, do not convert the result into a case study, market argument, positioning claim, or proof of the complete philosophy. Withhold the coming ordeal, catastrophic loss, later lesson, and second epiphany.`,
   5: `STAGE 5, FALL OR ORDEAL:
@@ -546,7 +546,7 @@ The viewer has never seen the story map, the planning notes, or any other video.
 - Never rely on anything the viewer has not heard. "Those same ideas," "that gap," "that first video," "the manuscript," and "the event" only work after the script has introduced them in spoken words.
 - Read the finished script as a stranger. If a sentence only makes sense to someone who has read the private material, fix it.`;
 
-const KEEP_SETUP_RULE = 'Never delete or blur the sentence that tells a stranger the situation: what the speaker was doing and the project, person, or event the story is about. If the script has no such sentence, that is a failure.';
+const KEEP_SETUP_RULE = 'Never delete or blur the sentence that tells a stranger the situation: what the speaker was doing and the project, person, or event the story is about.';
 
 const MEAT_EDITOR_RULES = `Cut the MEAT to the target length by deleting, not rewriting.
 - ${KEEP_SETUP_RULE}
@@ -628,47 +628,117 @@ An Epiphany is a paradigm-shifting realization that reframes a universal experie
 - SIMPLICITY SIGNAL: the reframe is one short sentence someone would screenshot, and it feels obvious once heard.
 - AUTHORITY ANCHOR: never claim authority. The viewer should think, "what else does this person see that I don't?"`;
 
-const EPIPHANY_GATE_SYSTEM = `You are the final 5E editor for an Epiphany video. An AI writer has already finished this script. Find out whether it obeys the rule of an Epiphany, and repair it if it does not.
+const EPIPHANY_AUDIT_SYSTEM = `You audit a finished Epiphany video. Report only. You do not edit anything.
 
 THE RULE: the viewer receives the answer for the first time in the CONCLUSION. Everything before it makes the old explanation impossible to keep without saying what the new one is.
 
 Check these in order:
-1. Identify the reframe the CONCLUSION delivers. If any sentence in the MEAT states it, paraphrases it, or connects the evidence to its meaning, that is a failure. The MEAT must end with the contradiction visible and unresolved.
+1. If any sentence in the MEAT or OPEN LOOP states, paraphrases, or points to the reframe the CONCLUSION delivers, that is a failure.
 2. The CONCLUSION must deliver one new lens in one simple sentence someone would screenshot, not a claim, an argument, or a summary of the story.
-3. The viewer must be able to use that lens on something in their own life. A conclusion that is only about the speaker's own project fails.
+3. The viewer must be able to use that lens on something in their own life.
 4. The CONCLUSION must answer the question the OPEN LOOP opened.
-5. For Video 6, the speaker is convicted and resolved. Hedging about whether they believe the truth, in the CONCLUSION or the CTA, fails. A CTA must not promise to resolve it later.
+5. A stranger must understand the situation from the words alone.
+6. For Video 6, the speaker is convicted and resolved, with no hedging in the CONCLUSION or the CTA.
 
-Repair only what fails, and only in MEAT, CONCLUSION, or CTA. In the MEAT, delete sentences rather than rewriting the story, and never make it longer. ${KEEP_SETUP_RULE} Keep the speaker's own words and facts. Add no new event, person, result, or number. Use no em dashes and no section labels inside the text.
+Return JSON only: {"pass":true} or {"pass":false,"problems":["short reason"]}`;
 
-Return JSON only, in one of these shapes:
-{"pass":true}
-{"pass":false,"problems":["short reason"],"replacements":{"MEAT":"spoken text","CONCLUSION":"spoken text","CTA":"spoken text"}}
-Include a replacement only for a section that fails.`;
-
-// The story editor's concerns do not block a script unless it supplies a repair, so the
-// Epiphany rule gets its own gate. Any failure keeps the finished script as it is.
-export async function enforceEpiphanyRule(script, config, callModelFn) {
+// David, 2026-11-07: no after-the-fact repair. A repair pass introduced a banned formula,
+// so this only records what reached the member, for diagnosis. It never changes the script.
+export async function auditEpiphanyRule(script, config, callModelFn) {
   const sections = parseSections(script);
   if (!sections || !sections.MEAT || !sections.CONCLUSION) return script;
   try {
-    const raw = await callModelFn(EPIPHANY_GATE_SYSTEM, 'VIDEO: ' + config.video + '\nLEVEL: ' + config.level + '\n\n' + composeSections(sections), 0.15, 1400);
+    const raw = await callModelFn(EPIPHANY_AUDIT_SYSTEM, 'VIDEO: ' + config.video + '\nLEVEL: ' + config.level + '\n\n' + composeSections(sections), 0.1, 500);
     const parsed = JSON.parse(String(raw || '').replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, '').trim());
-    console.log('[generate] Epiphany gate Video ' + config.video + ': ' + (parsed.pass ? 'pass' : 'repair ' + JSON.stringify(parsed.problems || [])));
-    if (parsed.pass || !parsed.replacements) return script;
-    const next = { ...sections };
-    ['MEAT', 'CONCLUSION', 'CTA'].forEach(key => {
-      const value = parsed.replacements[key];
-      if (typeof value === 'string' && value.trim()) next[key] = value.replace(/^\s*\[[A-Z ]+\]\s*/, '').trim();
-    });
-    if (spokenWordCount(next.MEAT) > spokenWordCount(sections.MEAT)) return script;
-    const candidate = composeSections(next);
-    const issues = text => validateOutput(text, config.video, config.level, config.userMessage, config.systemPrompt).issues.length;
-    return issues(candidate) <= issues(script) ? candidate : script;
+    console.log('[generate] Epiphany audit Video ' + config.video + ': ' + (parsed.pass ? 'pass' : 'fail ' + JSON.stringify(parsed.problems || [])));
   } catch (error) {
-    console.log('[generate] Epiphany gate skipped: ' + error.message);
-    return script;
+    console.log('[generate] Epiphany audit skipped: ' + error.message);
   }
+  return script;
+}
+
+// David, 2026-11-07: a writer that knows the answer drifts toward it, so in the two
+// Epiphany videos the Meat writer never sees RESERVED CONCLUSION. A separate step then
+// writes the Conclusion from the finished Meat and the planned answer.
+const ANSWER_FIRST_VIDEOS = new Set([3, 6]);
+const RESERVED_MARKER = 'RESERVED CONCLUSION:';
+
+export function writesMeatWithoutAnswer(video) {
+  return ANSWER_FIRST_VIDEOS.has(Number(video));
+}
+
+export function extractReservedConclusion(message) {
+  const source = String(message || '');
+  const start = source.indexOf(RESERVED_MARKER);
+  if (start === -1) return '';
+  const rest = source.slice(start + RESERVED_MARKER.length);
+  const next = rest.search(/\n(?:STAGE FIREWALL|VOICE SIGNALS):/);
+  return (next === -1 ? rest : rest.slice(0, next)).trim();
+}
+
+// The draft writer gets the note. The story review gets the same plan without the
+// answer and without the note, since the real Conclusion is in place by then.
+export function withholdReservedConclusion(message, forDraftWriter = true) {
+  const source = String(message || '');
+  const answer = extractReservedConclusion(source);
+  if (!answer) return source;
+  const start = source.indexOf(RESERVED_MARKER);
+  const end = source.indexOf(answer, start) + answer.length;
+  const blind = source.slice(0, start) + RESERVED_MARKER + '\n(withheld on purpose; the CONCLUSION already carries it)' + source.slice(end);
+  if (!forDraftWriter) return blind;
+  return blind + [
+    '',
+    '',
+    'ANSWER WITHHELD: You have not been told what this video realizes, and you must not invent one. Write the MEAT so the viewer reaches the contradiction and it stays visible and unresolved at the end: never say what it means, what changed in the speaker\'s understanding, or what the real skill, cause, or truth was. Write a short provisional CONCLUSION and a CTA for formatting. A separate writer replaces the CONCLUSION with the answer.'
+  ].join('\n');
+}
+
+const CONCLUSION_WRITER_RULES = `You are writing only the CONCLUSION of an Epiphany video. The MEAT is finished and you may not change it.
+
+- Answer exactly the question this MEAT leaves open, using the planned answer. This is the first time the viewer hears it.
+- Say the new lens in one simple sentence someone would screenshot, stated as how this works for anyone, earned by this story.
+- Then one sentence on what the old way of seeing costs a person who keeps it.
+- At most three sentences. Use only the speaker's facts from the MEAT. Add no new event, person, number, or result.
+- Never use a negation followed by a correction, such as "it was never X, it was Y" or "it is not X, it is Y." State the new lens directly.
+- No em dashes. No section labels. Return only the spoken CONCLUSION text.`;
+
+export async function writeConclusionFromMeat(script, answerContext, config, callModelFn) {
+  const sections = parseSections(script);
+  const answer = extractReservedConclusion(answerContext);
+  if (!sections || !sections.MEAT || !answer) return script;
+  const request = [
+    'VIDEO: ' + config.video,
+    'LEVEL: ' + config.level,
+    '',
+    EPIPHANY_5E_CONTRACT,
+    '',
+    CONCLUSION_WRITER_RULES,
+    '',
+    'PLANNED ANSWER (private):',
+    answer,
+    '',
+    'FINISHED MEAT:',
+    sections.MEAT,
+    '',
+    'CTA (for continuity only):',
+    sections.CTA || ''
+  ].join('\n');
+  for (let attempt = 0; attempt < 2; attempt++) {
+    // The blueprint asks for a whole script, so take its CONCLUSION if one comes back.
+    const reply = String(await callModelFn(config.systemPrompt, request + '\n\nReturn only the CONCLUSION text, not a full script.', attempt ? 0.3 : 0.6, 900) || '').trim();
+    const whole = parseSections(reply);
+    const conclusion = whole && whole.CONCLUSION
+      ? String(whole.CONCLUSION).trim()
+      : /\[(?:HOOK|OPEN LOOP|MEAT|CTA)\]/i.test(reply) ? '' : reply.replace(/^\s*\[CONCLUSION\]\s*/i, '').trim();
+    if (conclusion) return composeSections({ ...sections, CONCLUSION: conclusion });
+  }
+  throw recoverableConclusionError();
+}
+
+function recoverableConclusionError() {
+  const error = new Error('The Conclusion could not be written cleanly. Please try again.');
+  error.recoverableGeneration = true;
+  return error;
 }
 
 // Requirements the writer needs that the planning notes do not carry. Video 7 has
@@ -1345,6 +1415,9 @@ async function generateScriptCore(input, prompt, timings) {
   );
   preparedContext = addWriterContract(preserveViewerPremiseSource(input.userContext, preparedContext, input.video), input.video);
   const userMessage = regenerationMessage({ ...input, userContext: preparedContext });
+  const answerFirst = writesMeatWithoutAnswer(input.video);
+  const writerMessage = answerFirst ? withholdReservedConclusion(userMessage) : userMessage;
+  const reviewMessage = answerFirst ? withholdReservedConclusion(userMessage, false) : userMessage;
   let lastError;
 
   // Standard generation may receive targeted cleanup. Full regeneration keeps
@@ -1358,12 +1431,19 @@ async function generateScriptCore(input, prompt, timings) {
     try {
       const stageSuffix = '-' + (attempt + 1);
       const draft = await measureStage(timings, 'draft' + stageSuffix, () =>
-        callModel(systemPrompt, userMessage + retryNote, attempt ? 0.45 : 0.8)
+        callModel(systemPrompt, writerMessage + retryNote, attempt ? 0.45 : 0.8)
       );
+      const drafted = answerFirst
+        ? await measureStage(timings, 'conclusion' + stageSuffix, () => writeConclusionFromMeat(draft, userMessage, {
+          video: input.video,
+          level: input.level,
+          systemPrompt
+        }, callModel))
+        : draft;
       const content = await measureStage(timings, 'story-review' + stageSuffix, () => reviewAndRepairScript({
-        script: draft,
+        script: drafted,
         systemPrompt,
-        userMessage: userMessage + retryNote,
+        userMessage: reviewMessage + retryNote,
         level: input.level,
         video: input.video,
         callModel,
@@ -1388,7 +1468,7 @@ async function generateScriptCore(input, prompt, timings) {
         callModel
       }));
       const gatedContent = Number(input.video) === 3 || Number(input.video) === 6
-        ? await measureStage(timings, 'epiphany-gate' + stageSuffix, () => enforceEpiphanyRule(finalContent, {
+        ? await measureStage(timings, 'epiphany-audit' + stageSuffix, () => auditEpiphanyRule(finalContent, {
           video: input.video,
           level: input.level,
           systemPrompt,

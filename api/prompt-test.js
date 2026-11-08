@@ -2,7 +2,10 @@ import {
   callModel,
   prepareEpisodeArchitectureMaterial,
   preserveViewerPremiseSource,
-  addWriterContract
+  addWriterContract,
+  writesMeatWithoutAnswer,
+  withholdReservedConclusion,
+  writeConclusionFromMeat
 } from './generate.js';
 import {
   buildSystemPrompt,
@@ -59,6 +62,10 @@ export default async function handler(req, res) {
       prepareEpisodeArchitectureMaterial(userMessage, level, video)
     );
     preparedUserMessage = addWriterContract(preserveViewerPremiseSource(userMessage, preparedUserMessage, video), video);
+    // Same as live generation: the Epiphany Meat writer never sees the planned answer.
+    const answerFirst = writesMeatWithoutAnswer(video);
+    const writerMessage = answerFirst ? withholdReservedConclusion(preparedUserMessage) : preparedUserMessage;
+    const reviewMessage = answerFirst ? withholdReservedConclusion(preparedUserMessage, false) : preparedUserMessage;
     let rawContent = '';
     let content = '';
     let lastError;
@@ -69,12 +76,19 @@ export default async function handler(req, res) {
       try {
         const stageSuffix = '-' + (attempt + 1);
         rawContent = await measureStage(timings, 'draft' + stageSuffix, () =>
-          callModel(systemPrompt, preparedUserMessage + retryNote, attempt ? 0.45 : temperature)
+          callModel(systemPrompt, writerMessage + retryNote, attempt ? 0.45 : temperature)
         );
+        const drafted = answerFirst
+          ? await measureStage(timings, 'conclusion' + stageSuffix, () => writeConclusionFromMeat(rawContent, preparedUserMessage, {
+            video,
+            level,
+            systemPrompt
+          }, callModel))
+          : rawContent;
         const reviewedContent = await measureStage(timings, 'story-review' + stageSuffix, () => reviewAndRepairScript({
-          script: rawContent,
+          script: drafted,
           systemPrompt,
-          userMessage: preparedUserMessage + retryNote,
+          userMessage: reviewMessage + retryNote,
           level,
           video,
           callModel,
@@ -100,7 +114,7 @@ export default async function handler(req, res) {
         break;
       } catch (error) {
         lastError = error;
-        const canRetry = /story review found an issue|script response still needs correction/i.test(String(error && error.message || ''));
+        const canRetry = error && error.recoverableGeneration === true || /story review found an issue|script response still needs correction/i.test(String(error && error.message || ''));
         if (!canRetry || attempt === 1) throw error;
       }
     }
