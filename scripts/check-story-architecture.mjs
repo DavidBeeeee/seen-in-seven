@@ -544,6 +544,23 @@ for (const bad of [async () => 'not json', async () => { throw new Error('model 
 }
 assert(generationSource.includes("Number(input.video) === 3 || Number(input.video) === 6"), 'The Epiphany gate must run on Videos 3 and 6.');
 
+// David, 2026-11-07: Video 3 opened on a belief the viewer had no situation for. The
+// writer must get the setup right the first time, from the plan and its final contract.
+assert(generationSource.includes('MEAT opens by telling them the situation in plain words') && generationSource.includes('Never open on a belief, an assumption'), 'The final writing contract must require the setup.');
+assert(generationSource.includes('It begins with the situation a stranger needs in plain words'), 'The architect plan must begin with the situation.');
+assert(generationSource.includes('A starting belief alone does not orient a viewer.') && !generationSource.includes('Translate only the starting belief, situation, action'), 'The premise source must not allow a belief alone.');
+assert((generationSource.match(/Open on the situation in plain words/g) || []).length === 2, 'The Video 3 and 6 stage plans must open on the situation.');
+// The later deleting passes must not undo it.
+let gateSystem = '';
+await enforceEpiphanyRule(gateScript, gateConfig, async system => { gateSystem = system; return '{"pass":true}'; });
+assert(gateSystem.includes('Never delete or blur the sentence that tells a stranger the situation'), 'The Epiphany gate must not delete the setup.');
+for (const video of [1, 3]) {
+  let trimSystem = '';
+  await tightenMeat('[HOOK]\nA hook.\n\n[MEAT]\n' + 'word '.repeat(400).trim(), video, async system => { trimSystem = system; return 'kept '.repeat(130).trim(); });
+  assert(trimSystem.includes('Never delete or blur the sentence that tells a stranger the situation'), 'The Video ' + video + ' Meat trim must keep the setup sentence.');
+}
+assert(addWriterContract('X', 3).includes('Near the start of the MEAT, tell a stranger the situation'), 'The writer must set up the situation near the start of the Meat.');
+
 // A thin idea cannot be padded to fill a video: Videos 2-6 are held to the blueprint's range.
 const storyScript = '[HOOK]\nA hook.\n\n[OPEN LOOP]\nA loop.\n\n[MEAT]\n' + 'word '.repeat(330).trim() + '\n\n[CONCLUSION]\nA landing.\n\n[CTA]\nFollow along.';
 const storyEdited = await tightenMeat(storyScript, 2, async () => 'kept '.repeat(280).trim());

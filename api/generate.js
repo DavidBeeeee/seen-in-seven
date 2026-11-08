@@ -80,7 +80,7 @@ VOICE SIGNALS:
 GENERAL REQUIREMENTS:
 - EPISODE NUCLEUS is one private planning sentence that states the single story this episode tells. It is not a hook, thesis, summary, or spoken opening.
 - HUMAN CONTRADICTION identifies the value, desire, identity, or hope pulling the speaker forward and the protective belief, habit, fear, loyalty, or practical pressure pulling them back. Do not manufacture equal sides or false balance.
-- STORY PROGRESSION is one connected causal or transformational paragraph. Select only the events, decisions, evidence, pressures, consequences, and changes needed for this chapter. Do not return a checklist, montage, collection of examples, or several adjacent arguments.
+- STORY PROGRESSION is one connected causal or transformational paragraph. It begins with the situation a stranger needs in plain words: what the speaker was doing, and the project, person, place, or event this story is about. Select only the events, decisions, evidence, pressures, consequences, and changes needed for this chapter. Do not return a checklist, montage, collection of examples, or several adjacent arguments.
 - RESERVED CONCLUSION states the one emotional or conceptual destination owned by this chapter. Reserve it for the visible Conclusion. It must grow from STORY PROGRESSION and cannot resolve a later chapter.
 - STAGE FIREWALL explicitly names the meaning, event, recovery, authority, offer, or later realization that this episode must not reveal.
 - VOICE SIGNALS preserves the speaker's useful vocabulary, rhythm, humor, intensity, roughness, and emotionally charged phrasing. Preserve uncomfortable or socially risky material rather than sanitizing it.
@@ -135,13 +135,13 @@ Choose one commitment contradiction. The speaker wants to become visible or reac
   2: `STAGE 2, ORDINARY WORLD AND REFUSAL:
 Choose one ordinary identity bind. Ground the speaker in a recognizable routine, role, pressure, compromise, or expectation; let one unexpected private thread appear; then show one practical choice, delay, dismissal, retreat, or non-choice that kept the familiar life intact. The refusal must occur in behavior and must make sense from who the speaker was then. For Level 1, the private thread is personal. For Level 2, future expertise may be visible to the audience but remains unclaimed by the speaker. Reserve the unresolved assumption that made staying feel sensible. Withhold the first epiphany, mature interpretation, present method, mission, offer, and authority.`,
   3: `STAGE 3, FIRST EPIPHANY:
-Choose one belief collision. Establish one old assumption and how it shaped the speaker's action, then follow one representative moment or repeated pattern that the assumption cannot explain, naming the project, person, or event in plain words. End the progression with both truths still in conflict. STORY PROGRESSION must never state or paraphrase the reserved answer. Reserve one complete but bounded paradigm shift that resolves the exact contradiction as a lens the viewer can use on their own life, stated in one simple sentence, plus one human consequence showing what the old lens costs. For Level 1, keep the belief personal. For Level 2, keep the professional lens rooted in the speaker's own implication rather than an industry lecture. Withhold the later ordeal, complete method, mature authority, and second epiphany.`,
+Choose one belief collision. Open on the situation in plain words, what the speaker was doing and the project, person, or event, then show one old assumption through how it shaped the speaker's action, then follow one representative moment or repeated pattern that the assumption cannot explain, naming the project, person, or event in plain words. End the progression with both truths still in conflict. STORY PROGRESSION must never state or paraphrase the reserved answer. Reserve one complete but bounded paradigm shift that resolves the exact contradiction as a lens the viewer can use on their own life, stated in one simple sentence, plus one human consequence showing what the old lens costs. For Level 1, keep the belief personal. For Level 2, keep the professional lens rooted in the speaker's own implication rather than an industry lecture. Withhold the later ordeal, complete method, mature authority, and second epiphany.`,
   4: `STAGE 4, ROAD OF TRIALS:
 Choose one recoverable trial. Begin with one changed action after the first epiphany, enter one representative pressure where returning to the familiar approach feels genuinely tempting, show the choice made before proof, and stop before one meaningful human-scale result. Reserve that result and only the immediate possibility it created. For Level 1, do not substitute a challenge progress report for the larger life story. For Level 2, do not convert the result into a case study, market argument, positioning claim, or proof of the complete philosophy. Withhold the coming ordeal, catastrophic loss, later lesson, and second epiphany.`,
   5: `STAGE 5, FALL OR ORDEAL:
 Choose one ordeal nucleus and one causal descent. Establish what had become real enough to lose, identify the speaker's consequential choice, avoidance, blind spot, or overconfidence, trace the ignored warning or escalation, show the collapse, then show the failed attempt to repair it. A gradual collapse or symbolic death qualifies when the speaker believed their identity, calling, relationship, judgment, future, or work might never recover. Reserve the most painful owned lowest-point belief. Withhold recovery, reassurance, gratitude, authority, silver lining, and the second epiphany.`,
   6: `STAGE 6, SECOND EPIPHANY OR ELIXIR:
-Choose one evidence-to-elixir journey. Establish one common-sense model, follow one source experience or repeated pattern that refuses to fit it, told as something the viewer can picture and naming who was there, include one observable practice or decision proving the speaker lives differently, and end with the contradiction unresolved. STORY PROGRESSION must never state or paraphrase the reserved truth or connect the evidence to its meaning. Reserve one significant counterintuitive truth as one simple sentence the viewer can use on their own decisions, plus one useful new possibility. The speaker is convicted and resolved about this truth, with no hedging about whether they believe it. For Level 1, the truth must be earned through the Video 5 ordeal and aftermath. For Level 2, the source may be Video 5, Video 3, another experience, or a broader pattern; no earlier chapter is required to cause it. Withhold a complete method, commercial philosophy, offer, and final return.`,
+Choose one evidence-to-elixir journey. Open on the situation in plain words, what the speaker was doing and the project, person, or event, then establish one common-sense model, follow one source experience or repeated pattern that refuses to fit it, told as something the viewer can picture and naming who was there, include one observable practice or decision proving the speaker lives differently, and end with the contradiction unresolved. STORY PROGRESSION must never state or paraphrase the reserved truth or connect the evidence to its meaning. Reserve one significant counterintuitive truth as one simple sentence the viewer can use on their own decisions, plus one useful new possibility. The speaker is convicted and resolved about this truth, with no hedging about whether they believe it. For Level 1, the truth must be earned through the Video 5 ordeal and aftermath. For Level 2, the source may be Video 5, Video 3, another experience, or a broader pattern; no earlier chapter is required to cause it. Withhold a complete method, commercial philosophy, offer, and final return.`,
   7: `STAGE 7, RETURN:
 Bring the six-chapter audience canon home through one governing identity transformation. Select the earlier identity and refusal from Videos 1-2, the actual first realization and trial from Videos 3-4, the fall and cost from Video 5, and the second realization and returned self from Video 6 plus current Video 7 evidence. Keep each movement grounded in one lived event, choice, consequence, or observable behavior rather than a lesson or positioning claim. MEAT owns the complete Return, lets the earned identity or professional difference emerge from changed behavior, and ends with the honest unresolved human element. CONCLUSION is only a brief one-to-three-sentence homecoming statement of the one governing meaning, written entirely in I/me/my with no second-person you/your language, event replay, journey recap, viewer diagnosis, added evidence, or second miniature Return. CTA owns the relational horizon and all direct viewer recognition. Let a cold viewer understand the journey and a returning viewer recognize it without hearing an episode-by-episode recap or multiple examples performing the same job. For Level 1, center human identity. For Level 2, preserve professional difference without superiority, positioning, a market manifesto, service promise, or pitch. Withhold a second thesis, new trial, revelation, perfection, offer, manufactured urgency, and any Video 8 promise.`
 };
@@ -538,7 +538,18 @@ export function extractCurrentJourneyDirection(userContext, video) {
   return remainder.slice(0, end).trim();
 }
 
+// Every pass that writes or cuts the Meat gets this rule. Without it, an editor deleting
+// for length or for the Epiphany rule can delete the one sentence that sets the scene.
+const COLD_VIEWER_RULE = `COLD VIEWER RULE (private, never mention it):
+The viewer has never seen the story map, the planning notes, or any other video. Everything they know comes from the words they hear in this script.
+- Near the start of the MEAT, tell a stranger the situation in plain words: what the speaker was doing, and the project, person, place, or event the story is about, as in "I started writing a book." Do this before anything depends on it, including in the OPEN LOOP.
+- Never rely on anything the viewer has not heard. "Those same ideas," "that gap," "that first video," "the manuscript," and "the event" only work after the script has introduced them in spoken words.
+- Read the finished script as a stranger. If a sentence only makes sense to someone who has read the private material, fix it.`;
+
+const KEEP_SETUP_RULE = 'Never delete or blur the sentence that tells a stranger the situation: what the speaker was doing and the project, person, or event the story is about. If the script has no such sentence, that is a failure.';
+
 const MEAT_EDITOR_RULES = `Cut the MEAT to the target length by deleting, not rewriting.
+- ${KEEP_SETUP_RULE}
 - Delete any sentence that repeats an idea already said in the HOOK, OPEN LOOP, or MEAT, even in different words. Saying one idea several ways is the main thing to remove.
 - Keep the surviving sentences in the speaker's exact words. Change a word only to join two sentences.
 - Add no new facts, ideas, or lessons, and do not state what the CONCLUSION says.
@@ -608,12 +619,6 @@ export function tightenVideoOneMeat(script, callModelFn) {
   return tightenMeat(script, 1, callModelFn);
 }
 
-const COLD_VIEWER_RULE = `COLD VIEWER RULE (private, never mention it):
-The viewer has never seen the story map, the planning notes, or any other video. Everything they know comes from the words they hear in this script.
-- The first time a project, person, place, or event comes up, say plainly what it is, as in "I started writing a book." Do this before relying on it, including in the OPEN LOOP.
-- Never rely on anything the viewer has not heard. "Those same ideas," "that gap," "the manuscript," and "the event" only work after the script has introduced them in spoken words.
-- Read the finished script as a stranger. If a sentence only makes sense to someone who has read the private material, fix it.`;
-
 const EPIPHANY_5E_CONTRACT = `5E EPIPHANY CONTRACT (private, never mention it):
 An Epiphany is a paradigm-shifting realization that reframes a universal experience and hands the viewer a new intellectual tool. It is not a tip, and it is not only a story about the speaker's own project. These are outcomes to check, not extra spoken beats:
 - DISCOVERY ARC: the MEAT walks through one moment or pattern the viewer can picture, so they reach the contradiction before anyone explains it.
@@ -634,7 +639,7 @@ Check these in order:
 4. The CONCLUSION must answer the question the OPEN LOOP opened.
 5. For Video 6, the speaker is convicted and resolved. Hedging about whether they believe the truth, in the CONCLUSION or the CTA, fails. A CTA must not promise to resolve it later.
 
-Repair only what fails, and only in MEAT, CONCLUSION, or CTA. In the MEAT, delete sentences rather than rewriting the story, and never make it longer. Keep the speaker's own words and facts. Add no new event, person, result, or number. Use no em dashes and no section labels inside the text.
+Repair only what fails, and only in MEAT, CONCLUSION, or CTA. In the MEAT, delete sentences rather than rewriting the story, and never make it longer. ${KEEP_SETUP_RULE} Keep the speaker's own words and facts. Add no new event, person, result, or number. Use no em dashes and no section labels inside the text.
 
 Return JSON only, in one of these shapes:
 {"pass":true}
@@ -691,7 +696,7 @@ export function preserveViewerPremiseSource(originalContext, preparedContext, vi
   return [
     'CURRENT VIDEO VIEWER PREMISE SOURCE:',
     direction,
-    'Translate only the starting belief, situation, action, relationship, or conflict needed to orient a cold viewer once near the beginning of MEAT. This is private source material, not finished copy. Do not quote it, assign it to the Hook, recap prior videos, or disclose a realization or result reserved for the Conclusion.',
+    'Use it to tell a cold viewer the situation once at the start of MEAT: what the speaker was doing, and the project, person, place, or event the story is about. A starting belief alone does not orient a viewer. This is private source material, not finished copy. Do not quote it, assign it to the Hook, recap prior videos, or disclose a realization or result reserved for the Conclusion.',
     '',
     prepared
   ].join('\n');
@@ -1075,7 +1080,7 @@ export async function prepareEpisodeArchitectureMaterial(userContext, level, vid
     '',
     'The current chapter has already been selected and organized. Use this packet as the controlling story plan. Do not reconstruct omitted subplots, combine it with a more dramatic archive story, or turn its headings into visible prose.',
     '',
-    'FINAL WRITING CONTRACT: Reserve RESERVED CONCLUSION before drafting. Build MEAT as one seamless story through STORY PROGRESSION, using HUMAN CONTRADICTION as emotional pressure rather than a second topic. Stop at the boundary named by STAGE FIREWALL. Design OPEN LOOP afterward from the exact unfinished relationship the reserved conclusion will transform, without revealing the answer or explaining the Hook. Supply a provisional HOOK only for formatting; the global Hook Studio replaces it after the complete story is settled. Let the active video blueprint control the final section jobs and CTA.',
+    'FINAL WRITING CONTRACT: Reserve RESERVED CONCLUSION before drafting. The viewer has seen nothing else, so MEAT opens by telling them the situation in plain words: what the speaker was doing, and the project, person, place, or event the story is about, as in "I started writing a book." Never open on a belief, an assumption, or anything the viewer has not been told. Build MEAT as one seamless story through STORY PROGRESSION, using HUMAN CONTRADICTION as emotional pressure rather than a second topic. Stop at the boundary named by STAGE FIREWALL. Design OPEN LOOP afterward from the exact unfinished relationship the reserved conclusion will transform, without revealing the answer or explaining the Hook. Supply a provisional HOOK only for formatting; the global Hook Studio replaces it after the complete story is settled. Let the active video blueprint control the final section jobs and CTA.',
     '',
     'MEAT COMPOSITION CONTRACT: ' + MEAT_COMPOSITION_CONTRACT
   ].filter(Boolean).join('\n');
