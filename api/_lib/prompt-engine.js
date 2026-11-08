@@ -353,6 +353,12 @@ function recoverableGenerationError(message, code) {
     if (/\b(?:isn't|is not|wasn't|was not|is never|was never|were never)\b[^.!?]{1,120}[.!?]\s*(?:it|this|that)(?:'s| is| was)\b/i.test(normalized)) {
       issues.push('Remove the two-sentence false-balance construction and state the chosen point directly.');
     }
+    // David, 2026-11-08: "The skill I thought I had was explaining, but... it was actually
+    // responding" is the same correction formula. Narrowed so "I never thought I'd be here,
+    // but I'm actually doing a challenge" in a Video 1 stays legal.
+    if (/\b(?:thought|believed|assumed)\b[^.!?]{0,60}\b(?:was|is|were)\b[^.!?]{1,80}?,?\s*but\b[^.!?]{0,60}\b(?:was|is|were)\s+actually\b/i.test(normalized)) {
+      issues.push('Remove the false-balance construction "I thought it was X, but it was actually Y" and state the new lens directly.');
+    }
     if (/\b(?:the\s+)?(problem|lesson|truth|point|answer)\s+(?:isn't|is not|wasn't|was not)\b[^.!?]{1,120}[.!?]\s*(?:the\s+)?\1\s+(?:is|was)\b/i.test(normalized)) {
       issues.push('Remove the two-sentence "the point was not X; the point was Y" construction and commit to the actual point directly.');
     }

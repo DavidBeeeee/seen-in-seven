@@ -678,8 +678,12 @@ export function extractReservedConclusion(message) {
 
 // The draft writer gets the note. The story review gets the same plan without the
 // answer and without the note, since the real Conclusion is in place by then.
+// The raw map part for this video is the other copy of the answer: Part 3 asks what the
+// member no longer believes. The plan's STORY PROGRESSION already opens on the situation.
+const PREMISE_SOURCE_PATTERN = /CURRENT VIDEO VIEWER PREMISE SOURCE:\n[\s\S]*?\nUse it to tell a cold viewer the situation[^\n]*\n?/;
+
 export function withholdReservedConclusion(message, forDraftWriter = true) {
-  const source = String(message || '');
+  const source = String(message || '').replace(PREMISE_SOURCE_PATTERN, '');
   const answer = extractReservedConclusion(source);
   if (!answer) return source;
   const start = source.indexOf(RESERVED_MARKER);
@@ -699,7 +703,7 @@ const CONCLUSION_WRITER_RULES = `You are writing only the CONCLUSION of an Epiph
 - Say the new lens in one simple sentence someone would screenshot, stated as how this works for anyone, earned by this story.
 - Then one sentence on what the old way of seeing costs a person who keeps it.
 - At most three sentences. Use only the speaker's facts from the MEAT. Add no new event, person, number, or result.
-- Never use a negation followed by a correction, such as "it was never X, it was Y" or "it is not X, it is Y." State the new lens directly.
+- Never use a negation or a correction, such as "it was never X, it was Y," "it is not X, it is Y," or "I thought it was X, but it was actually Y." State the new lens directly.
 - No em dashes. No section labels. Return only the spoken CONCLUSION text.`;
 
 export async function writeConclusionFromMeat(script, answerContext, config, callModelFn) {

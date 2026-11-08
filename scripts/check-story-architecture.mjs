@@ -798,3 +798,20 @@ console.log('Story architecture checks passed for all 14 video paths and both qu
   assert(!falseBalance('A camera takes the person away. What you know stays in the room.'), 'A direct conclusion must not be flagged.');
   assert(engineSource.includes('OPEN_LOOP_NO_BORROWING_RULE') && (engineSource.match(/OPEN_LOOP_NO_BORROWING_RULE/g) || []).length >= 3, 'Open Loop retries and repairs must not borrow from the Meat.');
 }
+
+// David, 2026-11-08: the Video 3 Meat still leaked because the raw map part, which holds
+// the realization, reached the writer as the viewer premise source.
+{
+  const mapContext = 'CURRENT VIDEO 3 JOURNEY DIRECTION (private planning context only):\nI realized MAP REALIZATION.\nUse this as the intended subject and place in the seven-part journey.\n';
+  const packet = 'STORY PROGRESSION:\nI sat down to record my first video at GNC.\nRESERVED CONCLUSION:\nSECRET ANSWER\nSTAGE FIREWALL:\nNo fall.\nVOICE SIGNALS:\nPlain.';
+  const withPremise = preserveViewerPremiseSource(mapContext, packet, 3);
+  assert(withPremise.includes('MAP REALIZATION'), 'Fixture: the premise source must carry the map part before withholding.');
+  for (const forDraft of [true, false]) {
+    const writerView = withholdReservedConclusion(withPremise, forDraft);
+    assert(!writerView.includes('MAP REALIZATION') && !writerView.includes('SECRET ANSWER') && writerView.includes('I sat down to record my first video at GNC.'), 'The Epiphany writer and review must see neither copy of the answer, and must keep the plan.');
+  }
+  const { validateOutput: validateThought } = await import('../api/_lib/prompt-engine.js');
+  const flagged = (text, video) => validateThought('[HOOK]\nA hook here.\n\n[OPEN LOOP]\nWhy did one video take two weeks?\n\n[MEAT]\n' + (video === 1 ? text : 'I recorded for two weeks.') + '\n\n[CONCLUSION]\n' + (video === 1 ? 'I am doing it.' : text) + '\n\n[CTA]\nFollow along because the next part of my 7 Video Challenge is next.', video, 1, '', '').issues.some(issue => /false-balance/i.test(issue));
+  assert(flagged('The skill I thought I had was explaining, but the camera showed me it was actually responding.', 3), 'The detector must catch "I thought it was X, but it was actually Y."');
+  assert(!flagged("I never thought I'd be here, but I'm actually doing a challenge where I'm committing to make 7 videos.", 1), 'A legitimate Video 1 line must not be flagged.');
+}

@@ -36,6 +36,10 @@ repair pass then wrote a banned "was never X. It was Y" Conclusion.
 - Every story pass opens the Meat on the situation in plain words, and the length trim
   keeps that sentence. The Video 3 plan shows the old belief through action only.
 - `blueprints.txt` is unchanged.
+- Follow-up the same night: the Meat still leaked because the raw map part (the viewer
+  premise source) also carries the realization. The Epiphany writer and review no longer
+  get it. The detector also catches "I thought it was X, but it was actually Y" (1 match
+  in 52 stored scripts, the real formula; a legal Video 1 line stays allowed).
 
 ## November 5, 2026: Story Discovery asks for full stories
 
