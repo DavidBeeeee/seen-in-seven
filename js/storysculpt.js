@@ -1946,7 +1946,7 @@ function showProject(project) {
       if (interrupted) {
         const genStatus = storyEl('story-generation-status');
         if (genStatus) genStatus.textContent = interrupted.statusLine;
-        showErrorInConversation(interrupted.statusLine, () => retryInterviewGeneration(), { silent: true });
+        showErrorInConversation(interrupted.statusLine, () => retryInterviewGeneration(), { silent: true, retryLabel: 'Resume this step' });
       } else {
         const recoveryLine = lapseRecoveryLine(project, storyReturnNotice, STEP_GUIDE);
         const genStatus = storyEl('story-generation-status');
@@ -2594,7 +2594,7 @@ function showErrorInConversation(message, retryCallback, options = {}) {
             '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">' +
               '<path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/>' +
             '</svg>' +
-            '<span>Try Again</span>' +
+            '<span>' + storyEscape(options.retryLabel || 'Try Again') + '</span>' +
           '</button>' +
         '</div>'
       ) : '') +
@@ -2709,11 +2709,16 @@ async function executeInterviewGeneration() {
     const interrupted = (activeStory && typeof STATES !== 'undefined' && STATES && typeof STATES.interruptedStepInfo === 'function')
       ? STATES.interruptedStepInfo(activeStory, STEP_GUIDE)
       : null;
-    const combinedStatus = interrupted ? (cleanMsg + ' ' + interrupted.statusLine) : cleanMsg;
+    // The paused-step line says "Press Resume this step", so the interview's
+    // retry button is named that and the connection line says the same. Two
+    // names for one button sent the 2026-11-08 walk looking for one that did not exist.
+    const combinedStatus = interrupted
+      ? (cleanMsg.replace(/choose Try again/g, 'choose Resume this step').replace(/Choose Try again/g, 'Choose Resume this step') + ' ' + interrupted.statusLine)
+      : cleanMsg;
     status.textContent = combinedStatus;
     status.classList.add('error');
     const isFinished = /already finished|locked|Refine/i.test(cleanMsg);
-    showErrorInConversation(combinedStatus, isFinished ? null : () => retryInterviewGeneration());
+    showErrorInConversation(combinedStatus, isFinished ? null : () => retryInterviewGeneration(), { retryLabel: interrupted ? 'Resume this step' : 'Try Again' });
     if (isFinished) {
       const refineBox = storyEl('story-refine-box');
       if (refineBox) refineBox.hidden = false;
@@ -2735,8 +2740,11 @@ async function sendStoryAnswer(event) {
   const answer = storyEl('story-answer').value.trim();
   if (!answer && activeStory && !storySending) {
     storyEl('story-answer').focus();
-    const status = storyEl('story-composer-status');
-    if (status) status.textContent = emptyAnswerStatus(activeStory, STEP_GUIDE);
+    // The composer's status line is #story-generation-status (story-composer-status
+    // is only its class). Until 2026-11-08 this looked up the class name as an id,
+    // found nothing, and an empty send said nothing at all on production.
+    const status = storyEl('story-generation-status');
+    if (status) { status.hidden = false; status.textContent = emptyAnswerStatus(activeStory, STEP_GUIDE); }
   }
   if (!activeStory || !answer || storySending) return;
   if (activeStory.output) {

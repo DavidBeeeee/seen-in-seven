@@ -150,9 +150,13 @@ console.log('PASS: the browser serializes versioned saves and keys every turn.')
 
 // ── WBR-462: execute the browser recovery paths, not just their source ──────
 const statesSource = read('js', 'storysculpt-member-states.js');
+const pageHtml = read('api', '_hub', 'storysculpt.html');
 function recoveryBrowser(project) {
   const elements = new Map();
   const element = id => {
+    // Only ids the real page has. A fake that invents any id let an empty send
+    // write to a status line production does not have (2026-11-08 walk).
+    if (!pageHtml.includes(`id="${id}"`)) throw new Error(`StorySculpt client looked up #${id}, which api/_hub/storysculpt.html does not have`);
     if (!elements.has(id)) elements.set(id, {
       id, value: '', textContent: '', hidden: false, disabled: false, style: {}, scrollHeight: 100,
       className: '', classList: { add() {}, remove() {}, contains() { return false; } }, focus() {}
@@ -189,7 +193,7 @@ function recoveryBrowser(project) {
   const app = recoveryBrowser(project);
   await vm.runInContext('sendStoryAnswer()', app.c);
   assert.equal(project.conversation.length, 1, 'Stranger 39 browser: empty send adds no turn');
-  assert.match(app.element('story-composer-status').textContent, /Raw story[\s\S]*unchanged[\s\S]*exact step/, 'Stranger 39 browser: empty send names the waiting step and next action');
+  assert.match(app.element('story-generation-status').textContent, /Raw story[\s\S]*unchanged[\s\S]*exact step/, 'Stranger 39 browser: empty send names the waiting step and next action');
 
   const broadProject = { id: 'broad', content_type: 'rant', title: 'Kept title', output: null, intake: { current_step: 'R1' }, conversation: [{ role: 'assistant', content: 'Type the raw rant.' }] };
   const broadApp = recoveryBrowser(broadProject);
