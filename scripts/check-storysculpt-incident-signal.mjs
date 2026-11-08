@@ -39,6 +39,34 @@ const at = (m) => new Date(now - m * 60000).toISOString();
 const ev = (type, failureClass, m, extra = {}) => ({ event_type: 'storysculpt_' + type, created_at: at(m), detail: { outcome: type === 'generation' ? 'generation' : type, failureClass, ...extra } });
 const busy = Array.from({ length: 12 }, (_, i) => ev('generation', undefined, 50 - i));
 
+// Production alert windows replayed as counts only, no member identifiers or
+// content. Nov 7's routine lifecycle/safety events were falling through to
+// internal failures: 9/26 and 6/15, despite the per-kind breakdown not agreeing.
+const routine = ['lifecycle', 'safety', 'memory_confirmed', 'data_deleted', 'replayed'];
+for (const name of routine) {
+  const row = ev(name, undefined, 5);
+  check(incidentSignal([row], { now }).attempts === 0, name + ' is not a failed generation');
+  const failed = incidentSignal([ev(name, 'internal-error', 5)], { now });
+  check(failed.failures === 1 && failed.kinds.app === 1, name + ' must not hide an explicit failure');
+}
+const firstWindow = [
+  ...Array.from({ length: 17 }, () => ev('generation', undefined, 5)),
+  ...Array.from({ length: 6 }, () => ev('lifecycle', undefined, 5)),
+  ...Array.from({ length: 2 }, () => ev('safety', undefined, 5)),
+  ev('output_rejected', 'output-rejected', 5),
+  ev('walkaway', 'member-walkaway', 5)
+];
+const firstReplay = incidentSignal(firstWindow, { now });
+check(firstReplay.attempts === 18 && firstReplay.failures === 1 && firstReplay.kinds.rejected === 1 && firstReplay.memberWalkaways === 1 && firstReplay.level === 'ok', 'first alert replay retains the real rejected answer, not eight routine events');
+const secondReplay = incidentSignal([
+  ...Array.from({ length: 9 }, () => ev('generation', undefined, 5)),
+  ...Array.from({ length: 6 }, () => ev('lifecycle', undefined, 5)),
+  ev('output_rejected', 'output-rejected', 5, { delivered: true })
+], { now });
+check(secondReplay.attempts === 9 && secondReplay.failures === 0 && secondReplay.kinds.rejected === 1 && secondReplay.level === 'ok', 'second alert replay preserves the delivered quality signal without inventing failures');
+const unknownError = incidentSignal([ev('error', undefined, 5), ev('future_event', undefined, 5)], { now });
+check(unknownError.failures === 2 && unknownError.byLayer.internal === 2, 'unknown events still fail closed, never silently disappear');
+
 // Each kind alone, below and at its threshold.
 const cases = {
   provider: (n) => Array.from({ length: n }, (_, i) => ev('error', i % 2 ? 'database-error' : 'research-error', 10 + i)),
