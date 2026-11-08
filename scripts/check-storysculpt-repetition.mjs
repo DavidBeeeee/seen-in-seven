@@ -141,6 +141,10 @@ function finalWith(opening) {
 const finalMessages = [
   { role: 'user', content: 'I make props for school plays. My leaky bucket upstaged an actor at the school show. I stood behind the curtain with a mop, painted shoes, a puddle, a split seam, and careful paintwork.' },
   { role: 'user', content: '45 seconds' },
+  // A real final always follows an answered hook step; the off-path recovery
+  // guard (finalStepError) refuses a final whose hook prompt was never shown.
+  { role: 'assistant', content: 'Hook options\n1. The bucket upstaged the actor.\n2. The curtain ate the applause.\n3. The spotlight missed its cue.' },
+  { role: 'user', content: '1' },
   { role: 'assistant', content: 'Open loops\n1. Then the bucket overflowed.\n2. The actor looked down.\n3. The mop entered early.' },
   { role: 'user', content: '1' }
 ];

@@ -1947,6 +1947,10 @@ function showProject(project) {
         const genStatus = storyEl('story-generation-status');
         if (genStatus) genStatus.textContent = interrupted.statusLine;
         showErrorInConversation(interrupted.statusLine, () => retryInterviewGeneration(), { silent: true });
+      } else {
+        const recoveryLine = lapseRecoveryLine(project, storyReturnNotice, STEP_GUIDE);
+        const genStatus = storyEl('story-generation-status');
+        if (recoveryLine && genStatus) genStatus.textContent = recoveryLine;
       }
     }
     if (project.output) {
@@ -2383,6 +2387,26 @@ function showVariant(index, step) {
   queueStorySave();
 }
 
+function emptyAnswerStatus(project, stepGuides) {
+  const intake = project && project.intake && typeof project.intake === 'object' ? project.intake : {};
+  const fallback = { bold: 'B1', mini: 'M1', rant: 'R1' }[project && project.content_type] || 'R1';
+  const step = String(intake.current_step || fallback);
+  const title = stepGuides && stepGuides[step] && stepGuides[step].title ? stepGuides[step].title : 'Step ' + step;
+  return 'Nothing was sent, so ' + title + ' is still waiting. Your earlier answers are unchanged. Type an answer to continue this exact step.';
+}
+
+function lapseRecoveryLine(project, notice, stepGuides) {
+  if (!project || !notice || notice.state !== 'lapsed' || notice.projectId !== project.id || project.output) return '';
+  const intake = project.intake && typeof project.intake === 'object' ? project.intake : {};
+  const step = String(intake.current_step || ({ bold: 'B1', mini: 'M1', rant: 'R1' }[project.content_type] || 'R1'));
+  const title = stepGuides && stepGuides[step] && stepGuides[step].title ? stepGuides[step].title : 'Step ' + step;
+  const lastUser = [...(Array.isArray(project.conversation) ? project.conversation : [])].reverse().find(message => message && message.role === 'user' && String(message.content || '').trim());
+  const answer = lastUser ? String(lastUser.content).replace(/\s+/g, ' ').trim() : '';
+  const excerpt = Array.from(answer).slice(0, 60).join('') + (Array.from(answer).length > 60 ? '...' : '');
+  const carried = excerpt ? 'Your answer “' + excerpt + '” and the work through ' + title + ' carried forward.' : 'Your earlier work through ' + title + ' carried forward.';
+  return 'Welcome back. ' + carried + ' Answer the current question above to continue from this step; you do not need to start over.';
+}
+
 // One request path for both a fresh answer and a refine note. It posts the
 // current conversation (plus the member's standing profile as context) to the
 // unchanged /api/storysculpt endpoint and folds the response back in.
@@ -2436,10 +2460,8 @@ async function runGeneration(intent = 'interview', options = {}) {
     throw failure;
   }
   if (!response.ok) {
-    if (response.status === 409) {
-      throw new Error((data && data.error) || 'This script is already finished. Use Refine with a note to change it.');
-    }
-    const failure = new Error(data.error || 'StorySculpt could not complete this step.');
+    const failure = new Error((data && data.error) || (response.status === 409 ? 'This script is already finished. Use Refine with a note to change it.' : 'StorySculpt could not complete this step.'));
+    failure.storyStep = data && data.step ? data.step : '';
     if (response.status >= 500) failure.storyFailureKind = 'generation';
     throw failure;
   }
@@ -2677,7 +2699,7 @@ async function executeInterviewGeneration() {
       if (!activeStory.intake || typeof activeStory.intake !== 'object') activeStory.intake = {};
       const lastUser = [...(activeStory.conversation || [])].reverse().find(m => m && m.role === 'user');
       activeStory.intake.interruptedStep = {
-        step: activeStory.intake.current_step || '',
+        step: error.storyStep || activeStory.intake.current_step || '',
         lastAnswer: (lastUser && lastUser.content) || '',
         turnKey: (lastUser && lastUser.key) || '',
         reason: cleanMsg,
@@ -2714,7 +2736,7 @@ async function sendStoryAnswer(event) {
   if (!answer && activeStory && !storySending) {
     storyEl('story-answer').focus();
     const status = storyEl('story-composer-status');
-    if (status) status.textContent = 'Type a rough answer or position before sending. Unedited thoughts work best.';
+    if (status) status.textContent = emptyAnswerStatus(activeStory, STEP_GUIDE);
   }
   if (!activeStory || !answer || storySending) return;
   if (activeStory.output) {

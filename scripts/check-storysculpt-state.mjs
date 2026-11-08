@@ -20,6 +20,7 @@ import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { dirname, join } from 'node:path';
+import vm from 'node:vm';
 
 const root = dirname(dirname(fileURLToPath(import.meta.url)));
 const read = (...p) => readFileSync(join(root, ...p), 'utf8');
@@ -49,6 +50,8 @@ console.log('PASS: migration declares status, transitions, version check and key
 
 // ── Endpoint: a known key is replayed, never regenerated ───────────────────
 process.env.DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY || 'test-key';
+process.env.RATE_LIMIT_SECRET = process.env.RATE_LIMIT_SECRET || 'storysculpt-state-'.padEnd(40, 'x');
+process.env.GUEST_SESSION_SECRET = process.env.GUEST_SESSION_SECRET || 'storysculpt-state-'.padEnd(40, 'y');
 const { default: handler, replayFor, IDEMPOTENCY_KEY } = await import('../api/storysculpt.js');
 
 assert.ok(IDEMPOTENCY_KEY.test('gen:3f1c2b9e-1111-4222-8333-944455556666'), 'browser key shape accepted');
@@ -95,7 +98,36 @@ try {
   assert.deepEqual(second.data.content, first.data.content, 'a repeated key returns the same reply');
   assert.equal(modelCalls, 0, 'a repeated key never calls the model');
 
-  projectRow = { ...projectRow, status: 'archived' };
+  projectRow = { ...projectRow, output: 'Finished script', status: 'finished' };
+  const finished = await call({ ...body, idempotencyKey: 'gen:finished1' });
+  assert.equal(finished.statusCode, 409, 'Stranger 75 / Developer 65: a finished script refuses interview generation');
+  assert.match(finished.data.error, /Use Refine/, 'Stranger 75: the member is routed to Refine');
+  assert.equal(modelCalls, 0, 'Developer 65: the finished lock runs before the model');
+
+  projectRow = { ...projectRow, output: null, status: 'drafting', intake: { current_step: 'R1' }, conversation: [{ role: 'assistant', content: 'Type the raw rant.' }] };
+  const empty = await call({ ...body, messages: [{ role: 'assistant', content: 'Type the raw rant.' }, { role: 'user', content: '   ' }], idempotencyKey: 'gen:empty001' });
+  assert.equal(empty.statusCode, 400, 'Stranger 39: an empty answer never advances the interview');
+  assert.match(empty.data.error, /needs an answer[\s\S]*unchanged/, 'Stranger 39: the empty answer gets a clear recovery explanation');
+  assert.equal(modelCalls, 0, 'Developer 59: empty input does not call the model');
+
+  const keptAnswer = 'My exact pottery story about the cracked blue bowl';
+  projectRow = { ...projectRow, intake: { current_step: 'R1' }, conversation: [{ role: 'assistant', content: 'Type the raw rant.' }, { role: 'user', content: keptAnswer, key: 'turn:failed01' }] };
+  const failed = await call({ ...body, messages: projectRow.conversation, idempotencyKey: 'gen:failed01' });
+  assert.equal(failed.statusCode, 502, 'Stranger 40: a provider failure is returned as a failed generation: ' + JSON.stringify(failed.data));
+  assert.equal(failed.data.step, 'R2', 'Stranger 51 / Developer 59: the error names the exact attempted step, not the previous step');
+  assert.equal(projectRow.conversation.at(-1).content, keptAnswer, 'Stranger 58: the member words survive the failed generation');
+  assert.equal(projectRow.intake.current_step, 'R1', 'Stranger 51: a failed generation does not advance the saved position');
+  assert.ok(modelCalls > 0, 'Stranger 40: only the real generation reached the model');
+  const callsAfterFailure = modelCalls;
+
+  projectRow = { ...projectRow, intake: { current_step: 'R7' }, conversation: [{ role: 'user', content: '2', key: 'turn:sparse01' }] };
+  const premature = await call({ ...body, messages: projectRow.conversation, idempotencyKey: 'gen:sparse01' });
+  assert.equal(premature.statusCode, 409, 'Stranger 83: the final script waits for required interview material');
+  assert.equal(premature.data.step, 'R8', 'Stranger 83: the gated final position is explicit');
+  assert.match(premature.data.error, /saved|unchanged|still waiting/, 'Stranger 83: the gate explains that saved work is safe');
+  assert.equal(modelCalls, callsAfterFailure, 'Developer 65: required-answer gating runs before the model');
+
+  projectRow = { ...projectRow, intake: {}, status: 'archived' };
   const archived = await call({ ...body, idempotencyKey: 'gen:new12345' });
   assert.equal(archived.statusCode, 409, 'archived project refuses generation');
 } finally {
@@ -115,6 +147,97 @@ assert.match(client, /'gen:' \+ lastUser\.key\.replace/, 'a retry of the same tu
 assert.match(client, /findIndex\(m => m && m\.key === replyKey\)/, 'a replayed reply replaces, never duplicates, locally');
 assert.match(client, /Finish the script before marking it filmed\./, 'drafting to filmed is explained, not attempted');
 console.log('PASS: the browser serializes versioned saves and keys every turn.');
+
+// ── WBR-462: execute the browser recovery paths, not just their source ──────
+const statesSource = read('js', 'storysculpt-member-states.js');
+function recoveryBrowser(project) {
+  const elements = new Map();
+  const element = id => {
+    if (!elements.has(id)) elements.set(id, {
+      id, value: '', textContent: '', hidden: false, disabled: false, style: {}, scrollHeight: 100,
+      className: '', classList: { add() {}, remove() {}, contains() { return false; } }, focus() {}
+    });
+    return elements.get(id);
+  };
+  const stateContext = {};
+  vm.createContext(stateContext);
+  vm.runInContext(statesSource, stateContext);
+  const c = {
+    console, Date, activeStory: project, STATES: stateContext.StorySculptStates, memoryProfile: {},
+    STEP_GUIDE: { R1: { title: 'Raw story' }, R2: { title: 'Choose the tension' } },
+    STORY_MODE_LABELS: { rant: '5E Talking Head', bold: 'Controversial Take', mini: 'Mini-Webinar' },
+    storyEl: element, storyReturnNotice: null, innerWidth: 800,
+    EEEStudio: { refreshIcons() {} }, storyContext: { session: { access_token: 'fixture' } },
+    composeContext: () => '', storyTurnKey: () => 'turn:fixture01', generateSmartTitle: () => '',
+    autoGrow() {}, dismissReturnNotice() {}, renderConversation() {}, scrollThread() {},
+    showThinkingIndicator() {}, hideThinkingIndicator() {}, hideErrorInConversation() {},
+    showErrorInConversation() {}, announceToReader() {}, recordStoryFailure() {}, adoptScriptTitle() {},
+    renderProjectList() {}, renderScriptPanel() {}, renderSettingsSummary() {}, setStoryEditing() {},
+    switchMobileTab() {}, isStoryPhone: () => false, restoreUnsavedStory: () => false,
+    ensureVersions: () => [], saveActiveStory: async () => {}
+  };
+  c.window = c;
+  vm.createContext(c);
+  vm.runInContext(client.slice(client.indexOf('function emptyAnswerStatus('), client.indexOf('// One request path for both')), c);
+  vm.runInContext(client.slice(client.indexOf('async function sendStoryAnswer('), client.indexOf('async function retryRefineGeneration(')), c);
+  vm.runInContext('let storySending = false;', c);
+  return { c, element };
+}
+
+{
+  const project = { id: 'empty', content_type: 'rant', output: null, intake: { current_step: 'R1' }, conversation: [{ role: 'assistant', content: 'Type the raw rant.' }] };
+  const app = recoveryBrowser(project);
+  await vm.runInContext('sendStoryAnswer()', app.c);
+  assert.equal(project.conversation.length, 1, 'Stranger 39 browser: empty send adds no turn');
+  assert.match(app.element('story-composer-status').textContent, /Raw story[\s\S]*unchanged[\s\S]*exact step/, 'Stranger 39 browser: empty send names the waiting step and next action');
+
+  const broadProject = { id: 'broad', content_type: 'rant', title: 'Kept title', output: null, intake: { current_step: 'R1' }, conversation: [{ role: 'assistant', content: 'Type the raw rant.' }] };
+  const broadApp = recoveryBrowser(broadProject);
+  broadApp.element('story-answer').value = broadApp.c.STATES.BROAD_ANSWER_FIXTURE.fiveTopics;
+  let generations = 0;
+  broadApp.c.executeInterviewGeneration = async () => { generations++; };
+  await vm.runInContext('sendStoryAnswer()', broadApp.c);
+  assert.equal(generations, 0, 'Stranger 43: broad input is bounded before generation');
+  assert.equal(broadProject.intake.current_step, 'R1', 'Stranger 43: narrowing stays on the exact current step');
+  assert.equal(broadProject.conversation.at(-1).narrowingQuestion, true, 'Stranger 43: deterministic code adds the narrowing question');
+  assert.ok(broadProject.conversation.some(message => message.content === broadApp.c.STATES.BROAD_ANSWER_FIXTURE.fiveTopics), 'Stranger 43: the broad answer itself is preserved');
+}
+
+{
+  const answer = 'The cracked blue bowl stayed on the shelf';
+  const project = { id: 'retry', content_type: 'rant', title: 'Kept title', output: null, intake: { current_step: 'R1' }, conversation: [{ role: 'user', content: answer, key: 'turn:failed01' }] };
+  const app = recoveryBrowser(project);
+  const requests = [];
+  app.c.reply = { ok: false, status: 502, json: async () => ({ error: 'Writing failed.', step: 'R2' }) };
+  app.c.fetch = async (url, init) => { requests.push(JSON.parse(init.body)); return app.c.reply; };
+  vm.runInContext(client.slice(client.indexOf('function storyRecoveryMessage('), client.indexOf('let thinkingInterval = null;')), app.c);
+  vm.runInContext(client.slice(client.indexOf('async function retryInterviewGeneration('), client.indexOf('async function sendStoryAnswer(')), app.c);
+  await vm.runInContext('executeInterviewGeneration()', app.c);
+  assert.equal(project.intake.interruptedStep.step, 'R2', 'Stranger 51 browser: interruption records the attempted step');
+  assert.equal(project.intake.interruptedStep.lastAnswer, answer, 'Stranger 58 browser: interruption keeps the exact member answer');
+  assert.match(app.element('story-generation-status').textContent, /Choose the tension[\s\S]*Resume this step/, 'Developer 59 browser: the recovery notice names the step and Resume action');
+
+  app.c.reply = { ok: true, status: 200, json: async () => ({ final: false, content: 'NEXT QUESTION: What made the bowl matter?', step: 'R2', idempotencyKey: 'gen:failed01' }) };
+  await vm.runInContext('retryInterviewGeneration()', app.c);
+  assert.equal(project.conversation.filter(message => message.role === 'user').length, 1, 'Stranger 40 browser: retry never duplicates the member answer');
+  assert.equal(project.conversation.at(-1).step, 'R2', 'Stranger 40 browser: retry resumes R2');
+  assert.equal(project.intake.interruptedStep, null, 'Developer 59 browser: successful retry clears the interruption');
+  assert.equal(requests[0].idempotencyKey, requests[1].idempotencyKey, 'Stranger 51 browser: retry uses the same generation key');
+}
+
+{
+  const project = { id: 'lapsed', title: 'Blue bowl', content_type: 'rant', output: null, intake: { current_step: 'R2' }, conversation: [{ role: 'assistant', content: 'Type the raw rant.' }, { role: 'user', content: 'The cracked blue bowl stayed on the shelf' }, { role: 'assistant', content: 'What made it matter?' }] };
+  const app = recoveryBrowser(project);
+  app.c.activeStory = null;
+  app.c.storySaveTimer = null;
+  app.c.storyReturnNotice = { state: 'lapsed', projectId: 'lapsed' };
+  vm.runInContext(client.slice(client.indexOf('function showProject('), client.indexOf('function showStart()')), app.c);
+  vm.runInContext('showProject(activeStory || ' + JSON.stringify(project) + ')', app.c);
+  const line = app.element('story-generation-status').textContent;
+  assert.match(line, /cracked blue bowl[\s\S]*Choose the tension[\s\S]*carried forward/, 'Stranger 65: lapse recovery names the member material and step carried forward');
+  assert.match(line, /Answer the current question above[\s\S]*do not need to start over/, 'Stranger 67: lapse recovery says exactly what to do now');
+}
+console.log('PASS: WBR-462 browser recovery executes empty, broad, failed-retry and lapse paths.');
 
 // ── Lifecycle trail as server events (Developer 23, 25, 72) ────────────────
 const life = read('supabase_migrations', '2026-10-22-storysculpt-lifecycle-events.sql');
