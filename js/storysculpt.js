@@ -644,6 +644,14 @@ const STEP_GUIDE = {
   B6: LOOP_GUIDE, M6: LOOP_GUIDE, R7: LOOP_GUIDE
 };
 
+// Member-facing names for every step, including the opening ones that carry no
+// banner. Status and recovery lines read this, never STEP_GUIDE alone, so a member
+// is never shown an internal code like "Step R2" (2026-11-08 walk).
+const STEP_NAMES = Object.assign({
+  R1: { title: 'Raw story' }, R2: { title: 'Choose the tension' },
+  B1: { title: 'Choose your topic' }, M1: { title: 'Choose your topic' }, M2: { title: 'Your short story' }
+}, STEP_GUIDE);
+
 function stepGuideMarkup(message, isLatest) {
   const guide = message && message.step && STEP_GUIDE[message.step];
   if (!guide) return { banner: '', actions: '' };
@@ -776,7 +784,7 @@ function renderConversation() {
     const lastMsg = conversation[conversation.length - 1];
     const isPreFinal = lastMsg && ['B6', 'M6', 'R7'].includes(lastMsg.step);
     const interrupted = (!storySending && activeStory && !activeStory.output && typeof STATES !== 'undefined' && STATES && typeof STATES.interruptedStepInfo === 'function')
-      ? STATES.interruptedStepInfo(activeStory, STEP_GUIDE)
+      ? STATES.interruptedStepInfo(activeStory, STEP_NAMES)
       : null;
     const savedReason = activeStory && activeStory.intake && typeof activeStory.intake.lastStatusReason === 'string'
       ? activeStory.intake.lastStatusReason.trim()
@@ -1942,13 +1950,13 @@ function showProject(project) {
     renderScriptPanel();
     scrollThread();
     if (!storySending && !project.output && typeof STATES !== 'undefined' && STATES && typeof STATES.interruptedStepInfo === 'function') {
-      const interrupted = STATES.interruptedStepInfo(project, STEP_GUIDE);
+      const interrupted = STATES.interruptedStepInfo(project, STEP_NAMES);
       if (interrupted) {
         const genStatus = storyEl('story-generation-status');
         if (genStatus) genStatus.textContent = interrupted.statusLine;
         showErrorInConversation(interrupted.statusLine, () => retryInterviewGeneration(), { silent: true, retryLabel: 'Resume this step' });
       } else {
-        const recoveryLine = lapseRecoveryLine(project, storyReturnNotice, STEP_GUIDE);
+        const recoveryLine = lapseRecoveryLine(project, storyReturnNotice, STEP_NAMES);
         const genStatus = storyEl('story-generation-status');
         if (recoveryLine && genStatus) genStatus.textContent = recoveryLine;
       }
@@ -2658,7 +2666,7 @@ async function executeInterviewGeneration() {
       ? STATES.generationStatusLine(activeStory, {
           isFinal: Boolean(data.final),
           step: activeStep,
-          stepGuides: STEP_GUIDE,
+          stepGuides: STEP_NAMES,
           isPreFinal
         })
       : (isPreFinal ? STATES.FINISHING_LOCK_LINE : 'StorySculpt saves your chat as you go.');
@@ -2707,7 +2715,7 @@ async function executeInterviewGeneration() {
       };
     }
     const interrupted = (activeStory && typeof STATES !== 'undefined' && STATES && typeof STATES.interruptedStepInfo === 'function')
-      ? STATES.interruptedStepInfo(activeStory, STEP_GUIDE)
+      ? STATES.interruptedStepInfo(activeStory, STEP_NAMES)
       : null;
     // The paused-step line says "Press Resume this step", so the interview's
     // retry button is named that and the connection line says the same. Two
@@ -2744,7 +2752,7 @@ async function sendStoryAnswer(event) {
     // is only its class). Until 2026-11-08 this looked up the class name as an id,
     // found nothing, and an empty send said nothing at all on production.
     const status = storyEl('story-generation-status');
-    if (status) { status.hidden = false; status.textContent = emptyAnswerStatus(activeStory, STEP_GUIDE); }
+    if (status) { status.hidden = false; status.textContent = emptyAnswerStatus(activeStory, STEP_NAMES); }
   }
   if (!activeStory || !answer || storySending) return;
   if (activeStory.output) {

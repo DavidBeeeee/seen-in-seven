@@ -169,6 +169,7 @@ function recoveryBrowser(project) {
   const c = {
     console, Date, activeStory: project, STATES: stateContext.StorySculptStates, memoryProfile: {},
     STEP_GUIDE: { R1: { title: 'Raw story' }, R2: { title: 'Choose the tension' } },
+    STEP_NAMES: { R1: { title: 'Raw story' }, R2: { title: 'Choose the tension' } },
     STORY_MODE_LABELS: { rant: '5E Talking Head', bold: 'Controversial Take', mini: 'Mini-Webinar' },
     storyEl: element, storyReturnNotice: null, innerWidth: 800,
     EEEStudio: { refreshIcons() {} }, storyContext: { session: { access_token: 'fixture' } },
@@ -255,3 +256,16 @@ assert.match(life, /else 'revision'/, 'unknown notes map to a fixed kind');
 console.log('PASS: finish, filmed, unfilmed, restore and every new version are logged by the database without member text.');
 
 console.log('StorySculpt state and idempotency: all checks pass.');
+
+// 2026-11-08 walk: every interview step a member can be paused on has a name,
+// so no status line falls back to an internal code like "Step R2".
+{
+  const client = read('js', 'storysculpt.js');
+  const steps = read('api', '_lib', 'storysculpt-steps.js');
+  const names = vm.runInNewContext(client.slice(client.indexOf('const STEP_NAMES = '), client.indexOf('function stepGuideMarkup(')).replace('const STEP_NAMES = ', '(') .replace(/;\s*$/, ')'), { STEP_GUIDE: vm.runInNewContext('(' + client.slice(client.indexOf('const STEP_GUIDE = {') + 'const STEP_GUIDE = '.length, client.indexOf('};', client.indexOf('const STEP_GUIDE = {')) + 1) + ')', { LENGTH_GUIDE: { title: 'Choose your length' }, DRAFT_GUIDE: { title: 'Your first draft' }, HOOK_GUIDE: { title: 'Choose your hook' }, ESCALATE_GUIDE: { title: 'Make your chosen hook stronger' }, LOOP_GUIDE: { title: 'Choose your open loop' } }) });
+  const order = vm.runInNewContext('(' + steps.slice(steps.indexOf('{', steps.indexOf('bold:') - 40), steps.indexOf('}', steps.indexOf('rant:')) + 1) + ')');
+  const interview = [...order.bold, ...order.mini, ...order.rant].filter(step => !['B7', 'M7', 'R8'].includes(step));
+  const unnamed = interview.filter(step => !(names[step] && names[step].title));
+  assert.deepEqual(unnamed, [], 'every interview step has a member-facing name');
+  console.log('PASS: every interview step has a member-facing name, so no line says "Step R2".');
+}
