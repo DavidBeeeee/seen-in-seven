@@ -168,6 +168,14 @@
     {
       "source": "/terms/",
       "destination": "/terms.html"
+    },
+    {
+      "source": "/network",
+      "destination": "/network.html"
+    },
+    {
+      "source": "/network/",
+      "destination": "/network.html"
     }
   ]
 }
