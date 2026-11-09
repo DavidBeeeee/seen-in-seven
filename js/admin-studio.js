@@ -39,7 +39,8 @@ function appAccessState(row, appKey) {
 
 const adminEl = id => document.getElementById(id);
 let studioAdminSession = null;
-let studioAdminState = { users: [], entitlements: [], grants: [], webhooks: [], scripts: [], progress: [], logs: [], boardroom: [], catalog: [], hubUsage: [], books: [], bookGrants: [], rows: [], errors: {} };
+let studioAdminState = { users: [], entitlements: [], grants: [], webhooks: [], scripts: [], progress: [], logs: [], boardroom: [], catalog: [], hubUsage: [], books: [], bookGrants: [], networkEntries: [], rows: [], errors: {} };
+const NETWORK_PREVIEW_STORAGE_KEY = 'cm_network_preview_entries_v1';
 
 function refreshAdminIcons() {
   if (window.lucide) window.lucide.createIcons({ attrs: { 'stroke-width': 1.8 } });
@@ -205,7 +206,8 @@ async function loadStudioAdmin() {
     rpcSafe('hubUsage', 'admin_get_hub_usage'),
     tableSafe('catalog', 'studio_catalog_settings', 'app_key,catalog_mode,updated_at'),
     tableSafe('books', 'solution_vault_books', 'id,slug,title,subtitle,description,format,status,cover_url,content_path,content_version,page_count,file_size_bytes,sha256,download_enabled,previous_content_path,interactive,updated_at,created_at'),
-    tableSafe('bookGrants', 'solution_vault_book_grants', 'id,user_id,book_id,grant_kind,source_kind,source_ref,status,expires_at,granted_at,revoked_at')
+    tableSafe('bookGrants', 'solution_vault_book_grants', 'id,user_id,book_id,grant_kind,source_kind,source_ref,status,expires_at,granted_at,revoked_at'),
+    rpcSafe('networkEntries', 'admin_get_network_directory')
   ]);
   const loaded = Object.fromEntries(results.map(result => [result.name, result]));
   studioAdminState.users = loaded.users.data;
@@ -220,7 +222,8 @@ async function loadStudioAdmin() {
   studioAdminState.catalog = loaded.catalog.data;
   studioAdminState.books = loaded.books ? loaded.books.data : [];
   studioAdminState.bookGrants = loaded.bookGrants ? loaded.bookGrants.data : [];
-  studioAdminState.errors = Object.fromEntries(results.filter(result => result.error).map(result => [result.name, result.error]));
+  studioAdminState.networkEntries = loadNetworkEntriesForAdmin(loaded.networkEntries ? loaded.networkEntries.data : []);
+  studioAdminState.errors = Object.fromEntries(results.filter(result => result.error && result.name !== 'networkEntries').map(result => [result.name, result.error]));
   studioAdminState.rows = buildCustomerRows();
   renderStudioAdmin();
   adminEl('last-loaded').textContent = 'Updated ' + new Date().toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
@@ -298,9 +301,85 @@ function renderStudioAdmin() {
   renderHubUsage();
   renderEeeVisibility();
   renderCommerce();
+  renderNetworkDirectoryAdmin();
   renderCustomers();
   refreshAdminIcons();
 }
+
+function loadNetworkEntriesForAdmin(remoteEntries) {
+  let local = [];
+  try {
+    const raw = localStorage.getItem(NETWORK_PREVIEW_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) local = parsed;
+    }
+  } catch (e) {}
+  const remoteList = Array.isArray(remoteEntries) ? remoteEntries : [];
+  if (!remoteList.length) return local;
+  const seen = new Set(remoteList.map(item => item.id));
+  return remoteList.concat(local.filter(item => item && !seen.has(item.id)));
+}
+
+function renderNetworkDirectoryAdmin() {
+  const tbody = adminEl('network-admin-rows');
+  if (!tbody) return;
+  const entries = Array.isArray(studioAdminState.networkEntries) ? studioAdminState.networkEntries : loadNetworkEntriesForAdmin([]);
+  const pending = entries.filter(item => item.status === 'pending').length;
+  const approved = entries.filter(item => item.status === 'approved').length;
+  const setText = (id, val) => { const el = adminEl(id); if (el) el.textContent = String(val); };
+  setText('network-admin-pending', pending);
+  setText('network-admin-approved', approved);
+  setText('network-admin-total', entries.length);
+
+  if (!entries.length) {
+    tbody.innerHTML = '<tr><td colspan="6" class="table-loading">No networking directory submissions yet. Open /network to submit a preview card.</td></tr>';
+    return;
+  }
+
+  tbody.innerHTML = entries.map(row => {
+    const isApproved = row.status === 'approved';
+    const statusClass = isApproved ? ' webhook-processed' : '';
+    const statusLabel = isApproved ? 'approved' : (row.status || 'pending');
+    const collab = row.open_to_collaborating ? 'Yes, open' : 'Not right now';
+    const actionBtn = isApproved
+      ? '<button class="secondary-button" type="button" onclick="adminSetNetworkDirectoryStatus(event,\'' + safeAttr(row.id) + '\',\'pending\')">Hide</button>'
+      : '<button class="secondary-button" type="button" onclick="adminSetNetworkDirectoryStatus(event,\'' + safeAttr(row.id) + '\',\'approved\')">Approve</button>';
+    return '<tr>' +
+      '<td><span class="webhook-status' + statusClass + '">' + escapeHtml(statusLabel) + '</span></td>' +
+      '<td><div class="customer-name">' + escapeHtml(row.name || 'Attendee') + '</div></td>' +
+      '<td>' + escapeHtml(row.what_you_do || '') + '</td>' +
+      '<td><a href="' + safeAttr(row.link_url || '#') + '" target="_blank" rel="noopener noreferrer" style="color: var(--studio-teal);">' + escapeHtml(row.link_url || '') + '</a></td>' +
+      '<td>' + escapeHtml(collab) + '</td>' +
+      '<td>' + actionBtn + '</td>' +
+      '</tr>';
+  }).join('');
+}
+
+async function adminSetNetworkDirectoryStatus(event, entryId, status) {
+  event.stopPropagation();
+  const button = event.currentTarget;
+  if (button) button.disabled = true;
+  try {
+    const raw = localStorage.getItem(NETWORK_PREVIEW_STORAGE_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      if (Array.isArray(parsed)) {
+        const updated = parsed.map(item => String(item.id) === String(entryId)
+          ? Object.assign({}, item, { status, approved_at: status === 'approved' ? new Date().toISOString() : item.approved_at })
+          : item
+        );
+        localStorage.setItem(NETWORK_PREVIEW_STORAGE_KEY, JSON.stringify(updated));
+      }
+    }
+  } catch (e) {}
+  try {
+    await adminSb.rpc('admin_set_network_directory_status', { p_entry_id: entryId, p_status: status });
+  } catch (e) {}
+  studioAdminState.networkEntries = loadNetworkEntriesForAdmin([]);
+  renderNetworkDirectoryAdmin();
+}
+window.adminSetNetworkDirectoryStatus = adminSetNetworkDirectoryStatus;
 
 // WBR-384: surface each Momentum Hub tool's server-logged usage. Defensive by
 // design: any failure here must never break the rest of the admin, so it is
@@ -1483,4 +1562,5 @@ window.adminToggleBookPublish = adminToggleBookPublish;
 window.openNewBookDrawer = openNewBookDrawer;
 window.deleteBook = deleteBook;
 
+renderNetworkDirectoryAdmin();
 refreshAdminIcons();

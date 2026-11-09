@@ -89,6 +89,10 @@
             <i data-lucide="receipt-text"></i>
             <span>Purchases</span>
           </a>
+          <a class="nav-item" href="#network-directory">
+            <i data-lucide="contact-2"></i>
+            <span>Networking Directory</span>
+          </a>
           <p class="sidebar-label app-label">App Admin</p>
           <a class="nav-item" href="/admin/seeninseven">
             <i data-lucide="video"></i>
@@ -274,6 +278,24 @@
             <table class="customer-table commerce-table">
               <thead><tr><th>Status</th><th>Event</th><th>Customer</th><th>Product</th><th>Received</th><th>Message ID</th></tr></thead>
               <tbody id="commerce-rows"><tr><td colspan="6" class="table-loading">Loading purchase activity...</td></tr></tbody>
+            </table>
+          </div>
+        </section>
+
+        <section class="admin-section" id="network-directory" aria-labelledby="network-directory-title">
+          <div class="admin-section-head customer-heading">
+            <div><p class="eyebrow">Mastermind Directory</p><h2 id="network-directory-title">Networking directory approval list</h2></div>
+            <a class="secondary-button" href="/network"><i data-lucide="external-link"></i><span>Open /network page</span></a>
+          </div>
+          <div class="commerce-summary" aria-label="Networking directory summary">
+            <div><strong id="network-admin-pending">-</strong><span>pending approval</span></div>
+            <div><strong id="network-admin-approved">-</strong><span>approved cards</span></div>
+            <div><strong id="network-admin-total">-</strong><span>total submissions</span></div>
+          </div>
+          <div class="customer-table-wrap">
+            <table class="customer-table">
+              <thead><tr><th>Status</th><th>Attendee</th><th>What they do</th><th>Link</th><th>Collaborating</th><th>Action</th></tr></thead>
+              <tbody id="network-admin-rows"><tr><td colspan="6" class="table-loading">Loading directory entries...</td></tr></tbody>
             </table>
           </div>
         </section>

@@ -1,0 +1,569 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Mastermind Networking Directory | Colorado Mastermind Studio</title>
+  <link rel="icon" type="image/svg+xml" href="/assets/icons/studio.svg">
+  <meta name="description" content="Colorado Mastermind networking directory. Add your details, what you do, and whether you are open to collaborating.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('sis_theme_v1') === 'light') {
+          document.documentElement.classList.add('studio-light');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <link rel="stylesheet" href="/css/hub-theme.css">
+  <link rel="stylesheet" href="/css/studio.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/js/egress-report.js?v=1"></script>
+  <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+  <style>
+    .network-main {
+      width: min(1040px, 100%);
+      margin: 0 auto;
+      padding: calc(var(--header-height) + 42px) 28px 80px;
+      position: relative;
+      z-index: 1;
+    }
+    .network-hero {
+      margin-bottom: 32px;
+    }
+    .network-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px;
+      border-radius: var(--radius-pill);
+      border: 1px solid var(--border);
+      background: color-mix(in srgb, var(--teal) 12%, var(--card));
+      color: var(--teal);
+      font-size: 12px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin: 0 0 14px;
+    }
+    .network-hero h1 {
+      margin: 0 0 10px;
+      font-family: var(--font-display);
+      font-size: clamp(28px, 4vw, 40px);
+      font-weight: 600;
+      line-height: 1.15;
+      color: var(--cream);
+    }
+    .network-hero p {
+      margin: 0;
+      max-width: 680px;
+      color: var(--soft);
+      font-size: 16px;
+      line-height: 1.65;
+    }
+    .network-preview-banner {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 20px;
+      margin-bottom: 28px;
+      border-radius: var(--radius-card);
+      border: 1px solid color-mix(in srgb, var(--gold) 45%, var(--border));
+      background: color-mix(in srgb, var(--gold) 10%, var(--card));
+      color: var(--cream);
+      font-size: 14px;
+    }
+    .network-preview-banner strong {
+      color: var(--gold);
+      font-weight: 800;
+    }
+    .network-preview-actions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+    .network-grid {
+      display: grid;
+      grid-template-columns: minmax(300px, 400px) minmax(0, 1fr);
+      gap: 28px;
+      align-items: start;
+    }
+    .network-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-card);
+      padding: 28px;
+      box-shadow: 0 8px 28px rgba(0, 0, 0, 0.22);
+    }
+    .network-panel h2 {
+      margin: 0 0 6px;
+      font-family: var(--font-display);
+      font-size: 24px;
+      font-weight: 600;
+      color: var(--cream);
+    }
+    .network-panel-sub {
+      margin: 0 0 22px;
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .network-field {
+      margin-bottom: 18px;
+    }
+    .network-field label,
+    .network-fieldset legend {
+      display: block;
+      margin-bottom: 6px;
+      color: var(--soft);
+      font-size: 14px;
+      font-weight: 800;
+    }
+    .network-hint {
+      display: block;
+      margin-top: 4px;
+      color: var(--muted);
+      font-size: 12px;
+      line-height: 1.45;
+    }
+    .network-field input[type="text"],
+    .network-field input[type="url"],
+    .network-field textarea {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 11px 13px;
+      min-height: 46px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--cream);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.5;
+      transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    }
+    .network-field textarea {
+      min-height: 96px;
+      resize: vertical;
+    }
+    .network-field input:focus-visible,
+    .network-field textarea:focus-visible,
+    .network-radio-option input:focus-visible + span,
+    .network-consent-label input:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+      border-color: var(--teal);
+    }
+    .network-field input:user-invalid,
+    .network-field textarea:user-invalid,
+    .network-field input.is-invalid,
+    .network-field textarea.is-invalid {
+      border-color: var(--danger);
+    }
+    .network-error {
+      display: none;
+      margin-top: 6px;
+      color: var(--danger);
+      font-size: 13px;
+      font-weight: 700;
+    }
+    .network-field input:user-invalid ~ .network-error,
+    .network-field textarea:user-invalid ~ .network-error,
+    .network-field input.is-invalid ~ .network-error,
+    .network-field textarea.is-invalid ~ .network-error,
+    .network-error.is-visible {
+      display: block;
+    }
+    .network-fieldset {
+      margin: 0 0 18px;
+      padding: 0;
+      border: 0;
+    }
+    .network-radio-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+    .network-radio-option {
+      position: relative;
+      cursor: pointer;
+    }
+    .network-radio-option input {
+      position: absolute;
+      opacity: 0;
+      pointer-events: none;
+    }
+    .network-radio-option span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 46px;
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      color: var(--soft);
+      font-size: 14px;
+      font-weight: 800;
+      text-align: center;
+      transition: all 0.15s ease;
+    }
+    .network-radio-option input:checked + span {
+      border-color: var(--teal);
+      background: color-mix(in srgb, var(--teal) 16%, var(--card));
+      color: var(--cream);
+    }
+    .network-consent-label {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      cursor: pointer;
+      color: var(--soft);
+      font-size: 14px;
+      font-weight: 600;
+      line-height: 1.5;
+    }
+    .network-consent-label input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 2px;
+      flex: 0 0 20px;
+      accent-color: var(--teal);
+      cursor: pointer;
+    }
+    .network-submit {
+      width: 100%;
+      min-height: 48px;
+      font-size: 15px;
+    }
+    .network-status {
+      margin-top: 16px;
+      padding: 14px 16px;
+      border-radius: var(--radius-md);
+      border: 1px solid color-mix(in srgb, var(--green) 40%, var(--border));
+      background: color-mix(in srgb, var(--green) 10%, var(--bg));
+      color: var(--cream);
+      font-size: 14px;
+      line-height: 1.55;
+    }
+    .network-status.is-error {
+      border-color: color-mix(in srgb, var(--danger) 45%, var(--border));
+      background: color-mix(in srgb, var(--danger) 10%, var(--bg));
+      color: var(--danger);
+    }
+    .network-directory-head {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: baseline;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+    .network-count {
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 800;
+    }
+    .network-cards {
+      display: grid;
+      gap: 14px;
+    }
+    .network-card {
+      padding: 20px 22px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      transition: border-color 0.15s ease;
+    }
+    .network-card:hover {
+      border-color: color-mix(in srgb, var(--teal) 55%, var(--border));
+    }
+    .network-card-top {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .network-card-name {
+      margin: 0;
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--cream);
+    }
+    .network-collab-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: var(--radius-pill);
+      font-size: 11px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .network-collab-badge.is-open {
+      border: 1px solid color-mix(in srgb, var(--green) 40%, transparent);
+      background: color-mix(in srgb, var(--green) 12%, transparent);
+      color: var(--green);
+    }
+    .network-collab-badge.is-closed {
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--muted);
+    }
+    .network-card-bio {
+      margin: 0 0 14px;
+      color: var(--soft);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    .network-card-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      color: var(--teal);
+      font-size: 14px;
+      font-weight: 800;
+      text-decoration: none;
+      word-break: break-all;
+    }
+    .network-card-link:hover,
+    .network-card-link:focus-visible {
+      text-decoration: underline;
+    }
+    .network-empty {
+      padding: 28px 20px;
+      text-align: center;
+      border-radius: var(--radius-md);
+      border: 1px dashed var(--border);
+      color: var(--muted);
+      font-size: 14px;
+    }
+    .network-admin-drawer {
+      margin-top: 22px;
+      padding-top: 20px;
+      border-top: 1px solid var(--border);
+    }
+    .network-admin-drawer h3 {
+      margin: 0 0 6px;
+      font-family: var(--font-display);
+      font-size: 18px;
+      color: var(--gold);
+    }
+    .network-admin-drawer p {
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .network-admin-list {
+      display: grid;
+      gap: 10px;
+    }
+    .network-admin-row {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: var(--bg);
+      font-size: 13px;
+    }
+    .network-admin-meta strong {
+      display: block;
+      color: var(--cream);
+      font-size: 14px;
+    }
+    .network-admin-meta span {
+      color: var(--muted);
+    }
+    .network-admin-actions {
+      display: flex;
+      gap: 8px;
+    }
+    .network-admin-actions .secondary-button {
+      min-height: 34px;
+      padding: 0 12px;
+      font-size: 12px;
+    }
+    @media (max-width: 860px) {
+      .network-grid {
+        grid-template-columns: 1fr;
+      }
+      .network-main {
+        padding: calc(var(--header-height) + 28px) 16px 60px;
+      }
+      .network-panel {
+        padding: 22px 18px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="studio-header">
+    <a class="studio-brand" href="/" aria-label="Colorado Mastermind Studio home">
+      <span class="studio-mark">CM</span>
+      <span>
+        <strong>Colorado Mastermind</strong>
+        <small>Networking Directory</small>
+      </span>
+    </a>
+    <div class="header-actions">
+      <a class="secondary-button" href="/"><i data-lucide="layout-grid"></i><span>My Studio</span></a>
+      <a class="secondary-button" href="/admin#network-directory"><i data-lucide="shield-check"></i><span>Admin</span></a>
+      <button class="icon-button" id="theme-button" type="button" title="Change color theme" aria-label="Change color theme">
+        <i data-lucide="sun" class="theme-sun-icon"></i>
+        <i data-lucide="moon" class="theme-moon-icon"></i>
+      </button>
+    </div>
+  </header>
+
+  <main class="network-main">
+    <section class="network-hero">
+      <p class="network-eyebrow"><i data-lucide="users"></i> Colorado Mastermind</p>
+      <h1>Meet the people in the room.</h1>
+      <p>Share what you are building, leave one link where people can find your work, and let other Mastermind attendees know if you are open to collaborating.</p>
+    </section>
+
+    <aside class="network-preview-banner" id="network-preview-banner" aria-label="Preview mode controls">
+      <div>
+        <strong>Decision-ready preview:</strong> New entries wait for David's approval before they appear in the public directory. The database table migration is written and held unapplied until you choose where this page lives.
+      </div>
+      <div class="network-preview-actions">
+        <button class="secondary-button" id="toggle-admin-preview" type="button" aria-expanded="false" aria-controls="network-admin-preview">
+          <i data-lucide="check-square"></i>
+          <span>Review pending entries (<span id="pending-count-badge">0</span>)</span>
+        </button>
+      </div>
+    </aside>
+
+    <div class="network-grid">
+      <section class="network-panel" aria-labelledby="form-heading">
+        <h2 id="form-heading">Add your card</h2>
+        <p class="network-panel-sub">Fill out the short form below. Once David approves your card, it appears in the directory.</p>
+
+        <form id="network-form" method="post" action="/network" novalidate>
+          <div class="network-field">
+            <label for="network-name">Your name <span aria-hidden="true">*</span></label>
+            <input
+              id="network-name"
+              name="name"
+              type="text"
+              autocomplete="name"
+              maxlength="120"
+              required
+              placeholder="Alex Rivera"
+              aria-describedby="network-name-error"
+              aria-errormessage="network-name-error"
+            >
+            <span class="network-error" id="network-name-error">Please enter your name so people know who to ask for.</span>
+          </div>
+
+          <div class="network-field">
+            <label for="network-what">What you do <span aria-hidden="true">*</span></label>
+            <textarea
+              id="network-what"
+              name="what_you_do"
+              maxlength="500"
+              required
+              placeholder="I help local service founders turn client questions into short weekly videos."
+              aria-describedby="network-what-hint network-what-error"
+              aria-errormessage="network-what-error"
+            ></textarea>
+            <span class="network-hint" id="network-what-hint">One or two clear sentences about your work and who you help.</span>
+            <span class="network-error" id="network-what-error">Please share a short line about what you do.</span>
+          </div>
+
+          <div class="network-field">
+            <label for="network-link">One link <span aria-hidden="true">*</span></label>
+            <input
+              id="network-link"
+              name="link_url"
+              type="url"
+              inputmode="url"
+              autocomplete="url"
+              autocorrect="off"
+              autocapitalize="off"
+              spellcheck="false"
+              maxlength="300"
+              required
+              placeholder="https://example.com"
+              aria-describedby="network-link-hint network-link-error"
+              aria-errormessage="network-link-error"
+            >
+            <span class="network-hint" id="network-link-hint">Your website, portfolio, or primary social page (include https://).</span>
+            <span class="network-error" id="network-link-error">Please enter a complete web link starting with https:// or http://.</span>
+          </div>
+
+          <fieldset class="network-fieldset">
+            <legend>Open to collaborating?</legend>
+            <div class="network-radio-group">
+              <label class="network-radio-option">
+                <input type="radio" name="open_to_collaborating" value="yes" checked>
+                <span>Yes, open to it</span>
+              </label>
+              <label class="network-radio-option">
+                <input type="radio" name="open_to_collaborating" value="no">
+                <span>Not right now</span>
+              </label>
+            </div>
+          </fieldset>
+
+          <div class="network-field">
+            <label class="network-consent-label" for="network-consent">
+              <input
+                id="network-consent"
+                name="consent_given"
+                type="checkbox"
+                required
+                aria-describedby="network-consent-error"
+                aria-errormessage="network-consent-error"
+              >
+              <span>I agree to show my name, what I do, my link, and my collaboration preference on the Colorado Mastermind networking directory once approved.</span>
+            </label>
+            <span class="network-error" id="network-consent-error">Please check the consent box so we have permission to list your card.</span>
+          </div>
+
+          <button class="primary-button network-submit" id="network-submit" type="submit">
+            <span>Send card for approval</span>
+            <i data-lucide="arrow-right"></i>
+          </button>
+
+          <div class="network-status" id="network-form-status" role="status" aria-live="polite" hidden></div>
+        </form>
+      </section>
+
+      <section class="network-panel" aria-labelledby="directory-heading">
+        <div class="network-directory-head">
+          <div>
+            <h2 id="directory-heading">Approved directory</h2>
+            <p class="network-panel-sub" style="margin-bottom: 0;">Only entries approved by David appear here.</p>
+          </div>
+          <span class="network-count" id="network-directory-count">0 approved</span>
+        </div>
+
+        <div class="network-cards" id="network-directory-list" aria-live="polite"></div>
+
+        <section class="network-admin-drawer" id="network-admin-preview" hidden aria-labelledby="admin-preview-heading">
+          <h3 id="admin-preview-heading">Admin approval queue (preview)</h3>
+          <p>Unapproved submissions stay hidden from the directory above until you click Approve. You can also manage this queue in <a href="/admin#network-directory" style="color: var(--teal);">Studio Admin</a>.</p>
+          <div class="network-admin-list" id="network-admin-list"></div>
+        </section>
+      </section>
+    </div>
+  </main>
+
+  <script src="/js/network.js"></script>
+</body>
+</html>
