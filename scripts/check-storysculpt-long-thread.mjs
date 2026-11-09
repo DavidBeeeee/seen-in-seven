@@ -136,8 +136,102 @@ check(live.textContent === '', 'a re-render with nothing new is silent');
 check(!/id="story-conversation"[^>]*aria-live/.test(page), 'the thread itself is not a live region');
 check(/id="story-latest-live"[^>]*aria-live="polite"/.test(page), 'the page carries the newest-reply live region');
 
+// 5. Developer 65 (WBR-462): 40-turn terminology check (one name per concept).
+// Across a 40-turn thread (collapsed and expanded), step banners, message
+// actions, status lines, and the served page, each concept uses one consistent
+// member-facing name rather than drifting between synonyms or internal codes.
+{
+  const FORTY_TURNS = 40;
+  const stepCycle = ['R1', 'R2', 'R3', 'R4', 'R5', 'R6', 'R6.5', 'R7'];
+  const turns40 = [];
+  for (let i = 0; i < FORTY_TURNS; i++) {
+    if (i % 2 === 0) {
+      const step = stepCycle[Math.floor(i / 2) % stepCycle.length];
+      turns40.push({
+        role: 'assistant',
+        step,
+        content: `Turn ${i + 1} question: Share the concrete detail from your chat that shapes this script.`
+      });
+    } else if (i === 37) {
+      turns40.push({
+        role: 'user',
+        content: 'Turn 38 answer: Excluded detail kept out of future drafts.',
+        excludeFromGeneration: true
+      });
+    } else if (i === 39) {
+      turns40.push({
+        role: 'user',
+        content: 'Please revise the script above. Keep what works and change this: tighten the opening hook.',
+        refineNote: 'tighten the opening hook.'
+      });
+    } else {
+      turns40.push({
+        role: 'user',
+        content: `Turn ${i + 1} answer: A real member answer in their own voice for this script.`
+      });
+    }
+  }
+  // Put an assistant step at turn 40 so the latest assistant step banner & actions render too
+  turns40[38] = {
+    role: 'user',
+    content: 'Please revise the script above. Keep what works and change this: tighten the opening hook.',
+    refineNote: 'tighten the opening hook.'
+  };
+  turns40[39] = {
+    role: 'assistant',
+    step: 'R7',
+    content: 'Turn 40 question: Choose the open loop that keeps your viewer watching.'
+  };
+
+  const proj40 = {
+    id: 'p-40-terms',
+    title: 'Forty Turn Terminology Check',
+    content_type: 'rant',
+    conversation: turns40,
+    output: null,
+    intake: {
+      context: '',
+      current_step: 'R7',
+      versions: [],
+      interruptedStep: { step: 'R7', lastAnswer: 'Use option 1', turnKey: 'turn:40', at }
+    },
+    created_at: at,
+    updated_at: at
+  };
+  const app40 = boot([proj40]);
+  await app40.run();
+  const conv40 = app40.document.getElementById('story-conversation');
+  const collapsedHtml40 = conv40.innerHTML;
+  for (const fn of conv40.listeners.click || []) fn({ target: { closest: (sel) => (sel === '[data-show-earlier]' ? {} : null) } });
+  const expandedHtml40 = conv40.innerHTML;
+  const statusLine40 = app40.document.getElementById('story-generation-status').textContent;
+  const combinedCorpus = [page, collapsedHtml40, expandedHtml40, statusLine40].join('\n');
+
+  // Canonical concept names present
+  check(/story profile/i.test(page) && /Settings &amp; story profile/i.test(page), '40-turn terminology: standing memory is consistently named story profile');
+  check(/Show earlier answers \(28 messages\)/.test(collapsedHtml40), '40-turn terminology: collapsed control uses canonical "Show earlier answers"');
+  check((expandedHtml40.match(/<span>Copy<\/span>/g) || []).length === 20, '40-turn terminology: all 20 assistant turns use canonical "Copy" label');
+  check((expandedHtml40.match(/<span>Use as Script<\/span>/g) || []).length === 20, '40-turn terminology: all 20 assistant turns use canonical "Use as Script" label');
+  check((expandedHtml40.match(/<span>Don’t use this<\/span>/g) || []).length === 18, '40-turn terminology: all 18 active user answers use canonical "Don’t use this" label');
+  check((expandedHtml40.match(/<span>Use this again<\/span>/g) || []).length === 1 && expandedHtml40.includes('Not used in future drafts'), '40-turn terminology: excluded user answer uses canonical "Use this again" and "Not used in future drafts"');
+  check(expandedHtml40.includes('Revision note') && !/Re-prompt|Polish pass/i.test(expandedHtml40), '40-turn terminology: refine turn uses canonical "Revision note"');
+  check(/Step paused on Choose your open loop/i.test(statusLine40) && /Press Resume this step/i.test(statusLine40), '40-turn terminology: paused step names human step title and "Resume this step"');
+
+  // Forbidden drifted synonyms and leaked internal step codes
+  const driftedTerms = [
+    { label: 'memory bank / persona profile / brand vault', re: /\b(?:memory bank|persona profile|brand vault|voice database)\b/i },
+    { label: 'session thread / prompt chain / wizard', re: /\b(?:session thread|prompt chain|script wizard)\b/i },
+    { label: 'teleprompter deck / monologue file', re: /\b(?:teleprompter deck|monologue file|output document)\b/i },
+    { label: 'revision snapshots / branches', re: /\b(?:revision snapshots|script branches)\b/i },
+    { label: 'internal step code in status line', re: /\bStep\s+(?:R[1-7](?:\.5)?|B[1-6](?:\.5)?|M[1-6](?:\.5)?)\b/ }
+  ];
+  for (const rule of driftedTerms) {
+    check(!rule.re.test(combinedCorpus), `40-turn terminology: zero drifted term (${rule.label})`);
+  }
+}
+
 if (failures.length) {
   console.error('check-storysculpt-long-thread FAIL\n- ' + failures.join('\n- '));
   process.exit(1);
 }
-console.log(`PASS: check-storysculpt-long-thread: ${TURNS} turns render the last 12 in ${median.toFixed(2)} ms, keep the reading position on expand, and speak only a new reply.`);
+console.log(`PASS: check-storysculpt-long-thread: ${TURNS} turns render the last 12 in ${median.toFixed(2)} ms, keep the reading position on expand, speak only a new reply, and pass the 40-turn terminology check.`);

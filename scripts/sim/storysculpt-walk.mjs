@@ -1504,6 +1504,83 @@ async function lifecyclePass(browser) {
     await context.close();
   }
 
+  // 6. Member-stated objective (Stranger 44) and posted/graded control (Stranger 100, UX 100)
+  {
+    const { context, page, world } = await open(browser, 'first', { width: 1280 });
+    // Scenario A: Member who skips the objective sees a plain "no objective stated" line
+    await page.click('.story-mode[data-mode="bold"]');
+    await page.waitForSelector('#story-editor:not([hidden])', { timeout: 5000 });
+    world.mode.forceFinal = true;
+    await page.fill('#story-answer', 'Why founders should stop hiding their pricing.');
+    await page.click('#story-send');
+    await page.waitForSelector('#story-output:not([hidden])', { timeout: 5000 });
+    const skippedObjText = (await page.locator('#story-output-objective').textContent() || '').trim();
+    const skippedObjState = await page.locator('#story-output-objective').getAttribute('data-objective-state');
+
+    // Scenario B: Member enters who the script is for and next action in the intake, finishes, and sees both on the panel
+    await page.click('#start-another-story');
+    await page.waitForSelector('#story-start:not([hidden])', { timeout: 5000 });
+    await page.click('.story-mode[data-mode="rant"]');
+    await page.waitForSelector('#story-editor:not([hidden])', { timeout: 5000 });
+    await page.fill('#story-objective-audience', 'Bootstrapped founders who hate pitching');
+    await page.fill('#story-objective-action', 'Book a 20-minute strategy call');
+    world.mode.forceFinal = true;
+    await page.fill('#story-answer', 'When you name the exact bottleneck first, the right clients lean in.');
+    await page.click('#story-send');
+    await page.waitForSelector('#story-output:not([hidden])', { timeout: 5000 });
+    const statedObjText = (await page.locator('#story-output-objective').textContent() || '').trim();
+    const statedObjState = await page.locator('#story-output-objective').getAttribute('data-objective-state');
+    const savedIntakeObj = world.projects[0]?.intake?.objective || null;
+
+    // Scenario C: Editing it from the story profile updates the panel
+    await page.click('#story-open-memory');
+    await page.waitForSelector('#story-memory:not([hidden])', { timeout: 5000 });
+    await page.fill('#mem-objective-audience', 'Independent studio owners');
+    await page.fill('#mem-objective-action', 'Reply with their biggest bottleneck');
+    await page.click('#mem-save');
+    await page.waitForTimeout(200);
+    await page.click('#story-memory-close');
+    const editedObjText = (await page.locator('#story-output-objective').textContent() || '').trim();
+
+    // Help answer check ("Why does StorySculpt ask who this is for?")
+    await page.click('#eee-account-button');
+    await page.click('#story-help-open');
+    await page.waitForSelector('#story-help:not([hidden])', { timeout: 5000 });
+    const helpObjText = await page.locator('#story-help').textContent();
+    await page.keyboard.press('Escape');
+
+    // Posted and graded member control on the finished script panel
+    const weightBefore = await page.locator('#story-output-feedback').getAttribute('data-feedback-weight');
+    await page.click('#story-panel-film-btn');
+    await page.waitForTimeout(150);
+    const weightFilmed = await page.locator('#story-output-feedback').getAttribute('data-feedback-weight');
+    const postBtnVisible = await page.locator('#story-panel-post-btn').isVisible();
+    await page.click('#story-panel-post-btn');
+    await page.waitForTimeout(150);
+    const weightPosted = await page.locator('#story-output-feedback').getAttribute('data-feedback-weight');
+    const postedInStrip = await page.locator('#story-progress .story-progress').getAttribute('data-posted');
+
+    const objectiveAndPostedPass = skippedObjState === 'unset' &&
+      /No objective stated/i.test(skippedObjText) &&
+      statedObjState === 'stated' &&
+      statedObjText.includes('Bootstrapped founders who hate pitching') &&
+      statedObjText.includes('Book a 20-minute strategy call') &&
+      Boolean(savedIntakeObj && savedIntakeObj.audience) &&
+      editedObjText.includes('Independent studio owners') &&
+      editedObjText.includes('Reply with their biggest bottleneck') &&
+      /Why does StorySculpt ask who this is for\?/.test(helpObjText || '') &&
+      weightBefore === '1' &&
+      weightFilmed === '2' &&
+      postBtnVisible &&
+      weightPosted === '3' &&
+      postedInStrip === '1';
+
+    check('Stated objective in intake, finished panel, story profile, and Help, plus posted/graded member control',
+      objectiveAndPostedPass,
+      JSON.stringify({ skippedObjState, statedObjText, editedObjText, weightBefore, weightFilmed, weightPosted, postedInStrip }));
+    await context.close();
+  }
+
   // Signed out gate
   {
     const { context, page } = await open(browser, 'first', { width: 1280, signedOut: true });

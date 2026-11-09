@@ -254,10 +254,14 @@ async function confirmMemory(messageIndex, category) {
 }
 
 // The context sent to StorySculpt: the standing story profile first, then any
-// notes specific to this one chat. Both are the member's own words.
+// stated script objective and notes specific to this one chat. All are the member's own words.
 function composeContext() {
   const notes = storyEl('story-context').value.trim();
-  return [composeMemory(), notes].filter(part => part && part.trim()).join('\n\n');
+  const obj = (activeStory && typeof STATES !== 'undefined' && STATES && typeof STATES.scriptObjective === 'function')
+    ? STATES.scriptObjective(activeStory)
+    : null;
+  const objLine = obj && obj.summary ? 'SCRIPT OBJECTIVE: ' + obj.summary : '';
+  return [composeMemory(), objLine, notes].filter(part => part && part.trim()).join('\n\n');
 }
 
 // WBR-373: the 'Your scripts' strip and the one next step. The rail, the
@@ -326,18 +330,19 @@ function renderProjectList() {
     }
     const isActive = activeStory && activeStory.id === project.id;
     const isFilmed = Boolean(project.intake && project.intake.filmed);
+    const isPosted = STATES.isPosted(project);
     const isFinished = STATES.isFinished(project);
     const title = project.title || 'Untitled script';
     if (storySelectMode) {
       const checked = storySelected.has(project.id);
-      return '<div class="story-project-item is-selecting' + (checked ? ' is-checked' : '') + (isFilmed ? ' filmed' : '') + (isFinished ? ' is-finished' : '') + '"' + (isFinished ? ' data-finished="true"' : '') + (isFilmed ? ' data-filmed="true"' : '') + '>' +
+      return '<div class="story-project-item is-selecting' + (checked ? ' is-checked' : '') + (isFilmed ? ' filmed' : '') + (isPosted ? ' posted' : '') + (isFinished ? ' is-finished' : '') + '"' + (isFinished ? ' data-finished="true"' : '') + (isFilmed ? ' data-filmed="true"' : '') + (isPosted ? ' data-posted="true"' : '') + '>' +
         '<label class="story-project-check" title="' + storyEscape(title) + '">' +
           '<input type="checkbox" data-select-project="' + storyEscape(project.id) + '"' + (checked ? ' checked' : '') + '>' +
           '<span class="story-project-title">' + storyEscape(title) + '</span>' +
         '</label>' +
       '</div>';
     }
-    return '<div class="story-project-item' + (isActive ? ' active' : '') + (isFilmed ? ' filmed' : '') + (isFinished ? ' is-finished' : '') + '"' + (isFinished ? ' data-finished="true"' : '') + (isFilmed ? ' data-filmed="true"' : '') + '>' +
+    return '<div class="story-project-item' + (isActive ? ' active' : '') + (isFilmed ? ' filmed' : '') + (isPosted ? ' posted' : '') + (isFinished ? ' is-finished' : '') + '"' + (isFinished ? ' data-finished="true"' : '') + (isFilmed ? ' data-filmed="true"' : '') + (isPosted ? ' data-posted="true"' : '') + '>' +
       '<button class="story-project-select" type="button" data-project-id="' + storyEscape(project.id) + '" title="' + storyEscape(title) + '">' +
         '<span class="story-project-title">' + storyEscape(title) + '</span>' +
       '</button>' +
@@ -496,12 +501,19 @@ async function toggleFilmed(projectId) {
   const intake = Object.assign({}, project.intake);
   intake.filmed = !intake.filmed;
   // Dated from here on; scripts filmed before this have only the flag.
-  if (intake.filmed) intake.filmedAt = new Date().toISOString(); else delete intake.filmedAt;
+  if (intake.filmed) {
+    intake.filmedAt = new Date().toISOString();
+  } else {
+    delete intake.filmedAt;
+    delete intake.posted;
+    delete intake.postedAt;
+  }
   project.intake = intake;
   if (activeStory && activeStory.id === projectId) {
     activeStory.intake = intake;
   }
   renderProjectList();
+  renderScriptPanel();
   try {
     const { data, error } = await storyContext.sb.from('storysculpt_projects').update({
       intake,
@@ -515,6 +527,45 @@ async function toggleFilmed(projectId) {
     project.intake = previousIntake;
     if (activeStory && activeStory.id === projectId) activeStory.intake = previousIntake;
     renderProjectList();
+    renderScriptPanel();
+  }
+}
+
+async function togglePosted(projectId) {
+  const project = storyProjects.find(p => p.id === projectId);
+  if (!project) return;
+  if (!project.output || !(project.intake && project.intake.filmed)) {
+    const saveStatus = storyEl('story-save-status');
+    if (saveStatus) {
+      saveStatus.textContent = 'Mark the script filmed before marking it posted.';
+      saveStatus.className = 'eee-message error';
+    }
+    return;
+  }
+  const previousIntake = project.intake;
+  const intake = Object.assign({}, project.intake);
+  intake.posted = !intake.posted;
+  if (intake.posted) intake.postedAt = new Date().toISOString(); else delete intake.postedAt;
+  project.intake = intake;
+  if (activeStory && activeStory.id === projectId) {
+    activeStory.intake = intake;
+  }
+  renderProjectList();
+  renderScriptPanel();
+  try {
+    const { data, error } = await storyContext.sb.from('storysculpt_projects').update({
+      intake,
+      updated_at: new Date().toISOString()
+    }).eq('id', projectId).select('status,version').single();
+    if (error) throw error;
+    Object.assign(project, data);
+    if (activeStory && activeStory.id === projectId) Object.assign(activeStory, data);
+  } catch (err) {
+    console.error('Failed to update posted status', err);
+    project.intake = previousIntake;
+    if (activeStory && activeStory.id === projectId) activeStory.intake = previousIntake;
+    renderProjectList();
+    renderScriptPanel();
   }
 }
 
@@ -568,6 +619,100 @@ function renderVersionPills() {
   }
 }
 
+function syncObjectiveInputs(project) {
+  const rawObj = (project && project.intake && project.intake.objective && typeof project.intake.objective === 'object')
+    ? project.intake.objective
+    : {};
+  const aud = String(rawObj.audience || '');
+  const act = String(rawObj.nextAction || '');
+  const intakeAud = storyEl('story-objective-audience');
+  const intakeAct = storyEl('story-objective-action');
+  const memAud = storyEl('mem-objective-audience');
+  const memAct = storyEl('mem-objective-action');
+  const memBox = storyEl('mem-script-objective');
+  if (intakeAud && document.activeElement !== intakeAud) intakeAud.value = aud;
+  if (intakeAct && document.activeElement !== intakeAct) intakeAct.value = act;
+  if (memAud && document.activeElement !== memAud) memAud.value = aud;
+  if (memAct && document.activeElement !== memAct) memAct.value = act;
+  if (memBox) memBox.hidden = !project;
+}
+
+function applyStoryObjective(audience, nextAction, source) {
+  if (!activeStory) return;
+  const aud = String(audience || '').trim();
+  const act = String(nextAction || '').trim();
+  if (typeof STATES !== 'undefined' && STATES && typeof STATES.withScriptObjective === 'function') {
+    const nextProj = STATES.withScriptObjective(activeStory, aud, act);
+    activeStory.intake = nextProj.intake;
+  } else {
+    if (!activeStory.intake || typeof activeStory.intake !== 'object') activeStory.intake = {};
+    activeStory.intake.objective = { audience: aud, nextAction: act, updatedAt: new Date().toISOString() };
+  }
+  if (source !== 'intake') {
+    const intakeAud = storyEl('story-objective-audience');
+    const intakeAct = storyEl('story-objective-action');
+    if (intakeAud) intakeAud.value = aud;
+    if (intakeAct) intakeAct.value = act;
+  }
+  if (source !== 'memory') {
+    const memAud = storyEl('mem-objective-audience');
+    const memAct = storyEl('mem-objective-action');
+    if (memAud) memAud.value = aud;
+    if (memAct) memAct.value = act;
+  }
+  renderOutputMeta();
+}
+
+function renderOutputMeta() {
+  const objEl = storyEl('story-output-objective');
+  if (objEl) {
+    const obj = (activeStory && typeof STATES !== 'undefined' && STATES && typeof STATES.scriptObjective === 'function')
+      ? STATES.scriptObjective(activeStory)
+      : null;
+    if (obj && obj.summary) {
+      objEl.dataset.objectiveState = 'stated';
+      objEl.dataset.objectiveCategory = obj.category || '';
+      objEl.textContent = 'Stated objective: ' + obj.summary;
+    } else {
+      objEl.dataset.objectiveState = 'unset';
+      objEl.dataset.objectiveCategory = 'unset';
+      objEl.textContent = 'No objective stated for this script. Add who it is for and what they should do next in Settings & story profile if you want one shown here.';
+    }
+  }
+
+  const fbBox = storyEl('story-output-feedback');
+  if (fbBox && activeStory && typeof STATES !== 'undefined' && STATES) {
+    const fb = typeof STATES.feedbackScale === 'function' ? STATES.feedbackScale(activeStory) : null;
+    const effort = typeof STATES.effortRecognition === 'function' ? STATES.effortRecognition(activeStory) : null;
+    const filmed = Boolean(STATES.isFilmed && STATES.isFilmed(activeStory));
+    const posted = Boolean(STATES.isPosted && STATES.isPosted(activeStory));
+    if (fb) {
+      fbBox.dataset.feedbackWeight = String(fb.weight);
+      fbBox.dataset.filmed = String(filmed);
+      fbBox.dataset.posted = String(posted);
+      const labelEl = storyEl('story-feedback-label');
+      const headEl = storyEl('story-feedback-headline');
+      const detailEl = storyEl('story-feedback-detail');
+      if (labelEl) labelEl.textContent = fb.label;
+      if (headEl) headEl.textContent = fb.headline;
+      if (detailEl) detailEl.textContent = fb.detail;
+    }
+    const effortEl = storyEl('story-feedback-effort');
+    if (effortEl) effortEl.textContent = (effort && effort.line) || '';
+    const filmBtn = storyEl('story-panel-film-btn');
+    if (filmBtn) {
+      filmBtn.textContent = filmed ? 'Filmed (undo)' : 'Mark filmed';
+      filmBtn.setAttribute('aria-pressed', String(filmed));
+    }
+    const postBtn = storyEl('story-panel-post-btn');
+    if (postBtn) {
+      postBtn.hidden = !filmed;
+      postBtn.textContent = posted ? 'Posted (undo)' : 'Mark posted';
+      postBtn.setAttribute('aria-pressed', String(posted));
+    }
+  }
+}
+
 function renderScriptPanel() {
   normalizeViewingVersion();
   renderMemberProgress();
@@ -576,6 +721,7 @@ function renderScriptPanel() {
   const output = storyEl('story-output');
   const mobileTabs = storyEl('story-mobile-tabs');
   const composer = storyEl('story-composer');
+  const intakeObj = storyEl('story-intake-objective');
   const refineBox = storyEl('story-refine-box');
   const genStatus = storyEl('story-generation-status');
 
@@ -584,10 +730,12 @@ function renderScriptPanel() {
     output.hidden = false;
     mobileTabs.hidden = false;
     composer.hidden = true;
+    if (intakeObj) intakeObj.hidden = true;
     genStatus.hidden = true;
     refineBox.hidden = false;
 
     renderVersionPills();
+    renderOutputMeta();
 
     const versions = ensureVersions(activeStory);
     const contentToShow = (viewingVersionIndex !== -1 && versions[viewingVersionIndex])
@@ -616,6 +764,7 @@ function renderScriptPanel() {
     output.hidden = true;
     mobileTabs.hidden = true;
     composer.hidden = false;
+    if (intakeObj) intakeObj.hidden = Boolean(activeStory && activeStory.content_type === 'ugc');
     genStatus.hidden = false;
     refineBox.hidden = true;
     viewingVersionIndex = -1;
@@ -1924,6 +2073,7 @@ function showProject(project) {
   storyEl('story-mode').value = project.content_type || 'bold';
   storyEl('story-format-badge').textContent = STORY_MODE_LABELS[project.content_type] || 'Controversial Take';
   storyEl('story-context').value = project.intake && project.intake.context || '';
+  syncObjectiveInputs(project);
   storyEl('story-save-status').textContent = '';
   storyEl('story-refine-status').textContent = '';
   switchMobileTab('chat');
@@ -1932,12 +2082,15 @@ function showProject(project) {
   if (project.content_type === 'ugc') {
     storyEl('story-scroll').hidden = true;
     storyEl('story-composer').hidden = true;
+    const intakeObj = storyEl('story-intake-objective');
+    if (intakeObj) intakeObj.hidden = true;
     storyEl('story-generation-status').hidden = true;
     renderUgcProject(project);
     // Always render the script panel, so a new UGC chat clears the script the
     // previous chat left on screen (2026-10-13 live test).
     renderScriptPanel();
     storyEl('story-composer').hidden = true;
+    if (intakeObj) intakeObj.hidden = true;
     storyEl('story-generation-status').hidden = true;
     if (project.output && window.innerWidth > 820) storyEl('story-refine-note').focus();
   } else {
@@ -1996,6 +2149,7 @@ function showStart() {
   }
   activeStory = null;
   viewingVersionIndex = -1;
+  syncObjectiveInputs(null);
   const isFirstVisit = !storyProjects || storyProjects.length === 0;
   const startEl = storyEl('story-start');
   if (startEl) startEl.dataset.firstVisit = isFirstVisit ? 'true' : 'false';
@@ -2104,6 +2258,20 @@ function setStorySaveStatus(project, revision, text, error = false) {
 }
 
 function captureStorySave(project) {
+  if (project && project === activeStory) {
+    const intakeAud = storyEl('story-objective-audience');
+    const intakeAct = storyEl('story-objective-action');
+    const aud = intakeAud && intakeAud.value ? intakeAud.value.trim() : '';
+    const act = intakeAct && intakeAct.value ? intakeAct.value.trim() : '';
+    const existingObj = project.intake && project.intake.objective;
+    if (aud || act || (existingObj && (existingObj.audience || existingObj.nextAction))) {
+      const curAud = existingObj ? String(existingObj.audience || '').trim() : '';
+      const curAct = existingObj ? String(existingObj.nextAction || '').trim() : '';
+      if (aud !== curAud || act !== curAct) {
+        applyStoryObjective(aud, act, 'intake');
+      }
+    }
+  }
   return JSON.parse(JSON.stringify({
     title: storyEl('story-title').value.trim() || 'Untitled script',
     intake: { ...(project.intake || {}), context: storyEl('story-context').value.trim() },
@@ -3074,6 +3242,7 @@ function openMemory() {
     if (accountButton) accountButton.setAttribute('aria-expanded', 'false');
   }
   MEMORY_FIELDS.forEach(([key, id]) => { storyEl(id).value = memoryProfile[key] || ''; });
+  syncObjectiveInputs(activeStory);
   renderSettingsSummary();
   renderMemoryFreshness();
   storyEl('mem-status').textContent = '';
@@ -3139,6 +3308,13 @@ async function saveMemory() {
       replaced.forEach(val => sup.add(val));
       activeStory.intake.supersededDetails = [...sup];
     }
+    if (activeStory) {
+      const memAud = storyEl('mem-objective-audience');
+      const memAct = storyEl('mem-objective-action');
+      applyStoryObjective(memAud ? memAud.value : '', memAct ? memAct.value : '', 'memory');
+      renderScriptPanel();
+      await saveActiveStory('Objective saved').catch(() => {});
+    }
     renderSettingsSummary();
     renderMemoryFreshness();
     renderNewChatMemoryPreview();
@@ -3202,6 +3378,12 @@ storyEl('story-project-list').addEventListener('click', event => {
     toggleFilmed(filmBtn.dataset.projectId);
     return;
   }
+  const postBtn = event.target.closest('[data-action="toggle-posted"]');
+  if (postBtn) {
+    event.stopPropagation();
+    togglePosted(postBtn.dataset.projectId);
+    return;
+  }
   const delBtn = event.target.closest('[data-action="delete-project"]');
   if (delBtn) {
     event.stopPropagation();
@@ -3257,6 +3439,40 @@ storyEl('story-notes-toggle').addEventListener('click', () => {
 });
 storyEl('story-title').addEventListener('input', queueStorySave);
 storyEl('story-context').addEventListener('input', queueStorySave);
+if (storyEl('story-objective-audience')) {
+  storyEl('story-objective-audience').addEventListener('input', () => {
+    applyStoryObjective(storyEl('story-objective-audience').value, storyEl('story-objective-action') ? storyEl('story-objective-action').value : '', 'intake');
+    queueStorySave();
+  });
+}
+if (storyEl('story-objective-action')) {
+  storyEl('story-objective-action').addEventListener('input', () => {
+    applyStoryObjective(storyEl('story-objective-audience') ? storyEl('story-objective-audience').value : '', storyEl('story-objective-action').value, 'intake');
+    queueStorySave();
+  });
+}
+if (storyEl('mem-objective-audience')) {
+  storyEl('mem-objective-audience').addEventListener('input', () => {
+    applyStoryObjective(storyEl('mem-objective-audience').value, storyEl('mem-objective-action') ? storyEl('mem-objective-action').value : '', 'memory');
+    queueStorySave();
+  });
+}
+if (storyEl('mem-objective-action')) {
+  storyEl('mem-objective-action').addEventListener('input', () => {
+    applyStoryObjective(storyEl('mem-objective-audience') ? storyEl('mem-objective-audience').value : '', storyEl('mem-objective-action').value, 'memory');
+    queueStorySave();
+  });
+}
+if (storyEl('story-panel-film-btn')) {
+  storyEl('story-panel-film-btn').addEventListener('click', () => {
+    if (activeStory) toggleFilmed(activeStory.id);
+  });
+}
+if (storyEl('story-panel-post-btn')) {
+  storyEl('story-panel-post-btn').addEventListener('click', () => {
+    if (activeStory) togglePosted(activeStory.id);
+  });
+}
 storyEl('story-composer').addEventListener('submit', sendStoryAnswer);
 storyEl('story-conversation').addEventListener('click', event => {
   if (event.target.closest('[data-show-earlier]')) { showEarlierTurns(); return; }

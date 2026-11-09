@@ -154,7 +154,7 @@ const readStep = markup => {
 // A server-added escalation step must have working client choices, including
 // when an existing saved conversation is reopened. Version the script URL so
 // a reload does not reuse the pre-escalation client.
-check(html.includes('/js/storysculpt.js?v=wbr462-evening-walk-20261108-v2'), 'page must load the current client version (empty-send status line and one name for the resume button, archive, progress, return line, recovery, screen-reader announcements, confirmed memory, and self-serve deletion, WBR-462)');
+check(html.includes('/js/storysculpt.js?v=wbr462-kimi-objective-20261108-v1'), 'page must load the current client version (stated objective in intake/panel/profile/Help, posted/graded control, empty-send status line, one name for the resume button, archive, progress, return line, recovery, screen-reader announcements, confirmed memory, and self-serve deletion, WBR-462)');
 for (const step of ['B5.5', 'M5.5', 'R6.5']) {
   const app = boot([]);
   app.context.choiceProject = { id: 'choices', output: null, intake: { current_step: step }, conversation: [{ role: 'assistant', step, content: 'Stronger hooks\n1. First.\n2. Second.\n3. Third.' }] };
@@ -340,6 +340,47 @@ for (const step of ['B5.5', 'M5.5', 'R6.5']) {
   const withObj = S.withScriptObjective(finProj, 'Independent bakery owners', 'Book a tasting menu consultation');
   const obj = S.scriptObjective(withObj);
   check(obj && obj.audience === 'Independent bakery owners' && obj.category === 'conversion', 'Stranger 44: stated objective classifies script');
+
+  // Stranger 44 real-handler test: intake -> save -> finished script panel -> story profile edit -> Help
+  check(/<h3>Why does StorySculpt ask who this is for\?<\/h3>/.test(html), 'Stranger 44: Help answers why StorySculpt asks who the script is for');
+  const objApp = boot([project('obj-live', { touched: 1 })]);
+  await objApp.run();
+  check(!objApp.el('story-intake-objective').hidden, 'Stranger 44: intake objective fields are visible during interview');
+  vm.runInContext('activeStory.output = "Finished script without objective."; renderScriptPanel();', objApp.context);
+  check(objApp.el('story-output-objective').dataset.objectiveState === 'unset' && /No objective stated/i.test(objApp.el('story-output-objective').textContent), 'Stranger 44: script with no objective says so plainly on the panel');
+
+  const objApp2 = boot([project('obj-live-2', { touched: 1 })]);
+  await objApp2.run();
+  objApp2.el('story-objective-audience').value = 'Independent bakery owners';
+  objApp2.el('story-objective-action').value = 'Book a tasting menu consultation';
+  objApp2.el('story-objective-audience').listeners.input[0]();
+  objApp2.el('story-objective-action').listeners.input[0]();
+  await vm.runInContext('saveActiveStory("Objective saved")', objApp2.context);
+  check(objApp2.updates.some(u => u.intake && u.intake.objective && u.intake.objective.audience === 'Independent bakery owners' && u.intake.objective.nextAction === 'Book a tasting menu consultation'), 'Stranger 44: intake handler saves objective to project.intake.objective through existing save path');
+  vm.runInContext('activeStory.output = "Finished script with objective."; renderScriptPanel();', objApp2.context);
+  const panelObjText = objApp2.el('story-output-objective').textContent;
+  check(objApp2.el('story-output-objective').dataset.objectiveState === 'stated' && panelObjText.includes('Independent bakery owners') && panelObjText.includes('Book a tasting menu consultation'), 'Stranger 44: finished script panel displays stated audience and next action');
+
+  // Editing from the story profile updates the panel
+  vm.runInContext('openMemory()', objApp2.context);
+  check(objApp2.el('mem-objective-audience').value === 'Independent bakery owners' && objApp2.el('mem-objective-action').value === 'Book a tasting menu consultation', 'Stranger 44: story profile loads current script objective');
+  objApp2.el('mem-objective-audience').value = 'Local wedding planners';
+  objApp2.el('mem-objective-action').value = 'Reply with their spring venue dates';
+  objApp2.el('mem-objective-audience').listeners.input[0]();
+  objApp2.el('mem-objective-action').listeners.input[0]();
+  const updatedPanelText = objApp2.el('story-output-objective').textContent;
+  check(updatedPanelText.includes('Local wedding planners') && updatedPanelText.includes('Reply with their spring venue dates') && objApp2.el('story-output-objective').dataset.objectiveCategory === 'conversation', 'Stranger 44: editing objective from the story profile updates the finished script panel');
+
+  // Posted and graded member control on the live page (feeds Stranger 100 and UX 100)
+  check(objApp2.el('story-output-feedback').dataset.feedbackWeight === '1' && objApp2.el('story-feedback-label').textContent === 'Finished' && objApp2.el('story-panel-post-btn').hidden === true, 'graded control: finished script starts at weight 1 (Finished) with post button hidden until filmed');
+  objApp2.el('story-panel-film-btn').listeners.click[0]();
+  await new Promise(resolve => setTimeout(resolve, 0));
+  check(objApp2.el('story-output-feedback').dataset.feedbackWeight === '2' && objApp2.el('story-feedback-label').textContent === 'Filmed' && objApp2.el('story-panel-post-btn').hidden === false, 'graded control: marking filmed advances feedback to weight 2 (Filmed) and reveals Mark posted');
+  objApp2.el('story-panel-post-btn').listeners.click[0]();
+  await new Promise(resolve => setTimeout(resolve, 0));
+  check(objApp2.el('story-output-feedback').dataset.feedbackWeight === '3' && objApp2.el('story-feedback-label').textContent === 'Posted' && objApp2.el('story-output-feedback').dataset.posted === 'true', 'graded control: marking posted advances feedback to weight 3 (Posted)');
+  check(objApp2.updates.some(u => u.intake && u.intake.posted === true && typeof u.intake.postedAt === 'string'), 'graded control: Mark posted saves intake.posted and intake.postedAt');
+  check(objApp2.el('story-progress').innerHTML.includes('data-posted="1"'), 'graded control: progress strip updates to data-posted="1"');
 }
 
 if (failures.length) {

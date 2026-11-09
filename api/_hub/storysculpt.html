@@ -348,6 +348,17 @@
                 </div>
               </div>
 
+              <div class="story-intake-objective" id="story-intake-objective">
+                <label class="story-objective-field" for="story-objective-audience">
+                  <span>Who is this script for? <small>(optional)</small></span>
+                  <input id="story-objective-audience" maxlength="200" placeholder="For example: founders who hate pitching">
+                </label>
+                <label class="story-objective-field" for="story-objective-action">
+                  <span>What should they do next? <small>(optional)</small></span>
+                  <input id="story-objective-action" maxlength="200" placeholder="For example: reply or book a call">
+                </label>
+              </div>
+
               <form class="story-composer" id="story-composer">
                 <textarea id="story-answer" rows="1" placeholder="Write it the way you would say it. Rough is useful." aria-label="Your answer" required></textarea>
                 <button class="story-send" id="story-send" type="submit" title="Send" aria-label="Send"><i data-lucide="arrow-up"></i></button>
@@ -387,6 +398,22 @@
               <div class="story-version-banner" id="story-version-banner" hidden>
                 <span id="story-version-banner-text">Viewing Version 1</span>
                 <button type="button" class="story-version-restore-btn" id="story-version-restore-btn">Restore as active draft</button>
+              </div>
+
+              <div class="story-output-meta" id="story-output-meta">
+                <p class="story-output-objective" id="story-output-objective" data-objective-state="unset">No objective stated for this script. Add who it is for and what they should do next in Settings &amp; story profile if you want one shown here.</p>
+                <div class="story-output-feedback" id="story-output-feedback" data-feedback-weight="1" data-filmed="false" data-posted="false">
+                  <div class="story-output-feedback-copy">
+                    <span class="story-feedback-badge" id="story-feedback-label">Finished</span>
+                    <strong id="story-feedback-headline">Script finished.</strong>
+                    <span id="story-feedback-detail">The words are ready. Record it on camera to move from draft to filmed.</span>
+                    <span class="story-feedback-effort" id="story-feedback-effort"></span>
+                  </div>
+                  <div class="story-output-stage-actions">
+                    <button class="secondary-button" id="story-panel-film-btn" type="button" data-action="toggle-filmed" aria-pressed="false">Mark filmed</button>
+                    <button class="secondary-button" id="story-panel-post-btn" type="button" data-action="toggle-posted" aria-pressed="false" hidden>Mark posted</button>
+                  </div>
+                </div>
               </div>
 
               <div class="story-artifact-body">
@@ -459,6 +486,11 @@
       </div>
       <div class="story-memory-freshness-slot" id="mem-freshness"></div>
       <div class="story-memory-fields">
+        <div class="story-memory-objective" id="mem-script-objective">
+          <p class="story-memory-objective-head"><strong>Current script objective (optional)</strong></p>
+          <label for="mem-objective-audience">Who is this script for?<input id="mem-objective-audience" maxlength="200" placeholder="For example: founders who hate pitching"></label>
+          <label for="mem-objective-action">What should that viewer do next?<input id="mem-objective-action" maxlength="200" placeholder="For example: reply or book a call"></label>
+        </div>
         <label for="mem-name">What should StorySculpt call you?<input id="mem-name" maxlength="80" placeholder="Your name"></label>
         <label for="mem-role">What do you do?<input id="mem-role" maxlength="160" placeholder="Coach, founder, creator, consultant"></label>
         <label for="mem-audience">Who are your videos for?<textarea id="mem-audience" maxlength="1200" placeholder="The people you are talking to and what they care about."></textarea></label>
@@ -484,6 +516,7 @@
         <section><h3>What happens to my work, and what does StorySculpt remember?</h3><p>Your chats, project titles, notes, finished scripts, and story profile are saved to your Studio account so you can return to them. When you ask StorySculpt to continue or revise, your title, profile, notes, and recent messages are processed by the AI model that writes your next question or draft, guided by David's method and your own words. Do not enter anything you do not want processed by an AI service.</p><p>StorySculpt's memory matches only what is stored in your account: (1) your standing story profile in <code>storysculpt_member_context</code> (the fields you save in Settings &amp; story profile plus any facts or voice notes you explicitly confirm from a finished project, which automatically stop resurfacing after 90 days), (2) the current chat in <code>storysculpt_projects</code> (its conversation turns, chat-specific notes, UGC product findings, saved script versions, and stored material separated into verified member facts, tentative inferences, and generated phrasing so guesses and model lines are never reused as facts), and (3) the opening lines of up to 20 of your recent finished scripts, read only so new hooks do not repeat your earlier openings. When a new chat starts, StorySculpt shows which saved profile entries it will use so you can leave any entry out for that chat without deleting it from your standing profile.</p><p>Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them.</p></section>
         <section><h3>Can I change the format?</h3><p>The format is locked after creation. Start a new script to use a different format; your existing chat stays in your list.</p></section>
         <section><h3>Can I pause and come back?</h3><p>Yes. Leaving does not delete your project. Reopen the chat to resume the interview where you stopped. If a step is interrupted before StorySculpt replies, your last answer is kept and you can resume from that exact step. If an opening answer covers several topics at once, StorySculpt asks one narrowing question so you can pick the single moment to focus on. Check the save indicator before closing the browser: Saving means a write is pending, Saved means it was acknowledged, and Not saved means the latest change has not reached your account yet. Changes kept only on this device are not available on another device until saved.</p></section>
+        <section><h3>Why does StorySculpt ask who this is for?</h3><p>Before or during a script, you can optionally name who the video is for and what you want that viewer to do next. StorySculpt saves that objective on the script itself and shows it at the top of your finished script so you can check the draft against the audience and next step you intended. If you leave those fields blank, StorySculpt says plainly that no objective was stated instead of guessing one for you. You can add or edit the current script's objective anytime in Settings &amp; story profile.</p></section>
         <section><h3>What does finishing a script mean?</h3><p>Finishing closes the interview to new turns and assembles your answers into a script you can record. Once a script is finished, the interview is locked so your script stays stable. A new answer cannot be added to a finished interview; use Refine with a note to change the script, or start a new chat for your next script. Copy it or download the text file when you are ready to film. Your saved script does not expire; it stays in your account until you delete it.</p></section>
         <section><h3>How long does an interview take?</h3><p>An interview takes about 5 to 10 minutes across 4 to 6 conversational turns. You talk through raw, unedited thoughts one question at a time in your natural phrasing, without needing an outline, slide deck, or prepared notes. Rough answers give the 5E framework the real emotional tension and personal perspective your video needs.</p></section>
         <section><h3>What happens after my first script?</h3><p>When your first script is finished, it is ready to record. You can copy it directly to your teleprompter or download the text file to film your video. Once you film, mark it filmed or start your next script to build momentum. Your saved scripts stay in your library and your standing story profile carries forward what StorySculpt learned about your voice and audience into every new script you create.</p></section>
@@ -511,6 +544,6 @@
       </div>
     </div>
   </div>
-  <script src="/js/eee-common.js?v=egress-v1"></script><script src="/js/storysculpt-member-states.js?v=wbr462-recovery-20261106-v1"></script><script src="/js/storysculpt.js?v=wbr462-evening-walk-20261108-v2"></script><script src="/js/voice-input.js?v=voice-sessions-1"></script>
+  <script src="/js/eee-common.js?v=egress-v1"></script><script src="/js/storysculpt-member-states.js?v=wbr462-recovery-20261106-v1"></script><script src="/js/storysculpt.js?v=wbr462-kimi-objective-20261108-v1"></script><script src="/js/voice-input.js?v=voice-sessions-1"></script>
 </body>
 </html>
