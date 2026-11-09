@@ -652,6 +652,10 @@ function renderDailyReport() {
     const reportDate = record.metadata.report_date;
     const separated = Number(record.metadata.lane_slots_version || 0) >= 2
       || ['evening', 'agnight', 'kiminight'].some(key => Object.hasOwn(record.metadata, key));
+    // A lane David paused (WorkerBee runtime/paused-lanes.mjs) is published in
+    // paused_lanes and drops off the Dashboard unless it actually ran that day.
+    const paused = new Set(Array.isArray(record.metadata.paused_lanes) ? record.metadata.paused_lanes : []);
+    const shown = (slot, metadataKey = slot) => !paused.has(slot) || hasPeriodContent(record.metadata[metadataKey]);
     const renderLane = (label, slot, metadataKey = slot) => renderReportPeriod(
       label,
       record.metadata[metadataKey],
@@ -674,7 +678,7 @@ function renderDailyReport() {
     grid.append(
       renderLane('Morning', 'morning'),
       renderLane('Late morning · Antigravity', 'lateMorning', 'late_morning'),
-      renderLane('Kimi build', 'kimi'),
+      ...(shown('kimi') ? [renderLane('Kimi build', 'kimi')] : []),
       renderLane('Afternoon', 'afternoon'),
       renderReportPeriod('Moltbook', record.metadata.moltbook, reportDate, fold('Moltbook'), runForReportLane(reportDate, 'moltbook')),
     );
@@ -682,7 +686,7 @@ function renderDailyReport() {
       grid.append(
         renderLane('Evening · Claude Code', 'evening'),
         renderLane('Overnight · Antigravity', 'agnight'),
-        renderLane('Overnight · Kimi', 'kiminight'),
+        ...(shown('kiminight') ? [renderLane('Overnight · Kimi', 'kiminight')] : []),
       );
     }
     // Reports written before the lanes separated keep their original card. A
