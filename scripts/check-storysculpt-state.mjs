@@ -236,6 +236,8 @@ function recoveryBrowser(project) {
   app.c.activeStory = null;
   app.c.storySaveTimer = null;
   app.c.storyReturnNotice = { state: 'lapsed', projectId: 'lapsed' };
+  app.c.document = app.c.document || { activeElement: null };
+  vm.runInContext(client.slice(client.indexOf('function syncObjectiveInputs('), client.indexOf('function applyStoryObjective(')), app.c);
   vm.runInContext(client.slice(client.indexOf('function showProject('), client.indexOf('function showStart()')), app.c);
   vm.runInContext('showProject(activeStory || ' + JSON.stringify(project) + ')', app.c);
   const line = app.element('story-generation-status').textContent;
