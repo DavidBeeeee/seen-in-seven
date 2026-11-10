@@ -23,20 +23,13 @@
 **Day One answer:** yes / no
 **Graduation confirmation:** yes / no
 
-## Partnership
+## Momentum Hub offer
 
 **Private offer presented:** yes / no
 **Decision:** enrolled / declined / follow-up
 **Follow-up date:**
 **Exact objection or deciding factor:**
 
-## EEE downsell
-
-Complete only after the partnership was declined.
-
-**Presented:** yes / no / not eligible
-**Decision:** enrolled / declined / follow-up / not eligible
-**Exact objection or deciding factor:**
 
 ## Permission after results
 

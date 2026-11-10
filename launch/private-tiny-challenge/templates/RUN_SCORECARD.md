@@ -29,10 +29,8 @@
 
 ## Graduation results
 
-**Partnership decision:** enrolled / declined / follow-up
-**Exact partnership objection:**
-**EEE result:** enrolled / declined / follow-up / not eligible
-**Exact EEE objection:**
+**Momentum Hub decision:** enrolled / declined / follow-up
+**Exact Momentum Hub objection:**
 **Referrals received:**
 **Testimonial permission and approved wording:**
 
