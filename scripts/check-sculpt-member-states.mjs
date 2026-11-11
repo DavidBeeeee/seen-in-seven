@@ -266,6 +266,27 @@ function longThread(turns) {
   check(/announceToReader\('Interview finished\./.test(appSrc), 'a finished script is announced, not only focused');
 }
 
+// WBR-462, November 10 production walk: HTML required stopped the submit
+// event before the app could name the waiting step. Whitespace reached the
+// handler, but a truly empty answer only displayed the browser's generic tip.
+{
+  const composer = page.match(/<textarea\b[^>]*\bid="story-answer"[^>]*>/)?.[0] || '';
+  check(Boolean(composer) && !/\srequired(?:\s|=|>)/i.test(composer), 'empty send reaches the named-step handler instead of native required validation');
+  const app = boot([project('p-empty', 'Empty answer walk', 1)]);
+  await app.run();
+  const before = vm.runInContext('JSON.stringify(activeStory.conversation)', app.context);
+  let calls = 0;
+  app.context.fetch = () => { calls += 1; throw new Error('Empty answers must not generate'); };
+  for (const value of ['', '   ']) {
+    app.document.getElementById('story-answer').value = value;
+    await vm.runInContext('sendStoryAnswer({ preventDefault() {} })', app.context);
+    const status = app.document.getElementById('story-generation-status');
+    check(!status.hidden && /Raw story is still waiting/.test(status.textContent), 'empty and spaces-only sends name Raw story');
+    check(vm.runInContext('JSON.stringify(activeStory.conversation)', app.context) === before, 'empty send preserves the saved conversation');
+  }
+  check(calls === 0, 'empty and whitespace sends make no model request');
+}
+
 if (failures.length) {
   console.error('check-sculpt-member-states FAIL\n- ' + failures.join('\n- '));
   process.exit(1);
