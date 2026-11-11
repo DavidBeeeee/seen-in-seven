@@ -1,14 +1,10 @@
 - banner:
-  - link "SS StorySculpt":
+  - link "StorySculpt":
     - /url: /
-    - text: SS
     - heading "StorySculpt" [level=1]
   - link "My Studio":
     - /url: /
-    - img
-    - text: My Studio
-  - button "Change color theme":
-    - img
+  - button "Change color theme"
   - button "W"
 - main:
   - complementary:
@@ -26,6 +22,29 @@
   - button "Delete":
     - img
     - text: Delete
+  - strong: Saved entries StorySculpt will use in this chat (7)
+  - text: From your story profile and answers you confirmed in finished projects. Leave any entry out for this chat without deleting it.
+  - strong: "Name:"
+  - text: Alex
+  - button "Leave out of this chat"
+  - strong: "What they do:"
+  - text: Founder and positioning coach
+  - button "Leave out of this chat"
+  - strong: "Who their videos are for:"
+  - text: Bootstrapped B2B founders selling high-ticket services
+  - button "Leave out of this chat"
+  - strong: "Voice and phrasing:"
+  - text: Direct, calm, practical, no hype words
+  - button "Leave out of this chat"
+  - strong: "Offers and recurring calls to action:"
+  - text: Quarterly positioning sprint
+  - button "Leave out of this chat"
+  - strong: "Facts and results to reuse:"
+  - text: Built three profitable micro-SaaS companies; 12 years consulting
+  - button "Leave out of this chat"
+  - strong: "Other notes:"
+  - text: Prefers short sentences and concrete examples
+  - button "Leave out of this chat"
   - article:
     - text: StorySculpt What is the core thought or frustration on your mind today?
     - button "Copy":
@@ -64,6 +83,12 @@
       - img
       - text: Use as Script
   - status
+  - text: Who is this script for? (optional)
+  - textbox "Who is this script for? (optional)":
+    - /placeholder: "For example: founders who hate pitching"
+  - text: What should they do next? (optional)
+  - textbox "What should they do next? (optional)":
+    - /placeholder: "For example: reply or book a call"
   - textbox "Your answer":
     - /placeholder: Write it the way you would say it. Rough is useful.
   - button "Send":

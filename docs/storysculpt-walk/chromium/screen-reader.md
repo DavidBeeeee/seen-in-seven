@@ -6,7 +6,7 @@ Browser: `chromium`. Captured from the rendered accessibility tree; every networ
 
 ## first-visit
 
-Screenshot: `not captured`
+Screenshot: `docs/storysculpt-walk/chromium/shots/038-a11y-first-visit.jpg`
 Transcript: `a11y/first-visit.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a script the way you talk.” → h3 “Turn raw thoughts into video scripts that sound like you.” → h4 “1. Why the 5E interview keeps your voice” → h4 “2. What to expect: 5 to 10 minutes” → h4 “3. What happens when your script is ready”
@@ -80,7 +80,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a scrip
 
 ## interview
 
-Screenshot: `not captured`
+Screenshot: `docs/storysculpt-walk/chromium/shots/039-a11y-interview.jpg`
 Transcript: `a11y/interview.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor”
@@ -187,7 +187,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## finished
 
-Screenshot: `not captured`
+Screenshot: `docs/storysculpt-walk/chromium/shots/040-a11y-finished.jpg`
 Transcript: `a11y/finished.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor”
@@ -291,7 +291,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## story-profile
 
-Screenshot: `not captured`
+Screenshot: `docs/storysculpt-walk/chromium/shots/041-a11y-story-profile.jpg`
 Transcript: `a11y/story-profile.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Format, theme, and standing facts in one place.”
@@ -409,7 +409,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
   - paragraph: 7 of 7 standing fields saved below (reused across chats unless left out for a chat)
   - status:
     - paragraph:
-      - strong: Story profile updated 87 days ago.
+      - strong: Story profile updated 88 days ago.
       - text: Review your audience, offers, or facts to keep future scripts current.
     - button "Review details"
   - paragraph:
@@ -464,7 +464,7 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## help-dialog
 
-Screenshot: `not captured`
+Screenshot: `docs/storysculpt-walk/chromium/shots/042-a11y-help-dialog.jpg`
 Transcript: `a11y/help-dialog.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Help & privacy” → h3 “Who makes this?” → h3 “What does membership include, and how does it renew?” → h3 “What happens to my work, and what does StorySculpt remember?” → h3 “Can I change the format?” → h3 “Can I pause and come back?” → h3 “Why does StorySculpt ask who this is for?” → h3 “What does finishing a script mean?” → h3 “How long does an interview take?” → h3 “What happens after my first script?” → h3 “Can I archive or delete a chat?” → h3 “What happens when I delete a project?” → h3 “How do I delete all my StorySculpt data, and what is retained?” → h3 “What should I do next?” → h3 “What if something hard comes up while I write?” → h3 “Where do I get help?”

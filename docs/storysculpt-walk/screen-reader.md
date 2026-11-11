@@ -2,26 +2,6 @@
 
 Chromium uses the CDP Accessibility tree and an ARIA snapshot; WebKit uses its rendered ARIA snapshot. Neither is a substitute for a real VoiceOver session.
 
-
-<!-- voiceover:start -->
-
-## VoiceOver
-
-**Not recorded yet.** `scripts/sim/storysculpt-voiceover.mjs` drives real VoiceOver over the interview (start, answer, generate, finish, refine, delete with undo, and a send that loses the network) and replaces this section with what VoiceOver spoke. On 2026-11-01 the evening built it but did not run it live: the Mac was in active use (HID idle 0 s at 12:05 and 12:23 ET), and VoiceOver takes the front window and speaks over whoever is there. The script now refuses to start unless the Mac has been idle five minutes, or `--attended` says the person running it is watching.
-
-What the same steps found in a headless WebKit run (`--dry`, real page, stubbed world, no speech), before and after the fix in this commit:
-
-| Moment | Before | After |
-| --- | --- | --- |
-| Send loses the network | "Connection lost..." went only to `#story-generation-status`, which is not a live region, so nothing was spoken; keyboard focus fell to the page body | The status line (`#story-latest-live`) says "Could not finish this step. Connection lost. Your saved chat is safe..."; focus lands on Try Again |
-| Interview finishes | Focus moved to the refine box in silence; the live line still held the last interview question | The status line says "Interview finished. Your script is ready in the script panel. Refine it with a note, or start a new chat."; focus stays on the refine box |
-| Refine (and Bullet points) completes | The button disabled itself during the request and focus fell to the page body | Focus returns to the button; "Script revised." is spoken by the refine status as before |
-| Delete, Escape, confirm, Undo | Dialog takes focus, Escape returns focus to Delete chat, Undo restores the chat | Unchanged; works |
-
-Checks: `check-sculpt-member-states` now covers the spoken failure and the focus return; `storysculpt-walk --browser webkit` 47/47 with zero findings after the change; `npm test` exit 0.
-
-<!-- voiceover:end -->
-
 ---
 
 ## chromium
@@ -32,23 +12,19 @@ Browser: `chromium`. Captured from the rendered accessibility tree; every networ
 
 ## first-visit
 
-Screenshot: `docs/storysculpt-walk/chromium/shots/037-a11y-first-visit.jpg`
+Screenshot: `docs/storysculpt-walk/chromium/shots/038-a11y-first-visit.jpg`
 Transcript: `a11y/first-visit.yml`
 
-Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a script the way you talk.” → h3 “Turn raw thoughts into video scripts that sound like you.” → h4 “Why the 5E interview keeps your voice” → h4 “What to expect: 5 to 10 minutes” → h4 “What happens when your script is ready”
+Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a script the way you talk.” → h3 “Turn raw thoughts into video scripts that sound like you.” → h4 “1. Why the 5E interview keeps your voice” → h4 “2. What to expect: 5 to 10 minutes” → h4 “3. What happens when your script is ready”
 
 ```yaml
 - banner:
-  - link "SS StorySculpt":
+  - link "StorySculpt":
     - /url: /
-    - text: SS
     - heading "StorySculpt" [level=1]
   - link "My Studio":
     - /url: /
-    - img
-    - text: My Studio
-  - button "Change color theme":
-    - img
+  - button "Change color theme"
   - button "W"
 - main:
   - complementary:
@@ -66,67 +42,63 @@ Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a scrip
     - text: First Script Orientation
     - heading "Turn raw thoughts into video scripts that sound like you." [level=3]
     - paragraph: Getting on camera is hard when a blank page stares back at you, or when generic tools turn your thoughts into stiff corporate slogans. StorySculpt solves that. You talk through raw thoughts in a focused interview, and the system shapes your exact phrasing into a ready-to-film script.
-    - text: "1"
-    - heading "Why the 5E interview keeps your voice" [level=4]
+    - heading "1. Why the 5E interview keeps your voice" [level=4]
     - paragraph:
       - text: "Generic tools guess what you mean and flatten your personality. StorySculpt asks 4 to 6 focused questions to draw out the core emotional direction of your video:"
       - strong: Entertainment, Enragement, Epiphany, Empathy, or Education.
     - paragraph: It keeps your actual phrasing, natural cadence, and rough opinions so the finished script sounds like you talking to a friend.
-    - text: "2"
-    - 'heading "What to expect: 5 to 10 minutes" [level=4]'
+    - 'heading "2. What to expect: 5 to 10 minutes" [level=4]'
     - paragraph: "An interview takes about 5 to 10 minutes across 4 to 6 conversational turns. No preparation or polished outline is required: unedited thoughts and honest rants give the framework the real detail it needs."
     - paragraph: Pick a format below, answer each question in your own words, and pause whenever you want. Your work saves as you go.
-    - text: "3"
-    - heading "What happens when your script is ready" [level=4]
+    - heading "3. What happens when your script is ready" [level=4]
     - paragraph: Your finished script appears in the script panel with line-by-line editing, instant note refinement, and one-click export for your teleprompter.
     - paragraph: When you record, mark the script filmed to track your momentum. Build a steady library of filmed videos, keep your story profile updated, and start your next script anytime.
-    - text: Step 1
-    - strong: Choose your format
-    - text: Pick a format below and answer questions in your own words. Step 2
-    - strong: Review your script
-    - text: Refine lines with a quick note, edit text inline, or export. Step 3
-    - strong: Record and mark filmed
-    - text: Get on camera, track your momentum, and repeat. Choose your format to begin
+    - list "How StorySculpt works in three steps":
+      - listitem:
+        - text: Step 1
+        - strong: Choose your format
+        - text: Pick a format below and answer questions in your own words.
+      - listitem:
+        - text: Step 2
+        - strong: Review your script
+        - text: Refine lines with a quick note, edit text inline, or export.
+      - listitem:
+        - text: Step 3
+        - strong: Record and mark filmed
+        - text: Get on camera, track your momentum, and repeat.
+    - text: Choose your format to begin
     - paragraph: "Each format shapes your video for a specific audience reaction:"
     - paragraph: You can't change this later; start a new script for a different format.
   - region "Script format options":
     - button "Controversial Take A sharp point of view that challenges accepted wisdom.":
-      - img
       - strong: Controversial Take
       - text: A sharp point of view that challenges accepted wisdom.
     - button "Mini-Webinar A compact lesson with a story to teach one insight clearly.":
-      - img
       - strong: Mini-Webinar
       - text: A compact lesson with a story to teach one insight clearly.
     - button "5E Talking Head A raw thought with emotional momentum and personal honesty.":
-      - img
       - strong: 5E Talking Head
       - text: A raw thought with emotional momentum and personal honesty.
     - button "UGC / Product Video A creator-led breakdown that highlights a product naturally.":
-      - img
       - strong: UGC / Product Video
       - text: A creator-led breakdown that highlights a product naturally.
 ```
 
 ## interview
 
-Screenshot: `docs/storysculpt-walk/chromium/shots/038-a11y-interview.jpg`
+Screenshot: `docs/storysculpt-walk/chromium/shots/039-a11y-interview.jpg`
 Transcript: `a11y/interview.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor”
 
 ```yaml
 - banner:
-  - link "SS StorySculpt":
+  - link "StorySculpt":
     - /url: /
-    - text: SS
     - heading "StorySculpt" [level=1]
   - link "My Studio":
     - /url: /
-    - img
-    - text: My Studio
-  - button "Change color theme":
-    - img
+  - button "Change color theme"
   - button "W"
 - main:
   - complementary:
@@ -144,6 +116,29 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
   - button "Delete":
     - img
     - text: Delete
+  - strong: Saved entries StorySculpt will use in this chat (7)
+  - text: From your story profile and answers you confirmed in finished projects. Leave any entry out for this chat without deleting it.
+  - strong: "Name:"
+  - text: Alex
+  - button "Leave out of this chat"
+  - strong: "What they do:"
+  - text: Founder and positioning coach
+  - button "Leave out of this chat"
+  - strong: "Who their videos are for:"
+  - text: Bootstrapped B2B founders selling high-ticket services
+  - button "Leave out of this chat"
+  - strong: "Voice and phrasing:"
+  - text: Direct, calm, practical, no hype words
+  - button "Leave out of this chat"
+  - strong: "Offers and recurring calls to action:"
+  - text: Quarterly positioning sprint
+  - button "Leave out of this chat"
+  - strong: "Facts and results to reuse:"
+  - text: Built three profitable micro-SaaS companies; 12 years consulting
+  - button "Leave out of this chat"
+  - strong: "Other notes:"
+  - text: Prefers short sentences and concrete examples
+  - button "Leave out of this chat"
   - article:
     - text: StorySculpt What is the core thought or frustration on your mind today?
     - button "Copy":
@@ -182,6 +177,12 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
       - img
       - text: Use as Script
   - status
+  - text: Who is this script for? (optional)
+  - textbox "Who is this script for? (optional)":
+    - /placeholder: "For example: founders who hate pitching"
+  - text: What should they do next? (optional)
+  - textbox "What should they do next? (optional)":
+    - /placeholder: "For example: reply or book a call"
   - textbox "Your answer":
     - /placeholder: Write it the way you would say it. Rough is useful.
   - button "Speak instead of typing": 🎤
@@ -192,23 +193,19 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## finished
 
-Screenshot: `docs/storysculpt-walk/chromium/shots/039-a11y-finished.jpg`
+Screenshot: `docs/storysculpt-walk/chromium/shots/040-a11y-finished.jpg`
 Transcript: `a11y/finished.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor”
 
 ```yaml
 - banner:
-  - link "SS StorySculpt":
+  - link "StorySculpt":
     - /url: /
-    - text: SS
     - heading "StorySculpt" [level=1]
   - link "My Studio":
     - /url: /
-    - img
-    - text: My Studio
-  - button "Change color theme":
-    - img
+  - button "Change color theme"
   - button "W"
 - main:
   - complementary:
@@ -226,12 +223,17 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
   - button "Delete":
     - img
     - text: Delete
-  - button "Chat":
-    - img
-    - text: Chat
-  - button "Script v1":
-    - img
-    - text: Script v1
+  - tablist "Chat and script views":
+    - tab "Chat" [selected]
+    - tab "Script v1"
+  - strong: Saved entries StorySculpt will use in this chat (2)
+  - text: From your story profile and answers you confirmed in finished projects. Leave any entry out for this chat without deleting it.
+  - strong: "Name:"
+  - text: Alex
+  - button "Leave out of this chat"
+  - strong: "What they do:"
+  - text: Founder
+  - button "Leave out of this chat"
   - article:
     - text: StorySculpt What is the core thought on your mind today?
     - button "Copy":
@@ -245,6 +247,8 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Don’t use this":
       - img
       - text: Don’t use this
+    - button "Remember as fact"
+    - button "Remember as voice"
   - article:
     - text: StorySculpt Tell me about a time that proved this.
     - button "Copy":
@@ -258,6 +262,8 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Don’t use this":
       - img
       - text: Don’t use this
+    - button "Remember as fact"
+    - button "Remember as voice"
   - article:
     - text: StorySculpt Your script is assembled and ready to film below.
     - button "Copy":
@@ -291,23 +297,19 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## story-profile
 
-Screenshot: `docs/storysculpt-walk/chromium/shots/040-a11y-story-profile.jpg`
+Screenshot: `docs/storysculpt-walk/chromium/shots/041-a11y-story-profile.jpg`
 Transcript: `a11y/story-profile.yml`
 
-Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Set this once. Every chat reads it.”
+Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Format, theme, and standing facts in one place.”
 
 ```yaml
 - banner:
-  - link "SS StorySculpt":
+  - link "StorySculpt":
     - /url: /
-    - text: SS
     - heading "StorySculpt" [level=1]
   - link "My Studio":
     - /url: /
-    - img
-    - text: My Studio
-  - button "Change color theme":
-    - img
+  - button "Change color theme"
   - button "W"
 - main:
   - complementary:
@@ -325,6 +327,29 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
   - button "Delete":
     - img
     - text: Delete
+  - strong: Saved entries StorySculpt will use in this chat (7)
+  - text: From your story profile and answers you confirmed in finished projects. Leave any entry out for this chat without deleting it.
+  - strong: "Name:"
+  - text: Alex
+  - button "Leave out of this chat"
+  - strong: "What they do:"
+  - text: Founder and positioning coach
+  - button "Leave out of this chat"
+  - strong: "Who their videos are for:"
+  - text: Bootstrapped B2B founders selling high-ticket services
+  - button "Leave out of this chat"
+  - strong: "Voice and phrasing:"
+  - text: Direct, calm, practical, no hype words
+  - button "Leave out of this chat"
+  - strong: "Offers and recurring calls to action:"
+  - text: Quarterly positioning sprint
+  - button "Leave out of this chat"
+  - strong: "Facts and results to reuse:"
+  - text: Built three profitable micro-SaaS companies; 12 years consulting
+  - button "Leave out of this chat"
+  - strong: "Other notes:"
+  - text: Prefers short sentences and concrete examples
+  - button "Leave out of this chat"
   - article:
     - text: StorySculpt What is the core thought or frustration on your mind today?
     - button "Copy":
@@ -363,23 +388,44 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
       - img
       - text: Use as Script
   - status
+  - text: Who is this script for? (optional)
+  - textbox "Who is this script for? (optional)":
+    - /placeholder: "For example: founders who hate pitching"
+  - text: What should they do next? (optional)
+  - textbox "What should they do next? (optional)":
+    - /placeholder: "For example: reply or book a call"
   - textbox "Your answer":
     - /placeholder: Write it the way you would say it. Rough is useful.
   - button "Speak instead of typing": 🎤
   - button "Send":
     - img
   - paragraph: StorySculpt saves your chat as you go.
-- complementary "Your story profile":
-  - paragraph: Your story profile
-  - heading "Set this once. Every chat reads it." [level=2]
-  - button "Close story profile":
+- complementary "Settings and story profile":
+  - paragraph: Settings & story profile
+  - heading "Format, theme, and standing facts in one place." [level=2]
+  - button "Close settings and story profile":
     - img
-  - paragraph: These are the standing facts about you and your work. StorySculpt keeps them in mind on every script, so you never re-explain who you are.
+  - paragraph: "Everything StorySculpt holds for your workspace: your current script format, color theme, and the standing facts it uses across chats."
+  - strong: Script format
+  - paragraph: 5E Talking Head (locked for this chat; start a new chat for a different format)
+  - strong: Color theme
+  - paragraph: Dark mode active
+  - button "Switch to Light"
+  - strong: Story profile
+  - paragraph: 7 of 7 standing fields saved below (reused across chats unless left out for a chat)
   - status:
     - paragraph:
-      - strong: Story profile updated 77 days ago.
+      - strong: Story profile updated 88 days ago.
       - text: Review your audience, offers, or facts to keep future scripts current.
     - button "Review details"
+  - paragraph:
+    - strong: Current script objective (optional)
+  - text: Who is this script for?
+  - textbox "Who is this script for?":
+    - /placeholder: "For example: founders who hate pitching"
+  - text: What should that viewer do next?
+  - textbox "What should that viewer do next?":
+    - /placeholder: "For example: reply or book a call"
   - text: What should StorySculpt call you?
   - textbox "What should StorySculpt call you?":
     - /placeholder: Your name
@@ -414,6 +460,9 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - text: Prefers short sentences and concrete examples
   - button "Speak instead of typing": 🎤
   - paragraph
+  - button "Delete all StorySculpt data":
+    - img
+    - text: Delete all StorySculpt data
   - button "Save profile":
     - img
     - text: Save profile
@@ -421,23 +470,19 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## help-dialog
 
-Screenshot: `docs/storysculpt-walk/chromium/shots/041-a11y-help-dialog.jpg`
+Screenshot: `docs/storysculpt-walk/chromium/shots/042-a11y-help-dialog.jpg`
 Transcript: `a11y/help-dialog.yml`
 
-Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Help & privacy” → h3 “Who makes this?” → h3 “What does membership include, and how does it renew?” → h3 “What happens to my work?” → h3 “Can I change the format?” → h3 “Can I pause and come back?” → h3 “What does finishing a script mean?” → h3 “How long does an interview take?” → h3 “What happens after my first script?” → h3 “Can I archive or delete a chat?” → h3 “What happens when I delete a project?” → h3 “How do I request full account deletion?” → h3 “What should I do next?” → h3 “Where do I get help?”
+Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Help & privacy” → h3 “Who makes this?” → h3 “What does membership include, and how does it renew?” → h3 “What happens to my work, and what does StorySculpt remember?” → h3 “Can I change the format?” → h3 “Can I pause and come back?” → h3 “Why does StorySculpt ask who this is for?” → h3 “What does finishing a script mean?” → h3 “How long does an interview take?” → h3 “What happens after my first script?” → h3 “Can I archive or delete a chat?” → h3 “What happens when I delete a project?” → h3 “How do I delete all my StorySculpt data, and what is retained?” → h3 “What should I do next?” → h3 “What if something hard comes up while I write?” → h3 “Where do I get help?”
 
 ```yaml
 - banner:
-  - link "SS StorySculpt":
+  - link "StorySculpt":
     - /url: /
-    - text: SS
     - heading "StorySculpt" [level=1]
   - link "My Studio":
     - /url: /
-    - img
-    - text: My Studio
-  - button "Change color theme":
-    - img
+  - button "Change color theme"
   - button "W"
 - main:
   - complementary:
@@ -455,6 +500,29 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
   - button "Delete":
     - img
     - text: Delete
+  - strong: Saved entries StorySculpt will use in this chat (7)
+  - text: From your story profile and answers you confirmed in finished projects. Leave any entry out for this chat without deleting it.
+  - strong: "Name:"
+  - text: Alex
+  - button "Leave out of this chat"
+  - strong: "What they do:"
+  - text: Founder and positioning coach
+  - button "Leave out of this chat"
+  - strong: "Who their videos are for:"
+  - text: Bootstrapped B2B founders selling high-ticket services
+  - button "Leave out of this chat"
+  - strong: "Voice and phrasing:"
+  - text: Direct, calm, practical, no hype words
+  - button "Leave out of this chat"
+  - strong: "Offers and recurring calls to action:"
+  - text: Quarterly positioning sprint
+  - button "Leave out of this chat"
+  - strong: "Facts and results to reuse:"
+  - text: Built three profitable micro-SaaS companies; 12 years consulting
+  - button "Leave out of this chat"
+  - strong: "Other notes:"
+  - text: Prefers short sentences and concrete examples
+  - button "Leave out of this chat"
   - article:
     - text: StorySculpt What is the core thought or frustration on your mind today?
     - button "Copy":
@@ -493,6 +561,12 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
       - img
       - text: Use as Script
   - status
+  - text: Who is this script for? (optional)
+  - textbox "Who is this script for? (optional)":
+    - /placeholder: "For example: founders who hate pitching"
+  - text: What should they do next? (optional)
+  - textbox "What should they do next? (optional)":
+    - /placeholder: "For example: reply or book a call"
   - textbox "Your answer":
     - /placeholder: Write it the way you would say it. Rough is useful.
   - button "Speak instead of typing": 🎤
@@ -517,13 +591,21 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
       - /url: /terms#pricing-cancellation
     - text: .
   - paragraph: A lapsed membership pauses new scripts, interview generation, and revisions while keeping your saved chats, scripts, and story profile intact.
-  - heading "What happens to my work?" [level=3]
+  - heading "What happens to my work, and what does StorySculpt remember?" [level=3]
   - paragraph: Your chats, project titles, notes, finished scripts, and story profile are saved to your Studio account so you can return to them. When you ask StorySculpt to continue or revise, your title, profile, notes, and recent messages are processed by the AI model that writes your next question or draft, guided by David's method and your own words. Do not enter anything you do not want processed by an AI service.
-  - paragraph: "Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them. You can delete a chat and its saved script with the Delete button inside that chat. Your standing story profile is separate and can be edited from Story profile."
+  - paragraph:
+    - text: "StorySculpt's memory matches only what is stored in your account: (1) your standing story profile in"
+    - code: storysculpt_member_context
+    - text: (the fields you save in Settings & story profile plus any facts or voice notes you explicitly confirm from a finished project, which automatically stop resurfacing after 90 days), (2) the current chat in
+    - code: storysculpt_projects
+    - text: (its conversation turns, chat-specific notes, UGC product findings, saved script versions, and stored material separated into verified member facts, tentative inferences, and generated phrasing so guesses and model lines are never reused as facts), and (3) the opening lines of up to 20 of your recent finished scripts, read only so new hooks do not repeat your earlier openings. When a new chat starts, StorySculpt shows which saved profile entries it will use so you can leave any entry out for that chat without deleting it from your standing profile.
+  - paragraph: "Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them."
   - heading "Can I change the format?" [level=3]
   - paragraph: The format is locked after creation. Start a new script to use a different format; your existing chat stays in your list.
   - heading "Can I pause and come back?" [level=3]
-  - paragraph: "Yes. Leaving does not delete your project. Reopen the chat to resume the interview where you stopped. Check the save indicator before closing the browser: Saving means a write is pending, Saved means it was acknowledged, and Not saved means the latest change has not reached your account yet. Changes kept only on this device are not available on another device until saved."
+  - paragraph: "Yes. Leaving does not delete your project. Reopen the chat to resume the interview where you stopped. If a step is interrupted before StorySculpt replies, your last answer is kept and you can resume from that exact step. If an opening answer covers several topics at once, StorySculpt asks one narrowing question so you can pick the single moment to focus on. Check the save indicator before closing the browser: Saving means a write is pending, Saved means it was acknowledged, and Not saved means the latest change has not reached your account yet. Changes kept only on this device are not available on another device until saved."
+  - heading "Why does StorySculpt ask who this is for?" [level=3]
+  - paragraph: Before or during a script, you can optionally name who the video is for and what you want that viewer to do next. StorySculpt saves that objective on the script itself and shows it at the top of your finished script so you can check the draft against the audience and next step you intended. If you leave those fields blank, StorySculpt says plainly that no objective was stated instead of guessing one for you. You can add or edit the current script's objective anytime in Settings & story profile.
   - heading "What does finishing a script mean?" [level=3]
   - paragraph: Finishing closes the interview to new turns and assembles your answers into a script you can record. Once a script is finished, the interview is locked so your script stays stable. A new answer cannot be added to a finished interview; use Refine with a note to change the script, or start a new chat for your next script. Copy it or download the text file when you are ready to film. Your saved script does not expire; it stays in your account until you delete it.
   - heading "How long does an interview take?" [level=3]
@@ -533,18 +615,58 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
   - heading "Can I archive or delete a chat?" [level=3]
   - paragraph: "Leaving pauses your chat; it does not delete anything. Check that your changes say Saved before closing the browser. Archive puts a chat away without deleting its notes, answers or script. Use the Archive button beside its title, then open Archived and choose Restore chat to bring it back to All. Delete is different: after you confirm, it permanently removes the chat, its versions, and its saved script."
   - heading "What happens when I delete a project?" [level=3]
-  - paragraph: Deleting a project permanently removes the chat, its recorded versions, and the finished script. When you delete a chat, you get a short undo window of about ten seconds where the row shows Deleted and an Undo button to restore it immediately. After that window lapses, the server delete runs and the work is permanently gone. Returning after a delete shows your remaining active chats, or the clean start screen if you have no other chats.
-  - heading "How do I request full account deletion?" [level=3]
   - paragraph:
-    - text: Full account deletion is a Studio-level request to David. To have your entire account, all projects, scripts, and standing story profile permanently removed from the system, email David Bee at
+    - text: Deleting a project permanently removes its row in
+    - code: storysculpt_projects
+    - text: (the chat conversation, notes, material categories, recorded versions, and finished script), cascades deletion to its project context history in
+    - code: storysculpt_context_versions
+    - text: ", and clears any unsaved local copy on this device. When you delete a single chat, you get a ten-second undo window where the row shows Deleted and an Undo button to restore it immediately. After that window lapses, the server delete runs and the work is permanently gone. Returning after a delete shows your remaining active chats, or the clean start screen if you have no other chats."
+  - heading "How do I delete all my StorySculpt data, and what is retained?" [level=3]
+  - paragraph:
+    - text: Deleting all of your StorySculpt data is a self-serve member action. Use the
+    - strong: Delete all StorySculpt data
+    - text: button below or in Settings & story profile and confirm once. That action immediately clears and deletes your standing story profile and confirmed memories (
+    - code: storysculpt_member_context
+    - text: ), permanently deletes every active, filmed, and archived StorySculpt chat and script (
+    - code: storysculpt_projects
+    - text: ), cascades deletion to all project context history (
+    - code: storysculpt_context_versions
+    - text: ), and clears StorySculpt's local browser storage on this device.
+  - paragraph:
+    - text: "What is kept after you delete your StorySculpt data: (1) the append-only profile version history ("
+    - code: storysculpt_context_versions
+    - text: ), including earlier non-empty versions. Delete all adds an empty profile marker (
+    - code: "{}"
+    - text: ) as the latest entry so deleted profile words are never read back into any generation, but it does not erase earlier profile-history rows, (2) count-only operational telemetry in
+    - code: public.logs
+    - text: (which records event types, timestamps, step names, and sentence or category counts, never your words, prompts, or scripts), and (3) your Studio login and membership record (
+    - code: public.users
+    - text: and
+    - code: studio_entitlements
+    - text: ) so your other Momentum Hub apps keep working. If you also want your entire Studio login and billing record deleted across every Momentum Hub app, email David Bee at
     - link "email@davidbee.me":
       - /url: mailto:email@davidbee.me?subject=Studio%20account%20deletion
-    - text: with “Studio account deletion” in the subject. David handles account deletion requests directly.
+    - text: with “Studio account deletion” in the subject.
+  - paragraph:
+    - button "Delete all StorySculpt data":
+      - img
+      - text: Delete all StorySculpt data
   - heading "What should I do next?" [level=3]
   - paragraph:
     - strong: "Next:"
     - text: Answer the next question to finish this script.
   - button "Continue"
+  - heading "What if something hard comes up while I write?" [level=3]
+  - paragraph: "Stories often touch painful moments, and ordinary difficulty, honest product caveats, and your own personal experience are always welcome. When an input crosses a safety or high-risk boundary, StorySculpt pauses before spending quota or calling the AI model:"
+  - paragraph:
+    - strong: "Crisis or self-harm:"
+    - text: "If something you type says you are thinking about ending your life, hurting yourself, or hurting someone else, StorySculpt does not write the next step. It pauses and shows free, confidential lines you can reach right now: call or text 988 in the US and Canada, 116 123 (Samaritans) in the UK and Ireland, 13 11 14 (Lifeline) in Australia, or findahelpline.com anywhere else. If you are in immediate danger, call your local emergency number. Nothing you wrote is deleted, and the chat is there when you are ready to come back. StorySculpt is an AI writing tool, not a counselor."
+  - paragraph:
+    - strong: "Medical or financial claims in UGC or offer copy:"
+    - text: Before generating, StorySculpt flags unsubstantiated promises that a product cures, treats, heals, or prevents a medical condition, or promises guaranteed income, risk-free profit, or specific earnings. Reframe medical claims around your own personal comfort or everyday routine, and reframe financial claims around the specific task or workflow the product helps with, then generate again.
+  - paragraph:
+    - strong: "Disclosures about someone else:"
+    - text: If your notes name another person alongside a private medical diagnosis, addiction, arrest, bankruptcy, secret debt, or confidential secret shared without their permission, StorySculpt pauses before generating so you can remove identifying details or focus on your own side of the lesson.
   - heading "Where do I get help?" [level=3]
   - paragraph:
     - text: For a question about a script, chat, or your story profile, email
@@ -572,23 +694,19 @@ Browser: `webkit`. Captured from the rendered accessibility tree; every network 
 
 ## first-visit
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/137-a11y-first-visit.jpg`
+Screenshot: `docs/storysculpt-walk/webkit/shots/157-a11y-first-visit.jpg`
 Transcript: `a11y/first-visit.yml`
 
-Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a script the way you talk.” → h3 “Turn raw thoughts into video scripts that sound like you.” → h4 “Why the 5E interview keeps your voice” → h4 “What to expect: 5 to 10 minutes” → h4 “What happens when your script is ready”
+Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a script the way you talk.” → h3 “Turn raw thoughts into video scripts that sound like you.” → h4 “1. Why the 5E interview keeps your voice” → h4 “2. What to expect: 5 to 10 minutes” → h4 “3. What happens when your script is ready”
 
 ```yaml
 - banner:
-  - link "SS StorySculpt":
+  - link "StorySculpt":
     - /url: /
-    - text: SS
     - heading "StorySculpt" [level=1]
   - link "My Studio":
     - /url: /
-    - img
-    - text: My Studio
-  - button "Change color theme":
-    - img
+  - button "Change color theme"
   - button "W"
 - main:
   - complementary:
@@ -606,67 +724,63 @@ Heading outline: h1 “StorySculpt” → h2 “Chats” → h2 “Start a scrip
     - text: First Script Orientation
     - heading "Turn raw thoughts into video scripts that sound like you." [level=3]
     - paragraph: Getting on camera is hard when a blank page stares back at you, or when generic tools turn your thoughts into stiff corporate slogans. StorySculpt solves that. You talk through raw thoughts in a focused interview, and the system shapes your exact phrasing into a ready-to-film script.
-    - text: "1"
-    - heading "Why the 5E interview keeps your voice" [level=4]
+    - heading "1. Why the 5E interview keeps your voice" [level=4]
     - paragraph:
       - text: "Generic tools guess what you mean and flatten your personality. StorySculpt asks 4 to 6 focused questions to draw out the core emotional direction of your video:"
       - strong: Entertainment, Enragement, Epiphany, Empathy, or Education.
     - paragraph: It keeps your actual phrasing, natural cadence, and rough opinions so the finished script sounds like you talking to a friend.
-    - text: "2"
-    - 'heading "What to expect: 5 to 10 minutes" [level=4]'
+    - 'heading "2. What to expect: 5 to 10 minutes" [level=4]'
     - paragraph: "An interview takes about 5 to 10 minutes across 4 to 6 conversational turns. No preparation or polished outline is required: unedited thoughts and honest rants give the framework the real detail it needs."
     - paragraph: Pick a format below, answer each question in your own words, and pause whenever you want. Your work saves as you go.
-    - text: "3"
-    - heading "What happens when your script is ready" [level=4]
+    - heading "3. What happens when your script is ready" [level=4]
     - paragraph: Your finished script appears in the script panel with line-by-line editing, instant note refinement, and one-click export for your teleprompter.
     - paragraph: When you record, mark the script filmed to track your momentum. Build a steady library of filmed videos, keep your story profile updated, and start your next script anytime.
-    - text: Step 1
-    - strong: Choose your format
-    - text: Pick a format below and answer questions in your own words. Step 2
-    - strong: Review your script
-    - text: Refine lines with a quick note, edit text inline, or export. Step 3
-    - strong: Record and mark filmed
-    - text: Get on camera, track your momentum, and repeat. Choose your format to begin
+    - list "How StorySculpt works in three steps":
+      - listitem:
+        - text: Step 1
+        - strong: Choose your format
+        - text: Pick a format below and answer questions in your own words.
+      - listitem:
+        - text: Step 2
+        - strong: Review your script
+        - text: Refine lines with a quick note, edit text inline, or export.
+      - listitem:
+        - text: Step 3
+        - strong: Record and mark filmed
+        - text: Get on camera, track your momentum, and repeat.
+    - text: Choose your format to begin
     - paragraph: "Each format shapes your video for a specific audience reaction:"
     - paragraph: You can't change this later; start a new script for a different format.
   - region "Script format options":
     - button "Controversial Take A sharp point of view that challenges accepted wisdom.":
-      - img
       - strong: Controversial Take
       - text: A sharp point of view that challenges accepted wisdom.
     - button "Mini-Webinar A compact lesson with a story to teach one insight clearly.":
-      - img
       - strong: Mini-Webinar
       - text: A compact lesson with a story to teach one insight clearly.
     - button "5E Talking Head A raw thought with emotional momentum and personal honesty.":
-      - img
       - strong: 5E Talking Head
       - text: A raw thought with emotional momentum and personal honesty.
     - button "UGC / Product Video A creator-led breakdown that highlights a product naturally.":
-      - img
       - strong: UGC / Product Video
       - text: A creator-led breakdown that highlights a product naturally.
 ```
 
 ## interview
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/138-a11y-interview.jpg`
+Screenshot: `docs/storysculpt-walk/webkit/shots/158-a11y-interview.jpg`
 Transcript: `a11y/interview.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor”
 
 ```yaml
 - banner:
-  - link "SS StorySculpt":
+  - link "StorySculpt":
     - /url: /
-    - text: SS
     - heading "StorySculpt" [level=1]
   - link "My Studio":
     - /url: /
-    - img
-    - text: My Studio
-  - button "Change color theme":
-    - img
+  - button "Change color theme"
   - button "W"
 - main:
   - complementary:
@@ -684,6 +798,29 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
   - button "Delete":
     - img
     - text: Delete
+  - strong: Saved entries StorySculpt will use in this chat (7)
+  - text: From your story profile and answers you confirmed in finished projects. Leave any entry out for this chat without deleting it.
+  - strong: "Name:"
+  - text: Alex
+  - button "Leave out of this chat"
+  - strong: "What they do:"
+  - text: Founder and positioning coach
+  - button "Leave out of this chat"
+  - strong: "Who their videos are for:"
+  - text: Bootstrapped B2B founders selling high-ticket services
+  - button "Leave out of this chat"
+  - strong: "Voice and phrasing:"
+  - text: Direct, calm, practical, no hype words
+  - button "Leave out of this chat"
+  - strong: "Offers and recurring calls to action:"
+  - text: Quarterly positioning sprint
+  - button "Leave out of this chat"
+  - strong: "Facts and results to reuse:"
+  - text: Built three profitable micro-SaaS companies; 12 years consulting
+  - button "Leave out of this chat"
+  - strong: "Other notes:"
+  - text: Prefers short sentences and concrete examples
+  - button "Leave out of this chat"
   - article:
     - text: StorySculpt What is the core thought or frustration on your mind today?
     - button "Copy":
@@ -722,6 +859,12 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
       - img
       - text: Use as Script
   - status
+  - text: Who is this script for? (optional)
+  - textbox "Who is this script for? (optional)":
+    - /placeholder: "For example: founders who hate pitching"
+  - text: What should they do next? (optional)
+  - textbox "What should they do next? (optional)":
+    - /placeholder: "For example: reply or book a call"
   - textbox "Your answer":
     - /placeholder: Write it the way you would say it. Rough is useful.
   - button "Send":
@@ -731,23 +874,19 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## finished
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/139-a11y-finished.jpg`
+Screenshot: `docs/storysculpt-walk/webkit/shots/159-a11y-finished.jpg`
 Transcript: `a11y/finished.yml`
 
 Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor”
 
 ```yaml
 - banner:
-  - link "SS StorySculpt":
+  - link "StorySculpt":
     - /url: /
-    - text: SS
     - heading "StorySculpt" [level=1]
   - link "My Studio":
     - /url: /
-    - img
-    - text: My Studio
-  - button "Change color theme":
-    - img
+  - button "Change color theme"
   - button "W"
 - main:
   - complementary:
@@ -765,12 +904,17 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
   - button "Delete":
     - img
     - text: Delete
-  - button "Chat":
-    - img
-    - text: Chat
-  - button "Script v1":
-    - img
-    - text: Script v1
+  - tablist "Chat and script views":
+    - tab "Chat" [selected]
+    - tab "Script v1"
+  - strong: Saved entries StorySculpt will use in this chat (2)
+  - text: From your story profile and answers you confirmed in finished projects. Leave any entry out for this chat without deleting it.
+  - strong: "Name:"
+  - text: Alex
+  - button "Leave out of this chat"
+  - strong: "What they do:"
+  - text: Founder
+  - button "Leave out of this chat"
   - article:
     - text: StorySculpt What is the core thought on your mind today?
     - button "Copy":
@@ -784,6 +928,8 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Don’t use this":
       - img
       - text: Don’t use this
+    - button "Remember as fact"
+    - button "Remember as voice"
   - article:
     - text: StorySculpt Tell me about a time that proved this.
     - button "Copy":
@@ -797,6 +943,8 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - button "Don’t use this":
       - img
       - text: Don’t use this
+    - button "Remember as fact"
+    - button "Remember as voice"
   - article:
     - text: StorySculpt Your script is assembled and ready to film below.
     - button "Copy":
@@ -829,23 +977,19 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## story-profile
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/140-a11y-story-profile.jpg`
+Screenshot: `docs/storysculpt-walk/webkit/shots/160-a11y-story-profile.jpg`
 Transcript: `a11y/story-profile.yml`
 
-Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Set this once. Every chat reads it.”
+Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Format, theme, and standing facts in one place.”
 
 ```yaml
 - banner:
-  - link "SS StorySculpt":
+  - link "StorySculpt":
     - /url: /
-    - text: SS
     - heading "StorySculpt" [level=1]
   - link "My Studio":
     - /url: /
-    - img
-    - text: My Studio
-  - button "Change color theme":
-    - img
+  - button "Change color theme"
   - button "W"
 - main:
   - complementary:
@@ -863,6 +1007,29 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
   - button "Delete":
     - img
     - text: Delete
+  - strong: Saved entries StorySculpt will use in this chat (7)
+  - text: From your story profile and answers you confirmed in finished projects. Leave any entry out for this chat without deleting it.
+  - strong: "Name:"
+  - text: Alex
+  - button "Leave out of this chat"
+  - strong: "What they do:"
+  - text: Founder and positioning coach
+  - button "Leave out of this chat"
+  - strong: "Who their videos are for:"
+  - text: Bootstrapped B2B founders selling high-ticket services
+  - button "Leave out of this chat"
+  - strong: "Voice and phrasing:"
+  - text: Direct, calm, practical, no hype words
+  - button "Leave out of this chat"
+  - strong: "Offers and recurring calls to action:"
+  - text: Quarterly positioning sprint
+  - button "Leave out of this chat"
+  - strong: "Facts and results to reuse:"
+  - text: Built three profitable micro-SaaS companies; 12 years consulting
+  - button "Leave out of this chat"
+  - strong: "Other notes:"
+  - text: Prefers short sentences and concrete examples
+  - button "Leave out of this chat"
   - article:
     - text: StorySculpt What is the core thought or frustration on your mind today?
     - button "Copy":
@@ -901,22 +1068,43 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
       - img
       - text: Use as Script
   - status
+  - text: Who is this script for? (optional)
+  - textbox "Who is this script for? (optional)":
+    - /placeholder: "For example: founders who hate pitching"
+  - text: What should they do next? (optional)
+  - textbox "What should they do next? (optional)":
+    - /placeholder: "For example: reply or book a call"
   - textbox "Your answer":
     - /placeholder: Write it the way you would say it. Rough is useful.
   - button "Send":
     - img
   - paragraph: StorySculpt saves your chat as you go.
-- complementary "Your story profile":
-  - paragraph: Your story profile
-  - heading "Set this once. Every chat reads it." [level=2]
-  - button "Close story profile":
+- complementary "Settings and story profile":
+  - paragraph: Settings & story profile
+  - heading "Format, theme, and standing facts in one place." [level=2]
+  - button "Close settings and story profile":
     - img
-  - paragraph: These are the standing facts about you and your work. StorySculpt keeps them in mind on every script, so you never re-explain who you are.
+  - paragraph: "Everything StorySculpt holds for your workspace: your current script format, color theme, and the standing facts it uses across chats."
+  - strong: Script format
+  - paragraph: 5E Talking Head (locked for this chat; start a new chat for a different format)
+  - strong: Color theme
+  - paragraph: Dark mode active
+  - button "Switch to Light"
+  - strong: Story profile
+  - paragraph: 7 of 7 standing fields saved below (reused across chats unless left out for a chat)
   - status:
     - paragraph:
-      - strong: Story profile updated 77 days ago.
+      - strong: Story profile updated 88 days ago.
       - text: Review your audience, offers, or facts to keep future scripts current.
     - button "Review details"
+  - paragraph:
+    - strong: Current script objective (optional)
+  - text: Who is this script for?
+  - textbox "Who is this script for?":
+    - /placeholder: "For example: founders who hate pitching"
+  - text: What should that viewer do next?
+  - textbox "What should that viewer do next?":
+    - /placeholder: "For example: reply or book a call"
   - text: What should StorySculpt call you?
   - textbox "What should StorySculpt call you?":
     - /placeholder: Your name
@@ -946,6 +1134,9 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - /placeholder: Anything else StorySculpt should keep in mind.
     - text: Prefers short sentences and concrete examples
   - paragraph
+  - button "Delete all StorySculpt data":
+    - img
+    - text: Delete all StorySculpt data
   - button "Save profile":
     - img
     - text: Save profile
@@ -953,23 +1144,19 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ## help-dialog
 
-Screenshot: `docs/storysculpt-walk/webkit/shots/141-a11y-help-dialog.jpg`
+Screenshot: `docs/storysculpt-walk/webkit/shots/161-a11y-help-dialog.jpg`
 Transcript: `a11y/help-dialog.yml`
 
-Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Help & privacy” → h3 “Who makes this?” → h3 “What does membership include, and how does it renew?” → h3 “What happens to my work?” → h3 “Can I change the format?” → h3 “Can I pause and come back?” → h3 “What does finishing a script mean?” → h3 “How long does an interview take?” → h3 “What happens after my first script?” → h3 “Can I archive or delete a chat?” → h3 “What happens when I delete a project?” → h3 “How do I request full account deletion?” → h3 “What should I do next?” → h3 “Where do I get help?”
+Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Editor” → h2 “Help & privacy” → h3 “Who makes this?” → h3 “What does membership include, and how does it renew?” → h3 “What happens to my work, and what does StorySculpt remember?” → h3 “Can I change the format?” → h3 “Can I pause and come back?” → h3 “Why does StorySculpt ask who this is for?” → h3 “What does finishing a script mean?” → h3 “How long does an interview take?” → h3 “What happens after my first script?” → h3 “Can I archive or delete a chat?” → h3 “What happens when I delete a project?” → h3 “How do I delete all my StorySculpt data, and what is retained?” → h3 “What should I do next?” → h3 “What if something hard comes up while I write?” → h3 “Where do I get help?”
 
 ```yaml
 - banner:
-  - link "SS StorySculpt":
+  - link "StorySculpt":
     - /url: /
-    - text: SS
     - heading "StorySculpt" [level=1]
   - link "My Studio":
     - /url: /
-    - img
-    - text: My Studio
-  - button "Change color theme":
-    - img
+  - button "Change color theme"
   - button "W"
 - main:
   - complementary:
@@ -987,6 +1174,29 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
   - button "Delete":
     - img
     - text: Delete
+  - strong: Saved entries StorySculpt will use in this chat (7)
+  - text: From your story profile and answers you confirmed in finished projects. Leave any entry out for this chat without deleting it.
+  - strong: "Name:"
+  - text: Alex
+  - button "Leave out of this chat"
+  - strong: "What they do:"
+  - text: Founder and positioning coach
+  - button "Leave out of this chat"
+  - strong: "Who their videos are for:"
+  - text: Bootstrapped B2B founders selling high-ticket services
+  - button "Leave out of this chat"
+  - strong: "Voice and phrasing:"
+  - text: Direct, calm, practical, no hype words
+  - button "Leave out of this chat"
+  - strong: "Offers and recurring calls to action:"
+  - text: Quarterly positioning sprint
+  - button "Leave out of this chat"
+  - strong: "Facts and results to reuse:"
+  - text: Built three profitable micro-SaaS companies; 12 years consulting
+  - button "Leave out of this chat"
+  - strong: "Other notes:"
+  - text: Prefers short sentences and concrete examples
+  - button "Leave out of this chat"
   - article:
     - text: StorySculpt What is the core thought or frustration on your mind today?
     - button "Copy":
@@ -1025,6 +1235,12 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
       - img
       - text: Use as Script
   - status
+  - text: Who is this script for? (optional)
+  - textbox "Who is this script for? (optional)":
+    - /placeholder: "For example: founders who hate pitching"
+  - text: What should they do next? (optional)
+  - textbox "What should they do next? (optional)":
+    - /placeholder: "For example: reply or book a call"
   - textbox "Your answer":
     - /placeholder: Write it the way you would say it. Rough is useful.
   - button "Send":
@@ -1048,13 +1264,21 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
       - /url: /terms#pricing-cancellation
     - text: .
   - paragraph: A lapsed membership pauses new scripts, interview generation, and revisions while keeping your saved chats, scripts, and story profile intact.
-  - heading "What happens to my work?" [level=3]
+  - heading "What happens to my work, and what does StorySculpt remember?" [level=3]
   - paragraph: Your chats, project titles, notes, finished scripts, and story profile are saved to your Studio account so you can return to them. When you ask StorySculpt to continue or revise, your title, profile, notes, and recent messages are processed by the AI model that writes your next question or draft, guided by David's method and your own words. Do not enter anything you do not want processed by an AI service.
-  - paragraph: "Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them. You can delete a chat and its saved script with the Delete button inside that chat. Your standing story profile is separate and can be edited from Story profile."
+  - paragraph:
+    - text: "StorySculpt's memory matches only what is stored in your account: (1) your standing story profile in"
+    - code: storysculpt_member_context
+    - text: (the fields you save in Settings & story profile plus any facts or voice notes you explicitly confirm from a finished project, which automatically stop resurfacing after 90 days), (2) the current chat in
+    - code: storysculpt_projects
+    - text: (its conversation turns, chat-specific notes, UGC product findings, saved script versions, and stored material separated into verified member facts, tentative inferences, and generated phrasing so guesses and model lines are never reused as facts), and (3) the opening lines of up to 20 of your recent finished scripts, read only so new hooks do not repeat your earlier openings. When a new chat starts, StorySculpt shows which saved profile entries it will use so you can leave any entry out for that chat without deleting it from your standing profile.
+  - paragraph: "Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them."
   - heading "Can I change the format?" [level=3]
   - paragraph: The format is locked after creation. Start a new script to use a different format; your existing chat stays in your list.
   - heading "Can I pause and come back?" [level=3]
-  - paragraph: "Yes. Leaving does not delete your project. Reopen the chat to resume the interview where you stopped. Check the save indicator before closing the browser: Saving means a write is pending, Saved means it was acknowledged, and Not saved means the latest change has not reached your account yet. Changes kept only on this device are not available on another device until saved."
+  - paragraph: "Yes. Leaving does not delete your project. Reopen the chat to resume the interview where you stopped. If a step is interrupted before StorySculpt replies, your last answer is kept and you can resume from that exact step. If an opening answer covers several topics at once, StorySculpt asks one narrowing question so you can pick the single moment to focus on. Check the save indicator before closing the browser: Saving means a write is pending, Saved means it was acknowledged, and Not saved means the latest change has not reached your account yet. Changes kept only on this device are not available on another device until saved."
+  - heading "Why does StorySculpt ask who this is for?" [level=3]
+  - paragraph: Before or during a script, you can optionally name who the video is for and what you want that viewer to do next. StorySculpt saves that objective on the script itself and shows it at the top of your finished script so you can check the draft against the audience and next step you intended. If you leave those fields blank, StorySculpt says plainly that no objective was stated instead of guessing one for you. You can add or edit the current script's objective anytime in Settings & story profile.
   - heading "What does finishing a script mean?" [level=3]
   - paragraph: Finishing closes the interview to new turns and assembles your answers into a script you can record. Once a script is finished, the interview is locked so your script stays stable. A new answer cannot be added to a finished interview; use Refine with a note to change the script, or start a new chat for your next script. Copy it or download the text file when you are ready to film. Your saved script does not expire; it stays in your account until you delete it.
   - heading "How long does an interview take?" [level=3]
@@ -1064,18 +1288,58 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
   - heading "Can I archive or delete a chat?" [level=3]
   - paragraph: "Leaving pauses your chat; it does not delete anything. Check that your changes say Saved before closing the browser. Archive puts a chat away without deleting its notes, answers or script. Use the Archive button beside its title, then open Archived and choose Restore chat to bring it back to All. Delete is different: after you confirm, it permanently removes the chat, its versions, and its saved script."
   - heading "What happens when I delete a project?" [level=3]
-  - paragraph: Deleting a project permanently removes the chat, its recorded versions, and the finished script. When you delete a chat, you get a short undo window of about ten seconds where the row shows Deleted and an Undo button to restore it immediately. After that window lapses, the server delete runs and the work is permanently gone. Returning after a delete shows your remaining active chats, or the clean start screen if you have no other chats.
-  - heading "How do I request full account deletion?" [level=3]
   - paragraph:
-    - text: Full account deletion is a Studio-level request to David. To have your entire account, all projects, scripts, and standing story profile permanently removed from the system, email David Bee at
+    - text: Deleting a project permanently removes its row in
+    - code: storysculpt_projects
+    - text: (the chat conversation, notes, material categories, recorded versions, and finished script), cascades deletion to its project context history in
+    - code: storysculpt_context_versions
+    - text: ", and clears any unsaved local copy on this device. When you delete a single chat, you get a ten-second undo window where the row shows Deleted and an Undo button to restore it immediately. After that window lapses, the server delete runs and the work is permanently gone. Returning after a delete shows your remaining active chats, or the clean start screen if you have no other chats."
+  - heading "How do I delete all my StorySculpt data, and what is retained?" [level=3]
+  - paragraph:
+    - text: Deleting all of your StorySculpt data is a self-serve member action. Use the
+    - strong: Delete all StorySculpt data
+    - text: button below or in Settings & story profile and confirm once. That action immediately clears and deletes your standing story profile and confirmed memories (
+    - code: storysculpt_member_context
+    - text: ), permanently deletes every active, filmed, and archived StorySculpt chat and script (
+    - code: storysculpt_projects
+    - text: ), cascades deletion to all project context history (
+    - code: storysculpt_context_versions
+    - text: ), and clears StorySculpt's local browser storage on this device.
+  - paragraph:
+    - text: "What is kept after you delete your StorySculpt data: (1) the append-only profile version history ("
+    - code: storysculpt_context_versions
+    - text: ), including earlier non-empty versions. Delete all adds an empty profile marker (
+    - code: "{}"
+    - text: ) as the latest entry so deleted profile words are never read back into any generation, but it does not erase earlier profile-history rows, (2) count-only operational telemetry in
+    - code: public.logs
+    - text: (which records event types, timestamps, step names, and sentence or category counts, never your words, prompts, or scripts), and (3) your Studio login and membership record (
+    - code: public.users
+    - text: and
+    - code: studio_entitlements
+    - text: ) so your other Momentum Hub apps keep working. If you also want your entire Studio login and billing record deleted across every Momentum Hub app, email David Bee at
     - link "email@davidbee.me":
       - /url: mailto:email@davidbee.me?subject=Studio%20account%20deletion
-    - text: with “Studio account deletion” in the subject. David handles account deletion requests directly.
+    - text: with “Studio account deletion” in the subject.
+  - paragraph:
+    - button "Delete all StorySculpt data":
+      - img
+      - text: Delete all StorySculpt data
   - heading "What should I do next?" [level=3]
   - paragraph:
     - strong: "Next:"
     - text: Answer the next question to finish this script.
   - button "Continue"
+  - heading "What if something hard comes up while I write?" [level=3]
+  - paragraph: "Stories often touch painful moments, and ordinary difficulty, honest product caveats, and your own personal experience are always welcome. When an input crosses a safety or high-risk boundary, StorySculpt pauses before spending quota or calling the AI model:"
+  - paragraph:
+    - strong: "Crisis or self-harm:"
+    - text: "If something you type says you are thinking about ending your life, hurting yourself, or hurting someone else, StorySculpt does not write the next step. It pauses and shows free, confidential lines you can reach right now: call or text 988 in the US and Canada, 116 123 (Samaritans) in the UK and Ireland, 13 11 14 (Lifeline) in Australia, or findahelpline.com anywhere else. If you are in immediate danger, call your local emergency number. Nothing you wrote is deleted, and the chat is there when you are ready to come back. StorySculpt is an AI writing tool, not a counselor."
+  - paragraph:
+    - strong: "Medical or financial claims in UGC or offer copy:"
+    - text: Before generating, StorySculpt flags unsubstantiated promises that a product cures, treats, heals, or prevents a medical condition, or promises guaranteed income, risk-free profit, or specific earnings. Reframe medical claims around your own personal comfort or everyday routine, and reframe financial claims around the specific task or workflow the product helps with, then generate again.
+  - paragraph:
+    - strong: "Disclosures about someone else:"
+    - text: If your notes name another person alongside a private medical diagnosis, addiction, arrest, bankruptcy, secret debt, or confidential secret shared without their permission, StorySculpt pauses before generating so you can remove identifying details or focus on your own side of the lesson.
   - heading "Where do I get help?" [level=3]
   - paragraph:
     - text: For a question about a script, chat, or your story profile, email

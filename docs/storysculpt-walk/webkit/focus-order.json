@@ -3,7 +3,7 @@
   "tag": "a",
   "id": null,
   "cls": "studio-brand",
-  "label": "SSStorySculptThe 5E Script Builder",
+  "label": "SSStorySculpt The 5E Script Builder",
   "visible": true
  },
  {
@@ -80,28 +80,28 @@
   "tag": "button",
   "id": "story-open-memory",
   "cls": "story-memory-link",
-  "label": "Your story profileVoice, facts and offers StoryScu",
+  "label": "Settings & story profile Format, theme, and standi",
   "visible": true
  },
  {
   "tag": "button",
   "id": null,
   "cls": "story-mode",
-  "label": "Controversial TakeA sharp point of view that chall",
+  "label": "Controversial Take A sharp point of view that chal",
   "visible": true
  },
  {
   "tag": "button",
   "id": null,
   "cls": "story-mode",
-  "label": "Mini-WebinarA compact lesson with a story to teach",
+  "label": "Mini-Webinar A compact lesson with a story to teac",
   "visible": true
  },
  {
   "tag": "button",
   "id": null,
   "cls": "story-mode",
-  "label": "5E Talking HeadA raw thought with emotional moment",
+  "label": "5E Talking Head A raw thought with emotional momen",
   "visible": true
  },
  {
@@ -147,9 +147,11 @@
   "visible": true
  },
  {
-  "tag": "body",
-  "visible": false,
-  "label": "(nothing focused)"
+  "tag": "button",
+  "id": "story-refine-send",
+  "cls": "primary-button",
+  "label": "Revise",
+  "visible": true
  },
  {
   "tag": "button",

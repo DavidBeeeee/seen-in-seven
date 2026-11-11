@@ -1,14 +1,10 @@
 - banner:
-  - link "SS StorySculpt":
+  - link "StorySculpt":
     - /url: /
-    - text: SS
     - heading "StorySculpt" [level=1]
   - link "My Studio":
     - /url: /
-    - img
-    - text: My Studio
-  - button "Change color theme":
-    - img
+  - button "Change color theme"
   - button "W"
 - main:
   - complementary:
@@ -26,6 +22,29 @@
   - button "Delete":
     - img
     - text: Delete
+  - strong: Saved entries StorySculpt will use in this chat (7)
+  - text: From your story profile and answers you confirmed in finished projects. Leave any entry out for this chat without deleting it.
+  - strong: "Name:"
+  - text: Alex
+  - button "Leave out of this chat"
+  - strong: "What they do:"
+  - text: Founder and positioning coach
+  - button "Leave out of this chat"
+  - strong: "Who their videos are for:"
+  - text: Bootstrapped B2B founders selling high-ticket services
+  - button "Leave out of this chat"
+  - strong: "Voice and phrasing:"
+  - text: Direct, calm, practical, no hype words
+  - button "Leave out of this chat"
+  - strong: "Offers and recurring calls to action:"
+  - text: Quarterly positioning sprint
+  - button "Leave out of this chat"
+  - strong: "Facts and results to reuse:"
+  - text: Built three profitable micro-SaaS companies; 12 years consulting
+  - button "Leave out of this chat"
+  - strong: "Other notes:"
+  - text: Prefers short sentences and concrete examples
+  - button "Leave out of this chat"
   - article:
     - text: StorySculpt What is the core thought or frustration on your mind today?
     - button "Copy":
@@ -64,6 +83,12 @@
       - img
       - text: Use as Script
   - status
+  - text: Who is this script for? (optional)
+  - textbox "Who is this script for? (optional)":
+    - /placeholder: "For example: founders who hate pitching"
+  - text: What should they do next? (optional)
+  - textbox "What should they do next? (optional)":
+    - /placeholder: "For example: reply or book a call"
   - textbox "Your answer":
     - /placeholder: Write it the way you would say it. Rough is useful.
   - button "Send":
@@ -87,13 +112,21 @@
       - /url: /terms#pricing-cancellation
     - text: .
   - paragraph: A lapsed membership pauses new scripts, interview generation, and revisions while keeping your saved chats, scripts, and story profile intact.
-  - heading "What happens to my work?" [level=3]
+  - heading "What happens to my work, and what does StorySculpt remember?" [level=3]
   - paragraph: Your chats, project titles, notes, finished scripts, and story profile are saved to your Studio account so you can return to them. When you ask StorySculpt to continue or revise, your title, profile, notes, and recent messages are processed by the AI model that writes your next question or draft, guided by David's method and your own words. Do not enter anything you do not want processed by an AI service.
-  - paragraph: "Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them. You can delete a chat and its saved script with the Delete button inside that chat. Your standing story profile is separate and can be edited from Story profile."
+  - paragraph:
+    - text: "StorySculpt's memory matches only what is stored in your account: (1) your standing story profile in"
+    - code: storysculpt_member_context
+    - text: (the fields you save in Settings & story profile plus any facts or voice notes you explicitly confirm from a finished project, which automatically stop resurfacing after 90 days), (2) the current chat in
+    - code: storysculpt_projects
+    - text: (its conversation turns, chat-specific notes, UGC product findings, saved script versions, and stored material separated into verified member facts, tentative inferences, and generated phrasing so guesses and model lines are never reused as facts), and (3) the opening lines of up to 20 of your recent finished scripts, read only so new hooks do not repeat your earlier openings. When a new chat starts, StorySculpt shows which saved profile entries it will use so you can leave any entry out for that chat without deleting it from your standing profile.
+  - paragraph: "Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them."
   - heading "Can I change the format?" [level=3]
   - paragraph: The format is locked after creation. Start a new script to use a different format; your existing chat stays in your list.
   - heading "Can I pause and come back?" [level=3]
-  - paragraph: "Yes. Leaving does not delete your project. Reopen the chat to resume the interview where you stopped. Check the save indicator before closing the browser: Saving means a write is pending, Saved means it was acknowledged, and Not saved means the latest change has not reached your account yet. Changes kept only on this device are not available on another device until saved."
+  - paragraph: "Yes. Leaving does not delete your project. Reopen the chat to resume the interview where you stopped. If a step is interrupted before StorySculpt replies, your last answer is kept and you can resume from that exact step. If an opening answer covers several topics at once, StorySculpt asks one narrowing question so you can pick the single moment to focus on. Check the save indicator before closing the browser: Saving means a write is pending, Saved means it was acknowledged, and Not saved means the latest change has not reached your account yet. Changes kept only on this device are not available on another device until saved."
+  - heading "Why does StorySculpt ask who this is for?" [level=3]
+  - paragraph: Before or during a script, you can optionally name who the video is for and what you want that viewer to do next. StorySculpt saves that objective on the script itself and shows it at the top of your finished script so you can check the draft against the audience and next step you intended. If you leave those fields blank, StorySculpt says plainly that no objective was stated instead of guessing one for you. You can add or edit the current script's objective anytime in Settings & story profile.
   - heading "What does finishing a script mean?" [level=3]
   - paragraph: Finishing closes the interview to new turns and assembles your answers into a script you can record. Once a script is finished, the interview is locked so your script stays stable. A new answer cannot be added to a finished interview; use Refine with a note to change the script, or start a new chat for your next script. Copy it or download the text file when you are ready to film. Your saved script does not expire; it stays in your account until you delete it.
   - heading "How long does an interview take?" [level=3]
@@ -103,18 +136,58 @@
   - heading "Can I archive or delete a chat?" [level=3]
   - paragraph: "Leaving pauses your chat; it does not delete anything. Check that your changes say Saved before closing the browser. Archive puts a chat away without deleting its notes, answers or script. Use the Archive button beside its title, then open Archived and choose Restore chat to bring it back to All. Delete is different: after you confirm, it permanently removes the chat, its versions, and its saved script."
   - heading "What happens when I delete a project?" [level=3]
-  - paragraph: Deleting a project permanently removes the chat, its recorded versions, and the finished script. When you delete a chat, you get a short undo window of about ten seconds where the row shows Deleted and an Undo button to restore it immediately. After that window lapses, the server delete runs and the work is permanently gone. Returning after a delete shows your remaining active chats, or the clean start screen if you have no other chats.
-  - heading "How do I request full account deletion?" [level=3]
   - paragraph:
-    - text: Full account deletion is a Studio-level request to David. To have your entire account, all projects, scripts, and standing story profile permanently removed from the system, email David Bee at
+    - text: Deleting a project permanently removes its row in
+    - code: storysculpt_projects
+    - text: (the chat conversation, notes, material categories, recorded versions, and finished script), cascades deletion to its project context history in
+    - code: storysculpt_context_versions
+    - text: ", and clears any unsaved local copy on this device. When you delete a single chat, you get a ten-second undo window where the row shows Deleted and an Undo button to restore it immediately. After that window lapses, the server delete runs and the work is permanently gone. Returning after a delete shows your remaining active chats, or the clean start screen if you have no other chats."
+  - heading "How do I delete all my StorySculpt data, and what is retained?" [level=3]
+  - paragraph:
+    - text: Deleting all of your StorySculpt data is a self-serve member action. Use the
+    - strong: Delete all StorySculpt data
+    - text: button below or in Settings & story profile and confirm once. That action immediately clears and deletes your standing story profile and confirmed memories (
+    - code: storysculpt_member_context
+    - text: ), permanently deletes every active, filmed, and archived StorySculpt chat and script (
+    - code: storysculpt_projects
+    - text: ), cascades deletion to all project context history (
+    - code: storysculpt_context_versions
+    - text: ), and clears StorySculpt's local browser storage on this device.
+  - paragraph:
+    - text: "What is kept after you delete your StorySculpt data: (1) the append-only profile version history ("
+    - code: storysculpt_context_versions
+    - text: ), including earlier non-empty versions. Delete all adds an empty profile marker (
+    - code: "{}"
+    - text: ) as the latest entry so deleted profile words are never read back into any generation, but it does not erase earlier profile-history rows, (2) count-only operational telemetry in
+    - code: public.logs
+    - text: (which records event types, timestamps, step names, and sentence or category counts, never your words, prompts, or scripts), and (3) your Studio login and membership record (
+    - code: public.users
+    - text: and
+    - code: studio_entitlements
+    - text: ) so your other Momentum Hub apps keep working. If you also want your entire Studio login and billing record deleted across every Momentum Hub app, email David Bee at
     - link "email@davidbee.me":
       - /url: mailto:email@davidbee.me?subject=Studio%20account%20deletion
-    - text: with “Studio account deletion” in the subject. David handles account deletion requests directly.
+    - text: with “Studio account deletion” in the subject.
+  - paragraph:
+    - button "Delete all StorySculpt data":
+      - img
+      - text: Delete all StorySculpt data
   - heading "What should I do next?" [level=3]
   - paragraph:
     - strong: "Next:"
     - text: Answer the next question to finish this script.
   - button "Continue"
+  - heading "What if something hard comes up while I write?" [level=3]
+  - paragraph: "Stories often touch painful moments, and ordinary difficulty, honest product caveats, and your own personal experience are always welcome. When an input crosses a safety or high-risk boundary, StorySculpt pauses before spending quota or calling the AI model:"
+  - paragraph:
+    - strong: "Crisis or self-harm:"
+    - text: "If something you type says you are thinking about ending your life, hurting yourself, or hurting someone else, StorySculpt does not write the next step. It pauses and shows free, confidential lines you can reach right now: call or text 988 in the US and Canada, 116 123 (Samaritans) in the UK and Ireland, 13 11 14 (Lifeline) in Australia, or findahelpline.com anywhere else. If you are in immediate danger, call your local emergency number. Nothing you wrote is deleted, and the chat is there when you are ready to come back. StorySculpt is an AI writing tool, not a counselor."
+  - paragraph:
+    - strong: "Medical or financial claims in UGC or offer copy:"
+    - text: Before generating, StorySculpt flags unsubstantiated promises that a product cures, treats, heals, or prevents a medical condition, or promises guaranteed income, risk-free profit, or specific earnings. Reframe medical claims around your own personal comfort or everyday routine, and reframe financial claims around the specific task or workflow the product helps with, then generate again.
+  - paragraph:
+    - strong: "Disclosures about someone else:"
+    - text: If your notes name another person alongside a private medical diagnosis, addiction, arrest, bankruptcy, secret debt, or confidential secret shared without their permission, StorySculpt pauses before generating so you can remove identifying details or focus on your own side of the lesson.
   - heading "Where do I get help?" [level=3]
   - paragraph:
     - text: For a question about a script, chat, or your story profile, email

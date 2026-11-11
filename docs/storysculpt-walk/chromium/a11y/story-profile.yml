@@ -1,14 +1,10 @@
 - banner:
-  - link "SS StorySculpt":
+  - link "StorySculpt":
     - /url: /
-    - text: SS
     - heading "StorySculpt" [level=1]
   - link "My Studio":
     - /url: /
-    - img
-    - text: My Studio
-  - button "Change color theme":
-    - img
+  - button "Change color theme"
   - button "W"
 - main:
   - complementary:
@@ -26,6 +22,29 @@
   - button "Delete":
     - img
     - text: Delete
+  - strong: Saved entries StorySculpt will use in this chat (7)
+  - text: From your story profile and answers you confirmed in finished projects. Leave any entry out for this chat without deleting it.
+  - strong: "Name:"
+  - text: Alex
+  - button "Leave out of this chat"
+  - strong: "What they do:"
+  - text: Founder and positioning coach
+  - button "Leave out of this chat"
+  - strong: "Who their videos are for:"
+  - text: Bootstrapped B2B founders selling high-ticket services
+  - button "Leave out of this chat"
+  - strong: "Voice and phrasing:"
+  - text: Direct, calm, practical, no hype words
+  - button "Leave out of this chat"
+  - strong: "Offers and recurring calls to action:"
+  - text: Quarterly positioning sprint
+  - button "Leave out of this chat"
+  - strong: "Facts and results to reuse:"
+  - text: Built three profitable micro-SaaS companies; 12 years consulting
+  - button "Leave out of this chat"
+  - strong: "Other notes:"
+  - text: Prefers short sentences and concrete examples
+  - button "Leave out of this chat"
   - article:
     - text: StorySculpt What is the core thought or frustration on your mind today?
     - button "Copy":
@@ -64,23 +83,44 @@
       - img
       - text: Use as Script
   - status
+  - text: Who is this script for? (optional)
+  - textbox "Who is this script for? (optional)":
+    - /placeholder: "For example: founders who hate pitching"
+  - text: What should they do next? (optional)
+  - textbox "What should they do next? (optional)":
+    - /placeholder: "For example: reply or book a call"
   - textbox "Your answer":
     - /placeholder: Write it the way you would say it. Rough is useful.
   - button "Speak instead of typing": 🎤
   - button "Send":
     - img
   - paragraph: StorySculpt saves your chat as you go.
-- complementary "Your story profile":
-  - paragraph: Your story profile
-  - heading "Set this once. Every chat reads it." [level=2]
-  - button "Close story profile":
+- complementary "Settings and story profile":
+  - paragraph: Settings & story profile
+  - heading "Format, theme, and standing facts in one place." [level=2]
+  - button "Close settings and story profile":
     - img
-  - paragraph: These are the standing facts about you and your work. StorySculpt keeps them in mind on every script, so you never re-explain who you are.
+  - paragraph: "Everything StorySculpt holds for your workspace: your current script format, color theme, and the standing facts it uses across chats."
+  - strong: Script format
+  - paragraph: 5E Talking Head (locked for this chat; start a new chat for a different format)
+  - strong: Color theme
+  - paragraph: Dark mode active
+  - button "Switch to Light"
+  - strong: Story profile
+  - paragraph: 7 of 7 standing fields saved below (reused across chats unless left out for a chat)
   - status:
     - paragraph:
-      - strong: Story profile updated 77 days ago.
+      - strong: Story profile updated 88 days ago.
       - text: Review your audience, offers, or facts to keep future scripts current.
     - button "Review details"
+  - paragraph:
+    - strong: Current script objective (optional)
+  - text: Who is this script for?
+  - textbox "Who is this script for?":
+    - /placeholder: "For example: founders who hate pitching"
+  - text: What should that viewer do next?
+  - textbox "What should that viewer do next?":
+    - /placeholder: "For example: reply or book a call"
   - text: What should StorySculpt call you?
   - textbox "What should StorySculpt call you?":
     - /placeholder: Your name
@@ -115,6 +155,9 @@
     - text: Prefers short sentences and concrete examples
   - button "Speak instead of typing": 🎤
   - paragraph
+  - button "Delete all StorySculpt data":
+    - img
+    - text: Delete all StorySculpt data
   - button "Save profile":
     - img
     - text: Save profile

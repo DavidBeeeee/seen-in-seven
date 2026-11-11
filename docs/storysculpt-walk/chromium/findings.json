@@ -1,5 +1,5 @@
 {
- "at": "2026-11-11T08:30:27.122Z",
+ "at": "2026-11-11T15:13:04.453Z",
  "browser": "chromium",
  "checks": [
   {
@@ -252,7 +252,7 @@
    "browser": "chromium",
    "name": "An old story profile shows its age and a refresh offer",
    "pass": true,
-   "evidence": "Story profile updated 87 days ago. Review your audience, offers, or facts to keep future scripts current.Review details"
+   "evidence": "Story profile updated 88 days ago. Review your audience, offers, or facts to keep future scripts current.Review details"
   },
   {
    "browser": "chromium",
@@ -288,13 +288,13 @@
    "browser": "chromium",
    "name": "A five-topic answer gets one narrowing question (bounded in code)",
    "pass": true,
-   "evidence": "{\"turnCount\":3,\"lastTurn\":{\"role\":\"assistant\",\"content\":\"You named several distinct stories here (how I priced my first coaching offer too low; why hiring a virtual assistant too early burn...; moving my studio to Denver after college). One short video lands best when it turns on a single moment. Which one of those should we build this script around first?\",\"step\":\"narrow\",\"narrowingQuestion\":true,\"forStep\":\"B1\",\"key\":\"narrow:mwbuz5oz88iryodpn3a\"},\"statusLine\":\"Screen stayed on this step to ask one narrowing question because your answer covered several topics at once.\",\"secondCheck\":{\"broad\":false,\"reason\":\"already-narrowed\"}}"
+   "evidence": "{\"turnCount\":3,\"lastTurn\":{\"role\":\"assistant\",\"content\":\"You named several distinct stories here (how I priced my first coaching offer too low; why hiring a virtual assistant too early burn...; moving my studio to Denver after college). One short video lands best when it turns on a single moment. Which one of those should we build this script around first?\",\"step\":\"narrow\",\"narrowingQuestion\":true,\"forStep\":\"B1\",\"key\":\"narrow:mwc9d0f5np46dilckw\"},\"statusLine\":\"Screen stayed on this step to ask one narrowing question because your answer covered several topics at once.\",\"secondCheck\":{\"broad\":false,\"reason\":\"already-narrowed\"}}"
   },
   {
    "browser": "chromium",
    "name": "A step that fails mid-generation resumes at that step with the answer kept",
    "pass": true,
-   "evidence": "{\"failedStepState\":{\"step\":\"B1\",\"interruptedStep\":{\"step\":\"B1\",\"lastAnswer\":\"Let us focus on pricing my first coaching offer too low.\",\"turnKey\":\"turn:mwbuz5rskfmj9lmi3mn\",\"reason\":\"The writing attempt did not finish. Your saved chat is safe. Choose Try again to continue from the same answer.\",\"at\":\"2026-11-11T08:30:01.752Z\"},\"keptAnswer\":\"Let us focus on pricing my first coaching offer too low.\",\"statusText\":\"The writing attempt did not finish. Your saved chat is safe. Choose Resume this step to continue from the same answer. Step paused on Choose your topic before StorySculpt finished replying. Your last answer (“Let us focus on pricing my first coaching offer…”) is kept. Press Resume this step to continue from Choose your topic.\",\"hasRetry\":true},\"resumedState\":{\"interruptedCleared\":true,\"stepAfter\":\"evidence\",\"statusText\":\"Screen updated to Step evidence because your earlier answer (“Let us focus on pricing my first coaching o…”) shaped this question.\",\"finalStatusLine\":\"Screen changed to your finished script because every interview step is complete. Strong work bringing this story together, your script is ready to film.\",\"userCountForAnswer\":1}}"
+   "evidence": "{\"failedStepState\":{\"step\":\"B1\",\"interruptedStep\":{\"step\":\"B1\",\"lastAnswer\":\"Let us focus on pricing my first coaching offer too low.\",\"turnKey\":\"turn:mwc9d0hjn4g7yq9hfbg\",\"reason\":\"The writing attempt did not finish. Your saved chat is safe. Choose Try again to continue from the same answer.\",\"at\":\"2026-11-11T15:12:42.743Z\"},\"keptAnswer\":\"Let us focus on pricing my first coaching offer too low.\",\"statusText\":\"The writing attempt did not finish. Your saved chat is safe. Choose Resume this step to continue from the same answer. Step paused on Choose your topic before StorySculpt finished replying. Your last answer (“Let us focus on pricing my first coaching offer…”) is kept. Press Resume this step to continue from Choose your topic.\",\"hasRetry\":true},\"resumedState\":{\"interruptedCleared\":true,\"stepAfter\":\"evidence\",\"statusText\":\"Screen updated to Step evidence because your earlier answer (“Let us focus on pricing my first coaching o…”) shaped this question.\",\"finalStatusLine\":\"Screen changed to your finished script because every interview step is complete. Strong work bringing this story together, your script is ready to film.\",\"userCountForAnswer\":1}}"
   },
   {
    "browser": "chromium",
@@ -324,7 +324,7 @@
    "browser": "chromium",
    "name": "40-turn interrupted interview preserves all 40 turns, resumes the paused step, and finishes",
    "pass": true,
-   "evidence": "{\"collapsedBtnText\":\"Show earlier answers (28 messages)\",\"midInterrupt\":{\"totalTurns\":41,\"interruptedStep\":{\"step\":\"B5\",\"lastAnswer\":\"When I stopped discounting my audit, three clients signed in one week.\",\"turnKey\":\"turn:mwbuz84m9ek9uuincm8\",\"reason\":\"The writing attempt did not finish. Your saved chat is safe. Choose Try again to continue from the same answer.\",\"at\":\"2026-11-11T08:30:04.826Z\"},\"statusText\":\"The writing attempt did not finish. Your saved chat is safe. Choose Resume this step to continue from the same answer. Step paused on Choose your hook before StorySculpt finished replying. Your last answer (“When I stopped discounting my audit, three clie…”) is kept. Press Resume this step to continue from Choose your hook.\"},\"afterResume\":{\"finished\":true,\"interruptedStep\":null,\"totalTurns\":41,\"refineVisible\":true}}"
+   "evidence": "{\"collapsedBtnText\":\"Show earlier answers (28 messages)\",\"midInterrupt\":{\"totalTurns\":41,\"interruptedStep\":{\"step\":\"B5\",\"lastAnswer\":\"When I stopped discounting my audit, three clients signed in one week.\",\"turnKey\":\"turn:mwc9d292umjeh8es1mo\",\"reason\":\"The writing attempt did not finish. Your saved chat is safe. Choose Try again to continue from the same answer.\",\"at\":\"2026-11-11T15:12:45.034Z\"},\"statusText\":\"The writing attempt did not finish. Your saved chat is safe. Choose Resume this step to continue from the same answer. Step paused on Choose your hook before StorySculpt finished replying. Your last answer (“When I stopped discounting my audit, three clie…”) is kept. Press Resume this step to continue from Choose your hook.\"},\"afterResume\":{\"finished\":true,\"interruptedStep\":null,\"totalTurns\":41,\"refineVisible\":true}}"
   },
   {
    "browser": "chromium",
@@ -348,7 +348,7 @@
    "browser": "chromium",
    "name": "Full start, finish, refine, export, archive, restore, delete, undo journey completes end to end",
    "pass": true,
-   "evidence": "{\"refinedVersionCount\":2,\"exportReceipt\":{\"download\":\"why-most-founders-underprice-revised.txt\",\"href\":\"blob:http://storysculpt.walk.test/88d0b031-9f2a-40d6-a081-4cb920acac65\"},\"countInAllAfterArchive\":0,\"countInArchived\":1,\"countInAllAfterRestore\":1,\"finalJourneyState\":{\"activeId\":\"proj-101\",\"outputPresent\":true,\"versionsCount\":2,\"archived\":false,\"pendingDeletes\":0}}"
+   "evidence": "{\"refinedVersionCount\":2,\"exportReceipt\":{\"download\":\"why-most-founders-underprice-revised.txt\",\"href\":\"blob:http://storysculpt.walk.test/20062e0d-95a7-48e2-ab1b-e3bf0cb97e91\"},\"countInAllAfterArchive\":0,\"countInArchived\":1,\"countInAllAfterRestore\":1,\"finalJourneyState\":{\"activeId\":\"proj-101\",\"outputPresent\":true,\"versionsCount\":2,\"archived\":false,\"pendingDeletes\":0}}"
   },
   {
    "browser": "chromium",
@@ -420,7 +420,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/001-first-375-dark-zoom200.jpg"
   },
   {
    "browser": "chromium",
@@ -430,7 +430,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/002-first-375-dark-font24.jpg"
   },
   {
    "browser": "chromium",
@@ -530,7 +530,7 @@
    "mode": "zoom400",
    "rootFont": "16px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/003-first-1280-dark-zoom400.jpg"
   },
   {
    "browser": "chromium",
@@ -560,7 +560,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/004-interview-375-dark-zoom200.jpg"
   },
   {
    "browser": "chromium",
@@ -570,7 +570,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/005-interview-375-dark-font24.jpg"
   },
   {
    "browser": "chromium",
@@ -700,7 +700,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/006-sixtyTurn-375-dark-zoom200.jpg"
   },
   {
    "browser": "chromium",
@@ -710,7 +710,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/007-sixtyTurn-375-dark-font24.jpg"
   },
   {
    "browser": "chromium",
@@ -840,7 +840,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/008-rant-375-dark-zoom200.jpg"
   },
   {
    "browser": "chromium",
@@ -850,7 +850,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/009-rant-375-dark-font24.jpg"
   },
   {
    "browser": "chromium",
@@ -980,7 +980,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/010-finished-375-dark-zoom200.jpg"
   },
   {
    "browser": "chromium",
@@ -990,7 +990,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/011-finished-375-dark-font24.jpg"
   },
   {
    "browser": "chromium",
@@ -1120,7 +1120,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/012-refine-375-dark-zoom200.jpg"
   },
   {
    "browser": "chromium",
@@ -1130,7 +1130,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/013-refine-375-dark-font24.jpg"
   },
   {
    "browser": "chromium",
@@ -1260,7 +1260,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/014-ugc-375-dark-zoom200.jpg"
   },
   {
    "browser": "chromium",
@@ -1270,7 +1270,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/015-ugc-375-dark-font24.jpg"
   },
   {
    "browser": "chromium",
@@ -1400,7 +1400,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/016-memory-375-dark-zoom200.jpg"
   },
   {
    "browser": "chromium",
@@ -1410,7 +1410,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/017-memory-375-dark-font24.jpg"
   },
   {
    "browser": "chromium",
@@ -1540,7 +1540,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/018-help-375-dark-zoom200.jpg"
   },
   {
    "browser": "chromium",
@@ -1550,7 +1550,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/019-help-375-dark-font24.jpg"
   },
   {
    "browser": "chromium",
@@ -1680,7 +1680,7 @@
    "mode": "zoom200",
    "rootFont": "16px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/020-signedout-375-dark-zoom200.jpg"
   },
   {
    "browser": "chromium",
@@ -1690,7 +1690,7 @@
    "mode": "font24",
    "rootFont": "24px",
    "pass": true,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/021-signedout-375-dark-font24.jpg"
   },
   {
    "browser": "chromium",
@@ -1813,7 +1813,7 @@
    "stops": 30,
    "invisibleFocusStops": 0,
    "focusOrder": "focus-order.json",
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/022-keyboard-journey-dark-1280.jpg"
   },
   {
    "browser": "chromium",
@@ -1824,7 +1824,7 @@
    "stops": 31,
    "invisibleFocusStops": 0,
    "focusOrder": null,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/023-keyboard-journey-dark-375.jpg"
   },
   {
    "browser": "chromium",
@@ -1835,7 +1835,7 @@
    "stops": 30,
    "invisibleFocusStops": 0,
    "focusOrder": null,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/024-keyboard-journey-light-1280.jpg"
   },
   {
    "browser": "chromium",
@@ -1846,7 +1846,7 @@
    "stops": 31,
    "invisibleFocusStops": 0,
    "focusOrder": null,
-   "shot": null
+   "shot": "docs/storysculpt-walk/chromium/shots/025-keyboard-journey-light-375.jpg"
   }
  ],
  "accessibilityResults": [
@@ -1854,7 +1854,7 @@
    "browser": "chromium",
    "screen": "first-visit",
    "pass": true,
-   "shot": null,
+   "shot": "docs/storysculpt-walk/chromium/shots/038-a11y-first-visit.jpg",
    "transcript": "a11y/first-visit.yml",
    "headings": [
     {
@@ -1892,7 +1892,7 @@
    "browser": "chromium",
    "screen": "interview",
    "pass": true,
-   "shot": null,
+   "shot": "docs/storysculpt-walk/chromium/shots/039-a11y-interview.jpg",
    "transcript": "a11y/interview.yml",
    "headings": [
     {
@@ -1914,7 +1914,7 @@
    "browser": "chromium",
    "screen": "finished",
    "pass": true,
-   "shot": null,
+   "shot": "docs/storysculpt-walk/chromium/shots/040-a11y-finished.jpg",
    "transcript": "a11y/finished.yml",
    "headings": [
     {
@@ -1936,7 +1936,7 @@
    "browser": "chromium",
    "screen": "story-profile",
    "pass": true,
-   "shot": null,
+   "shot": "docs/storysculpt-walk/chromium/shots/041-a11y-story-profile.jpg",
    "transcript": "a11y/story-profile.yml",
    "headings": [
     {
@@ -1962,7 +1962,7 @@
    "browser": "chromium",
    "screen": "help-dialog",
    "pass": true,
-   "shot": null,
+   "shot": "docs/storysculpt-walk/chromium/shots/042-a11y-help-dialog.jpg",
    "transcript": "a11y/help-dialog.yml",
    "headings": [
     {

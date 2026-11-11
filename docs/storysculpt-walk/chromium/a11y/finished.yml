@@ -1,14 +1,10 @@
 - banner:
-  - link "SS StorySculpt":
+  - link "StorySculpt":
     - /url: /
-    - text: SS
     - heading "StorySculpt" [level=1]
   - link "My Studio":
     - /url: /
-    - img
-    - text: My Studio
-  - button "Change color theme":
-    - img
+  - button "Change color theme"
   - button "W"
 - main:
   - complementary:
@@ -26,12 +22,17 @@
   - button "Delete":
     - img
     - text: Delete
-  - button "Chat":
-    - img
-    - text: Chat
-  - button "Script v1":
-    - img
-    - text: Script v1
+  - tablist "Chat and script views":
+    - tab "Chat" [selected]
+    - tab "Script v1"
+  - strong: Saved entries StorySculpt will use in this chat (2)
+  - text: From your story profile and answers you confirmed in finished projects. Leave any entry out for this chat without deleting it.
+  - strong: "Name:"
+  - text: Alex
+  - button "Leave out of this chat"
+  - strong: "What they do:"
+  - text: Founder
+  - button "Leave out of this chat"
   - article:
     - text: StorySculpt What is the core thought on your mind today?
     - button "Copy":
@@ -45,6 +46,8 @@
     - button "Don’t use this":
       - img
       - text: Don’t use this
+    - button "Remember as fact"
+    - button "Remember as voice"
   - article:
     - text: StorySculpt Tell me about a time that proved this.
     - button "Copy":
@@ -58,6 +61,8 @@
     - button "Don’t use this":
       - img
       - text: Don’t use this
+    - button "Remember as fact"
+    - button "Remember as voice"
   - article:
     - text: StorySculpt Your script is assembled and ready to film below.
     - button "Copy":
