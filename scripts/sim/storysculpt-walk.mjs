@@ -45,7 +45,7 @@ function chromiumPath() {
 
 const ORIGIN = 'http://storysculpt.walk.test';
 const fixtures = JSON.parse(readFileSync(join(root, 'scripts', 'sim', 'fixtures', 'storysculpt-states.json'), 'utf8'));
-const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'application/javascript', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg' };
+const MIME = { '.html': 'text/html', '.css': 'text/css', '.js': 'application/javascript', '.json': 'application/json', '.svg': 'image/svg+xml', '.png': 'image/png', '.jpg': 'image/jpeg', '.jpeg': 'image/jpeg' };
 
 const SUPABASE_STUB = `
 window.supabase = { createClient: function () {
@@ -636,6 +636,94 @@ async function lifecyclePass(browser) {
       return { allMatch: all.length > 0 && all.every(Boolean), count: all.length, direct: document.querySelector('[data-approach="direct"]').getAttribute('aria-pressed'), thirty: document.querySelector('[data-duration="30"]').getAttribute('aria-pressed'), sixty: document.querySelector('[data-duration="60"]').getAttribute('aria-pressed') };
     });
     check('UGC pills: aria-pressed follows the highlight on every group after a click', pills.allMatch && pills.direct === 'true' && pills.thirty === 'true' && pills.sixty === 'false', JSON.stringify(pills));
+    await context.close();
+  }
+
+  // WBR-462: Annie UGC requests (creator profile shortcut, TikTok Shop brand-word flagger, long script on mobile)
+  {
+    const { context, page } = await open(browser, 'ugc', { width: 1280 });
+    const profileOpen = await page.evaluate(async () => {
+      const btn = document.querySelector('#ugc-open-profile-btn');
+      const memoryPanel = document.querySelector('#story-memory');
+      const wasHiddenBefore = memoryPanel ? memoryPanel.hidden : null;
+      if (btn) btn.click();
+      const isVisibleAfter = memoryPanel ? !memoryPanel.hidden : false;
+      return { btnExists: Boolean(btn), wasHiddenBefore, isVisibleAfter };
+    });
+    check('UGC creator profile: one tap from the UGC card opens story profile',
+      profileOpen.btnExists && profileOpen.wasHiddenBefore && profileOpen.isVisibleAfter,
+      JSON.stringify(profileOpen));
+    await context.close();
+  }
+
+  {
+    const { context, page } = await open(browser, 'ugc', { width: 1280 });
+    const flagResult = await page.evaluate(async () => {
+      const toggle = document.querySelector('#ugc-tiktok-toggle');
+      if (toggle && !toggle.checked) {
+        toggle.click();
+      }
+      const testDraft = 'This elegant summer dress skims the floor and gives you an effortless silhouette for any event.';
+      const copy = document.querySelector('#story-output-copy');
+      if (copy) {
+        copy.value = testDraft;
+        copy.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+      const flagsBox = document.querySelector('#story-brand-flags');
+      const flagText = flagsBox ? flagsBox.textContent : '';
+      const flagsShown = Boolean(flagsBox && !flagsBox.hidden);
+      const mentionsSkims = /skims/i.test(flagText);
+      const hasAlternative = /grazes|brushes|fits close/i.test(flagText);
+
+      // Turning toggle off hides the flag
+      if (toggle) toggle.click();
+      const hiddenWhenOff = Boolean(flagsBox && flagsBox.hidden);
+
+      return { flagsShown, mentionsSkims, hasAlternative, hiddenWhenOff, flagText: flagText.slice(0, 120) };
+    });
+    check('UGC TikTok Shop flagger: with TikTok Shop on, skims in a draft is flagged with a plain alternative',
+      flagResult.flagsShown && flagResult.mentionsSkims && flagResult.hasAlternative && flagResult.hiddenWhenOff,
+      JSON.stringify(flagResult));
+    await context.close();
+  }
+
+  {
+    const { context, page } = await open(browser, 'ugc', { width: 375 });
+    const longScriptResult = await page.evaluate(async () => {
+      const sample = 'When you are creating product videos that actually convert, you have to understand why someone stops scrolling in the first place. Nobody opens their phone hoping to be sold a product. They open it looking for a moment of relief, an interesting story, or a problem they recognize in their own day. Most brands get this completely backwards. They lead with features, specifications, battery life, and materials, assuming that technical facts will convince a skeptical viewer. But the viewer has not even agreed that the problem matters yet. If you want people to stay, start with the specific friction point. Show what went wrong before you found the solution. Let them feel the awkwardness, the frustration, or the waste of time. When you describe their experience better than they can describe it themselves, trust is earned immediately. That is where natural UGC begins. It is not an actor pretending to love an unboxed item. It is a real creator demonstrating one clear shift in their daily routine. Once the problem is established, demonstrate the solution in action. Keep your language simple, conversational, and direct. Avoid corporate jargon or exaggerated hype. Speak like you are recommending a practical tool to a friend across the kitchen table. When the viewer sees honest evaluation, they stay for the recommendation. Keep the pace moving, focus on the real result, and let the product speak through genuine demonstration.';
+      const text600 = [sample, sample, sample].join('\n\n');
+      const wordCount = text600.trim().split(/\s+/).filter(Boolean).length;
+
+      if (window.activeStory) {
+        window.activeStory.output = text600;
+        if (!window.activeStory.intake) window.activeStory.intake = {};
+        if (!window.activeStory.intake.ugc) window.activeStory.intake.ugc = {};
+        window.activeStory.intake.ugc.currentStep = 'review';
+      }
+      if (typeof window.renderScriptPanel === 'function') {
+        window.renderScriptPanel();
+      }
+      if (typeof window.switchMobileTab === 'function') {
+        window.switchMobileTab('script');
+      }
+
+      const copy = document.querySelector('#story-output-copy');
+      const copyStyle = window.getComputedStyle(copy);
+      const copyOverflowY = copyStyle.overflowY;
+      const copyHeight = copy.getBoundingClientRect().height;
+      const isNestedScrollBox = (copyOverflowY === 'auto' || copyOverflowY === 'scroll') && (copy.scrollHeight > copy.clientHeight);
+
+      return {
+        wordCount,
+        copyHeight,
+        copyOverflowY,
+        isNestedScrollBox,
+        readsWithoutNestedScroll: !isNestedScrollBox && copyHeight > 800
+      };
+    });
+    check('UGC long script on 375px mobile: 600-word script reads without a nested scroll box',
+      longScriptResult.readsWithoutNestedScroll,
+      JSON.stringify(longScriptResult));
     await context.close();
   }
 

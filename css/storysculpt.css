@@ -468,7 +468,7 @@ html.studio-light .eee-gate-box .studio-mark {
 }
 
 /* Right Pane: Artifact Script Panel (Claude Artifact style) */
-.story-pane-artifact { display: flex; flex-direction: column; height: 100%; min-height: 0; background: color-mix(in srgb, var(--studio-surface) 60%, var(--studio-bg)); overflow: hidden; flex: 1.25; }
+.story-pane-artifact { display: flex; flex-direction: column; height: 100%; min-height: 0; background: color-mix(in srgb, var(--studio-surface) 60%, var(--studio-bg)); overflow-y: auto; overflow-x: hidden; flex: 1.25; }
 .story-artifact-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 16px; padding: 16px 24px; border-bottom: 1px solid var(--studio-border); background: var(--studio-surface); flex-shrink: 0; }
 .story-artifact-info { min-width: 0; flex: 1; }
 .story-artifact-eyebrow-row { display: flex; align-items: center; gap: 12px; }
@@ -488,8 +488,8 @@ html.studio-light .eee-gate-box .studio-mark {
 .story-version-restore-btn:hover { background: var(--studio-gold); color: #071313; }
 
 /* Script document textarea */
-.story-artifact-body { flex: 1; display: flex; flex-direction: column; padding: 18px 24px; min-height: 0; overflow: hidden; }
-.story-output-copy { flex: 1; width: 100%; min-height: 0; padding: 18px 20px; border-radius: var(--radius-md, 10px); border: 1px solid var(--studio-border); background: var(--studio-bg); color: var(--studio-text); font-family: var(--font-body, 'Nunito'), sans-serif; font-size: 16px; line-height: 1.75; letter-spacing: 0.01em; white-space: pre-wrap; resize: none; outline: 0; overflow-y: auto; box-sizing: border-box; box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08); transition: border-color 0.15s ease; }
+.story-artifact-body { flex: none; display: flex; flex-direction: column; padding: 18px 24px; min-height: 0; overflow: visible; }
+.story-output-copy { width: 100%; min-height: 180px; height: auto; padding: 18px 20px; border-radius: var(--radius-md, 10px); border: 1px solid var(--studio-border); background: var(--studio-bg); color: var(--studio-text); font-family: var(--font-body, 'Nunito'), sans-serif; font-size: 16px; line-height: 1.75; letter-spacing: 0.01em; white-space: pre-wrap; resize: none; outline: 0; overflow-y: hidden; field-sizing: content; box-sizing: border-box; box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.08); transition: border-color 0.15s ease; }
 .story-output-copy:focus { border-color: var(--studio-teal); }
 
 /* Script panel footer */
@@ -755,8 +755,9 @@ html.studio-light .eee-gate-box .studio-mark {
   .story-artifact-head { align-items: center; padding-top: 8px; padding-bottom: 8px; gap: 10px; }
   .story-version-nav { margin-top: 4px; }
   .story-version-label { display: none; }
-  .story-artifact-body { padding-top: 10px; padding-bottom: 10px; }
-  .story-output-copy { padding: 14px; }
+  .story-artifact-body { padding-top: 10px; padding-bottom: 10px; flex: none; overflow: visible; }
+  .story-output-copy { padding: 14px; overflow-y: hidden; height: auto; }
+  .story-pane-artifact .ugc-filming-plan-panel { margin: 0 16px 14px; overflow: visible; flex: none; }
   .story-artifact-foot { gap: 10px; padding-top: 8px; padding-bottom: calc(8px + env(safe-area-inset-bottom)); }
   .story-next-actions { flex-wrap: nowrap; gap: 8px; }
   .story-next-actions .secondary-button { min-height: 36px; padding: 0 12px; }
@@ -901,11 +902,10 @@ button[aria-busy="true"] .spin-icon, button[aria-busy="true"] svg.spin-icon { wi
 
 /* Filming plan panel */
 .ugc-filming-plan-panel { margin-top: 16px; padding: 18px 22px; border-radius: var(--radius-card, 14px); border: 1px solid var(--studio-border); background: var(--studio-surface); display: flex; flex-direction: column; gap: 14px; }
-/* The script pane is a fixed-height column that hides overflow, so the plan
-   scrolls in its own share and the script keeps room to be read and edited
-   (2026-10-13 live test: the plan squeezed the script box to 38px). */
-.story-pane-artifact .ugc-filming-plan-panel { flex: 0 1 45%; min-height: 0; overflow-y: auto; margin: 0 24px 18px; }
-.story-pane-artifact .story-artifact-body { min-height: 180px; }
+/* The script pane grows with its content on mobile and desktop without nested
+   scroll traps (WBR-462). The filming plan sits naturally below the script. */
+.story-pane-artifact .ugc-filming-plan-panel { flex: none; min-height: 0; overflow: visible; margin: 0 24px 18px; }
+.story-pane-artifact .story-artifact-body { min-height: auto; overflow: visible; }
 .ugc-filming-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .ugc-filming-title { display: flex; align-items: center; gap: 8px; font-family: var(--font-display, 'Oswald'), sans-serif; font-size: 18px; color: var(--studio-text); }
 .ugc-filming-actions { display: flex; align-items: center; gap: 10px; }
@@ -924,6 +924,103 @@ button[aria-busy="true"] .spin-icon, button[aria-busy="true"] svg.spin-icon { wi
   .ugc-angles-grid { grid-template-columns: 1fr; }
   .ugc-hook-card { flex-direction: column; }
   .ugc-hook-use-btn { align-self: flex-start; }
+}
+
+/* UGC Creator Profile Shortcut Card (WBR-462) */
+.ugc-creator-profile-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 16px;
+  border-radius: var(--radius-card, 12px);
+  border: 1px solid var(--studio-border);
+  background: color-mix(in srgb, var(--studio-teal) 8%, var(--studio-surface));
+}
+.ugc-creator-profile-info {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.ugc-creator-profile-info svg,
+.ugc-creator-profile-info i {
+  color: var(--studio-teal);
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+.ugc-creator-profile-info strong {
+  display: block;
+  font-size: 14px;
+  color: var(--studio-text);
+  font-weight: 700;
+}
+.ugc-creator-profile-info p {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--studio-muted);
+  line-height: 1.35;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ugc-creator-profile-card .secondary-button {
+  flex-shrink: 0;
+  min-height: 36px;
+  padding: 0 12px;
+  font-size: 13px;
+  gap: 6px;
+}
+
+/* TikTok Shop Brand Word Flagger (WBR-462) */
+.story-brand-flags,
+.ugc-brand-flags-box {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.story-brand-flag-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md, 8px);
+  background: color-mix(in srgb, var(--studio-gold) 12%, var(--studio-surface));
+  border: 1px solid color-mix(in srgb, var(--studio-gold) 45%, var(--studio-border));
+  color: var(--studio-text);
+  font-size: 13px;
+  line-height: 1.45;
+}
+.story-brand-flag-item svg,
+.story-brand-flag-item i {
+  color: var(--studio-gold);
+  flex-shrink: 0;
+  margin-top: 2px;
+  width: 16px;
+  height: 16px;
+}
+.story-brand-flag-item strong {
+  color: var(--studio-gold);
+}
+.story-brand-flag-clear {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm, 6px);
+  background: color-mix(in srgb, var(--studio-teal) 8%, var(--studio-surface));
+  border: 1px solid color-mix(in srgb, var(--studio-teal) 30%, var(--studio-border));
+  color: var(--studio-teal);
+  font-size: 12px;
+  font-weight: 600;
+}
+.story-brand-flag-clear svg,
+.story-brand-flag-clear i {
+  width: 15px;
+  height: 15px;
 }
 
 /* ── VOICE-TO-TEXT (2026-10-17) ─────────────────────────

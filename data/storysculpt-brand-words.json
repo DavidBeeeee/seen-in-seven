@@ -1,0 +1,146 @@
+[
+  {
+    "term": "skims",
+    "brand": "SKIMS",
+    "category": "apparel",
+    "suggestion": "Use 'grazes', 'brushes', or 'fits close' instead to avoid TikTok Shop brand-name flags."
+  },
+  {
+    "term": "band-aid",
+    "brand": "Band-Aid",
+    "category": "first aid",
+    "suggestion": "Use 'bandage' or 'quick fix' instead."
+  },
+  {
+    "term": "bandaid",
+    "brand": "Band-Aid",
+    "category": "first aid",
+    "suggestion": "Use 'bandage' or 'quick fix' instead."
+  },
+  {
+    "term": "chapstick",
+    "brand": "ChapStick",
+    "category": "personal care",
+    "suggestion": "Use 'lip balm' instead."
+  },
+  {
+    "term": "kleenex",
+    "brand": "Kleenex",
+    "category": "paper products",
+    "suggestion": "Use 'tissue' or 'facial tissue' instead."
+  },
+  {
+    "term": "q-tip",
+    "brand": "Q-tip",
+    "category": "personal care",
+    "suggestion": "Use 'cotton swab' instead."
+  },
+  {
+    "term": "qtip",
+    "brand": "Q-tip",
+    "category": "personal care",
+    "suggestion": "Use 'cotton swab' instead."
+  },
+  {
+    "term": "tupperware",
+    "brand": "Tupperware",
+    "category": "kitchenware",
+    "suggestion": "Use 'food container' or 'storage container' instead."
+  },
+  {
+    "term": "crockpot",
+    "brand": "Crock-Pot",
+    "category": "kitchenware",
+    "suggestion": "Use 'slow cooker' instead."
+  },
+  {
+    "term": "crock-pot",
+    "brand": "Crock-Pot",
+    "category": "kitchenware",
+    "suggestion": "Use 'slow cooker' instead."
+  },
+  {
+    "term": "thermos",
+    "brand": "Thermos",
+    "category": "drinkware",
+    "suggestion": "Use 'insulated bottle' or 'travel flask' instead."
+  },
+  {
+    "term": "rollerblade",
+    "brand": "Rollerblade",
+    "category": "sporting goods",
+    "suggestion": "Use 'inline skate' instead."
+  },
+  {
+    "term": "rollerblades",
+    "brand": "Rollerblade",
+    "category": "sporting goods",
+    "suggestion": "Use 'inline skates' instead."
+  },
+  {
+    "term": "popsicle",
+    "brand": "Popsicle",
+    "category": "frozen food",
+    "suggestion": "Use 'ice pop' or 'frozen treat' instead."
+  },
+  {
+    "term": "velcro",
+    "brand": "Velcro",
+    "category": "fasteners",
+    "suggestion": "Use 'hook-and-loop fastener' or 'strap' instead."
+  },
+  {
+    "term": "frisbee",
+    "brand": "Frisbee",
+    "category": "toys",
+    "suggestion": "Use 'flying disc' instead."
+  },
+  {
+    "term": "jacuzzi",
+    "brand": "Jacuzzi",
+    "category": "home / bath",
+    "suggestion": "Use 'hot tub' or 'whirlpool' instead."
+  },
+  {
+    "term": "post-it",
+    "brand": "Post-it",
+    "category": "office supplies",
+    "suggestion": "Use 'sticky note' instead."
+  },
+  {
+    "term": "postit",
+    "brand": "Post-it",
+    "category": "office supplies",
+    "suggestion": "Use 'sticky note' instead."
+  },
+  {
+    "term": "spanx",
+    "brand": "Spanx",
+    "category": "apparel",
+    "suggestion": "Use 'shapewear' or 'smoothing layer' instead."
+  },
+  {
+    "term": "bubble wrap",
+    "brand": "Bubble Wrap",
+    "category": "packaging",
+    "suggestion": "Use 'cushioning wrap' or 'padded wrap' instead."
+  },
+  {
+    "term": "taser",
+    "brand": "TASER",
+    "category": "security",
+    "suggestion": "Use 'stun device' instead."
+  },
+  {
+    "term": "jet ski",
+    "brand": "Jet Ski",
+    "category": "watercraft",
+    "suggestion": "Use 'personal watercraft' instead."
+  },
+  {
+    "term": "jetski",
+    "brand": "Jet Ski",
+    "category": "watercraft",
+    "suggestion": "Use 'personal watercraft' instead."
+  }
+]

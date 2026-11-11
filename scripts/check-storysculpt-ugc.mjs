@@ -276,4 +276,57 @@ assert.deepEqual(navExtract.features, ['Sugarcane-based SweetFoam cushioning wit
 assert.deepEqual(navExtract.customerReports, ['Comfortable all day on my feet, but the heel wore through in four months.'], 'Only real review text is a customer report');
 console.log('PASS: Live-test regressions verified.');
 
-console.log('\nALL STORYSCULPT UGC TESTS PASSED (10/10 areas verified)!');
+// 11. Annie's three UGC requests (WBR-462)
+console.log('11. Checking Annie UGC requests (WBR-462)...');
+const brandWordsPath = join(root, 'data', 'storysculpt-brand-words.json');
+const brandWordsRaw = readFileSync(brandWordsPath, 'utf8');
+assert(!brandWordsRaw.includes('\u2014'), 'Zero em dashes in data/storysculpt-brand-words.json');
+const brandWords = JSON.parse(brandWordsRaw);
+assert(Array.isArray(brandWords), 'Brand words must be an array');
+assert(brandWords.length >= 15, 'Must be seeded with at least 15 brand/restricted terms (found ' + brandWords.length + ')');
+const skims = brandWords.find(b => b.term === 'skims');
+assert(skims, "Brand words must include 'skims'");
+assert.equal(skims.brand, 'SKIMS', "Brand for 'skims' must be 'SKIMS'");
+assert(skims.suggestion && skims.suggestion.length > 0, "'skims' entry must provide a plain alternative suggestion");
+
+// Creator profile shortcut on UGC card
+assert(html.includes('id="ugc-creator-profile-card"'), 'UGC entry card must include creator profile card');
+assert(html.includes('id="ugc-open-profile-btn"'), 'UGC entry card must include open profile button');
+assert(html.includes('id="ugc-creator-profile-summary"'), 'UGC entry card must include creator profile summary');
+assert(script.includes("openProfileBtn.addEventListener('click', openMemory)"), 'Open profile button must reuse existing story profile');
+
+// TikTok Shop toggle
+assert(html.includes('id="ugc-tiktok-toggle"'), 'UGC entry card must include TikTok Shop toggle');
+assert(html.includes('id="ugc-tiktok-toggle-angle"'), 'UGC angles card must include TikTok Shop toggle');
+assert(html.includes('id="ugc-tiktok-toggle-review"'), 'UGC review card must include TikTok Shop toggle');
+assert(html.includes('id="ugc-brand-flags-box"'), 'UGC review card must include brand flags container');
+assert(html.includes('id="story-brand-flags"'), 'Script panel must include brand flags container');
+
+// Brand-word flagger behavior: flagging only, never silent rewriting
+const testDraft = 'This dress skims the ankle and feels amazing.';
+const flags = [];
+for (const entry of brandWords) {
+  const escaped = entry.term.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+  const regex = new RegExp('(?:^|[^a-zA-Z0-9_-])(' + escaped + ')(?=[^a-zA-Z0-9_-]|$)', 'gi');
+  let m;
+  while ((m = regex.exec(testDraft)) !== null) {
+    flags.push({ term: entry.term, matched: m[1], brand: entry.brand, suggestion: entry.suggestion });
+  }
+}
+assert.equal(flags.length, 1, 'Draft with skims must produce exactly 1 flag');
+assert.equal(flags[0].matched, 'skims', 'Matched word must be skims');
+assert.equal(testDraft, 'This dress skims the ankle and feels amazing.', 'Draft text must never be silently rewritten');
+
+// Long script CSS: no nested scroll box, auto-grow
+const css = readFileSync(join(root, 'css', 'storysculpt.css'), 'utf8');
+assert(!css.includes('\u2014'), 'Zero em dashes in css/storysculpt.css');
+assert(css.includes('.story-output-copy { width: 100%; min-height: 180px; height: auto;'), 'Output textarea must have height: auto for growing');
+assert(css.includes('overflow-y: hidden;'), 'Output textarea must have overflow-y: hidden to avoid nested scroll trap');
+assert(css.includes('.story-pane-artifact { display: flex; flex-direction: column; height: 100%; min-height: 0; background: color-mix(in srgb, var(--studio-surface) 60%, var(--studio-bg)); overflow-y: auto;'), 'Artifact panel must have overflow-y: auto as single scroll container');
+
+// Preserved features
+assert(html.includes('id="ugc-hooks-box"'), 'Hook variety options must be preserved');
+assert(html.includes('id="ugc-filming-toggle"'), 'Camera direction toggle must be preserved');
+console.log('PASS: Annie UGC requests verified (11/11 areas).');
+
+console.log('\nALL STORYSCULPT UGC TESTS PASSED (11/11 areas verified)!');

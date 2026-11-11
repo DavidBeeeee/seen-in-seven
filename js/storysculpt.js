@@ -105,6 +105,145 @@ function autoGrow(el) {
   el.style.height = Math.min(el.scrollHeight, 180) + 'px';
 }
 
+function autoGrowScriptOutput(el) {
+  if (!el) return;
+  el.style.height = 'auto';
+  el.style.height = Math.max(180, el.scrollHeight) + 'px';
+  el.style.overflowY = 'hidden';
+}
+
+let storyBrandWords = [
+  { term: 'skims', brand: 'SKIMS', category: 'apparel', suggestion: "Use 'grazes', 'brushes', or 'fits close' instead to avoid TikTok Shop brand-name flags." },
+  { term: 'band-aid', brand: 'Band-Aid', category: 'first aid', suggestion: "Use 'bandage' or 'quick fix' instead." },
+  { term: 'bandaid', brand: 'Band-Aid', category: 'first aid', suggestion: "Use 'bandage' or 'quick fix' instead." },
+  { term: 'chapstick', brand: 'ChapStick', category: 'personal care', suggestion: "Use 'lip balm' instead." },
+  { term: 'kleenex', brand: 'Kleenex', category: 'paper products', suggestion: "Use 'tissue' or 'facial tissue' instead." },
+  { term: 'q-tip', brand: 'Q-tip', category: 'personal care', suggestion: "Use 'cotton swab' instead." },
+  { term: 'qtip', brand: 'Q-tip', category: 'personal care', suggestion: "Use 'cotton swab' instead." },
+  { term: 'tupperware', brand: 'Tupperware', category: 'kitchenware', suggestion: "Use 'food container' or 'storage container' instead." },
+  { term: 'crockpot', brand: 'Crock-Pot', category: 'kitchenware', suggestion: "Use 'slow cooker' instead." },
+  { term: 'crock-pot', brand: 'Crock-Pot', category: 'kitchenware', suggestion: "Use 'slow cooker' instead." },
+  { term: 'thermos', brand: 'Thermos', category: 'drinkware', suggestion: "Use 'insulated bottle' or 'travel flask' instead." },
+  { term: 'rollerblade', brand: 'Rollerblade', category: 'sporting goods', suggestion: "Use 'inline skate' instead." },
+  { term: 'rollerblades', brand: 'Rollerblade', category: 'sporting goods', suggestion: "Use 'inline skates' instead." },
+  { term: 'popsicle', brand: 'Popsicle', category: 'frozen food', suggestion: "Use 'ice pop' or 'frozen treat' instead." },
+  { term: 'velcro', brand: 'Velcro', category: 'fasteners', suggestion: "Use 'hook-and-loop fastener' or 'strap' instead." },
+  { term: 'frisbee', brand: 'Frisbee', category: 'toys', suggestion: "Use 'flying disc' instead." },
+  { term: 'jacuzzi', brand: 'Jacuzzi', category: 'home / bath', suggestion: "Use 'hot tub' or 'whirlpool' instead." },
+  { term: 'post-it', brand: 'Post-it', category: 'office supplies', suggestion: "Use 'sticky note' instead." },
+  { term: 'postit', brand: 'Post-it', category: 'office supplies', suggestion: "Use 'sticky note' instead." },
+  { term: 'spanx', brand: 'Spanx', category: 'apparel', suggestion: "Use 'shapewear' or 'smoothing layer' instead." },
+  { term: 'bubble wrap', brand: 'Bubble Wrap', category: 'packaging', suggestion: "Use 'cushioning wrap' or 'padded wrap' instead." },
+  { term: 'taser', brand: 'TASER', category: 'security', suggestion: "Use 'stun device' instead." },
+  { term: 'jet ski', brand: 'Jet Ski', category: 'watercraft', suggestion: "Use 'personal watercraft' instead." },
+  { term: 'jetski', brand: 'Jet Ski', category: 'watercraft', suggestion: "Use 'personal watercraft' instead." }
+];
+
+async function loadBrandWords() {
+  try {
+    const res = await fetch('/data/storysculpt-brand-words.json');
+    if (res.ok) {
+      const list = await res.json();
+      if (Array.isArray(list) && list.length > 0) storyBrandWords = list;
+    }
+  } catch (_) {}
+}
+
+function findBrandWordFlags(text, wordList) {
+  if (!text || typeof text !== 'string') return [];
+  const list = Array.isArray(wordList) ? wordList : storyBrandWords;
+  const found = [];
+  for (const entry of list) {
+    if (!entry || !entry.term) continue;
+    const escaped = entry.term.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&');
+    const regex = new RegExp('(?:^|[^a-zA-Z0-9_-])(' + escaped + ')(?=[^a-zA-Z0-9_-]|$)', 'gi');
+    let m;
+    while ((m = regex.exec(text)) !== null) {
+      found.push({
+        term: entry.term,
+        brand: entry.brand || entry.term.toUpperCase(),
+        matchedWord: m[1],
+        suggestion: entry.suggestion || ("Use a plain generic alternative instead of '" + entry.term + "'.")
+      });
+      if (regex.lastIndex === m.index) regex.lastIndex++;
+    }
+  }
+  return found;
+}
+
+function isTikTokShopEnabled() {
+  return Boolean(activeStory && activeStory.intake && activeStory.intake.ugc && activeStory.intake.ugc.tiktokShop);
+}
+
+function renderBrandWordFlags() {
+  const panelBox = storyEl('story-brand-flags');
+  const reviewBox = storyEl('ugc-brand-flags-box');
+  const isUgc = Boolean(activeStory && activeStory.content_type === 'ugc');
+  const on = isTikTokShopEnabled();
+
+  if (!isUgc || !on) {
+    if (panelBox) panelBox.hidden = true;
+    if (reviewBox) reviewBox.hidden = true;
+    return;
+  }
+
+  const scriptText = (activeStory && activeStory.output) || (storyEl('story-output-copy') ? storyEl('story-output-copy').value : '');
+  if (!scriptText) {
+    if (panelBox) panelBox.hidden = true;
+    if (reviewBox) reviewBox.hidden = true;
+    return;
+  }
+
+  const flags = findBrandWordFlags(scriptText);
+  let html = '';
+  if (flags.length > 0) {
+    html = flags.map(f =>
+      '<div class="story-brand-flag-item"><i data-lucide="shield-alert" aria-hidden="true"></i><div><strong>TikTok Shop brand-word flag:</strong> &ldquo;' +
+      storyEscape(f.matchedWord) + '&rdquo; is a registered brand name (' + storyEscape(f.brand) +
+      ') and risks suppression on TikTok Shop. ' + storyEscape(f.suggestion) + '</div></div>'
+    ).join('');
+  } else {
+    html = '<div class="story-brand-flag-clear"><i data-lucide="shield-check" aria-hidden="true"></i><span>TikTok Shop check: No restricted brand names detected.</span></div>';
+  }
+
+  if (panelBox) {
+    panelBox.innerHTML = html;
+    panelBox.hidden = false;
+  }
+  if (reviewBox) {
+    reviewBox.innerHTML = html;
+    reviewBox.hidden = false;
+  }
+  if (typeof EEEStudio !== 'undefined' && EEEStudio.refreshIcons) EEEStudio.refreshIcons();
+}
+
+function setTikTokShop(enabled) {
+  if (!activeStory) return;
+  if (!activeStory.intake) activeStory.intake = {};
+  if (!activeStory.intake.ugc) activeStory.intake.ugc = {};
+  activeStory.intake.ugc.tiktokShop = Boolean(enabled);
+  ['ugc-tiktok-toggle', 'ugc-tiktok-toggle-angle', 'ugc-tiktok-toggle-review'].forEach(id => {
+    const el = storyEl(id);
+    if (el) el.checked = Boolean(enabled);
+  });
+  queueStorySave();
+  renderBrandWordFlags();
+}
+
+if (typeof window !== 'undefined') {
+  Object.defineProperty(window, 'activeStory', {
+    get() { return activeStory; },
+    set(v) { activeStory = v; },
+    configurable: true
+  });
+  window.renderScriptPanel = renderScriptPanel;
+  window.switchMobileTab = switchMobileTab;
+  window.findBrandWordFlags = findBrandWordFlags;
+  window.storyBrandWords = storyBrandWords;
+  window.autoGrowScriptOutput = autoGrowScriptOutput;
+  window.setTikTokShop = setTikTokShop;
+}
+
 function updateWordCount(text) {
   const words = (text || '').trim().split(/\s+/).filter(Boolean).length;
   const minutes = Math.max(1, Math.round(words / 130 * 10) / 10);
@@ -747,6 +886,8 @@ function renderScriptPanel() {
       copyEl.value = contentToShow;
     }
     copyEl.readOnly = viewingVersionIndex !== -1;
+    autoGrowScriptOutput(copyEl);
+    renderBrandWordFlags();
     const fidelityEl = storyEl('story-fidelity-note');
     if (fidelityEl) {
       const note = viewingVersionIndex === -1 && activeStory.intake && activeStory.intake.fidelity_note;
@@ -1100,6 +1241,8 @@ function switchMobileTab(tab) {
     if (btnChat) btnChat.classList.remove('active');
     if (scriptPane) scriptPane.classList.remove('mobile-hidden');
     if (chatPane) chatPane.classList.add('mobile-hidden');
+    autoGrowScriptOutput(storyEl('story-output-copy'));
+    renderBrandWordFlags();
   }
 }
 
@@ -1114,6 +1257,8 @@ function selectVersion(index) {
   const content = viewingVersionIndex === -1 ? (activeStory.output || '') : versions[viewingVersionIndex].content;
   const copyEl = storyEl('story-output-copy');
   copyEl.value = content;
+  autoGrowScriptOutput(copyEl);
+  renderBrandWordFlags();
   copyEl.readOnly = viewingVersionIndex !== -1;
   updateWordCount(content);
   renderVersionPills();
@@ -1421,7 +1566,10 @@ function renderUgcProject(project) {
 
     const reviewToggle = storyEl('ugc-filming-toggle-review');
     if (reviewToggle) reviewToggle.checked = Boolean(ugcState.filming && ugcState.filming.enabled);
+    const reviewTiktok = storyEl('ugc-tiktok-toggle-review');
+    if (reviewTiktok) reviewTiktok.checked = Boolean(ugcState.tiktokShop);
     renderUgcFilmingPlan(project);
+    renderBrandWordFlags();
     EEEStudio.refreshIcons();
     return;
   }
@@ -1441,6 +1589,21 @@ function renderUgcProject(project) {
     storyEl('ugc-product-details').value = prod.userDetails || '';
     storyEl('ugc-brand-brief').value = prod.brief || '';
     storyEl('ugc-filming-toggle').checked = Boolean(ugcState.filming && ugcState.filming.enabled);
+    const entryTiktok = storyEl('ugc-tiktok-toggle');
+    if (entryTiktok) entryTiktok.checked = Boolean(ugcState.tiktokShop);
+
+    const profSummary = storyEl('ugc-creator-profile-summary');
+    if (profSummary) {
+      const name = (memoryProfile && memoryProfile.name) || '';
+      const role = (memoryProfile && memoryProfile.role) || '';
+      const voice = (memoryProfile && memoryProfile.voice) || '';
+      if (name || role || voice) {
+        const who = [name, role].filter(Boolean).join(', ');
+        profSummary.textContent = who ? 'Speaking as ' + who + '. Tap to edit.' : 'Your voice and phrasing are ready. Tap to edit.';
+      } else {
+        profSummary.textContent = 'Tone, voice, and who you are. Reused across your scripts.';
+      }
+    }
 
     const apprBtns = storyEl('ugc-approach-select').querySelectorAll('.ugc-pill-btn');
     apprBtns.forEach(btn => btn.classList.toggle('active', btn.dataset.approach === (ugcState.salesApproach || 'help-decide')));
@@ -1524,9 +1687,11 @@ function renderUgcProject(project) {
       findingsEl.innerHTML = parts.length ? parts.join('') : '<p>No external claims extracted yet; relying on your product description.</p>';
     }
 
-    // Filming toggle sync
+    // Filming and TikTok toggle sync
     const filmToggleAngle = storyEl('ugc-filming-toggle-angle');
     if (filmToggleAngle) filmToggleAngle.checked = Boolean(ugcState.filming && ugcState.filming.enabled);
+    const tiktokToggleAngle = storyEl('ugc-tiktok-toggle-angle');
+    if (tiktokToggleAngle) tiktokToggleAngle.checked = Boolean(ugcState.tiktokShop);
   }
 
   EEEStudio.refreshIcons();
@@ -1782,6 +1947,16 @@ function initUgcListeners() {
       queueStorySave();
       if (activeStory.output) renderUgcFilmingPlan(activeStory);
     });
+  }
+
+  ['ugc-tiktok-toggle', 'ugc-tiktok-toggle-angle', 'ugc-tiktok-toggle-review'].forEach(id => {
+    const el = storyEl(id);
+    if (el) el.addEventListener('change', () => setTikTokShop(el.checked));
+  });
+
+  const openProfileBtn = storyEl('ugc-open-profile-btn');
+  if (openProfileBtn) {
+    openProfileBtn.addEventListener('click', openMemory);
   }
 
   const productUrlField = storyEl('ugc-product-url');
@@ -3492,7 +3667,11 @@ storyEl('story-answer').addEventListener('keydown', event => {
 });
 
 // Artifact panel and version history events
-storyEl('story-output-copy').addEventListener('input', queueOutputSave);
+storyEl('story-output-copy').addEventListener('input', () => {
+  autoGrowScriptOutput(storyEl('story-output-copy'));
+  renderBrandWordFlags();
+  queueOutputSave();
+});
 storyEl('story-refine-send').addEventListener('click', refineStory);
 storyEl('story-regenerate-script').addEventListener('click', regenerateScript);
 storyEl('story-regenerate-script-foot').addEventListener('click', regenerateScript);
@@ -3938,5 +4117,6 @@ EEEStudio.initialize(async context => {
   storyContext = context;
   try { await loadMemory(); } catch (error) { memoryProfile = {}; }
   initUgcListeners();
+  loadBrandWords();
   await loadStoryProjects();
 });

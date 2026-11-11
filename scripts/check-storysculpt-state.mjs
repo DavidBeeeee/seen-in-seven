@@ -179,7 +179,7 @@ function recoveryBrowser(project) {
     showErrorInConversation() {}, announceToReader() {}, recordStoryFailure() {}, adoptScriptTitle() {},
     renderProjectList() {}, renderScriptPanel() {}, renderSettingsSummary() {}, setStoryEditing() {},
     switchMobileTab() {}, isStoryPhone: () => false, restoreUnsavedStory: () => false,
-    ensureVersions: () => [], saveActiveStory: async () => {}
+    ensureVersions: () => [], saveActiveStory: async () => {}, syncObjectiveInputs() {}
   };
   c.window = c;
   vm.createContext(c);

@@ -9,7 +9,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
   <script>try{if(localStorage.getItem('sis_theme_v1')==='light')document.documentElement.classList.add('studio-light')}catch(e){}</script>
-  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=wbr462-text-zoom-v1">
+  <link rel="stylesheet" href="/css/hub-theme.css"><link rel="stylesheet" href="/css/studio.css"><link rel="stylesheet" href="/css/eee.css"><link rel="stylesheet" href="/css/storysculpt.css?v=wbr462-agnight-20261110-v1">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/js/egress-report.js?v=1"></script><script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
 <body>
@@ -192,6 +192,19 @@
                     <h3>What product are we featuring?</h3>
                     <p>Enter a product link or paste its details. StorySculpt will research the claims and find an angle worth watching.</p>
                   </div>
+                  <div class="ugc-creator-profile-card" id="ugc-creator-profile-card">
+                    <div class="ugc-creator-profile-info">
+                      <i data-lucide="user-round" aria-hidden="true"></i>
+                      <div>
+                        <strong>Creator profile</strong>
+                        <p id="ugc-creator-profile-summary">Tone, voice, and who you are. Reused across your scripts.</p>
+                      </div>
+                    </div>
+                    <button class="secondary-button" id="ugc-open-profile-btn" type="button">
+                      <span>Edit profile</span>
+                      <i data-lucide="arrow-right" aria-hidden="true"></i>
+                    </button>
+                  </div>
                   <div class="ugc-input-group">
                     <label for="ugc-product-url">Product link (Amazon or brand store)</label>
                     <input type="url" id="ugc-product-url" placeholder="https://..." autocomplete="off">
@@ -215,6 +228,13 @@
                       <button class="ugc-pill-btn" type="button" aria-pressed="false" data-approach="direct">Sell directly</button>
                       <button class="ugc-pill-btn" type="button" aria-pressed="false" data-approach="useful">Useful content featuring it</button>
                     </div>
+                  </div>
+                  <div class="ugc-toggle-row">
+                    <label class="ugc-switch-label" for="ugc-tiktok-toggle">
+                      <input type="checkbox" id="ugc-tiktok-toggle" class="ugc-switch-input">
+                      <span class="ugc-switch-slider"></span>
+                      <span class="ugc-switch-text">TikTok Shop mode (flag brand words that risk suppression)</span>
+                    </label>
                   </div>
                   <div class="ugc-toggle-row">
                     <label class="ugc-switch-label" for="ugc-filming-toggle">
@@ -297,6 +317,13 @@
                       </div>
                     </div>
                     <div class="ugc-toggle-row">
+                      <label class="ugc-switch-label" for="ugc-tiktok-toggle-angle">
+                        <input type="checkbox" id="ugc-tiktok-toggle-angle" class="ugc-switch-input">
+                        <span class="ugc-switch-slider"></span>
+                        <span class="ugc-switch-text">TikTok Shop mode (flag brand words)</span>
+                      </label>
+                    </div>
+                    <div class="ugc-toggle-row">
                       <label class="ugc-switch-label" for="ugc-filming-toggle-angle">
                         <input type="checkbox" id="ugc-filming-toggle-angle" class="ugc-switch-input">
                         <span class="ugc-switch-slider"></span>
@@ -332,6 +359,14 @@
                     </div>
                     <p class="ugc-working-status" id="ugc-revise-status" role="status" aria-live="polite" hidden></p>
                   </div>
+                  <div class="ugc-toggle-row">
+                    <label class="ugc-switch-label" for="ugc-tiktok-toggle-review">
+                      <input type="checkbox" id="ugc-tiktok-toggle-review" class="ugc-switch-input">
+                      <span class="ugc-switch-slider"></span>
+                      <span class="ugc-switch-text">TikTok Shop mode (flag brand words)</span>
+                    </label>
+                  </div>
+                  <div class="ugc-brand-flags-box" id="ugc-brand-flags-box" hidden></div>
                   <div class="ugc-toggle-row">
                     <label class="ugc-switch-label" for="ugc-filming-toggle-review">
                       <input type="checkbox" id="ugc-filming-toggle-review" class="ugc-switch-input">
@@ -418,6 +453,7 @@
 
               <div class="story-artifact-body">
                 <p class="eee-message story-fidelity-note" id="story-fidelity-note" role="status" hidden></p>
+                <div class="story-brand-flags" id="story-brand-flags" hidden></div>
                 <textarea class="story-output-copy" id="story-output-copy" aria-label="Your finished script" spellcheck="true" placeholder="Your finished talking-head script will appear here..."></textarea>
               </div>
 
@@ -544,6 +580,6 @@
       </div>
     </div>
   </div>
-  <script src="/js/eee-common.js?v=egress-v1"></script><script src="/js/storysculpt-member-states.js?v=wbr462-recovery-20261106-v1"></script><script src="/js/storysculpt.js?v=wbr462-kimi-objective-20261108-v1"></script><script src="/js/voice-input.js?v=voice-sessions-1"></script>
+  <script src="/js/eee-common.js?v=egress-v1"></script><script src="/js/storysculpt-member-states.js?v=wbr462-recovery-20261106-v1"></script><script src="/js/storysculpt.js?v=wbr462-agnight-20261110-v1"></script><script src="/js/voice-input.js?v=voice-sessions-1"></script>
 </body>
 </html>
