@@ -2587,6 +2587,7 @@ function lapseRecoveryLine(project, notice, stepGuides) {
 // current conversation (plus the member's standing profile as context) to the
 // unchanged /api/storysculpt endpoint and folds the response back in.
 function storyRecoveryMessage(error, fallback) {
+  if (String(error && error.message || '').includes('STALE_VERSION')) return 'A newer copy of this chat was saved. Your latest answer is still visible in this tab, but has not been saved. Copy your answer before reloading to see the newer saved chat. Nothing newer was overwritten.';
   const kind = error && error.storyFailureKind;
   if (kind === 'connection') return 'Connection lost. Your saved chat is safe. Reconnect, then choose Try again; you do not need to retype your answer.';
   if (kind === 'save') return error.keptLocally
@@ -2871,6 +2872,15 @@ async function executeInterviewGeneration() {
     failed = true;
     hideThinkingIndicator();
     const cleanMsg = storyRecoveryMessage(error, 'This step did not finish. Your answers are still saved.');
+    if (String(error && error.message || '').includes('STALE_VERSION')) {
+      // A refused save never reached generation. Do not offer a generation
+      // retry or claim the unsaved answer is safely stored in the account.
+      if (activeStory && activeStory.intake) activeStory.intake.interruptedStep = null;
+      status.textContent = cleanMsg;
+      status.classList.add('error');
+      showErrorInConversation(cleanMsg, null);
+      return;
+    }
     if (activeStory) {
       if (!activeStory.intake || typeof activeStory.intake !== 'object') activeStory.intake = {};
       const lastUser = [...(activeStory.conversation || [])].reverse().find(m => m && m.role === 'user');
