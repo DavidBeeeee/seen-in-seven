@@ -1192,7 +1192,7 @@ button[aria-busy="true"] .spin-icon, button[aria-busy="true"] svg.spin-icon { wi
 /* Member-stated objective & graded feedback (WBR-462: Stranger 44, 100; UX 100) */
 .story-intake-objective {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(180px, 100%), 1fr));
   gap: 8px 12px;
   padding: 10px 26px 0;
   border-top: 1px solid var(--studio-border);
