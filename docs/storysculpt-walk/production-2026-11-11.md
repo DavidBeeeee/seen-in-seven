@@ -118,3 +118,42 @@ answer visibly, zero generation calls and no Resume button. Final candidate,
 full suite and deployed verification receipts are recorded below after the
 release. Independent acceptance of this new Afternoon artifact belongs to the
 named Evening lane; the full WBR-462 card remains open.
+
+## Deployed correction and final re-walk
+
+The final candidate-only save-refusal check passed with no database overwrite
+or generation request. The correction was pushed in f6251e85e3885885ae54bb19947a1598ef2b9ed0.
+Vercel independently reports production deployment
+`dpl_F3xDmMh6EXpUPXK9NFuzB9xqL1Ud` READY for that exact main commit, alias
+studio.coloradomastermind.com. The served JS SHA256 is now
+`bc5e940854fc52198ac7ae647b571def358f39f54ffa0d4cefd95fea92237c5b`,
+matching the local corrected JS exactly.
+
+At 20:16:28.349Z the real deployed client passed the controlled PATCH409
+regression without a client override. It displayed the full corrected line
+above; the answer stayed visible, the independently read database had only
+the earlier greeting, and no generation or Resume control appeared.
+
+A second complete live fault walk after that client change passed all three
+assigned cases between 20:16 and 20:17 UTC. Both real Resume calls kept their
+original generation keys and a single saved answer; empty and whitespace
+Send made zero generation requests. No page exceptions. These repeats have
+a specific reason: a new client recovery branch was deployed, so its neighboring
+connection/503 behavior was rechecked rather than assumed unchanged.
+
+Release sequencing correction: the first client commit was pushed before a
+full-suite failure was resolved. The remaining failure was the progress check
+still pinning the earlier script cache name. This was my sequencing error;
+the two product Git hooks being green did not establish a green `npm test`.
+The existing progress assertion now names the actual new client cache key,
+without dropping any check. `npm test` then exited zero across the complete
+suite, including pretest, state, release, progress and member checks. An earlier
+VM-isolated save-status fixture also exposed a new helper dependency; the
+recovery predicate is now self-contained so that fixture remains executable.
+No frozen prompt, blueprint, database, entitlement or safety rule changed.
+
+Evening receiving review: inspect this exact committed receipt and narrow JS
+diff, replay the scoped save-conflict case if needed, and record independent
+acceptance on WO-20261111-afternoon. The original rapid title-save conflict's
+root cause remains unknown. Do not call this wording correction a repair of
+that race, and do not infer feature-wide acceptance or a new 300 grade.
