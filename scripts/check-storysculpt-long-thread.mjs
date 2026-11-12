@@ -230,8 +230,126 @@ check(/id="story-latest-live"[^>]*aria-live="polite"/.test(page), 'the page carr
   }
 }
 
+// 6. Developer 65 (WBR-462, 2026-11-11): the generated replies themselves.
+// Section 5 proves the page's own labels hold still over 40 turns; that is UI
+// text, which the 11-11 order called out as not the row. This section runs 20
+// fixture model replies (the raw strings a provider returns, em dashes and
+// contract prefixes included) through the shipped delivery gate,
+// classifyOutput() in api/_lib/storysculpt-observability.js, interleaved with 20
+// member answers into one 40-turn interview, and checks the text a member
+// actually reads: one voice (talks to "you", never about "the user", never
+// turns into an AI or a company, no corporate register, no em dash after
+// sanitising) and one set of terms (each concept keeps the name the page uses,
+// never a synonym). A drifted reply planted at turn 34 must be caught, so the
+// check is proved to bite rather than to pass by being blind.
+{
+  const { classifyOutput } = await import('../api/_lib/storysculpt-observability.js');
+  const answers = [
+    'I coach first-time managers. Most of them got promoted for being good at the job, not for leading people.',
+    'The moment I knew: my first one-on-one, I talked for 40 minutes and my report said nothing.',
+    'I want them to feel less alone. Everybody pretends they have it figured out.',
+    'The enemy is the leadership books that say be a servant leader and never say how.',
+    'I would say it like I am talking to a friend over coffee. Swearing is fine, a little.',
+    'Use option 2.',
+    'Keep my line about the 40 minutes, that is the real part.',
+    'Option 1 for the loop.',
+    'It should be about 60 seconds.',
+    'Ask them to comment FIRST and I will send the one-on-one question list.',
+    'Make the middle shorter, it drags.',
+    'Yes, that version.',
+    'Can you keep the coffee line?',
+    'I like the second hook better now.',
+    'Go with it.',
+    'Add that I still get it wrong sometimes.',
+    'Good. Keep going.',
+    'That ending works.',
+    'Shorter call to action please.',
+    'Done, that is the script.'
+  ];
+  const raw = [
+    'NEXT QUESTION: Who are you talking to in this video, and what did they just get handed that nobody trained them for?',
+    'NEXT QUESTION: That one-on-one is your story. What did your report’s silence feel like from your side of the table?',
+    'NEXT QUESTION: You want them to feel less alone. What does pretending to have it figured out cost them by Friday?',
+    'NEXT QUESTION: Name the system you are pushing against. What does it promise, and where does it leave you hanging?',
+    'NEXT QUESTION: Say the one sentence you would say to a friend over coffee about this — in your own words, rough is fine.',
+    'NEXT QUESTION: Here are three hooks from your words. Pick the one you would actually say:\n1. I talked for 40 minutes and my report said nothing.\n2. Nobody tells you the promotion comes with a silence.\n3. The leadership books skipped the part where you freeze.',
+    'NEXT QUESTION: Your hook keeps the 40 minutes. What happened the week after that one-on-one?',
+    'NEXT QUESTION: Choose your open loop, the line that keeps your viewer watching:\n1. I found the question that broke the silence.\n2. What I did next is not in any book.\n3. It took me a year to see what I was doing wrong.',
+    'NEXT QUESTION: About 60 seconds is around 180 words. Which part of your story has to survive if we cut?',
+    'NEXT QUESTION: Your call to action is comment FIRST for the question list. Do you want it said once or twice?',
+    'NEXT QUESTION: I trimmed the middle of your draft script. Does the turn from the silence to the question still land?',
+    'NEXT QUESTION: Locked. Your script now runs hook, the silence, the question, the call to action. Anything you would never say out loud?',
+    'NEXT QUESTION: The coffee line stays in your script, word for word. Where should it sit, before or after the question?',
+    'NEXT QUESTION: Switching to your second hook: "Nobody tells you the promotion comes with a silence." Keep your open loop as it is?',
+    'NEXT QUESTION: Your script keeps hook 2 and open loop 1. Want to hear the full draft read straight through?',
+    'NEXT QUESTION: Adding "I still get it wrong sometimes" near the end of your script. Does it sound like you?',
+    'NEXT QUESTION: Your story profile says you coach first-time managers. Should the script say that out loud, or let the story show it?',
+    'NEXT QUESTION: Your ending lands on the question you asked. Is that the last thing you want your viewer to hear?',
+    'NEXT QUESTION: Shorter call to action: "Comment FIRST and I will send you the list." Good?',
+    'FINAL SCRIPT: Nobody tells you the promotion comes with a silence.\n\nMy first one-on-one as a manager, I talked for 40 minutes. My report said nothing. I thought I was helping — I was filling the room so I would not have to hear how lost I was.\n\nThe leadership books say be a servant leader. They never say how. So here is the one thing I learned: stop talking and ask one real question, then wait.\n\nI still get it wrong sometimes. But the silence stopped being theirs and started being a question.\n\nComment FIRST and I will send you the list.'
+  ];
+  check(answers.length === 20 && raw.length === 20, 'generated replies: fixture is a 40-turn interview (20 answers, 20 replies)');
+
+  const source = answers.join('\n');
+  const deliver = (text) => classifyOutput(text, { source });
+
+  // The shipped page's own names for each concept. A reply must use the same
+  // name or none; a synonym is the drift a member notices by turn 30.
+  const TERMS = [
+    { concept: 'script', canonical: /\bscript\b/i, drift: /\b(?:post copy|caption|content piece|copy deck|monologue|screenplay)\b/i },
+    { concept: 'hook', canonical: /\bhooks?\b/i, drift: /\b(?:opener|opening line|attention[- ]grabber|intro line|headline)s?\b/i },
+    { concept: 'open loop', canonical: /\bopen loop\b/i, drift: /\b(?:cliffhanger|curiosity gap|teaser line)s?\b/i },
+    { concept: 'story profile', canonical: /\bstory profile\b/i, drift: /\b(?:brand profile|creator profile|voice profile|persona|avatar profile|brand voice)\b/i },
+    { concept: 'call to action', canonical: /\bcall to action\b/i, drift: /\b(?:CTA|closing ask|conversion line)\b/ }
+  ];
+  const VOICE = [
+    { rule: 'talks about the member in the third person', re: /\b(?:the user|the member|the creator|the client|this user)\b/i },
+    { rule: 'speaks as an AI or a model', re: /\b(?:as an ai|i(?:'|’)?m an ai|language model|as a model|my training)\b/i },
+    { rule: 'speaks as a company', re: /\b(?:we at storysculpt|our team|storysculpt recommends|the storysculpt team)\b/i },
+    { rule: 'corporate register', re: /\b(?:leverage|synergy|elevate your brand|unlock your potential|game[- ]changer|actionable insights?|value proposition)\b/i },
+    { rule: 'contract prefix leaked', re: /\b(?:NEXT QUESTION|FINAL SCRIPT):/ },
+    { rule: 'em dash after delivery', re: /—/ }
+  ];
+
+  function auditThread(replies) {
+    const delivered = [];
+    const problems = [];
+    replies.forEach((text, i) => {
+      const turn = i * 2 + 2;
+      const verdict = deliver(text);
+      if (!verdict.ok) { problems.push(`turn ${turn}: delivery gate refused (${verdict.reason})`); return; }
+      const body = verdict.content;
+      delivered.push(body);
+      if (!/\byour?\b/i.test(body) && !verdict.final) problems.push(`turn ${turn}: does not speak to the member as "you"`);
+      for (const v of VOICE) if (v.re.test(body)) problems.push(`turn ${turn}: ${v.rule}`);
+      for (const t of TERMS) if (t.drift.test(body)) problems.push(`turn ${turn}: "${t.concept}" drifted to "${body.match(t.drift)[0]}"`);
+    });
+    return { delivered, problems };
+  }
+
+  const clean = auditThread(raw);
+  check(clean.delivered.length === 20, `generated replies: all 20 pass the shipped delivery gate (got ${clean.delivered.length})`);
+  check(clean.problems.length === 0, 'generated replies: one voice and one set of terms across 40 turns' + (clean.problems.length ? ': ' + clean.problems.join('; ') : ''));
+  check(raw.filter((r) => r.includes('—')).length === 2 && clean.delivered.every((r) => !r.includes('—')), 'generated replies: the two em dashes the fixture model wrote are sanitised before the member reads them');
+  for (const t of TERMS) {
+    check(t.canonical.test(page) || t.canonical.test(appSrc), `generated replies: "${t.concept}" is the page's own word`);
+    check(clean.delivered.some((r) => t.canonical.test(r)), `generated replies: "${t.concept}" is used by name in the thread`);
+  }
+  const finalScript = clean.delivered.at(-1);
+  check(/40 minutes/.test(finalScript) && /servant leader/.test(finalScript) && /still get it wrong sometimes/.test(finalScript), 'generated replies: the finished script at turn 40 keeps the member\'s own lines from turns 3, 7 and 31');
+
+  // Negative control: the same thread with turn 34 drifted.
+  const drifted = raw.slice();
+  drifted[16] = 'NEXT QUESTION: The user’s brand profile says they coach managers. As an AI, I suggest we leverage that in the opener. Keep it?';
+  const caught = auditThread(drifted).problems.filter((p) => p.startsWith('turn 34:'));
+  for (const expected of ['third person', 'as an AI', 'corporate register', '"story profile" drifted', '"hook" drifted']) {
+    check(caught.some((p) => p.includes(expected)), `generated replies: a drifted reply at turn 34 is caught (${expected})`);
+  }
+  check(auditThread(drifted).problems.every((p) => p.startsWith('turn 34:')), 'generated replies: only the drifted turn is flagged');
+}
+
 if (failures.length) {
   console.error('check-storysculpt-long-thread FAIL\n- ' + failures.join('\n- '));
   process.exit(1);
 }
-console.log(`PASS: check-storysculpt-long-thread: ${TURNS} turns render the last 12 in ${median.toFixed(2)} ms, keep the reading position on expand, speak only a new reply, and pass the 40-turn terminology check.`);
+console.log(`PASS: check-storysculpt-long-thread: ${TURNS} turns render the last 12 in ${median.toFixed(2)} ms, keep the reading position on expand, speak only a new reply, pass the 40-turn terminology check, and 20 generated replies across a 40-turn interview keep one voice and one set of terms.`);

@@ -157,3 +157,16 @@ diff, replay the scoped save-conflict case if needed, and record independent
 acceptance on WO-20261111-afternoon. The original rapid title-save conflict's
 root cause remains unknown. Do not call this wording correction a repair of
 that race, and do not infer feature-wide acceptance or a new 300 grade.
+
+## Evening receiving review (2026-11-12 ~04:00Z): ACCEPTED
+
+Reviewed by the 11-11 evening, not rebuilt. Independently checked:
+the served `/js/storysculpt.js?v=wbr462-save-conflict-20261111-v1` SHA256 is
+`bc5e940854fc52198ac7ae647b571def358f39f54ffa0d4cefd95fea92237c5b`, identical
+to `js/storysculpt.js` on origin/main 2381b06 (f6251e8..2381b06 touches only
+this receipt and one progress check, no client code); `npm test` exits 0 on
+that tree plus the evening's Developer 65 check. The receipt's limits are
+stated honestly (tab-scoped client faults, not a provider outage). Accepted
+within that scope. One open item carried, not a defect in this artifact: the
+20:05:13Z `STALE_VERSION` save refusal's race cause is still unknown; the
+afternoon fixed the line the member reads, not the race.
