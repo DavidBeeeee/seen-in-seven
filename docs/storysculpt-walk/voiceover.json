@@ -1,0 +1,337 @@
+{
+  "at": "2026-11-12T04:24:40.013Z",
+  "reader": "VoiceOver (macOS 26.2)",
+  "browser": "WebKit 27.2",
+  "refused": [],
+  "stoppedAt": {
+    "screen": "delete",
+    "error": "page.focus: Timeout 30000ms exceeded."
+  },
+  "transcript": [
+    {
+      "screen": "start",
+      "step": "VO to the first item",
+      "heard": [
+        "link heading level 1 StorySculpt The 5E Script Builder"
+      ]
+    },
+    {
+      "screen": "start",
+      "step": "VO-Right through the first-visit screen",
+      "heard": [
+        "link My Studio",
+        "Change color theme button",
+        "W walk.member@example.invalid menu pop up button",
+        "end of banner",
+        "You are currently on a main, inside of web content.",
+        "complementary",
+        "heading level 2 Chats collapsed button",
+        "Start a new StorySculpt chat button",
+        "YOUR SCRIPTS",
+        "0  finished 0  filmed 0  posted",
+        "Finish a script and it counts here.",
+        "Month over month: 0 this month vs 0 last month.",
+        "Next:Pick a format to start a script. StorySculpt asks one question at a time.",
+        "Start a script button",
+        "Filter chats tab group",
+        "All selected tab, 1 of 4",
+        "Active tab, 2 of 4",
+        "Filmed tab, 3 of 4",
+        "Archived tab, 4 of 4",
+        "end of Filter chats tab group",
+        "No chats here. Check Archived for chats you put away.",
+        "Step away whenever you like. Nothing is deleted when you stop: your chats and scripts stay in your account until you delete them.",
+        "Settings & story profile Format, theme, and standing facts StorySculpt remembers on every chat. button",
+        "end of complementary",
+        "STORYSCULPT · FIRST SCRIPT ORIENTATION",
+        "heading level 2 Start a script the way you talk.",
+        "Talk through rough thoughts in a conversational interview. StorySculpt asks one question at a time and shapes your answers into a video script that sounds like you.",
+        "Turn raw thoughts into video scripts that sound like you. region",
+        "FIRST SCRIPT ORIENTATION",
+        "heading level 3 Turn raw thoughts into video scripts that sound like you.",
+        "Getting on camera is hard when a blank page stares back at you, or when generic tools turn your thoughts into stiff corporate slogans. StorySculpt solves that. You talk through raw thoughts in a focused interview, and the system shapes your exact phrasing into a ready-to-film script.",
+        "heading level 4 1. Why the 5E interview keeps your voice 2 items",
+        "Generic tools guess what you mean and flatten your personality. StorySculpt asks 4 to 6 focused questions to draw out the core emotional direction of your video:",
+        "Entertainment, Enragement, Epiphany, Empathy, or Education.",
+        "It keeps your actual phrasing, natural cadence, and rough opinions so the finished script sounds like you talking to a friend.",
+        "heading level 4 2. What to expect: 5 to 10 minutes 2 items",
+        "An interview takes about 5 to 10 minutes across 4 to 6 conversational turns. No preparation or polished outline is required: unedited thoughts and honest rants give the framework the real detail it needs.",
+        "Pick a format below, answer each question in your own words, and pause whenever you want. Your work saves as you go.",
+        "heading level 4 3. What happens when your script is ready 2 items",
+        "Your finished script appears in the script panel with line-by-line editing, instant note refinement, and one-click export for your teleprompter.",
+        "When you record, mark the script filmed to track your momentum. Build a steady library of filmed videos, keep your story profile updated, and start your next script anytime.",
+        "How StorySculpt works in three steps group",
+        "STEP 1",
+        "Choose your format",
+        "Pick a format below and answer questions in your own words.",
+        "STEP 2",
+        "Review your script",
+        "Refine lines with a quick note, edit text inline, or export.",
+        "STEP 3",
+        "You are currently on a selectable text.",
+        "Get on camera, track your momentum, and repeat.",
+        "end of How StorySculpt works in three steps group",
+        "CHOOSE YOUR FORMAT TO BEGIN",
+        "Each format shapes your video for a specific audience reaction:",
+        "You can't change this later; start a new script for a different format.",
+        "end of Turn raw thoughts into video scripts that sound like you. region",
+        "Script format options region",
+        "Controversial Take A sharp point of view that challenges accepted wisdom. button",
+        "Mini-Webinar A compact lesson with a story to teach one insight clearly. button",
+        "5E Talking Head A raw thought with emotional momentum and personal honesty. button"
+      ]
+    },
+    {
+      "screen": "start",
+      "step": "focus the 5E Talking Head format",
+      "heard": [
+        "5E Talking Head A raw thought with emotional momentum and personal honesty. button",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "start",
+      "step": "VO-Space on 5E Talking Head: what is announced as the chat opens",
+      "heard": [
+        "Your answer Write it the way you would say it. Rough is useful. text entry area main",
+        "actions available You are currently on a text area. To Show Writing Tools, press Control-Option-Command-Space first to bring up the action menu."
+      ]
+    },
+    {
+      "screen": "start",
+      "step": "after start",
+      "heard": [],
+      "status": "StorySculpt saves your chat as you go.",
+      "live": "",
+      "focus": "story-answer",
+      "finished": false
+    },
+    {
+      "screen": "answer",
+      "step": "type the first answer",
+      "heard": [
+        "problem .",
+        "actions available You are currently on a text area. To Show Writing Tools, press Control-Option-Command-Space first to bring up the action menu."
+      ]
+    },
+    {
+      "screen": "answer",
+      "step": "focus Send",
+      "heard": [
+        "Send button",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "answer",
+      "step": "VO-Space on Send: what is announced while the next question arrives",
+      "heard": [
+        "StorySculpt: What is the specific story or proof that showed you this was true?",
+        "actions available You are currently on a text area. To Show Writing Tools, press Control-Option-Command-Space first to bring up the action menu."
+      ]
+    },
+    {
+      "screen": "answer",
+      "step": "after first answer",
+      "heard": [],
+      "status": "Screen updated to Step evidence because your earlier answer (“Most coaches pitch features before anyone a…”) shaped this question.",
+      "live": "StorySculpt: What is the specific story or proof that showed you this was true?",
+      "focus": "story-answer",
+      "finished": false
+    },
+    {
+      "screen": "answer",
+      "step": "VO-Right from the composer back into the latest message",
+      "heard": [
+        "Send button",
+        "Screen updated to Step evidence because your earlier answer (“Most coaches pitch features before anyone a…”) shaped this question.",
+        "end of main",
+        "You are currently on a main, inside of web content.  To exit this web area, press Control-Option-Shift-Up Arrow.",
+        ""
+      ]
+    },
+    {
+      "screen": "generate",
+      "step": "type the second answer",
+      "heard": [
+        "offer .",
+        "actions available You are currently on a text area. To Show Writing Tools, press Control-Option-Command-Space first to bring up the action menu."
+      ]
+    },
+    {
+      "screen": "generate",
+      "step": "focus Send",
+      "heard": [
+        "Send button",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "generate",
+      "step": "VO-Space on Send: what is announced while the script is written",
+      "heard": [
+        "1 1 script finished in the last 30 days, up from 0 the 30 days before. Month over month: 1 script this month, up from 0 last month.",
+        "Screen changed to your finished script because every interview step is complete. Strong work bringing this story together, your script is ready to film."
+      ]
+    },
+    {
+      "screen": "finish",
+      "step": "after generation",
+      "heard": [],
+      "status": "Screen updated to Step evidence because your earlier answer (“Most coaches pitch features before anyone a…”) shaped this question.",
+      "live": "Interview finished. Your script is ready in the script panel. Refine it with a note, or start a new chat.",
+      "focus": "story-refine-note",
+      "finished": true
+    },
+    {
+      "screen": "finish",
+      "step": "focus the finished line",
+      "heard": [
+        "Screen changed to your finished script because every interview step is complete. Strong work bringing this story together, your script is ready to film."
+      ]
+    },
+    {
+      "screen": "finish",
+      "step": "VO-Right through the finished script",
+      "heard": [
+        "Revise button",
+        "Regenerate the script button",
+        "Screen changed to your finished script because every interview step is complete. Strong work bringing this story together, your script is ready to film.",
+        "Script artifact region",
+        "TALKING-HEAD SCRIPT",
+        "34 words (~1 min)",
+        "Script versions group",
+        "VERSIONS:",
+        "v1 (latest) button",
+        "end of Script versions group",
+        "Turn the script into bullet points button",
+        "Copy script button",
+        "Download script button",
+        "No objective stated for this script. Add who it is for and what they should do next in Settings & story profile if you want one shown here.",
+        "FINISHED",
+        "Script finished.",
+        "The words are ready. Record it on camera to move from draft to filmed.",
+        "Effort recorded from what you did: you answered 2 interview steps.",
+        "Mark filmed toggle button",
+        "Your finished script Your finished talking-head script will appear here... text entry area Here is your finished talking-head script.\n\nStop pitching features to people who have not agreed on the problem.\n\nWhen you lead with the pain and the exact result, conversions follow.\n\nStart with the outcome. Insertion on word: Here , between characters:   and"
+      ]
+    },
+    {
+      "screen": "finish",
+      "step": "focus the finished script text",
+      "heard": [
+        "Your finished script Your finished talking-head script will appear here... text entry area Here is your finished talking-head script.\n\nStop pitching features to people who have not agreed on the problem.\n\nWhen you lead with the pain and the exact result, conversions follow.\n\nStart with the outcome. Insertion on word: Here , between characters:   and"
+      ]
+    },
+    {
+      "screen": "refine",
+      "step": "type a refine note",
+      "heard": [
+        "relief .",
+        "actions available You are currently on a text area. To Show Writing Tools, press Control-Option-Command-Space first to bring up the action menu."
+      ]
+    },
+    {
+      "screen": "refine",
+      "step": "focus the refine button",
+      "heard": [
+        "Revise button",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "refine",
+      "step": "VO-Space on refine: what is announced when version 2 lands",
+      "heard": [
+        "Script revised."
+      ]
+    },
+    {
+      "screen": "refine",
+      "step": "after refine",
+      "heard": [],
+      "status": "Screen changed to your finished script because every interview step is complete. Strong work bringing this story together, your script is ready to film.",
+      "live": "Interview finished. Your script is ready in the script panel. Refine it with a note, or start a new chat.",
+      "focus": "story-refine-send",
+      "finished": true,
+      "refineStatus": "Script revised."
+    },
+    {
+      "screen": "delete",
+      "step": "focus Delete chat in the chat list",
+      "heard": [
+        "Delete chat button complementary",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "delete",
+      "step": "VO-Space on Delete chat: the dialog opens",
+      "heard": [
+        "Keep project button Delete \"Most Coaches Pitch Features (Revised)\"? This permanently removes the chat, its recorded versions, and the finished script. This cannot be undone once completed. web alert dialog"
+      ]
+    },
+    {
+      "screen": "delete",
+      "step": "keyboard focus is inside the dialog",
+      "heard": [
+        "true"
+      ]
+    },
+    {
+      "screen": "delete",
+      "step": "VO-Right through the delete dialog",
+      "heard": [
+        "Delete project button",
+        "end of Delete \"Most Coaches Pitch Features (Revised)\"? This permanently removes the chat, its recorded versions, and the finished script. This cannot be undone once completed. web alert dialog",
+        ""
+      ]
+    },
+    {
+      "screen": "delete",
+      "step": "Escape: what is announced",
+      "heard": [
+        "Delete chat button complementary",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ],
+      "remaining": 1,
+      "focusAfter": "delete-project"
+    },
+    {
+      "screen": "delete",
+      "step": "focus Delete chat again",
+      "heard": [
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "delete",
+      "step": "VO-Space on Delete chat again",
+      "heard": [
+        "Keep project button Delete \"Most Coaches Pitch Features (Revised)\"? This permanently removes the chat, its recorded versions, and the finished script. This cannot be undone once completed. web alert dialog"
+      ]
+    },
+    {
+      "screen": "delete",
+      "step": "focus the delete confirm",
+      "heard": [
+        "Delete project button",
+        "You are currently on a button. To click this button, press Control-Option-Space."
+      ]
+    },
+    {
+      "screen": "delete",
+      "step": "VO-Space on confirm: what is announced after deleting",
+      "heard": [
+        "What to change in the script What should change? e.g. make it shorter, cut the repeated lesson, give it a warmer ending. text entry area main",
+        "actions available You are currently on a text area. To Show Writing Tools, press Control-Option-Command-Space first to bring up the action menu.",
+        "0 Finish a script and it counts here. Month over month: 0 this month vs 0 last month."
+      ]
+    },
+    {
+      "screen": "delete",
+      "step": "STOPPED: page.focus: Timeout 30000ms exceeded.",
+      "heard": []
+    }
+  ]
+}

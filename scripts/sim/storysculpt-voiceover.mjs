@@ -212,6 +212,7 @@ async function wire(page, world) {
 
 // ── Steps ──────────────────────────────────────────────────────────────────
 const transcript = [];
+let stoppedAt = null;
 let screen = null;
 const log = (step, heard, extra = {}) => {
   transcript.push({ screen, step, heard, ...extra });
@@ -347,15 +348,23 @@ async function run() {
     await activate('VO-Space on Send: network drop', 3600);
     log('after the drop', [], await state(page));
     await context.close();
+  } catch (error) {
+    // WBR-462, 2026-11-11 evening: a real session that stopped partway used
+    // to throw its whole transcript away. What VoiceOver already spoke is the
+    // evidence; keep it and name the step that stopped. A focus-safety stop
+    // (another window in front) still records nothing past that point.
+    stoppedAt = { screen, error: String(error.message || error).split('\n')[0] };
+    transcript.push({ screen, step: 'STOPPED: ' + stoppedAt.error, heard: [] });
   } finally {
     await browser.close();
     vo('output "StorySculpt screen reader pass finished"');
   }
-  const record = { at: new Date().toISOString(), reader: 'VoiceOver (macOS ' + osVersion() + ')', browser: 'WebKit ' + browser.version(), refused, transcript };
+  const record = { at: new Date().toISOString(), reader: 'VoiceOver (macOS ' + osVersion() + ')', browser: 'WebKit ' + browser.version(), refused, stoppedAt, transcript };
   if (DRY) { console.log(JSON.stringify(transcript.filter(e => !e.heard.length && Object.keys(e).length > 3), null, 1)); return; }
   writeFileSync(outFile, JSON.stringify(record, null, 2) + '\n');
   writeMarkdown(record);
-  console.log('wrote ' + outFile + (refused.length ? '; refused ' + refused.length + ' requests' : ''));
+  console.log('wrote ' + outFile + (refused.length ? '; refused ' + refused.length + ' requests' : '') + (stoppedAt ? '; STOPPED on ' + stoppedAt.screen + ': ' + stoppedAt.error : ''));
+  if (stoppedAt) process.exitCode = 1;
 }
 
 // The readable transcript, kept in screen-reader.md between markers so the
@@ -364,6 +373,7 @@ const START = '<!-- voiceover:start -->';
 const END = '<!-- voiceover:end -->';
 function writeMarkdown(record) {
   const lines = [START, '', '## VoiceOver', '', 'Reader: ' + record.reader + '. Browser: ' + record.browser + '. Recorded ' + record.at + ' by `scripts/sim/storysculpt-voiceover.mjs`; every network call was stubbed' + (record.refused.length ? ' (' + record.refused.length + ' refused)' : '') + '.', ''];
+  if (record.stoppedAt) lines.push('**Stopped on ' + record.stoppedAt.screen + ':** ' + record.stoppedAt.error + ' Everything below is what VoiceOver actually spoke before it stopped.', '');
   let current = null;
   for (const entry of record.transcript) {
     if (entry.screen !== current) { current = entry.screen; lines.push('### ' + current, ''); }
