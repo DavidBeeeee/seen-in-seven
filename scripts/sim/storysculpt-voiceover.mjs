@@ -333,6 +333,8 @@ async function run() {
     await focus(page, '[data-action="delete-project"]', 'focus Delete chat again');
     await activate('VO-Space on Delete chat again', 2400);
     await focus(page, '#story-delete-dialog-confirm', 'focus the delete confirm');
+    vo('tell vo cursor to move to delete confirm');
+    await new Promise(r => setTimeout(r, 600));
     await activate('VO-Space on confirm: what is announced after deleting', 3200);
     await focus(page, '[data-action="undo-delete"]', 'focus Undo');
     await activate('VO-Space on Undo: what is announced after undoing', 3000);

@@ -559,6 +559,15 @@
   });
 
   const NARROW_ELIGIBLE_STEPS = new Set(['', 'start', 'B1', 'M1', 'R1', 'R2']);
+  const BROAD_UNIVERSAL_PATTERNS = [
+    /\bconfidence\s+for\s+everyone\s+about\s+everything\b/i,
+    /\beveryone\s+about\s+everything\b/i,
+    /\beverything\s+for\s+everyone\b/i,
+    /\beverything\s+to\s+everyone\b/i,
+    /\bhelp\s+everyone\s+with\s+everything\b/i,
+    /\ball\s+things\s+to\s+all\s+people\b/i
+  ];
+
   const LIFE_STAGE_PATTERNS = [
     /\bwhole life story\b/i,
     /\bgrowing up\b/i,
@@ -595,7 +604,8 @@
     const text = String(answer || '').replace(/\s+/g, ' ').trim();
     const step = String(currentStep || '').trim();
     const list = Array.isArray(conversation) ? conversation : [];
-    if (!text || text.split(/\s+/).length < 18) return { broad: false, reason: 'short' };
+    const isUniversalBroad = BROAD_UNIVERSAL_PATTERNS.some(re => re.test(text));
+    if (!text || (text.split(/\s+/).length < 18 && !isUniversalBroad)) return { broad: false, reason: 'short' };
     if (step && !NARROW_ELIGIBLE_STEPS.has(step)) return { broad: false, reason: 'step-ineligible' };
     const alreadyNarrowed = list.some(turn => turn && turn.role === 'assistant' && (turn.step === 'narrow' || turn.narrowingQuestion === true));
     if (alreadyNarrowed) return { broad: false, reason: 'already-narrowed' };
@@ -603,13 +613,15 @@
     const topics = extractBroadTopics(text);
     const lifeHits = LIFE_STAGE_PATTERNS.filter(re => re.test(text)).length;
     const isLifeStory = /\bwhole life story\b/i.test(text) || lifeHits >= 3;
-    if (topics.length < 4 && !isLifeStory) {
+    if (topics.length < 4 && !isLifeStory && !isUniversalBroad) {
       return { broad: false, reason: 'focused' };
     }
     const named = topics.slice(0, 3).map(t => t.length > 48 ? t.slice(0, 45).trim() + '...' : t);
-    const question = named.length >= 2
-      ? 'You named several distinct stories here (' + named.join('; ') + '). One short video lands best when it turns on a single moment. Which one of those should we build this script around first?'
-      : 'That spans a whole life story across several chapters. One short video lands best when it turns on a single moment. Which one moment or topic from what you shared should we build this script around first?';
+    const question = isUniversalBroad
+      ? 'That takes in everyone and everything at once. One short video lands best when it turns on a single person or one concrete situation. Who is one specific person you are picturing, or what is one exact moment when this comes up?'
+      : named.length >= 2
+        ? 'You named several distinct stories here (' + named.join('; ') + '). One short video lands best when it turns on a single moment. Which one of those should we build this script around first?'
+        : 'That spans a whole life story across several chapters. One short video lands best when it turns on a single moment. Which one moment or topic from what you shared should we build this script around first?';
     const statusLine = 'Screen stayed on this step to ask one narrowing question because your answer covered several topics at once.';
     return {
       broad: true,

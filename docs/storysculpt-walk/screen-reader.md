@@ -1601,3 +1601,23 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
     - text: .
 ```
 
+
+
+---
+
+## Real VoiceOver Session Update: Delete, Undo, and Network Drop Walk (UX 95)
+
+On macOS 26.2 (WebKit 27.2) with AppleScript automation, the VoiceOver cursor was synchronized to the delete confirmation trigger, successfully executing the delete, undo, and network drop flows:
+
+1. **Delete & Escape:**
+   - Focuses `Delete chat` in chat list. VoiceOver announces delete dialog.
+   - Escape closes dialog; focus returns cleanly to `Delete chat` button.
+2. **Delete & Confirm:**
+   - VO cursor aligns with `#story-delete-dialog-confirm`.
+   - `VO-Space` triggers project deletion. Dialog dismisses, focus moves to notification container with `Undo` action.
+3. **Undo:**
+   - `VO-Space` on `Undo` restores project cleanly. Project count restored to 1.
+4. **Network Drop Recovery:**
+   - During active interview step, network drop simulated (`drop`).
+   - Announced: *"Connection lost. Your saved chat is safe. Reconnect, then choose Resume this step; you do not need to retype your answer. Step paused on Step epiphany before StorySculpt finished replying. Your last answer is kept. Press Resume this step to continue from Step epiphany."*
+   - Focus lands on `#story-retry-btn` (`Resume this step`).

@@ -206,6 +206,18 @@ function recoveryBrowser(project) {
   assert.equal(broadProject.intake.current_step, 'R1', 'Stranger 43: narrowing stays on the exact current step');
   assert.equal(broadProject.conversation.at(-1).narrowingQuestion, true, 'Stranger 43: deterministic code adds the narrowing question');
   assert.ok(broadProject.conversation.some(message => message.content === broadApp.c.STATES.BROAD_ANSWER_FIXTURE.fiveTopics), 'Stranger 43: the broad answer itself is preserved');
+
+  // Stranger 43: short but broad opening ('confidence for everyone about everything')
+  const shortBroadProject = { id: 'short-broad', content_type: 'rant', title: 'New rant', output: null, intake: { current_step: 'R1' }, conversation: [{ role: 'assistant', content: 'Type the raw rant.' }] };
+  const shortBroadApp = recoveryBrowser(shortBroadProject);
+  shortBroadApp.element('story-answer').value = 'confidence for everyone about everything';
+  let shortGenerations = 0;
+  shortBroadApp.c.executeInterviewGeneration = async () => { shortGenerations++; };
+  await vm.runInContext('sendStoryAnswer()', shortBroadApp.c);
+  assert.equal(shortGenerations, 0, 'Stranger 43: short broad opening is bounded before generation');
+  assert.equal(shortBroadProject.intake.current_step, 'R1', 'Stranger 43: short broad narrowing stays on current step');
+  assert.equal(shortBroadProject.conversation.at(-1).narrowingQuestion, true, 'Stranger 43: short broad narrowing question added');
+  assert.match(shortBroadProject.conversation.at(-1).content, /takes in everyone and everything/i, 'Stranger 43: narrowing question addresses universal scope');
 }
 
 {
