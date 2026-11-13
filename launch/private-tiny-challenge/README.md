@@ -11,7 +11,7 @@ This private, one-person-at-a-time experience is the current client-acquisition 
 The group version cannot be marked ready until both conditions are true:
 
 - At least 10 private Tiny Challenges are complete.
-- At least 5 participants have enrolled in the private $250/month partnership.
+- At least 5 participants have enrolled in the Momentum Hub, offered privately at $250/month.
 
 If ten runs produce fewer than five enrollments, review exact objections, revise the weakest stage, and continue private runs. October does not override the evidence.
 
@@ -21,7 +21,7 @@ If ten runs produce fewer than five enrollments, review exact objections, revise
 2. Day One diagnostic, belief shifts, SeenInSeven demonstration, and one approved script.
 3. Two private working sessions that aim for three total scripts.
 4. One optional recovery session only when a real blocker prevents the promised result.
-5. Graduation, referrals, permission-based partnership offer, and EEE downsell only after the partnership is declined.
+5. Graduation, referrals, and the permission-based Momentum Hub offer. There is no downsell.
 
 Recording and publishing earn recognition, but neither is required to continue. Participation is free during validation. Consent is required before recording, transcribing, quoting, or using results.
 

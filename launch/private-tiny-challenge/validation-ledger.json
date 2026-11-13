@@ -9,7 +9,8 @@
   },
   "currentExperiment": {
     "variable": "baseline",
-    "description": "Run the approved four-session experience before changing a major variable."
+    "description": "Run the three private sessions the live 777limited page promises (untangle, create the videos together, review what changed; read 2026-11-10) before changing a major variable. The README and facilitator playbook still describe Day One, two working sessions and an optional recovery session; reconcile them against the live page before the first logged run.",
+    "baselineSource": "https://content.coloradomastermind.com/777limited, read 2026-11-10"
   },
   "runs": []
 }

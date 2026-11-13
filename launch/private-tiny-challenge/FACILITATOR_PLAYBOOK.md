@@ -93,17 +93,13 @@ Ask for two people who would genuinely fit the same private experience. Capture 
 
 Remind the participant of their Day One answer. If permission was declined, ask again without pressure before presenting anything.
 
-Present the unlimited partnership privately as an $800/month value offered to this qualified participant at $250/month. Explain the result, working relationship, boundaries, and next decision step. This price must not appear on public pages, public group emails, or public decks.
+Present the Momentum Hub privately as an $800/month value offered to this qualified participant at $250/month. It is the only offer (David, 2026-11-10: "There is no downsell, there is only the 250 dollar momentum hub"). Explain the result, working relationship, boundaries, and next decision step. This price must not appear on public pages, public group emails, or public decks.
 
 Give a clear yes, no, or dated decision-follow-up path.
 
-### 4. Downsell
+### 4. Close and learn
 
-Only after the partnership is declined, offer EEE at $77/month as the lower-commitment continuation. Never lead with EEE and never offer both at once.
-
-### 5. Close and learn
-
-Capture the exact objection to each declined offer. Confirm testimonial and quotation permissions separately. Close with dignity regardless of the decision, then complete the scorecard before making changes.
+There is no downsell. If the participant declines, capture the exact objection. Confirm testimonial and quotation permissions separately. Close with dignity regardless of the decision, then complete the scorecard before making changes.
 
 ## Improvement rule
 

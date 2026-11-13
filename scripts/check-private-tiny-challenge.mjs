@@ -23,7 +23,7 @@ if (ledger.gate?.completedRunsRequired !== 10 || ledger.gate?.partnershipEnrollm
 
 const completed = ledger.runs.filter((run) => run.status === 'complete');
 const enrolled = completed.filter((run) => run.partnershipDecision === 'enrolled');
-const requiredRunFields = ['id', 'participant', 'consent', 'sessions', 'scripts', 'blockers', 'recoverySessionUsed', 'partnershipDecision', 'eeeDecision', 'referrals', 'testimonial', 'changeForNextRun'];
+const requiredRunFields = ['id', 'participant', 'consent', 'sessions', 'scripts', 'blockers', 'recoverySessionUsed', 'partnershipDecision', 'referrals', 'testimonial', 'changeForNextRun'];
 for (const run of completed) {
   const missing = requiredRunFields.filter((field) => !(field in run));
   if (missing.length) throw new Error(`Completed run ${run.id || '(unknown)'} is missing: ${missing.join(', ')}`);
