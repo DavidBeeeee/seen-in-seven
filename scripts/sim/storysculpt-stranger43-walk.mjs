@@ -35,59 +35,43 @@ await context.addInitScript(({ session }) => {
   }
 }, { session });
 
-// Override with candidate js/storysculpt-member-states.js and js/storysculpt.js
-await context.route(origin + '/js/storysculpt-member-states.js*', route => {
-  route.fulfill({ status: 200, contentType: 'application/javascript', body: fs.readFileSync(path.join(root, 'js/storysculpt-member-states.js'), 'utf8') });
-});
-await context.route(origin + '/js/storysculpt.js*', route => {
-  route.fulfill({ status: 200, contentType: 'application/javascript', body: fs.readFileSync(path.join(root, 'js/storysculpt.js'), 'utf8') });
-});
 
 const page = await context.newPage();
 let generationRequestCount = 0;
 page.on('request', request => {
-  if (request.url() === origin + '/api/storysculpt' && request.method() === 'POST') {
-    generationRequestCount++;
+  if (request.url() === origin + '/api/storysculpt' && request.method() === 'POST') generationRequestCount++;
+});
+const cases = [
+  { answer: 'Showing the world how to enjoy every part of living', broad: true },
+  { answer: 'Advice for anybody who wants to improve everything', broad: true },
+  { answer: 'the day my mom handed me her car keys', broad: false }
+];
+const results = [];
+try {
+  await page.goto(origin + '/storysculpt', { waitUntil: 'domcontentloaded' });
+  await page.locator('#eee-account-email').filter({ hasText: email }).waitFor({ timeout: 30000 });
+  await page.waitForFunction(() => typeof activeStory !== 'undefined' && activeStory?.id, null, { timeout: 30000 });
+  for (const test of cases) {
+    await page.locator('#new-project-button').click();
+    await page.locator('[data-mode="rant"]').click();
+    await page.locator('#story-answer').waitFor();
+    await page.waitForTimeout(1200);
+    const before = generationRequestCount;
+    await page.locator('#story-answer').fill(test.answer);
+    await page.locator('#story-send').click();
+    await page.waitForFunction(() => !storySending, null, { timeout: 60000 });
+    const observed = await page.evaluate(() => ({
+      projectId: activeStory?.id,
+      step: activeStory?.intake?.current_step,
+      narrowed: !!activeStory?.conversation?.some(m => m.narrowingQuestion),
+      conversation: activeStory?.conversation?.map(m => ({ role: m.role, content: m.content, narrowingQuestion: !!m.narrowingQuestion })),
+      statusLine: document.getElementById('story-generation-status')?.textContent?.trim()
+    }));
+    const requests = generationRequestCount - before;
+    results.push({ answer: test.answer, expectedBroad: test.broad, ...observed, generationRequests: requests,
+      pass: test.broad ? observed.narrowed && observed.step === 'R1' && requests === 0 : !observed.narrowed && requests > 0 && observed.step !== 'R1' });
   }
-});
-
-await page.goto(origin + '/storysculpt', { waitUntil: 'domcontentloaded' });
-await page.locator('#eee-account-email').filter({ hasText: email }).waitFor({ timeout: 30000 });
-await page.waitForFunction(() => typeof activeStory !== 'undefined' && activeStory?.id, null, { timeout: 30000 });
-await page.locator('#new-project-button').click();
-await page.locator('[data-mode="rant"]').click();
-await page.locator('#story-answer').waitFor();
-
-// Enter the short broad opening: "confidence for everyone about everything"
-await page.locator('#story-answer').fill('confidence for everyone about everything');
-await page.locator('#story-send').click();
-
-// Wait for the narrowing question in the conversation
-await page.waitForFunction(() => {
-  const bubbles = Array.from(document.querySelectorAll('.story-bubble-assistant'));
-  return bubbles.some(b => /takes in everyone and everything/i.test(b.textContent));
-}, null, { timeout: 15000 });
-
-const text = await page.evaluate(() => {
-  const bubbles = Array.from(document.querySelectorAll('.story-bubble-assistant'));
-  return bubbles.map(b => b.textContent.trim()).join(' | ');
-});
-const statusLine = await page.evaluate(() => {
-  const el = document.getElementById('story-generation-status');
-  return el ? el.textContent.trim() : '';
-});
-
-const timestamp = new Date().toISOString();
-const result = {
-  success: true,
-  timestamp,
-  generationRequestCount,
-  narrowingText: text,
-  statusLine
-};
-console.log(JSON.stringify(result, null, 2));
-
-// Save receipt
-fs.writeFileSync(path.join(root, 'docs/storysculpt-walk/stranger43-production-walk.json'), JSON.stringify(result, null, 2), 'utf8');
-
-await browser.close();
+  console.log(JSON.stringify({ timestamp: new Date().toISOString(), origin, servedAssetsOnly: true, success: results.every(r => r.pass), cases: results }, null, 2));
+} finally {
+  await browser.close();
+}

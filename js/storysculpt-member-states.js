@@ -559,14 +559,10 @@
   });
 
   const NARROW_ELIGIBLE_STEPS = new Set(['', 'start', 'B1', 'M1', 'R1', 'R2']);
-  const BROAD_UNIVERSAL_PATTERNS = [
-    /\bconfidence\s+for\s+everyone\s+about\s+everything\b/i,
-    /\beveryone\s+about\s+everything\b/i,
-    /\beverything\s+for\s+everyone\b/i,
-    /\beverything\s+to\s+everyone\b/i,
-    /\bhelp\s+everyone\s+with\s+everything\b/i,
-    /\ball\s+things\s+to\s+all\s+people\b/i
-  ];
+  // Scope cues, not memorized example sentences. A concrete scene takes
+  // precedence: "everything changed when my mom handed me her keys" is bounded.
+  const UNBOUNDED_SCOPE = /\b(?:everyone|everybody|anyone|anybody|all people|the world|everything|all of it|my whole life|in general|all things)\b/i;
+  const CONCRETE_SCENE = /\b(?:the day|that day|yesterday|today|last (?:week|month|year|night)|when (?:i|we|my|our)|my (?:mom|dad|mother|father|sister|brother|daughter|son|friend|client|boss)|our (?:client|customer)|at (?:the|my|our)|in (?:the|my|our) (?:office|kitchen|car|school)|on (?:monday|tuesday|wednesday|thursday|friday|saturday|sunday)|\d{1,2}:\d{2}|(?:19|20)\d{2})\b/i;
 
   const LIFE_STAGE_PATTERNS = [
     /\bwhole life story\b/i,
@@ -604,7 +600,7 @@
     const text = String(answer || '').replace(/\s+/g, ' ').trim();
     const step = String(currentStep || '').trim();
     const list = Array.isArray(conversation) ? conversation : [];
-    const isUniversalBroad = BROAD_UNIVERSAL_PATTERNS.some(re => re.test(text));
+    const isUniversalBroad = text.split(/\s+/).length < 18 && UNBOUNDED_SCOPE.test(text) && !CONCRETE_SCENE.test(text);
     if (!text || (text.split(/\s+/).length < 18 && !isUniversalBroad)) return { broad: false, reason: 'short' };
     if (step && !NARROW_ELIGIBLE_STEPS.has(step)) return { broad: false, reason: 'step-ineligible' };
     const alreadyNarrowed = list.some(turn => turn && turn.role === 'assistant' && (turn.step === 'narrow' || turn.narrowingQuestion === true));

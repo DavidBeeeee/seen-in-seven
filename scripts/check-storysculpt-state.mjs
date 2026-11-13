@@ -218,6 +218,34 @@ function recoveryBrowser(project) {
   assert.equal(shortBroadProject.intake.current_step, 'R1', 'Stranger 43: short broad narrowing stays on current step');
   assert.equal(shortBroadProject.conversation.at(-1).narrowingQuestion, true, 'Stranger 43: short broad narrowing question added');
   assert.match(shortBroadProject.conversation.at(-1).content, /takes in everyone and everything/i, 'Stranger 43: narrowing question addresses universal scope');
+  const broadOpenings = [
+    'I want to help all people feel better about their lives',
+    'how to be happy in general',
+    'I want everybody to find confidence',
+    'Teaching anybody to succeed at everything',
+    'Making the world happier',
+    'I want to discuss all of it',
+    'Changing my whole life',
+    'Helping anyone feel successful',
+    'Everything about motivation',
+    'Being all things to all people'
+  ];
+  for (const answer of broadOpenings) {
+    const p = { id: 'general-broad', content_type: 'rant', title: 'New rant', output: null, intake: { current_step: 'R1' }, conversation: [{ role: 'assistant', content: 'Type the raw rant.' }] };
+    const app = recoveryBrowser(p);
+    app.element('story-answer').value = answer;
+    let calls = 0;
+    app.c.executeInterviewGeneration = async () => { calls++; };
+    await vm.runInContext('sendStoryAnswer()', app.c);
+    assert.equal(calls, 0, answer + ': no generation before narrowing');
+    assert.equal(p.intake.current_step, 'R1', answer + ': same step');
+    assert.equal(p.conversation.filter(m => m.narrowingQuestion).length, 1, answer + ': one narrowing question');
+    assert.ok(p.conversation.some(m => m.content === answer), answer + ': words kept');
+  }
+  for (const answer of ['the day my mom handed me her car keys', 'Everything changed when my dad called', 'Helping everyone at our kitchen table']) {
+    const app = recoveryBrowser(shortBroadProject);
+    assert.equal(app.c.STATES.broadAnswerCheck(answer, [], 'R1').broad, false, answer + ': focused scene not narrowed');
+  }
 }
 
 {
