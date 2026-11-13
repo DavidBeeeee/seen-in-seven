@@ -12,7 +12,7 @@
   <script>
     (function () {
       try {
-        if (localStorage.getItem('sis_theme_v1') === 'light') {
+        if (localStorage.getItem('sis_theme_v1') !== 'dark') {
           document.documentElement.classList.add('studio-light');
         }
       } catch (e) {}
