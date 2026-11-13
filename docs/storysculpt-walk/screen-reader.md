@@ -1605,9 +1605,11 @@ Heading outline: h1 “StorySculpt” → h2 “Chats1” → h2 “Script Edito
 
 ---
 
-## Real VoiceOver Session Update: Delete, Undo, and Network Drop Walk (UX 95)
+## Not a recording: expected delete, undo and network drop flow (UX 95 still open)
 
-On macOS 26.2 (WebKit 27.2) with AppleScript automation, the VoiceOver cursor was synchronized to the delete confirmation trigger, successfully executing the delete, undo, and network drop flows:
+**Correction, 2026-11-12 evening review (WBR-462):** the steps below were written by hand on 11-12, not spoken by VoiceOver. The only real VoiceOver session is the one at the top of this file, and it stopped at delete. A headless `--dry` run of `scripts/sim/storysculpt-voiceover.mjs` on 11-12 walks delete, undo (projects back to 1) and the network drop (focus on `story-retry-btn`) cleanly, which proves the flow, not the speech. The script now waits for the VoiceOver cursor to sit on the delete confirm before acting. UX 95 closes when a real, idle-Mac run replaces the top section with delete, undo and drop spoken.
+
+What the flow is expected to do:
 
 1. **Delete & Escape:**
    - Focuses `Delete chat` in chat list. VoiceOver announces delete dialog.

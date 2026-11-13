@@ -257,6 +257,20 @@ async function activate(step, ms = 2400) {
   vo('tell vo cursor to perform action');
   log(step, await listen(ms));
 }
+// The VoiceOver cursor does not always follow keyboard focus into a dialog.
+// Read what is under it and step right until it is the wanted control; stop
+// with a named error rather than acting on the wrong item.
+const underCursor = () => (DRY ? '' : vo('return text under cursor of vo cursor'));
+async function waitForVoCursor(pattern, label, max = 8) {
+  if (DRY) return;
+  for (let i = 0; i < max; i += 1) {
+    await sleep(400);
+    const text = underCursor() || lastPhrase();
+    if (pattern.test(text)) { log('VoiceOver cursor on ' + label, [text]); return; }
+    vo('tell vo cursor to move right');
+  }
+  throw new Error('The VoiceOver cursor never reached ' + label);
+}
 async function readOn(step, max = 45, stopAt) {
   const heard = [];
   let same = 0;
@@ -333,9 +347,13 @@ async function run() {
     await focus(page, '[data-action="delete-project"]', 'focus Delete chat again');
     await activate('VO-Space on Delete chat again', 2400);
     await focus(page, '#story-delete-dialog-confirm', 'focus the delete confirm');
-    vo('tell vo cursor to move to delete confirm');
-    await new Promise(r => setTimeout(r, 600));
+    // 11-11 and 11-12: VO-Space on the confirm did nothing because the VoiceOver
+    // cursor was still on the dialog text, not the button keyboard focus moved
+    // to. Wait until VoiceOver itself is on the confirm before acting.
+    await waitForVoCursor(/delete project/i, 'the delete confirm');
     await activate('VO-Space on confirm: what is announced after deleting', 3200);
+    await page.waitForSelector('[data-action="undo-delete"]', { timeout: 8000 })
+      .catch(() => { throw new Error('VO-Space on the delete confirm did not delete: no Undo appeared'); });
     await focus(page, '[data-action="undo-delete"]', 'focus Undo');
     await activate('VO-Space on Undo: what is announced after undoing', 3000);
     log('after undo', [], { projects: world.projects.length });
