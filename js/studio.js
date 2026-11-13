@@ -9,6 +9,16 @@ let studioAccess = [];
 let userHasBooks = false;
 let studioCatalogMode = 'automatic';
 let authMode = 'password';
+let studioAuthResolved = false;
+const HAS_CACHED_SESSION = (() => {
+  try {
+    return Boolean(localStorage.getItem('sb-zdtkwpzdwnzzmdwrvmka-auth-token'));
+  } catch (e) {
+    return false;
+  }
+})();
+const FRONT_DOOR_TABS = ['seeninseven', 'library', 'business-cards'];
+let activeFrontDoorTab = 'seeninseven';
 const ACCESS_APP_NAMES = { seeninseven: 'SeenInSeven', boardroom: 'AI Boardroom', eee: 'EEE Membership', storysculpt: 'StorySculpt', navigator: 'Next Step Navigator', vault: 'Solution Vault', certainty: 'Certainty Sessions' };
 // Per-app Hub access (WBR-442): the Hub opens for its bundle or any one app.
 const HUB_APP_KEYS = ['storysculpt', 'navigator', 'vault', 'certainty'];
@@ -139,14 +149,87 @@ function hasLocalSeenInSevenProgress() {
   }
 }
 
-function setStudioTheme(theme) {
+function setStudioTheme(theme, persist = true) {
   const isLight = theme === 'light';
   document.documentElement.classList.toggle('studio-light', isLight);
-  try { localStorage.setItem(STUDIO_THEME_KEY, isLight ? 'light' : 'dark'); } catch (e) {}
+  if (persist) {
+    try { localStorage.setItem(STUDIO_THEME_KEY, isLight ? 'light' : 'dark'); } catch (e) {}
+  }
+}
+
+function applyThemeForAuth(signedIn) {
+  let saved = null;
+  try { saved = localStorage.getItem(STUDIO_THEME_KEY); } catch (e) {}
+  if (saved === 'light') {
+    setStudioTheme('light', false);
+  } else if (saved === 'dark') {
+    setStudioTheme('dark', false);
+  } else {
+    // Signed-out visitors land on the light Colorado Mastermind look by default;
+    // signed-in members keep the existing dark Studio default unless toggled.
+    setStudioTheme(signedIn ? 'dark' : 'light', false);
+  }
 }
 
 function toggleStudioTheme() {
-  setStudioTheme(document.documentElement.classList.contains('studio-light') ? 'dark' : 'light');
+  setStudioTheme(document.documentElement.classList.contains('studio-light') ? 'dark' : 'light', true);
+}
+
+function normalizeFrontDoorTab(raw) {
+  const key = String(raw || '').trim().toLowerCase().replace(/^#/, '');
+  if (key === 'network' || key === 'business-cards' || key === 'cards') return 'business-cards';
+  if (key === 'library' || key === 'the-library') return 'library';
+  if (key === 'seeninseven' || key === 'sis') return 'seeninseven';
+  return null;
+}
+
+function activateFrontDoorTab(tabKey, moveFocus = false) {
+  const next = FRONT_DOOR_TABS.includes(tabKey) ? tabKey : 'seeninseven';
+  activeFrontDoorTab = next;
+  for (const key of FRONT_DOOR_TABS) {
+    const selected = key === next;
+    const tab = el('fd-tab-' + key);
+    const panel = el('fd-panel-' + key);
+    if (tab) {
+      tab.setAttribute('aria-selected', selected ? 'true' : 'false');
+      tab.tabIndex = selected ? 0 : -1;
+      if (selected && moveFocus) tab.focus();
+    }
+    if (panel) {
+      panel.hidden = !selected;
+    }
+  }
+}
+
+function initFrontDoorTabs() {
+  const params = new URLSearchParams(window.location.search);
+  const initial = normalizeFrontDoorTab(params.get('tab')) || normalizeFrontDoorTab(window.location.hash) || 'seeninseven';
+  activateFrontDoorTab(initial, false);
+
+  const tablist = document.querySelector('.front-door-tabs');
+  if (!tablist) return;
+
+  tablist.addEventListener('click', event => {
+    const btn = event.target.closest('[data-fd-tab]');
+    if (!btn) return;
+    activateFrontDoorTab(btn.getAttribute('data-fd-tab'), false);
+  });
+
+  tablist.addEventListener('keydown', event => {
+    const btn = event.target.closest('[data-fd-tab]');
+    if (!btn) return;
+    const idx = FRONT_DOOR_TABS.indexOf(btn.getAttribute('data-fd-tab'));
+    if (idx === -1) return;
+    let nextIdx = -1;
+    if (event.key === 'ArrowRight') nextIdx = (idx + 1) % FRONT_DOOR_TABS.length;
+    else if (event.key === 'ArrowLeft') nextIdx = (idx - 1 + FRONT_DOOR_TABS.length) % FRONT_DOOR_TABS.length;
+    else if (event.key === 'Home') nextIdx = 0;
+    else if (event.key === 'End') nextIdx = FRONT_DOOR_TABS.length - 1;
+    if (nextIdx !== -1) {
+      event.preventDefault();
+      activateFrontDoorTab(FRONT_DOOR_TABS[nextIdx], true);
+    }
+  });
 }
 
 function openAuthModal() {
@@ -300,6 +383,7 @@ async function hydrateStudio(session) {
       }
     }
   }
+  studioAuthResolved = true;
   renderStudio();
   const nextPath = !studioSession && pendingStudioNext();
   if (nextPath) {
@@ -314,6 +398,7 @@ async function hydrateStudio(session) {
 
 function renderStudio() {
   const signedIn = Boolean(studioSession && studioSession.user);
+  const showFrontDoor = !signedIn && (studioAuthResolved || !HAS_CACHED_SESSION);
   const email = signedIn ? studioSession.user.email : '';
   const localProgress = hasLocalSeenInSevenProgress();
   const seenInSevenUnlocked = true;
@@ -329,9 +414,22 @@ function renderStudio() {
   // If user is book-only or has standalone vault access without full EEE bundle, show vault-card
   const showVaultCard = signedIn && vaultUnlocked && !hubBundle;
 
+  document.body.dataset.auth = signedIn ? 'signed-in' : (showFrontDoor ? 'signed-out' : 'pending');
+  applyThemeForAuth(signedIn);
+
+  if (el('studio-sidebar')) el('studio-sidebar').hidden = !signedIn;
+  if (el('studio-member-view')) el('studio-member-view').hidden = !signedIn;
+  if (el('studio-front-door')) el('studio-front-door').hidden = !showFrontDoor;
+
+  const fdSisStart = el('fd-seeninseven-start');
+  if (fdSisStart) {
+    const fdSisLabel = fdSisStart.querySelector('span');
+    if (fdSisLabel) fdSisLabel.textContent = localProgress ? 'Continue SeenInSeven' : 'Start SeenInSeven';
+  }
+
   el('sign-in-button').hidden = signedIn;
   el('account-button').hidden = !signedIn;
-  el('device-progress').hidden = !localProgress || hasStudioAccess('seeninseven');
+  el('device-progress').hidden = !signedIn || !localProgress || hasStudioAccess('seeninseven');
   const isAdmin = Boolean(signedIn && studioProfile && studioProfile.is_admin === true);
   if (el('management-label')) el('management-label').hidden = !isAdmin;
   if (el('management-divider')) el('management-divider').hidden = !isAdmin;
@@ -445,6 +543,7 @@ async function signOutStudio() {
   studioAccess = [];
   userHasBooks = false;
   closeSettingsModal();
+  studioAuthResolved = true;
   renderStudio();
 }
 
@@ -504,6 +603,7 @@ studioSb.auth.onAuthStateChange((event, session) => {
       studioSession = session;
       studioProfile = null;
       studioAccess = [];
+      studioAuthResolved = true;
       renderStudio();
     });
   }, 0);
@@ -511,6 +611,9 @@ studioSb.auth.onAuthStateChange((event, session) => {
 
 el('theme-button').addEventListener('click', toggleStudioTheme);
 el('sign-in-button').addEventListener('click', openAuthModal);
+if (el('fd-library-sign-in')) {
+  el('fd-library-sign-in').addEventListener('click', openAuthModal);
+}
 el('auth-close').addEventListener('click', closeAuthModal);
 el('auth-modal').addEventListener('click', event => {
   if (event.target === el('auth-modal')) closeAuthModal();
@@ -542,8 +645,18 @@ if (ACCESS_APP_NAMES[accessNoticeApp] && window.history && window.history.replac
   window.history.replaceState({}, '', cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
 }
 
+initFrontDoorTabs();
 refreshIcons();
 renderStudio();
+
+if (HAS_CACHED_SESSION) {
+  window.setTimeout(() => {
+    if (!studioAuthResolved) {
+      studioAuthResolved = true;
+      renderStudio();
+    }
+  }, 1000);
+}
 
 window.setInterval(renderStudio, 60 * 1000);
 document.addEventListener('visibilitychange', () => {

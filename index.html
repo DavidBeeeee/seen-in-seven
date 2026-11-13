@@ -12,7 +12,9 @@
   <script>
     (function () {
       try {
-        if (localStorage.getItem('sis_theme_v1') === 'light') {
+        var theme = localStorage.getItem('sis_theme_v1');
+        var hasSession = Boolean(localStorage.getItem('sb-zdtkwpzdwnzzmdwrvmka-auth-token'));
+        if (theme === 'light' || (theme !== 'dark' && !hasSession)) {
           document.documentElement.classList.add('studio-light');
         }
       } catch (e) {}
@@ -23,7 +25,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/js/egress-report.js?v=1"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
-<body class="studio-home">
+<body class="studio-home" data-auth="pending">
   <header class="studio-header">
     <a class="studio-brand" href="/" aria-label="Colorado Mastermind Studio home">
       <span class="studio-mark">CM</span>
@@ -51,7 +53,7 @@
   </header>
 
   <div class="studio-layout">
-    <aside class="studio-sidebar" aria-label="Studio navigation">
+    <aside class="studio-sidebar" id="studio-sidebar" aria-label="Studio navigation" hidden>
       <nav>
         <a class="nav-item active" href="/" aria-current="page"><i data-lucide="layout-grid"></i><span>My Studio</span></a>
         <a class="nav-item" href="/seeninseven"><i data-lucide="video"></i><span>SeenInSeven</span></a>
@@ -94,6 +96,145 @@
     </aside>
 
     <main class="studio-main">
+      <!-- The signed-out front door (WBR-477, David 2026-11-13): exactly three
+           tabs, SeenInSeven, The Library and Business Cards, plus Sign in.
+           Every other app stays out of sight until someone signs in. -->
+      <div class="front-door" id="studio-front-door" hidden>
+        <section class="front-door-intro">
+          <p class="eyebrow">Colorado Mastermind Studio</p>
+          <h1>Come on in and look around.</h1>
+          <p class="intro-copy">Start your first video in SeenInSeven, browse the shelf in The Library, and meet the people who've been in the room with me. You don't need an account to begin. 😊</p>
+        </section>
+
+        <div class="front-door-tabs" role="tablist" aria-label="Studio front door">
+          <button class="front-door-tab" type="button" role="tab" id="fd-tab-seeninseven" data-fd-tab="seeninseven" aria-controls="fd-panel-seeninseven" aria-selected="true">
+            <i data-lucide="video"></i><span>SeenInSeven</span>
+          </button>
+          <button class="front-door-tab" type="button" role="tab" id="fd-tab-library" data-fd-tab="library" aria-controls="fd-panel-library" aria-selected="false" tabindex="-1">
+            <i data-lucide="library"></i><span>The Library</span>
+          </button>
+          <button class="front-door-tab" type="button" role="tab" id="fd-tab-business-cards" data-fd-tab="business-cards" aria-controls="fd-panel-business-cards" aria-selected="false" tabindex="-1">
+            <i data-lucide="contact"></i><span>Business Cards</span>
+          </button>
+        </div>
+
+        <section class="front-door-panel" role="tabpanel" id="fd-panel-seeninseven" aria-labelledby="fd-tab-seeninseven" tabindex="0">
+          <article class="app-card">
+            <div class="app-preview">
+              <img src="/assets/seeninseven-preview.jpg" alt="SeenInSeven app dashboard preview">
+            </div>
+            <div class="app-details">
+              <div class="app-title-row">
+                <div>
+                  <span class="access-label unlocked">Free to start</span>
+                  <h3>SeenInSeven</h3>
+                </div>
+                <span class="app-icon"><i data-lucide="video"></i></span>
+              </div>
+              <p>Your AI StoryStarter for the 777 Video Challenge. It asks you a few questions, finds the story you already have, and turns it into seven short videos in your own voice.</p>
+              <div class="app-status unlocked">
+                <i data-lucide="badge-check"></i>
+                <span>Start right now. Your progress stays on this device until you save it with your email.</span>
+              </div>
+              <div class="app-actions">
+                <a class="primary-button" id="fd-seeninseven-start" href="/seeninseven">
+                  <span>Start SeenInSeven</span>
+                  <i data-lucide="arrow-right"></i>
+                </a>
+              </div>
+            </div>
+          </article>
+        </section>
+
+        <section class="front-door-panel" role="tabpanel" id="fd-panel-library" aria-labelledby="fd-tab-library" tabindex="0" hidden>
+          <div class="library-preview">
+            <div class="library-preview-head">
+              <h2>The Library</h2>
+              <p>Short books I wrote about getting on camera and making content that sounds like a person. Members read them right here in the Studio.</p>
+            </div>
+            <div class="library-shelf">
+              <article class="library-book">
+                <img src="/assets/vault/content-lies-cover.png" alt="Cover of The Stupidest Lies You Were Told About Making Content" loading="lazy">
+                <h3>The Stupidest Lies You Were Told About Making Content</h3>
+                <p>Ten rules you probably still follow. Call each one before you read it. 😏</p>
+              </article>
+              <article class="library-book">
+                <img src="/assets/vault/the-5e-framework-cover.png" alt="Cover of The 5E Framework" loading="lazy">
+                <h3>The 5E Framework</h3>
+                <p>How human content builds trust with the one client who needs your help.</p>
+              </article>
+            </div>
+            <div class="app-actions">
+              <button class="primary-button" id="fd-library-sign-in" type="button">
+                <i data-lucide="log-in"></i>
+                <span>Sign in to read</span>
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <section class="front-door-panel" role="tabpanel" id="fd-panel-business-cards" aria-labelledby="fd-tab-business-cards" tabindex="0" hidden>
+          <div class="network-intro">
+            <h2>Business Cards</h2>
+            <p>Leave your card for the people you met at Colorado Mastermind: what you do, one link, and whether you're up for working together. I look over every card before it shows up here.</p>
+          </div>
+          <div class="network-grid">
+            <section class="network-panel" aria-labelledby="network-form-heading">
+              <h3 id="network-form-heading">Add your card</h3>
+              <p class="network-panel-sub">Takes about a minute.</p>
+              <form id="network-form" novalidate>
+                <div class="network-field">
+                  <label for="network-name">Your name <span aria-hidden="true">*</span></label>
+                  <input id="network-name" name="name" type="text" autocomplete="name" maxlength="120" required placeholder="Alex Rivera" aria-describedby="network-name-error" aria-errormessage="network-name-error">
+                  <span class="network-error" id="network-name-error">Add your name so people know who to ask for.</span>
+                </div>
+                <div class="network-field">
+                  <label for="network-what">What you do <span aria-hidden="true">*</span></label>
+                  <textarea id="network-what" name="what_you_do" maxlength="500" required placeholder="I help local service founders turn client questions into short weekly videos." aria-describedby="network-what-hint network-what-error" aria-errormessage="network-what-error"></textarea>
+                  <span class="network-hint" id="network-what-hint">One or two sentences about your work and who you help.</span>
+                  <span class="network-error" id="network-what-error">Add a short line about what you do.</span>
+                </div>
+                <div class="network-field">
+                  <label for="network-link">One link <span aria-hidden="true">*</span></label>
+                  <input id="network-link" name="link_url" type="url" inputmode="url" autocomplete="url" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="300" required placeholder="https://example.com" aria-describedby="network-link-hint network-link-error" aria-errormessage="network-link-error">
+                  <span class="network-hint" id="network-link-hint">Your website, portfolio, or main social page, starting with https://</span>
+                  <span class="network-error" id="network-link-error">Use a full web link that starts with https:// or http://</span>
+                </div>
+                <fieldset class="network-fieldset">
+                  <legend>Open to collaborating?</legend>
+                  <div class="network-radio-group">
+                    <label class="network-radio-option"><input type="radio" name="open_to_collaborating" value="yes" checked><span>Yes, open to it</span></label>
+                    <label class="network-radio-option"><input type="radio" name="open_to_collaborating" value="no"><span>Not right now</span></label>
+                  </div>
+                </fieldset>
+                <div class="network-field">
+                  <label class="network-consent-label" for="network-consent">
+                    <input id="network-consent" name="consent_given" type="checkbox" required aria-describedby="network-consent-error" aria-errormessage="network-consent-error">
+                    <span>Show my name, what I do, my link and my collaboration answer on the Colorado Mastermind Business Cards page once it's approved.</span>
+                  </label>
+                  <span class="network-error" id="network-consent-error">Check the box so I have your permission to show your card.</span>
+                </div>
+                <button class="primary-button network-submit" id="network-submit" type="submit">
+                  <span>Send my card</span>
+                  <i data-lucide="arrow-right"></i>
+                </button>
+                <div class="network-status" id="network-form-status" role="status" aria-live="polite" hidden></div>
+              </form>
+            </section>
+            <section class="network-panel" aria-labelledby="directory-heading">
+              <div class="network-directory-head">
+                <h3 id="directory-heading">Cards</h3>
+                <span class="network-count" id="network-directory-count">0 cards</span>
+              </div>
+              <div class="network-cards" id="network-directory-list" aria-live="polite"></div>
+            </section>
+          </div>
+        </section>
+
+        <p class="front-door-footer"><a href="/terms">Terms &amp; FAQ</a></p>
+      </div>
+
+      <div class="studio-member-view" id="studio-member-view" hidden>
       <section class="studio-intro">
         <div>
           <p class="eyebrow">Your Studio</p>
@@ -204,6 +345,7 @@
           </div>
         </article>
       </section>
+      </div>
     </main>
   </div>
 
@@ -273,6 +415,7 @@
   </div>
 
   <script src="/js/777-launch-cycle.js?v=2026-09"></script>
-  <script src="/js/studio.js?v=egress-v1"></script>
+  <script src="/js/network.js?v=front-door-1"></script>
+  <script src="/js/studio.js?v=front-door-1"></script>
 </body>
 </html>

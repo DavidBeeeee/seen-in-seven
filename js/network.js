@@ -90,9 +90,7 @@ async function fetchDirectoryEntries() {
       directoryState.entries = local;
     } else {
       directoryState.mode = 'live-table';
-      const remoteIds = new Set((data || []).map(item => item.id));
-      const extras = local.filter(item => !remoteIds.has(item.id));
-      directoryState.entries = (data || []).concat(extras);
+      directoryState.entries = Array.isArray(data) ? data : [];
     }
   } catch (err) {
     directoryState.mode = 'preview-stub';
@@ -288,9 +286,11 @@ async function handleFormSubmit(event) {
   const labelSpan = submitBtn.querySelector('span');
   if (labelSpan) labelSpan.textContent = 'Sending...';
 
+  let savedRemotely = false;
+  let liveInsertFailed = false;
   if (networkSb) {
     try {
-      const { data, error } = await networkSb
+      const { error } = await networkSb
         .from('network_directory')
         .insert([{
           name: newEntry.name,
@@ -298,19 +298,32 @@ async function handleFormSubmit(event) {
           link_url: newEntry.link_url,
           open_to_collaborating: newEntry.open_to_collaborating,
           consent_given: true
-        }])
-        .select('id,status,created_at')
-        .maybeSingle();
-      if (!error && data && data.id) {
-        newEntry.id = data.id;
+        }]);
+      if (!error) {
+        savedRemotely = true;
+      } else if (directoryState.mode === 'live-table') {
+        liveInsertFailed = true;
       }
-    } catch (e) {}
+    } catch (e) {
+      if (directoryState.mode === 'live-table') liveInsertFailed = true;
+    }
+  }
+
+  if (liveInsertFailed && !savedRemotely) {
+    submitBtn.disabled = false;
+    if (labelSpan) labelSpan.textContent = document.body && document.body.classList.contains('studio-home') ? 'Send my card' : 'Send card for approval';
+    statusBox.hidden = false;
+    statusBox.className = 'network-status is-error';
+    statusBox.textContent = 'We could not save your card right now. Please check your details and try again.';
+    return;
   }
 
   const current = loadLocalEntries();
   current.unshift(newEntry);
   saveLocalEntries(current);
-  directoryState.entries = current;
+  if (directoryState.mode !== 'live-table') {
+    directoryState.entries = current;
+  }
 
   netEl('network-form').reset();
   for (const control of controls) {
@@ -321,7 +334,7 @@ async function handleFormSubmit(event) {
   }
 
   submitBtn.disabled = false;
-  if (labelSpan) labelSpan.textContent = 'Send card for approval';
+  if (labelSpan) labelSpan.textContent = document.body && document.body.classList.contains('studio-home') ? 'Send my card' : 'Send card for approval';
 
   statusBox.hidden = false;
   statusBox.className = 'network-status';
@@ -365,7 +378,7 @@ document.addEventListener('change', event => {
 if (netEl('network-form')) {
   netEl('network-form').addEventListener('submit', handleFormSubmit);
 }
-if (netEl('theme-button')) {
+if (netEl('theme-button') && !(document.body && document.body.classList && document.body.classList.contains('studio-home'))) {
   netEl('theme-button').addEventListener('click', toggleTheme);
 }
 if (netEl('toggle-admin-preview')) {
