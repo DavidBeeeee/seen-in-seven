@@ -304,12 +304,13 @@ html.studio-light .library-preview {
 }
 .library-book img {
   width: 100%;
-  aspect-ratio: 3 / 4;
-  max-height: 260px;
-  object-fit: cover;
+  height: 260px;
+  object-fit: contain;
+  object-position: center;
   border-radius: var(--radius-sm, 6px);
   border: 1px solid var(--studio-border);
   background: var(--studio-surface-2);
+  padding: 10px;
 }
 .library-book h3 {
   margin: 4px 0 0;
