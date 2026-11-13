@@ -57,19 +57,28 @@ try {
     await page.locator('#story-answer').waitFor();
     await page.waitForTimeout(1200);
     const before = generationRequestCount;
+    const beforeStep = await page.evaluate(() => activeStory?.intake?.current_step ?? null);
     await page.locator('#story-answer').fill(test.answer);
     await page.locator('#story-send').click();
     await page.waitForFunction(() => !storySending, null, { timeout: 60000 });
     const observed = await page.evaluate(() => ({
       projectId: activeStory?.id,
-      step: activeStory?.intake?.current_step,
+      step: activeStory?.intake?.current_step ?? null,
       narrowed: !!activeStory?.conversation?.some(m => m.narrowingQuestion),
       conversation: activeStory?.conversation?.map(m => ({ role: m.role, content: m.content, narrowingQuestion: !!m.narrowingQuestion })),
       statusLine: document.getElementById('story-generation-status')?.textContent?.trim()
     }));
     const requests = generationRequestCount - before;
-    results.push({ answer: test.answer, expectedBroad: test.broad, ...observed, generationRequests: requests,
-      pass: test.broad ? observed.narrowed && observed.step === 'R1' && requests === 0 : !observed.narrowed && requests > 0 && observed.step !== 'R1' });
+    const savedResponse = await fetch(base + '/rest/v1/storysculpt_projects?id=eq.' + observed.projectId + '&select=id,intake,conversation,status', {
+      headers: { apikey: publicKey, Authorization: 'Bearer ' + session.access_token }, signal: AbortSignal.timeout(15000)
+    });
+    assert.equal(savedResponse.status, 200, 'Independent test-member saved-row read');
+    const saved = (await savedResponse.json())[0];
+    const persisted = { answerCount: saved?.conversation?.filter(m => m.role === 'user' && m.content === test.answer).length,
+      narrowingCount: saved?.conversation?.filter(m => m.narrowingQuestion).length, step: saved?.intake?.current_step ?? null };
+    const localPass = test.broad ? observed.narrowed && observed.step === beforeStep && requests === 0 : !observed.narrowed && requests > 0 && observed.step !== beforeStep;
+    results.push({ answer: test.answer, expectedBroad: test.broad, beforeStep, ...observed, persisted, generationRequests: requests,
+      pass: localPass && persisted.answerCount === 1 && persisted.narrowingCount === (test.broad ? 1 : 0) && persisted.step === observed.step });
   }
   console.log(JSON.stringify({ timestamp: new Date().toISOString(), origin, servedAssetsOnly: true, success: results.every(r => r.pass), cases: results }, null, 2));
 } finally {
