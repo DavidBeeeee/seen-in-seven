@@ -181,7 +181,11 @@ function longThread(turns) {
   check(visibleTurns.includes('Turn 40 marker') && !visibleTurns.includes('Turn 1 marker') && !visibleTurns.includes('Turn 28 marker') && visibleTurns.includes('Turn 29 marker'), '40 turns: only the latest 12 message bodies may render');
   check(thread.includes('Last earlier answer:'), '40 turns: one earlier-answer excerpt orients the member without opening history');
   check(thread.indexOf('data-show-earlier') < thread.indexOf('Turn 29 marker'), '40 turns: the control must sit above the latest exchange');
-  check(/data-msg-index="38"/.test(thread), '40 turns: message actions must keep absolute indices');
+  // Copy and Use as Script left assistant replies on 2026-11-13 (c238d9b), so the
+  // absolute-index proof now rides on the member's own answers: turn 40 is index
+  // 39, a user message whose context toggle must carry 39, never its window
+  // position 11.
+  check(/data-action="toggle-context-message" data-msg-index="39"/.test(thread) && !/data-msg-index="11"/.test(thread), '40 turns: message actions must keep absolute indices');
   // Expand through the real click handler.
   const conv = app.document.getElementById('story-conversation');
   for (const fn of conv.listeners.click || []) fn({ target: { closest: sel => sel === '[data-show-earlier]' ? {} : null } });

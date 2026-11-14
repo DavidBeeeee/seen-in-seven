@@ -142,7 +142,9 @@ const terms = fs.readFileSync(new URL('../terms.html', import.meta.url), 'utf8')
 for (const text of [html.slice(html.indexOf('id="story-help"')), terms.slice(terms.indexOf('id="storysculpt-faq"'))]) {
   for (const pattern of [/format is locked/, /resume/, /clos(?:ed|es).*to new turns/, /Refine/, /Archive/, /Restore chat/, /irreversible|permanently/]) assert.match(text, pattern);
 }
-assert.match(html, /You can't change this later; start a new script for a different format\./);
+// The format-lock hint was reworded on 2026-11-13 (c238d9b, writing-space pass);
+// the lock itself is unchanged and still stated in Help and the shared FAQ above.
+assert.match(html, /For a different format later, start a new script\./);
 console.log('PASS Help, shared FAQ and format-lock hint');
 const help = html.slice(html.indexOf('id="story-help"'));
 const membershipFaq = terms.slice(terms.indexOf('id="storysculpt-membership-faq"'), terms.indexOf('id="certainty-faq"'));
