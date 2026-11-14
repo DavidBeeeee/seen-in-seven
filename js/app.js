@@ -298,7 +298,7 @@ function journeyFilmingComplete(status) {
     .every(value => value === 'filmed' || value === 'skipped');
 }
 
-const ONBOARDING_ORDER = ['screen-0','screen-1','screen-3','screen-2a','screen-commit-desire','screen-6','screen-recap','screen-story-discovery','screen-journey-map','screen-journey-review','screen-mvo2','screen-script','plan-screen'];
+const ONBOARDING_ORDER = ['screen-0','screen-1','screen-3','screen-2a','screen-commit-desire','screen-6','screen-recap','screen-story-discovery','screen-journey-map','screen-mvo2','screen-script','plan-screen'];
 let screenOrder = ['screen-0','screen-1'];
 let currentIndex = 0;
 let currentVideoIndex = 0;
@@ -593,7 +593,6 @@ function goNext() {
     populateRecap();
     setTimeout(maybeShowSaveProgressOverlay, 450);
   }
-  else if (nextId === 'screen-journey-review') renderJourneyReview();
   else if (nextId === 'screen-mvo2') renderVideoOneBridge();
   else if (nextId === 'screen-7') {
     currentVideoIndex = 0;
@@ -614,7 +613,6 @@ function goBack() {
     else if (prevId === 'screen-commit-desire') renderCommitmentCards('desire');
     else if (prevId === 'screen-6') renderCommitmentDeclaration();
     else if (prevId === 'screen-recap') populateRecap();
-    else if (prevId === 'screen-journey-review') renderJourneyReview();
     else if (prevId === 'screen-mvo2') renderVideoOneBridge();
     showScreen(prevId, 'back');
   }
@@ -1504,49 +1502,6 @@ function renderJourneyMap() {
   }
 }
 
-const JOURNEY_REVIEW_LABELS = [
-  'The Story You Want To Tell',
-  'Where You Started',
-  'What You Used To Believe',
-  'The Turning Point',
-  'The Hardest Part',
-  'The Truth You Found',
-  'Who You Are Now'
-];
-
-function renderJourneyReview() {
-  const answers = journeyAnswersForLevel(state.level || 1);
-  const skipped = ensurePhase2().skippedJourneyParts || [];
-  const list = document.getElementById('journey-review-list');
-  if (!list) return;
-  list.innerHTML = JOURNEY_REVIEW_LABELS.map((label, index) => {
-    const value = answers[index] || '';
-    const unfinished = !value && skipped.includes(index);
-    return `<section class="journey-review-item${unfinished ? ' unfinished' : ''}">
-      <div class="journey-review-heading"><span>${index + 1}</span><strong>${escapeHTML(label)}</strong></div>
-      ${unfinished ? '<p>We’ll help fill this in later.</p>' : ''}
-      <textarea class="journey-answer-input" rows="${journeyAnswerRows(value)}" placeholder="You can leave this unfinished for now."
-        oninput="setJourneyMapAnswer(${index}, this.value)">${escapeHTML(value)}</textarea>
-    </section>`;
-  }).join('');
-}
-
-function backToJourneyInterview() {
-  journeyMapMode = 'onboarding';
-  journeyMapLevel = Number(state.level || 1);
-  journeyMapReturnVideo = null;
-  if (ensurePhase2().storyDiscoveryMode !== 'imported') journeyOnboardingIndex = 6;
-  currentIndex = screenOrder.indexOf('screen-journey-map');
-  renderJourneyMap();
-  showScreen('screen-journey-map', 'back');
-}
-
-function finishJourneyReview() {
-  saveProgress();
-  currentIndex = screenOrder.indexOf('screen-journey-review');
-  goNext();
-}
-
 // A paste that cannot be read says why, in the box's own terms, instead of
 // changing a placeholder nobody can see behind the pasted text.
 function journeyImportProblem(detail) {
@@ -1579,8 +1534,9 @@ function importStoryNotes(notes, level) {
   notes.parts.forEach((part, index) => {
     answers[index] = part.about;
     if (index === 0) return;
+    const store = journeyNoteStore(level);
     questions[index - 1].forEach((question, order) => {
-      if (part.answers[order]) state.videos[question.key] = part.answers[order];
+      if (part.answers[order]) store[question.key] = part.answers[order];
     });
   });
 }
@@ -1661,7 +1617,7 @@ function openJourneyPartHelp(index) {
 
 function setJourneyMapAnswer(index, value) {
   const answers = journeyAnswersForLevel(journeyMapLevel);
-  answers[Number(index)] = String(value || '').slice(0, 600);
+  answers[Number(index)] = String(value || '').slice(0, 4000);
   const count = journeyWordCount(value);
   const label = document.getElementById('journey-count-' + index);
   if (label) {
@@ -2006,8 +1962,8 @@ async function copyCurrentJourney(button) {
 function completeJourneyMap() {
   const answers = journeyAnswersForLevel(journeyMapLevel);
   const p2 = ensurePhase2();
-  const reviewingImport = journeyMapMode === 'onboarding' && p2.storyDiscoveryMode === 'imported';
-  const missing = journeyMapMode === 'onboarding' && !reviewingImport
+  const reviewingMap = journeyMapMode === 'onboarding' && (p2.storyDiscoveryMode === 'imported' || p2.storyDiscoveryMode === 'self-review');
+  const missing = journeyMapMode === 'onboarding' && !reviewingMap
     ? (!String(answers[journeyOnboardingIndex] || '').trim() ? journeyOnboardingIndex : -1)
     : journeyMapMode === 'video' && journeyMapReturnVideo != null && !String(answers[journeyMapReturnVideo] || '').trim()
       ? Number(journeyMapReturnVideo)
@@ -2027,7 +1983,7 @@ function completeJourneyMap() {
     answered: answers.filter(answer => SISJourneyMap.isUsableAnswer(answer)).length
   });
   if (journeyMapMode === 'onboarding') {
-    if (reviewingImport) {
+    if (reviewingMap) {
       goNext();
       return;
     }
@@ -2038,7 +1994,10 @@ function completeJourneyMap() {
       renderJourneyMap();
       window.scrollTo(0, 0);
     } else {
-      goNext();
+      p2.storyDiscoveryMode = 'self-review';
+      saveProgress();
+      renderJourneyMap();
+      window.scrollTo(0, 0);
     }
     return;
   }
@@ -2055,7 +2014,15 @@ function completeJourneyMap() {
 
 function backFromJourneyMap() {
   if (journeyMapMode === 'onboarding') {
-    if (ensurePhase2().storyDiscoveryMode !== 'imported' && journeyOnboardingIndex > 0) {
+    const p2 = ensurePhase2();
+    if (p2.storyDiscoveryMode === 'self-review') {
+      p2.storyDiscoveryMode = 'self';
+      journeyOnboardingIndex = 6;
+      saveProgress();
+      renderJourneyMap();
+      return;
+    }
+    if (p2.storyDiscoveryMode !== 'imported' && journeyOnboardingIndex > 0) {
       journeyOnboardingIndex -= 1;
       saveProgress();
       renderJourneyMap();
@@ -3316,14 +3283,12 @@ function buildAPIUserMessage(videoIdx) {
     video,
     // Video 1 declares from the onboarding answers. The map is outside research, so here
     // it is background the planner may draw on, not the brief for this video.
-    onboardingLines: videoIdx === 0 && journeyDirectionFor(0, level)
-      ? onboardingLines.concat('- Background from my outside story research (context only, not the subject of this video): ' + journeyDirectionFor(0, level))
-      : onboardingLines,
+    onboardingLines,
     previousVideos,
     currentMode,
     currentEasyAnswer: state.videos['videoExtra_v' + videoIdx] || (currentEasy ? state.videos[currentEasy.key] || '' : ''),
     currentAnswers: videoIdx === 0 ? videoOnePromptAnswers(level) : extendedPromptAnswers(currentDefinition),
-    currentJourneyDirection: videoIdx === 0 ? '' : journeyDirectionFor(videoIdx, level),
+    currentJourneyDirection: journeyDirectionFor(videoIdx, level),
     nextPartEvent: videoIdx < 6 ? journeyDirectionFor(videoIdx + 1, level) : ''
   });
 }
@@ -7612,8 +7577,11 @@ function resumeSavedWorkflow() {
       renderJourneyMap();
       showScreen('screen-journey-map');
     } else if (resume.screenId === 'screen-journey-review') {
-      renderJourneyReview();
-      showScreen('screen-journey-review');
+      currentIndex = screenOrder.indexOf('screen-journey-map');
+      journeyMapMode = 'onboarding';
+      if (ensurePhase2().storyDiscoveryMode !== 'imported') ensurePhase2().storyDiscoveryMode = 'self-review';
+      renderJourneyMap();
+      showScreen('screen-journey-map');
     } else if (resume.screenId === 'screen-mvo2') {
       renderVideoOneBridge();
       showScreen('screen-mvo2');
