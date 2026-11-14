@@ -106,7 +106,7 @@ const escapedRecap = app.context.StorySculptStates.showEarlierMarkup(1,[{role:'u
 check(escapedRecap.includes('&lt;img') && !escapedRecap.includes('<img'), 'recap text is escaped');
 check(app.context.StorySculptStates.showEarlierMarkup(0,[{role:'user',content:'No hidden history'}]) === '', 'short and expanded threads have no recap');
 check(conv.innerHTML.indexOf('data-show-earlier') < conv.innerHTML.indexOf('Turn 189 marker'), 'the control sits above the visible answers');
-check(/data-msg-index="198"/.test(conv.innerHTML), 'actions keep absolute indices');
+check(/data-msg-index="199"/.test(conv.innerHTML), 'actions keep absolute indices');
 
 // 2. Scroll position: the member is reading 80px from the bottom and opens the
 // earlier answers. They must still be 80px from the bottom, not thrown to the top.
@@ -210,8 +210,8 @@ check(/id="story-latest-live"[^>]*aria-live="polite"/.test(page), 'the page carr
   // Canonical concept names present
   check(/story profile/i.test(page) && /Settings &amp; story profile/i.test(page), '40-turn terminology: standing memory is consistently named story profile');
   check(/Show earlier answers \(28 messages\)/.test(collapsedHtml40), '40-turn terminology: collapsed control uses canonical "Show earlier answers"');
-  check((expandedHtml40.match(/<span>Copy<\/span>/g) || []).length === 20, '40-turn terminology: all 20 assistant turns use canonical "Copy" label');
-  check((expandedHtml40.match(/<span>Use as Script<\/span>/g) || []).length === 20, '40-turn terminology: all 20 assistant turns use canonical "Use as Script" label');
+  check(!expandedHtml40.includes('data-action="copy-msg"'), 'interview replies do not expose script Copy controls');
+  check(!expandedHtml40.includes('data-action="promote-msg"'), 'interview instructions cannot be promoted to a script');
   check((expandedHtml40.match(/<span>Don’t use this<\/span>/g) || []).length === 18, '40-turn terminology: all 18 active user answers use canonical "Don’t use this" label');
   check((expandedHtml40.match(/<span>Use this again<\/span>/g) || []).length === 1 && expandedHtml40.includes('Not used in future drafts'), '40-turn terminology: excluded user answer uses canonical "Use this again" and "Not used in future drafts"');
   check(expandedHtml40.includes('Revision note') && !/Re-prompt|Polish pass/i.test(expandedHtml40), '40-turn terminology: refine turn uses canonical "Revision note"');

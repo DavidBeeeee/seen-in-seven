@@ -29,6 +29,9 @@ let memoryProfile = {};
 let helpReturnFocus = null;
 let viewingVersionIndex = -1; // -1 means viewing active/latest draft
 let viewingSeenLength = 0; // how many versions existed when an older one was chosen
+let storyCustomReplyKey = null;
+let storyFollowUntil = 0;
+let storyScrollRequest = 0;
 let mobileActiveTab = 'chat'; // 'chat' or 'script'
 let storyRailFilter = 'all'; // 'all' | 'active' | 'filmed' | 'archived'
 const storyArchivePending = new Set();
@@ -103,6 +106,10 @@ function autoGrow(el) {
   if (!el) return;
   el.style.height = 'auto';
   el.style.height = Math.min(el.scrollHeight, 180) + 'px';
+  if (el.id === 'story-answer') {
+    syncStoryComposer();
+    if (isStoryPhone()) scrollThread();
+  }
 }
 
 function updateWordCount(text) {
@@ -757,6 +764,7 @@ function renderScriptPanel() {
     const filmingPanel = storyEl('ugc-filming-plan-panel');
     if (filmingPanel) filmingPanel.hidden = true;
   }
+  syncStoryComposer();
 }
 
 // What the member is being asked to do at each of David's steps, so a choice
@@ -806,8 +814,38 @@ function stepGuideMarkup(message, isLatest) {
   return { banner, actions: '<div class="story-quick-actions">' + buttons.join('') + '</div>' };
 }
 
+// Choices get the screen on phones. Free writing stays one tap away and grows with the answer.
+function storyReplyKey() {
+  const conversation = activeStory && activeStory.conversation || [];
+  const latest = conversation[conversation.length - 1];
+  return activeStory ? activeStory.id + ':' + conversation.length + ':' + (latest && latest.step || '') : '';
+}
+function syncStoryComposer() {
+  const composer = storyEl('story-composer');
+  const answer = storyEl('story-answer');
+  const custom = storyEl('story-custom-answer');
+  if (!composer || !answer || !custom) return;
+  const conversation = activeStory && activeStory.conversation || [];
+  const latest = conversation[conversation.length - 1];
+  const guide = latest && latest.role === 'assistant' && STEP_GUIDE[latest.step];
+  const choosing = Boolean(activeStory && !activeStory.output && guide && (guide.choices || guide.replies || guide.actions));
+  const open = storyCustomReplyKey === storyReplyKey() || Boolean(answer.value.trim());
+  composer.classList.toggle('is-choice-step', choosing);
+  composer.classList.toggle('is-custom-answer-open', open);
+  custom.hidden = !isStoryPhone() || !choosing || open || composer.hidden;
+  answer.placeholder = choosing ? 'Your own answer…' : 'Your answer…';
+}
+function openStoryAnswer() {
+  storyCustomReplyKey = storyReplyKey();
+  syncStoryComposer();
+  const answer = storyEl('story-answer');
+  answer.focus();
+  autoGrow(answer);
+  scrollThread();
+}
+
 function sendQuickReply(text) {
-  if (!text || !activeStory || activeStory.output) return;
+  if (!text || !activeStory || activeStory.output || storySending) return;
   storyEl('story-answer').value = text;
   sendStoryAnswer();
 }
@@ -1049,9 +1087,27 @@ async function promoteMessageToScript(msgIndex) {
   }
 }
 
+function updateStoryLatestButton() {
+  const thread = storyEl('story-scroll');
+  const button = storyEl('story-jump-latest');
+  if (!thread || !button) return;
+  button.hidden = thread.hidden || thread.scrollHeight - thread.scrollTop - thread.clientHeight < 80;
+}
 function scrollThread() {
   const thread = storyEl('story-scroll');
-  if (thread) thread.scrollTop = thread.scrollHeight;
+  if (!thread) return;
+  storyFollowUntil = Date.now() + 600;
+  const request = ++storyScrollRequest;
+  const bottom = () => {
+    if (request !== storyScrollRequest) return;
+    thread.scrollTop = thread.scrollHeight;
+    updateStoryLatestButton();
+  };
+  bottom();
+  // Composer changes, icons and the phone keyboard settle after the first layout.
+  if (typeof window.requestAnimationFrame === 'function') {
+    window.requestAnimationFrame(() => { bottom(); window.requestAnimationFrame(bottom); });
+  }
 }
 
 // A pill's pressed state follows its highlight, so a screen reader hears what shows.
@@ -2824,12 +2880,14 @@ async function executeInterviewGeneration() {
       renderScriptPanel();
       announceToReader('Interview finished. Your script is ready in the script panel. Refine it with a note, or start a new chat.');
       const refineNote = storyEl('story-refine-note');
-      if (refineNote) refineNote.focus();
+      if (isStoryPhone()) switchMobileTab('script');
+      else if (refineNote) refineNote.focus();
     } else {
       await saveActiveStory();
       renderConversation();
       const ans = storyEl('story-answer');
-      if (ans) ans.focus();
+      if (ans && !isStoryPhone()) ans.focus();
+      scrollThread();
     }
   } catch (error) {
     failed = true;
@@ -2925,6 +2983,12 @@ async function sendStoryAnswer(event) {
     ? STATES.broadAnswerCheck(answer, priorConversation, currentStep)
     : { broad: false };
 
+  if (isStoryPhone()) {
+    const focused = document.activeElement;
+    if (focused && typeof focused.blur === 'function') focused.blur();
+    setStoryTyping(false);
+  }
+  storyCustomReplyKey = null;
   const button = storyEl('story-send');
   button.disabled = true;
   storySending = true;
@@ -2957,7 +3021,8 @@ async function sendStoryAnswer(event) {
     } catch (_) {}
     button.disabled = false;
     storySending = false;
-    storyEl('story-answer').focus();
+    if (!isStoryPhone()) storyEl('story-answer').focus();
+    scrollThread();
     return;
   }
 
@@ -3448,11 +3513,17 @@ if (storyEl('story-panel-post-btn')) {
   });
 }
 storyEl('story-composer').addEventListener('submit', sendStoryAnswer);
+storyEl('story-custom-answer').addEventListener('click', openStoryAnswer);
+storyEl('story-jump-latest').addEventListener('click', scrollThread);
+storyEl('story-scroll').addEventListener('scroll', updateStoryLatestButton);
+for (const event of ['wheel', 'pointerdown', 'touchstart']) {
+  storyEl('story-scroll').addEventListener(event, () => { storyFollowUntil = 0; storyScrollRequest++; }, { passive: true });
+}
 storyEl('story-conversation').addEventListener('click', event => {
   if (event.target.closest('[data-show-earlier]')) { showEarlierTurns(); return; }
   const quick = event.target.closest('[data-quick-reply]');
   if (quick) { sendQuickReply(quick.getAttribute('data-quick-reply')); return; }
-  if (event.target.closest('[data-quick-focus]')) storyEl('story-answer').focus();
+  if (event.target.closest('[data-quick-focus]')) openStoryAnswer();
 });
 storyEl('story-conversation').addEventListener('submit', event => {
   const form = event.target.closest('[data-regen-form]');
@@ -3556,6 +3627,8 @@ function syncStoryViewport() {
   const vv = window.visualViewport;
   if (!vv) return;
   document.documentElement.style.setProperty('--story-vvh', Math.round(vv.height) + 'px');
+  syncStoryComposer();
+  if (Date.now() < storyFollowUntil) scrollThread();
   // iOS scrolls the whole page to show a focused field; the editor already fits
   // the visible area, so put the page back where the header stays in view.
   if (isStoryPhone() && !storyEl('story-editor').hidden && window.scrollY) window.scrollTo(0, 0);
@@ -3611,9 +3684,16 @@ function syncStoryRailToggle() {
   const open = isStoryPhone() ? rail.classList.contains('is-open') : !rail.classList.contains('is-desktop-collapsed');
   toggle.setAttribute('aria-expanded', String(open));
   toggle.setAttribute('aria-label', open ? 'Hide chats' : 'Show chats');
+  syncStoryComposer();
 }
 syncStoryRailToggle();
 if (typeof window.addEventListener === 'function') window.addEventListener('resize', syncStoryRailToggle);
+if (typeof ResizeObserver === 'function') {
+  new ResizeObserver(() => {
+    if (Date.now() < storyFollowUntil) scrollThread();
+    else updateStoryLatestButton();
+  }).observe(storyEl('story-scroll'));
+}
 if (window.visualViewport) {
   // The keyboard resizes the visual viewport; rotation resizes the window.
   window.visualViewport.addEventListener('resize', syncStoryViewport);

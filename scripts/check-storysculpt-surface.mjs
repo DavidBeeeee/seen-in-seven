@@ -630,7 +630,11 @@ async function main() {
   }
 }
 
-main().catch(err => {
-  console.error(err);
-  process.exit(1);
-});
+export { chromium, chromiumPath, openState };
+
+if (process.argv[1] === selfFile) {
+  main().catch(err => {
+    console.error(err);
+    process.exit(1);
+  });
+}
