@@ -654,14 +654,23 @@ html.studio-light .library-preview {
 .network-card.is-unverified { filter: grayscale(1); opacity: 0.72; }
 .network-unverified-badge { display: inline-block; margin-bottom: 8px; padding: 3px 9px; border-radius: 999px; border: 1px dashed currentColor; font-size: 11px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.9; }
 
-/* Cards two across, like a table of business cards (David 2026-11-14).
-   Two columns while the form is folded away; one column on phones or
-   while the form is open beside them. */
-.network-grid.network-form-closed .network-cards { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-.network-grid .network-card { display: flex; flex-direction: column; min-height: 210px; overflow-wrap: anywhere; }
-.network-grid .network-card .network-card-top { flex-wrap: wrap; gap: 8px; }
-.network-grid .network-card .network-card-links { margin-top: auto; padding-top: 12px; }
+/* Cards like a table of business cards (David 2026-11-14): wide and short,
+   as many across as fit at a readable size (three on a wide screen, two on a
+   laptop, one on a phone). Long text clamps so a hundred cards stay quick to
+   scan; tapping a card opens the rest. */
+.network-grid.network-form-closed .network-cards { grid-template-columns: repeat(auto-fill, minmax(330px, 1fr)); gap: 14px; }
+.network-grid .network-card { display: flex; flex-direction: column; padding: 16px 18px; overflow-wrap: anywhere; cursor: pointer; }
+.network-grid .network-card .network-card-top { flex-wrap: wrap; gap: 6px 10px; }
+.network-grid .network-card .network-card-name { font-size: 19px; }
+.network-grid .network-card .network-card-bio { margin: 6px 0 0; font-size: 14px; line-height: 1.5; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.network-grid .network-card .network-card-looking { margin-top: 8px; padding: 7px 10px; font-size: 13px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.network-grid .network-card.is-expanded .network-card-bio,
+.network-grid .network-card.is-expanded .network-card-looking { -webkit-line-clamp: unset; display: block; }
+.network-grid .network-card .network-card-links { margin-top: auto; padding-top: 10px; gap: 4px 12px; font-size: 13px; }
+.network-grid .network-card .network-card-contact { margin-top: 6px; font-size: 13px; }
+.network-grid .network-card .network-collab-badge { font-size: 10px; }
 @media (max-width: 720px) {
   .network-grid.network-form-closed .network-cards { grid-template-columns: 1fr; }
-  .network-grid .network-card { min-height: 0; }
 }
+.network-cards .network-card-contact-note,
+.network-cards .network-empty { grid-column: 1 / -1; }

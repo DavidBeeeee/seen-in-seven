@@ -563,6 +563,17 @@ window.addEventListener('storage', event => {
   }
 });
 
+// Tapping a card opens its clamped text; tapping a link still follows it.
+if (netEl('network-directory-list')) {
+  netEl('network-directory-list').addEventListener('click', event => {
+    if (!event.target || !event.target.closest || event.target.closest('a')) return;
+    const card = event.target.closest('.network-card');
+    if (card) {
+      card.classList.toggle('is-expanded');
+      card.setAttribute('aria-expanded', String(card.classList.contains('is-expanded')));
+    }
+  });
+}
 setupNetworkFormToggle();
 fetchDirectoryEntries();
 refreshIcons();
