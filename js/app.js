@@ -1560,9 +1560,58 @@ function journeyImportProblem(detail) {
   return 'I found ' + found.length + ' of 7 parts, then could not find a line starting with ' + next + '.' + how;
 }
 
+// The questions each of Parts 2 through 7 answers, taken from the video definitions so the
+// AI prompt, the paste reader, and the script generator all use one list.
+function storyNoteQuestions(level) {
+  const videos = Number(level) === 2 ? level2Videos : level1Videos;
+  return videos.slice(1).map(video => (video.prompts || []).map(prompt => ({
+    key: prompt.key,
+    label: String(prompt.label || '').replace(/\s*___\s*$/, '').trim(),
+    hint: prompt.hint || ''
+  })));
+}
+
+// Story notes carry one line per part for the map, and an answer for each of that
+// video's questions. The answers are what the script is written from.
+function importStoryNotes(notes, level) {
+  const questions = storyNoteQuestions(level);
+  const answers = journeyAnswersForLevel(level);
+  notes.parts.forEach((part, index) => {
+    answers[index] = part.about;
+    if (index === 0) return;
+    questions[index - 1].forEach((question, order) => {
+      if (part.answers[order]) state.videos[question.key] = part.answers[order];
+    });
+  });
+}
+
 function importJourneyMap() {
   const field = document.getElementById('journey-import');
   const error = document.getElementById('journey-import-error');
+  const notes = window.SISJourneyMap && SISJourneyMap.parseStoryNotes(
+    field && field.value,
+    storyNoteQuestions(journeyMapLevel).map(list => list.length)
+  );
+  if (notes) {
+    if (!notes.ok) {
+      if (error) { error.textContent = notes.problems.join(' ') + ' Ask your AI for the complete final notes, then paste them again.'; error.hidden = false; }
+      if (field) field.focus();
+      if (typeof logEvent === 'function') logEvent('story_map_import_unread', { format: 'notes', problems: notes.problems.length });
+      return;
+    }
+    if (error) { error.textContent = ''; error.hidden = true; }
+    importStoryNotes(notes, journeyMapLevel);
+    const p2 = ensurePhase2();
+    p2.storyMapImportedAt = new Date().toISOString();
+    // saveProgress replaces state.phase2, so anything set on p2 after it is lost.
+    p2.storyDiscoveryMode = 'imported';
+    saveProgress();
+    if (typeof logEvent === 'function') logEvent('story_map_imported', { level: journeyMapLevel, parts: 7, format: 'notes' });
+    journeyOnboardingIndex = 0;
+    renderJourneyMap();
+    window.scrollTo(0, 0);
+    return;
+  }
   const detail = window.SISJourneyMap && SISJourneyMap.parseImportedMapDetail(field && field.value);
   if (detail && !detail.answers && /draft of part/i.test(field && field.value || '')) detail.draft = true;
   const parsed = detail && detail.answers;
@@ -1657,7 +1706,8 @@ function openJourneyHelp() {
   const prompt = SISJourneyMap.buildHelperPrompt(
     journeyMapLevel,
     state.topicFreewrite || ensurePhase2().knowledgeContext || '',
-    journeyOnboardingContext()
+    journeyOnboardingContext(),
+    storyNoteQuestions(journeyMapLevel)
   );
   const field = document.getElementById('journey-help-prompt');
   const title = document.getElementById('journey-help-title');
@@ -1665,9 +1715,9 @@ function openJourneyHelp() {
   const overlay = document.getElementById('journey-help-overlay');
   if (field) field.value = prompt;
   if (title) title.textContent = 'Find your full seven-part story.';
-  if (description) description.textContent = 'Copy this into the AI you already use. It will offer three story ideas, help you choose, write a draft, revise it once, then give you seven numbered answers to paste back here.';
+  if (description) description.textContent = 'Copy this into the AI you already use. It will offer three story ideas, help you choose, write a draft, revise it once, then give you your story notes to paste back here.';
   journeyHelpTarget = 'journey-import';
-  resetHelpNextStep('journey', 'Pick a story, then reply revise to its draft. Copy the final seven parts.');
+  resetHelpNextStep('journey', 'Pick a story, then reply revise to its draft. Copy the final notes.');
   if (overlay) overlay.hidden = false;
   if (typeof logEvent === 'function') logEvent('journey_help_opened', { level: journeyMapLevel });
 }
@@ -3246,7 +3296,7 @@ function buildAPIUserMessage(videoIdx) {
   for (let index = 0; index < videoIdx; index++) {
     const definition = videos[index];
     const easy = getEasyPrompt(index, level);
-    const mode = index === 0 ? 'extended' : getSavedVideoPromptMode(index, level);
+    const mode = index === 0 ? 'extended' : videoAnswerMode(index, level);
     const declaration = index === 0 ? videoOneDeclaration(level) : '';
     const rawScript = state.videos['script_v' + index] || '';
     previousVideos.push({
@@ -3260,7 +3310,7 @@ function buildAPIUserMessage(videoIdx) {
 
   const currentDefinition = videos[videoIdx];
   const currentEasy = getEasyPrompt(videoIdx, level);
-  const currentMode = videoIdx === 0 ? 'extended' : getSavedVideoPromptMode(videoIdx, level);
+  const currentMode = videoIdx === 0 ? 'extended' : videoAnswerMode(videoIdx, level);
   return SISPromptEngine.buildUserMessage({
     level,
     video,
@@ -3273,8 +3323,17 @@ function buildAPIUserMessage(videoIdx) {
     currentMode,
     currentEasyAnswer: state.videos['videoExtra_v' + videoIdx] || (currentEasy ? state.videos[currentEasy.key] || '' : ''),
     currentAnswers: videoIdx === 0 ? videoOnePromptAnswers(level) : extendedPromptAnswers(currentDefinition),
-    currentJourneyDirection: videoIdx === 0 ? '' : journeyDirectionFor(videoIdx, level)
+    currentJourneyDirection: videoIdx === 0 ? '' : journeyDirectionFor(videoIdx, level),
+    nextPartEvent: videoIdx < 6 ? journeyDirectionFor(videoIdx + 1, level) : ''
   });
+}
+
+// The detailed answers are sent whenever a video has any. Nothing ever switched a video
+// to the mode that sent them, so answers typed under "more specific" were being dropped.
+function videoAnswerMode(videoIdx, level) {
+  const definition = (Number(level) === 2 ? level2Videos : level1Videos)[videoIdx];
+  const answered = (definition && definition.prompts || []).some(prompt => String(state.videos[prompt.key] || '').trim());
+  return answered ? 'extended' : getSavedVideoPromptMode(videoIdx, level);
 }
 
 // ── VIDEO DATA ────────────────────────────────────────
@@ -3679,18 +3738,19 @@ function _buildPromptsContent(container, v, idx) {
         <div class="script-text">"${prebuiltScript}"</div>
       </div>`;
   } else {
+    const hasNotes = v.prompts.some(p => String(state.videos[p.key] || '').trim());
     const extHTML = `
-      <details class="simple-details">
-        <summary>Help Me Make This More Specific</summary>
-        <p class="input-hint">These questions are optional. Use them only when you want to give the script more detail.</p>
+      <details class="simple-details"${hasNotes ? ' open' : ''}>
+        <summary>${hasNotes ? 'Your Story Notes For This Video' : 'Help Me Make This More Specific'}</summary>
+        <p class="input-hint">${hasNotes ? 'Your script is written from these. Change anything that is not right, or make it more yours.' : 'These questions are optional. Use them only when you want to give the script more detail.'}</p>
         <div class="answer-help-row">
           <button class="answer-help-trigger" type="button" onclick="openAnswerHelp(${idx},'extended')">Use My AI To Help</button>
         </div>` + v.prompts.map(p => `
       <div class="input-group">
         <label class="input-label">${p.label}</label>
         <span class="input-hint">${p.hint}</span>
-        <textarea class="text-input" rows="2" placeholder="${p.ph}"
-          oninput="setVideoAnswer('${p.key}', this.value)">${state.videos[p.key] || ''}</textarea>
+        <textarea class="text-input" rows="${hasNotes ? journeyAnswerRows(state.videos[p.key]) : 2}" placeholder="${p.ph}"
+          oninput="setVideoAnswer('${p.key}', this.value)">${escapeHTML(state.videos[p.key] || '')}</textarea>
       </div>`).join('') + '</details>';
     promptsHTML = `
       <div class="input-group">

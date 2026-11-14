@@ -173,7 +173,7 @@ const journeyPrompt = journeyHelper.buildHelperPrompt(
 );
 [
   'Here are three things you could talk about. Which one feels right?',
-  'Do not write the full seven-part map yet',
+  'THEN WRITE NOTES, NOT A STORY',
   'Keep my language patterns, vocabulary, rhythm, bluntness, humor, and emotional temperature',
   'LONG HISTORY SENTINEL',
   'JOURNEY ONBOARDING SENTINEL'

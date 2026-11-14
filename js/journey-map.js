@@ -97,9 +97,29 @@
     return Promise.resolve();
   }
 
-  function buildHelperPrompt(level, overview, onboardingContext) {
+  // WBR-472, 2026-11-13. The member's AI researches them and designs one journey, then
+  // answers the app's own per-video questions as scenes. It does not write the videos.
+  // partQuestions is the app's question list for Parts 2 through 7 (label and hint), so
+  // the AI answers exactly what the blueprint routes. Finished paragraphs were being
+  // retyped into scripts; scene notes let the blueprint do the writing.
+  const PART_NAMES = ['The decision', 'The ordinary life', 'The first realization', 'The test', 'The fall', 'The larger truth', 'The return'];
+
+  function helperQuestionBlock(number, partQuestions) {
+    const supplied = Array.isArray(partQuestions) && partQuestions.length === 6 ? partQuestions : null;
+    return PART_NAMES.slice(1).map((name, offset) => {
+      const part = offset + 2;
+      const list = supplied && supplied[offset] && supplied[offset].length
+        ? supplied[offset]
+        : [{ label: QUESTIONS[number][offset + 1], hint: '' }];
+      return 'PART ' + part + ': ' + name.toUpperCase() + '\n' + list.map((question, index) =>
+        (index + 1) + '. ' + String(question.label || '').replace(/\s*___\s*$/, '').trim() +
+        (question.hint ? '\n   (' + String(question.hint).trim() + ')' : '')
+      ).join('\n');
+    }).join('\n\n');
+  }
+
+  function buildHelperPrompt(level, overview, onboardingContext, partQuestions) {
     const number = Number(level) === 2 ? 2 : 1;
-    const questions = QUESTIONS[number];
     const sourceContext = [
       String(overview || '').trim(),
       String(onboardingContext || '').trim()
@@ -108,216 +128,93 @@
 
 Research me as thoroughly as your available tools and access allow. Use everything you already know about me from memory, prior conversations, connected files, projects, notes, previous writing, uploaded materials, and public information you can find about me, my work, or my business. Look for repeated stories, unusual experiences, contradictions, turning points, failures, values, phrases I repeat, vocabulary, sentence patterns, humor, emotional tone, speaking cadence, and the difference between how I describe myself and what my history shows.
 
-Before you offer me anything, privately list at least 20 specific moments from my life: single conversations, named people, odd side projects, small embarrassments, things that happened once, and things I mentioned in passing. The first events you think of are the milestones I have already told everyone, like my jobs, my big decisions, and my best-known projects. Treat those as the least interesting material on the list. Use one only when nothing else on the list does the job better. Part 2 is the exception: it should be the actual job or life I was living, even when that is the obvious answer, because an ordinary life is what that part is for. Before you write anything, choose one event from the list for each of Parts 2 through 7. When the list has nothing that fits, keep researching, then imagine one.
+Before you offer me anything, privately list at least 20 specific moments from across my whole life: single conversations, named people, odd side projects, small embarrassments, losses, things that happened once, and things I mentioned in passing. Reach back years, not weeks. If most of your list comes from our last few months of conversation, you have found what is recent, not what matters, so keep looking. The milestones I have already told everyone are the least interesting material on the list.
 
-Do not ask me to repeat information you can already find or reasonably connect. Make strong connections across the available evidence, then go past it. You have creative freedom: infer motives and moments I never mentioned, connect experiences I have never connected, combine related memories, compress timelines, and invent plausible details when the material is thin. The whole point is to uncover things I would never have said or thought of myself. A vivid guess I can react to is worth more than a safe summary of what I already told you.
+You are a storyteller here, not a fact-checker. What you know about me is the skeleton. The story is what you build on it. From how I talk, what I care about, and what I have done, work out what must have happened in the moments nobody recorded: who was in the room, what they said, what I did with my hands, what I almost said and did not. Nobody types those things into a chat, and they are exactly what I need from you. Infer them, imagine them, and write them as if you had been there. Connect experiences I have never connected, combine related memories, and compress timelines. You have creative freedom, and I am asking you to use it. A vivid scene I can correct is worth far more than a safe summary of what I already told you.
 
 HOW TO TALK TO ME
 
-Do the work yourself. Do not interview me. Never ask me anything you already know, could look up, could connect, or could imagine. Figuring this out is your job, not mine.
-- Do your research and thinking privately. Do not explain your reasoning, your process, or what you are about to do.
-- Until the finished map, keep your messages short and plain, with no headings or long explanations. The map itself gets all the space it needs.
-- You may ask me a question only when you genuinely need clarification: the answer would change the story and you cannot work it out or imagine it well. Most of the time you will not need one. Ask one short question at a time, never more than two in all, and never one you could answer yourself.
-- If you have almost nothing about me beyond this message, ask me once for a short paragraph about my life and work, then continue.
+Do the work yourself. Do not interview me, and do not explain your reasoning or your process. Keep your messages short and plain until the final notes. You may ask me a question only when the answer would change the story and you cannot work it out or imagine it well: one short question at a time, never more than two in all. If you have almost nothing about me beyond this message, ask me once for a short paragraph about my life and work, then continue.
 
-DESIGN THE JOURNEY FIRST
+FIRST, DESIGN ONE JOURNEY
 
-These seven parts are one person changing, so design that change before you choose any event. From everything you know about me, work out:
-- The old belief: what I believed about myself or how things work, which kept my life the way it was.
-- The truth it becomes: what I believe by the end that I could not have believed at the start.
-- The fall: the loss that makes the old belief impossible to keep living by.
-- The rise: what I do differently now because of that fall.
+Seven videos feel connected when they are seven steps of one struggle. Before choosing any event, work out:
+- What I was after: the thing I wanted or was trying to become, underneath everything else.
+- The belief that kept it out of reach: what I believed about myself or how things work.
+- The fall: the one loss, inside that same pursuit, that the belief led me into. Something I had begun to build, trust, or hope for ended, and I could not put it back the way it was.
+- The truth I carry now: what I could only have understood after that loss, and what I visibly do differently because of it.
+- What I bring back: something I can now give a person who is where I started.
 
-Then choose events that show this change, one step per part. Part 2 shows me living the old belief. Part 3 cracks it. Part 4 is me acting on the crack before I have proof. Part 5 is the fall, and my part in it. Part 6 is the truth that answers the fall. Part 7 is me living it, unfinished. If an event is interesting but does not move this change, leave it out. The events do not need to cause one another, but a viewer should feel one person changing, with the stakes building. Do not force a connection between two events. The fall comes before the larger truth and the return, and no part depends on something I had not yet lived through.
+Every part is a step in that one pursuit. Part 2 shows the life the belief kept me in. Part 3 is the first crack in it. Part 4 is me acting on the crack before I had proof. Part 5 is the fall. Part 6 is the truth. Part 7 is who I am now, unfinished. A stranger watching all seven should always know what I was after and feel what was at stake. An interesting moment that does not belong to this pursuit stays out.
 
-Then say: "Here are three things you could talk about. Which one feels right?"
+Then say: "Here are three things you could talk about. Which one feels right?" Give me three different journeys, about 50 words each: a short name, what I was after, and the events that would carry the first crack, the test, the fall, and the truth. Use different events in each. Let me choose one, combine them, or tell you what feels wrong.
 
-Give me three distinct core story seeds, each a different version of that change, about 40 words each, with:
-- a short name
-- the tension at its center, stated as an open question rather than the answer
-- the events that could carry it, different from the events in the other two ideas: the moment an old belief broke, the first test, the fall, and the larger truth
-- a sentence in language close to the way I speak
+THEN WRITE NOTES, NOT A STORY
 
-Do not write the full seven-part map yet. Let me choose one, combine them, or tell you what feels wrong. That choice, and telling you to revise your draft, are usually the only things you need from me.
+Once I choose, you do not write the videos. A later writer does that. You give that writer my answers to the questions below, part by part. Answer the way a good witness would:
+- Every answer that asks what happened is a scene, not a summary: something a camera could have filmed. One day, one place. Who was there. At least one thing another person said out loud, in quotation marks. My own thoughts do not count as that. One small physical detail: an object, a screen, a room, what I did with my hands. What I did next.
+- A summary sounds like "I always felt out of place at those family dinners." A scene sounds like "My uncle slid the check across the table and said, 'You're the one with the business, right?'" Give me the second kind every time. (That example is not about me. Do not use it.)
+- You will not know most of these details, and that is expected. Do not look for permission in what I have told you. Invent them. Build each scene the way a novelist who knows me well would: start from what you know, then speculate. What would a person like me have said in that room? Who would have pushed back, and with what words? What was on the table? Choose the most believable and most interesting version and state it as plain fact, with no "probably" or "I imagine." I can fix what is inaccurate. I cannot add a story later.
+- Watch for the shortcut. "I remember thinking," "I realized," "I noticed," and "I started wondering" are what gets written when the scene was skipped. When you catch one, stop and put something in the room instead: a person, a sentence said out loud, an action. The only place my private thoughts belong is where a question asks what I believed.
+- Answer from inside that moment: what I knew, wanted, and believed then. Leave out what it meant, what I learned, and what I understand now, unless the question asks for exactly that. The writer saves the meaning for the end of each video, and cannot do that if your answer has already said it.
+- Give every question its own facts. Do not repeat one fact under two questions.
+- Each answer is usually 40 to 120 words, in first person. Keep my language patterns, vocabulary, rhythm, bluntness, humor, and emotional temperature. The writer takes my voice from these notes.
+- Never leave an answer empty.
 
-ONCE I CHOOSE, WRITE THE MAP
+THE QUESTIONS
 
-Write the full draft in your next message, with no questions first unless you genuinely need clarification. It gets one revision before it is final. Use WHAT EACH PART MUST DO below. Look for the events that fit each part in everything you know about me. Imagine the most compelling plausible version of anything you cannot find. Include things I would never think to say about myself. I will read it and tell you what feels off.
+These questions are written to me. Answer them as me, in first person.
 
-THE MOST IMPORTANT RULE
+PART 1: THE DECISION
+Write one short paragraph, in first person: ${number === 2 ? 'what I am committing to say publicly, who it is for' : 'what I am finally ready to be seen for, who it is for'}, and the specific thing that has kept me quiet. It is happening now. Leave out my history and everything I have learned.
 
-The map is seven different stories, not one idea explained seven ways. Each part is the private story base for its own short video, and a stranger may see that video first. So:
-- Each part has its own subject: a different event, period, person, or decision. One thread connects them, but every part takes the story somewhere new.
-- Every part from 2 through 7 is built on one event. An event is one thing that happened at one time: who was there, what was said or done, and what changed afterward. An opinion, a habit, a belief, a practice, or "I sometimes" is not an event. If a part's job asks for something I do, tell one specific time I did it. A paragraph with no event gives the video nothing to tell, and the script will repeat one sentence until it runs out of time.
-- Do not state the main lesson early and then repeat it. Each part knows only what I knew at that point in the story. The biggest truth does not appear until Part 6.
-- Each part must make sense on its own. Name the job, person, project, or period instead of saying "that job" or "what happened."
-- No part describes a product, program, service, or resume. If I built something, tell what happened while I was building it.
-- Only one project, job, or period may appear in more than one part. The thread connects the parts. The same few milestones do not.
-
-WHAT EACH PART MUST DO
-
-${PART_JOBS[number].map((job, index) => `${index + 1}. ${job}`).join('\n\n')}
-
-A small event that exposes something surprising about me is worth more than a major accomplishment that explains my career. Do not let the need for a connected story pull you back to the obvious milestones, apart from the ordinary life in Part 2.
-
-Before you show me the map, check every part privately. Do not show me this check.
-- Name its subject in one short sentence. If two parts have the same subject or the same point, rebuild one of them using a different event.
-- It holds one event. If it lists several, keep the one that fits its job best and leave the others out.
-- Compare its event with your private list. If it uses an obvious milestone and a smaller, stranger moment on the list could do the job, use the smaller moment. This does not apply to Part 2.
-- A stranger could picture it: a place or period, a person or project, and what happened in order. If it reads like a summary or a description of my work, it is not finished.
-- It contains every piece its job asks for. If a piece is missing, imagine it.
-- It has an event from Part 2 onward. If someone asked "what happened?" and it could only answer with a belief or a habit, rebuild it.
-- Part 4: name the day or conversation it happens in, who was there, and one thing someone said. "One of my meetings" or "an entrepreneur" does not pass. If you cannot, it is still describing how things usually went, so rebuild it around one.${number === 2 ? `
-- Part 6: write one sentence saying what I do, then one sentence with the objection a sensible person would raise against it. If there is no real objection, or the sentence describes something I realized instead of something I do, rebuild the part around a practice that has one.` : ''}
-
-Never leave a part thin. Do not explain which details you inferred or invented, and write them as plain events, never as "I can imagine" or "probably." I will read the map and change anything that does not feel right.
+${helperQuestionBlock(number, partQuestions)}
 
 DRAFT FIRST, THEN ONE REVISION
 
-Your message after I choose a story is a draft, not the final map.
-- Show the draft as seven paragraphs, each starting with "Draft of part" and its number, like "Draft of part 3:". Do not put the draft in a code block, and do not start any line of the draft with a number, so it cannot be pasted into SeenInSeven by mistake.
-- Under the draft, show this review as short lines, with no number at the start of any line:
+Your first full message after I choose is a draft. Show it as plain paragraphs, not in a code block, and label each part "Draft of part 2" and so on, never "PART 2", so the draft cannot be pasted into SeenInSeven by mistake. Under it, add this short review:
 
-I started out believing: [the old belief]
-I end up believing: [the truth it becomes]
-First epiphany (Part 3): [the old belief that cracked, and what cracked it]
-Second epiphany (Part 6): [the deeper truth, and how it answers the fall in Part 5]
-The elixir (Part 7): [what I return with that I can now give someone who is where I started]
-The thread: [one sentence on how the seven events make one person change]
+What I was after: [one line]
+The belief that kept it out of reach: [one line]
+The first crack (Part 3): [the moment, without what it meant]
+The fall (Part 5): [what ended, the moment it could not be undone, and what I tried afterward that failed]
+The truth (Part 6): [what I do now, and why a sensible person would argue with it]
+What I bring back (Part 7): [what I can now give someone who is where I started, and what someone could see me doing]
 
-Then one short line for each of Parts 2 through 7 naming its event, like "The test: the night Dana asked me to take over the room."
+End that message with exactly: "That's the draft. Reply revise and I'll do one revision pass to make it stronger."
 
-- End that message with exactly this: "That's the draft. Reply revise and I'll do one revision pass to make it stronger. Copy the final map, not this draft."
+When I reply, read the draft as a strict editor and fix what you find:
+- An answer that should be a scene is a summary: no single day, no place, nothing another person said out loud. "I remember thinking" is a summary. Rewrite it as a scene, speculating from what you know about me and inventing what you need.
+- An answer stays close to what I already told you when a bolder, more specific version would tell the story better. Take the bolder version.
+- Part 3 has no single moment where something happened that the old belief could not explain.
+- An answer explains what something meant or taught me when the question did not ask.
+- Part 5 is a hard period or a mood. It needs one loss with a moment I could not undo, and an attempt to fix it that failed.
+- Part 5 has nothing to do with what I was after in Parts 2 through 4.
+- Part 6 says the same thing as Part 3.
+- Two answers use the same fact, or two parts tell the same event.
+- Names, dates, or details contradict each other.
 
-When I reply, do one revision pass. Read the draft as a strict editor and fix every problem you find, including ones I did not mention:
-- A part gives away a later part's truth, especially Part 3 or Part 4 stating what Part 6 reveals. Cut it from the earlier part.
-- The two epiphanies are the same truth, or the second one does not answer the fall.
-- The elixir is only something I learned, not something I can give to another person.
-- A part describes a product, service, or offer instead of telling what happened. Watch Part 7 especially.
-- A part has no event, or crowds several events together.
-- The same idea or sentence repeats across parts or inside one part.
-- Names, dates, places, or details contradict each other between parts.
-- A part summarizes instead of telling what happened in order.
-Then list what you changed in a few short lines, with no number at the start of any line.
-
-In that revision message, give me the finished map inside one plain-text code block so I can copy it with the copy button and paste it straight into SeenInSeven. This is the only version I should copy. These are private story notes for a later writer, not narration, so say plainly what happened, in the order it happened, with the names and details that make it real. Write each part as one full paragraph. Use as much space as each part needs to hold everything its job asks for, usually 100 to 200 words. Never compress a story into a summary to make it shorter. The block must contain exactly seven lines and nothing else:
+Then give me the finished notes inside one plain-text code block, in exactly this layout, so I can paste them into SeenInSeven:
 
 \`\`\`
-1. [the full story of this part, in first person, as one paragraph]
-2. [the full story of this part, in first person, as one paragraph]
-3. [the full story of this part, in first person, as one paragraph]
-4. [the full story of this part, in first person, as one paragraph]
-5. [the full story of this part, in first person, as one paragraph]
-6. [the full story of this part, in first person, as one paragraph]
-7. [the full story of this part, in first person, as one paragraph]
+PART 1
+[the paragraph]
+
+PART 2
+About: [one line naming the situation and the event only, with no realization or outcome]
+1. [answer]
+2. [answer]
+3. [answer]
+
+PART 3
+About: [one line]
+1. [answer]
+...
 \`\`\`
 
-Format rules for that block, because the SeenInSeven box reads it by its numbers:
-- Each line starts with its number and a period (1. through 7.), then the whole paragraph on the same line.
-- No titles, part names, headings, bold, italics, bullets or emoji, and no extra line breaks inside a part.
-- No other line inside the block starts with a number.
-- Nothing before 1. or after 7. inside the block. Put any note to me outside the block.
-
-Keep my language patterns, vocabulary, rhythm, bluntness, humor, and emotional temperature, but let the events carry each part rather than the phrasing. Do not turn this into generic coaching, a sales pitch, a polished script, or a motivational speech.
-
-LEVEL ${number} MAP QUESTIONS (for you to answer yourself, not to ask me. If a question and a part's job differ, follow the job.)
-
-${questions.map((question, index) => `${index + 1}. ${question}`).join('\n\n')}
+Continue the same way through PART 7. Every part has the same number of answers as it has questions. Each answer is one line that starts with its number. No headings, bold, bullets, or anything else inside the block.
 
 ${sourceContext ? `MY CURRENT CONTEXT\n\n${sourceContext}` : 'MY CURRENT CONTEXT\n\nI have not added much here. Use what you already know about me.'}`.trim();
-
-    /* Legacy helper prompt retained below as historical reference.
-    return `Using everything you already know about me, create three possible seven-part Hero's Journeys from my life.
-
-Review all available context first, including our chat history, connected files, notes, previous writing, personal experiences, business history, failures, relationships, contradictions, and unusual memories. Do not ask me to repeat information you can already access.
-
-PURPOSE
-
-I need three short sets of answers that I can use as direction when completing a sequence of seven videos in a story-development app.
-
-${PURPOSE[number]}
-
-This is not a marketing exercise. Do not turn the journey into business advice, professional positioning, guru-porn, or a disguised sales pitch.
-
-CREATIVE FREEDOM
-
-You may make strong inferences, connect experiences I have never connected, combine related memories, compress timelines, and heighten the dramatic phrasing. Base events on information available about me, but be imaginative about what those events reveal and how they connect.
-
-Create three genuinely different complete answer sets, not three alternatives for each individual question.
-
-Each answer will later become the Current Story Direction for one video. The seven answers should create one coherent journey, but every individual answer must also make sense when copied into a separate conversation by itself.
-
-Use the question to decide what belongs in each direction. Do not force every video into the same event-cause-lesson formula. Name important people, jobs, relationships, periods, choices, and events explicitly instead of relying on compressed references such as "that job," "what happened," or "it" when the reference carries the meaning.
-
-Give each direction enough context to preserve the intended story without explaining a revelation, failure, recovery, or conclusion that belongs to a later video.
-
-THE SEVEN QUESTIONS
-
-${questions.map((question, index) => `${index + 1}. ${question}`).join('\n\n')}
-
-ANSWER REQUIREMENTS
-
-Every answer must:
-- Be written in first person using I, me, and my.
-- Use one or two direct sentences.
-- Contain no more than 60 words.
-- Answer the question rather than suggest a topic.
-- Directly address every part of its question instead of answering one clause and ignoring the others.
-- Use specific beliefs, experiences, choices, consequences, and flaws.
-- Connect with the other six answers as one recognizable journey.
-- Be understandable on its own without the other six answers.
-- Make causal relationships explicit when they are necessary to understand why an event mattered.
-- Sound like a private planning answer rather than polished content.
-
-Do not:
-- Write "I could tell the story of" or suggest what I might discuss.
-- Write hooks, scripts, scenes, metaphors, CTAs, or presentation ideas.
-- Turn every answer into a lesson.
-- Preview the answer to a later question.
-- Make me sound like an authority who always knew the answer.
-- Force a product or service into the conclusion.
-- Choose stories based on how effectively they could attract clients.
-- End by explaining why people should work with me.
-
-Before presenting each set, silently confirm:
-- Answer 1 introduces what I am finally making visible.
-- Answer 2 establishes my ordinary beginning and why I dismissed the path.
-- Answer 3 contains a distinctive first belief earned through experience.
-- Answer 4 shows the human struggle created by living according to that belief.
-- Answer 5 contains a genuine fall rather than a minor inconvenience.
-- Answer 6 introduces a second, more significant truth rather than repeating Answer 3.
-- Answer 7 combines meaningful differentiation with unresolved humanity.
-- The seven answers belong to the same journey rather than merely sharing a topic.
-- Every answer identifies its own subject clearly enough to guide a later AI without requiring the other six answers.
-- Every answer covers all parts of its question, including any requested person, reason, resistance, consequence, change, or unresolved flaw.
-
-If a set fails these checks, rebuild it before showing it.
-
-OUTPUT FORMAT
-
-ANSWER SET 1: [Short descriptive name]
-
-1. [Self-contained first-person direction.]
-2. [Self-contained first-person direction.]
-3. [Self-contained first-person direction.]
-4. [Self-contained first-person direction.]
-5. [Self-contained first-person direction.]
-6. [Self-contained first-person direction.]
-7. [Self-contained first-person direction.]
-
-Repeat the same format for Answer Sets 2 and 3.
-
-FINAL CHECK
-
-Ranking: [Strongest to weakest.]
-Strongest: [One short sentence explaining why.]
-Weakest connection:
-- Set 1: [One short sentence.]
-- Set 2: [One short sentence.]
-- Set 3: [One short sentence.]
-Sales-pitch warning: [Identify any set that feels promotional, or write "None."]
-
-${sourceContext ? `CONTEXT I HAVE ALREADY PROVIDED TO SEENINSEVEN\n\n${sourceContext}` : ''}`.trim(); */
   }
 
   function buildPartHelperPrompt(level, partIndex, onboardingContext, previousAnswers) {
@@ -396,6 +293,53 @@ ${prior ? `\nEARLIER PARTS OF MY STORY\n${prior}` : ''}`.trim();
     return { answers, found, empty, blank: false };
   }
 
+  // Story notes: "PART 1" then a paragraph; "PART 2".."PART 7" each with an "About:" line
+  // and numbered answers. counts is how many answers each of Parts 2 through 7 needs.
+  // Returns null when the text is not in the notes layout, so the older seven-line map
+  // still reads through parseImportedMapDetail.
+  function parseStoryNotes(value, counts) {
+    const text = String(value || '')
+      .replace(/\r/g, '')
+      .replace(/\\([.)\-:*_#>~`])/g, '$1')
+      .replace(/^[ \t]*(?:```|~~~)[^\n]*$/gm, '')
+      .replace(/\*\*|__/g, '');
+    const heads = Array.from(text.matchAll(/^[ \t#>]*PART[ \t]+([1-7])\b[^\n]*$/gim));
+    if (!heads.length || !/^[ \t]*About[ \t]*:/im.test(text)) return null;
+    const parts = [];
+    const problems = [];
+    let expected = 1;
+    const picked = heads.filter(head => { if (Number(head[1]) !== expected) return false; expected += 1; return true; });
+    picked.forEach((head, order) => {
+      const number = Number(head[1]);
+      const from = head.index + head[0].length;
+      const to = order + 1 < picked.length ? picked[order + 1].index : text.length;
+      const body = text.slice(from, to).trim();
+      if (number === 1) {
+        parts[0] = { about: body.replace(/\s+/g, ' ').trim().slice(0, 4000), answers: [] };
+        if (!parts[0].about) problems.push('Part 1 has no paragraph.');
+        return;
+      }
+      const aboutMatch = body.match(/^[ \t]*About[ \t]*:[ \t]*(.+)$/im);
+      const answers = [];
+      const marks = Array.from(body.matchAll(/^[ \t]*(\d{1,2})[.)][ \t]+/gm));
+      let next = 1;
+      const kept = marks.filter(mark => { if (Number(mark[1]) !== next) return false; next += 1; return true; });
+      kept.forEach((mark, index) => {
+        const start = mark.index + mark[0].length;
+        const end = index + 1 < kept.length ? kept[index + 1].index : body.length;
+        answers.push(body.slice(start, end).replace(/\s+/g, ' ').trim().slice(0, 4000));
+      });
+      const need = Array.isArray(counts) ? Number(counts[number - 2]) || 0 : 0;
+      if (!aboutMatch) problems.push('Part ' + number + ' has no "About:" line.');
+      if (need && answers.filter(Boolean).length < need) problems.push('Part ' + number + ' has ' + answers.filter(Boolean).length + ' of its ' + need + ' answers.');
+      parts[number - 1] = { about: aboutMatch ? aboutMatch[1].replace(/\s+/g, ' ').trim().slice(0, 600) : '', answers };
+    });
+    for (let number = 1; number <= 7; number++) {
+      if (!parts[number - 1]) problems.push('Part ' + number + ' is missing.');
+    }
+    return { parts, problems, ok: !problems.length };
+  }
+
   function parseImportedMap(value) {
     return parseImportedMapDetail(value).answers;
   }
@@ -417,6 +361,7 @@ ${prior ? `\nEARLIER PARTS OF MY STORY\n${prior}` : ''}`.trim();
     buildPartHelperPrompt,
     parseImportedMap,
     parseImportedMapDetail,
+    parseStoryNotes,
     formatJourney,
     copyText
   };

@@ -628,123 +628,6 @@ An Epiphany is a paradigm-shifting realization that reframes a universal experie
 - SIMPLICITY SIGNAL: the reframe is one short sentence someone would screenshot, and it feels obvious once heard.
 - AUTHORITY ANCHOR: never claim authority. The viewer should think, "what else does this person see that I don't?"`;
 
-const EPIPHANY_AUDIT_SYSTEM = `You audit a finished Epiphany video. Report only. You do not edit anything.
-
-THE RULE: the viewer receives the answer for the first time in the CONCLUSION. Everything before it makes the old explanation impossible to keep without saying what the new one is.
-
-Check these in order:
-1. If any sentence in the MEAT or OPEN LOOP states, paraphrases, or points to the reframe the CONCLUSION delivers, that is a failure.
-2. The CONCLUSION must deliver one new lens in one simple sentence someone would screenshot, not a claim, an argument, or a summary of the story.
-3. The viewer must be able to use that lens on something in their own life.
-4. The CONCLUSION must answer the question the OPEN LOOP opened.
-5. A stranger must understand the situation from the words alone.
-6. For Video 6, the speaker is convicted and resolved, with no hedging in the CONCLUSION or the CTA.
-
-Return JSON only: {"pass":true} or {"pass":false,"problems":["short reason"]}`;
-
-// David, 2026-11-07: no after-the-fact repair. A repair pass introduced a banned formula,
-// so this only records what reached the member, for diagnosis. It never changes the script.
-export async function auditEpiphanyRule(script, config, callModelFn) {
-  const sections = parseSections(script);
-  if (!sections || !sections.MEAT || !sections.CONCLUSION) return script;
-  try {
-    const raw = await callModelFn(EPIPHANY_AUDIT_SYSTEM, 'VIDEO: ' + config.video + '\nLEVEL: ' + config.level + '\n\n' + composeSections(sections), 0.1, 500);
-    const parsed = JSON.parse(String(raw || '').replace(/^\s*```(?:json)?\s*|\s*```\s*$/g, '').trim());
-    console.log('[generate] Epiphany audit Video ' + config.video + ': ' + (parsed.pass ? 'pass' : 'fail ' + JSON.stringify(parsed.problems || [])));
-  } catch (error) {
-    console.log('[generate] Epiphany audit skipped: ' + error.message);
-  }
-  return script;
-}
-
-// David, 2026-11-07: a writer that knows the answer drifts toward it, so in the two
-// Epiphany videos the Meat writer never sees RESERVED CONCLUSION. A separate step then
-// writes the Conclusion from the finished Meat and the planned answer.
-const ANSWER_FIRST_VIDEOS = new Set([3, 6]);
-const RESERVED_MARKER = 'RESERVED CONCLUSION:';
-
-export function writesMeatWithoutAnswer(video) {
-  return ANSWER_FIRST_VIDEOS.has(Number(video));
-}
-
-export function extractReservedConclusion(message) {
-  const source = String(message || '');
-  const start = source.indexOf(RESERVED_MARKER);
-  if (start === -1) return '';
-  const rest = source.slice(start + RESERVED_MARKER.length);
-  const next = rest.search(/\n(?:STAGE FIREWALL|VOICE SIGNALS):/);
-  return (next === -1 ? rest : rest.slice(0, next)).trim();
-}
-
-// The draft writer gets the note. The story review gets the same plan without the
-// answer and without the note, since the real Conclusion is in place by then.
-// The raw map part for this video is the other copy of the answer: Part 3 asks what the
-// member no longer believes. The plan's STORY PROGRESSION already opens on the situation.
-const PREMISE_SOURCE_PATTERN = /CURRENT VIDEO VIEWER PREMISE SOURCE:\n[\s\S]*?\nUse it to tell a cold viewer the situation[^\n]*\n?/;
-
-export function withholdReservedConclusion(message, forDraftWriter = true) {
-  const source = String(message || '').replace(PREMISE_SOURCE_PATTERN, '');
-  const answer = extractReservedConclusion(source);
-  if (!answer) return source;
-  const start = source.indexOf(RESERVED_MARKER);
-  const end = source.indexOf(answer, start) + answer.length;
-  const blind = source.slice(0, start) + RESERVED_MARKER + '\n(withheld on purpose; the CONCLUSION already carries it)' + source.slice(end);
-  if (!forDraftWriter) return blind;
-  return blind + [
-    '',
-    '',
-    'ANSWER WITHHELD: You have not been told what this video realizes, and you must not invent one. Write the MEAT so the viewer reaches the contradiction and it stays visible and unresolved at the end: never say what it means, what changed in the speaker\'s understanding, or what the real skill, cause, or truth was. Write a short provisional CONCLUSION and a CTA for formatting. A separate writer replaces the CONCLUSION with the answer.'
-  ].join('\n');
-}
-
-const CONCLUSION_WRITER_RULES = `You are writing only the CONCLUSION of an Epiphany video. The MEAT is finished and you may not change it.
-
-- Answer exactly the question this MEAT leaves open, using the planned answer. This is the first time the viewer hears it.
-- Say the new lens in one simple sentence someone would screenshot, stated as how this works for anyone, earned by this story.
-- Then one sentence on what the old way of seeing costs a person who keeps it.
-- At most three sentences. Use only the speaker's facts from the MEAT. Add no new event, person, number, or result.
-- Never use a negation or a correction, such as "it was never X, it was Y," "it is not X, it is Y," or "I thought it was X, but it was actually Y." State the new lens directly.
-- No em dashes. No section labels. Return only the spoken CONCLUSION text.`;
-
-export async function writeConclusionFromMeat(script, answerContext, config, callModelFn) {
-  const sections = parseSections(script);
-  const answer = extractReservedConclusion(answerContext);
-  if (!sections || !sections.MEAT || !answer) return script;
-  const request = [
-    'VIDEO: ' + config.video,
-    'LEVEL: ' + config.level,
-    '',
-    EPIPHANY_5E_CONTRACT,
-    '',
-    CONCLUSION_WRITER_RULES,
-    '',
-    'PLANNED ANSWER (private):',
-    answer,
-    '',
-    'FINISHED MEAT:',
-    sections.MEAT,
-    '',
-    'CTA (for continuity only):',
-    sections.CTA || ''
-  ].join('\n');
-  for (let attempt = 0; attempt < 2; attempt++) {
-    // The blueprint asks for a whole script, so take its CONCLUSION if one comes back.
-    const reply = String(await callModelFn(config.systemPrompt, request + '\n\nReturn only the CONCLUSION text, not a full script.', attempt ? 0.3 : 0.6, 900) || '').trim();
-    const whole = parseSections(reply);
-    const conclusion = whole && whole.CONCLUSION
-      ? String(whole.CONCLUSION).trim()
-      : /\[(?:HOOK|OPEN LOOP|MEAT|CTA)\]/i.test(reply) ? '' : reply.replace(/^\s*\[CONCLUSION\]\s*/i, '').trim();
-    if (conclusion) return composeSections({ ...sections, CONCLUSION: conclusion });
-  }
-  throw recoverableConclusionError();
-}
-
-function recoverableConclusionError() {
-  const error = new Error('The Conclusion could not be written cleanly. Please try again.');
-  error.recoverableGeneration = true;
-  return error;
-}
-
 // Requirements the writer needs that the planning notes do not carry. Video 7 has
 // its own canon-based context, and Video 1 declares rather than tells a story.
 export function addWriterContract(preparedContext, video) {
@@ -1156,8 +1039,19 @@ export async function prepareEpisodeArchitectureMaterial(userContext, level, vid
     '',
     'FINAL WRITING CONTRACT: Reserve RESERVED CONCLUSION before drafting. The viewer has seen nothing else, so MEAT opens by telling them the situation in plain words: what the speaker was doing, and the project, person, place, or event the story is about, as in "I started writing a book." Never open on a belief, an assumption, or anything the viewer has not been told. Build MEAT as one seamless story through STORY PROGRESSION, using HUMAN CONTRADICTION as emotional pressure rather than a second topic. Stop at the boundary named by STAGE FIREWALL. Design OPEN LOOP afterward from the exact unfinished relationship the reserved conclusion will transform, without revealing the answer or explaining the Hook. Supply a provisional HOOK only for formatting; the global Hook Studio replaces it after the complete story is settled. Let the active video blueprint control the final section jobs and CTA.',
     '',
-    'MEAT COMPOSITION CONTRACT: ' + MEAT_COMPOSITION_CONTRACT
+    'MEAT COMPOSITION CONTRACT: ' + MEAT_COMPOSITION_CONTRACT,
+    nextPartLine(userContext)
   ].filter(Boolean).join('\n');
+}
+
+// WBR-472, 2026-11-13. Each writer saw only its own part of the story, so every CTA
+// guessed at the next video. The app now sends the next part's event, and the writer
+// is told to point the CTA at it.
+export function nextPartLine(userContext) {
+  const match = String(userContext || '').match(/NEXT PART OF THE SERIES \(private[^)]*\): (.+)/);
+  if (!match) return '';
+  return '\nNEXT PART (private, for the CTA only): The next video in this series is about: ' + match[1].trim() +
+    ' In the CTA, give that coming event in plain words as the reason to follow, without telling how it turns out or what it meant. Do not tell or hint at that event anywhere else in this script.';
 }
 
 function epiphanyRouterSource(userContext, video) {
@@ -1419,9 +1313,6 @@ async function generateScriptCore(input, prompt, timings) {
   );
   preparedContext = addWriterContract(preserveViewerPremiseSource(input.userContext, preparedContext, input.video), input.video);
   const userMessage = regenerationMessage({ ...input, userContext: preparedContext });
-  const answerFirst = writesMeatWithoutAnswer(input.video);
-  const writerMessage = answerFirst ? withholdReservedConclusion(userMessage) : userMessage;
-  const reviewMessage = answerFirst ? withholdReservedConclusion(userMessage, false) : userMessage;
   let lastError;
 
   // Standard generation may receive targeted cleanup. Full regeneration keeps
@@ -1435,19 +1326,12 @@ async function generateScriptCore(input, prompt, timings) {
     try {
       const stageSuffix = '-' + (attempt + 1);
       const draft = await measureStage(timings, 'draft' + stageSuffix, () =>
-        callModel(systemPrompt, writerMessage + retryNote, attempt ? 0.45 : 0.8)
+        callModel(systemPrompt, userMessage + retryNote, attempt ? 0.45 : 0.8)
       );
-      const drafted = answerFirst
-        ? await measureStage(timings, 'conclusion' + stageSuffix, () => writeConclusionFromMeat(draft, userMessage, {
-          video: input.video,
-          level: input.level,
-          systemPrompt
-        }, callModel))
-        : draft;
       const content = await measureStage(timings, 'story-review' + stageSuffix, () => reviewAndRepairScript({
-        script: drafted,
+        script: draft,
         systemPrompt,
-        userMessage: reviewMessage + retryNote,
+        userMessage: userMessage + retryNote,
         level: input.level,
         video: input.video,
         callModel,
@@ -1471,17 +1355,9 @@ async function generateScriptCore(input, prompt, timings) {
         video: input.video,
         callModel
       }));
-      const gatedContent = Number(input.video) === 3 || Number(input.video) === 6
-        ? await measureStage(timings, 'epiphany-audit' + stageSuffix, () => auditEpiphanyRule(finalContent, {
-          video: input.video,
-          level: input.level,
-          systemPrompt,
-          userMessage: userMessage + retryNote
-        }, callModel))
-        : finalContent;
       const deliveredContent = Number(input.video) === 7
-        ? gatedContent
-        : await measureStage(timings, 'meat-edit' + stageSuffix, () => tightenMeat(gatedContent, input.video, callModel));
+        ? finalContent
+        : await measureStage(timings, 'meat-edit' + stageSuffix, () => tightenMeat(finalContent, input.video, callModel));
       return { content: deliveredContent, promptVersion: prompt.version, generationAttempts: attempt + 1 };
     } catch (error) {
       lastError = error;

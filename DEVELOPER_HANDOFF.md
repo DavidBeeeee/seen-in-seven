@@ -18,6 +18,43 @@ Before planning or implementing roadmap work, read `SEENINSEVEN_ROADMAP.md`.
 
 This handoff remains the source of truth for architecture, stack, debugging history, and current implementation shape. Its older roadmap notes are partially superseded by `SEENINSEVEN_ROADMAP.md`, especially around admin priorities, test-user timing, delayed email nudges, delayed paid access, removed posted-vs-filmed work, and the placeholder-only gamification phase.
 
+## November 13 to 14, 2026: the member's AI returns story notes, and the blueprint writes the scripts (WBR-472)
+
+**What was wrong.** Since November 5 the AI prompt asked for seven finished first-person
+paragraphs. That paragraph was the only story material a video received, labeled the
+authoritative brief, so the generator retyped it (Video 5's Meat was 68 to 76 percent the
+map paragraph, word for word). The blueprint only shaped the wrapper. The "leaks" patched
+on November 6 to 8 were the map's own sentences. Separately, answers typed under "Help Me
+Make This More Specific" were never sent: nothing ever set a video to the mode that sends
+them. And each video saw only its own part, so every CTA guessed at the next video.
+
+**What changed.**
+- `js/journey-map.js` `buildHelperPrompt`: the member's AI designs one pursuit, then
+  answers the app's own per-video questions as scenes (a day, a place, something said out
+  loud), inventing what it does not know (David, 2026-11-13: invention over parroting;
+  the member edits what is inaccurate). David, 2026-11-14: the AI is told it is the
+  storyteller, not a fact-checker. It speculates from what it knows about the person to
+  write the moments nobody would type, and "I remember thinking" is named as the shortcut
+  to avoid. Do not add fact-verification limits to this prompt. Output layout is `PART n`, `About:`, numbered
+  answers. The questions are passed in from the video definitions (`storyNoteQuestions` in
+  `js/app.js`), so there is one list. `parseStoryNotes` reads the layout; the older
+  seven-line map still reads through `parseImportedMapDetail`.
+- `js/app.js`: `importStoryNotes` files each answer into its question field and puts the
+  `About:` line in the map. `videoAnswerMode` sends a video's answers whenever any exist.
+  The per-video screen opens them as "Your Story Notes For This Video".
+- Next part: the app sends `NEXT PART OF THE SERIES` (`js/script-prompt-engine.js`), and
+  `nextPartLine` in `api/generate.js` tells the writer to point the CTA at that event.
+- Removed: the answer-hiding path for Videos 3 and 6 (`withholdReservedConclusion`,
+  `writeConclusionFromMeat`) and the Epiphany audit. The blueprint designs the Conclusion
+  first; rig runs were at least as good without them and used fewer model calls.
+- `api/_lib/blueprints.txt` and `api/_lib/prompt-engine.js` are unchanged.
+
+**How it was tested.** A rig outside the repository,
+`/Users/flutemusik/Developer/sis-story-rig/rig.mjs`, loads the live generator untouched and
+runs a saved member through all seven videos, recording every model call. Its
+`WHERE-WE-ARE.md` and `runs/` hold the comparisons. Level 2 only so far; Level 1 has not
+been run. Scene quality depends on the member's AI actually writing scenes.
+
 ## November 7, 2026: Epiphany scripts are right the first time, not repaired
 
 David's direction: no after-the-fact gates. Server logs for a Video 3 run showed the

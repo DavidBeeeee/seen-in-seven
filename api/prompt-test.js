@@ -2,10 +2,7 @@ import {
   callModel,
   prepareEpisodeArchitectureMaterial,
   preserveViewerPremiseSource,
-  addWriterContract,
-  writesMeatWithoutAnswer,
-  withholdReservedConclusion,
-  writeConclusionFromMeat
+  addWriterContract
 } from './generate.js';
 import {
   buildSystemPrompt,
@@ -62,10 +59,6 @@ export default async function handler(req, res) {
       prepareEpisodeArchitectureMaterial(userMessage, level, video)
     );
     preparedUserMessage = addWriterContract(preserveViewerPremiseSource(userMessage, preparedUserMessage, video), video);
-    // Same as live generation: the Epiphany Meat writer never sees the planned answer.
-    const answerFirst = writesMeatWithoutAnswer(video);
-    const writerMessage = answerFirst ? withholdReservedConclusion(preparedUserMessage) : preparedUserMessage;
-    const reviewMessage = answerFirst ? withholdReservedConclusion(preparedUserMessage, false) : preparedUserMessage;
     let rawContent = '';
     let content = '';
     let lastError;
@@ -76,19 +69,12 @@ export default async function handler(req, res) {
       try {
         const stageSuffix = '-' + (attempt + 1);
         rawContent = await measureStage(timings, 'draft' + stageSuffix, () =>
-          callModel(systemPrompt, writerMessage + retryNote, attempt ? 0.45 : temperature)
+          callModel(systemPrompt, preparedUserMessage + retryNote, attempt ? 0.45 : temperature)
         );
-        const drafted = answerFirst
-          ? await measureStage(timings, 'conclusion' + stageSuffix, () => writeConclusionFromMeat(rawContent, preparedUserMessage, {
-            video,
-            level,
-            systemPrompt
-          }, callModel))
-          : rawContent;
         const reviewedContent = await measureStage(timings, 'story-review' + stageSuffix, () => reviewAndRepairScript({
-          script: drafted,
+          script: rawContent,
           systemPrompt,
-          userMessage: reviewMessage + retryNote,
+          userMessage: preparedUserMessage + retryNote,
           level,
           video,
           callModel,

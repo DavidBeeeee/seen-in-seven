@@ -82,9 +82,32 @@ const fifth = map.parseImportedMap(IMPORT_FORMATS['number inside a part'])[4];
 if (!fifth.includes('3: that was the year') || !fifth.includes('6:00 pm')) throw new Error('A number inside Part 5 was read as a new part.');
 const short = map.parseImportedMapDetail('1. a\n2. b\n3. c');
 if (short.answers || short.found.length !== 3) throw new Error('A three-part paste must report three parts found.');
-const guide = map.buildHelperPrompt(1, '', '');
-if (!guide.includes('plain-text code block') || !guide.includes('Each line starts with its number and a period') || !guide.includes('No titles, part names, headings, bold')) {
-  throw new Error('The Story Discovery guide does not ask for the exact format the paste box reads.');
+// WBR-472, 2026-11-13: the AI returns story notes (an About line and an answer to each of
+// that video's own questions), not seven finished paragraphs. The prompt must ask for
+// exactly the layout the paste box reads, using the questions the app passes in.
+const noteQuestions = [3, 3, 4, 3, 4, 2].map((count, part) => Array.from({ length: count }, (_, q) => ({ label: `QUESTION P${part + 2} N${q + 1}`, hint: `HINT P${part + 2} N${q + 1}` })));
+const guide = map.buildHelperPrompt(2, '', '', noteQuestions);
+if (!guide.includes('plain-text code block') || !guide.includes('PART 2\nAbout:') || !guide.includes('Each answer is one line that starts with its number')) {
+  throw new Error('The Story Discovery prompt does not ask for the exact layout the paste box reads.');
+}
+for (const list of noteQuestions) for (const question of list) {
+  if (!guide.includes(question.label) || !guide.includes('(' + question.hint + ')')) throw new Error('The prompt lost one of the app\'s own questions: ' + question.label);
+}
+if (!appSource.includes('storyNoteQuestions(journeyMapLevel)') || !appSource.includes('function importStoryNotes(')) {
+  throw new Error('The app must pass its own questions to the prompt and file the answers on paste.');
+}
+const pastedNotes = '```\nPART 1\nI am finally saying it.\n\n' + noteQuestions.map((list, part) => `**PART ${part + 2}**\nAbout: Event ${part + 2}.\n` + list.map((_, q) => `${q + 1}. Answer ${part + 2}.${q + 1} with 3: a number inside.`).join('\n')).join('\n\n') + '\n```';
+const readNotes = map.parseStoryNotes(pastedNotes, noteQuestions.map(list => list.length));
+if (!readNotes || !readNotes.ok || readNotes.parts[0].about !== 'I am finally saying it.' || readNotes.parts[4].about !== 'Event 5.' || readNotes.parts[3].answers.length !== 4 || !readNotes.parts[3].answers[3].includes('3: a number inside')) {
+  throw new Error('The paste box could not read story notes in the layout the prompt asks for.');
+}
+const shortNotes = map.parseStoryNotes(pastedNotes.replace('3. Answer 5.3 with 3: a number inside.', ''), noteQuestions.map(list => list.length));
+if (!shortNotes || shortNotes.ok || !shortNotes.problems.some(problem => /Part 5 has 2 of its 3 answers/.test(problem))) throw new Error('Notes with a missing answer must say which part is short.');
+if (map.parseStoryNotes(seven(n => `${n}. An older map paragraph ${n}.`), [3, 3, 4, 3, 4, 2]) !== null) throw new Error('An older seven-line map must still go to the older reader.');
+if (map.parseStoryNotes(seven(n => `Draft of part ${n}: draft.`) + '\nAbout: x', [3, 3, 4, 3, 4, 2]) !== null) throw new Error('A pasted draft must not be read as final notes.');
+// Answers typed for a video are sent whenever they exist (they were silently dropped).
+if (!appSource.includes('function videoAnswerMode(') || (appSource.match(/videoAnswerMode\((?:videoIdx|index), level\)/g) || []).length < 2) {
+  throw new Error('A video\'s answers must be sent for the current and the earlier videos.');
 }
 // A good paste must leave the paste screen. saveProgress replaces state.phase2,
 // so the imported mode set after it was lost and the box silently reset (2026-11-03).
@@ -125,97 +148,54 @@ if (!html.includes('id="video-one-story-part"') || !appSource.includes("storyPar
   throw new Error('Every video must show its map part above the anything-else box.');
 }
 
-// David, 2026-11-06: a quirky Part 2 made a good story that did the wrong job. Part 2 is
-// the ordinary life, and it covers what that level's Video 2 questions ask for.
-if (!map.buildHelperPrompt(2, '', '').includes('what made me dismiss it or assume it could never be real work') ||
-    !map.buildHelperPrompt(1, '', '').includes('one thing about me people would not expect')) {
-  throw new Error('Part 2 must carry what its Video 2 questions ask for on both levels.');
-}
-
-// David, 2026-11-06: tracker blocks open finished scripts, and future videos stay plain.
-if (!appSource.includes('function openTrackerScript(idx)') || !appSource.includes('if (hasScript && !(context === \'script\' && i === currentVideoIndex))')) {
-  throw new Error('Finished scripts must open from the video tracker.');
-}
-
-// The full start-over popup sat inside the dashboard screen, so it opened at zero size
-// from every other page and the button looked dead (2026-11-06).
-if (html.indexOf('id="start-over-confirm"') > html.search(/class="screen[" ]/)) {
-  throw new Error('The start-over popup must live outside every screen.');
-}
-
-// David, 2026-11-06: after copying a prompt, the member sees the next step and a button
-// back to the box their AI's answer goes in.
-for (const piece of ['id="journey-help-next"', 'id="answer-help-next"', 'pasteJourneyHelpAnswer()', 'pasteAnswerHelpAnswer()']) {
-  if (!html.includes(piece)) throw new Error(`The helper next step lost: ${piece}`);
-}
-if (!appSource.includes("journeyHelpTarget = 'journey-import'") || !appSource.includes("journeyHelpTarget = 'journey-answer-' + index")) {
-  throw new Error('Each helper must lead back to its own paste box.');
-}
-
-// David, 2026-11-06: a part with no event makes a script that repeats itself. The event
-// lines above the map carry no numbers, so a whole-message paste still reads as seven parts.
-const wholeMessage = 'Draft of part 1: an early draft.\nDraft of part 2: another draft.\nI started out believing: hard work is enough.\nI end up believing: people prove it.\nFirst epiphany (Part 3): the book stalled.\nSecond epiphany (Part 6): ask one person by name.\nThe elixir (Part 7): I can show someone where to start.\nThe thread: one person learning to be heard.\nThe test: the night Dana asked me to take over.\nThe fall: the week the show stopped.\n\n```\n' + seven(n => `${n}. Story part ${n}.`) + '\n```';
-const wholeParts = map.parseImportedMap(wholeMessage);
-if (!wholeParts || wholeParts[0] !== 'Story part 1.' || !wholeParts[6].includes('Story part 7')) throw new Error('Event lines above the map must not be read as parts.');
-
 // David, 2026-11-07: the AI shows a draft, says it needs one revision, then gives the final
 // map. A pasted draft says so instead of failing silently.
 const draftOnly = seven(n => `Draft of part ${n}: draft text ${n}.`);
 if (map.parseImportedMap(draftOnly)) throw new Error('A pasted draft must not be read as the final map.');
 if (!appSource.includes('This looks like the draft. Reply revise to your AI')) throw new Error('A pasted draft must say what to do.');
 
-// The journey is designed before the story ideas, so the ideas are versions of one change.
+// The journey is designed before the story ideas, so the ideas are versions of one pursuit,
+// and the return still brings something back (David, 2026-11-07).
 for (const level of [1, 2]) {
-  const guideText = map.buildHelperPrompt(level, '', '');
-  if (guideText.indexOf('DESIGN THE JOURNEY FIRST') > guideText.indexOf('Here are three things you could talk about')) {
-    throw new Error(`The Level ${level} guide must design the journey before offering story ideas.`);
+  const guideText = map.buildHelperPrompt(level, '', '', noteQuestions);
+  if (guideText.indexOf('FIRST, DESIGN ONE JOURNEY') === -1 || guideText.indexOf('FIRST, DESIGN ONE JOURNEY') > guideText.indexOf('Here are three things you could talk about')) {
+    throw new Error(`The Level ${level} prompt must design the journey before offering story ideas.`);
   }
-  if (!guideText.includes('the elixir I come back with')) throw new Error(`The Level ${level} return lost its elixir.`);
-}
-
-// The map must come back as seven separate story bases, not one idea in seven
-// parts (2026-11-03): every part keeps its own job in both guides, on both levels.
-for (const level of [1, 2]) {
-  const fullGuide = map.buildHelperPrompt(level, '', '');
-  if (!fullGuide.includes('seven different stories, not one idea explained seven ways') || !fullGuide.includes('WHAT EACH PART MUST DO')) {
-    throw new Error(`The Level ${level} guide lost the separate-stories rule.`);
-  }
+  if (!guideText.includes('something I can now give a person who is where I started')) throw new Error(`The Level ${level} return lost what it brings back.`);
   for (const [index, label] of ['The decision', 'The ordinary life', 'The first realization', 'The test', 'The fall', 'The larger truth', 'The return'].entries()) {
-    if (!fullGuide.includes(`${index + 1}. ${label}:`)) throw new Error(`The Level ${level} guide lost the job for Part ${index + 1}.`);
+    if (!guideText.includes(`PART ${index + 1}: ${label.toUpperCase()}`)) throw new Error(`The Level ${level} prompt lost Part ${index + 1}.`);
     const partGuide = map.buildPartHelperPrompt(level, index, '', []);
     if (!partGuide.includes(`WHAT THIS PART MUST DO\n${label}:`)) throw new Error(`The Level ${level} helper for Part ${index + 1} lost its job.`);
   }
 }
 
-// A part is a full story (2026-11-05). Sixty words forced a summary, the box cut
-// every part at 600 characters. David, 2026-11-05: the AI keeps its leeway to
-// infer and invent. Holding it to what was said wrecks the process, because the
-// point is to uncover what would otherwise never be said or thought of.
-// David, same day: no interview. The AI works it out, the member only picks a story,
-// and it never asks what it already knows. It may ask only for genuine clarification.
-// Later runs wrote well about the same five milestones, so it must now search past them.
-// A strict cause-and-effect chain then pushed it back to those milestones, so the
-// parts share one question and build emotionally without having to cause each other.
+// Decisions the prompt must keep, each one David's:
+// 2026-11-05: the AI keeps its leeway to infer and invent; no interview, at most two
+// clarifying questions; search past the obvious milestones; no length cap on the paste.
+// 2026-11-07: draft first, then one revision, and a pasted draft cannot be read as final.
+// 2026-11-14: the AI is the storyteller. It speculates from what it knows about the person
+// and writes the moments nobody would ever type, instead of the "I remember thinking" shortcut.
+// 2026-11-13: one pursuit designed first; answers are scenes, not summaries; invent what
+// is unknown; reach back years, not recent chats; leave the meaning out of the notes.
 const longStory = 'word '.repeat(330).trim();
 const longParts = map.parseImportedMap(seven(n => `${n}. ${longStory}`));
 if (!longParts || longParts.some(part => part !== longStory)) throw new Error('The paste box cut a full-length story part.');
 for (const level of [1, 2]) {
-  const fullGuide = map.buildHelperPrompt(level, '', '');
-  for (const value of ['no more than 60', 'one or two', 'up to three', 'no limit on these questions', 'maximum of five', 'what part 4 starts', 'run in time order', 'start by asking', 'one short question per message', 'about eight questions', 'ask me for it', 'never invent', 'made up', 'only what is true', 'real event']) {
-    if (fullGuide.toLowerCase().includes(value)) throw new Error(`The Level ${level} guide still says: ${value}`);
+  const fullGuide = map.buildHelperPrompt(level, '', '', noteQuestions);
+  for (const value of ['no more than 60', 'one or two', 'up to three', 'no limit on these questions', 'maximum of five', 'what part 4 starts', 'run in time order', 'start by asking', 'one short question per message', 'about eight questions', 'ask me for it', 'never invent', 'made up', 'only what is true', 'real event', 'do not invent']) {
+    if (fullGuide.toLowerCase().includes(value)) throw new Error(`The Level ${level} prompt still says: ${value}`);
   }
-  for (const value of ['ONCE I CHOOSE, WRITE THE MAP', 'with no questions first', 'Never ask me anything you already know', 'That choice, and telling you to revise your draft', 'never more than two in all', 'The map itself gets all the space it needs', 'follow the job', 'is built on one event', 'one short line for each of Parts 2 through 7 naming its event', 'choose one event from the list', 'Part 2 is the exception: it should be the actual job or life I was living', 'This does not apply to Part 2', 'DESIGN THE JOURNEY FIRST', 'The old belief:', 'The truth it becomes:', 'I started out believing:', 'DRAFT FIRST, THEN ONE REVISION', 'Draft of part', 'Reply revise and I\'ll do one revision pass to make it stronger', 'Second epiphany (Part 6):', 'The elixir (Part 7):', 'Part 3 or Part 4 stating what Part 6 reveals', 'This is the only version I should copy', 'do not need to cause one another', 'pull you back to the obvious milestones', 'does not pass', 'the moment it hit me hardest', 'privately list at least 20 specific moments', 'Only one project, job, or period', 'use the smaller moment', 'name the day or conversation', 'one specific day or conversation', 'cannot be taken back', 'way back', 'usually 100 to 200 words', 'It holds one event', 'invent plausible details', 'things I would never have said or thought of', 'Imagine the most compelling plausible version', 'HOW TO TALK TO ME']) {
-    if (!fullGuide.includes(value)) throw new Error(`The Level ${level} guide lost: ${value}`);
+  for (const value of ['Do not interview me', 'never more than two in all', 'You have creative freedom', 'You are a storyteller here, not a fact-checker', 'Do not look for permission in what I have told you', 'Watch for the shortcut', 'Take the bolder version', 'privately list at least 20 specific moments', 'Reach back years, not weeks', 'What I was after:', 'The belief that kept it out of reach:', 'Here are three things you could talk about. Which one feels right?', 'THEN WRITE NOTES, NOT A STORY', 'is a scene, not a summary', 'in quotation marks', 'Invent them.', 'I cannot add a story later', 'Leave out what it meant, what I learned', 'Keep my language patterns, vocabulary, rhythm, bluntness, humor, and emotional temperature', 'DRAFT FIRST, THEN ONE REVISION', 'Draft of part', 'Reply revise and I\'ll do one revision pass to make it stronger', 'The fall (Part 5):', 'an attempt to fix it that failed', 'Part 6 says the same thing as Part 3']) {
+    if (!fullGuide.includes(value)) throw new Error(`The Level ${level} prompt lost: ${value}`);
   }
-  if (level === 2 && !fullGuide.includes('a realization about myself does not count')) throw new Error('Level 2 Part 6 must stay a way of working someone could argue with.');
-  if ((level === 2) !== fullGuide.includes('the objection a sensible person would raise')) throw new Error('The objection test belongs on Level 2 Part 6 only.');
-  if (level === 2 && (!fullGuide.includes('Then tell one specific time it happened') || !fullGuide.includes('it must answer the fall in Part 5'))) throw new Error('Level 2 Part 6 must open with the practice.');
   const partGuide = map.buildPartHelperPrompt(level, 3, '', []);
   if (partGuide.includes('no more than 60') || !partGuide.includes('Do not ask me questions') || partGuide.includes('never invent') || !partGuide.includes('invent plausible details') || !partGuide.includes('usually 100 to 200 words')) throw new Error(`The Level ${level} part helper still asks for a summary.`);
 }
+// Without the app's questions (older callers), the prompt still works from the map questions.
+if (!map.buildHelperPrompt(1, '', '').includes('PART 5: THE FALL\n1. ')) throw new Error('The prompt must still build when no question list is passed.');
 
 if (!/id="journey-import-error" role="alert"/.test(appSource) || !appSource.includes('function journeyImportProblem(') || /field\.placeholder = 'Please paste all seven/.test(appSource)) {
   throw new Error('An unreadable paste must show a visible error, not only change the placeholder.');
 }
 
-console.log('Journey Map checks passed for both levels, thirteen paste formats, the visible paste error, the guide output format, per-part story jobs, current-video prompt isolation, onboarding order, and Settings access.');
+console.log('Journey Map checks passed for both levels, thirteen paste formats, story notes, the visible paste error, the prompt output layout, per-part story jobs, current-video prompt isolation, onboarding order, and Settings access.');

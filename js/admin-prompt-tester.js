@@ -675,7 +675,9 @@ function buildTestUserMessage(user, ob, video, level, mode, answers) {
     currentMode:mode,
     currentEasyAnswer:easy ? answers[easy.key] || '' : '',
     currentAnswers:currentQuestions.map(question => ({label:question.label, value:answers[question.key] || ''})),
-    currentJourneyDirection:Number(video) === 1 ? '' : testJourneyDirection(user, ob, video, level)
+    currentJourneyDirection:Number(video) === 1 ? '' : testJourneyDirection(user, ob, video, level),
+    // Same as the app: the writer is told the next part's event for the CTA.
+    nextPartEvent:Number(video) < 7 ? testJourneyDirection(user, ob, Number(video) + 1, level) : ''
   });
 }
 

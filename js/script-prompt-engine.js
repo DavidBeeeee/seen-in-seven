@@ -129,6 +129,12 @@
       appendAnswers(lines, 'CURRENT VIDEO ' + video + ' PROMPTS:', config.currentAnswers);
       if (config.currentEasyAnswer) lines.push('', 'Additional free-write context from user:', String(config.currentEasyAnswer).trim());
     }
+    // Each video is told what the next part is about so its CTA can point at the real
+    // next event. The server passes this to the writer.
+    const nextPartEvent = String(config.nextPartEvent || '').trim();
+    if (nextPartEvent && video < 7) {
+      lines.push('', 'NEXT PART OF THE SERIES (private; it is not part of this chapter, so never plan, tell, or hint at it here): ' + nextPartEvent.replace(/\s+/g, ' '));
+    }
     return lines.join('\n');
   }
 

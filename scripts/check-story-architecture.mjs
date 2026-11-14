@@ -23,11 +23,7 @@ import {
   tightenVideoOneMeat,
   tightenMeat,
   addWriterContract,
-  auditEpiphanyRule,
-  withholdReservedConclusion,
-  extractReservedConclusion,
-  writeConclusionFromMeat,
-  writesMeatWithoutAnswer,
+  nextPartLine,
   VIDEO_SEVEN_RETURN_ANCHORS,
   VIDEO_SEVEN_RETURN_HEADINGS,
   VIDEO_SEVEN_RETURN_SYSTEM,
@@ -356,8 +352,8 @@ assert(
   );
 });
 assert(
-  appHtml.includes('/js/script-prompt-engine.js?v=video7-epic-return-2') &&
-    testerHtml.includes('/js/script-prompt-engine.js?v=video7-epic-return-2'),
+  appHtml.includes('/js/script-prompt-engine.js?v=next-part-1') &&
+    testerHtml.includes('/js/script-prompt-engine.js?v=next-part-1'),
   'The live app or admin tester can retain the pre-premise browser prompt engine from cache.'
 );
 assert(
@@ -536,33 +532,30 @@ for (const beat of ['DISCOVERY ARC', 'COGNITIVE REFRAME', 'AHA TRANSFER', 'COST 
 }
 assert(promptTestSource.includes('addWriterContract(preserveViewerPremiseSource(userMessage, preparedUserMessage, video), video)'), 'The Prompt Tester must use the same writer contract.');
 
-// David, 2026-11-07: no after-the-fact repair. The Epiphany audit only logs.
-const gateScript = '[HOOK]\nA strange thing happened.\n\n[OPEN LOOP]\nWhy did the room keep working?\n\n[MEAT]\nI ran the room again. People kept coming back. The lesson is that rooms need people. Nobody could explain it.\n\n[CONCLUSION]\nI still have not decided.\n\n[CTA]\nFollow along because the next part of this 7 Video Challenge is next.';
-const gateConfig = { video: 6, level: 2, userMessage: '', systemPrompt: '' };
-for (const reply of [async () => JSON.stringify({ pass: false, problems: ['leak'], replacements: { MEAT: 'changed' } }), async () => '{"pass":true}', async () => 'not json', async () => { throw new Error('model down'); }]) {
-  assert(await auditEpiphanyRule(gateScript, gateConfig, reply) === gateScript, 'The Epiphany audit must never change the script.');
-}
-assert(!/replacements/.test(generationSource.slice(generationSource.indexOf('const EPIPHANY_AUDIT_SYSTEM'), generationSource.indexOf('export async function auditEpiphanyRule'))), 'The Epiphany audit must not ask for repairs.');
-
-// The Epiphany Meat writer never sees the planned answer; the Conclusion is written from the finished Meat.
-const plannedPacket = 'STORY PROGRESSION:\nI recorded for two weeks.\nRESERVED CONCLUSION:\nMy skill was reading a person in real time. SECRET ANSWER\nSTAGE FIREWALL:\nNo Video 5 fall.\nVOICE SIGNALS:\nPlain.';
-assert(extractReservedConclusion(plannedPacket).includes('SECRET ANSWER'), 'The planned answer must be readable for the Conclusion step.');
-const blind = withholdReservedConclusion(plannedPacket);
-assert(!blind.includes('SECRET ANSWER') && blind.includes('STAGE FIREWALL:\nNo Video 5 fall.') && blind.includes('ANSWER WITHHELD'), 'The Meat writer must not see the planned answer, and the rest of the plan must survive.');
-const reviewBlind = withholdReservedConclusion(plannedPacket, false);
-assert(!reviewBlind.includes('SECRET ANSWER') && !reviewBlind.includes('ANSWER WITHHELD'), 'The story review must get the plan without the answer or the draft note.');
-for (const source of [generationSource, promptTestSource]) assert(/userMessage: reviewMessage \+ retryNote/.test(source), 'The story review must use the plan without the answer.');
-assert(withholdReservedConclusion('NO PLAN HERE') === 'NO PLAN HERE', 'A packet without an answer must pass through unchanged.');
-assert([3, 6].every(writesMeatWithoutAnswer) && ![1, 2, 4, 5, 7].some(writesMeatWithoutAnswer), 'Only Videos 3 and 6 withhold the answer.');
-let conclusionRequest = '';
-const concluded = await writeConclusionFromMeat(gateScript, plannedPacket, { video: 3, level: 1, systemPrompt: 'BLUEPRINT' }, async (system, request) => { conclusionRequest = request; return '[HOOK]\nx\n\n[OPEN LOOP]\nx\n\n[MEAT]\nx\n\n[CONCLUSION]\nA camera takes the person away.\n\n[CTA]\nx'; });
-assert(concluded.includes('A camera takes the person away.') && concluded.includes('The lesson is that rooms need people.') && conclusionRequest.includes('SECRET ANSWER') && conclusionRequest.includes('FINISHED MEAT:'), 'The Conclusion step must write only the Conclusion from the finished Meat and the planned answer.');
-assert(await writeConclusionFromMeat(gateScript, 'NO PLAN', { video: 3, level: 1, systemPrompt: '' }, async () => { throw new Error('must not be called'); }) === gateScript, 'Without a planned answer the draft must stay as written.');
+// WBR-472, 2026-11-13: the answer-hiding path and the Epiphany audit are gone. Rig runs
+// showed the "leaks" came from the map paragraph being retyped, not from the writer
+// knowing the answer, and the blueprint designs the Conclusion first.
 for (const source of [generationSource, promptTestSource]) {
-  assert(source.includes('withholdReservedConclusion(') && source.includes('writeConclusionFromMeat('), 'Live generation and the Prompt Tester must both split the Epiphany Meat from its answer.');
+  for (const gone of ['withholdReservedConclusion', 'writeConclusionFromMeat', 'auditEpiphanyRule', 'enforceEpiphanyRule']) {
+    assert(!source.includes(gone), 'The removed patch is back: ' + gone);
+  }
+}
+
+// Each video is told the next part's event, and the writer points the CTA at it.
+const nextMarked = 'CURRENT VIDEO 4 PROMPTS:\n1. Q: A\n\nNEXT PART OF THE SERIES (private; it is not part of this chapter, so never plan, tell, or hint at it here): The day a guest asked when her episode was coming out.';
+assert(nextPartLine(nextMarked).includes('The day a guest asked when her episode was coming out.') && nextPartLine(nextMarked).includes('for the CTA only'), 'The writer must be told the next part for the CTA.');
+assert(nextPartLine('CURRENT VIDEO 4 PROMPTS:\n1. Q: A') === '', 'No next part means no CTA line.');
+assert(generationSource.includes('nextPartLine(userContext)'), 'The planner packet must carry the next part line.');
+{
+  const sandbox = { window: {} };
+  (await import('node:vm')).runInNewContext(readFileSync(new URL('../js/script-prompt-engine.js', import.meta.url), 'utf8'), sandbox);
+  const build = sandbox.window.SISPromptEngine.buildUserMessage;
+  const base = { level: 2, onboardingLines: [], previousVideos: [], currentMode: 'extended', currentAnswers: [{ label: 'Q', value: 'A' }], currentJourneyDirection: 'This part.' };
+  assert(nextPartLine(build({ ...base, video: 4, nextPartEvent: 'The day\nit stopped.' })).includes('The day it stopped.'), 'The app must send the next part in the form the server reads.');
+  assert(!build({ ...base, video: 7, nextPartEvent: 'Nothing follows.' }).includes('NEXT PART OF THE SERIES'), 'Video 7 has no next part.');
+  assert(!build({ ...base, video: 4 }).includes('NEXT PART OF THE SERIES'), 'No next part is sent when the map has none.');
 }
 assert(generationSource.includes('never by naming it as an assumption or something they thought'), 'The Video 3 plan must show the old belief through action.');
-assert(generationSource.includes("Number(input.video) === 3 || Number(input.video) === 6"), 'The Epiphany audit must run on Videos 3 and 6.');
 
 // David, 2026-11-07: Video 3 opened on a belief the viewer had no situation for. The
 // writer must get the setup right the first time, from the plan and its final contract.
@@ -584,7 +577,7 @@ const storyEdited = await tightenMeat(storyScript, 2, async () => 'kept '.repeat
 assert((storyEdited.match(/kept/g) || []).length === 280, 'Video 2 must be held to its whole-script range.');
 const storyFitting = '[HOOK]\nA hook.\n\n[MEAT]\n' + 'word '.repeat(250).trim();
 assert(await tightenMeat(storyFitting, 5, async () => { throw new Error('must not be called'); }) === storyFitting, 'A Meat inside the range must not be edited.');
-assert(generationSource.includes("Number(input.video) === 7\n        ? gatedContent"), 'Video 7 must not be cut by the Meat edit.');
+assert(generationSource.includes("Number(input.video) === 7\n        ? finalContent"), 'Video 7 must not be cut by the Meat edit.');
 
 const preservedPremise = preserveViewerPremiseSource(
   [
@@ -799,17 +792,8 @@ console.log('Story architecture checks passed for all 14 video paths and both qu
   assert(engineSource.includes('OPEN_LOOP_NO_BORROWING_RULE') && (engineSource.match(/OPEN_LOOP_NO_BORROWING_RULE/g) || []).length >= 3, 'Open Loop retries and repairs must not borrow from the Meat.');
 }
 
-// David, 2026-11-08: the Video 3 Meat still leaked because the raw map part, which holds
-// the realization, reached the writer as the viewer premise source.
+// David, 2026-11-08: "I thought it was X, but it was actually Y" is the banned correction formula.
 {
-  const mapContext = 'CURRENT VIDEO 3 JOURNEY DIRECTION (private planning context only):\nI realized MAP REALIZATION.\nUse this as the intended subject and place in the seven-part journey.\n';
-  const packet = 'STORY PROGRESSION:\nI sat down to record my first video at GNC.\nRESERVED CONCLUSION:\nSECRET ANSWER\nSTAGE FIREWALL:\nNo fall.\nVOICE SIGNALS:\nPlain.';
-  const withPremise = preserveViewerPremiseSource(mapContext, packet, 3);
-  assert(withPremise.includes('MAP REALIZATION'), 'Fixture: the premise source must carry the map part before withholding.');
-  for (const forDraft of [true, false]) {
-    const writerView = withholdReservedConclusion(withPremise, forDraft);
-    assert(!writerView.includes('MAP REALIZATION') && !writerView.includes('SECRET ANSWER') && writerView.includes('I sat down to record my first video at GNC.'), 'The Epiphany writer and review must see neither copy of the answer, and must keep the plan.');
-  }
   const { validateOutput: validateThought } = await import('../api/_lib/prompt-engine.js');
   const flagged = (text, video) => validateThought('[HOOK]\nA hook here.\n\n[OPEN LOOP]\nWhy did one video take two weeks?\n\n[MEAT]\n' + (video === 1 ? text : 'I recorded for two weeks.') + '\n\n[CONCLUSION]\n' + (video === 1 ? 'I am doing it.' : text) + '\n\n[CTA]\nFollow along because the next part of my 7 Video Challenge is next.', video, 1, '', '').issues.some(issue => /false-balance/i.test(issue));
   assert(flagged('The skill I thought I had was explaining, but the camera showed me it was actually responding.', 3), 'The detector must catch "I thought it was X, but it was actually Y."');
