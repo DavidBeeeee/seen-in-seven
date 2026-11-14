@@ -432,7 +432,11 @@ function renderStudio() {
   el('device-progress').hidden = !signedIn || !localProgress || hasStudioAccess('seeninseven');
   const isAdmin = Boolean(signedIn && studioProfile && studioProfile.is_admin === true);
   if (el('management-label')) el('management-label').hidden = !isAdmin;
-  if (el('management-divider')) el('management-divider').hidden = !isAdmin;
+  // The line under the apps is for everyone signed in: CoMM Business Cards
+  // sits there for members, with WorkerBee and Administration for admins only.
+  if (el('management-divider')) el('management-divider').hidden = !signedIn;
+  if (el('cards-nav-item')) el('cards-nav-item').hidden = !signedIn;
+  if (el('cards-card')) el('cards-card').hidden = !signedIn;
   el('workerbee-nav-item').hidden = !isAdmin;
   el('admin-nav-item').hidden = !isAdmin;
   el('eee-card').hidden = !eeeCardVisible;
@@ -463,6 +467,7 @@ function renderStudio() {
   let workspaceCount = 1; // SeenInSeven
   if (eeeCardVisible) workspaceCount++;
   if (showVaultCard) workspaceCount++;
+  if (signedIn) workspaceCount++; // Community Business Cards
   el('studio-app-count').textContent = workspaceCount + ' workspace' + (workspaceCount === 1 ? '' : 's');
 
   if (signedIn) {

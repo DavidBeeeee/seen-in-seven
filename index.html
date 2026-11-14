@@ -57,7 +57,7 @@
       <nav>
         <a class="nav-item active" href="/" aria-current="page"><i data-lucide="layout-grid"></i><span>My Studio</span></a>
         <a class="nav-item" href="/seeninseven"><i data-lucide="video"></i><span>SeenInSeven</span></a>
-        <details class="studio-nav-group" open>
+        <details class="studio-nav-group">
           <summary class="nav-item"><i data-lucide="sparkles"></i><span>Momentum Hub</span></summary>
           <div class="studio-nav-children">
             <a class="nav-item" href="/eee"><span>Hub workspace</span></a>
@@ -66,17 +66,21 @@
             <a class="nav-item" href="/boardroom"><span>AI Boardroom</span></a>
           </div>
         </details>
-        <a class="nav-item" href="/certainty"><i data-lucide="calendar-check"></i><span>Certainty Sessions</span></a>
         <a class="nav-item" id="vault-nav-link" href="/vault"><i data-lucide="library"></i><span>Solution Vault</span></a>
-        <details class="studio-nav-group" id="vault-nav-group" open hidden>
+        <details class="studio-nav-group" id="vault-nav-group" hidden>
           <summary class="nav-item"><i data-lucide="library"></i><span>Solution Vault</span></summary>
           <div class="studio-nav-children">
             <a class="nav-item" id="vault-nav-books" href="/vault?section=books" hidden><span>Book Shelf</span></a>
             <a class="nav-item" id="vault-nav-videos" href="/vault?section=video" hidden><span>Video Room</span></a>
           </div>
         </details>
+        <a class="nav-item" href="/certainty"><i data-lucide="calendar-check"></i><span>Certainty Sessions</span></a>
 
         <div class="sidebar-section-divider" id="management-divider" hidden></div>
+        <a class="nav-item" id="cards-nav-item" href="/network" hidden>
+          <i data-lucide="contact"></i>
+          <span>CoMM Business Cards</span>
+        </a>
         <a class="nav-item" id="workerbee-nav-item" href="/dashboard" hidden>
           <i data-lucide="list-checks"></i>
           <span>WorkerBee</span>
@@ -318,6 +322,32 @@
           </div>
         </article>
 
+        <article class="app-card" id="cards-card" hidden>
+          <div class="app-preview">
+            <img src="/assets/business-cards/cards-preview.svg" alt="A spread of Colorado Mastermind business cards">
+          </div>
+          <div class="app-details">
+            <div class="app-title-row">
+              <div>
+                <span class="access-label unlocked">Colorado Mastermind</span>
+                <h3>Community Business Cards</h3>
+              </div>
+              <span class="app-icon"><i data-lucide="contact"></i></span>
+            </div>
+            <p>Leave your card for the people you met at Colorado Mastermind, and find theirs: what they do, one link, and whether they're up for working together.</p>
+            <div class="app-status unlocked">
+              <i data-lucide="badge-check"></i>
+              <span>Every card is approved by David before it shows.</span>
+            </div>
+            <div class="app-actions">
+              <a class="primary-button" id="cards-open-button" href="/network">
+                <span>Open Community Business Cards</span>
+                <i data-lucide="arrow-right"></i>
+              </a>
+            </div>
+          </div>
+        </article>
+
         <article class="app-card" id="vault-card" hidden>
           <div class="app-preview">
             <img src="/assets/vault/the-5e-framework-cover.png" alt="Solution Vault library preview">
@@ -416,6 +446,6 @@
 
   <script src="/js/777-launch-cycle.js?v=2026-09"></script>
   <script src="/js/network.js?v=front-door-1"></script>
-  <script src="/js/studio.js?v=front-door-1"></script>
+  <script src="/js/studio.js?v=cards-2"></script>
 </body>
 </html>

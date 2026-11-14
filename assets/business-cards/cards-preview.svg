@@ -1,0 +1,55 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 600" width="960" height="600" role="img" aria-label="Three business cards fanned on a teal table">
+  <defs>
+    <radialGradient id="bg" cx="30%" cy="35%" r="80%">
+      <stop offset="0" stop-color="#16494a"/>
+      <stop offset="1" stop-color="#0a2324"/>
+    </radialGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="160%">
+      <feDropShadow dx="0" dy="14" stdDeviation="14" flood-color="#000" flood-opacity="0.38"/>
+    </filter>
+    <linearGradient id="paper" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fbfaf6"/>
+      <stop offset="1" stop-color="#ece8dd"/>
+    </linearGradient>
+  </defs>
+  <rect width="960" height="600" fill="url(#bg)"/>
+  <g fill="none" stroke="#2a6a69" stroke-opacity="0.35">
+    <circle cx="120" cy="520" r="160"/>
+    <circle cx="120" cy="520" r="240"/>
+  </g>
+
+  <!-- back card -->
+  <g transform="translate(70 120) rotate(-12)" filter="url(#shadow)">
+    <rect width="380" height="220" rx="16" fill="#d9a441"/>
+    <rect x="28" y="30" width="54" height="54" rx="12" fill="#0d2828" fill-opacity="0.85"/>
+    <rect x="100" y="38" width="170" height="16" rx="8" fill="#0d2828" fill-opacity="0.75"/>
+    <rect x="100" y="66" width="120" height="11" rx="5.5" fill="#0d2828" fill-opacity="0.45"/>
+    <rect x="28" y="150" width="250" height="10" rx="5" fill="#0d2828" fill-opacity="0.35"/>
+    <rect x="28" y="172" width="190" height="10" rx="5" fill="#0d2828" fill-opacity="0.35"/>
+  </g>
+
+  <!-- middle card -->
+  <g transform="translate(150 175) rotate(-3)" filter="url(#shadow)">
+    <rect width="380" height="220" rx="16" fill="#2f8f88"/>
+    <circle cx="56" cy="58" r="28" fill="#fbfaf6" fill-opacity="0.9"/>
+    <rect x="100" y="40" width="190" height="16" rx="8" fill="#fbfaf6" fill-opacity="0.92"/>
+    <rect x="100" y="68" width="130" height="11" rx="5.5" fill="#fbfaf6" fill-opacity="0.6"/>
+    <rect x="28" y="148" width="260" height="10" rx="5" fill="#fbfaf6" fill-opacity="0.45"/>
+    <rect x="28" y="170" width="200" height="10" rx="5" fill="#fbfaf6" fill-opacity="0.45"/>
+  </g>
+
+  <!-- front card -->
+  <g transform="translate(240 235) rotate(6)" filter="url(#shadow)">
+    <rect width="400" height="232" rx="16" fill="url(#paper)"/>
+    <rect x="28" y="28" width="58" height="58" rx="12" fill="#0d2828"/>
+    <text x="57" y="66" text-anchor="middle" font-family="Oswald, 'Arial Narrow', Arial, sans-serif" font-size="24" font-weight="700" fill="#fbfaf6">CM</text>
+    <rect x="104" y="36" width="200" height="17" rx="8.5" fill="#0d2828"/>
+    <rect x="104" y="64" width="140" height="11" rx="5.5" fill="#2f8f88"/>
+    <rect x="28" y="120" width="300" height="10" rx="5" fill="#0d2828" fill-opacity="0.25"/>
+    <rect x="28" y="142" width="250" height="10" rx="5" fill="#0d2828" fill-opacity="0.25"/>
+    <rect x="28" y="182" width="150" height="26" rx="13" fill="#2f8f88" fill-opacity="0.16"/>
+    <circle cx="46" cy="195" r="6" fill="#2f8f88"/>
+    <rect x="60" y="190" width="104" height="10" rx="5" fill="#2f8f88"/>
+    <path d="M352 182 l14 0 l0 14 M366 182 l-22 22" stroke="#d9a441" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+  </g>
+</svg>

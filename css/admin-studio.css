@@ -254,3 +254,12 @@
 .vi-edit-quote { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 220px) auto; gap: 8px; align-items: center; }
 .vi-claim-url { width: 100%; padding: 9px 11px; border-radius: 8px; border: 1px solid var(--studio-border); background: var(--studio-surface); color: var(--studio-text); font: inherit; font-size: 12px; }
 @media (max-width: 600px) { .vi-edit-quote { grid-template-columns: 1fr; } }
+
+/* Community Business Cards admin editing (WBR-477, 2026-11-14) */
+.network-admin-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.network-admin-editing input:not([type="checkbox"]),
+.network-admin-editing textarea,
+.network-admin-editing select { width: 100%; min-width: 120px; padding: 8px 10px; border: 1px solid var(--studio-border); border-radius: 8px; background: var(--studio-surface, transparent); color: inherit; font: inherit; }
+.network-admin-editing textarea { resize: vertical; }
+.network-admin-error { margin-top: 8px; color: #c2410c; font-size: 13px; font-weight: 700; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }

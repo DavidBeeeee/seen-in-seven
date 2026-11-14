@@ -321,6 +321,8 @@ function loadNetworkEntriesForAdmin(remoteEntries) {
   return remoteList.concat(local.filter(item => item && !seen.has(item.id)));
 }
 
+let networkAdminEditingId = null;
+
 function renderNetworkDirectoryAdmin() {
   const tbody = adminEl('network-admin-rows');
   if (!tbody) return;
@@ -333,28 +335,104 @@ function renderNetworkDirectoryAdmin() {
   setText('network-admin-total', entries.length);
 
   if (!entries.length) {
-    tbody.innerHTML = '<tr><td colspan="6" class="table-loading">No networking directory submissions yet. Open /network to submit a preview card.</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="table-loading">No business cards yet. Cards people send from Community Business Cards land here for approval.</td></tr>';
     return;
   }
 
   tbody.innerHTML = entries.map(row => {
+    const id = safeAttr(row.id);
+    if (networkAdminEditingId !== null && String(row.id) === String(networkAdminEditingId)) {
+      const status = row.status || 'pending';
+      const opt = (value, label) => '<option value="' + value + '"' + (status === value ? ' selected' : '') + '>' + label + '</option>';
+      return '<tr class="network-admin-editing" data-entry-id="' + id + '">' +
+        '<td><label class="sr-only" for="nde-status-' + id + '">Status</label><select id="nde-status-' + id + '" data-field="status">' + opt('pending', 'pending') + opt('approved', 'approved') + opt('hidden', 'hidden') + '</select></td>' +
+        '<td><label class="sr-only" for="nde-name-' + id + '">Name</label><input id="nde-name-' + id + '" data-field="name" maxlength="120" value="' + safeAttr(row.name || '') + '"></td>' +
+        '<td><label class="sr-only" for="nde-what-' + id + '">What they do</label><textarea id="nde-what-' + id + '" data-field="what_you_do" maxlength="500" rows="3">' + escapeHtml(row.what_you_do || '') + '</textarea></td>' +
+        '<td><label class="sr-only" for="nde-link-' + id + '">Link</label><input id="nde-link-' + id + '" data-field="link_url" maxlength="300" value="' + safeAttr(row.link_url || '') + '"></td>' +
+        '<td><label><input type="checkbox" data-field="open_to_collaborating"' + (row.open_to_collaborating ? ' checked' : '') + '> Open</label></td>' +
+        '<td><div class="network-admin-actions">' +
+          '<button class="primary-button" type="button" onclick="adminSaveNetworkDirectoryEntry(event,\'' + id + '\')">Save</button>' +
+          '<button class="secondary-button" type="button" onclick="adminEditNetworkDirectoryEntry(event,null)">Cancel</button>' +
+        '</div><div class="network-admin-error" role="alert" hidden></div></td>' +
+        '</tr>';
+    }
     const isApproved = row.status === 'approved';
     const statusClass = isApproved ? ' webhook-processed' : '';
     const statusLabel = isApproved ? 'approved' : (row.status || 'pending');
     const collab = row.open_to_collaborating ? 'Yes, open' : 'Not right now';
     const actionBtn = isApproved
-      ? '<button class="secondary-button" type="button" onclick="adminSetNetworkDirectoryStatus(event,\'' + safeAttr(row.id) + '\',\'pending\')">Hide</button>'
-      : '<button class="secondary-button" type="button" onclick="adminSetNetworkDirectoryStatus(event,\'' + safeAttr(row.id) + '\',\'approved\')">Approve</button>';
+      ? '<button class="secondary-button" type="button" onclick="adminSetNetworkDirectoryStatus(event,\'' + id + '\',\'pending\')">Hide</button>'
+      : '<button class="secondary-button" type="button" onclick="adminSetNetworkDirectoryStatus(event,\'' + id + '\',\'approved\')">Approve</button>';
+    const editBtn = '<button class="secondary-button" type="button" onclick="adminEditNetworkDirectoryEntry(event,\'' + id + '\')">Edit</button>';
     return '<tr>' +
       '<td><span class="webhook-status' + statusClass + '">' + escapeHtml(statusLabel) + '</span></td>' +
       '<td><div class="customer-name">' + escapeHtml(row.name || 'Attendee') + '</div></td>' +
       '<td>' + escapeHtml(row.what_you_do || '') + '</td>' +
       '<td><a href="' + safeAttr(row.link_url || '#') + '" target="_blank" rel="noopener noreferrer" style="color: var(--studio-teal);">' + escapeHtml(row.link_url || '') + '</a></td>' +
       '<td>' + escapeHtml(collab) + '</td>' +
-      '<td>' + actionBtn + '</td>' +
+      '<td><div class="network-admin-actions">' + actionBtn + editBtn + '</div></td>' +
       '</tr>';
   }).join('');
 }
+
+// Re-read the live list after any admin change. Before 2026-11-14 an approval
+// re-rendered from browser storage only, so live cards vanished from this
+// table the moment David approved one.
+async function reloadNetworkDirectoryAdmin() {
+  let remote = [];
+  try {
+    const { data, error } = await adminSb.rpc('admin_get_network_directory');
+    if (!error && Array.isArray(data)) remote = data;
+  } catch (e) {}
+  studioAdminState.networkEntries = loadNetworkEntriesForAdmin(remote);
+  renderNetworkDirectoryAdmin();
+}
+
+function adminEditNetworkDirectoryEntry(event, entryId) {
+  if (event) event.stopPropagation();
+  networkAdminEditingId = entryId;
+  renderNetworkDirectoryAdmin();
+  if (entryId !== null) {
+    const first = document.getElementById('nde-name-' + entryId);
+    if (first) first.focus();
+  }
+}
+window.adminEditNetworkDirectoryEntry = adminEditNetworkDirectoryEntry;
+
+async function adminSaveNetworkDirectoryEntry(event, entryId) {
+  event.stopPropagation();
+  const row = document.querySelector('tr[data-entry-id="' + CSS.escape(String(entryId)) + '"]');
+  if (!row) return;
+  const field = name => row.querySelector('[data-field="' + name + '"]');
+  const errorBox = row.querySelector('.network-admin-error');
+  const showError = message => { if (errorBox) { errorBox.textContent = message; errorBox.hidden = false; } };
+  const values = {
+    name: field('name').value.trim(),
+    what_you_do: field('what_you_do').value.trim(),
+    link_url: field('link_url').value.trim(),
+    open_to_collaborating: field('open_to_collaborating').checked,
+    status: field('status').value
+  };
+  if (!values.name || !values.what_you_do) return showError('Name and what they do are both needed.');
+  if (!/^https?:\/\//i.test(values.link_url)) return showError('The link has to start with https://');
+  const button = event.currentTarget;
+  if (button) button.disabled = true;
+  const { error } = await adminSb.rpc('admin_update_network_directory_entry', {
+    p_entry_id: entryId,
+    p_name: values.name,
+    p_what_you_do: values.what_you_do,
+    p_link_url: values.link_url,
+    p_open_to_collaborating: values.open_to_collaborating,
+    p_status: values.status
+  });
+  if (error) {
+    if (button) button.disabled = false;
+    return showError('Not saved: ' + (error.message || 'the database refused the change.'));
+  }
+  networkAdminEditingId = null;
+  await reloadNetworkDirectoryAdmin();
+}
+window.adminSaveNetworkDirectoryEntry = adminSaveNetworkDirectoryEntry;
 
 async function adminSetNetworkDirectoryStatus(event, entryId, status) {
   event.stopPropagation();
@@ -376,8 +454,7 @@ async function adminSetNetworkDirectoryStatus(event, entryId, status) {
   try {
     await adminSb.rpc('admin_set_network_directory_status', { p_entry_id: entryId, p_status: status });
   } catch (e) {}
-  studioAdminState.networkEntries = loadNetworkEntriesForAdmin([]);
-  renderNetworkDirectoryAdmin();
+  await reloadNetworkDirectoryAdmin();
 }
 window.adminSetNetworkDirectoryStatus = adminSetNetworkDirectoryStatus;
 
