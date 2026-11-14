@@ -1423,6 +1423,67 @@ function journeyOnboardingContext() {
   ].filter(Boolean).join('\n');
 }
 
+
+// Full story notes are the script's source material. Keep the short map and its
+// detailed notes visible together without mixing the two journey levels.
+function journeyNoteStore(level) {
+  const number = Number(level) === 2 ? 2 : 1;
+  if (number === Number(state.level || 1)) return state.videos;
+  if (!state.videoAnswersByLevel || typeof state.videoAnswersByLevel !== 'object') state.videoAnswersByLevel = {};
+  if (!state.videoAnswersByLevel[String(number)]) state.videoAnswersByLevel[String(number)] = {};
+  return state.videoAnswersByLevel[String(number)];
+}
+
+function journeyNoteProgress(level) {
+  const store = journeyNoteStore(level);
+  const lists = storyNoteQuestions(level);
+  return {
+    saved: lists.reduce((total, list) => total + list.filter(q => String(store[q.key] || '').trim()).length, 0),
+    total: lists.reduce((total, list) => total + list.length, 0)
+  };
+}
+
+function renderJourneyDetailNotes(level, index) {
+  if (index === 0) return '';
+  const questions = storyNoteQuestions(level)[index - 1] || [];
+  const store = journeyNoteStore(level);
+  const saved = questions.filter(q => String(store[q.key] || '').trim()).length;
+  const headline = saved ? saved + ' of ' + questions.length + ' detailed answers saved. Review or edit.'
+    : 'Add ' + questions.length + ' detailed answers (optional).';
+  return '<details class="journey-story-notes">' +
+    '<summary id="journey-story-note-count-' + level + '-' + index + '">' + escapeHTML(headline) + '</summary>' +
+    '<p>These are the actual scenes and facts the video writer uses. The short summary above is only the map.</p>' +
+    questions.map((question, order) =>
+      '<div class="journey-story-note-item">' +
+      '<label for="journey-story-note-' + level + '-' + index + '-' + order + '">' +
+      (order + 1) + '. ' + escapeHTML(question.label) + '</label>' +
+      '<textarea class="journey-answer-input" id="journey-story-note-' + level + '-' + index + '-' + order +
+      '" rows="' + journeyAnswerRows(store[question.key] || '') + '" maxlength="4000" ' +
+      'oninput="setJourneyStoryNote(' + level + ', \'' + question.key + '\', this.value)">' +
+      escapeHTML(store[question.key] || '') + '</textarea></div>'
+    ).join('') + '</details>';
+}
+
+function setJourneyStoryNote(level, key, value) {
+  if (!/^v[1-6]p\d+$/.test(String(key || ''))) return;
+  const store = journeyNoteStore(level);
+  store[key] = String(value || '').slice(0, 4000);
+  const chapter = Number(key.match(/^v(\d+)p/)[1]) + 1;
+  const countEl = document.getElementById('journey-story-note-count-' + level + '-' + chapter);
+  if (countEl) {
+    const questions = storyNoteQuestions(level)[chapter - 2] || [];
+    const saved = questions.filter(q => String(store[q.key] || '').trim()).length;
+    countEl.textContent = saved + ' of ' + questions.length + ' detailed answers saved. Review or edit.';
+  }
+  const totalEl = document.getElementById('journey-import-count');
+  if (totalEl) {
+    const progress = journeyNoteProgress(level);
+    totalEl.textContent = progress.saved + ' of ' + progress.total + ' detailed answers saved';
+  }
+  clearTimeout(videoAnswerSaveTimer);
+  videoAnswerSaveTimer = setTimeout(saveProgress, 600);
+}
+
 function renderJourneyMap() {
   if (!window.SISJourneyMap) return;
   const level = Number(journeyMapLevel) === 2 ? 2 : 1;
@@ -1463,19 +1524,36 @@ function renderJourneyMap() {
     return;
   }
   const reviewingImport = journeyMapMode === 'onboarding' && p2.storyDiscoveryMode === 'imported';
-  if (title) title.innerHTML = reviewingImport ? 'Here is your <span class="accent">seven-part story.</span>' : journeyMapMode === 'onboarding' ? 'Build your <span class="accent">seven-part story.</span>' : 'Edit your <span class="accent">seven-part story.</span>';
-  if (subtitle) subtitle.textContent = reviewingImport
-    ? 'Your seven answers are saved.'
+  const reviewingSelf = journeyMapMode === 'onboarding' && p2.storyDiscoveryMode === 'self-review';
+  const reviewingMap = reviewingImport || reviewingSelf;
+  if (title) title.innerHTML = reviewingMap ? 'Here is your <span class="accent">seven-part story.</span>' : journeyMapMode === 'onboarding' ? 'Build your <span class="accent">seven-part story.</span>' : 'Edit your <span class="accent">seven-part story.</span>';
+  if (subtitle) subtitle.textContent = reviewingMap
+    ? 'Review the seven-part journey and the source notes behind it before writing your videos.'
     : journeyMapMode === 'onboarding'
     ? 'We will ask one small question at a time. Short, imperfect answers are welcome.'
     : 'These private directions guide future scripts. They are not finished scripts.';
   if (note) note.textContent = journeyMapMode === 'onboarding'
-    ? (p2.storyDiscoveryMode === 'imported' ? 'Review the story your AI helped you find. Change anything that does not feel true.' : 'Finding Your Hero’s Journey • Part ' + (journeyOnboardingIndex + 1) + ' of 7 • About ' + Math.max(2, (7 - journeyOnboardingIndex) * 2) + ' minutes left')
+    ? (reviewingMap ? 'The short summaries orient the videos. Open any part to see or edit its detailed story answers.' : 'Finding Your Hero’s Journey • Part ' + (journeyOnboardingIndex + 1) + ' of 7 • About ' + Math.max(2, (7 - journeyOnboardingIndex) * 2) + ' minutes left')
     : 'Editing Level ' + level + '. Saved changes guide future scripts and intentional regenerations only.';
-  if (confirm) { confirm.style.display = ''; confirm.textContent = journeyMapMode === 'onboarding' ? (p2.storyDiscoveryMode === 'imported' ? 'This Feels Right →' : (journeyOnboardingIndex < 6 ? 'Save And Continue →' : 'Finish My Story →')) : 'Save My Journey →'; }
+  if (confirm) { confirm.style.display = ''; confirm.textContent = journeyMapMode === 'onboarding' ? (reviewingMap ? 'This Feels Right →' : (journeyOnboardingIndex < 6 ? 'Save And Continue →' : 'Finish My Story →')) : 'Save My Journey →'; }
 
-  const visibleIndexes = journeyMapMode === 'onboarding' && p2.storyDiscoveryMode !== 'imported' ? [journeyOnboardingIndex] : questions.map((_, index) => index);
-  list.innerHTML = visibleIndexes.map(index => {
+  const visibleIndexes = journeyMapMode === 'onboarding' && !reviewingMap ? [journeyOnboardingIndex] : questions.map((_, index) => index);
+  const noteProgress = journeyNoteProgress(level);
+  const completedParts = answers.filter(answer => SISJourneyMap.isUsableAnswer(answer)).length;
+  const scriptStore = level === Number(state.level || 1) ? state.videos : (level === 1 ? state.l1Videos : state.l2Videos) || {};
+  const existingScripts = Array.from({ length: 7 }, (_, index) => index + 1)
+    .filter(number => String(scriptStore['script_v' + (number - 1)] || '').trim());
+  const reviewIntro = reviewingMap
+    ? '<div class="journey-story-summary" role="status">' +
+      '<strong>' + completedParts + ' of 7 story parts saved</strong>' +
+      '<span id="journey-import-count">' + noteProgress.saved + ' of ' + noteProgress.total + ' detailed answers saved</span>' +
+      '<p>' + (reviewingImport
+        ? 'Your complete numbered answers were stored as the source for each video. Expand a part below to see them.'
+        : 'The seven-part outline is saved. Detailed scene notes are optional now and can also be added before each video.') + '</p>' +
+      (existingScripts.length ? '<p class="journey-story-existing">Existing scripts for Videos ' +
+        existingScripts.join(', ') + ' will not automatically update. Review or regenerate affected scripts intentionally without deleting your story answers.</p>' : '') +
+      '</div>' : '';
+  list.innerHTML = reviewIntro + visibleIndexes.map(index => {
     const question = questions[index];
     const value = answers[index] || '';
     const count = journeyWordCount(value);
@@ -1488,10 +1566,11 @@ function renderJourneyMap() {
         <label for="journey-answer-${index}">${escapeHTML(question)}</label>
         <p class="journey-question-explainer">${escapeHTML((SISJourneyMap.EXPLANATIONS[level] || [])[index] || '')}</p>
         <textarea class="journey-answer-input" id="journey-answer-${index}" rows="${journeyAnswerRows(value)}" placeholder="Say what happened, in your own words."
-          oninput="setJourneyMapAnswer(${index}, this.value)">${escapeHTML(value)}</textarea>
+          oninput="setJourneyMapAnswer(${index}, this.value)" maxlength="4000">${escapeHTML(value)}</textarea>
+        ${reviewingMap || journeyMapMode === 'settings' ? renderJourneyDetailNotes(level, index) : ''}
         <div class="journey-question-actions">
           <button class="journey-ai-btn" type="button" onclick="openJourneyPartHelp(${index})">Use My AI To Help</button>
-          ${journeyMapMode === 'onboarding' && p2.storyDiscoveryMode !== 'imported' ? '<button class="journey-unsure-btn" type="button" onclick="skipJourneyPart()">Skip For Now</button>' : ''}
+          ${journeyMapMode === 'onboarding' && !reviewingMap ? '<button class="journey-unsure-btn" type="button" onclick="skipJourneyPart()">Skip For Now</button>' : ''}
         </div>
       </article>`;
   }).join('');
