@@ -266,6 +266,10 @@ async function openState(browser, stateName) {
     return app && !app.hidden && ((start && !start.hidden) || (editor && !editor.hidden));
   }, null, { timeout: 10000 });
 
+  // Wait for the saved project to open before injecting a fault or clicking its controls.
+  // The start screen can briefly be visible while that asynchronous read finishes.
+  if (world.projects.length) await page.waitForSelector('#story-editor:not([hidden])', { timeout: 10000 });
+
   if (stateName === 'ugc-entry') {
     await page.evaluate(() => {
       document.getElementById('ugc-step-entry').hidden = false;

@@ -264,14 +264,13 @@ function composeContext() {
   return [composeMemory(), objLine, notes].filter(part => part && part.trim()).join('\n\n');
 }
 
-// WBR-373: the 'Your scripts' strip and the one next step. The rail, the
-// finished-script footer and Help all render the same STATES.nextStep, so they
-// cannot disagree.
+// Progress stays available under Script totals. The finished-script footer
+// and Help share one next-step state; the chat list stays focused on chats.
 function renderMemberProgress() {
   const strip = storyEl('story-progress');
   if (strip) strip.innerHTML = STATES.progressMarkup(STATES.progress(storyProjects));
   const step = STATES.nextStep(activeStory || 'start');
-  for (const [id, surface] of [['story-next-step-rail', 'rail'], ['story-next-step-footer', 'footer'], ['story-next-step-help', 'help']]) {
+  for (const [id, surface] of [['story-next-step-footer', 'footer'], ['story-next-step-help', 'help']]) {
     const slot = storyEl(id);
     if (slot) slot.innerHTML = STATES.nextStepMarkup(step, surface);
   }
@@ -625,13 +624,9 @@ function syncObjectiveInputs(project) {
     : {};
   const aud = String(rawObj.audience || '');
   const act = String(rawObj.nextAction || '');
-  const intakeAud = storyEl('story-objective-audience');
-  const intakeAct = storyEl('story-objective-action');
   const memAud = storyEl('mem-objective-audience');
   const memAct = storyEl('mem-objective-action');
   const memBox = storyEl('mem-script-objective');
-  if (intakeAud && document.activeElement !== intakeAud) intakeAud.value = aud;
-  if (intakeAct && document.activeElement !== intakeAct) intakeAct.value = act;
   if (memAud && document.activeElement !== memAud) memAud.value = aud;
   if (memAct && document.activeElement !== memAct) memAct.value = act;
   if (memBox) memBox.hidden = !project;
@@ -647,12 +642,6 @@ function applyStoryObjective(audience, nextAction, source) {
   } else {
     if (!activeStory.intake || typeof activeStory.intake !== 'object') activeStory.intake = {};
     activeStory.intake.objective = { audience: aud, nextAction: act, updatedAt: new Date().toISOString() };
-  }
-  if (source !== 'intake') {
-    const intakeAud = storyEl('story-objective-audience');
-    const intakeAct = storyEl('story-objective-action');
-    if (intakeAud) intakeAud.value = aud;
-    if (intakeAct) intakeAct.value = act;
   }
   if (source !== 'memory') {
     const memAud = storyEl('mem-objective-audience');
@@ -721,7 +710,6 @@ function renderScriptPanel() {
   const output = storyEl('story-output');
   const mobileTabs = storyEl('story-mobile-tabs');
   const composer = storyEl('story-composer');
-  const intakeObj = storyEl('story-intake-objective');
   const refineBox = storyEl('story-refine-box');
   const genStatus = storyEl('story-generation-status');
 
@@ -730,7 +718,6 @@ function renderScriptPanel() {
     output.hidden = false;
     mobileTabs.hidden = false;
     composer.hidden = true;
-    if (intakeObj) intakeObj.hidden = true;
     genStatus.hidden = true;
     refineBox.hidden = false;
 
@@ -764,7 +751,6 @@ function renderScriptPanel() {
     output.hidden = true;
     mobileTabs.hidden = true;
     composer.hidden = false;
-    if (intakeObj) intakeObj.hidden = Boolean(activeStory && activeStory.content_type === 'ugc');
     genStatus.hidden = false;
     refineBox.hidden = true;
     viewingVersionIndex = -1;
@@ -918,12 +904,6 @@ function renderConversation() {
       '<div class="story-message-actions">' +
         (canRegenerate ? '<button class="story-msg-btn" type="button" data-action="regen-open" data-msg-index="' + index + '" title="Write this step again"><i data-lucide="refresh-cw"></i><span>Regenerate</span></button>' : '') +
         pager +
-        '<button class="story-msg-btn" type="button" data-action="copy-msg" data-msg-index="' + index + '" title="Copy response">' +
-          '<i data-lucide="copy"></i><span>Copy</span>' +
-        '</button>' +
-        '<button class="story-msg-btn promote" type="button" data-action="promote-msg" data-msg-index="' + index + '" title="Open this draft in the script panel">' +
-          '<i data-lucide="file-text"></i><span>Use as Script</span>' +
-        '</button>' +
       '</div>' +
     '</article>';
   }).join('');
@@ -2082,15 +2062,12 @@ function showProject(project) {
   if (project.content_type === 'ugc') {
     storyEl('story-scroll').hidden = true;
     storyEl('story-composer').hidden = true;
-    const intakeObj = storyEl('story-intake-objective');
-    if (intakeObj) intakeObj.hidden = true;
     storyEl('story-generation-status').hidden = true;
     renderUgcProject(project);
     // Always render the script panel, so a new UGC chat clears the script the
     // previous chat left on screen (2026-10-13 live test).
     renderScriptPanel();
     storyEl('story-composer').hidden = true;
-    if (intakeObj) intakeObj.hidden = true;
     storyEl('story-generation-status').hidden = true;
     if (project.output && window.innerWidth > 820) storyEl('story-refine-note').focus();
   } else {
@@ -2258,20 +2235,6 @@ function setStorySaveStatus(project, revision, text, error = false) {
 }
 
 function captureStorySave(project) {
-  if (project && project === activeStory) {
-    const intakeAud = storyEl('story-objective-audience');
-    const intakeAct = storyEl('story-objective-action');
-    const aud = intakeAud && intakeAud.value ? intakeAud.value.trim() : '';
-    const act = intakeAct && intakeAct.value ? intakeAct.value.trim() : '';
-    const existingObj = project.intake && project.intake.objective;
-    if (aud || act || (existingObj && (existingObj.audience || existingObj.nextAction))) {
-      const curAud = existingObj ? String(existingObj.audience || '').trim() : '';
-      const curAct = existingObj ? String(existingObj.nextAction || '').trim() : '';
-      if (aud !== curAud || act !== curAct) {
-        applyStoryObjective(aud, act, 'intake');
-      }
-    }
-  }
   return JSON.parse(JSON.stringify({
     title: storyEl('story-title').value.trim() || 'Untitled script',
     intake: { ...(project.intake || {}), context: storyEl('story-context').value.trim() },
@@ -3462,18 +3425,6 @@ storyEl('story-notes-toggle').addEventListener('click', () => {
 });
 storyEl('story-title').addEventListener('input', queueStorySave);
 storyEl('story-context').addEventListener('input', queueStorySave);
-if (storyEl('story-objective-audience')) {
-  storyEl('story-objective-audience').addEventListener('input', () => {
-    applyStoryObjective(storyEl('story-objective-audience').value, storyEl('story-objective-action') ? storyEl('story-objective-action').value : '', 'intake');
-    queueStorySave();
-  });
-}
-if (storyEl('story-objective-action')) {
-  storyEl('story-objective-action').addEventListener('input', () => {
-    applyStoryObjective(storyEl('story-objective-audience') ? storyEl('story-objective-audience').value : '', storyEl('story-objective-action').value, 'intake');
-    queueStorySave();
-  });
-}
 if (storyEl('mem-objective-audience')) {
   storyEl('mem-objective-audience').addEventListener('input', () => {
     applyStoryObjective(storyEl('mem-objective-audience').value, storyEl('mem-objective-action') ? storyEl('mem-objective-action').value : '', 'memory');
@@ -3837,7 +3788,7 @@ storyEl('story-return-notice').addEventListener('click', event => {
   if (event.target.closest('[data-return-dismiss]')) dismissReturnNotice();
 });
 // WBR-373: the one next step, wherever it is shown.
-for (const id of ['story-next-step-rail', 'story-next-step-footer', 'story-next-step-help']) {
+for (const id of ['story-next-step-footer', 'story-next-step-help']) {
   storyEl(id).addEventListener('click', event => {
     const button = event.target.closest('[data-next-action]');
     if (button) runNextStep(button.dataset.nextAction);

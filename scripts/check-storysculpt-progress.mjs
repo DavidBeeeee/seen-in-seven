@@ -166,7 +166,7 @@ for (const step of ['B5.5', 'M5.5', 'R6.5']) {
   check(app.context.sentChoice === '2', step+': button submits the numbered choice');
 }
 
-// 3. One next step, identical on all three surfaces, in all three states
+// 3. One next step, identical in the footer and Help, in all three states
 {
   const cases = [
     ['interview', project('i', { touched: 1 }), 'continue', 'Answer the next question to finish this script.'],
@@ -176,12 +176,12 @@ for (const step of ['B5.5', 'M5.5', 'R6.5']) {
   for (const [state, proj, action, text] of cases) {
     const app = boot([proj]);
     await app.run();
-    const surfaces = ['story-next-step-rail', 'story-next-step-footer', 'story-next-step-help'].map(id => app.el(id).innerHTML);
+    const surfaces = ['story-next-step-footer', 'story-next-step-help'].map(id => app.el(id).innerHTML);
     const steps = surfaces.map(readStep);
     check(steps.every(s => s.state === state), state + ': every surface must render state ' + state + ', got ' + steps.map(s => s.state).join(', '));
     check(steps.every(s => s.text === text), state + ': every surface must say "' + text + '"');
     check(steps.every(s => s.action === action), state + ': every surface must offer action ' + action);
-    check(new Set(surfaces.map(m => m.replace(/data-surface="[^"]*"/, ''))).size === 1, state + ': the three surfaces must render the same step');
+    check(new Set(surfaces.map(m => m.replace(/data-surface="[^"]*"/, ''))).size === 1, state + ': the footer and Help must render the same step');
     check(surfaces.every(m => !m.includes(EM)), state + ': no em dashes in the rendered step');
     const strip = app.el('story-progress').innerHTML;
     check(/Your scripts/.test(strip) && !strip.includes(EM), state + ': strip must render with no em dashes');
@@ -190,15 +190,15 @@ for (const step of ['B5.5', 'M5.5', 'R6.5']) {
   // Marking the finished script filmed through the next step moves every surface on.
   const app = boot([project('f2', { finished: 2, touched: 1 })]);
   await app.run();
-  const rail = app.el('story-next-step-rail');
+  const rail = app.el('story-next-step-footer');
   rail.listeners.click[0]({ target: { closest: sel => (sel === '[data-next-action]' ? { dataset: { nextAction: 'film' } } : null) } });
   await new Promise(resolve => setTimeout(resolve, 0));
-  const after = ['story-next-step-rail', 'story-next-step-footer', 'story-next-step-help'].map(id => readStep(app.el(id).innerHTML).state);
+  const after = ['story-next-step-footer', 'story-next-step-help'].map(id => readStep(app.el(id).innerHTML).state);
   check(after.every(s => s === 'filmed'), 'after Mark filmed every surface must say filmed, got ' + after.join(', '));
   check(/data-filmed="1"/.test(app.el('story-progress').innerHTML), 'after Mark filmed the strip must count 1 filmed');
   check(app.updates.some(u => u.intake && u.intake.filmed === true && typeof u.intake.filmedAt === 'string'), 'Mark filmed must save filmed with a filmedAt date');
 
-  // The app renders all three slots from one STATES.nextStep call.
+  // The app renders both slots from one STATES.nextStep call.
   check((appSrc.match(/STATES\.nextStep\(/g) || []).length === 1, 'storysculpt.js must call STATES.nextStep in exactly one place');
 }
 
@@ -261,10 +261,10 @@ for (const step of ['B5.5', 'M5.5', 'R6.5']) {
   const rail = html.indexOf('id="story-projects"');
   const strip = html.indexOf('id="story-progress"');
   const list = html.indexOf('id="story-project-list"');
-  check(rail > 0 && strip > rail && strip < list, 'layout: the strip sits at the top of the rail');
+  check(rail > 0 && list > rail && strip > list, 'layout: chat history comes before the collapsible script totals');
   check(/id="story-refine-box"[\s\S]*id="story-next-step-footer"[\s\S]*id="story-refine-note"/.test(html), 'layout: the footer step sits with the finished script');
   check(/id="story-help"[\s\S]*id="story-next-step-help"/.test(html), 'layout: Help carries the next step');
-  check(/id="story-next-step-rail"/.test(html), 'layout: the rail carries the next step');
+  check(!/id="story-next-step-rail"/.test(html), 'layout: the chat list has no redundant next-step button');
 }
 
 // 7. WBR-462 graded feedback scale, early finish, sincere effort, maintaining vs recovering, month-over-month, and stated objective (Stranger 44, 48, 52, 54, 55; UX 13, 17, 18, 19, 45, 46)
@@ -341,22 +341,22 @@ for (const step of ['B5.5', 'M5.5', 'R6.5']) {
   const obj = S.scriptObjective(withObj);
   check(obj && obj.audience === 'Independent bakery owners' && obj.category === 'conversion', 'Stranger 44: stated objective classifies script');
 
-  // Stranger 44 real-handler test: intake -> save -> finished script panel -> story profile edit -> Help
+  // Stranger 44 real-handler test: Settings -> save -> finished script panel -> story profile edit -> Help
   check(/<h3>Why does StorySculpt ask who this is for\?<\/h3>/.test(html), 'Stranger 44: Help answers why StorySculpt asks who the script is for');
   const objApp = boot([project('obj-live', { touched: 1 })]);
   await objApp.run();
-  check(!objApp.el('story-intake-objective').hidden, 'Stranger 44: intake objective fields are visible during interview');
+  check(!/id="story-intake-objective"/.test(html), 'objective: no duplicate audience/action form takes space from the interview');
   vm.runInContext('activeStory.output = "Finished script without objective."; renderScriptPanel();', objApp.context);
   check(objApp.el('story-output-objective').dataset.objectiveState === 'unset' && /No objective stated/i.test(objApp.el('story-output-objective').textContent), 'Stranger 44: script with no objective says so plainly on the panel');
 
   const objApp2 = boot([project('obj-live-2', { touched: 1 })]);
   await objApp2.run();
-  objApp2.el('story-objective-audience').value = 'Independent bakery owners';
-  objApp2.el('story-objective-action').value = 'Book a tasting menu consultation';
-  objApp2.el('story-objective-audience').listeners.input[0]();
-  objApp2.el('story-objective-action').listeners.input[0]();
+  objApp2.el('mem-objective-audience').value = 'Independent bakery owners';
+  objApp2.el('mem-objective-action').value = 'Book a tasting menu consultation';
+  objApp2.el('mem-objective-audience').listeners.input[0]();
+  objApp2.el('mem-objective-action').listeners.input[0]();
   await vm.runInContext('saveActiveStory("Objective saved")', objApp2.context);
-  check(objApp2.updates.some(u => u.intake && u.intake.objective && u.intake.objective.audience === 'Independent bakery owners' && u.intake.objective.nextAction === 'Book a tasting menu consultation'), 'Stranger 44: intake handler saves objective to project.intake.objective through existing save path');
+  check(objApp2.updates.some(u => u.intake && u.intake.objective && u.intake.objective.audience === 'Independent bakery owners' && u.intake.objective.nextAction === 'Book a tasting menu consultation'), 'Stranger 44: Settings handler saves objective to project.intake.objective through existing save path');
   vm.runInContext('activeStory.output = "Finished script with objective."; renderScriptPanel();', objApp2.context);
   const panelObjText = objApp2.el('story-output-objective').textContent;
   check(objApp2.el('story-output-objective').dataset.objectiveState === 'stated' && panelObjText.includes('Independent bakery owners') && panelObjText.includes('Book a tasting menu consultation'), 'Stranger 44: finished script panel displays stated audience and next action');

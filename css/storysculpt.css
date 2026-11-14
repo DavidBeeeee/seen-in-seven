@@ -1089,7 +1089,7 @@ button[aria-busy="true"] .spin-icon, button[aria-busy="true"] svg.spin-icon { wi
     padding: 8px 16px 0;
   }
 }
-@media (max-height: 560px) {
+@media (max-width: 359px) and (max-height: 560px), (min-width: 821px) and (max-height: 560px) {
   .story-workspace.is-editing {
     height: auto;
     min-height: calc(100vh - var(--header-height));
@@ -1490,4 +1490,45 @@ html.studio-light .story-feedback-badge {
   .story-next-actions { gap: 6px; }
   .story-next-actions .secondary-button { min-height: 32px; padding: 5px 8px; font-size: 11px; }
   .story-output-meta { padding: 8px 14px; }
+}
+
+/* Chats are the sidebar's main content; totals and retention are references. */
+.story-rail-head { gap: 8px; }
+.story-projects .story-rail-head h2 { margin: 0; }
+.story-new-script { display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: auto; min-height: 36px; padding: 6px 10px; white-space: nowrap; font-size: 12px; }
+.story-new-script svg { width: 16px; height: 16px; }
+.story-library-totals { flex-shrink: 0; margin-top: 12px; font-size: 11px; color: var(--studio-muted); }
+.story-library-totals > summary { cursor: pointer; padding: 4px 0; }
+#eee-app #story-inactivity-line { display: block; margin: 6px 0 0; padding: 0; border: 0; background: none; font-size: .625rem; line-height: 1.4; flex-shrink: 0; }
+.story-projects .eee-rail-list { scrollbar-width: auto; scrollbar-color: var(--studio-teal) var(--studio-bg); scrollbar-gutter: stable; padding-right: 4px; }
+.story-projects .eee-rail-list::-webkit-scrollbar { width: 10px; }
+.story-projects .eee-rail-list::-webkit-scrollbar-track { background: var(--studio-bg); border-radius: 6px; }
+.story-projects .eee-rail-list::-webkit-scrollbar-thumb { background: var(--studio-teal); border: 2px solid var(--studio-bg); border-radius: 6px; }
+.story-projects .eee-rail-list::-webkit-scrollbar-thumb:hover { background: var(--studio-soft); }
+#eee-app .story-return-slot { padding: 8px 0; }
+#eee-app .story-return-slot p { font-size: .75rem; line-height: 1.4; }
+.story-projects .story-return-notice { margin: 0; }
+@media (min-width: 821px) {
+  .story-projects.is-desktop-collapsed .story-new-script { width: 36px; padding: 0; }
+  .story-projects.is-desktop-collapsed .story-new-script span { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); }
+}
+@media (max-width: 820px) {
+  .story-projects .story-new-script { width: auto; min-height: 36px; }
+  .story-composer { padding: 10px 12px 6px; gap: 8px; }
+  .story-composer textarea { min-height: min(128px, calc(var(--story-vvh, 100dvh) * .34)); max-height: min(240px, calc(var(--story-vvh, 100dvh) * .45)); padding: 12px; }
+  body.story-typing .story-composer textarea { max-height: calc(var(--story-vvh, 100dvh) * .45); }
+  .story-scroll { padding: 12px; }
+  .story-message-body { padding: 12px 14px; }
+  .story-projects.is-open { scrollbar-width: auto; scrollbar-color: var(--studio-teal) var(--studio-bg); }
+}
+
+.story-project-item { height: 52px; min-height: 52px; max-height: 52px; }
+.story-project-select { max-width: none; }
+.story-project-select .story-project-title { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; white-space: normal; line-height: 1.35; }
+@media (max-width: 820px) {
+  #eee-app .story-projects:not(.is-open) #story-inactivity-line { display: none; }
+}
+
+@supports selector(::-webkit-scrollbar) {
+  .story-projects .eee-rail-list { scrollbar-color: auto; }
 }
