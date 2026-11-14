@@ -3,9 +3,9 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mastermind Networking Directory | Colorado Mastermind Studio</title>
+  <title>Business Cards | Colorado Mastermind Studio</title>
   <link rel="icon" type="image/svg+xml" href="/assets/icons/studio.svg">
-  <meta name="description" content="Colorado Mastermind networking directory. Add your details, what you do, and whether you are open to collaborating.">
+  <meta name="description" content="Colorado Mastermind Business Cards. Add your details, what you do, and whether you are open to collaborating.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Oswald:wght@500;600;700&display=swap" rel="stylesheet">
@@ -416,7 +416,7 @@
       <span class="studio-mark">CM</span>
       <span>
         <strong>Colorado Mastermind</strong>
-        <small>Networking Directory</small>
+        <small>Business Cards</small>
       </span>
     </a>
     <div class="header-actions">
@@ -438,7 +438,7 @@
 
     <aside class="network-preview-banner" id="network-preview-banner" aria-label="Preview mode controls">
       <div>
-        <strong>Decision-ready preview:</strong> New entries wait for David's approval before they appear in the public directory. The database table migration is written and held unapplied until you choose where this page lives.
+        <strong>Preview mode:</strong> New cards wait for David's approval before they appear on the Business Cards page.
       </div>
       <div class="network-preview-actions">
         <button class="secondary-button" id="toggle-admin-preview" type="button" aria-expanded="false" aria-controls="network-admin-preview">
@@ -451,7 +451,7 @@
     <div class="network-grid">
       <section class="network-panel" aria-labelledby="form-heading">
         <h2 id="form-heading">Add your card</h2>
-        <p class="network-panel-sub">Fill out the short form below. Once David approves your card, it appears in the directory.</p>
+        <p class="network-panel-sub">Fill out the short form below. Once David approves your card, it shows up with the other Business Cards.</p>
 
         <form id="network-form" method="post" action="/network" novalidate>
           <div class="network-field">
@@ -530,7 +530,7 @@
                 aria-describedby="network-consent-error"
                 aria-errormessage="network-consent-error"
               >
-              <span>I agree to show my name, what I do, my link, and my collaboration preference on the Colorado Mastermind networking directory once approved.</span>
+              <span>I agree to show my name, what I do, my link, and my collaboration preference on the Colorado Mastermind Business Cards page once approved.</span>
             </label>
             <span class="network-error" id="network-consent-error">Please check the consent box so we have permission to list your card.</span>
           </div>
@@ -547,7 +547,7 @@
       <section class="network-panel" aria-labelledby="directory-heading">
         <div class="network-directory-head">
           <div>
-            <h2 id="directory-heading">Approved directory</h2>
+            <h2 id="directory-heading">Business Cards</h2>
             <p class="network-panel-sub" style="margin-bottom: 0;">Only entries approved by David appear here.</p>
           </div>
           <span class="network-count" id="network-directory-count">0 approved</span>
@@ -557,7 +557,7 @@
 
         <section class="network-admin-drawer" id="network-admin-preview" hidden aria-labelledby="admin-preview-heading">
           <h3 id="admin-preview-heading">Admin approval queue (preview)</h3>
-          <p>Unapproved submissions stay hidden from the directory above until you click Approve. You can also manage this queue in <a href="/admin#network-directory" style="color: var(--teal);">Studio Admin</a>.</p>
+          <p>Unapproved cards stay hidden from the Business Cards above until you click Approve. You can also manage this queue in <a href="/admin#network-directory" style="color: var(--teal);">Studio Admin</a>.</p>
           <div class="network-admin-list" id="network-admin-list"></div>
         </section>
       </section>

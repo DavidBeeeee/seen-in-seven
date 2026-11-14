@@ -91,6 +91,9 @@ async function fetchDirectoryEntries() {
     } else {
       directoryState.mode = 'live-table';
       directoryState.entries = Array.isArray(data) ? data : [];
+      // WBR-477: the live table answers, so the local preview queue is not
+      // the real one. Approval lives in Studio Admin; hide the preview banner.
+      if (netEl('network-preview-banner')) netEl('network-preview-banner').hidden = true;
     }
   } catch (err) {
     directoryState.mode = 'preview-stub';
@@ -338,7 +341,7 @@ async function handleFormSubmit(event) {
 
   statusBox.hidden = false;
   statusBox.className = 'network-status';
-  statusBox.textContent = 'Thank you, ' + newEntry.name + '. Your card is in the approval queue and stays hidden from the public directory until David approves it.';
+  statusBox.textContent = 'Thank you, ' + newEntry.name + '. Your card is in the approval queue and stays hidden from the Business Cards page until David approves it.';
 
   renderDirectory();
 }
