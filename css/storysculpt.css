@@ -1089,7 +1089,7 @@ button[aria-busy="true"] .spin-icon, button[aria-busy="true"] svg.spin-icon { wi
     padding: 8px 16px 0;
   }
 }
-@media (max-width: 420px), (max-height: 560px) {
+@media (max-height: 560px) {
   .story-workspace.is-editing {
     height: auto;
     min-height: calc(100vh - var(--header-height));
@@ -1364,3 +1364,130 @@ html.studio-light .story-feedback-badge {
 }
 
 
+
+/* Keep reference material available without taking space from the writing. */
+.story-format-choice-note { margin: 0 0 12px; color: var(--studio-muted); font-size: 13px; line-height: 1.5; }
+.story-first-run-card > summary,
+.story-profile-fold > summary,
+.story-consequence-note > summary {
+  cursor: pointer;
+  color: var(--studio-soft);
+  font-weight: 700;
+  line-height: 1.5;
+}
+.story-first-run-card > summary span {
+  margin-left: 12px;
+  color: var(--studio-muted);
+  font-size: 13px;
+  font-weight: 400;
+}
+.story-first-run-card { padding: 16px 20px; }
+.story-first-run-card[open] > summary { margin-bottom: 20px; }
+.story-profile-fold { font-size: 12px; }
+.story-profile-fold > summary { padding: 6px 0; }
+.story-profile-fold[open] { max-height: 32vh; overflow-y: auto; }
+.story-profile-fold[open] > summary { margin-bottom: 6px; }
+.story-consequence-note[open] > summary { margin-bottom: 8px; }
+.story-output-objective[data-objective-state="unset"] { display: none; }
+
+@media (min-width: 821px) {
+  .story-workspace {
+    width: 100%;
+    max-width: none;
+    grid-template-columns: 240px minmax(0, 1fr);
+  }
+  .story-projects { width: 240px; max-width: 240px; padding: 16px; }
+  .story-main { width: 100%; max-width: none; min-height: 0; }
+  .story-workspace.is-editing { height: calc(100dvh - var(--header-height)); min-height: 0; box-sizing: border-box; }
+  .story-workspace.is-editing .story-projects { height: 100%; max-height: 100%; }
+  .story-chat { height: 100%; min-height: 0; }
+  .story-chat-head { padding: 10px 24px; }
+  .story-chat.has-output .story-stage { grid-template-columns: minmax(300px, .7fr) minmax(0, 1.3fr); }
+  .story-pane-chat, .story-pane-artifact { min-width: 0; }
+  .story-pane-artifact { overflow-y: auto; }
+  .story-composer textarea { min-height: 100px; }
+  .story-artifact-head { padding: 12px 20px; flex-wrap: wrap; gap: 8px; }
+  .story-artifact-body { padding: 14px 20px; }
+  .story-artifact-foot { padding: 10px 20px; gap: 6px; }
+  .story-artifact-foot-row { flex-wrap: wrap; gap: 8px; }
+  .story-output-meta { padding: 8px 20px; }
+  .story-output-feedback { padding-top: 0; border-top: 0; }
+  .story-refine-box { padding: 12px 20px; }
+  .story-finished-line { margin-bottom: 8px; }
+  /* The script panel already offers the same next step beside its status. */
+  .story-chat.has-output #story-next-step-footer { display: none; }
+  .story-rail-toggle { cursor: pointer; min-height: 34px; }
+  .story-rail-toggle svg { display: none; }
+  .story-rail-toggle::after { content: "‹"; font-family: sans-serif; font-size: 24px; line-height: 1; color: var(--studio-muted); }
+  .story-workspace:has(.story-projects.is-desktop-collapsed) { grid-template-columns: 64px minmax(0, 1fr); }
+  .story-projects.is-desktop-collapsed { width: 64px; max-width: 64px; padding: 12px 8px; }
+  .story-projects.is-desktop-collapsed > :not(.story-rail-head) { display: none; }
+  .story-projects.is-desktop-collapsed .story-rail-head { flex-direction: column; gap: 12px; }
+  .story-projects.is-desktop-collapsed .story-rail-head h2 { margin: 0; }
+  .story-projects.is-desktop-collapsed .story-rail-toggle { width: 34px; justify-content: center; }
+  .story-projects.is-desktop-collapsed .story-rail-toggle span { display: none; }
+  .story-projects.is-desktop-collapsed .story-rail-toggle::after { content: "›"; }
+}
+
+/* Sidebar references stay quiet; writing keeps the visual priority. */
+#eee-app #story-inactivity-line { font-size: .6875rem; line-height: 1.45; margin: 12px 2px; }
+#eee-app .story-projects .story-progress { padding: 8px; gap: 4px 8px; }
+#eee-app .story-projects .story-progress-head { font-size: .625rem; margin: 0; }
+#eee-app .story-projects .story-progress-stats { gap: 8px; }
+#eee-app .story-projects .story-progress-stat { font-size: .6875rem; }
+#eee-app .story-projects .story-progress-stat strong { font-size: .75rem; }
+#eee-app .story-projects .story-progress p { font-size: .6875rem; line-height: 1.4; margin: 0; }
+
+/* One scrollable settings body, with a fixed heading and Save button. */
+.story-memory-panel { left: auto; width: min(560px, 100vw); height: 100dvh; box-sizing: border-box; overflow: hidden; }
+.story-memory-head, .story-memory-foot { flex-shrink: 0; }
+.story-memory-head { align-items: center; padding: 18px 24px; }
+.story-memory-head .eyebrow { margin: 0; }
+.story-memory-head .icon-button { flex-shrink: 0; }
+.story-memory-body { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding: 20px 24px 24px; scrollbar-gutter: stable; }
+#eee-app .story-memory-intro { padding: 0; margin: 0 0 18px; font-size: .8125rem; }
+.story-settings-overview { margin-bottom: 20px; }
+.story-settings-card { border: 1px solid var(--studio-border); border-radius: 10px; overflow: hidden; }
+.story-settings-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px; }
+.story-settings-row + .story-settings-row { border-top: 1px solid var(--studio-border); }
+.story-settings-row > div { flex: 1; min-width: 0; }
+.story-settings-row strong { font-size: .875rem; }
+#eee-app .story-settings-row p { margin: 4px 0 0; font-size: .75rem; line-height: 1.45; color: var(--studio-muted); }
+.story-settings-row button { flex-shrink: 0; min-height: 36px; padding: 6px 12px; font-size: .75rem; }
+#settings-theme-toggle { display: inline-flex; align-items: center; gap: 8px; }
+#settings-theme-toggle::before { content: ''; width: 28px; height: 16px; border-radius: 99px; background: radial-gradient(circle at 8px 8px, var(--studio-soft) 5px, transparent 5.5px), var(--studio-surface-2); border: 1px solid var(--studio-border); flex-shrink: 0; }
+#settings-theme-toggle[aria-checked="true"]::before { background: radial-gradient(circle at 20px 8px, var(--studio-bg) 5px, transparent 5.5px), var(--studio-teal); }
+.story-memory-body .story-notes { padding: 0 0 20px; margin-bottom: 20px; background: transparent; }
+.story-memory-body .story-notes label { text-transform: none; font-size: .875rem; letter-spacing: 0; }
+#eee-app .story-settings-description { font-size: .75rem; line-height: 1.5; color: var(--studio-muted); margin: 0 0 10px; }
+.story-memory-body .story-memory-preview { padding: 0; margin-bottom: 20px; }
+.story-memory-body .story-memory-fields { display: grid; flex: none; overflow: visible; padding: 0; gap: 18px; align-content: start; }
+.story-memory-body .story-memory-freshness { margin: 0 0 20px; }
+.story-memory-foot { flex-wrap: wrap; padding: 14px 24px; }
+.story-memory-foot-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; width: 100%; }
+.story-memory-foot-actions button { font-size: .75rem; }
+.story-help-content { min-height: 0; }
+
+@media (min-width: 821px) {
+  /* Pin the editing shell to the actual window; only its contents scroll. */
+  .story-workspace.is-editing { position: fixed; inset: var(--header-height) 0 0; margin: 0; height: auto; overflow: hidden; }
+  .story-workspace.is-editing .story-pane-chat { overflow-y: auto; }
+  .story-workspace.is-editing .story-pane-artifact .story-artifact-body { min-height: 0; }
+  .story-composer textarea { min-height: min(100px, 18dvh); max-height: min(180px, 25dvh); }
+}
+@media (max-width: 520px) {
+  .story-memory-body { padding: 16px; }
+  .story-memory-head, .story-memory-foot { padding: 14px 16px; }
+  .story-settings-row { flex-wrap: wrap; gap: 8px; }
+  .story-settings-row > div { flex-basis: 100%; }
+}
+@media (min-width: 821px) and (max-width: 1100px) {
+  .story-artifact-head { flex-direction: column; align-items: stretch; padding: 8px 14px; gap: 6px; }
+  .story-artifact-eyebrow-row { flex-wrap: wrap; gap: 4px 8px; }
+  .story-version-nav { margin-top: 4px; }
+  .story-artifact-actions .secondary-button { min-height: 32px; padding: 5px 8px; font-size: 11px; }
+  .story-artifact-foot { padding: 8px 14px; }
+  .story-next-actions { gap: 6px; }
+  .story-next-actions .secondary-button { min-height: 32px; padding: 5px 8px; font-size: 11px; }
+  .story-output-meta { padding: 8px 14px; }
+}

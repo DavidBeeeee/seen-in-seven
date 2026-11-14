@@ -3244,7 +3244,9 @@ function renderMemoryFreshness() {
   }
 }
 
+let memoryReturnFocus = null;
 function openMemory() {
+  memoryReturnFocus = document.activeElement;
   const accountMenu = storyEl('eee-account-menu');
   const accountButton = storyEl('eee-account-button');
   if (accountMenu && !accountMenu.hidden) {
@@ -3258,12 +3260,18 @@ function openMemory() {
   storyEl('mem-status').textContent = '';
   storyEl('story-memory').hidden = false;
   storyEl('story-memory-scrim').hidden = false;
+  storyEl('story-notes').hidden = !activeStory;
+  renderNewChatMemoryPreview();
+  const body = storyEl('story-memory-body');
+  if (body) body.scrollTop = 0;
+  storyEl('story-memory-close').focus();
   EEEStudio.refreshIcons();
 }
 
 function closeMemory() {
   storyEl('story-memory').hidden = true;
   storyEl('story-memory-scrim').hidden = true;
+  if (memoryReturnFocus && typeof memoryReturnFocus.focus === 'function') memoryReturnFocus.focus();
 }
 
 function openHelp() {
@@ -3351,8 +3359,11 @@ if (memoryPreviewEl && typeof memoryPreviewEl.addEventListener === 'function') {
 const memoryPanelEl = storyEl('story-memory');
 if (memoryPanelEl && typeof memoryPanelEl.addEventListener === 'function') {
   memoryPanelEl.addEventListener('click', event => {
-    const btn = event.target && event.target.closest && event.target.closest('[data-action="toggle-settings-theme"]');
+    const btn = event.target && event.target.closest && event.target.closest('[data-action]');
     if (!btn) return;
+    if (btn.dataset.action === 'settings-new-script') { closeMemory(); showStart(); return; }
+    if (btn.dataset.action === 'settings-edit-profile') { storyEl('mem-name').focus(); return; }
+    if (btn.dataset.action !== 'toggle-settings-theme') return;
     const isLight = currentStoryTheme() === 'light';
     const next = isLight ? 'dark' : 'light';
     if (typeof document !== 'undefined' && document.documentElement && document.documentElement.classList) {
@@ -3445,7 +3456,9 @@ if (railFilterEl) {
 storyEl('new-project-button').addEventListener('click', showStart);
 storyEl('delete-project-button').addEventListener('click', deleteActiveStory);
 storyEl('story-notes-toggle').addEventListener('click', () => {
-  storyEl('story-notes').hidden = !storyEl('story-notes').hidden;
+  openMemory();
+  const entries = storyEl('story-memory-preview');
+  if (entries && !entries.hidden && typeof entries.scrollIntoView === 'function') entries.scrollIntoView({ block: 'start' });
 });
 storyEl('story-title').addEventListener('input', queueStorySave);
 storyEl('story-context').addEventListener('input', queueStorySave);
@@ -3582,6 +3595,7 @@ function setStoryRailOpen(open) {
   if (!rail || !toggle || !rail.classList) return;
   rail.classList.toggle('is-open', open);
   toggle.setAttribute('aria-expanded', String(open));
+  toggle.setAttribute('aria-label', open ? 'Hide chats' : 'Show chats');
 }
 function setStoryEditing(editing) {
   const workspace = storyEl('story-workspace');
@@ -3630,9 +3644,25 @@ if (typeof document.addEventListener === 'function') {
   });
 }
 storyEl('story-rail-toggle').addEventListener('click', () => {
-  if (!isStoryPhone()) return;
+  if (!isStoryPhone()) {
+    const rail = storyEl('story-projects');
+    const collapsed = rail.classList.toggle('is-desktop-collapsed');
+    const toggle = storyEl('story-rail-toggle');
+    toggle.setAttribute('aria-expanded', String(!collapsed));
+    toggle.setAttribute('aria-label', collapsed ? 'Show chats' : 'Hide chats');
+    return;
+  }
   setStoryRailOpen(!storyEl('story-projects').classList.contains('is-open'));
 });
+function syncStoryRailToggle() {
+  const rail = storyEl('story-projects');
+  const toggle = storyEl('story-rail-toggle');
+  const open = isStoryPhone() ? rail.classList.contains('is-open') : !rail.classList.contains('is-desktop-collapsed');
+  toggle.setAttribute('aria-expanded', String(open));
+  toggle.setAttribute('aria-label', open ? 'Hide chats' : 'Show chats');
+}
+syncStoryRailToggle();
+if (typeof window.addEventListener === 'function') window.addEventListener('resize', syncStoryRailToggle);
 if (window.visualViewport) {
   // The keyboard resizes the visual viewport; rotation resizes the window.
   window.visualViewport.addEventListener('resize', syncStoryViewport);
@@ -3648,6 +3678,16 @@ if (storyEl('story-open-memory-top')) storyEl('story-open-memory-top').addEventL
 if (storyEl('menu-story-profile')) storyEl('menu-story-profile').addEventListener('click', openMemory);
 storyEl('story-memory-close').addEventListener('click', closeMemory);
 storyEl('story-memory-scrim').addEventListener('click', closeMemory);
+if (typeof document.addEventListener === 'function') document.addEventListener('keydown', event => {
+  if (storyEl('story-memory').hidden || !storyEl('story-delete-dialog-backdrop').hidden) return;
+  if (event.key === 'Escape') { event.preventDefault(); closeMemory(); return; }
+  if (event.key !== 'Tab') return;
+  const focusable = [...storyEl('story-memory').querySelectorAll('button:not([disabled]), input, textarea, select, a[href]')].filter(el => el.getClientRects().length);
+  const first = focusable[0];
+  const last = focusable[focusable.length - 1];
+  if (event.shiftKey && document.activeElement === first) { event.preventDefault(); last.focus(); }
+  else if (!event.shiftKey && (document.activeElement === last || !storyEl('story-memory').contains(document.activeElement))) { event.preventDefault(); first.focus(); }
+});
 storyEl('story-help-open').addEventListener('click', openHelp);
 storyEl('story-help-close').addEventListener('click', closeHelp);
 storyEl('story-help-scrim').addEventListener('click', closeHelp);

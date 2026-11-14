@@ -1002,13 +1002,15 @@
     return '<div class="story-settings-card" data-settings-summary="true">' +
       '<div class="story-settings-row" id="settings-format-row">' +
         '<div><strong>Script format</strong><p id="settings-format-value">' + escapeHtml(formatRule) + '</p></div>' +
+        '<button class="secondary-button" type="button" data-action="settings-new-script">New script</button>' +
       '</div>' +
       '<div class="story-settings-row" id="settings-theme-row">' +
         '<div><strong>Color theme</strong><p id="settings-theme-value">' + escapeHtml(theme) + ' mode active</p></div>' +
-        '<button class="secondary-button" id="settings-theme-toggle" data-action="toggle-settings-theme" type="button">Switch to ' + escapeHtml(nextTheme) + '</button>' +
+        '<button class="secondary-button" id="settings-theme-toggle" data-action="toggle-settings-theme" type="button" role="switch" aria-label="Light mode" aria-checked="' + (theme === 'Light' ? 'true' : 'false') + '">Switch to ' + escapeHtml(nextTheme) + '</button>' +
       '</div>' +
       '<div class="story-settings-row" id="settings-profile-row">' +
         '<div><strong>Story profile</strong><p id="settings-profile-summary">' + escapeHtml(profileSummary) + '</p></div>' +
+        '<button class="secondary-button" type="button" data-action="settings-edit-profile">Edit profile</button>' +
       '</div>' +
     '</div>';
   }
