@@ -263,3 +263,6 @@
 .network-admin-editing textarea { resize: vertical; }
 .network-admin-error { margin-top: 8px; color: #c2410c; font-size: 13px; font-weight: 700; }
 .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.network-admin-stack { display: grid; gap: 6px; }
+.network-admin-stack label { font-size: 12px; font-weight: 800; }
+.network-admin-sub { margin-top: 4px; font-size: 13px; opacity: 0.85; }

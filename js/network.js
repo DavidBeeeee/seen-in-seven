@@ -47,6 +47,7 @@ function refreshIcons() {
 }
 
 function loadLocalEntries() {
+  // WBR-477: once the live table answers, the local preview list is unused.
   try {
     const raw = localStorage.getItem(NETWORK_STORAGE_KEY);
     if (!raw) {
@@ -81,7 +82,7 @@ async function fetchDirectoryEntries() {
   try {
     const { data, error } = await networkSb
       .from('network_directory')
-      .select('id,name,what_you_do,link_url,open_to_collaborating,status,created_at,approved_at')
+      .select('id,name,what_you_do,link_url,extra_links,social_url,looking_for,open_to_collaborating,status,created_at,approved_at')
       .eq('status', 'approved')
       .order('created_at', { ascending: false });
 
@@ -91,6 +92,7 @@ async function fetchDirectoryEntries() {
     } else {
       directoryState.mode = 'live-table';
       directoryState.entries = Array.isArray(data) ? data : [];
+      await loadMemberContacts();
       // WBR-477: the live table answers, so the local preview queue is not
       // the real one. Approval lives in Studio Admin; hide the preview banner.
       if (netEl('network-preview-banner')) netEl('network-preview-banner').hidden = true;
@@ -101,6 +103,36 @@ async function fetchDirectoryEntries() {
   }
 
   renderDirectory();
+}
+
+// Email and phone are never readable by the public. A signed-in member gets
+// them through network_directory_contacts(), and only for cards whose owner
+// ticked "let members reach me" (WBR-477, David 2026-11-14).
+let networkSignedIn = false;
+let networkContacts = {};
+async function loadMemberContacts() {
+  networkContacts = {};
+  networkSignedIn = false;
+  if (!networkSb) return;
+  try {
+    const { data: sessionData } = await networkSb.auth.getSession();
+    networkSignedIn = Boolean(sessionData && sessionData.session);
+    if (!networkSignedIn) return;
+    const { data, error } = await networkSb.rpc('network_directory_contacts');
+    if (!error && Array.isArray(data)) {
+      for (const row of data) networkContacts[row.id] = row;
+    }
+  } catch (e) {}
+}
+
+function socialLabel(url) {
+  const host = String(url || '').replace(/^https?:\/\//i, '').replace(/^www\./i, '').split('/')[0].toLowerCase();
+  const known = { 'instagram.com': 'Instagram', 'facebook.com': 'Facebook', 'linkedin.com': 'LinkedIn', 'tiktok.com': 'TikTok', 'youtube.com': 'YouTube', 'x.com': 'X', 'twitter.com': 'X', 'threads.net': 'Threads' };
+  return known[host] || 'Social';
+}
+
+function shortLink(url) {
+  return String(url || '').replace(/^https?:\/\//i, '').replace(/^www\./i, '').replace(/\/$/, '');
 }
 
 function renderDirectory() {
@@ -127,16 +159,31 @@ function renderDirectory() {
         const collabOpen = Boolean(entry.open_to_collaborating);
         const badgeClass = collabOpen ? 'is-open' : 'is-closed';
         const badgeText = collabOpen ? 'Open to collaborating' : 'Not collaborating right now';
-        const link = String(entry.link_url || '').trim();
+        const links = [entry.link_url].concat(Array.isArray(entry.extra_links) ? entry.extra_links : [])
+          .map(item => String(item || '').trim()).filter(item => /^https?:\/\//i.test(item));
+        const social = String(entry.social_url || '').trim();
+        const linkHtml = links.map(url => '<a class="network-card-link" href="' + safeAttr(url) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(shortLink(url)) + '</a>').join('') +
+          (/^https?:\/\//i.test(social) ? '<a class="network-card-link" href="' + safeAttr(social) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(socialLabel(social)) + '</a>' : '');
+        const looking = String(entry.looking_for || '').trim();
+        const contact = networkContacts[entry.id];
+        let contactHtml = '';
+        if (contact && (contact.email || contact.phone)) {
+          contactHtml = '<div class="network-card-contact">' +
+            (contact.email ? '<a href="mailto:' + safeAttr(contact.email) + '">' + escapeHtml(contact.email) + '</a>' : '') +
+            (contact.phone ? '<a href="tel:' + safeAttr(String(contact.phone).replace(/[^0-9+]/g, '')) + '">' + escapeHtml(contact.phone) + '</a>' : '') +
+          '</div>';
+        }
         return '<article class="network-card" data-entry-id="' + safeAttr(entry.id) + '">' +
           '<div class="network-card-top">' +
             '<h3 class="network-card-name">' + escapeHtml(entry.name) + '</h3>' +
             '<span class="network-collab-badge ' + badgeClass + '">' + escapeHtml(badgeText) + '</span>' +
           '</div>' +
           '<p class="network-card-bio">' + escapeHtml(entry.what_you_do) + '</p>' +
-          (link ? '<a class="network-card-link" href="' + safeAttr(link) + '" target="_blank" rel="noopener noreferrer">' + escapeHtml(link) + '</a>' : '') +
+          (looking ? '<p class="network-card-looking"><strong>Would like to meet</strong>' + escapeHtml(looking) + '</p>' : '') +
+          (linkHtml ? '<div class="network-card-links">' + linkHtml + '</div>' : '') +
+          contactHtml +
         '</article>';
-      }).join('');
+      }).join('') + (networkSignedIn ? '' : '<p class="network-card-contact-note">Signed-in members also see the email and phone of anyone who chose to share them.</p>');
     }
   }
 
@@ -204,6 +251,14 @@ function validateField(input) {
     valid = val.length >= 1 && val.length <= 500;
   } else if (input.id === 'network-link') {
     valid = /^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(val) && val.length <= 300;
+  } else if (input.id === 'network-email') {
+    valid = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(val) && val.length <= 254;
+  } else if (input.id === 'network-phone') {
+    valid = val === '' || (/^[0-9+()\-. ]+$/.test(val) && val.replace(/[^0-9]/g, '').length >= 7 && val.length <= 40);
+  } else if (input.id === 'network-social' || input.id === 'network-link-2' || input.id === 'network-link-3') {
+    valid = val === '' || (/^https?:\/\/[^\s/$.?#].[^\s]*$/i.test(val) && val.length <= 300);
+  } else if (input.id === 'network-looking') {
+    valid = val.length <= 280;
   } else if (input.id === 'network-consent') {
     valid = Boolean(input.checked);
   } else {
@@ -252,10 +307,17 @@ async function handleFormSubmit(event) {
   const whatInput = netEl('network-what');
   const linkInput = netEl('network-link');
   const consentInput = netEl('network-consent');
+  const emailInput = netEl('network-email');
+  const phoneInput = netEl('network-phone');
+  const socialInput = netEl('network-social');
+  const link2Input = netEl('network-link-2');
+  const link3Input = netEl('network-link-3');
+  const lookingInput = netEl('network-looking');
+  const showContactInput = netEl('network-show-contact');
   const statusBox = netEl('network-form-status');
   const submitBtn = netEl('network-submit');
 
-  const controls = [nameInput, whatInput, linkInput, consentInput];
+  const controls = [nameInput, whatInput, emailInput, phoneInput, linkInput, socialInput, link2Input, link3Input, lookingInput, consentInput].filter(Boolean);
   let firstInvalid = null;
   for (const control of controls) {
     const ok = validateField(control);
@@ -278,6 +340,9 @@ async function handleFormSubmit(event) {
     name: nameInput.value.trim(),
     what_you_do: whatInput.value.trim(),
     link_url: linkInput.value.trim(),
+    extra_links: [link2Input, link3Input].filter(Boolean).map(input => input.value.trim()).filter(Boolean),
+    social_url: socialInput && socialInput.value.trim() ? socialInput.value.trim() : null,
+    looking_for: lookingInput && lookingInput.value.trim() ? lookingInput.value.trim() : null,
     open_to_collaborating: openToCollab,
     consent_given: true,
     status: 'pending',
@@ -299,6 +364,12 @@ async function handleFormSubmit(event) {
           name: newEntry.name,
           what_you_do: newEntry.what_you_do,
           link_url: newEntry.link_url,
+          extra_links: newEntry.extra_links,
+          social_url: newEntry.social_url,
+          looking_for: newEntry.looking_for,
+          email: emailInput ? emailInput.value.trim() : null,
+          phone: phoneInput && phoneInput.value.trim() ? phoneInput.value.trim() : null,
+          show_contact: Boolean(showContactInput && showContactInput.checked),
           open_to_collaborating: newEntry.open_to_collaborating,
           consent_given: true
         }]);

@@ -19,7 +19,7 @@
     })();
   </script>
   <link rel="stylesheet" href="/css/hub-theme.css">
-  <link rel="stylesheet" href="/css/studio.css">
+  <link rel="stylesheet" href="/css/studio.css?v=cards-3">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/js/egress-report.js?v=1"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <style>
@@ -486,7 +486,7 @@
           </div>
 
           <div class="network-field">
-            <label for="network-link">One link <span aria-hidden="true">*</span></label>
+            <label for="network-link">Website <span aria-hidden="true">*</span></label>
             <input
               id="network-link"
               name="link_url"
@@ -506,6 +506,35 @@
             <span class="network-error" id="network-link-error">Please enter a complete web link starting with https:// or http://.</span>
           </div>
 
+          <div class="network-field">
+            <label for="network-email">Email <span aria-hidden="true">*</span></label>
+            <input id="network-email" name="email" type="email" autocomplete="email" autocapitalize="off" spellcheck="false" maxlength="254" required placeholder="alex@example.com" aria-describedby="network-email-hint network-email-error" aria-errormessage="network-email-error">
+            <span class="network-hint" id="network-email-hint">So David can reach you. It only shows on your card if you tick the box below.</span>
+            <span class="network-error" id="network-email-error">Add an email address like name@example.com</span>
+          </div>
+          <div class="network-field">
+            <label for="network-phone">Phone <span class="network-optional">(optional)</span></label>
+            <input id="network-phone" name="phone" type="tel" autocomplete="tel" maxlength="40" placeholder="(303) 555-0142" aria-describedby="network-phone-error" aria-errormessage="network-phone-error">
+            <span class="network-error" id="network-phone-error">Use digits, spaces, dashes or a leading +.</span>
+          </div>
+          <div class="network-field">
+            <label for="network-social">Social profile <span class="network-optional">(optional)</span></label>
+            <input id="network-social" name="social_url" type="url" inputmode="url" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="300" placeholder="https://instagram.com/yourname" aria-describedby="network-social-error" aria-errormessage="network-social-error">
+            <span class="network-error" id="network-social-error">Use a full link that starts with https://</span>
+          </div>
+          <div class="network-field">
+            <label for="network-link-2">More links <span class="network-optional">(optional, up to two)</span></label>
+            <input id="network-link-2" name="extra_link_1" type="url" inputmode="url" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="300" placeholder="https://" aria-errormessage="network-link-2-error">
+            <span class="network-error" id="network-link-2-error">Use a full link that starts with https://</span>
+            <label class="sr-only" for="network-link-3">Another link</label>
+            <input id="network-link-3" name="extra_link_2" type="url" inputmode="url" autocorrect="off" autocapitalize="off" spellcheck="false" maxlength="300" placeholder="https://" aria-errormessage="network-link-3-error">
+            <span class="network-error" id="network-link-3-error">Use a full link that starts with https://</span>
+          </div>
+          <div class="network-field">
+            <label for="network-looking">Who you'd like to meet <span class="network-optional">(optional)</span></label>
+            <textarea id="network-looking" name="looking_for" maxlength="280" placeholder="Looking for a video editor to trade skills with, or anyone in Denver building a podcast." aria-describedby="network-looking-hint"></textarea>
+            <span class="network-hint" id="network-looking-hint">Who you'd like to connect with, what you're looking for, or anything you'd like to share with the community.</span>
+          </div>
           <fieldset class="network-fieldset">
             <legend>Open to collaborating?</legend>
             <div class="network-radio-group">
@@ -521,6 +550,12 @@
           </fieldset>
 
           <div class="network-field">
+            <label class="network-consent-label" for="network-show-contact">
+              <input id="network-show-contact" name="show_contact" type="checkbox">
+              <span>Let signed-in Colorado Mastermind members see my email and phone so they can reach me.</span>
+            </label>
+          </div>
+          <div class="network-field">
             <label class="network-consent-label" for="network-consent">
               <input
                 id="network-consent"
@@ -530,7 +565,7 @@
                 aria-describedby="network-consent-error"
                 aria-errormessage="network-consent-error"
               >
-              <span>I agree to show my name, what I do, my link, and my collaboration preference on the Colorado Mastermind Business Cards page once approved.</span>
+              <span>I agree to show my name, what I do, my links, my social, the line about who I'd like to meet and my collaboration answer on Community Business Cards once approved.</span>
             </label>
             <span class="network-error" id="network-consent-error">Please check the consent box so we have permission to list your card.</span>
           </div>
@@ -564,6 +599,6 @@
     </div>
   </main>
 
-  <script src="/js/network.js"></script>
+  <script src="/js/network.js?v=cards-3"></script>
 </body>
 </html>

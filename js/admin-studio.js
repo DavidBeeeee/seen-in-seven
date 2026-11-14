@@ -222,7 +222,7 @@ async function loadStudioAdmin() {
   studioAdminState.catalog = loaded.catalog.data;
   studioAdminState.books = loaded.books ? loaded.books.data : [];
   studioAdminState.bookGrants = loaded.bookGrants ? loaded.bookGrants.data : [];
-  studioAdminState.networkEntries = loadNetworkEntriesForAdmin(loaded.networkEntries ? loaded.networkEntries.data : []);
+  studioAdminState.networkEntries = loadNetworkEntriesForAdmin(loaded.networkEntries ? loaded.networkEntries.data : [], Boolean(loaded.networkEntries && !loaded.networkEntries.error && Array.isArray(loaded.networkEntries.data)));
   studioAdminState.errors = Object.fromEntries(results.filter(result => result.error && result.name !== 'networkEntries').map(result => [result.name, result.error]));
   studioAdminState.rows = buildCustomerRows();
   renderStudioAdmin();
@@ -306,7 +306,10 @@ function renderStudioAdmin() {
   refreshAdminIcons();
 }
 
-function loadNetworkEntriesForAdmin(remoteEntries) {
+function loadNetworkEntriesForAdmin(remoteEntries, remoteAnswered) {
+  // When the live table answered, it is the whole truth: browser-preview cards
+  // (the old seed "David Bee" card included) never mix into the admin list.
+  if (remoteAnswered) return Array.isArray(remoteEntries) ? remoteEntries : [];
   let local = [];
   try {
     const raw = localStorage.getItem(NETWORK_PREVIEW_STORAGE_KEY);
@@ -346,9 +349,22 @@ function renderNetworkDirectoryAdmin() {
       const opt = (value, label) => '<option value="' + value + '"' + (status === value ? ' selected' : '') + '>' + label + '</option>';
       return '<tr class="network-admin-editing" data-entry-id="' + id + '">' +
         '<td><label class="sr-only" for="nde-status-' + id + '">Status</label><select id="nde-status-' + id + '" data-field="status">' + opt('pending', 'pending') + opt('approved', 'approved') + opt('hidden', 'hidden') + '</select></td>' +
-        '<td><label class="sr-only" for="nde-name-' + id + '">Name</label><input id="nde-name-' + id + '" data-field="name" maxlength="120" value="' + safeAttr(row.name || '') + '"></td>' +
-        '<td><label class="sr-only" for="nde-what-' + id + '">What they do</label><textarea id="nde-what-' + id + '" data-field="what_you_do" maxlength="500" rows="3">' + escapeHtml(row.what_you_do || '') + '</textarea></td>' +
-        '<td><label class="sr-only" for="nde-link-' + id + '">Link</label><input id="nde-link-' + id + '" data-field="link_url" maxlength="300" value="' + safeAttr(row.link_url || '') + '"></td>' +
+        '<td><div class="network-admin-stack">' +
+          '<label for="nde-name-' + id + '">Name</label><input id="nde-name-' + id + '" data-field="name" maxlength="120" value="' + safeAttr(row.name || '') + '">' +
+          '<label for="nde-email-' + id + '">Email</label><input id="nde-email-' + id + '" data-field="email" type="email" maxlength="254" value="' + safeAttr(row.email || '') + '">' +
+          '<label for="nde-phone-' + id + '">Phone</label><input id="nde-phone-' + id + '" data-field="phone" type="tel" maxlength="40" value="' + safeAttr(row.phone || '') + '">' +
+          '<label><input type="checkbox" data-field="show_contact"' + (row.show_contact ? ' checked' : '') + '> Members may see email and phone</label>' +
+        '</div></td>' +
+        '<td><div class="network-admin-stack">' +
+          '<label for="nde-what-' + id + '">What they do</label><textarea id="nde-what-' + id + '" data-field="what_you_do" maxlength="500" rows="3">' + escapeHtml(row.what_you_do || '') + '</textarea>' +
+          '<label for="nde-looking-' + id + '">Would like to meet</label><textarea id="nde-looking-' + id + '" data-field="looking_for" maxlength="280" rows="2">' + escapeHtml(row.looking_for || '') + '</textarea>' +
+        '</div></td>' +
+        '<td><div class="network-admin-stack">' +
+          '<label for="nde-link-' + id + '">Website</label><input id="nde-link-' + id + '" data-field="link_url" maxlength="300" value="' + safeAttr(row.link_url || '') + '">' +
+          '<label for="nde-link2-' + id + '">More links</label><input id="nde-link2-' + id + '" data-field="extra_link_1" maxlength="300" value="' + safeAttr((row.extra_links || [])[0] || '') + '">' +
+          '<input aria-label="Another link" data-field="extra_link_2" maxlength="300" value="' + safeAttr((row.extra_links || [])[1] || '') + '">' +
+          '<label for="nde-social-' + id + '">Social</label><input id="nde-social-' + id + '" data-field="social_url" maxlength="300" value="' + safeAttr(row.social_url || '') + '">' +
+        '</div></td>' +
         '<td><label><input type="checkbox" data-field="open_to_collaborating"' + (row.open_to_collaborating ? ' checked' : '') + '> Open</label></td>' +
         '<td><div class="network-admin-actions">' +
           '<button class="primary-button" type="button" onclick="adminSaveNetworkDirectoryEntry(event,\'' + id + '\')">Save</button>' +
@@ -366,9 +382,14 @@ function renderNetworkDirectoryAdmin() {
     const editBtn = '<button class="secondary-button" type="button" onclick="adminEditNetworkDirectoryEntry(event,\'' + id + '\')">Edit</button>';
     return '<tr>' +
       '<td><span class="webhook-status' + statusClass + '">' + escapeHtml(statusLabel) + '</span></td>' +
-      '<td><div class="customer-name">' + escapeHtml(row.name || 'Attendee') + '</div></td>' +
-      '<td>' + escapeHtml(row.what_you_do || '') + '</td>' +
-      '<td><a href="' + safeAttr(row.link_url || '#') + '" target="_blank" rel="noopener noreferrer" style="color: var(--studio-teal);">' + escapeHtml(row.link_url || '') + '</a></td>' +
+      '<td><div class="customer-name">' + escapeHtml(row.name || 'Attendee') + '</div>' +
+        (row.email ? '<div class="network-admin-sub"><a href="mailto:' + safeAttr(row.email) + '">' + escapeHtml(row.email) + '</a></div>' : '<div class="network-admin-sub">no email</div>') +
+        (row.phone ? '<div class="network-admin-sub">' + escapeHtml(row.phone) + '</div>' : '') +
+        '<div class="network-admin-sub">' + (row.show_contact ? 'Members can see contact' : 'Contact private') + '</div></td>' +
+      '<td>' + escapeHtml(row.what_you_do || '') +
+        (row.looking_for ? '<div class="network-admin-sub"><strong>Would like to meet:</strong> ' + escapeHtml(row.looking_for) + '</div>' : '') + '</td>' +
+      '<td>' + [row.link_url].concat(row.extra_links || []).concat(row.social_url ? [row.social_url] : []).filter(Boolean).map(url =>
+        '<div><a href="' + safeAttr(url) + '" target="_blank" rel="noopener noreferrer" style="color: var(--studio-teal);">' + escapeHtml(url) + '</a></div>').join('') + '</td>' +
       '<td>' + escapeHtml(collab) + '</td>' +
       '<td><div class="network-admin-actions">' + actionBtn + editBtn + '</div></td>' +
       '</tr>';
@@ -380,11 +401,12 @@ function renderNetworkDirectoryAdmin() {
 // table the moment David approved one.
 async function reloadNetworkDirectoryAdmin() {
   let remote = [];
+  let answered = false;
   try {
     const { data, error } = await adminSb.rpc('admin_get_network_directory');
-    if (!error && Array.isArray(data)) remote = data;
+    if (!error && Array.isArray(data)) { remote = data; answered = true; }
   } catch (e) {}
-  studioAdminState.networkEntries = loadNetworkEntriesForAdmin(remote);
+  studioAdminState.networkEntries = loadNetworkEntriesForAdmin(remote, answered);
   renderNetworkDirectoryAdmin();
 }
 
@@ -411,8 +433,17 @@ async function adminSaveNetworkDirectoryEntry(event, entryId) {
     what_you_do: field('what_you_do').value.trim(),
     link_url: field('link_url').value.trim(),
     open_to_collaborating: field('open_to_collaborating').checked,
-    status: field('status').value
+    status: field('status').value,
+    email: field('email').value.trim(),
+    phone: field('phone').value.trim(),
+    extra_links: [field('extra_link_1').value.trim(), field('extra_link_2').value.trim()].filter(Boolean),
+    social_url: field('social_url').value.trim(),
+    looking_for: field('looking_for').value.trim(),
+    show_contact: field('show_contact').checked
   };
+  for (const url of values.extra_links.concat(values.social_url ? [values.social_url] : [])) {
+    if (!/^https?:\/\//i.test(url)) return showError('Every link has to start with https://');
+  }
   if (!values.name || !values.what_you_do) return showError('Name and what they do are both needed.');
   if (!/^https?:\/\//i.test(values.link_url)) return showError('The link has to start with https://');
   const button = event.currentTarget;
@@ -423,7 +454,13 @@ async function adminSaveNetworkDirectoryEntry(event, entryId) {
     p_what_you_do: values.what_you_do,
     p_link_url: values.link_url,
     p_open_to_collaborating: values.open_to_collaborating,
-    p_status: values.status
+    p_status: values.status,
+    p_email: values.email || null,
+    p_phone: values.phone || null,
+    p_extra_links: values.extra_links,
+    p_social_url: values.social_url || null,
+    p_looking_for: values.looking_for || null,
+    p_show_contact: values.show_contact
   });
   if (error) {
     if (button) button.disabled = false;
