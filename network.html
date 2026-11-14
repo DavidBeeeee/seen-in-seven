@@ -19,7 +19,7 @@
     })();
   </script>
   <link rel="stylesheet" href="/css/hub-theme.css">
-  <link rel="stylesheet" href="/css/studio.css?v=cards-3">
+  <link rel="stylesheet" href="/css/studio.css?v=cards-4">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/js/egress-report.js?v=1"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <style>
@@ -433,7 +433,7 @@
     <section class="network-hero">
       <p class="network-eyebrow"><i data-lucide="users"></i> Colorado Mastermind</p>
       <h1>Meet the people in the room.</h1>
-      <p>Share what you are building, leave one link where people can find your work, and let other Mastermind attendees know if you are open to collaborating.</p>
+      <p>Share what you are building, where people can find you, and who you would like to meet. Your card shows up right away.</p>
     </section>
 
     <aside class="network-preview-banner" id="network-preview-banner" aria-label="Preview mode controls">
@@ -451,7 +451,7 @@
     <div class="network-grid">
       <section class="network-panel" aria-labelledby="form-heading">
         <h2 id="form-heading">Add your card</h2>
-        <p class="network-panel-sub">Fill out the short form below. Once David approves your card, it shows up with the other Business Cards.</p>
+        <p class="network-panel-sub">Fill this out once. Your card shows up right away, marked Unverified until David checks it.</p>
 
         <form id="network-form" method="post" action="/network" novalidate>
           <div class="network-field">
@@ -565,7 +565,7 @@
                 aria-describedby="network-consent-error"
                 aria-errormessage="network-consent-error"
               >
-              <span>I agree to show my name, what I do, my links, my social, the line about who I'd like to meet and my collaboration answer on Community Business Cards once approved.</span>
+              <span>I agree to show my name, what I do, my links, my social, the line about who I'd like to meet and my collaboration answer on Community Business Cards. It shows right away, marked Unverified until David checks it.</span>
             </label>
             <span class="network-error" id="network-consent-error">Please check the consent box so we have permission to list your card.</span>
           </div>
@@ -583,7 +583,7 @@
         <div class="network-directory-head">
           <div>
             <h2 id="directory-heading">Community Business Cards</h2>
-            <p class="network-panel-sub" style="margin-bottom: 0;">Only entries approved by David appear here.</p>
+            <p class="network-panel-sub" style="margin-bottom: 0;">Gray cards are new and not yet verified by David.</p>
           </div>
           <span class="network-count" id="network-directory-count">0 approved</span>
         </div>
@@ -599,6 +599,6 @@
     </div>
   </main>
 
-  <script src="/js/network.js?v=cards-3"></script>
+  <script src="/js/network.js?v=cards-4"></script>
 </body>
 </html>

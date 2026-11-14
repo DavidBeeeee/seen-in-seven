@@ -348,7 +348,7 @@ function renderNetworkDirectoryAdmin() {
       const status = row.status || 'pending';
       const opt = (value, label) => '<option value="' + value + '"' + (status === value ? ' selected' : '') + '>' + label + '</option>';
       return '<tr class="network-admin-editing" data-entry-id="' + id + '">' +
-        '<td><label class="sr-only" for="nde-status-' + id + '">Status</label><select id="nde-status-' + id + '" data-field="status">' + opt('pending', 'pending') + opt('approved', 'approved') + opt('hidden', 'hidden') + '</select></td>' +
+        '<td><label class="sr-only" for="nde-status-' + id + '">Status</label><select id="nde-status-' + id + '" data-field="status">' + opt('pending', 'unverified') + opt('approved', 'verified') + opt('hidden', 'hidden') + '</select></td>' +
         '<td><div class="network-admin-stack">' +
           '<label for="nde-name-' + id + '">Name</label><input id="nde-name-' + id + '" data-field="name" maxlength="120" value="' + safeAttr(row.name || '') + '">' +
           '<label for="nde-email-' + id + '">Email</label><input id="nde-email-' + id + '" data-field="email" type="email" maxlength="254" value="' + safeAttr(row.email || '') + '">' +
@@ -374,12 +374,13 @@ function renderNetworkDirectoryAdmin() {
     }
     const isApproved = row.status === 'approved';
     const statusClass = isApproved ? ' webhook-processed' : '';
-    const statusLabel = isApproved ? 'approved' : (row.status || 'pending');
+    const statusLabel = isApproved ? 'verified' : (row.status === 'hidden' ? 'hidden' : 'unverified, showing');
     const collab = row.open_to_collaborating ? 'Yes, open' : 'Not right now';
     const actionBtn = isApproved
-      ? '<button class="secondary-button" type="button" onclick="adminSetNetworkDirectoryStatus(event,\'' + id + '\',\'pending\')">Hide</button>'
-      : '<button class="secondary-button" type="button" onclick="adminSetNetworkDirectoryStatus(event,\'' + id + '\',\'approved\')">Approve</button>';
-    const editBtn = '<button class="secondary-button" type="button" onclick="adminEditNetworkDirectoryEntry(event,\'' + id + '\')">Edit</button>';
+      ? '<button class="secondary-button" type="button" onclick="adminSetNetworkDirectoryStatus(event,\'' + id + '\',\'hidden\')">Hide</button>'
+      : '<button class="secondary-button" type="button" onclick="adminSetNetworkDirectoryStatus(event,\'' + id + '\',\'approved\')">Verify</button>';
+    const editBtn = '<button class="secondary-button" type="button" onclick="adminEditNetworkDirectoryEntry(event,\'' + id + '\')">Edit</button>' +
+      '<button class="secondary-button network-admin-delete" type="button" onclick="adminDeleteNetworkDirectoryEntry(event,\'' + id + '\')">Delete</button>';
     return '<tr>' +
       '<td><span class="webhook-status' + statusClass + '">' + escapeHtml(statusLabel) + '</span></td>' +
       '<td><div class="customer-name">' + escapeHtml(row.name || 'Attendee') + '</div>' +
@@ -470,6 +471,23 @@ async function adminSaveNetworkDirectoryEntry(event, entryId) {
   await reloadNetworkDirectoryAdmin();
 }
 window.adminSaveNetworkDirectoryEntry = adminSaveNetworkDirectoryEntry;
+
+async function adminDeleteNetworkDirectoryEntry(event, entryId) {
+  event.stopPropagation();
+  const entry = (studioAdminState.networkEntries || []).find(item => String(item.id) === String(entryId));
+  const name = entry && entry.name ? entry.name : 'this card';
+  if (!window.confirm('Delete ' + name + "'s card for good? This can't be undone.")) return;
+  const button = event.currentTarget;
+  if (button) button.disabled = true;
+  const { error } = await adminSb.rpc('admin_delete_network_directory_entry', { p_entry_id: entryId });
+  if (error) {
+    if (button) button.disabled = false;
+    window.alert('Not deleted: ' + (error.message || 'the database refused.'));
+    return;
+  }
+  await reloadNetworkDirectoryAdmin();
+}
+window.adminDeleteNetworkDirectoryEntry = adminDeleteNetworkDirectoryEntry;
 
 async function adminSetNetworkDirectoryStatus(event, entryId, status) {
   event.stopPropagation();

@@ -644,3 +644,12 @@ html.studio-light .library-preview {
 .network-card-contact { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-size: 14px; font-weight: 700; }
 .network-card-contact a { color: inherit; }
 .network-card-contact-note { margin-top: 10px; font-size: 13px; opacity: 0.75; }
+
+/* Cards first: form behind "Add your card"; unverified cards gray (David 2026-11-14) */
+.network-grid.network-form-closed { grid-template-columns: 1fr; }
+.network-add-bar { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; margin: 4px 0 16px; }
+.network-add-bar .network-status { width: 100%; }
+.network-form-cancel { margin-top: 10px; }
+.network-card { position: relative; }
+.network-card.is-unverified { filter: grayscale(1); opacity: 0.72; }
+.network-unverified-badge { display: inline-block; margin-bottom: 8px; padding: 3px 9px; border-radius: 999px; border: 1px dashed currentColor; font-size: 11px; font-weight: 900; letter-spacing: 0.06em; text-transform: uppercase; opacity: 0.9; }

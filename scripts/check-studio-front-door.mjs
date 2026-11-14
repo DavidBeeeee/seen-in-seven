@@ -237,14 +237,14 @@ assert.equal(elements['fd-tab-business-cards'].getAttribute('aria-selected'), 't
 assert.equal(elements['fd-panel-business-cards'].hidden, false);
 assert.equal(elements['fd-panel-seeninseven'].hidden, true);
 
-// Submitting Business Cards form stores pending entry and hides it from public list
+// Submitting the Business Cards form shows the card at once, marked Unverified
 elements['network-name'].value = 'Jordan Cole';
 elements['network-what'].value = 'Helps founders clarify their offer.';
 elements['network-link'].value = 'https://jordancole.example.com';
 elements['network-consent'].checked = true;
 await elements['network-form'].trigger('submit', { preventDefault() {} });
 assert.equal(elements['network-form-status'].hidden, false);
-assert.doesNotMatch(elements['network-directory-list'].innerHTML, /Jordan Cole/, 'Pending card must stay hidden until approved');
+assert.match(elements['network-directory-list'].innerHTML, /Unverified[\s\S]*Jordan Cole/, 'A new card shows at once, marked Unverified (David 2026-11-14)');
 
 // Library tab + Sign in to read button opens auth modal
 tablistEl.trigger('click', { target: { closest: () => elements['fd-tab-library'] } });

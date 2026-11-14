@@ -43,7 +43,12 @@ assert.equal(rewrites['/network/'], '/network.html');
 // 5. Migration defines table, RLS, approved-only public read, and admin functions
 assert.match(sql, /create table if not exists public\.network_directory/);
 assert.match(sql, /alter table public\.network_directory enable row level security/);
-assert.match(sql, /using \(status = 'approved'\)/, 'Public select policy must only show approved entries');
+assert.match(sql, /using \(status = 'approved'\)/, 'The 11-09 policy read approved entries only');
+// David 2026-11-14: cards show the moment they are sent, gray and Unverified
+// until he approves; hidden cards never show. The open-cards migration replaces the policy.
+const openSql = read('supabase_migrations/2026-11-14_network_directory_open_cards.sql');
+assert.match(openSql, /using \(status in \('pending', 'approved'\)\)/, 'Public select must show unverified and verified cards, never hidden');
+assert.match(openSql, /function public\.admin_delete_network_directory_entry[\s\S]*vault_caller_is_admin\(\)/);
 assert.match(sql, /create or replace function public\.admin_get_network_directory/);
 assert.match(sql, /create or replace function public\.admin_set_network_directory_status/);
 
@@ -142,11 +147,11 @@ const context = vm.createContext({
 vm.runInContext(js, context);
 
 // Initial render has 1 seeded approved entry (David Bee)
-assert.equal(elements['network-directory-count'].textContent, '1 approved');
+assert.equal(elements['network-directory-count'].textContent, '1 card');
 assert.equal(elements['pending-count-badge'].textContent, '0');
 assert.match(elements['network-directory-list'].innerHTML, /David Bee/);
 
-// Scenario 1: Visitor fills the form and sees a thank-you; unapproved entry does not show
+// Scenario 1: Visitor fills the form and sees a thank-you; the new card shows at once, gray and Unverified
 elements['network-name'].value = 'Maya Lin';
 elements['network-what'].value = 'B2B podcast producer helping founders launch interview shows.';
 elements['network-link'].value = 'https://mayalin.example.com';
@@ -155,19 +160,20 @@ elements['network-consent'].checked = true;
 await elements['network-form'].trigger('submit', { preventDefault() {} });
 
 assert.equal(elements['network-form-status'].hidden, false, 'Thank-you status must become visible');
-assert.match(elements['network-form-status'].textContent, /Thank you, Maya Lin\. Your card is in the approval queue and stays hidden/);
-assert.equal(elements['network-directory-count'].textContent, '1 approved', 'Approved count must remain 1 before approval');
+assert.match(elements['network-form-status'].textContent, /Thank you, Maya Lin\. Your card is up\. It shows as Unverified until David checks it\./);
+assert.equal(elements['network-directory-count'].textContent, '2 cards', 'The new card counts at once');
 assert.equal(elements['pending-count-badge'].textContent, '1', 'Pending count must increment to 1');
-assert.doesNotMatch(elements['network-directory-list'].innerHTML, /Maya Lin/, 'Unapproved entry must not appear in public directory');
+assert.match(elements['network-directory-list'].innerHTML, /is-unverified[\s\S]*Unverified[\s\S]*Maya Lin/, 'The new card must show at once, marked Unverified');
 assert.match(elements['network-admin-list'].innerHTML, /Maya Lin \(Pending approval \(hidden\)\)/, 'Unapproved entry must appear in admin queue');
 
 // Scenario 2: Admin approves the entry -> Approved entry shows with name, what they do, link, collaboration flag
 await context.setEntryStatus('test-entry-123', 'approved');
-assert.equal(elements['network-directory-count'].textContent, '2 approved', 'Approved count must become 2 after approval');
+assert.equal(elements['network-directory-count'].textContent, '2 cards', 'Count stays 2 after approval');
+assert.doesNotMatch(elements['network-directory-list'].innerHTML, /is-unverified/, 'An approved card is no longer gray');
 assert.equal(elements['pending-count-badge'].textContent, '0', 'Pending count must become 0 after approval');
 assert.match(elements['network-directory-list'].innerHTML, /Maya Lin/, 'Approved entry name must show');
 assert.match(elements['network-directory-list'].innerHTML, /B2B podcast producer helping founders launch interview shows\./, 'Approved entry bio must show');
 assert.match(elements['network-directory-list'].innerHTML, /https:\/\/mayalin\.example\.com/, 'Approved entry link must show');
 assert.match(elements['network-directory-list'].innerHTML, /Open to collaborating/, 'Approved entry collaboration flag must show');
 
-console.log('PASS check-network-directory: form, accessibility, unapproved hiding, admin approval, and migration verified.');
+console.log('PASS check-network-directory: form, accessibility, new cards show at once as Unverified, approval clears it, hidden never shows, admin delete, migrations verified.');

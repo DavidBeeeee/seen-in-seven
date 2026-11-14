@@ -83,7 +83,7 @@ async function fetchDirectoryEntries() {
     const { data, error } = await networkSb
       .from('network_directory')
       .select('id,name,what_you_do,link_url,extra_links,social_url,looking_for,open_to_collaborating,status,created_at,approved_at')
-      .eq('status', 'approved')
+      .in('status', ['approved', 'pending'])
       .order('created_at', { ascending: false });
 
     if (error) {
@@ -137,12 +137,14 @@ function shortLink(url) {
 
 function renderDirectory() {
   const all = directoryState.entries || [];
-  const approved = all.filter(item => item.status === 'approved');
+  // Cards show the moment they are sent (David 2026-11-14). New ones render
+  // gray and say Unverified until David approves them; hidden ones never show.
+  const approved = all.filter(item => item.status === 'approved' || item.status === 'pending');
   const pending = all.filter(item => item.status === 'pending');
 
   const countEl = netEl('network-directory-count');
   if (countEl) {
-    countEl.textContent = approved.length + ' approved';
+    countEl.textContent = approved.length + (approved.length === 1 ? ' card' : ' cards');
   }
 
   const badgeEl = netEl('pending-count-badge');
@@ -153,9 +155,10 @@ function renderDirectory() {
   const listEl = netEl('network-directory-list');
   if (listEl) {
     if (!approved.length) {
-      listEl.innerHTML = '<div class="network-empty">No approved cards are showing right now. Add your card on the left and approve it to see it here.</div>';
+      listEl.innerHTML = '<div class="network-empty">No cards yet. Be the first: tap Add your card.</div>';
     } else {
       listEl.innerHTML = approved.map(entry => {
+        const unverified = entry.status !== 'approved';
         const collabOpen = Boolean(entry.open_to_collaborating);
         const badgeClass = collabOpen ? 'is-open' : 'is-closed';
         const badgeText = collabOpen ? 'Open to collaborating' : 'Not collaborating right now';
@@ -173,7 +176,8 @@ function renderDirectory() {
             (contact.phone ? '<a href="tel:' + safeAttr(String(contact.phone).replace(/[^0-9+]/g, '')) + '">' + escapeHtml(contact.phone) + '</a>' : '') +
           '</div>';
         }
-        return '<article class="network-card" data-entry-id="' + safeAttr(entry.id) + '">' +
+        return '<article class="network-card' + (unverified ? ' is-unverified' : '') + '" data-entry-id="' + safeAttr(entry.id) + '">' +
+          (unverified ? '<span class="network-unverified-badge">Unverified</span>' : '') +
           '<div class="network-card-top">' +
             '<h3 class="network-card-name">' + escapeHtml(entry.name) + '</h3>' +
             '<span class="network-collab-badge ' + badgeClass + '">' + escapeHtml(badgeText) + '</span>' +
@@ -301,6 +305,73 @@ function syncUserInvalid(event) {
   }
 }
 
+// The cards are the page; the form waits behind "Add your card" and folds
+// away once a card is sent, with the button there to send another.
+function networkFormPanel() {
+  const form = netEl('network-form');
+  return form && typeof form.closest === 'function' ? form.closest('.network-panel') : null;
+}
+
+function setNetworkFormOpen(open, focus) {
+  const panel = networkFormPanel();
+  if (!panel) return;
+  panel.hidden = !open;
+  const grid = panel.parentElement;
+  if (grid) grid.classList.toggle('network-form-closed', !open);
+  const toggle = netEl('network-add-card');
+  if (toggle) {
+    toggle.setAttribute('aria-expanded', String(open));
+    toggle.hidden = open;
+  }
+  if (open && focus) {
+    panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const first = netEl('network-name');
+    if (first) setTimeout(() => first.focus(), 250);
+  }
+}
+
+function setupNetworkFormToggle() {
+  const panel = networkFormPanel();
+  const list = netEl('network-directory-list');
+  if (!panel || !list || netEl('network-add-card')) return;
+  if (!panel.id) panel.id = 'network-form-panel';
+  const bar = document.createElement('div');
+  bar.className = 'network-add-bar';
+  bar.innerHTML = '<button class="primary-button" id="network-add-card" type="button" aria-expanded="false" aria-controls="' + panel.id + '">' +
+      '<i data-lucide="plus"></i><span>Add your card</span></button>' +
+    '<div class="network-status" id="network-sent-status" role="status" aria-live="polite" hidden></div>';
+  list.parentElement.insertBefore(bar, list);
+  netEl('network-add-card').addEventListener('click', () => setNetworkFormOpen(true, true));
+  const cancel = document.createElement('button');
+  cancel.type = 'button';
+  cancel.className = 'secondary-button network-form-cancel';
+  cancel.textContent = 'Close without sending';
+  cancel.addEventListener('click', () => setNetworkFormOpen(false));
+  const submit = netEl('network-submit');
+  if (submit && submit.parentElement) submit.parentElement.insertBefore(cancel, submit.nextSibling);
+  setNetworkFormOpen(false);
+  refreshIcons();
+}
+
+// Sending a card also opens a Studio account if this email has none: the same
+// email sign-in link the Studio's own Sign in sends (shouldCreateUser), and the
+// Studio profile is created when they first follow it. A signed-in member
+// already has one, so nothing is sent.
+async function ensureStudioAccountFor(email) {
+  if (!networkSb || !email) return 'skipped';
+  try {
+    const { data } = await networkSb.auth.getSession();
+    if (data && data.session) return 'signed-in';
+    const { error } = await networkSb.auth.signInWithOtp({
+      email,
+      options: { emailRedirectTo: window.location.origin + '/', shouldCreateUser: true }
+    });
+    return error ? 'failed' : 'sent';
+  } catch (e) {
+    return 'failed';
+  }
+}
+
 async function handleFormSubmit(event) {
   event.preventDefault();
   const nameInput = netEl('network-name');
@@ -410,9 +481,25 @@ async function handleFormSubmit(event) {
   submitBtn.disabled = false;
   if (labelSpan) labelSpan.textContent = document.body && document.body.classList.contains('studio-home') ? 'Send my card' : 'Send card for approval';
 
-  statusBox.hidden = false;
-  statusBox.className = 'network-status';
-  statusBox.textContent = 'Thank you, ' + newEntry.name + '. Your card is in the approval queue and stays hidden from the Business Cards page until David approves it.';
+  const submittedEmail = emailInput ? emailInput.value.trim() : '';
+  const account = savedRemotely ? await ensureStudioAccountFor(submittedEmail) : 'skipped';
+  statusBox.hidden = true;
+  const sent = netEl('network-sent-status');
+  const message = 'Thank you, ' + newEntry.name + '. Your card is up. It shows as Unverified until David checks it.' +
+    (account === 'sent' ? ' We also emailed ' + submittedEmail + ' a link to your Colorado Mastermind Studio.' : '');
+  if (sent) {
+    sent.hidden = false;
+    sent.className = 'network-status';
+    sent.textContent = message;
+  } else {
+    statusBox.hidden = false;
+    statusBox.className = 'network-status';
+    statusBox.textContent = message;
+  }
+  const addLabel = netEl('network-add-card') && netEl('network-add-card').querySelector('span');
+  if (addLabel) addLabel.textContent = 'Add another card';
+  setNetworkFormOpen(false);
+  if (directoryState.mode === 'live-table') await fetchDirectoryEntries();
 
   renderDirectory();
 }
@@ -476,5 +563,6 @@ window.addEventListener('storage', event => {
   }
 });
 
+setupNetworkFormToggle();
 fetchDirectoryEntries();
 refreshIcons();
