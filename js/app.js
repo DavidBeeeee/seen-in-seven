@@ -1561,7 +1561,7 @@ function renderJourneyMap() {
       '<strong>' + completedParts + ' of 7 story parts saved</strong>' +
       '<span id="journey-import-count">' + noteProgress.saved + ' of ' + noteProgress.total + ' detailed answers saved</span>' +
       '<p>' + (reviewingImport && noteProgress.saved
-        ? 'Your detailed answers were saved as the source for each video. Expand a part below to see them.'
+        ? 'Your detailed answers were saved as the source for each video. Expand a part to check the scenes and wording. If your AI invented dialogue or details, correct them here before you film.'
         : 'The seven-part outline is saved. Detailed scene notes are optional now and can also be added before each video.') + '</p>' +
       (existingScripts.length ? '<p class="journey-story-existing">Existing scripts for Videos ' +
         existingScripts.join(', ') + ' will not automatically update. Review or regenerate affected scripts intentionally without deleting your story answers.</p>' : '') +
