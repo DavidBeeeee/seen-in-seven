@@ -3375,14 +3375,17 @@ function buildAPIUserMessage(videoIdx) {
   return SISPromptEngine.buildUserMessage({
     level,
     video,
-    // Video 1 declares from the onboarding answers. The map is outside research, so here
-    // it is background the planner may draw on, not the brief for this video.
-    onboardingLines,
+    // David, 2026-11-06, restored 2026-11-14: Video 1 declares from the onboarding answers.
+    // Part 1 of the story is background the planner may draw on, never the brief for this
+    // video. Do not send it as Video 1's journey direction.
+    onboardingLines: videoIdx === 0 && journeyDirectionFor(0, level)
+      ? onboardingLines.concat('- Background from my outside story research (context only, not the subject of this video): ' + journeyDirectionFor(0, level))
+      : onboardingLines,
     previousVideos,
     currentMode,
     currentEasyAnswer: state.videos['videoExtra_v' + videoIdx] || (currentEasy ? state.videos[currentEasy.key] || '' : ''),
     currentAnswers: videoIdx === 0 ? videoOnePromptAnswers(level) : extendedPromptAnswers(currentDefinition),
-    currentJourneyDirection: journeyDirectionFor(videoIdx, level),
+    currentJourneyDirection: videoIdx === 0 ? '' : journeyDirectionFor(videoIdx, level),
     nextPartEvent: videoIdx < 6 ? journeyDirectionFor(videoIdx + 1, level) : ''
   });
 }

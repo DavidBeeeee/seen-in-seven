@@ -510,28 +510,23 @@ for (const badEdit of [async () => 'kept '.repeat(40).trim(), async () => 'kept 
 const fittingMeatScript = '[HOOK]\nA hook.\n\n[MEAT]\n' + 'word '.repeat(130).trim();
 assert(await tightenVideoOneMeat(fittingMeatScript, async () => { throw new Error('must not be called'); }) === fittingMeatScript, 'A Meat already in range must not be edited.');
 
-// Video 1 must now use the chosen Part 1 direction as the authoritative source,
-// alongside the member's actual commitment, instead of treating it as background.
-const videoOneMessage = [
-  'Generate Video 1 script.',
-  'ONBOARDING DATA:',
-  '- Name: Test',
-  '',
-  'CURRENT VIDEO 1 JOURNEY DIRECTION (private planning context only):',
-  'MAP SENTINEL',
-  'Use this as the intended subject and place in the seven-part journey.',
-  '',
-  'VIDEO 1 PREFILLED PROMPTS (user may have edited these):',
-  '1. Opening declaration (read-only): Hi.',
-  '2. What has been making this hard: BLANK SENTINEL'
-].join('\n');
+// David, 2026-11-06: Video 1's brief is its onboarding answers alone, and Part 1 of the story
+// stays in the background once. Another session reversed this on 2026-11-14 and rewrote this
+// check to match; David had it restored the same day. Do not change it without his decision.
+const videoOneMessage = ['Generate Video 1 script.', 'ONBOARDING DATA:', '- Name: Test', '- Background from my outside story research (context only, not the subject of this video): MAP SENTINEL', '', 'VIDEO 1 PREFILLED PROMPTS (user may have edited these):', '1. Opening declaration (read-only): Hi.', '2. What has been making this hard: BLANK SENTINEL'].join('\n');
 const videoOneBrief = extractCurrentVideoBrief(videoOneMessage, 1);
 const videoOneSource = buildEpisodeArchitectSource(videoOneMessage, 2, 1);
 assert(
-  videoOneBrief.includes('MAP SENTINEL') && videoOneBrief.includes('BLANK SENTINEL') &&
+  videoOneBrief.includes('BLANK SENTINEL') && !videoOneBrief.includes('MAP SENTINEL') &&
     videoOneSource.split('MAP SENTINEL').length === 2 && videoOneSource.split('BLANK SENTINEL').length === 2,
-  'Video 1 must use Part 1 as its authoritative direction, with each fact supplied exactly once.'
+  'Video 1 must brief from onboarding answers once, with the story\'s Part 1 as background once.'
 );
+{
+  const appJs = readFileSync(new URL('../js/app.js', import.meta.url), 'utf8');
+  assert(appJs.includes("currentJourneyDirection: videoIdx === 0 ? '' : journeyDirectionFor(videoIdx, level)") &&
+    appJs.includes('Background from my outside story research (context only, not the subject of this video)'),
+    'The app must send Part 1 to Video 1 as background only, never as its journey direction.');
+}
 
 // David, 2026-11-06: scripts assumed the viewer knew the map, and the 5E was not enforced.
 for (const video of [2, 3, 4, 5, 6]) {

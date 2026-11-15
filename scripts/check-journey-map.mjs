@@ -166,11 +166,11 @@ if (!appSource.includes('if (phase2.resume && resumePositionApplied) {') ||
   throw new Error('A signed-in reload must not overwrite the saved place, and onboarding must use the member level.');
 }
 
-// Video 1 now receives Part 1 as its story direction, not unrelated background.
-// The server's own Video 1 router requires CURRENT VIDEO 1 JOURNEY DIRECTION.
-if (!appSource.includes('currentJourneyDirection: journeyDirectionFor(videoIdx, level)') ||
-    appSource.includes('Background from my outside story research')) {
-  throw new Error('Video 1 must receive the member\'s chosen Part 1 as its real direction.');
+// David, 2026-11-06, restored 2026-11-14: Video 1 declares from the onboarding answers.
+// Part 1 of the story reaches it as background only, never as its journey direction.
+if (!appSource.includes("currentJourneyDirection: videoIdx === 0 ? '' : journeyDirectionFor(videoIdx, level)") ||
+    !appSource.includes('Background from my outside story research')) {
+  throw new Error('Video 1 must get Part 1 as background only, never as its direction.');
 }
 const firstVideoMessage = engine.buildUserMessage({level:2, video:1, onboardingLines:[], previousVideos:[], currentMode:'extended', currentAnswers:[{label:'Decision',value:'I am sharing my story.'}], currentJourneyDirection:'I will speak despite being afraid nobody cares.'});
 if (!firstVideoMessage.includes('CURRENT VIDEO 1 JOURNEY DIRECTION') || !firstVideoMessage.includes('I will speak despite being afraid nobody cares.')) {
