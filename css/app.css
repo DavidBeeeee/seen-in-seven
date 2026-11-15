@@ -2170,6 +2170,33 @@ body::after {
   border:1px solid var(--border); border-radius:8px; margin-bottom:14px;
 }
 .journey-question-list { display:grid; gap:10px; }
+
+.journey-story-summary {
+  display:grid; gap:7px; padding:16px 18px;
+  background:var(--card); border:1px solid var(--border);
+  border-radius:8px; color:var(--cream); line-height:1.5;
+}
+.journey-story-summary strong { font-size:18px; }
+.journey-story-summary span { color:var(--teal); font-weight:800; }
+.journey-story-summary p { color:var(--muted); margin:0; line-height:1.5; }
+.journey-story-summary .journey-story-existing {
+  margin-top:5px; padding-top:9px; border-top:1px solid var(--border);
+}
+.journey-story-notes {
+  grid-column:1 / -1; min-width:0;
+  border:1px solid var(--border); border-radius:8px;
+  background:rgba(255,255,255,.025); padding:12px;
+}
+.journey-story-notes > summary {
+  color:var(--teal); cursor:pointer; font-size:15px; line-height:1.5;
+  font-weight:800; padding:3px; list-style-position:inside;
+}
+.journey-story-notes > summary:focus-visible { outline:2px solid var(--teal); outline-offset:3px; }
+.journey-story-notes > p { color:var(--muted); font-size:14px; line-height:1.6; margin:9px 0 14px; }
+.journey-story-note-item { display:grid; gap:8px; margin-top:14px; }
+.journey-story-note-item label { color:var(--cream); font-size:16px; font-weight:700; line-height:1.45; }
+.journey-story-note-item textarea { width:100%; font-size:16px; }
+
 .journey-question-card {
   display:grid; grid-template-columns:38px minmax(0,1fr); gap:12px;
   padding:15px; border:1px solid var(--border); border-radius:8px;

@@ -531,7 +531,7 @@ export function extractCurrentJourneyDirection(userContext, video) {
     remainder.indexOf('\nUse this to clarify the desired return destination, differentiation, unfinished flaw, or horizon.')
   ].filter(index => index >= 0);
   const promptEnd = remainder.search(new RegExp(
-    '\\nCURRENT VIDEO ' + number + ' (?:PROMPTS:|JOURNAL ENTRY \\(easy mode; use this to infer all story beats\\):)'
+    '\\n(?:CURRENT VIDEO ' + number + ' (?:PROMPTS:|JOURNAL ENTRY \\(easy mode; use this to infer all story beats\\):)|VIDEO ' + number + ' PREFILLED PROMPTS)'
   ));
   const ends = [...instructionEnds, promptEnd].filter(index => index >= 0);
   const end = ends.length ? Math.min(...ends) : remainder.length;
@@ -665,7 +665,7 @@ function extractOnboardingBlock(userContext) {
   const start = source.indexOf(marker);
   if (start === -1) return '';
   const remainder = source.slice(start);
-  const end = remainder.search(/\n(?:VIDEO \d+ PREFILLED PROMPTS|VIDEO \d+ PROMPTS:|VIDEO \d+ JOURNAL ENTRY \(easy mode\):|VIDEO \d+ FINAL SCRIPT)/);
+  const end = remainder.search(/\n(?:CURRENT VIDEO \d+ JOURNEY DIRECTION \(private planning context only\):|VIDEO \d+ PREFILLED PROMPTS|VIDEO \d+ PROMPTS:|VIDEO \d+ JOURNAL ENTRY \(easy mode\):|VIDEO \d+ FINAL SCRIPT)/);
   return remainder.slice(0, end === -1 ? undefined : end).trim();
 }
 

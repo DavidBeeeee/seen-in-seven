@@ -70,6 +70,29 @@ assert(
   'A fully filmed journey is not recognized as complete.'
 );
 
+// The Journey review can edit an inactive level's detailed notes. Those edits
+// must win over an older archived script bundle when that level is reactivated.
+const noteEditState = {
+  level: 2,
+  videos: {},
+  videoStatus: {},
+  videoPosted: {},
+  videoPostedByLevel: {1:{},2:{}},
+  videoAnswersByLevel: {1:{v1p0:'Edited Level 1 scene'},2:{v1p0:'Level 2 scene'}},
+  l1Videos: {v1p0:'Old archived Level 1 scene',script_v1:'Keep Level 1 script'},
+  l1VideoStatus: {},
+  l2Videos: {v1p0:'Old archived Level 2 scene'},
+  l2VideoStatus: {}
+};
+const noteEditHelpers = helperContext(noteEditState);
+noteEditState.level = 1;
+noteEditHelpers.activateJourneyLevel(1);
+assert(noteEditState.videos.v1p0 === 'Edited Level 1 scene', 'An edited Level 1 story note was overwritten by its old archive.');
+assert(noteEditState.videos.script_v1 === 'Keep Level 1 script', 'Restoring an edited note erased an existing script.');
+noteEditState.level = 2;
+noteEditHelpers.activateJourneyLevel(2);
+assert(noteEditState.videos.v1p0 === 'Level 2 scene', 'Level 1 notes crossed into Level 2.');
+
 const legacyState = {
   level: 2,
   videos: { script_v0:'Legacy L2 script' },
