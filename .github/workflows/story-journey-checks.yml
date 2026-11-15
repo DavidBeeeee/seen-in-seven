@@ -1,0 +1,35 @@
+name: SeenInSeven Story Journey Checks
+on:
+  pull_request:
+    paths:
+      - 'js/app.js'
+      - 'js/journey-map.js'
+      - 'js/script-prompt-engine.js'
+      - 'api/generate.js'
+      - 'seeninseven.html'
+      - 'css/app.css'
+      - 'scripts/check-journey-map.mjs'
+      - 'scripts/check-story-architecture.mjs'
+      - 'scripts/check-level-consistency.mjs'
+      - 'scripts/check-answer-help.mjs'
+      - '.github/workflows/story-journey-checks.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  offline-story-checks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c # v4.2.2
+      - name: Verify Node.js syntax
+        run: node --check js/app.js
+      - name: Verify both levels and import routes
+        run: node scripts/check-journey-map.mjs
+      - name: Verify script source ownership and story architecture
+        run: node scripts/check-story-architecture.mjs
+      - name: Verify level separation and answer help
+        run: |
+          node scripts/check-level-consistency.mjs
+          node scripts/check-answer-help.mjs
