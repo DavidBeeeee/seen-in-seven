@@ -47,11 +47,17 @@ if (!message.includes('private Viewer Premise Source') ||
 }
 if (message.includes('VIDEO 5 JOURNEY DIRECTION')) throw new Error('A future Journey direction leaked into the current prompt.');
 
-if (!appSource.includes("'screen-recap','screen-story-discovery','screen-journey-map','screen-journey-review','screen-mvo2'")) {
-  throw new Error('Hero orientation, Story Discovery, Journey review, and Video 1 are not in the required order.');
+if (!appSource.includes("'screen-recap','screen-story-discovery','screen-journey-map','screen-mvo2'")) {
+  throw new Error('Story Discovery must lead directly from one Journey review to Video 1.');
 }
-if (!html.includes('id="screen-journey-map"') || !html.includes('id="screen-journey-review"') || !html.includes('openJourneyMapSettings()')) {
-  throw new Error('Journey Map onboarding, review, or Settings entry is missing.');
+if (!html.includes('id="screen-journey-map"') || html.includes('id="screen-journey-review"') || !html.includes('openJourneyMapSettings()')) {
+  throw new Error('Journey must have exactly one review screen, with Settings access.');
+}
+if (!appSource.includes('function renderJourneyDetailNotes(') || !appSource.includes('function setJourneyStoryNote(') || !appSource.includes('journeyNoteProgress(level)')) {
+  throw new Error('Journey review must show/edit detailed source answers, not only short About summaries.');
+}
+if (!appSource.includes("storyDiscoveryMode = 'self-review'") || !appSource.includes("p2.storyDiscoveryMode === 'self-review'")) {
+  throw new Error('Self-guided and skipped journeys must reach the same one-screen review.');
 }
 
 // A pasted seven-part map is read whatever heading style the member's AI used,
@@ -105,6 +111,32 @@ const shortNotes = map.parseStoryNotes(pastedNotes.replace('3. Answer 5.3 with 3
 if (!shortNotes || shortNotes.ok || !shortNotes.problems.some(problem => /Part 5 has 2 of its 3 answers/.test(problem))) throw new Error('Notes with a missing answer must say which part is short.');
 if (map.parseStoryNotes(seven(n => `${n}. An older map paragraph ${n}.`), [3, 3, 4, 3, 4, 2]) !== null) throw new Error('An older seven-line map must still go to the older reader.');
 if (map.parseStoryNotes(seven(n => `Draft of part ${n}: draft.`) + '\nAbout: x', [3, 3, 4, 3, 4, 2]) !== null) throw new Error('A pasted draft must not be read as final notes.');
+// Both Level 1 and Level 2 have different question counts. Each must accept its
+// own complete notes and reject an incomplete answer set without using an LLM.
+const sourceCounts = {1:[3,3,4,5,4,2], 2:[3,3,4,3,4,2]};
+for (const level of [1,2]) {
+  const counts = sourceCounts[level];
+  const notes = 'PART 1\nI am starting now.\n\n' + counts.map((count, offset) =>
+    'PART ' + (offset + 2) + '\nAbout: Specific chapter ' + (offset + 2) +
+    '\n' + Array.from({length:count}, (_, index) => (index + 1) + '. A detailed scene in answer ' + (index + 1) + '.').join('\n')
+  ).join('\n\n');
+  const parsed = map.parseStoryNotes(notes, counts);
+  if (!parsed || !parsed.ok || parsed.parts[6].answers.length !== 2) {
+    throw new Error('Level ' + level + ' complete story notes failed to import.');
+  }
+  const bad = map.parseStoryNotes(notes.replace('2. A detailed scene in answer 2.', ''), counts);
+  if (!bad || bad.ok) throw new Error('Level ' + level + ' must reject missing source answers.');
+}
+if (!appSource.includes("const store = journeyNoteStore(level)") ||
+    !appSource.includes("answers[Number(index)] = String(value || '').slice(0, 4000)") ||
+    !appSource.includes("if (!signedIn) state.journeyMaps = {1:[],2:[]};")) {
+  throw new Error('Source notes, long Part 1 answers, and returning members must not lose data.');
+}
+if (!appSource.includes('Existing scripts for Videos ') ||
+    !appSource.includes('will not automatically update')) {
+  throw new Error('Members must be warned when existing scripts predate changed story notes.');
+}
+
 // Answers typed for a video are sent whenever they exist (they were silently dropped).
 if (!appSource.includes('function videoAnswerMode(') || (appSource.match(/videoAnswerMode\((?:videoIdx|index), level\)/g) || []).length < 2) {
   throw new Error('A video\'s answers must be sent for the current and the earlier videos.');
@@ -134,12 +166,15 @@ if (!appSource.includes('if (phase2.resume && resumePositionApplied) {') ||
   throw new Error('A signed-in reload must not overwrite the saved place, and onboarding must use the member level.');
 }
 
-// David, 2026-11-06: Video 1 comes from the onboarding answers, and the map is outside
-// research. Part 1 reaches Video 1 only as background, never as its brief or an answer.
-if (appSource.includes('The story direction behind this video') ||
-    !appSource.includes("currentJourneyDirection: videoIdx === 0 ? '' : journeyDirectionFor(videoIdx, level)") ||
-    !appSource.includes('Background from my outside story research')) {
-  throw new Error('Video 1 must be built from onboarding, with the map as background only.');
+// Video 1 now receives Part 1 as its story direction, not unrelated background.
+// The server's own Video 1 router requires CURRENT VIDEO 1 JOURNEY DIRECTION.
+if (!appSource.includes('currentJourneyDirection: journeyDirectionFor(videoIdx, level)') ||
+    appSource.includes('Background from my outside story research')) {
+  throw new Error('Video 1 must receive the member\'s chosen Part 1 as its real direction.');
+}
+const firstVideoMessage = engine.buildUserMessage({level:2, video:1, onboardingLines:[], previousVideos:[], currentMode:'extended', currentAnswers:[{label:'Decision',value:'I am sharing my story.'}], currentJourneyDirection:'I will speak despite being afraid nobody cares.'});
+if (!firstVideoMessage.includes('CURRENT VIDEO 1 JOURNEY DIRECTION') || !firstVideoMessage.includes('I will speak despite being afraid nobody cares.')) {
+  throw new Error('Video 1 story direction was dropped by the prompt engine.');
 }
 
 // David, 2026-11-06: the map part shows above the "anything else" box on every video.
@@ -198,4 +233,4 @@ if (!/id="journey-import-error" role="alert"/.test(appSource) || !appSource.incl
   throw new Error('An unreadable paste must show a visible error, not only change the placeholder.');
 }
 
-console.log('Journey Map checks passed for both levels, thirteen paste formats, story notes, the visible paste error, the prompt output layout, per-part story jobs, current-video prompt isolation, onboarding order, and Settings access.');
+console.log('Journey Map checks passed for both levels, single review, notes import and edit, legacy maps, self-guided and skipped routes, Video 1 ownership, existing-script warnings, and Settings.');
