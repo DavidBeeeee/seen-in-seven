@@ -273,7 +273,8 @@ function activateJourneyLevel(level) {
   const archivedVideos = number === 1 ? state.l1Videos : state.l2Videos;
   const archivedStatus = number === 1 ? state.l1VideoStatus : state.l2VideoStatus;
   const preservedAnswers = state.videoAnswersByLevel[String(number)] || {};
-  state.videos = Object.assign({}, preservedAnswers, archivedVideos || {});
+  // Edited per-level source answers take precedence over an older script archive.
+  state.videos = Object.assign({}, archivedVideos || {}, preservedAnswers);
   state.videoStatus = Object.assign({}, archivedStatus || {});
   state.videoPosted = Object.assign({}, ensureVideoPostedByLevel()[number] || {});
 }
@@ -1438,7 +1439,12 @@ function journeyNoteStore(level) {
   if (number === Number(state.level || 1)) return state.videos;
   if (!state.videoAnswersByLevel || typeof state.videoAnswersByLevel !== 'object') state.videoAnswersByLevel = {};
   if (!state.videoAnswersByLevel[String(number)]) state.videoAnswersByLevel[String(number)] = {};
-  return state.videoAnswersByLevel[String(number)];
+  const saved = state.videoAnswersByLevel[String(number)];
+  const archived = (number === 1 ? state.l1Videos : state.l2Videos) || {};
+  Object.keys(archived).forEach(key => {
+    if (/^v[1-6]p\d+$/.test(key) && saved[key] === undefined) saved[key] = archived[key];
+  });
+  return saved;
 }
 
 function journeyNoteProgress(level) {
