@@ -22,7 +22,7 @@ jobs:
   offline-story-checks:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c # v4.2.2
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
       - name: Verify Node.js syntax
         run: node --check js/app.js
       - name: Verify both levels and import routes
