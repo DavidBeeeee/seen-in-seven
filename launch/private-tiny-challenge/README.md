@@ -17,11 +17,12 @@ If ten runs produce fewer than five enrollments, review exact objections, revise
 
 ## Normal shape
 
+Three one-to-one sessions, matching the live 777limited page (David, 2026-11-15, via Muse: three sessions, guides rewritten to match the page). There is no fourth call and no recovery call held in reserve.
+
 1. Private intake and written commitment.
-2. Day One diagnostic, belief shifts, SeenInSeven demonstration, and one approved script.
-3. Two private working sessions that aim for three total scripts.
-4. One optional recovery session only when a real blocker prevents the promised result.
-5. Graduation, referrals, and the permission-based Momentum Hub offer. There is no downsell.
+2. Session 1, untangle: diagnostic, belief shifts, SeenInSeven demonstration, and one approved script.
+3. Session 2, create the videos together: build and approve the next scripts, working toward the seven videos in about seven days the page promises.
+4. Session 3, review what changed: Graduation, referrals, and the permission-based Momentum Hub offer. There is no downsell.
 
 Recording and publishing earn recognition, but neither is required to continue. Participation is free during validation. Consent is required before recording, transcribing, quoting, or using results.
 

@@ -1,12 +1,12 @@
 # Day One Guide
 
-This is a fresh private-session guide built from the strongest parts of the retail webinar and the first live 777 event. It is not a shortened webinar transcript. Use the participant's answers to decide which belief shift earns airtime.
+This guide covers Session 1, untangle, of the three sessions the live page promises. It is a fresh private-session guide built from the strongest parts of the retail webinar and the first live 777 event. It is not a shortened webinar transcript. Use the participant's answers to decide which belief shift earns airtime.
 
 ## Promise for the call
 
 “By the end of today, you will have one complete video script in your own voice. You do not have to record it today, and you do not have to prove anything to me. We are going to finish the part that usually leaves people staring at a blank screen.”
 
-Explain the four-call shape and the optional recovery session. Confirm that recording and posting are bonus progress, not the price of continuing.
+Explain the three-session shape the page promises: today we untangle, next time we create the videos together, and the last session reviews what changed. There is no fourth call. Confirm that recording and posting are bonus progress, not the price of continuing.
 
 ## Diagnostic conversation
 
@@ -74,7 +74,7 @@ Do not explain old checkout steps, access codes, coupons, PayPal, a second payme
 
 “You came in with [their exact starting language]. You are leaving with a finished script you approved. That does not mean every fear vanished. It means the fear is no longer the only evidence we have.”
 
-Ask what changed and what still feels hard. If they want to record or post, recognize it as bonus progress. Confirm Session 2 and make no new curriculum promise.
+Ask what changed and what still feels hard. If they want to record or post, recognize it as bonus progress. Confirm Session 2, create the videos together, and make no new curriculum promise.
 
 ## Day One completion check
 

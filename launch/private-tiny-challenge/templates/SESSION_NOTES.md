@@ -2,7 +2,7 @@
 
 **Run ID:**
 **Participant:**
-**Session:** Day One / Session 2 / Session 3 / Recovery
+**Session:** Session 1 untangle / Session 2 create the videos together / Session 3 review what changed
 **Date:**
 **Duration:**
 

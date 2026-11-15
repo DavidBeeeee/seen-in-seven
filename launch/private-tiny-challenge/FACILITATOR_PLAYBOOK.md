@@ -4,23 +4,23 @@
 
 The participant should finish with evidence that they can turn lived experience into clear video scripts. David should finish with evidence about the participant's language, blockers, response to SeenInSeven, and willingness to continue in a paid partnership.
 
-Keep the experience private, conversational, and specific to the person in front of you. Teach only what helps complete the next tiny action. Do not compress the old webinar into four calls.
+Keep the experience private, conversational, and specific to the person in front of you. Teach only what helps complete the next tiny action. Do not compress the old webinar into three calls.
 
 ## Before the first call
 
 - Confirm the participant matches the working audience: an early entrepreneur with useful experience or an offer, a visibility need, and discomfort or uncertainty about video.
 - Complete the intake and written commitment.
 - Obtain explicit choices for recording, transcription, internal analysis, testimonial use, and quotation. A yes to one is not a yes to the others.
-- Schedule the four core calls as close together as practical, ideally within 7 to 10 days. The schedule is a container, not a completion gate.
+- Schedule the three sessions the live page promises (untangle, create the videos together, review what changed) as close together as practical, inside the page's seven videos in about seven days. The schedule is a container, not a completion gate. There is no fourth call and no recovery call held in reserve (David, 2026-11-15, via Muse).
 - Create a run in `validation-ledger.json` and change only one major experiment variable from the previous run.
 
-## Session 1: Day One
+## Session 1: Untangle (Day One)
 
 **Suggested length:** 60 to 75 minutes
 
 ### 1. Safety and orientation, 5 minutes
 
-Explain that this is not a performance test. The goal is to complete useful work together. Recording and posting are optional bonus progress. Show the four-call shape and the one optional recovery rule.
+Explain that this is not a performance test. The goal is to complete useful work together. Recording and posting are optional bonus progress. Show the three-session shape: untangle today, create the videos together next, then review what changed.
 
 ### 2. Diagnostic, 15 to 20 minutes
 
@@ -57,27 +57,21 @@ Use the strongest portion of David's retail quota story to establish peer-level 
 
 ### 5. Close, 5 minutes
 
-Ask what feels different now. Offer recording or posting as optional progress, not homework required for Session 2. Confirm the next call.
+Ask what feels different now. Offer recording or posting as optional progress, not homework required for Session 2. Confirm Session 2.
 
-## Sessions 2 and 3: proof through repetition
+## Session 2: Create the videos together
 
-**Suggested length:** 45 to 60 minutes each
+**Suggested length:** 60 to 90 minutes
 
 1. Ask what happened after the previous script. Do not shame non-recording.
 2. Identify whether the current blocker is emotional, technical, message-related, or inside the app.
 3. Teach only enough to clear that blocker.
-4. Build and approve the next script during the call.
+4. Build and approve the next scripts during the call, working toward the seven videos the page promises.
 5. Record completion time, friction, and any recording or publishing bonus.
 
-The default result is three approved scripts across the working sessions. Two strong scripts are sufficient for Graduation when they represent meaningful progress.
+There is no recovery call. If a real emotional, technical, or app problem stops the work, clear what you can inside this session, then go to Session 3 and document honestly what stopped progress. Do not add modules, extend the free experience indefinitely, or make Graduation conditional on perfection.
 
-## Optional recovery session
-
-Use one recovery call only when a real emotional, technical, or app problem prevented completion of the second script. Restore the promised result. Do not add modules, extend the free experience indefinitely, or make Graduation conditional on perfection.
-
-If the work remains incomplete, proceed to Graduation and document honestly what stopped progress.
-
-## Graduation
+## Session 3: Review what changed (Graduation)
 
 **Suggested length:** 45 to 60 minutes
 

@@ -20,12 +20,16 @@
 | 1 | | | | |
 | 2 | | | | |
 | 3 | | | | |
+| 4 | | | | |
+| 5 | | | | |
+| 6 | | | | |
+| 7 | | | | |
 
 **Emotional blockers:**
 **Technical blockers:**
 **Message blockers:**
 **App blockers:**
-**Recovery session used:** yes / no
+**Recovery session used:** no (the three-session shape has no recovery call; field kept for the ledger check)
 
 ## Graduation results
 

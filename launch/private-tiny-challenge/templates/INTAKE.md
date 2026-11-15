@@ -13,7 +13,7 @@
 - What would greater visibility make possible?
 - What feels difficult about video right now?
 - What have you already tried?
-- Can you attend four private sessions?
+- Can you attend three private sessions over about seven days?
 
 ## Consent choices
 
