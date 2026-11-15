@@ -565,7 +565,8 @@ function goNext() {
       state.l2VideoStatus = null;
       state.l2Videos = null;
     }
-    state.journeyMaps = {1:[],2:[]};
+    // Returning members keep both levels' source maps when they re-run onboarding.
+    if (!signedIn) state.journeyMaps = {1:[],2:[]};
     maxProgressPct = 0;
     maxProgressL2Pct = 0;
     const storyDirection = ensurePhase2().storyDirection;
@@ -1073,7 +1074,13 @@ function selectStoryDirection(el, direction) {
   p2.storyDirection = direction;
   p2.contentIntent = direction === 'expertise' ? 'teach' : 'person';
   p2.contentIntentTitle = direction;
-  state.level = direction === 'expertise' ? 2 : 1;
+  const nextLevel = direction === 'expertise' ? 2 : 1;
+  if (state.level && Number(state.level) !== nextLevel) {
+    captureVideoAnswersByLevel();
+    archiveActiveJourneyLevel(state.level);
+    state.level = nextLevel;
+    activateJourneyLevel(nextLevel);
+  } else state.level = nextLevel;
   if (el) el.classList.add('selecting');
   saveProgress();
   setTimeout(goNext, 300);
@@ -1515,9 +1522,9 @@ function renderJourneyMap() {
       '<div class="journey-question-top" style="margin-top:24px;"><span class="journey-step">Step 2</span></div>' +
       '<h3>Paste it into your favorite AI.</h3><p>Pick the story that feels most true to you. It writes a draft, then reply revise and it makes it stronger. Copy the final version.</p>' +
       '<div class="journey-question-top" style="margin-top:24px;"><span class="journey-step">Step 3</span></div>' +
-      '<h3>Paste the seven numbered answers below.</h3>' +
-      '<label for="journey-import" style="margin-top:24px;display:block;">Paste your finished seven-part map</label>' +
-      '<textarea class="journey-answer-input" id="journey-import" rows="10" aria-describedby="journey-import-error" placeholder="1. ...\n\n2. ...\n\n3. ...\n\nPaste all seven numbered answers here."></textarea>' +
+      '<h3>Paste your final seven-part story notes below.</h3>' +
+      '<label for="journey-import" style="margin-top:24px;display:block;">Paste your finished seven-part notes</label>' +
+      '<textarea class="journey-answer-input" id="journey-import" rows="10" aria-describedby="journey-import-error" placeholder="PART 1\nMy commitment...\n\nPART 2\nAbout: Where this started\n1. My first scene...\n2. Another detail...\n\nContinue through PART 7."></textarea>' +
       '<p class="journey-import-error" id="journey-import-error" role="alert" hidden style="margin-top:10px;color:#e8705a;font-size:14px;line-height:1.5;"></p>' +
       '<button class="btn-primary" style="margin-top:14px;" type="button" onclick="importJourneyMap()">Review My Story →</button>' +
       '</section>';
@@ -1547,8 +1554,8 @@ function renderJourneyMap() {
     ? '<div class="journey-story-summary" role="status">' +
       '<strong>' + completedParts + ' of 7 story parts saved</strong>' +
       '<span id="journey-import-count">' + noteProgress.saved + ' of ' + noteProgress.total + ' detailed answers saved</span>' +
-      '<p>' + (reviewingImport
-        ? 'Your complete numbered answers were stored as the source for each video. Expand a part below to see them.'
+      '<p>' + (reviewingImport && noteProgress.saved
+        ? 'Your detailed answers were saved as the source for each video. Expand a part below to see them.'
         : 'The seven-part outline is saved. Detailed scene notes are optional now and can also be added before each video.') + '</p>' +
       (existingScripts.length ? '<p class="journey-story-existing">Existing scripts for Videos ' +
         existingScripts.join(', ') + ' will not automatically update. Review or regenerate affected scripts intentionally without deleting your story answers.</p>' : '') +
@@ -1726,8 +1733,10 @@ function skipJourneyPart() {
     renderJourneyMap();
     window.scrollTo(0, 0);
   } else {
+    p2.storyDiscoveryMode = 'self-review';
     saveProgress();
-    goNext();
+    renderJourneyMap();
+    window.scrollTo(0, 0);
   }
 }
 
