@@ -3455,8 +3455,11 @@ function renderMomentum300() {
   if (!m300App || !scored[m300App]) m300App = scoredKeys[0];
 
   const meta = appsMeta.get(m300App) || {};
+  const ownSet = meta.questionSet && meta.questionSet !== 'momentum-hub-three-hundred';
   note.textContent = [
-    (meta.name || m300App) + ' scored against ' + (artifact.scoredAgainst || 'the product'),
+    ownSet
+      ? (meta.name || m300App) + ' on its own ' + (meta.questionCount || '') + ' questions, against ' + (meta.repository || 'the product') + (meta.status === 'needs-score' ? ', not scored yet' : '')
+      : (meta.name || m300App) + ' scored against ' + (artifact.scoredAgainst || 'the product'),
     meta.scoredOn ? 'on ' + meta.scoredOn : null,
     artifact.cadence ? '· ' + artifact.cadence : null,
   ].filter(Boolean).join(' ');
@@ -3484,7 +3487,7 @@ function renderMomentum300() {
   const tally = scored[m300App].tally || {};
 
   // PART was retired 2026-10-21 (David): a row is PASS, FAIL or N/A.
-  for (const verdict of ['PASS', 'FAIL', 'LIVE', 'N/A']) {
+  for (const verdict of ['PASS', 'FAIL', 'LIVE', 'N/A', 'UNSCORED']) {
     if (!tally[verdict]) continue;
     const card = document.createElement('div');
     card.className = 'analytics-card';
@@ -3501,6 +3504,7 @@ function renderMomentum300() {
       FAIL: 'Not done yet. The note says what is missing.',
       LIVE: 'Needs a live look that has not happened.',
       'N/A': 'The capability genuinely does not exist.',
+      UNSCORED: 'A new question the morning has not graded yet.',
     })[verdict] || '';
     card.append(label, figure, sub);
     cards.append(card);
@@ -3517,6 +3521,23 @@ function renderMomentum300() {
     : `${visible.length} of ${rows.length} questions.`;
 
   const listLabels = new Map((artifact.lists || []).map(list => [list.id, list]));
+  const listSelect = el('m300-list');
+  if (listSelect) {
+    const present = [...new Set(rows.map(row => row.list))];
+    if (m300List !== 'all' && !present.includes(m300List)) m300List = 'all';
+    listSelect.replaceChildren();
+    const every = document.createElement('option');
+    every.value = 'all';
+    every.textContent = `All ${rows.length} questions`;
+    listSelect.append(every);
+    for (const id of present) {
+      const option = document.createElement('option');
+      option.value = id;
+      option.textContent = (listLabels.get(id) || {}).label || id;
+      listSelect.append(option);
+    }
+    listSelect.value = m300List;
+  }
   let lastKey = null;
   for (const row of visible) {
     const key = row.list + '|' + (row.section || '');
