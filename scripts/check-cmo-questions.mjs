@@ -157,16 +157,19 @@ try {
     assert.equal(res.statusCode, 403);
   }
 
-  // Admin caller still gets the full bootstrap on /api/workerbee, and 403 on /api/cmo-questions.
+  // Admin caller still gets the full bootstrap on /api/workerbee, and the same CMO projection on /api/cmo-questions.
   {
     const wbAdmin = mockRes();
     await workerbeeHandler({ method: 'GET', query: {}, headers: { authorization: 'Bearer admin-token' } }, wbAdmin);
     assert.equal(wbAdmin.statusCode, 200);
     assert.ok(Array.isArray(wbAdmin.body.journal));
 
+    // Admins (David) can open the CMO page too, to see what Muse sees.
     const cmoAdmin = mockRes();
     await cmoHandler({ method: 'GET', headers: { authorization: 'Bearer admin-token' } }, cmoAdmin);
-    assert.equal(cmoAdmin.statusCode, 403);
+    assert.equal(cmoAdmin.statusCode, 200);
+    assert.equal(cmoAdmin.body.apps[0].key, 'ward');
+    assert.equal(cmoAdmin.body.journal, undefined);
   }
 } finally {
   globalThis.fetch = priorFetch;
@@ -198,7 +201,7 @@ const studioHtml = read('index.html');
 const studioJs = read('js/studio.js');
 assert.match(studioHtml, /id="cmo-nav-item" href="\/cmo" hidden/);
 assert.match(studioJs, /const CMO_EMAILS = \['davidkamau\.t\+cmo@gmail\.com'\]/);
-assert.match(studioJs, /el\('cmo-nav-item'\)\.hidden = !\(signedIn && CMO_EMAILS\.includes/);
+assert.match(studioJs, /el\('cmo-nav-item'\)\.hidden = !\(signedIn && \(isAdmin \|\| CMO_EMAILS\.includes/);
 for (const email of parseCmoEmails(undefined)) assert.ok(studioJs.includes(`'${email}'`), `studio.js CMO_EMAILS missing ${email}`);
 
 // Hobby plan caps Vercel at 12 functions (the a8afcfd production deploy failed

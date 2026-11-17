@@ -484,7 +484,7 @@ function renderStudio() {
   if (el('cards-card')) el('cards-card').hidden = !signedIn;
   el('workerbee-nav-item').hidden = !isAdmin;
   el('admin-nav-item').hidden = !isAdmin;
-  if (el('cmo-nav-item')) el('cmo-nav-item').hidden = !(signedIn && CMO_EMAILS.includes(String(email || '').trim().toLowerCase()));
+  if (el('cmo-nav-item')) el('cmo-nav-item').hidden = !(signedIn && (isAdmin || CMO_EMAILS.includes(String(email || '').trim().toLowerCase())));
   el('eee-card').hidden = !eeeCardVisible;
 
   // Solution Vault in the sidebar (WBR-445): a Book Shelf and a Video Room

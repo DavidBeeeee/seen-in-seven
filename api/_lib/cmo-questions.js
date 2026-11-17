@@ -1,4 +1,4 @@
-import { authenticatedUser, json } from './security.js';
+import { authenticatedAdmin, authenticatedUser, json } from './security.js';
 import { readJsonWithBytes, recordResponseBytes } from './egress-budget.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
@@ -117,8 +117,11 @@ async function readCmoQuestions(token, serverSecret) {
 export default async function handler(req, res) {
   if (req.method !== 'GET') return json(res, 405, { error: 'Method not allowed.' });
 
+  // CMO_EMAILS accounts, plus Studio admins so David can see exactly what
+  // Muse sees (David, 2026-11-17: "GIVE ME ACCESS TO HER CMO PAGEEEE!").
   const user = await authenticatedUser(req);
-  if (!user || !isCmoEmail(user.email)) {
+  const allowed = Boolean(user && (isCmoEmail(user.email) || await authenticatedAdmin(req)));
+  if (!allowed) {
     return json(res, 403, { error: 'CMO access requires a signed-in CMO account.' });
   }
 
