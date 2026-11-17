@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import cmoHandler, { isCmoEmail, parseCmoEmails, projectCmoQuestions } from '../api/cmo-questions.js';
+import cmoHandler, { isCmoEmail, parseCmoEmails, projectCmoQuestions } from '../api/_lib/cmo-questions.js';
 import workerbeeHandler from '../api/workerbee.js';
 
 function mockRes() {
@@ -116,6 +116,16 @@ try {
     assert.equal(q100.question, 'Ward H5 Q100 text');
   }
 
+  // Same read through the production path: /api/cmo-questions rewrites to
+  // /api/workerbee?channel=cmo-questions (12-function Hobby limit).
+  {
+    const res = mockRes();
+    await workerbeeHandler({ method: 'GET', query: { channel: 'cmo-questions' }, headers: { authorization: 'Bearer cmo-token' } }, res);
+    assert.equal(res.statusCode, 200);
+    assert.equal(res.body.apps[0].key, 'ward');
+    assert.equal(res.body.journal, undefined);
+  }
+
   // CMO caller gets 403 on default bootstrap GET, view=hub-scores, and every POST action.
   for (const req of [
     { method: 'GET', query: {}, headers: { authorization: 'Bearer cmo-token' } },
@@ -170,7 +180,7 @@ try {
 const read = (rel) => fs.readFileSync(new URL(`../${rel}`, import.meta.url), 'utf8');
 const cmoHtml = read('cmo.html');
 const cmoJs = read('js/cmo.js');
-const cmoApi = read('api/cmo-questions.js');
+const cmoApi = read('api/_lib/cmo-questions.js');
 const vercel = JSON.parse(read('vercel.json'));
 const migration = read('supabase_migrations/2026-11-16-workerbee-cmo-questions.sql');
 
@@ -182,5 +192,18 @@ assert.doesNotMatch(cmoJs, /SERVICE_ROLE|SUPABASE_SECRET|WORKERBEE_STUDIO_SECRET
 assert.doesNotMatch(cmoApi, /SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY|is_admin|provision_admin_account/);
 assert.ok(vercel.rewrites.some((r) => r.source === '/cmo' && r.destination === '/cmo.html'));
 assert.match(migration, /elsif p_profile = 'cmo-questions' then/);
+
+// Hobby plan caps Vercel at 12 functions (the a8afcfd production deploy failed
+// at 13). The CMO route rides /api/workerbee and must branch before authorize().
+const functionCount = fs.readdirSync(new URL('../api/', import.meta.url)).filter((f) => /\.(js|mjs|ts)$/.test(f)).length;
+assert.ok(functionCount <= 12, `api/ has ${functionCount} functions; Hobby allows 12`);
+assert.ok(vercel.rewrites.some((r) => r.source === '/api/cmo-questions' && r.destination === '/api/workerbee?channel=cmo-questions'));
+const workerbeeApi = read('api/workerbee.js');
+assert.ok(workerbeeApi.indexOf("channel === 'cmo-questions'") > -1 && workerbeeApi.indexOf("channel === 'cmo-questions'") < workerbeeApi.indexOf('await authorize(req)'));
+{
+  const res = { statusCode: 0, body: null, setHeader() {}, status(c) { this.statusCode = c; return this; }, json(b) { this.body = b; return this; }, end(b) { this.body = b; return this; } };
+  await workerbeeHandler({ method: 'GET', query: { channel: 'cmo-questions' }, headers: {} }, res);
+  assert.equal(res.statusCode, 403, 'anonymous caller on the CMO channel gets 403');
+}
 
 console.log('CMO questions route, /cmo page, and 403 isolation checks passed.');

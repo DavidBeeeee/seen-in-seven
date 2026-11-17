@@ -26,6 +26,10 @@
   ],
   "rewrites": [
     {
+      "source": "/api/cmo-questions",
+      "destination": "/api/workerbee?channel=cmo-questions"
+    },
+    {
       "source": "/api/workerbee-mailchimp",
       "destination": "/api/workerbee?channel=mailchimp"
     },

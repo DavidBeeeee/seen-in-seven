@@ -1,5 +1,5 @@
-import { authenticatedUser, json } from './_lib/security.js';
-import { readJsonWithBytes, recordResponseBytes } from './_lib/egress-budget.js';
+import { authenticatedUser, json } from './security.js';
+import { readJsonWithBytes, recordResponseBytes } from './egress-budget.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
