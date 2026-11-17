@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="robots" content="noindex,nofollow">
+  <meta name="theme-color" content="#111716">
+  <title>CMO · Momentum 300</title>
+  <link rel="icon" href="/assets/workerbee-mark.svg">
+  <link rel="stylesheet" href="/css/workerbee.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+</head>
+<body data-workerbee-surface="cmo">
+  <header class="wb-header todo-header">
+    <span class="wb-brand"><img src="/assets/workerbee-mark.svg" alt=""><span><small>CMO</small><strong>Momentum 300</strong></span></span>
+    <div class="header-actions"><button class="quiet-button" id="cmo-sign-out" type="button" hidden>Sign out</button></div>
+  </header>
+  <main class="todo-main">
+    <section class="auth-card" id="cmo-auth-card">
+      <p class="eyebrow">CMO Access</p>
+      <h1>Sign in to read the Momentum 300.</h1>
+      <p>Read-only access to the product question sets and current scores.</p>
+      <form id="cmo-auth-form">
+        <label for="cmo-auth-email">Email</label>
+        <input id="cmo-auth-email" type="email" autocomplete="email" required>
+        <label for="cmo-auth-password">Password</label>
+        <input id="cmo-auth-password" type="password" autocomplete="current-password" required>
+        <button class="primary-button" type="submit">Sign in</button>
+        <p class="form-message" id="cmo-auth-message" role="status"></p>
+      </form>
+    </section>
+
+    <section class="auth-card" id="cmo-recovery-card" hidden>
+      <p class="eyebrow">CMO Access</p>
+      <h1>Set your CMO password.</h1>
+      <p>Choose a password to sign in to the Momentum 300 view.</p>
+      <form id="cmo-recovery-form">
+        <label for="cmo-new-password">New password</label>
+        <input id="cmo-new-password" type="password" autocomplete="new-password" minlength="8" required>
+        <label for="cmo-confirm-password">Confirm password</label>
+        <input id="cmo-confirm-password" type="password" autocomplete="new-password" minlength="8" required>
+        <button class="primary-button" type="submit">Save password</button>
+        <p class="form-message" id="cmo-recovery-message" role="status"></p>
+      </form>
+    </section>
+
+    <section id="cmo-loading" class="loading-card" hidden>Loading the Momentum 300...</section>
+    <section id="cmo-error-card" class="error-card" hidden>
+      <h1>Could not open the Momentum 300.</h1>
+      <p id="cmo-error-message"></p>
+    </section>
+
+    <div id="cmo-app" hidden>
+      <p class="analytics-note" id="cmo-note"></p>
+      <div class="period-tabs" id="cmo-apps" role="tablist" aria-label="App filter"></div>
+      <div class="analytics-grid" id="cmo-cards"></div>
+      <section class="card analytics-trend">
+        <div class="done-filters">
+          <input id="cmo-search" type="search" autocomplete="off" placeholder="Search questions" aria-label="Search questions">
+          <select id="cmo-verdict" aria-label="Score filter">
+            <option value="all">Every score</option>
+            <option value="PASS">PASS</option>
+            <option value="FAIL">FAIL</option>
+            <option value="LIVE">LIVE</option>
+            <option value="N/A">N/A</option>
+            <option value="UNSCORED">UNSCORED</option>
+          </select>
+          <select id="cmo-list" aria-label="Hundred filter">
+            <option value="all">All questions</option>
+          </select>
+        </div>
+        <p class="analytics-sub" id="cmo-count"></p>
+        <div id="cmo-rows"></div>
+      </section>
+    </div>
+  </main>
+  <script type="module" src="/js/cmo.js"></script>
+</body>
+</html>
