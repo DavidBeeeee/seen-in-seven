@@ -66,6 +66,14 @@
       "destination": "/momentum300.html"
     },
     {
+      "source": "/cmo",
+      "destination": "/cmo.html"
+    },
+    {
+      "source": "/cmo/",
+      "destination": "/cmo.html"
+    },
+    {
       "source": "/todo",
       "destination": "/todo.html"
     },
