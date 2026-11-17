@@ -193,6 +193,14 @@ assert.doesNotMatch(cmoApi, /SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY|is_ad
 assert.ok(vercel.rewrites.some((r) => r.source === '/cmo' && r.destination === '/cmo.html'));
 assert.match(migration, /elsif p_profile = 'cmo-questions' then/);
 
+// Studio sidebar shows the CMO link only to CMO_EMAILS accounts (display only).
+const studioHtml = read('index.html');
+const studioJs = read('js/studio.js');
+assert.match(studioHtml, /id="cmo-nav-item" href="\/cmo" hidden/);
+assert.match(studioJs, /const CMO_EMAILS = \['davidkamau\.t\+cmo@gmail\.com'\]/);
+assert.match(studioJs, /el\('cmo-nav-item'\)\.hidden = !\(signedIn && CMO_EMAILS\.includes/);
+for (const email of parseCmoEmails(undefined)) assert.ok(studioJs.includes(`'${email}'`), `studio.js CMO_EMAILS missing ${email}`);
+
 // Hobby plan caps Vercel at 12 functions (the a8afcfd production deploy failed
 // at 13). The CMO route rides /api/workerbee and must branch before authorize().
 const functionCount = fs.readdirSync(new URL('../api/', import.meta.url)).filter((f) => /\.(js|mjs|ts)$/.test(f)).length;

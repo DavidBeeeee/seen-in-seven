@@ -26,6 +26,10 @@ const HUB_APP_KEYS = ['storysculpt', 'navigator', 'vault', 'certainty'];
 const accessNoticeApp = new URLSearchParams(window.location.search).get('access');
 
 const el = id => document.getElementById(id);
+// WBR-464. Display only: shows the /cmo link in the sidebar for the CMO
+// account. /api/cmo-questions enforces CMO_EMAILS on the server, so keep this
+// list in step with that variable (default davidkamau.t+cmo@gmail.com).
+const CMO_EMAILS = ['davidkamau.t+cmo@gmail.com'];
 
 // Return to a Studio page after sign-in (WBR-445). A gifted book link sends a
 // signed-out reader here with ?next=/vault?book=...; once they sign in they
@@ -480,6 +484,7 @@ function renderStudio() {
   if (el('cards-card')) el('cards-card').hidden = !signedIn;
   el('workerbee-nav-item').hidden = !isAdmin;
   el('admin-nav-item').hidden = !isAdmin;
+  if (el('cmo-nav-item')) el('cmo-nav-item').hidden = !(signedIn && CMO_EMAILS.includes(String(email || '').trim().toLowerCase()));
   el('eee-card').hidden = !eeeCardVisible;
 
   // Solution Vault in the sidebar (WBR-445): a Book Shelf and a Video Room
