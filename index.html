@@ -21,7 +21,7 @@
     })();
   </script>
   <link rel="stylesheet" href="/css/hub-theme.css">
-  <link rel="stylesheet" href="/css/studio.css?v=cards-6">
+  <link rel="stylesheet" href="/css/studio.css?v=accounts-1">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="/js/egress-report.js?v=1"></script>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
 </head>
@@ -421,39 +421,73 @@
       </button>
       <p class="eyebrow">Colorado Mastermind Studio</p>
       <h2 id="auth-title">Welcome back.</h2>
-      <p class="auth-intro">Use the same email you use with Colorado Mastermind.</p>
+      <p class="auth-intro" id="auth-intro">Use the same email you use with Colorado Mastermind.</p>
 
-      <div class="auth-tabs" role="tablist" aria-label="Sign in method">
-        <button class="auth-tab" id="magic-tab" type="button" role="tab">Magic link</button>
-        <button class="auth-tab active" id="password-tab" type="button" role="tab">Password</button>
+      <div class="auth-tabs" id="auth-tabs" role="tablist" aria-label="Sign in method">
+        <button class="auth-tab active" id="password-tab" type="button" role="tab">Sign in</button>
+        <button class="auth-tab" id="magic-tab" type="button" role="tab">Email link</button>
+        <button class="auth-tab" id="signup-tab" type="button" role="tab">Create account</button>
       </div>
 
       <form id="auth-form">
+        <div id="name-field" hidden>
+          <label for="auth-name">Your name</label>
+          <input id="auth-name" type="text" autocomplete="name" placeholder="First and last name">
+        </div>
         <label for="auth-email">Email address</label>
         <input id="auth-email" type="email" autocomplete="email" placeholder="you@example.com" required>
         <div id="password-field">
           <label for="auth-password">Password</label>
           <input id="auth-password" type="password" autocomplete="current-password" placeholder="Your password" required>
+          <button class="auth-text-link" id="forgot-password" type="button">Forgot your password?</button>
+        </div>
+        <div id="confirm-field" hidden>
+          <label for="auth-password-confirm">Confirm password</label>
+          <input id="auth-password-confirm" type="password" autocomplete="new-password" placeholder="Type it again">
         </div>
         <button class="primary-button auth-submit" id="auth-submit" type="submit">
           <span>Sign in</span>
           <i data-lucide="arrow-right"></i>
         </button>
+        <button class="auth-text-link auth-back" id="auth-back" type="button" hidden>Back to sign in</button>
         <p class="auth-message" id="auth-message" role="status"></p>
       </form>
     </section>
   </div>
 
   <div class="modal-backdrop" id="settings-modal" hidden>
-    <section class="auth-dialog settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title">
-      <button class="icon-button modal-close" id="settings-close" type="button" title="Close" aria-label="Close account settings">
+    <section class="auth-dialog settings-dialog profile-dialog" role="dialog" aria-modal="true" aria-labelledby="settings-title">
+      <button class="icon-button modal-close" id="settings-close" type="button" title="Close" aria-label="Close your profile">
         <i data-lucide="x"></i>
       </button>
-      <p class="eyebrow">Account settings</p>
-      <h2 id="settings-title">Set your password.</h2>
-      <p class="auth-intro">Use a password next time instead of waiting for a sign-in email.</p>
-      <p class="settings-email" id="settings-email"></p>
-      <form id="settings-password-form">
+      <div class="profile-head">
+        <span class="profile-avatar" id="profile-avatar" aria-hidden="true">?</span>
+        <div>
+          <p class="eyebrow">Your profile</p>
+          <h2 id="settings-title">Your profile</h2>
+          <p class="settings-email" id="settings-email"></p>
+        </div>
+      </div>
+      <p class="auth-message profile-notice" id="profile-notice" role="status" hidden></p>
+
+      <form class="profile-section" id="profile-name-form">
+        <h3>Your name</h3>
+        <label for="profile-name">How your name shows in Studio</label>
+        <div class="profile-row">
+          <input id="profile-name" type="text" autocomplete="name" maxlength="80" placeholder="First and last name" required>
+          <button class="secondary-button" id="profile-name-submit" type="submit"><span>Save</span></button>
+        </div>
+        <p class="auth-message" id="profile-name-message" role="status"></p>
+      </form>
+
+      <section class="profile-section" aria-labelledby="profile-access-title">
+        <h3 id="profile-access-title">What you can open</h3>
+        <ul class="profile-access" id="profile-access"></ul>
+      </section>
+
+      <form class="profile-section" id="settings-password-form">
+        <h3 id="profile-password-title">Password</h3>
+        <p class="profile-hint" id="profile-password-hint">Set a password to sign in without waiting for an email.</p>
         <label for="settings-password">New password</label>
         <input id="settings-password" type="password" autocomplete="new-password" minlength="6" placeholder="At least 6 characters" required>
         <label for="settings-password-confirm">Confirm password</label>
@@ -464,14 +498,16 @@
         </button>
         <p class="auth-message" id="settings-password-message" role="status"></p>
       </form>
+
+      <button class="auth-text-link profile-sign-out" id="profile-sign-out" type="button">Sign out</button>
     </section>
   </div>
 
   <div class="account-menu" id="account-menu" hidden>
     <div class="account-menu-email" id="menu-email"></div>
     <button id="settings-button" type="button">
-      <i data-lucide="settings"></i>
-      Account settings
+      <i data-lucide="user-round"></i>
+      Your profile
     </button>
     <button id="sign-out-button" type="button">
       <i data-lucide="log-out"></i>
@@ -481,6 +517,6 @@
 
   <script src="/js/777-launch-cycle.js?v=2026-09"></script>
   <script src="/js/network.js?v=cards-6"></script>
-  <script src="/js/studio.js?v=cards-2"></script>
+  <script src="/js/studio.js?v=accounts-1"></script>
 </body>
 </html>

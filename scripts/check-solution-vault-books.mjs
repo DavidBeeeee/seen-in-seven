@@ -109,7 +109,8 @@ assert.ok(hubPageSrc.includes("b.href = '/?next=' + encodeURIComponent(back)"), 
 const safeNext = new RegExp(studioJs.match(/const SAFE_NEXT = \/(.*)\/;/)[1]);
 for (const ok of ['/vault?book=5e-framework', '/vault']) assert.ok(safeNext.test(ok), `${ok} is followed`);
 for (const bad of ['//evil.example', 'https://evil.example', '/\\evil.example', 'javascript:alert(1)', '/vault#x']) assert.ok(!safeNext.test(bad), `${bad} is refused`);
-assert.ok(studioJs.includes('if (followStudioNext()) return;'), 'Studio follows the saved destination after sign-in');
+// A password-reset sign-in opens the profile first (Studio accounts, 2026-11-17); every other sign-in still follows the destination.
+assert.ok(studioJs.includes('if (!pendingPasswordRecovery && followStudioNext()) return;'), 'Studio follows the saved destination after sign-in');
 console.log('PASS: sign-in return path verified.');
 
 // 6. Gift delivery, exercised with a fake database.

@@ -9,6 +9,7 @@ let studioAccess = [];
 let userHasBooks = false;
 let studioCatalogMode = 'automatic';
 let authMode = 'password';
+let pendingPasswordRecovery = new URLSearchParams(window.location.search).get('reset') === '1';
 let studioAuthResolved = false;
 const HAS_CACHED_SESSION = (() => {
   try {
@@ -242,14 +243,38 @@ function closeAuthModal() {
   setAuthMessage('');
 }
 
+// Four ways in (Studio accounts, 2026-11-17): password sign-in, an emailed
+// link, self-service account creation, and a password reset email. New
+// accounts carry no app access; access is still granted by David.
+const AUTH_MODES = {
+  password: { title: 'Welcome back.', intro: 'Use the same email you use with Colorado Mastermind.', submit: 'Sign in' },
+  magic: { title: 'Welcome back.', intro: 'We will email you a link that signs you straight in. No password needed.', submit: 'Send my sign-in link' },
+  signup: { title: 'Create your Studio account.', intro: 'One login for everything you use with Colorado Mastermind.', submit: 'Create my account' },
+  reset: { title: 'Reset your password.', intro: 'Enter your email and we will send you a link to choose a new password.', submit: 'Send my reset link' }
+};
+
 function setAuthMode(nextMode) {
-  authMode = nextMode;
-  const passwordMode = authMode === 'password';
-  el('magic-tab').classList.toggle('active', !passwordMode);
-  el('password-tab').classList.toggle('active', passwordMode);
-  el('password-field').hidden = !passwordMode;
-  el('auth-password').required = passwordMode;
-  el('auth-submit').querySelector('span').textContent = passwordMode ? 'Sign in' : 'Send my sign-in link';
+  authMode = AUTH_MODES[nextMode] ? nextMode : 'password';
+  const mode = AUTH_MODES[authMode];
+  const usesPassword = authMode === 'password' || authMode === 'signup';
+  const signup = authMode === 'signup';
+  el('password-tab').classList.toggle('active', authMode === 'password');
+  el('magic-tab').classList.toggle('active', authMode === 'magic');
+  el('signup-tab').classList.toggle('active', signup);
+  el('auth-tabs').hidden = authMode === 'reset';
+  el('auth-back').hidden = authMode !== 'reset';
+  el('name-field').hidden = !signup;
+  el('auth-name').required = signup;
+  el('password-field').hidden = !usesPassword;
+  el('auth-password').required = usesPassword;
+  el('auth-password').autocomplete = signup ? 'new-password' : 'current-password';
+  el('auth-password').placeholder = signup ? 'At least 6 characters' : 'Your password';
+  el('forgot-password').hidden = authMode !== 'password';
+  el('confirm-field').hidden = !signup;
+  el('auth-password-confirm').required = signup;
+  el('auth-title').textContent = mode.title;
+  el('auth-intro').textContent = mode.intro;
+  el('auth-submit').querySelector('span').textContent = mode.submit;
   setAuthMessage('');
 }
 
@@ -353,6 +378,15 @@ function renderAppAccess(appKey, unlocked, betaCopy, lockedCopy) {
   }
 }
 
+// A self-created account carries the name typed at sign-up in its auth
+// metadata. Copy it onto the Studio profile once, never over a name already set.
+async function syncSignupName(user) {
+  const signupName = user && user.user_metadata && typeof user.user_metadata.name === 'string' ? user.user_metadata.name.trim() : '';
+  if (!signupName || !studioProfile || (studioProfile.name && studioProfile.name.trim())) return;
+  const { error } = await studioSb.from('users').update({ name: signupName.slice(0, 80) }).eq('id', studioProfile.id);
+  if (!error) studioProfile.name = signupName.slice(0, 80);
+}
+
 async function hydrateStudio(session) {
   studioSession = session;
   studioProfile = null;
@@ -364,6 +398,7 @@ async function hydrateStudio(session) {
   if (session && session.user) {
     studioProfile = await ensureStudioProfile(session.user);
     if (studioProfile) {
+      await syncSignupName(session.user);
       studioAccess = await loadStudioAccess(studioProfile);
       try {
         const { data: hasBooks } = await studioSb.rpc('has_any_book_access');
@@ -371,9 +406,9 @@ async function hydrateStudio(session) {
       } catch (e) {
         userHasBooks = false;
       }
-      if (followStudioNext()) return;
+      if (!pendingPasswordRecovery && followStudioNext()) return;
 
-      if (userHasBooks) {
+      if (userHasBooks && !pendingPasswordRecovery) {
         const unopenedSlug = await findNewestUnopenedGiftBook(studioProfile);
         if (unopenedSlug) {
           markGiftBookShown(studioProfile.id, unopenedSlug);
@@ -385,6 +420,12 @@ async function hydrateStudio(session) {
   }
   studioAuthResolved = true;
   renderStudio();
+  if (pendingPasswordRecovery && studioSession && studioSession.user) {
+    pendingPasswordRecovery = false;
+    clearResetParam();
+    openSettingsModal({ recovery: true });
+    return;
+  }
   const nextPath = !studioSession && pendingStudioNext();
   if (nextPath) {
     openAuthModal();
@@ -501,13 +542,28 @@ function renderStudio() {
   refreshIcons();
 }
 
+function signupAlreadyExists(error, data) {
+  const raw = (error && error.message ? error.message : '').toLowerCase();
+  if (raw.includes('already registered') || raw.includes('already exists')) return true;
+  // With email confirmation on, Supabase answers an existing address with a
+  // user that has no identities rather than an error.
+  return Boolean(!error && data && data.user && Array.isArray(data.user.identities) && data.user.identities.length === 0);
+}
+
 async function submitAuth(event) {
   event.preventDefault();
   const email = el('auth-email').value.trim().toLowerCase();
   const password = el('auth-password').value;
   const submitButton = el('auth-submit');
   const submitLabel = submitButton.querySelector('span');
-  const originalLabel = authMode === 'password' ? 'Sign in' : 'Send my sign-in link';
+  const originalLabel = AUTH_MODES[authMode].submit;
+
+  if (authMode === 'signup') {
+    const name = el('auth-name').value.trim();
+    if (!name) { setAuthMessage('Add your name so people know who you are.', 'error'); return; }
+    if (password.length < 6) { setAuthMessage('Use at least 6 characters for your password.', 'error'); return; }
+    if (password !== el('auth-password-confirm').value) { setAuthMessage('Those passwords do not match.', 'error'); return; }
+  }
 
   submitButton.disabled = true;
   submitLabel.textContent = 'One moment...';
@@ -518,6 +574,29 @@ async function submitAuth(event) {
       const { error } = await studioSb.auth.signInWithPassword({ email, password });
       if (error) throw error;
       closeAuthModal();
+    } else if (authMode === 'signup') {
+      const name = el('auth-name').value.trim();
+      const { data, error } = await studioSb.auth.signUp({
+        email,
+        password,
+        options: { emailRedirectTo: window.location.origin + '/', data: { name } }
+      });
+      if (signupAlreadyExists(error, data)) {
+        setAuthMode('password');
+        el('auth-email').value = email;
+        setAuthMessage('You already have an account with that email. Sign in below, or use Forgot your password.', 'error');
+        return;
+      }
+      if (error) throw error;
+      if (data && data.session) {
+        closeAuthModal();
+      } else {
+        setAuthMessage('Almost done. We sent a confirmation link to ' + email + '. Open it to finish creating your account.', 'success');
+      }
+    } else if (authMode === 'reset') {
+      const { error } = await studioSb.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/?reset=1' });
+      if (error) throw error;
+      setAuthMessage('If there is an account for ' + email + ', a reset link is on its way. Check your inbox.', 'success');
     } else {
       const { error } = await studioSb.auth.signInWithOtp({
         email,
@@ -529,10 +608,16 @@ async function submitAuth(event) {
   } catch (error) {
     const raw = (error && error.message ? error.message : '').toLowerCase();
     const message = raw.includes('invalid login') || raw.includes('invalid credentials')
-      ? 'That email and password did not match. Try again or use a magic link.'
-      : raw.includes('rate')
-        ? 'There have been too many attempts. Please wait a few minutes and try again.'
-        : 'We could not sign you in just now. Please try again.';
+      ? 'That email and password did not match. Try again, or use Forgot your password.'
+      : raw.includes('email not confirmed')
+        ? 'Please confirm your email first. Open the link we sent when you created your account.'
+        : raw.includes('rate')
+          ? 'There have been too many attempts. Please wait a few minutes and try again.'
+          : raw.includes('password') && raw.includes('weak')
+            ? 'That password is too easy to guess. Try a longer one.'
+            : authMode === 'signup'
+              ? 'We could not create your account just now. Please try again.'
+              : 'We could not sign you in just now. Please try again.';
     setAuthMessage(message, 'error');
   } finally {
     submitButton.disabled = false;
@@ -558,18 +643,115 @@ function setPasswordMessage(message, type) {
   messageEl.className = 'auth-message' + (type ? ' ' + type : '');
 }
 
-function openSettingsModal() {
+function clearResetParam() {
+  if (!window.history || !window.history.replaceState) return;
+  const cleanUrl = new URL(window.location.href);
+  if (!cleanUrl.searchParams.has('reset')) return;
+  cleanUrl.searchParams.delete('reset');
+  window.history.replaceState({}, '', cleanUrl.pathname + cleanUrl.search + cleanUrl.hash);
+}
+
+function setProfileNameMessage(message, type) {
+  const messageEl = el('profile-name-message');
+  messageEl.textContent = message || '';
+  messageEl.className = 'auth-message' + (type ? ' ' + type : '');
+}
+
+function profileDisplayName() {
+  return studioProfile && studioProfile.name && studioProfile.name.trim() ? studioProfile.name.trim() : '';
+}
+
+function renderProfileHead() {
+  const email = studioSession && studioSession.user ? studioSession.user.email || '' : '';
+  const name = profileDisplayName();
+  el('settings-title').textContent = name || 'Your profile';
+  el('settings-email').textContent = email;
+  el('profile-avatar').textContent = (name || email || '?').charAt(0).toUpperCase();
+}
+
+function renderProfileAccess() {
+  const list = el('profile-access');
+  list.textContent = '';
+  const items = [];
+  if (studioProfile && studioProfile.is_admin === true) items.push({ name: 'Studio admin', note: 'Full access' });
+  studioAccess.forEach(item => {
+    const note = item.expires_at
+      ? 'Until ' + new Date(item.expires_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })
+      : item.access_source === 'beta' ? 'Beta' : '';
+    items.push({ name: ACCESS_APP_NAMES[item.app_key] || item.app_key, note });
+  });
+  items.push({ name: 'Community Business Cards', note: 'Every member' });
+  items.forEach(item => {
+    const li = document.createElement('li');
+    const icon = document.createElement('i');
+    icon.setAttribute('data-lucide', 'badge-check');
+    const label = document.createElement('span');
+    label.textContent = item.name;
+    li.append(icon, label);
+    if (item.note) {
+      const note = document.createElement('span');
+      note.className = 'profile-access-note';
+      note.textContent = item.note;
+      li.append(note);
+    }
+    list.append(li);
+  });
+  if (!studioAccess.length && !(studioProfile && studioProfile.is_admin === true)) {
+    const li = document.createElement('li');
+    li.className = 'empty';
+    li.textContent = 'Apps you are given access to show up here. Message David Bee if you are expecting one.';
+    list.append(li);
+  }
+  refreshIcons();
+}
+
+function openSettingsModal(options = {}) {
   if (!studioSession || !studioSession.user) return;
+  const recovery = options.recovery === true;
   el('account-menu').hidden = true;
-  el('settings-email').textContent = studioSession.user.email || '';
+  renderProfileHead();
+  el('profile-name').value = profileDisplayName();
+  setProfileNameMessage('');
+  renderProfileAccess();
+  el('profile-notice').hidden = !recovery;
+  el('profile-notice').textContent = recovery ? 'You are signed in from your reset link. Choose a new password below.' : '';
+  el('profile-password-title').textContent = recovery ? 'Choose a new password' : 'Password';
+  el('profile-password-hint').textContent = recovery
+    ? 'Save it and use it next time you sign in.'
+    : 'Set or change your password so you can sign in without waiting for an email.';
   el('settings-modal').hidden = false;
-  el('settings-password').focus();
+  if (recovery) el('settings-password').focus();
 }
 
 function closeSettingsModal() {
   el('settings-modal').hidden = true;
   el('settings-password-form').reset();
   setPasswordMessage('');
+  setProfileNameMessage('');
+}
+
+async function saveProfileName(event) {
+  event.preventDefault();
+  if (!studioProfile) return;
+  const name = el('profile-name').value.trim().slice(0, 80);
+  if (!name) { setProfileNameMessage('Add your name first.', 'error'); return; }
+  const button = el('profile-name-submit');
+  button.disabled = true;
+  button.querySelector('span').textContent = 'Saving...';
+  setProfileNameMessage('');
+  try {
+    const { error } = await studioSb.from('users').update({ name }).eq('id', studioProfile.id);
+    if (error) throw error;
+    studioProfile.name = name;
+    renderProfileHead();
+    renderStudio();
+    setProfileNameMessage('Saved.', 'success');
+  } catch (error) {
+    setProfileNameMessage('We could not save your name. Please try again.', 'error');
+  } finally {
+    button.disabled = false;
+    button.querySelector('span').textContent = 'Save';
+  }
 }
 
 async function saveStudioPassword(event) {
@@ -602,7 +784,8 @@ async function saveStudioPassword(event) {
 }
 
 studioSb.auth.onAuthStateChange((event, session) => {
-  if (!['INITIAL_SESSION', 'SIGNED_IN', 'SIGNED_OUT', 'TOKEN_REFRESHED'].includes(event)) return;
+  if (event === 'PASSWORD_RECOVERY') pendingPasswordRecovery = true;
+  if (!['INITIAL_SESSION', 'SIGNED_IN', 'SIGNED_OUT', 'TOKEN_REFRESHED', 'PASSWORD_RECOVERY'].includes(event)) return;
   setTimeout(() => {
     hydrateStudio(session).catch(() => {
       studioSession = session;
@@ -625,6 +808,14 @@ el('auth-modal').addEventListener('click', event => {
 });
 el('magic-tab').addEventListener('click', () => setAuthMode('magic'));
 el('password-tab').addEventListener('click', () => setAuthMode('password'));
+el('signup-tab').addEventListener('click', () => setAuthMode('signup'));
+el('forgot-password').addEventListener('click', () => {
+  setAuthMode('reset');
+  el('auth-email').focus();
+});
+el('auth-back').addEventListener('click', () => setAuthMode('password'));
+el('profile-name-form').addEventListener('submit', saveProfileName);
+el('profile-sign-out').addEventListener('click', signOutStudio);
 el('auth-form').addEventListener('submit', submitAuth);
 el('account-button').addEventListener('click', () => {
   el('account-menu').hidden = !el('account-menu').hidden;
