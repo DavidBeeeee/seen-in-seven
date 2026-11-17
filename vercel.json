@@ -30,6 +30,10 @@
       "destination": "/api/workerbee?channel=mailchimp"
     },
     {
+      "source": "/api/cmo-questions",
+      "destination": "/api/workerbee?channel=cmo-questions"
+    },
+    {
       "source": "/api/storysculpt-research",
       "destination": "/api/storysculpt?action=research"
     },

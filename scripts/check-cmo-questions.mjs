@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
-import cmoHandler, { isCmoEmail, parseCmoEmails, projectCmoQuestions } from '../api/cmo-questions.js';
+import cmoHandler, { isCmoEmail, parseCmoEmails, projectCmoQuestions } from '../api/_lib/cmo-questions.js';
 import workerbeeHandler from '../api/workerbee.js';
 
 function mockRes() {
@@ -170,7 +170,7 @@ try {
 const read = (rel) => fs.readFileSync(new URL(`../${rel}`, import.meta.url), 'utf8');
 const cmoHtml = read('cmo.html');
 const cmoJs = read('js/cmo.js');
-const cmoApi = read('api/cmo-questions.js');
+const cmoApi = read('api/_lib/cmo-questions.js');
 const vercel = JSON.parse(read('vercel.json'));
 const migration = read('supabase_migrations/2026-11-16-workerbee-cmo-questions.sql');
 
@@ -182,5 +182,13 @@ assert.doesNotMatch(cmoJs, /SERVICE_ROLE|SUPABASE_SECRET|WORKERBEE_STUDIO_SECRET
 assert.doesNotMatch(cmoApi, /SUPABASE_SERVICE_ROLE_KEY|SUPABASE_SECRET_KEY|is_admin|provision_admin_account/);
 assert.ok(vercel.rewrites.some((r) => r.source === '/cmo' && r.destination === '/cmo.html'));
 assert.match(migration, /elsif p_profile = 'cmo-questions' then/);
+
+// Hobby plan: at most twelve serverless functions, so the feed rides on
+// api/workerbee.js and is dispatched before the admin check.
+const functions = fs.readdirSync(new URL('../api/', import.meta.url)).filter((f) => f.endsWith('.js'));
+assert.ok(functions.length <= 12, `api/ has ${functions.length} functions; the Hobby plan deploys at most 12`);
+assert.ok(vercel.rewrites.some((r) => r.source === '/api/cmo-questions' && r.destination === '/api/workerbee?channel=cmo-questions'));
+const workerbeeSrc = read('api/workerbee.js');
+assert.ok(workerbeeSrc.indexOf("channel === 'cmo-questions'") < workerbeeSrc.indexOf('await authorize(req)'), 'CMO dispatch precedes the admin check');
 
 console.log('CMO questions route, /cmo page, and 403 isolation checks passed.');

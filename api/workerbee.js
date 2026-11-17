@@ -2,6 +2,7 @@ import { timingSafeEqual } from 'node:crypto';
 import { authenticatedAdmin, json } from './_lib/security.js';
 import { mailchimpRequest } from './_lib/workerbee-mailchimp.js';
 import { readJsonWithBytes, recordResponseBytes } from './_lib/egress-budget.js';
+import cmoQuestionsHandler from './_lib/cmo-questions.js';
 
 const SUPABASE_URL = process.env.SUPABASE_URL || 'https://zdtkwpzdwnzzmdwrvmka.supabase.co';
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InpkdGt3cHpkd256em1kd3J2bWthIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAxNzA5MTgsImV4cCI6MjA5NTc0NjkxOH0.t1OPKb3YuzLxmGvJThUcWSSxkAEwa0sKaVFDCHSoPlE';
@@ -244,6 +245,9 @@ async function certaintyWeek(token) {
 }
 
 export default async function handler(req, res) {
+  // The CMO feed has its own gate (a signed-in CMO_EMAILS account) and must be
+  // answered before David's admin check, never after it.
+  if (req.query?.channel === 'cmo-questions') return cmoQuestionsHandler(req, res);
   if (!['GET', 'POST'].includes(req.method)) return json(res, 405, { error: 'Method not allowed.' });
   const auth = await authorize(req);
   if (!auth) return json(res, 403, { error: 'This private workspace is only available to David.' });
