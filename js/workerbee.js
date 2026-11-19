@@ -310,14 +310,14 @@ function dailyReportUpdates() {
 }
 
 const LANE_NAMES = {
-  morning: 'Morning',
-  latemorning: 'Late morning · Antigravity',
-  kimi: 'Kimi build',
-  afternoon: 'Afternoon',
+  morning: 'CoworkCoffee · 7 a.m.',
+  latemorning: 'AgLiftoff · 10 a.m.',
+  kimi: 'KimiLunch · 1 p.m.',
+  afternoon: 'CodexTeaTime · 3 p.m.',
   social: 'Moltbook',
-  evening: 'Evening · Claude Code',
-  agnight: 'Overnight · Antigravity',
-  kiminight: 'Overnight · Kimi',
+  evening: 'ClaudeNightcap · 10:30 p.m.',
+  agnight: 'AgMoonwalk · 12:30 a.m.',
+  kiminight: 'KimiGraveyard · 3:30 a.m.',
   lateNight: 'Late night',
 };
 const REPORT_SLOT_LANES = {
@@ -505,7 +505,7 @@ function renderReportPeriod(label, period, reportDate, defaultOpen = true, run =
   // the half David actually asked for: he can read tonight's plan before
   // tonight runs it, in English, instead of decoding Board ids at the point
   // where correcting it is still cheap.
-  if (label === 'Morning') {
+  if (label === 'CoworkCoffee · 7 a.m.') {
     const walkthroughs = todaysWalkthroughs(reportDate);
     if (walkthroughs.length) card.append(walkthroughButton(walkthroughs));
   }
@@ -645,7 +645,7 @@ function renderDailyReport() {
   const newestDate = records.map(record => String(record.metadata.report_date)).sort().pop();
   const newest = records.find(record => String(record.metadata.report_date) === newestDate);
   const morningRan = Boolean(newest?.metadata?.morning?.updatedAt) && !['not-run', 'pending', ''].includes(String(newest?.metadata?.morning?.status || ''));
-  const nightCards = new Set(['Late night', 'Evening · Claude Code', 'Overnight · Antigravity', 'Overnight · Kimi']);
+  const nightCards = new Set(['Late night', 'ClaudeNightcap · 10:30 p.m.', 'AgMoonwalk · 12:30 a.m.', 'KimiGraveyard · 3:30 a.m.']);
   records.forEach(record => {
     const older = String(record.metadata.report_date) !== newestDate;
     const fold = laneLabel => !(older && morningRan && !nightCards.has(laneLabel));
@@ -676,17 +676,17 @@ function renderDailyReport() {
     const grid = document.createElement('div');
     grid.className = 'daily-report-grid';
     grid.append(
-      renderLane('Morning', 'morning'),
-      renderLane('Late morning · Antigravity', 'lateMorning', 'late_morning'),
-      ...(shown('kimi') ? [renderLane('Kimi build', 'kimi')] : []),
-      renderLane('Afternoon', 'afternoon'),
+      renderLane('CoworkCoffee · 7 a.m.', 'morning'),
+      renderLane('AgLiftoff · 10 a.m.', 'lateMorning', 'late_morning'),
+      ...(shown('kimi') ? [renderLane('KimiLunch · 1 p.m.', 'kimi')] : []),
+      renderLane('CodexTeaTime · 3 p.m.', 'afternoon'),
       renderReportPeriod('Moltbook', record.metadata.moltbook, reportDate, fold('Moltbook'), runForReportLane(reportDate, 'moltbook')),
     );
     if (separated) {
       grid.append(
-        renderLane('Evening · Claude Code', 'evening'),
-        renderLane('Overnight · Antigravity', 'agnight'),
-        ...(shown('kiminight') ? [renderLane('Overnight · Kimi', 'kiminight')] : []),
+        renderLane('ClaudeNightcap · 10:30 p.m.', 'evening'),
+        renderLane('AgMoonwalk · 12:30 a.m.', 'agnight'),
+        ...(shown('kiminight') ? [renderLane('KimiGraveyard · 3:30 a.m.', 'kiminight')] : []),
       );
     }
     // Reports written before the lanes separated keep their original card. A

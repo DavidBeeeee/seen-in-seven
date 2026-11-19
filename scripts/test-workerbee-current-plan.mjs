@@ -29,9 +29,9 @@ for (const kimi of [undefined, { status: 'built-awaiting-integration', summary: 
   );
   render();
   assert.equal(lanes.length, 6);
-  assert.equal(lanes[2].label, 'Kimi build');
+  assert.equal(lanes[2].label, 'KimiLunch · 1 p.m.');
   assert.equal(lanes[2].period, kimi);
-  assert.equal(lanes[3].label, 'Afternoon');
+  assert.equal(lanes[3].label, 'CodexTeaTime · 3 p.m.');
 }
 const statusCode = source.slice(source.indexOf('function statusLabel('), source.indexOf('\nfunction healthUpdate()'));
 const label = new Function(statusCode + '; return statusLabel;')();
