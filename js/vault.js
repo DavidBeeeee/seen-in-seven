@@ -277,13 +277,20 @@ async function loadPdfDocument(book) {
   }
 }
 
+// Fit means the whole page is in view, like a book held open: limited by the
+// window's height on a desktop and by its width on a phone. Filling the width
+// alone drew an A4 page about 1,500px wide on a large screen, taller than two
+// screens (David, 2026-11-19: "the book is appearing oversized"). Zoom in
+// still goes larger for anyone who wants it.
 function fitPdfWidth() {
   if (!pdfDoc) return;
   const wrap = vaultEl('pdf-canvas-wrap');
   const availableWidth = wrap ? Math.max(240, wrap.clientWidth - 32) : 800;
+  const availableHeight = wrap && wrap.clientHeight > 0 ? Math.max(320, wrap.clientHeight - 96) : 900;
   pdfDoc.getPage(currentPdfPage).then(page => {
     const viewport = page.getViewport({ scale: 1.0 });
-    pdfScale = Math.max(0.4, Math.min(2.5, availableWidth / viewport.width));
+    const fit = Math.min(availableWidth / viewport.width, availableHeight / viewport.height);
+    pdfScale = Math.max(0.4, Math.min(2.5, fit));
     queueRenderPage(currentPdfPage);
   }).catch(() => queueRenderPage(currentPdfPage));
 }
