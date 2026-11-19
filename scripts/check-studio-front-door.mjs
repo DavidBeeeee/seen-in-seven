@@ -39,6 +39,14 @@ for (const hiddenRoute of ['/storysculpt', '/navigator', '/certainty', '/boardro
 assert.ok(frontDoorHtml.includes('href="/seeninseven"'), 'SeenInSeven tab links to /seeninseven guest path');
 assert.ok(frontDoorHtml.includes('id="fd-library-sign-in"'), 'The Library tab includes Sign in to read button');
 
+// Community Business Cards leads both views (David 2026-11-19 capture).
+const fdCardsAt = frontDoorHtml.indexOf('id="fd-cards-card"');
+assert.ok(fdCardsAt > -1, 'Signed-out front door shows the Community Business Cards card');
+assert.ok(fdCardsAt < frontDoorHtml.indexOf('class="front-door-tabs"'), 'Business Cards card sits above the SeenInSeven tab and card');
+assert.doesNotMatch(frontDoorHtml.slice(fdCardsAt, frontDoorHtml.indexOf('</article>', fdCardsAt)), /^[^>]*hidden/, 'Front door Business Cards card is not hidden');
+const memberViewHtml = indexHtml.split('id="studio-member-view"')[1];
+assert.ok(memberViewHtml.indexOf('id="cards-card"') > -1 && memberViewHtml.indexOf('id="cards-card"') < memberViewHtml.indexOf('id="seeninseven-card"'), 'Member view lists Community Business Cards above SeenInSeven');
+
 // 3. Behavioral walkthrough in VM: signed-out -> tabs -> Business Cards form -> signed-in
 const elements = {};
 function makeEl(id, init = {}) {
