@@ -34,9 +34,10 @@
       <button data-eee-sign-out type="button"><i data-lucide="log-out"></i><span>Sign out</span></button>
     </div>
 
-    <!-- Section navigation: visible only when member holds both books and video access -->
+    <!-- Section navigation: visible when member holds two or more library sections -->
     <nav class="vault-tabs" id="vault-tabs" hidden>
       <button class="vault-tab active" id="tab-books" type="button"><i data-lucide="book-open"></i><span>Book Shelf</span></button>
+      <button class="vault-tab" id="tab-courses" type="button"><i data-lucide="graduation-cap"></i><span>Classroom</span></button>
       <button class="vault-tab" id="tab-videos" type="button"><i data-lucide="video"></i><span>Video Room</span></button>
     </nav>
 
@@ -125,6 +126,57 @@
       <div class="reader-notice" id="vi-notice" role="status" hidden></div>
       <article class="vi-page" id="vi-page"></article>
     </section>
+
+    <!-- SECTION: CLASSROOM -->
+    <main class="vault-main" id="vault-courses-section" hidden>
+      <section class="eee-page-head">
+        <div>
+          <p class="eyebrow">Solution Vault &middot; Classroom</p>
+          <h1>Classroom</h1>
+          <p>Your courses, one lesson at a time</p>
+        </div>
+        <span class="eee-member-chip"><i data-lucide="graduation-cap"></i><span id="vault-courses-count">0 courses</span></span>
+      </section>
+
+      <section class="book-grid" id="vault-courses-grid"></section>
+      <div class="vault-empty eee-panel" id="vault-courses-empty" hidden>
+        <p>Your Classroom holds the courses granted to your account. Nothing has been added here yet.</p>
+      </div>
+    </main>
+
+    <!-- SECTION: COURSE PLAYER -->
+    <div class="vault-reader-wrap" id="vault-course-player" hidden>
+      <header class="reader-bar">
+        <div class="reader-bar-left">
+          <button class="secondary-button" id="course-back-btn" type="button"><i data-lucide="arrow-left"></i><span>Back to Classroom</span></button>
+          <div class="reader-title-group">
+            <strong id="course-player-title">Course Title</strong>
+            <span id="course-player-subtitle"></span>
+          </div>
+        </div>
+        <div class="reader-bar-right">
+          <select id="course-lesson-select" aria-label="Select lesson"></select>
+          <button class="secondary-button" id="course-complete-btn" type="button"><i data-lucide="check-circle"></i><span>Mark complete</span></button>
+        </div>
+      </header>
+      <div class="course-player-layout">
+        <aside class="course-lesson-rail eee-panel" aria-label="Course lessons">
+          <p class="course-rail-label">Lessons in order</p>
+          <ol class="course-lesson-list" id="course-lesson-list"></ol>
+        </aside>
+        <article class="web-content-wrap course-lesson-card">
+          <p class="course-module-badge" id="course-lesson-module" hidden></p>
+          <h1 id="course-lesson-heading">Lesson Title</h1>
+          <div class="course-lesson-media" id="course-lesson-media" hidden></div>
+          <div class="web-body-text" id="course-lesson-body"></div>
+          <p class="course-save-status" id="course-save-status" role="status"></p>
+          <footer class="web-chapter-nav">
+            <button class="secondary-button" id="course-prev-lesson" type="button"><i data-lucide="chevron-left"></i><span>Previous Lesson</span></button>
+            <button class="primary-button" id="course-next-lesson" type="button"><span>Next Lesson</span><i data-lucide="chevron-right"></i></button>
+          </footer>
+        </article>
+      </div>
+    </div>
 
     <!-- SECTION 4: VIDEO ROOM -->
     <main class="vault-main" id="vault-videos-section" hidden>

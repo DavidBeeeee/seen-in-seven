@@ -6,6 +6,10 @@ let vaultItems = [];
 let vaultProgress = new Map();
 let vaultBooks = [];
 let activeBook = null;
+let vaultCourses = [];
+let activeCourse = null;
+let currentCourseLessonIdx = 0;
+let courseLastSavedLesson = null;
 
 // Reader state
 let pdfDoc = null;
@@ -30,18 +34,24 @@ function vaultEscape(value) {
 /* ── Section switching ──────────────────────────────────────────────── */
 function showSection(section) {
   const isBooks = section === 'books';
+  const isCourses = section === 'courses';
+  const isVideos = section === 'videos';
   const booksSec = vaultEl('vault-books-section');
+  const coursesSec = vaultEl('vault-courses-section');
   const videosSec = vaultEl('vault-videos-section');
   const tabBooks = vaultEl('tab-books');
+  const tabCourses = vaultEl('tab-courses');
   const tabVideos = vaultEl('tab-videos');
 
   if (booksSec) booksSec.hidden = !isBooks;
-  if (videosSec) videosSec.hidden = isBooks;
+  if (coursesSec) coursesSec.hidden = !isCourses;
+  if (videosSec) videosSec.hidden = !isVideos;
 
   if (tabBooks) tabBooks.classList.toggle('active', isBooks);
-  if (tabVideos) tabVideos.classList.toggle('active', !isBooks);
+  if (tabCourses) tabCourses.classList.toggle('active', isCourses);
+  if (tabVideos) tabVideos.classList.toggle('active', isVideos);
 
-  if (!isBooks && vaultItems.length === 0) {
+  if (isVideos && vaultItems.length === 0) {
     loadVault().catch(console.error);
   }
 
@@ -162,6 +172,285 @@ async function loadBooks() {
   return booksState === 'ready';
 }
 
+/* ── Classroom (Courses & Lesson Player) ───────────────────────────── */
+let coursesState = 'ready';
+
+function renderClassroom() {
+  const grid = vaultEl('vault-courses-grid');
+  const empty = vaultEl('vault-courses-empty');
+  const countEl = vaultEl('vault-courses-count');
+  if (!grid) return;
+
+  if (countEl) {
+    countEl.textContent = vaultCourses.length + ' course' + (vaultCourses.length === 1 ? '' : 's');
+  }
+
+  if (!vaultCourses.length) {
+    grid.innerHTML = '';
+    if (empty) empty.hidden = false;
+    return;
+  }
+
+  if (empty) empty.hidden = true;
+  grid.innerHTML = vaultCourses.map(course => {
+    const lessons = Array.isArray(course.lessons) ? course.lessons : [];
+    const progress = course.progress || {};
+    const doneIds = Array.isArray(progress.completed_lesson_ids) ? progress.completed_lesson_ids : [];
+    const badge = course.admin_preview ? 'Admin preview' : 'Course';
+    let progressHtml = '';
+    let actionLabel = 'Start course';
+
+    if (progress.completed) {
+      progressHtml = '<span class="book-progress-chip"><i data-lucide="check-circle"></i><span>Completed</span></span>';
+      actionLabel = 'Open again';
+    } else if (progress.last_lesson_id) {
+      const idx = lessons.findIndex(l => l.id === progress.last_lesson_id);
+      const lessonLabel = idx >= 0 ? 'Lesson ' + (idx + 1) + ' of ' + lessons.length : (doneIds.length + ' of ' + lessons.length + ' done');
+      progressHtml = '<span class="book-progress-chip"><i data-lucide="bookmark"></i><span>' + vaultEscape(lessonLabel) + '</span></span>';
+      actionLabel = 'Continue course';
+    } else if (lessons.length) {
+      progressHtml = '<span class="book-progress-chip"><i data-lucide="layers"></i><span>' + lessons.length + ' lesson' + (lessons.length === 1 ? '' : 's') + '</span></span>';
+    }
+
+    return '<article class="book-card" data-course-slug="' + vaultEscape(course.slug) + '">' +
+      '<div class="book-card-cover">' +
+        '<img src="' + vaultEscape(course.cover_url || '/assets/eee/vault.png') + '" alt="Cover of ' + vaultEscape(course.title) + '">' +
+        '<span class="book-format-badge">' + badge + '</span>' +
+      '</div>' +
+      '<div class="book-card-body">' +
+        '<h2>' + vaultEscape(course.title) + '</h2>' +
+        '<p class="book-card-subtitle">' + vaultEscape(course.subtitle || '') + '</p>' +
+        '<p class="book-card-desc">' + vaultEscape(course.description || '') + '</p>' +
+        progressHtml +
+        '<div class="book-card-actions">' +
+          '<button class="primary-button" type="button" data-course-slug="' + vaultEscape(course.slug) + '">' +
+            '<i data-lucide="play-circle"></i><span>' + actionLabel + '</span>' +
+          '</button>' +
+        '</div>' +
+      '</div>' +
+    '</article>';
+  }).join('');
+
+  EEEStudio.refreshIcons();
+}
+
+async function loadCourses() {
+  coursesState = 'loading';
+  try {
+    const { data, error } = await vaultContext.sb.rpc('my_classroom_courses');
+    if (error || !Array.isArray(data)) throw error || new Error('Unexpected classroom response');
+    vaultCourses = data;
+    coursesState = 'ready';
+  } catch (err) {
+    vaultCourses = [];
+    coursesState = 'error';
+  }
+  renderClassroom();
+  return coursesState === 'ready';
+}
+
+function getCourseCompletedIds(course) {
+  const ids = course && course.progress && Array.isArray(course.progress.completed_lesson_ids)
+    ? course.progress.completed_lesson_ids
+    : [];
+  return Array.from(new Set(ids.map(String)));
+}
+
+function saveCourseProgress(course, lessonId, doneIds, isCompleted) {
+  if (!course || course.admin_preview) return;
+  const slug = course.slug;
+  const statusEl = vaultEl('course-save-status');
+  vaultContext.sb.rpc('save_classroom_progress', {
+    target_course_slug: slug,
+    target_lesson_id: lessonId,
+    target_completed_lesson_ids: doneIds,
+    target_completed: isCompleted
+  }).then(({ data, error }) => {
+    if (error) {
+      if (statusEl && activeCourse && activeCourse.slug === slug) {
+        statusEl.textContent = 'Progress could not be saved right now. You can keep going.';
+      }
+      return;
+    }
+    course.progress = Object.assign({}, course.progress || {}, {
+      last_lesson_id: (data && data.last_lesson_id) || lessonId,
+      completed_lesson_ids: (data && data.completed_lesson_ids) || doneIds,
+      completed: data && typeof data.completed === 'boolean' ? data.completed : isCompleted
+    });
+  });
+}
+
+function renderCourseRail(course, activeIdx) {
+  const listEl = vaultEl('course-lesson-list');
+  if (!listEl) return;
+  const lessons = Array.isArray(course.lessons) ? course.lessons : [];
+  const doneSet = new Set(getCourseCompletedIds(course));
+  listEl.textContent = '';
+
+  lessons.forEach((lesson, idx) => {
+    const li = document.createElement('li');
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.dataset.lessonIdx = String(idx);
+    btn.className = 'course-lesson-item' +
+      (idx === activeIdx ? ' is-active' : '') +
+      (doneSet.has(String(lesson.id)) ? ' is-done' : '');
+
+    const num = document.createElement('span');
+    num.className = 'course-lesson-num';
+    num.textContent = doneSet.has(String(lesson.id)) ? '✓' : String(idx + 1);
+
+    const label = document.createElement('span');
+    label.textContent = lesson.title || ('Lesson ' + (idx + 1));
+
+    btn.appendChild(num);
+    btn.appendChild(label);
+    li.appendChild(btn);
+    listEl.appendChild(li);
+  });
+}
+
+function showCourseLesson(idx, options) {
+  if (!activeCourse) return;
+  const lessons = Array.isArray(activeCourse.lessons) ? activeCourse.lessons : [];
+  if (!lessons.length) return;
+  const clamped = Math.max(0, Math.min(lessons.length - 1, idx));
+  currentCourseLessonIdx = clamped;
+  const lesson = lessons[clamped];
+
+  const selectEl = vaultEl('course-lesson-select');
+  if (selectEl) selectEl.value = String(clamped);
+
+  const moduleEl = vaultEl('course-lesson-module');
+  if (moduleEl) {
+    moduleEl.textContent = lesson.module || '';
+    moduleEl.hidden = !lesson.module;
+  }
+
+  vaultEl('course-lesson-heading').textContent = lesson.title || ('Lesson ' + (clamped + 1));
+
+  const mediaEl = vaultEl('course-lesson-media');
+  if (mediaEl) {
+    mediaEl.textContent = '';
+    const mediaUrl = lesson.video_url || lesson.asset_url || '';
+    if (mediaUrl && /^https:\/\//i.test(mediaUrl)) {
+      const link = document.createElement('a');
+      link.className = 'secondary-button';
+      link.href = mediaUrl;
+      link.target = '_blank';
+      link.rel = 'noopener noreferrer';
+      link.textContent = lesson.video_url ? 'Open lesson video' : 'Open lesson resource';
+      mediaEl.appendChild(link);
+      mediaEl.hidden = false;
+    } else {
+      mediaEl.hidden = true;
+    }
+  }
+
+  const bodyEl = vaultEl('course-lesson-body');
+  bodyEl.textContent = '';
+  for (const para of String(lesson.body || lesson.content || '').split(/\n\s*\n/).filter(Boolean)) {
+    const p = document.createElement('p');
+    p.textContent = para.trim();
+    bodyEl.appendChild(p);
+  }
+
+  const doneIds = getCourseCompletedIds(activeCourse);
+  const isDone = doneIds.includes(String(lesson.id));
+  const completeBtn = vaultEl('course-complete-btn');
+  if (completeBtn) {
+    completeBtn.classList.toggle('primary-button', isDone);
+    completeBtn.classList.toggle('secondary-button', !isDone);
+    const labelSpan = completeBtn.querySelector('span');
+    if (labelSpan) labelSpan.textContent = isDone ? 'Lesson completed' : 'Mark complete';
+  }
+
+  vaultEl('course-prev-lesson').disabled = clamped === 0;
+  vaultEl('course-next-lesson').disabled = clamped === lessons.length - 1;
+  renderCourseRail(activeCourse, clamped);
+
+  const skipSave = options && options.skipSave;
+  if (!skipSave && lesson.id && lesson.id !== courseLastSavedLesson) {
+    courseLastSavedLesson = lesson.id;
+    const allDone = lessons.length > 0 && lessons.every(l => doneIds.includes(String(l.id)));
+    saveCourseProgress(activeCourse, String(lesson.id), doneIds, allDone);
+  }
+}
+
+function toggleCurrentLessonComplete() {
+  if (!activeCourse) return;
+  const lessons = Array.isArray(activeCourse.lessons) ? activeCourse.lessons : [];
+  const lesson = lessons[currentCourseLessonIdx];
+  if (!lesson || !lesson.id) return;
+
+  const doneSet = new Set(getCourseCompletedIds(activeCourse));
+  const id = String(lesson.id);
+  if (doneSet.has(id)) {
+    doneSet.delete(id);
+  } else {
+    doneSet.add(id);
+  }
+  const doneIds = Array.from(doneSet);
+  const allDone = lessons.length > 0 && lessons.every(l => doneSet.has(String(l.id)));
+
+  activeCourse.progress = Object.assign({}, activeCourse.progress || {}, {
+    last_lesson_id: id,
+    completed_lesson_ids: doneIds,
+    completed: allDone
+  });
+
+  saveCourseProgress(activeCourse, id, doneIds, allDone);
+  showCourseLesson(currentCourseLessonIdx, { skipSave: true });
+}
+
+function openCourse(course) {
+  activeCourse = course;
+  const player = vaultEl('vault-course-player');
+  const coursesSec = vaultEl('vault-courses-section');
+  const booksSec = vaultEl('vault-books-section');
+  const videosSec = vaultEl('vault-videos-section');
+  const tabs = vaultEl('vault-tabs');
+  if (coursesSec) coursesSec.hidden = true;
+  if (booksSec) booksSec.hidden = true;
+  if (videosSec) videosSec.hidden = true;
+  if (tabs) tabs.hidden = true;
+  if (player) player.hidden = false;
+  showVaultLinkNotice('');
+
+  vaultEl('course-player-title').textContent = course.title;
+  vaultEl('course-player-subtitle').textContent = course.subtitle || '';
+  const statusEl = vaultEl('course-save-status');
+  if (statusEl) statusEl.textContent = '';
+
+  const lessons = Array.isArray(course.lessons) ? course.lessons : [];
+  const selectEl = vaultEl('course-lesson-select');
+  if (selectEl) {
+    selectEl.textContent = '';
+    lessons.forEach((l, idx) => {
+      const opt = document.createElement('option');
+      opt.value = String(idx);
+      opt.textContent = (idx + 1) + '. ' + (l.title || ('Lesson ' + (idx + 1)));
+      selectEl.appendChild(opt);
+    });
+  }
+
+  const savedId = course.progress && course.progress.last_lesson_id;
+  courseLastSavedLesson = savedId || null;
+  const startIdx = savedId ? Math.max(0, lessons.findIndex(l => l.id === savedId)) : 0;
+  showCourseLesson(startIdx, { skipSave: true });
+  EEEStudio.refreshIcons();
+}
+
+function closeCoursePlayer() {
+  const player = vaultEl('vault-course-player');
+  if (player) player.hidden = true;
+  activeCourse = null;
+  const tabs = vaultEl('vault-tabs');
+  if (tabs && tabs.dataset.forcedHidden !== 'true') tabs.hidden = false;
+  showSection('courses');
+  renderClassroom();
+}
+
 const BOOK_FILE_BYTES = 505492;
 
 async function signedBookUrl(book, download) {
@@ -199,6 +488,7 @@ function openPdfReader(book) {
   const videosSec = vaultEl('vault-videos-section');
   const tabs = vaultEl('vault-tabs');
   if (booksSec) booksSec.hidden = true;
+  if (vaultEl('vault-courses-section')) vaultEl('vault-courses-section').hidden = true;
   if (videosSec) videosSec.hidden = true;
   if (tabs) tabs.hidden = true;
   if (reader) reader.hidden = false;
@@ -462,6 +752,7 @@ function openWebReader(book) {
   const videosSec = vaultEl('vault-videos-section');
   const tabs = vaultEl('vault-tabs');
   if (booksSec) booksSec.hidden = true;
+  if (vaultEl('vault-courses-section')) vaultEl('vault-courses-section').hidden = true;
   if (videosSec) videosSec.hidden = true;
   if (tabs) tabs.hidden = true;
   if (reader) reader.hidden = false;
@@ -1005,8 +1296,60 @@ function wireEvents() {
       } else if (event.key === 'Escape') {
         closeWebReader();
       }
+      return;
+    }
+    const coursePlayer = vaultEl('vault-course-player');
+    if (coursePlayer && !coursePlayer.hidden) {
+      if (event.key === 'ArrowLeft') {
+        showCourseLesson(currentCourseLessonIdx - 1);
+      } else if (event.key === 'ArrowRight') {
+        showCourseLesson(currentCourseLessonIdx + 1);
+      } else if (event.key === 'Escape') {
+        closeCoursePlayer();
+      }
     }
   });
+
+  // Classroom events
+  const tabCourses = vaultEl('tab-courses');
+  if (tabCourses) tabCourses.addEventListener('click', () => showSection('courses'));
+
+  const coursesGrid = vaultEl('vault-courses-grid');
+  if (coursesGrid) {
+    coursesGrid.addEventListener('click', event => {
+      const btn = event.target.closest('[data-course-slug]');
+      if (!btn) return;
+      const course = vaultCourses.find(c => c.slug === btn.dataset.courseSlug);
+      if (course) openCourse(course);
+    });
+  }
+
+  const courseBack = vaultEl('course-back-btn');
+  if (courseBack) courseBack.addEventListener('click', closeCoursePlayer);
+
+  const courseSelect = vaultEl('course-lesson-select');
+  if (courseSelect) {
+    courseSelect.addEventListener('change', () => {
+      showCourseLesson(Number(courseSelect.value));
+    });
+  }
+
+  const courseList = vaultEl('course-lesson-list');
+  if (courseList) {
+    courseList.addEventListener('click', event => {
+      const item = event.target.closest('[data-lesson-idx]');
+      if (item) showCourseLesson(Number(item.dataset.lessonIdx));
+    });
+  }
+
+  const coursePrev = vaultEl('course-prev-lesson');
+  if (coursePrev) coursePrev.addEventListener('click', () => showCourseLesson(currentCourseLessonIdx - 1));
+
+  const courseNext = vaultEl('course-next-lesson');
+  if (courseNext) courseNext.addEventListener('click', () => showCourseLesson(currentCourseLessonIdx + 1));
+
+  const courseComplete = vaultEl('course-complete-btn');
+  if (courseComplete) courseComplete.addEventListener('click', toggleCurrentLessonComplete);
 
   // Video Room events
   const searchEl = vaultEl('vault-search');
@@ -1055,24 +1398,48 @@ EEEStudio.initialize(async context => {
   // hiding books the person may own.
   const hasBooks = !booksLoaded || vaultBooks.length > 0;
 
+  await loadCourses();
+  const hasCourses = vaultCourses.length > 0;
+
   const tabs = vaultEl('vault-tabs');
   const booksSec = vaultEl('vault-books-section');
+  const coursesSec = vaultEl('vault-courses-section');
   const videosSec = vaultEl('vault-videos-section');
+  const tabBooks = vaultEl('tab-books');
+  const tabCourses = vaultEl('tab-courses');
+  const tabVideos = vaultEl('tab-videos');
   const params = new URLSearchParams(window.location.search);
   const targetSlug = (params.get('book') || '').toLowerCase();
+  const targetCourseSlug = (params.get('course') || '').toLowerCase();
+  const sectionParam = (params.get('section') || '').toLowerCase();
 
-  if (hasVideos && hasBooks) {
+  if (tabBooks) tabBooks.hidden = !hasBooks;
+  if (tabCourses) tabCourses.hidden = !hasCourses;
+  if (tabVideos) tabVideos.hidden = !hasVideos;
+
+  const sectionCount = [hasBooks, hasCourses, hasVideos].filter(Boolean).length;
+  if (sectionCount >= 2) {
     tabs.hidden = false;
     delete tabs.dataset.forcedHidden;
-    if (window.location.hash === '#videos' || params.get('section') === 'video') {
+    if (hasVideos && (window.location.hash === '#videos' || params.get('section') === 'video' || sectionParam === 'videos')) {
       showSection('videos');
-    } else {
+    } else if (hasCourses && (window.location.hash === '#classroom' || window.location.hash === '#courses' || sectionParam === 'classroom' || sectionParam === 'courses')) {
+      showSection('courses');
+    } else if (hasBooks) {
       showSection('books');
+    } else if (hasCourses) {
+      showSection('courses');
+    } else {
+      showSection('videos');
     }
   } else if (hasBooks) {
     tabs.hidden = true;
     tabs.dataset.forcedHidden = 'true';
     showSection('books');
+  } else if (hasCourses) {
+    tabs.hidden = true;
+    tabs.dataset.forcedHidden = 'true';
+    showSection('courses');
   } else if (hasVideos) {
     tabs.hidden = true;
     tabs.dataset.forcedHidden = 'true';
@@ -1080,6 +1447,7 @@ EEEStudio.initialize(async context => {
   } else {
     tabs.hidden = true;
     if (booksSec) booksSec.hidden = true;
+    if (coursesSec) coursesSec.hidden = true;
     if (videosSec) videosSec.hidden = true;
     EEEStudio.showGate('access');
     return;
@@ -1093,7 +1461,7 @@ EEEStudio.initialize(async context => {
       : 'That gift link is no longer active. Ask David for the current one. Everything already on your shelf is still here.');
   }
 
-  // A direct book link opens that book. If this account does not hold it,
+  // A direct book or course link opens that item. If this account does not hold it,
   // say so plainly instead of showing anything else in its place.
   if (targetSlug && booksLoaded) {
     const targetBook = vaultBooks.find(b => b.slug === targetSlug);
@@ -1101,6 +1469,14 @@ EEEStudio.initialize(async context => {
       openBook(targetBook);
     } else {
       showVaultLinkNotice('That book is not in the library for ' + (context.profile && context.profile.email ? context.profile.email : 'this account') +
+        '. If it was sent to a different email address, sign out and sign in with that one.');
+    }
+  } else if (targetCourseSlug && coursesState === 'ready') {
+    const targetCourse = vaultCourses.find(c => c.slug === targetCourseSlug);
+    if (targetCourse) {
+      openCourse(targetCourse);
+    } else {
+      showVaultLinkNotice('That course is not in the classroom for ' + (context.profile && context.profile.email ? context.profile.email : 'this account') +
         '. If it was sent to a different email address, sign out and sign in with that one.');
     }
   }
