@@ -701,3 +701,6 @@ html.studio-light .library-preview {
 }
 .network-cards .network-card-contact-note,
 .network-cards .network-empty { grid-column: 1 / -1; }
+
+/* Community Business Cards leads the signed-out front door (David 2026-11-19). */
+.front-door > #fd-cards-card { margin: 24px 0 28px; }
