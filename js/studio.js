@@ -7,6 +7,7 @@ let studioSession = null;
 let studioProfile = null;
 let studioAccess = [];
 let userHasBooks = false;
+let userHasCourses = false;
 let studioCatalogMode = 'automatic';
 let authMode = 'password';
 let pendingPasswordRecovery = new URLSearchParams(window.location.search).get('reset') === '1';
@@ -396,6 +397,7 @@ async function hydrateStudio(session) {
   studioProfile = null;
   studioAccess = [];
   userHasBooks = false;
+  userHasCourses = false;
 
   await loadStudioCatalogMode();
 
@@ -409,6 +411,12 @@ async function hydrateStudio(session) {
         userHasBooks = Boolean(hasBooks);
       } catch (e) {
         userHasBooks = false;
+      }
+      try {
+        const { data: hasCourses } = await studioSb.rpc('has_any_classroom_access');
+        userHasCourses = Boolean(hasCourses);
+      } catch (e) {
+        userHasCourses = false;
       }
       if (!pendingPasswordRecovery && followStudioNext()) return;
 
@@ -454,8 +462,8 @@ function renderStudio() {
   const eeeUnlocked = hubBundle || hubApps.length > 0;
   const eeeCardVisible = shouldShowEeeCard(eeeUnlocked);
 
-  // Solution Vault book access or standalone vault access
-  const vaultUnlocked = hasStudioAccess('vault') || userHasBooks;
+  // Solution Vault book access, classroom access, or standalone vault access
+  const vaultUnlocked = hasStudioAccess('vault') || userHasBooks || userHasCourses;
   // If user is book-only or has standalone vault access without full EEE bundle, show vault-card
   const showVaultCard = signedIn && vaultUnlocked && !hubBundle;
 
@@ -487,15 +495,17 @@ function renderStudio() {
   if (el('cmo-nav-item')) el('cmo-nav-item').hidden = !(signedIn && (isAdmin || CMO_EMAILS.includes(String(email || '').trim().toLowerCase())));
   el('eee-card').hidden = !eeeCardVisible;
 
-  // Solution Vault in the sidebar (WBR-445): a Book Shelf and a Video Room
-  // link under it, each shown only when this account can use that section.
-  // Admins can preview every book. With neither, it stays one plain link.
+  // Solution Vault in the sidebar (WBR-445, WBR-491): Book Shelf, Classroom,
+  // and Video Room links under it, each shown only when this account can use that section.
+  // Admins can preview every book and course. With none, it stays one plain link.
   const vaultVideos = signedIn && (hasStudioAccess('vault') || hubBundle);
   const vaultBooksNav = signedIn && (userHasBooks || isAdmin);
+  const vaultCoursesNav = signedIn && (userHasCourses || isAdmin);
   el('vault-nav-books').hidden = !vaultBooksNav;
+  if (el('vault-nav-courses')) el('vault-nav-courses').hidden = !vaultCoursesNav;
   el('vault-nav-videos').hidden = !vaultVideos;
-  el('vault-nav-group').hidden = !(vaultBooksNav || vaultVideos);
-  el('vault-nav-link').hidden = vaultBooksNav || vaultVideos;
+  el('vault-nav-group').hidden = !(vaultBooksNav || vaultCoursesNav || vaultVideos);
+  el('vault-nav-link').hidden = vaultBooksNav || vaultCoursesNav || vaultVideos;
 
   const vaultCard = el('vault-card');
   if (vaultCard) {
@@ -637,6 +647,7 @@ async function signOutStudio() {
   studioProfile = null;
   studioAccess = [];
   userHasBooks = false;
+  userHasCourses = false;
   closeSettingsModal();
   studioAuthResolved = true;
   renderStudio();
