@@ -36,10 +36,12 @@ assert.match(html, /This releases your current time first, and someone else can 
 assert.match(block('not-a-scheduler'), /Not a calendar link/);
 // Stranger 91: a held session is the outcome.
 assert.match(block('held-outcome'), /success when it is held/);
-// Stranger 99: who reads a topic, how to delete, what sessions are not for.
+// Stranger 99 & WBR-493: who reads a topic, how to delete, and scope moved cleanly into Terms.
+const termsHtml = readFileSync(join(root, 'terms.html'), 'utf8');
 assert.match(block('topic-reader'), /only David/);
-assert.match(block('not-for'), /not therapy or crisis support/);
-assert.match(block('not-for'), /988/);
+assert.match(block('not-for'), /href="\/terms#certainty-scope"/);
+assert.match(termsHtml.slice(termsHtml.indexOf('id="certainty-scope"')), /not therapy or crisis support/);
+assert.match(termsHtml.slice(termsHtml.indexOf('id="certainty-scope"')), /988/);
 assert.match(block('delete-data'), /Delete my past sessions and phone number/);
 assert.match(html, /el\('cs-delete-data'\)\.onclick = deleteData;/);
 assert.match(html, /api\('delete_data'\)/);
