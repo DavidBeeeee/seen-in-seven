@@ -900,11 +900,21 @@ function renderThisWeek() {
   });
 
   const tc = meta.tiny_challenge;
-  const tiny = weekBlock('Tiny Challenge', tc?.checkedAt, 36);
+  const purchase = meta.purchase_signal;
+  const tiny = weekBlock('Interest and purchases', purchase?.checkedAt || tc?.checkedAt, 36);
+  if (purchase) {
+    weekLine(tiny.list, `recorded purchases this week (${purchase.purchasesTotal} in all)`, String(purchase.purchasesThisWeek));
+    weekLine(tiny.list, `Purchase log checked ${day(purchase.checkedAt)}. Routed, processed orders only; test addresses excluded.`);
+    weekLine(tiny.list, purchase.momentumHubRouted ? 'Momentum Hub plan is routed.' : 'Momentum Hub plan is not actively routed.');
+    if (purchase.failedEvents || purchase.unroutedSales) weekLine(tiny.list, `${purchase.failedEvents} failed events; ${purchase.unroutedSales} unrouted sales, not included as purchases.`);
+    weekLine(tiny.list, 'This log does not measure revenue or every payment method.');
+  } else weekLine(tiny.list, 'Purchase log not read yet.');
   if (!tc) weekLine(tiny.list, 'Not read from Systeme yet.');
   else {
+    const tagFresh = Number.isFinite(Date.parse(tc.checkedAt)) && Date.now() - Date.parse(tc.checkedAt) < 36 * 3600000;
+    weekLine(tiny.list, tagFresh ? `Systeme tags checked ${day(tc.checkedAt)}.` : `Systeme tags: last known, ${day(tc.checkedAt)}. Interest is not freshly verified.`);
     weekLine(tiny.list, `new on the Tiny Challenge page this week (${tc.interestTotal} in all${tc.latestInterestAt ? `, latest ${tc.latestInterestAt}` : ''})`, String(tc.interestThisWeek));
-    weekLine(tiny.list, `purchases this week (${tc.purchasesTotal} in all)`, String(tc.purchasesThisWeek));
+    weekLine(tiny.list, `tagged purchases in that last read (${tc.purchasesTotal} in all)`, String(tc.purchasesThisWeek));
   }
   root.append(certainty.block, events.block, tiny.block);
 
