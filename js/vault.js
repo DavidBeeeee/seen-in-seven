@@ -802,7 +802,7 @@ function showWebChapter(idx) {
   // Plain text only: paragraphs are text nodes, so no markup in content runs.
   const bodyEl = vaultEl('web-body-text');
   bodyEl.textContent = '';
-  for (const para of String(ch.content || '').split(/\n\s*\n/).filter(Boolean)) {
+  for (const para of String(ch.content || ch.body || '').split(/\n\s*\n/).filter(Boolean)) {
     const p = document.createElement('p');
     p.textContent = para.trim();
     bodyEl.appendChild(p);
