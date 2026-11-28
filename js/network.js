@@ -164,6 +164,12 @@ function renderDirectory() {
     badgeEl.textContent = String(pending.length);
   }
 
+  // The gray-card note only makes sense when a gray card is on the page
+  // (Muse cold read 2026-11-28: the note beside two verified cards read as a
+  // contradiction).
+  const unverifiedNote = netEl('network-unverified-note');
+  if (unverifiedNote) unverifiedNote.hidden = !pending.length;
+
   const listEl = netEl('network-directory-list');
   if (listEl) {
     if (!approved.length) {
@@ -204,7 +210,35 @@ function renderDirectory() {
   }
 
   renderAdminPreviewList(all);
+  markClippedCards();
   refreshIcons();
+}
+
+// A clamped card says so: a newcomer will not guess a card opens (Muse cold
+// read 2026-11-28). Only cards whose text is actually cut get the cue.
+function markClippedCards() {
+  const listEl = netEl('network-directory-list');
+  if (!listEl || typeof window.requestAnimationFrame !== 'function') return;
+  window.requestAnimationFrame(() => {
+    listEl.querySelectorAll('.network-card').forEach(card => {
+      const existing = card.querySelector('.network-card-more');
+      if (card.classList.contains('is-expanded')) {
+        if (existing) existing.textContent = 'Show less';
+        return;
+      }
+      const clipped = [...card.querySelectorAll('.network-card-bio, .network-card-looking')]
+        .some(el => el.scrollHeight > el.clientHeight + 1);
+      if (clipped && !existing) {
+        const more = document.createElement('span');
+        more.className = 'network-card-more';
+        more.textContent = 'Tap to read more';
+        const links = card.querySelector('.network-card-links');
+        card.insertBefore(more, links || null);
+      } else if (!clipped && existing) {
+        existing.remove();
+      }
+    });
+  });
 }
 
 function renderAdminPreviewList(all) {
@@ -582,10 +616,18 @@ if (netEl('network-directory-list')) {
     const card = event.target.closest('.network-card');
     if (card) {
       card.classList.toggle('is-expanded');
-      card.setAttribute('aria-expanded', String(card.classList.contains('is-expanded')));
+      const expanded = card.classList.contains('is-expanded');
+      card.setAttribute('aria-expanded', String(expanded));
+      const more = card.querySelector('.network-card-more');
+      if (more) more.textContent = expanded ? 'Show less' : 'Tap to read more';
     }
   });
 }
+let clipResizeTimer = null;
+window.addEventListener('resize', () => {
+  clearTimeout(clipResizeTimer);
+  clipResizeTimer = setTimeout(markClippedCards, 150);
+});
 setupNetworkFormToggle();
 fetchDirectoryEntries();
 refreshIcons();

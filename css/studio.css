@@ -693,6 +693,8 @@ html.studio-light .library-preview {
 .network-grid .network-card .network-card-looking { margin-top: 8px; padding: 7px 10px; font-size: 13px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .network-grid .network-card.is-expanded .network-card-bio,
 .network-grid .network-card.is-expanded .network-card-looking { -webkit-line-clamp: unset; display: block; }
+.network-grid .network-card .network-card-more { margin-top: 6px; color: var(--teal); font-size: 12px; font-weight: 800; }
+.network-account-note { margin: 10px 0 0; }
 .network-grid .network-card .network-card-links { margin-top: auto; padding-top: 10px; gap: 4px 12px; font-size: 13px; }
 .network-grid .network-card .network-card-contact { margin-top: 6px; font-size: 13px; }
 .network-grid .network-card .network-collab-badge { font-size: 10px; }
