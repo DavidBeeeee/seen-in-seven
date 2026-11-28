@@ -75,6 +75,7 @@ async function fetchDirectoryEntries() {
   const local = loadLocalEntries();
   if (!networkSb) {
     directoryState.entries = local;
+    showPreviewBanner();
     renderDirectory();
     return;
   }
@@ -89,6 +90,7 @@ async function fetchDirectoryEntries() {
     if (error) {
       directoryState.mode = 'preview-stub';
       directoryState.entries = local;
+      showPreviewBanner();
     } else {
       directoryState.mode = 'live-table';
       directoryState.entries = Array.isArray(data) ? data : [];
@@ -100,6 +102,7 @@ async function fetchDirectoryEntries() {
   } catch (err) {
     directoryState.mode = 'preview-stub';
     directoryState.entries = local;
+    showPreviewBanner();
   }
 
   renderDirectory();
@@ -133,6 +136,15 @@ function socialLabel(url) {
 
 function shortLink(url) {
   return String(url || '').replace(/^https?:\/\//i, '').replace(/^www\./i, '').replace(/\/$/, '');
+}
+
+// WBR-477 follow-up (2026-11-28): the preview banner starts hidden in the
+// markup, so a visitor never sees "New cards wait for David's approval" flash
+// while the live table is loading. It appears only in the local preview
+// fallback, where that sentence is true.
+function showPreviewBanner() {
+  const banner = netEl('network-preview-banner');
+  if (banner) banner.hidden = false;
 }
 
 function renderDirectory() {
